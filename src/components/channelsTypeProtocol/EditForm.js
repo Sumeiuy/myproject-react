@@ -22,8 +22,6 @@ import styles from './editForm.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-// const EMPTY_PARAM = '暂无';
-// const BOOL_TRUE = true;
 const {
   underCustTitleList,  // 下挂客户表头集合
   protocolClauseTitleList,  // 协议条款表头集合
@@ -51,11 +49,8 @@ export default class EditForm extends PureComponent {
     protocolDetail: PropTypes.object,
     // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
-    operationTypeList: PropTypes.array.isRequired,
-    subTypeList: PropTypes.array.isRequired,
-    // 查询协议编号
-    // onSearchProtocolNum: PropTypes.func.isRequired,
-    // protocolNumList: PropTypes.array,
+    operationTypeList: PropTypes.array,
+    subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     // 所选模板对应协议条款列表
@@ -73,9 +68,11 @@ export default class EditForm extends PureComponent {
     // 清空props数据
     clearPropsData: PropTypes.func.isRequired,
     // 验证客户
-    getCustValidate: PropTypes.func.isRequired,
+    getCustValidate: PropTypes.func,
     // 附件列表
     attachmentList: PropTypes.array,
+    // 模版信息
+    template: PropTypes.object,
   }
 
   static defaultProps = {
@@ -83,6 +80,10 @@ export default class EditForm extends PureComponent {
     canApplyCustList: EMPTY_LIST,
     protocolDetail: EMPTY_OBJECT,
     attachmentList: [],
+    operationTypeList: [],
+    getCustValidate: () => {},
+    template: {},
+    subTypeList: [],
   }
 
   constructor(props) {
@@ -110,26 +111,31 @@ export default class EditForm extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    // const { protocolDetail: prePD } = this.props;
     const { protocolDetail: nextPD, attachmentList } = nextProps;
-    if (!_.isEmpty(nextPD) && attachmentList.length) {
-      const { cust, item: productList } = nextPD;
-      const assignAttachment = attachmentMap.map((item) => {
-        let newItem = {};
-        attachmentList.forEach((child) => {
-          if (item.title === child.title) {
-            newItem = {
-              ...item,
-              ...child,
-            };
-          } else {
-            newItem = item;
-          }
+    if (!_.isEmpty(nextPD)) {
+      // 如果附件列表不为空
+      let assignAttachment = [];
+      if (attachmentList.length) {
+        assignAttachment = attachmentMap.map((item) => {
+          let newItem = {};
+          attachmentList.forEach((child) => {
+            if (item.title === child.title) {
+              newItem = {
+                ...item,
+                ...child,
+                length: child.attachmentList.length,
+              };
+            } else {
+              newItem = item;
+            }
+          });
+          return newItem;
         });
-        return newItem;
-      });
+      }
+      const { cust, item: productList } = nextPD;
       const hasCust = nextPD.multiUsedFlag === 'Y' || false;
       this.setState({
+        ...nextPD,
         isEdit: true,
         // 附件类型列表
         attachmentTypeList: assignAttachment,
@@ -162,8 +168,8 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    const { protocolClauseList } = this.props;
-    const { productList, attachmentTypeList, cust } = this.state;
+    const { protocolClauseList, protocolDetail } = this.props;
+    const { productList, attachmentTypeList, cust, isEdit } = this.state;
     const formData = {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
@@ -177,9 +183,10 @@ export default class EditForm extends PureComponent {
       multiUsedFlag: baseInfoData.multiUsedFlag ? 'Y' : 'N',
       levelTenFlag: baseInfoData.levelTenFlag ? 'Y' : 'N',
       item: productList,
-      term: protocolClauseList,
+      term: (isEdit && _.isEmpty(protocolClauseList)) ? protocolDetail.term : protocolClauseList,
       attachment: attachmentTypeList,
       cust,
+      flowid: isEdit ? protocolDetail.flowid : '',
     };
     return formData;
   }
@@ -396,6 +403,8 @@ export default class EditForm extends PureComponent {
       protocolDetail,
       // 清除数据
       clearPropsData,
+      // 模版数据
+      template,
     } = this.props;
     const {
       isEdit,
@@ -423,7 +432,7 @@ export default class EditForm extends PureComponent {
       firstTitle: '待选协议产品',
       secondTitle: '已选协议产品',
       firstData: protocolProductList,
-      secondData: protocolDetail.item,
+      secondData: (isEdit && _.isEmpty(protocolProductList)) ? protocolDetail.item : [],
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
@@ -457,6 +466,7 @@ export default class EditForm extends PureComponent {
             formData={protocolDetail}
             clearPropsData={clearPropsData}
             isEdit={isEdit}
+            template={template}
           />
         </div>
         <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
@@ -472,7 +482,10 @@ export default class EditForm extends PureComponent {
             head="协议条款"
           />
           <CommonTable
-            data={isEdit ? protocolDetail.term : protocolClauseList}
+            data={(isEdit && _.isEmpty(protocolClauseList)) ?
+              protocolDetail.term
+            :
+              protocolClauseList}
             titleList={protocolClauseTitleList}
           />
         </div>
@@ -509,7 +522,7 @@ export default class EditForm extends PureComponent {
                   type={item.type}
                   title={item.title}
                   required={item.required}
-                  attachment={isEdit ? item.attachment : ''}
+                  attachment={isEdit ? item.uuid : ''}
                   attachmentList={isEdit ? item.attachmentList : []}
                   uploadCallback={this.handleUploadCallback}
                   deleteCallback={this.handleDeleteCallback}

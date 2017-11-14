@@ -5,8 +5,6 @@
  * @Last Modified time: 2017-11-13 20:40:29
  */
 
-// import _ from 'lodash';
-
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
 // import { seibelConfig } from '../config';
@@ -23,9 +21,8 @@ export default {
     protocolDetail: EMPTY_OBJECT, // 协议详情
     attachmentList: EMPTY_LIST, // 附件信息
     flowHistory: EMPTY_LIST,  // 审批记录
-    flowStepInfo: EMPTY_LIST,  // 审批人及按钮
+    flowStepInfo: EMPTY_OBJECT,  // 审批人及按钮
     operationList: EMPTY_LIST, // 操作类型列表
-    subTypeList: EMPTY_LIST, // 子类型列表
     templateList: EMPTY_LIST, // 模板列表
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
     protocolProductList: EMPTY_LIST, // 协议产品列表
@@ -58,24 +55,6 @@ export default {
         flowHistory: resultData,
       };
     },
-    // 查询操作类型
-    // queryOperationListSuccess(state, action) {
-    //   const { payload: { resultData = EMPTY_LIST } } = action;
-    //   return {
-    //     ...state,
-    //     protocolProductList: [],
-    //     protocolClauseList: [],
-    //     operationList: resultData,
-    //   };
-    // },
-    // // 查询子类型
-    // querySubTypeListSuccess(state, action) {
-    //   const { payload: { resultData = EMPTY_LIST } } = action;
-    //   return {
-    //     ...state,
-    //     subTypeList: resultData,
-    //   };
-    // },
     // 查询模板列表
     queryTemplateListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -159,7 +138,7 @@ export default {
         const responsePayload = {
           attachmentList: attachmentResponse.resultData,
           title: item.attachmentType,
-          attachment: item.uuid,
+          uuid: item.uuid,
         };
         attachmentArray.push(responsePayload);
       }
@@ -176,6 +155,25 @@ export default {
       yield put({
         type: 'getFlowHistorySuccess',
         payload: flowHistoryResponse,
+      });
+      const flowStepPayload = {
+        flowId: response.resultData.flowid || '',
+      };
+      const flowResponse = yield call(api.getFlowStepInfo, flowStepPayload);
+      const { resultData: { flowButtons = [] } } = flowResponse;
+      /*eslint-disable */
+      flowButtons.forEach(v => {
+        v.flowAuditors.forEach((sv, index) => {
+          sv.belowDept = sv.occupation;
+          sv.empNo = sv.login;
+          sv.key = `${new Date().getTime()}-${index}`;
+          sv.groupName = v.nextGroupName;
+          sv.operate = v.operate;
+        })
+      });
+      yield put({
+        type: 'getFlowStepInfoSuccess',
+        payload: flowResponse,
       });
     },
     // 获取附件信息
@@ -200,15 +198,10 @@ export default {
     },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {
-      const response = yield call(api.saveProtocolData, payload.formData);
+      const response = yield call(api.saveProtocolData, payload);
       yield put({
         type: 'saveProtocolDataSuccess',
         payload: response,
-      });
-      // 保存成功之后重新请求左侧列表
-      yield put({
-        type: 'app/getSeibleList',
-        payload: payload.params,
       });
     },
     // 查询客户
@@ -252,6 +245,10 @@ export default {
         },
       });
     },
+    // 提交审批流程
+    * doApprove({ payload }, { call, put }) {
+      yield call(api.postDoApprove, payload.formData);
+    }
   },
   subscriptions: {},
 };

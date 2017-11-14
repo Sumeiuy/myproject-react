@@ -40,8 +40,8 @@ export default class EditBaseInfo extends PureComponent {
     templateList: PropTypes.array.isRequired,
     // 查询子类型/操作类型
     queryTypeVaules: PropTypes.func.isRequired,
-    operationTypeList: PropTypes.array.isRequired,
-    subTypeList: PropTypes.array.isRequired,
+    operationTypeList: PropTypes.array,
+    subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     // 查询协议产品列表
@@ -56,18 +56,25 @@ export default class EditBaseInfo extends PureComponent {
     // 清空附件
     resetUpload: PropTypes.func,
     // 验证客户
-    getCustValidate: PropTypes.func.isRequired,
+    getCustValidate: PropTypes.func,
     // 清除数据
     clearPropsData: PropTypes.func,
+    // 模版数据
+    template: PropTypes.object,
+    // 是否是编辑
     isEdit: PropTypes.bool,
   }
 
   static defaultProps = {
     formData: EMPTY_OBJECT,
     protocolNumList: EMPTY_ARRAY,
+    operationTypeList: EMPTY_ARRAY,
     onChangeMultiCustomer: () => {},
     resetUpload: () => {},
     clearPropsData: () => {},
+    getCustValidate: () => {},
+    template: {},
+    subTypeList: [],
     isEdit: false,
   }
 
@@ -112,8 +119,7 @@ export default class EditBaseInfo extends PureComponent {
     const {
       templateList: nextTL,
       formData: nextFD,
-      // queryTypeVaules,
-      // subTypeList,
+      template,
     } = nextProps;
     // 设定新的模版列表数据
     if (!_.isEqual(preTL, nextTL)) {
@@ -122,15 +128,6 @@ export default class EditBaseInfo extends PureComponent {
       });
     }
     if (!_.isEqual(preFD, nextFD) && !_.isEmpty(nextFD)) {
-      // console.warn('两次数据不一样，并且有值', nextFD);
-      // const filterSubType = _.filter(subTypeList, o => o.val === nextFD.subType);
-      // console.warn('filterSubType', filterSubType);
-      // console.warn('subTypeList', subTypeList);
-      // console.warn('nextFD.subType', nextFD.subType);
-      // queryTypeVaules({
-      //   typeCode: 'templateId',
-      //   subType: value,
-      // });
       const {
         operationType,
         subType,
@@ -141,18 +138,32 @@ export default class EditBaseInfo extends PureComponent {
         startDt,
         vailDt,
         content,
+        custId,
+        custType,
+        econNum,
       } = nextFD;
       this.setState({
         operationType,
         subType,
         contactName,
-        templateId,
-        multiUsedFlag,
-        levelTenFlag,
+        protocolTemplate: {
+          rowId: templateId,
+        },
+        multiUsedFlag: multiUsedFlag === 'Y' || false,
+        levelTenFlag: levelTenFlag === 'Y' || false,
         startDt,
         vailDt,
         content,
-        edit: true,
+        client: {
+          cusId: custId,
+          custType,
+          brokerNumber: econNum,
+        },
+      });
+    }
+    if (!_.isEmpty(template)) {
+      this.setState({
+        protocolTemplate: template,
       });
     }
   }
@@ -227,7 +238,6 @@ export default class EditBaseInfo extends PureComponent {
       resetUpload,
       isEdit,
     } = this.props;
-    console.warn('选择客户 value', value);
     const { cusId, custType, brokerNumber } = value;
     const validatePayload = {
       id: cusId,
@@ -381,6 +391,8 @@ export default class EditBaseInfo extends PureComponent {
       operationTypeList,
       subTypeList,
       formData: protocolDetail,
+      template,
+      isEdit,
     } = this.props;
     const {
       subType,
@@ -389,13 +401,12 @@ export default class EditBaseInfo extends PureComponent {
       levelTenFlag,
       protocolTemplate,
       templateList,
-      edit,
     } = this.state;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
         {
-          edit ?
+          isEdit ?
             <div>
               <InfoItem label="子类型" value={subType} />
               <InfoItem label="操作类型" value={protocolDetail.operationType} />
@@ -439,7 +450,8 @@ export default class EditBaseInfo extends PureComponent {
             placeholder="协议模板"
             showObjKey="prodName"
             objId="rowId"
-            value={edit ? (this.state.protocolTemplate.rowId || '') : protocolDetail.templateId}
+            value={isEdit ? `${template.prodName || ''}${template.rowId || ''}` : ''}
+            /* value={isEdit ? protocolDetail.templateId : (protocolTemplate.rowId || '')} */
             searchList={templateList}
             emitSelectItem={this.handleSelectTemplate}
             emitToSearch={this.handleSearchTemplate}
@@ -476,7 +488,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
-            defaultValue={edit ? protocolDetail.content : ''}
+            defaultValue={isEdit ? protocolDetail.content : ''}
           />
         </InfoForm>
       </div>

@@ -72,6 +72,16 @@ export default class DropdownSelect extends PureComponent {
     document.addEventListener('click', this.hideModal, false);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { value: preValue } = this.props;
+    const { value: nextValue } = nextProps;
+    if (preValue !== nextValue) {
+      this.setState({
+        value: nextValue,
+      });
+    }
+  }
+
   get getSearchListDom() {
     const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
