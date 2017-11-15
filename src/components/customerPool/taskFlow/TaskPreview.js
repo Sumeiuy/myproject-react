@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 14:29:11
+ * @Last Modified time: 2017-11-14 13:28:38
  */
 
 import React, { PureComponent } from 'react';
@@ -47,7 +47,7 @@ const renderColumnTitle = () => {
 @RestoreScrollTop
 export default class TaskPreview extends PureComponent {
   static propTypes = {
-    storedTaskFlowData: PropTypes.object.isRequired,
+    storedData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
     currentTab: PropTypes.string.isRequired,
     getApprovalList: PropTypes.func.isRequired,
@@ -124,9 +124,6 @@ export default class TaskPreview extends PureComponent {
   handleClick() {
     const { getApprovalList } = this.props;
     getApprovalList();
-    this.setState({
-      isShowTable: true,
-    });
   }
 
   @autobind
@@ -162,7 +159,7 @@ export default class TaskPreview extends PureComponent {
 
   render() {
     const {
-      storedTaskFlowData,
+      storedData,
       isNeedApproval,
       currentTab = '1',
       executeTypes,
@@ -179,7 +176,7 @@ export default class TaskPreview extends PureComponent {
       taskFormData = EMPTY_OBJECT,
       labelCust = EMPTY_OBJECT,
       custSegment = EMPTY_OBJECT,
-    } = storedTaskFlowData;
+    } = storedData;
 
     let finalData = {};
     if (currentTab === '1') {

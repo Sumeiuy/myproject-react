@@ -9,14 +9,14 @@ exports.response = function (req, res) {
       "cftCust":"40",  // 涨乐财付通
       "dateType":"518005",
       "finaTranAmt":"25",  // 公募基金
-      "fundTranAmt":"18",  // 证券投资类私募
+      "fundTranAmt":"18",  // 紫金产品
       "hkCust":"40",      // 沪港通 + 深港通
       "shHkCust":"20",   // 沪港通
       "szHkCust":"20",   // 深港通
       "newProdCust":"2500",  // 新增产品客户
       "optCust":"35",    // 期权
       "otcTranAmt":"18",   // OTC
-      "privateTranAmt":"18",  // 紫金产品
+      "privateTranAmt":"18",  // 证券投资类私募
       "purAddCust":"180",  // 净新增有效户
       "purAddCustaset":"10000033333330",  // 净新增客户资产
       "purAddHighprodcust":"1900",  // 净新增高端产品户

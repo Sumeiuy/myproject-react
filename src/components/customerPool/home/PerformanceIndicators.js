@@ -96,10 +96,11 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   formatIndicators(indicatorArray) {
+    const isEmpty = _.isEmpty(indicatorArray);
     const custAndProperty = {
       key: 'kehujizichan',
       headLine: '客户及资产',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[0],  // 服务客户数
         indicatorArray[1],  // 服务客户资产
         indicatorArray[2],  // 签约客户数
@@ -111,7 +112,7 @@ export default class PerformanceIndicators extends PureComponent {
     const establishBusiness = {
       key: 'yewukaitong',
       headLine: '业务开通',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[10], // 天天发
         indicatorArray[11], // 港股通
         indicatorArray[12], // 深港通
@@ -124,14 +125,14 @@ export default class PerformanceIndicators extends PureComponent {
     const hsRate = {
       key: 'hushenguijilv',
       headLine: '沪深归集率',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[17], // 沪深归集率
       ],
     };
     const productSale = {
       key: 'chanpinxiaoshou',
       headLine: '产品销售',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[21], // 公募
         indicatorArray[22], // 私模
         indicatorArray[23], // 紫金
@@ -141,7 +142,7 @@ export default class PerformanceIndicators extends PureComponent {
     const pureIcome = {
       key: 'jingchuangshou',
       headLine: '净创收',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[18], // 净佣金收入
         indicatorArray[19], // 产品净手续费收入
         indicatorArray[20], // 净利息收入
@@ -150,7 +151,7 @@ export default class PerformanceIndicators extends PureComponent {
     const serviceIndicator = {
       key: 'fuwuzhibiao',
       headLine: '服务指标',
-      data: [
+      data: isEmpty ? [] : [
         indicatorArray[5],  // MOT 完成率
         indicatorArray[6],  // 服务覆盖率
         indicatorArray[7],  // 资产配置覆盖率
@@ -289,7 +290,7 @@ export default class PerformanceIndicators extends PureComponent {
       param.data,
       (item, index) => (
         performanceData.push({
-          value: filterEmptyToNumber(item.value).toFixed(2),
+          value: (filterEmptyToNumber(item.value) * 100),
           color: colors[index],
         })
       ),

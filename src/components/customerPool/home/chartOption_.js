@@ -109,10 +109,11 @@ const getBgItem = ({
         fontSize: 12,
         color: '#4a4a4a',
         formatter: (params) => {
-          if (params.value !== 0) {
-            return `${(maxValue - params.value).toFixed(2)}%`;
-          }
-          return '';
+          const isNotFloat = `${params.value}`.indexOf('.') === -1;
+          const value = maxValue - params.value;
+          // 0%,100%没有小数点，其他保留两位小数
+          const newValue = isNotFloat ? value : value.toFixed(2);
+          return `${newValue}%`;
         },
       },
     },

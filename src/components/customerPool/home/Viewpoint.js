@@ -56,7 +56,10 @@ export default class Viewpoint extends PureComponent {
         onClick={() => { this.handleDetailClick(index); }}
         key={item.id}
       >
-        <a className={styles.news}>
+        <a
+          className={styles.news}
+          title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+        >
           {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
         </a>
       </div>
@@ -64,20 +67,20 @@ export default class Viewpoint extends PureComponent {
   }
 
   render() {
-    const { information: { infoVOList = [] } } = this.props;
+    const { information = {} } = this.props;
+    const { infoVOList = [] } = _.isEmpty(information) ? {} : information;
     // 展示第一个新闻
-    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
+    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : _.head(infoVOList);
     // : 为中文符号，英文的：不匹配
     const titleArray = _.split(texttitle, '：');
     const newTitle = _.last(titleArray);
-    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
+    // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
     const formateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      _.replace(
-        _.trim(abstract),
-        /<\/?span[^>]*?>/g,
-        '',
+      abstract.replace(
+        /<\/?([^>]+?)>/g,
+        argument => (argument.match(/<\/?p[^>]*?>/g) ? argument : ''),
       )
     );
     const isShowMore = infoVOList.length > 12;
@@ -87,7 +90,12 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{newTitle || '暂无标题'}</div>
+          <div
+            className={styles.title}
+            title={newTitle || '暂无标题'}
+          >
+            {newTitle || '暂无标题'}
+          </div>
           <div className={styles.article}>
             <div className={styles.text} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div

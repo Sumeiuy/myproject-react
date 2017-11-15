@@ -49,25 +49,18 @@ export default class DropdownSelect extends PureComponent {
     disable: false,
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       // 查询信息
       searchValue: '',
       // 下拉选框是否展示
       isSHowModal: false,
       // 选中的值
-      value: '',
+      value: props.value,
       // 添加id标识
-      id: '',
-    };
-  }
-
-  componentWillMount() {
-    this.setState({
-      value: this.props.value,
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
-    });
+    };
   }
 
   componentDidMount() {
@@ -80,7 +73,6 @@ export default class DropdownSelect extends PureComponent {
     if (value !== preValue) {
       this.setState({
         value,
-        id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
       });
     }
   }
@@ -122,9 +114,6 @@ export default class DropdownSelect extends PureComponent {
   toSearch(value) {
     // 在这里去触发查询搜索信息的方法
     this.props.emitToSearch(value);
-    this.setState({
-      value,
-    });
   }
 
   @autobind

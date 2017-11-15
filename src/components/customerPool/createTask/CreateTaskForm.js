@@ -31,6 +31,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: PropTypes.bool,
     isShowErrorTaskType: PropTypes.bool.isRequired,
     isShowErrorExcuteType: PropTypes.bool.isRequired,
+    custCount: PropTypes.number,
   }
 
   static defaultProps = {
@@ -40,6 +41,7 @@ export default class CreateTaskForm extends PureComponent {
     previousData: {},
     isShowTitle: false,
     isShowErrorInfo: false,
+    custCount: 0,
   }
 
   constructor(props) {
@@ -62,8 +64,8 @@ export default class CreateTaskForm extends PureComponent {
       previousData,
     } = this.props;
     const arr = _.map(custIdexPlaceHolders, item => ({
-      name: item.substring(1, item.length - 1),
-      type: item.substring(1, item.length),
+      name: item.slice(1, -1),
+      type: item.slice(1, -1),
     }));
     this.setState({
       statusData: arr,
@@ -194,6 +196,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
+      custCount,
     } = this.props;
     const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
@@ -211,7 +214,9 @@ export default class CreateTaskForm extends PureComponent {
     return (
       <div>
         {!isShowTitle ?
-          <div className={styles.task_title}>为{firstUserName} <b>{count}</b> 位客户新建任务</div>
+          <div className={styles.task_title}>
+            为{firstUserName} <b>{custCount || count}</b> 位客户新建任务
+          </div>
           :
           <div className={styles.task_title}>任务基本信息</div>
         }

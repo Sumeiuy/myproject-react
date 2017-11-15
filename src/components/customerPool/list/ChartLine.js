@@ -9,14 +9,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
 
-import { helper } from '../../../utils';
-
-const formatNumber = value => helper.toUnit(value, '元', 5).value;
-
-const formatUnit = value => helper.toUnit(value, '元', 5).unit;
-
-const formatRate = value => helper.toUnit(value, '%', 3).value;
-
 // y轴通用配置项
 const yAxisOptions = {
   type: 'value',
@@ -79,6 +71,7 @@ export default class ChartLineWidget extends PureComponent {
 
   static propTypes = {
     chartData: PropTypes.array,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -94,6 +87,7 @@ export default class ChartLineWidget extends PureComponent {
 
   render() {
     let { chartData = [] } = this.props;
+    const { formatAsset } = this.props;
     const assetProfits = [];
     let minAssetProfit = 0 - 1;
     let maxAssetProfit = 1;
@@ -204,9 +198,9 @@ export default class ChartLineWidget extends PureComponent {
                 return 0;
               }
               if (value > 0) {
-                return `+${formatRate(value)}%`;
+                return `+${Number(value.toFixed(2))}%`;
               }
-              return `${formatRate(value)}%`;
+              return `${Number(value.toFixed(2))}%`;
             },
           },
           min: minAssetProfitRate,
@@ -224,7 +218,8 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              return value === 0 ? 0 : `${formatNumber(value)}${formatUnit(value)}`;
+              const obj = formatAsset(value);
+              return value === 0 ? 0 : `${Number(obj.value)}${obj.unit}`;
             },
           },
         },
