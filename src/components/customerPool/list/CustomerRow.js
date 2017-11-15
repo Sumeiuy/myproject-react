@@ -235,7 +235,7 @@ export default class CustomerRow extends PureComponent {
     // 归集率
     let hsRate = '--';
     if (listItem.hsRate !== null) {
-      hsRate = listItem.hsRate < 0 ? listItem.hsRate : `${listItem.hsRate}%`;
+      hsRate = listItem.hsRate < 0 ? listItem.hsRate : `${listItem.hsRate * 100}%`;
     }
     return (
       <div

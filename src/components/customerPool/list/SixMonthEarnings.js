@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { Tooltip } from 'antd';
 import { fspContainer } from '../../../config';
 import ChartLineWidget from './ChartLine';
-import { helper } from '../../../utils';
+// import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
@@ -78,22 +78,22 @@ export default class SixMonthEarnings extends PureComponent {
       isShowCharts,
     } = this.state;
     const thisProfits = monthlyProfits[listItem.custId] || [];
-    const lastestProfit = Number(getLastestData(thisProfits).assetProfit);
-    const lastestProfitRate = Number(getLastestData(thisProfits).assetProfitRate);
+    const lastestProfit = getLastestData(thisProfits).assetProfit;
+    const lastestProfitRate = getLastestData(thisProfits).assetProfitRate;
     // 格式化本月收益的值和单位、本月收益率
     let lastestPrifitsValue = '--';
     let lastestPrifitsUnit = '';
     let lastestPrifitsRate = '--';
     if (thisProfits.length) {
-      if (lastestProfit !== null) {
-        if (lastestProfit !== 0) {
-          const obj = formatAsset(lastestProfit);
+      if (lastestProfit !== null || lastestProfitRate !== null) {
+        if (lastestProfit !== 0 || lastestProfitRate !== 0) {
+          const obj = formatAsset(Number(lastestProfit));
           lastestPrifitsValue = obj.value;
           lastestPrifitsUnit = obj.unit;
-          lastestPrifitsRate = `${helper.toUnit(lastestProfitRate, '%', 3, 3).value}%`;
+          lastestPrifitsRate = `${Number(lastestProfitRate.toFixed(2))}%`;
         } else {
           lastestPrifitsValue = '0';
-          lastestPrifitsRate = '0';
+          lastestPrifitsRate = '0%';
         }
       }
     }
