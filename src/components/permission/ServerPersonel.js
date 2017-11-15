@@ -9,20 +9,26 @@ import TableList from '../common/TableList';
 import style from './serverpersonel.less';
 import DropdownSelect from '../common/dropdownSelect';
 
+// 私密客户取消
+const permissionCustCancle = '0102';
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
+    subType: PropTypes.string,
     onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
     searchServerPersonList: PropTypes.array,
+    custId: PropTypes.string,
   }
 
   static defaultProps = {
     info: [],
     searchServerPersonList: [],
     onEmitEvent: () => {},
+    subType: '',
+    custId: '',
   }
 
   static contextTypes = {
@@ -48,11 +54,31 @@ export default class ServerPersonel extends PureComponent {
     if (newProps.info !== this.props.info) {
       this.setState({ serverInfo: newProps.info });
     }
+    if (!_.isEqual(this.props.custId, newProps.custId)) {
+      this.setState({ serverInfo: [] });
+    }
+  }
+
+  // 不能修改服务经理
+  @autobind
+  isCannotModify() {
+    const { statusType, subType } = this.props;
+    return statusType === 'ready'
+      || (statusType === 'modify' && subType === permissionCustCancle)
+      || (statusType === 'modify' && subType === '');
+  }
+
+  // 能修改服务经理
+  @autobind
+  isCanModify() {
+    const { statusType, subType } = this.props;
+    return (statusType === 'modify' && subType !== permissionCustCancle)
+      || (statusType === 'modify' && subType !== '');
   }
 
   get modifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
-    if (this.props.statusType === 'ready') {
+    if (this.isCannotModify()) {
       result = (
         <div
           className={style.spAlerts}
@@ -66,7 +92,7 @@ export default class ServerPersonel extends PureComponent {
           </span>
         </div>
       );
-    } else if (this.props.statusType === 'modify') {
+    } else if (this.isCanModify()) {
       result = (
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
@@ -174,6 +200,7 @@ export default class ServerPersonel extends PureComponent {
           info={this.state.serverInfo}
           statusType={this.props.statusType}
           onEmitUpdateValue={this.updateDeleteValue}
+          subType={this.props.subType}
         />
       </div>
     );
