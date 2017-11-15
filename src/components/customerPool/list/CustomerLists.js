@@ -49,23 +49,23 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: (newNum / WANYI).toFixed(2),
+      value: Number((newNum / WANYI).toFixed(2)),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: (newNum / YI).toFixed(2),
+      value: Number((newNum / YI).toFixed(2)),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: (newNum / WAN).toFixed(2),
+      value: Number((newNum / WAN).toFixed(2)),
       unit: UNIT_WAN,
     };
   }
-  return { value: newNum, unit: UNIT_DEFAULT };
+  return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
 };
 
 export default class CustomerLists extends PureComponent {
