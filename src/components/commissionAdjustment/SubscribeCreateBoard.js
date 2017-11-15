@@ -97,6 +97,7 @@ export default class SubscribeCreateBoard extends PureComponent {
       approverId: '',
       // 附件编号
       attachment: '',
+      canShowAppover: false,
     };
   }
 
@@ -117,6 +118,7 @@ export default class SubscribeCreateBoard extends PureComponent {
       subscribelProductMatchInfo,
       approverId,
       attachment,
+      canShowAppover,
     } = this.state;
     const newSubProList = createCommon.changeSubmitSubProList(
       subProList,
@@ -126,6 +128,7 @@ export default class SubscribeCreateBoard extends PureComponent {
       newSubProList,
       approverId,
       attachment,
+      canShowAppover,
     };
   }
 
