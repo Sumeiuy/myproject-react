@@ -1,0 +1,49 @@
+.module {
+  padding: 0 0 15px;
+  border-bottom: 1px solid #f3f3f4;
+  h2 {
+    font-weight: normal;
+    line-height: 1.5;
+  }
+  .modContent {
+    position: relative;
+    padding: 0;
+    width: 100%;
+    .propertyList {
+      li.item {
+        padding: 1px 0;
+        position: relative;
+        clear: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      li.fir, li.sed {
+        padding: 1px 0;
+        position: relative;
+        // clear: left;
+        width: 50%;
+        box-sizing: border-box;
+      }
+      li.fir {
+        float: left;
+      }
+      li.sed {
+      float: right;
+      }
+    }
+    .leftCommission {
+      width: 48%;
+      float: left;
+    }
+    .rightCommission {
+      width: 52%;
+      float: left;
+    }
+    &:after {
+      content: " ";
+      display: table;
+      clear: both;
+    }
+  }
+}
+
