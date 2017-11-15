@@ -186,8 +186,8 @@ export default class TableTransfer extends Component {
 
   // 获取右表所有的佣金率
   @autobind
-  getTotalRate() {
-    const { aboutRate, secondData } = this.props;
+  getTotalRate(param) {
+    const { aboutRate, secondData } = param;
     if (_.isEmpty(aboutRate)) {
       return 0;
     }
@@ -225,7 +225,7 @@ export default class TableTransfer extends Component {
       this.initTableColumn(secondColumns, defaultCheckKey, disableCheckKey)
     ) : secondColumns;
     // 第三步，佣金率相关
-    const totalRate = this.getTotalRate();
+    const totalRate = this.getTotalRate({ aboutRate, secondData });
     const rateFlag = !_.isEmpty(aboutRate);
     let differenceRate = 0;
     if (rateFlag) {
@@ -494,7 +494,6 @@ export default class TableTransfer extends Component {
       modifyTotalRate = float2Integer(totalRate) - float2Integer(_.toNumber(selected[rateKey]));
     }
     modifyDifferenceRate = modifyTotalRate - float2Integer(_.toNumber(targetRate));
-    // if (modifyDifferenceRate === 0) {
     if (withinErrorRange(modifyDifferenceRate, 0)) {
       modifyTip = { type: 'finish', content: '产品组合等于目标佣金率' };
     } else if (modifyDifferenceRate > 0) {
