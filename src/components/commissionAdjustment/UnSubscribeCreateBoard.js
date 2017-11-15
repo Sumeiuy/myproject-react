@@ -92,6 +92,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
       approverId: '',
       // 附件编号
       attachment: '',
+      canShowAppover: false,
     };
   }
 
@@ -118,12 +119,14 @@ export default class UnSubscribeCreateBoard extends PureComponent {
       unSubProList,
       approverId,
       attachment,
+      canShowAppover,
     } = this.state;
     const newUnSubProList = createCommon.changeSubmitUnSubProList(unSubProList);
     return {
       newUnSubProList,
       approverId,
       attachment,
+      canShowAppover,
     };
   }
 

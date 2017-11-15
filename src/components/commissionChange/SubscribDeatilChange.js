@@ -75,12 +75,6 @@ export default class SubscribeDetailToChange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { threeMatchInfo: prev3 } = this.props;
-    const { threeMatchInfo: next3 } = nextProps;
-    if (!_.isEqual(prev3, next3)) {
-      // 资讯订阅的
-      this.merge3MatchSubInfo(next3);
-    }
     const { subscribeDetailToChange: preDetail } = this.props;
     const { subscribeDetailToChange: nextDetail } = nextProps;
     if (nextDetail !== preDetail) {
