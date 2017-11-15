@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-14 16:58:26
+ * @Last Modified time: 2017-11-15 10:54:55
  * @description 单佣金申请内容区域
  */
 
@@ -74,7 +74,7 @@ const mapDispatchToProps = {
   clearRedux: getDataFunction(false, effects.clearRedux),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class SingleCreateBoard extends PureComponent {
   static propTypes = {
     // 登录人信息

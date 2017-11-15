@@ -75,6 +75,11 @@
     width: 512px;
     flex: 0 0 auto;
     transition: width 0.2s;
+    :global {
+      .ant-table-body {
+        overflow-x: hidden;
+      }
+    }
   }
   .stretch {
     width: 20px;
@@ -84,5 +89,7 @@
   }
   .detailScreen {
     flex: 1 1 auto;
+    overflow: hidden;
+    background-color: #fff;
   }
 }

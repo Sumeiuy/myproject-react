@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-13 21:20:01
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-15 10:54:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,7 +33,7 @@ const mapDispatchToProps = {
   deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment'),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class MultiUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法

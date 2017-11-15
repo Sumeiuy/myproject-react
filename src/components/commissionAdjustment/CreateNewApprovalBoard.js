@@ -270,14 +270,20 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
     } else if (this.judgeSubtypeNow(commadj.subscribe)) {
       // 检查资讯订阅
-      const { approverId, canShowAppover } = this.state;
+      const {
+        approverId,
+        canShowAppover,
+      } = this.subBoard.getData();
       if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
       }
     } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
       // 检查资讯退订
-      const { approverId, canShowAppover } = this.state;
+      const {
+        approverId, // 审批人工号
+        canShowAppover,
+      } = this.unSubBoard.getData();
       if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
@@ -323,7 +329,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 提交
     this.props.onBatchSubmit(submitParams).then(
       () => {
-        message.error('批量佣金调整提交成功');
+        message.success('批量佣金调整提交成功');
         this.submitLoadiing(false);
         this.clearApprovalBoard();
         const { modalKey, onClose } = this.props;
