@@ -160,7 +160,7 @@ export default class ChartTable extends PureComponent {
       onClick={() => { this.handleTitleClick(item); }}
     >
       {unitFlag && item.unit ?
-      `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`
+      `${item.name}(${encodeURIComponent(item.unit).indexOf (encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
       :
       item.name
       }
@@ -339,6 +339,9 @@ export default class ChartTable extends PureComponent {
             value = Number.parseFloat((itemValue * 1000).toFixed(2));
             break;
           case encodeURIComponent('元'):
+            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            break;
+          case encodeURIComponent('元/年'):
             value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
             break;
           default:
