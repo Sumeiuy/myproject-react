@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-13 16:03:34
+ * @Last Modified time: 2017-11-15 10:31:47
  * @description 分割组件
  */
 
@@ -60,6 +60,9 @@ export default class CutScreen extends PureComponent {
     this.setDocumentScroll();
   }
 
+  componentDidUpdate() {
+    this.initPanel();
+  }
 
   componentWillUnmount() {
     // 重置外层容器样式,防止影响其他界面
