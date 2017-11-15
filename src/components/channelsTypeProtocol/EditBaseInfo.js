@@ -109,7 +109,6 @@ export default class EditBaseInfo extends PureComponent {
     // }
     this.state = {
       ...stateObj,
-      edit: false,
       templateList,
     };
   }
@@ -184,6 +183,7 @@ export default class EditBaseInfo extends PureComponent {
       client: EMPTY_OBJECT,
       protocolTemplate: EMPTY_OBJECT,
       multiUsedFlag: false,
+      levelTenFlag: false,
       [key]: value,
     }, () => {
       const { onChangeMultiCustomer, resetUpload, isEdit } = this.props;
@@ -247,34 +247,42 @@ export default class EditBaseInfo extends PureComponent {
       agrType: '',
       templateId: '',
       type: 'PriCust',
-      ignoreCatch: true,
     };
-    getCustValidate(validatePayload).then(() => {
-      clearPropsData();
-      this.setState({
-        ...this.state,
-        content: '',
-        protocolTemplate: EMPTY_OBJECT,
-        client: value,
-        multiUsedFlag: false,
-      }, () => {
-        // 清除下挂客户
-        onChangeMultiCustomer(false);
-        if (!isEdit) {
-          // 清除附件
-          resetUpload();
-        }
-        // 清空协议模版
-        this.selectTemplateComponent.clearValue();
-        // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-        // const { operationType } = this.state;
-        // if (operationType > 1) {
-        //   this.handleSearchProtocolNum();
-        // }
-        // 选择客户之后查询协议产品列表
-        this.queryChannelProtocolProduct();
-      });
-    });
+    getCustValidate(validatePayload).then(
+      () => {
+        clearPropsData();
+        this.setState({
+          ...this.state,
+          content: '',
+          protocolTemplate: EMPTY_OBJECT,
+          client: value,
+          multiUsedFlag: false,
+          levelTenFlag: false,
+        }, () => {
+          // 清除下挂客户
+          onChangeMultiCustomer(false);
+          if (!isEdit) {
+            // 清除附件
+            resetUpload();
+          }
+          // 清空协议模版
+          this.selectTemplateComponent.clearValue();
+          // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
+          // const { operationType } = this.state;
+          // if (operationType > 1) {
+          //   this.handleSearchProtocolNum();
+          // }
+          // 选择客户之后查询协议产品列表
+          this.queryChannelProtocolProduct();
+        });
+      },
+      () => {
+        console.warn('失败回调');
+        this.setState({
+          client: {},
+        });
+      },
+    );
   }
 
   // 查询协议产品列表
@@ -308,9 +316,11 @@ export default class EditBaseInfo extends PureComponent {
   // 选择协议模板
   @autobind
   handleSelectTemplate(value) {
+    console.warn('value', value);
     this.setState({
       content: '',
       multiUsedFlag: false,
+      levelTenFlag: false,
       protocolTemplate: value,
     }, () => {
       const { queryChannelProtocolItem, onChangeMultiCustomer, resetUpload, isEdit } = this.props;
@@ -370,28 +380,12 @@ export default class EditBaseInfo extends PureComponent {
 
   }
 
-
-  // 切换子类型清空所选模板和所选客户
-  // @autobind
-  // clearValue() {
-  //   this.setState({
-  //     ...this.state,
-  //     operationType: '',
-  //     client: EMPTY_OBJECT,
-  //     protocolTemplate: EMPTY_OBJECT,
-  //   }, () => {
-  //     this.selectCustComponent.clearValue();
-  //     this.selectTemplateComponent.clearValue();
-  //   });
-  // }
-
   render() {
     const {
       custList,
       operationTypeList,
       subTypeList,
       formData: protocolDetail,
-      template,
       isEdit,
     } = this.props;
     const {
@@ -401,6 +395,7 @@ export default class EditBaseInfo extends PureComponent {
       levelTenFlag,
       protocolTemplate,
       templateList,
+      client,
     } = this.state;
     return (
       <div className={styles.editWrapper}>
@@ -435,7 +430,7 @@ export default class EditBaseInfo extends PureComponent {
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={this.state.client.brokerNumber || ''}
+                  value={client ? `${client.custName || ''} ${client.brokerNumber || ''}` : ''}
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
@@ -450,8 +445,7 @@ export default class EditBaseInfo extends PureComponent {
             placeholder="协议模板"
             showObjKey="prodName"
             objId="rowId"
-            value={isEdit ? `${template.prodName || ''}${template.rowId || ''}` : ''}
-            /* value={isEdit ? protocolDetail.templateId : (protocolTemplate.rowId || '')} */
+            value={protocolTemplate ? `${protocolTemplate.prodName || ''}${protocolTemplate.rowId || ''}` : ''}
             searchList={templateList}
             emitSelectItem={this.handleSelectTemplate}
             emitToSearch={this.handleSearchTemplate}

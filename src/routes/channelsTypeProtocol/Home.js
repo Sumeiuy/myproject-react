@@ -181,40 +181,31 @@ export default class ChannelsTypeProtocol extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
+      getSeibleList,
+      getProtocolDetail,
       location: {
         query,
         query: {
           pageNum,
           pageSize,
+          currentId,
         },
       },
-      getSeibleList,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-
     // 默认筛选条件
-    getSeibleList({
-      ...params,
-      type: pageType,
+    getSeibleList({ ...params, type: pageType }).then(() => {
+      getProtocolDetail({
+        id: currentId,
+      });
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      seibleListLoading: prevSLL,
-      location: { query: { currentId: prevCurrentId } },
-    } = this.props;
-    const {
-      seibleList: nextSL,
-      seibleListLoading: nextSLL,
-      location: { query: { currentId } },
-      getProtocolDetail,
-    } = nextProps;
-
     const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { location: { query: nextQuery = EMPTY_OBJECT }, getProtocolDetail } = nextProps;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
@@ -228,19 +219,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
         getSeibleList({
           ...params,
           type: pageType,
+        }).then(() => {
+          getProtocolDetail({
+            id: nextQuery.currentId,
+          });
         });
       }
-    }
-    /* currentId变化重新请求 */
-    // 获取到 seibleList,并且 seibleList 的 resultData 有数据
-    if (((prevSLL && !nextSLL) && nextSL.resultData.length) ||
-      (currentId && (currentId !== prevCurrentId))) {
-      getProtocolDetail({
-        id: currentId,
-      });
-      // this.setState({
-      //   editFormModal: false,
-      // });
     }
   }
 
@@ -271,6 +255,20 @@ export default class ChannelsTypeProtocol extends PureComponent {
       return false;
     }
     return true;
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record) {
+    const { id } = record;
+    const {
+      location: { query: { currentId } },
+      getProtocolDetail,
+    } = this.props;
+    if (currentId === id) return;
+    getProtocolDetail({
+      id: currentId,
+    });
   }
 
   // 查询客户
@@ -499,6 +497,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
+        clickRow={this.handleListRowClick}
       />
     );
     const rightPanel = (

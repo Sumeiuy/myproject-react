@@ -158,7 +158,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     const { getProtocolDetail, location: { query } } = this.props;
     // 获取详情
     getProtocolDetail({
-      id: query.currentId,
+      flowId: query.flowId,
     }).then(() => {
       const {
         protocolDetail,

@@ -161,19 +161,28 @@ export default {
       };
       const flowResponse = yield call(api.getFlowStepInfo, flowStepPayload);
       const { resultData: { flowButtons = [] } } = flowResponse;
-      /*eslint-disable */
-      flowButtons.forEach(v => {
-        v.flowAuditors.forEach((sv, index) => {
-          sv.belowDept = sv.occupation;
-          sv.empNo = sv.login;
-          sv.key = `${new Date().getTime()}-${index}`;
-          sv.groupName = v.nextGroupName;
-          sv.operate = v.operate;
-        })
+      // 对按钮内的审批人进行处理
+      const transferButtons = flowButtons.map((item) => {
+        const newItem = item.flowAuditors.length &&
+          item.flowAuditors.map(child => ({
+            belowDept: child.occupation,
+            empNo: child.login,
+            key: child.login,
+            groupName: item.nextGroupName,
+            operate: item.operate,
+          }));
+        // 返回新的按钮数据
+        return {
+          ...item,
+          flowAuditors: newItem,
+        };
       });
       yield put({
         type: 'getFlowStepInfoSuccess',
-        payload: flowResponse,
+        payload: {
+          ...flowResponse,
+          flowButtons: transferButtons,
+        },
       });
     },
     // 获取附件信息
@@ -191,9 +200,29 @@ export default {
     // 获取审批人列表
     * getFlowStepInfo({ payload }, { call, put }) {
       const response = yield call(api.getFlowStepInfo, payload);
+      const { resultData: { flowButtons = [] } } = response;
+      // 对按钮内的审批人进行处理
+      const transferButtons = flowButtons.map((item) => {
+        const newItem = item.flowAuditors.length &&
+          item.flowAuditors.map(child => ({
+            belowDept: child.occupation,
+            empNo: child.login,
+            key: child.login,
+            groupName: item.nextGroupName,
+            operate: item.operate,
+          }));
+        // 返回新的按钮数据
+        return {
+          ...item,
+          flowAuditors: newItem,
+        };
+      });
       yield put({
-        type: 'getFlowStepInfoSuccess',
-        payload: response,
+        type: 'getAddFlowStepInfoSuccess',
+        payload: {
+          ...response,
+          flowButtons: transferButtons,
+        },
       });
     },
     // 保存详情
@@ -246,9 +275,9 @@ export default {
       });
     },
     // 提交审批流程
-    * doApprove({ payload }, { call, put }) {
+    * doApprove({ payload }, { call }) {
       yield call(api.postDoApprove, payload.formData);
-    }
+    },
   },
   subscriptions: {},
 };
