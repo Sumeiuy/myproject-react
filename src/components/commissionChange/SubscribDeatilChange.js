@@ -134,7 +134,8 @@ export default class SubscribeDetailToChange extends PureComponent {
   }
 
   @autobind
-  merge3MatchSubInfo(info) {
+  merge3MatchSubInfo() {
+    const { threeMatchInfo: info } = this.props;
     const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
     const matchInfo = {
       productCode,
@@ -287,7 +288,7 @@ export default class SubscribeDetailToChange extends PureComponent {
         custRowId: id,
         custType,
         prdCode: prodCode,
-      });
+      }).then(this.merge3MatchSubInfo);
     }
   }
 
@@ -538,9 +539,6 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   render() {
     const {
-      threeMatchInfo,
-    } = this.props;
-    const {
       subscribeDetailToChange: {
         base,
         attachmentList,
@@ -582,6 +580,8 @@ export default class SubscribeDetailToChange extends PureComponent {
       btnDisabled,
       canShowAppover,
       buttonList,
+      subProSubList,
+      subscribelProductMatchInfo,
     } = this.state;
 
     // 资讯订阅中的产品选择配置
@@ -640,7 +640,7 @@ export default class SubscribeDetailToChange extends PureComponent {
             <InfoTitle head="资讯产品选择" />
             <Transfer {...subScribetransferProps} />
           </div>
-          <ThreeMatchTip info={threeMatchInfo} />
+          <ThreeMatchTip info={subscribelProductMatchInfo} userList={subProSubList} />
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
             <CommonUpload {...uploadProps} />

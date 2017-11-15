@@ -293,7 +293,6 @@ export default class SubscribeCreateBoard extends PureComponent {
     const {
       approvalUserList,
       subscribelProList,
-      threeMatchInfo,
     } = this.props;
 
     const {
@@ -301,6 +300,8 @@ export default class SubscribeCreateBoard extends PureComponent {
       approverName,
       approverId,
       canShowAppover,
+      subscribelProductMatchInfo,
+      subProList,
     } = this.state;
 
     const newApproverList = approvalUserList.map((item, index) => {
@@ -347,7 +348,7 @@ export default class SubscribeCreateBoard extends PureComponent {
           <InfoTitle head="资讯产品选择" />
           <Transfer {...subScribetransferProps} />
         </div>
-        <ThreeMatchTip info={threeMatchInfo} />
+        <ThreeMatchTip info={subscribelProductMatchInfo} userList={subProList} />
         <div className={styles.approvalBlock}>
           <InfoTitle head="附件信息" />
           <CommonUpload {...uploadProps} />
