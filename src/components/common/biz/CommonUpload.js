@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 14:57:22
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-15 10:54:45
  */
 /**
  * 常用说明
@@ -57,7 +57,7 @@ const mapDispatchToProps = {
   deleteAttachment: fetchDataFunction(true, 'app/deleteAttachment'),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class CommonUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法

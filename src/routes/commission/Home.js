@@ -278,7 +278,7 @@ export default class CommissionHome extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       getCommissionList,
       location: {
@@ -291,25 +291,25 @@ export default class CommissionHome extends PureComponent {
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
-    getCommissionList({ ...params, type: pageType });
+    getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
 
   componentWillReceiveProps(nextProps) {
-    const { listProcess: prevLP } = this.props;
-    const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
-    if (!nextLP && prevLP) {
-      if (!_.isEmpty(list.resultData)) {
-        // 表示左侧列表获取完毕
-        // 因此此时获取Detail
-        const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
-        const { subType: st } = item;
-        this.setState({
-          currentSubtype: st,
-        });
-        this.getDetail4Subtye(item);
-      }
-    }
+    // const { listProcess: prevLP } = this.props;
+    // const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
+    // if (!nextLP && prevLP) {
+    //   if (!_.isEmpty(list.resultData)) {
+    //     // 表示左侧列表获取完毕
+    //     // 因此此时获取Detail
+    //     const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+    //     const { subType: st } = item;
+    //     this.setState({
+    //       currentSubtype: st,
+    //     });
+    //     this.getDetail4Subtye(item);
+    //   }
+    // }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
@@ -325,7 +325,7 @@ export default class CommissionHome extends PureComponent {
         getCommissionList({
           ...params,
           type: pageType,
-        });
+        }).then(this.getRightDetail);
       }
     }
   }
@@ -349,6 +349,22 @@ export default class CommissionHome extends PureComponent {
           pageNum: 1,
         },
       });
+    }
+  }
+
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const { list, location: { query: { currentId } } } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      const { subType: st } = item;
+      this.setState({
+        currentSubtype: st,
+      });
+      this.getDetail4Subtye(item);
     }
   }
 
@@ -384,9 +400,7 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
-    this.props.getApprovalRecords({ ...info, loginuser }).then(
-      () => { this.openApprovalBoard(); },
-    );
+    this.props.getApprovalRecords({ ...info, loginuser }).then(this.openApprovalBoard);
   }
 
   /**

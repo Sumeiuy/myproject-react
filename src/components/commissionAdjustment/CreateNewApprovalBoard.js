@@ -323,7 +323,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 提交
     this.props.onBatchSubmit(submitParams).then(
       () => {
-        message.error('批量佣金调整提交成功');
+        message.success('批量佣金调整提交成功');
         this.submitLoadiing(false);
         this.clearApprovalBoard();
         const { modalKey, onClose } = this.props;

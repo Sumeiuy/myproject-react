@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 14:01:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-08 18:31:39
+ * @Last Modified time: 2017-11-15 10:55:41
  * @description 批量佣金调整新建独自的页面
  */
 
@@ -75,7 +75,7 @@ const mapDispatchToProps = {
   validateCust: getDataFunction(false, effects.validate),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class BatchCreatBoard extends PureComponent {
 
   static propTypes = {

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-08 15:51:25
- * @Last Modified by: baojiajia
- * @Last Modified time: 2017-11-10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-15 10:54:57
  * @description 资讯订阅新建的内容组件
  */
 import React, { PureComponent } from 'react';
@@ -60,7 +60,7 @@ const mapDispatchToProps = {
   getAprovalUserList: getDataFunction(false, effects.approver),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class SubscribeCreateBoard extends PureComponent {
   static propTypes = {
     // 登录人信息

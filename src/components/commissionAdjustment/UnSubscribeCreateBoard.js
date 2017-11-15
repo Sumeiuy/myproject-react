@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-08 15:52:14
- * @Last Modified by: baojiajia
- * @Last Modified time: 2017-11-10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-15 10:54:46
  * @description 资讯退订新建的内容组件
  */
 import React, { PureComponent } from 'react';
@@ -59,7 +59,7 @@ const mapDispatchToProps = {
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
 };
 
-@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class UnSubscribeCreateBoard extends PureComponent {
   static propTypes = {
     // 登录人信息
