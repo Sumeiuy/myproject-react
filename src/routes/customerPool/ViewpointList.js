@@ -4,13 +4,13 @@
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
-
+import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 import { fspGlobal, helper } from '../../utils';
 import Paganation from '../../components/common/Paganation';
