@@ -23,6 +23,7 @@ export default class BottomFixedBox extends PureComponent {
     selectCount: PropTypes.number.isRequired,
     mainServiceManager: PropTypes.bool,
     entertype: PropTypes.string.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -114,10 +115,18 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
+  @autobind
+  handleCreateTaskClick(url, title, id) {
+    const { clearCreateTaskData } = this.props;
+    // 发起新的任务之前，先清除数据
+    clearCreateTaskData();
+
+    this.handleClick(url, title, id);
+  }
+
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
   openByIds(url, condition, ids, count, title, id, entertype, source, fr) {
-    // debugger
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -200,7 +209,7 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <button
-        onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
         发起任务
       </button>

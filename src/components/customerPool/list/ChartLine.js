@@ -67,6 +67,25 @@ const xAxisOptions = {
   },
 };
 
+// 限制数字的位数,最多4位
+// 例： 1234 => 1234   1234.56 => 1234   123.45 => 123   23.45 => 23.4  0.569 => 0.56
+function limitDigit(value) {
+  const sign = value < 0 ? '-' : '';
+  const absValue = Math.abs(value);
+  const valueStr = String(absValue);
+  if (valueStr.indexOf('.') > -1) {
+    const tmpArr = valueStr.split('.');
+    const valueStrLeft = tmpArr[0];
+    if (valueStrLeft.length > 2) {
+      return `${sign}${valueStrLeft}`;
+    } else if (valueStrLeft.length === 2) {
+      return `${sign}${absValue.toFixed(1)}`;
+    }
+    return `${sign}${Number(absValue.toFixed(2))}`;
+  }
+  return value;
+}
+
 export default class ChartLineWidget extends PureComponent {
 
   static propTypes = {
@@ -135,8 +154,8 @@ export default class ChartLineWidget extends PureComponent {
     maxAssetProfit = Math.max(...assetProfits);
     minAssetProfit = Math.min(...assetProfits);
     // 提取出最大收益率和最小收益率
-    maxAssetProfitRate = Math.max(...assetProfitRates);
-    minAssetProfitRate = Math.min(...assetProfitRates);
+    maxAssetProfitRate = Math.ceil(Math.max(...assetProfitRates));
+    minAssetProfitRate = Math.floor(Math.min(...assetProfitRates));
 
     // TODO: 此处需要对无数据的情况下进行处理,
     // 以及当所有月份的数字都是是0
@@ -177,6 +196,8 @@ export default class ChartLineWidget extends PureComponent {
       grid: {
         bottom: '20%',
         top: '14%',
+        left: '50px',
+        right: '60px',
       },
       xAxis: {
         ...xAxisOptions,
@@ -202,6 +223,8 @@ export default class ChartLineWidget extends PureComponent {
               }
               return `${Number(value.toFixed(2))}%`;
             },
+            inside: false,
+            margin: 3,
           },
           min: minAssetProfitRate,
           max: maxAssetProfitRate,
@@ -219,8 +242,10 @@ export default class ChartLineWidget extends PureComponent {
                 return '';
               }
               const obj = formatAsset(value);
-              return value === 0 ? 0 : `${Number(obj.value)}${obj.unit}`;
+              return value === 0 ? 0 : `${limitDigit(Number(obj.value))}${obj.unit}`;
             },
+            inside: false,
+            margin: 3,
           },
         },
       ],
@@ -251,7 +276,7 @@ export default class ChartLineWidget extends PureComponent {
 
 
     return (
-      <IECharts option={options} style={{ width: 305, height: 152 }} />
+      <IECharts option={options} style={{ width: 320, height: 152 }} />
     );
   }
 }
