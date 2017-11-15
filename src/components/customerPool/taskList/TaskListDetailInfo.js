@@ -18,15 +18,17 @@ export default class TaskListDetailInfo extends PureComponent {
   static propTypes = {
     // location: PropTypes.object.isRequired,
     // checkApproval: PropTypes.func.isRequired,
-    status: PropTypes.object,
+    status: PropTypes.string,
+    infoData: PropTypes.object,
   }
 
   static defaultProps = {
     status: '',
+    infoData: {},
   }
 
   render() {
-    const { status } = this.props;
+    const { status, infoData } = this.props;
     return (
       <div id="detailModule" className={styles.module}>
         {status === '审批中' || status === '被驳回' ?
@@ -36,13 +38,13 @@ export default class TaskListDetailInfo extends PureComponent {
                 <InfoItem label="任务状态" value="审批中" />
               </li>
               <li className={styles.item}>
-                <InfoItem label="有效期（天）" value="21" />
+                <InfoItem label="有效期（天）" value={infoData.timelyIntervalValue} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务策略" value="32323232323232323" />
+                <InfoItem label="服务策略" value={infoData.strategyDesc} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务提示" value="{comments}" />
+                <InfoItem label="服务提示" value={infoData.infoContent} />
               </li>
             </ul>
           </div> :
@@ -61,10 +63,10 @@ export default class TaskListDetailInfo extends PureComponent {
                 <InfoItem label="截止时间" value="21" />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务策略" value="32323232323232323" />
+                <InfoItem label="服务策略" value={infoData.strategyDesc} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务提示" value="{comments}" />
+                <InfoItem label="服务提示" value={infoData.infoContent} />
               </li>
             </ul>
           </div>

@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -21,130 +21,6 @@ import Button from '../../common/Button';
 import GroupTable from '../groupManage/GroupTable';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 
-const data = {
-  code: '0',
-  msg: 'OK',
-  resultData: {
-    page: {
-      pageNum: 1,
-      pageSize: 10,
-      totalCount: 10344,
-      totalPage: 1035,
-    },
-    custInfos: [
-      [
-        '客户号',
-        '经纪客户号',
-        '客户名称',
-        '客户类别',
-        '客户等级',
-        '总资产',
-        '资金余额',
-        '年累计交易净佣金',
-      ],
-      [
-        'A000000096532676',
-        '666628526955',
-        '孙强军',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '8839901.55',
-        '7349.55',
-        '1591.5',
-      ],
-      [
-        'B000000000434880',
-        '666800001707',
-        '厦门航空投资有限公司',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '0',
-        '0',
-        '119770.13',
-      ],
-      [
-        'A000000096664995',
-        '666628630182',
-        '晋凤兰',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '10000098.22',
-        '98.22',
-        '0',
-      ],
-      [
-        'B000000000434268',
-        '666800001045',
-        '深圳冠泓基金有限公司－冠泓价值增长1号私募证券投资基金',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '10573773.031',
-        '4060935.7',
-        '3019.25',
-      ],
-      [
-        'A000000096600465',
-        '666628578165',
-        '苏晨',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '5886889.76',
-        '2868.76',
-        '2510.96',
-      ],
-      [
-        'B000000000432172',
-        '',
-        '珠海农村商业银行股份有限公司',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '0',
-        '0',
-        '0',
-      ],
-      [
-        'B000000000425673',
-        '',
-        '华泰紫金投资有限责任公司',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '0',
-        '0',
-        '0',
-      ],
-      [
-        'A000000096547491',
-        '666628537391',
-        '罗丽莲',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '5035190.36',
-        '618.36',
-        '831.62',
-      ],
-      [
-        'B000000000434551',
-        '666800001312',
-        '上海复旦科技园投资有限公司',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '13709063.37',
-        '319.02',
-        '7854.25',
-      ],
-      [
-        'A000000095774337',
-        '',
-        '王琼',
-        '新增客户',
-        '紫金理财钻石卡客户',
-        '7670000',
-        '0',
-        '0',
-      ],
-    ],
-  },
-};
 const COLUMN_WIDTH = 115;
 const INITIAL_PAGE_SIZE = 10;
 const COLUMN_HEIGHT = 36;
@@ -152,12 +28,14 @@ export default class TaskListDetail extends PureComponent {
 
   static propTypes = {
     // location: PropTypes.object.isRequired,
-    // checkApproval: PropTypes.func.isRequired,
-    // status: PropTypes.object,
+    onPreview: PropTypes.func.isRequired,
+    priviewCustFileData: PropTypes.object,
+    taskBasicInfo: PropTypes.object,
   }
 
   static defaultProps = {
-    // data: {},
+    priviewCustFileData: {},
+    taskBasicInfo: {},
   }
 
   constructor(props) {
@@ -166,17 +44,77 @@ export default class TaskListDetail extends PureComponent {
       curPageNum: 1,
       curPageSize: 10,
       isShowTable: false,
+      fileNames: 'b9e19dde-60f6-4614-9651-24b67839f1a7.xls',
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { priviewCustFileData } = nextProps;
+    const { page } = priviewCustFileData;
+    this.setState({
+      totalRecordNum: page.totalCount,
+    });
   }
 
   @autobind
   handleSeeCust() {
     console.log(111111);
-    // debugger;
+    const { onPreview } = this.props;
+    const { fileNames, curPageNum, curPageSize } = this.state;
     this.setState({
       isShowTable: true,
     });
+    onPreview({
+      filename: fileNames,
+      pageNum: curPageNum,
+      pageSize: curPageSize,
+    });
   }
+
+  /**
+   * 页码改变事件，翻页事件
+   * @param {*} nextPage 下一页码
+   * @param {*} curPageSize 当前页条目
+   */
+  @autobind
+  handlePageChange(nextPage, currentPageSize) {
+    console.log(nextPage, currentPageSize);
+    const { fileNames } = this.state;
+    const { onPreview } = this.props;
+    this.setState({
+      curPageNum: nextPage,
+      curPageSize: currentPageSize,
+    });
+    // 预览数据
+    onPreview({
+      filename: fileNames,
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+    });
+  }
+
+  /**
+   * 改变每一页的条目
+   * @param {*} currentPageNum 当前页码
+   * @param {*} changedPageSize 当前每页条目
+   */
+  @autobind
+  handleShowSizeChange(currentPageNum, changedPageSize) {
+    console.log(currentPageNum, changedPageSize);
+    const { fileNames } = this.state;
+    const { onPreview } = this.props;
+    this.setState({
+      curPageNum: currentPageNum,
+      curPageSize: changedPageSize,
+    });
+    // 预览数据
+    onPreview({
+      filename: fileNames,
+      pageNum: currentPageNum,
+      pageSize: changedPageSize,
+    });
+  }
+
   @autobind
   handleCloseModal() {
     this.setState({
@@ -215,56 +153,47 @@ export default class TaskListDetail extends PureComponent {
     }));
   }
 
+  renderMention() {
+    const { taskBasicInfo } = this.props;
+    const { tagetCustModel } = taskBasicInfo;
+    if (tagetCustModel.custSource === '导入客户') {
+      return (
+        <li className={styles.item}>
+          <div className={styles.wrap}>
+            <div className={styles.label}>
+              客户连接<span className={styles.colon}>:</span>
+            </div>
+            <div className={styles.value}>
+              <Icon type="excel" className={styles.excel} />客户列表
+                        <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
+            </div>
+          </div>
+        </li>
+      );
+    } else if (tagetCustModel.custSource === '标签圈人') {
+      return (
+        <li className={styles.item}>
+          <InfoItem label="标签描述" value={tagetCustModel.dataName} />
+        </li>
+      );
+    }
+    return null;
+    // return ();
+  }
+
   render() {
     // const custList = createCustTableData(base);
     // const proList = createSubProTableData(item);
     // const bugTitle = `编号:${currentId}`;
     // const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
+    const { taskBasicInfo, priviewCustFileData } = this.props;
+    const { motDetailModel, workflowHistoryBeanList, tagetCustModel } = taskBasicInfo;
     const stepName = '';
     const handleName = '';
-    // 审批记录本地写死数据
-    const test = [
-      {
-        id: '1',
-        approver: '002332',
-        handleName: 'jjdddd',
-        handleTime: '2017-09-21 13:39:21',
-        stepName: '流程发起',
-        status: '同意',
-        comment: '这里是审批意见，有很多的意见，说不完的意见',
-      },
-      {
-        id: '2',
-        approver: '002332',
-        handleName: 'efefe',
-        handleTime: '2017-09-22 13:39:21',
-        stepName: '流程发起',
-        status: '同意',
-        comment: '这里是审批意见，有很多的意见，说不完的意见',
-      },
-      {
-        id: '3',
-        approver: '002332',
-        handleName: 'aaaaa',
-        handleTime: '2017-09-23 13:39:21',
-        stepName: '流程发起',
-        status: '同意',
-        comment: '这里是审批意见，有很多的意见，说不完的意见',
-      },
-      {
-        id: '4',
-        approver: '002332',
-        handleName: 'fdfdfd',
-        handleTime: '2017-09-24 13:39:21',
-        stepName: '流程发起',
-        status: '同意',
-        comment: '这里是审批意见，有很多的意见，说不完的意见',
-      },
-    ];
-    const status = '进行中';
-    const { isShowTable, curPageNum, curPageSize, totalRecordNum = 12 } = this.state;
-    console.log(this.state.isShowTable);
-    const columns = _.head(data.resultData.custInfos);
+    const status = '审批中';
+    const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
+
+    const columns = _.head(priviewCustFileData.custInfos);
     const columnSize = _.size(columns);
     const scrollX = (columnSize * COLUMN_WIDTH);
 
@@ -277,16 +206,18 @@ export default class TaskListDetail extends PureComponent {
     } : null;
     const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
     const dataSource =
-      this.addIdToDataSource(this.renderDataSource(columns, _.drop(data.resultData.custInfos)));
+      this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.bugTitle}>任务名称：进行中</h1>
+            <h1 className={styles.bugTitle}>任务名称：
+              {_.isEmpty(motDetailModel.eventName) ? null : motDetailModel.eventName}</h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <TaskListDetailInfo
+                infoData={motDetailModel}
                 status={status}
               />
             </div>
@@ -295,32 +226,19 @@ export default class TaskListDetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户类型" value="{drafter}" />
+                    <InfoItem label="客户类型" value={tagetCustModel.custSource} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="客户总数" value="{created}" />
+                    <InfoItem label="客户总数" value={tagetCustModel.custNum} />
                   </li>
-                  <li className={styles.item}>
-                    <div className={styles.wrap}>
-                      <div className={styles.label}>
-                        客户连接<span className={styles.colon}>:</span>
-                      </div>
-                      <div className={styles.value}>
-                        <Icon type="excel" className={styles.excel} />value
-                        <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
-                      </div>
-                    </div>
-                  </li>
-                  <li className={styles.item}>
-                    <InfoItem label="标签描述" value="{status}" />
-                  </li>
+                  {this.renderMention()}
                 </ul>
               </div>
             </div>
             <div id="approvalRecord" className={styles.module}>
               <InfoTitle head="审批意见" />
               <ApproveList
-                data={test}
+                data={workflowHistoryBeanList}
                 nowStep={{
                   stepName,
                   handleName,
