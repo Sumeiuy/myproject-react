@@ -4,11 +4,11 @@
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
-// import { autobind } from 'core-decorators';
-import { withRouter } from 'dva/router';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
+import { withRouter, routerRedux } from 'dva/router';
+// import _ from 'lodash';
 // import { message } from 'antd';
 
 // import confirm from '../../components/common/confirm_';
@@ -24,81 +24,112 @@ import './home.less';
 
 // const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
-const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 // const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
 
-// const effects = {
-// };
+const effects = {
+  // 客户预览
+  previewCustFile: 'customerPool/previewCustFile',
+  getTaskBasicInfo: 'customerPool/getTaskBasicInfo',
+};
 
-// const mapStateToProps = state => ({
-// });
+const mapStateToProps = state => ({
+  // 字典信息
+  dict: state.app.dict,
+  // 客户细分导入数据
+  priviewCustFileData: state.customerPool.priviewCustFileData,
+  taskBasicInfo: state.customerPool.taskBasicInfo,
+});
 
-// const getDataFunction = (loading, type, forceFull) => query => ({
-//   type,
-//   payload: query || {},
-//   loading,
-//   forceFull,
-// });
+const getDataFunction = (loading, type, forceFull) => query => ({
+  type,
+  payload: query || {},
+  loading,
+  forceFull,
+});
 
-// const mapDispatchToProps = {
-//   replace: routerRedux.replace,
-// };
+const mapDispatchToProps = {
+  replace: routerRedux.replace,
+  previewCustFile: getDataFunction(true, effects.previewCustFile),
+  getTaskBasicInfo: getDataFunction(true, effects.getTaskBasicInfo),
+};
 
-// @connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 // @Barable
 export default class TaskList extends PureComponent {
 
   static propTypes = {
+    dict: PropTypes.object,
+    priviewCustFileData: PropTypes.object.isRequired,
+    previewCustFile: PropTypes.func.isRequired,
+    getTaskBasicInfo: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
+    dict: {},
+    // priviewCustFileData: {},
+    // taskBasicInfo: {},
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      baseInfo: props.taskBasicInfo,
     };
   }
 
   componentWillMount() {
+    // this.handleTaskBasicInfo();
+    console.warn('taskBasicInfo-->', this.props.taskBasicInfo);
   }
-
-
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
-
-  componentDidUpdate() {
-
+    console.log(nextProps.taskBasicInfo);
   }
 
 
-  /**
-   * 检查部分属性是否相同
-   * @param {*} prevQuery 前一次query
-   * @param {*} nextQuery 后一次query
-   */
-  diffObject(prevQuery, nextQuery) {
-    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
-    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
-    if (!_.isEqual(prevQueryData, nextQueryData)) {
-      return false;
-    }
-    return true;
+  @autobind
+  handlePreview({ filename, pageNum, pageSize }) {
+    const { previewCustFile } = this.props;
+    // 预览数据
+    previewCustFile({
+      filename,
+      pageNum,
+      pageSize,
+    });
+  }
+
+  @autobind
+  handleTaskBasicInfo() {
+    const { getTaskBasicInfo } = this.props;
+    console.log(2222);
+    const param = {
+      flowId: 'D102FE4575C9FA409194D127FE8E8A36',
+      systemCode: '102330',
+    };
+    getTaskBasicInfo(param);
   }
 
 
   render() {
     const topPanel = null;
-    const leftPanel = null;
+    const { baseInfo } = this.state;
+    const leftPanel = (
+      <div>
+        <a onClick={this.handleTaskBasicInfo}>点击</a>
+      </div>
+    );
+    const { priviewCustFileData } = this.props;
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
     const rightPanel = (
-      <TaskListDetail />
+      <TaskListDetail
+        onPreview={this.handlePreview}
+        priviewCustFileData={priviewCustFileData}
+        taskBasicInfo={baseInfo}
+      />
     );
-
     return (
-      <div className="feedbackbox">
+      <div className="feedbackbox" >
         <SplitPanel
           topPanel={topPanel}
           leftPanel={leftPanel}
