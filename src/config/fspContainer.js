@@ -27,4 +27,6 @@ export default {
   sidebarShowBtn: '#sidebar-show-btn',
   // 360视图中服务记录的iframe
   view360Iframe: '#view360-tab-serviceRecord-iframe',
+  // 工作区域内容
+  workspaceContent: '#workspace-content',
 };
