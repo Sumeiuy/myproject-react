@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-14 17:06:35
+ * @Last Modified time: 2017-11-15 13:49:49
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -28,31 +28,12 @@ import {
   pagination,
   singleColumns,
 } from '../commissionAdjustment/commissionTransferHelper/transferPropsHelper';
+import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 
 import styles from './change.less';
 
 const { TextArea } = Input;
 const { comsubs: commadj } = seibelConfig;
-
-// 其他佣金率的参数名称数组
-const otherComs = [
-  'zqCommission',
-  'stkCommission',
-  'creditCommission',
-  'ddCommission',
-  'hCommission',
-  'dzCommission',
-  'coCommission',
-  'stbCommission',
-  'oCommission',
-  'doCommission',
-  'hkCommission',
-  'bgCommission',
-  'qCommission',
-  'dqCommission',
-  'opCommission',
-  'dCommission',
-];
 
 export default class SingleDetailChange extends PureComponent {
   static propTypes = {
