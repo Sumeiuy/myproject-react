@@ -36,12 +36,18 @@ export default class TaskFormFlowStep extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { storedCreateTaskData: { taskFormData, current, custSource } } = props;
+    const { storedCreateTaskData: {
+      taskFormData,
+      current,
+      custSource,
+      currentSelectRowKeys,
+      currentSelectRecord,
+     } } = props;
     this.state = {
       current: current || 0,
       previousData: taskFormData || {},
-      currentSelectRecord: {},
-      currentSelectRowKeys: [],
+      currentSelectRecord: currentSelectRecord || {},
+      currentSelectRowKeys: currentSelectRowKeys || [],
       currentTab: '1',
       custSource: custSource || '',
       isShowErrorInfo: false,
@@ -111,6 +117,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const { current } = this.state;
     const { saveCreateTaskData, location: { query: { source, count } } } = this.props;
     const custSource = this.handleCustSource(source);
+
     saveCreateTaskData({
       taskFormData: values,
       totalCust: count,
@@ -155,18 +162,27 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  handleRowSelectionChange(selectedRowKeys, selectedRows) {
-    console.log(selectedRowKeys, selectedRows);
+  handleRowSelectionChange(selectedRowKeys) {
+    const { saveCreateTaskData, storedCreateTaskData } = this.props;
     this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+    saveCreateTaskData({
+      ...storedCreateTaskData,
       currentSelectRowKeys: selectedRowKeys,
     });
   }
 
   @autobind
-  handleSingleRowSelectionChange(record, selected, selectedRows) {
-    console.log(record, selected, selectedRows);
+  handleSingleRowSelectionChange(record) {
     const { login } = record;
+    const { saveCreateTaskData, storedCreateTaskData } = this.props;
     this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
+    saveCreateTaskData({
+      ...storedCreateTaskData,
       currentSelectRecord: record,
       currentSelectRowKeys: [login],
     });
