@@ -145,47 +145,47 @@ export default class ChartTable extends PureComponent {
   getTitleHtml(item, unitFlag = true) {
     const { orderIndicatorId, orderType } = this.state;
     const orderUp = classnames({
-      ['ant-table-column-sorter-up']: true,
-      ['on']: orderIndicatorId === item.key && (orderType !== 'desc'),
-      ['off']: orderIndicatorId === item.key && (orderType === 'desc'),
+      'ant-table-column-sorter-up': true,
+      on: orderIndicatorId === item.key && (orderType !== 'desc'),
+      off: orderIndicatorId === item.key && (orderType === 'desc'),
     });
     const orderDown = classnames({
-      ['ant-table-column-sorter-up']: true,
-      ['on']: orderIndicatorId === item.key && (orderType !== 'asc'),
-      ['off']: orderIndicatorId === item.key && (orderType === 'asc'),
+      'ant-table-column-sorter-up': true,
+      on: orderIndicatorId === item.key && (orderType !== 'asc'),
+      off: orderIndicatorId === item.key && (orderType === 'asc'),
     });
     let titleHtml = '';
     titleHtml = (<span
       className={styles.columnsTitle}
       onClick={() => { this.handleTitleClick(item); }}
     >
-      {unitFlag && item.unit?
+      {unitFlag && item.unit ?
       `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`
       :
       item.name
       }
       {
-        !item.children ? 
-        <span className={'ant-table-column-sorter'}>
-          <span
-            className={orderUp}
-            title="↑"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'asc');
-            }}
-          >
-            <i className={'anticon anticon-caret-up'} />
+        !item.children ?
+          <span className={'ant-table-column-sorter'}>
+            <span
+              className={orderUp}
+              title="↑"
+              onClick={(e) => {
+                this.arrowHandle(e, item, 'asc');
+              }}
+            >
+              <i className={'anticon anticon-caret-up'} />
+            </span>
+            <span
+              className={orderDown}
+              title="↓"
+              onClick={(e) => {
+                this.arrowHandle(e, item, 'desc');
+              }}
+            >
+              <i className={'anticon anticon-caret-down'} />
+            </span>
           </span>
-          <span
-            className={orderDown}
-            title="↓"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'desc');
-            }}
-          >
-            <i className={'anticon anticon-caret-down'} />
-          </span>
-        </span>
         :
         null
       }
@@ -199,7 +199,7 @@ export default class ChartTable extends PureComponent {
     // 取出字符串对应的字节长度，汉字为 2，英文符号为 1，最终除以 2 当做字符串长度
     const length = getStrLen(str) / 2;
     let unitLength;
-    if(!_.isEmpty(unitStr)){
+    if (!_.isEmpty(unitStr)) {
       unitLength = getStrLen(unitStr) / 2;
     } else {
       unitLength = 0;

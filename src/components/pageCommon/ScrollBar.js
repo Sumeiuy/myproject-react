@@ -32,9 +32,22 @@ export default class ScrollBar extends PureComponent {
       clientWidth: clientWidthValue,
     };
   }
+
+  componentDidMount() {
+    // 由表格的滚动条的scrollLeft值来控制自己写的滚动条的scrollLeft值
+    this.reportScroll.scrollLeft = this.props.tableScrollLeft;
+    this.onWindowResize();
+    window.addEventListener('resize', this.onWindowResize, false);
+    if (fsp) {
+      // 监听 FSP 侧边栏显示隐藏按钮点击事件
+      addClickEvent(showBtn, this.onWindowResize);
+      addClickEvent(hideBtn, this.onWindowResize);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
-    const { tableScrollLeft: preTSL } = this.props; 
-    const { tableScrollLeft: nextTSL } = nextProps; 
+    const { tableScrollLeft: preTSL } = this.props;
+    const { tableScrollLeft: nextTSL } = nextProps;
     if (!_.isEqual(preTSL, nextTSL)) {
       // this.props.setScrollLeft(nextTSL);
       console.warn('nextTSL', nextTSL);
@@ -42,21 +55,9 @@ export default class ScrollBar extends PureComponent {
     }
   }
 
-  componentDidMount() {
-    
-    // 由表格的滚动条的scrollLeft值来控制自己写的滚动条的scrollLeft值
-    this.reportScroll.scrollLeft = this.props.tableScrollLeft;
-    this.onWindowResize();
-    window.addEventListener('resize', this.onWindowResize, false);
-    if(fsp){
-      // 监听 FSP 侧边栏显示隐藏按钮点击事件
-      addClickEvent(showBtn, this.onWindowResize);
-      addClickEvent(hideBtn, this.onWindowResize);
-    }
-  }
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
-    if(fsp){
+    if (fsp) {
       // remove FSP 侧边栏显示隐藏按钮点击事件
       removeClickEvent(showBtn, this.onWindowResize);
       removeClickEvent(hideBtn, this.onWindowResize);
@@ -75,7 +76,7 @@ export default class ScrollBar extends PureComponent {
     // 滚动条向左滚动距离的传递函数
     setScrollLeft(scrollLeft);
   }
-  
+
   @autobind
   reportScrollBar(dom) {
     this.reportScroll = dom;
@@ -83,8 +84,6 @@ export default class ScrollBar extends PureComponent {
   render() {
     const { clientWidth } = this.state;
     const { allWidth } = this.props;
-    // 首先判断wrap存在与否即是否在fsp中
-    const fsp = document.getElementById('workspace-content');
     // 20为表格距离浏览器左边的值，45为fsp中表格距离浏览器左边的值
     return (
       <div
