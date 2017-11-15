@@ -74,9 +74,7 @@ export default class TaskList extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      baseInfo: props.taskBasicInfo,
-    };
+    this.state = {};
   }
 
   componentWillMount() {
@@ -113,19 +111,18 @@ export default class TaskList extends PureComponent {
 
   render() {
     const topPanel = null;
-    const { baseInfo } = this.state;
     const leftPanel = (
       <div>
         <a onClick={this.handleTaskBasicInfo}>点击</a>
       </div>
     );
-    const { priviewCustFileData } = this.props;
+    const { priviewCustFileData, taskBasicInfo } = this.props;
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
     const rightPanel = (
       <TaskListDetail
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
-        taskBasicInfo={baseInfo}
+        taskBasicInfo={taskBasicInfo}
       />
     );
     return (
