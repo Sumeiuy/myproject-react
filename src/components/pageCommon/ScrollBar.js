@@ -11,7 +11,7 @@ import { getCssStyle, addClickEvent, removeClickEvent } from '../../utils/helper
 import { fspContainer } from '../../config';
 
 const clientWidthValue = document.querySelector('#exApp').clientWidth - 40;
-const fsp = document.querySelector(fspContainer.container);
+const inFsp = document.querySelector(fspContainer.container);
 // fsp中侧边栏点击显示和隐藏按钮
 const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
@@ -38,7 +38,7 @@ export default class ScrollBar extends PureComponent {
     this.reportScroll.scrollLeft = this.props.tableScrollLeft;
     this.onWindowResize();
     window.addEventListener('resize', this.onWindowResize, false);
-    if (fsp) {
+    if (inFsp) {
       // 监听 FSP 侧边栏显示隐藏按钮点击事件
       addClickEvent(showBtn, this.onWindowResize);
       addClickEvent(hideBtn, this.onWindowResize);
@@ -49,15 +49,13 @@ export default class ScrollBar extends PureComponent {
     const { tableScrollLeft: preTSL } = this.props;
     const { tableScrollLeft: nextTSL } = nextProps;
     if (!_.isEqual(preTSL, nextTSL)) {
-      // this.props.setScrollLeft(nextTSL);
-      console.warn('nextTSL', nextTSL);
       this.reportScroll.scrollLeft = nextTSL;
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
-    if (fsp) {
+    if (inFsp) {
       // remove FSP 侧边栏显示隐藏按钮点击事件
       removeClickEvent(showBtn, this.onWindowResize);
       removeClickEvent(hideBtn, this.onWindowResize);
@@ -84,6 +82,8 @@ export default class ScrollBar extends PureComponent {
   render() {
     const { clientWidth } = this.state;
     const { allWidth } = this.props;
+    // 首先判断wrap存在与否即是否在fsp中
+    const fsp = document.getElementById('workspace-content');
     // 20为表格距离浏览器左边的值，45为fsp中表格距离浏览器左边的值
     return (
       <div
