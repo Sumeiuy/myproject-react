@@ -75,7 +75,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       modalContent,
     } = this.props;
     const { visible, footer } = this.state;
-
     return (
       <div className={styles.groupUpdateWrapper}>
         <Modal

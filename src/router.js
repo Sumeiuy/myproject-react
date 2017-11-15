@@ -34,6 +34,8 @@ import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
+import TakList from './routes/customerPool/TaskList';
+
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -69,6 +71,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
+        <Route path="taskList" component={TakList} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
