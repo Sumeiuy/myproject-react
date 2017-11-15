@@ -20,7 +20,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
 let searchInput;
-const NONE_INFO = '无相关目标客户';
+const NONE_INFO = '没有匹配内容';
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -123,21 +123,15 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchInput(event) {
     const e = event || window.event; // || arguments.callee.caller.arguments[0];
-    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
       e.cancelBubble = true;
     }
     if (e && e.keyCode === 13) {
-      let searchVal = e.target.value;
+      const searchVal = e.target.value;
       if (!this.checkInputValue(searchVal)) {
         return false;
-      }
-      if (_.isEmpty(searchVal)) {
-        // message.info('搜索内容不能为空', 1);
-        // return;
-        searchVal = hotWds.labelNameVal;
       }
       this.handleOpenTab({
         source: 'search',
@@ -304,16 +298,10 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
-    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
     if (!this.checkInputValue(inputVal)) {
       return false;
     }
-    if (_.isEmpty(inputVal)) {
-      // 搜索的时候，如果搜索框没有内容，将hotWds塞入搜索框
-      this.setState({
-        inputVal: hotWds.labelNameVal,
-      });
-    } else {
+    if (!_.isEmpty(inputVal)) {
       this.setState({
         inputVal: '',
       });
@@ -443,8 +431,7 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { data: { hotWds = EMPTY_OBJECT,
-      hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
+    const { data: { hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
 
     return (
       <div className={styles.searchBox}>
@@ -459,7 +446,7 @@ export default class Search extends PureComponent {
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
                 onSearch={this.handleSearch}
-                placeholder={hotWds.labelNameVal || ''}
+                placeholder={'经济客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}
               >

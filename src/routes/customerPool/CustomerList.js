@@ -125,7 +125,11 @@ const mapDispatchToProps = {
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
   }),
-
+  // 清除数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -176,6 +180,7 @@ export default class CustomerList extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -544,6 +549,7 @@ export default class CustomerList extends PureComponent {
       handleCloseClick,
       handleAddServiceRecord,
       handleCollapseClick,
+      clearCreateTaskData,
     } = this.props;
     const {
       sortDirection,
@@ -638,6 +644,7 @@ export default class CustomerList extends PureComponent {
           {...custRangeProps}
           isLoadingEnd={isLoadingEnd}
           onRequestLoading={this.setLoading}
+          clearCreateTaskData={clearCreateTaskData}
         />
       </div>
     );
