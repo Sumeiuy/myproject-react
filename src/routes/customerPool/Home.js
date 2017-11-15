@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
@@ -20,6 +20,7 @@ import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper, permission } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
+import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;

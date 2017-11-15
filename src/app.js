@@ -4,9 +4,9 @@
  */
 
 import 'babel-polyfill';
-import dva from 'dva-react-router-3';
-import { hashHistory, routerRedux } from 'dva-react-router-3/router';
-
+import dva from 'dva';
+import { routerRedux } from 'dva/router';
+import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
@@ -42,7 +42,7 @@ const onError = (e) => {
 
 // 1. Initialize
 const app = dva({
-  history: hashHistory,
+  history: createHistory(),
   onAction: [createLogger(), createSensorsLogger()],
   extraEnhancers,
   onError,
@@ -55,18 +55,8 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/app'));
-app.model(require('./models/feedback'));
-app.model(require('./models/report'));
-app.model(require('./models/manage'));
-app.model(require('./models/edit'));
-app.model(require('./models/preview'));
-app.model(require('./models/history'));
-app.model(require('./models/permission'));
+app.model(require('./models/global'));
 app.model(require('./models/customerPool'));
-app.model(require('./models/contract'));
-app.model(require('./models/fullChannelServiceRecord'));
-app.model(require('./models/commission'));
-app.model(require('./models/commissionChange'));
 app.model(require('./models/channelsTypeProtocol'));
 app.model(require('./models/channelsEdit'));
 

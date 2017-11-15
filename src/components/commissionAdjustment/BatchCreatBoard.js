@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-// import { withRouter } from 'dva-react-router-3/router';
+// import { withRouter } from 'dva/router';
 import { Icon, message } from 'antd';
 import _ from 'lodash';
 

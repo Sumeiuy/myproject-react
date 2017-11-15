@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -17,7 +17,7 @@ import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { fspContainer } from '../../config';
 import { permission } from '../../utils';
-
+import withRouter from '../../decorators/withRouter';
 import styles from './customerlist.less';
 
 const CUST_MANAGER = '1'; // 客户经理

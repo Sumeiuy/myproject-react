@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
 import SplitPane from 'react-split-pane';
 import Icon from '../../components/common/Icon';
@@ -19,6 +19,7 @@ import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody, getEnv } from '../../utils/helper';
+import withRouter from '../../decorators/withRouter';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 
@@ -43,6 +44,7 @@ const getDataFunction = loading => query => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackList: getDataFunction(true),
 };
@@ -55,6 +57,7 @@ export default class FeedBack extends PureComponent {
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -323,7 +326,7 @@ export default class FeedBack extends PureComponent {
   }
 
   render() {
-    const { list, location, replace } = this.props;
+    const { list, location, replace, push } = this.props;
     const { isEmpty, paneMaxSize, paneMinSize } = this.state;
     const emptyClass = classnames({
       none: !isEmpty,
@@ -376,6 +379,7 @@ export default class FeedBack extends PureComponent {
               <Col span="24" className="rightSection" id="rightSection">
                 <Detail
                   location={location}
+                  push={push}
                 />
               </Col>
             </Row>

@@ -6,7 +6,6 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'dva-react-router-3/router';
 import { Button, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -14,6 +13,7 @@ import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { helper, permission } from '../../../utils';
 import { validateFormContent } from '../../../decorators/validateFormContent';
+import withRouter from '../../../decorators/withRouter';
 import styles from './taskFormFlowStep.less';
 
 const { toString } = Mention;

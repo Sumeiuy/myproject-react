@@ -6,7 +6,7 @@
  * @Last Modified time: 2017-11-13 20:38:47
  */
 // import _ from 'lodash';
-
+import { parse } from 'query-string';
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { constructSeibelPostBody, getEmpId } from '../utils/helper';
 import { seibelConfig } from '../config';
@@ -306,7 +306,8 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
+      return history.listen(({ pathname, search }) => {
+        const query = parse(search);
         // 查询子类型列表参数
         const subTypeListParam = {
           typeCode: 'subType',
