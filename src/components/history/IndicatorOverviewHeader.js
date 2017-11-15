@@ -36,7 +36,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
   }
 
   static contextTypes = {
-    history: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -49,8 +49,8 @@ export default class IndicatorOverviewHeader extends PureComponent {
   }
 
   componentDidMount() {
-    const { history } = this.context;
-    this.removeHistoryListener = history.listenBefore(
+    const { router } = this.context;
+    this.removeHistoryListener = router.listenBefore(
       () => {
         if (!_.isEmpty(this.props.selectKeys)) {
           /*eslint-disable*/
