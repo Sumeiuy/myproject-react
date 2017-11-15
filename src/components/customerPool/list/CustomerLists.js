@@ -114,6 +114,7 @@ export default class CustomerLists extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -514,6 +515,7 @@ export default class CustomerLists extends PureComponent {
       condition,
       push,
       entertype,
+      clearCreateTaskData,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -682,6 +684,7 @@ export default class CustomerLists extends PureComponent {
               push={push}
               custList={custList}
               entertype={entertype}
+              clearCreateTaskData={clearCreateTaskData}
             /> : null
         }
         {

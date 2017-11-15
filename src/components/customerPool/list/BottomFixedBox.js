@@ -23,6 +23,7 @@ export default class BottomFixedBox extends PureComponent {
     selectCount: PropTypes.number.isRequired,
     mainServiceManager: PropTypes.bool,
     entertype: PropTypes.string.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -117,7 +118,7 @@ export default class BottomFixedBox extends PureComponent {
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
   openByIds(url, condition, ids, count, title, id, entertype, source, fr) {
-    // debugger
+    const { clearCreateTaskData } = this.props;
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -134,6 +135,11 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
+    if (url && url.indexOf('createTask') > -1) {
+      // 发起任务
+      // 清除数据
+      clearCreateTaskData();
+    }
     if (document.querySelector(fspContainer.container)) {
       const newurl = `${url}?${helper.queryToString(obj)}`;
       const param = {
