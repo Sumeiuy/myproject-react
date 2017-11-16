@@ -97,18 +97,6 @@ export default class TaskList extends PureComponent {
     });
   }
 
-  @autobind
-  handleTaskBasicInfo() {
-    const { getTaskBasicInfo } = this.props;
-    console.log(2222);
-    const param = {
-      flowId: 'D102FE4575C9FA409194D127FE8E8A36',
-      systemCode: '102330',
-    };
-    getTaskBasicInfo(param);
-  }
-
-
   render() {
     const topPanel = null;
     const leftPanel = (

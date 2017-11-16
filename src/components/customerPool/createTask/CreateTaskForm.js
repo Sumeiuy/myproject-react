@@ -60,12 +60,12 @@ export default class CreateTaskForm extends PureComponent {
   componentWillMount() {
     const {
       location: { query },
-      dict: { custIdexPlaceHolders },
+      dict: { custIndexPlaceHolders },
       previousData,
     } = this.props;
-    const arr = _.map(custIdexPlaceHolders, item => ({
-      name: item.slice(1, -1),
-      type: item.slice(1, -1),
+    const arr = _.map(custIndexPlaceHolders, item => ({
+      name: item.value.slice(1, item.value.length),
+      type: item.value.slice(1, item.value.length),
     }));
     this.setState({
       statusData: arr,
@@ -91,10 +91,8 @@ export default class CreateTaskForm extends PureComponent {
   // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
   @autobind
   handleKey(key, custIdexPlaceHolders) {
-    let values = null;
-    values = _.filter(custIdexPlaceHolders, item => item.key === key);
-    console.log(values);
-    return values.value;
+    const values = _.filter(custIdexPlaceHolders, item => item.key === key);
+    return values[0].value;
   }
 
   @autobind
@@ -105,7 +103,7 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    const { dict: { custIdexPlaceHolders } } = this.props;
+    const { dict: { custIndexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
@@ -116,7 +114,6 @@ export default class CreateTaskForm extends PureComponent {
     let searchReq = null;
     let firstUserName = '';
     let defaultKey = '';
-
     if (query.ids) {
       custIdList = decodeURIComponent(query.ids).split(',');
     } else if (query.condition) {
@@ -141,7 +138,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultExecutionType = 'Mission'; // 执行方式
         defaultKey = 'UNRIGHTS';
         // 任务提示
-        defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIdexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
+        defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
       case 'search':
@@ -161,7 +158,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultKey = 'ACCOUNT_OPEN_DATE';
-        defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIdexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         break;
       case 'numOfCustOpened':
@@ -169,7 +166,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultKey = 'RIGHTS';
-        defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIdexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;

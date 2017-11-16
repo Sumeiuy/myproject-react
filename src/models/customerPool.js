@@ -172,17 +172,6 @@ export default {
             type: 'getToDoList',
           });
         }
-
-        const taskDetail = matchRoute('taskList', pathname);
-        if (taskDetail) {
-          dispatch({
-            type: 'getTaskBasicInfo',
-            payload: {
-              flowId: 'D102FE4575C9FA409194D127FE8E8A36',
-              systemCode: '102330',
-            },
-          });
-        }
       });
     },
   },

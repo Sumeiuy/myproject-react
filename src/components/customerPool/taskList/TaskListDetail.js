@@ -1,7 +1,7 @@
 /**
  * @file components/commissionAdjustment/Detail.js
- *  批量佣金详情
- * @author baojiajia
+ *  任务列表详情
+ * @author zhushwengnan
  */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,28 @@ import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 const COLUMN_WIDTH = 115;
 const INITIAL_PAGE_SIZE = 10;
 const COLUMN_HEIGHT = 36;
+const PAGR_SIZE = 10;
+const PAGE_NO = 1;
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
+const taskStatus = [
+  {
+    key: '01',
+    value: '处理中',
+  },
+  {
+    key: '02',
+    value: '完成',
+  },
+  {
+    key: '03',
+    value: '终止',
+  },
+  {
+    key: '04',
+    value: '被驳回',
+  },
+];
 export default class TaskListDetail extends PureComponent {
 
   static propTypes = {
@@ -44,30 +66,37 @@ export default class TaskListDetail extends PureComponent {
       curPageNum: 1,
       curPageSize: 10,
       isShowTable: false,
-      fileNames: 'b9e19dde-60f6-4614-9651-24b67839f1a7.xls',
+      fileNames: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { priviewCustFileData } = nextProps;
+    const { priviewCustFileData: prevPriviewCustFileData } = this.props;
     const { page } = priviewCustFileData;
-    this.setState({
-      totalRecordNum: page.totalCount,
-    });
+    const { page: prevPage } = prevPriviewCustFileData;
+    if (page !== prevPage) {
+      this.setState({
+        totalRecordNum: page.totalCount,
+      });
+    }
   }
 
   @autobind
   handleSeeCust() {
-    console.log(111111);
+    const { taskBasicInfo } = this.props;
+    const { tagetCustModel = {} } = taskBasicInfo;
     const { onPreview } = this.props;
-    const { fileNames, curPageNum, curPageSize } = this.state;
     this.setState({
       isShowTable: true,
+      fileNames: tagetCustModel.dataName,
+      curPageNum: PAGE_NO,
+      curPageSize: PAGR_SIZE,
     });
     onPreview({
-      filename: fileNames,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
+      filename: tagetCustModel.dataName,
+      pageNum: PAGE_NO,
+      pageSize: PAGR_SIZE,
     });
   }
 
@@ -78,7 +107,6 @@ export default class TaskListDetail extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
     const { fileNames } = this.state;
     const { onPreview } = this.props;
     this.setState({
@@ -100,7 +128,6 @@ export default class TaskListDetail extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
     const { fileNames } = this.state;
     const { onPreview } = this.props;
     this.setState({
@@ -122,6 +149,23 @@ export default class TaskListDetail extends PureComponent {
     });
   }
 
+  handleTaskStatus(key) {
+    let value = '--';
+    if (!_.isEmpty(key)) {
+      value = _.filter(taskStatus, item => item.key === key);
+      value = value[0].value;
+    }
+    return value;
+  }
+
+  handleIsEmpty(value) {
+    let words = '--';
+    if (!_.isEmpty(value)) {
+      words = value;
+    }
+    return words;
+  }
+
   /**
    * 为数据源的每一项添加一个id属性
    * @param {*} listData 数据源
@@ -137,7 +181,7 @@ export default class TaskListDetail extends PureComponent {
   @autobind
   renderDataSource(column, datas) {
     const dataSource = _.map(datas, (item) => {
-      const rowData = {};
+      const rowData = EMPTY_OBJECT;
       return _.merge(rowData, _.fromPairs(_.map(item, (itemData, index) => { // eslint-disable-line
         return [column[index], itemData];
       })));
@@ -155,7 +199,7 @@ export default class TaskListDetail extends PureComponent {
 
   renderMention() {
     const { taskBasicInfo } = this.props;
-    const { tagetCustModel } = taskBasicInfo;
+    const { tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
     if (tagetCustModel.custSource === '导入客户') {
       return (
         <li className={styles.item}>
@@ -178,19 +222,15 @@ export default class TaskListDetail extends PureComponent {
       );
     }
     return null;
-    // return ();
   }
 
   render() {
-    // const custList = createCustTableData(base);
-    // const proList = createSubProTableData(item);
-    // const bugTitle = `编号:${currentId}`;
-    // const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const { taskBasicInfo, priviewCustFileData } = this.props;
-    const { motDetailModel, workflowHistoryBeanList, tagetCustModel } = taskBasicInfo;
-    const stepName = '';
-    const handleName = '';
-    const status = '审批中';
+    const {
+      motDetailModel = EMPTY_OBJECT,
+      workflowHistoryBeanList = EMPTY_ARRAY,
+      tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
+    const status = this.handleTaskStatus(motDetailModel.status);
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
@@ -208,6 +248,7 @@ export default class TaskListDetail extends PureComponent {
     const dataSource =
       this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -219,6 +260,7 @@ export default class TaskListDetail extends PureComponent {
               <TaskListDetailInfo
                 infoData={motDetailModel}
                 status={status}
+                onIsEmpty={this.handleIsEmpty}
               />
             </div>
             <div id="nginformation_module" className={styles.module}>
@@ -226,10 +268,10 @@ export default class TaskListDetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户类型" value={tagetCustModel.custSource} />
+                    <InfoItem label="客户类型" value={this.handleIsEmpty(tagetCustModel.custSource)} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="客户总数" value={tagetCustModel.custNum} />
+                    <InfoItem label="客户总数" value={this.handleIsEmpty(tagetCustModel.custNum)} />
                   </li>
                   {this.renderMention()}
                 </ul>
@@ -239,10 +281,6 @@ export default class TaskListDetail extends PureComponent {
               <InfoTitle head="审批意见" />
               <ApproveList
                 data={workflowHistoryBeanList}
-                nowStep={{
-                  stepName,
-                  handleName,
-                }}
               />
             </div>
           </div>
