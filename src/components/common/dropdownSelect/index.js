@@ -90,7 +90,8 @@ export default class DropdownSelect extends PureComponent {
         this.setState({
           isSHowModal: false,
           value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
-        });
+          searchValue: '',
+        }, this.toSearch);
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
       return (
