@@ -332,6 +332,7 @@ export default class modifyPrivateClient extends PureComponent {
             statusType="modify"
             onEmitEvent={this.updateValue}
             searchServerPersonList={this.props.searchServerPersonList}
+            subType={this.state.subType}
           />
           <UploadFile
             fileList={this.props.attaches}
