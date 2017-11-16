@@ -124,7 +124,7 @@ const pageConfig = {
   },
   // 佣金调整
   commission: {
-    pageName: '佣金调整',
+    pageName: '服务订购',
     pageType: '02',
     subType: [
       {

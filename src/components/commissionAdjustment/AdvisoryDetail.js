@@ -19,7 +19,7 @@ import {
   advisoryProColumns,
   createSubProTableData,
 } from './detailConfig';
-import styles from './advisoryDetail.less';
+import styles from './detail.less';
 
 export default class AdvisoryDetail extends PureComponent {
 

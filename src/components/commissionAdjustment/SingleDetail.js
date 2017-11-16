@@ -20,7 +20,7 @@ import {
   singleProColumns,
   createProTableData,
 } from './detailConfig';
-import styles from './singleDetail.less';
+import styles from './detail.less';
 
 export default class Singlecommissiondetail extends PureComponent {
 
