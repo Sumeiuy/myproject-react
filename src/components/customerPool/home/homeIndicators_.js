@@ -206,7 +206,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
     },
     xAxis: {
       type: 'category',
-      data: ['MOT\n完成率', '服务\n覆盖率', '资产配\n置覆盖率', '信息\n完备率'],
+      data: ['必做MOT\n任务完成率', '服务\n覆盖率', '多元产\n品覆盖率', '客户信\n息完备率'],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
