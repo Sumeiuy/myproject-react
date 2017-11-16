@@ -135,6 +135,14 @@ export default class CreatePrivateClient extends PureComponent {
   updateValue(name, value) {
     this.setState({ [name]: value });
     switch (name) {
+      case 'subType':
+        if (!_.isEmpty(value)) {
+          this.props.getHasServerPersonList({
+            custId: this.state.custId,
+            custType: this.state.custType,
+          });
+        }
+        break;
       case 'customer':
         this.setState({
           customer: {
@@ -144,11 +152,6 @@ export default class CreatePrivateClient extends PureComponent {
           },
           custId: value.cusId,
           custType: value.custType,
-        }, () => {
-          this.props.getHasServerPersonList({
-            custId: this.state.custId,
-            custType: this.state.custType,
-          });
         });
         break;
       default: break;
@@ -237,6 +240,8 @@ export default class CreatePrivateClient extends PureComponent {
             statusType="modify"
             onEmitEvent={this.updateValue}
             searchServerPersonList={this.props.searchServerPersonList}
+            subType={this.state.subType}
+            custId={this.state.custId}
           />
           <UploadFile
             fileList={[]}

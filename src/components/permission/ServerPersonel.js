@@ -9,20 +9,26 @@ import TableList from '../common/TableList';
 import style from './serverpersonel.less';
 import DropdownSelect from '../common/dropdownSelect';
 
+// 私密客户取消
+const PERMISSION_CUST_CANCLE = '0102';
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
+    subType: PropTypes.string,
     onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
     searchServerPersonList: PropTypes.array,
+    custId: PropTypes.string,
   }
 
   static defaultProps = {
     info: [],
     searchServerPersonList: [],
     onEmitEvent: () => {},
+    subType: '',
+    custId: '',
   }
 
   static contextTypes = {
@@ -48,25 +54,21 @@ export default class ServerPersonel extends PureComponent {
     if (newProps.info !== this.props.info) {
       this.setState({ serverInfo: newProps.info });
     }
+    if (!_.isEqual(this.props.custId, newProps.custId)) {
+      this.setState({ serverInfo: [] });
+    }
+  }
+
+  // 能修改服务经理
+  @autobind
+  canModify() {
+    const { statusType, subType } = this.props;
+    return (statusType === 'modify' && subType !== PERMISSION_CUST_CANCLE && subType !== '');
   }
 
   get modifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
-    if (this.props.statusType === 'ready') {
-      result = (
-        <div
-          className={style.spAlerts}
-        >
-          <span className={style.spAlertsCircle}>&nbsp;</span>
-          <span className={style.spAlertsCon}>
-            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；
-          </span>
-          <span className={style.spAlertsCon}>
-            仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
-          </span>
-        </div>
-      );
-    } else if (this.props.statusType === 'modify') {
+    if (this.canModify()) {
       result = (
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
@@ -100,6 +102,20 @@ export default class ServerPersonel extends PureComponent {
               添加
             </Button>
           }
+        </div>
+      );
+    } else {
+      result = (
+        <div
+          className={style.spAlerts}
+        >
+          <span className={style.spAlertsCircle}>&nbsp;</span>
+          <span className={style.spAlertsCon}>
+            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；
+          </span>
+          <span className={style.spAlertsCon}>
+            仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
+          </span>
         </div>
       );
     }
@@ -174,6 +190,7 @@ export default class ServerPersonel extends PureComponent {
           info={this.state.serverInfo}
           statusType={this.props.statusType}
           onEmitUpdateValue={this.updateDeleteValue}
+          subType={this.props.subType}
         />
       </div>
     );
