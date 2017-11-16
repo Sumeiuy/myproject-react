@@ -6,6 +6,7 @@
  * @Last Modified time: 2017-11-13 20:38:47
  */
 // import _ from 'lodash';
+import { message } from 'antd';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { constructSeibelPostBody, getEmpId } from '../utils/helper';
@@ -123,9 +124,12 @@ export default {
     // 查询客户
     queryCustSuccess(state, action) {
       const { payload: { resultData } } = action;
+      if (!resultData) {
+        message.error('未找到该客户。');
+      }
       return {
         ...state,
-        underCustList: [resultData && resultData],
+        underCustList: resultData ? [resultData] : [],
       };
     },
     // 查询审批人
@@ -266,31 +270,33 @@ export default {
     // 客户验证
     * getCustValidate({ payload }, { call, put }) {
       const response = yield call(api.getCustValidate, payload);
-      console.warn('getCustValidate response', response);
-      // yield put({
-      //   type: 'getCustValidateSuccess',
-      //   payload: response,
-      // });
     },
     // 新建时的获取审批人列表
     * getFlowStepInfo({ payload }, { call, put }) {
       const response = yield call(api.getFlowStepInfo, payload);
-      // response.resultData || {}.flowButtons || []
       const { resultData: { flowButtons = [] } } = response;
-      /*eslint-disable */
-      flowButtons.forEach(v => {
-        v.flowAuditors.forEach((sv, index) => {
-          sv.belowDept = sv.occupation;
-          sv.empNo = sv.login;
-          sv.key = `${new Date().getTime()}-${index}`;
-          sv.groupName = v.nextGroupName;
-          sv.operate = v.operate;
-        })
+      // 对按钮内的审批人进行处理
+      const transferButtons = flowButtons.map((item) => {
+        const newItem = item.flowAuditors.length &&
+          item.flowAuditors.map(child => ({
+            belowDept: child.occupation,
+            empNo: child.login,
+            key: child.login,
+            groupName: item.nextGroupName,
+            operate: item.operate,
+          }));
+        // 返回新的按钮数据
+        return {
+          ...item,
+          flowAuditors: newItem,
+        };
       });
-      /*eslint-disable */
       yield put({
         type: 'getAddFlowStepInfoSuccess',
-        payload: response,
+        payload: {
+          ...response,
+          flowButtons: transferButtons,
+        },
       });
     },
     // 提交审批流程
