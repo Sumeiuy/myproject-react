@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 14:30:07
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-16 17:36:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,8 +18,8 @@ import SplitPanel from '../../components/common/splitPanel/CutScreen';
 // import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
-import ContractList from '../../components/common/biz/CommonList';
-import seibelColumns from '../../components/common/biz/seibelColumns';
+import ContractList from '../../components/common/appList';
+// import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/contract/EditForm';
 import AddForm from '../../components/contract/AddForm';
@@ -574,15 +574,6 @@ export default class Contract extends PureComponent {
     });
   }
 
-  @autobind
-  constructTableColumns() {
-    return seibelColumns({
-      pageName: 'contract',
-      type: 'kehu1',
-      pageData: contract,
-    });
-  }
-
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
@@ -859,7 +850,9 @@ export default class Contract extends PureComponent {
         list={seibleList}
         replace={replace}
         location={location}
-        columns={this.constructTableColumns()}
+        pageName="contract"
+        type="kehu1"
+        pageData={contract}
       />
     );
     const rightPanel = (

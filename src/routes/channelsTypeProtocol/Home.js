@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-14 17:22:16
+ * @Last Modified time: 2017-11-16 17:36:22
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -16,8 +16,8 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
-import ChannelsTypeProtocolList from '../../components/common/biz/CommonList';
-import seibelColumns from '../../components/common/biz/seibelColumns';
+import ChannelsTypeProtocolList from '../../components/common/appList';
+// import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
@@ -306,15 +306,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
-  @autobind
-  constructTableColumns() {
-    return seibelColumns({
-      pageName: 'channelsTypeProtocol',
-      type: 'kehu1',
-      pageData: channelsTypeProtocol,
-    });
-  }
-
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
@@ -496,8 +487,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
         list={seibleList}
         replace={replace}
         location={location}
-        columns={this.constructTableColumns()}
         clickRow={this.handleListRowClick}
+        pageName="channelsTypeProtocol"
+        type="kehu1"
+        pageData={channelsTypeProtocol}
       />
     );
     const rightPanel = (
