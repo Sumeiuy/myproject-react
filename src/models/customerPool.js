@@ -114,6 +114,8 @@ export default {
     approvalList: [],
     // 存储自建任务数据
     storedCreateTaskData: {},
+    // 任务列表-任务详情基本信息
+    taskBasicInfo: {},
   },
 
   subscriptions: {
@@ -696,6 +698,15 @@ export default {
         payload: flowAuditors,
       });
     },
+    // 获取任务列表-任务详情基本信息
+    * getTaskBasicInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryBasicInfo, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getTaskBasicInfoSuccess',
+        payload: { resultData },
+      });
+    },
   },
   reducers: {
     getCustCountSuccess(state, action) {
@@ -1201,6 +1212,14 @@ export default {
       return {
         ...state,
         submitTaskFlowResult: '',
+      };
+    },
+    // 获取任务列表-任务详情基本信息成功
+    getTaskBasicInfoSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        taskBasicInfo: resultData,
       };
     },
   },

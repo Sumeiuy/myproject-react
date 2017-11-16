@@ -119,5 +119,8 @@ export default function customerPool(api) {
 
     // 提交任务流程
     submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
+
+    // 任务列表-任务详情基本信息
+    queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
   };
 }
