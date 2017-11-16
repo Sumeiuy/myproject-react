@@ -78,6 +78,32 @@ const FixNumber = {
     };
   },
 
+  // 针对元/年这种单位进行特殊处理
+  toFixedNewMoney(series) {
+    let newUnit = '元/年';
+    const tempSeries = series.map(n => Math.abs(n));
+    let newSeries = series;
+    const MaxMoney = Math.max(...tempSeries);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (MaxMoney >= 100000000) {
+      newUnit = `亿${newUnit}`;
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 100000000));
+    } else if (MaxMoney > 10000) {
+      newUnit = `万${newUnit}`;
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      // newUnit = unit;
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  },
+
   // 对用户数进行特殊处理
   toFixedCust(series) {
     let newUnit = '户';
