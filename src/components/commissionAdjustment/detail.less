@@ -48,12 +48,13 @@
         line-height: 1.5;
       }
       .modContent {
+        padding: 5px 0;
         position: relative;
-        padding: 0;
         width: 100%;
+        overflow: hidden;
         .propertyList {
           li.item {
-            padding: 1px 0;
+            // padding: 1px 0;
             position: relative;
             clear: left;
             width: 100%;
@@ -74,6 +75,11 @@
           clear: both;
         }
       }
+    }
+  }
+  :global {
+    .ant-table-row-expand-icon {
+      float: left;
     }
   }
 }
