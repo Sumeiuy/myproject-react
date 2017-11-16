@@ -74,12 +74,12 @@ export default class DropdownSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { value: nextValue } = nextProps;
-    this.setState({
-      value: nextValue,
-    });
-    // const { value: preValue } = this.props;
-    // if (preValue !== nextValue) {
-    // }
+    const { value: preValue } = this.props;
+    if (preValue !== nextValue) {
+      this.setState({
+        value: nextValue,
+      });
+    }
   }
 
   get getSearchListDom() {

@@ -111,10 +111,10 @@ export default {
     },
     // 查询审批人
     getFlowStepInfoSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload = EMPTY_OBJECT } = action;
       return {
         ...state,
-        flowStepInfo: resultData,
+        flowStepInfo: payload,
       };
     },
   },
@@ -167,6 +167,7 @@ export default {
           item.flowAuditors.map(child => ({
             belowDept: child.occupation,
             empNo: child.login,
+            empName: child.empName,
             key: child.login,
             groupName: item.nextGroupName,
             operate: item.operate,
@@ -180,7 +181,7 @@ export default {
       yield put({
         type: 'getFlowStepInfoSuccess',
         payload: {
-          ...flowResponse,
+          ...flowResponse.resultData,
           flowButtons: transferButtons,
         },
       });
@@ -196,34 +197,6 @@ export default {
     // 删除附件
     * deleteAttachment({ payload }, { call }) {
       yield call(seibelApi.deleteAttachment, payload);
-    },
-    // 获取审批人列表
-    * getFlowStepInfo({ payload }, { call, put }) {
-      const response = yield call(api.getFlowStepInfo, payload);
-      const { resultData: { flowButtons = [] } } = response;
-      // 对按钮内的审批人进行处理
-      const transferButtons = flowButtons.map((item) => {
-        const newItem = item.flowAuditors.length &&
-          item.flowAuditors.map(child => ({
-            belowDept: child.occupation,
-            empNo: child.login,
-            key: child.login,
-            groupName: item.nextGroupName,
-            operate: item.operate,
-          }));
-        // 返回新的按钮数据
-        return {
-          ...item,
-          flowAuditors: newItem,
-        };
-      });
-      yield put({
-        type: 'getAddFlowStepInfoSuccess',
-        payload: {
-          ...response,
-          flowButtons: transferButtons,
-        },
-      });
     },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {

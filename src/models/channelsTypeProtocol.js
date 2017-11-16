@@ -134,10 +134,10 @@ export default {
     },
     // 查询审批人
     getAddFlowStepInfoSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload = EMPTY_OBJECT } = action;
       return {
         ...state,
-        flowStepInfo: resultData,
+        flowStepInfo: payload,
       };
     },
   },
@@ -281,6 +281,7 @@ export default {
           item.flowAuditors.map(child => ({
             belowDept: child.occupation,
             empNo: child.login,
+            empName: child.empName,
             key: child.login,
             groupName: item.nextGroupName,
             operate: item.operate,
@@ -294,7 +295,7 @@ export default {
       yield put({
         type: 'getAddFlowStepInfoSuccess',
         payload: {
-          ...response,
+          ...response.resultData,
           flowButtons: transferButtons,
         },
       });

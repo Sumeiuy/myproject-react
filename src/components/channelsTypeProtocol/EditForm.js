@@ -111,29 +111,30 @@ export default class EditForm extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { protocolDetail: prePD } = this.props;
     const { protocolDetail: nextPD, attachmentList } = nextProps;
-    if (!_.isEmpty(nextPD)) {
-      // 如果附件列表不为空
+    if (!_.isEmpty(nextPD) && !_.isEqual(prePD, nextPD)) {
       let assignAttachment = [];
+      // 对数据进行必传等配置
       if (attachmentList.length) {
         assignAttachment = attachmentMap.map((item) => {
           let newItem = {};
-          attachmentList.forEach((child) => {
-            if (item.title === child.title) {
-              newItem = {
-                ...item,
-                ...child,
-                length: child.attachmentList.length,
-              };
-            } else {
-              newItem = item;
-            }
-          });
+          const filterArr = _.filter(attachmentList, o => o.title === item.title);
+          if (filterArr.length) {
+            newItem = {
+              ...item,
+              ...filterArr[0],
+              length: filterArr[0].attachmentList.length,
+            };
+          } else {
+            newItem = item;
+          }
           return newItem;
         });
       }
       const { cust, item: productList } = nextPD;
       const hasCust = nextPD.multiUsedFlag === 'Y' || false;
+      console.warn('willreceiveProps', nextPD);
       this.setState({
         ...nextPD,
         isEdit: true,
@@ -161,7 +162,7 @@ export default class EditForm extends PureComponent {
     this.setState({
       multiUsedFlag: boolean,
       cust: [],
-    });
+    }, () => this.setUploadConfig(boolean));
   }
 
   // 向父组件提供数据
@@ -197,8 +198,13 @@ export default class EditForm extends PureComponent {
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
     const requiredArr = hasCust ? attachmentRequired.hasCust : attachmentRequired.noCust;
+    // 清空附件数组的必传项
+    const defaultAttachmentArr = attachmentTypeList.map(item => ({
+      ...item,
+      required: false,
+    }));
     // 将附件数组做必传项配置
-    const attachmentMapRequired = attachmentTypeList.map((item) => {
+    const attachmentMapRequired = defaultAttachmentArr.map((item) => {
       if (_.includes(requiredArr, item.type)) {
         return {
           ...item,
@@ -272,10 +278,9 @@ export default class EditForm extends PureComponent {
     };
     const { getCustValidate } = this.props;
     getCustValidate(validatePayload).then(() => {
-      const hasCust = true;
       this.setState({
         cust: [...cust, value],
-      }, this.setUploadConfig(hasCust));
+      });
     });
   }
 
@@ -302,11 +307,9 @@ export default class EditForm extends PureComponent {
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
     const newTableList = _.remove(testArr, (n, i) => i !== index);
-    // 设置必传的附件
-    const hasCust = Boolean(newTableList.length) || false;
     this.setState({
       cust: newTableList,
-    }, this.setUploadConfig(hasCust));
+    });
   }
 
   // 文件上传成功
@@ -366,12 +369,20 @@ export default class EditForm extends PureComponent {
         ...item,
       };
     });
-    console.warn('resetUpload newAttachmentList', newAttachmentList);
     this.setState({
       productList: [],
       attachmentTypeList: newAttachmentList,
     });
     // this.EditFormComponent.getData();
+  }
+
+  // 清除协议产品信息
+  @autobind
+  resetProduct() {
+    console.warn('更新 propductList 为空');
+    this.setState({
+      productList: [],
+    });
   }
 
 
@@ -462,6 +473,7 @@ export default class EditForm extends PureComponent {
             queryChannelProtocolProduct={queryChannelProtocolProduct}
             onChangeMultiCustomer={this.onChangeMultiCustomer}
             resetUpload={this.resetUpload}
+            resetProduct={this.resetProduct}
             getCustValidate={getCustValidate}
             formData={protocolDetail}
             clearPropsData={clearPropsData}
