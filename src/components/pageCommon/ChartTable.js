@@ -160,7 +160,7 @@ export default class ChartTable extends PureComponent {
       onClick={() => { this.handleTitleClick(item); }}
     >
       {unitFlag && item.unit ?
-      `${item.name}(${encodeURIComponent(item.unit).indexOf (encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
+      `${item.name}(${encodeURIComponent(item.unit).indexOf(encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
       :
       item.name
       }
