@@ -267,7 +267,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     } = this.props;
     if (currentId === id) return;
     getProtocolDetail({
-      id: currentId,
+      id,
     });
   }
 

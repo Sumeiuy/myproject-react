@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../../components/common/biz/CommonModal';
+import InfoForm from '../common/infoForm';
 import Select from '../../components/common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import styles from './addClause.less';
@@ -225,52 +226,30 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.addClauseBox}>
         <CommonModal {...clasueProps} >
-          <div className={styles.lineInputWrap}>
-            <div className={styles.label}>
-              <i className={styles.required} />
-                  条款名称<span className={styles.colon}>:</span>
-            </div>
-            <div className={`${styles.componentBox} ${styles.selectBox}`}>
+          <div className={styles.editWrapper}>
+            <InfoForm label="条款名称" required>
               <Select
                 name="clauseName"
                 data={clauseNameList}
                 value={clauseName.value || ''}
                 onChange={this.handleSelectChange}
               />
-            </div>
-          </div>
-          <div className={styles.lineInputWrap}>
-            <div className={styles.label}>
-              <i className={styles.required} />
-                  明细参数<span className={styles.colon}>:</span>
-            </div>
-            <div className={`${styles.componentBox} ${styles.selectBox}`}>
+            </InfoForm>
+            <InfoForm label="明细参数" required>
               <Select
                 name="detailParam"
                 data={detailParamList}
                 value={detailParam.val || ''}
                 onChange={this.handleSelectChange}
               />
-            </div>
-          </div>
-          <div className={styles.lineInputWrap}>
-            <div className={styles.label}>
-              <i className={styles.required} />
-                  值<span className={styles.colon}>:</span>
-            </div>
-            <div className={`${styles.componentBox} ${styles.inputBox}`}>
+            </InfoForm>
+            <InfoForm label="值" required>
               <Input
                 onChange={this.changeValue}
                 value={value}
               />
-            </div>
-          </div>
-          <div className={styles.lineInputWrap}>
-            <div className={styles.label}>
-              <i className={styles.required} />
-                  合作部门<span className={styles.colon}>:</span>
-            </div>
-            <div className={styles.componentBox}>
+            </InfoForm>
+            <InfoForm label="合作部门" required>
               <DropDownSelect
                 placeholder="合作部门"
                 showObjKey="name"
@@ -281,7 +260,7 @@ export default class EditForm extends PureComponent {
                 boxStyle={dropDownSelectBoxStyle}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
-            </div>
+            </InfoForm>
           </div>
         </CommonModal>
       </div>
