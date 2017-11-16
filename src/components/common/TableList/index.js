@@ -5,7 +5,7 @@ import style from './tablelist.less';
 import Icon from '../Icon';
 
 // 私密客户取消
-const permissionCustCancle = '0102';
+const PERMISSION_CUST_CANCLE = '0102';
 export default class TableList extends PureComponent {
   static propTypes = {
     info: PropTypes.array,
@@ -50,7 +50,7 @@ export default class TableList extends PureComponent {
           >{item.businessDepartment}</span>
           <div
             className={classnames(['text-center',
-              { 'flex-base_0': statusType === 'ready' || this.props.subType === permissionCustCancle },
+              { 'flex-base_0': statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
               { 'flex-base_1': statusType !== 'ready' },
             ])}
           >
@@ -84,7 +84,7 @@ export default class TableList extends PureComponent {
           >所属营业部</span>
           <span
             className={classnames(['text-center',
-              { 'flex-base_0': this.props.statusType === 'ready' || this.props.subType === permissionCustCancle },
+              { 'flex-base_0': this.props.statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
               { 'flex-base_1': this.props.statusType !== 'ready' },
             ])}
           >操作</span>

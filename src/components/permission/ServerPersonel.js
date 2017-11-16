@@ -10,7 +10,7 @@ import style from './serverpersonel.less';
 import DropdownSelect from '../common/dropdownSelect';
 
 // 私密客户取消
-const permissionCustCancle = '0102';
+const PERMISSION_CUST_CANCLE = '0102';
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
@@ -59,40 +59,16 @@ export default class ServerPersonel extends PureComponent {
     }
   }
 
-  // 不能修改服务经理
-  @autobind
-  isCannotModify() {
-    const { statusType, subType } = this.props;
-    return statusType === 'ready'
-      || (statusType === 'modify' && subType === permissionCustCancle)
-      || (statusType === 'modify' && subType === '');
-  }
-
   // 能修改服务经理
   @autobind
-  isCanModify() {
+  canModify() {
     const { statusType, subType } = this.props;
-    return (statusType === 'modify' && subType !== permissionCustCancle)
-      || (statusType === 'modify' && subType !== '');
+    return (statusType === 'modify' && subType !== PERMISSION_CUST_CANCLE && subType !== '');
   }
 
   get modifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
-    if (this.isCannotModify()) {
-      result = (
-        <div
-          className={style.spAlerts}
-        >
-          <span className={style.spAlertsCircle}>&nbsp;</span>
-          <span className={style.spAlertsCon}>
-            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；
-          </span>
-          <span className={style.spAlertsCon}>
-            仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
-          </span>
-        </div>
-      );
-    } else if (this.isCanModify()) {
+    if (this.canModify()) {
       result = (
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
@@ -126,6 +102,20 @@ export default class ServerPersonel extends PureComponent {
               添加
             </Button>
           }
+        </div>
+      );
+    } else {
+      result = (
+        <div
+          className={style.spAlerts}
+        >
+          <span className={style.spAlertsCircle}>&nbsp;</span>
+          <span className={style.spAlertsCon}>
+            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；
+          </span>
+          <span className={style.spAlertsCon}>
+            仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
+          </span>
         </div>
       );
     }
