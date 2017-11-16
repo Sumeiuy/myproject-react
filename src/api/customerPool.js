@@ -105,7 +105,7 @@ export default function customerPool(api) {
     // 查询某客户的服务人员待选择列表
     getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
 
-    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
+    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllChannelServiceRecord', query),
 
     // 预览客户细分数据
     previewCustFile: query => api.post('/groovynoauth/fsp/cust/custlist/previewCustFile', query),
