@@ -99,11 +99,7 @@ export default class TaskList extends PureComponent {
 
   render() {
     const topPanel = null;
-    const leftPanel = (
-      <div>
-        <a onClick={this.handleTaskBasicInfo}>点击</a>
-      </div>
-    );
+    const leftPanel = null;
     const { priviewCustFileData, taskBasicInfo } = this.props;
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
     const rightPanel = (
