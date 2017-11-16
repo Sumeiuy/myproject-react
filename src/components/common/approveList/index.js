@@ -72,7 +72,7 @@ export default class ApproveList extends PureComponent {
             null
         }
         <div className={styles.approveList}>
-          {
+          {!_.isEmpty(data) ?
             data.map(item => (
               <div key={item.handleTime}>
                 <p>
@@ -84,7 +84,8 @@ export default class ApproveList extends PureComponent {
                   {item.comment}
                 </p>
               </div>
-            ))
+            )) :
+            null
           }
         </div>
       </div>
