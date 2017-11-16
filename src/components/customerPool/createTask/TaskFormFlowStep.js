@@ -40,14 +40,10 @@ export default class TaskFormFlowStep extends PureComponent {
       taskFormData,
       current,
       custSource,
-      currentSelectRowKeys,
-      currentSelectRecord,
      } } = props;
     this.state = {
       current: current || 0,
       previousData: taskFormData || {},
-      currentSelectRecord: currentSelectRecord || {},
-      currentSelectRowKeys: currentSelectRowKeys || [],
       currentTab: '1',
       custSource: custSource || '',
       isShowErrorInfo: false,
@@ -115,10 +111,12 @@ export default class TaskFormFlowStep extends PureComponent {
   @validateFormContent
   saveFormContent(values) {
     const { current } = this.state;
-    const { saveCreateTaskData, location: { query: { source, count } } } = this.props;
+    const { saveCreateTaskData, location: { query: { source, count } },
+     storedCreateTaskData } = this.props;
     const custSource = this.handleCustSource(source);
 
     saveCreateTaskData({
+      ...storedCreateTaskData,
       taskFormData: values,
       totalCust: count,
       // 记住当前在第二步
@@ -134,8 +132,13 @@ export default class TaskFormFlowStep extends PureComponent {
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedCreateTaskData, createTask, parseQuery, orgId } = this.props;
-    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+    const {
+      storedCreateTaskData,
+      createTask,
+      parseQuery,
+      orgId,
+      storedCreateTaskData: { currentSelectRecord: { login: flowAuditorId = null } },
+    } = this.props;
     const {
       custIdList,
       custCondition,
@@ -164,9 +167,6 @@ export default class TaskFormFlowStep extends PureComponent {
   @autobind
   handleRowSelectionChange(selectedRowKeys) {
     const { saveCreateTaskData, storedCreateTaskData } = this.props;
-    this.setState({
-      currentSelectRowKeys: selectedRowKeys,
-    });
     saveCreateTaskData({
       ...storedCreateTaskData,
       currentSelectRowKeys: selectedRowKeys,
@@ -177,10 +177,6 @@ export default class TaskFormFlowStep extends PureComponent {
   handleSingleRowSelectionChange(record) {
     const { login } = record;
     const { saveCreateTaskData, storedCreateTaskData } = this.props;
-    this.setState({
-      currentSelectRecord: record,
-      currentSelectRowKeys: [login],
-    });
     saveCreateTaskData({
       ...storedCreateTaskData,
       currentSelectRecord: record,
@@ -203,8 +199,6 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       current,
       previousData,
-      currentSelectRecord,
-      currentSelectRowKeys,
       currentTab,
       custSource,
       isShowErrorInfo,
@@ -218,6 +212,10 @@ export default class TaskFormFlowStep extends PureComponent {
       approvalList,
       getApprovalList,
       storedCreateTaskData,
+      storedCreateTaskData: {
+        currentSelectRecord = {},
+        currentSelectRowKeys = [],
+      },
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
