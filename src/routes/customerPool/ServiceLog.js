@@ -23,6 +23,7 @@ const today = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
 const sixMonth = moment(today).subtract(6, 'months');
 const sixDate = moment(sixMonth).format('YYYY-MM-DD HH:mm:ss');
+const PAGE_NUM = 1;
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -78,7 +79,7 @@ export default class CreateTaskForm extends PureComponent {
       showBtn: true,
       logData: [],
       loading: props.serviceLogDataLoading,
-      pageNum: 0,
+      pageNum: 1,
     };
   }
   componentWillMount() {
@@ -139,7 +140,7 @@ export default class CreateTaskForm extends PureComponent {
         serveDateFrom: start,
         serveDateTo: end,
         serveDateToPaged: null,
-        pageNum: null,
+        pageNum: PAGE_NUM,
       },
     });
   }
@@ -201,7 +202,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveSource: value,
         serveDateToPaged: null,
-        pageNum: null,
+        pageNum: PAGE_NUM,
       },
     });
   }
@@ -234,7 +235,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveType: type,
         serveDateToPaged: null,
-        pageNum: null,
+        pageNum: PAGE_NUM,
       },
     });
   }

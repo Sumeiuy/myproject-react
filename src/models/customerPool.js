@@ -128,6 +128,7 @@ export default {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          params.pageNum = 1; // 默认显示第一页
           dispatch({
             type: 'getServiceLog',
             payload: params,
