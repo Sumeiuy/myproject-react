@@ -75,7 +75,7 @@ export const constructScatterData = (options = {}) => {
         minAndMax = getMaxAndMinCi(array);
       } else if (curUnit === GE) {
         minAndMax = getMaxAndMinGE(array);
-      } else if (curUnit === YUAN) {
+      } else if (curUnit.indexOf(YUAN) !== -1) {
         minAndMax = getMaxAndMinMoney(array);
       } else if (curUnit === PERCENT) {
         minAndMax = getMaxAndMinPercentOrPermillage(array);

@@ -15,23 +15,17 @@ import ToDoList from '../../components/customerPool/todo/ToDoList';
 
 import styles from './todo.less';
 
+const curPageNum = 1;
+const pageSize = 10;
+
 const mapStateToProps = state => ({
   todolist: state.customerPool.todolist,
   data: state.customerPool.todolistRecord,
-  todoPage: state.customerPool.todoPage,
 });
 
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
-  search: query => ({
-    type: 'customerPool/search',
-    payload: query,
-  }),
-  pageChange: query => ({
-    type: 'customerPool/pageChange',
-    payload: query,
-  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -44,23 +38,51 @@ export default class ToDo extends PureComponent {
     location: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
-    search: PropTypes.func.isRequired,
-    todoPage: PropTypes.object.isRequired,
-    pageChange: PropTypes.func.isRequired,
   }
 
   @autobind
   onSearch(value) {
-    this.props.search(value);
+    // this.props.search(value);
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        keyword: value,
+        curPageNum,
+        pageSize,
+      },
+    });
   }
 
   @autobind
   pageChange(obj) {
-    this.props.pageChange(obj);
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...obj,
+      },
+    });
+    // this.props.pageChange(obj);
+  }
+
+  @autobind
+  sizeChange(obj) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...obj,
+      },
+    });
   }
 
   render() {
-    const { data, todoPage, todolist } = this.props;
+    const { data, todolist, location } = this.props;
+    const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
         <Row type="flex" justify="space-between" align="middle">
@@ -72,6 +94,7 @@ export default class ToDo extends PureComponent {
               <Input.Search
                 className="search-input"
                 placeholder="请输入任务名称"
+                defaultValue={keyword}
                 onSearch={this.onSearch}
               />
             </div>
@@ -81,8 +104,9 @@ export default class ToDo extends PureComponent {
           className="todoList"
           data={data}
           todolist={todolist}
-          todoPage={todoPage}
-          onChange={this.pageChange}
+          onPageChange={this.pageChange}
+          onSizeChange={this.sizeChange}
+          location={location}
         />
       </div>
     );
