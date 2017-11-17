@@ -672,7 +672,7 @@ const pageConfig = {
       {
         dataIndex: 'paraVal',
         key: 'paraVal',
-        title: '值',
+        title: '值(元)',
       },
       {
         dataIndex: 'preCondition',

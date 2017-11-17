@@ -4,16 +4,20 @@ import classnames from 'classnames';
 import style from './tablelist.less';
 import Icon from '../Icon';
 
+// 私密客户取消
+const PERMISSION_CUST_CANCLE = '0102';
 export default class TableList extends PureComponent {
   static propTypes = {
     info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
     onEmitUpdateValue: PropTypes.func,
+    subType: PropTypes.string,
   }
 
   static defaultProps = {
     info: [],
     onEmitUpdateValue: null,
+    subType: '',
   }
 
   get eleList() {
@@ -46,7 +50,7 @@ export default class TableList extends PureComponent {
           >{item.businessDepartment}</span>
           <div
             className={classnames(['text-center',
-              { 'flex-base_0': statusType === 'ready' },
+              { 'flex-base_0': statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
               { 'flex-base_1': statusType !== 'ready' },
             ])}
           >
@@ -80,7 +84,7 @@ export default class TableList extends PureComponent {
           >所属营业部</span>
           <span
             className={classnames(['text-center',
-              { 'flex-base_0': this.props.statusType === 'ready' },
+              { 'flex-base_0': this.props.statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
               { 'flex-base_1': this.props.statusType !== 'ready' },
             ])}
           >操作</span>

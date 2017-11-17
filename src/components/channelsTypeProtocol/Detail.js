@@ -105,7 +105,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
           <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
           <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
-          <InfoItem label="合约有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="协议有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

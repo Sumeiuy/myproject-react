@@ -36,10 +36,11 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -80,27 +81,27 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
   // 获取客户列表
-  getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
+  getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', true),
   // 获取右侧详情
   getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
   // 查询操作类型/子类型/模板列表
-  queryTypeVaules: fetchDataFunction(false, 'channelsTypeProtocol/queryTypeVaules'),
+  queryTypeVaules: fetchDataFunction(true, 'channelsTypeProtocol/queryTypeVaules', true),
   // 根据所选模板id查询模板对应协议条款
-  queryChannelProtocolItem: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolItem'),
+  queryChannelProtocolItem: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolItem', true),
   // 查询协议产品列表
-  queryChannelProtocolProduct: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolProduct'),
+  queryChannelProtocolProduct: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolProduct', true),
   // 保存详情
-  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData'),
+  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData', true),
   // 查询客户
-  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust'),
+  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust', true),
   // 清除协议产品列表
   clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
   // 获取审批人
   getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
   // 提交审批流程
-  doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove'),
+  doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', true),
   // 验证客户
-  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate'),
+  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -267,7 +268,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     } = this.props;
     if (currentId === id) return;
     getProtocolDetail({
-      id: currentId,
+      id,
     });
   }
 
@@ -352,27 +353,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
       title: '提示',
       content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
       onOk: () => {
-        // const {
-        //   location: {
-        //     query,
-        //   },
-        // } = this.props;
-        // const params = {
-        //   ...constructSeibelPostBody(query, 1, 10),
-        //   type: pageType,
-        // };
-        this.setState({
-          ...this.state,
-          approverModal: true,
-          flowAuditors: btnItem.flowAuditors,
-          protocolData: formData,
+        const { saveProtocolData } = this.props;
+        saveProtocolData(formData).then(() => {
+          this.setState({
+            approverModal: true,
+            flowAuditors: btnItem.flowAuditors,
+            protocolData: formData,
+          });
         });
-        // saveProtocolData({
-        //   formData,
-        //   params,
-        // }).then(() => {
-        //   this.closeModal('editFormModal');
-        // });
       },
       onCancel: () => {
         console.log('Cancel');
@@ -383,33 +371,29 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    const { saveProtocolData, doApprove } = this.props;
-    const { protocolData } = this.state;
-    saveProtocolData(protocolData).then(() => {
-      const {
+    const { doApprove } = this.props;
+    const {
         location: {
           query,
         },
       } = this.props;
-      const params = {
-        ...constructSeibelPostBody(query, 1, 10),
-        type: pageType,
-      };
-      doApprove({
-        formData: {
-          itemId: this.props.itemId,
-          flowId: '',
-          auditors: auth.login,
-          groupName: auth.groupName,
-          operate: '1',
-          approverIdea: '',
-        },
-        params,
-      }).then((data) => {
-        console.log('data', data);
-        this.closeModal('editFormModal');
-        this.closeModal('approverModal');
-      });
+    const params = {
+      ...constructSeibelPostBody(query, 1, 10),
+      type: pageType,
+    };
+    doApprove({
+      formData: {
+        itemId: this.props.itemId,
+        flowId: '',
+        auditors: auth.login,
+        groupName: auth.groupName,
+        operate: '1',
+        approverIdea: '',
+      },
+      params,
+    }).then(() => {
+      this.closeModal('editFormModal');
+      this.closeModal('approverModal');
     });
   }
 
@@ -572,7 +556,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         {
           editFormModal ?
             <CommonModal {...editFormModalProps} />
-          :
+            :
             null
         }
         {

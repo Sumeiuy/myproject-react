@@ -74,12 +74,12 @@ export default class DropdownSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { value: nextValue } = nextProps;
-    this.setState({
-      value: nextValue,
-    });
-    // const { value: preValue } = this.props;
-    // if (preValue !== nextValue) {
-    // }
+    const { value: preValue } = this.props;
+    if (preValue !== nextValue) {
+      this.setState({
+        value: nextValue,
+      });
+    }
   }
 
   get getSearchListDom() {
@@ -90,7 +90,8 @@ export default class DropdownSelect extends PureComponent {
         this.setState({
           isSHowModal: false,
           value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
-        });
+          searchValue: '',
+        }, this.toSearch);
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
       return (
