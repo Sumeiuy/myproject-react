@@ -91,14 +91,23 @@ export default class ViewpointDetail extends PureComponent {
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
 
     // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
-    const formateAbstract = _.isEmpty(abstract) ? (
+    const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
       abstract.replace(
         /<\/?([^>]+?)>/g,
-        argument => (argument.match(/<\/?p[^>]*?>/g) ? argument : ''),
+        (argument) => {
+          if (!_.isEmpty(argument.match(/<p[^>]*?>/g))) {
+            return '<p>';
+          } else if (!_.isEmpty(argument.match(/<\/p[^>]*?>/g))) {
+            return '</p>';
+          }
+          return '';
+        },
       )
     );
+    // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
+    const formateAbstract = newFormateAbstract.replace('↵', '');
     return (
       <div className={styles.listContainer}>
         <div className={styles.inner} >
