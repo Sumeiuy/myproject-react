@@ -7,6 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Tooltip } from 'antd';
+import classnames from 'classnames';
 import { fspContainer } from '../../../config';
 import ChartLineWidget from './ChartLine';
 // import { helper } from '../../../utils';
@@ -109,6 +110,14 @@ export default class SixMonthEarnings extends PureComponent {
         maxTotAsetYValue = '0';
       }
     }
+    const lastestProfitCls = classnames({
+      red: lastestProfit >= 0,
+      green: lastestProfit < 0,
+    });
+    const lastestProfitRateCls = classnames({
+      red: lastestProfitRate >= 0,
+      green: lastestProfitRate < 0,
+    });
     const suspendedLayer = (
       <div
         className={`${styles.showCharts}`}
@@ -127,14 +136,14 @@ export default class SixMonthEarnings extends PureComponent {
           <div>
             <p className="tit">本月收益</p>
             <p className="asset">
-              <span className="num redNum">{lastestPrifitsValue}</span>
-              <span className="unit redUnit">{lastestPrifitsUnit}</span>
+              <span className={`num ${lastestProfitCls}`}>{lastestPrifitsValue}</span>
+              <span className={`unit ${lastestProfitCls}`}>{lastestPrifitsUnit}</span>
             </p>
           </div>
           <div>
             <p className="tit">本月收益率</p>
             <p className="asset">
-              <span className="num redNum">{lastestPrifitsRate}</span>
+              <span className={`num ${lastestProfitRateCls}`}>{lastestPrifitsRate}</span>
             </p>
           </div>
         </div>

@@ -28,10 +28,6 @@ export default {
     todolist: [],
     // 存放筛选后数据
     todolistRecord: [],
-    // 待办列表页码
-    todoPage: {
-      curPageNum: 1,
-    },
     manageIndicators: {},
     // 组织机构树
     custRange: [],
@@ -169,6 +165,14 @@ export default {
 
         const todoListUrl = matchRoute('todo', pathname);
         if (todoListUrl) {
+          const { keyword } = params;
+          if (keyword) {
+            dispatch({
+              type: 'search',
+              payload: keyword,
+            });
+            return;
+          }
           dispatch({
             type: 'getToDoList',
           });
@@ -248,18 +252,6 @@ export default {
       yield put({
         type: 'searchSuccess',
         payload: todolist.filter(v => v.subject.indexOf(payload) > -1),
-      });
-    },
-    // 代办流程任务页数改变
-    * pageChange({ payload }, { put, select }) {
-      const todoPage = yield select(state => state.customerPool.todoPage);
-      const newPage = {
-        ...todoPage,
-        ...payload,
-      };
-      yield put({
-        type: 'pageChangeSuccess',
-        payload: newPage,
       });
     },
     // 获取客户列表
@@ -761,12 +753,6 @@ export default {
         todoPage: {
           curPageNum: 1,
         },
-      };
-    },
-    pageChangeSuccess(state, action) {
-      return {
-        ...state,
-        todoPage: action.payload,
       };
     },
     // 客户池用户范围

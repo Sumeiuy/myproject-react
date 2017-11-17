@@ -315,6 +315,8 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc,
       timelyIntervalValue,
+      labelDesc,
+      labelName,
     } = finalData;
 
     let postBody = {
@@ -344,6 +346,8 @@ export default class TaskFlow extends PureComponent {
         queryLabelDTO: {
           ptyMngId: helper.getEmpId(),
           orgId,
+          labelDesc,
+          labelName,
         },
         labelCustNums,
         ...postBody,
