@@ -15,8 +15,8 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/permission/Detail';
-import PermissionList from '../../components/common/biz/CommonList';
-import seibelColumns from '../../components/common/biz/seibelColumns';
+import PermissionList from '../../components/common/appList';
+// import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
 import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient_';
@@ -274,18 +274,6 @@ export default class Permission extends PureComponent {
   showModifyModal() {
     this.setState(prevState => ({ isShowModifyModal: !prevState.isShowModifyModal }));
   }
-  /**
-   * 构造表格的列数据
-   * 传参为icon的type
-   */
-  @autobind
-  constructTableColumns() {
-    return seibelColumns({
-      pageName: 'permission',
-      type: 'kehu1',
-      pageData: permission,
-    });
-  }
 
   /**
    * 检查部分属性是否相同
@@ -382,7 +370,9 @@ export default class Permission extends PureComponent {
         list={list}
         replace={replace}
         location={location}
-        columns={this.constructTableColumns()}
+        pageName="permission"
+        type="kehu1"
+        pageData={permission}
       />
     );
 

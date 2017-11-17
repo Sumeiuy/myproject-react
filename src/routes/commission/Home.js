@@ -18,8 +18,8 @@ import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader';
-import CommissionList from '../../components/common/biz/CommonList';
-import seibelColumns from '../../components/common/biz/seibelColumns';
+import CommissionList from '../../components/common/appList';
+// import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import { seibelConfig } from '../../config';
 import { permission } from '../../utils';
@@ -513,16 +513,6 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
-  // 生成左侧列表页面的数据列
-  @autobind
-  constructTableColumns() {
-    return seibelColumns({
-      pageName: 'commission',
-      type: 'yongjin',
-      pageData: commission,
-    });
-  }
-
   // 打开审批记录弹出窗
   @autobind
   openApprovalBoard() {
@@ -605,8 +595,10 @@ export default class CommissionHome extends PureComponent {
         list={list}
         replace={replace}
         location={location}
-        columns={this.constructTableColumns()}
         clickRow={this.handleListRowClick}
+        pageName="commission"
+        type="yongjin"
+        pageData={commission}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
