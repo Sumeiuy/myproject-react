@@ -175,8 +175,8 @@ const chartData = {
    * 此处需要新增对总数的处理
    * 总数的单位由各项来决定
    */
-  dealStackSeriesMoney(stackSeries, totals) {
-    let newUnit = '元';
+  dealStackSeriesMoney(stackSeries, totals, unit) {
+    let newUnit = unit;
     let newStackSeries = stackSeries;
     // 合计值
     let newTotals = totals.map(convert2number);
@@ -191,11 +191,11 @@ const chartData = {
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
     if (maxMoney > 100000000) {
-      newUnit = '亿元';
+      newUnit = `亿${newUnit}`;
       newStackSeries = newStackSeries.map(toFixedData(100000000));
       newTotals = newTotals.map(toFixedTotals(100000000));
     } else if (maxMoney > 10000) {
-      newUnit = '万元';
+      newUnit = `万${newUnit}`;
       newStackSeries = newStackSeries.map(toFixedData(10000));
       newTotals = newTotals.map(toFixedTotals(10000));
     }

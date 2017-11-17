@@ -28,6 +28,7 @@ const HU = ZHUNICODE.HU;
 const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
 const GE = ZHUNICODE.GE;
+const YUANNIAN = ZHUNICODE.YUANNIAN;
 
 export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
@@ -117,6 +118,8 @@ export const constructScatterData = (options = {}) => {
     getYAxisUnit(array, unit) {
       if (unit === YUAN) {
         return FixNumber.toFixedMoney(array);
+      } else if (unit === YUANNIAN) {
+        return FixNumber.toFixedNewMoney(array);
       } else if (unit === CI) {
         return FixNumber.toFixedCI(array);
       } else if (unit === GE) {
