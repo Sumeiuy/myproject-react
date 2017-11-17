@@ -311,7 +311,7 @@ export default class Pageheader extends PureComponent {
     const { createTime } = this.state;
 
     const dateProps = {
-      allowClear: false,
+      allowClear: true,
       boxStyle: datePickerStyle,
       placeholder: 'yyyy/mm/dd',
       dateFormat,
