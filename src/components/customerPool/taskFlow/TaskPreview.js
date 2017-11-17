@@ -300,7 +300,7 @@ export default class TaskPreview extends PureComponent {
                   <div>{customNum || 0}户</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>标签说明：</div>
+                  <div>标签描述：</div>
                   <div>{labelDesc || '--'}</div>
                 </div>
               </div>
