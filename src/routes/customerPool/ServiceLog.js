@@ -16,7 +16,6 @@ import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
-const INITIAL_PAGE_NUM = 1;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -24,6 +23,7 @@ const today = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
 const sixMonth = moment(today).subtract(6, 'months');
 const sixDate = moment(sixMonth).format('YYYY-MM-DD HH:mm:ss');
+const PAGE_NUM = 1;
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -79,7 +79,7 @@ export default class CreateTaskForm extends PureComponent {
       showBtn: true,
       logData: [],
       loading: props.serviceLogDataLoading,
-      pageNum: 0,
+      pageNum: 1,
     };
   }
   componentWillMount() {
@@ -140,7 +140,7 @@ export default class CreateTaskForm extends PureComponent {
         serveDateFrom: start,
         serveDateTo: end,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: PAGE_NUM,
       },
     });
   }
@@ -202,7 +202,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveSource: value,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: PAGE_NUM,
       },
     });
   }
@@ -235,7 +235,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveType: type,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: PAGE_NUM,
       },
     });
   }
