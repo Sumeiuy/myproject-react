@@ -95,12 +95,10 @@ export default class ViewpointDetail extends PureComponent {
       '<p>暂无内容</p>'
     ) : (
       abstract.replace(
-        /<\/?([^>]+?)>/g,
-        (argument) => {
-          if (!_.isEmpty(argument.match(/<p[^>]*?>/g))) {
-            return '<p>';
-          } else if (!_.isEmpty(argument.match(/<\/p[^>]*?>/g))) {
-            return '</p>';
+        /<(\/?)([^\s>]+)[^>]*?>/g,
+        (all, isEnd, tagName) => {
+          if (_.includes(['p', 'pre'], tagName)) {
+            return _.isEmpty(isEnd) ? '<p>' : '/p';
           }
           return '';
         },
