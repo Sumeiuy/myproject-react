@@ -14,6 +14,7 @@ import {
   filterOrgModelData,
   getStackSeries,
   dealStackSeriesMoney,
+  dealStackSeriesNewMoney,
   dealStackData,
   fixedMoneyMaxMin,
   fixedPeopleMaxMin,
@@ -32,6 +33,7 @@ const {
   HU,
   YUAN,
   UNDISTRIBUTED,
+  YUANNIAN,
 } = ZHUNICODE;
 const getIcon = iconTypeMap.getIcon;
 
@@ -130,7 +132,6 @@ export default class ChartBarStack extends PureComponent {
       return;
     }
     const anid = arg.event.target.anid;
-    console.log('anid', anid);
     const index = anid.split('_')[1];
     this.setState({
       mouseoverLabelIndex: Number(index),
@@ -179,6 +180,12 @@ export default class ChartBarStack extends PureComponent {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       // 此处先前写的newTotals不在使用，需要注销
       const tempStackSeries = dealStackSeriesMoney(stackSeries, totals);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
+    } else if (unit === YUANNIAN) {
+      // 如果图表中的数据表示的是金额并且单位为元/年，需要对其进行单位识别和重构
+      // 此处先前写的newTotals不在使用，需要注销
+      const tempStackSeries = dealStackSeriesNewMoney(stackSeries, totals);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
     } else if (unit === HU) {
