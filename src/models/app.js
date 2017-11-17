@@ -31,6 +31,8 @@ export default {
     customerList: EMPTY_LIST,
     // 可申请客户列表
     canApplyCustList: EMPTY_LIST,
+    // 审批人列表（服务经理接口）
+    approvePersonList: EMPTY_LIST,
   },
   reducers: {
     // 获取员工职责与职位
@@ -63,10 +65,10 @@ export default {
     // 获取拟稿人
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empList = EMPTY_LIST } = resultData;
+      const { servicePeopleList = EMPTY_LIST } = resultData;
       return {
         ...state,
-        drafterList: empList,
+        drafterList: servicePeopleList,
       };
     },
     // 获取列表
@@ -114,6 +116,15 @@ export default {
       return {
         ...state,
         dict,
+      };
+    },
+    // 审批人列表（服务经理接口）
+    getApprovePersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { servicePeopleList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        approvePersonList: servicePeopleList,
       };
     },
   },
@@ -168,7 +179,8 @@ export default {
     },
     // 获取拟稿人
     * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getDrafterList, payload);
+      // const response = yield call(seibelApi.getDrafterList, payload);
+      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
       yield put({
         type: 'getDrafterListSuccess',
         payload: response,
@@ -187,6 +199,14 @@ export default {
       const response = yield call(seibelApi.getCustRange, payload);
       yield put({
         type: 'getCustRangeSuccess',
+        payload: response,
+      });
+    },
+    // 审批人列表（服务经理接口）
+    * getApprovePersonList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
+      yield put({
+        type: 'getApprovePersonListSuccess',
         payload: response,
       });
     },

@@ -1,6 +1,8 @@
 /**
  * @file Select.js
  * @author honggaunqging
+ * @Last Modified by:   K0240008
+ * @Last Modified:新增width属性 默认值为220px
  */
 
 import React, { PureComponent } from 'react';
@@ -17,10 +19,14 @@ export default class CommonSelect extends PureComponent {
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    width: PropTypes.string,
+    disabled: PropTypes.bool,
   }
 
   static defaultProps = {
     value: '全部',
+    width: '',
+    disabled: false,
   }
 
   @autobind
@@ -37,7 +43,7 @@ export default class CommonSelect extends PureComponent {
 
 
   render() {
-    const { data, name, value, onChange, ...resetProps } = this.props;
+    const { data, name, value, onChange, width, ...resetProps } = this.props;
     const options = this.makeSelectOptions(data);
     return (
       <div className={styles.commomSelect}>
@@ -46,6 +52,8 @@ export default class CommonSelect extends PureComponent {
           value={value}
           onChange={key => onChange(name, key)}
           dropdownMatchSelectWidth={false}
+          style={{ width }}
+          dropdownStyle={{ width }}
           {...resetProps}
         >
           {options}
