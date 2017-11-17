@@ -105,7 +105,7 @@ export default class PerformanceIndicators extends PureComponent {
         indicatorArray[1],  // 服务客户资产
         indicatorArray[2],  // 签约客户数
         indicatorArray[3],  // 签约客户资产
-        indicatorArray[9],  // 新开客户数
+        indicatorArray[12],  // 新开客户数
         indicatorArray[4],  // 新开客户资产
       ],
     };
@@ -113,20 +113,20 @@ export default class PerformanceIndicators extends PureComponent {
       key: 'yewukaitong',
       headLine: '业务开通',
       data: isEmpty ? [] : [
-        indicatorArray[10], // 天天发
-        indicatorArray[11], // 港股通
-        indicatorArray[12], // 深港通
-        indicatorArray[13], // 融资融券
-        indicatorArray[14], // 新三板
-        indicatorArray[15], // 股票期权
-        indicatorArray[16], // 创业板
+        indicatorArray[13], // 天天发
+        indicatorArray[14], // 港股通
+        indicatorArray[15], // 深港通
+        indicatorArray[16], // 融资融券
+        indicatorArray[17], // 新三板
+        indicatorArray[18], // 股票期权
+        indicatorArray[19], // 创业板
       ],
     };
     const hsRate = {
       key: 'hushenguijilv',
       headLine: '沪深归集率',
       data: isEmpty ? [] : [
-        indicatorArray[17], // 沪深归集率
+        indicatorArray[20], // 沪深归集率
       ],
     };
     const productSale = {
@@ -143,19 +143,19 @@ export default class PerformanceIndicators extends PureComponent {
       key: 'jingchuangshou',
       headLine: '净创收',
       data: isEmpty ? [] : [
-        indicatorArray[18], // 净佣金收入
-        indicatorArray[19], // 产品净手续费收入
-        indicatorArray[20], // 净利息收入
+        indicatorArray[5], // 净佣金收入
+        indicatorArray[6], // 产品净手续费收入
+        indicatorArray[7], // 净利息收入
       ],
     };
     const serviceIndicator = {
       key: 'fuwuzhibiao',
       headLine: '服务指标',
       data: isEmpty ? [] : [
-        indicatorArray[5],  // MOT 完成率
-        indicatorArray[6],  // 服务覆盖率
-        indicatorArray[7],  // 资产配置覆盖率
-        indicatorArray[8],  // 信息完备率
+        indicatorArray[8],  // 必做MOT任务完成率
+        indicatorArray[9],  // 服务覆盖率
+        indicatorArray[10],  // 多元产品覆盖率
+        indicatorArray[11],  // 客户信息完善率
       ],
     };
     const newIndicators = [
