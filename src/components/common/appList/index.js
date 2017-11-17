@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-11-16 14:31:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-16 17:52:28
+ * @Last Modified time: 2017-11-17 10:21:19
  * @description 合作合约、服务订购、私密申请通用的List组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { Pagination } from 'antd';
+import { Pagination } from 'antd';
 import _ from 'lodash';
 
 import AppItem from './appItem';
@@ -172,9 +172,9 @@ export default class AppList extends PureComponent {
   }
 
   render() {
-    const { list: { resultData = [] } } = this.props;
-      // location: { query: { pageNum, pageSize } }page = {}
-    // const { totalCount } = page;
+    const { list: { resultData = [], page = {} },
+      location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { totalCount = 0 } = page;
     const { curSelectedRow } = this.state;
 
     if (!resultData) {
@@ -183,19 +183,19 @@ export default class AppList extends PureComponent {
 
     const { pageName, type, pageData } = this.props;
 
-    // const paginationOptions = {
-    //   current: parseInt(pageNum, 10),
-    //   defaultCurrent: 1,
-    //   size: 'small', // 迷你版
-    //   total: totalCount,
-    //   pageSize: parseInt(pageSize, 10),
-    //   defaultPageSize: 10,
-    //   onChange: this.handlePageChange,
-    //   showTotal: total => `共${total}个`,
-    //   showSizeChanger: true,
-    //   onShowSizeChange: this.handleShowSizeChange,
-    //   pageSizeOptions: this.constructPageSizeOptions(totalCount),
-    // };
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: totalCount,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageChange,
+      showTotal: total => `共${total}个`,
+      showSizeChanger: true,
+      onShowSizeChange: this.handleShowSizeChange,
+      pageSizeOptions: this.constructPageSizeOptions(totalCount),
+    };
 
     return (
       <div className={styles.pageCommonList}>
@@ -213,6 +213,9 @@ export default class AppList extends PureComponent {
               />
             ))
           }
+        </div>
+        <div className={styles.pagination}>
+          <Pagination {...paginationOptions} />
         </div>
       </div>
     );
