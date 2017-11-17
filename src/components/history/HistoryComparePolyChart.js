@@ -33,6 +33,7 @@ const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
 const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
+const YUANNIAN = ZHUNICODE.YUANNIAN;
 const GE = ZHUNICODE.GE;
 
 export default class HistoryComparePolyChart extends PureComponent {
@@ -162,7 +163,9 @@ export default class HistoryComparePolyChart extends PureComponent {
   @autobind
   getYAxisUnit(array, yAxisUnit, isCommissionRate) {
     if (!_.isEmpty(array)) {
-      if (yAxisUnit.indexOf(YUAN) !== -1) {
+      if (yAxisUnit.indexOf(YUANNIAN) !== -1) {
+        return FixNumber.toFixedNewMoney(array);
+      } else if (yAxisUnit.indexOf(YUAN) !== -1) {
         return FixNumber.toFixedMoney(array);
       } else if (yAxisUnit.indexOf(HU) !== -1) {
         return toFixedCust(array);

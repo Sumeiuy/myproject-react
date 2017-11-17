@@ -16,7 +16,7 @@ import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
-
+const INITIAL_PAGE_NUM = 1;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -79,6 +79,7 @@ export default class CreateTaskForm extends PureComponent {
       showBtn: true,
       logData: [],
       loading: props.serviceLogDataLoading,
+      pageNum: 0,
     };
   }
   componentWillMount() {
@@ -139,6 +140,7 @@ export default class CreateTaskForm extends PureComponent {
         serveDateFrom: start,
         serveDateTo: end,
         serveDateToPaged: null,
+        pageNum: INITIAL_PAGE_NUM,
       },
     });
   }
@@ -171,10 +173,14 @@ export default class CreateTaskForm extends PureComponent {
     const { location: { query },
       getServiceLogMore,
     } = this.props;
-    const { logData } = this.state;
+    const { logData, pageNum } = this.state;
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
+    params.pageNum = pageNum + 1;
+    this.setState({
+      pageNum: pageNum + 1,
+    });
     // params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
@@ -196,6 +202,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveSource: value,
         serveDateToPaged: null,
+        pageNum: INITIAL_PAGE_NUM,
       },
     });
   }
@@ -228,6 +235,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveType: type,
         serveDateToPaged: null,
+        pageNum: INITIAL_PAGE_NUM,
       },
     });
   }
