@@ -22,7 +22,7 @@ export default {
   state: {
     custCount: [],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
-    performanceIndicators: [],  // 投顾指标
+    performanceIndicators: EMPTY_OBJECT,  // 投顾指标
     hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
@@ -110,6 +110,8 @@ export default {
     approvalList: [],
     // 存储自建任务数据
     storedCreateTaskData: {},
+    // 任务列表-任务详情基本信息
+    taskBasicInfo: {},
   },
 
   subscriptions: {
@@ -122,6 +124,7 @@ export default {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          params.pageNum = 1; // 默认显示第一页
           dispatch({
             type: 'getServiceLog',
             payload: params,
@@ -688,6 +691,15 @@ export default {
         payload: flowAuditors,
       });
     },
+    // 获取任务列表-任务详情基本信息
+    * getTaskBasicInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryBasicInfo, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getTaskBasicInfoSuccess',
+        payload: { resultData },
+      });
+    },
   },
   reducers: {
     getCustCountSuccess(state, action) {
@@ -1187,6 +1199,14 @@ export default {
       return {
         ...state,
         submitTaskFlowResult: '',
+      };
+    },
+    // 获取任务列表-任务详情基本信息成功
+    getTaskBasicInfoSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        taskBasicInfo: resultData,
       };
     },
   },

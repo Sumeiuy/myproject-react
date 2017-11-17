@@ -117,7 +117,7 @@ export default class Home extends PureComponent {
     searchHistoryVal: PropTypes.string,
     getInformation: PropTypes.func.isRequired,
     information: PropTypes.object,
-    performanceIndicators: PropTypes.array,
+    performanceIndicators: PropTypes.object,
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
@@ -143,7 +143,7 @@ export default class Home extends PureComponent {
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
-    performanceIndicators: EMPTY_LIST,
+    performanceIndicators: EMPTY_OBJECT,
     hsRateAndBusinessIndicator: EMPTY_LIST,
     custCount: EMPTY_LIST,
   }
@@ -272,7 +272,7 @@ export default class Home extends PureComponent {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === (cycleSelect || (cycle[0] || {}).key)).name) || {}; // 本月
+        item.key === ((cycleSelect || (cycle[0] || {}).key)) || {}).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;

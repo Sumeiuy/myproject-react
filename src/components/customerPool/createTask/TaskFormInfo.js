@@ -197,7 +197,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        如果要在任务提示中包含对应每个客户的属性数值，可以用 &#123;xx&#125; 插入参数，比如  &#123;已开通业务&#125;。注意“ &#123;”前要有空格。
+        如果要在任务提示中包含对应每个客户的属性数值，可以用 $xx 插入参数，比如 $已开通业务。注意“ $ ”前要有空格。
       </div>
     );
   }
@@ -335,7 +335,7 @@ export default class TaskFormInfo extends PureComponent {
                 rows={5}
                 placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-300字）"
                 style={{ width: '100%' }}
-                maxLength={1000}
+                maxLength={300}
               />,
             )}
           </FormItem>

@@ -446,7 +446,7 @@ export default class Search extends PureComponent {
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
                 onSearch={this.handleSearch}
-                placeholder={'经济客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
+                placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}
               >
