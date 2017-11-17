@@ -32,7 +32,7 @@ const getLabelList = arr => arr.map(v => (v || {}).name);
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
-    indicators: PropTypes.array,
+    indicators: PropTypes.object,
     push: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
@@ -40,7 +40,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   static defaultProps = {
-    indicators: [],
+    indicators: {},
     cycle: [],
   }
 
@@ -95,67 +95,73 @@ export default class PerformanceIndicators extends PureComponent {
     });
   }
 
-  formatIndicators(indicatorArray) {
-    const isEmpty = _.isEmpty(indicatorArray);
+  formatIndicators(indicator) {
+    const isEmpty = _.isEmpty(indicator);
+    const { custNum, totAset, currSignCustNum, currSignCustAset, otcTranAmt,
+      newCustInAset, purRake, prdtPurFee, purInteIncome, motCompletePercent,
+      serviceCompPercent, feeConfigPercent, infoCompPercent, newCustNum,
+      ttfBusiCurr, hgtBusiCurr, sgtBusiCurr, rzrqBusiCurr, xsbBusiCurr,
+      gpqqBusiCurr, cybBusiCurr, shzNpRate, kfTranAmt, smTranAmt, taTranAmt,
+    } = (isEmpty ? {} : indicator);
     const custAndProperty = {
       key: 'kehujizichan',
       headLine: '客户及资产',
       data: isEmpty ? [] : [
-        indicatorArray[0],  // 服务客户数
-        indicatorArray[1],  // 服务客户资产
-        indicatorArray[2],  // 签约客户数
-        indicatorArray[3],  // 签约客户资产
-        indicatorArray[12],  // 新开客户数
-        indicatorArray[4],  // 新开客户资产
+        custNum,  // 服务客户数
+        totAset,  // 服务客户资产
+        currSignCustNum,  // 签约客户数
+        currSignCustAset,  // 签约客户资产
+        newCustNum,  // 新开客户数
+        newCustInAset,  // 新开客户资产
       ],
     };
     const establishBusiness = {
       key: 'yewukaitong',
       headLine: '业务开通',
       data: isEmpty ? [] : [
-        indicatorArray[13], // 天天发
-        indicatorArray[14], // 港股通
-        indicatorArray[15], // 深港通
-        indicatorArray[16], // 融资融券
-        indicatorArray[17], // 新三板
-        indicatorArray[18], // 股票期权
-        indicatorArray[19], // 创业板
+        ttfBusiCurr, // 天天发
+        hgtBusiCurr, // 港股通
+        sgtBusiCurr, // 深港通
+        rzrqBusiCurr, // 融资融券
+        xsbBusiCurr, // 新三板
+        gpqqBusiCurr, // 个股期权
+        cybBusiCurr, // 创业板
       ],
     };
     const hsRate = {
       key: 'hushenguijilv',
       headLine: '沪深归集率',
       data: isEmpty ? [] : [
-        indicatorArray[20], // 沪深归集率
+        shzNpRate, // 沪深归集率
       ],
     };
     const productSale = {
       key: 'chanpinxiaoshou',
       headLine: '产品销售',
       data: isEmpty ? [] : [
-        indicatorArray[21], // 公募
-        indicatorArray[22], // 私模
-        indicatorArray[23], // 紫金
-        indicatorArray[24], // OTC
+        kfTranAmt, // 公募
+        smTranAmt, // 私模
+        taTranAmt, // 紫金
+        otcTranAmt, // OTC
       ],
     };
     const pureIcome = {
       key: 'jingchuangshou',
       headLine: '净创收',
       data: isEmpty ? [] : [
-        indicatorArray[5], // 净佣金收入
-        indicatorArray[6], // 产品净手续费收入
-        indicatorArray[7], // 净利息收入
+        purRake, // 净佣金收入
+        prdtPurFee, // 产品净手续费收入
+        purInteIncome, // 净利息收入
       ],
     };
     const serviceIndicator = {
       key: 'fuwuzhibiao',
       headLine: '服务指标',
       data: isEmpty ? [] : [
-        indicatorArray[8],  // 必做MOT任务完成率
-        indicatorArray[9],  // 服务覆盖率
-        indicatorArray[10],  // 多元产品覆盖率
-        indicatorArray[11],  // 客户信息完善率
+        motCompletePercent,  // 必做MOT任务完成率
+        serviceCompPercent,  // 服务覆盖率
+        feeConfigPercent,  // 多元产品覆盖率
+        infoCompPercent,  // 客户信息完善率
       ],
     };
     const newIndicators = [

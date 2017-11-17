@@ -117,7 +117,7 @@ export default class Home extends PureComponent {
     searchHistoryVal: PropTypes.string,
     getInformation: PropTypes.func.isRequired,
     information: PropTypes.object,
-    performanceIndicators: PropTypes.array,
+    performanceIndicators: PropTypes.object,
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
@@ -143,7 +143,7 @@ export default class Home extends PureComponent {
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
-    performanceIndicators: EMPTY_LIST,
+    performanceIndicators: EMPTY_OBJECT,
     hsRateAndBusinessIndicator: EMPTY_LIST,
     custCount: EMPTY_LIST,
   }

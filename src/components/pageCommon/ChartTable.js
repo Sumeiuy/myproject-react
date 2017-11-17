@@ -196,17 +196,21 @@ export default class ChartTable extends PureComponent {
   // 根据 column 的 name 计算 column 的宽度
   @autobind
   getColumnWidth(str, unitStr = 0) {
+    let newUnit = unitStr;
+    if (encodeURIComponent(unitStr).indexOf(encodeURIComponent('元')) !== -1) {
+      newUnit = `万${unitStr}`;
+    }
     // 取出字符串对应的字节长度，汉字为 2，英文符号为 1，最终除以 2 当做字符串长度
     const length = getStrLen(str) / 2;
     let unitLength;
-    if (!_.isEmpty(unitStr)) {
-      unitLength = getStrLen(unitStr) / 2;
+    if (!_.isEmpty(newUnit)) {
+      unitLength = getStrLen(newUnit) / 2;
     } else {
       unitLength = 0;
     }
     // TODO，取出每个文字的实际字体大小
-    // 设定每个 column 的宽度，16 为每个字的假想大小，40 为后面的箭头宽度
-    const width = (length * 16) + (unitLength * 16) + 40;
+    // 设定每个 column 的宽度，16 为每个字的假想大小，60 为后面的箭头宽度
+    const width = (length * 16) + (unitLength * 16) + 60;
     // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
     return width < 120 ? 120 : width;
   }
