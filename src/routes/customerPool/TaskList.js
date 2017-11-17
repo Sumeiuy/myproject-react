@@ -13,7 +13,7 @@ import { withRouter, routerRedux } from 'dva/router';
 
 // import confirm from '../../components/common/confirm_';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import TaskListDetail from '../../components/customerPool/taskList/TaskListDetail';
+import TaskListDetail from '../../components/customerPool/tasklist/TaskListDetail';
 // import CommissionList from '../../components/common/biz/CommonList';
 // import seibelColumns from '../../components/common/biz/seibelColumns';
 // import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
