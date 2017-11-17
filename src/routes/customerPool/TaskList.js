@@ -1,90 +1,193 @@
 /**
- * @description 任务列表
- * @author
+ * @file customerPool/TaskList.js
+ *  客户池-任务列表
+ * @author wangjunjun
  */
 
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PropTypes, PureComponent } from 'react';
+import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
-// import _ from 'lodash';
-// import { message } from 'antd';
-
-// import confirm from '../../components/common/confirm_';
+import _ from 'lodash';
+import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import TaskListDetail from '../../components/customerPool/taskList/TaskListDetail';
-// import CommissionList from '../../components/common/biz/CommonList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
-// import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
-// import { seibelConfig } from '../../config';
-// import { permission } from '../../utils';
-// import Barable from '../../decorators/selfBar';
-import './home.less';
+import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import Columns from '../../components/customerPool/tasklist/Columns';
+import RightPanel from '../../components/customerPool/tasklist/RightPanel';
+import LeftList from '../../components/common/biz/CommonList';
+import { seibelConfig, fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-// const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
+import styles from './tasklist.less';
 
-const effects = {
-  // 客户预览
-  previewCustFile: 'customerPool/previewCustFile',
-  getTaskBasicInfo: 'customerPool/getTaskBasicInfo',
-};
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 
-const mapStateToProps = state => ({
-  // 字典信息
-  dict: state.app.dict,
-  // 客户细分导入数据
-  priviewCustFileData: state.customerPool.priviewCustFileData,
-  taskBasicInfo: state.customerPool.taskBasicInfo,
+const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
+
+const { tasklist, tasklist: { pageType, type, status } } = seibelConfig;
+
+const fetchDataFunction = (globalLoading, value) => query => ({
+  type: value,
+  payload: query || {},
+  loading: globalLoading,
 });
 
-const getDataFunction = (loading, type, forceFull) => query => ({
-  type,
-  payload: query || {},
-  loading,
-  forceFull,
+const mapStateToProps = state => ({
+  // 字典
+  dict: state.app.dict,
+  // 登录人信息
+  empInfo: state.app.empInfo,
+  // 左侧列表
+  list: state.app.seibleList,
+  // 客户细分导入数据
+  priviewCustFileData: state.tasklist.priviewCustFileData,
+  taskBasicInfo: state.tasklist.taskBasicInfo,
+  // 列表请求状态
+  seibelListLoading: state.loading.effects['app/getSeibleList'],
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
-  previewCustFile: getDataFunction(true, effects.previewCustFile),
-  getTaskBasicInfo: getDataFunction(true, effects.getTaskBasicInfo),
+  // 获取左侧列表
+  getTasklist: fetchDataFunction(true, 'app/getSeibleList'),
+  previewCustFile: fetchDataFunction(true, 'tasklist/previewCustFile'),
+  getTaskBasicInfo: fetchDataFunction(true, 'tasklist/getTaskBasicInfo'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-// @Barable
 export default class TaskList extends PureComponent {
 
   static propTypes = {
     dict: PropTypes.object,
-    priviewCustFileData: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
+    getTasklist: PropTypes.func.isRequired,
+    list: PropTypes.object.isRequired,
+    priviewCustFileData: PropTypes.object,
     previewCustFile: PropTypes.func.isRequired,
-    getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object.isRequired,
-  }
+    getTaskBasicInfo: PropTypes.func.isRequired,
+    seibelListLoading: PropTypes.bool,
+  };
 
   static defaultProps = {
-    dict: {},
-    // priviewCustFileData: {},
-    // taskBasicInfo: {},
+    dict: EMPTY_OBJECT,
+    priviewCustFileData: EMPTY_OBJECT,
+    seibelListLoading: false,
+  };
+
+  componentDidMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+      getTasklist,
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    // 默认筛选条件
+    getTasklist({
+      ...params,
+      type: pageType,
+    });
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  componentWillMount() {
-    // this.handleTaskBasicInfo();
-    console.warn('taskBasicInfo-->', this.props.taskBasicInfo);
-  }
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps.taskBasicInfo);
+    const {
+      location: { query: nextQuery = EMPTY_OBJECT },
+      list,
+    } = nextProps;
+    const {
+      location: { query: prevQuery = EMPTY_OBJECT },
+      getTasklist,
+     } = this.props;
+    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    // 深比较值是否相等
+    // url发生变化，检测是否改变了筛选条件
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
+        // 只监测筛选条件是否变化
+        const params = constructSeibelPostBody(nextQuery,
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        );
+        getTasklist({
+          ...params,
+          type: pageType,
+        });
+      }
+    }
+    const { seibelListLoading: prevSLL } = this.props;
+    const { seibelListLoading: nextSLL } = nextProps;
+    const applicationBaseInfoList = list.resultData;
+    const { currentId } = nextQuery;
+    const { currentId: prevCurrentId } = prevQuery;
+    /* currentId变化重新请求 */
+    if ((prevSLL && !nextSLL && !_.isEmpty(applicationBaseInfoList)) ||
+      (currentId && (currentId !== prevCurrentId) && !_.isEmpty(applicationBaseInfoList))) {
+      const { getTaskBasicInfo } = this.props;
+      getTaskBasicInfo({
+        flowId: currentId,
+        systemCode: '102330',
+      });
+      this.setState({ detailMessage: {} });
+    }
+    // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
+    if (this.props.taskBasicInfo !== nextProps.taskBasicInfo) {
+      this.setState({ detailMessage: nextProps.taskBasicInfo });
+    }
   }
 
+  /**
+   * 检查部分属性是否相同
+   * @param {*} prevQuery 前一次query
+   * @param {*} nextQuery 后一次query
+   */
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
+    }
+    return true;
+  }
+
+  // 头部新建按钮，跳转到新建表单
+  @autobind
+  handleCreateBtnClick() {
+    const url = '/customerPool/taskFlow';
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({
+        url,
+        param: {
+          id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+          title: '新建自建任务',
+          closable: true,
+          isSpecialTab: true,
+        },
+      });
+    } else {
+      this.props.push(url);
+    }
+  }
+
+  // 生成左侧列表页面的数据列
+  @autobind
+  constructTableColumns() {
+    return Columns({
+      pageName: 'tasklist',
+      type: 'tasklist',
+      pageData: tasklist,
+    });
+  }
 
   @autobind
   handlePreview({ filename, pageNum, pageSize }) {
@@ -98,25 +201,59 @@ export default class TaskList extends PureComponent {
   }
 
   render() {
-    const topPanel = null;
-    const leftPanel = null;
-    const { priviewCustFileData, taskBasicInfo } = this.props;
-    // TODO 此处需要根据不同的子类型使用不同的Detail组件
+    const {
+      location,
+      replace,
+      empInfo,
+      list,
+      taskBasicInfo,
+      priviewCustFileData,
+    } = this.props;
+    const { resultData = EMPTY_LIST } = list;
+    const isEmpty = !resultData.length;
+    // 页面头部需要用到的控件
+    const topPanelNeedWidgets = {
+      needType: true,
+      needStatus: true,
+      needCreator: true,
+      needCreationTime: true,
+    };
+    const topPanel = (
+      <ConnectedSeibelHeader
+        {...topPanelNeedWidgets}
+        location={location}
+        replace={replace}
+        page="tasklist"
+        pageType={pageType}
+        typeOptions={type}
+        stateOptions={status}
+        creatSeibelModal={this.handleCreateBtnClick}
+        empInfo={empInfo}
+      />
+    );
+    const leftPanel = (
+      <LeftList
+        pageName="tasklist"
+        list={list}
+        replace={replace}
+        location={location}
+        columns={this.constructTableColumns()}
+      />
+    );
     const rightPanel = (
-      <TaskListDetail
+      <RightPanel
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
         taskBasicInfo={taskBasicInfo}
       />
     );
     return (
-      <div className="feedbackbox" >
+      <div className={styles.tasklist}>
         <SplitPanel
+          isEmpty={isEmpty}
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          isEmpty={false}
-          leftListClassName="feedbackList"
         />
       </div>
     );
