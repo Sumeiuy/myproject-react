@@ -217,19 +217,22 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    const { protocolDetail } = this.props;
+    const { protocolDetail, saveProtocolData } = this.props;
     confirm({
       title: '提示',
       content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
       onOk: () => {
-        this.setState({
-          ...this.state,
-          approverModal: true,
-          flowAuditors: btnItem.flowAuditors,
-          protocolData: {
-            ...protocolDetail,
-            ...formData,
-          },
+        const protocolData = {
+          ...protocolDetail,
+          ...formData,
+        };
+        saveProtocolData(protocolData).then(() => {
+          this.setState({
+            ...this.state,
+            approverModal: true,
+            flowAuditors: btnItem.flowAuditors,
+            protocolData,
+          });
         });
       },
       onCancel: () => {
@@ -241,33 +244,29 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    const { protocolDetail, saveProtocolData, doApprove } = this.props;
-    const { protocolData } = this.state;
-    console.warn('protocolData', protocolData);
-    saveProtocolData(protocolData).then(() => {
-      const {
-        location: {
-          query,
-        },
-      } = this.props;
-      const params = {
-        ...constructSeibelPostBody(query, 1, 10),
-        type: pageType,
-      };
-      doApprove({
-        formData: {
-          itemId: this.props.itemId,
-          flowId: protocolDetail.flowid,
-          auditors: auth.login,
-          groupName: auth.groupName,
-          approverIdea: '',
-        },
-        params,
-      }).then((data) => {
-        console.warn('data', data);
-        this.closeModal('editFormModal');
-        this.closeModal('approverModal');
-      });
+    const { protocolDetail, doApprove } = this.props;
+    const {
+      location: {
+        query,
+      },
+    } = this.props;
+    const params = {
+      ...constructSeibelPostBody(query, 1, 10),
+      type: pageType,
+    };
+    doApprove({
+      formData: {
+        // itemId: this.props.itemId,
+        flowId: protocolDetail.flowid,
+        auditors: auth.login,
+        groupName: auth.groupName,
+        approverIdea: '',
+      },
+      params,
+    }).then((data) => {
+      console.warn('data', data);
+      this.closeModal('editFormModal');
+      this.closeModal('approverModal');
     });
   }
 

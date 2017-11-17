@@ -63,7 +63,7 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
-    loadingForceFull: PropTypes.string,
+    loadingForceFull: PropTypes.bool,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
@@ -81,7 +81,7 @@ export default class Main extends Component {
     serviceRecordModalVisible: false,
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
-    loadingForceFull: '',
+    loadingForceFull: false,
   }
 
   componentDidMount() {

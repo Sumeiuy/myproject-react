@@ -19,7 +19,7 @@ function Loading({ loading, forceFull }) {
   let left = contentWrapper ? getCssStyle(contentWrapper, 'left') : '0';
   // 新增判断如果forceFull有值，则需要判断是Y或者N，
   // 无值则按默认的方式处理
-  if (forceFull === 'Y') {
+  if (forceFull) {
     // 强制全屏
     top = '0';
     left = '0';
@@ -36,7 +36,7 @@ function Loading({ loading, forceFull }) {
 
 Loading.propTypes = {
   loading: PropTypes.bool.isRequired,
-  forceFull: PropTypes.string.isRequired,
+  forceFull: PropTypes.bool.isRequired,
 };
 
 export default Loading;
