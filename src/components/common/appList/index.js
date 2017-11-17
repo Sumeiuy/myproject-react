@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-16 14:31:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-17 10:21:19
+ * @Last Modified time: 2017-11-17 13:59:31
  * @description 合作合约、服务订购、私密申请通用的List组件
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import { Pagination } from 'antd';
 import _ from 'lodash';
 
-import AppItem from './appItem';
+import AppItem from './AppItem_';
 import styles from './index.less';
 
 export default class AppList extends PureComponent {
