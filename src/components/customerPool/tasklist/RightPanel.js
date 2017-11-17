@@ -26,7 +26,7 @@ const INITIAL_PAGE_SIZE = 10;
 const COLUMN_HEIGHT = 36;
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
-export default class TaskListDetail extends PureComponent {
+export default class RightPanel extends PureComponent {
 
   static propTypes = {
     // location: PropTypes.object.isRequired,
