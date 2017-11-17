@@ -90,7 +90,7 @@ export default class SelectLabelCust extends PureComponent {
 
     const param = {
       condition: value,
-      ptyMngId: helper.getEmpId(),
+      // ptyMngId: helper.getEmpId(),
     };
 
     this.setState({
@@ -115,7 +115,10 @@ export default class SelectLabelCust extends PureComponent {
         orgId,
       });
     } else {
-      getLabelInfo(param);
+      getLabelInfo({
+        ...param,
+        ptyMngId: helper.getEmpId(),
+      });
     }
   }
 

@@ -16,7 +16,6 @@ import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
-const INITIAL_PAGE_NUM = 1;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -140,7 +139,7 @@ export default class CreateTaskForm extends PureComponent {
         serveDateFrom: start,
         serveDateTo: end,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: null,
       },
     });
   }
@@ -202,7 +201,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveSource: value,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: null,
       },
     });
   }
@@ -235,7 +234,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveType: type,
         serveDateToPaged: null,
-        pageNum: INITIAL_PAGE_NUM,
+        pageNum: null,
       },
     });
   }
