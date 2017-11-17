@@ -17,6 +17,7 @@ import {
   getMaxAndMinCi,
   getMaxAndMinGE,
   toFixedMoney,
+  toFixedNewMoney,
   toFixedCust,
   toFixedCI,
   toFixedGE,
@@ -38,6 +39,7 @@ const {
   YUAN,
   GE,
   UNDISTRIBUTED,
+  YUANNIAN,
 } = ZHUNICODE;
 
 export default class ChartBarNormal extends PureComponent {
@@ -281,6 +283,11 @@ export default class ChartBarNormal extends PureComponent {
     } else if (unit === YUAN) {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       const tempSeries = toFixedMoney(seriesData);
+      seriesData = tempSeries.newSeries;
+      unit = tempSeries.newUnit;
+    } else if (unit === YUANNIAN) {
+      // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
+      const tempSeries = toFixedNewMoney(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
     } else if (unit === HU) {

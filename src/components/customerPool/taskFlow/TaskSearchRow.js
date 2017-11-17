@@ -116,6 +116,7 @@ export default class TaskSearchRow extends PureComponent {
       postBody = {
         ...postBody,
         orgId,
+        ptyMngId: helper.getEmpId(),
       };
     } else {
       postBody = {
