@@ -81,27 +81,27 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
   // 获取客户列表
-  getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', 'Y'),
+  getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', true),
   // 获取右侧详情
   getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
   // 查询操作类型/子类型/模板列表
-  queryTypeVaules: fetchDataFunction(true, 'channelsTypeProtocol/queryTypeVaules', 'Y'),
+  queryTypeVaules: fetchDataFunction(true, 'channelsTypeProtocol/queryTypeVaules', true),
   // 根据所选模板id查询模板对应协议条款
-  queryChannelProtocolItem: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolItem', 'Y'),
+  queryChannelProtocolItem: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolItem', true),
   // 查询协议产品列表
-  queryChannelProtocolProduct: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolProduct', 'Y'),
+  queryChannelProtocolProduct: fetchDataFunction(true, 'channelsTypeProtocol/queryChannelProtocolProduct', true),
   // 保存详情
-  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData', 'Y'),
+  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData', true),
   // 查询客户
-  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust', 'Y'),
+  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust', true),
   // 清除协议产品列表
   clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
   // 获取审批人
   getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
   // 提交审批流程
-  doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', 'Y'),
+  doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', true),
   // 验证客户
-  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate', 'Y'),
+  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)

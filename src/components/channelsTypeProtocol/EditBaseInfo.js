@@ -259,6 +259,8 @@ export default class EditBaseInfo extends PureComponent {
         });
       },
       () => {
+        // 清除客户列表
+        this.selectCustComponent.clearValue();
         this.setState({
           client: {},
         });
