@@ -84,6 +84,10 @@ export default class Detail extends PureComponent {
     const scroll = {
       x: true,
     };
+    // 判断是否是十档行情
+    const isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
+    // 判断是否显示下挂客户
+    const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
     let statusLabel = '';
     if (protocolDetail.status) {
       statusLabel = status[Number(protocolDetail.status)].label;
@@ -102,8 +106,15 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           <InfoItem label="协议模板" value={protocolDetail.templateId} />
-          <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
-          <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
+          {
+            isTenLevel ?
+              null
+              :
+              <div>
+                <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
+                <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
+              </div>
+          }
           <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
           <InfoItem label="协议有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
@@ -129,13 +140,18 @@ export default class Detail extends PureComponent {
             titleList={protocolClauseTitleList}
           />
         </div>
-        <div className={styles.detailWrapper}>
-          <InfoTitle head="下挂客户" />
-          <CommonTable
-            data={protocolDetail.cust}
-            titleList={underCustTitleList}
-          />
-        </div>
+        {
+          showUnderCust ?
+            <div className={styles.detailWrapper}>
+              <InfoTitle head="下挂客户" />
+              <CommonTable
+                data={protocolDetail.cust}
+                titleList={underCustTitleList}
+              />
+            </div>
+            :
+            null
+        }
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {

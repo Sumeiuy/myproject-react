@@ -9,12 +9,8 @@
 import { message } from 'antd';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
-import { constructSeibelPostBody, getEmpId } from '../utils/helper';
-import { seibelConfig } from '../config';
+import { getEmpId } from '../utils/helper';
 
-const {
-  pageType,  // 页面类型
-} = seibelConfig.channelsTypeProtocol;
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
@@ -318,17 +314,9 @@ export default {
         const subTypeListParam = {
           typeCode: 'subType',
         };
-        // 查询左侧列表参数
-        const { pageNum, pageSize } = query;
-        const seibleListParam = {
-          ...constructSeibelPostBody(query, pageNum || 1, pageSize || 10),
-          type: pageType,
-        }
         if (pathname === '/channelsTypeProtocol') {
           // 进入页面查询子类型列表
           dispatch({ type: 'queryTypeVaules', payload: subTypeListParam });
-          // 进入页面是查询左侧列表
-          // dispatch({type: 'app/getSeibleList', payload: seibleListParam});
         }
       });
     },
