@@ -102,7 +102,7 @@ export default class PerformanceIndicators extends PureComponent {
       serviceCompPercent, feeConfigPercent, infoCompPercent, newCustNum,
       ttfBusiCurr, hgtBusiCurr, sgtBusiCurr, rzrqBusiCurr, xsbBusiCurr,
       gpqqBusiCurr, cybBusiCurr, shzNpRate, kfTranAmt, smTranAmt, taTranAmt,
-    } = indicator;
+    } = (isEmpty ? {} : indicator);
     const custAndProperty = {
       key: 'kehujizichan',
       headLine: '客户及资产',
