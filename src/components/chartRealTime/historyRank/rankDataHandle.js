@@ -21,6 +21,7 @@ import {
 import {
   getStackSeries,
   dealStackSeriesMoney,
+  dealStackSeriesNewMoney,
   dealStackSeiesHu,
   dealStackData,
   fixedMoneyMaxMin,
@@ -189,6 +190,9 @@ const dataHandle = {
     switch (unit) {
       case YUAN:
         result = dealStackSeriesMoney(stackSeries, summury);
+        break;
+      case YUANNIAN:
+        result = dealStackSeriesNewMoney(stackSeries, summury);
         break;
       case HU:
         result = dealStackSeiesHu(stackSeries, summury);
