@@ -1,10 +1,10 @@
-.treeBody{
-  ::-webkit-scrollbar{
+.treeBody {
+  ::-webkit-scrollbar {
     display: block;
   }
   position: relative;
-  .arrow{
-    &:after{
+  .arrow {
+    &:after {
       position: relative;
       content: "";
       display: inline-block;
@@ -15,18 +15,18 @@
       border-bottom: 4px solid transparent;
     }
   }
-  .treeMain{
+  .treeMain {
     display: flex;
     flex-direction: normal;
     // -webkit-box-orient: horizontal;
     position: relative;
     padding-top: 30px;
-    .treeMainLeft{
+    .treeMainLeft {
       display: flex;
       flex-direction: normal;
-      :global{
+      :global {
         .ant-tree li span.ant-tree-switcher,
-        .ant-tree li span.ant-tree-iconEle{
+        .ant-tree li span.ant-tree-iconEle {
           width: 20px;
           height: 20px;
           margin: -2px 4px 0 0;
@@ -34,8 +34,8 @@
           box-shadow: 0;
         }
         .ant-tree-noline_open,
-        .ant-tree-noline_close{
-          &:after{
+        .ant-tree-noline_close {
+          &:after {
             content: "\E624" !important;
             font-size: 24px !important;
             display: block;
@@ -49,8 +49,8 @@
             box-shadow: 0;
           }
         }
-        .ant-tree-noline_close{
-          &:after{
+        .ant-tree-noline_close {
+          &:after {
             content: "\E627" !important;
             font-size: 22px !important;
             background: #dfdfdf;
@@ -65,19 +65,19 @@
       .treeMainLeftContentTYPE_LSDB_TGJXsummury,
       .treeMainLeftContentTYPE_LSDB_TGJXdetail,
       .treeMainLeftContentTYPE_LSDB_JYYJsummury,
-      .treeMainLeftContentTYPE_LSDB_JYYJdetail{
+      .treeMainLeftContentTYPE_LSDB_JYYJdetail {
         display: flex;
         flex-direction: normal;
         width: 254px;
         // -webkit-box-orient: horizontal;
-        &>div{
-          flex:1 ;
+        & > div {
+          flex: 1;
           box-sizing: border-box;
           border: 1px solid #dfdfdf;
           width: 254px;
           height: 400px;
           overflow-y: auto;
-          &:nth-child(2){
+          &:nth-child(2) {
             border-left: 0;
             flex: 1;
           }
@@ -87,40 +87,40 @@
       .treeMainLeftContentTYPE_TGJXdetail,
       .treeMainLeftContentTYPE_LSDB_TGJXsummury,
       .treeMainLeftContentTYPE_LSDB_TGJXdetail,
-      .treeMainLeftContentTYPE_JYYJdetail{
+      .treeMainLeftContentTYPE_JYYJdetail {
         width: 254px;
       }
       .treeMainLeftContentTYPE_JYYJsummury,
-      .treeMainLeftContentTYPE_LSDB_JYYJsummury{
+      .treeMainLeftContentTYPE_LSDB_JYYJsummury {
         width: 508px;
       }
     }
-    .treeMainRight{
+    .treeMainRight {
       flex: 1;
       margin-left: 16px;
-      &>div{
+      & > div {
         height: 400px;
         overflow-y: auto;
         box-sizing: border-box;
         border: 1px solid #dfdfdf;
         padding: 10px 20px;
         transition: all .3s;
-        .selectItem{
+        .selectItem {
           display: inline-block;
           padding: 4px 7px 4px 15px;
           margin: 10px 10px 0 0;
           background: #f0f0f0;
           border-radius: 4px;
-          &:hover{
-            box-shadow: 0.5px 0.866px 3px 0px rgb( 173, 173, 173 );
+          &:hover {
+            box-shadow: 0.5px 0.866px 3px 0 rgb(173, 173, 173);
           }
         }
-        .treeMainRigthChildTitle{
+        .treeMainRigthChildTitle {
           margin-top: 20px;
-          &:first-child{
+          &:first-child {
             margin-top: 0;
           }
-          h3{
+          h3 {
             height: 30px;
             font-size: 14px;
             line-height: 30px;
@@ -130,21 +130,21 @@
           }
         }
         :global {
-          .anticon-close{
+          .anticon-close {
             margin-left: 7px;
             cursor: pointer;
           }
         }
       }
     }
-    .treeDivNodeTitle{
+    .treeDivNodeTitle {
       position: absolute;
       top: -10px;
       color: #33393c;
       font-size: 16px;
       font-weight: normal;
       line-height: 40px;
-      span{
+      span {
         width: inherit;
         color: #999;
         margin-left: 20px;
@@ -152,17 +152,17 @@
     }
   }
 }
-:global{
+:global {
   .ant-tree li {
     font-size: 14px;
     padding-left: 12px;
     .ant-tree-node-content-wrapper,
-    .ant-tree-node-content-wrapper-normal{
+    .ant-tree-node-content-wrapper-normal {
       width: 170px;
       height: 22px;
       padding: 0;
     }
-    .ant-tree-title{
+    .ant-tree-title {
       display: inline-block;
       width: 100%;
       height: 100%;
@@ -179,64 +179,64 @@
       }
     }
   }
-  .ant-tree-child-tree{
-    li{
+  .ant-tree-child-tree {
+    li {
       padding-left: 0;
     }
   }
-  .ant-tree > li >span.ant-tree-checkbox{
+  .ant-tree > li >span.ant-tree-checkbox {
     display: none;
   }
-  .ant-tree > li > ul li{
-    .ant-tree-switcher{
+  .ant-tree > li > ul li {
+    .ant-tree-switcher {
       display: none;
     }
-    .ant-tree-checkbox{
+    .ant-tree-checkbox {
       margin: 0 8px 0 20px;
     }
-    .ant-tree-node-content-wrapper, .ant-tree-node-content-wrapper-normal{
+    .ant-tree-node-content-wrapper, .ant-tree-node-content-wrapper-normal {
       font-size: 14px;
     }
   }
-  .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree{
+  .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree {
     position: absolute;
     left: 280px;
     top: 45px;
     z-index: 2;
     height: 400px;
     overflow-y: auto;
-    li{
+    li {
       // line-height: 22px;
       margin-left: -20px;
     }
   }
-  .ant-tree-checkbox-checked .ant-tree-checkbox-inner{
+  .ant-tree-checkbox-checked .ant-tree-checkbox-inner {
     border-color: #108ee9;
   }
-  .ant-tree-checkbox-inner{
+  .ant-tree-checkbox-inner {
     width: 14px;
     height: 14px;
     border-color: #999;
   }
 }
-.treeTitle{
+.treeTitle {
   width: 100%;
   color: #33393c;
-  h2{
+  h2 {
     height: 60px;
     line-height: 60px;
     text-indent: 38px;
     font-weight: normal;
     font-size: 16px;
-    &.treeTitlesummury{
+    &.treeTitlesummury {
       background: url('../../../static/images/icon-summury.png') no-repeat 0 center;
       background-size: 22px 22px;
     }
-    &.treeTitledetail{
+    &.treeTitledetail {
       background: url('../../../static/images/icon-detail.png') no-repeat 0 center;
       background-size: 22px 22px;
     }
-    .treeTitleSpan{
+    .treeTitleSpan {
       display: inline-block;
       width: 28px;
       height: 18px;
@@ -246,10 +246,10 @@
     }
   }
 }
-.treeNodeInfo{
+.treeNodeInfo {
   margin-top: 10px;
   min-height: 60px;
-  h4{
+  h4 {
     font-size: 12px;
     color: #999;
     font-weight: normal;
@@ -257,10 +257,10 @@
     text-indent: 24px;
     line-height: 24px;
     margin-top: 5px;
-    span{
+    span {
       color: #333;
     }
-    &:before{
+    &:before {
       content: "";
       width: 6px;
       height: 6px;
