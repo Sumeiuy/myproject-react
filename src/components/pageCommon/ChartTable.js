@@ -209,8 +209,8 @@ export default class ChartTable extends PureComponent {
       unitLength = 0;
     }
     // TODO，取出每个文字的实际字体大小
-    // 设定每个 column 的宽度，16 为每个字的假想大小，50 为后面的箭头宽度
-    const width = (length * 16) + (unitLength * 16) + 50;
+    // 设定每个 column 的宽度，16 为每个字的假想大小，60 为后面的箭头宽度
+    const width = (length * 16) + (unitLength * 16) + 60;
     // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
     return width < 120 ? 120 : width;
   }

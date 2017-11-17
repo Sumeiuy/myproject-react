@@ -22,7 +22,7 @@ export default {
   state: {
     custCount: [],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
-    performanceIndicators: [],  // 投顾指标
+    performanceIndicators: EMPTY_OBJECT,  // 投顾指标
     hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
@@ -128,6 +128,7 @@ export default {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          params.pageNum = 1; // 默认显示第一页
           dispatch({
             type: 'getServiceLog',
             payload: params,

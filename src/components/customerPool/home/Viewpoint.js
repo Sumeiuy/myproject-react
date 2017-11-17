@@ -75,14 +75,21 @@ export default class Viewpoint extends PureComponent {
     const titleArray = _.split(texttitle, '：');
     const newTitle = _.last(titleArray);
     // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
-    const formateAbstract = _.isEmpty(abstract) ? (
+    const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
       abstract.replace(
-        /<\/?([^>]+?)>/g,
-        argument => (argument.match(/<\/?p[^>]*?>/g) ? argument : ''),
+        /<(\/?)([^\s>]+)[^>]*?>/g,
+        (all, isEnd, tagName) => {
+          if (_.includes(['p', 'pre'], tagName)) {
+            return _.isEmpty(isEnd) ? '<p>' : '/p';
+          }
+          return '';
+        },
       )
     );
+    // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
+    const formateAbstract = newFormateAbstract.replace('↵', '');
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
     const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
