@@ -53,7 +53,7 @@ export default class ScrollBar extends PureComponent {
       this.reportScroll.scrollLeft = nextTSL;
     }
   }
-  
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
     if (fsp) {
