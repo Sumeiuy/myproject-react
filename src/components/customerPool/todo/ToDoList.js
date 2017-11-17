@@ -68,8 +68,9 @@ export default class ToDoList extends PureComponent {
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
-    todoPage: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+    onSizeChange: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   componentDidMount() {
@@ -101,12 +102,22 @@ export default class ToDoList extends PureComponent {
 
   @autobind
   handleChange(page) {
-    this.props.onChange({
+    this.props.onPageChange({
       curPageNum: page,
     });
   }
+
+  @autobind
+  handleSizeChange(current, size) {
+    this.props.onSizeChange({
+      pageSize: size,
+      curPageNum: 1,
+    });
+  }
+
   render() {
-    const { className, data, todoPage, todolist } = this.props;
+    const { className, data, todolist, location } = this.props;
+    const { query: { curPageNum = 1, pageSize = 10 } } = location;
     // 没有待办流程
     if (todolist.length === 0) {
       return (<div className={styles.empty}>
@@ -151,10 +162,12 @@ export default class ToDoList extends PureComponent {
         dataSource={data}
         pagination={{
           size: 'small',
-          current: +todoPage.curPageNum,
+          current: +curPageNum,
           onChange: this.handleChange,
           showTotal: total => (`共${total}项`),
           showSizeChanger: true,
+          onShowSizeChange: this.handleSizeChange,
+          pageSize: +pageSize,
         }}
       />
     );
