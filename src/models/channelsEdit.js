@@ -251,6 +251,15 @@ export default {
     * doApprove({ payload }, { call }) {
       yield call(api.postDoApprove, payload.formData);
     },
+    // 清除按钮
+    * cleartBtnGroup({ payload }, { put }) {
+      yield put({
+        type: 'getFlowStepInfoSuccess',
+        payload: {
+          resultData: [],
+        },
+      });
+    },
   },
   subscriptions: {},
 };
