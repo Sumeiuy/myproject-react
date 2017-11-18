@@ -49,23 +49,23 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: (newNum / WANYI).toFixed(2),
+      value: Number((newNum / WANYI).toFixed(2)),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: (newNum / YI).toFixed(2),
+      value: Number((newNum / YI).toFixed(2)),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: (newNum / WAN).toFixed(2),
+      value: Number((newNum / WAN).toFixed(2)),
       unit: UNIT_WAN,
     };
   }
-  return { value: newNum, unit: UNIT_DEFAULT };
+  return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
 };
 
 export default class CustomerLists extends PureComponent {
@@ -114,6 +114,7 @@ export default class CustomerLists extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -416,14 +417,15 @@ export default class CustomerLists extends PureComponent {
       replace,
       handleSelect,
     } = this.props;
+    const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
-    handleSelect({ param: `${item.ptyMngName}_${item.ptyMngId}` });
+    handleSelect({ param: ptyMng });
 
     replace({
       pathname,
       query: {
         ...query,
-        ptyMng: `${item.ptyMngName}_${item.ptyMngId}`,
+        ptyMng,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -513,6 +515,7 @@ export default class CustomerLists extends PureComponent {
       condition,
       push,
       entertype,
+      clearCreateTaskData,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -551,6 +554,7 @@ export default class CustomerLists extends PureComponent {
     const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
+    console.log('authority', authority);
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     if (authority) {
@@ -680,6 +684,7 @@ export default class CustomerLists extends PureComponent {
               push={push}
               custList={custList}
               entertype={entertype}
+              clearCreateTaskData={clearCreateTaskData}
             /> : null
         }
         {

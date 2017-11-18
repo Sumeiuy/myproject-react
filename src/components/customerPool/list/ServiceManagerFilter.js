@@ -27,6 +27,7 @@ export default class ServiceManagerFilter extends PureComponent {
       dropdownToSearchInfo,
       disable,
     } = this.props;
+    console.log('serviceManagerDefaultValue>>', serviceManagerDefaultValue);
     return (
       <div>
         <span className={styles.selectLabel}>服务经理：</span>

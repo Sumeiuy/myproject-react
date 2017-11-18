@@ -191,11 +191,46 @@ const chartData = {
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
     if (maxMoney > 100000000) {
-      newUnit = '亿元';
+      newUnit = `亿${newUnit}`;
       newStackSeries = newStackSeries.map(toFixedData(100000000));
       newTotals = newTotals.map(toFixedTotals(100000000));
     } else if (maxMoney > 10000) {
-      newUnit = '万元';
+      newUnit = `万${newUnit}`;
+      newStackSeries = newStackSeries.map(toFixedData(10000));
+      newTotals = newTotals.map(toFixedTotals(10000));
+    }
+    return {
+      newStackSeries,
+      newUnit,
+      newTotals,
+    };
+  },
+  /**
+   * 处理stackSeries中的金额数据以及单位
+   * 此处需要新增对总数的处理
+   * 总数的单位由各项来决定
+   */
+  dealStackSeriesNewMoney(stackSeries, totals) {
+    let newUnit = '元/年';
+    let newStackSeries = stackSeries;
+    // 合计值
+    let newTotals = totals.map(convert2number);
+    // 判断stackSeries中最大值是多少
+    let allData = [];
+    const len = newStackSeries.length;
+    for (let i = 0; i < len; i++) {
+      allData = _.concat(allData, newStackSeries[i].data);
+    }
+    const maxMoney = Math.max(...allData);
+     // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (maxMoney > 100000000) {
+      newUnit = `亿${newUnit}`;
+      newStackSeries = newStackSeries.map(toFixedData(100000000));
+      newTotals = newTotals.map(toFixedTotals(100000000));
+    } else if (maxMoney > 10000) {
+      newUnit = `万${newUnit}`;
       newStackSeries = newStackSeries.map(toFixedData(10000));
       newTotals = newTotals.map(toFixedTotals(10000));
     }

@@ -12,6 +12,7 @@ import {
   getMaxAndMinCi,
   getMaxAndMinGE,
   toFixedMoney,
+  toFixedNewMoney,
   toFixedCust,
   toFixedCI,
   toFixedGE,
@@ -20,6 +21,7 @@ import {
 import {
   getStackSeries,
   dealStackSeriesMoney,
+  dealStackSeriesNewMoney,
   dealStackSeiesHu,
   dealStackData,
   fixedMoneyMaxMin,
@@ -33,6 +35,7 @@ const HU = ZHUNICODE.HU;
 const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
 const GE = ZHUNICODE.GE;
+const YUANNIAN = ZHUNICODE.YUANNIAN;
 const yiwan = 10000;
 
 function toFixedDecimal(value) {
@@ -143,6 +146,9 @@ const dataHandle = {
       case YUAN:
         result = toFixedMoney(seriesData);
         break;
+      case YUANNIAN:
+        result = toFixedNewMoney(seriesData);
+        break;
       case GE:
         result = toFixedGE(seriesData);
         break;
@@ -184,6 +190,9 @@ const dataHandle = {
     switch (unit) {
       case YUAN:
         result = dealStackSeriesMoney(stackSeries, summury);
+        break;
+      case YUANNIAN:
+        result = dealStackSeriesNewMoney(stackSeries, summury);
         break;
       case HU:
         result = dealStackSeiesHu(stackSeries, summury);

@@ -20,6 +20,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
 let searchInput;
+const NONE_INFO = '没有匹配内容';
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -53,6 +54,7 @@ export default class Search extends PureComponent {
   state = {
     dataSource: EMPTY_LIST,
     inputVal: '',
+    isHasSearchResult: true,
     historySource: [{
       title: '历史搜索',
       children: [{
@@ -121,21 +123,15 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchInput(event) {
     const e = event || window.event; // || arguments.callee.caller.arguments[0];
-    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
       e.cancelBubble = true;
     }
     if (e && e.keyCode === 13) {
-      let searchVal = e.target.value;
+      const searchVal = e.target.value;
       if (!this.checkInputValue(searchVal)) {
         return false;
-      }
-      if (_.isEmpty(searchVal)) {
-        // message.info('搜索内容不能为空', 1);
-        // return;
-        searchVal = hotWds.labelNameVal;
       }
       this.handleOpenTab({
         source: 'search',
@@ -206,6 +202,26 @@ export default class Search extends PureComponent {
   }
 
   searchResult(query, hotList) {
+    if (_.isEmpty(hotList)) {
+      this.setState({
+        isHasSearchResult: false,
+      });
+      // 提示无相关目标客户
+      return [{
+        query,
+        category: NONE_INFO,
+        content: NONE_INFO,
+        desc: NONE_INFO,
+        labelMapping: NONE_INFO,
+        tagNumId: NONE_INFO,
+        id: NONE_INFO,
+      }];
+    }
+
+    this.setState({
+      isHasSearchResult: true,
+    });
+
     return _.map(hotList, (item, index) => ({
       query,
       category: `${item.labelNameVal}${index}`,
@@ -262,8 +278,15 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource, inputVal } = this.state;
-    const newData = _.map(dataSource, this.renderOption);
+    const { dataSource, historySource, inputVal, isHasSearchResult } = this.state;
+    let newData;
+    if (isHasSearchResult) {
+      // 有搜索结果
+      newData = _.map(dataSource, this.renderOption);
+    } else {
+      // 无搜索结果
+      newData = _.map(dataSource, this.renderNoneSearchResult);
+    }
     if (!_.isEmpty(inputVal)) {
       return newData;
     }
@@ -275,16 +298,10 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
-    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
     if (!this.checkInputValue(inputVal)) {
       return false;
     }
-    if (_.isEmpty(inputVal)) {
-      // 搜索的时候，如果搜索框没有内容，将hotWds塞入搜索框
-      this.setState({
-        inputVal: hotWds.labelNameVal,
-      });
-    } else {
+    if (!_.isEmpty(inputVal)) {
       this.setState({
         inputVal: '',
       });
@@ -309,6 +326,7 @@ export default class Search extends PureComponent {
       searchVal: saveVal,
     });
   }
+
   // 清除历史搜索
   @autobind
   handleClearHistory() {
@@ -348,6 +366,15 @@ export default class Search extends PureComponent {
           rel="noopener noreferrer"
         />
         <span className="desc">{item.desc}</span>
+      </Option>
+    );
+  }
+
+  @autobind
+  renderNoneSearchResult(item) {
+    return (
+      <Option key={item.id} text={item.labelNameVal} disabled>
+        {item.desc}
       </Option>
     );
   }
@@ -404,8 +431,7 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { data: { hotWds = EMPTY_OBJECT,
-      hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
+    const { data: { hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
 
     return (
       <div className={styles.searchBox}>
@@ -420,7 +446,7 @@ export default class Search extends PureComponent {
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
                 onSearch={this.handleSearch}
-                placeholder={hotWds.labelNameVal || ''}
+                placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}
               >
