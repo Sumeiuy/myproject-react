@@ -383,7 +383,6 @@ export default class EditForm extends PureComponent {
   // 清除协议产品信息
   @autobind
   resetProduct() {
-    console.warn('更新 propductList 为空');
     this.setState({
       productList: [],
     });
