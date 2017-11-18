@@ -330,13 +330,7 @@ export default class EditBaseInfo extends PureComponent {
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    const {
-      templateList,
-    } = this.props;
-    const newTemplateList = _.filter(templateList, o => o.prodName.indexOf(value) !== -1);
-    this.setState({
-      templateList: newTemplateList,
-    });
+    console.warn('进入搜索方法', value);
   }
 
   // 修改备注
