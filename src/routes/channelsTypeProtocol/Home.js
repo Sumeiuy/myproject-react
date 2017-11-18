@@ -198,9 +198,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getSeibleList({ ...params, type: pageType }).then(() => {
-      getProtocolDetail({
-        id: currentId,
-      });
+      if (currentId) {
+        getProtocolDetail({
+          id: currentId,
+        });
+      }
     });
   }
 
@@ -344,13 +346,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       title: '提示',
       content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
       onOk: () => {
-        const { saveProtocolData } = this.props;
-        saveProtocolData(formData).then(() => {
-          this.setState({
-            approverModal: true,
-            flowAuditors: btnItem.flowAuditors,
-            protocolData: formData,
-          });
+        this.setState({
+          ...this.state,
+          approverModal: true,
+          flowAuditors: btnItem.flowAuditors,
+          protocolData: formData,
         });
       },
       onCancel: () => {
@@ -362,29 +362,33 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    const { doApprove } = this.props;
-    const {
+    console.warn('auth', auth);
+    const { saveProtocolData, doApprove } = this.props;
+    const { protocolData } = this.state;
+    saveProtocolData(protocolData).then(() => {
+      const {
         location: {
           query,
         },
       } = this.props;
-    const params = {
-      ...constructSeibelPostBody(query, 1, 10),
-      type: pageType,
-    };
-    doApprove({
-      formData: {
-        itemId: this.props.itemId,
-        flowId: '',
-        auditors: auth.login,
-        groupName: auth.groupName,
-        operate: '1',
-        approverIdea: '',
-      },
-      params,
-    }).then(() => {
-      this.closeModal('editFormModal');
-      this.closeModal('approverModal');
+      const params = {
+        ...constructSeibelPostBody(query, 1, 10),
+        type: pageType,
+      };
+      doApprove({
+        formData: {
+          itemId: this.props.itemId,
+          flowId: '',
+          auditors: auth.empNo,
+          groupName: auth.groupName,
+          operate: '1',
+          approverIdea: '',
+        },
+        params,
+      }).then(() => {
+        this.closeModal('editFormModal');
+        this.closeModal('approverModal');
+      });
     });
   }
 
@@ -413,8 +417,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         ...formData,
         attachment: newAttachment,
       };
-      // test
-      console.log('btnItem', btnItem);
       // 弹出提示窗
       this.showconFirm(payload, btnItem);
     }
