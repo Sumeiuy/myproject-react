@@ -118,7 +118,7 @@ export default class EditBaseInfo extends PureComponent {
       const filterTemplate = _.filter(nextTL, o => o.prodName === templateId);
       this.setState({
         templateList: nextTL,
-        protocolTemplate: filterTemplate && filterTemplate[0],
+        protocolTemplate: (filterTemplate && filterTemplate[0]) || {},
       });
     }
     if (!_.isEqual(preFD, nextFD) && !_.isEmpty(nextFD)) {
@@ -419,7 +419,7 @@ export default class EditBaseInfo extends PureComponent {
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={client ? `${client.custName || ''} ${client.brokerNumber || ''}` : ''}
+                  value={isEdit ? `${client.custName || ''} ${client.brokerNumber || ''}` : ''}
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
@@ -434,7 +434,7 @@ export default class EditBaseInfo extends PureComponent {
             placeholder="协议模板"
             showObjKey="prodName"
             objId="rowId"
-            value={protocolTemplate ? `${protocolTemplate.prodName || ''} ${protocolTemplate.rowId || ''}` : ''}
+            value={isEdit ? `${protocolTemplate.prodName || ''} ${protocolTemplate.rowId || ''}` : ''}
             searchList={templateList}
             emitSelectItem={this.handleSelectTemplate}
             emitToSearch={this.handleSearchTemplate}
@@ -443,7 +443,7 @@ export default class EditBaseInfo extends PureComponent {
           />
         </InfoForm>
         {
-          protocolIsShowSwitch(protocolTemplate.rowId, subType) ?
+          protocolIsShowSwitch(protocolTemplate.rowId || '', subType) ?
             <InfoForm label="是否多账户使用" >
               <CustomSwitch
                 name="multiUsedFlag"
@@ -455,7 +455,7 @@ export default class EditBaseInfo extends PureComponent {
           null
         }
         {
-          protocolIsShowSwitch(protocolTemplate.rowId, subType) ?
+          protocolIsShowSwitch(protocolTemplate.rowId || '', subType) ?
             <InfoForm label="是否订购十档行情">
               <CustomSwitch
                 name="levelTenFlag"

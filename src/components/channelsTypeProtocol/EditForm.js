@@ -111,15 +111,28 @@ export default class EditForm extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { protocolDetail: prePD } = this.props;
-    const { protocolDetail: nextPD, attachmentList } = nextProps;
+    const { protocolDetail: prePD, attachmentList: preAl } = this.props;
+    const { protocolDetail: nextPD, attachmentList: nextAL } = nextProps;
     if (!_.isEmpty(nextPD) && !_.isEqual(prePD, nextPD)) {
+      const { cust, item: productList } = nextPD;
+      const hasCust = nextPD.multiUsedFlag === 'Y' || false;
+      this.setState({
+        ...nextPD,
+        isEdit: true,
+        // 下挂客户表格数据
+        cust,
+        // 所选协议产品列表
+        productList,
+        multiUsedFlag: hasCust,
+      }, () => this.setUploadConfig(hasCust));
+    }
+    if (!_.isEmpty(nextAL) && !_.isEqual(preAl, nextAL)) {
       let assignAttachment = [];
       // 对数据进行必传等配置
-      if (attachmentList.length) {
+      if (nextAL.length) {
         assignAttachment = attachmentMap.map((item) => {
           let newItem = {};
-          const filterArr = _.filter(attachmentList, o => o.title === item.title);
+          const filterArr = _.filter(nextAL, o => o.title === item.title);
           if (filterArr.length) {
             newItem = {
               ...item,
@@ -132,19 +145,10 @@ export default class EditForm extends PureComponent {
           return newItem;
         });
       }
-      const { cust, item: productList } = nextPD;
       const hasCust = nextPD.multiUsedFlag === 'Y' || false;
-      console.warn('willreceiveProps', nextPD);
       this.setState({
-        ...nextPD,
-        isEdit: true,
         // 附件类型列表
         attachmentTypeList: assignAttachment,
-        // 下挂客户表格数据
-        cust,
-        // 所选协议产品列表
-        productList,
-        multiUsedFlag: hasCust,
       }, () => this.setUploadConfig(hasCust));
     }
   }
