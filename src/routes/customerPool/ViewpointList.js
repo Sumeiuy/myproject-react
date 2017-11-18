@@ -124,12 +124,12 @@ export default class ViewpointList extends PureComponent {
     super(props);
     const {
       information: { infoVOList = [] },
-      location: { query: { curPageNum = '1', curPageSize = '18' } },
+      location: { query: { curPageNum = '1', pageSize = '20' } },
     } = props;
     // 注意 location的query中的字段，无论是key还是value都是字符串
     this.state = {
       curPageNum: _.toNumber(curPageNum), // 记录当前展示的页码
-      curPageSize: _.toNumber(curPageSize), // 记录当前每页的容量
+      curPageSize: _.toNumber(pageSize), // 记录当前每页的容量
       pageList: infoVOList, // 当前页码对应的列表数据
     };
   }
@@ -144,7 +144,7 @@ export default class ViewpointList extends PureComponent {
     const { curPageSize, curPageNum } = this.state;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointDetail';
-    const query = { detailIndex: item.id, curPageSize, curPageNum };
+    const query = { detailIndex: item.id, pageSize: curPageSize, curPageNum };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
@@ -173,11 +173,10 @@ export default class ViewpointList extends PureComponent {
   @autobind
   handlePageSizeClick(current, size) {
     const { getInformation, replace, location: { pathname, query } } = this.props;
-    const { curPageNum } = this.state;
     this.setState(
-      { curPageSize: size },
+      { curPageSize: size, curPageNum: 1 },
       () => {
-        const newQuery = { curPageNum, pageSize: size };
+        const newQuery = { curPageNum: 1, pageSize: size };
         getInformation(newQuery);
         replace({ pathname, query: { ...query, ...newQuery } });
       },
@@ -186,7 +185,7 @@ export default class ViewpointList extends PureComponent {
 
   render() {
     const { information: { totalCount } } = this.props;
-    const { curPageNum = 1, pageList = [], curPageSize = 18 } = this.state;
+    const { curPageNum = 1, pageList = [], curPageSize = 20 } = this.state;
     const newInfoVOList = _.map(
       pageList,
       (item, index) => ({
@@ -201,7 +200,7 @@ export default class ViewpointList extends PureComponent {
       totalRecordNum: totalCount,
       onPageChange: this.handlePageClick,
       onSizeChange: this.handlePageSizeClick,
-      originPageSizeUnit: 18,
+      originPageSizeUnit: 20,
     };
     const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (

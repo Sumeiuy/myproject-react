@@ -113,9 +113,9 @@ export default class QuickMenu extends PureComponent {
       currentFollowCustId,
       isFollows,
     } = this.props;
-    const {
-      addressEmail,
-    } = this.state;
+    // const {
+    //   addressEmail,
+    // } = this.state;
     const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
       || isFollows[listItem.custId];
     return (
@@ -125,10 +125,23 @@ export default class QuickMenu extends PureComponent {
             <Icon type="dianhua" />
             <span>电话联系</span>
           </li>
+          {/*
           <li onClick={this.handleIsEmail}>
             <Icon type="youjian" />
-            <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
+            <span>
+              <a
+                ref={ref => this.sendEmail = ref}
+                href={
+                  _.isEmpty(addressEmail[listItem.custId]) ?
+                  NO_EMAIL_HREF :
+                  `mailto:${addressEmail[listItem.custId]}
+                }
+              >
+                &nbsp;邮件联系&nbsp;
+              </a>
+            </span>
           </li>
+          */}
           <li
             onClick={() => this.handleAddFollow(listItem)}
             className={isFollow ? styles.follows : ''}

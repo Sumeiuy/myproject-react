@@ -3,7 +3,6 @@
   float: left;
   margin-left: 10px;
   font-size: 14px;
-  color: #3983ff !important;
   cursor: pointer;
 }
 .lh28 {
@@ -11,14 +10,9 @@
   line-height: 28px;
 }
 .showCharts {
-  display: none;
   border: 1px solid antiquewhite;
   height: 152px;
   width: 423px;
-  position: absolute;
-  left: -5px;
-  top: 25px;
-  z-index: 2;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 1px 1px 10px 2px #d2d2d2;
@@ -55,18 +49,40 @@
           font-weight: bold;
           font-size: 16px;
           color: #4a4a4a;
-          &.redNum {
+          &.red {
             color: #e64340;
+          }
+          &.green {
+            color: #499d37;
           }
         }
         .unit {
           font-size: 12px;
           color: #888;
-          &.redUnit {
+          &.red {
             color: #e64340;
+          }
+          &.green {
+            color: #499d37;
           }
         }
       }
     }
   }
+}
+.sixMonthEarnings {
+  :global {
+    .ant-tooltip-arrow {
+      display: none;
+    }
+    .ant-tooltip-inner {
+      max-width: 423px;
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+}
+.showDetail {
+  color: #3983ff;
+  font-style: normal;
 }

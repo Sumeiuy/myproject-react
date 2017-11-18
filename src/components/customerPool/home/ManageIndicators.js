@@ -28,6 +28,9 @@ import {
   linkTo,
 } from './homeIndicators_';
 
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object,
@@ -36,18 +39,28 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
+    custCount: React.PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+    ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
   }
 
   static defaultProps = {
-    indicators: {},
-    cycle: [],
-    hsRateAndBusinessIndicator: [],
+    indicators: EMPTY_OBJECT,
+    cycle: EMPTY_LIST,
+    hsRateAndBusinessIndicator: EMPTY_LIST,
+    custCount: EMPTY_LIST,
   }
 
   @autobind
   handleBusinessOpenClick(instance) {
     instance.on('click', (arg) => {
       const { clientNameData } = this.analyticHSRateAndBusinessIndicator();
+      // 当无数据是，展示 暂无数据，下面的下钻不需要了
+      if (_.isEmpty(clientNameData)) {
+        return;
+      }
+      // 当数据展示出来，需要下钻
       const {
         push,
         cycle,
@@ -98,7 +111,9 @@ export default class PerformanceIndicators extends PureComponent {
     const clientNumberData = [];
     // 业务开通name
     const clientNameData = [];
-    const length = hsRateAndBusinessIndicator.length || 0;
+    // 是否为空
+    const isEmpty = _.isEmpty(hsRateAndBusinessIndicator);
+    const length = isEmpty ? 0 : hsRateAndBusinessIndicator.length;
     _.forEach(
       hsRateAndBusinessIndicator,
       (item, index) => {
@@ -110,7 +125,7 @@ export default class PerformanceIndicators extends PureComponent {
         }
       },
     );
-    return { isEmpty: (length === 0), hsRate, clientNumberData, clientNameData };
+    return { isEmpty, hsRate, clientNumberData, clientNameData };
   }
 
   render() {
@@ -120,6 +135,7 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       location,
       empInfo,
+      custCount,
     } = this.props;
     // 解析hsRateAndBusinessIndicator数据
     const {
@@ -130,10 +146,10 @@ export default class PerformanceIndicators extends PureComponent {
     } = this.analyticHSRateAndBusinessIndicator();
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
-      motOkMnt, motTotMnt, taskCust, totCust, custCount,
+      motOkMnt, motTotMnt, taskCust, totCust,
       otcTranAmt, fundTranAmt, finaTranAmt, privateTranAmt,
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
-    } = indicators || {};
+    } = _.isEmpty(indicators) ? {} : indicators;
     // 控制是否显示 暂无数据
     const isEmpty = _.isEmpty(indicators);
 
@@ -168,8 +184,8 @@ export default class PerformanceIndicators extends PureComponent {
     // 产品销售（经营指标）
     const productSaleData = [
       filterEmptyToNumber(fundTranAmt),
-      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(privateTranAmt),
+      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(otcTranAmt),
     ];
     const {

@@ -23,6 +23,7 @@ export default class BottomFixedBox extends PureComponent {
     selectCount: PropTypes.number.isRequired,
     mainServiceManager: PropTypes.bool,
     entertype: PropTypes.string.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -114,10 +115,18 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
+  @autobind
+  handleCreateTaskClick(url, title, id) {
+    const { clearCreateTaskData } = this.props;
+    // 发起新的任务之前，先清除数据
+    clearCreateTaskData();
+
+    this.handleClick(url, title, id);
+  }
+
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
   openByIds(url, condition, ids, count, title, id, entertype, source, fr) {
-    // debugger
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -200,10 +209,29 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <button
-        onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
         发起任务
       </button>
+    );
+  }
+
+  @autobind
+  renderText() {
+    const {
+      selectCount,
+      mainServiceManager,
+    } = this.props;
+    let str = '';
+    if (mainServiceManager) {
+      str = '，或者把用户加入分组管理';
+    }
+    return (
+      <p className="left">
+        已选&nbsp;
+        <span className="marked">{selectCount}</span>
+        &nbsp;户，选择目标用户以创建自定义任务{str}
+      </p>
     );
   }
 
@@ -211,9 +239,6 @@ export default class BottomFixedBox extends PureComponent {
     const {
       taskAndGroupLeftPos,
     } = this.state;
-    const {
-      selectCount,
-    } = this.props;
     return (
       <div
         id="fixedEleDom"
@@ -222,11 +247,7 @@ export default class BottomFixedBox extends PureComponent {
           left: taskAndGroupLeftPos,
         }}
       >
-        <p className="left">
-          已选&nbsp;
-          <span className="marked">{selectCount}</span>
-          &nbsp;户，选择目标用户以创建自定义任务，或者把用户加入分组管理
-        </p>
+        { this.renderText() }
         <div className="right">
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}

@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import getSeries, { singleColorBar } from './chartOption_';
-import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
+import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -81,7 +81,7 @@ function getProgressDataSource({
 export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
-    categoryArray: ['新增有效户', '新增非零售客户', '新增高端产品户', '新增产品客户'],
+    categoryArray: ['新增有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
     formatterMethod: toFixedCust,
   };
@@ -119,6 +119,7 @@ export function getClientsNumber({
     newUnit,
     newSeries,
   } = toFomatterCust(clientNumberData);
+  const max = getBarAdaptiveMax(newSeries);
   const items = {
     grid: {
       left: '12px',
@@ -150,7 +151,11 @@ export function getClientsNumber({
         triggerEvent: true,
       },
     ],
-    yAxis: [{ show: false }],
+    yAxis: [{
+      show: false,
+      max,
+      min: 0,
+    }],
     series: singleColorBar({
       data: newSeries,
       width: 13,
@@ -201,7 +206,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
     },
     xAxis: {
       type: 'category',
-      data: ['MOT\n完成率', '服务\n覆盖率', '资产配\n置覆盖率', '信息\n完备率'],
+      data: ['必做MOT\n任务完成率', '服务\n覆盖率', '多元产\n品覆盖率', '客户信\n息完备率'],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {

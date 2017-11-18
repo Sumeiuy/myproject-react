@@ -45,10 +45,10 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push, location: { query: { curPageNum = 1, curPageSize = 18 } } } = this.props;
+    const { push, location: { query: { curPageNum = 1, pageSize = 20 } } } = this.props;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
-    const newQuery = { curPageNum, curPageSize };
+    const newQuery = { curPageNum, pageSize };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(newQuery)}`, param });
     } else {
@@ -89,16 +89,23 @@ export default class ViewpointDetail extends PureComponent {
     } = infoVOList[index] || {};
     const dateArray = _.split(pubdatedetail, ' ');
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
-    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
-    const formateAbstract = _.isEmpty(abstract) ? (
+
+    // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
+    const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      _.replace(
-        _.trim(abstract),
-        /<\/?span[^>]*?>/g,
-        '',
+      abstract.replace(
+        /<(\/?)([^\s>]+)[^>]*?>/g,
+        (all, isEnd, tagName) => {
+          if (_.includes(['p', 'pre'], tagName)) {
+            return _.isEmpty(isEnd) ? '<p>' : '</p>';
+          }
+          return '';
+        },
       )
     );
+    // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
+    const formateAbstract = newFormateAbstract.replace('↵', '');
     return (
       <div className={styles.listContainer}>
         <div className={styles.inner} >

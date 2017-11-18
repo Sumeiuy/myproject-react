@@ -235,7 +235,9 @@ export default class CustomerRow extends PureComponent {
     // 归集率
     let hsRate = '--';
     if (listItem.hsRate !== null) {
-      hsRate = `${listItem.hsRate}%`;
+      hsRate = listItem.hsRate < 0 ?
+        Number(listItem.hsRate.toFixed(2)) :
+        `${Number((listItem.hsRate * 100).toFixed(2))}%`;
     }
     return (
       <div
@@ -333,6 +335,7 @@ export default class CustomerRow extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 custIncomeReqState={custIncomeReqState}
                 getCustIncome={getCustIncome}
+                formatAsset={formatAsset}
               />
               <div className="department">
                 <span>

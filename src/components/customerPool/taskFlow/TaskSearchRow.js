@@ -5,7 +5,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 // import { autobind } from 'core-decorators';
-import { Radio, Modal, Button } from 'antd';
+import { Radio, Modal, Button, Icon } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -17,6 +17,8 @@ import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 10;
 
 const renderColumnTitle = [{
   key: 'brok_id',
@@ -55,6 +57,7 @@ export default class TaskSearchRow extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
+    isHasAuthorize: PropTypes.bool.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -64,8 +67,8 @@ export default class TaskSearchRow extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      curPageNum: 1,
-      pageSize: 10,
+      curPageNum: INITIAL_PAGE_NUM,
+      pageSize: INITIAL_PAGE_SIZE,
       totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
@@ -78,13 +81,13 @@ export default class TaskSearchRow extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData, visible } = nextProps;
-    const { userObjectFormList } = peopleOfLabelData;
+    const { userObjectFormList = [] } = peopleOfLabelData || {};
     const list = _.map(userObjectFormList, item => ({
       ...item,
-      cust_type: item.cust_type === 'Y' ? '高净值' : '零售',
+      cust_type: item.cust_type === 'N' ? '高净值' : '零售',
     }));
     this.setState({
-      totalRecordNum: peopleOfLabelData.totalCount,
+      totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
       custTableData: list,
       visible,
     });
@@ -96,23 +99,46 @@ export default class TaskSearchRow extends PureComponent {
     onChange(e.target.value);
   }
 
-  @autobind
-  handleSeeCust(value) {
-    const { getLabelPeople, orgId } = this.props;
-    console.log(value);
+  /**
+   * 查询标签下客户
+   * @param {*} labelId 标签Id
+   * @param {*} curPageNum 当前页
+   * @param {*} pageSize 当前页条目
+   */
+  queryPeopleOfLabel(labelId, curPageNum, pageSize) {
+    const { isHasAuthorize, orgId, getLabelPeople } = this.props;
+    let postBody = {
+      labelId,
+      curPageNum,
+      pageSize,
+    };
+    if (isHasAuthorize) {
+      postBody = {
+        ...postBody,
+        orgId,
+      };
+    } else {
+      postBody = {
+        ...postBody,
+        ptyMngId: helper.getEmpId(),
+      };
+    }
+
     getLabelPeople({
-      labelId: value.labelMapping,
-      curPageNum: 1,
-      pageSize: 10,
-      orgId,
-      ptyMngId: helper.getEmpId(),
+      ...postBody,
     });
+  }
+
+  @autobind
+  handleSeeCust(value = {}) {
+    this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE);
+
     this.setState({
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,
-      curPageNum: 1,
-      pageSize: 10,
+      curPageNum: INITIAL_PAGE_NUM,
+      pageSize: INITIAL_PAGE_SIZE,
     });
   }
 
@@ -126,34 +152,20 @@ export default class TaskSearchRow extends PureComponent {
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
-    const { getLabelPeople, orgId } = this.props;
     const { labelId } = this.state;
-    getLabelPeople({
-      curPageNum: 1,
-      pageSize: changedPageSize,
-      orgId,
-      ptyMngId: helper.getEmpId(),
-      labelId,
-    });
+    this.queryPeopleOfLabel(labelId, INITIAL_PAGE_NUM, changedPageSize);
+
     this.setState({
-      curPageNum: 1,
+      curPageNum: INITIAL_PAGE_NUM,
       pageSize: changedPageSize,
     });
   }
 
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
-    const { getLabelPeople, orgId } = this.props;
-    const { labelId, pageSize } = this.state;
-    getLabelPeople({
-      curPageNum: nextPage,
-      pageSize,
-      orgId,
-      ptyMngId: helper.getEmpId(),
-      labelId,
-    });
+    const { labelId } = this.state;
+    this.queryPeopleOfLabel(labelId, nextPage, currentPageSize);
+
     this.setState({
       curPageNum: nextPage,
     });
@@ -198,8 +210,8 @@ export default class TaskSearchRow extends PureComponent {
 
   render() {
     const {
-      curPageNum = 1,
-      pageSize = 10,
+      curPageNum = INITIAL_PAGE_NUM,
+      pageSize = INITIAL_PAGE_SIZE,
       totalRecordNum = 0,
       visible,
       totalCustNums,
@@ -238,28 +250,38 @@ export default class TaskSearchRow extends PureComponent {
                   <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
                 ]}
                 width={700}
+                wrapClassName={styles.labelCustModalContainer}
               >
-                <GroupTable
-                  pageData={{
-                    curPageNum,
-                    curPageSize: pageSize,
-                    totalRecordNum,
-                  }}
-                  tableClass={
-                    classnames({
-                      [styles.labelCustTable]: true,
-                      [tableStyles.groupTable]: true,
-                    })
-                  }
-                  isFixedTitle
-                  scrollY={400}
-                  onSizeChange={this.handleShowSizeChange}
-                  onPageChange={this.handlePageChange}
-                  listData={custTableData}
-                  titleColumn={renderColumnTitle}
-                  isFirstColumnLink={false}
-                  columnWidth={100}
-                />
+                {
+                  _.isEmpty(custTableData) ?
+                    <div className={styles.emptyContent}>
+                      <span>
+                        <Icon className={styles.emptyIcon} type="frown-o" />
+                        暂无数据
+                      </span>
+                    </div> :
+                    <GroupTable
+                      pageData={{
+                        curPageNum,
+                        curPageSize: pageSize,
+                        totalRecordNum,
+                      }}
+                      tableClass={
+                        classnames({
+                          [styles.labelCustTable]: true,
+                          [tableStyles.groupTable]: true,
+                        })
+                      }
+                      isFixedTitle
+                      scrollY={400}
+                      onSizeChange={this.handleShowSizeChange}
+                      onPageChange={this.handlePageChange}
+                      listData={custTableData}
+                      titleColumn={renderColumnTitle}
+                      isFirstColumnLink={false}
+                      columnWidth={100}
+                    />
+                }
               </Modal> : null
           }
         </div>

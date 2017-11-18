@@ -68,7 +68,7 @@ export default class SelectLabelCust extends PureComponent {
 
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', customNum = '', labelMapping } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', customNum = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
@@ -77,6 +77,7 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       customNum,
       tipsSize,
+      labelName,
     };
 
     return {
@@ -90,7 +91,7 @@ export default class SelectLabelCust extends PureComponent {
 
     const param = {
       condition: value,
-      ptyMngId: helper.getEmpId(),
+      // ptyMngId: helper.getEmpId(),
     };
 
     this.setState({
@@ -115,7 +116,10 @@ export default class SelectLabelCust extends PureComponent {
         orgId,
       });
     } else {
-      getLabelInfo(param);
+      getLabelInfo({
+        ...param,
+        ptyMngId: helper.getEmpId(),
+      });
     }
   }
 
@@ -136,6 +140,7 @@ export default class SelectLabelCust extends PureComponent {
       isLoadingEnd,
       onCancel,
       visible,
+      isHasAuthorize,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -165,6 +170,7 @@ export default class SelectLabelCust extends PureComponent {
           condition={condition}
           currentSelectLabel={currentSelectLabel}
           orgId={orgId}
+          isHasAuthorize={isHasAuthorize}
         />
       </div>
     );

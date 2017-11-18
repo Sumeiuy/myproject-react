@@ -69,7 +69,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '002727'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -467,17 +467,36 @@ const helper = {
    * 添加滚动监听
   */
   addWheelEvent(obj, handler) {
-    obj.addEventListener('mousewheel', handler, false);
-    obj.addEventListener('DOMMouseScroll', handler, false);
-    obj.addEventListener('wheel', handler, false);
+    if (window.addEventListener) {
+      obj.addEventListener('mousewheel', handler, false);
+      obj.addEventListener('DOMMouseScroll', handler, false);
+    } else if (window.attachEvent) {
+      obj.attachEvent('onmousewheel', handler);
+    }
   },
   /**
    * 删除滚动监听
   */
   removeWheelEvent(obj, handler) {
-    obj.removeEventListener('mousewheel', handler, false);
-    obj.removeEventListener('DOMMouseScroll', handler, false);
-    obj.removeEventListener('wheel', handler, false);
+    if (window.addEventListener) {
+      obj.removeEventListener('mousewheel', handler, false);
+      obj.removeEventListener('DOMMouseScroll', handler, false);
+    } else if (window.attachEvent) {
+      obj.detachEvent('onmousewheel', handler);
+    }
+  },
+
+  /**
+   * 添加点击监听
+  */
+  addClickEvent(obj, handler) {
+    obj.addEventListener('click', handler, false);
+  },
+  /**
+   * 删除点击监听
+  */
+  removeClickEvent(obj, handler) {
+    obj.removeEventListener('click', handler, false);
   },
 
   // 获取环比时间段事件
