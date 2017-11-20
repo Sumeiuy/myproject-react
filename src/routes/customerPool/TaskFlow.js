@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-20 15:47:23
+ * @Last Modified time: 2017-11-20 17:56:12
  */
 
 import React, { PureComponent } from 'react';
@@ -334,23 +334,33 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
+    const labelCustPostBody = {
+      labelId: labelMapping,
+      queryLabelDTO: {
+        labelDesc,
+        labelName,
+      },
+      labelCustNums,
+      ...postBody,
+    };
+
     if (currentTab === '1') {
       submitTaskFlow({
         fileId,
         ...postBody,
       });
+    } else if (this.isHasAuthorize) {
+      submitTaskFlow(_.merge(labelCustPostBody, {
+        queryLabelDTO: {
+          orgId,
+        },
+      }));
     } else {
-      submitTaskFlow({
-        labelId: labelMapping,
+      submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
           ptyMngId: helper.getEmpId(),
-          orgId,
-          labelDesc,
-          labelName,
         },
-        labelCustNums,
-        ...postBody,
-      });
+      }));
     }
 
     // 成功之后再clear
