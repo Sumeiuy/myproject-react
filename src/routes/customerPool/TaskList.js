@@ -152,6 +152,21 @@ export default class TaskList extends PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+          pageNum: 1,
+        },
+      });
+    }
+  }
+
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query

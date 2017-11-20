@@ -258,6 +258,7 @@ export default class Pageheader extends PureComponent {
       query: {
         ...query,
         [name]: value,
+        isResetPageNum: 'Y',
       },
     });
   }
