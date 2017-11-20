@@ -20,10 +20,12 @@ export default class SearchSelect extends PureComponent {
     onAddCustomer: PropTypes.func.isRequired,
     onChangeValue: PropTypes.func.isRequired,
     width: PropTypes.string,
+    defaultInput: PropTypes.string,
   }
 
   static defaultProps = {
     width: '300px',
+    defaultInput: '',
   }
 
   constructor(props) {
@@ -47,6 +49,8 @@ export default class SearchSelect extends PureComponent {
   @autobind
   setSelectValue(value, option) {
     this.setState({
+      proValue: value,
+      inputValue: '',
       selectItem: this.props.dataSource[option.props.index],
     });
   }
@@ -57,6 +61,8 @@ export default class SearchSelect extends PureComponent {
     this.props.onAddCustomer(this.state.selectItem);
     this.setState({
       proValue: '',
+      inputValue: '',
+      selectItem: {},
     });
   }
 
@@ -67,12 +73,12 @@ export default class SearchSelect extends PureComponent {
 
 
   render() {
-    const { labelName, dataSource, width } = this.props;
+    const { labelName, dataSource, width, defaultInput } = this.props;
     const { proValue } = this.state;
-    const newDataSource = dataSource.map(item => ({ key: item.cusId, ...item }));
+    const newDataSource = dataSource.map(item => ({ key: item.cusId || item.custId, ...item }));
     const options = newDataSource.map(opt => (
-      <Option key={opt.cusId} value={opt.cusId} text={opt.custName}>
-        <span className={styles.prodValue}>{opt.custName}</span>
+      <Option key={opt.cusId || opt.custId} value={opt.cusId || opt.custId} text={opt.custName}>
+        <span className={styles.prodValue}>{opt.custName}({opt.brokerNumber || opt.econNum})</span>
       </Option>
     ));
     return (
@@ -84,6 +90,7 @@ export default class SearchSelect extends PureComponent {
           dropdownStyle={{ width }}
           dropdownMatchSelectWidth={false}
           size="large"
+          placeholder={defaultInput}
           style={{ width }}
           dataSource={options}
           optionLabelProp="text"

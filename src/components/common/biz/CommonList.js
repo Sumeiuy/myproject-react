@@ -21,11 +21,13 @@ export default class PermissionList extends PureComponent {
     columns: PropTypes.array.isRequired,
     clickRow: PropTypes.func,
     backKeys: PropTypes.array,
+    pageName: PropTypes.string,
   };
 
   static defaultProps = {
     clickRow: () => {},
     backKeys: [],
+    pageName: '',
   };
 
   constructor(props) {
@@ -39,13 +41,17 @@ export default class PermissionList extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 第一次替换query
     // 添加currentId
-    const { list: { resultData: prevResultData = EMPTY_LIST } } = this.props;
+    const { pageName, list: { resultData: prevResultData = EMPTY_LIST } } = this.props;
     const {
        location: { query, pathname, query: { currentId } },
        replace,
        list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
     const { pageNum, pageSize } = page;
-
+    // 在目标客户池的自建任务列表时，currentId 表示的是followId, 其他表示 id
+    let tmpId = 'id';
+    if (pageName === 'tasklist') {
+      tmpId = 'flowId';
+    }
     // 只有当有数据，
     // 当前没有选中项currentId
     // 或者query上存在currentId，但是数据没有匹配时
@@ -54,13 +60,13 @@ export default class PermissionList extends PureComponent {
       if (!_.isEmpty(resultData)) {
         if ((!currentId || (
            currentId &&
-           _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
+          _.isEmpty(_.find(resultData, item => item[tmpId].toString() === currentId))
         ))) {
           replace({
             pathname,
             query: {
               ...query,
-              currentId: resultData[0] && resultData[0].id,
+              currentId: resultData[0] && resultData[0][tmpId],
               pageNum,
               pageSize,
             },
@@ -74,7 +80,7 @@ export default class PermissionList extends PureComponent {
           // 设置当前选中行
           this.setState({ // eslint-disable-line
             curSelectedRow: _.findIndex(resultData,
-              item => item.id.toString() === currentId),
+              item => item[tmpId].toString() === currentId),
           });
 
           replace({
@@ -102,8 +108,14 @@ export default class PermissionList extends PureComponent {
       replace,
       list: { resultData = EMPTY_LIST },
       clickRow,
-      backKeys,
+      pageName,
     } = this.props;
+
+    // 在目标客户池的自建任务列表时，currentId 表示的是followId, 其他表示 id
+    let tmpId = 'id';
+    if (pageName === 'tasklist') {
+      tmpId = 'flowId';
+    }
 
     // 设置当前选中行
     this.setState({
@@ -115,17 +127,10 @@ export default class PermissionList extends PureComponent {
       pathname,
       query: {
         ...query,
-        currentId: resultData[index].id,
+        currentId: resultData[index][tmpId],
       },
     });
-    const params = backKeys.map(item => ({
-      [item]: record[item],
-    }));
-    const obj = {
-      id: resultData[index].id,
-      ...Object.assign({}, ...params),
-    };
-    clickRow(obj);
+    clickRow(record);
   }
 
   /**

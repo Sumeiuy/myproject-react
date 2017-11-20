@@ -8,7 +8,10 @@ import moment from 'moment';
 import bowser from 'bowser';
 import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash';
-import { ZHUNICODE, constants, seibelConfig } from '../config';
+
+import { hasPermissionOfPostion } from './permission';
+
+import { ZHUNICODE, constants, seibelConfig, fspContainer } from '../config';
 
 const routerPrefix = '/customerPool';
 
@@ -50,6 +53,17 @@ const helper = {
       }
     }
     return len;
+  },
+
+  // 格式化日期为 YYYY-MM-DD 格式
+  dateFormat(str) {
+    let date = '';
+    if (str) {
+      date = moment(str).format('YYYY-MM-DD');
+    } else {
+      date = '';
+    }
+    return date;
   },
 
   // 获取 empId
@@ -115,6 +129,24 @@ const helper = {
   hasClass(elem, className) {
     return elem.className.indexOf(className) > -1;
   },
+
+  addClass(elem, cls) {
+    const ele = elem;
+    if (!helper.hasClass(ele, cls)) {
+      const oldCls = ele.className;
+      ele.className = _.isEmpty(oldCls) ? cls : `${oldCls} ${cls}`;
+    }
+  },
+
+  removeClass(elem, cls) {
+    const ele = elem;
+    if (helper.hasClass(ele, cls)) {
+      const oldCls = ` ${ele.className} `;
+      const newCls = oldCls.replace(` ${cls} `, ' ');
+      ele.className = newCls.trim();
+    }
+  },
+
   /**
      * toUnit('123456', '元', 5) => {vale: 12.34, unit:'万元'}
      * @param  { string } str  需要转换的字符串数字
@@ -435,23 +467,15 @@ const helper = {
    * 添加滚动监听
   */
   addWheelEvent(obj, handler) {
-    if (window.addEventListener) {
-      obj.addEventListener('mousewheel', handler, false);
-      obj.addEventListener('DOMMouseScroll', handler, false);
-    } else if (window.attachEvent) {
-      obj.attachEvent('onmousewheel', handler);
-    }
+    obj.addEventListener('mousewheel', handler, false);
+    obj.addEventListener('DOMMouseScroll', handler, false);
   },
   /**
    * 删除滚动监听
   */
   removeWheelEvent(obj, handler) {
-    if (window.addEventListener) {
-      obj.removeEventListener('mousewheel', handler, false);
-      obj.removeEventListener('DOMMouseScroll', handler, false);
-    } else if (window.attachEvent) {
-      obj.detachEvent('onmousewheel', handler);
-    }
+    obj.removeEventListener('mousewheel', handler, false);
+    obj.removeEventListener('DOMMouseScroll', handler, false);
   },
 
   /**
@@ -533,6 +557,22 @@ const helper = {
     isEmail(value) {
       return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
     },
+  },
+
+  // 检测合作合约项目，当前用户是否有相应的职责、职位权限
+  hasPermission(empInfo) {
+    const fsp = document.querySelector(fspContainer.container);
+    let hasPermissionOnBtn = true;
+    if (fsp) {
+      hasPermissionOnBtn = hasPermissionOfPostion(empInfo);
+    }
+    return hasPermissionOnBtn;
+  },
+
+  // 判断当前是否在FSP系统中
+  isInFsp() {
+    const fsp = document.querySelector(fspContainer.container);
+    return !!fsp;
   },
 
   // 获取ogrId

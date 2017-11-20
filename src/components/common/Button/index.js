@@ -25,9 +25,9 @@ import './index.less';
 export default function Button(props) {
   const { className } = props;
   return (
-    <div className="commonBtn">
+    <span className="commonBtn">
       <AntButton {...props} className={className} />
-    </div>
+    </span>
   );
 }
 Button.propTypes = {
