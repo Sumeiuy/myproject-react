@@ -179,7 +179,7 @@ export default class RightPanel extends PureComponent {
     } else if (tagetCustModel.custSource === '标签圈人') {
       return (
         <li className={styles.item}>
-          <InfoItem label="标签描述" value={tagetCustModel.dataName} />
+          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc} />
         </li>
       );
     }
