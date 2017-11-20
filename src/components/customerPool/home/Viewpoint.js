@@ -82,7 +82,7 @@ export default class Viewpoint extends PureComponent {
         /<(\/?)([^\s>]+)[^>]*?>/g,
         (all, isEnd, tagName) => {
           if (_.includes(['p', 'pre'], tagName)) {
-            return _.isEmpty(isEnd) ? '<p>' : '/p';
+            return _.isEmpty(isEnd) ? '<p>' : '</p>';
           }
           return '';
         },

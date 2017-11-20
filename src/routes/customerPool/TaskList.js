@@ -8,23 +8,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
-// import _ from 'lodash';
-// import { message } from 'antd';
-
-// import confirm from '../../components/common/confirm_';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import TaskListDetail from '../../components/customerPool/taskList/TaskListDetail';
-// import CommissionList from '../../components/common/biz/CommonList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
-// import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
-// import { seibelConfig } from '../../config';
-// import { permission } from '../../utils';
-// import Barable from '../../decorators/selfBar';
 import './home.less';
-
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-// const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
 
 const effects = {
   // 客户预览

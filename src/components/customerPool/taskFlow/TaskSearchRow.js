@@ -84,7 +84,7 @@ export default class TaskSearchRow extends PureComponent {
     const { userObjectFormList = [] } = peopleOfLabelData || {};
     const list = _.map(userObjectFormList, item => ({
       ...item,
-      cust_type: item.cust_type === 'Y' ? '高净值' : '零售',
+      cust_type: item.cust_type === 'N' ? '高净值' : '零售',
     }));
     this.setState({
       totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
