@@ -4,8 +4,8 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'antd';
 import { autobind } from 'core-decorators';
+import { Dropdown, Input } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 import style from './style.less';
@@ -63,16 +63,23 @@ export default class DropdownSelect extends PureComponent {
     };
   }
 
+  // componentWillMount() {
+  //   this.setState({
+  //     value: this.props.value,
+  //     id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+  //   });
+  // }
+
   componentDidMount() {
-    document.addEventListener('click', this.hideModal);
+    document.addEventListener('click', this.hideModal, false);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value = '' } = nextProps;
-    const { value: preValue = '' } = this.props;
-    if (value !== preValue) {
+    const { value: preValue } = this.props;
+    const { value: nextValue } = nextProps;
+    if (preValue !== nextValue) {
       this.setState({
-        value,
+        value: nextValue,
       });
     }
   }
@@ -101,8 +108,16 @@ export default class DropdownSelect extends PureComponent {
     return result;
   }
 
+  @autobind
+  clearValue() {
+    this.setState({
+      ...this.state,
+      value: '',
+    });
+  }
+
   componentWillUnMount() {
-    document.removeEventListener('click', this.hideModal);
+    document.removeEventListener('click', this.hideModal, false);
   }
 
   @autobind
@@ -138,33 +153,12 @@ export default class DropdownSelect extends PureComponent {
       { [style.disable]: disable },
       { [style.active]: this.state.isSHowModal },
     ]);
-    if (disable) {
-      return (
-        <div
-          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
-        >
-          <div
-            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-            data-id={this.state.id}
-            style={this.props.boxStyle || {}}
-          >
-            {this.state.value}
-          </div>
-        </div>
-      );
-    }
-    return (
+
+    const menu = (
       <div
         className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        onClick={this.handleMenuClick}
       >
-        <div
-          onClick={this.showDrapDown}
-          className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-          data-id={this.state.id}
-          style={this.props.boxStyle || {}}
-        >
-          {this.state.value}
-        </div>
         <div className={modalClass}>
           <div
             className={style.ddsDrapMenuSearch}
@@ -186,6 +180,39 @@ export default class DropdownSelect extends PureComponent {
           </ul>
         </div>
       </div>
+    );
+    if (disable) {
+      return (
+        <div>
+          <div
+            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
+            data-id={this.state.id}
+            style={this.props.boxStyle || {}}
+          >
+            {this.state.value}
+          </div>
+        </div>
+      );
+    }
+    return (
+      <Dropdown
+        overlay={menu}
+        trigger={['click']}
+        visible={this.state.isSHowModal}
+      >
+        <div
+          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        >
+          <div
+            onClick={this.showDrapDown}
+            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
+            data-id={this.state.id}
+            style={this.props.boxStyle || {}}
+          >
+            {this.state.value}
+          </div>
+        </div>
+      </Dropdown>
     );
   }
 }
