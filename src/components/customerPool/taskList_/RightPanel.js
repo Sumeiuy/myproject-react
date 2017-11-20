@@ -46,7 +46,7 @@ export default class RightPanel extends PureComponent {
       curPageNum: PAGE_NO,
       curPageSize: PAGE_SIZE,
       isShowTable: false,
-      fileNames: 'b9e19dde-60f6-4614-9651-24b67839f1a7.xls',
+      fileNames: '',
     };
   }
 
@@ -169,10 +169,16 @@ export default class RightPanel extends PureComponent {
             <div className={styles.label}>
               客户连接<span className={styles.colon}>:</span>
             </div>
-            <div className={styles.value}>
-              <Icon type="excel" className={styles.excel} />客户列表
-                        <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
-            </div>
+            {
+              tagetCustModel.dataName ?
+                <div className={styles.value}>
+                  <Icon type="excel" className={styles.excel} />
+                  客户列表
+                  <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
+                </div>
+                :
+                <div className={styles.value}>--</div>
+            }
           </div>
         </li>
       );

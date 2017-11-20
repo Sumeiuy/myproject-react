@@ -14,6 +14,9 @@ import styles from './detailInfo.less';
 
 const { tasklist: { status } } = seibelConfig;
 
+// 完成状态对应的 key 值
+const COMPLETE_CODE = '02';
+
 export default class TaskListDetailInfo extends PureComponent {
 
   static propTypes = {
@@ -38,7 +41,7 @@ export default class TaskListDetailInfo extends PureComponent {
     const timelyIntervalValue = infoData.timelyIntervalValue || '--';
     return (
       <div id="detailModule" className={styles.module}>
-        {infoData.status !== '02' ?
+        {infoData.status !== COMPLETE_CODE ?
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
               <li className={styles.item}>
