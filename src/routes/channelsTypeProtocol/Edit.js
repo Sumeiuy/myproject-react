@@ -36,6 +36,10 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   payload: query || {},
   loading: globalLoading,
 });
+// 终止按钮
+const btnEnd = 'FINISH';
+// 终止文字
+const textEnd = 'falseOver';
 
 const mapStateToProps = state => ({
   // 子类型、操作类型、协议模版
@@ -83,7 +87,9 @@ const mapDispatchToProps = {
   // 提交审批流程
   doApprove: fetchDataFunction(true, 'channelsEdit/doApprove'),
   // 验证客户
-  getCustValidate: fetchDataFunction(true, 'channelsEdit/getCustValidate'),
+  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate'),
+  // 清除审批人
+  cleartBtnGroup: fetchDataFunction(false, 'channelsEdit/cleartBtnGroup'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -128,6 +134,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     doApprove: PropTypes.func.isRequired,
     // 验证客户
     getCustValidate: PropTypes.func.isRequired,
+    // 清除审批人
+    cleartBtnGroup: PropTypes.func,
   }
 
   static defaultProps = {
@@ -137,6 +145,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     underCustList: EMPTY_LIST,
     flowStepInfo: EMPTY_OBJECT,
     itemId: '',
+    cleartBtnGroup: () => {},
   }
 
   constructor(props) {
@@ -217,23 +226,55 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    const { protocolDetail, saveProtocolData } = this.props;
+    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    let confirmContent = '';
+    const protocolData = {
+      ...protocolDetail,
+      ...formData,
+    };
+    if (btnItem.nextGroupName === btnEnd && btnItem.operate === textEnd) {
+      confirmContent = '是否确定终止？';
+    } else {
+      confirmContent = '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！';
+    }
     confirm({
       title: '提示',
-      content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
+      content: confirmContent,
       onOk: () => {
-        const protocolData = {
-          ...protocolDetail,
-          ...formData,
-        };
-        saveProtocolData(protocolData).then(() => {
+        if (btnItem.approverNum === 'none') {
+          const auth = btnItem.flowAuditors[0];
+          saveProtocolData(protocolData).then(() => {
+            const {
+              location: {
+                query,
+              },
+            } = this.props;
+            const params = {
+              ...constructSeibelPostBody(query, 1, 10),
+              type: pageType,
+            };
+            doApprove({
+              formData: {
+                // itemId: this.props.itemId,
+                flowId: protocolDetail.flowid,
+                auditors: auth.empNo,
+                groupName: auth.groupName,
+                approverIdea: '',
+              },
+              params,
+            }).then(() => {
+              cleartBtnGroup();
+              this.closeModal('editFormModal');
+            });
+          });
+        } else {
           this.setState({
             ...this.state,
             approverModal: true,
             flowAuditors: btnItem.flowAuditors,
             protocolData,
           });
-        });
+        }
       },
       onCancel: () => {
         console.log('Cancel');
@@ -244,29 +285,32 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    const { protocolDetail, doApprove } = this.props;
-    const {
-      location: {
-        query,
-      },
-    } = this.props;
-    const params = {
-      ...constructSeibelPostBody(query, 1, 10),
-      type: pageType,
-    };
-    doApprove({
-      formData: {
-        // itemId: this.props.itemId,
-        flowId: protocolDetail.flowid,
-        auditors: auth.login,
-        groupName: auth.groupName,
-        approverIdea: '',
-      },
-      params,
-    }).then((data) => {
-      console.warn('data', data);
-      this.closeModal('editFormModal');
-      this.closeModal('approverModal');
+    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    const { protocolData } = this.state;
+    saveProtocolData(protocolData).then(() => {
+      const {
+        location: {
+          query,
+        },
+      } = this.props;
+      const params = {
+        ...constructSeibelPostBody(query, 1, 10),
+        type: pageType,
+      };
+      doApprove({
+        formData: {
+          // itemId: this.props.itemId,
+          flowId: protocolDetail.flowid,
+          auditors: auth.empNo,
+          groupName: auth.groupName,
+          approverIdea: '',
+        },
+        params,
+      }).then(() => {
+        cleartBtnGroup();
+        this.closeModal('editFormModal');
+        this.closeModal('approverModal');
+      });
     });
   }
 
@@ -295,7 +339,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
         ...formData,
         attachment: newAttachment,
       };
-      console.warn('showconFirm paylaod', payload);
       // 弹出提示窗
       this.showconFirm(payload, btnItem);
     }
@@ -318,6 +361,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       flowStepInfo, // 审批人列表
       getCustValidate,  // 验证客户接口
       attachmentList,  // 附件列表
+      cleartBtnGroup,  // 清除审批人
     } = this.props;
     const {
       approverModal,
@@ -358,6 +402,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       template,
       // 验证客户
       getCustValidate,
+      // 清除审批人
+      cleartBtnGroup,
     };
     const nowStep = {
       // 当前步骤
@@ -371,7 +417,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
           {...editFormProps}
           ref={(ref) => { this.EditFormComponent = ref; }}
         />
-        <div className={styles.detailWrapper}>
+        <div className={styles.editComponent}>
           <InfoTitle head="审批记录" />
           <ApproveList data={flowHistory} nowStep={nowStep} />
         </div>

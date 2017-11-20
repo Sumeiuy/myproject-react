@@ -31,6 +31,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: PropTypes.bool,
     isShowErrorTaskType: PropTypes.bool.isRequired,
     isShowErrorExcuteType: PropTypes.bool.isRequired,
+    custCount: PropTypes.number,
   }
 
   static defaultProps = {
@@ -40,6 +41,7 @@ export default class CreateTaskForm extends PureComponent {
     previousData: {},
     isShowTitle: false,
     isShowErrorInfo: false,
+    custCount: 0,
   }
 
   constructor(props) {
@@ -58,12 +60,12 @@ export default class CreateTaskForm extends PureComponent {
   componentWillMount() {
     const {
       location: { query },
-      dict: { custIdexPlaceHolders },
+      dict: { custIndexPlaceHolders },
       previousData,
     } = this.props;
-    const arr = _.map(custIdexPlaceHolders, item => ({
-      name: item.substring(1, item.length - 1),
-      type: item.substring(1, item.length),
+    const arr = _.map(custIndexPlaceHolders, item => ({
+      name: item.value.slice(1),
+      type: item.value.slice(1),
     }));
     this.setState({
       statusData: arr,
@@ -87,6 +89,11 @@ export default class CreateTaskForm extends PureComponent {
   // 标签、搜索目标客户：searchCustPool
   // 绩效目标客户 - 净新增客户： performanceCustPool
   // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
+  @autobind
+  handleKey(key, custIdexPlaceHolders) {
+    const values = _.filter(custIdexPlaceHolders, item => item.key === key);
+    return values[0].value;
+  }
 
   @autobind
   handleInit(query = {}) {
@@ -96,7 +103,7 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    const { dict: { custIdexPlaceHolders } } = this.props;
+    const { dict: { custIndexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
@@ -106,7 +113,7 @@ export default class CreateTaskForm extends PureComponent {
     let custIdList = null;
     let searchReq = null;
     let firstUserName = '';
-
+    let defaultKey = '';
     if (query.ids) {
       custIdList = decodeURIComponent(query.ids).split(',');
     } else if (query.condition) {
@@ -129,8 +136,9 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '提醒客户办理已满足条件的业务'; // 任务名称
         defaultMissionType = 'BusinessRecomm'; // 任务类型
         defaultExecutionType = 'Mission'; // 执行方式
+        defaultKey = 'UNRIGHTS';
         // 任务提示
-        defaultMissionDesc = `用户已达到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
+        defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
       case 'search':
@@ -149,14 +157,16 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[2]} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultKey = 'ACCOUNT_OPEN_DATE';
+        defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         break;
       case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[1]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultKey = 'RIGHTS';
+        defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;
@@ -193,6 +203,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
+      custCount,
     } = this.props;
     const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
@@ -210,7 +221,9 @@ export default class CreateTaskForm extends PureComponent {
     return (
       <div>
         {!isShowTitle ?
-          <div className={styles.task_title}>为{firstUserName} <b>{count}</b> 位客户新建任务</div>
+          <div className={styles.task_title}>
+            为{firstUserName} <b>{custCount || count}</b> 位客户新建任务
+          </div>
           :
           <div className={styles.task_title}>任务基本信息</div>
         }
