@@ -139,7 +139,7 @@ export default class CreateTask extends PureComponent {
       // 并且用closeTabMenu关闭
       fspGlobal.closeTabMenu('RCT_FSP_CREATE_TASK');
     } else {
-      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+      fspGlobal.closeTabMenu('RCT_FSP_CUSTOMER_LIST');
     }
     fspGlobal.openRctTab({ url: '/customerPool', param });
   }

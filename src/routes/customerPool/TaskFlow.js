@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 09:19:16
+ * @Last Modified time: 2017-11-20 15:19:02
  */
 
 import React, { PureComponent } from 'react';
@@ -192,14 +192,6 @@ export default class TaskFlow extends PureComponent {
         isShowApprovalModal: true,
       });
     }
-  }
-
-  componentWillUnmount() {
-    const { clearTaskFlowData, resetActiveTab } = this.props;
-    // 清除数据
-    clearTaskFlowData();
-    // 恢复默认tab
-    resetActiveTab();
   }
 
   @autobind
