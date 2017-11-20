@@ -70,8 +70,6 @@ export default class Pageheader extends PureComponent {
     customerList: PropTypes.array.isRequired,
     // 获取客户列表
     getCustomerList: PropTypes.func.isRequired,
-    // 类型
-    typeOptions: PropTypes.array,
     // 是否渲染客户范围的组件
     needPtyMng: PropTypes.bool,
     // 是否渲染子类型下拉选择组件
@@ -98,7 +96,6 @@ export default class Pageheader extends PureComponent {
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
-    typeOptions: [],
     needPtyMng: false,
     needSubType: false,
     needStatus: false,
@@ -263,9 +260,6 @@ export default class Pageheader extends PureComponent {
         [name]: value,
       },
     });
-    this.setState({
-      createTime: value,
-    });
   }
 
   render() {
@@ -286,7 +280,6 @@ export default class Pageheader extends PureComponent {
       operateOptions,
       needOperate,
       empInfo,
-      typeOptions,
       needPtyMng,
       needSubType,
       needStatus,
@@ -301,14 +294,15 @@ export default class Pageheader extends PureComponent {
           subType,
           status,
           business2,
-          type,
+          createTime,
         },
       },
     } = this.props;
 
     // 默认取当前默认日期时间
     // const creationTime = moment(Date.now()).format(dateFormat);
-    const { createTime } = this.state;
+    // const { createTime } = this.state;
+
 
     const dateProps = {
       allowClear: true,
@@ -400,9 +394,9 @@ export default class Pageheader extends PureComponent {
               <div className={styles.filterFl}>
                 类型:
                 <Select
-                  name="type"
-                  value={type}
-                  data={typeOptions}
+                  name="subType"
+                  value={subType}
+                  data={subtypeOptions}
                   onChange={this.handleSelectChange}
                 />
               </div>
