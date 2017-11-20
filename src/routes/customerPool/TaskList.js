@@ -119,6 +119,7 @@ export default class TaskList extends PureComponent {
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
+        console.log('params>>>>', params);
         getTasklist({
           ...params,
           type: pageType,
@@ -225,7 +226,7 @@ export default class TaskList extends PureComponent {
         replace={replace}
         page="tasklist"
         pageType={pageType}
-        typeOptions={type}
+        subtypeOptions={type}
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         empInfo={empInfo}

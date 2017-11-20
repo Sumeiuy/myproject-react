@@ -53,7 +53,7 @@ export default class TaskListDetailInfo extends PureComponent {
                 <InfoItem label="服务策略" value={infoData.strategyDesc || '--'} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务提示" value={infoData.infoContent || '--'} />
+                <InfoItem label="任务提示" value={infoData.infoContent || '--'} />
               </li>
             </ul>
           </div> :
@@ -75,7 +75,7 @@ export default class TaskListDetailInfo extends PureComponent {
                 <InfoItem label="服务策略" value={infoData.strategyDesc || '--'} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="服务提示" value={infoData.infoContent || '--'} />
+                <InfoItem label="任务提示" value={infoData.infoContent || '--'} />
               </li>
             </ul>
           </div>
