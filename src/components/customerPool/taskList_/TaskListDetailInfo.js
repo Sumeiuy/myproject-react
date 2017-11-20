@@ -14,9 +14,6 @@ import styles from './detailInfo.less';
 
 const { tasklist: { status } } = seibelConfig;
 
-// 存储状态码，处理中：'01'，驳回：'04'
-const arr = ['01', '04'];
-
 export default class TaskListDetailInfo extends PureComponent {
 
   static propTypes = {
@@ -38,16 +35,20 @@ export default class TaskListDetailInfo extends PureComponent {
 
   render() {
     const { infoData } = this.props;
+    const timelyIntervalValue = infoData.timelyIntervalValue || '--';
     return (
       <div id="detailModule" className={styles.module}>
-        {_.includes(arr, infoData.status) ?
+        {infoData.status !== '02' ?
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
               <li className={styles.item}>
                 <InfoItem label="任务状态" value={this.changeDisplay(infoData.status, status) || '--'} />
               </li>
               <li className={styles.item}>
-                <InfoItem label="有效期（天）" value={String(infoData.timelyIntervalValue) || '--'} />
+                <InfoItem
+                  label="有效期（天）"
+                  value={String(timelyIntervalValue)}
+                />
               </li>
               <li className={styles.item}>
                 <InfoItem label="服务策略" value={infoData.strategyDesc || '--'} />
@@ -63,10 +64,10 @@ export default class TaskListDetailInfo extends PureComponent {
                 <InfoItem label="任务状态" value={this.changeDisplay(infoData.status, status) || '--'} />
               </li>
               <li className={styles.sed}>
-                <InfoItem label="触发时间" value={infoData.triggerTime || '--'} />
+                <InfoItem label=" " value={' '} />
               </li>
               <li className={styles.fir}>
-                <InfoItem label="创建时间" value={infoData.createTime || '--'} />
+                <InfoItem label="触发时间" value={infoData.triggerTime || '--'} />
               </li>
               <li className={styles.sed}>
                 <InfoItem label="截止时间" value={infoData.deadTime || '--'} />

@@ -179,7 +179,7 @@ export default class RightPanel extends PureComponent {
     } else if (tagetCustModel.custSource === '标签圈人') {
       return (
         <li className={styles.item}>
-          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc} />
+          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc || '--'} />
         </li>
       );
     }
@@ -210,6 +210,7 @@ export default class RightPanel extends PureComponent {
     const dataSource =
       this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
+    const custNum = tagetCustModel.custNum || '--';
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -227,10 +228,13 @@ export default class RightPanel extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户类型" value={tagetCustModel.custSource} />
+                    <InfoItem label="客户类型" value={tagetCustModel.custSource || '--'} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="客户总数" value={String(tagetCustModel.custNum)} />
+                    <InfoItem
+                      label="客户总数"
+                      value={String(custNum)}
+                    />
                   </li>
                   {this.renderMention()}
                 </ul>
