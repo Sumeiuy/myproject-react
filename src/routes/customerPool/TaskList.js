@@ -125,7 +125,6 @@ export default class TaskList extends PureComponent {
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
-        console.log('params>>>>', params);
         getTasklist({
           ...params,
           type: pageType,
