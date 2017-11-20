@@ -270,9 +270,13 @@ export default class Home extends PureComponent {
   getTimeSelectBeginAndEnd(props) {
     const { cycle, location: { query: { cycleSelect } } } = props;
     const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === ((cycleSelect || (cycle[0] || {}).key)) || {}).name) || {}; // 本月
+    const currentSelect = _.find(historyTime, (itemData) => {
+      const a = _.find(
+        customerPoolTimeSelect,
+        item => item.key === (cycleSelect || (cycle[0] || {}).key),
+      ) || {};
+      return itemData.name === a.name;
+    }) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;

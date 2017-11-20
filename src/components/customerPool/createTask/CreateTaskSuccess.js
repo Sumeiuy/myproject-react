@@ -6,7 +6,6 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-// import { withRouter } from 'dva/router';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import imgSrc from '../../../../static/images/createTask_success.png';
@@ -49,7 +48,7 @@ export default class CreateTaskSuccess extends PureComponent {
         taskSuccessBox.style.height = (docElemHeight - 40) + 'px';
       }
     }
-    this.handleShowSuccess(this.props);
+    this.handleShowSuccess();
   }
 
   componentWillUnmount() {
@@ -59,8 +58,8 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   @autobind
-  handleShowSuccess(props) {
-    const { successType } = props;
+  handleShowSuccess() {
+    const { successType } = this.props;
     if (successType) {
       this.successSetInterval = setInterval(this.handleMovTime, 1000);
     }
@@ -93,7 +92,6 @@ export default class CreateTaskSuccess extends PureComponent {
       changeTime: --changeTime,
     }, () => {
       if (changeTime <= 0) {
-        console.log('页面关闭');
         // 跳转之前关闭interval
         this.goToHome();
       }
