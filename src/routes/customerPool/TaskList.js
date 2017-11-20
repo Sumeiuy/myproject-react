@@ -54,6 +54,11 @@ const mapDispatchToProps = {
   getTasklist: fetchDataFunction(true, 'app/getSeibleList'),
   previewCustFile: fetchDataFunction(true, 'tasklist/previewCustFile'),
   getTaskBasicInfo: fetchDataFunction(true, 'tasklist/getTaskBasicInfo'),
+  // 清除数据
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -73,6 +78,7 @@ export default class TaskList extends PureComponent {
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     seibelListLoading: PropTypes.bool,
+    clearTaskFlowData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -165,6 +171,8 @@ export default class TaskList extends PureComponent {
   @autobind
   handleCreateBtnClick() {
     const url = '/customerPool/taskFlow';
+    const { clearTaskFlowData } = this.props;
+    clearTaskFlowData();
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({
         url,
