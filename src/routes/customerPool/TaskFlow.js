@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 14:32:56
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-20 17:56:12
  */
 
 import React, { PureComponent } from 'react';
@@ -130,10 +130,11 @@ export default class TaskFlow extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { current, currentSelectRowKeys, currentSelectRecord } = props.storedTaskFlowData || {};
     this.state = {
-      current: 0,
-      currentSelectRecord: {},
-      currentSelectRowKeys: [],
+      current: current || 0,
+      currentSelectRecord: currentSelectRecord || {},
+      currentSelectRowKeys: currentSelectRowKeys || [],
       isSuccess: false,
       custSource: '',
       isLoadingEnd: true,
@@ -194,14 +195,6 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    const { clearTaskFlowData, resetActiveTab } = this.props;
-    // 清除数据
-    clearTaskFlowData();
-    // 恢复默认tab
-    resetActiveTab();
-  }
-
   @autobind
   handleNextStep() {
     // 下一步
@@ -246,6 +239,7 @@ export default class TaskFlow extends PureComponent {
         ...storedTaskFlowData,
         taskFormData,
         ...pickTargetCustomerData,
+        current: current + 1,
       });
       this.setState({
         current: current + 1,
@@ -262,9 +256,14 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handlePreviousStep() {
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { current } = this.state;
     // 上一步
     this.setState({
+      current: current - 1,
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
       current: current - 1,
     });
   }
@@ -335,23 +334,33 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
+    const labelCustPostBody = {
+      labelId: labelMapping,
+      queryLabelDTO: {
+        labelDesc,
+        labelName,
+      },
+      labelCustNums,
+      ...postBody,
+    };
+
     if (currentTab === '1') {
       submitTaskFlow({
         fileId,
         ...postBody,
       });
+    } else if (this.isHasAuthorize) {
+      submitTaskFlow(_.merge(labelCustPostBody, {
+        queryLabelDTO: {
+          orgId,
+        },
+      }));
     } else {
-      submitTaskFlow({
-        labelId: labelMapping,
+      submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
           ptyMngId: helper.getEmpId(),
-          orgId,
-          labelDesc,
-          labelName,
         },
-        labelCustNums,
-        ...postBody,
-      });
+      }));
     }
 
     // 成功之后再clear
@@ -361,7 +370,12 @@ export default class TaskFlow extends PureComponent {
   @autobind
   handleRowSelectionChange(selectedRowKeys, selectedRows) {
     console.log(selectedRowKeys, selectedRows);
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
     this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
       currentSelectRowKeys: selectedRowKeys,
     });
   }
@@ -369,8 +383,14 @@ export default class TaskFlow extends PureComponent {
   @autobind
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { login } = record;
     this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
       currentSelectRecord: record,
       currentSelectRowKeys: [login],
     });

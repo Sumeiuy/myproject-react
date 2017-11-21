@@ -274,6 +274,7 @@ export default class Pageheader extends PureComponent {
           status,
           business2,
           createTime,
+          drafterId,
         },
       },
     } = this.props;
@@ -304,6 +305,11 @@ export default class Pageheader extends PureComponent {
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
 
+    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    let curDrafter = '全部';
+    if (curDrafterInfo) {
+      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+    }
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
     // 新建按钮权限
@@ -417,7 +423,7 @@ export default class Pageheader extends PureComponent {
                 创建者:
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value="全部"
+                    value={curDrafter}
                     placeholder="工号/名称"
                     searchList={drafterAllList}
                     showObjKey="ptyMngName"
