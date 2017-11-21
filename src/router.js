@@ -42,6 +42,7 @@ import PermissonHome from './routes/permission/Home';
 import Contract from './routes/contract/Home';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TakList from './routes/customerPool/TaskList';
+import PerformerView from './routes/customerPool/PerformerView';
 
 
 function switchRouter() {
@@ -89,6 +90,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
         <Route path="taskList" component={TakList} />
+        <Route path="performerView" component={PerformerView} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
