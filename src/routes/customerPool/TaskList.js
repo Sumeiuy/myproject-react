@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Columns from '../../components/customerPool/taskList_/Columns';
 import RightPanel from '../../components/customerPool/taskList_/RightPanel';
