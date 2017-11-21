@@ -13,16 +13,46 @@
   &.chooseTodo {
     background: #60bbea;
   }
+  :global(.active) & {
+    background-color: #fff;
+    color: #4897f1;
+  }
 }
+:global {
+  .react-app .pageCommonList tr.active .rightSection.customerTaskList > span {
+    background-color: transparent !important;
+    border: 1px solid #fff;
+  }
+}
+
 .serialNumber {
   margin-left: 10px;
   color: #9b9b9b;
   font-size: 12px;
+  :global(.active) & {
+    color: #fff;
+  }
 }
 .type {
   margin-left: 15px;
   color: #9b9b9b;
   font-size: 12px;
+  :global(.active) & {
+    color: #fff;
+  }
+}
+.subType, .date {
+  max-width: 400px;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 5px;
+  color: #666;
+  :global(.active) & {
+    color: #fff;
+  }
 }
 .drafter {
   max-width: 400px;
@@ -33,4 +63,7 @@
   text-overflow: ellipsis;
   margin-top: 5px;
   color: #9b9b9b;
+  :global(.active) & {
+    color: #fff;
+  }
 }
