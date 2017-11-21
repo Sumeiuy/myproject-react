@@ -296,7 +296,6 @@ export default class Pageheader extends PureComponent {
           status,
           business2,
           createTime,
-          drafterId,
         },
       },
     } = this.props;
@@ -317,13 +316,6 @@ export default class Pageheader extends PureComponent {
 
     if (createTime) {
       dateProps.value = moment(createTime, dateFormat);
-    }
-
-    // 回填自建任务中创建者url中当前选中的人
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    let curDrafter = '全部';
-    if (curDrafterInfo) {
-      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
 
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
@@ -449,7 +441,7 @@ export default class Pageheader extends PureComponent {
                 创建者:
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value={curDrafter}
+                    value="全部"
                     placeholder="工号/名称"
                     searchList={drafterAllList}
                     showObjKey="ptyMngName"

@@ -19,8 +19,7 @@ import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import styles from './customerRow.less';
 
-import maleAvator from '../../../../static/images/icon-avator.png';
-import femaleAvator from '../../../../static/images/female-avator.png';
+import iconavator from '../../../../static/images/icon-avator.png';
 import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
 import iconProductAgency from '../../../../static/images/icon-product-agency.png';
 import iconMoney from '../../../../static/images/icon-money.png';
@@ -30,24 +29,6 @@ import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
 // import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
-
-// 客户男女code码
-const MALE_CODE = '109001';
-const FEMALE_CODE = '109002';
-
-// 个人对应的code码
-const PER_CODE = 'per';
-// 一般机构对应的code码
-const ORG_CODE = 'org';
-// 产品机构对应的code码
-const PROD_CODE = 'prod';
-
-// 客户性质 code 对应 name
-const custNatureName = {
-  [PER_CODE]: '个人客户',
-  [ORG_CODE]: '一般机构',
-  [PROD_CODE]: '产品机构',
-};
 
 // 风险等级配置
 const riskLevelConfig = {
@@ -82,7 +63,21 @@ const riskLevelConfig = {
     colorCls: 'jiji',
   },
 };
-
+// 客户性质配置
+const custNature = {
+  per: {
+    name: '个人客户',
+    imgSrc: iconavator,
+  },
+  org: {
+    name: '一般机构',
+    imgSrc: iconGeneralGgency,
+  },
+  prod: {
+    name: '产品机构',
+    imgSrc: iconProductAgency,
+  },
+};
 // 客户等级的图片源
 const rankImgSrcConfig = {
   // 钻石
@@ -100,6 +95,10 @@ const rankImgSrcConfig = {
   // 其他
   805999: '',
 };
+
+// const formatNumber = value => helper.toUnit(value, '元').value;
+
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -149,7 +148,7 @@ export default class CustomerRow extends PureComponent {
         ptyId,
       },
     } = this.props;
-    const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
+    const type = (!pOrO || pOrO === 'per') ? 'per' : 'org';
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
@@ -176,48 +175,24 @@ export default class CustomerRow extends PureComponent {
     createContact({
       custName: name,
       custId,
-      custType: (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE,
+      custType: (!pOrO || pOrO === 'per') ? 'per' : 'org',
     });
   }
 
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
-    if (listItem.pOrO === PER_CODE) {
+    if (listItem.pOrO === 'per') {
       // 客户性质为个人
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === ORG_CODE && listItem.orgTypeName) {
+    } else if (listItem.pOrO === 'org' && listItem.orgTypeName) {
       // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === PROD_CODE && listItem.prodTypeCode) {
+    } else if (listItem.pOrO === 'prod' && listItem.prodTypeCode) {
       // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }
     return '';
-  }
-
-  // 渲染客户头像
-  // 区分产品机构、一般机构、个人客户：男、女 ，四种头像
-  @autobind
-  renderAvator({ genderCode = '', pOrO = '' }) {
-    let imgSrc = '';
-    if (pOrO === PER_CODE) {
-      if (genderCode === MALE_CODE) {
-        imgSrc = maleAvator;
-      } else if (genderCode === FEMALE_CODE) {
-        imgSrc = femaleAvator;
-      }
-    } else if (pOrO === ORG_CODE) {
-      imgSrc = iconGeneralGgency;
-    } else if (pOrO === PROD_CODE) {
-      imgSrc = iconProductAgency;
-    }
-    return (<img
-      className={styles.avatorImage}
-      src={imgSrc}
-      alt=""
-      onClick={this.toDetail}
-    />);
   }
 
   renderRankImg(listItem = {}) {
@@ -294,8 +269,13 @@ export default class CustomerRow extends PureComponent {
         >
           <div className={`${styles.customerRowLeft} clear`}>
             <div className={styles.avatorContent}>
-              { this.renderAvator(listItem) }
-              <div className={styles.avatorText}>{custNatureName[listItem.pOrO] || ''}</div>
+              <img
+                className={styles.avatorImage}
+                src={custNature[listItem.pOrO].imgSrc}
+                alt=""
+                onClick={this.toDetail}
+              />
+              <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
               {
                 this.renderRankImg(listItem)
               }
