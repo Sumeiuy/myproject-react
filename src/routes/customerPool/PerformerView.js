@@ -14,6 +14,7 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewList from '../../components/common/appList';
+import PerformerViewDetail from '../../components/customerPool/performerView/PerformerViewDetail';
 import { seibelConfig } from '../../config';
 
 const { performerView, performerView: { pageType, subType, status } } = seibelConfig;
@@ -99,7 +100,7 @@ export default class PerformerView extends PureComponent {
     );
 
     const rightPanel = (
-      <div>detail2222</div>
+      <PerformerViewDetail />
     );
     return (
       <div>
