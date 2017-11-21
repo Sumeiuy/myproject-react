@@ -7,18 +7,29 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
+import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
+import PerformerViewList from '../../components/common/appList';
 import { seibelConfig } from '../../config';
 
-const { permission: { pageType, subType, status } } = seibelConfig;
+const { performerView, performerView: { pageType, subType, status } } = seibelConfig;
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
 const mapStateToProps = state => ({
   // 左侧列表数据
-  list: state.app.seibleList,
+  performerViewList: state.app.seibleList,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  // 获取左侧列表
+  getPerformerViewList: fetchDataFunction(true, 'app/getSeibleList'),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -26,6 +37,27 @@ export default class PerformerView extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    performerViewList: PropTypes.object.isRequired,
+    getPerformerViewList: PropTypes.func.isRequired,
+  }
+
+  componentWillMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+      getPerformerViewList,
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    // 默认筛选条件
+    getPerformerViewList({
+      ...params,
+      type: pageType,
+    });
   }
 
   // 头部新建页面
@@ -38,17 +70,45 @@ export default class PerformerView extends PureComponent {
     const {
       location,
       replace,
+      performerViewList,
     } = this.props;
+
+    const isEmpty = _.isEmpty(performerViewList.resultData);
+    const topPanel = (
+      <ConnectedSeibelHeader
+        location={location}
+        replace={replace}
+        page="performerViewPage"
+        pageType={pageType}
+        subtypeOptions={subType}
+        stateOptions={status}
+        creatSeibelModal={this.creatPermossionModal}
+        filterControl="performerView"
+      />
+    );
+
+    const leftPanel = (
+      <PerformerViewList
+        list={performerViewList}
+        replace={replace}
+        location={location}
+        pageName="performerView"
+        type="kehu1"
+        pageData={performerView}
+      />
+    );
+
+    const rightPanel = (
+      <div>detail2222</div>
+    );
     return (
       <div>
-        <ConnectedSeibelHeader
-          location={location}
-          replace={replace}
-          page="premissionPage"
-          pageType={pageType}
-          subtypeOptions={subType}
-          stateOptions={status}
-          creatSeibelModal={this.creatPermossionModal}
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="premissionList"
         />
       </div>
     );
