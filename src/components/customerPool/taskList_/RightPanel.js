@@ -234,7 +234,7 @@ export default class RightPanel extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户类型" value={tagetCustModel.custSource || '--'} />
+                    <InfoItem label="客户来源" value={tagetCustModel.custSource || '--'} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem
