@@ -63,7 +63,7 @@ export default function Columns(props) {
           <span className={styles.serialNumber}>编号{record.id || '暂无'}</span>
           <span className={styles.type}>{changeTypeDisplay(record.subType, pageData.type)}</span>
         </div>
-        <div className="subType">{record.title || '无'}</div>
+        <div className={styles.subType}>{record.title || '无'}</div>
         <div className={styles.drafter}>
           创建者：
           <span className="drafterName">
@@ -75,12 +75,12 @@ export default function Columns(props) {
   }, {
     width: '40%',
     render: (text, record) => (
-      <div className="rightSection">
+      <div className="rightSection customerTaskList">
         <Tag
           color={record.status ? tagClsConfig[record.status] : ''}
           text={changeDisplay(record.status, pageData.status)}
         />
-        <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
+        <div className={styles.date}>{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
       </div>
     ),
   }];
