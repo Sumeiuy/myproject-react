@@ -229,8 +229,10 @@ export default class CreateContactModal extends PureComponent {
     const {
       perCustomerContactInfo = EMPTY_OBJECT,
       orgCustomerContactInfoList = EMPTY_LIST,
+      custBaseInfo = EMPTY_OBJECT,
     } = custContactData;
 
+    const { custName } = custBaseInfo;
     let otherContactInfo = EMPTY_LIST;
     let mainContactInfo = {
       nameInfo: {},
@@ -339,6 +341,12 @@ export default class CreateContactModal extends PureComponent {
           <Button key="close" size="large" onClick={this.handleCancel}>关闭</Button>,
         ]}
       >
+        {
+          (isPersonHasContact || isOrgMainContactHasTel) ?
+            <div className={styles.custName}>
+              {custName || ''}
+            </div> : null
+        }
         {
           custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
             <div className={styles.title}>
