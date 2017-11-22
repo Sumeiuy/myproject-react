@@ -282,13 +282,14 @@ export default {
       });
     },
     // 联想的推荐热词列表
-    * getHotPossibleWds({ payload }, { call, put }) {
-      const response = yield call(api.getHotPossibleWds, payload);
-      yield put({
-        type: 'getHotPossibleWdsSuccess',
-        payload: { response },
-      });
-    },
+    getHotPossibleWds: [
+      function* getHotPossibleWds({ payload }, { call, put }) {
+        const response = yield call(api.getHotPossibleWds, payload);
+        yield put({
+          type: 'getHotPossibleWdsSuccess',
+          payload: { response },
+        });
+      }, { type: 'takeLatest' }],
     // 默认推荐词及热词推荐列表及历史搜索数据
     * getHistoryWdsList({ payload }, { call, put }) {
       const history = yield call(api.getHistoryWdsList, payload);
