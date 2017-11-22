@@ -14,15 +14,20 @@ export default class BasicInfo extends PureComponent {
 
   static propTypes = {
     // 有效期
-    validPeriod: PropTypes.string.isRequired,
-    // 任务目标时间
-    taskTargetTime: PropTypes.string.isRequired,
-    // 任务目标标题
-    taskTargetTitle: PropTypes.string.isRequired,
+    validPeriod: PropTypes.string,
+    // 任务目标
+    taskTargete: PropTypes.string,
     // 服务策略
-    servicePolicy: PropTypes.string.isRequired,
+    servicePolicy: PropTypes.string,
     // 是否有问卷调查
-    hasSurvey: PropTypes.bool.isRequired,
+    hasSurvey: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    validPeriod: '',
+    taskTargete: '',
+    servicePolicy: '',
+    hasSurvey: false,
   }
 
   render() {

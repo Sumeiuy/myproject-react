@@ -21,6 +21,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       basicInfo,
     } = this.props;
+    console.log(' this.props>>>>>>>>>>>', this.props);
     const {
       taskId,
       taskName,
