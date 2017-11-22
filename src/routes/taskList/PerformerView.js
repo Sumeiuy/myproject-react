@@ -14,7 +14,7 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewList from '../../components/common/appList';
-import PerformerViewDetail from '../../components/customerPool/performerView/PerformerViewDetail';
+import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
 import { seibelConfig } from '../../config';
 
 const { performerView, performerView: { pageType, subType, status } } = seibelConfig;
@@ -26,6 +26,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   // 左侧列表数据
   performerViewList: state.app.seibleList,
+  taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
@@ -40,6 +41,7 @@ export default class PerformerView extends PureComponent {
     replace: PropTypes.func.isRequired,
     performerViewList: PropTypes.object.isRequired,
     getPerformerViewList: PropTypes.func.isRequired,
+    taskDetailBasicInfo: PropTypes.object.isRequired,
   }
 
   componentWillMount() {
@@ -72,6 +74,7 @@ export default class PerformerView extends PureComponent {
       location,
       replace,
       performerViewList,
+      taskDetailBasicInfo,
     } = this.props;
 
     const isEmpty = _.isEmpty(performerViewList.resultData);
@@ -100,7 +103,9 @@ export default class PerformerView extends PureComponent {
     );
 
     const rightPanel = (
-      <PerformerViewDetail />
+      <PerformerViewDetail
+        basicInfo={taskDetailBasicInfo}
+      />
     );
     return (
       <div>
