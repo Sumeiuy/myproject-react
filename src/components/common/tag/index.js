@@ -17,7 +17,7 @@ import styles from './index.less';
 
 export default class Tag extends PureComponent {
   static propTypes = {
-    type: PropTypes.oneOf(['blue', 'yellow']),
+    type: PropTypes.string,
     color: PropTypes.string,
     text: PropTypes.string,
   };

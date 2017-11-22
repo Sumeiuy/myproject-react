@@ -16,8 +16,9 @@ import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/appList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
+import AppItem from '../../components/common/appList/AppItem';
+import appListTool from '../../components/common/appList/tool';
 import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient_';
 import Barable from '../../decorators/selfBar';
@@ -143,6 +144,8 @@ export default class Permission extends PureComponent {
       // 是否显示修改私密客户弹框
       isShowModifyModal: false,
       detailMessage: {},
+      // 高亮项的下标索引
+      activeRowIndex: 0,
     };
   }
 
@@ -184,20 +187,17 @@ export default class Permission extends PureComponent {
     getPermissionList({
       ...params,
       type: pageType,
-    });
+    }).then(this.getRightDetail);
     this.setState({ detailMessage: this.props.detailMessage });
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       location: { query: nextQuery = EMPTY_OBJECT },
-      location: { query: { currentId } },
     } = nextProps;
     const {
       location: { query: prevQuery = EMPTY_OBJECT },
       getPermissionList,
-      location: { query: { currentId: prevCurrentId } },
-      list,
      } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
@@ -212,21 +212,8 @@ export default class Permission extends PureComponent {
         getPermissionList({
           ...params,
           type: pageType,
-        });
+        }).then(this.getRightDetail);
       }
-    }
-    const { seibelListLoading: prevSLL } = this.props;
-    const { seibelListLoading: nextSLL } = nextProps;
-    const applicationBaseInfoList = list.resultData;
-    /* currentId变化重新请求 */
-    if ((prevSLL && !nextSLL && !_.isEmpty(applicationBaseInfoList)) ||
-    (currentId && (currentId !== prevCurrentId) && !_.isEmpty(applicationBaseInfoList))) {
-      const { getDetailMessage } = this.props;
-      getDetailMessage({
-        id: currentId,
-        type: pageType,
-      });
-      this.setState({ detailMessage: {} });
     }
     // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
     if (this.props.detailMessage !== nextProps.detailMessage) {
@@ -249,6 +236,47 @@ export default class Permission extends PureComponent {
     }
   }
 
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        detailMessage: {},
+        activeRowIndex: itemIndex,
+      });
+      this.props.getDetailMessage({
+        type: pageType,
+        id: item.id,
+      });
+    }
+  }
+
   get getDetailComponent() {
     if (_.isEmpty(this.props.detailMessage)) {
       return null;
@@ -266,13 +294,35 @@ export default class Permission extends PureComponent {
   @autobind
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
-    // this.props.getHasServerPersonList({ id: 101110 });
     this.setState({ isShowCreateModal: true });
   }
 
   @autobind
   showModifyModal() {
     this.setState(prevState => ({ isShowModifyModal: !prevState.isShowModifyModal }));
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record, index) {
+    const { id } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index, detailMessage: {} });
+    this.props.getDetailMessage({
+      id,
+      type: pageType,
+    });
   }
 
   /**
@@ -326,6 +376,54 @@ export default class Permission extends PureComponent {
     );
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <AppItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="permission"
+        type="kehu1"
+        pageData={permission}
+      />
+    );
+  }
+
   render() {
     const {
       list,
@@ -365,14 +463,28 @@ export default class Permission extends PureComponent {
       />
     );
 
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { resultData = [], page = {} } = list;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
+
     const leftPanel = (
       <PermissionList
-        list={list}
-        replace={replace}
-        location={location}
-        pageName="permission"
-        type="kehu1"
-        pageData={permission}
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
       />
     );
 

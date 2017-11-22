@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-16 14:44:10
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-17 13:57:20
+ * @Last Modified time: 2017-11-21 15:04:37
  * @description 合作合约、服务订购、私密申请的每一项
  */
 
@@ -56,6 +56,34 @@ export default function AppItem(props) {
     [styles.appItem]: true,
     [styles.active]: active,
   });
+  const appIconCls = cx({
+    [styles.appIcon]: true,
+    [styles.active]: active,
+  });
+  const serialCls = cx({
+    [styles.serialNumber]: true,
+    [styles.active]: active,
+  });
+  const typeCls = cx({
+    [styles.type]: true,
+    [styles.active]: active,
+  });
+  const secondLineCls = cx({
+    [styles.secondLine]: true,
+    [styles.active]: active,
+  });
+  const thirdLineCls = cx({
+    [styles.thirdLine]: true,
+    [styles.active]: active,
+  });
+  const tagYellowType = cx({
+    yellow: !active,
+    transparent: active,
+  });
+  const tagBlueType = cx({
+    blue: !active,
+    transparent: active,
+  });
   function handleClick() {
     onClick(data, index);
   }
@@ -64,27 +92,30 @@ export default function AppItem(props) {
       {/* 第一行 */}
       <div className={styles.itemHeader}>
         <div className={styles.title}>
-          <Icon type={type} className={styles.appIcon} />
-          <span className={styles.serialNumber}>编号{data.id || '暂无'}</span>
+          <Icon type={type} className={appIconCls} />
+          <span className={serialCls}>编号{data.id || '暂无'}</span>
           {
             (pageName === 'channelsTypeProtocol' && data.business2) ?
-              <span className={styles.type}>{changeDisplay(data.business2, operateType)}</span>
+              <span className={typeCls}>{changeDisplay(data.business2, operateType)}</span>
             :
-              <span className={styles.type}>{changeTypeDisplay(data.type, pageData)}</span>
+              <span className={typeCls}>{changeTypeDisplay(data.type, pageData)}</span>
           }
         </div>
         <div className={styles.tagArea}>
-          {(pageName === 'contract' && data.business2) ? <Tag type="yellow" text={changeDisplay(data.business2, operateType)} /> : null}
-          <Tag type="blue" text={changeDisplay(data.status, status)} />
+          {
+            !(pageName === 'contract' && data.business2) ? null
+            : (<Tag type={tagYellowType} text={changeDisplay(data.business2, operateType)} />)
+          }
+          <Tag type={tagBlueType} text={changeDisplay(data.status, status)} />
         </div>
       </div>
       {/* 第二行 */}
-      <div className={styles.secondLine}>
+      <div className={secondLineCls}>
         <div className={styles.subType}>{changeDisplay(data.subType, subType)}</div>
         <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
       </div>
       {/* 第三行 */}
-      <div className={styles.thirdLine}>
+      <div className={thirdLineCls}>
         <div className={styles.drafter}>拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}</div>
         <div className={styles.customer} title={showCustomerBySubtype(data)}>
           {showCustomerBySubtype(data)}

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-16 17:36:13
+ * @Last Modified time: 2017-11-20 14:35:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,11 +15,11 @@ import _ from 'lodash';
 
 import { constructSeibelPostBody, getEmpId, hasPermission } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
-// import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/appList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
+import appListTool from '../../components/common/appList/tool';
+import AppItem from '../../components/common/appList/AppItem';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/contract/EditForm';
 import AddForm from '../../components/contract/AddForm';
@@ -188,6 +188,8 @@ export default class Contract extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 高亮的列表项下标索引
+      activeRowIndex: 0,
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createApprovalBoard: false,
@@ -235,32 +237,23 @@ export default class Contract extends PureComponent {
     getSeibleList({
       ...params,
       type: pageType,
-    });
+    }).then(this.getRightDetail);
 
     getClauseNameList({});
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      seibleListLoading: prevSLL,
-      // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
-      // doApprove: preDA,
       postDoApproveLoading: prePDA,
-      location: { query: { currentId: prevCurrentId } },
     } = this.props;
     const {
-      seibleList: nextSL,
-      seibleListLoading: nextSLL,
-      getBaseInfo,
       baseInfo: nextBI,
       baseInfoLoading: nextBIL,
       addFlowStepInfo: nextAFSI,
       unsubFlowStepInfo: nextUFSI,
-      // doApprove: nextDA,
       postDoApproveLoading: nextPDA,
-      location: { query: { currentId } },
       empInfo,
     } = nextProps;
 
@@ -279,7 +272,7 @@ export default class Contract extends PureComponent {
         getSeibleList({
           ...params,
           type: pageType,
-        });
+        }).then(this.getRightDetail);
       }
     }
     if ((preBIL && !nextBIL)) {
@@ -295,24 +288,6 @@ export default class Contract extends PureComponent {
         hasEditPermission,
       });
     }
-    /* currentId变化重新请求 */
-    // 获取到 seibleList,并且 seibleList 的 resultData 有数据
-    if (((prevSLL && !nextSLL) && nextSL.resultData.length) ||
-    (currentId && (currentId !== prevCurrentId))) {
-      getBaseInfo({
-        id: currentId,
-      });
-      this.setState({
-        addFormModal: false,
-        editFormModal: false,
-      });
-    }
-    // // 获取到基本信息
-    // if (!_.isEqual(preBI, nextBI)) {
-    //   this.setState({
-    //     contractFormData: nextBI,
-    //   });
-    // }
 
     // 获取到新建订购时的按钮
     if (!_.isEmpty(nextAFSI)) {
@@ -361,6 +336,7 @@ export default class Contract extends PureComponent {
     }
   }
 
+
   @autobind
   onOk(modalKey) {
     this.setState({
@@ -375,6 +351,48 @@ export default class Contract extends PureComponent {
       ...this.state,
       contractFormData: formData,
     });
+  }
+
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      seibleList: list,
+      getBaseInfo,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+        addFormModal: false,
+        editFormModal: false,
+      });
+      getBaseInfo({
+        id: item.id,
+      });
+    }
   }
 
   // 根据传入的条款列表和Key返回分类后的二维数组
@@ -753,23 +771,6 @@ export default class Contract extends PureComponent {
     }
   }
 
-  // 构造底部按钮集合
-  // @autobind
-  // constructSelfBtnGroup() {
-  //   const { flowStepInfo, unsubFlowStepInfo } = this.state;
-  //   let list = [];
-  //   if (unsubFlowStepInfo) {
-  //     list = unsubFlowStepInfo;
-  //   } else {
-  //     list = flowStepInfo;
-  //   }
-  //   this.setState({
-  //     addOrEditSelfBtnGroup: <BottonGroup
-  //       list={list}
-  //       onEmitEvent={this.footerBtnHandle}
-  //     />,
-  //   });
-  // }
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
@@ -803,6 +804,74 @@ export default class Contract extends PureComponent {
       currentQuery: query,
     };
     saveContractData(payload);
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record, index) {
+    const { id } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.props.getBaseInfo({ id });
+  }
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <AppItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="contract"
+        type="kehu1"
+        pageData={contract}
+      />
+    );
   }
 
   render() {
@@ -845,14 +914,27 @@ export default class Contract extends PureComponent {
         empInfo={empInfo}
       />
     );
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { resultData = [], page = {} } = seibleList;
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
     const leftPanel = (
       <ContractList
-        list={seibleList}
-        replace={replace}
-        location={location}
-        pageName="contract"
-        type="kehu1"
-        pageData={contract}
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
       />
     );
     const rightPanel = (
