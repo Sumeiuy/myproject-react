@@ -19,7 +19,8 @@ import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalR
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import CommissionList from '../../components/common/appList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
+import AppItem from '../../components/common/appList/AppItem';
+import appListTool from '../../components/common/appList/tool';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import { seibelConfig } from '../../config';
 import { permission } from '../../utils';
@@ -275,6 +276,7 @@ export default class CommissionHome extends PureComponent {
       isEmpty: true,
       approvalBoard: false,
       createApprovalBoard: false,
+      activeRowIndex: 0,
     };
   }
 
@@ -296,20 +298,6 @@ export default class CommissionHome extends PureComponent {
 
 
   componentWillReceiveProps(nextProps) {
-    // const { listProcess: prevLP } = this.props;
-    // const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
-    // if (!nextLP && prevLP) {
-    //   if (!_.isEmpty(list.resultData)) {
-    //     // 表示左侧列表获取完毕
-    //     // 因此此时获取Detail
-    //     const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
-    //     const { subType: st } = item;
-    //     this.setState({
-    //       currentSubtype: st,
-    //     });
-    //     this.getDetail4Subtye(item);
-    //   }
-    // }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
@@ -355,14 +343,37 @@ export default class CommissionHome extends PureComponent {
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
-    const { list, location: { query: { currentId } } } = this.props;
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
-      const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
       const { subType: st } = item;
       this.setState({
         currentSubtype: st,
+        activeRowIndex: itemIndex,
       });
       this.getDetail4Subtye(item);
     }
@@ -461,13 +472,21 @@ export default class CommissionHome extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
-  handleListRowClick(record) {
+  handleListRowClick(record, index) {
     const { id, subType: st } = record;
     const {
-      location: { query: { currentId } },
+      replace,
+      location: { pathname, query, query: { currentId } },
     } = this.props;
     if (currentId === id) return;
-    this.setState({ currentSubtype: st });
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ currentSubtype: st, activeRowIndex: index });
     this.getDetail4Subtye(record);
   }
 
@@ -545,6 +564,54 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <AppItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="commission"
+        type="yongjin"
+        pageData={commission}
+      />
+    );
+  }
+
   render() {
     const {
       location,
@@ -590,15 +657,29 @@ export default class CommissionHome extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
       />
     );
+
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { resultData = [], page = {} } = list;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
+
     const leftPanel = (
       <CommissionList
-        list={list}
-        replace={replace}
-        location={location}
-        clickRow={this.handleListRowClick}
-        pageName="commission"
-        type="yongjin"
-        pageData={commission}
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
