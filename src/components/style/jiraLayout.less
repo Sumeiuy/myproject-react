@@ -25,7 +25,21 @@
       right: 0;
       top: 3px;
     }
-
+    .dateWidget {
+      :global {
+        .ant-calendar-picker {
+          height: 30px;
+          .ant-calendar-picker-input {
+            border: 0;
+            outline: 0;
+            font-size: 14px;
+          }
+          .ant-calendar-picker-icon {
+            display: none;
+          }
+        }
+      }
+    }
     :global {
       .filterNoneIcon {
         display: none;

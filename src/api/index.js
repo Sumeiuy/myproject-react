@@ -9,6 +9,7 @@ import contract from './contract';
 import channelsTypeProtocol from './channelsTypeProtocol';
 import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
+import performerView from './performerView';
 
 const api = apiCreator();
 
@@ -19,6 +20,8 @@ export default {
   common: common(api),
   // ========= 客户资源池
   customerPool: customerPool(api),
+  // ========= 执行者视图
+  performerView: performerView(api),
   // ========= 绩效视图
   report: report(api),
   // ========= 反馈管理

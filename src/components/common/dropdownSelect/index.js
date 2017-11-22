@@ -63,6 +63,13 @@ export default class DropdownSelect extends PureComponent {
     };
   }
 
+  // componentWillMount() {
+  //   this.setState({
+  //     value: this.props.value,
+  //     id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+  //   });
+  // }
+
   componentDidMount() {
     document.addEventListener('click', this.hideModal, false);
   }
@@ -147,10 +154,13 @@ export default class DropdownSelect extends PureComponent {
       { [style.disable]: disable },
       { [style.active]: this.state.isSHowModal },
     ]);
-
+    const drapDownSelectCls = classnames({
+      [style.drapDowmSelect]: theme === 'theme1',
+      [style.drapDowmSelect2]: theme !== 'theme1',
+    });
     const menu = (
       <div
-        className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        className={drapDownSelectCls}
         onClick={this.handleMenuClick}
       >
         <div className={modalClass}>
@@ -177,7 +187,7 @@ export default class DropdownSelect extends PureComponent {
     );
     if (disable) {
       return (
-        <div>
+        <div className={drapDownSelectCls}>
           <div
             className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
             data-id={this.state.id}
@@ -195,7 +205,7 @@ export default class DropdownSelect extends PureComponent {
         visible={this.state.isSHowModal}
       >
         <div
-          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+          className={drapDownSelectCls}
         >
           <div
             onClick={this.showDrapDown}

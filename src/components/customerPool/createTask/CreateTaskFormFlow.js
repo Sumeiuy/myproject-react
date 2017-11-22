@@ -37,6 +37,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    enterType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -44,6 +45,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     createTaskResult: {},
     createTask: () => { },
     orgId: null,
+    enterType: null,
   }
 
   constructor(props) {
@@ -91,7 +93,7 @@ export default class CreateTaskFormFlow extends PureComponent {
   handleSubmit = (e) => {
     e.preventDefault();
     const { createTask, location: { query } } = this.props;
-    const { groupId } = query;
+    const { groupId, enterType } = query;
     this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
       let isFormError = false;
       console.log(err);
@@ -101,7 +103,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       const formDataValidation = this.checkFormField({ ...values, isFormError });
       if (formDataValidation) {
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
-        const value = { ...values, groupId };
+        const value = { ...values, groupId, enterType };
         createTask(value);
       }
     });

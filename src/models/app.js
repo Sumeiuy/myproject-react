@@ -191,6 +191,7 @@ export default {
     },
     // 获取拟稿人
     * getDrafterList({ payload }, { call, put }) {
+      // const response = yield call(seibelApi.getDrafterList, payload);
       const response = yield call(seibelApi.getSearchServerPersonelList, payload);
       yield put({
         type: 'getDrafterListSuccess',

@@ -2,8 +2,8 @@
 * @Description: 日期选择组件
 * @Author: XuWenKang
 * @Date:   2017-09-20 10:38:57
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 17:05:55
+* @Last Modified by:   K0240008
+* @Last Modified time: 2017-11-16 18:33:35
 */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,8 @@ export default class CommonDatePicker extends PureComponent {
     placeholder: PropTypes.string,
     boxStyle: PropTypes.object,
     disabled: PropTypes.bool,
+    dateFormat: PropTypes.string,
+    allowClear: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -28,6 +30,8 @@ export default class CommonDatePicker extends PureComponent {
     placeholder: '',
     boxStyle: {},
     disabled: false,
+    dateFormat: 'YYYY-MM-DD',
+    allowClear: false,
   }
 
   @autobind
@@ -38,7 +42,7 @@ export default class CommonDatePicker extends PureComponent {
 
 
   render() {
-    const { value, placeholder, boxStyle, disabled } = this.props;
+    const { value, placeholder, boxStyle, disabled, dateFormat, allowClear } = this.props;
     return (
       <div
         className={styles.commonDatePicker}
@@ -46,8 +50,9 @@ export default class CommonDatePicker extends PureComponent {
       >
         <DatePicker
           disabled={disabled}
-          allowClear={false}
+          allowClear={allowClear}
           value={value}
+          format={dateFormat}
           placeholder={placeholder}
           onChange={this.handleChange}
         />
