@@ -665,7 +665,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
 
     return (
       <div>
