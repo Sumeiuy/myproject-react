@@ -14,7 +14,7 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewList from '../../components/common/appList';
-import PerformerViewDetail from '../../components/customerPool/performerView/PerformerViewDetail';
+import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
 import AppItem from '../../components/common/appList/AppItem';
 import { seibelConfig } from '../../config';
 import appListTool from '../../components/common/appList/tool';
@@ -34,6 +34,7 @@ const effects = {
 
 const mapStateToProps = state => ({
   // 左侧列表数据
+  taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.app.seibleList,
   dict: state.app.dict,
 });
@@ -56,6 +57,7 @@ export default class PerformerView extends PureComponent {
     getPerformerViewList: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    taskDetailBasicInfo: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -137,6 +139,7 @@ export default class PerformerView extends PureComponent {
       list,
       dict,
       addServeRecord,
+      taskDetailBasicInfo,
     } = this.props;
 
     const isEmpty = _.isEmpty(list.resultData);
@@ -183,6 +186,7 @@ export default class PerformerView extends PureComponent {
         dict={dict}
         isReadOnly={false}
         addServeRecord={addServeRecord}
+        basicInfo={taskDetailBasicInfo}
       />
     );
     return (

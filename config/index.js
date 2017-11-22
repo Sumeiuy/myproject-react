@@ -29,7 +29,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/fspa/mcrm/api/fsp/': {
+      '/fspa/mcrm/api/fsp/task/performer': {
         target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
         secure: false,
       },

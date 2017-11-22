@@ -12,8 +12,8 @@ import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
-import Columns from '../../components/customerPool/taskList_/Columns';
-import RightPanel from '../../components/customerPool/taskList_/RightPanel';
+import Columns from '../../components/taskList/taskList/Columns';
+import RightPanel from '../../components/taskList/taskList/RightPanel';
 import LeftList from '../../components/common/biz/CommonList';
 import { seibelConfig, fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
@@ -252,6 +252,7 @@ export default class TaskList extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         empInfo={empInfo}
+        filterControl="taskList"
       />
     );
     const leftPanel = (
