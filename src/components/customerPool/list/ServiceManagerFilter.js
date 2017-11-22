@@ -27,7 +27,6 @@ export default class ServiceManagerFilter extends PureComponent {
       dropdownToSearchInfo,
       disable,
     } = this.props;
-    console.log('serviceManagerDefaultValue>>', serviceManagerDefaultValue);
     return (
       <div>
         <span className={styles.selectLabel}>服务经理：</span>
@@ -35,7 +34,7 @@ export default class ServiceManagerFilter extends PureComponent {
           theme="theme2"
           showObjKey="ptyMngName"
           objId="ptyMngId"
-          placeholder="服务经理"
+          placeholder="输入姓名或工号查询"
           name="服务经理"
           disable={disable}
           value={serviceManagerDefaultValue}

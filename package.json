@@ -14,7 +14,7 @@
     "test": "npm run unit",
     "lint-staged": "lint-staged",
     "lint:less": "styelint src/**/*.less --config .stylelintrc",
-    "lint": "eslint --ext .js src"
+    "lint": "eslint --ext .js src --fix"
   },
   "keywords": [],
   "dependencies": {
@@ -133,7 +133,7 @@
     "subTaskConcurrency": 1,
     "concurrent": false,
     "linters": {
-      "src/**/*.js": "eslint --ext .js",
+      "src/**/*.js": "eslint --ext .js --fix",
       "src/**/*.less": "stylelint --syntax less"
     }
   },

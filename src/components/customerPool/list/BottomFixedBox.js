@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import info from '../../common/info';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 
@@ -116,6 +117,21 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   @autobind
+  handleCustomerGroupClick(url, title, id) {
+    const {
+      page = {},
+    } = this.props;
+    const { total = 0 } = page;
+    if (Number(total) > 500) {
+      info({
+        content: '一次添加的客户数不能超过500个',
+      });
+      return;
+    }
+    this.handleClick(url, title, id);
+  }
+
+  @autobind
   handleCreateTaskClick(url, title, id) {
     const { clearCreateTaskData } = this.props;
     // 发起新的任务之前，先清除数据
@@ -198,7 +214,7 @@ export default class BottomFixedBox extends PureComponent {
   renderGroup() {
     if (this.props.mainServiceManager) {
       return (<button
-        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
+        onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
         用户分组
       </button>);

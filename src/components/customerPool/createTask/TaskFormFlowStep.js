@@ -136,13 +136,14 @@ export default class TaskFormFlowStep extends PureComponent {
       storedCreateTaskData,
       createTask,
       parseQuery,
-      storedCreateTaskData: { currentSelectRecord: { login: flowAuditorId = null } },
+      storedCreateTaskData: { currentSelectRecord = {} },
     } = this.props;
+    const { login: flowAuditorId = null } = currentSelectRecord || {};
     const {
       custIdList,
       custCondition,
     } = parseQuery();
-    const params = storedCreateTaskData.taskFormData;
+    const params = storedCreateTaskData.taskFormData || {};
     const data = {
       executionType: params.executionType,
       serviceStrategySuggestion: params.serviceStrategySuggestion,

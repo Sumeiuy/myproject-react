@@ -46,7 +46,7 @@ export default class RightPanel extends PureComponent {
       curPageNum: PAGE_NO,
       curPageSize: PAGE_SIZE,
       isShowTable: false,
-      fileNames: 'b9e19dde-60f6-4614-9651-24b67839f1a7.xls',
+      fileNames: '',
     };
   }
 
@@ -169,17 +169,23 @@ export default class RightPanel extends PureComponent {
             <div className={styles.label}>
               客户连接<span className={styles.colon}>:</span>
             </div>
-            <div className={styles.value}>
-              <Icon type="excel" className={styles.excel} />客户列表
-                        <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
-            </div>
+            {
+              tagetCustModel.dataName ?
+                <div className={styles.value}>
+                  <Icon type="excel" className={styles.excel} />
+                  客户列表
+                  <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
+                </div>
+                :
+                <div className={styles.value}>--</div>
+            }
           </div>
         </li>
       );
     } else if (tagetCustModel.custSource === '标签圈人') {
       return (
         <li className={styles.item}>
-          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc} />
+          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc || '--'} />
         </li>
       );
     }
@@ -210,6 +216,7 @@ export default class RightPanel extends PureComponent {
     const dataSource =
       this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
+    const custNum = tagetCustModel.custNum || '--';
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -227,10 +234,13 @@ export default class RightPanel extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户类型" value={tagetCustModel.custSource} />
+                    <InfoItem label="客户来源" value={tagetCustModel.custSource || '--'} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="客户总数" value={String(tagetCustModel.custNum)} />
+                    <InfoItem
+                      label="客户总数"
+                      value={String(custNum)}
+                    />
                   </li>
                   {this.renderMention()}
                 </ul>

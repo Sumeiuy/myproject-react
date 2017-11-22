@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Columns from '../../components/customerPool/taskList_/Columns';
 import RightPanel from '../../components/customerPool/taskList_/RightPanel';
@@ -125,7 +125,6 @@ export default class TaskList extends PureComponent {
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
-        console.log('params>>>>', params);
         getTasklist({
           ...params,
           type: pageType,
@@ -150,6 +149,21 @@ export default class TaskList extends PureComponent {
     // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
     if (this.props.taskBasicInfo !== nextProps.taskBasicInfo) {
       this.setState({ detailMessage: nextProps.taskBasicInfo });
+    }
+  }
+
+  componentDidUpdate() {
+    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+          pageNum: 1,
+        },
+      });
     }
   }
 
