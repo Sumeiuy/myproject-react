@@ -6,10 +6,15 @@
 
 import React, { PureComponent } from 'react';
 
+import LabelInfo from './LabelInfo';
+
+import styles from './targetCustomer.less';
+
 export default class TargetCustomer extends PureComponent {
   render() {
     return (
-      <div>
+      <div className={styles.targetCustomer}>
+        <LabelInfo value="目标客户" />
         TargetCustomer
       </div>
     );

@@ -16,36 +16,46 @@ export default class BasicInfo extends PureComponent {
     // 有效期
     validPeriod: PropTypes.string,
     // 任务目标
-    taskTargete: PropTypes.string,
+    taskTarget: PropTypes.string,
     // 服务策略
     servicePolicy: PropTypes.string,
-    // 是否有问卷调查
-    hasSurvey: PropTypes.bool,
   }
 
   static defaultProps = {
     validPeriod: '',
-    taskTargete: '',
+    taskTarget: '',
     servicePolicy: '',
-    hasSurvey: false,
   }
 
   render() {
-    console.log('BasicInfo>>>', this.props);
+    const {
+      validPeriod,
+      taskTarget,
+      servicePolicy,
+    } = this.props;
     return (
       <div className={styles.basicInfo}>
         <LabelInfo value="基本信息" />
         <div className={styles.basicInfoContent}>
-          <Row>
-            <Col span={12}>
-              XX
+          <Row className={styles.rowItem}>
+            <Col span={12} className={styles.colItem}>
+              <span className={styles.label}>任务有效期:&nbsp;</span>
+              <span className={styles.content}>{validPeriod}</span>
             </Col>
-            <Col span={12}>
-              XX
+            <Col span={12} className={styles.colItem}>
+              <span className={styles.label}>任务目标:&nbsp;</span>
+              <span className={styles.content}>{taskTarget}</span>
+            </Col>
+          </Row>
+          <Row className={styles.rowItem}>
+            <Col className={styles.colItem}>
+              <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
+              <p className={`${styles.content} ${styles.servicePolicy}`}>
+                {servicePolicy}
+              </p>
             </Col>
           </Row>
         </div>
-        BasicInfo
       </div>
     );
   }
