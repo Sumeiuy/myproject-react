@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-22 20:10:00
+ * @Last Modified time: 2017-11-22 20:17:33
  * 服务记录
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
-import Uploader from '../taskFlow/Uploader';
+import Uploader from '../../customerPool/taskFlow/Uploader';
 import Button from '../../common/Button';
 import { request } from '../../../config';
 // import { helper } from '../../../utils';
