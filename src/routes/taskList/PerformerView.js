@@ -14,7 +14,7 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewList from '../../components/common/appList';
-import PerformerViewDetail from '../../components/customerPool/performerView/PerformerViewDetail';
+import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
 import AppItem from '../../components/common/appList/AppItem';
 import { seibelConfig } from '../../config';
 import appListTool from '../../components/common/appList/tool';
@@ -27,6 +27,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 const mapStateToProps = state => ({
   // 左侧列表数据
+  performerViewList: state.app.seibleList,
+  taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.app.seibleList,
 });
 const mapDispatchToProps = {
@@ -42,6 +44,7 @@ export default class PerformerView extends PureComponent {
     replace: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
     getPerformerViewList: PropTypes.func.isRequired,
+    taskDetailBasicInfo: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -120,6 +123,8 @@ export default class PerformerView extends PureComponent {
     const {
       location,
       replace,
+      // performerViewList,
+      taskDetailBasicInfo,
       list,
     } = this.props;
 
@@ -163,7 +168,9 @@ export default class PerformerView extends PureComponent {
     );
 
     const rightPanel = (
-      <PerformerViewDetail />
+      <PerformerViewDetail
+        basicInfo={taskDetailBasicInfo}
+      />
     );
     return (
       <div>
