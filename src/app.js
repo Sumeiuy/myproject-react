@@ -69,6 +69,7 @@ app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 app.model(require('./models/channelsTypeProtocol'));
 app.model(require('./models/channelsEdit'));
+app.model(require('./models/customerPool/tasklist'));
 
 // 4. Router
 app.router(routerConfig);

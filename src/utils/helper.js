@@ -467,23 +467,15 @@ const helper = {
    * 添加滚动监听
   */
   addWheelEvent(obj, handler) {
-    if (window.addEventListener) {
-      obj.addEventListener('mousewheel', handler, false);
-      obj.addEventListener('DOMMouseScroll', handler, false);
-    } else if (window.attachEvent) {
-      obj.attachEvent('onmousewheel', handler);
-    }
+    obj.addEventListener('mousewheel', handler, false);
+    obj.addEventListener('DOMMouseScroll', handler, false);
   },
   /**
    * 删除滚动监听
   */
   removeWheelEvent(obj, handler) {
-    if (window.addEventListener) {
-      obj.removeEventListener('mousewheel', handler, false);
-      obj.removeEventListener('DOMMouseScroll', handler, false);
-    } else if (window.attachEvent) {
-      obj.detachEvent('onmousewheel', handler);
-    }
+    obj.removeEventListener('mousewheel', handler, false);
+    obj.removeEventListener('DOMMouseScroll', handler, false);
   },
 
   /**

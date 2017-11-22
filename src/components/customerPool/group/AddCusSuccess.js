@@ -23,6 +23,13 @@ export default class AddCusSuccess extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      changeTime: 2,
+    };
+  }
+
   componentWillMount() {
     // 解决记住tab的问题
     // 设置标志位
@@ -34,16 +41,26 @@ export default class AddCusSuccess extends PureComponent {
         isOperateSuccess: 'Y',
       },
     });
+    this.successSetInterval = setInterval(this.handleMovTime, 1000);
   }
 
   componentWillUnmount() {
     const { onDestroy } = this.props;
     onDestroy();
+    this.clearTimeInterval();
+  }
+
+  @autobind
+  clearTimeInterval() {
+    // 清除interval
+    clearInterval(this.successSetInterval);
+    this.successSetInterval = null;
   }
 
   /* 跳转到客户分组管理列表 */
   @autobind
   LinkToGroupManage() {
+    this.clearTimeInterval();
     const { push } = this.props;
     const url = '/customerPool/customerGroupManage';
     const param = {
@@ -59,9 +76,23 @@ export default class AddCusSuccess extends PureComponent {
     }
   }
 
+  @autobind
+  handleMovTime() {
+    let { changeTime } = this.state;
+    this.setState({
+      changeTime: --changeTime,
+    }, () => {
+      if (changeTime <= 0) {
+        // 跳转之前关闭interval
+        this.goToHome();
+      }
+    });
+  }
+
   // 返回首页
   @autobind
-  goToIndex() {
+  goToHome() {
+    this.clearTimeInterval();
     const { closeTab, push, location: { state } } = this.props;
     const url = '/customerPool';
     const param = {
@@ -81,6 +112,7 @@ export default class AddCusSuccess extends PureComponent {
   }
 
   render() {
+    const { changeTime } = this.state;
     return (
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
@@ -94,6 +126,7 @@ export default class AddCusSuccess extends PureComponent {
             </span>
             查看该分组
           </div>
+          <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
           <div className={styles.successBtn}>
             <Button onClick={this.goToIndex} type="primary">返回首页</Button>
           </div>

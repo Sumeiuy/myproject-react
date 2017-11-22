@@ -754,6 +754,111 @@ const pageConfig = {
       },
     ],
   },
+  // 权限分配
+  performerView: {
+    pageName: '执行者视图',
+    pageType: '01', // 查询列表接口中的type值
+    subType: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '产品营销',
+        value: '0103',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ], // 状态
+      },
+      {
+        show: true,
+        label: '产品售后',
+        value: '0102',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+      {
+        show: true,
+        label: '业务推荐',
+        value: '0101',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+    ], // 子类型
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '审批中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '结束',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '执行中',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '被驳回',
+        value: '04',
+      },
+    ],
+  },
   // 进行佣金调整子类型比对需要用到的数据
   comsubs: {
     noSelected: '', // 用户未选择子类型的情况
@@ -762,6 +867,76 @@ const pageConfig = {
     subscribe: '0203', // 资讯订阅
     unsubscribe: '0204', // 资讯退订
   },
+  // 自建任务列表
+  tasklist: {
+    pageName: '自建任务列表',
+    pageType: '04',
+    type: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '产品营销',
+        value: 'ProdMarketing',
+      },
+      {
+        show: true,
+        label: '产品售后',
+        value: 'AfterSales',
+      },
+      {
+        show: true,
+        label: '业务推荐',
+        value: 'BusinessRecomm',
+      },
+      {
+        show: true,
+        label: '账户服务',
+        value: 'AccoutService',
+      },
+      {
+        show: true,
+        label: '交易服务',
+        value: 'TradeService',
+      },
+      {
+        show: true,
+        label: '活动关怀',
+        value: 'ActiveCare',
+      },
+    ],
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
+  },
+
 };
 
 export default pageConfig;

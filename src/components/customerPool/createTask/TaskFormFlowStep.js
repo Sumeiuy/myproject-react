@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { helper, permission } from '../../../utils';
+import { permission } from '../../../utils';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import styles from './taskFormFlowStep.less';
 
@@ -142,14 +142,14 @@ export default class TaskFormFlowStep extends PureComponent {
       storedCreateTaskData,
       createTask,
       parseQuery,
-      orgId,
-      storedCreateTaskData: { currentSelectRecord: { login: flowAuditorId = null } },
+      storedCreateTaskData: { currentSelectRecord = {} },
     } = this.props;
+    const { login: flowAuditorId = null } = currentSelectRecord || {};
     const {
       custIdList,
       custCondition,
     } = parseQuery();
-    const params = storedCreateTaskData.taskFormData;
+    const params = storedCreateTaskData.taskFormData || {};
     const data = {
       executionType: params.executionType,
       serviceStrategySuggestion: params.serviceStrategySuggestion,
@@ -162,11 +162,7 @@ export default class TaskFormFlowStep extends PureComponent {
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: {
-        ptyMngId: helper.getEmpId(),
-        orgId,
-        ...custCondition,
-      },
+      searchReq: custCondition,
     });
   }
 
