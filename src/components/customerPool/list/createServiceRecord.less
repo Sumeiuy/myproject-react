@@ -98,6 +98,9 @@
   background-color: #ddd;
   border: 0;
 }
+.divider {
+  border: 1px solid #ddd;
+}
 .customFooter {
   margin: 0 54px 0 36px;
   overflow: hidden;
@@ -124,5 +127,23 @@
   background-color: #4a90e2;
   &:hover {
     color: #fff;
+  }
+}
+.uploadSection {
+  :global {
+    .uploadBox {
+      width: 100px;
+      font-size: 12px;
+      color: #108ee9;
+      letter-spacing: -0.07px;
+      text-align: left;
+      .uploadedFile span {
+        font-size: 12px;
+        color: #666;
+        letter-spacing: -0.07px;
+        text-align: left;
+        margin-left: 5px;
+      }
+    }
   }
 }

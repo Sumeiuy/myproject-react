@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 15:07:42
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-22 20:28:05
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
-import { request } from '../../../config';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
@@ -24,11 +23,15 @@ export default class Uploader extends PureComponent {
   static propTypes = {
     attachModel: PropTypes.object,
     fileKey: PropTypes.string,
-    onOperateFile: PropTypes.func.isRequired,
-    onHandleOverview: PropTypes.func.isRequired,
-    onDeleteFile: PropTypes.func.isRequired,
+    onOperateFile: PropTypes.func,
+    onHandleOverview: PropTypes.func,
+    onDeleteFile: PropTypes.func,
     originFileName: PropTypes.string,
     totalCount: PropTypes.number,
+    isNeedPreview: PropTypes.bool,
+    isNeedDelete: PropTypes.bool,
+    uploadTitle: PropTypes.string.isRequired,
+    uploadTarget: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -36,6 +39,11 @@ export default class Uploader extends PureComponent {
     fileKey: '',
     originFileName: '',
     totalCount: 0,
+    onHandleOverview: () => { },
+    onDeleteFile: () => { },
+    onOperateFile: () => { },
+    isNeedPreview: false,
+    isNeedDelete: false,
   }
 
   constructor(props) {
@@ -79,6 +87,36 @@ export default class Uploader extends PureComponent {
     const fileList = info.fileList;
     // 当前操作upload项
     const currentFile = info.file;
+    // {
+    //    uid: 'uid',      // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
+    //    name: 'xx.png'   // 文件名
+    //    status: 'done', // 状态有：uploading done error removed
+    //    response: '{"status": "success"}', // 服务端响应内容
+    // }
+
+    //  {
+    //   "lastModified": 1247549551674,
+    //   "lastModifiedDate": "2009-07-14T05:32:31.674Z",
+    //   "name": "Lighthouse.jpg",
+    //   "size": 561276,
+    //   "type": "image/jpeg",
+    //   "uid": "rc-upload-1508129119030-2",
+    //   "response": {
+    //       "code": "0",
+    //       "msg": "OK",
+    //       "resultData": {
+    //           "attachName": "Lighthouse.jpg",
+    //           "attachUrl": "10dc4bd5-2a16-408f-a380-bfb077b65e59.jpg",
+    //           "attachUploader": "002332"
+    //       }
+    //   },
+    //   "percent": 100,
+    //   "originFileObj": {
+    //       "uid": "rc-upload-1508129119030-2"
+    //   },
+    //   "status": "done"
+    // }
+
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
@@ -167,6 +205,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
+    const { uploadTitle, uploadTarget } = this.props;
     const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
     return (
@@ -175,14 +214,14 @@ export default class Uploader extends PureComponent {
         name="file"
         defaultFileList={fileList}
         data={upData}
-        action={`${request.prefix}/file/khxfFileUpload`}
+        action={uploadTarget}
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
         showUploadList={showUploadList}
       >
         <div className="upload_txt">
-          + 上传客户列表
+          + {uploadTitle}
         </div>
       </Dragger>
     );
@@ -223,6 +262,7 @@ export default class Uploader extends PureComponent {
   }
 
   render() {
+    const { isNeedDelete, isNeedPreview } = this.props;
     const { isShowUpload, isShowError, originFileName } = this.state;
     return (
       <div>
@@ -240,14 +280,19 @@ export default class Uploader extends PureComponent {
                 }
                 <span>{originFileName}</span>
               </div>
-              <div
-                className="overview"
-                onClick={this.handlePreview}
-              >预览</div>
-              <div
-                className="delete"
-                onClick={this.handleDeleteFile}
-              >删除</div>
+              {
+                isNeedPreview ? <div
+                  className="overview"
+                  onClick={this.handlePreview}
+                >预览</div>
+                  : null
+              }
+              {
+                isNeedDelete ? <div
+                  className="delete"
+                  onClick={this.handleDeleteFile}
+                >删除</div> : null
+              }
             </div> : null
           }
         </div>
