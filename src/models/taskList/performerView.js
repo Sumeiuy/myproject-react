@@ -1,14 +1,15 @@
 /**
  * @Description: 执行者视图 model
- * @file models/performerView.js
+ * @file models/taskList/performerView.js
  * @author hongguangqing
  */
 
-import { performerView as api } from '../api';
+import { performerView as api } from '../../api';
 
 export default {
   namespace: 'performerView',
   state: {
+    // 任务详情中基本信息
     taskDetailBasicInfo: {},
   },
   reducers: {
@@ -30,5 +31,14 @@ export default {
       });
     },
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      return history.listen(({ pathname, query }) => {
+        if (pathname === '/taskList/performerView') {
+          // 进入页面根据url中的id来获取
+          dispatch({ type: 'getTaskDetailBasicInfo', payload: query });
+        }
+      });
+    },
+  },
 };

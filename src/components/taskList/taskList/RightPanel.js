@@ -16,8 +16,8 @@ import TaskListDetailInfo from './TaskListDetailInfo';
 import styles from './rightPanel.less';
 import Icon from '../../common/Icon';
 import Button from '../../common/Button';
-import GroupTable from '../groupManage/GroupTable';
-import GroupModal from '../groupManage/CustomerGroupUpdateModal';
+import GroupTable from '../../customerPool/groupManage/GroupTable';
+import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
