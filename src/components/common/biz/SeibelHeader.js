@@ -39,6 +39,7 @@ const FILTERBOX_HEIGHT = 32;
 const displayConfig = {
   seibel: ['needPtyMng', 'needSubType', 'needStatus', 'needDrafter', 'needDepartment', 'needApprover'],
   performerView: ['needType', 'needStatus', 'needCreator', 'needCreationTime'],
+  taskList: ['needType', 'needStatus', 'needCreator', 'needCreationTime'],
 };
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -301,6 +302,11 @@ export default class Pageheader extends PureComponent {
 
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+    const curCustomerInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    let curCustomer = '全部';
+    if (curCustomerInfo) {
+      curCustomer = `${curCustomerInfo.custName}(${curCustomerInfo.custNumber})`;
+    }
 
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
@@ -312,6 +318,11 @@ export default class Pageheader extends PureComponent {
     }
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
+    const curApprovePersonInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    let curApprovePerson = '全部';
+    if (curApprovePersonInfo) {
+      curApprovePerson = `${curApprovePersonInfo.approvalName}(${curApprovePersonInfo.approvalId})`;
+    }
     // 新建按钮权限
     let hasCreatePermission = true;
     // 如果是合作合约页面
@@ -329,7 +340,7 @@ export default class Pageheader extends PureComponent {
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value="全部"
+                    value={curCustomer}
                     placeholder="经纪客户号/客户名称"
                     searchList={customerAllList}
                     showObjKey="custName"
@@ -404,7 +415,7 @@ export default class Pageheader extends PureComponent {
                 拟稿人:
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value="全部"
+                    value={curDrafter}
                     placeholder="工号/名称"
                     searchList={drafterAllList}
                     showObjKey="ptyMngName"
@@ -456,7 +467,7 @@ export default class Pageheader extends PureComponent {
                 审批人:
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value="全部"
+                    value={curApprovePerson}
                     placeholder="工号/名称"
                     searchList={approvePersonAllList}
                     showObjKey="ptyMngName"

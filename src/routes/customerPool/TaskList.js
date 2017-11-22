@@ -252,6 +252,7 @@ export default class TaskList extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         empInfo={empInfo}
+        filterControl="taskList"
       />
     );
     const leftPanel = (
