@@ -588,26 +588,18 @@ export default {
         payload: { resultData },
       });
     },
-    * getSearchServerPersonList({ payload }, { call, put, select }) {
-      const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
-      const { servicePeopleList = EMPTY_LIST } = resultData;
-      // 当搜索框为空的时候，给搜索结果加上‘所有人’和登录用户自己的信息
-      // 当输入信息搜索的时候，只显示搜索内容
+    * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
-        const { empInfo } = yield select(state => state.app.empInfo);
-        const myInfo = {
-          ptyMngName: empInfo.empName,
-          ptyMngId: empInfo.empNum,
-        };
-        const all = {
-          ptyMngName: '所有人',
-          ptyMngId: '',
-        };
         yield put({
           type: 'getSearchServerPersonListSuccess',
-          payload: [all, myInfo, ...servicePeopleList],
+          payload: [{
+            ptyMngName: '所有人',
+            ptyMngId: '',
+          }],
         });
       } else {
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        const { servicePeopleList = EMPTY_LIST } = resultData;
         yield put({
           type: 'getSearchServerPersonListSuccess',
           payload: servicePeopleList,

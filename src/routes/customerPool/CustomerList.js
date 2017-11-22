@@ -230,11 +230,6 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
-    this.props.getSearchServerPersonList({
-      keyword: '',
-      pageSize: 10,
-      pageNum: 1,
-    });
   }
 
   componentWillReceiveProps(nextProps) {
