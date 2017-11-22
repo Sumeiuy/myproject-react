@@ -40,7 +40,7 @@ import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
 import Contract from './routes/contract/Home';
-import RejectEdit from './routes/contract/RejectEdit';
+import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import PerformerView from './routes/taskList/PerformerView';
 import TaskList from './routes/taskList/TaskList';
@@ -75,7 +75,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="permission" component={PermissonHome} />
       <Route path="contract">
         <IndexRoute component={Contract} />
-        <Route path="edit" component={RejectEdit} />
+        <Route path="form" component={Form} />
       </Route>
       <Route path="channelsTypeProtocol">
         <IndexRoute component={ChannelsTypeProtocol} />

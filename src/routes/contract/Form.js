@@ -14,7 +14,7 @@ import { message, Modal } from 'antd';
 import { seibelConfig } from '../../config';
 import BottonGroup from '../../components/permission/BottonGroup';
 import EditForm from '../../components/contract/EditForm';
-import styles from './rejectEdit.less';
+import styles from './form.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -60,7 +60,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class RejectEdit extends PureComponent {
+export default class Form extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,

@@ -68,7 +68,7 @@ export default class BaseInfoEdit extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { contractDetail, contractDetail: { baseInfo } } = nextProps;
-    if (!_.isEqual(contractDetail, this.props.contractDetail)) {
+    if (contractDetail !== this.props.contractDetail) {
       this.setState({
         contractStarDate: dateFormat(baseInfo.startDt),
         contractPalidity: dateFormat(baseInfo.vailDt),

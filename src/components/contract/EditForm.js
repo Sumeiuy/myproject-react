@@ -83,7 +83,7 @@ export default class EditForm extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { contractDetail } = nextProps;
-    if (!_.isEqual(contractDetail, this.props.contractDetail)) {
+    if (contractDetail !== this.props.contractDetail) {
       this.setState({
         formData: {
           ...this.state.formData,
