@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
-
 import styles from './performerViewDetail.less';
 
 export default class PerformerViewDetail extends PureComponent {
