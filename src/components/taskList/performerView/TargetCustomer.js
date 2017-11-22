@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import styles from './targetCustomer.less';
 import Icon from '../../common/Icon';
 
+import LabelInfo from './LabelInfo';
+
 export default class TargetCustomer extends PureComponent {
   constructor(props) {
     super(props);
@@ -44,6 +46,7 @@ export default class TargetCustomer extends PureComponent {
     const { visible } = this.state;
     return (
       <div className={styles.targetCustomer}>
+        <LabelInfo value="目标客户" />
         <div className={styles.left}>
           表格
         </div>

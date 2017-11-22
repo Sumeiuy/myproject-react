@@ -1,5 +1,5 @@
 /**
- * @file models/customerPool/tasklist.js
+ * @file models/taskList/tasklist.js
  *  目标客户池  自建任务
  * @author wangjunjun
  */
