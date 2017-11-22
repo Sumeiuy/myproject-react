@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-14 16:57:22
+ * @Last Modified time: 2017-11-22 20:27:38
  * 客户细分组件
  */
 
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Uploader from './Uploader';
+import { request } from '../../../config';
 import Button from '../../common/Button';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import styles from './customerSegment.less';
@@ -263,6 +264,10 @@ export default class CustomerSegment extends PureComponent {
             onDeleteFile={this.handleDeleteFile}
             originFileName={originFileName}
             totalCount={totalCount}
+            isNeedPreview
+            isNeedDelete
+            uploadTitle={'上传客户列表'}
+            uploadTarget={`${request.prefix}/file/khxfFileUpload`}
           />
         </div>
         <div className={styles.tipSection}>
