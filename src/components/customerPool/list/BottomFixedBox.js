@@ -122,7 +122,7 @@ export default class BottomFixedBox extends PureComponent {
       page = {},
     } = this.props;
     const { total = 0 } = page;
-    if (total > 500) {
+    if (Number(total) > 500) {
       info({
         content: '一次添加的客户数不能超过500个',
       });
