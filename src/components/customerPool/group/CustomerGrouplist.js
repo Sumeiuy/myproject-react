@@ -22,6 +22,10 @@ const renderColumnTitle = [
     value: '分组描述',
   },
   {
+    key: 'relatCust',
+    value: '客户数',
+  },
+  {
     key: 'createdTm',
     value: '创建时间',
   },
@@ -75,7 +79,7 @@ export default class CustomerGrouplist extends PureComponent {
         }
         // 构造表格头部
         titleColumn={renderColumnTitle}
-        columnWidth={['35%', '35%', '20%']}
+        columnWidth={['30%', '25%', '15%', '20%']}
         isNeedRowSelection
         onSingleRowSelectionChange={onSingleRowSelectionChange}
         onRowSelectionChange={onRowSelectionChange}
