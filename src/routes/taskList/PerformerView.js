@@ -20,22 +20,33 @@ import { seibelConfig } from '../../config';
 import appListTool from '../../components/common/appList/tool';
 
 const { performerView, performerView: { pageType, subType, status } } = seibelConfig;
+
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
 });
+
+const effects = {
+  getSeibleList: 'app/getSeibleList',
+  addServeRecord: 'customerPool/addServeRecord',
+};
+
 const mapStateToProps = state => ({
   // 左侧列表数据
-  performerViewList: state.app.seibleList,
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.app.seibleList,
+  dict: state.app.dict,
 });
+
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
-  getPerformerViewList: fetchDataFunction(true, 'app/getSeibleList'),
+  getPerformerViewList: fetchDataFunction(true, effects.getSeibleList),
+  // 添加服务记录
+  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
 };
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -44,6 +55,8 @@ export default class PerformerView extends PureComponent {
     replace: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
     getPerformerViewList: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
     taskDetailBasicInfo: PropTypes.object.isRequired,
   }
 
@@ -61,9 +74,9 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
       getPerformerViewList,
@@ -124,9 +137,10 @@ export default class PerformerView extends PureComponent {
     const {
       location,
       replace,
-      // performerViewList,
-      taskDetailBasicInfo,
       list,
+      dict,
+      addServeRecord,
+      taskDetailBasicInfo,
     } = this.props;
 
     const isEmpty = _.isEmpty(list.resultData);
@@ -170,6 +184,9 @@ export default class PerformerView extends PureComponent {
 
     const rightPanel = (
       <PerformerViewDetail
+        dict={dict}
+        isReadOnly={false}
+        addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
       />
     );
