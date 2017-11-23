@@ -36,7 +36,8 @@ export default {
       return history.listen(({ pathname, query }) => {
         if (pathname === '/taskList/performerView') {
           // 进入页面根据url中的id来获取
-          dispatch({ type: 'getTaskDetailBasicInfo', payload: query });
+          const { currentId } = query;
+          dispatch({ type: 'getTaskDetailBasicInfo', payload: { missionId: currentId } });
         }
       });
     },

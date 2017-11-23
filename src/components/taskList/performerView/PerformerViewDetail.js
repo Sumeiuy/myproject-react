@@ -4,7 +4,8 @@
  * @description 执行者视图右侧详情
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
