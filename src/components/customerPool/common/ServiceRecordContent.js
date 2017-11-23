@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-23 17:07:42
+ * @Last Modified time: 2017-11-23 17:18:14
  */
 
 
@@ -122,6 +122,8 @@ export default class ServiceRecordContent extends PureComponent {
           serviceStatus,
           // 服务方式
           serviceWay,
+          // 服务记录内容
+          serviceContent,
         } = formData;
 
         formObject = {
@@ -143,6 +145,7 @@ export default class ServiceRecordContent extends PureComponent {
           serviceStatus,
           // 服务方式
           serviceWay,
+          serviceContent,
         };
       } else {
         // 当前日期的时间戳
@@ -167,6 +170,7 @@ export default class ServiceRecordContent extends PureComponent {
           serviceStatus: (serveStatus[0] || {}).key,
           // 服务方式
           serviceWay: (serveWay[0] || {}).key,
+          serviceContent: '',
         };
       }
     } else {
@@ -184,6 +188,7 @@ export default class ServiceRecordContent extends PureComponent {
       const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
 
       formObject = {
+        serviceContent: '',
         feedbackType,
         feedbackTypeChild,
         feedbackTypeArr,
