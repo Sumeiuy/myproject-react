@@ -1,47 +1,4 @@
-.serviceRecordWrapper {
-  width: 100%;
-  overflow-x: hidden;
-  border: 1px solid #ddd;
-  padding: 19px 10px 10px 24px;
-  .hidden {
-    display: none;
-  }
-  & > .title {
-    margin-left: -10px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 12px;
-    margin-top: 0;
-    font-size: 15px;
-    color: #4a4a4a;
-    text-align: left;
-    font-weight: 600;
-  }
-  .serveTip {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-flow: row;
-    // flex-wrap: wrap;
-    padding-bottom: 15px;
-    & > .title {
-      font-size: 14px;
-      color: #9b9b9b;
-      letter-spacing: -0.09px;
-      text-align: left;
-      width: 70px;
-      min-width: 70px;
-    }
-    & > .content {
-      display: -webkit-box;
-      overflow-y: auto;
-      word-break: break-all;
-      font-size: 14px;
-      color: #4a4a4a;
-      overflow-x: hidden;
-      max-height: 105px;
-    }
-  }
+.serviceRecordContent {
   .serveSelect {
     display: flex;
     justify-content: flex-start;
@@ -51,6 +8,34 @@
     padding-bottom: 15px;
     width: 100%;
     & > .serveWay {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      line-height: 40px;
+      vertical-align: middle;
+      padding-right: 100px;
+      & > .title {
+        font-size: 14px;
+        letter-spacing: -0.09px;
+        text-align: left;
+        color: #a1a1a1;
+        width: 70px;
+        margin-left: -10px;
+      }
+      & > .title::before {
+        display: inline-block;
+        margin-right: 4px;
+        content: "*";
+        line-height: 1;
+        font-size: 12px;
+        color: #f04134;
+      }
+      & > .content {
+        border-radius: 3px;
+        padding-left: 15px;
+      }
+    }
+    & > .serveType {
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -269,18 +254,7 @@
       }
     }
   }
-  .operationSection {
-    display: flex;
-    justify-content: flex-end;
-    & > span:last-child {
-      padding-left: 50px;
-    }
-    :global {
-      .commonBtn {
-        button {
-          padding: 0 24px;
-        }
-      }
-    }
+  .hidden {
+    display: none;
   }
 }

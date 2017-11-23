@@ -1,24 +1,23 @@
 /*
  * @Author: xuxiaoqin
- * @Date: 2017-11-22 16:05:54
+ * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-23 15:34:27
- * 服务记录
+ * @Last Modified time: 2017-11-23 17:07:42
  */
+
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Select, DatePicker, TimePicker, Input, message, Radio } from 'antd';
+import { Select, DatePicker, TimePicker, Input, Radio } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../customerPool/taskFlow/Uploader';
-import Button from '../../common/Button';
 import { request } from '../../../config';
 // import { helper } from '../../../utils';
 import Icon from '../../common/Icon';
-import styles from './serviceRecordForm.less';
+import styles from './serviceRecordContent.less';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -28,9 +27,6 @@ const RadioGroup = Radio.Group;
 const dateFormat = 'YYYY/MM/DD';
 const timeFormat = 'HH:mm';
 const width = { width: 142 };
-
-// 服务内容字数限制
-const MAX_LENGTH = 100;
 
 const EMPTY_LIST = [];
 
@@ -68,13 +64,12 @@ function generateObjOfValue(arr) {
   return subObj;
 }
 
-export default class ServiceRecordForm extends PureComponent {
+export default class ServiceRecordContent extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     // 是否是执行者视图页面
-    isEntranceFromPerformerView: PropTypes.bool.isRequired,
+    isEntranceFromPerformerView: PropTypes.bool,
     // 表单数据
     formData: PropTypes.object,
     // 服务类型
@@ -85,6 +80,7 @@ export default class ServiceRecordForm extends PureComponent {
     dict: {},
     formData: {},
     serviceType: '',
+    isEntranceFromPerformerView: false,
   }
 
   constructor(props) {
@@ -217,37 +213,11 @@ export default class ServiceRecordForm extends PureComponent {
     });
   }
 
-  // 保存选中的服务方式的值
-  @autobind
-  handleServiceWay(value) {
-    this.setState({
-      serviceWay: value,
-    });
-  }
-
-  @autobind
-  handleCancel() {
-    const { originFormData } = this.state;
-    this.setState({
-      ...this.state,
-      ...originFormData,
-    });
-  }
-
   // 提供所有数据
   @autobind
-  handleSubmit() {
+  getData() {
     const serviceContentNode = this.serviceContent.textAreaRef;
     const serviceContent = _.trim(serviceContentNode.value);
-    if (!serviceContent) {
-      message.error('请输入此次服务的内容');
-      return;
-    }
-
-    if (serviceContent.length > MAX_LENGTH) {
-      message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
-      return;
-    }
 
     const {
       serviceWay,
@@ -261,43 +231,35 @@ export default class ServiceRecordForm extends PureComponent {
       uploadedFileKey,
     } = this.state;
 
-    const {
-      addServeRecord,
-      isEntranceFromPerformerView,
-    } = this.props;
-
-    let postBody = {
-      // 经纪客户号
-      custId: '',
-      serveWay: serviceWay,
-      serveType: serviceType,
-      type: serviceType,
-      serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
-      serveContentDesc: serviceContent,
-      feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveCustFeedBack: feedbackType,
-      serveCustFeedBack2: feedbackTypeChild || '',
-      // 从客户列表带过来
-      custUuid: '',
+    return {
+      serviceContent,
+      serviceWay,
+      serviceType,
+      serviceDate,
+      serviceTime,
+      feedbackDate,
+      feedbackType,
+      feedbackTypeChild,
+      serviceStatus,
+      uploadedFileKey,
     };
+  }
 
-    if (uploadedFileKey) {
-      postBody = {
-        ...postBody,
-        file: uploadedFileKey,
-      };
-    }
+  @autobind
+  resetField() {
+    const { originFormData } = this.state;
+    this.setState({
+      ...this.state,
+      ...originFormData,
+    });
+  }
 
-    if (isEntranceFromPerformerView) {
-      addServeRecord({
-        ...postBody,
-        serviceStatus,
-      });
-    } else {
-      addServeRecord(postBody);
-    }
-
-    serviceContentNode.value = '';
+  // 保存选中的服务方式的值
+  @autobind
+  handleServiceWay(value) {
+    this.setState({
+      serviceWay: value,
+    });
   }
 
   // 保存服务类型的值
@@ -453,19 +415,7 @@ export default class ServiceRecordForm extends PureComponent {
     }
 
     return (
-      <div className={styles.serviceRecordWrapper}>
-        <div className={styles.title}>
-          服务记录
-        </div>
-        <div className={styles.serveTip}>
-          <div className={styles.title}>
-            服务提示:
-          </div>
-          <div className={styles.content}>
-            静态文本
-          </div>
-        </div>
-
+      <div className={styles.serviceRecordContent}>
         <div className={styles.serveSelect}>
           <div className={styles.serveWay}>
             <div className={styles.title}>
@@ -510,8 +460,8 @@ export default class ServiceRecordForm extends PureComponent {
           <div
             className={
               classnames({
-                [styles.serveType]: true,
                 [styles.hidden]: isEntranceFromPerformerView,
+                [styles.serveType]: true,
               })
             }
           >
@@ -648,21 +598,6 @@ export default class ServiceRecordForm extends PureComponent {
             </div>
           }
         </div>
-        {
-          !isReadOnly ?
-            <div className={styles.operationSection}>
-              <Button
-                className={styles.submitBtn}
-                onClick={this.handleSubmit}
-                type="primary"
-              >
-                提交</Button>
-              <Button
-                className={styles.cancelBtn}
-                onClick={this.handleCancel}
-              >取消</Button>
-            </div> : null
-        }
       </div>
     );
   }
