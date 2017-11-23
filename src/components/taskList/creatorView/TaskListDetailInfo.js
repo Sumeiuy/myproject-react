@@ -12,7 +12,7 @@ import { seibelConfig } from '../../../config';
 
 import styles from './detailInfo.less';
 
-const { tasklist: { status } } = seibelConfig;
+const { creatorView: { status } } = seibelConfig;
 
 // 完成状态对应的 key 值
 const COMPLETE_CODE = '02';

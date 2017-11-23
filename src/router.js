@@ -43,7 +43,7 @@ import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import PerformerView from './routes/taskList/PerformerView';
-import TaskList from './routes/taskList/TaskList';
+import CreatorView from './routes/taskList/CreatorView';
 
 
 function switchRouter() {
@@ -95,7 +95,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="taskFlow" component={TaskFlow} />
       </Route>
       <Route path="taskList">
-        <IndexRoute component={TaskList} />
+        <IndexRoute component={CreatorView} />
         <Route path="performerView" component={PerformerView} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />

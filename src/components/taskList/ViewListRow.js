@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
 
-import Tag from '../../common/tag';
-import styles from './performerViewListRow.less';
+import Tag from '../common/tag';
+import styles from './viewListRow.less';
 
 const PROCESSING = '01'; // 执行者视图状态审批中
 const END = '02'; // 执行者视图状态结束

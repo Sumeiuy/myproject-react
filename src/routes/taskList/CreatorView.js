@@ -11,21 +11,20 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
-import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
-import Columns from '../../components/taskList/taskList/Columns';
-import RightPanel from '../../components/taskList/taskList/RightPanel';
-import LeftList from '../../components/common/biz/CommonList';
+import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
+import RightPanel from '../../components/taskList/creatorView/RightPanel';
+import ViewList from '../../components/common/appList';
+import ViewListRow from '../../components/taskList/ViewListRow';
+import appListTool from '../../components/common/appList/tool';
 import { seibelConfig, fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
+import styles from './creatorView.less';
 
-import styles from './tasklist.less';
-
-const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 
-const { tasklist, tasklist: { pageType, type, status } } = seibelConfig;
+const { creatorView, creatorView: { pageType, type, status } } = seibelConfig;
 
 const fetchDataFunction = (globalLoading, value) => query => ({
   type: value,
@@ -51,7 +50,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   // 获取左侧列表
-  getTasklist: fetchDataFunction(true, 'app/getSeibleList'),
+  getCreatorViewlist: fetchDataFunction(true, 'app/getSeibleList'),
   previewCustFile: fetchDataFunction(true, 'tasklist/previewCustFile'),
   getTaskBasicInfo: fetchDataFunction(true, 'tasklist/getTaskBasicInfo'),
   // 清除数据
@@ -63,7 +62,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class TaskList extends PureComponent {
+export default class CreatorView extends PureComponent {
 
   static propTypes = {
     dict: PropTypes.object,
@@ -71,7 +70,7 @@ export default class TaskList extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
-    getTasklist: PropTypes.func.isRequired,
+    getCreatorViewlist: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
     priviewCustFileData: PropTypes.object,
     previewCustFile: PropTypes.func.isRequired,
@@ -87,6 +86,13 @@ export default class TaskList extends PureComponent {
     seibelListLoading: false,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeRowIndex: 0,
+    };
+  }
+
   componentDidMount() {
     const {
       location: {
@@ -96,24 +102,23 @@ export default class TaskList extends PureComponent {
           pageSize,
         },
       },
-      getTasklist,
+      getCreatorViewlist,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
-    getTasklist({
+    getCreatorViewlist({
       ...params,
       type: pageType,
-    });
+    }).then(this.getRightDetail);
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       location: { query: nextQuery = EMPTY_OBJECT },
-      list,
     } = nextProps;
     const {
       location: { query: prevQuery = EMPTY_OBJECT },
-      getTasklist,
+      getCreatorViewlist,
      } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
@@ -125,30 +130,11 @@ export default class TaskList extends PureComponent {
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
-        getTasklist({
+        getCreatorViewlist({
           ...params,
           type: pageType,
-        });
+        }).then(this.getRightDetail);
       }
-    }
-    const { seibelListLoading: prevSLL } = this.props;
-    const { seibelListLoading: nextSLL } = nextProps;
-    const applicationBaseInfoList = list.resultData;
-    const { currentId } = nextQuery;
-    const { currentId: prevCurrentId } = prevQuery;
-    /* currentId变化重新请求 */
-    if ((prevSLL && !nextSLL && !_.isEmpty(applicationBaseInfoList)) ||
-      (currentId && (currentId !== prevCurrentId) && !_.isEmpty(applicationBaseInfoList))) {
-      const { getTaskBasicInfo } = this.props;
-      getTaskBasicInfo({
-        flowId: currentId,
-        systemCode: '102330',
-      });
-      this.setState({ detailMessage: {} });
-    }
-    // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
-    if (this.props.taskBasicInfo !== nextProps.taskBasicInfo) {
-      this.setState({ detailMessage: nextProps.taskBasicInfo });
     }
   }
 
@@ -167,6 +153,49 @@ export default class TaskList extends PureComponent {
     }
   }
 
+
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      const { subType: st } = item;
+      this.setState({
+        currentSubtype: st,
+        activeRowIndex: itemIndex,
+      });
+      this.props.getTaskBasicInfo({
+        flowId: currentId,
+        systemCode: '102330',
+      });
+    }
+  }
+
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
@@ -179,6 +208,71 @@ export default class TaskList extends PureComponent {
       return false;
     }
     return true;
+  }
+
+  @autobind
+  handlePreview({ filename, pageNum, pageSize }) {
+    const { previewCustFile } = this.props;
+    // 预览数据
+    previewCustFile({
+      filename,
+      pageNum,
+      pageSize,
+    });
+  }
+
+
+   // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record, index) {
+    const { id, subType: st } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ currentSubtype: st, activeRowIndex: index });
+    this.props.getTaskBasicInfo({
+      flowId: currentId,
+      systemCode: '102330',
+    });
+  }
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
   }
 
   // 头部新建按钮，跳转到新建表单
@@ -202,25 +296,22 @@ export default class TaskList extends PureComponent {
     }
   }
 
-  // 生成左侧列表页面的数据列
-  @autobind
-  constructTableColumns() {
-    return Columns({
-      pageName: 'tasklist',
-      type: 'tasklist',
-      pageData: tasklist,
-    });
-  }
 
+  // 渲染列表项里面的每一项
   @autobind
-  handlePreview({ filename, pageNum, pageSize }) {
-    const { previewCustFile } = this.props;
-    // 预览数据
-    previewCustFile({
-      filename,
-      pageNum,
-      pageSize,
-    });
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <ViewListRow
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="creatorView"
+        pageData={creatorView}
+      />
+    );
   }
 
   render() {
@@ -232,36 +323,41 @@ export default class TaskList extends PureComponent {
       taskBasicInfo,
       priviewCustFileData,
     } = this.props;
-    const { resultData = EMPTY_LIST } = list;
-    const isEmpty = !resultData.length;
-    // 页面头部需要用到的控件
-    const topPanelNeedWidgets = {
-      needType: true,
-      needStatus: true,
-      needCreator: true,
-      needCreationTime: true,
-    };
     const topPanel = (
-      <ConnectedSeibelHeader
-        {...topPanelNeedWidgets}
+      <ConnectedPageHeader
         location={location}
         replace={replace}
-        page="tasklist"
+        page="creatorView"
         pageType={pageType}
         subtypeOptions={type}
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         empInfo={empInfo}
-        filterControl="taskList"
       />
     );
+
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { resultData = [], page = {} } = list;
+    const isEmpty = _.isEmpty(list.resultData);
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
     const leftPanel = (
-      <LeftList
-        pageName="tasklist"
-        list={list}
-        replace={replace}
-        location={location}
-        columns={this.constructTableColumns()}
+      <ViewList
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
       />
     );
     const rightPanel = (
@@ -272,7 +368,7 @@ export default class TaskList extends PureComponent {
       />
     );
     return (
-      <div className={styles.tasklist}>
+      <div className={styles.creatorView}>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
