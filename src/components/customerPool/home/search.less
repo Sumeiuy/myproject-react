@@ -32,15 +32,10 @@
       width: 716px;
       margin: 0 auto 11px;
       :global {
-        .ant-select-auto-complete.ant-select-lg .ant-input {
-          padding: 6px 106px 0 20px;
-        }
         .ant-select-auto-complete.ant-select .ant-select-selection__placeholder {
           margin-left: 20px;
         }
         .ant-input {
-          border: 1px solid #66b7f1;
-          border-radius: 3px;
           overflow: visible;
           line-height: 18px;
         }
@@ -56,6 +51,8 @@
         }
         .ant-select-combobox .ant-select-search__field {
           overflow: hidden;
+          border: 1px solid #66b7f1;
+          border-radius: 4px;
         }
         .ant-input-suffix {
           right: 0;
@@ -81,6 +78,8 @@
     }
     .global-search.ant-select-auto-complete .ant-input-affix-wrapper .ant-input:not(:last-child) {
       padding-right: 62px;
+      padding-left: 20px;
+      border: none;
     }
   }
   .historyList {
