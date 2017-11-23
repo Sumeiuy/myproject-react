@@ -2,12 +2,16 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-15 10:31:47
+ * @Last Modified time: 2017-11-23 10:21:03
  * @description 分割组件
+ * 此组件中
+ * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
+ * 并且在详情的外部容器组件上会多一个isCSListFold的CSS类
+ * 当左侧列表组件展开起来后，右侧详情的isFold属性将会变成false,
+ * 并且在详情的外部容器组件上没有isCSListFold的CSS类
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-// import SplitPane from 'react-split-pane';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -44,6 +48,7 @@ export default class CutScreen extends PureComponent {
     super(props);
     this.state = {
       stretchIcon: 'caret-left',
+      isFold: false, // 判断左侧列表组件是否折叠起来
     };
   }
 
@@ -212,6 +217,7 @@ export default class CutScreen extends PureComponent {
   shrinkList() {
     this.setState({
       stretchIcon: 'caret-right',
+      isFold: true,
     });
     this.setElementStyle(this.leftSection, 'none', 'display');
   }
@@ -220,13 +226,14 @@ export default class CutScreen extends PureComponent {
   growList() {
     this.setState({
       stretchIcon: 'caret-left',
+      isFold: false,
     });
     this.setElementStyle(this.leftSection, 'block', 'display');
   }
 
   // 展开伸缩列表
   @autobind
-  stretchList() {
+  handleStretchIconClick() {
     const { stretchIcon } = this.state;
     if (stretchIcon === 'caret-left') {
       // 收缩列表
@@ -284,7 +291,7 @@ export default class CutScreen extends PureComponent {
       rightPanel,
       isEmpty,
     } = this.props;
-    const { stretchIcon } = this.state;
+    const { stretchIcon, isFold } = this.state;
     const noDataClass = classnames({
       [styles.hide]: !isEmpty,
       [styles.noData]: true,
@@ -292,6 +299,10 @@ export default class CutScreen extends PureComponent {
     const hasDataClass = classnames({
       [styles.hide]: isEmpty,
       [styles.panelBd]: true,
+    });
+    const hasFoldCls = classnames({
+      [styles.detailScreen]: true,
+      isCSListFold: isFold,
     });
 
     return (
@@ -309,9 +320,16 @@ export default class CutScreen extends PureComponent {
           <div className={styles.cutScreenBd}>
             <div className={styles.listScreen} ref={this.leftPanelRef}>{leftPanel}</div>
             <div className={styles.stretch} ref={this.stretchRef}>
-              <Icon type={stretchIcon} onClick={this.stretchList} />
+              <Icon type={stretchIcon} onClick={this.handleStretchIconClick} />
             </div>
-            <div className={styles.detailScreen} ref={this.rightPanelRef}>{rightPanel}</div>
+            <div className={hasFoldCls} ref={this.rightPanelRef}>
+              {
+                _.isEmpty(rightPanel) ? null
+                : (
+                  <rightPanel.type {...rightPanel.props} isFold={isFold} />
+                )
+              }
+            </div>
           </div>
         </div>
       </div>

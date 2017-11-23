@@ -10,7 +10,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
-import { fspContainer } from '../../../config';
+import Uploader from '../taskFlow/Uploader';
+import { fspContainer, request } from '../../../config';
 import { helper } from '../../../utils';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -112,6 +113,9 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackTypeChild,
       feedbackTypeArr,
       feedbackTypeChildArr,
+      currentFile: {},
+      uploadedFileKey: '',
+      originFileName: '',
     };
   }
 
@@ -298,6 +302,20 @@ export default class CreateServiceRecord extends PureComponent {
     return m;
   }
 
+  /**
+   * @param {*} result 本次上传结果
+   */
+  @autobind
+  handleFileUpload(lastFile) {
+    // 当前上传的file
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    this.setState({
+      currentFile,
+      uploadedFileKey,
+      originFileName,
+    });
+  }
+
   render() {
     const {
       isShow,
@@ -316,7 +334,11 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackTypeChild,
       feedbackTypeArr,
       feedbackTypeChildArr,
+      currentFile,
+      uploadedFileKey,
+      originFileName,
     } = this.state;
+
     if (!dict) {
       return null;
     }
@@ -449,6 +471,20 @@ export default class CreateServiceRecord extends PureComponent {
                   onChange={this.handleFeedbackDate}
                   disabledDate={this.disabledDate}
                 />
+              </div>
+              <div className={styles.divider} />
+              <p className={styles.categoryTitle}>附件</p>
+              <div className={styles.row}>
+                <div className={styles.uploadSection}>
+                  <Uploader
+                    onOperateFile={this.handleFileUpload}
+                    attachModel={currentFile}
+                    fileKey={uploadedFileKey}
+                    originFileName={originFileName}
+                    uploadTitle={'上传附件'}
+                    uploadTarget={`${request.prefix}/file/khxfFileUpload`}
+                  />
+                </div>
               </div>
             </div>
             :
