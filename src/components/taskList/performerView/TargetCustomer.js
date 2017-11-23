@@ -4,15 +4,65 @@
  * @description 执行者视图右侧详情的目标客户
  */
 
-import React, { PureComponent } from 'react';
-import { Modal, Row, Col } from 'antd';
-import { autobind } from 'core-decorators';
+import React, { PropTypes, PureComponent } from 'react';
 import styles from './targetCustomer.less';
-import Icon from '../../common/Icon';
-
+import TargetCustomerRight from './TargetCustomerRight';
 import LabelInfo from './LabelInfo';
 
+// 模拟接口的死数据
+const data = {
+  code: '200',
+  msg: 'success',
+  resultData: {
+    page: {
+      pageNo: '1',
+      pageSize: '10',
+      totalCount: '200',
+      totalPage: '20',
+    },
+    list: [
+      {
+        custId: '002332',
+        custName: '王华',
+        isSign: true,
+        genderValue: '男',
+        age: '33',
+        missionStatusCode: '106110',
+        missionStatusValue: '处理中',
+        levelCode: '1078',
+        levelValue: '白金',
+        riskLevelValue: '积极型',
+        genderCode: '01',
+        contactPhone: '18255353210',
+        empName: '王华',
+        empId: '0110102',
+        empContactPhone: '18533536936',
+        empDepartment: '南京长江路营业部',
+        officePhone: '025-44544646455646',
+        homePhone: '025-89898933',
+        cellPhone: '18255353210',
+        assets: '1000000000',
+        openAssets: '10000000',
+        availablBalance: '100000',
+        commissionRate: '0.2',
+        hsRate: '0.3',
+        openBusiness: '创业板、深港通、沪港通',
+        openedBusiness: '创业板',
+        recentServiceTime: '2017/11/11',
+        missionTitle: 'XXOO',
+        missionType: 'OOXX',
+        custUuid: '',
+      },
+    ],
+  },
+};
+
+
 export default class TargetCustomer extends PureComponent {
+  static propTypes = {
+    isFold: PropTypes.bool.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -20,29 +70,9 @@ export default class TargetCustomer extends PureComponent {
     };
   }
 
-  @autobind
-  showModal() {
-    this.setState({
-      visible: true,
-    });
-  }
-
-  @autobind
-  handleOk() {
-    this.setState({
-      visible: false,
-    });
-  }
-
-  @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
-  }
 
   render() {
-    const { visible } = this.state;
+    const { isFold } = this.props;
     return (
       <div className={styles.targetCustomer}>
         <LabelInfo value="目标客户" />
@@ -50,88 +80,11 @@ export default class TargetCustomer extends PureComponent {
           表格
         </div>
         <div className={styles.right}>
-          <div className={styles.titles}>
-            <Row>
-              <Col span={12}><h3 className={styles.custNames}>客户名称</h3></Col>
-              <Col span={12}>
-                <h5 className={styles.custNamesCont}>
-                  <span>02004889</span>|<span>男</span>|<span>46岁</span>
-                </h5>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <h5 className={styles.phoneLeft}><span>介绍人：</span><span>王华</span><Icon type="info-circle-o" /></h5>
-              </Col>
-              <Col span={12}>
-                <h5 className={styles.phoneLeft}><span>联系电话：</span><span>15357890001</span></h5>
-              </Col>
-            </Row>
-          </div>
-          <div className={styles.asset}>
-            <Row>
-              <Col span={14}>
-                <h5 className={styles.peopleTwo}><span>总资产：</span><span>2345.78万元</span><Icon type="info-circle-o" /></h5>
-              </Col>
-              <Col span={10}>
-                <h5 className={styles.peopleThr}><span>股基佣金率额：</span><span>0.34%</span></h5>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={14}>
-                <h5 className={styles.peopleTwo}>
-                  <span>持仓资产：</span><span>2345.78万元</span>/<span>99.5%</span>
-                </h5>
-              </Col>
-              <Col span={10}>
-                <h5 className={styles.peopleThr}><span>沪深归集率：</span><span>0.34%</span></h5>
-              </Col>
-            </Row>
-            <Row className={styles.lastCol}>
-              <Col span={12}>
-                <h5 className={styles.peopleTwo}>
-                  <span>可用余额：</span><span>2345.78万元</span>/<span>0.5%</span>
-                </h5>
-              </Col>
-            </Row>
-          </div>
-          <div className={styles.asset}>
-            <Row>
-              <Col span={12}>
-                <h5 className={styles.peopleFour}><span>已开通业务：</span><span>创业板、沪港通、深港通</span></h5>
-              </Col>
-            </Row>
-            <Row className={styles.lastCol}>
-              <Col span={12}>
-                <h5 className={styles.peopleFour}><span>可开通业务：</span><span>融资融券</span></h5>
-              </Col>
-            </Row>
-          </div>
-          <div className={styles.service}>
-            <Row>
-              <Col span={14}>
-                <h5 className={styles.people}>
-                  <span>最近服务时间：</span>
-                  <span>（2017/11/11）任务类型 - 任务标题</span>
-                </h5>
-              </Col>
-              <Col span={10}>
-                <h5 className={styles.people}><a onClick={this.showModal}>查看更多</a></h5>
-              </Col>
-            </Row>
-          </div>
+          <TargetCustomerRight
+            isFold={isFold}
+            itemData={data.resultData.list[0]}
+          />
         </div>
-        <Modal
-          title="Basic Modal"
-          visible={visible}
-          width={700}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </Modal>
       </div>
     );
   }

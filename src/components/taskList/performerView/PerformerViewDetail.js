@@ -19,6 +19,7 @@ export default class PerformerViewDetail extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
+    isFold: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -31,8 +32,9 @@ export default class PerformerViewDetail extends PureComponent {
       dict,
       addServeRecord,
       isReadOnly,
+      isFold,
     } = this.props;
-
+    console.log(this.props);
     const {
       taskId,
       taskName,
@@ -47,7 +49,9 @@ export default class PerformerViewDetail extends PureComponent {
           {hasSurvey ? <a className={styles.survey}>任务问卷调查</a> : null}
         </p>
         <BasicInfo {...otherProps} />
-        <TargetCustomer />
+        <TargetCustomer
+          isFold={isFold}
+        />
         <ServiceRecord
           dict={dict}
           addServeRecord={addServeRecord}
