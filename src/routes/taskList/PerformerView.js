@@ -69,6 +69,7 @@ export default class PerformerView extends PureComponent {
     };
   }
 
+
   componentWillMount() {
     const {
       location: {
