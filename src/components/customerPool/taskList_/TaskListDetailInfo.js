@@ -63,7 +63,7 @@ export default class TaskListDetailInfo extends PureComponent {
           </div> :
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
-              <li className={`${styles.fir} ${styles.occupyOneLine}`}>
+              <li className={styles.item}>
                 <InfoItem
                   label="任务状态"
                   value={this.changeDisplay(infoData.status, status) || '--'}
