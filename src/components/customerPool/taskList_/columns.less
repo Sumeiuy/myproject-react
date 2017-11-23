@@ -13,7 +13,7 @@
   &.chooseTodo {
     background: #60bbea;
   }
-  :global(.active) & {
+  :global(.active) > td > :global(.leftSection) & {
     background-color: #fff;
     color: #4897f1;
   }
@@ -29,7 +29,7 @@
   margin-left: 10px;
   color: #9b9b9b;
   font-size: 12px;
-  :global(.active) & {
+  :global(.active) > td > :global(.leftSection) & {
     color: #fff;
   }
 }
@@ -37,7 +37,7 @@
   margin-left: 15px;
   color: #9b9b9b;
   font-size: 12px;
-  :global(.active) & {
+  :global(.active) > td > :global(.leftSection) & {
     color: #fff;
   }
 }
@@ -50,7 +50,10 @@
   text-overflow: ellipsis;
   margin-top: 5px;
   color: #666;
-  :global(.active) & {
+  :global(.active) > td > :global(.leftSection) & {
+    color: #fff;
+  }
+  :global(.active) > td > :global(.rightSection.customerTaskList) & {
     color: #fff;
   }
 }
@@ -63,7 +66,7 @@
   text-overflow: ellipsis;
   margin-top: 5px;
   color: #9b9b9b;
-  :global(.active) & {
+  :global(.active) > td > :global(.leftSection) & {
     color: #fff;
   }
 }
