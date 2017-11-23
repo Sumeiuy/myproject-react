@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-02 14:20:14
+ * @Last Modified time: 2017-11-22 14:55:53
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
-import { request } from '../../../config';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
@@ -24,11 +23,15 @@ export default class Uploader extends PureComponent {
   static propTypes = {
     attachModel: PropTypes.object,
     fileKey: PropTypes.string,
-    onOperateFile: PropTypes.func.isRequired,
-    onHandleOverview: PropTypes.func.isRequired,
-    onDeleteFile: PropTypes.func.isRequired,
+    onOperateFile: PropTypes.func,
+    onHandleOverview: PropTypes.func,
+    onDeleteFile: PropTypes.func,
     originFileName: PropTypes.string,
     totalCount: PropTypes.number,
+    isNeedPreview: PropTypes.bool,
+    isNeedDelete: PropTypes.bool,
+    uploadTitle: PropTypes.string.isRequired,
+    uploadTarget: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -36,6 +39,11 @@ export default class Uploader extends PureComponent {
     fileKey: '',
     originFileName: '',
     totalCount: 0,
+    onHandleOverview: () => { },
+    onDeleteFile: () => { },
+    onOperateFile: () => { },
+    isNeedPreview: false,
+    isNeedDelete: false,
   }
 
   constructor(props) {
@@ -197,6 +205,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
+    const { uploadTitle, uploadTarget } = this.props;
     const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
     return (
@@ -205,14 +214,14 @@ export default class Uploader extends PureComponent {
         name="file"
         defaultFileList={fileList}
         data={upData}
-        action={`${request.prefix}/file/khxfFileUpload`}
+        action={uploadTarget}
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
         showUploadList={showUploadList}
       >
         <div className="upload_txt">
-          + 上传客户列表
+          + {uploadTitle}
         </div>
       </Dragger>
     );
@@ -253,6 +262,7 @@ export default class Uploader extends PureComponent {
   }
 
   render() {
+    const { isNeedDelete, isNeedPreview } = this.props;
     const { isShowUpload, isShowError, originFileName } = this.state;
     return (
       <div>
@@ -270,14 +280,19 @@ export default class Uploader extends PureComponent {
                 }
                 <span>{originFileName}</span>
               </div>
-              <div
-                className="overview"
-                onClick={this.handlePreview}
-              >预览</div>
-              <div
-                className="delete"
-                onClick={this.handleDeleteFile}
-              >删除</div>
+              {
+                isNeedPreview ? <div
+                  className="overview"
+                  onClick={this.handlePreview}
+                >预览</div>
+                  : null
+              }
+              {
+                isNeedDelete ? <div
+                  className="delete"
+                  onClick={this.handleDeleteFile}
+                >删除</div> : null
+              }
             </div> : null
           }
         </div>
