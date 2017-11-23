@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-20 11:02:16
+ * @Last Modified time: 2017-11-23 15:25:33
  * @description 单佣金申请内容区域
  */
 
@@ -27,7 +27,6 @@ import {
   pagination,
   singleColumns,
 } from './commissionTransferHelper/transferPropsHelper';
-// import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import createCommon from './commissionCreateCommon/common';
 import styles from './createNewApprovalBoard.less';
 
@@ -332,14 +331,26 @@ export default class SingleCreateBoard extends PureComponent {
       };
     });
 
+    // 给佣金率Column加一个render属性
+    const treatedColumns = singleColumns.map((column, index) => {
+      if (index === 2) {
+        // 佣金率所在Column
+        return {
+          ...column,
+          render: text => (<div className="xxxxxx">{text} </div>),
+        };
+      }
+      return column;
+    });
+
     // 单佣金调整中的产品选择配置
     const singleTransferProps = {
       firstTitle: '可选佣金产品',
       secondTitle: '已选产品',
       firstData: productList,
       secondData: [],
-      firstColumns: singleColumns,
-      secondColumns: singleColumns,
+      firstColumns: treatedColumns,
+      secondColumns: treatedColumns,
       transferChange: this.handleParentProductAction,
       checkChange: this.handleChildProductCheck,
       rowKey: 'id',
