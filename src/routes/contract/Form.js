@@ -103,7 +103,7 @@ export default class Form extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       getFlowStepInfo,
       getClauseNameList,
@@ -281,19 +281,17 @@ export default class Form extends PureComponent {
       // 根据管检测查询合作部门
       searchCooperDeparment: this.handleSearchCooperDeparment,
     };
-    const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo}
-      onEmitEvent={this.footerBtnHandle}
-    />);
+
     return (
       <div className={styles.channelEditWrapper} >
         <EditForm
           {...editFormProps}
           ref={(ref) => { this.EditFormComponent = ref; }}
         />
-        <div>
-          {selfBtnGroup}
-        </div>
+        <BottonGroup
+          list={flowStepInfo}
+          onEmitEvent={this.footerBtnHandle}
+        />
       </div>
     );
   }
