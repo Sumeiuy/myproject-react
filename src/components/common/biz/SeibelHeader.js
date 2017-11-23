@@ -236,9 +236,6 @@ export default class Pageheader extends PureComponent {
           subType,
           status,
           business2,
-          drafterId,
-          custNumber,
-          approvalId,
         },
       },
     } = this.props;
@@ -247,32 +244,14 @@ export default class Pageheader extends PureComponent {
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
-    // 客户回填
-    const curCustomerInfo = _.find(customerAllList, o => o.custNumber === custNumber);
-    let curCustomer = '全部';
-    if (curCustomerInfo && curCustomerInfo.custNumber) {
-      curCustomer = `${curCustomerInfo.custName}(${curCustomerInfo.custNumber})`;
-    }
 
     // 拟稿人增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
-    // 拟稿人回填
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    let curDrafter = '全部';
-    if (curDrafterInfo && curDrafterInfo.ptyMngId) {
-      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
-    }
 
     // 审批人增加全部
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
-    // 审批人回填
-    const curApprovePersonInfo = _.find(approvePersonAllList, o => o.ptyMngId === approvalId);
-    let curApprovePerson = '全部';
-    if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-      curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
-    }
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -289,7 +268,7 @@ export default class Pageheader extends PureComponent {
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value={curCustomer}
+                value="全部"
                 placeholder="经纪客户号/客户名称"
                 searchList={customerAllList}
                 showObjKey="custName"
@@ -337,7 +316,7 @@ export default class Pageheader extends PureComponent {
             拟稿人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value={curDrafter}
+                value="全部"
                 placeholder="工号/名称"
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
@@ -364,7 +343,7 @@ export default class Pageheader extends PureComponent {
             审批人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value={curApprovePerson}
+                value="全部"
                 placeholder="工号/名称"
                 searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
