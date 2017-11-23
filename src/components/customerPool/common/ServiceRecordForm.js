@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-22 20:17:33
+ * @Last Modified time: 2017-11-23 15:34:27
  * 服务记录
  */
 
@@ -10,17 +10,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Select, DatePicker, TimePicker, Input, message } from 'antd';
+import { Select, DatePicker, TimePicker, Input, message, Radio } from 'antd';
 import moment from 'moment';
+import classnames from 'classnames';
 import Uploader from '../../customerPool/taskFlow/Uploader';
 import Button from '../../common/Button';
 import { request } from '../../../config';
 // import { helper } from '../../../utils';
 import Icon from '../../common/Icon';
-import styles from './serviceRecord.less';
+import styles from './serviceRecordForm.less';
 
 const { Option } = Select;
 const { TextArea } = Input;
+const RadioGroup = Radio.Group;
 
 // 日期组件的显示格式
 const dateFormat = 'YYYY/MM/DD';
@@ -66,53 +68,173 @@ function generateObjOfValue(arr) {
   return subObj;
 }
 
-export default class ServiceRecord extends PureComponent {
+export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
+    // 是否是执行者视图页面
+    isEntranceFromPerformerView: PropTypes.bool.isRequired,
+    // 表单数据
+    formData: PropTypes.object,
+    // 服务类型
+    serviceType: PropTypes.string,
   }
 
   static defaultProps = {
     dict: {},
+    formData: {},
+    serviceType: '',
   }
 
   constructor(props) {
     super(props);
     const {
+      // 服务方式字典
       serveWay = [{}],
       custServerTypeFeedBackDict = [{}],
+      // 服务状态字典
+      serveStatus = [{}],
     } = props.dict || {};
+    const { isEntranceFromPerformerView, formData, isReadOnly, serviceType } = props;
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
-    // 反馈类型数组
-    const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
-    // 反馈类型value对应反馈类型数组
-    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
-    // 反馈子类型数组
-    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
-    // 当前日期的时间戳
-    const currentDate = new Date().getTime();
-    const serviceType = (custServerTypeFeedBackDict[0] || {}).key || '';
-    const feedbackType = (feedbackTypeArr[0] || {}).value || '';
-    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
+    let formObject = {};
+
+    if (isEntranceFromPerformerView) {
+      const {
+        feedbackType = '',
+        feedbackTypeArr = [],
+        feedbackTypeChild = '',
+        feedbackTypeChildArr = [],
+      } = this.handleServiceType(serviceType);
+
+      // 反馈类型value对应反馈类型数组
+      this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+
+      // 执行者视图
+      if (isReadOnly) {
+        // 只读状态
+        const {
+          // 服务时间（日期）
+          serviceDate,
+          // 服务时间（时分秒）
+          serviceTime,
+          // 反馈时间
+          feedbackDate,
+          // 服务状态
+          serviceStatus,
+          // 服务方式
+          serviceWay,
+        } = formData;
+
+        formObject = {
+          // 服务类型，页面上隐藏该字段
+          serviceType,
+          // 客户反馈一级
+          feedbackType,
+          feedbackTypeArr,
+          // 客户反馈二级
+          feedbackTypeChild,
+          feedbackTypeChildArr,
+          // 服务时间（日期）
+          serviceDate,
+          // 服务时间（时分秒）
+          serviceTime,
+          // 反馈时间
+          feedbackDate,
+          // 服务状态
+          serviceStatus,
+          // 服务方式
+          serviceWay,
+        };
+      } else {
+        // 当前日期的时间戳
+        const currentDate = new Date().getTime();
+
+        formObject = {
+          // 服务类型，页面上隐藏该字段
+          serviceType,
+          // 客户反馈一级
+          feedbackType,
+          feedbackTypeArr,
+          // 客户反馈二级
+          feedbackTypeChild,
+          feedbackTypeChildArr,
+          // 服务时间（日期）
+          serviceDate: moment(currentDate).format(dateFormat),
+          // 服务时间（时分秒）
+          serviceTime: moment(currentDate).format(timeFormat),
+          // 反馈时间
+          feedbackDate: moment(currentDate).format(dateFormat),
+          // 服务状态
+          serviceStatus: (serveStatus[0] || {}).key,
+          // 服务方式
+          serviceWay: (serveWay[0] || {}).key,
+        };
+      }
+    } else {
+      // 客户列表添加服务记录
+      // 反馈类型数组
+      const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
+      // 反馈类型value对应反馈类型数组
+      this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+      // 反馈子类型数组
+      const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
+      // 当前日期的时间戳
+      const currentDate = new Date().getTime();
+      const serveType = (custServerTypeFeedBackDict[0] || {}).key || '';
+      const feedbackType = (feedbackTypeArr[0] || {}).value || '';
+      const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
+
+      formObject = {
+        feedbackType,
+        feedbackTypeChild,
+        feedbackTypeArr,
+        feedbackTypeChildArr,
+        serviceType: serveType,
+        serviceWay: (serveWay[0] || {}).key,
+        serviceDate: moment(currentDate).format(dateFormat),
+        serviceTime: moment(currentDate).format(timeFormat),
+        feedbackDate: moment(currentDate).format(dateFormat),
+      };
+    }
+
     this.state = {
-      serviceWay: (serveWay[0] || {}).key,
-      serviceType,
-      serviceDate: moment(currentDate).format(dateFormat),
-      serviceTime: moment(currentDate).format(timeFormat),
-      feedbackDate: moment(currentDate).format(dateFormat),
-      feedbackType,
-      feedbackTypeChild,
-      feedbackTypeArr,
-      feedbackTypeChildArr,
+      ...formObject,
       currentFile: {},
       uploadedFileKey: '',
       originFileName: '',
+      originFormData: formObject,
     };
   }
 
-  // 提交
+  // 服务状态change事件
+  @autobind
+  onRadioChange(e) {
+    this.setState({
+      serviceStatus: e.target.value,
+    });
+  }
+
+  // 保存选中的服务方式的值
+  @autobind
+  handleServiceWay(value) {
+    this.setState({
+      serviceWay: value,
+    });
+  }
+
+  @autobind
+  handleCancel() {
+    const { originFormData } = this.state;
+    this.setState({
+      ...this.state,
+      ...originFormData,
+    });
+  }
+
+  // 提供所有数据
   @autobind
   handleSubmit() {
     const serviceContentNode = this.serviceContent.textAreaRef;
@@ -135,12 +257,17 @@ export default class ServiceRecord extends PureComponent {
       feedbackDate,
       feedbackType,
       feedbackTypeChild,
+      serviceStatus,
+      uploadedFileKey,
     } = this.state;
+
     const {
       addServeRecord,
+      isEntranceFromPerformerView,
     } = this.props;
 
-    addServeRecord({
+    let postBody = {
+      // 经纪客户号
       custId: '',
       serveWay: serviceWay,
       serveType: serviceType,
@@ -150,21 +277,35 @@ export default class ServiceRecord extends PureComponent {
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
-    });
-    serviceContentNode.value = '';
-  }
+      // 从客户列表带过来
+      custUuid: '',
+    };
 
-  // 保存选中的服务方式的值
-  @autobind
-  handleServiceWay(value) {
-    this.setState({
-      serviceWay: value,
-    });
+    if (uploadedFileKey) {
+      postBody = {
+        ...postBody,
+        file: uploadedFileKey,
+      };
+    }
+
+    if (isEntranceFromPerformerView) {
+      addServeRecord({
+        ...postBody,
+        serviceStatus,
+      });
+    } else {
+      addServeRecord(postBody);
+    }
+
+    serviceContentNode.value = '';
   }
 
   // 保存服务类型的值
   @autobind
   handleServiceType(value) {
+    if (_.isEmpty(value)) {
+      return {};
+    }
     const feedbackTypeArr = this.serviceTypeObj[value];
     const feedbackType = (feedbackTypeArr[0] || {}).value;
     const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
@@ -176,6 +317,12 @@ export default class ServiceRecord extends PureComponent {
       feedbackTypeChild,
       feedbackTypeChildArr,
     });
+    return {
+      feedbackType,
+      feedbackTypeArr,
+      feedbackTypeChild,
+      feedbackTypeChildArr,
+    };
   }
 
   // 保存服务日期的值
@@ -282,11 +429,13 @@ export default class ServiceRecord extends PureComponent {
     const {
       dict,
       isReadOnly,
+      isEntranceFromPerformerView,
     } = this.props;
 
     const {
       serviceWay,
-      // serviceType,
+      serviceStatus = 'handling',
+      serviceType,
       serviceTime,
       serviceDate,
       feedbackDate,
@@ -338,19 +487,45 @@ export default class ServiceRecord extends PureComponent {
             </div>
           </div>
 
-          <div className={styles.serveStatus}>
+          {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
+          {
+            isEntranceFromPerformerView ?
+              <div className={styles.serveStatus}>
+                <div className={styles.title}>
+                  服务状态:
+                </div>
+                <div className={styles.content}>
+                  <RadioGroup
+                    onChange={this.onRadioChange}
+                    value={serviceStatus}
+                  >
+                    <Radio value={'handling'}>处理中</Radio>
+                    <Radio value={'completed'}>已完成</Radio>
+                  </RadioGroup>
+                </div>
+              </div> : null
+          }
+
+          {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
+          <div
+            className={
+              classnames({
+                [styles.serveType]: true,
+                [styles.hidden]: isEntranceFromPerformerView,
+              })
+            }
+          >
             <div className={styles.title}>
-              服务状态:
+              服务类型:
             </div>
             <div className={styles.content}>
               <Select
-                value={serviceWay}
+                value={serviceType}
                 style={width}
-                onChange={this.handleServiceWay}
-                disabled={isReadOnly}
+                onChange={this.handleServiceType}
               >
                 {
-                  (dict.serveWay || EMPTY_LIST).map(obj => (
+                  (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
                     <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                   ))
                 }
@@ -374,7 +549,7 @@ export default class ServiceRecord extends PureComponent {
               />
               <TimePicker
                 style={width}
-                className={styles.hide}
+                className={styles.hidden}
                 placeholder={'选择时间'}
                 value={moment(serviceTime, timeFormat)}
                 onChange={this.handleServiceTime}
@@ -471,21 +646,23 @@ export default class ServiceRecord extends PureComponent {
               }
               <span>{originFileName}</span>
             </div>
+          }
+        </div>
+        {
+          !isReadOnly ?
+            <div className={styles.operationSection}>
+              <Button
+                className={styles.submitBtn}
+                onClick={this.handleSubmit}
+                type="primary"
+              >
+                提交</Button>
+              <Button
+                className={styles.cancelBtn}
+                onClick={this.handleCancel}
+              >取消</Button>
+            </div> : null
         }
-        </div>
-
-        <div className={styles.operationSection}>
-          <Button
-            className={styles.submitBtn}
-            onClick={() => { console.log('点击提交了'); }}
-            type="primary"
-          >
-            提交</Button>
-          <Button
-            className={styles.cancelBtn}
-            onClick={() => { console.log('点击取消了'); }}
-          >取消</Button>
-        </div>
       </div>
     );
   }

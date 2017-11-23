@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
-import ServiceRecord from './ServiceRecord';
+import ServiceRecordForm from '../../customerPool/common/ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
@@ -48,10 +48,11 @@ export default class PerformerViewDetail extends PureComponent {
         </p>
         <BasicInfo {...otherProps} />
         <TargetCustomer />
-        <ServiceRecord
+        <ServiceRecordForm
           dict={dict}
           addServeRecord={addServeRecord}
           isReadOnly={isReadOnly}
+          isEntranceFromPerformerView
         />
       </div>
     );
