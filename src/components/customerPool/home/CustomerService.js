@@ -28,19 +28,11 @@ export default class CustomerService extends PureComponent {
       series: [{
         type: 'pie',
         radius: ['70%', '83%'], // 这里是控制环形内半径和外半径
-        avoidLabelOverlap: true,
+        avoidLabelOverlap: false,
         hoverAnimation: false, // hover区域是否放大
         data: dataArray,
         label: {
-          emphasis: {
-            show: true,
-            textStyle: {
-              fontSize: '20',
-              fontWeight: 'bold',
-              fontFamily: 'Microsoft YaHei',
-            },
-          },
-          normal: { show: true, position: 'center' },
+          normal: { show: false, position: 'center' },
         },
       }],
     };
@@ -58,7 +50,23 @@ export default class CustomerService extends PureComponent {
       finishedName = `${parseFloat(finish).toFixed(0)}%`;
       unfinishedName = `${parseFloat(unfinished).toFixed(0)}%`;
     }
-    return [{ value: finish, name: finishedName }, { value: unfinished, name: unfinishedName }];
+    const textStyle = { fontSize: '20', fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
+    const configItems = { show: true, textStyle };
+
+    return [{
+      value: finish,
+      name: finishedName,
+      label: {
+        normal: { ...configItems, position: 'center' },
+        emphasis: { ...configItems },
+      },
+    }, {
+      value: unfinished,
+      name: unfinishedName,
+      label: {
+        emphasis: { ...configItems, backgroundColor: '#fff' }, // 此处添加背景色，是为了盖着下方的文字
+      },
+    }];
   }
 
   render() {
