@@ -754,10 +754,10 @@ const pageConfig = {
       },
     ],
   },
-  // 权限分配
+  // 执行者视图
   performerView: {
     pageName: '执行者视图',
-    pageType: '01', // 查询列表接口中的type值
+    pageType: '04', // 查询列表接口中的type值
     subType: [
       {
         show: true,
@@ -854,8 +854,13 @@ const pageConfig = {
       },
       {
         show: true,
-        label: '被驳回',
+        label: '结果跟踪',
         value: '04',
+      },
+      {
+        show: true,
+        label: '被驳回',
+        value: '05',
       },
     ],
   },
@@ -867,8 +872,8 @@ const pageConfig = {
     subscribe: '0203', // 资讯订阅
     unsubscribe: '0204', // 资讯退订
   },
-  // 自建任务列表
-  tasklist: {
+  // 创建者视图
+  creatorView: {
     pageName: '自建任务列表',
     pageType: '04',
     type: [
