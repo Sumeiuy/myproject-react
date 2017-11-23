@@ -4,8 +4,9 @@ import ServiceRecordItem from './ServiceRecordItem';
 import styles from './createCollapse.less';
 
 export default function ServiceRecordContent(props) {
-  const { item, executeTypes } = props;
+  const { item, executeTypes, isShow = false } = props;
   const { subtypeCd = '' } = item;
+  const isShowChild = true; // 默认有文件名这个字段
   // 包含MOT服务记录则为MOT任务服务记录
 
   if (!_.isEmpty(subtypeCd)) {
@@ -78,6 +79,14 @@ export default function ServiceRecordContent(props) {
           content={item.serveStatus}
           title={'服务状态'}
         />
+        {isShow ?
+          <ServiceRecordItem
+            content={item.serveStatus}
+            title={'附件'}
+            isShowChild={isShowChild}
+          /> :
+          null
+        }
       </div>
       {
         !_.isEmpty(subtypeCd) ?
@@ -100,10 +109,12 @@ ServiceRecordContent.propTypes = {
   item: PropTypes.object,
   type: PropTypes.string,
   executeTypes: PropTypes.array,
+  isShow: PropTypes.bool,
 };
 
 ServiceRecordContent.defaultProps = {
   item: {},
   type: '',
   executeTypes: [],
+  isShow: false,
 };
