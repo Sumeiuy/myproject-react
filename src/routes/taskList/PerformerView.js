@@ -11,11 +11,11 @@ import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { constructSeibelPostBody } from '../../utils/helper';
-import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
-import PerformerViewList from '../../components/common/appList';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
-import PerformerViewListRow from '../../components/taskList/performerView/PerformerViewListRow';
+import ViewList from '../../components/common/appList';
+import ViewListRow from '../../components/taskList/ViewListRow';
 import { seibelConfig } from '../../config';
 import appListTool from '../../components/common/appList/tool';
 
@@ -247,7 +247,7 @@ export default class PerformerView extends PureComponent {
   renderListRow(record, index) {
     const { activeRowIndex } = this.state;
     return (
-      <PerformerViewListRow
+      <ViewListRow
         key={record.id}
         data={record}
         active={index === activeRowIndex}
@@ -271,7 +271,7 @@ export default class PerformerView extends PureComponent {
 
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
-      <ConnectedSeibelHeader
+      <ConnectedPageHeader
         location={location}
         replace={replace}
         page="performerViewPage"
@@ -301,7 +301,7 @@ export default class PerformerView extends PureComponent {
     };
 
     const leftPanel = (
-      <PerformerViewList
+      <ViewList
         list={resultData}
         renderRow={this.renderListRow}
         pagination={paginationOptions}

@@ -8,59 +8,47 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Select from '../Select';
-import CustRange from '../../pageCommon/SeibelCustRange';
-import DropDownSelect from '../dropdownSelect';
-import Button from '../Button';
-import Icon from '../Icon';
-import styles from '../../style/jiraLayout.less';
-import { hasPermission, addClass, removeClass } from '../../../utils/helper';
-import { hasPermissionOfProtocolCreate } from '../../../utils/permission';
-import { fspContainer, seibelConfig } from '../../../config';
+import moment from 'moment';
+import { DatePicker, message, Input } from 'antd';
+import Select from '../common/Select';
+import DropDownSelect from '../common/dropdownSelect';
+import Button from '../common/Button';
+import Icon from '../common/Icon';
+import styles from '../style/jiraLayout.less';
+import { addClass, removeClass } from '../../utils/helper';
+import { fspContainer } from '../../config';
 
-const {
-  contract: { pageType: contractPageType },
-  channelsTypeProtocol: { pageType: channelsPageType },
-} = seibelConfig;
+const { RangePicker } = DatePicker;
+const Search = Input.Search;
+
+// 日期格式
+const dateFormat = 'YYYY/MM/DD';
+
+const datePickerStyle = {
+  height: '32px',
+  width: 'auto',
+};
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
-
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
-    // 子类型
-    subtypeOptions: PropTypes.array,
     // 状态
     stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
-    // 操作类型
-    needOperate: PropTypes.bool,
-    operateOptions: PropTypes.array,
-    // 新建权限
-    empInfo: PropTypes.object,
     // 页面类型
     pageType: PropTypes.string.isRequired,
-    // 部门列表
-    custRange: PropTypes.array.isRequired,
-    // 获取部门列表
-    getCustRange: PropTypes.func.isRequired,
     // 拟稿人列表
     drafterList: PropTypes.array.isRequired,
     // 获取拟稿人列表
     getDrafterList: PropTypes.func.isRequired,
-    // 审批人列表
-    approvePersonList: PropTypes.array.isRequired,
-    // 获取审批人列表
-    getApprovePersonList: PropTypes.func.isRequired,
-    // 客户列表
-    customerList: PropTypes.array.isRequired,
-    // 获取客户列表
-    getCustomerList: PropTypes.func.isRequired,
+    // 子类型
+    subtypeOptions: PropTypes.array,
   }
 
   static defaultProps = {
@@ -76,12 +64,6 @@ export default class Pageheader extends PureComponent {
     this.state = {
       showMore: true,
     };
-  }
-
-  componentWillMount() {
-    this.props.getCustRange({
-      type: this.props.pageType,
-    });
   }
 
   componentDidUpdate() {
@@ -145,21 +127,8 @@ export default class Pageheader extends PureComponent {
     this.onWindowResize();
   }
 
-  // 选中客户下拉对象中对应的某个对象
-  @autobind
-  selectCustItem(item) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        custNumber: item.custNumber,
-        isResetPageNum: 'Y',
-      },
-    });
-  }
 
-  // 选中拟稿人/审批人下拉对象中对应的某个对象
+  // 选中创建者下拉对象中对应的某个对象
   @autobind
   selectItem(name, item) {
     const { replace, location: { pathname, query } } = this.props;
@@ -173,19 +142,6 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-  // 选中部门下拉对象中对应的某个对象
-  @autobind
-  selectCustRange(obj) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        orgId: obj.orgId,
-        isResetPageNum: 'Y',
-      },
-    });
-  }
 
   // select改变
   @autobind
@@ -213,109 +169,102 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  handleDateChange(dateStrings) {
+    const { replace, location: { pathname, query } } = this.props;
+    const createTimePartFrom = dateStrings[0];
+    const createTimePartTo = dateStrings[1];
+    const startDate = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
+    const endDate = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
+    if (endDate && startDate) {
+      if (endDate > startDate) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            startDate,
+            endDate,
+            isResetPageNum: 'Y',
+          },
+        });
+        return true;
+      }
+      message.error('开始时间与结束时间不能为同一天', 1);
+      return false;
+    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        startDate: '',
+        endDate: '',
+        isResetPageNum: 'Y',
+      },
+    });
+    return false;
+  }
+
   render() {
     const {
-      getCustomerList,
-      getApprovePersonList,
       getDrafterList,
-      subtypeOptions,
       stateOptions,
       creatSeibelModal,
       drafterList,
-      approvePersonList,
-      customerList,
-      custRange,
-      replace,
       page,
-      pageType,
-      operateOptions,
-      needOperate,
-      empInfo,
+      subtypeOptions,
       location: {
         query: {
           subType,
           status,
-          business2,
+          createTime,
           drafterId,
-          custNumber,
-          approvalId,
+
+          createTimePartFrom,
+          createTimePartTo,
         },
       },
     } = this.props;
 
-    const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
-    // 客户增加全部
-    const customerAllList = !_.isEmpty(customerList) ?
-      [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
-    // 客户回填
-    const curCustomerInfo = _.find(customerAllList, o => o.custNumber === custNumber);
-    let curCustomer = '全部';
-    if (curCustomerInfo && curCustomerInfo.custNumber) {
-      curCustomer = `${curCustomerInfo.custName}(${curCustomerInfo.custNumber})`;
+    const dateProps = {
+      allowClear: true,
+      boxStyle: datePickerStyle,
+      placeholder: 'yyyy/mm/dd',
+      dateFormat,
+      name: 'createTime',
+      onChange: this.changeDate,
+    };
+
+    if (createTime) {
+      dateProps.value = moment(createTime, dateFormat);
     }
 
-    // 拟稿人增加全部
+    const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
+
+    // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
-    // 拟稿人回填
+    // 创建者回填
     const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
     let curDrafter = '全部';
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
 
-    // 审批人增加全部
-    const approvePersonAllList = !_.isEmpty(approvePersonList) ?
-      [ptyMngAll, ...approvePersonList] : approvePersonList;
-    // 审批人回填
-    const curApprovePersonInfo = _.find(approvePersonAllList, o => o.ptyMngId === approvalId);
-    let curApprovePerson = '全部';
-    if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-      curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
-    }
-
-    // 新建按钮权限
-    let hasCreatePermission = true;
-    // 如果是合作合约页面
-    if (pageType === contractPageType) {
-      hasCreatePermission = hasPermission(empInfo);
-    } else if (pageType === channelsPageType) {
-      // 如果是通道类协议页面
-      hasCreatePermission = hasPermissionOfProtocolCreate(empInfo);
-    }
+    // 默认时间
+    const startTime = createTimePartFrom ? moment(createTimePartFrom) : null;
+    const endTime = createTimePartTo ? moment(createTimePartTo) : null;
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           <div className={styles.filterFl}>
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curCustomer}
-                placeholder="经纪客户号/客户名称"
-                searchList={customerAllList}
-                showObjKey="custName"
-                objId="custNumber"
-                emitSelectItem={this.selectCustItem}
-                emitToSearch={value => this.toSearch(getCustomerList, value)}
-                name={`${page}-custName`}
-              />
-            </div>
+            <Search
+              placeholder="任务名称"
+              style={{ width: 186 }}
+              onSearch={value => console.log(value)}
+            />
           </div>
-          {
-            needOperate ?
-              <div className={styles.filterFl}>
-                操作类型:
-                <Select
-                  name="business2"
-                  value={business2}
-                  data={operateOptions}
-                  onChange={this.handleSelectChange}
-                  style={{ width: '20%' }}
-                />
-              </div>
-            : null
-          }
           <div className={styles.filterFl}>
-            子类型:
+            类型:
             <Select
               name="subType"
               value={subType}
@@ -323,6 +272,7 @@ export default class Pageheader extends PureComponent {
               onChange={this.handleSelectChange}
             />
           </div>
+
           <div className={styles.filterFl}>
             状态:
             <Select
@@ -334,7 +284,7 @@ export default class Pageheader extends PureComponent {
           </div>
 
           <div className={styles.filterFl}>
-            拟稿人:
+            创建者:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
                 value={curDrafter}
@@ -349,29 +299,13 @@ export default class Pageheader extends PureComponent {
             </div>
           </div>
 
-          <div className={styles.filterFl}>
-            部门:
-            <CustRange
-              style={{ width: '20%' }}
-              custRange={custRange}
-              location={location}
-              replace={replace}
-              updateQueryState={this.selectCustRange}
-            />
-          </div>
-
-          <div className={styles.filterFl}>
-            审批人:
+          <div className={`${styles.filterFl} ${styles.dateWidget}`}>
+            创建时间:
             <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curApprovePerson}
-                placeholder="工号/名称"
-                searchList={approvePersonAllList}
-                showObjKey="ptyMngName"
-                objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('approvalId', item)}
-                emitToSearch={value => this.toSearch(getApprovePersonList, value)}
-                name={`${page}-ptyMngName`}
+              <RangePicker
+                defaultValue={[startTime, endTime]}
+                onChange={this.handleDateChange}
+                placeholder={['开始时间', '结束时间']}
               />
             </div>
           </div>
@@ -396,19 +330,14 @@ export default class Pageheader extends PureComponent {
               </div>
           }
         </div>
-        {
-          hasCreatePermission ?
-            <Button
-              type="primary"
-              icon="plus"
-              size="small"
-              onClick={creatSeibelModal}
-            >
-              新建
-            </Button>
-            :
-            null
-        }
+        <Button
+          type="primary"
+          icon="plus"
+          size="small"
+          onClick={creatSeibelModal}
+        >
+          新建
+        </Button>
       </div>
     );
   }
