@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import Clickable from '../../../components/common/Clickable';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import styles from './viewpoint.less';
@@ -51,18 +52,23 @@ export default class Viewpoint extends PureComponent {
   @autobind
   renderContent(titleArray) {
     return titleArray.map((item, index) => (
-      <div
-        className={classnames(styles.row, { [styles.none]: (index >= 12) })}
+      <Clickable
         onClick={() => { this.handleDetailClick(index); }}
-        key={item.id}
+        eventName="/click/viewpoint"
+        payload={{ test: 1 }}
       >
-        <a
-          className={styles.news}
-          title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+        <div
+          className={classnames(styles.row, { [styles.none]: (index >= 12) })}
+          key={item.id}
         >
-          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
-        </a>
-      </div>
+          <a
+            className={styles.news}
+            title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+          >
+            {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+          </a>
+        </div>
+      </Clickable>
     ));
   }
 
