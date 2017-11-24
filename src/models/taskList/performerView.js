@@ -9,6 +9,9 @@ import { performerView as api } from '../../api';
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
+const PAGE_SIZE = 8;
+const PAGE_NO = 1;
+
 export default {
   namespace: 'performerView',
   state: {
@@ -18,8 +21,8 @@ export default {
     targetCustList: {
       list: EMPTY_LIST,
       page: {
-        pageNo: 1,
-        pageSize: 10,
+        pageNo: PAGE_NO,
+        pageSize: PAGE_SIZE,
         totalCount: 0,
       },
     },
@@ -72,8 +75,8 @@ export default {
           const {
             currentId = '',
             orgId = '',
-            pageSize = 10,
-            pageNo = 1,
+            pageSize = PAGE_SIZE,
+            pageNo = PAGE_NO,
           } = query;
           dispatch({ type: 'getTaskDetailBasicInfo', payload: { missionId: currentId } });
           dispatch({

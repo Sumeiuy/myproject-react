@@ -24,6 +24,7 @@ export default class TargetCustomer extends PureComponent {
     replace: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
+    isFold: PropTypes.bool.isRequired,
   }
 
   @autobind
@@ -70,14 +71,32 @@ export default class TargetCustomer extends PureComponent {
 
   @autobind
   handleRowClick({ id }) {
-    console.log('click id>>>', id);
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        targetCustId: id,
+      },
+    });
   }
 
+  @autobind
   renderList() {
-    const { list } = this.props;
+    const { list, isFold, location } = this.props;
+    const [{ custId = '' }] = list;
     return list.map(o => <TargetCustomerRow
       key={o.custId}
       item={o}
+      isFold={isFold}
+      location={location}
+      defaultSelectId={custId}
       onClick={this.handleRowClick}
     />);
   }
@@ -144,7 +163,7 @@ export default class TargetCustomer extends PureComponent {
                 { this.renderList() }
               </div>
             </Col>
-            <Col span={15}></Col>
+            <Col span={15} />
           </Row>
         </div>
       </div>

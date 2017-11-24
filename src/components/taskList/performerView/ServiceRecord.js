@@ -43,6 +43,9 @@ function range(start, end) {
 // {key:1, children: [{key: 11}]} 转成 {1: [{key: 11}]}
 function generateObjOfKey(arr) {
   const subObj = {};
+  if (_.isEmpty(arr)) {
+    return subObj;
+  }
   arr.forEach((obj) => {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.key] = obj.children;
@@ -56,6 +59,9 @@ function generateObjOfKey(arr) {
 // {value:2, children: [{key: 222}]} 转成 {2: [{key: 222}]}
 function generateObjOfValue(arr) {
   const subObj = {};
+  if (_.isEmpty(arr)) {
+    return subObj;
+  }
   arr.forEach((obj) => {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.value] = obj.children;

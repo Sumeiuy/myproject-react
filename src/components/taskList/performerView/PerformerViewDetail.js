@@ -61,6 +61,7 @@ export default class PerformerViewDetail extends PureComponent {
           {...otherProps}
         />
         <TargetCustomer
+          isFold={isFold}
           location={location}
           replace={replace}
           {...targetCustList}
