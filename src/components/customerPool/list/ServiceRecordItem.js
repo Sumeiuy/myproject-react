@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
+import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 
 const EMPTY_OBJECT = {};
 
 export default function ServiceRecordItem(props) {
-  const { title, type, content, executeTypes } = props;
+  const { title, type, content, executeTypes, isShowChild = false } = props;
   let newContent = content;
   if (!_.isEmpty(executeTypes)) {
     // 当前为执行方式
@@ -23,7 +24,14 @@ export default function ServiceRecordItem(props) {
       })}
     >
       <span>{title || '--'}</span>
-      <span title={newContent}>{newContent || '--'}</span>
+      {
+        isShowChild ?
+          <span title={newContent}><Icon type="excel" className={styles.excel} />
+            <a className={styles.seeCust}>{'我的附件'}</a></span>
+          :
+          <span title={newContent}>{newContent || '--'}</span>
+      }
+
     </div>
   );
 }
@@ -33,6 +41,7 @@ ServiceRecordItem.propTypes = {
   title: PropTypes.string,
   type: PropTypes.string,
   executeTypes: PropTypes.array,
+  isShowChild: PropTypes.bool,
 };
 
 ServiceRecordItem.defaultProps = {
@@ -40,4 +49,5 @@ ServiceRecordItem.defaultProps = {
   title: '--',
   type: 'left',
   executeTypes: [],
+  isShowChild: false,
 };

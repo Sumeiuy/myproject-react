@@ -50,10 +50,9 @@ export default class TargetCustomerRow extends PureComponent {
   static propTypes = {
     isFold: PropTypes.bool.isRequired,
     item: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
     onClick: PropTypes.func.isRequired,
-    // 默认选中的客户id
-    defaultSelectId: PropTypes.string.isRequired,
+    // 当前选中的客户id
+    currentCustId: PropTypes.string.isRequired,
   }
 
   @autobind
@@ -119,12 +118,7 @@ export default class TargetCustomerRow extends PureComponent {
     const {
       isFold,
       item = {},
-      location: {
-        query: {
-          targetCustId = '',
-        },
-      },
-      defaultSelectId = '',
+      currentCustId = '',
     } = this.props;
     const {
       missionStatusValue,
@@ -144,7 +138,7 @@ export default class TargetCustomerRow extends PureComponent {
     });
     // url中的targetCustId存在，就选中url中targetCustId对应的数据，否则默认选中第一条数据
     const rowItemCls = classnames([styles.rowItem], {
-      [styles.active]: targetCustId ? targetCustId === custId : custId === defaultSelectId,
+      [styles.active]: custId === currentCustId,
     });
     return (
       <div className={rowItemCls} onClick={this.handleClick}>

@@ -3,19 +3,25 @@
  * @author wangjunjun
  * @description 执行者视图右侧详情的目标客户
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Pagination, Row, Col } from 'antd';
+import _ from 'lodash';
 
+import TargetCustomerRight from './TargetCustomerRight';
 import LabelInfo from './LabelInfo';
 import Select from '../../common/Select';
 import TargetCustomerRow from './TargetCustomerRow';
 
 import styles from './targetCustomer.less';
 
+// const datas = {};
+
 // const EMPTY_LIST = [];
+
+const PAGE_SIZE = 8;
+const PAGE_NO = 1;
 
 export default class TargetCustomer extends PureComponent {
 
@@ -25,11 +31,43 @@ export default class TargetCustomer extends PureComponent {
     list: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     isFold: PropTypes.bool.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    dict: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
+  }
+
+  static defaultProps = {
+    dict: {},
+    serviceRecordData: {},
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+    };
   }
 
   @autobind
-  handleStateChange() {
-
+  handleStateChange(key, v) {
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        [key]: v,
+      },
+    });
   }
 
   @autobind
@@ -89,30 +127,54 @@ export default class TargetCustomer extends PureComponent {
 
   @autobind
   renderList() {
-    const { list, isFold, location } = this.props;
+    const {
+      list,
+      isFold,
+      location: {
+        query: { targetCustId = '' },
+      },
+    } = this.props;
     const [{ custId = '' }] = list;
+    const currentCustId = targetCustId || custId;
     return list.map(o => <TargetCustomerRow
       key={o.custId}
       item={o}
       isFold={isFold}
-      location={location}
-      defaultSelectId={custId}
+      currentCustId={currentCustId}
       onClick={this.handleRowClick}
     />);
   }
 
   render() {
     const {
+      isFold,
+      dict,
       page,
+      list,
       location: {
         query: {
-          pageNo = 1,
-          pageSize = 10,
+          pageNo = PAGE_NO,
+          pageSize = PAGE_SIZE,
+          targetCustId = '',
         },
       },
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      getCustIncome,
+      custIncomeReqState,
+      monthlyProfits,
     } = this.props;
+    if (_.isEmpty(list)) {
+      return null;
+    }
+    const { executeTypes, serveWay } = dict;
     const curPageNo = pageNo || page.pageNo;
     const curPageSize = pageSize || page.pageSize;
+    const [{ custId = '' }] = list;
+    // 默认取列表中第一条数据
+    const currentCustId = targetCustId || custId;
+    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
     const stateData = [{
       value: '',
       label: '全部',
@@ -163,7 +225,20 @@ export default class TargetCustomer extends PureComponent {
                 { this.renderList() }
               </div>
             </Col>
-            <Col span={15} />
+            <Col span={15}>
+              <TargetCustomerRight
+                isFold={isFold}
+                itemData={currentSelectedCust}
+                handleCollapseClick={handleCollapseClick}
+                serveWay={serveWay}
+                executeTypes={executeTypes}
+                getServiceRecord={getServiceRecord}
+                serviceRecordData={serviceRecordData}
+                getCustIncome={getCustIncome}
+                monthlyProfits={monthlyProfits}
+                custIncomeReqState={custIncomeReqState}
+              />
+            </Col>
           </Row>
         </div>
       </div>

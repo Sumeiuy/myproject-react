@@ -11,14 +11,16 @@ import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { constructSeibelPostBody } from '../../utils/helper';
-import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
-import PerformerViewList from '../../components/common/appList';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
-import AppItem from '../../components/common/appList/AppItem';
+import ViewList from '../../components/common/appList';
+import ViewListRow from '../../components/taskList/ViewListRow';
 import { seibelConfig } from '../../config';
 import appListTool from '../../components/common/appList/tool';
 
+const EMPTY_OBJECT = {};
+const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const { performerView, performerView: { pageType, subType, status } } = seibelConfig;
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -30,6 +32,9 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const effects = {
   getSeibleList: 'app/getSeibleList',
   addServeRecord: 'customerPool/addServeRecord',
+  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  getServiceRecord: 'customerPool/getServiceRecord',
+  getCustIncome: 'customerPool/getCustIncome',
 };
 
 const mapStateToProps = state => ({
@@ -39,6 +44,11 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   // 详情中目标客户的数据
   targetCustList: state.performerView.targetCustList,
+  serviceRecordData: state.customerPool.taskDetailBasicInfo,
+  // 接口的loading状态
+  interfaceState: state.loading.effects,
+  // 6个月收益数据
+  monthlyProfits: state.customerPool.monthlyProfits,
 });
 
 const mapDispatchToProps = {
@@ -47,6 +57,12 @@ const mapDispatchToProps = {
   getPerformerViewList: fetchDataFunction(true, effects.getSeibleList),
   // 添加服务记录
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  // 手动上传日志
+  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
+  // 最近五次服务记录
+  getServiceRecord: fetchDataFunction(false, effects.getServiceRecord),
+  // 获取最近6个月收益
+  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -61,6 +77,14 @@ export default class PerformerView extends PureComponent {
     dict: PropTypes.object.isRequired,
     taskDetailBasicInfo: PropTypes.object.isRequired,
     targetCustList: PropTypes.object.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
+    // 接口的loading状态
+    interfaceState: PropTypes.object.isRequired,
+    // 6个月收益数据
+    monthlyProfits: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -71,6 +95,7 @@ export default class PerformerView extends PureComponent {
       activeRowIndex: 0,
     };
   }
+
 
   componentWillMount() {
     const {
@@ -88,7 +113,89 @@ export default class PerformerView extends PureComponent {
     getPerformerViewList({
       ...params,
       type: pageType,
-    });
+    }).then(this.getRightDetail);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getPerformerViewList } = this.props;
+    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    // 深比较值是否相等
+    // url发生变化，检测是否改变了筛选条件
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
+        // 只监测筛选条件是否变化
+        const params = constructSeibelPostBody(nextQuery,
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        );
+        getPerformerViewList({
+          ...params,
+          type: pageType,
+        }).then(this.getRightDetail);
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    const {
+      location: {
+        pathname,
+      query,
+      query: { isResetPageNum },
+      },
+      replace,
+    } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+          pageNum: 1,
+        },
+      });
+    }
+  }
+
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      const { subType: st } = item;
+      this.setState({
+        currentSubtype: st,
+        activeRowIndex: itemIndex,
+      });
+      this.getDetail(item);
+    }
   }
 
   // 头部新建页面
@@ -117,19 +224,62 @@ export default class PerformerView extends PureComponent {
     // this.getDetail4Subtye(record);
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  /**
+   * 检查部分属性是否相同
+   * @param {*} prevQuery 前一次query
+   * @param {*} nextQuery 后一次query
+   */
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
+    }
+    return true;
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex } = this.state;
     return (
-      <AppItem
+      <ViewListRow
         key={record.id}
         data={record}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
         index={index}
         pageName="performerView"
-        type="yongjin"
         pageData={performerView}
       />
     );
@@ -144,11 +294,17 @@ export default class PerformerView extends PureComponent {
       addServeRecord,
       taskDetailBasicInfo,
       targetCustList,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      interfaceState,
+      getCustIncome,
+      monthlyProfits,
     } = this.props;
-
+    console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
-      <ConnectedSeibelHeader
+      <ConnectedPageHeader
         location={location}
         replace={replace}
         page="performerViewPage"
@@ -178,7 +334,7 @@ export default class PerformerView extends PureComponent {
     };
 
     const leftPanel = (
-      <PerformerViewList
+      <ViewList
         list={resultData}
         renderRow={this.renderListRow}
         pagination={paginationOptions}
@@ -194,6 +350,12 @@ export default class PerformerView extends PureComponent {
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
         targetCustList={targetCustList}
+        handleCollapseClick={handleCollapseClick}
+        getServiceRecord={getServiceRecord}
+        serviceRecordData={serviceRecordData}
+        getCustIncome={getCustIncome}
+        monthlyProfits={monthlyProfits}
+        custIncomeReqState={interfaceState[effects.getCustIncome]}
       />
     );
     return (

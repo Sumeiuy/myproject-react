@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
@@ -24,11 +25,19 @@ export default class PerformerViewDetail extends PureComponent {
     dict: PropTypes.object,
     isFold: PropTypes.bool,
     targetCustList: PropTypes.object.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
+    custIncomeReqState: PropTypes.bool,
   }
 
   static defaultProps = {
     dict: {},
     isFold: false,
+    serviceRecordData: {},
+    custIncomeReqState: false,
   };
 
   render() {
@@ -41,8 +50,17 @@ export default class PerformerViewDetail extends PureComponent {
       isReadOnly,
       isFold,
       targetCustList,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      getCustIncome,
+      monthlyProfits,
+      custIncomeReqState,
     } = this.props;
-
+    if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
+      return null;
+    }
+    console.log(this.props);
     const {
       missionId,
       missionName,
@@ -64,6 +82,13 @@ export default class PerformerViewDetail extends PureComponent {
           isFold={isFold}
           location={location}
           replace={replace}
+          handleCollapseClick={handleCollapseClick}
+          dict={dict}
+          getServiceRecord={getServiceRecord}
+          serviceRecordData={serviceRecordData}
+          getCustIncome={getCustIncome}
+          custIncomeReqState={custIncomeReqState}
+          monthlyProfits={monthlyProfits}
           {...targetCustList}
         />
         <ServiceRecord

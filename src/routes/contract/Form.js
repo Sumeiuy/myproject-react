@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { withRouter } from 'dva-react-router-3/router';
 import { message, Modal } from 'antd';
+import _ from 'lodash';
 
 import { seibelConfig } from '../../config';
 import BottonGroup from '../../components/permission/BottonGroup';
@@ -20,6 +21,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const confirm = Modal.confirm;
 const { contract: { pageType } } = seibelConfig;
+// TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
+const TESTFLOWID = '964BEB99608BFB42A9F8FD072BD50B70';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -41,6 +44,8 @@ const mapStateToProps = state => ({
   cooperDeparment: state.contract.cooperDeparment,
   // 审批人
   flowStepInfo: state.contract.flowStepInfo,
+  // 列表请求状态  // 获取列表数据进程
+  saveContractDataLoading: state.loading.effects['contract/saveContractData'],
 });
 
 const mapDispatchToProps = {
@@ -56,6 +61,8 @@ const mapDispatchToProps = {
   getCooperDeparmentList: fetchDataFunction(false, 'contract/getCooperDeparmentList'),
   // 获取审批人
   getFlowStepInfo: fetchDataFunction(true, 'contract/getFlowStepInfo'),
+  // 保存合作合约
+  saveContractData: fetchDataFunction(true, 'contract/saveContractData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -84,6 +91,10 @@ export default class Form extends PureComponent {
     // 审批人
     flowStepInfo: PropTypes.object,
     getFlowStepInfo: PropTypes.func.isRequired,
+    // 保存合作合约
+    saveContractData: PropTypes.func.isRequired,
+    // 保存合作合约请求状态
+    saveContractDataLoading: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -93,13 +104,14 @@ export default class Form extends PureComponent {
     baseInfo: EMPTY_OBJECT,
     clauseNameList: EMPTY_LIST,
     cooperDeparment: EMPTY_LIST,
+    saveContractDataLoading: false,
   }
 
   constructor(props) {
     super(props);
     this.state = {
       // 合作合约表单数据
-      contractFormData: EMPTY_OBJECT,
+      contractFormData: props.baseInfo,
     };
   }
 
@@ -108,11 +120,19 @@ export default class Form extends PureComponent {
       getFlowStepInfo,
       getClauseNameList,
       getBaseInfo,
-      location: { query: { currentId } },
+      location: { query: { flowId } },
     } = this.props;
+    const newFolwId = (flowId && !_.isEmpty(flowId)) ? flowId : TESTFLOWID;
     getClauseNameList({});
-    getBaseInfo({ id: currentId });
+    getBaseInfo({ flowId: newFolwId });
     getFlowStepInfo({ operate: 1, flowId: '' });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { baseInfo } = nextProps;
+    if (baseInfo !== this.props.baseInfo) {
+      this.setState({ contractFormData: baseInfo });
+    }
   }
 
   // 上传成功后回调
@@ -124,14 +144,23 @@ export default class Form extends PureComponent {
     });
   }
 
-  // 查询客户
+  // 根据传入的条款列表和Key返回分类后的二维数组
   @autobind
-  toSearchCust(value) {
-    const { getCustomerList } = this.props;
-    getCustomerList({
-      keyword: value,
-      type: pageType,
+  getTwoDimensionClauseList(list, key) {
+    const uniqedArr = _.uniqBy(list, key);
+    const clauseList = [];
+    uniqedArr.forEach((v) => {
+      const paraName = v[key];
+      let sameKeyArray = [];
+      list.forEach((sv) => {
+        if (paraName === sv[key]) {
+          sameKeyArray.push(sv);
+        }
+      });
+      clauseList.push(sameKeyArray);
+      sameKeyArray = [];
     });
+    return clauseList;
   }
 
   // 根据关键词查询合作部门
@@ -157,7 +186,15 @@ export default class Form extends PureComponent {
   // 最终发出接口请求
   @autobind
   sendRequest(sendPayload) {
-    console.log(sendPayload);
+    const {
+      saveContractData,
+      location: { query },
+    } = this.props;
+    const payload = {
+      ...sendPayload,
+      currentQuery: query,
+    };
+    saveContractData(payload);
   }
 
   // 判断合约有效期是否大于开始日期
@@ -174,6 +211,62 @@ export default class Form extends PureComponent {
     const vailDateHs = new Date(vailDt).getTime();
     const date = new Date();
     return vailDateHs > (date.getTime() + (86400000 * 5));
+  }
+
+  // 查询客户
+  @autobind
+  toSearchCust(value) {
+    const { getCustomerList } = this.props;
+    getCustomerList({
+      keyword: value,
+      type: pageType,
+    });
+  }
+
+  // 检查合约条款值是否合法
+  @autobind
+  checkClauseIsLegal(list) {
+    const clauseList = this.getTwoDimensionClauseList(list, 'paraName');
+    for (let i = 0; i < clauseList.length; i++) {
+      const sameKeyArray = clauseList[i];
+      const headItem = _.head(sameKeyArray);
+      // 是否存在匹配的字符
+      if (headItem.paraDisplayName.indexOf('比例') > -1) {
+        let result = 0;
+        // 求和
+        sameKeyArray.forEach((item) => {
+          result += Number(item.paraVal);
+        });
+        // result前加+号，是将string类型的result转换成数值类型
+        // 需求：result如果不等于1，则不合法。
+        if (+result !== 1) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  // 检查每个部门只能选一种合约条款，如果>1，则不合法
+  @autobind
+  checkClauseIsUniqueness(list) {
+    const clauseList = this.getTwoDimensionClauseList(list, 'termsName');
+    const clauseID = {};
+    let clauseStatus = true;
+    clauseList.forEach((itemArray) => {
+      itemArray.forEach((item) => {
+        if (itemArray.length > 1) {
+          // 检测该条款是否存在，如果存在，则不合法
+          if (clauseID[item.divIntegrationId]) {
+            clauseStatus = false;
+          } else {
+            // 添加条款到clauseID
+            clauseID[item.divIntegrationId] = 1;
+          }
+        }
+      });
+    });
+    return clauseStatus;
   }
 
   // 检查必填项
@@ -211,12 +304,12 @@ export default class Form extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     const { contractFormData } = this.state;
-    if (this.checkRequireFileds(contractFormData)) {
+    if (!this.checkRequireFileds(contractFormData)) {
       return;
     }
     const payload = contractFormData;
     // 编辑
-    const tempApproveData = {
+    const newApproveData = {
       type: 'edit',
       flowId: contractFormData.flowid,
       approverIdea: contractFormData.appraval || '',
@@ -232,7 +325,7 @@ export default class Form extends PureComponent {
     const sendPayload = {
       payload,
       approveData: {
-        ...tempApproveData,
+        ...newApproveData,
         groupName: btnItem.nextGroupName,
         auditors: btnItem.flowAuditors[0].login,
       },
