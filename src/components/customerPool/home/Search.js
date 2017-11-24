@@ -9,6 +9,8 @@ import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
+import Clickable from '../../../components/common/Clickable';
 import { fspContainer } from '../../../config';
 import { fspGlobal } from '../../../utils';
 import Icon from '../../common/Icon';
@@ -259,20 +261,25 @@ export default class Search extends PureComponent {
     const recommendList = [];
     data.forEach((item) => {
       recommendList.push(
-        <a
-          key={item.id}
-          className="item"
+        <Clickable
           onClick={() => this.handleOpenTab({
             source: 'tag',
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || '',
             q: encodeURIComponent(item.labelNameVal),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          title={item.labelDesc}
-          rel="noopener noreferrer"
+          eventName="/click/search"
+          payload={{ test: 'recommendClick' }}
+          key={item.id}
         >
-          {item.labelNameVal}
-        </a>);
+          <a
+            className="item"
+            title={item.labelDesc}
+            rel="noopener noreferrer"
+          >
+            {item.labelNameVal}
+          </a>
+        </Clickable>);
     });
     return recommendList;
   }
@@ -355,16 +362,21 @@ export default class Search extends PureComponent {
     // 标签 tag
     return (
       <Option key={item.id} text={item.content}>
-        <a
+        <Clickable
           onClick={() => this.handleOpenTab({
             source: 'association',
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          dangerouslySetInnerHTML={{ __html: newContent }}
-          rel="noopener noreferrer"
-        />
+          eventName="/click/search"
+          payload={{ test: 'option' }}
+        >
+          <a
+            dangerouslySetInnerHTML={{ __html: newContent }}
+            rel="noopener noreferrer"
+          />
+        </Clickable>
         <span className="desc">{item.desc}</span>
       </Option>
     );
@@ -391,17 +403,18 @@ export default class Search extends PureComponent {
               {item.labelNameVal}
             </Option> :
             <Option key={item.id} text={item.labelNameVal} >
-              <a
+              <Clickable
                 onClick={() => this.handleOpenTab({
                   source: 'search',
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
                 }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-                rel="noopener noreferrer"
+                eventName="/click/search"
+                payload={{ test: 'group' }}
               >
-                {item.labelNameVal}
-              </a>
+                <a rel="noopener noreferrer">{item.labelNameVal}</a>
+              </Clickable>
             </Option>
         ))}
       </OptGroup>
@@ -419,13 +432,18 @@ export default class Search extends PureComponent {
     return (
       <span>
         {title}
-        <a
-          className={styles.delHistory_a}
-          rel="noopener noreferrer"
+        <Clickable
           onClick={this.handleClearHistory}
+          eventName="/click/search"
+          payload={{ test: 'delete' }}
         >
-          <AntdIcon type="delete" />清除历史记录
-        </a>
+          <a
+            className={styles.delHistory_a}
+            rel="noopener noreferrer"
+          >
+            <AntdIcon type="delete" />清除历史记录
+          </a>
+        </Clickable>
       </span>
     );
   }
@@ -452,14 +470,19 @@ export default class Search extends PureComponent {
               >
                 <Input
                   suffix={(
-                    <Button
-                      className="search-btn"
-                      size="large"
-                      type="primary"
+                    <Clickable
                       onClick={this.handleSearchBtn}
+                      eventName="/click/search"
+                      payload={{ test: 'search' }}
                     >
-                      <AntdIcon type="search" />
-                    </Button>
+                      <Button
+                        className="search-btn"
+                        size="large"
+                        type="primary"
+                      >
+                        <AntdIcon type="search" />
+                      </Button>
+                    </Clickable>
                   )}
                 />
               </AutoComplete>

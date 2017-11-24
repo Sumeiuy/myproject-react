@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
+import Clickable from '../../../components/common/Clickable';
 import imgSrc from '../../../../static/images/createTask_success.png';
 import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
@@ -121,9 +122,13 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onClick={this.goToHome}>
-                返回首页
-              </Button>
+              <Clickable
+                onClick={this.goToHome}
+                eventName="/click/createTaskSuccess"
+                payload={{ test: 'backHome' }}
+              >
+                <Button type="primary">返回首页</Button>
+              </Clickable>
             </div>
           </div>
         </div>

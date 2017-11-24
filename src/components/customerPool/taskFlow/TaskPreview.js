@@ -15,6 +15,7 @@ import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
 import { RestoreScrollTop } from '../../common/hocComponent';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
+import Clickable from '../../../components/common/Clickable';
 import styles from './taskPreview.less';
 
 const { toString } = Mention;
@@ -307,11 +308,18 @@ export default class TaskPreview extends PureComponent {
           }
         </div>
         {
-          isNeedApproval ?
-            <div className={styles.selectApprover} onClick={this.handleClick}>
-              <span>选择审批人：</span>
-              <Search className={styles.searchSection} readOnly value={empName} />
-            </div> : null
+          isNeedApproval ? (
+            <Clickable
+              onClick={this.handleClick}
+              eventName="/click/taskPreview"
+              payload={{ test: 'selectApprover' }}
+            >
+              <div className={styles.selectApprover}>
+                <span>选择审批人：</span>
+                <Search className={styles.searchSection} readOnly value={empName} />
+              </div>
+            </Clickable>
+          ) : null
         }
         {
           isShowTable && isApprovalListLoadingEnd ?
@@ -328,12 +336,20 @@ export default class TaskPreview extends PureComponent {
               onOkHandler={this.handleCloseModal}
               footer={
                 <div className={styles.btnSection}>
-                  <Button type="default" size="default" onClick={this.handleCloseModal}>
-                    取消
-                </Button>
-                  <Button type="primary" size="default" className={styles.confirmBtn} onClick={this.handleCloseModal}>
-                    确定
-                </Button>
+                  <Clickable
+                    onClick={this.handleCloseModal}
+                    eventName="/click/taskPreview"
+                    payload={{ test: 'cancel' }}
+                  >
+                    <Button type="default" size="default">取消</Button>
+                  </Clickable>
+                  <Clickable
+                    onClick={this.handleCloseModal}
+                    eventName="/click/taskPreview"
+                    payload={{ test: 'confirm' }}
+                  >
+                    <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
+                  </Clickable>
                 </div>
               }
               modalContent={
@@ -348,14 +364,19 @@ export default class TaskPreview extends PureComponent {
                       }}
                       ref={inst => (this.inputRef = inst)}
                       suffix={(
-                        <Button
-                          className="search-btn"
-                          size="large"
-                          type="primary"
+                        <Clickable
                           onClick={this.handleSearchApproval}
+                          eventName="/click/taskPreview"
+                          payload={{ test: 'search' }}
                         >
-                          <Icon type="search" />
-                        </Button>
+                          <Button
+                            className="search-btn"
+                            size="large"
+                            type="primary"
+                          >
+                            <Icon type="search" />
+                          </Button>
+                        </Clickable>
                       )}
                     />
                   </div>

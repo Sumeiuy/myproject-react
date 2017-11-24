@@ -6,6 +6,7 @@ import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import styles from './taskFormFlowStep.less';
 
@@ -264,42 +265,54 @@ export default class TaskFormFlowStep extends PureComponent {
           {
             current === 0
             &&
-            <Button
-              className={styles.cancelBtn}
-              type="default"
+            <Clickable
               onClick={this.handleCancel}
+              eventName="/click/taskFormFlowStep"
+              payload={{ test: 'cancel' }}
             >
-              取消
-            </Button>
+              <Button className={styles.cancelBtn} type="default">
+                取消
+              </Button>
+            </Clickable>
           }
           {
             current > 0
             &&
-            <Button
-              className={styles.prevStepBtn}
-              type="default"
+            <Clickable
               onClick={this.handlePreviousStep}
+              eventName="/click/taskFormFlowStep"
+              payload={{ test: 'lastStep' }}
             >
-              上一步
-            </Button>
+              <Button className={styles.prevStepBtn} type="default">
+                上一步
+              </Button>
+            </Clickable>
           }
           {
             current < stepsCount - 1
             &&
-            <Button
-              className={styles.handlePreviousStep}
-              type="primary"
+            <Clickable
               onClick={this.handleNextStep}
-            >下一步</Button>
+              eventName="/click/taskFormFlowStep"
+              payload={{ test: 'nextStep' }}
+            >
+              <Button className={styles.handlePreviousStep} type="primary">
+                下一步
+              </Button>
+            </Clickable>
           }
           {
             current === stepsCount - 1
             &&
-            <Button
-              className={styles.confirmBtn}
-              type="primary"
+            <Clickable
               onClick={this.handleSubmit}
-            >确认无误，提交</Button>
+              eventName="/click/taskFormFlowStep"
+              payload={{ test: 'submit' }}
+            >
+              <Button className={styles.confirmBtn} type="primary">
+                确认无误，提交
+              </Button>
+            </Clickable>
           }
         </div>
       </div>

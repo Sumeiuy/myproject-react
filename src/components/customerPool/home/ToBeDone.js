@@ -8,9 +8,10 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import styles from './toBeDone.less';
 import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
-import styles from './toBeDone.less';
+import Clickable from '../../../components/common/Clickable';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -148,61 +149,79 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <div className={styles.row}>
           <div className={`${styles.item} ${styles.item_a}`}>
-            <a className="item" onClick={this.handleMotClick}>
-              <div className={styles.content}>
-                <div className={styles.description}>
-                  <div className={styles.count}>
-                    {this.farmtNum(todayToDoNumbers)}
+            <Clickable
+              onClick={this.handleMotClick}
+              eventName="/click/toBeDone"
+              payload={{ test: 'canDoTodayClick' }}
+            >
+              <a className="item">
+                <div className={styles.content}>
+                  <div className={styles.description}>
+                    <div className={styles.count}>
+                      {this.farmtNum(todayToDoNumbers)}
+                    </div>
+                    <div className={styles.intro}>今日可做任务</div>
                   </div>
-                  <div className={styles.intro}>今日可做任务</div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </Clickable>
           </div>
           <div className={`${styles.item} ${styles.item_b}`}>
-            <a
-              className="item"
+            <Clickable
               onClick={this.linkToBusiness}
+              eventName="/click/toBeDone"
+              payload={{ test: 'bisinessCustClick' }}
             >
-              <div className={styles.content}>
-                <div className={styles.description}>
-                  <div
-                    className={styles.count}
-                    ref={(ref) => { this.itemBElem = ref; }}
-                  >
-                    {this.farmtNum(businessNumbers)}
+              <a className="item">
+                <div className={styles.content}>
+                  <div className={styles.description}>
+                    <div
+                      className={styles.count}
+                      ref={(ref) => { this.itemBElem = ref; }}
+                    >
+                      {this.farmtNum(businessNumbers)}
+                    </div>
+                    <div className={styles.intro}>潜在业务客户</div>
                   </div>
-                  <div className={styles.intro}>潜在业务客户</div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </Clickable>
           </div>
           <div className={`${styles.item} ${styles.item_c}`}>
-            <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
-              <div className={styles.content}>
-                <div className={styles.description}>
-                  <div className={styles.count}>
-                    {this.processNum(workFlowNumbers)}
+            <Clickable
+              onClick={() => fspGlobal.openRctTab({ url, param })}
+              eventName="/click/toBeDone"
+              payload={{ test: 'workFlowClick' }}
+            >
+              <a className="item">
+                <div className={styles.content}>
+                  <div className={styles.description}>
+                    <div className={styles.count}>
+                      {this.processNum(workFlowNumbers)}
+                    </div>
+                    <div className={styles.intro}>待办流程</div>
                   </div>
-                  <div className={styles.intro}>待办流程</div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </Clickable>
           </div>
           <div className={`${styles.item} ${styles.item_d}`}>
-            <a
-              className="item"
+            <Clickable
               onClick={this.handleMessageClick}
+              eventName="/click/toBeDone"
+              payload={{ test: 'messageNotificationClick' }}
             >
-              <div className={styles.content}>
-                <div className={styles.description}>
-                  <div className={styles.count}>
-                    {this.processNum(notificationNumbers)}
+              <a className="item">
+                <div className={styles.content}>
+                  <div className={styles.description}>
+                    <div className={styles.count}>
+                      {this.processNum(notificationNumbers)}
+                    </div>
+                    <div className={styles.intro}>消息提醒</div>
                   </div>
-                  <div className={styles.intro}>消息提醒</div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </Clickable>
           </div>
         </div>
       </div>

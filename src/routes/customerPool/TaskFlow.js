@@ -12,6 +12,8 @@ import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
+import Clickable from '../../components/common/Clickable';
 import { permission, fspGlobal, helper } from '../../utils';
 import { fspContainer } from '../../config';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -541,42 +543,46 @@ export default class TaskFlow extends PureComponent {
             {
               current === 0
               &&
-              <Button
-                className={styles.cancelBtn}
-                type="default"
+              <Clickable
                 onClick={this.handleCloseTab}
+                eventName="/click/taskFlow"
+                payload={{ test: 'cancel' }}
               >
-                取消
-            </Button>
+                <Button className={styles.cancelBtn} type="default">取消</Button>
+              </Clickable>
             }
             {
               current > 0
               &&
-              <Button
-                className={styles.prevStepBtn}
-                type="default"
+              <Clickable
                 onClick={this.handlePreviousStep}
+                eventName="/click/taskFlow"
+                payload={{ test: 'lastStep' }}
               >
-                上一步
-            </Button>
+                <Button className={styles.prevStepBtn} type="default">上一步</Button>
+              </Clickable>
             }
             {
               current < stepsCount - 1
               &&
-              <Button
-                className={styles.nextStepBtn}
-                type="primary"
+              <Clickable
                 onClick={_.debounce(this.handleNextStep, 250)}
-              >下一步</Button>
+                eventName="/click/taskFlow"
+                payload={{ test: 'nextStep' }}
+              >
+                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
+              </Clickable>
             }
             {
               current === stepsCount - 1
               &&
-              <Button
-                className={styles.confirmBtn}
-                type="primary"
+              <Clickable
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-              >确认无误，提交</Button>
+                eventName="/click/taskFlow"
+                payload={{ test: 'submit' }}
+              >
+                <Button className={styles.confirmBtn} type="primary">确认无误，提交</Button>
+              </Clickable>
             }
           </div>
         </div>

@@ -7,10 +7,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
 import Button from '../../common/Button';
 import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
 import { fspGlobal } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
@@ -121,14 +123,24 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在
-            <span onClick={this.LinkToGroupManage} className={styles.linkTo}>
-              客户分组
-            </span>
+            <Clickable
+              onClick={this.LinkToGroupManage}
+              eventName="/click/addCustSuccess"
+              payload={{ test: 'linkToCustGroup' }}
+            >
+              <span className={styles.linkTo}>客户分组</span>
+            </Clickable>
             查看该分组
           </div>
           <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
           <div className={styles.successBtn}>
-            <Button onClick={this.goToIndex} type="primary">返回首页</Button>
+            <Clickable
+              onClick={this.goToIndex}
+              eventName="/click/addCustSuccess"
+              payload={{ test: 'backHome' }}
+            >
+              <Button type="primary">返回首页</Button>
+            </Clickable>
           </div>
         </div>
       </div>

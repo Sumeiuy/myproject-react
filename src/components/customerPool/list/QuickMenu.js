@@ -9,6 +9,7 @@ import _ from 'lodash';
 
 import Icon from '../../common/Icon';
 import { helper } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './quickMenu.less';
 
@@ -121,10 +122,16 @@ export default class QuickMenu extends PureComponent {
     return (
       <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
-          <li onClick={() => createModal(listItem)}>
-            <Icon type="dianhua" />
-            <span>电话联系</span>
-          </li>
+          <Clickable
+            onClick={() => createModal(listItem)}
+            eventName="/click/quickMenu"
+            payload={{ test: 'telcontact' }}
+          >
+            <li>
+              <Icon type="dianhua" />
+              <span>电话联系</span>
+            </li>
+          </Clickable>
           {/*
           <li onClick={this.handleIsEmail}>
             <Icon type="youjian" />
@@ -142,23 +149,30 @@ export default class QuickMenu extends PureComponent {
             </span>
           </li>
           */}
-          <li
+          <Clickable
             onClick={() => this.handleAddFollow(listItem)}
-            className={isFollow ? styles.follows : ''}
+            eventName="/click/quickMenu"
+            payload={{ test: 'guanzhu' }}
           >
-            <Icon type="guanzhu" />
-            <span>{isFollow ? '已关注' : '关注'}</span>
-          </li>
-          <li
+            <li className={isFollow ? styles.follows : ''}>
+              <Icon type="guanzhu" />
+              <span>{isFollow ? '已关注' : '关注'}</span>
+            </li>
+          </Clickable>
+          <Clickable
             onClick={() => toggleServiceRecordModal({
               custId: listItem.custId,
               custName: listItem.name,
               flag: true,
             })}
+            eventName="/click/quickMenu"
+            payload={{ test: 'addRecord' }}
           >
-            <Icon type="jilu" />
-            <span>添加服务记录</span>
-          </li>
+            <li>
+              <Icon type="jilu" />
+              <span>添加服务记录</span>
+            </li>
+          </Clickable>
         </ul>
       </div>
     );

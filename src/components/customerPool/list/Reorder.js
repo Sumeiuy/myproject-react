@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './reorder.less';
 
@@ -50,46 +51,76 @@ export default class Order extends PureComponent {
         <li>
           总资产
           <div className={styles.btn}>
-            <Icon
-              type="xiangshang"
-              className={this.getCls(totalAssetsAsc)}
+            <Clickable
               onClick={() => this.handleSort(totalAssetsAsc)}
-            />
-            <Icon
-              type="xiangxia"
-              className={this.getCls(totalAssetsDesc)}
+              eventName="/click/recorder"
+              payload={{ test: 'assetsAscOrder' }}
+            >
+              <Icon
+                type="xiangshang"
+                className={this.getCls(totalAssetsAsc)}
+              />
+            </Clickable>
+            <Clickable
               onClick={() => this.handleSort(totalAssetsDesc)}
-            />
+              eventName="/click/recorder"
+              payload={{ test: 'assetsDescOrder' }}
+            >
+              <Icon
+                type="xiangxia"
+                className={this.getCls(totalAssetsDesc)}
+              />
+            </Clickable>
           </div>
         </li>
         <li>
           开户时间
           <div className={styles.btn}>
-            <Icon
-              type="xiangshang"
-              className={this.getCls(openTimeAsc)}
+            <Clickable
               onClick={() => this.handleSort(openTimeAsc)}
-            />
-            <Icon
-              type="xiangxia"
-              className={this.getCls(openTimeDesc)}
+              eventName="/click/recorder"
+              payload={{ test: 'timeAscOrder' }}
+            >
+              <Icon
+                type="xiangshang"
+                className={this.getCls(openTimeAsc)}
+              />
+            </Clickable>
+            <Clickable
               onClick={() => this.handleSort(openTimeDesc)}
-            />
+              eventName="/click/recorder"
+              payload={{ test: 'timeDescOrder' }}
+            >
+              <Icon
+                type="xiangxia"
+                className={this.getCls(openTimeDesc)}
+              />
+            </Clickable>
           </div>
         </li>
         <li>
           佣金率
           <div className={styles.btn}>
-            <Icon
-              type="xiangshang"
-              className={this.getCls(commissionAsc)}
+            <Clickable
               onClick={() => this.handleSort(commissionAsc)}
-            />
-            <Icon
-              type="xiangxia"
-              className={this.getCls(commissionDesc)}
+              eventName="/click/recorder"
+              payload={{ test: 'commissionAscOrder' }}
+            >
+              <Icon
+                type="xiangshang"
+                className={this.getCls(commissionAsc)}
+              />
+            </Clickable>
+            <Clickable
               onClick={() => this.handleSort(commissionDesc)}
-            />
+              eventName="/click/recorder"
+              payload={{ test: 'commissionAscOrder' }}
+            >
+              <Icon
+                type="xiangxia"
+                className={this.getCls(commissionDesc)}
+              />
+            </Clickable>
           </div>
         </li>
       </ul>
