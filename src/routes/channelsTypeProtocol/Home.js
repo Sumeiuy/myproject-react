@@ -21,6 +21,8 @@ import ChannelsTypeProtocolList from '../../components/common/appList';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
+import AppItem from '../../components/common/appList/AppItem';
+import appListTool from '../../components/common/appList/tool';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
@@ -179,13 +181,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
       protocolData: EMPTY_OBJECT,
       // 审批人列表
       flowAuditors: EMPTY_LIST,
+      activeRowIndex: 0,
     };
   }
 
   componentDidMount() {
     const {
       getSeibleList,
-      getProtocolDetail,
       location: {
         query,
         query: {
@@ -199,16 +201,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 默认筛选条件
     getSeibleList({ ...params, type: pageType }).then(() => {
       if (currentId) {
-        getProtocolDetail({
-          id: currentId,
-        });
+        this.getRightDetail();
       }
     });
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
-    const { location: { query: nextQuery = EMPTY_OBJECT }, getProtocolDetail } = nextProps;
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
@@ -223,9 +223,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
           ...params,
           type: pageType,
         }).then(() => {
-          getProtocolDetail({
-            id: nextQuery.currentId,
-          });
+          this.getRightDetail();
         });
       }
     }
@@ -246,6 +244,72 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
   }
 
+  // 获取列表后再获取某个Detail
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      getProtocolDetail,
+      seibleList: list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({ activeRowIndex: itemIndex });
+      getProtocolDetail({ id: currentId });
+    }
+  }
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
@@ -262,13 +326,25 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
-  handleListRowClick(record) {
+  handleListRowClick(record, index) {
     const { id } = record;
     const {
-      location: { query: { currentId } },
+      replace,
+      location: { pathname, query, query: { currentId } },
       getProtocolDetail,
     } = this.props;
     if (currentId === id) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    // 更新
+    this.setState({
+      activeRowIndex: index,
+    });
     getProtocolDetail({
       id,
     });
@@ -421,6 +497,23 @@ export default class ChannelsTypeProtocol extends PureComponent {
       this.showconFirm(payload, btnItem);
     }
   }
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <AppItem
+        key={record.id}
+        data={record}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="channelsTypeProtocol"
+        type="kehu1"
+        pageData={channelsTypeProtocol}
+        active={index === activeRowIndex}
+      />
+    );
+  }
 
   render() {
     const {
@@ -447,6 +540,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       clearPropsData, // 清除props数据
       flowStepInfo, // 审批人列表
       getCustValidate,  // 验证客户接口
+      location: { query: { pageNum = 1, pageSize = 10 } },
+      seibleList: { page = {} },
     } = this.props;
     const {
       editFormModal,
@@ -468,15 +563,24 @@ export default class ChannelsTypeProtocol extends PureComponent {
         needOperate
       />
     );
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
     const leftPanel = (
       <ChannelsTypeProtocolList
-        list={seibleList}
-        replace={replace}
-        location={location}
-        clickRow={this.handleListRowClick}
-        pageName="channelsTypeProtocol"
-        type="kehu1"
-        pageData={channelsTypeProtocol}
+        list={seibleList.resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
       />
     );
     const rightPanel = (
