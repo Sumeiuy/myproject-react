@@ -1,6 +1,6 @@
 /**
- * @fileOverview components/customerPool/BasicInfo.js
- * @author wangjunjun
+ * @fileOverview components/customerPool/TargetCustomerRight.js
+ * @author zhushengnan
  * @description 执行者视图右侧详情的目标客户
  */
 
