@@ -41,14 +41,15 @@ export default class Pageheader extends PureComponent {
     getDrafterList: PropTypes.func.isRequired,
     // 子类型
     subtypeOptions: PropTypes.array,
+    // 视图选择
+    chooseMissionViewOptions: PropTypes.array,
   }
 
   static defaultProps = {
     page: '',
-    needOperate: false,
-    operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
+    chooseMissionViewOptions: [],
   }
 
   constructor(props) {
@@ -152,6 +153,7 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  // 任务名称搜索
   @autobind
   handleSearchChange(value) {
     const { replace, location: { pathname, query } } = this.props;
@@ -159,7 +161,7 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        taskName: value,
+        missionName: value,
         isResetPageNum: 'Y',
       },
     });
@@ -170,7 +172,6 @@ export default class Pageheader extends PureComponent {
   toSearch(method, value) {
     method({
       keyword: value,
-      type: this.props.pageType,
     });
   }
 
@@ -179,16 +180,16 @@ export default class Pageheader extends PureComponent {
     const { replace, location: { pathname, query } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
-    const startDate = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
-    const endDate = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
-    if (endDate && startDate) {
-      if (endDate > startDate) {
+    const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
+    const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
+    if (createTimeEnd && createTimeStart) {
+      if (createTimeEnd > createTimeStart) {
         replace({
           pathname,
           query: {
             ...query,
-            startDate,
-            endDate,
+            createTimeStart,
+            createTimeEnd,
             isResetPageNum: 'Y',
           },
         });
@@ -217,8 +218,10 @@ export default class Pageheader extends PureComponent {
       drafterList,
       page,
       subtypeOptions,
+      chooseMissionViewOptions,
       location: {
         query: {
+          missionViewType,
           subType,
           status,
           drafterId,
@@ -245,6 +248,7 @@ export default class Pageheader extends PureComponent {
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
     const subTypeValue = !_.isEmpty(subType) ? subType : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
+    const missionViewTypeValue = !_.isEmpty(missionViewType) ? status : '发起者视图';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -258,7 +262,16 @@ export default class Pageheader extends PureComponent {
           </div>
           <div className={styles.filterFl}>
             <Select
-              name="subType"
+              name="chooseMissionView"
+              value={missionViewTypeValue}
+              data={chooseMissionViewOptions}
+              onChange={this.handleSelectChange}
+            />
+          </div>
+
+          <div className={styles.filterFl}>
+            <Select
+              name="type"
               value={subTypeValue}
               data={subtypeOptions}
               onChange={this.handleSelectChange}
@@ -282,7 +295,7 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('drafterId', item)}
+                emitSelectItem={item => this.selectItem('creator', item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />
