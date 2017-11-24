@@ -52,6 +52,7 @@ export default function AppItem(props) {
   const appIconCls = cx({
     [styles.appMissionIcon]: data.business2 === 'Mission',
     [styles.appChanceIcon]: data.business2 === 'Chance',
+    [styles.active]: active,
   });
   const serialCls = cx({
     [styles.serialNumber]: true,

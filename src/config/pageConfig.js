@@ -761,7 +761,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '所有类型',
         value: '',
       },
       {
@@ -834,7 +834,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '所有状态',
         value: '',
       },
       {
@@ -879,7 +879,7 @@ const pageConfig = {
     type: [
       {
         show: true,
-        label: '全部',
+        label: '所有类型',
         value: '',
       },
       {
@@ -916,7 +916,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '所有状态',
         value: '',
       },
       {
