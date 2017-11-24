@@ -35,6 +35,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const effects = {
   getTaskList: 'performerView/getTaskList',
   addServeRecord: 'customerPool/addServeRecord',
+  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  getServiceRecord: 'customerPool/getServiceRecord',
 };
 
 const mapStateToProps = state => ({
@@ -42,6 +44,7 @@ const mapStateToProps = state => ({
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.performerView.taskList,
   dict: state.app.dict,
+  serviceRecordData: state.customerPool.taskDetailBasicInfo,
 });
 
 const mapDispatchToProps = {
@@ -50,6 +53,10 @@ const mapDispatchToProps = {
   getTaskList: fetchDataFunction(true, effects.getTaskList),
   // 添加服务记录
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  // 手动上传日志
+  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
+  // 最近五次服务记录
+  getServiceRecord: fetchDataFunction(false, effects.getServiceRecord),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -63,6 +70,9 @@ export default class PerformerView extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     taskDetailBasicInfo: PropTypes.object.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -117,8 +127,8 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         pathname,
-        query,
-        query: { isResetPageNum },
+      query,
+      query: { isResetPageNum },
       },
       replace,
     } = this.props;
@@ -269,8 +279,11 @@ export default class PerformerView extends PureComponent {
       dict,
       addServeRecord,
       taskDetailBasicInfo,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
     } = this.props;
-
+    console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
@@ -317,6 +330,9 @@ export default class PerformerView extends PureComponent {
         isReadOnly={false}
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
+        handleCollapseClick={handleCollapseClick}
+        getServiceRecord={getServiceRecord}
+        serviceRecordData={serviceRecordData}
       />
     );
     return (
