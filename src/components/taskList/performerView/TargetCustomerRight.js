@@ -49,11 +49,11 @@ export default class TargetCustomerRight extends PureComponent {
 
   @autobind
   showModal() {
-    const { getServiceRecord } = this.props;
+    const { itemData = {}, getServiceRecord } = this.props;
     this.setState({
       visible: true,
     });
-    getServiceRecord({}); // 应传 custId
+    getServiceRecord({ custId: itemData.custId }); // 应传 custId
   }
 
   @autobind
@@ -107,7 +107,6 @@ export default class TargetCustomerRight extends PureComponent {
     const firSpan = isFold ? 12 : 24;
     const sendSpan = isFold ? 16 : 24;
     const thrSpan = isFold ? 8 : 24;
-    console.log(firSpan);
 
     const suspendedLayer = (
       <div className={`${styles.nameTips}`}>
@@ -125,10 +124,10 @@ export default class TargetCustomerRight extends PureComponent {
     );
     const inFoPerfectRate = (
       <div className={`${styles.nameTips}`}>
-        <h6><span>手机号码：</span><span>不完善</span></h6>
-        <h6><span>联系地址：</span><span>完善</span></h6>
-        <h6><span>电子邮箱：</span><span>完善</span></h6>
-        <h6><span>风险偏好：</span><span>完善</span></h6>
+        <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhoneCR)}</span></h6>
+        <h6><span>联系地址：</span><span>{this.handleEmpty(itemData.contactAddressCR)}</span></h6>
+        <h6><span>电子邮箱：</span><span>{this.handleEmpty(itemData.emailCR)}</span></h6>
+        <h6><span>风险偏好：</span><span>{this.handleEmpty(itemData.riskPreferenceCR)}</span></h6>
       </div>
     );
     // 佣金率
@@ -327,7 +326,7 @@ export default class TargetCustomerRight extends PureComponent {
           onCancel={this.handleCancel}
         >
           <Collapse
-            data={serviceRecordData}
+            data={serviceRecordData[itemData.custId]}
             executeTypes={executeTypes}
             serveWay={serveWay}
             handleCollapseClick={handleCollapseClick}

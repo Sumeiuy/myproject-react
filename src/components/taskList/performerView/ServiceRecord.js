@@ -32,6 +32,12 @@ const MAX_LENGTH = 100;
 
 const EMPTY_LIST = [];
 
+// 客户任务所处待处理和处理中时服务记录可编辑
+// 处理中 106110
+// 待处理  106112
+// 此处code码待修改
+const EDITABLE = ['106110', '106112'];
+
 function range(start, end) {
   const result = [];
   for (let i = start; i < end; i++) {
@@ -74,7 +80,8 @@ function generateObjOfValue(arr) {
 
 export default class ServiceRecord extends PureComponent {
   static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
+    // 当前选中的数据
+    currentSelectedCust: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
   }
@@ -287,8 +294,13 @@ export default class ServiceRecord extends PureComponent {
   render() {
     const {
       dict,
-      isReadOnly,
+      currentSelectedCust,
     } = this.props;
+
+    const { missionStatusCode } = currentSelectedCust;
+
+    // 处理中 和 待处理 时表单可编辑
+    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
 
     const {
       serviceWay,

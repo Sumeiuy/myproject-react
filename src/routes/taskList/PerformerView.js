@@ -44,7 +44,7 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   // 详情中目标客户的数据
   targetCustList: state.performerView.targetCustList,
-  serviceRecordData: state.customerPool.taskDetailBasicInfo,
+  serviceRecordData: state.customerPool.serviceRecordData,
   // 接口的loading状态
   interfaceState: state.loading.effects,
   // 6个月收益数据
@@ -346,7 +346,6 @@ export default class PerformerView extends PureComponent {
         location={location}
         replace={replace}
         dict={dict}
-        isReadOnly={false}
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
         targetCustList={targetCustList}

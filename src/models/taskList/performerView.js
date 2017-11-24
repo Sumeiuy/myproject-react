@@ -77,11 +77,13 @@ export default {
             orgId = '',
             pageSize = PAGE_SIZE,
             pageNo = PAGE_NO,
+            targetCustomerState = '',
           } = query;
           dispatch({ type: 'getTaskDetailBasicInfo', payload: { missionId: currentId } });
           dispatch({
             type: 'queryTargetCust',
             payload: {
+              state: targetCustomerState,
               missionId: currentId,
               orgId,
               pageSize,

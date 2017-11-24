@@ -38,11 +38,14 @@ export default class TargetCustomer extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
+    // 列表中当前选中的数据
+    currentCustId: PropTypes.string,
   }
 
   static defaultProps = {
     dict: {},
     serviceRecordData: {},
+    currentCustId: '',
   };
 
   constructor(props) {
@@ -130,12 +133,8 @@ export default class TargetCustomer extends PureComponent {
     const {
       list,
       isFold,
-      location: {
-        query: { targetCustId = '' },
-      },
+      currentCustId,
     } = this.props;
-    const [{ custId = '' }] = list;
-    const currentCustId = targetCustId || custId;
     return list.map(o => <TargetCustomerRow
       key={o.custId}
       item={o}
@@ -155,9 +154,9 @@ export default class TargetCustomer extends PureComponent {
         query: {
           pageNo = PAGE_NO,
           pageSize = PAGE_SIZE,
-          targetCustId = '',
         },
       },
+      currentCustId,
       handleCollapseClick,
       getServiceRecord,
       serviceRecordData,
@@ -171,9 +170,6 @@ export default class TargetCustomer extends PureComponent {
     const { executeTypes, serveWay } = dict;
     const curPageNo = pageNo || page.pageNo;
     const curPageSize = pageSize || page.pageSize;
-    const [{ custId = '' }] = list;
-    // 默认取列表中第一条数据
-    const currentCustId = targetCustId || custId;
     const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
     const stateData = [{
       value: '',

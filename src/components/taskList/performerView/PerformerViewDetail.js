@@ -20,7 +20,6 @@ export default class PerformerViewDetail extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     basicInfo: PropTypes.object.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     isFold: PropTypes.bool,
@@ -47,7 +46,6 @@ export default class PerformerViewDetail extends PureComponent {
       basicInfo,
       dict,
       addServeRecord,
-      isReadOnly,
       isFold,
       targetCustList,
       handleCollapseClick,
@@ -60,7 +58,6 @@ export default class PerformerViewDetail extends PureComponent {
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
     }
-    console.log(this.props);
     const {
       missionId,
       missionName,
@@ -68,6 +65,14 @@ export default class PerformerViewDetail extends PureComponent {
       hasSurvey,
       ...otherProps
     } = basicInfo;
+    const {
+      query: { targetCustId = '' },
+    } = location;
+    const { list, list: [{ custId = '' }] } = targetCustList;
+    // 获取当前选中的数据的custId
+    const currentCustId = targetCustId || custId;
+    // 根据当前选中的数据的custId来获取这条数据
+    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
@@ -82,6 +87,7 @@ export default class PerformerViewDetail extends PureComponent {
           isFold={isFold}
           location={location}
           replace={replace}
+          currentCustId={currentCustId}
           handleCollapseClick={handleCollapseClick}
           dict={dict}
           getServiceRecord={getServiceRecord}
@@ -94,7 +100,7 @@ export default class PerformerViewDetail extends PureComponent {
         <ServiceRecord
           dict={dict}
           addServeRecord={addServeRecord}
-          isReadOnly={isReadOnly}
+          currentSelectedCust={currentSelectedCust}
         />
       </div>
     );
