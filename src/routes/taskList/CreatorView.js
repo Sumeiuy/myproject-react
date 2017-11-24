@@ -18,7 +18,6 @@ import ViewListRow from '../../components/taskList/ViewListRow';
 import appListTool from '../../components/common/appList/tool';
 import { viewPageConfig, fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
-import styles from './creatorView.less';
 
 const EMPTY_OBJECT = {};
 
@@ -368,7 +367,7 @@ export default class CreatorView extends PureComponent {
       />
     );
     return (
-      <div className={styles.creatorView}>
+      <div>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}

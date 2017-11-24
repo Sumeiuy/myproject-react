@@ -14,9 +14,9 @@ import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
-import styles from '../style/jiraLayout.less';
 import { addClass, removeClass } from '../../utils/helper';
 import { fspContainer } from '../../config';
+import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
