@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-23 15:25:33
+ * @Last Modified time: 2017-11-23 17:35:51
  * @description 单佣金申请内容区域
  */
 
@@ -96,14 +96,12 @@ export default class SingleCreateBoard extends PureComponent {
     // 审批人列表
     approverList: PropTypes.array.isRequired,
     queryApprovalList: PropTypes.func.isRequired,
-    ref: PropTypes.func,
     clearRedux: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     customer: {},
     empInfo: {},
-    ref: () => {},
     otherRations: [],
   }
 
@@ -335,9 +333,9 @@ export default class SingleCreateBoard extends PureComponent {
     const treatedColumns = singleColumns.map((column, index) => {
       if (index === 2) {
         // 佣金率所在Column
+        // const { title } = column;
         return {
           ...column,
-          render: text => (<div className="xxxxxx">{text} </div>),
         };
       }
       return column;

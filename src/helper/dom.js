@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 17:15:17
+ * @Last Modified time: 2017-11-24 14:15:34
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';
@@ -56,6 +56,16 @@ const dom = {
       const newCls = oldCls.replace(` ${cls} `, ' ');
       ele.className = newCls.trim();
     }
+  },
+  /**
+   * 给DOM元素添加自定义属性
+   * @author sunweibin
+   * @param {HTMLElement} ele DOM圆度
+   * @param {String} key 属性的键
+   * @param {*} value 属性的值
+   */
+  setAttr(ele, key, value) {
+    ele.setAttribute(key, value);
   },
 };
 

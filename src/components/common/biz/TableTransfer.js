@@ -34,6 +34,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 
+import { dom } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './tableTransfer.less';
 
@@ -155,7 +156,30 @@ export default class TableTransfer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.resetDataSource();
+    this.state = {
+      ...this.resetDataSource(),
+      sortInfo: null,
+    };
+  }
+
+  // 含有sort的第一个表头的index值
+  firstSortIndexs = [] // eslint-disable-line
+  // 含有sort的第二个表头的index值
+  secondSortIndexs = []
+  // firstTable表头的CSS选择器前缀
+  firstPrefix = `.${styles.leftContent} .ant-table .ant-table-content .ant-table-header .ant-table-thead > tr`
+  // secondTable表头的CSS选择器前缀
+  secondPrefix = `.${styles.rightContent} .ant-table .ant-table-content .ant-table-header .ant-table-thead > tr`
+
+  componentDidMount() {
+    const { firstColumns, secondColumns } = this.props;
+    // 找出两个表头中那个字段需要sort的，并保留其index值
+    this.firstSortIndexs = this.fetchSortIndex(firstColumns);
+    this.secondSortIndexs = this.fetchSortIndex(secondColumns);
+    // 给每一个含有sort的表头添加一个class类
+    // 本组件使用antd的Table组件
+    this.addClassForTableHead(this.firstSortIndexs, this.firstPrefix, 'first');
+    this.addClassForTableHead(this.secondSortIndexs, this.secondPrefix, 'second');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -166,6 +190,37 @@ export default class TableTransfer extends Component {
     }
   }
 
+  @autobind
+  addClassForTableHead(sortIndexs, prefix, which) {
+    if (_.isEmpty(sortIndexs)) return;
+    _.each(sortIndexs, (item) => {
+      const ele = document.querySelector(`${prefix}>th:nth-child(${item.index + 1})`);
+      dom.setAttr(ele, 'data-transferSort', true);
+      // 给dom添加点击事件
+      ele.addEventListener('click', this.handleSortClick(which, item.key), false);
+    });
+  }
+
+  @autobind
+  handleSortClick(which, key) {
+    return () => {
+      const { sortInfo } = this.state;
+      let orderText = 'descend';
+      if (!_.isEmpty(sortInfo)) {
+        // 如果有值则取反
+        const { order } = sortInfo;
+        if (order === 'descend') orderText = 'ascend';
+        if (order === 'ascend') orderText = 'descend';
+      }
+      this.setState({
+        sortInfo: {
+          which,
+          key,
+          order: orderText,
+        },
+      });
+    };
+  }
   // 获取所有默认选中
   getAllDefaultCheck(dataArray, rowKey, defaultCheckKey) {
     let defaultCheck = {};
@@ -199,6 +254,15 @@ export default class TableTransfer extends Component {
       },
     );
     return int2Float(totalRate);
+  }
+
+  @autobind
+  fetchSortIndex(columns) {
+    const sortIndexs = [];
+    _.each(columns, (column, index) => {
+      if (column.sorter) sortIndexs.push({ index, key: column.key });
+    });
+    return sortIndexs;
   }
 
   // 重置数据源
@@ -668,7 +732,35 @@ export default class TableTransfer extends Component {
       secondArray,
       firstColumns,
       secondColumns,
+      sortInfo,
     } = this.state;
+    // 修改firstColumns
+    const newFirstColumn = firstColumns.map((column) => {
+      const { sorter, key } = column;
+      if (sorter) {
+        return {
+          ...column,
+          sortOrder: !_.isEmpty(sortInfo)
+            && sortInfo.which === 'first'
+            && sortInfo.key === key
+            && sortInfo.order,
+        };
+      }
+      return column;
+    });
+    const newSecondColumn = secondColumns.map((column) => {
+      const { sorter, key } = column;
+      if (sorter) {
+        return {
+          ...column,
+          sortOrder: !_.isEmpty(sortInfo)
+            && sortInfo.which === 'second'
+            && sortInfo.key === key
+            && sortInfo.order,
+        };
+      }
+      return column;
+    });
     let scroll = { y: 245 };
     // scrollX 的默认值是 ''
     if (scrollX !== '') {
@@ -692,7 +784,7 @@ export default class TableTransfer extends Component {
           </div>
           <Table
             rowKey={record => record[rowKey]}
-            columns={firstColumns}
+            columns={newFirstColumn}
             dataSource={firstArray}
             pagination={pagination}
             scroll={scroll}
@@ -707,7 +799,7 @@ export default class TableTransfer extends Component {
           </div>
           <Table
             rowKey={record => record[rowKey]}
-            columns={secondColumns}
+            columns={newSecondColumn}
             dataSource={secondArray}
             pagination={pagination}
             scroll={scroll}
