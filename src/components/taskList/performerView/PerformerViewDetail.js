@@ -20,10 +20,14 @@ export default class PerformerViewDetail extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     isFold: PropTypes.bool.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
   }
 
   static defaultProps = {
     dict: {},
+    serviceRecordData: {},
   };
 
   render() {
@@ -33,6 +37,9 @@ export default class PerformerViewDetail extends PureComponent {
       addServeRecord,
       isReadOnly,
       isFold,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
     } = this.props;
     console.log(this.props);
     const {
@@ -51,6 +58,10 @@ export default class PerformerViewDetail extends PureComponent {
         <BasicInfo {...otherProps} />
         <TargetCustomer
           isFold={isFold}
+          handleCollapseClick={handleCollapseClick}
+          dict={dict}
+          getServiceRecord={getServiceRecord}
+          serviceRecordData={serviceRecordData}
         />
         <ServiceRecord
           dict={dict}

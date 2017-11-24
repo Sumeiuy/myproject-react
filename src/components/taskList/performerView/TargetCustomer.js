@@ -9,59 +9,22 @@ import styles from './targetCustomer.less';
 import TargetCustomerRight from './TargetCustomerRight';
 import LabelInfo from './LabelInfo';
 
-// 模拟接口的死数据
-const data = {
-  code: '200',
-  msg: 'success',
-  resultData: {
-    page: {
-      pageNo: '1',
-      pageSize: '10',
-      totalCount: '200',
-      totalPage: '20',
-    },
-    list: [
-      {
-        custId: '002332',
-        custName: '王华',
-        isSign: true,
-        genderValue: '男',
-        age: '33',
-        missionStatusCode: '106110',
-        missionStatusValue: '处理中',
-        levelCode: '1078',
-        levelValue: '白金',
-        riskLevelValue: '积极型',
-        genderCode: '01',
-        contactPhone: '18255353210',
-        empName: '王华',
-        empId: '0110102',
-        empContactPhone: '18533536936',
-        empDepartment: '南京长江路营业部',
-        officePhone: '025-44544646455646',
-        homePhone: '025-89898933',
-        cellPhone: '18255353210',
-        assets: '1000000000',
-        openAssets: '10000000',
-        availablBalance: '100000',
-        commissionRate: '0.2',
-        hsRate: '0.3',
-        openBusiness: '创业板、深港通、沪港通',
-        openedBusiness: '创业板',
-        recentServiceTime: '2017/11/11',
-        missionTitle: 'XXOO',
-        missionType: 'OOXX',
-        custUuid: '',
-      },
-    ],
-  },
-};
 
+const datas = {};
 
 export default class TargetCustomer extends PureComponent {
   static propTypes = {
     isFold: PropTypes.bool.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    dict: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
   }
+
+  static defaultProps = {
+    dict: {},
+    serviceRecordData: {},
+  };
 
   constructor(props) {
     super(props);
@@ -72,7 +35,8 @@ export default class TargetCustomer extends PureComponent {
 
 
   render() {
-    const { isFold } = this.props;
+    const { isFold, handleCollapseClick, dict, getServiceRecord, serviceRecordData } = this.props;
+    const { executeTypes, serveWay } = dict;
     return (
       <div className={styles.targetCustomer}>
         <LabelInfo value="目标客户" />
@@ -82,7 +46,12 @@ export default class TargetCustomer extends PureComponent {
         <div className={styles.right}>
           <TargetCustomerRight
             isFold={isFold}
-            itemData={data.resultData.list[0]}
+            itemData={datas}
+            handleCollapseClick={handleCollapseClick}
+            serveWay={serveWay}
+            executeTypes={executeTypes}
+            getServiceRecord={getServiceRecord}
+            serviceRecordData={serviceRecordData}
           />
         </div>
       </div>
