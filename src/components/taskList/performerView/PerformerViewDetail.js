@@ -19,10 +19,15 @@ export default class PerformerViewDetail extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
+    isFold: PropTypes.bool.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
   }
 
   static defaultProps = {
     dict: {},
+    serviceRecordData: {},
   };
 
   render() {
@@ -31,8 +36,12 @@ export default class PerformerViewDetail extends PureComponent {
       dict,
       addServeRecord,
       isReadOnly,
+      isFold,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
     } = this.props;
-
+    console.log(this.props);
     const {
       taskId,
       taskName,
@@ -47,7 +56,13 @@ export default class PerformerViewDetail extends PureComponent {
           {hasSurvey ? <a className={styles.survey}>任务问卷调查</a> : null}
         </p>
         <BasicInfo {...otherProps} />
-        <TargetCustomer />
+        <TargetCustomer
+          isFold={isFold}
+          handleCollapseClick={handleCollapseClick}
+          dict={dict}
+          getServiceRecord={getServiceRecord}
+          serviceRecordData={serviceRecordData}
+        />
         <ServiceRecord
           dict={dict}
           addServeRecord={addServeRecord}
