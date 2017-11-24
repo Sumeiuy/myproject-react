@@ -21,6 +21,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const confirm = Modal.confirm;
 const { contract: { pageType } } = seibelConfig;
+// TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
 const TESTFLOWID = '964BEB99608BFB42A9F8FD072BD50B70';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -147,19 +148,19 @@ export default class Form extends PureComponent {
   @autobind
   getTwoDimensionClauseList(list, key) {
     const uniqedArr = _.uniqBy(list, key);
-    const tmpArr1 = [];
+    const clauseList = [];
     uniqedArr.forEach((v) => {
       const paraName = v[key];
-      let tmpArr2 = [];
+      let sameKeyArray = [];
       list.forEach((sv) => {
         if (paraName === sv[key]) {
-          tmpArr2.push(sv);
+          sameKeyArray.push(sv);
         }
       });
-      tmpArr1.push(tmpArr2);
-      tmpArr2 = [];
+      clauseList.push(sameKeyArray);
+      sameKeyArray = [];
     });
-    return tmpArr1;
+    return clauseList;
   }
 
   // 根据关键词查询合作部门
@@ -225,36 +226,42 @@ export default class Form extends PureComponent {
   // 检查合约条款值是否合法
   @autobind
   checkClauseIsLegal(list) {
-    const tmpArr = this.getTwoDimensionClauseList(list, 'paraName');
-    let clauseStatus = true;
-    for (let i = 0; i < tmpArr.length; i++) {
-      if (tmpArr[i][0].paraDisplayName.indexOf('比例') > -1) {
+    const clauseList = this.getTwoDimensionClauseList(list, 'paraName');
+    for (let i = 0; i < clauseList.length; i++) {
+      const sameKeyArray = clauseList[i];
+      const headItem = _.head(sameKeyArray);
+      // 是否存在匹配的字符
+      if (headItem.paraDisplayName.indexOf('比例') > -1) {
         let result = 0;
-        tmpArr[i].forEach((v) => {
-          result += Number(v.paraVal);
+        // 求和
+        sameKeyArray.forEach((item) => {
+          result += Number(item.paraVal);
         });
+        // result前加+号，是将string类型的result转换成数值类型
+        // 需求：result如果不等于1，则不合法。
         if (+result !== 1) {
-          clauseStatus = false;
-          break;
+          return false;
         }
       }
     }
-    return clauseStatus;
+    return true;
   }
 
-  // 检查每个每个部门只能选一种合约条款
+  // 检查每个部门只能选一种合约条款，如果>1，则不合法
   @autobind
   checkClauseIsUniqueness(list) {
-    const tmpArr = this.getTwoDimensionClauseList(list, 'termsName');
-    const tmpObj = {};
+    const clauseList = this.getTwoDimensionClauseList(list, 'termsName');
+    const clauseID = {};
     let clauseStatus = true;
-    tmpArr.forEach((v) => {
-      v.forEach((sv) => {
-        if (v.length > 1) {
-          if (tmpObj[sv.divIntegrationId]) {
+    clauseList.forEach((itemArray) => {
+      itemArray.forEach((item) => {
+        if (itemArray.length > 1) {
+          // 检测该条款是否存在，如果存在，则不合法
+          if (clauseID[item.divIntegrationId]) {
             clauseStatus = false;
           } else {
-            tmpObj[sv.divIntegrationId] = 1;
+            // 添加条款到clauseID
+            clauseID[item.divIntegrationId] = 1;
           }
         }
       });
@@ -302,7 +309,7 @@ export default class Form extends PureComponent {
     }
     const payload = contractFormData;
     // 编辑
-    const tempApproveData = {
+    const newApproveData = {
       type: 'edit',
       flowId: contractFormData.flowid,
       approverIdea: contractFormData.appraval || '',
@@ -318,7 +325,7 @@ export default class Form extends PureComponent {
     const sendPayload = {
       payload,
       approveData: {
-        ...tempApproveData,
+        ...newApproveData,
         groupName: btnItem.nextGroupName,
         auditors: btnItem.flowAuditors[0].login,
       },
