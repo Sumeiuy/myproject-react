@@ -3,8 +3,9 @@
 }
 .listControl {
   margin-top: 15px;
-  height: 20px;
-  line-height: 20px;
+  margin-left: 16px;
+  height: 32px;
+  line-height: 32px;
   .stateWidget {
     float: left;
     .label {
@@ -16,6 +17,26 @@
       background-color: transparent;
       font-size: 14px;
       color: #4a4a4a;
+      .ant-select-arrow:before {
+        top: 3px;
+      }
     }
+  }
+  .total {
+    float: left;
+    font-size: 14px;
+    color: #9b9b9b;
+    span {
+      color: #000;
+    }
+  }
+  .pagination {
+    float: right;
+  }
+}
+.listBox {
+  margin: 10px 0 0 16px;
+  .list {
+    border:1px solid #ddd;
   }
 }

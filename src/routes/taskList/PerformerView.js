@@ -33,10 +33,12 @@ const effects = {
 };
 
 const mapStateToProps = state => ({
-  // 左侧列表数据
+  // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.app.seibleList,
   dict: state.app.dict,
+  // 详情中目标客户的数据
+  targetCustList: state.performerView.targetCustList,
 });
 
 const mapDispatchToProps = {
@@ -58,6 +60,7 @@ export default class PerformerView extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     taskDetailBasicInfo: PropTypes.object.isRequired,
+    targetCustList: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -75,7 +78,7 @@ export default class PerformerView extends PureComponent {
         query,
       query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
       getPerformerViewList,
@@ -140,6 +143,7 @@ export default class PerformerView extends PureComponent {
       dict,
       addServeRecord,
       taskDetailBasicInfo,
+      targetCustList,
     } = this.props;
 
     const isEmpty = _.isEmpty(list.resultData);
@@ -183,10 +187,13 @@ export default class PerformerView extends PureComponent {
 
     const rightPanel = (
       <PerformerViewDetail
+        location={location}
+        replace={replace}
         dict={dict}
         isReadOnly={false}
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
+        targetCustList={targetCustList}
       />
     );
     return (

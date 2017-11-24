@@ -17,28 +17,28 @@ export default class BasicInfo extends PureComponent {
     // 有效期
     validPeriod: PropTypes.string,
     // 任务目标
-    taskTarget: PropTypes.string,
+    missionTarget: PropTypes.string,
     // 服务策略
     servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
-    isWide: PropTypes.bool,
+    isFold: PropTypes.bool,
   }
 
   static defaultProps = {
     validPeriod: '',
-    taskTarget: '',
+    missionTarget: '',
     servicePolicy: '',
-    isWide: false,
+    isFold: false,
   }
 
   render() {
     const {
       validPeriod,
-      taskTarget,
+      missionTarget,
       servicePolicy,
-      isWide,
+      isFold,
     } = this.props;
-    const colSpanValue = isWide ? 12 : 24;
+    const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.basicInfo}>
         <LabelInfo value="基本信息" />
@@ -50,7 +50,7 @@ export default class BasicInfo extends PureComponent {
             </Col>
             <Col span={colSpanValue} className={styles.colItem}>
               <span className={styles.label}>任务目标:&nbsp;</span>
-              <span className={styles.content}>{taskTarget}</span>
+              <span className={styles.content}>{missionTarget}</span>
             </Col>
           </Row>
           <Row className={styles.rowItem}>
