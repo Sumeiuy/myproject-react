@@ -2,14 +2,44 @@
     width: 100%;
     margin-top: 25px;
     overflow: hidden;
-    clear: both;
-    .left {
-      width: 40%;
-      float: left;
+}
+.listControl {
+  margin-top: 15px;
+  margin-left: 16px;
+  height: 32px;
+  line-height: 32px;
+  .stateWidget {
+    float: left;
+    .label {
+      font-size: 14px;
+      color: #9b9b9b;
     }
-    .right {
-      width: 60%;
-      float: right;
-      border: 1px solid #ddd;
+    :global .ant-select .ant-select-selection {
+      border: 0;
+      background-color: transparent;
+      font-size: 14px;
+      color: #4a4a4a;
+      .ant-select-arrow:before {
+        top: 3px;
+      }
     }
+  }
+  .total {
+    float: left;
+    font-size: 14px;
+    color: #9b9b9b;
+    span {
+      color: #000;
+    }
+  }
+  .pagination {
+    float: right;
+  }
+}
+.listBox {
+  margin: 10px 0 0 16px;
+  .list {
+    border: 1px solid #ddd;
+    border-right: 0;
+  }
 }
