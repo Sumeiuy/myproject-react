@@ -32,6 +32,7 @@ export default class Paganation extends PureComponent {
       PropTypes.string,
       PropTypes.number,
     ]),
+    showSizeChanger: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -41,6 +42,7 @@ export default class Paganation extends PureComponent {
     onPageChange: () => { },
     onSizeChange: () => { },
     originPageSizeUnit: 10,
+    showSizeChanger: true,
   };
 
   componentDidMount() {
@@ -105,6 +107,7 @@ export default class Paganation extends PureComponent {
     onPageChange,
     onSizeChange,
     originPageSizeUnit,
+    showSizeChanger,
   }) {
     const paginationOptions = {
       current: parseInt(curPageNum, 10),
@@ -120,7 +123,7 @@ export default class Paganation extends PureComponent {
             {total}
           </span> 项
         </span>,
-      showSizeChanger: true,
+      showSizeChanger,
       onShowSizeChange: onSizeChange,
       pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, originPageSizeUnit),
     };

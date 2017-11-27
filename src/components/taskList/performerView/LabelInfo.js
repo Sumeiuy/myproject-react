@@ -4,7 +4,8 @@
  * @description 执行者视图右侧详情的模块标签
  */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import styles from './labelInfo.less';

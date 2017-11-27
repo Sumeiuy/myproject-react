@@ -2,99 +2,44 @@
     width: 100%;
     margin-top: 25px;
     overflow: hidden;
-    clear: both;
-    .left {
-      width: 40%;
-      float: left;
+}
+.listControl {
+  margin-top: 15px;
+  margin-left: 16px;
+  height: 32px;
+  line-height: 32px;
+  .stateWidget {
+    float: left;
+    .label {
+      font-size: 14px;
+      color: #9b9b9b;
     }
-    .right {
-      width: 60%;
-      float: right;
-      border: 1px solid #ddd;
-      h5 {
-        font-size: 14px;
-      }
-      .people {
-        span:first-child {
-          color: #9b9b9b;
-        }
-        span:last-child {
-          color: #333;
-        }
-      }
-      .titles {
-        background: #f3f7ff;
-        padding: 10px 15px;
-        border-bottom: 1px solid #ddd;
-        div {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          align-items: center;
-          h3.custNames {
-            font-size: 20px;
-            color: #2782d7;
-            float: left;
-          }
-          h5.custNamesCont {
-            color: #4a4a4a;
-            text-align: right;
-            float: right;
-            span {
-              margin: 0 5px;
-            }
-          }
-          h5.custNamesCont:first-child {
-            margin-right: 10%;
-            width: 60%;
-          }
-        }
-      }
-      .asset {
-        padding: 5px 15px 10px;
-        border-bottom: 1px solid #ddd;
-         div {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          align-items: center;
-          h5 {
-            line-height: 30px;
-          }
-          h5:first-child {
-            margin-right: 10%;
-            width: 60%;
-          }
-        }
-      }
-      .business {
-        padding: 5px 15px 10px;
-        border-bottom: 1px solid #ddd;
-         div {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          align-items: center;
-          h5 {
-            line-height: 30px;
-          }
-        }
-      }
-      .service {
-        padding: 5px 15px 10px;
-         div {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          align-items: center;
-          h5 {
-            line-height: 30px;
-          }
-        }
+    :global .ant-select .ant-select-selection {
+      border: 0;
+      background-color: transparent;
+      font-size: 14px;
+      color: #4a4a4a;
+      .ant-select-arrow:before {
+        top: 3px;
       }
     }
+  }
+  .total {
+    float: left;
+    font-size: 14px;
+    color: #9b9b9b;
+    span {
+      color: #000;
+    }
+  }
+  .pagination {
+    float: right;
+  }
+}
+.listBox {
+  margin: 10px 0 0 16px;
+  .list {
+    border: 1px solid #ddd;
+    border-right: 0;
+  }
 }

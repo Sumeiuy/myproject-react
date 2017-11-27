@@ -1,19 +1,53 @@
 /**
- * @fileOverview components/customerPool/BasicInfo.js
+ * @fileOverview components/customerPool/TargetCustomer.js
  * @author wangjunjun
  * @description 执行者视图右侧详情的目标客户
  */
-
 import React, { PureComponent } from 'react';
-// import { Row, Col } from 'antd';
-import { Modal } from 'antd';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import styles from './targetCustomer.less';
-import Icon from '../../common/Icon';
+import { Pagination, Row, Col } from 'antd';
+import _ from 'lodash';
 
+import TargetCustomerRight from './TargetCustomerRight';
 import LabelInfo from './LabelInfo';
+import Select from '../../common/Select';
+import TargetCustomerRow from './TargetCustomerRow';
+
+import styles from './targetCustomer.less';
+
+// const datas = {};
+
+// const EMPTY_LIST = [];
+
+const PAGE_SIZE = 8;
+const PAGE_NO = 1;
 
 export default class TargetCustomer extends PureComponent {
+
+  static propTypes = {
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    list: PropTypes.array.isRequired,
+    page: PropTypes.object.isRequired,
+    isFold: PropTypes.bool.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
+    dict: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.object,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
+    // 列表中当前选中的数据
+    currentCustId: PropTypes.string,
+  }
+
+  static defaultProps = {
+    dict: {},
+    serviceRecordData: {},
+    currentCustId: '',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -22,89 +56,187 @@ export default class TargetCustomer extends PureComponent {
   }
 
   @autobind
-  showModal() {
-    this.setState({
-      visible: true,
+  handleStateChange(key, v) {
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        [key]: v,
+      },
     });
   }
 
   @autobind
-  handleOk() {
-    this.setState({
-      visible: false,
+  handlePageChange(pageNo) {
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNo,
+      },
     });
   }
 
   @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
+  handleSizeChange(current, pageSize) {
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageSize,
+        pageNo: 1,
+      },
     });
+  }
+
+  @autobind
+  handleRowClick({ id }) {
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        targetCustId: id,
+      },
+    });
+  }
+
+  @autobind
+  renderList() {
+    const {
+      list,
+      isFold,
+      currentCustId,
+    } = this.props;
+    return list.map(o => <TargetCustomerRow
+      key={o.custId}
+      item={o}
+      isFold={isFold}
+      currentCustId={currentCustId}
+      onClick={this.handleRowClick}
+    />);
   }
 
   render() {
-    const { visible } = this.state;
+    const {
+      isFold,
+      dict,
+      page,
+      list,
+      location: {
+        query: {
+          pageNo = PAGE_NO,
+          pageSize = PAGE_SIZE,
+        },
+      },
+      currentCustId,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      getCustIncome,
+      custIncomeReqState,
+      monthlyProfits,
+    } = this.props;
+    if (_.isEmpty(list)) {
+      return null;
+    }
+    const { executeTypes, serveWay } = dict;
+    const curPageNo = pageNo || page.pageNo;
+    const curPageSize = pageSize || page.pageSize;
+    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
+    const stateData = [{
+      value: '',
+      label: '全部',
+      show: true,
+    }, {
+      value: '01',
+      label: '处理中',
+      show: true,
+    }, {
+      value: '02',
+      label: '已完成',
+      show: true,
+    }, {
+      value: '03',
+      label: '待处理',
+      show: true,
+    }];
     return (
       <div className={styles.targetCustomer}>
         <LabelInfo value="目标客户" />
-        <div className={styles.left}>
-          表格
-        </div>
-        <div className={styles.right}>
-          <div className={styles.titles}>
-            <div>
-              <h3 className={styles.custNames}>客户名称</h3>
-              <h5 className={styles.custNamesCont}>
-                <span>02004889</span>|<span>男</span>|<span>46岁</span>
-              </h5>
-            </div>
-            <div>
-              <h5 className={styles.people}><span>介绍人：</span><span>王华</span><Icon type="info-circle-o" /></h5>
-              <h5 className={styles.people}><span>联系电话：</span><span>15357890001</span></h5>
-            </div>
+        <div className={styles.listControl}>
+          <div className={styles.stateWidget}>
+            <span className={styles.label}>状态:</span>
+            <Select
+              name="targetCustomerState"
+              value={'全部客户'}
+              data={stateData}
+              onChange={this.handleStateChange}
+            />
           </div>
-          <div className={styles.asset}>
-            <div>
-              <h5 className={styles.people}><span>总资产：</span><span>2345.78万元</span><Icon type="info-circle-o" /></h5>
-              <h5 className={styles.people}><span>股基佣金率额：</span><span>0.34%</span></h5>
-            </div>
-            <div>
-              <h5 className={styles.people}><span>持仓资产：</span><span>2345.78万元/99.5%</span></h5>
-              <h5 className={styles.people}><span>沪深归集率：</span><span>0.34%</span></h5>
-            </div>
-            <div>
-              <h5 className={styles.people}><span>可用余额：</span><span>2345.78万元/0.5%</span></h5>
-            </div>
-          </div>
-          <div className={styles.business}>
-            <div>
-              <h5 className={styles.people}><span>已开通业务：</span><span>创业板、沪港通、深港通</span></h5>
-            </div>
-            <div>
-              <h5 className={styles.people}><span>可开通业务：</span><span>融资融券</span></h5>
-            </div>
-          </div>
-          <div className={styles.service}>
-            <div>
-              <h5 className={styles.people}>
-                <span>最近服务时间：</span>
-                <span>（2017/11/11）任务类型 - 任务标题</span>
-              </h5>
-              <h5 className={styles.people}><a onClick={this.showModal}>查看更多</a></h5>
-            </div>
+          <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
+          <div className={styles.pagination}>
+            <Pagination
+              size="small"
+              current={+curPageNo}
+              total={+page.totalCount}
+              pageSize={+curPageSize}
+              showSizeChanger
+              onChange={this.handlePageChange}
+              onShowSizeChange={this.handleSizeChange}
+            />
           </div>
         </div>
-        <Modal
-          title="Basic Modal"
-          visible={visible}
-          width={700}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </Modal>
+        <div className={styles.listBox}>
+          <Row>
+            <Col span={9}>
+              <div className={styles.list}>
+                { this.renderList() }
+              </div>
+            </Col>
+            <Col span={15}>
+              <TargetCustomerRight
+                isFold={isFold}
+                itemData={currentSelectedCust}
+                handleCollapseClick={handleCollapseClick}
+                serveWay={serveWay}
+                executeTypes={executeTypes}
+                getServiceRecord={getServiceRecord}
+                serviceRecordData={serviceRecordData}
+                getCustIncome={getCustIncome}
+                monthlyProfits={monthlyProfits}
+                custIncomeReqState={custIncomeReqState}
+              />
+            </Col>
+          </Row>
+        </div>
       </div>
     );
   }
