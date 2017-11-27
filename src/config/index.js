@@ -16,6 +16,7 @@ import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
+import viewPageConfig from './taskList/viewPageConfig';
 import contract from './contract';
 
 export default {
@@ -39,4 +40,5 @@ export default {
   permissionOptions,
   seibelConfig,
   contract,
+  viewPageConfig,
 };

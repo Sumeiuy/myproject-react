@@ -15,6 +15,8 @@ const PAGE_NO = 1;
 export default {
   namespace: 'performerView',
   state: {
+    // 执行者视图、管理者视图、创建者视图公共列表
+    taskList: EMPTY_OBJ,
     // 任务详情中基本信息
     taskDetailBasicInfo: EMPTY_OBJ,
     // 任务详情中目标客户列表信息
@@ -28,6 +30,17 @@ export default {
     },
   },
   reducers: {
+    getTaskListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJ } } = action;
+      const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        taskList: {
+          page,
+          resultData: viewBaseInfoList,
+        },
+      };
+    },
     getTaskDetailBasicInfoSuccess(state, action) {
       const { payload } = action;
       return {
@@ -47,6 +60,14 @@ export default {
     },
   },
   effects: {
+    // 执行者视图、管理者视图、创建者视图公共列表
+    * getTaskList({ payload }, { call, put }) {
+      const listResponse = yield call(api.queryTaskList, payload);
+      yield put({
+        type: 'getTaskListSuccess',
+        payload: listResponse,
+      });
+    },
     // 执行者视图的详情基本信息
     * getTaskDetailBasicInfo({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, payload);
