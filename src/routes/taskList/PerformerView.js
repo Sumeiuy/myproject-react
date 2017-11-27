@@ -52,6 +52,8 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 6个月收益数据
   monthlyProfits: state.customerPool.monthlyProfits,
+  // 任务详情中目标客户列表当前选中的详情信息
+  targetCustDetail: state.performerView.targetCustDetail,
 });
 
 const mapDispatchToProps = {
@@ -88,6 +90,7 @@ export default class PerformerView extends PureComponent {
     interfaceState: PropTypes.object.isRequired,
     // 6个月收益数据
     monthlyProfits: PropTypes.object.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -301,6 +304,7 @@ export default class PerformerView extends PureComponent {
       interfaceState,
       getCustIncome,
       monthlyProfits,
+      targetCustDetail,
     } = this.props;
     console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
@@ -357,6 +361,7 @@ export default class PerformerView extends PureComponent {
         getCustIncome={getCustIncome}
         monthlyProfits={monthlyProfits}
         custIncomeReqState={interfaceState[effects.getCustIncome]}
+        targetCustDetail={targetCustDetail}
       />
     );
     return (

@@ -40,6 +40,7 @@ export default class TargetCustomer extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     // 列表中当前选中的数据
     currentCustId: PropTypes.string,
+    targetCustDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -156,13 +157,13 @@ export default class TargetCustomer extends PureComponent {
           pageSize = PAGE_SIZE,
         },
       },
-      currentCustId,
       handleCollapseClick,
       getServiceRecord,
       serviceRecordData,
       getCustIncome,
       custIncomeReqState,
       monthlyProfits,
+      targetCustDetail,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
@@ -170,7 +171,6 @@ export default class TargetCustomer extends PureComponent {
     const { executeTypes, serveWay } = dict;
     const curPageNo = pageNo || page.pageNo;
     const curPageSize = pageSize || page.pageSize;
-    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
     const stateData = [{
       value: '',
       label: '全部',
@@ -224,7 +224,7 @@ export default class TargetCustomer extends PureComponent {
             <Col span={15}>
               <TargetCustomerRight
                 isFold={isFold}
-                itemData={currentSelectedCust}
+                itemData={targetCustDetail}
                 handleCollapseClick={handleCollapseClick}
                 serveWay={serveWay}
                 executeTypes={executeTypes}

@@ -36,6 +36,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool,
+    targetCustDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -60,6 +61,7 @@ export default class PerformerViewDetail extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
+      targetCustDetail,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -110,6 +112,7 @@ export default class PerformerViewDetail extends PureComponent {
           getCustIncome={getCustIncome}
           custIncomeReqState={custIncomeReqState}
           monthlyProfits={monthlyProfits}
+          targetCustDetail={targetCustDetail}
           {...targetCustList}
         />
         <ServiceRecord
