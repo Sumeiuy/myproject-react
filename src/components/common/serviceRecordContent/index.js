@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 14:09:18
+ * @Last Modified time: 2017-11-27 14:18:43
  */
 
 
@@ -17,7 +17,7 @@ import Uploader from '../../customerPool/taskFlow/Uploader';
 import { request } from '../../../config';
 // import { helper } from '../../../utils';
 import Icon from '../../common/Icon';
-import styles from './serviceRecordContent.less';
+import styles from './index.less';
 
 const { Option } = Select;
 const { TextArea } = Input;

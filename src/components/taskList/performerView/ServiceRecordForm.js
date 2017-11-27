@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 10:09:15
+ * @Last Modified time: 2017-11-27 14:17:17
  * 服务记录表单
  */
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
 import { autobind } from 'core-decorators';
-import ServiceRecordContent from '../../customerPool/common/ServiceRecordContent';
+import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
 
