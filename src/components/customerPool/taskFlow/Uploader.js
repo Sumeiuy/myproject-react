@@ -13,6 +13,7 @@ import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
+import Clickable from '../../../components/common/Clickable';
 import './uploader.less';
 
 let count = 0;
@@ -281,17 +282,24 @@ export default class Uploader extends PureComponent {
                 <span>{originFileName}</span>
               </div>
               {
-                isNeedPreview ? <div
-                  className="overview"
-                  onClick={this.handlePreview}
-                >预览</div>
-                  : null
+                isNeedPreview ? (
+                  <Clickable
+                    onClick={this.handlePreview}
+                    eventName="/click/uploader/overview"
+                  >
+                    <div className="overview">预览</div>
+                  </Clickable>
+                ) : null
               }
               {
-                isNeedDelete ? <div
-                  className="delete"
-                  onClick={this.handleDeleteFile}
-                >删除</div> : null
+                isNeedDelete ? (
+                  <Clickable
+                    onClick={this.handleDeleteFile}
+                    eventName="/click/uploader/delete"
+                  >
+                    <div className="delete">删除</div>
+                  </Clickable>
+                ) : null
               }
             </div> : null
           }

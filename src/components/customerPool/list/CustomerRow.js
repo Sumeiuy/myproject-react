@@ -30,6 +30,7 @@ import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
 // import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
+import Clickable from '../../../components/common/Clickable';
 
 // 客户男女code码
 const MALE_CODE = '109001';
@@ -212,12 +213,14 @@ export default class CustomerRow extends PureComponent {
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    return (<img
-      className={styles.avatorImage}
-      src={imgSrc}
-      alt=""
-      onClick={this.toDetail}
-    />);
+    return (
+      <Clickable
+        onClick={this.toDetail}
+        eventName="/click/custListRow/imgClick"
+      >
+        <img className={styles.avatorImage} src={imgSrc} alt="" />
+      </Clickable>
+    );
   }
 
   renderRankImg(listItem = {}) {
@@ -304,9 +307,14 @@ export default class CustomerRow extends PureComponent {
           <div className={styles.customerRowRight}>
             <div className="row-one">
               {
-                listItem.name ?
-                  <span className="name" onClick={this.toDetail}>{listItem.name}</span> :
-                  null
+                listItem.name ? (
+                  <Clickable
+                    onClick={this.toDetail}
+                    eventName="/click/custListRow/nameClick"
+                  >
+                    <span className="name">{listItem.name}</span>
+                  </Clickable>
+                ) : null
               }
               <span>{listItem.custId}</span>
               <span className="cutOffLine">|</span>

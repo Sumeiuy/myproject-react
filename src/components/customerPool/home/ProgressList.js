@@ -118,15 +118,14 @@ export default class ProgressList extends PureComponent {
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
-
     return dataSource.map(
       (item, index) => {
         const rowId = `row${index}`;
         return (
           <div
+            onClick={() => { this.handleClick(index, item); }}
             className={styles.row} style={style}
             key={item.id}
-            onClick={() => { this.handleClick(index, item); }}
             ref={ref => (this[rowId] = ref)}
           >
             <div className={styles.intro}>

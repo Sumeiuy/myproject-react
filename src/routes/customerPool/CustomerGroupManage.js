@@ -13,7 +13,9 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { message } from 'antd';
 import _ from 'lodash';
+
 import Button from '../../components/common/Button';
+import Clickable from '../../components/common/Clickable';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
@@ -620,13 +622,12 @@ export default class CustomerGroupManage extends PureComponent {
             />
           </div>
           <div className={styles.rightSection}>
-            <Button
+            <Clickable
               onClick={this.showGroupDetailModal}
-              type="primary"
-              className={styles.addBtn}
+              eventName="/click/customerGroupManager/add"
             >
-              新增
-            </Button>
+              <Button type="primary" className={styles.addBtn}>新增</Button>
+            </Clickable>
           </div>
         </div>
         <GroupTable
@@ -666,21 +667,25 @@ export default class CustomerGroupManage extends PureComponent {
               okType={'primary'}
               onCancelHandler={this.handleCloseModal}
               footer={<div className={styles.operationBtnSection}>
-                <Button
-                  className={styles.cancel}
+                <Clickable
                   onClick={this.handleCloseModal}
+                  eventName="/click/customerGroupManager/cancel"
                 >
-                  取消
-                </Button>
-                <Button
-                  htmlType="submit"
-                  className={styles.submit}
-                  type="primary"
+                  <Button className={styles.cancel}>取消</Button>
+                </Clickable>
+                <Clickable
                   // 加入节流函数
                   onClick={_.debounce(this.handleSubmit, 250)}
+                  eventName="/click/customerGroupManager/submit"
                 >
-                  提交
-              </Button>
+                  <Button
+                    htmlType="submit"
+                    className={styles.submit}
+                    type="primary"
+                  >
+                    提交
+                  </Button>
+                </Clickable>
               </div>}
               modalContent={
                 <CustomerGroupDetail
