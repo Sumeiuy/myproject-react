@@ -50,17 +50,24 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  handleListClick(title, index) {
+    if (!_.isEmpty(title)) {
+      this.handleDetailClick(index);
+    }
+  }
+
+  @autobind
   renderContent(titleArray) {
     return titleArray.map((item, index) => (
       <Clickable
-        onClick={() => { this.handleDetailClick(index); }}
+        onClick={() => { this.handleListClick(item.subtitle, index); }}
         eventName="/click/Home/viewpointList"
         key={item.id}
       >
         <div className={classnames(styles.row, { [styles.none]: (index >= 12) })}>
           <a
-            className={styles.news}
-            title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+            className={classnames(styles.news, { [styles.emptyNews]: _.isEmpty(item.subtitle) })}
+            title={_.isEmpty(item.subtitle) ? '' : item.subtitle}
           >
             {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
           </a>
