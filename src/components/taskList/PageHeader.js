@@ -1,6 +1,6 @@
 /**
  * @file Pageheader.js
- * 权限申请，合约管理，佣金调整头部筛选
+ * 创建者视图、执行者视图头部筛选
  * @author honggaunqging
  */
 
@@ -14,20 +14,12 @@ import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
-import styles from '../style/jiraLayout.less';
 import { addClass, removeClass } from '../../utils/helper';
 import { fspContainer } from '../../config';
+import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
-
-// 日期格式
-const dateFormat = 'YYYY/MM/DD';
-
-const datePickerStyle = {
-  height: '32px',
-  width: 'auto',
-};
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -49,14 +41,15 @@ export default class Pageheader extends PureComponent {
     getDrafterList: PropTypes.func.isRequired,
     // 子类型
     subtypeOptions: PropTypes.array,
+    // 视图选择
+    chooseMissionViewOptions: PropTypes.array,
   }
 
   static defaultProps = {
     page: '',
-    needOperate: false,
-    operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
+    chooseMissionViewOptions: [],
   }
 
   constructor(props) {
@@ -160,12 +153,25 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  // 任务名称搜索
+  @autobind
+  handleSearchChange(value) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        missionName: value,
+        isResetPageNum: 'Y',
+      },
+    });
+  }
+
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
   toSearch(method, value) {
     method({
       keyword: value,
-      type: this.props.pageType,
     });
   }
 
@@ -174,16 +180,16 @@ export default class Pageheader extends PureComponent {
     const { replace, location: { pathname, query } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
-    const startDate = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
-    const endDate = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
-    if (endDate && startDate) {
-      if (endDate > startDate) {
+    const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
+    const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
+    if (createTimeEnd && createTimeStart) {
+      if (createTimeEnd > createTimeStart) {
         replace({
           pathname,
           query: {
             ...query,
-            startDate,
-            endDate,
+            createTimeStart,
+            createTimeEnd,
             isResetPageNum: 'Y',
           },
         });
@@ -212,40 +218,27 @@ export default class Pageheader extends PureComponent {
       drafterList,
       page,
       subtypeOptions,
+      chooseMissionViewOptions,
       location: {
         query: {
+          missionViewType,
           subType,
           status,
-          createTime,
           drafterId,
-
           createTimePartFrom,
           createTimePartTo,
         },
       },
     } = this.props;
 
-    const dateProps = {
-      allowClear: true,
-      boxStyle: datePickerStyle,
-      placeholder: 'yyyy/mm/dd',
-      dateFormat,
-      name: 'createTime',
-      onChange: this.changeDate,
-    };
-
-    if (createTime) {
-      dateProps.value = moment(createTime, dateFormat);
-    }
-
-    const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
+    const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
     // 创建者回填
     const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    let curDrafter = '全部';
+    let curDrafter = '所有创建者';
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
@@ -253,38 +246,48 @@ export default class Pageheader extends PureComponent {
     // 默认时间
     const startTime = createTimePartFrom ? moment(createTimePartFrom) : null;
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
+    const subTypeValue = !_.isEmpty(subType) ? subType : '所有类型';
+    const statusValue = !_.isEmpty(status) ? status : '所有状态';
+    const missionViewTypeValue = !_.isEmpty(missionViewType) ? status : '发起者视图';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           <div className={styles.filterFl}>
             <Search
+              className={styles.taskNameSearch}
               placeholder="任务名称"
               style={{ width: 186 }}
-              onSearch={value => console.log(value)}
+              onSearch={this.handleSearchChange}
             />
           </div>
           <div className={styles.filterFl}>
-            类型:
             <Select
-              name="subType"
-              value={subType}
+              name="chooseMissionView"
+              value={missionViewTypeValue}
+              data={chooseMissionViewOptions}
+              onChange={this.handleSelectChange}
+            />
+          </div>
+
+          <div className={styles.filterFl}>
+            <Select
+              name="type"
+              value={subTypeValue}
               data={subtypeOptions}
               onChange={this.handleSelectChange}
             />
           </div>
 
           <div className={styles.filterFl}>
-            状态:
             <Select
               name="status"
-              value={status}
+              value={statusValue}
               data={stateOptions}
               onChange={this.handleSelectChange}
             />
           </div>
 
           <div className={styles.filterFl}>
-            创建者:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
                 value={curDrafter}
@@ -292,7 +295,7 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('drafterId', item)}
+                emitSelectItem={item => this.selectItem('creator', item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />

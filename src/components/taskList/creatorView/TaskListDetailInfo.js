@@ -8,11 +8,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
-import { seibelConfig } from '../../../config';
+import { viewPageConfig } from '../../../config';
 
 import styles from './detailInfo.less';
 
-const { creatorView: { status } } = seibelConfig;
+const { creatorView: { status } } = viewPageConfig;
 
 // 完成状态对应的 key 值
 const COMPLETE_CODE = '02';
