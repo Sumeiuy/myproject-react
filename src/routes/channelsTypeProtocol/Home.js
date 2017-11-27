@@ -248,35 +248,25 @@ export default class ChannelsTypeProtocol extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      replace,
       getProtocolDetail,
       seibleList: list,
-      location: { pathname, query, query: { currentId } },
+      location: { query: { currentId } },
     } = this.props;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
-      const { pageNum, pageSize } = list.page;
       let item = list.resultData[0];
-      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      const itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
         item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        this.setState({ activeRowIndex: itemIndex });
+        getProtocolDetail({ id: currentId });
       } else {
         // 不存在currentId
-        replace({
-          pathname,
-          query: {
-            ...query,
-            currentId: item.id,
-            pageNum,
-            pageSize,
-          },
-        });
-        itemIndex = 0;
+        this.setState({ activeRowIndex: 0 });
+        getProtocolDetail({ id: item.id });
       }
-      this.setState({ activeRowIndex: itemIndex });
-      getProtocolDetail({ id: currentId });
     }
   }
 
