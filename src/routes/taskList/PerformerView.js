@@ -195,7 +195,7 @@ export default class PerformerView extends PureComponent {
         currentSubtype: st,
         activeRowIndex: itemIndex,
       });
-      this.getDetail(item);
+      this.props.taskDetailBasicInfo(item);
     }
   }
 
@@ -222,7 +222,7 @@ export default class PerformerView extends PureComponent {
       },
     });
     this.setState({ currentSubtype: st, activeRowIndex: index });
-    // this.getDetail4Subtye(record);
+    this.props.taskDetailBasicInfo(record);
   }
 
   // 切换页码
