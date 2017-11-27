@@ -125,6 +125,7 @@ export default {
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
           params.pageNum = 1; // 默认显示第一页
+          params.custId = '02001404';
           dispatch({
             type: 'getServiceLog',
             payload: params,
