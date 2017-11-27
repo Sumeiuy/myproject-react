@@ -285,8 +285,7 @@ export default class Uploader extends PureComponent {
                 isNeedPreview ? (
                   <Clickable
                     onClick={this.handlePreview}
-                    eventName="/click/uploader"
-                    payload={{ test: 'overview' }}
+                    eventName="/click/uploader/overview"
                   >
                     <div className="overview">预览</div>
                   </Clickable>
@@ -296,8 +295,7 @@ export default class Uploader extends PureComponent {
                 isNeedDelete ? (
                   <Clickable
                     onClick={this.handleDeleteFile}
-                    eventName="/click/uploader"
-                    payload={{ test: 'delete' }}
+                    eventName="/click/uploader/delete"
                   >
                     <div className="delete">删除</div>
                   </Clickable>

@@ -267,8 +267,7 @@ export default class TaskFormFlowStep extends PureComponent {
             &&
             <Clickable
               onClick={this.handleCancel}
-              eventName="/click/taskFormFlowStep"
-              payload={{ test: 'cancel' }}
+              eventName="/click/taskFormFlowStep/cancel"
             >
               <Button className={styles.cancelBtn} type="default">
                 取消
@@ -280,8 +279,7 @@ export default class TaskFormFlowStep extends PureComponent {
             &&
             <Clickable
               onClick={this.handlePreviousStep}
-              eventName="/click/taskFormFlowStep"
-              payload={{ test: 'lastStep' }}
+              eventName="/click/taskFormFlowStep/lastStep"
             >
               <Button className={styles.prevStepBtn} type="default">
                 上一步
@@ -293,8 +291,7 @@ export default class TaskFormFlowStep extends PureComponent {
             &&
             <Clickable
               onClick={this.handleNextStep}
-              eventName="/click/taskFormFlowStep"
-              payload={{ test: 'nextStep' }}
+              eventName="/click/taskFormFlowStep/nextStep"
             >
               <Button className={styles.handlePreviousStep} type="primary">
                 下一步
@@ -306,8 +303,7 @@ export default class TaskFormFlowStep extends PureComponent {
             &&
             <Clickable
               onClick={this.handleSubmit}
-              eventName="/click/taskFormFlowStep"
-              payload={{ test: 'submit' }}
+              eventName="/click/taskFormFlowStep/submit"
             >
               <Button className={styles.confirmBtn} type="primary">
                 确认无误，提交

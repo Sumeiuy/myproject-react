@@ -165,15 +165,13 @@ export default class CreateTaskFormFlow extends PureComponent {
               <div className={styles.task_btn}>
                 <Clickable
                   onClick={this.handleCancleTab}
-                  eventName="/click/createTaskFormFlow"
-                  payload={{ test: 'cancel' }}
+                  eventName="/click/createTaskForm/cancel"
                 >
                   <Button>取消</Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleSubmit}
-                  eventName="/click/createTaskFormFlow"
-                  payload={{ test: 'submit' }}
+                  eventName="/click/createTaskForm/submit"
                 >
                   <Button type="primary">提交</Button>
                 </Clickable>

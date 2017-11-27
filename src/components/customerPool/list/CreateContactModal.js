@@ -341,8 +341,7 @@ export default class CreateContactModal extends PureComponent {
         footer={[
           <Clickable
             onClick={this.handleCancel}
-            eventName="/click/createContactModal"
-            payload={{ test: 'close' }}
+            eventName="/click/createContactModal/close"
           >
             <Button key="close" size="large">关闭</Button>
           </Clickable>,
@@ -377,8 +376,7 @@ export default class CreateContactModal extends PureComponent {
               <div className={styles.rightSection}>
                 <Clickable
                   onClick={this.handleServiceRecordClick}
-                  eventName="/click/createContactModal"
-                  payload={{ test: 'addRecord' }}
+                  eventName="/click/createContactModal/addRecord"
                 >
                   <Button>
                     <Icon type="jia" className={styles.addIcon} />
@@ -405,8 +403,7 @@ export default class CreateContactModal extends PureComponent {
               <div className={styles.rightSection}>
                 <Clickable
                   onClick={this.handleServiceRecordClick}
-                  eventName="/click/createContactModal"
-                  payload={{ test: 'addRecord' }}
+                  eventName="/click/createContactModal/addRecord"
                 >
                   <Button>
                     <Icon type="jia" className={styles.addIcon} />

@@ -34,8 +34,7 @@ const columns = ({ actionClick }) => {
     render: item => (
       <Clickable
         onClick={() => { handleClick(item); }}
-        eventName="/click/viewpointList"
-        payload={{ test: 'clickTitle' }}
+        eventName="/click/viewpointList/clickTitle"
       >
         <div
           className={classnames(styles.td, styles.headLine)}

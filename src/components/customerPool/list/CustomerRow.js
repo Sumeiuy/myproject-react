@@ -216,8 +216,7 @@ export default class CustomerRow extends PureComponent {
     return (
       <Clickable
         onClick={this.toDetail}
-        eventName="/click/customerRow"
-        payload={{ test: 'imgClick' }}
+        eventName="/click/custListRow/imgClick"
       >
         <img className={styles.avatorImage} src={imgSrc} alt="" />
       </Clickable>
@@ -311,8 +310,7 @@ export default class CustomerRow extends PureComponent {
                 listItem.name ? (
                   <Clickable
                     onClick={this.toDetail}
-                    eventName="/click/customerRow"
-                    payload={{ test: 'nameClick' }}
+                    eventName="/click/custListRow/nameClick"
                   >
                     <span className="name">{listItem.name}</span>
                   </Clickable>

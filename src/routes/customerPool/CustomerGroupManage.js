@@ -624,8 +624,7 @@ export default class CustomerGroupManage extends PureComponent {
           <div className={styles.rightSection}>
             <Clickable
               onClick={this.showGroupDetailModal}
-              eventName="/click/customerGroupManager"
-              payload={{ test: 'add' }}
+              eventName="/click/customerGroupManager/add"
             >
               <Button type="primary" className={styles.addBtn}>新增</Button>
             </Clickable>
@@ -670,16 +669,14 @@ export default class CustomerGroupManage extends PureComponent {
               footer={<div className={styles.operationBtnSection}>
                 <Clickable
                   onClick={this.handleCloseModal}
-                  eventName="/click/customerGroupManager"
-                  payload={{ test: 'cancel' }}
+                  eventName="/click/customerGroupManager/cancel"
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
                 <Clickable
                   // 加入节流函数
                   onClick={_.debounce(this.handleSubmit, 250)}
-                  eventName="/click/customerGroupManager"
-                  payload={{ test: 'submit' }}
+                  eventName="/click/customerGroupManager/submit"
                 >
                   <Button
                     htmlType="submit"

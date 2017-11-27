@@ -88,8 +88,7 @@ export default class CustomerGroupListSearch extends PureComponent {
               suffix={(
                 <Clickable
                   onClick={this.handleSearchEnter}
-                  eventName="/click/customerGroupListSearch"
-                  payload={{ test: 'inputSearch' }}
+                  eventName="/click/customerGroupListSearch/inputSearch"
                 >
                   <Button className="search-btn" size="large" type="primary">
                     <Icon type="search" />

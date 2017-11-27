@@ -189,8 +189,7 @@ export default class GroupTable extends PureComponent {
                   _.map(actionSource, itemData => (
                     <Clickable
                       onClick={() => itemData.handler(record)}
-                      eventName="/click/groupTabel"
-                      payload={{ test: 'operationLastColumn' }}
+                      eventName="/click/groupTabel/operationLastColumn"
                     >
                       <span className={styles.link} key={itemData.type}>
                         {itemData.type}
@@ -212,8 +211,7 @@ export default class GroupTable extends PureComponent {
               <div className={styles.operation}>
                 <Clickable
                   onClick={() => firstColumnHandler(record)}
-                  eventName="/click/groupTabel"
-                  payload={{ test: 'operationFirstColumn' }}
+                  eventName="/click/groupTabel/operationFirstColumn"
                 >
                   <span title={record[item.key]} className={styles.link}>
                     {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
@@ -235,8 +233,7 @@ export default class GroupTable extends PureComponent {
                 <div className={styles.operation}>
                   <Clickable
                     onClick={() => firstColumnHandler(record)}
-                    eventName="/click/groupTabel"
-                    payload={{ test: 'operationColumn' }}
+                    eventName="/click/groupTabel/operationColumn"
                   >
                     <span title={record[item.key]} className={styles.link}>
                       {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}

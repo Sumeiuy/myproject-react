@@ -311,8 +311,7 @@ export default class TaskPreview extends PureComponent {
           isNeedApproval ? (
             <Clickable
               onClick={this.handleClick}
-              eventName="/click/taskPreview"
-              payload={{ test: 'selectApprover' }}
+              eventName="/click/taskPreview/selectApprover"
             >
               <div className={styles.selectApprover}>
                 <span>选择审批人：</span>
@@ -338,15 +337,13 @@ export default class TaskPreview extends PureComponent {
                 <div className={styles.btnSection}>
                   <Clickable
                     onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview"
-                    payload={{ test: 'cancel' }}
+                    eventName="/click/taskPreview/cancel"
                   >
                     <Button type="default" size="default">取消</Button>
                   </Clickable>
                   <Clickable
                     onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview"
-                    payload={{ test: 'confirm' }}
+                    eventName="/click/taskPreview/confirm"
                   >
                     <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
                   </Clickable>
@@ -366,8 +363,7 @@ export default class TaskPreview extends PureComponent {
                       suffix={(
                         <Clickable
                           onClick={this.handleSearchApproval}
-                          eventName="/click/taskPreview"
-                          payload={{ test: 'search' }}
+                          eventName="/click/taskPreview/search"
                         >
                           <Button
                             className="search-btn"

@@ -177,8 +177,7 @@ export default class RightPanel extends PureComponent {
                   客户列表
                   <Clickable
                     onClick={this.handleSeeCust}
-                    eventName="/click/rightPanel"
-                    payload={{ test: 'lookOverview' }}
+                    eventName="/click/taskListRightPanel/lookOverview"
                   >
                     <a className={styles.seeCust}>查看预览</a>
                   </Clickable>
@@ -272,8 +271,7 @@ export default class RightPanel extends PureComponent {
             footer={
               <Clickable
                 onClick={this.handleCloseModal}
-                eventName="/click/rightPanel"
-                payload={{ test: 'confirm' }}
+                eventName="/click/taskListRightPanel/confirm"
               >
                 <Button type="primary" size="default">确定</Button>
               </Clickable>

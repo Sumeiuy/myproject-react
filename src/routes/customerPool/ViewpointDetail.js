@@ -67,8 +67,7 @@ export default class ViewpointDetail extends PureComponent {
     return (
       <Clickable
         onClick={() => this.handleDownloadClick({ format })}
-        eventName="/click/viewpointDetail"
-        payload={{ test: 'download' }}
+        eventName="/click/viewpointDetail/download"
       >
         <a
           href={loadUrl}
@@ -120,8 +119,7 @@ export default class ViewpointDetail extends PureComponent {
               <div className={styles.titleRow}>
                 <Clickable
                   onClick={this.handleBackClick}
-                  eventName="/click/viewpointDetail"
-                  payload={{ test: 'backToList' }}
+                  eventName="/click/viewpointDetail/backToList"
                 >
                   <div className={classnames(styles.backColumn, styles.upper)}>
                     <div className={styles.iconContainer}>
@@ -184,8 +182,7 @@ export default class ViewpointDetail extends PureComponent {
               </div>
               <Clickable
                 onClick={this.handleBackClick}
-                eventName="/click/viewpointDetail"
-                payload={{ test: 'backToList' }}
+                eventName="/click/viewpointDetail/backToList"
               >
                 <div className={classnames(styles.backColumn, styles.under)}>
                   <div className={styles.iconContainer}>

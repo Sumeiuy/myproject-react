@@ -99,8 +99,7 @@ export default class AddNewGroup extends PureComponent {
           <div className={styles.rightSection}>
             <Clickable
               onClick={goBack}
-              eventName="/click/addNewGroup"
-              payload={{ test: 'cancel' }}
+              eventName="/click/addNewGroup/cancel"
             >
               <Button>取消</Button>
             </Clickable>

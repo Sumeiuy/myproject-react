@@ -125,8 +125,7 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.text2}>你可以在
             <Clickable
               onClick={this.LinkToGroupManage}
-              eventName="/click/addCustSuccess"
-              payload={{ test: 'linkToCustGroup' }}
+              eventName="/click/addCustSuccess/linkToCustGroup"
             >
               <span className={styles.linkTo}>客户分组</span>
             </Clickable>
@@ -136,8 +135,7 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.successBtn}>
             <Clickable
               onClick={this.goToIndex}
-              eventName="/click/addCustSuccess"
-              payload={{ test: 'backHome' }}
+              eventName="/click/addCustSuccess/backHome"
             >
               <Button type="primary">返回首页</Button>
             </Clickable>

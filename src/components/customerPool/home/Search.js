@@ -268,8 +268,7 @@ export default class Search extends PureComponent {
             tagNumId: item.tagNumId || '',
             q: encodeURIComponent(item.labelNameVal),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          eventName="/click/search"
-          payload={{ test: 'recommendClick' }}
+          eventName="/click/search/recommend"
           key={item.id}
         >
           <a
@@ -369,8 +368,7 @@ export default class Search extends PureComponent {
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          eventName="/click/search"
-          payload={{ test: 'option' }}
+          eventName="/click/search/option"
         >
           <a
             dangerouslySetInnerHTML={{ __html: newContent }}
@@ -410,8 +408,7 @@ export default class Search extends PureComponent {
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
                 }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-                eventName="/click/search"
-                payload={{ test: 'group' }}
+                eventName="/click/search/group"
               >
                 <a rel="noopener noreferrer">{item.labelNameVal}</a>
               </Clickable>
@@ -434,8 +431,7 @@ export default class Search extends PureComponent {
         {title}
         <Clickable
           onClick={this.handleClearHistory}
-          eventName="/click/search"
-          payload={{ test: 'delete' }}
+          eventName="/click/search/deleteHistoryRecord"
         >
           <a
             className={styles.delHistory_a}
@@ -473,7 +469,6 @@ export default class Search extends PureComponent {
                     <Clickable
                       onClick={this.handleSearchBtn}
                       eventName="/click/search"
-                      payload={{ test: 'search' }}
                     >
                       <Button
                         className="search-btn"

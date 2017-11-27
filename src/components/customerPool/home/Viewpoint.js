@@ -54,8 +54,7 @@ export default class Viewpoint extends PureComponent {
     return titleArray.map((item, index) => (
       <Clickable
         onClick={() => { this.handleDetailClick(index); }}
-        eventName="/click/viewpointList"
-        payload={{ test: `clickIndex[${index}]` }}
+        eventName="/click/Home/viewpointList"
         key={item.id}
       >
         <div className={classnames(styles.row, { [styles.none]: (index >= 12) })}>
@@ -117,8 +116,7 @@ export default class Viewpoint extends PureComponent {
             >
               <Clickable
                 onClick={() => { this.handleDetailClick(0); }}
-                eventName="/click/viewpointDetail"
-                payload={{ test: 'clickIndex[0]' }}
+                eventName="/click/Home/viewpointDetail"
               >
                 <a>详情</a>
               </Clickable>
@@ -141,8 +139,7 @@ export default class Viewpoint extends PureComponent {
               <div className={styles.fold} >
                 <Clickable
                   onClick={this.handleMoreClick}
-                  eventName="/click/viewpointMore"
-                  payload={{ test: 'clickMore' }}
+                  eventName="/click/Home/viewpointMore"
                 >
                   <a>{'更多'}</a>
                 </Clickable>

@@ -217,8 +217,7 @@ export default class BottomFixedBox extends PureComponent {
       return (
         <Clickable
           onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
-          eventName="/click/bottomFixedBox"
-          payload={{ test: 'custGroup' }}
+          eventName="/click/custListBottomFixedBox/custGroup"
         >
           <button>用户分组</button>
         </Clickable>
@@ -231,8 +230,7 @@ export default class BottomFixedBox extends PureComponent {
     return (
       <Clickable
         onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
-        eventName="/click/bottomFixedBox"
-        payload={{ test: 'launchTask' }}
+        eventName="/click/custListBottomFixedBox/launchTask"
       >
         <button>发起任务</button>
       </Clickable>

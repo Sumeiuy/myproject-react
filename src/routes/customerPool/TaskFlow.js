@@ -545,8 +545,7 @@ export default class TaskFlow extends PureComponent {
               &&
               <Clickable
                 onClick={this.handleCloseTab}
-                eventName="/click/taskFlow"
-                payload={{ test: 'cancel' }}
+                eventName="/click/taskFlow/cancel"
               >
                 <Button className={styles.cancelBtn} type="default">取消</Button>
               </Clickable>
@@ -556,8 +555,7 @@ export default class TaskFlow extends PureComponent {
               &&
               <Clickable
                 onClick={this.handlePreviousStep}
-                eventName="/click/taskFlow"
-                payload={{ test: 'lastStep' }}
+                eventName="/click/taskFlow/lastStep"
               >
                 <Button className={styles.prevStepBtn} type="default">上一步</Button>
               </Clickable>
@@ -567,8 +565,7 @@ export default class TaskFlow extends PureComponent {
               &&
               <Clickable
                 onClick={_.debounce(this.handleNextStep, 250)}
-                eventName="/click/taskFlow"
-                payload={{ test: 'nextStep' }}
+                eventName="/click/taskFlow/nextStep"
               >
                 <Button className={styles.nextStepBtn} type="primary">下一步</Button>
               </Clickable>
@@ -578,8 +575,7 @@ export default class TaskFlow extends PureComponent {
               &&
               <Clickable
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                eventName="/click/taskFlow"
-                payload={{ test: 'submit' }}
+                eventName="/click/taskFlow/submit"
               >
                 <Button className={styles.confirmBtn} type="primary">确认无误，提交</Button>
               </Clickable>

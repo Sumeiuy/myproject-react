@@ -11,7 +11,6 @@ import { Progress } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-// import Clickable from '../../../components/common/Clickable';
 
 import styles from './progressList.less';
 

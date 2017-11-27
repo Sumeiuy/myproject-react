@@ -313,8 +313,7 @@ export default class CreateTaskForm extends PureComponent {
             <Col className={styles.more}>
               <Clickable
                 onClick={this.handleMore}
-                eventName="/click/serviceLog"
-                payload={{ test: 'loadMoreServiceRecord' }}
+                eventName="/click/serviceLog/loadMore"
               >
                 <Button>加载更多服务记录</Button>
               </Clickable>

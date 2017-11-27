@@ -53,8 +53,7 @@ export default class Order extends PureComponent {
           <div className={styles.btn}>
             <Clickable
               onClick={() => this.handleSort(totalAssetsAsc)}
-              eventName="/click/recorder"
-              payload={{ test: 'assetsAscOrder' }}
+              eventName="/click/custListOrder/assetsAscOrder"
             >
               <Icon
                 type="xiangshang"
@@ -63,8 +62,7 @@ export default class Order extends PureComponent {
             </Clickable>
             <Clickable
               onClick={() => this.handleSort(totalAssetsDesc)}
-              eventName="/click/recorder"
-              payload={{ test: 'assetsDescOrder' }}
+              eventName="/click/custListOrder/assetsDescOrder"
             >
               <Icon
                 type="xiangxia"
@@ -78,8 +76,7 @@ export default class Order extends PureComponent {
           <div className={styles.btn}>
             <Clickable
               onClick={() => this.handleSort(openTimeAsc)}
-              eventName="/click/recorder"
-              payload={{ test: 'timeAscOrder' }}
+              eventName="/click/custListOrder/timeAscOrder"
             >
               <Icon
                 type="xiangshang"
@@ -88,8 +85,7 @@ export default class Order extends PureComponent {
             </Clickable>
             <Clickable
               onClick={() => this.handleSort(openTimeDesc)}
-              eventName="/click/recorder"
-              payload={{ test: 'timeDescOrder' }}
+              eventName="/click/custListOrder/timeDescOrder"
             >
               <Icon
                 type="xiangxia"
@@ -103,8 +99,7 @@ export default class Order extends PureComponent {
           <div className={styles.btn}>
             <Clickable
               onClick={() => this.handleSort(commissionAsc)}
-              eventName="/click/recorder"
-              payload={{ test: 'commissionAscOrder' }}
+              eventName="/click/custListOrder/commissionAscOrder"
             >
               <Icon
                 type="xiangshang"
@@ -113,8 +108,7 @@ export default class Order extends PureComponent {
             </Clickable>
             <Clickable
               onClick={() => this.handleSort(commissionDesc)}
-              eventName="/click/recorder"
-              payload={{ test: 'commissionAscOrder' }}
+              eventName="/click/custListOrder/commissionAscOrder"
             >
               <Icon
                 type="xiangxia"

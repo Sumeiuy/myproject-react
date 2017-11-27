@@ -392,15 +392,13 @@ export default class CustomerGroup extends PureComponent {
                       <Col span={12}>
                         <Clickable
                           onClick={this.handleCancel}
-                          eventName="/click/customerGroup"
-                          payload={{ test: 'cancel' }}
+                          eventName="/click/customerGroup/cancel"
                         >
                           <Button>取消</Button>
                         </Clickable>
                         <Clickable
                           onClick={this.handleSubmit}
-                          eventName="/click/customerGroup"
-                          payload={{ test: 'submit' }}
+                          eventName="/click/customerGroup/submit"
                         >
                           <Button type="primary">保存</Button>
                         </Clickable>

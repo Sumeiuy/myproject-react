@@ -46,8 +46,7 @@ function renderIntro(data) {
       <div className={styles.row} key={`row${index}`}>
         <Clickable
           onClick={() => linkToList(item)}
-          eventName="/click/fuuney"
-          payload={{ test: 'linkToList' }}
+          eventName="/click/fuuney/linkToList"
         >
           <div className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}>
             {item.value}

@@ -124,8 +124,7 @@ export default class CreateTaskSuccess extends PureComponent {
             <div className={styles.taskSuccess_btn}>
               <Clickable
                 onClick={this.goToHome}
-                eventName="/click/createTaskSuccess"
-                payload={{ test: 'backHome' }}
+                eventName="/click/createTaskSuccess/backHome"
               >
                 <Button type="primary">返回首页</Button>
               </Clickable>

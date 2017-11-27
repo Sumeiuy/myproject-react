@@ -196,8 +196,7 @@ export default class TaskSearchRow extends PureComponent {
               />
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow"
-                payload={{ test: 'checkCust' }}
+                eventName="/click/taskSearchRow/checkCust"
               >
                 <Button className={styles.seeCust}>查看客户</Button>
               </Clickable>
@@ -254,8 +253,7 @@ export default class TaskSearchRow extends PureComponent {
                 footer={[
                   <Clickable
                     onClick={this.handleCancel}
-                    eventName="/click/taskSearchRow"
-                    payload={{ test: 'close' }}
+                    eventName="/click/taskSearchRow/close"
                   >
                     <Button key="back" size="large">关闭</Button>
                   </Clickable>,

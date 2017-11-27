@@ -151,8 +151,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_a}`}>
             <Clickable
               onClick={this.handleMotClick}
-              eventName="/click/toBeDone"
-              payload={{ test: 'canDoTodayClick' }}
+              eventName="/click/taskOverview/canDoTodayClick"
             >
               <a className="item">
                 <div className={styles.content}>
@@ -169,8 +168,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_b}`}>
             <Clickable
               onClick={this.linkToBusiness}
-              eventName="/click/toBeDone"
-              payload={{ test: 'bisinessCustClick' }}
+              eventName="/click/taskOverview/bisinessCust"
             >
               <a className="item">
                 <div className={styles.content}>
@@ -190,8 +188,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_c}`}>
             <Clickable
               onClick={() => fspGlobal.openRctTab({ url, param })}
-              eventName="/click/toBeDone"
-              payload={{ test: 'workFlowClick' }}
+              eventName="/click/taskOverview/toDoFlow"
             >
               <a className="item">
                 <div className={styles.content}>
@@ -208,8 +205,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_d}`}>
             <Clickable
               onClick={this.handleMessageClick}
-              eventName="/click/toBeDone"
-              payload={{ test: 'messageNotificationClick' }}
+              eventName="/click/taskOverview/messageNotification"
             >
               <a className="item">
                 <div className={styles.content}>

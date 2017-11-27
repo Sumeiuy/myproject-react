@@ -286,8 +286,7 @@ export default class CustomerSegment extends PureComponent {
               footer={
                 <Clickable
                   onClick={this.handleCloseModal}
-                  eventName="/click/customerSegment"
-                  payload={{ test: 'confirm' }}
+                  eventName="/click/customerSegment/confirm"
                 >
                   <Button type="primary" size="default">确定</Button>
                 </Clickable>

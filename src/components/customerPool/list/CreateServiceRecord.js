@@ -353,15 +353,13 @@ export default class CreateServiceRecord extends PureComponent {
       <div className={styles.customFooter}>
         <Clickable
           onClick={this.handleCancel}
-          eventName="/click/createServiceRecord"
-          payload={{ test: 'cancel' }}
+          eventName="/click/createServiceRecord/cancel"
         >
           <a className={styles.cancelBtn}>取消</a>
         </Clickable>
         <Clickable
           onClick={this.handleSubmit}
-          eventName="/click/createServiceRecord"
-          payload={{ test: 'submit' }}
+          eventName="/click/createServiceRecord/submit"
         >
           <a className={styles.submitBtn}>提交</a>
         </Clickable>

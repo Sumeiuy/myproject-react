@@ -124,8 +124,7 @@ export default class QuickMenu extends PureComponent {
         <ul className={styles.operationIcon}>
           <Clickable
             onClick={() => createModal(listItem)}
-            eventName="/click/quickMenu"
-            payload={{ test: 'telcontact' }}
+            eventName="/click/quickMenu/telcontact"
           >
             <li>
               <Icon type="dianhua" />
@@ -151,8 +150,7 @@ export default class QuickMenu extends PureComponent {
           */}
           <Clickable
             onClick={() => this.handleAddFollow(listItem)}
-            eventName="/click/quickMenu"
-            payload={{ test: 'guanzhu' }}
+            eventName="/click/quickMenu/guanzhu"
           >
             <li className={isFollow ? styles.follows : ''}>
               <Icon type="guanzhu" />
@@ -165,8 +163,7 @@ export default class QuickMenu extends PureComponent {
               custName: listItem.name,
               flag: true,
             })}
-            eventName="/click/quickMenu"
-            payload={{ test: 'addRecord' }}
+            eventName="/click/quickMenu/addRecord"
           >
             <li>
               <Icon type="jilu" />
