@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 14:18:43
+ * @Last Modified time: 2017-11-27 14:56:05
  */
 
 
@@ -23,8 +23,11 @@ const { Option } = Select;
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 
-// 日期组件的显示格式
+// 日期组件的格式
 const dateFormat = 'YYYY/MM/DD';
+// 界面上显示的日期格式
+const showDateFormat = 'YYYY年MM月DD日';
+
 const timeFormat = 'HH:mm';
 // 当天时间
 const CURRENT_DATE = moment(new Date(), dateFormat);
@@ -251,12 +254,9 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
-  // 提供所有数据
+  // 向组件外部提供所有数据
   @autobind
   getData() {
-    const serviceContentNode = this.serviceContent.textAreaRef;
-    const serviceContent = _.trim(serviceContentNode.value);
-
     const {
       serviceWay,
       serviceType,
@@ -267,6 +267,7 @@ export default class ServiceRecordContent extends PureComponent {
       feedbackTypeChild,
       serviceStatus,
       uploadedFileKey,
+      serviceContent,
     } = this.state;
 
     return {
@@ -286,9 +287,15 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   resetField() {
     const { originFormData } = this.state;
+    // 清除上传文件列表
+    this.uploadElem.clearUploadFile();
+
     this.setState({
       ...this.state,
       ...originFormData,
+      currentFile: {},
+      uploadedFileKey: '',
+      originFileName: '',
     });
   }
 
@@ -425,6 +432,18 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  /**
+   * 处理服务记录文本框输入事件
+   * @param {*} e event
+   */
+  @autobind
+  handleServiceRecordInputChange(e) {
+    console.log(e.target.value);
+    this.setState({
+      serviceContent: e.target.value,
+    });
+  }
+
   render() {
     const {
       dict,
@@ -446,6 +465,7 @@ export default class ServiceRecordContent extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
+      serviceContent,
     } = this.state;
 
     if (!dict) {
@@ -457,8 +477,8 @@ export default class ServiceRecordContent extends PureComponent {
 
     const serviceDateProps = !this.isReadOnly ? {
       allowClear: false,
-      value: moment(serviceDate, dateFormat),
-      format: dateFormat,
+      value: moment(serviceDate, showDateFormat),
+      format: showDateFormat,
       onChange: this.handleServiceDate,
       disabledDate: this.disabledDate,
     } : {
@@ -478,8 +498,8 @@ export default class ServiceRecordContent extends PureComponent {
 
     const feedbackTimeProps = !this.isReadOnly ? {
       allowClear: false,
-      value: moment(feedbackDate, dateFormat),
-      format: dateFormat,
+      value: moment(feedbackDate, showDateFormat),
+      format: showDateFormat,
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
     } : {
@@ -573,7 +593,7 @@ export default class ServiceRecordContent extends PureComponent {
                   <DatePicker
                     style={width}
                     {...serviceDateProps}
-                    defaultValue={moment(CURRENT_DATE, dateFormat)}
+                    defaultValue={moment(CURRENT_DATE, showDateFormat)}
                   />
                   <TimePicker
                     style={width}
@@ -592,8 +612,10 @@ export default class ServiceRecordContent extends PureComponent {
           <div className={styles.content}>
             <TextArea
               rows={5}
-              ref={ref => this.serviceContent = ref}
               disabled={this.isReadOnly}
+              value={serviceContent}
+              defaultValue={serviceContent}
+              onChange={this.handleServiceRecordInputChange}
             />
           </div>
         </div>
@@ -646,7 +668,7 @@ export default class ServiceRecordContent extends PureComponent {
                   <DatePicker
                     style={width}
                     {...feedbackTimeProps}
-                    defaultValue={moment(CURRENT_DATE, dateFormat)}
+                    defaultValue={moment(CURRENT_DATE, showDateFormat)}
                   />
                 </div>
               </div>
@@ -657,6 +679,7 @@ export default class ServiceRecordContent extends PureComponent {
         <div className={styles.uploadSection}>
           {
             !this.isReadOnly ? <Uploader
+              ref={ref => (this.uploadElem = ref)}
               onOperateFile={this.handleFileUpload}
               attachModel={currentFile}
               fileKey={uploadedFileKey}
