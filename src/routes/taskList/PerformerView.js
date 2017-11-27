@@ -34,14 +34,21 @@ const effects = {
   addServeRecord: 'customerPool/addServeRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
+  getCustIncome: 'customerPool/getCustIncome',
 };
 
 const mapStateToProps = state => ({
-  // 左侧列表数据
+  // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.app.seibleList,
   dict: state.app.dict,
-  serviceRecordData: state.customerPool.taskDetailBasicInfo,
+  // 详情中目标客户的数据
+  targetCustList: state.performerView.targetCustList,
+  serviceRecordData: state.customerPool.serviceRecordData,
+  // 接口的loading状态
+  interfaceState: state.loading.effects,
+  // 6个月收益数据
+  monthlyProfits: state.customerPool.monthlyProfits,
 });
 
 const mapDispatchToProps = {
@@ -54,6 +61,8 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 最近五次服务记录
   getServiceRecord: fetchDataFunction(false, effects.getServiceRecord),
+  // 获取最近6个月收益
+  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -67,9 +76,15 @@ export default class PerformerView extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     taskDetailBasicInfo: PropTypes.object.isRequired,
+    targetCustList: PropTypes.object.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
+    // 接口的loading状态
+    interfaceState: PropTypes.object.isRequired,
+    // 6个月收益数据
+    monthlyProfits: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -88,7 +103,7 @@ export default class PerformerView extends PureComponent {
         query,
       query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
       getPerformerViewList,
@@ -278,9 +293,13 @@ export default class PerformerView extends PureComponent {
       dict,
       addServeRecord,
       taskDetailBasicInfo,
+      targetCustList,
       handleCollapseClick,
       getServiceRecord,
       serviceRecordData,
+      interfaceState,
+      getCustIncome,
+      monthlyProfits,
     } = this.props;
     console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
@@ -324,13 +343,18 @@ export default class PerformerView extends PureComponent {
 
     const rightPanel = (
       <PerformerViewDetail
+        location={location}
+        replace={replace}
         dict={dict}
-        isReadOnly={false}
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
+        targetCustList={targetCustList}
         handleCollapseClick={handleCollapseClick}
         getServiceRecord={getServiceRecord}
         serviceRecordData={serviceRecordData}
+        getCustIncome={getCustIncome}
+        monthlyProfits={monthlyProfits}
+        custIncomeReqState={interfaceState[effects.getCustIncome]}
       />
     );
     return (
