@@ -29,6 +29,11 @@ export default class SixMonthEarnings extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
+    displayText: PropTypes.string,
+  }
+
+  static defaultProps = {
+    displayText: '详情',
   }
 
   constructor(props) {
@@ -74,6 +79,7 @@ export default class SixMonthEarnings extends PureComponent {
       monthlyProfits,
       custIncomeReqState,
       formatAsset,
+      displayText,
     } = this.props;
     const {
       isShowCharts,
@@ -167,7 +173,7 @@ export default class SixMonthEarnings extends PureComponent {
           getPopupContainer={this.getPopupContainer}
           visible={isShowCharts}
         >
-          <em className={styles.showDetail}>详情</em>
+          <em className={styles.showDetail}>{displayText}</em>
         </Tooltip>
       </div>
     );
