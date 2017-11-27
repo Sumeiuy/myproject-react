@@ -27,6 +27,7 @@
  * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
  * scrollX：不必要，表x方向滑动时，设置的最大宽度。
  *          要考虑到，操作栏的宽度40px，虽然是组件内部添加的，用户传入的scrollX时，需要考虑在内。
+ * isNeedTransfer: 不必要，默认值为true。是否有操作列，实现穿梭功能
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Input, Checkbox } from 'antd';
@@ -135,6 +136,7 @@ export default class TableTransfer extends Component {
       PropTypes.number,
       PropTypes.string,
     ]),
+    isNeedTransfer: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -151,6 +153,7 @@ export default class TableTransfer extends Component {
     supportSearchKey: [],
     aboutRate: [],
     scrollX: '',
+    isNeedTransfer: true,
   }
 
   constructor(props) {
@@ -201,6 +204,14 @@ export default class TableTransfer extends Component {
     return int2Float(totalRate);
   }
 
+  addActionColumn(isNeed, type, scrollX) {
+    return (
+      isNeed ? (
+        actionColumns(type, scrollX !== '', this.handleClick) // scrollX 的默认值为 ''
+      ) : {}
+    );
+  }
+
   // 重置数据源
   @autobind
   resetDataSource(nextProps) {
@@ -214,6 +225,7 @@ export default class TableTransfer extends Component {
       disableCheckKey,
       aboutRate,
       scrollX,
+      isNeedTransfer,
     } = nextProps || this.props;
     // 第一步，添加方便操作的key
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
@@ -239,11 +251,11 @@ export default class TableTransfer extends Component {
       secondArray: initSecondArray,
       firstColumns: [
         ...firstColumns,
-        actionColumns('first', scrollX !== '', this.handleClick), // scrollX 的默认值为 ''
+        this.addActionColumn(isNeedTransfer, 'first', scrollX),
       ],
       secondColumns: [
         ...initSecondColumns,
-        actionColumns('second', scrollX !== '', this.handleClick), // scrollX 的默认值为 ''
+        this.addActionColumn(isNeedTransfer, 'second', scrollX),
       ],
       rate: {
         rateFlag, // 是否计算佣金率
