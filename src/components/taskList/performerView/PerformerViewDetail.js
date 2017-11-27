@@ -14,6 +14,12 @@ import ServiceRecord from './ServiceRecord';
 
 import styles from './performerViewDetail.less';
 
+// 客户任务所处待处理和处理中时服务记录可编辑
+// 处理中 106110
+// 待处理  106112
+// 此处code码待修改
+const EDITABLE = ['106110', '106112'];
+
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -73,6 +79,15 @@ export default class PerformerViewDetail extends PureComponent {
     const currentCustId = targetCustId || custId;
     // 根据当前选中的数据的custId来获取这条数据
     const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
+
+    const { missionStatusCode, missionStatusValue } = currentSelectedCust;
+
+    // 处理中 和 待处理 时表单可编辑
+    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
+    const missionStatus = {
+      missionStatusCode,
+      missionStatusValue,
+    };
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
@@ -100,7 +115,8 @@ export default class PerformerViewDetail extends PureComponent {
         <ServiceRecord
           dict={dict}
           addServeRecord={addServeRecord}
-          currentSelectedCust={currentSelectedCust}
+          isReadOnly={isReadOnly}
+          missionStatus={missionStatus}
         />
       </div>
     );
