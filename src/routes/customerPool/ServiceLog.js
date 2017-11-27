@@ -169,7 +169,6 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleMore() {
-    console.log(this.props);
     const { location: { query },
       getServiceLogMore,
     } = this.props;
@@ -181,7 +180,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    params.custId = '02001404'; // 本地测试用的数据
+    // params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
@@ -194,7 +193,6 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   serveAllSourceChange(value) {
-    console.log(value);
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -221,7 +219,6 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   serveAllTypeChange(value) {
-    console.log(value);
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
     if (value === '所有类型') {
