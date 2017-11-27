@@ -38,8 +38,11 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
-  // 改变详情中的用来查询的参数
   changeParameter: 'performerView/changeParameter',
+  queryTargetCust: 'performerView/queryTargetCust',
+  queryTargetCustDetail: 'performerView/queryTargetCustDetail',
+  getTaskDetailBasicInfo: 'performerView/getTaskDetailBasicInfo',
+  queryCustUuid: 'performerView/queryCustUuid',
 };
 
 const mapStateToProps = state => ({
@@ -58,6 +61,8 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits,
   // 任务详情中目标客户列表当前选中的详情信息
   targetCustDetail: state.performerView.targetCustDetail,
+  // 添加服务记录和上传附件用的custUuid
+  custUuid: state.performerView.custUuid,
 });
 
 const mapDispatchToProps = {
@@ -72,7 +77,16 @@ const mapDispatchToProps = {
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   // 获取最近6个月收益
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
+  // 改变详情中的用来查询的参数
   changeParameter: fetchDataFunction(false, effects.changeParameter),
+  // 查询详情中目标客户列表
+  queryTargetCust: fetchDataFunction(true, effects.queryTargetCust),
+  // 查询详情中目标客户的详情
+  queryTargetCustDetail: fetchDataFunction(true, effects.queryTargetCustDetail),
+  // 右侧详情的基本信息
+  getTaskDetailBasicInfo: fetchDataFunction(true, effects.getTaskDetailBasicInfo),
+  // 获取添加服务记录和上传附件用的custUuid
+  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -98,6 +112,11 @@ export default class PerformerView extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     targetCustDetail: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryTargetCustDetail: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    getTaskDetailBasicInfo: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -205,14 +224,37 @@ export default class PerformerView extends PureComponent {
         currentSubtype: st,
         activeRowIndex: itemIndex,
       });
-      this.props.taskDetailBasicInfo(item);
+      this.loadDetailContent(item);
     }
   }
 
-  // 头部新建页面
+  // 获取目标客户列表项的对应浮层详情
   @autobind
-  creatPermossionModal() {
+  getCustDetail({ missionId = '', custId = '' }) {
+    const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
+    const { list = [] } = targetCustList;
+    if (_.isEmpty(list)) {
+      return;
+    }
+    queryTargetCustDetail({
+      missionId,
+      custId: custId || (list[0] || EMPTY_OBJECT).custId,
+    });
+  }
 
+  // 加载右侧panel中的详情内容
+  @autobind
+  loadDetailContent(obj) {
+    const {
+      getTaskDetailBasicInfo,
+      queryTargetCust,
+    } = this.props;
+    getTaskDetailBasicInfo({
+      missionId: obj.id,
+    });
+    queryTargetCust({
+      missionId: obj.id,
+    }).then(() => this.getCustDetail({ missionId: obj.id }));
   }
 
   // 点击列表每条的时候对应请求详情
@@ -232,7 +274,13 @@ export default class PerformerView extends PureComponent {
       },
     });
     this.setState({ currentSubtype: st, activeRowIndex: index });
-    this.props.taskDetailBasicInfo(record);
+    this.loadDetailContent(record);
+  }
+
+  // 头部新建页面
+  @autobind
+  creatPermossionModal() {
+
   }
 
   // 切换页码
@@ -314,8 +362,10 @@ export default class PerformerView extends PureComponent {
       targetCustDetail,
       changeParameter,
       parameter,
+      queryTargetCust,
+      queryCustUuid,
+      custUuid,
     } = this.props;
-    console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
@@ -332,7 +382,7 @@ export default class PerformerView extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 10, currentId } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
       current: parseInt(pageNum, 10),
@@ -358,6 +408,7 @@ export default class PerformerView extends PureComponent {
 
     const rightPanel = (
       <PerformerViewDetail
+        currentId={currentId}
         parameter={parameter}
         location={location}
         replace={replace}
@@ -373,6 +424,10 @@ export default class PerformerView extends PureComponent {
         custIncomeReqState={interfaceState[effects.getCustIncome]}
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
+        queryTargetCust={queryTargetCust}
+        queryCustUuid={queryCustUuid}
+        custUuid={custUuid}
+        getCustDetail={this.getCustDetail}
       />
     );
     return (

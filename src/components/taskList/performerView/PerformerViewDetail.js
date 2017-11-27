@@ -10,7 +10,7 @@ import _ from 'lodash';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
-import ServiceRecord from './ServiceRecord';
+import ServiceRecordForm from './ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
@@ -23,6 +23,7 @@ const EDITABLE = ['106110', '106112'];
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
+    currentId: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     basicInfo: PropTypes.object.isRequired,
@@ -39,6 +40,11 @@ export default class PerformerViewDetail extends PureComponent {
     targetCustDetail: PropTypes.object.isRequired,
     parameter: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryTargetCustDetail: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    getCustDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -50,6 +56,7 @@ export default class PerformerViewDetail extends PureComponent {
 
   render() {
     const {
+      currentId,
       location,
       replace,
       basicInfo,
@@ -67,6 +74,10 @@ export default class PerformerViewDetail extends PureComponent {
       changeParameter,
       parameter,
       parameter: { targetCustId = '' },
+      queryTargetCust,
+      queryCustUuid,
+      custUuid,
+      getCustDetail,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -78,19 +89,41 @@ export default class PerformerViewDetail extends PureComponent {
       hasSurvey,
       ...otherProps
     } = basicInfo;
-    const { list, list: [{ custId = '' }] } = targetCustList;
+    const { list = [] } = targetCustList;
     // 获取当前选中的数据的custId
-    const currentCustId = targetCustId || custId;
-    // 根据当前选中的数据的custId来获取这条数据
-    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
+    const currentCustId = targetCustId || (list[0] || {}).custId;
 
-    const { missionStatusCode, missionStatusValue } = currentSelectedCust;
+    const { missionStatusCode } = targetCustDetail;
 
     // 处理中 和 待处理 时表单可编辑
     const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
-    const missionStatus = {
-      missionStatusCode,
-      missionStatusValue,
+    const {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceStatusName,
+      serviceStatusCode,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      attachmentRecord,
+      custId,
+    } = targetCustDetail;
+    // 服务记录的props
+    const serviceReocrd = {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceStatusName,
+      serviceStatusCode,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      attachmentRecord,
+      custId,
+      custUuid,
     };
     return (
       <div className={styles.performerViewDetail}>
@@ -103,6 +136,7 @@ export default class PerformerViewDetail extends PureComponent {
           {...otherProps}
         />
         <TargetCustomer
+          currentId={currentId}
           isFold={isFold}
           location={location}
           replace={replace}
@@ -117,13 +151,20 @@ export default class PerformerViewDetail extends PureComponent {
           targetCustDetail={targetCustDetail}
           changeParameter={changeParameter}
           parameter={parameter}
+          queryTargetCust={queryTargetCust}
+          queryCustUuid={queryCustUuid}
+          getCustDetail={getCustDetail}
           {...targetCustList}
         />
-        <ServiceRecord
+        <ServiceRecordForm
           dict={dict}
           addServeRecord={addServeRecord}
           isReadOnly={isReadOnly}
-          missionStatus={missionStatus}
+          isEntranceFromPerformerView
+          formData={{}}
+          serviceType={''}
+          isFold={isFold}
+          serviceReocrd={serviceReocrd}
         />
       </div>
     );

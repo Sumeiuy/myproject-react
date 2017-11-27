@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-22 20:28:05
+ * @Last Modified time: 2017-11-27 14:56:13
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -259,6 +259,20 @@ export default class Uploader extends PureComponent {
     const { onHandleOverview } = this.props;
     const { uploadedFileKey } = this.state;
     onHandleOverview(uploadedFileKey);
+  }
+
+  /**
+   * 清除当前上传的文件列表和历史记录
+   */
+  @autobind
+  clearUploadFile() {
+    this.setState({
+      lastFile: {},
+      uploadedFileKey: '',
+      isShowUpload: true,
+      // 删除完毕之后，打开上传进度开关
+      showUploadList: true,
+    });
   }
 
   render() {

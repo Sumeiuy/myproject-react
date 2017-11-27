@@ -29,6 +29,8 @@ const pageSizeOptions = ['8', '16', '32'];
 export default class TargetCustomer extends PureComponent {
 
   static propTypes = {
+    // 当前任务的id
+    currentId: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
@@ -46,6 +48,9 @@ export default class TargetCustomer extends PureComponent {
     targetCustDetail: PropTypes.object.isRequired,
     parameter: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    getCustDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -63,33 +68,91 @@ export default class TargetCustomer extends PureComponent {
 
   @autobind
   handleStateChange(key, v) {
-    this.props.changeParameter({
+    const {
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
+    } = this.props;
+    changeParameter({
       [key]: v,
       targetCustomerPageSize: PAGE_SIZE,
       targetCustomerPageNo: PAGE_NO,
     });
+    queryTargetCust({
+      state: v,
+      pageSize: PAGE_SIZE,
+      pageNo: PAGE_NO,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
   @autobind
   handlePageChange(pageNo) {
-    this.props.changeParameter({
+    const {
+      parameter: {
+        targetCustomerPageSize = PAGE_SIZE,
+        targetCustomerState,
+      },
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
+    } = this.props;
+    changeParameter({
       targetCustomerPageNo: pageNo,
     });
+    queryTargetCust({
+      state: targetCustomerState,
+      pageSize: targetCustomerPageSize,
+      pageNo,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
   @autobind
   handleSizeChange(current, pageSize) {
-    this.props.changeParameter({
+    const {
+      parameter: {
+        targetCustomerState,
+      },
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
+    } = this.props;
+    changeParameter({
       targetCustomerPageSize: pageSize,
       targetCustomerPageNo: PAGE_NO,
     });
+    queryTargetCust({
+      state: targetCustomerState,
+      pageSize,
+      pageNo: PAGE_NO,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
+  // 查询客户列表项对应的详情
   @autobind
   handleRowClick({ id }) {
-    this.props.changeParameter({
+    const {
+      currentId,
+      changeParameter,
+      queryCustUuid,
+      getCustDetail,
+    } = this.props;
+    changeParameter({
       targetCustId: id,
     });
+    getCustDetail({
+      custId: id,
+      missionId: currentId,
+    });
+    queryCustUuid();
   }
 
   @autobind
@@ -114,11 +177,9 @@ export default class TargetCustomer extends PureComponent {
       dict,
       page,
       list,
-      location: {
-        query: {
-          pageNo = PAGE_NO,
-          pageSize = PAGE_SIZE,
-        },
+      parameter: {
+        targetCustomerPageNo,
+        targetCustomerPageSize,
       },
       handleCollapseClick,
       getServiceRecord,
@@ -132,8 +193,8 @@ export default class TargetCustomer extends PureComponent {
       return null;
     }
     const { executeTypes, serveWay } = dict;
-    const curPageNo = pageNo || page.pageNo;
-    const curPageSize = pageSize || page.pageSize;
+    const curPageNo = targetCustomerPageNo || page.pageNo;
+    const curPageSize = targetCustomerPageSize || page.pageSize;
     const stateData = [{
       value: '',
       label: '全部',
