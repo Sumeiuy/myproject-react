@@ -2,13 +2,11 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 14:59:01
+ * @Last Modified time: 2017-11-27 16:34:43
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
 import pathToRegexp from 'path-to-regexp';
-
-const routerPrefix = '/customerPool';
 
 const url = {
   /**
@@ -30,13 +28,14 @@ const url = {
     return qs.stringify(query);
   },
   /**
-   * 检查当前页面路径是否匹配指定子路由
+   * 检查当前页面路径是否匹配指定路径的子路由
    * @author xuxiaoqin
-   * @param {*} route 当前子路由
-   * @param {*} pathname 当前页面路径
+   * @param {String} route 当前子路由
+   * @param {String} pathname 当前页面路径
+   * @param {String} routerPrefix='/customerPool' 路由前缀
    * @returns {String} 全路径
    */
-  matchRoute(route, pathname) {
+  matchRoute(route, pathname, routerPrefix = '/customerPool') {
     return pathToRegexp(`${routerPrefix}/${route}`).exec(pathname);
   },
 };
