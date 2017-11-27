@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 16:34:13
+ * @Last Modified time: 2017-11-27 17:30:26
  * 服务记录表单
  */
 
@@ -60,7 +60,7 @@ export default class ServiceRecordForm extends PureComponent {
     }
 
     if (serviceContent.length > 100) {
-      message.error(`服务的内容字数不能超过${100}`);
+      message.error('服务的内容字数不能超过100');
       return;
     }
 
