@@ -10,7 +10,7 @@ import _ from 'lodash';
 
 import BasicInfo from './BasicInfo';
 import TargetCustomer from './TargetCustomer';
-import ServiceRecord from './ServiceRecord';
+import ServiceRecordForm from './ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
@@ -97,10 +97,14 @@ export default class PerformerViewDetail extends PureComponent {
           monthlyProfits={monthlyProfits}
           {...targetCustList}
         />
-        <ServiceRecord
+        <ServiceRecordForm
           dict={dict}
           addServeRecord={addServeRecord}
+          isEntranceFromPerformerView
+          formData={{}}
+          serviceType={''}
           currentSelectedCust={currentSelectedCust}
+          isFold={isFold}
         />
       </div>
     );
