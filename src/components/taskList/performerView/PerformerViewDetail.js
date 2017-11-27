@@ -37,6 +37,8 @@ export default class PerformerViewDetail extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool,
     targetCustDetail: PropTypes.object.isRequired,
+    parameter: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -62,6 +64,9 @@ export default class PerformerViewDetail extends PureComponent {
       monthlyProfits,
       custIncomeReqState,
       targetCustDetail,
+      changeParameter,
+      parameter,
+      parameter: { targetCustId = '' },
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -73,9 +78,6 @@ export default class PerformerViewDetail extends PureComponent {
       hasSurvey,
       ...otherProps
     } = basicInfo;
-    const {
-      query: { targetCustId = '' },
-    } = location;
     const { list, list: [{ custId = '' }] } = targetCustList;
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || custId;
@@ -113,6 +115,8 @@ export default class PerformerViewDetail extends PureComponent {
           custIncomeReqState={custIncomeReqState}
           monthlyProfits={monthlyProfits}
           targetCustDetail={targetCustDetail}
+          changeParameter={changeParameter}
+          parameter={parameter}
           {...targetCustList}
         />
         <ServiceRecord

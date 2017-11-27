@@ -23,6 +23,9 @@ import styles from './targetCustomer.less';
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
 
+// 指定每页可以显示多少条
+const pageSizeOptions = ['8', '16', '32'];
+
 export default class TargetCustomer extends PureComponent {
 
   static propTypes = {
@@ -41,6 +44,8 @@ export default class TargetCustomer extends PureComponent {
     // 列表中当前选中的数据
     currentCustId: PropTypes.string,
     targetCustDetail: PropTypes.object.isRequired,
+    parameter: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -58,74 +63,32 @@ export default class TargetCustomer extends PureComponent {
 
   @autobind
   handleStateChange(key, v) {
-    const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [key]: v,
-      },
+    this.props.changeParameter({
+      [key]: v,
+      targetCustomerPageSize: PAGE_SIZE,
+      targetCustomerPageNo: PAGE_NO,
     });
   }
 
   @autobind
   handlePageChange(pageNo) {
-    const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNo,
-      },
+    this.props.changeParameter({
+      targetCustomerPageNo: pageNo,
     });
   }
 
   @autobind
   handleSizeChange(current, pageSize) {
-    const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageSize,
-        pageNo: 1,
-      },
+    this.props.changeParameter({
+      targetCustomerPageSize: pageSize,
+      targetCustomerPageNo: PAGE_NO,
     });
   }
 
   @autobind
   handleRowClick({ id }) {
-    const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        targetCustId: id,
-      },
+    this.props.changeParameter({
+      targetCustId: id,
     });
   }
 
@@ -211,6 +174,8 @@ export default class TargetCustomer extends PureComponent {
               showSizeChanger
               onChange={this.handlePageChange}
               onShowSizeChange={this.handleSizeChange}
+              defaultPageSize={8}
+              pageSizeOptions={pageSizeOptions}
             />
           </div>
         </div>

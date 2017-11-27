@@ -15,6 +15,8 @@ const PAGE_NO = 1;
 export default {
   namespace: 'performerView',
   state: {
+    // 记录详情中的参数
+    parameter: {},
     // 执行者视图、管理者视图、创建者视图公共列表
     taskList: EMPTY_OBJ,
     // 任务详情中基本信息
@@ -32,6 +34,13 @@ export default {
     targetCustDetail: EMPTY_OBJ,
   },
   reducers: {
+    changeParameterSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        parameter: payload,
+      };
+    },
     getTaskListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJ } } = action;
       const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData;
@@ -68,6 +77,16 @@ export default {
     },
   },
   effects: {
+    * changeParameter({ payload }, { select, put }) {
+      const prevParameter = yield select(state => state.performerView.parameter);
+      yield put({
+        type: 'changeParameterSuccess',
+        payload: {
+          ...prevParameter,
+          ...payload,
+        },
+      });
+    },
     // 执行者视图、管理者视图、创建者视图公共列表
     * getTaskList({ payload }, { call, put }) {
       const listResponse = yield call(api.queryTaskList, payload);

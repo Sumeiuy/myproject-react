@@ -38,9 +38,13 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
+  // 改变详情中的用来查询的参数
+  changeParameter: 'performerView/changeParameter',
 };
 
 const mapStateToProps = state => ({
+  // 记录详情中的参数
+  parameter: state.performerView.parameter,
   // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.performerView.taskList,
@@ -65,15 +69,17 @@ const mapDispatchToProps = {
   // 手动上传日志
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 最近五次服务记录
-  getServiceRecord: fetchDataFunction(false, effects.getServiceRecord),
+  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   // 获取最近6个月收益
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
+  changeParameter: fetchDataFunction(false, effects.changeParameter),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class PerformerView extends PureComponent {
   static propTypes = {
+    parameter: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
@@ -91,6 +97,7 @@ export default class PerformerView extends PureComponent {
     // 6个月收益数据
     monthlyProfits: PropTypes.object.isRequired,
     targetCustDetail: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -305,6 +312,8 @@ export default class PerformerView extends PureComponent {
       getCustIncome,
       monthlyProfits,
       targetCustDetail,
+      changeParameter,
+      parameter,
     } = this.props;
     console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
@@ -349,6 +358,7 @@ export default class PerformerView extends PureComponent {
 
     const rightPanel = (
       <PerformerViewDetail
+        parameter={parameter}
         location={location}
         replace={replace}
         dict={dict}
@@ -362,6 +372,7 @@ export default class PerformerView extends PureComponent {
         monthlyProfits={monthlyProfits}
         custIncomeReqState={interfaceState[effects.getCustIncome]}
         targetCustDetail={targetCustDetail}
+        changeParameter={changeParameter}
       />
     );
     return (
