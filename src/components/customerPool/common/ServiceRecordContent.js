@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 09:05:22
+ * @Last Modified time: 2017-11-27 14:09:18
  */
 
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Select, DatePicker, TimePicker, Input, Radio } from 'antd';
+import { Select, DatePicker, TimePicker, Input, Radio, Row, Col } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../customerPool/taskFlow/Uploader';
@@ -26,6 +26,8 @@ const RadioGroup = Radio.Group;
 // 日期组件的显示格式
 const dateFormat = 'YYYY/MM/DD';
 const timeFormat = 'HH:mm';
+// 当天时间
+const CURRENT_DATE = moment(new Date(), dateFormat);
 const width = { width: 142 };
 
 const EMPTY_LIST = [];
@@ -78,10 +80,8 @@ function generateObjOfValue(arr) {
 
 export default class ServiceRecordContent extends PureComponent {
   static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
     // 当前选中的数据
     currentSelectedCust: PropTypes.object.isRequired,
-    addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     // 是否是执行者视图页面
     isEntranceFromPerformerView: PropTypes.bool,
@@ -89,6 +89,7 @@ export default class ServiceRecordContent extends PureComponent {
     formData: PropTypes.object,
     // 服务类型
     serviceType: PropTypes.string,
+    isFold: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -96,6 +97,7 @@ export default class ServiceRecordContent extends PureComponent {
     formData: {},
     serviceType: '',
     isEntranceFromPerformerView: false,
+    isFold: false,
   }
 
   constructor(props) {
@@ -103,6 +105,7 @@ export default class ServiceRecordContent extends PureComponent {
     const {
       // 服务方式字典
       serveWay = [{}],
+      // 服务类型、客户反馈类型三级字典
       custServerTypeFeedBackDict = [{}],
       // 服务状态字典
       serveStatus = [{}],
@@ -118,6 +121,10 @@ export default class ServiceRecordContent extends PureComponent {
 
     // 处理中 和 待处理 时表单可编辑
     this.isReadOnly = !_.includes(EDITABLE, missionStatusCode);
+
+    // TODO
+    // 暂时测试
+    // this.isReadOnly = true;
 
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
@@ -381,7 +388,7 @@ export default class ServiceRecordContent extends PureComponent {
     const currentTimeStamp = moment(serviceDate).format('x');
     const hours = range(0, 24);
     const d = new Date();
-    if (currentTimeStamp < moment(moment().format('YYYY/MM/DD')).format('x')) {
+    if (currentTimeStamp < moment(moment().format(dateFormat)).format('x')) {
       return [];
     }
     return hours.slice(d.getHours() + 1);
@@ -393,7 +400,7 @@ export default class ServiceRecordContent extends PureComponent {
     const m = range(0, 60);
     const { serviceDate } = this.state;
     const currentTimeStamp = moment(serviceDate).format('x');
-    if (currentTimeStamp < moment(moment().format('YYYY/MM/DD')).format('x')) {
+    if (currentTimeStamp < moment(moment().format(dateFormat)).format('x')) {
       return [];
     }
     if (h === d.getHours()) {
@@ -422,6 +429,7 @@ export default class ServiceRecordContent extends PureComponent {
     const {
       dict,
       isEntranceFromPerformerView,
+      isFold,
     } = this.props;
 
     const {
@@ -444,103 +452,140 @@ export default class ServiceRecordContent extends PureComponent {
       return null;
     }
 
+    const firstCol = isFold ? 8 : 24;
+    const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
+
+    const serviceDateProps = !this.isReadOnly ? {
+      allowClear: false,
+      value: moment(serviceDate, dateFormat),
+      format: dateFormat,
+      onChange: this.handleServiceDate,
+      disabledDate: this.disabledDate,
+    } : {
+      disabled: true,
+    };
+
+    const serviceTimeProps = !this.isReadOnly ? {
+      placeholder: '选择时间',
+      value: moment(serviceTime, timeFormat),
+      onChange: this.handleServiceTime,
+      format: timeFormat,
+      disabledHours: this.disabledHours,
+      disabledMinutes: this.disabledMinutes,
+    } : {
+      disabled: true,
+    };
+
+    const feedbackTimeProps = !this.isReadOnly ? {
+      allowClear: false,
+      value: moment(feedbackDate, dateFormat),
+      format: dateFormat,
+      onChange: this.handleFeedbackDate,
+      disabledDate: this.disabledDate,
+    } : {
+      disabled: true,
+    };
+
     return (
       <div className={styles.serviceRecordContent}>
-        <div className={styles.serveSelect}>
-          <div className={styles.serveWay}>
-            <div className={styles.title}>
-              服务方式:
-            </div>
-            <div className={styles.content}>
-              <Select
-                value={serviceWay}
-                style={width}
-                onChange={this.handleServiceWay}
-                disabled={this.isReadOnly}
-              >
-                {
-                  (dict.serveWay || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-          </div>
-
-          {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
-          {
-            isEntranceFromPerformerView ?
-              <div className={styles.serveStatus}>
+        <Row>
+          <div className={styles.serveSelect}>
+            <Col span={firstCol}>
+              <div className={styles.serveWay}>
                 <div className={styles.title}>
-                  服务状态:
+                  服务方式:
                 </div>
                 <div className={styles.content}>
-                  <RadioGroup
-                    onChange={this.onRadioChange}
-                    value={serviceStatus}
+                  <Select
+                    value={serviceWay}
+                    style={width}
+                    onChange={this.handleServiceWay}
+                    disabled={this.isReadOnly}
                   >
-                    <Radio value={'handling'}>处理中</Radio>
-                    <Radio value={'completed'}>已完成</Radio>
-                  </RadioGroup>
+                    {
+                      (dict.serveWay || EMPTY_LIST).map(obj => (
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
                 </div>
-              </div> : null
-          }
+              </div>
+            </Col>
 
-          {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
-          <div
-            className={
-              classnames({
-                [styles.hidden]: isEntranceFromPerformerView,
-                [styles.serveType]: true,
-              })
+            {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
+            {
+              isEntranceFromPerformerView ?
+                <Col span={firstCol}>
+                  <div className={styles.serveStatus}>
+                    <div className={styles.title}>
+                      服务状态:
+                    </div>
+                    <div className={styles.content}>
+                      <RadioGroup
+                        onChange={this.onRadioChange}
+                        value={serviceStatus}
+                        disabled={this.isReadOnly}
+                      >
+                        <Radio value={'handling'}>处理中</Radio>
+                        <Radio value={'completed'}>已完成</Radio>
+                      </RadioGroup>
+                    </div>
+                  </div>
+                </Col>
+                : null
             }
-          >
-            <div className={styles.title}>
-              服务类型:
-            </div>
-            <div className={styles.content}>
-              <Select
-                value={serviceType}
-                style={width}
-                onChange={this.handleServiceType}
-              >
-                {
-                  (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-          </div>
 
-          <div className={styles.serveTime}>
-            <div className={styles.title}>
-              服务时间:
-            </div>
-            <div className={styles.content}>
-              <DatePicker
-                style={width}
-                allowClear={false}
-                value={moment(serviceDate, dateFormat)}
-                format={dateFormat}
-                onChange={this.handleServiceDate}
-                disabledDate={this.disabledDate}
-                disabled={this.isReadOnly}
-              />
-              <TimePicker
-                style={width}
-                className={styles.hidden}
-                placeholder={'选择时间'}
-                value={moment(serviceTime, timeFormat)}
-                onChange={this.handleServiceTime}
-                format={timeFormat}
-                disabledHours={this.disabledHours}
-                disabledMinutes={this.disabledMinutes}
-                disabled={this.isReadOnly}
-              />
-            </div>
+            {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
+            <Col
+              span={firstCol}
+              className={
+                classnames({
+                  [styles.hidden]: isEntranceFromPerformerView,
+                })
+              }
+            >
+              <div className={styles.serveType}>
+                <div className={styles.title}>
+                  服务类型:
+                </div>
+                <div className={styles.content}>
+                  <Select
+                    value={serviceType}
+                    style={width}
+                    onChange={this.handleServiceType}
+                  >
+                    {
+                      (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
+                </div>
+              </div>
+            </Col>
+
+            <Col span={firstCol}>
+              <div className={styles.serveTime}>
+                <div className={styles.title}>
+                  服务时间:
+                </div>
+                <div className={styles.content}>
+                  <DatePicker
+                    style={width}
+                    {...serviceDateProps}
+                    defaultValue={moment(CURRENT_DATE, dateFormat)}
+                  />
+                  <TimePicker
+                    style={width}
+                    className={styles.hidden}
+                    {...serviceTimeProps}
+                    defaultValue={moment(CURRENT_DATE, timeFormat)}
+                  />
+                </div>
+              </div>
+            </Col>
           </div>
-        </div>
+        </Row>
 
         <div className={styles.serveRecord}>
           <div className={styles.title}>服务记录:</div>
@@ -556,55 +601,57 @@ export default class ServiceRecordContent extends PureComponent {
         <div className={styles.divider} />
 
         <div className={styles.custFeedbackSection}>
-          <div className={styles.feedbackType}>
-            <div className={styles.title}>
-              客户反馈:
-            </div>
-            <div className={styles.content}>
-              <Select
-                value={feedbackType}
-                style={width}
-                onChange={this.handleFeedbackType}
-                disabled={this.isReadOnly}
-              >
-                {
-                  (feedbackTypeArr).map(obj => (
-                    <Option key={obj.key} value={obj.value}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-              {
-                _.isEmpty(feedbackTypeChildArr) ? null :
-                <Select
-                  value={feedbackTypeChild}
-                  style={width}
-                  onChange={this.handleFeedbackTypeChild}
-                  disabled={this.isReadOnly}
-                >
+          <Row>
+            <Col span={secondCol.first}>
+              <div className={styles.feedbackType}>
+                <div className={styles.title}>
+                  客户反馈:
+                </div>
+                <div className={styles.content}>
+                  <Select
+                    value={feedbackType}
+                    style={width}
+                    onChange={this.handleFeedbackType}
+                    disabled={this.isReadOnly}
+                  >
+                    {
+                      (feedbackTypeArr).map(obj => (
+                        <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
                   {
-                    (feedbackTypeChildArr).map(obj => (
-                      <Option key={obj.key} value={obj.value}>{obj.value}</Option>
-                    ))
+                    _.isEmpty(feedbackTypeChildArr) ? null :
+                    <Select
+                      value={feedbackTypeChild}
+                      style={width}
+                      onChange={this.handleFeedbackTypeChild}
+                      disabled={this.isReadOnly}
+                    >
+                      {
+                        (feedbackTypeChildArr).map(obj => (
+                          <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                        ))
+                      }
+                    </Select>
                   }
-                </Select>
-              }
-            </div>
-          </div>
+                </div>
+              </div>
+            </Col>
 
-          <div className={styles.feedbackTime}>
-            <div className={styles.title}>反馈时间:</div>
-            <div className={styles.content}>
-              <DatePicker
-                style={width}
-                allowClear={false}
-                value={moment(feedbackDate, dateFormat)}
-                format={dateFormat}
-                onChange={this.handleFeedbackDate}
-                disabledDate={this.disabledDate}
-                disabled={this.isReadOnly}
-              />
-            </div>
-          </div>
+            <Col span={secondCol.second}>
+              <div className={styles.feedbackTime}>
+                <div className={styles.title}>反馈时间:</div>
+                <div className={styles.content}>
+                  <DatePicker
+                    style={width}
+                    {...feedbackTimeProps}
+                    defaultValue={moment(CURRENT_DATE, dateFormat)}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
         </div>
 
         <div className={styles.uploadSection}>

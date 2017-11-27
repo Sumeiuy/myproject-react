@@ -104,6 +104,7 @@ export default class PerformerViewDetail extends PureComponent {
           formData={{}}
           serviceType={''}
           currentSelectedCust={currentSelectedCust}
+          isFold={isFold}
         />
       </div>
     );

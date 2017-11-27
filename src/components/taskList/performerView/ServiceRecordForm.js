@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-23 17:19:38
+ * @Last Modified time: 2017-11-27 10:09:15
  * 服务记录表单
  */
 
@@ -25,6 +25,8 @@ export default class ServiceRecordForm extends PureComponent {
     formData: PropTypes.object,
     // 服务类型
     serviceType: PropTypes.string,
+    currentSelectedCust: PropTypes.object.isRequired,
+    isFold: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -81,16 +83,14 @@ export default class ServiceRecordForm extends PureComponent {
         ...postBody,
         file: uploadedFileKey,
       };
-    }
-
-    if (isEntranceFromPerformerView) {
-      addServeRecord({
+    } else if (isEntranceFromPerformerView) {
+      postBody = {
         ...postBody,
         serviceStatus,
-      });
-    } else {
-      addServeRecord(postBody);
+      };
     }
+
+    addServeRecord(postBody);
   }
 
   @autobind
@@ -103,6 +103,8 @@ export default class ServiceRecordForm extends PureComponent {
       dict,
       isReadOnly,
       isEntranceFromPerformerView,
+      currentSelectedCust,
+      isFold,
     } = this.props;
 
     if (!dict) {
@@ -133,6 +135,8 @@ export default class ServiceRecordForm extends PureComponent {
           formData={{}}
           // 服务类型
           serviceType={''}
+          currentSelectedCust={currentSelectedCust}
+          isFold={isFold}
         />
 
         {
