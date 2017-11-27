@@ -23,8 +23,6 @@ export default class ServiceRecordForm extends PureComponent {
     isEntranceFromPerformerView: PropTypes.bool,
     // 表单数据
     formData: PropTypes.object,
-    // 服务类型
-    serviceType: PropTypes.string,
     currentSelectedCust: PropTypes.object.isRequired,
     isFold: PropTypes.bool.isRequired,
   }
@@ -32,7 +30,6 @@ export default class ServiceRecordForm extends PureComponent {
   static defaultProps = {
     dict: {},
     formData: {},
-    serviceType: '',
     isEntranceFromPerformerView: false,
   }
 
@@ -138,8 +135,6 @@ export default class ServiceRecordForm extends PureComponent {
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
           formData={{}}
-          // 服务类型
-          serviceType={''}
           currentSelectedCust={currentSelectedCust}
           isFold={isFold}
         />
