@@ -255,6 +255,7 @@ export default class TemplModal extends PureComponent {
       aboutRate: ['0.0004', 'rate'],
       supportSearchKey: [['productCode'], ['productName']],
       // scrollX: '130%',
+      // isNeedTransfer: false,
     };
 
 
