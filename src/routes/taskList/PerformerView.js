@@ -34,7 +34,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServiceRecord: 'customerPool/addServiceRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
@@ -59,7 +59,7 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getTaskList: fetchDataFunction(true, effects.getTaskList),
   // 添加服务记录
-  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  addServeRecord: fetchDataFunction(true, effects.addServiceRecord),
   // 手动上传日志
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 最近五次服务记录

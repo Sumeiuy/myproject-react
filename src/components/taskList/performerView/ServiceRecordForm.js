@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 14:17:17
+ * @Last Modified time: 2017-11-27 15:05:45
  * 服务记录表单
  */
 
@@ -90,7 +90,12 @@ export default class ServiceRecordForm extends PureComponent {
       };
     }
 
-    addServeRecord(postBody);
+    // 添加服务记录
+    addServeRecord(postBody).then((res) => {
+      console.log(res);
+    }, (err) => {
+      console.log(err);
+    });
   }
 
   @autobind
