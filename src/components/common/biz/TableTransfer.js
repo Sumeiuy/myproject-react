@@ -195,7 +195,7 @@ export default class TableTransfer extends Component {
     if (_.isEmpty(sortIndexs)) return;
     _.each(sortIndexs, (item) => {
       const ele = document.querySelector(`${prefix}>th:nth-child(${item.index + 1})`);
-      dom.setAttr(ele, 'data-transferSort', true);
+      dom.setAttribute(ele, 'data-transferSort', true);
       // 给dom添加点击事件
       ele.addEventListener('click', this.handleSortClick(which, item.key), false);
     });
