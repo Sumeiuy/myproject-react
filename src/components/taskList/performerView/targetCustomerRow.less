@@ -1,0 +1,174 @@
+.rowItem {
+  position: relative;
+  padding: 8px 0;
+  cursor: pointer;
+  &.active {
+    background: #4a90e2;
+    .triangle {
+      display: inline-block;
+    }
+    .name, .status {
+      color: #fff;
+    }
+    .sign {
+      background-color: #fff;
+      color: #4a90e2;
+    }
+    .riskLevel {
+      &.zuidi, &.baoshou, &.jinshen, &.wenjian, &.jiji, &.jijin {
+        background-color: #fff;
+        color: #4a90e2;
+      }
+    }
+    .vipLevel {
+      &.baijin {
+        background: url('../../../../static/images/a-baijin.png');
+      }
+      &.jinka {
+        background: url('../../../../static/images/a-jinka.png');
+      }
+      &.licai {
+        background: url('../../../../static/images/a-licai.png');
+      }
+      &.wu {
+        background: url('../../../../static/images/a-wu.png');
+      }
+      &.yinka {
+        background: url('../../../../static/images/a-yinka.png');
+      }
+      &.zuanshi {
+        background: url('../../../../static/images/a-zuanshi.png');
+      }
+    }
+    :global {
+      .iconfont {
+        color: #fff;
+      }
+    }
+  }
+
+  .textCenter {
+    text-align: center;
+  }
+  .status {
+    font-size: 14px;
+    color: #4a4a4a;
+  }
+  .name {
+    padding-left: 3px;
+    color: #333;
+    font-size: 14px;
+  }
+  .vipLevel {
+    display: inline-block;
+    width: 40px;
+    height: 14px;
+    overflow: hidden;
+    vertical-align: middle;
+    &.baijin {
+      background: url('../../../../static/images/n-baijin.png');
+    }
+    &.jinka {
+      background: url('../../../../static/images/n-jinka.png');
+    }
+    &.licai {
+      background: url('../../../../static/images/n-licai.png');
+    }
+    &.wu {
+      background: url('../../../../static/images/n-wu.png');
+    }
+    &.yinka {
+      background: url('../../../../static/images/n-yinka.png');
+    }
+    &.zuanshi {
+      background: url('../../../../static/images/n-zuanshi.png');
+    }
+  }
+  .riskLevel {
+    display: inline-block;
+    margin-left: 10px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 1px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    overflow: hidden;
+    vertical-align: middle;
+    background-color: #fff;
+    &.zuidi {
+      background-color: #81a3b8;
+    }
+    &.baoshou {
+      background-color: #756fb8;
+    }
+    &.jinshen {
+      background-color: #7d9be0;
+    }
+    &.wenjian {
+      background-color: #60c1ea;
+    }
+    &.jiji {
+      background-color: #fdb02b;
+    }
+    &.jijin {
+      background-color: #fd752b;
+    }
+  }
+  .sign {
+    display: inline-block;
+    margin-left: 10px;
+    width: 28px;
+    height: 18px;
+    line-height: 18px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    background: #ff784e;
+    border-radius: 1px;
+    vertical-align: middle;
+  }
+  .triangle {
+    position: absolute;
+    top: 50%;
+    right: -1px;
+    z-index: 9999;
+    margin-top: -7px;
+    display: none;
+    width: 0;
+    height: 0;
+    border-right: 7px solid #f3f7ff;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+  }
+}
+
+.ln24 {
+  height: 24px;
+  line-height: 24px;
+}
+
+.maleColor {
+  color: #60c1ea;
+}
+.femaleColor {
+  color: #f48a8a;
+}
+.orgColor {
+  color: #7d9be0;
+}
+.prodColor {
+  color: #756fb8;
+}
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.pl35 {
+  padding-left: 35px;
+}
+.pr14 {
+  padding-right: 14px;
+}
