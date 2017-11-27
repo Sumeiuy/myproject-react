@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 16:31:26
+ * @Last Modified time: 2017-11-27 17:21:49
  */
 
 
@@ -77,8 +77,6 @@ function generateObjOfValue(arr) {
 
 export default class ServiceRecordContent extends PureComponent {
   static propTypes = {
-    // 当前选中的数据
-    currentSelectedCust: PropTypes.object.isRequired,
     dict: PropTypes.object,
     // 是否是执行者视图页面
     isEntranceFromPerformerView: PropTypes.bool,
