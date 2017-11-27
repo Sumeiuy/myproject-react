@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 16:31:48
+ * @Last Modified time: 2017-11-27 16:34:13
  * 服务记录表单
  */
 
@@ -112,6 +112,7 @@ export default class ServiceRecordForm extends PureComponent {
       isEntranceFromPerformerView,
       currentSelectedCust,
       isFold,
+      formData,
     } = this.props;
 
     if (!dict) {
@@ -145,7 +146,7 @@ export default class ServiceRecordForm extends PureComponent {
           // 是否是执行者视图页面
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
-          formData={{}}
+          formData={formData}
           currentSelectedCust={currentSelectedCust}
           isFold={isFold}
         />
