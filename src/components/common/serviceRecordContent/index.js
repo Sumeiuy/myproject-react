@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 15:54:21
+ * @Last Modified time: 2017-11-27 16:31:26
  */
 
 
@@ -34,12 +34,6 @@ const CURRENT_DATE = moment(new Date(), dateFormat);
 const width = { width: 142 };
 
 const EMPTY_LIST = [];
-
-// 客户任务所处待处理和处理中时服务记录可编辑
-// 处理中 106110
-// 待处理  106112
-// 此处code码待修改
-const EDITABLE = ['106110', '106112'];
 
 function range(start, end) {
   const result = [];
@@ -91,6 +85,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 表单数据
     formData: PropTypes.object,
     isFold: PropTypes.bool,
+    isReadOnly: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -98,6 +93,7 @@ export default class ServiceRecordContent extends PureComponent {
     formData: {},
     isEntranceFromPerformerView: false,
     isFold: false,
+    isReadOnly: false,
   }
 
   constructor(props) {
@@ -114,17 +110,8 @@ export default class ServiceRecordContent extends PureComponent {
       isEntranceFromPerformerView,
       formData,
       formData: { serviceType = '' },
-      currentSelectedCust = {},
+      isReadOnly,
     } = props;
-
-    const { missionStatusCode } = currentSelectedCust;
-
-    // 处理中 和 待处理 时表单可编辑
-    this.isReadOnly = !_.includes(EDITABLE, missionStatusCode);
-
-    // TODO
-    // 暂时测试
-    // this.isReadOnly = true;
 
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
@@ -142,7 +129,7 @@ export default class ServiceRecordContent extends PureComponent {
       this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
 
       // 执行者视图
-      if (this.isReadOnly) {
+      if (isReadOnly) {
         // 只读状态
         const {
           // 服务时间（日期）
@@ -446,6 +433,7 @@ export default class ServiceRecordContent extends PureComponent {
       dict,
       isEntranceFromPerformerView,
       isFold,
+      isReadOnly,
     } = this.props;
 
     const {
@@ -472,7 +460,7 @@ export default class ServiceRecordContent extends PureComponent {
     const firstCol = isFold ? 8 : 24;
     const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
 
-    const serviceDateProps = !this.isReadOnly ? {
+    const serviceDateProps = !isReadOnly ? {
       allowClear: false,
       value: moment(serviceDate, showDateFormat),
       format: showDateFormat,
@@ -482,7 +470,7 @@ export default class ServiceRecordContent extends PureComponent {
       disabled: true,
     };
 
-    const serviceTimeProps = !this.isReadOnly ? {
+    const serviceTimeProps = !isReadOnly ? {
       placeholder: '选择时间',
       value: moment(serviceTime, timeFormat),
       onChange: this.handleServiceTime,
@@ -493,7 +481,7 @@ export default class ServiceRecordContent extends PureComponent {
       disabled: true,
     };
 
-    const feedbackTimeProps = !this.isReadOnly ? {
+    const feedbackTimeProps = !isReadOnly ? {
       allowClear: false,
       value: moment(feedbackDate, showDateFormat),
       format: showDateFormat,
@@ -517,7 +505,7 @@ export default class ServiceRecordContent extends PureComponent {
                     value={serviceWay}
                     style={width}
                     onChange={this.handleServiceWay}
-                    disabled={this.isReadOnly}
+                    disabled={isReadOnly}
                   >
                     {
                       (dict.serveWay || EMPTY_LIST).map(obj => (
@@ -541,7 +529,7 @@ export default class ServiceRecordContent extends PureComponent {
                       <RadioGroup
                         onChange={this.onRadioChange}
                         value={serviceStatus}
-                        disabled={this.isReadOnly}
+                        disabled={isReadOnly}
                       >
                         <Radio value={'handling'}>处理中</Radio>
                         <Radio value={'completed'}>已完成</Radio>
@@ -609,7 +597,7 @@ export default class ServiceRecordContent extends PureComponent {
           <div className={styles.content}>
             <TextArea
               rows={5}
-              disabled={this.isReadOnly}
+              disabled={isReadOnly}
               value={serviceContent}
               defaultValue={serviceContent}
               onChange={this.handleServiceRecordInputChange}
@@ -631,7 +619,7 @@ export default class ServiceRecordContent extends PureComponent {
                     value={feedbackType}
                     style={width}
                     onChange={this.handleFeedbackType}
-                    disabled={this.isReadOnly}
+                    disabled={isReadOnly}
                   >
                     {
                       (feedbackTypeArr).map(obj => (
@@ -645,7 +633,7 @@ export default class ServiceRecordContent extends PureComponent {
                       value={feedbackTypeChild}
                       style={width}
                       onChange={this.handleFeedbackTypeChild}
-                      disabled={this.isReadOnly}
+                      disabled={isReadOnly}
                     >
                       {
                         (feedbackTypeChildArr).map(obj => (
@@ -675,7 +663,7 @@ export default class ServiceRecordContent extends PureComponent {
 
         <div className={styles.uploadSection}>
           {
-            !this.isReadOnly ? <Uploader
+            !isReadOnly ? <Uploader
               ref={ref => (this.uploadElem = ref)}
               onOperateFile={this.handleFileUpload}
               attachModel={currentFile}

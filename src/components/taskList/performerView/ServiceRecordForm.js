@@ -2,21 +2,27 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 15:05:45
+ * @Last Modified time: 2017-11-27 16:31:48
  * 服务记录表单
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
 
+// 客户任务所处待处理和处理中时服务记录可编辑
+// 处理中 106110
+// 待处理  106112
+// 此处code码待修改
+const EDITABLE = ['106110', '106112'];
+
 export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     // 是否是执行者视图页面
@@ -103,7 +109,6 @@ export default class ServiceRecordForm extends PureComponent {
   render() {
     const {
       dict,
-      isReadOnly,
       isEntranceFromPerformerView,
       currentSelectedCust,
       isFold,
@@ -112,6 +117,12 @@ export default class ServiceRecordForm extends PureComponent {
     if (!dict) {
       return null;
     }
+
+    const { missionStatusCode } = currentSelectedCust;
+
+    // 处理中 和 待处理 时表单可编辑
+    // 完成状态时表单是只读状态
+    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
 
     return (
       <div className={styles.serviceRecordWrapper}>
