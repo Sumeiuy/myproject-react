@@ -194,7 +194,7 @@ export default class PerformerView extends PureComponent {
         currentSubtype: st,
         activeRowIndex: itemIndex,
       });
-      this.getDetail(item);
+      // this.getDetail(item);
     }
   }
 
