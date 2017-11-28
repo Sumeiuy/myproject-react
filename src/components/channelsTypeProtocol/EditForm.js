@@ -106,6 +106,7 @@ export default class EditForm extends PureComponent {
 
   constructor(props) {
     super(props);
+    console.warn('constructor props', props);
     const { underCustList, protocolDetail, location: { pathname } } = props;
     const isEdit = !_.isEmpty(protocolDetail) && pathname.indexOf('/edit') > -1;
     this.state = {
@@ -113,12 +114,12 @@ export default class EditForm extends PureComponent {
       // 附件类型列表
       attachmentTypeList: attachmentMap,
       // 下挂客户表格数据
-      cust: EMPTY_LIST,
+      cust: isEdit ? protocolDetail.cust : EMPTY_LIST,
       // 所选协议产品列表
       productList: isEdit ? protocolDetail.item : EMPTY_LIST,
       protocolClause: isEdit ? protocolDetail.term : EMPTY_LIST,
       // 是否多账户
-      multiUsedFlag: false,
+      multiUsedFlag: protocolDetail.multiUsedFlag === 'Y' || false,
       underCustList,
       isNeedTransfer: true,
       // 协议产品是否可编辑，默认true
@@ -157,7 +158,7 @@ export default class EditForm extends PureComponent {
           return newItem;
         });
       }
-      const hasCust = nextPD.multiUsedFlag === 'Y' || false;
+      const hasCust = nextPD.multiUsedFlag === 'Y';
       this.setState({
         // 附件类型列表
         attachmentTypeList: assignAttachment,
@@ -175,7 +176,7 @@ export default class EditForm extends PureComponent {
   @autobind
   onChangeProtocolNumber(operationType) {
     const { protocolDetail, protocolDetail: { cust, item: productList, term } } = this.props;
-    const hasCust = protocolDetail.multiUsedFlag === 'Y' || false;
+    const hasCust = protocolDetail.multiUsedFlag === 'Y';
     // 协议产品不可编辑，下挂客户不可编辑
     const productOperate = false;
     let custOperate = false;
