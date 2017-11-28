@@ -18,7 +18,7 @@ import RemarkList from './RemarkList';
 import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
 import UploadFiles from './UploadFiles';
-import { helper } from '../../utils';
+import { emp } from '../../helper';
 import { feedbackOptions, request } from '../../config';
 import './detail.less';
 
@@ -331,7 +331,7 @@ export default class Detail extends PureComponent {
           ...detail,
           id: currentId,
           feedbackId: currentId,
-          processerEmpId: helper.getEmpId(),
+          processerEmpId: emp.getId(),
         },
         currentQuery: query,
       });
@@ -358,7 +358,7 @@ export default class Detail extends PureComponent {
       request: {
         ...fileStatus,
         id: currentId,
-        processerEmpId: helper.getEmpId(),
+        processerEmpId: emp.getId(),
       },
       currentQuery: query,
     });
@@ -372,7 +372,7 @@ export default class Detail extends PureComponent {
       request: {
         deletedFiles: [item],
         id: currentId,
-        processerEmpId: helper.getEmpId(),
+        processerEmpId: emp.getId(),
         feedbackId: currentId,
       },
       currentQuery: query,
@@ -394,7 +394,7 @@ export default class Detail extends PureComponent {
               request: {
                 remark: values.remarkContent,
                 id: currentId,
-                processerEmpId: helper.getEmpId(),
+                processerEmpId: emp.getId(),
               },
               currentQuery: query,
             });

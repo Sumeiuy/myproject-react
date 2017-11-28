@@ -2,14 +2,14 @@
  * @Description: 通道类型协议 model
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-13 20:38:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:46:17
  */
 // import _ from 'lodash';
 import { message } from 'antd';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
-import { getEmpId } from '../utils/helper';
+import { emp } from '../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -140,7 +140,7 @@ export default {
   effects: {
     // 获取协议详情
     * getProtocolDetail({ payload }, { call, put }) {
-      const empId = getEmpId();
+      const empId = emp.getId();
       const response = yield call(api.getProtocolDetail, payload);
       yield put({
         type: 'getProtocolDetailSuccess',

@@ -20,7 +20,7 @@ import {
   fixedPeopleMaxMin,
   dealStackSeiesHu,
 } from './chartData';
-import { transform2array } from '../../utils/helper';
+import { data } from '../../helper';
 import { stackTooltip } from './chartTooltipConfig';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
@@ -67,7 +67,7 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
-    this.custRange = transform2array(this.props.custRange);
+    this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {

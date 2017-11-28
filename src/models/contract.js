@@ -2,12 +2,13 @@
  * @Description: 合作合约 model
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-06 10:31:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 15:10:03
  */
 import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
-import { getEmpId, constructSeibelPostBody } from '../utils/helper';
+import seibelHelper from '../helper/page/seibel';
+import { emp } from '../helper';
 import { seibelConfig } from '../config';
 
 const { contract: { pageType } } = seibelConfig;
@@ -161,7 +162,7 @@ export default {
     // 获取详情
     // TODO 增加一个参数，区分详情页与新建退订的数据
     * getBaseInfo({ payload }, { call, put }) {
-      const empId = getEmpId();
+      const empId = emp.getId();
       const response = yield call(api.getContractDetail, payload);
 
       // 获取审批人的 payload
@@ -271,7 +272,7 @@ export default {
         });
         message.success('操作成功！');
         // 新建时保存并调用审批接口后，获取列表
-        const params = constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+        const params = seibelHelper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
         yield put({
           type: 'app/getSeibleList',
           payload: {

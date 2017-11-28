@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 14:41:02
+ * @Last Modified time: 2017-11-28 16:02:29
  * @description: 客户分组功能
  */
 
@@ -13,12 +13,13 @@ import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
+
 import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
-import { helper, fspGlobal } from '../../utils';
-// import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
+import { emp } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 
 import styles from './customerGroup_.less';
@@ -180,8 +181,8 @@ export default class CustomerGroup extends PureComponent {
         groupId,
         custIdList,
         searchReq: _.isEmpty(custIdList) ? {
-          ptyMngId: helper.getEmpId(),
-          orgId: helper.getOrgId(),
+          ptyMngId: emp.getId(),
+          orgId: emp.getOrgId(),
           ...custCondition,
         } : null,
       });
@@ -211,8 +212,8 @@ export default class CustomerGroup extends PureComponent {
       groupDesc,
       custIdList,
       searchReq: _.isEmpty(custIdList) ? {
-        ptyMngId: helper.getEmpId(),
-        orgId: helper.getOrgId(),
+        ptyMngId: emp.getId(),
+        orgId: emp.getOrgId(),
         ...custCondition,
       } : null,
     });

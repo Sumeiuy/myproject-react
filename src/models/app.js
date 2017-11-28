@@ -168,7 +168,6 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(custApi.getStatisticalPeriod);
-      console.log('dict00000', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },

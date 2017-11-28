@@ -18,7 +18,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 
 import Icon from '../Icon';
-import { helper } from '../../../utils';
+import { dom } from '../../../helper';
 import { fspContainer } from '../../../config';
 
 import styles from './filter.less';
@@ -83,8 +83,8 @@ export default class MultiFilter extends PureComponent {
   @autobind
   addMoreBtn() {
     if (this.domNode) {
-      const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
-      this.domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
+      const domNodeHeight = dom.getCssStyle(this.domNode, 'height');
+      this.domNodeLineHeight = dom.getCssStyle(this.domNode, 'line-height');
       if (parseInt(domNodeHeight, 10) >= 2 * parseInt(this.domNodeLineHeight, 10)) {
         this.domNode.style.height = this.domNodeLineHeight;
         this.setState({

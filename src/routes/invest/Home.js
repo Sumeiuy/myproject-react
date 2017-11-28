@@ -10,7 +10,7 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
+import { emp, url, time } from '../../helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
@@ -77,7 +77,7 @@ export default class InvestHome extends PureComponent {
     super(props);
     const { location: { query: { cycleType, boardId } } } = this.props;
     const value = cycleType || 'month';
-    const obj = getDurationString(value);
+    const obj = time.getDurationString(value);
     this.state = {
       ...obj,
       boardId: boardId || '1',
@@ -186,7 +186,7 @@ export default class InvestHome extends PureComponent {
       boardId,
       scope,
     };
-    const empId = getEmpId();
+    const empId = emp.getId();
     getAllInfo({
       custRange: {
         empId,
@@ -236,7 +236,7 @@ export default class InvestHome extends PureComponent {
   handleExportExcel(param) {
     const { exportExcel } = this.props;
     const payload = this.getApiParams(param);
-    exportExcel({ query: queryToString(payload) });
+    exportExcel({ query: url.stringify(payload) });
   }
 
   // 获取单个卡片接口

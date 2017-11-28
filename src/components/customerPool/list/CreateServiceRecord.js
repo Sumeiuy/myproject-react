@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
 import { fspContainer } from '../../../config';
-import { helper } from '../../../utils';
+import { url } from '../../../helper';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -52,7 +52,7 @@ export default class CreateServiceRecord extends PureComponent {
       if (iframe) {
         const iframeHash = iframe.contentWindow.location.hash;
         const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
-        const obj = helper.getQuery(newIframeHash);
+        const obj = url.parse(newIframeHash);
         obj.s = Date.now();
         iframe.contentWindow.location.hash = Object.keys(obj).map(
           key => (`${key}=${obj[key]}`),

@@ -11,8 +11,8 @@ import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
-import { fspContainer } from '../../config';
-import { fspGlobal, helper } from '../../utils';
+import { fspGlobal } from '../../utils';
+import { url as urlHelper, env } from '../../helper';
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
@@ -145,8 +145,8 @@ export default class ViewpointList extends PureComponent {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointDetail';
     const query = { detailIndex: item.id, pageSize: curPageSize, curPageNum };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
+    if (env.isInFsp()) {
+      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(query)}`, param });
     } else {
       const { push } = this.props;
       push({

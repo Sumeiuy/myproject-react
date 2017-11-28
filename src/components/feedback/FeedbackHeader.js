@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Cascader, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
-import { getEnv } from '../../utils/helper';
+import { env } from '../../helper';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
 
@@ -105,7 +105,7 @@ export default class PageHeader extends PureComponent {
   // 解决IE下readonly无效
   @autobind
   addIeInputListener() {
-    if (getEnv().$browser === 'Internet Explorer') {
+    if (env.isIE()) {
       const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
       node.addEventListener('focus', () => node.blur());
     }
@@ -114,7 +114,7 @@ export default class PageHeader extends PureComponent {
   // 销毁监听
   @autobind
   removeIeInputListener() {
-    if (getEnv().$browser === 'Internet Explorer') {
+    if (env.isIE()) {
       const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
       node.removeEventListener('focus', () => node.blur());
     }
