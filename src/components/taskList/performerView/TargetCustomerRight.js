@@ -131,7 +131,7 @@ export default class TargetCustomerRight extends PureComponent {
     const firSpan = isFold ? 12 : 24;
     const sendSpan = isFold ? 16 : 24;
     const thrSpan = isFold ? 8 : 24;
-    const isShow = { main: true };
+    const isShow = { main: true }; // 默认有主联系人
     const suspendedLayer = (
       <div className={`${styles.nameTips}`}>
         <h6><span>工号：</span><span>{this.handleEmpty(itemData.empId)}</span></h6>
