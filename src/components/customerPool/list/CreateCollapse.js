@@ -137,7 +137,6 @@ export default class CreateCollapse extends PureComponent {
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
     const { currentActiveIndex } = this.state;
-    const isShow = true; // 默认有文件名这个字段
 
     if (_.isEmpty(data)) {
       return null;
@@ -217,7 +216,6 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
-                  isShow={isShow}
                 />
               </Panel>,
             )

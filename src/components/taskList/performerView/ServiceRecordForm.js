@@ -2,13 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by:   K0240008
- * @Last Modified time: 2017-11-27 18:39:52
+ * @Last Modified time: 2017-11-28 11:50:09
  * 服务记录表单
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
+// import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
@@ -16,23 +17,19 @@ import styles from './serviceRecordForm.less';
 
 export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
     // 是否是执行者视图页面
     isEntranceFromPerformerView: PropTypes.bool,
     // 表单数据
     formData: PropTypes.object,
-    // 服务类型
-    serviceType: PropTypes.string,
     isFold: PropTypes.bool.isRequired,
-    serviceReocrd: PropTypes.object.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
     dict: {},
     formData: {},
-    serviceType: '',
     isEntranceFromPerformerView: false,
   }
 
@@ -57,7 +54,7 @@ export default class ServiceRecordForm extends PureComponent {
     }
 
     if (serviceContent.length > 100) {
-      message.error(`服务的内容字数不能超过${100}`);
+      message.error('服务的内容字数不能超过100');
       return;
     }
 
@@ -90,7 +87,12 @@ export default class ServiceRecordForm extends PureComponent {
       };
     }
 
-    addServeRecord(postBody);
+    // 添加服务记录
+    addServeRecord(postBody).then((res) => {
+      console.log(res);
+    }, (err) => {
+      console.log(err);
+    });
   }
 
   @autobind
@@ -101,16 +103,15 @@ export default class ServiceRecordForm extends PureComponent {
   render() {
     const {
       dict,
-      isReadOnly,
       isEntranceFromPerformerView,
-      serviceReocrd,
       isFold,
+      formData,
+      isReadOnly,
     } = this.props;
 
     if (!dict) {
       return null;
     }
-
     return (
       <div className={styles.serviceRecordWrapper}>
         <div className={styles.title}>
@@ -132,11 +133,8 @@ export default class ServiceRecordForm extends PureComponent {
           // 是否是执行者视图页面
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
-          formData={{}}
-          // 服务类型
-          serviceType={''}
+          formData={formData}
           isFold={isFold}
-          serviceReocrd={serviceReocrd}
         />
 
         {

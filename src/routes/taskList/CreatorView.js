@@ -16,14 +16,18 @@ import RightPanel from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import appListTool from '../../components/common/appList/tool';
-import { viewPageConfig, fspContainer } from '../../config';
+import { fspContainer } from '../../config';
+import pageConfig from '../../components/taskList/pageConfig';
 import { fspGlobal } from '../../utils';
 
 const EMPTY_OBJECT = {};
 
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 
-const { creatorView, creatorView: { pageType, type, status } } = viewPageConfig;
+const {
+  taskList,
+  taskList: { pageType, viewType, status, chooseMissionView },
+} = pageConfig;
 
 const fetchDataFunction = (globalLoading, value) => query => ({
   type: value,
@@ -308,7 +312,7 @@ export default class CreatorView extends PureComponent {
         onClick={this.handleListRowClick}
         index={index}
         pageName="creatorView"
-        pageData={creatorView}
+        pageData={taskList}
       />
     );
   }
@@ -328,9 +332,10 @@ export default class CreatorView extends PureComponent {
         replace={replace}
         page="creatorView"
         pageType={pageType}
-        subtypeOptions={type}
+        typeOptions={viewType}
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
+        chooseMissionViewOptions={chooseMissionView}
         empInfo={empInfo}
       />
     );

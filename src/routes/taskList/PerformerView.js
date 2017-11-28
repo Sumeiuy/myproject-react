@@ -14,17 +14,22 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
+import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
-import { viewPageConfig } from '../../config';
+import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const {
-  performerView,
-  performerView: { pageType, subType, status, chooseMissionView },
-} = viewPageConfig;
+  taskList,
+  taskList: { pageType, viewType, status, chooseMissionView },
+} = pageConfig;
+
+const EXECUTOR = 'executor'; // 执行者视图
+const INITIATOR = 'initiator'; // 创造者视图
+// const CONTROLLER = 'controller'; //管理者视图视图
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -34,7 +39,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServiceRecord: 'customerPool/addServiceRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
@@ -43,6 +48,8 @@ const effects = {
   queryTargetCustDetail: 'performerView/queryTargetCustDetail',
   getTaskDetailBasicInfo: 'performerView/getTaskDetailBasicInfo',
   queryCustUuid: 'performerView/queryCustUuid',
+  previewCustFile: 'tasklist/previewCustFile',
+  getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
 };
 
 const mapStateToProps = state => ({
@@ -63,6 +70,9 @@ const mapStateToProps = state => ({
   targetCustDetail: state.performerView.targetCustDetail,
   // 添加服务记录和上传附件用的custUuid
   custUuid: state.performerView.custUuid,
+  // 客户细分导入数据
+  priviewCustFileData: state.tasklist.priviewCustFileData,
+  taskBasicInfo: state.tasklist.taskBasicInfo,
 });
 
 const mapDispatchToProps = {
@@ -70,7 +80,7 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getTaskList: fetchDataFunction(true, effects.getTaskList),
   // 添加服务记录
-  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  addServeRecord: fetchDataFunction(true, effects.addServiceRecord),
   // 手动上传日志
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 最近五次服务记录
@@ -87,6 +97,8 @@ const mapDispatchToProps = {
   getTaskDetailBasicInfo: fetchDataFunction(true, effects.getTaskDetailBasicInfo),
   // 获取添加服务记录和上传附件用的custUuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
+  previewCustFile: fetchDataFunction(true, effects.previewCustFile),
+  getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -117,12 +129,20 @@ export default class PerformerView extends PureComponent {
     custUuid: PropTypes.string.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     getTaskDetailBasicInfo: PropTypes.func.isRequired,
+    priviewCustFileData: PropTypes.object,
+    previewCustFile: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object.isRequired,
+    getTaskBasicInfo: PropTypes.func.isRequired,
   }
+
+  static defaultProps = {
+    priviewCustFileData: EMPTY_OBJECT,
+  };
 
   constructor(props) {
     super(props);
     this.state = {
-      currentSubtype: '',
+      currentView: '',
       isEmpty: true,
       activeRowIndex: 0,
     };
@@ -219,12 +239,12 @@ export default class PerformerView extends PureComponent {
         });
         itemIndex = 0;
       }
-      const { subType: st } = item;
+      const { missionViewType: st } = item;
       this.setState({
-        currentSubtype: st,
+        currentView: st,
         activeRowIndex: itemIndex,
       });
-      this.loadDetailContent(item);
+      this.getDetailByView(item);
     }
   }
 
@@ -242,6 +262,98 @@ export default class PerformerView extends PureComponent {
     });
   }
 
+  // 查询不同视图的详情信息
+  getDetailByView(record) {
+    const { currentView: st } = record;
+    const {
+      getTaskBasicInfo,
+    } = this.props;
+    switch (st) {
+      case INITIATOR:
+        getTaskBasicInfo({});
+        break;
+      case EXECUTOR:
+        this.loadDetailContent(record);
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * 根据不同的视图获取不同的Detail组件
+   * @param  {string} st 子类型
+   */
+  @autobind
+  getDetailComponentByView(st) {
+    const {
+      parameter,
+      location,
+      replace,
+      dict,
+      addServeRecord,
+      taskDetailBasicInfo,
+      targetCustList,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      interfaceState,
+      getCustIncome,
+      monthlyProfits,
+      taskBasicInfo,
+      priviewCustFileData,
+      targetCustDetail,
+      changeParameter,
+      queryTargetCust,
+      queryCustUuid,
+      custUuid,
+    } = this.props;
+    const {
+      query: { currentId },
+    } = location;
+    let detailComponent = null;
+    switch (st) {
+      case INITIATOR:
+        detailComponent = (
+          <CreatorViewDetail
+            onPreview={this.handlePreview}
+            priviewCustFileData={priviewCustFileData}
+            taskBasicInfo={taskBasicInfo}
+          />
+        );
+        break;
+      case EXECUTOR:
+        detailComponent = (
+          <PerformerViewDetail
+            currentId={currentId}
+            parameter={parameter}
+            location={location}
+            replace={replace}
+            dict={dict}
+            addServeRecord={addServeRecord}
+            basicInfo={taskDetailBasicInfo}
+            targetCustList={targetCustList}
+            handleCollapseClick={handleCollapseClick}
+            getServiceRecord={getServiceRecord}
+            serviceRecordData={serviceRecordData}
+            getCustIncome={getCustIncome}
+            monthlyProfits={monthlyProfits}
+            custIncomeReqState={interfaceState[effects.getCustIncome]}
+            targetCustDetail={targetCustDetail}
+            changeParameter={changeParameter}
+            queryTargetCust={queryTargetCust}
+            queryCustUuid={queryCustUuid}
+            custUuid={custUuid}
+            getCustDetail={this.getCustDetail}
+          />
+        );
+        break;
+      default:
+        break;
+    }
+    return detailComponent;
+  }
+
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
@@ -255,32 +367,6 @@ export default class PerformerView extends PureComponent {
     queryTargetCust({
       missionId: obj.id,
     }).then(() => this.getCustDetail({ missionId: obj.id }));
-  }
-
-  // 点击列表每条的时候对应请求详情
-  @autobind
-  handleListRowClick(record, index) {
-    const { id, subType: st } = record;
-    const {
-      replace,
-      location: { pathname, query, query: { currentId } },
-    } = this.props;
-    if (currentId === id) return;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        currentId: id,
-      },
-    });
-    this.setState({ currentSubtype: st, activeRowIndex: index });
-    this.loadDetailContent(record);
-  }
-
-  // 头部新建页面
-  @autobind
-  creatPermossionModal() {
-
   }
 
   // 切换页码
@@ -327,6 +413,32 @@ export default class PerformerView extends PureComponent {
     return true;
   }
 
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record, index) {
+    const { id, missionViewType: st } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ currentView: st, activeRowIndex: index });
+    this.getDetailByView(record);
+  }
+
+  // 头部新建页面
+  @autobind
+  creatPermossionModal() {
+
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -339,7 +451,7 @@ export default class PerformerView extends PureComponent {
         onClick={this.handleListRowClick}
         index={index}
         pageName="performerView"
-        pageData={performerView}
+        pageData={taskList}
       />
     );
   }
@@ -349,22 +461,6 @@ export default class PerformerView extends PureComponent {
       location,
       replace,
       list,
-      dict,
-      addServeRecord,
-      taskDetailBasicInfo,
-      targetCustList,
-      handleCollapseClick,
-      getServiceRecord,
-      serviceRecordData,
-      interfaceState,
-      getCustIncome,
-      monthlyProfits,
-      targetCustDetail,
-      changeParameter,
-      parameter,
-      queryTargetCust,
-      queryCustUuid,
-      custUuid,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
@@ -373,7 +469,7 @@ export default class PerformerView extends PureComponent {
         replace={replace}
         page="performerViewPage"
         pageType={pageType}
-        subtypeOptions={subType}
+        typeOptions={viewType}
         stateOptions={status}
         chooseMissionViewOptions={chooseMissionView}
         creatSeibelModal={this.creatPermossionModal}
@@ -382,7 +478,7 @@ export default class PerformerView extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10, currentId } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
       current: parseInt(pageNum, 10),
@@ -405,31 +501,8 @@ export default class PerformerView extends PureComponent {
         pagination={paginationOptions}
       />
     );
-
-    const rightPanel = (
-      <PerformerViewDetail
-        currentId={currentId}
-        parameter={parameter}
-        location={location}
-        replace={replace}
-        dict={dict}
-        addServeRecord={addServeRecord}
-        basicInfo={taskDetailBasicInfo}
-        targetCustList={targetCustList}
-        handleCollapseClick={handleCollapseClick}
-        getServiceRecord={getServiceRecord}
-        serviceRecordData={serviceRecordData}
-        getCustIncome={getCustIncome}
-        monthlyProfits={monthlyProfits}
-        custIncomeReqState={interfaceState[effects.getCustIncome]}
-        targetCustDetail={targetCustDetail}
-        changeParameter={changeParameter}
-        queryTargetCust={queryTargetCust}
-        queryCustUuid={queryCustUuid}
-        custUuid={custUuid}
-        getCustDetail={this.getCustDetail}
-      />
-    );
+    // TODO 此处需要根据不同的子类型使用不同的Detail组件
+    const rightPanel = this.getDetailComponentByView(this.state.currentView);
     return (
       <div>
         <SplitPanel

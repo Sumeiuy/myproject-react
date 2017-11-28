@@ -162,7 +162,6 @@ export default class PerformerViewDetail extends PureComponent {
           isReadOnly={isReadOnly}
           isEntranceFromPerformerView
           formData={{}}
-          serviceType={''}
           isFold={isFold}
           serviceReocrd={serviceReocrd}
         />
