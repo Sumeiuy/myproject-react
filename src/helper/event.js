@@ -2,9 +2,11 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:08:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 15:10:10
+ * @Last Modified time: 2017-11-23 15:07:15
  * @description 此处存放公用的事件相关的方法
  */
+import _ from 'lodash';
+
 const event = {
   /**
    * 给DOM元素添加滚轮事件
@@ -44,17 +46,39 @@ const event = {
   },
 
   /**
-   * 模拟鼠标点击事件
-   * @param  ele 触发事件的html节点
-   * @param  eventType 事件类型 例如 ‘click’
-   * @param  canBubble  canBubble
-   * @param  cancelable 是否可以用 preventDefault() 方法取消事件。
+   * 模拟事件触发
+   * 最新的W3C标准中已经废弃了createEvent等相关方法，
+   * 不过目前发现新的Event接口好像浏览器实现有问题，
+   * 所以目前还是使用createEvent方法
+   * @author sunweibin
+   * @param {HEMLElement} dom DOM元素
+   * @param {String} type 事件类型字符串 取值'UIEvents' || 'MouseEvents' || 'HTMLEvents'
+   * @param {String} name 事件名称字符串 例如: 'click'
+   * @param {*} reset 剩余参数的数组，自定义事件的其他参数
    */
-  trigger(ele, eventType, canBubble = true, cancelable = true) {
-    const evt = document.createEvent('MouseEvent');
-    evt.initEvent(eventType, canBubble, cancelable);
-    ele.dispatchEvent(evt);
+  trigger(dom, type, name, ...reset) {
+    if (typeof type !== 'string' && _.includes(['UIEvents', 'MouseEvents', 'HTMLEvents'], type)) return;
+    const e = document.createEvent(type);
+    if (type === 'MouseEvents') {
+      e.initMouseEvent(name, ...reset);
+    } else if (type === 'HTMLEvents') {
+      e.initEvent(name, ...reset);
+    } else if (type === 'UIEvents') {
+      e.initUIEvent(name, ...reset);
+    }
+    dom.dispatchEvent(e);
   },
+  /**
+   * 触发Click事件
+   * @author sunweibin
+   * @param {HEMLElement} dom DOM元素
+   * @param {Boolean} canBubble=true 是否冒泡
+   * @param {Boolean} cancelable=true 是否可以阻止事件默认行为
+   */
+  triggerClick(dom, canBubble = true, cancelable = true) {
+    event.trigger(dom, 'MouseEvents', 'click', canBubble, cancelable);
+  },
+
 };
 
 export default event;

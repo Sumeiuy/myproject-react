@@ -2,8 +2,8 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 14:31:22
- * @description 此处存放与正则表达式相关的校验公用方法
+ * @Last Modified time: 2017-11-27 17:03:57
+ * @description 此处存放通用的正则表达式
  */
 const regexp = {
   /**
@@ -22,6 +22,16 @@ const regexp = {
    * 电子邮箱的正则表达式
    */
   email: /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/,
+  /**
+   * 整数部分千分位格式化的正则表达式
+   * 例子：12345604 => 12,345,604
+   */
+  thousand_integer: /(\d{1,3})(?=(\d{3})+(?:$|\D))/g,
+  /**
+   * 小数部分千分位格式化的正则表达式
+   * 例子： 12345604 => 123,456,04
+   */
+  thousand_decimal: /(\d{3})(?=(\d{1,3})+)/g,
 };
 
 export default regexp;
