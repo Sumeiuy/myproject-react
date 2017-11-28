@@ -15,7 +15,7 @@ import SubscribDeatilChange from '../../components/commissionChange/SubscribDeat
 import UnSubscribDeatilChange from '../../components/commissionChange/UnSubscribDeatilChange';
 import SingleDetailChange from '../../components/commissionChange/SingleDetailChange';
 import Barable from '../../decorators/selfBar';
-import { isInFsp, getCssStyle } from '../../utils/helper';
+import { env, dom } from '../../helper';
 import styles from './home.less';
 
 const effects = {
@@ -178,8 +178,8 @@ export default class RejectionAndAmendment extends PureComponent {
   @autobind
   setHomeHeight() {
     // 判断是否在fsp系统
-    let height = getCssStyle(document.documentElement, 'height');
-    if (isInFsp()) {
+    let height = dom.getCssStyle(document.documentElement, 'height');
+    if (env.isInFsp()) {
       height = `${Number.parseInt(height, 10) - 55}px`;
     }
     this.changeHome.style.height = height;

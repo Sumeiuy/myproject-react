@@ -12,7 +12,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 
-import { getDurationString } from '../../utils/helper';
+import { time } from '../../helper';
 import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './DurationSelect.less';
@@ -55,7 +55,7 @@ export default class DurationSelect extends PureComponent {
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
     const value = 'month';
-    const obj = getDurationString(value);
+    const obj = time.getDurationString(value);
     const beginMoment = moment(obj.begin);
     const endMoment = moment(obj.end);
     this.state = {
@@ -75,7 +75,7 @@ export default class DurationSelect extends PureComponent {
     const { location: { query: { boardId }, pathname } } = nextProps;
     const { location: { query: { boardId: preBId }, pathname: prePathname } } = this.props;
     if (Number(boardId || '1') !== Number(preBId || '1')) {
-      const duration = getDurationString('month');
+      const duration = time.getDurationString('month');
       const beginMoment = moment(duration.begin);
       const endMoment = moment(duration.end);
       this.setState({
@@ -97,7 +97,7 @@ export default class DurationSelect extends PureComponent {
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
-    const duration = getDurationString(value);
+    const duration = time.getDurationString(value);
     const { updateQueryState, collectData } = this.props;
     collectData({
       text: duration.cycleType,
@@ -255,7 +255,7 @@ export default class DurationSelect extends PureComponent {
   historyChangeDuration(e) {
     const { compare } = this.state;
     const cycleType = e.target.value;
-    const nowDuration = getDurationString(cycleType);
+    const nowDuration = time.getDurationString(cycleType);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const begin = nowDuration.begin;

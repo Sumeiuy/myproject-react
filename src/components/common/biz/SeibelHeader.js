@@ -14,7 +14,8 @@ import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
-import { hasPermission, addClass, removeClass } from '../../../utils/helper';
+import contractHelper from '../../../helper/page/contract';
+import { dom } from '../../../helper';
 import { hasPermissionOfProtocolCreate } from '../../../utils/permission';
 import { fspContainer, seibelConfig } from '../../../config';
 
@@ -109,11 +110,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      removeClass(this.filterMore, 'filterMoreIcon');
-      addClass(this.filterMore, 'filterNoneIcon');
+      dom.removeClass(this.filterMore, 'filterMoreIcon');
+      dom.addClass(this.filterMore, 'filterNoneIcon');
     } else {
-      removeClass(this.filterMore, 'filterNoneIcon');
-      addClass(this.filterMore, 'filterMoreIcon');
+      dom.removeClass(this.filterMore, 'filterNoneIcon');
+      dom.addClass(this.filterMore, 'filterMoreIcon');
     }
   }
 
@@ -138,9 +139,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      addClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
     } else {
-      removeClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
     }
     this.onWindowResize();
   }
@@ -257,7 +258,7 @@ export default class Pageheader extends PureComponent {
     let hasCreatePermission = true;
     // 如果是合作合约页面
     if (pageType === contractPageType) {
-      hasCreatePermission = hasPermission(empInfo);
+      hasCreatePermission = contractHelper.hasPermission(empInfo);
     } else if (pageType === channelsPageType) {
       // 如果是通道类协议页面
       hasCreatePermission = hasPermissionOfProtocolCreate(empInfo);

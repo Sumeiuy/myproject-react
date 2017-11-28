@@ -8,7 +8,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
-import { helper } from '../../../utils';
+import { event } from '../../../helper';
 
 import styles from './quickMenu.less';
 
@@ -57,7 +57,7 @@ export default class QuickMenu extends PureComponent {
     // 在此以isEmail判断是否是isFollows更新渲染完成
     if (!_.isEmpty(email) && (emailCustId === listItem.custId) && isEmail) {
       // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
-      helper.trigger(this.sendEmail, 'click', false, false);
+      event.triggerClick(this.sendEmail, false, false);
     }
   }
   @autobind

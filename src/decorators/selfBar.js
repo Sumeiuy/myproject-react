@@ -6,31 +6,27 @@
 
 import React, { PureComponent } from 'react';
 
-import { getEnv, addClass, removeClass } from '../utils/helper';
+import { dom, env } from '../helper';
 import './bar.less';
-
-const BROWSER = getEnv();
 
 export default (ComposedComponent) => {
   class UpdateBarableComponent extends PureComponent {
     componentDidMount() {
-      const browser = BROWSER.$browser;
       const body = document.querySelector('body');
-      if (browser === 'Internet Explorer') {
+      if (env.isIE()) {
         // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
-        addClass(body, 'selfScrollBarStyleIE');
+        dom.addClass(body, 'selfScrollBarStyleIE');
       } else {
-        addClass(body, 'selfScrollBarStyle');
+        dom.addClass(body, 'selfScrollBarStyle');
       }
     }
     componentWillUnmount() {
-      const browser = BROWSER.$browser;
       const body = document.querySelector('body');
-      if (browser === 'Internet Explorer') {
+      if (env.isIE()) {
         // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
-        removeClass(body, 'selfScrollBarStyleIE');
+        dom.removeClass(body, 'selfScrollBarStyleIE');
       } else {
-        removeClass(body, 'selfScrollBarStyle');
+        dom.removeClass(body, 'selfScrollBarStyle');
       }
     }
 

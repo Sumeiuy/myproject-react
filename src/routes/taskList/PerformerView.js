@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { constructSeibelPostBody } from '../../utils/helper';
+import seibelHelper from '../../helper/page/seibel';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
@@ -111,7 +111,7 @@ export default class PerformerView extends PureComponent {
       },
       getTaskList,
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getTaskList({
       ...params,
@@ -127,7 +127,7 @@ export default class PerformerView extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = seibelHelper.constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );

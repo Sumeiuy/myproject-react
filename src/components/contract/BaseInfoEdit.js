@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 17:46:12
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:31:53
 */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,7 @@ import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 
 import styles from './baseInfoEdit.less';
 
@@ -55,8 +55,8 @@ export default class BaseInfoEdit extends PureComponent {
     // econNum
     this.state = {
       childType: _.filter(childTypeList, v => v.value === '0301')[0].label,
-      contractStarDate: dateFormat(baseInfo.startDt),
-      contractPalidity: dateFormat(baseInfo.vailDt),
+      contractStarDate: time.format(baseInfo.startDt),
+      contractPalidity: time.format(baseInfo.vailDt),
       remark: baseInfo.description,
       tdDescription: baseInfo.tdDescription,
       id: '',
@@ -70,8 +70,8 @@ export default class BaseInfoEdit extends PureComponent {
     const { contractDetail, contractDetail: { baseInfo } } = nextProps;
     if (contractDetail !== this.props.contractDetail) {
       this.setState({
-        contractStarDate: dateFormat(baseInfo.startDt),
-        contractPalidity: dateFormat(baseInfo.vailDt),
+        contractStarDate: time.format(baseInfo.startDt),
+        contractPalidity: time.format(baseInfo.vailDt),
         remark: baseInfo.description,
         tdDescription: baseInfo.tdDescription,
         oldData: {

@@ -17,7 +17,7 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
-import { getEmpId } from '../../utils/helper';
+import { emp } from '../../helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
@@ -331,7 +331,7 @@ export default class Detail extends PureComponent {
   }
 
   render() {
-    const loginUser = getEmpId();
+    const loginUser = emp.getId();
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
       { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId !== loginUser },
     ]);

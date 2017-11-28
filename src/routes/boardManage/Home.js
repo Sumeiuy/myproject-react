@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
- * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
- * @Last Modified time: 2017-10-24 16:47:37
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 10:46:08
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId, getCssStyle } from '../../utils/helper';
+import { dom, emp } from '../../helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
@@ -105,9 +105,9 @@ export default class BoardManageHome extends PureComponent {
     let scrollX;
     let leftWidth;
     if (fsp) {
-      contentWidth = getCssStyle(contentWrapper, 'width');
+      contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
-      leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+      leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
@@ -120,7 +120,7 @@ export default class BoardManageHome extends PureComponent {
   }
 
   componentWillMount() {
-    const empId = getEmpId();
+    const empId = emp.getId();
     this.props.getInitial({ empId });
   }
 
@@ -161,7 +161,7 @@ export default class BoardManageHome extends PureComponent {
   // resize 事件
   @autobind
   onWindowResize() {
-    const contentWidth = getCssStyle(contentWrapper, 'width');
+    const contentWidth = dom.getCssStyle(contentWrapper, 'width');
     this.setState({
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
     });
@@ -170,7 +170,7 @@ export default class BoardManageHome extends PureComponent {
   @autobind
   onScroll() {
     const scrollX = window.scrollX;
-    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.setState({
       left: leftWidth - scrollX,
     });
@@ -184,7 +184,7 @@ export default class BoardManageHome extends PureComponent {
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
-      const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+      const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
       this.setState({
         left: leftWidth,
       });
@@ -198,7 +198,7 @@ export default class BoardManageHome extends PureComponent {
   }
   @autobind
   toggleLeft() {
-    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.onWindowResize();
     this.setState({
       left: leftWidth,

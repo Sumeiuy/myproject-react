@@ -9,7 +9,7 @@ import { Radio, Modal, Button, Icon } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { helper } from '../../../utils';
+import { emp } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
@@ -120,7 +120,7 @@ export default class TaskSearchRow extends PureComponent {
     } else {
       postBody = {
         ...postBody,
-        ptyMngId: helper.getEmpId(),
+        ptyMngId: emp.getId(),
       };
     }
 
