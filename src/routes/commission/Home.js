@@ -21,7 +21,8 @@ import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader'
 import CommissionList from '../../components/common/appList';
 import AppItem from '../../components/common/appList/AppItem';
 import appListTool from '../../components/common/appList/tool';
-import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+import seibelHelper from '../../helper/page/seibel';
+import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
 import { permission } from '../../utils';
 import Barable from '../../decorators/selfBar';
@@ -291,7 +292,7 @@ export default class CommissionHome extends PureComponent {
         },
       },
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
@@ -306,7 +307,7 @@ export default class CommissionHome extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = seibelHelper.constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
@@ -388,7 +389,7 @@ export default class CommissionHome extends PureComponent {
       getUnSubscribeDetail,
       getSingleDetail,
     } = this.props;
-    const loginuser = getEmpId();
+    const loginuser = emp.getId();
     switch (st) {
       case comsubs.batch:
         getBatchCommissionDetail({ batchNum: business1 });
@@ -410,7 +411,7 @@ export default class CommissionHome extends PureComponent {
   // 点击查看的时候，弹出框需要的所点击的用户信息
   @autobind
   getApprovalBoardCustInfo(info) {
-    const loginuser = getEmpId();
+    const loginuser = emp.getId();
     this.props.getApprovalRecords({ ...info, loginuser }).then(this.openApprovalBoard);
   }
 

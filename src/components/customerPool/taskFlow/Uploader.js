@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 14:56:13
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:41:48
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
-import { helper } from '../../../utils';
+import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
 
@@ -55,7 +55,7 @@ export default class Uploader extends PureComponent {
       fileList: [],
       uploadedFileKey: fileKey,
       upData: {
-        empId: helper.getEmpId(),
+        empId: emp.getId(),
       },
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,

@@ -14,7 +14,7 @@ import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
-import { addClass, removeClass } from '../../utils/helper';
+import { dom } from '../../helper';
 import { fspContainer } from '../../config';
 import styles from './pageHeader.less';
 
@@ -29,20 +29,18 @@ export default class Pageheader extends PureComponent {
     replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
-    // 状态
-    stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
     pageType: PropTypes.string.isRequired,
-    // 拟稿人列表
+    // 创建者列表
     drafterList: PropTypes.array.isRequired,
-    // 获取拟稿人列表
+    // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 子类型
-    typeOptions: PropTypes.array,
     // 视图选择
     chooseMissionViewOptions: PropTypes.array,
+    // dict字典
+    dict: PropTypes.object,
   }
 
   static defaultProps = {
@@ -50,6 +48,7 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
     typeOptions: [],
     chooseMissionViewOptions: [],
+    dict: {},
   }
 
   constructor(props) {
@@ -84,11 +83,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      removeClass(this.filterMore, 'filterMoreIcon');
-      addClass(this.filterMore, 'filterNoneIcon');
+      dom.removeClass(this.filterMore, 'filterMoreIcon');
+      dom.addClass(this.filterMore, 'filterNoneIcon');
     } else {
-      removeClass(this.filterMore, 'filterNoneIcon');
-      addClass(this.filterMore, 'filterMoreIcon');
+      dom.removeClass(this.filterMore, 'filterNoneIcon');
+      dom.addClass(this.filterMore, 'filterMoreIcon');
     }
   }
 
@@ -113,9 +112,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      addClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
     } else {
-      removeClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
     }
     this.onWindowResize();
   }
@@ -201,23 +200,40 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        startDate: '',
-        endDate: '',
+        createTimeStart: '',
+        createTimeEnd: '',
         isResetPageNum: 'Y',
       },
     });
     return false;
   }
 
+  // 从字典里面拿来的数据进行数据转化
+  @autobind
+  constructorDataType(data) {
+    if (data.length) {
+      const newData = data.map((item) => {
+        const newItem = {};
+        newItem.label = item.value;
+        newItem.value = item.key;
+        newItem.show = true;
+        return {
+          ...newItem,
+        };
+      });
+      return newData;
+    }
+    return null;
+  }
+
   render() {
     const {
       getDrafterList,
-      stateOptions,
       creatSeibelModal,
       drafterList,
       page,
-      typeOptions,
       chooseMissionViewOptions,
+      dict,
       location: {
         query: {
           chooseMissionView,
@@ -231,7 +247,18 @@ export default class Pageheader extends PureComponent {
     } = this.props;
 
     const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
+    const stateAll = { label: '所有状态', value: '', show: true };
+    const typeAll = { label: '所有类型', value: '', show: true };
 
+    const { missionStatus, missionType } = dict;
+    const stateOptions = this.constructorDataType(missionStatus);
+    const typeOptions = this.constructorDataType(missionType);
+    // 类型增加全部
+    const typeAllOptions = !_.isEmpty(typeOptions) ?
+    [typeAll, ...typeOptions] : typeOptions;
+    // 状态增加全部
+    const stateAllOptions = !_.isEmpty(stateOptions) ?
+    [stateAll, ...stateOptions] : stateOptions;
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
@@ -247,7 +274,7 @@ export default class Pageheader extends PureComponent {
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
-    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '发起者视图';
+    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '我执行的任务';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -272,7 +299,7 @@ export default class Pageheader extends PureComponent {
             <Select
               name="type"
               value={typeValue}
-              data={typeOptions}
+              data={typeAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>
@@ -281,7 +308,7 @@ export default class Pageheader extends PureComponent {
             <Select
               name="status"
               value={statusValue}
-              data={stateOptions}
+              data={stateAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>

@@ -9,7 +9,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { fspContainer } from '../../../config';
-import { fspGlobal, helper } from '../../../utils';
+import { fspGlobal } from '../../../utils';
+import { url as urlHelper, env } from '../../../helper';
 
 import styles from './bottomFixedBox.less';
 
@@ -143,8 +144,8 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
-    if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?${helper.queryToString(obj)}`;
+    if (env.isInFsp()) {
+      const newurl = `${url}?${urlHelper.stringify(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,
@@ -175,8 +176,8 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
     };
-    if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?${helper.queryToString(obj)}`;
+    if (env.isInFsp()) {
+      const newurl = `${url}?${urlHelper.stringify(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,

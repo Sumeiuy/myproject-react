@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-20 14:35:42
+ * @Last Modified time: 2017-11-28 16:00:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,9 @@ import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
-import { constructSeibelPostBody, getEmpId, hasPermission } from '../../utils/helper';
+import contractHelper from '../../helper/page/contract';
+import seibelHelper from '../../helper/page/seibel';
+import { emp } from '../../helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
@@ -231,7 +233,7 @@ export default class Contract extends PureComponent {
       getSeibleList,
       getClauseNameList,
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
     // 默认筛选条件
     getSeibleList({
@@ -265,7 +267,7 @@ export default class Contract extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = seibelHelper.constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
@@ -277,15 +279,18 @@ export default class Contract extends PureComponent {
     }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
-      hasEditPermission = hasPermission(empInfo);
+      hasEditPermission = contractHelper.hasPermission(empInfo);
       // 如果当前登陆人与详情里的审批人相等，并且状态是驳回时显示编辑按钮
-      if (getEmpId() === nextBI.approver && nextBI.status === '04' && hasEditPermission) {
+      if (emp.getId() === nextBI.approver && nextBI.status === '04' && hasEditPermission) {
         hasEditPermission = true;
       } else {
         hasEditPermission = false;
       }
+      // 新需求，将详情内的 修改 按钮拿掉，将修改触发的弹框变成了新的form界面（同文件夹内）。
+      // 应要求，不需要拿掉修改按钮触发的弹框逻辑
+      // hasEditPermission 控制详情内 修改 按钮是否显示
       this.setState({
-        hasEditPermission,
+        hasEditPermission: false,
       });
     }
 

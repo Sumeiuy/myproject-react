@@ -28,6 +28,7 @@ function getOS() {
 
 const helper = {
   // 判断参数是否为null
+  // TODO 该方法已经提取
   isNull(v) {
     if (v === null || v === 'null' || v === '' || v === undefined || v === 'undefined') {
       return true;
@@ -36,11 +37,13 @@ const helper = {
   },
 
   // 获取元素CSS的样式
+  // TODO 该方法已经提取
   getCssStyle(ele, css) {
     return window.getComputedStyle(ele, null).getPropertyValue(css);
   },
 
   // 计算字符串长度
+  // TODO 该方法已经提取
   getStrLen(str) {
     let len = 0;
     for (let i = 0; i < str.length; i++) {
@@ -56,6 +59,7 @@ const helper = {
   },
 
   // 格式化日期为 YYYY-MM-DD 格式
+  // TODO 该方法已经提取
   dateFormat(str) {
     let date = '';
     if (str) {
@@ -67,6 +71,7 @@ const helper = {
   },
 
   // 获取 empId
+  // TODO 该方法已经提取
   getEmpId() {
     // 临时 ID
     const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
@@ -78,6 +83,7 @@ const helper = {
    * 将{ a: 1, b: 2 } => a=1&b=2
    * @param {object} query
    */
+  // TODO 该方法已经提取
   queryToString(query = {}) {
     const encode = encodeURIComponent;
     return Object.keys(query).map(
@@ -89,6 +95,7 @@ const helper = {
    * 由?a=1&b=2 ==> {a:1, b:2}
    * @param {string} search 一般取自location.search
    */
+  // TODO 该方法已经提取
   getQuery(search) {
     const query = {};
     // 去掉`?`
@@ -111,6 +118,7 @@ const helper = {
    * @param {string} name 属性名
    * @return {*}
    */
+  // TODO 该方法已经提取
   getProperty(object, name) {
     const paths = name.split('.');
     let property = object[paths.shift()];
@@ -125,11 +133,12 @@ const helper = {
     return property;
   },
 
-
+  // TODO 该方法已经提取
   hasClass(elem, className) {
     return elem.className.indexOf(className) > -1;
   },
 
+  // TODO 该方法已经提取
   addClass(elem, cls) {
     const ele = elem;
     if (!helper.hasClass(ele, cls)) {
@@ -138,6 +147,7 @@ const helper = {
     }
   },
 
+  // TODO 该方法已经提取
   removeClass(elem, cls) {
     const ele = elem;
     if (helper.hasClass(ele, cls)) {
@@ -154,6 +164,7 @@ const helper = {
      * @return { number } per  以显示几位为转换依据，默认 5 位
      * @return { bool } isCommissionRate  对佣金率指标作特殊处理
   */
+  // TODO 该方法已经提取
   toUnit(value, unit, per = 5, isCommissionRate) {
     const PERCENT = ZHUNICODE.PERCENT;
     const PERMILLAGE = ZHUNICODE.PERMILLAGE;
@@ -250,6 +261,7 @@ const helper = {
    * @param {*} newPageNum 当前页
    * @param {*} newPageSize 当前分页条目数
    */
+  // TODO 该方法已经提取
   constructPostBody(query, newPageNum, newPageSize) {
     let finalPostData = {
       page: {
@@ -297,6 +309,7 @@ const helper = {
    * @param {*} newPageNum 当前页
    * @param {*} newPageSize 当前分页条目数
    */
+  // TODO 该方法已经提取
   constructSeibelPostBody(query, newPageNum, newPageSize) {
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
@@ -315,6 +328,7 @@ const helper = {
    * @param  {[object]} query [查询参数]
    * @return {[object]}       [接口查询需要的最终参数]
    */
+  // TODO 该方法已经提取
   getSeibelQuery(page, query) {
     const type = seibelConfig[page].pageType;
     const defaultQuery = {
@@ -339,11 +353,13 @@ const helper = {
    * 格式化时间戳
    * @param {*} time 中国标准时间
    */
+  // TODO 该方法已经提取
   formatTime(time) {
     return moment(time).format('YYYY/MM/DD');
   },
 
   // 格式化数字，逢三位加一个逗号
+  // TODO 该方法已经提取
   formatNum(num) {
     let newStr = '';
     let count = 0;
@@ -377,6 +393,7 @@ const helper = {
    * 将字符串添加到剪贴板中
    * @param  {string} value 需要将复制的字符串
    */
+  // TODO 该方法已经提取
   copyToClipBoard(value) {
     // 选中元素中的文本
     const selectElementText = (element) => {
@@ -399,6 +416,7 @@ const helper = {
     element.remove();
   },
 
+  // TODO 该方法已经提取
   getEnv() {
     // $app_version 字符串 应用的版本
     // $os 字符串 操作系统，例如iOS
@@ -417,6 +435,7 @@ const helper = {
   },
 
   // 获取事件段事件
+  // TODO 该方法已经提取
   getDurationString(cycleType) {
     const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
@@ -466,6 +485,7 @@ const helper = {
   /**
    * 添加滚动监听
   */
+  // TODO 该方法已经提取
   addWheelEvent(obj, handler) {
     obj.addEventListener('mousewheel', handler, false);
     obj.addEventListener('DOMMouseScroll', handler, false);
@@ -473,6 +493,7 @@ const helper = {
   /**
    * 删除滚动监听
   */
+  // TODO 该方法已经提取
   removeWheelEvent(obj, handler) {
     obj.removeEventListener('mousewheel', handler, false);
     obj.removeEventListener('DOMMouseScroll', handler, false);
@@ -481,17 +502,20 @@ const helper = {
   /**
    * 添加点击监听
   */
+  // TODO 该方法已经提取
   addClickEvent(obj, handler) {
     obj.addEventListener('click', handler, false);
   },
   /**
    * 删除点击监听
   */
+  // TODO 该方法已经提取
   removeClickEvent(obj, handler) {
     obj.removeEventListener('click', handler, false);
   },
 
   // 获取环比时间段事件
+  // TODO 该方法已经提取
   queryMoMDuration(begin, end, duration) {
     let tempDuration;
     if (duration === 'month' || duration === 'lastMonth') {
@@ -523,6 +547,7 @@ const helper = {
   },
 
   // 根据Date的对象获取星期
+  // TODO 该方法已经提取
   getDay(d) {
     const weekday = new Array(7);
     weekday[0] = '周日';
@@ -536,6 +561,7 @@ const helper = {
   },
 
   // 将CustRange转换成一个一维数据
+  // TODO 该方法已经提取
   transform2array(arr) {
     let tmpArr = arr.slice();
     arr.forEach((v) => {
@@ -547,6 +573,7 @@ const helper = {
   },
 
   // 手机号、座机、邮箱正则表达式
+  // TODO 该方法已经提取
   checkFormat: {
     isCellphone(value) {
       return /^((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(17[0-8]{1})|(18[0-9]{1}))+\d{8}$/.test(value);
@@ -560,6 +587,7 @@ const helper = {
   },
 
   // 检测合作合约项目，当前用户是否有相应的职责、职位权限
+  // TODO 该方法已经提取
   hasPermission(empInfo) {
     const fsp = document.querySelector(fspContainer.container);
     let hasPermissionOnBtn = true;
@@ -570,12 +598,14 @@ const helper = {
   },
 
   // 判断当前是否在FSP系统中
+  // TODO 该方法已经提取
   isInFsp() {
     const fsp = document.querySelector(fspContainer.container);
     return !!fsp;
   },
 
   // 获取ogrId
+  // TODO 该方法已经提取
   getOrgId() {
     let orgId = '';
     if (_.isEmpty(window.forReactPosition)) {
@@ -592,6 +622,7 @@ const helper = {
    * @param  canBubble  canBubble
    * @param  cancelable 是否可以用 preventDefault() 方法取消事件。
    */
+  // TODO 该方法已经提取
   trigger(eleDom, eventType, canBubble = true, cancelable = true) {
     const evt = document.createEvent('MouseEvent');
     evt.initEvent(eventType, canBubble, cancelable);
@@ -602,6 +633,7 @@ const helper = {
    * @param {*} route 当前子路由
    * @param {*} pathname 当前页面路径
    */
+  // TODO 该方法已经提取
   matchRoute(route, pathname) {
     return pathToRegexp(`${routerPrefix}/${route}`).exec(pathname);
   },

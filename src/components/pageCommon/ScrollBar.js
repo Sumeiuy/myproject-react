@@ -6,16 +6,16 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import styles from './scrollBar.less';
-import { getCssStyle, addClickEvent, removeClickEvent } from '../../utils/helper';
+import { dom, event, env } from '../../helper';
 import { fspContainer } from '../../config';
+import styles from './scrollBar.less';
 
 const clientWidthValue = document.querySelector('#exApp').clientWidth - 40;
-const fsp = document.querySelector(fspContainer.container);
 const fspWorkspaceContent = document.querySelector(fspContainer.workspaceContent);
 // fsp中侧边栏点击显示和隐藏按钮
 const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
+
 export default class ScrollBar extends PureComponent {
 
   static propTypes = {
@@ -39,10 +39,10 @@ export default class ScrollBar extends PureComponent {
     this.reportScroll.scrollLeft = this.props.tableScrollLeft;
     this.onWindowResize();
     window.addEventListener('resize', this.onWindowResize, false);
-    if (fsp) {
+    if (env.isInFsp()) {
       // 监听 FSP 侧边栏显示隐藏按钮点击事件
-      addClickEvent(showBtn, this.onWindowResize);
-      addClickEvent(hideBtn, this.onWindowResize);
+      event.addClickEvent(showBtn, this.onWindowResize);
+      event.addClickEvent(hideBtn, this.onWindowResize);
     }
   }
 
@@ -56,10 +56,10 @@ export default class ScrollBar extends PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
-    if (fsp) {
+    if (env.isInFsp()) {
       // remove FSP 侧边栏显示隐藏按钮点击事件
-      removeClickEvent(showBtn, this.onWindowResize);
-      removeClickEvent(hideBtn, this.onWindowResize);
+      event.removeClickEvent(showBtn, this.onWindowResize);
+      event.removeClickEvent(hideBtn, this.onWindowResize);
     }
   }
 
@@ -77,8 +77,8 @@ export default class ScrollBar extends PureComponent {
   }
 
   @autobind
-  reportScrollBar(dom) {
-    this.reportScroll = dom;
+  reportScrollBar(input) {
+    this.reportScroll = input;
   }
   render() {
     const { clientWidth } = this.state;
@@ -91,7 +91,7 @@ export default class ScrollBar extends PureComponent {
         ref={this.reportScrollBar}
         style={{
           width: clientWidth,
-          left: fsp ? parseInt(getCssStyle(fspWorkspaceContent, 'left'), 10) + 45 : 20,
+          left: env.isInFsp() ? parseInt(dom.getCssStyle(fspWorkspaceContent, 'left'), 10) + 45 : 20,
         }}
       >
         <div className={styles.reportScrollBarInner} style={{ width: allWidth }} />

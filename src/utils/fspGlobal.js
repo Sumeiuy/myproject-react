@@ -3,7 +3,7 @@
  *  封装fsp系统中window方法
  * @author wangjunjun
  */
-import { getProperty } from './helper';
+import { data } from '../helper';
 
 function exec(method, ...args) {
   try {
@@ -23,7 +23,7 @@ function execOpenTab(method, ...args) {
 
 function execSwitchTab(tabId) {
   try {
-    const activeReactTab = getProperty(window, 'eb.component.SmartTab.activeReactTab');
+    const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
     activeReactTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);
@@ -40,7 +40,7 @@ function closeTab(arg) {
 
 function removeTabMenu(tabId) {
   try {
-    const removeTab = getProperty(window, 'eb.component.SmartTab.remove');
+    const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
     removeTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);

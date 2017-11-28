@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-16 17:36:22
+ * @Last Modified time: 2017-11-28 15:12:03
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,12 +12,11 @@ import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
-import { constructSeibelPostBody } from '../../utils/helper';
+import seibelHelper from '../../helper/page/seibel';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
 import ChannelsTypeProtocolList from '../../components/common/appList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
@@ -197,7 +196,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         },
       },
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getSeibleList({ ...params, type: pageType }).then(() => {
       if (currentId) {
@@ -215,7 +214,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = seibelHelper.constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
@@ -442,7 +441,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         },
       } = this.props;
       const params = {
-        ...constructSeibelPostBody(query, 1, 10),
+        ...seibelHelper.constructSeibelPostBody(query, 1, 10),
         type: pageType,
       };
       doApprove({

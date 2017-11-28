@@ -12,7 +12,7 @@ import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer } from '../../config';
 import DurationSelect from './DurationSelect';
-import { getCssStyle } from '../../utils/helper';
+import { dom } from '../../helper';
 // 选择项字典
 import styles from './PageHeader.less';
 
@@ -55,9 +55,9 @@ export default class PageHeader extends PureComponent {
     let scrollX;
     let leftWidth;
     if (fsp) {
-      contentWidth = getCssStyle(contentWrapper, 'width');
+      contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
-      leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+      leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
@@ -80,7 +80,7 @@ export default class PageHeader extends PureComponent {
   // resize 事件
   @autobind
   onWindowResize() {
-    const contentWidth = getCssStyle(contentWrapper, 'width');
+    const contentWidth = dom.getCssStyle(contentWrapper, 'width');
     this.setState({
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
     });
@@ -89,7 +89,7 @@ export default class PageHeader extends PureComponent {
   @autobind
   onScroll() {
     const scrollX = window.scrollX;
-    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.setState({
       left: leftWidth - scrollX,
     });
@@ -103,7 +103,7 @@ export default class PageHeader extends PureComponent {
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
-      const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+      const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
       this.setState({
         left: leftWidth,
       });
@@ -118,7 +118,7 @@ export default class PageHeader extends PureComponent {
   // 检测到 FSP 侧边栏显示隐藏按钮点击事件后，根据项目的容器改变 left 值
   @autobind
   toggleLeft() {
-    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.onWindowResize();
     this.setState({
       left: leftWidth,
