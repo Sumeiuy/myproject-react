@@ -88,6 +88,9 @@ export default {
         });
       }
     },
+    * addServiceRecord({ payload }, { call }) {
+      yield call(api.addServiceRecord, payload);
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {

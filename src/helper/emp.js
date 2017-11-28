@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 14:52:51
+ * @Last Modified time: 2017-11-27 17:29:57
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -27,13 +27,24 @@ const emp = {
    * @returns {String|null}
    */
   getOrgId() {
-    let orgId = '';
-    if (_.isEmpty(window.forReactPosition)) {
-      orgId = null;
-    } else {
+    let orgId = null;
+    if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
     return orgId;
+  },
+
+  /**
+   * 获取登录人当前的职位信息
+   * @author sunweibin
+   * @returns {String|null} 职位信息
+   */
+  getPstnId() {
+    let pstnId = null;
+    if (!_.isEmpty(window.forReactPosition)) {
+      pstnId = window.forReactPosition.pstnId;
+    }
+    return pstnId;
   },
 };
 
