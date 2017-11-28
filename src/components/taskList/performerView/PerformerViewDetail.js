@@ -104,6 +104,7 @@ export default class PerformerViewDetail extends PureComponent {
       feedbackDate,
       attachmentRecord,
       custId,
+      missionFlowId,
     } = targetCustDetail;
     // 服务记录的props
     const serviceReocrd = {
@@ -119,6 +120,7 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
+      missionFlowId,
     };
     return (
       <div className={styles.performerViewDetail}>
