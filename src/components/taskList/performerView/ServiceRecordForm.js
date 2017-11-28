@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:29:07
+ * @Last Modified time: 2017-11-28 20:39:54
  * 服务记录表单
  */
 
@@ -62,7 +62,7 @@ export default class ServiceRecordForm extends PureComponent {
       return;
     }
 
-    let postBody = {
+    const postBody = {
       // 经纪客户号
       custId,
       serveWay: serviceWay,
@@ -73,13 +73,7 @@ export default class ServiceRecordForm extends PureComponent {
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
-      // 从客户列表带过来
-      custUuid,
       missionFlowId,
-    };
-
-    postBody = {
-      ...postBody,
       flowStatus: serviceStatus,
       uuid: custUuid,
     };
