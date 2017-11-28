@@ -359,7 +359,7 @@ export default class PerformerView extends PureComponent {
       queryTargetCust,
     } = this.props;
     getTaskDetailBasicInfo({
-      missionId: obj.id,
+      taskId: obj.id,
     });
     queryTargetCust({
       missionId: obj.id,
