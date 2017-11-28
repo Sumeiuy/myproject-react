@@ -13,9 +13,8 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import LeftPanel from '../../components/common/leftPanel';
 import Detail from '../../components/feedback/Detail';
-// import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { constructPostBody } from '../../utils/helper';
+import feedbackHelper from '../../helper/page/feedback';
 import './home.less';
 
 const EMPTY_LIST = [];
@@ -63,7 +62,7 @@ export default class FeedBackNew extends PureComponent {
       curPageSize,
      } } } = this.props;
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
+    getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,7 +75,7 @@ export default class FeedBackNew extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getFeedbackList(constructPostBody(
+        getFeedbackList(feedbackHelper.constructPostBody(
           nextQuery,
           isResetPageNum === 'Y' ? 1 : curPageNum,
           isResetPageNum === 'Y' ? 10 : curPageSize,

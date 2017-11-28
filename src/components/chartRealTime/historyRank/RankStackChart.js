@@ -20,7 +20,7 @@ import {
   getStackSummury,
   optimizeGrid,
 } from './rankDataHandle';
-import { transform2array } from '../../../utils/helper';
+import { data as dataHelper } from '../../../helper';
 import { ZHUNICODE } from '../../../config';
 import styles from './RankChart.less';
 
@@ -41,7 +41,7 @@ export default class RankStackChart extends PureComponent {
   }
 
   componentDidMount() {
-    this.custRange = transform2array(this.props.custRange);
+    this.custRange = dataHelper.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {

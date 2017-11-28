@@ -18,7 +18,7 @@ import {
   mapFiledList,
   EVENT_PROFILE_ACTION,
 } from '../config/log';
-import helper from '../utils/helper';
+import { emp, data as dataHelper, env as envHelper } from '../helper';
 
 const EVENT_PROFILE_KEY = 'profile_set';
 
@@ -75,7 +75,7 @@ function getExtraData(action) {
           if (value === '*') {
             return { ...mergedData, ...payload };
           }
-          const propertyValue = helper.getProperty(payload, value);
+          const propertyValue = dataHelper.getChainPropertyFromObject(payload, value);
           if (_.isObject(propertyValue)) {
             return { ...mergedData, ...propertyValue };
           }
@@ -105,12 +105,12 @@ function getLogData(action) {
   const eventType = getEventType(action);
   // 系统变量
   const env = eventType.type === EVENT_PROFILE_KEY
-    ? { empId: helper.getEmpId() } : helper.getEnv();
+    ? { empId: emp.getId() } : envHelper.getEnv();
   const extraData = getExtraData(action);
 
   return {
     ...eventType,
-    distinct_id: helper.getEmpId(),
+    distinct_id: emp.getId(),
     time: new Date().getTime(),
     project: projectName,
     properties: {

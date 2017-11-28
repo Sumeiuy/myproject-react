@@ -74,7 +74,7 @@ export default class ApprovalRecordBoard extends PureComponent {
           <InfoTitle head="审批记录" />
           <div className={styles.recordBox}>
             {
-              newApproval.map(item => (<ApprovalRecord record={item} />))
+              newApproval.map(item => (<ApprovalRecord key={`${new Date().getTime()}`} record={item} />))
             }
           </div>
         </div>

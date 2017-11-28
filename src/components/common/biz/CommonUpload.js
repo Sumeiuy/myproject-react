@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-15 10:54:45
+ * @Last Modified time: 2017-11-28 13:38:52
  */
 /**
  * 常用说明
@@ -36,7 +36,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import Button from '../Button';
 import { request } from '../../../config';
-import { helper } from '../../../utils';
+import { emp } from '../../../helper';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
 
@@ -92,7 +92,7 @@ export default class CommonUpload extends PureComponent {
     super(props);
     const { attachmentList, attachment } = props;
     this.state = {
-      empId: helper.getEmpId(), // empId
+      empId: emp.getId(), // empId
       percent: 0, // 上传百分比
       status: 'active', // 上传状态
       statusText: '', // 上传状态对应文字

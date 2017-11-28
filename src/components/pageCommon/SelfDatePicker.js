@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-08-03 16:04:14
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-08-04 09:06:43
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 15:34:19
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -11,7 +11,7 @@ import 'moment/locale/zh-cn';
 import { autobind } from 'core-decorators';
 import { Row, Col, DatePicker, Radio, Button } from 'antd';
 import { constants, optionsMap } from '../../config';
-import { getDurationString } from '../../utils/helper';
+import { time } from '../../helper';
 
 // 选择项字典
 import styles from './SelfDatePicker.less';
@@ -35,7 +35,7 @@ export default class SelfDatePicker extends PureComponent {
 
   constructor(props) {
     super(props);
-    const nowDuration = getDurationString(defaultCycleType);
+    const nowDuration = time.getDurationString(defaultCycleType);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const nowDurationStr = nowDuration.durationStr;
@@ -140,7 +140,7 @@ export default class SelfDatePicker extends PureComponent {
         lastDurationStr: `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`,
       });
     } else {
-      const nowDuration = getDurationString(duration);
+      const nowDuration = time.getDurationString(duration);
       const beginMoment = moment(nowDuration.begin);
       const endMoment = moment(nowDuration.end);
       const nowDurationStr = nowDuration.durationStr;
@@ -164,7 +164,7 @@ export default class SelfDatePicker extends PureComponent {
   changeDuration(e) {
     const { compare } = this.state;
     const duration = e.target.value;
-    const nowDuration = getDurationString(duration);
+    const nowDuration = time.getDurationString(duration);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const nowDurationStr = nowDuration.durationStr;

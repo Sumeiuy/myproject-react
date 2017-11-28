@@ -8,8 +8,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { fspContainer } from '../../../config';
-import { fspGlobal, helper } from '../../../utils';
+import { fspGlobal } from '../../../utils';
+import { url as urlHelper, env } from '../../../helper';
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
@@ -25,8 +25,8 @@ export default class Viewpoint extends PureComponent {
   @autobind
   openNewTab(url, query) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
+    if (env.isInFsp()) {
+      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(query)}`, param });
     } else {
       const { push } = this.props;
       push({
@@ -104,7 +104,10 @@ export default class Viewpoint extends PureComponent {
             {newTitle || '暂无标题'}
           </div>
           <div className={styles.article}>
-            <div className={styles.text} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
+            <div
+              className={styles.text}
+              dangerouslySetInnerHTML={{ __html: formateAbstract }} // eslint-diable-line
+            />
             <div
               className={classnames(
                 styles.details,

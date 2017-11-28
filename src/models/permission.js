@@ -4,7 +4,7 @@
  */
 import { message } from 'antd';
 import { permission as api } from '../api';
-import { helper } from '../utils';
+import seibelHelper from '../helper/page/seibel';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -134,7 +134,8 @@ export default {
         payload: response,
       });
       message.success('私密客户修改成功！');
-      const params = helper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+      const params = seibelHelper.constructSeibelPostBody(
+        currentQuery, pageNum || 1, pageSize || 10);
       yield put({
         type: 'app/getSeibleList',
         payload: {
@@ -156,7 +157,8 @@ export default {
           payload: response,
         });
         message.success('私密客户创建成功！');
-        const params = helper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+        const params = seibelHelper.constructSeibelPostBody(
+          currentQuery, pageNum || 1, pageSize || 10);
         yield put({
           type: 'app/getSeibleList',
           payload: {

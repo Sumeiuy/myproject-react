@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import Icon from '../common/Icon';
 import { iconTypeMap } from '../../config';
-import { toUnit } from '../../utils/helper';
+import report from '../../helper/page/report';
 import styles from './indexItem.less';
 
 const {
@@ -52,7 +52,7 @@ export default class IndexItem extends PureComponent {
     const {
       itemData:
     { unit, value, name, parentName, incrementRate, key }, active } = this.props;
-    const data = toUnit(value, unit, 5, _.findIndex(COMMISSION_RATE_MAP,
+    const data = report.toUnit(value, unit, 5, _.findIndex(COMMISSION_RATE_MAP,
       item => item.key === key) > -1);
     const IndexIcon = getCoreIcon(unit);
     const IndexIconColor = getCoreIconColor(unit);

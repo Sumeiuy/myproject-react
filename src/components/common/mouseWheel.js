@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { addWheelEvent, removeWheelEvent, trigger } from '../../utils/helper';
+import { event } from '../../helper';
 
 export default (options = {}) => (ComposedComponent) => {
   const { container = '.react-app', eventDom = '' } = options;
@@ -27,7 +27,7 @@ export default (options = {}) => (ComposedComponent) => {
 
     bindMousewheel() {
       const app = document.querySelector(container);
-      addWheelEvent(app, this.handleMousewheel);
+      event.addWheelEvent(app, this.handleMousewheel);
     }
 
     @autobind
@@ -38,7 +38,7 @@ export default (options = {}) => (ComposedComponent) => {
       }
       this.addDropDownMouseWheel();
       // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
-      trigger(document.querySelector(container), 'mousedown');
+      event.triggerMouseDown(document.querySelector(container));
     }
 
     @autobind
@@ -54,7 +54,7 @@ export default (options = {}) => (ComposedComponent) => {
     addDropDownMouseWheel() {
       const elem = document.querySelector(eventDom);
       if (elem) {
-        addWheelEvent(elem, this.handleDropDownMousewheel);
+        event.addWheelEvent(elem, this.handleDropDownMousewheel);
       }
     }
 
@@ -62,10 +62,10 @@ export default (options = {}) => (ComposedComponent) => {
       const elem = document.querySelector(eventDom);
       const app = document.querySelector(container);
       if (elem) {
-        removeWheelEvent(elem, this.handleDropDownMousewheel);
+        event.removeWheelEvent(elem, this.handleDropDownMousewheel);
       }
       if (app) {
-        removeWheelEvent(app, this.handleMousewheel);
+        event.removeWheelEvent(app, this.handleMousewheel);
       }
     }
 

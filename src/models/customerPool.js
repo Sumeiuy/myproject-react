@@ -6,7 +6,7 @@
 import _ from 'lodash';
 import queryString from 'query-string';
 import { customerPool as api } from '../api';
-import { matchRoute, getEmpId } from '../utils/helper';
+import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
 
@@ -119,7 +119,7 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = matchRoute('serviceLog', pathname);
+        const serviceLogUrl = url.matchRoute('serviceLog', pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -132,7 +132,7 @@ export default {
           return;
         }
 
-        const custGroupUrl = matchRoute('customerGroup', pathname);
+        const custGroupUrl = url.matchRoute('customerGroup', pathname);
         if (custGroupUrl) {
           const { curPageNum, curPageSize, keyWord = null } = params;
           dispatch({
@@ -140,7 +140,7 @@ export default {
             payload: {
               pageNum: curPageNum || INITIAL_PAGE_NUM,
               pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: getEmpId(),
+              empId: emp.getId(),
               keyWord,
             },
           });
@@ -148,7 +148,7 @@ export default {
           return;
         }
 
-        const customerGroupManageUrl = matchRoute('customerGroupManage', pathname);
+        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
         const { curPageNum, curPageSize, keyWord = null } = params;
         if (customerGroupManageUrl) {
           dispatch({
@@ -163,7 +163,7 @@ export default {
           return;
         }
 
-        const todoListUrl = matchRoute('todo', pathname);
+        const todoListUrl = url.matchRoute('todo', pathname);
         if (todoListUrl) {
           const { keyword } = params;
           if (keyword) {
