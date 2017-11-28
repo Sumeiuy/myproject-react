@@ -12,6 +12,7 @@ import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
 import Uploader from '../taskFlow/Uploader';
 import { fspContainer, request } from '../../../config';
+import Clickable from '../../../components/common/Clickable';
 import { helper } from '../../../utils';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -350,8 +351,18 @@ export default class CreateServiceRecord extends PureComponent {
     );
     const footer = (
       <div className={styles.customFooter}>
-        <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
-        <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
+        <Clickable
+          onClick={this.handleCancel}
+          eventName="/click/createServiceRecord/cancel"
+        >
+          <a className={styles.cancelBtn}>取消</a>
+        </Clickable>
+        <Clickable
+          onClick={this.handleSubmit}
+          eventName="/click/createServiceRecord/submit"
+        >
+          <a className={styles.submitBtn}>提交</a>
+        </Clickable>
       </div>
     );
     return (

@@ -11,6 +11,7 @@ import _ from 'lodash';
 import info from '../../common/info';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './bottomFixedBox.less';
 
@@ -213,22 +214,26 @@ export default class BottomFixedBox extends PureComponent {
   // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
   renderGroup() {
     if (this.props.mainServiceManager) {
-      return (<button
-        onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
-      >
-        用户分组
-      </button>);
+      return (
+        <Clickable
+          onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
+          eventName="/click/custListBottomFixedBox/custGroup"
+        >
+          <button>用户分组</button>
+        </Clickable>
+      );
     }
     return null;
   }
 
   renderCreateTaskBtn() {
     return (
-      <button
+      <Clickable
         onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        eventName="/click/custListBottomFixedBox/launchTask"
       >
-        发起任务
-      </button>
+        <button>发起任务</button>
+      </Clickable>
     );
   }
 

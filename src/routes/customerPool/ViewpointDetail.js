@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { fspContainer } from '../../config';
 import { fspGlobal, helper } from '../../utils';
 import wordSrc from '../../../static/images/word.png';
+import Clickable from '../../components/common/Clickable';
 import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
 import styles from './viewpointDetail.less';
@@ -64,13 +65,17 @@ export default class ViewpointDetail extends PureComponent {
 
   renderDownLoad({ loadUrl, format, fileName }) {
     return (
-      <a
-        href={loadUrl}
-        download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
+      <Clickable
         onClick={() => this.handleDownloadClick({ format })}
+        eventName="/click/viewpointDetail/download"
       >
-        {`${_.toUpper(format)} 全文`}
-      </a>
+        <a
+          href={loadUrl}
+          download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
+        >
+          {`${_.toUpper(format)} 全文`}
+        </a>
+      </Clickable>
     );
   }
 
@@ -112,15 +117,17 @@ export default class ViewpointDetail extends PureComponent {
           <div className={styles.content}>
             <div className={styles.head}>
               <div className={styles.titleRow}>
-                <div
-                  className={classnames(styles.backColumn, styles.upper)}
+                <Clickable
                   onClick={this.handleBackClick}
+                  eventName="/click/viewpointDetail/backToList"
                 >
-                  <div className={styles.iconContainer}>
-                    <Icon type="fanhui" className={styles.backIcon} />
+                  <div className={classnames(styles.backColumn, styles.upper)}>
+                    <div className={styles.iconContainer}>
+                      <Icon type="fanhui" className={styles.backIcon} />
+                    </div>
+                    <div className={styles.backTitle}>资讯列表</div>
                   </div>
-                  <div className={styles.backTitle}>资讯列表</div>
-                </div>
+                </Clickable>
                 <div className={styles.title}>
                   {_.isEmpty(texttitle) ? '暂无标题' : texttitle}
                 </div>
@@ -173,15 +180,17 @@ export default class ViewpointDetail extends PureComponent {
                   })}
                 </div>
               </div>
-              <div
-                className={classnames(styles.backColumn, styles.under)}
+              <Clickable
                 onClick={this.handleBackClick}
+                eventName="/click/viewpointDetail/backToList"
               >
-                <div className={styles.iconContainer}>
-                  <Icon type="fanhui" className={styles.backIcon} />
+                <div className={classnames(styles.backColumn, styles.under)}>
+                  <div className={styles.iconContainer}>
+                    <Icon type="fanhui" className={styles.backIcon} />
+                  </div>
+                  <div className={styles.backTitle}>资讯列表</div>
                 </div>
-                <div className={styles.backTitle}>资讯列表</div>
-              </div>
+              </Clickable>
             </div>
           </div>
         </div>

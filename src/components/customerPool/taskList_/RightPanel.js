@@ -17,6 +17,7 @@ import styles from './rightPanel.less';
 import Icon from '../../common/Icon';
 import Button from '../../common/Button';
 import GroupTable from '../groupManage/GroupTable';
+import Clickable from '../../../components/common/Clickable';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 
 const EMPTY_OBJECT = {};
@@ -174,7 +175,12 @@ export default class RightPanel extends PureComponent {
                 <div className={styles.value}>
                   <Icon type="excel" className={styles.excel} />
                   客户列表
-                  <a className={styles.seeCust} onClick={this.handleSeeCust}>查看预览</a>
+                  <Clickable
+                    onClick={this.handleSeeCust}
+                    eventName="/click/taskListRightPanel/lookOverview"
+                  >
+                    <a className={styles.seeCust}>查看预览</a>
+                  </Clickable>
                 </div>
                 :
                 <div className={styles.value}>--</div>
@@ -263,9 +269,12 @@ export default class RightPanel extends PureComponent {
             okType={'primary'}
             onOkHandler={this.handleCloseModal}
             footer={
-              <Button type="primary" size="default" onClick={this.handleCloseModal}>
-                确定
-            </Button>
+              <Clickable
+                onClick={this.handleCloseModal}
+                eventName="/click/taskListRightPanel/confirm"
+              >
+                <Button type="primary" size="default">确定</Button>
+              </Clickable>
             }
             width={700}
             modalContent={
