@@ -808,7 +808,9 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
-    saveContractData(payload);
+    saveContractData(payload).then(
+      () => this.closeModal('addFormModal'),
+    );
   }
 
   // 点击列表每条的时候对应请求详情
