@@ -24,5 +24,7 @@ export default function channels(api) {
     postDoApprove: query => api.post('/groovynoauth/fsp/protocol/doApprove', query),
     // 验证客户
     getCustValidate: query => api.post('/groovynoauth/fsp/protocol/custValidate', query),
+    // 根据操作类型返回可用的协议列表
+    queryProtocolList: query => api.post('/groovynoauth/fsp/protocol/queryProtocolList', query),
   };
 }
