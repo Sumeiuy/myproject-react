@@ -3,11 +3,13 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
+import { request } from '../../../config';
+import { helper } from '../../../utils';
 
 const EMPTY_OBJECT = {};
 
 export default function ServiceRecordItem(props) {
-  const { title, type, content, executeTypes, isShowChild = false } = props;
+  const { title, type, content, executeTypes, isShowChild, files } = props;
   let newContent = content;
   if (!_.isEmpty(executeTypes)) {
     // 当前为执行方式
@@ -27,7 +29,11 @@ export default function ServiceRecordItem(props) {
       {
         isShowChild ?
           <span title={newContent}><Icon type="excel" className={styles.excel} />
-            <a className={styles.seeCust}>{'我的附件'}</a></span>
+            <a
+              className={styles.seeCust}
+              href={`${request.prefix}/file/ceFileDownload?attachId=${newContent}&empId=${helper.getEmpId()}&filename=${files}`}
+            >{'我的附件'}</a>
+          </span>
           :
           <span title={newContent}>{newContent || '--'}</span>
       }
@@ -42,6 +48,7 @@ ServiceRecordItem.propTypes = {
   type: PropTypes.string,
   executeTypes: PropTypes.array,
   isShowChild: PropTypes.bool,
+  files: PropTypes.string,
 };
 
 ServiceRecordItem.defaultProps = {
@@ -50,4 +57,5 @@ ServiceRecordItem.defaultProps = {
   type: 'left',
   executeTypes: [],
   isShowChild: false,
+  files: '',
 };

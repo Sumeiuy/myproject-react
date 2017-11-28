@@ -124,10 +124,38 @@ export default class TargetCustomerRight extends PureComponent {
     );
     const inFoPerfectRate = (
       <div className={`${styles.nameTips}`}>
-        <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhoneCR)}</span></h6>
-        <h6><span>联系地址：</span><span>{this.handleEmpty(itemData.contactAddressCR)}</span></h6>
-        <h6><span>电子邮箱：</span><span>{this.handleEmpty(itemData.emailCR)}</span></h6>
-        <h6><span>风险偏好：</span><span>{this.handleEmpty(itemData.riskPreferenceCR)}</span></h6>
+        <h6><span>手机号码：</span>
+          <span
+            className={classnames({
+              [styles.perfectRate]: itemData.cellPhoneCR === '完善',
+              [styles.noPerfectRate]: itemData.cellPhoneCR === '不完善',
+            })}
+          >{this.handleEmpty(itemData.cellPhoneCR)}</span>
+        </h6>
+        <h6><span>联系地址：</span>
+          <span
+            className={classnames({
+              [styles.perfectRate]: itemData.contactAddressCR === '完善',
+              [styles.noPerfectRate]: itemData.contactAddressCR === '不完善',
+            })}
+          >{this.handleEmpty(itemData.contactAddressCR)}</span>
+        </h6>
+        <h6><span>电子邮箱：</span>
+          <span
+            className={classnames({
+              [styles.perfectRate]: itemData.emailCR === '完善',
+              [styles.noPerfectRate]: itemData.emailCR === '不完善',
+            })}
+          >{this.handleEmpty(itemData.emailCR)}</span>
+        </h6>
+        <h6><span>风险偏好：</span>
+          <span
+            className={classnames({
+              [styles.perfectRate]: itemData.riskPreferenceCR === '完善',
+              [styles.noPerfectRate]: itemData.riskPreferenceCR === '不完善',
+            })}
+          >{this.handleEmpty(itemData.riskPreferenceCR)}</span>
+        </h6>
       </div>
     );
     // 佣金率
@@ -319,11 +347,12 @@ export default class TargetCustomerRight extends PureComponent {
         <Modal
           title="最近服务记录"
           visible={visible}
-          width={700}
+          width={900}
           mask={false}
           footer={null}
           maskClosable={false}
           onCancel={this.handleCancel}
+          className={styles.moreServices}
         >
           <Collapse
             data={serviceRecordData[itemData.custId]}

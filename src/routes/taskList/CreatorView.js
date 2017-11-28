@@ -16,15 +16,18 @@ import RightPanel from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import appListTool from '../../components/common/appList/tool';
-import { seibelConfig, fspContainer } from '../../config';
+import { fspContainer } from '../../config';
+import pageConfig from '../../components/taskList/pageConfig';
 import { fspGlobal } from '../../utils';
-import styles from './creatorView.less';
 
 const EMPTY_OBJECT = {};
 
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 
-const { creatorView, creatorView: { pageType, type, status } } = seibelConfig;
+const {
+  taskList,
+  taskList: { pageType, viewType, status, chooseMissionView },
+} = pageConfig;
 
 const fetchDataFunction = (globalLoading, value) => query => ({
   type: value,
@@ -38,7 +41,7 @@ const mapStateToProps = state => ({
   // 登录人信息
   empInfo: state.app.empInfo,
   // 左侧列表
-  list: state.app.seibleList,
+  list: state.performerView.taskList,
   // 客户细分导入数据
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
@@ -50,7 +53,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   // 获取左侧列表
-  getCreatorViewlist: fetchDataFunction(true, 'app/getSeibleList'),
+  getCreatorViewlist: fetchDataFunction(true, 'performerView/getTaskList'),
   previewCustFile: fetchDataFunction(true, 'tasklist/previewCustFile'),
   getTaskBasicInfo: fetchDataFunction(true, 'tasklist/getTaskBasicInfo'),
   // 清除数据
@@ -309,7 +312,7 @@ export default class CreatorView extends PureComponent {
         onClick={this.handleListRowClick}
         index={index}
         pageName="creatorView"
-        pageData={creatorView}
+        pageData={taskList}
       />
     );
   }
@@ -329,9 +332,10 @@ export default class CreatorView extends PureComponent {
         replace={replace}
         page="creatorView"
         pageType={pageType}
-        subtypeOptions={type}
+        typeOptions={viewType}
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
+        chooseMissionViewOptions={chooseMissionView}
         empInfo={empInfo}
       />
     );
@@ -368,7 +372,7 @@ export default class CreatorView extends PureComponent {
       />
     );
     return (
-      <div className={styles.creatorView}>
+      <div>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}

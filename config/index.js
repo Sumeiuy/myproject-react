@@ -24,7 +24,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9088,
+    port: 9083,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -53,6 +53,8 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
     mock: false, // 本地
+    // 是否开启HMR
+    enableHMR: true,
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
