@@ -264,7 +264,7 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { currentView: st } = record;
+    const { currentView: st = EXECUTOR } = record;
     const {
       getTaskBasicInfo,
     } = this.props;

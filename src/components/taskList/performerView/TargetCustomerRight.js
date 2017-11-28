@@ -90,28 +90,29 @@ export default class TargetCustomerRight extends PureComponent {
     return `${newValue}${Unit}`;
   }
 
-  handleOpenAssetsRate(val, key) {
-    let openAsset = '--';
-    if (!_.isEmpty(val) && !_.isEmpty(key)) {
-      openAsset = val / key;
-    }
-    return openAsset;
-  }
-
-  handleOpenAssetsPercent(value) {
-    let word = '--';
-    if (value !== '--') {
-      word = `${(value) * 100}%`;
-    }
-    return word;
-  }
-
-  handleAvailablBalancePercent(value) {
-    let word = '--';
-    if (value !== '--') {
-      word = `${(1 - value) * 100}%`;
-    }
-    return word;
+  // 联系电话的浮层信息
+  renderPhoneNumList(itemData) {
+    const isShow = true;
+    const phoneNum = (
+      <div className={`${styles.nameTips}`}>
+        {
+          isShow ?
+            <div>
+              <h5 className={styles.callName}>张三</h5>
+              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
+              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
+              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
+            </div>
+            :
+            <div>
+              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
+              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
+              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
+            </div>
+        }
+      </div>
+    );
+    return phoneNum;
   }
 
   render() {
@@ -131,31 +132,11 @@ export default class TargetCustomerRight extends PureComponent {
     const firSpan = isFold ? 12 : 24;
     const sendSpan = isFold ? 16 : 24;
     const thrSpan = isFold ? 8 : 24;
-    const isShow = { main: true }; // 默认有主联系人
     const suspendedLayer = (
       <div className={`${styles.nameTips}`}>
         <h6><span>工号：</span><span>{this.handleEmpty(itemData.empId)}</span></h6>
         <h6><span>联系电话：</span><span>{this.handleEmpty(itemData.empContactPhone)}</span></h6>
         <h6><span>所在营业部：</span><span>{this.handleEmpty(itemData.empDepartment)}</span></h6>
-      </div>
-    );
-    const phoneNum = (
-      <div className={`${styles.nameTips}`}>
-        {
-          isShow ?
-            <div>
-              <h5 className={styles.callName}>张三</h5>
-              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
-              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
-              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
-            </div>
-            :
-            <div>
-              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
-              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
-              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
-            </div>
-        }
       </div>
     );
     const inFoPerfectRate = (
@@ -209,9 +190,9 @@ export default class TargetCustomerRight extends PureComponent {
     }
     // 持仓金额占余额的百分比openAssetsPercent
     // 可用余额占余额的百分比availablBalancePercent
-    const openAssetsRate = this.handleOpenAssetsRate(itemData.openAssets / itemData.assets);
-    const openAssetsPercent = this.handleOpenAssetsPercent(openAssetsRate);
-    const availablBalancePercent = this.handleAvailablBalancePercent(openAssetsRate);
+    const openAssetsRate = itemData.openAssets / itemData.assets;
+    const openAssetsPercent = `${(openAssetsRate) * 100}%`;
+    const availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
     return (
       <div className={styles.box}>
         <div className={styles.titles}>
@@ -255,7 +236,7 @@ export default class TargetCustomerRight extends PureComponent {
                   _.isEmpty(itemData.contactPhone) ?
                     null :
                     <TipsInfo
-                      title={phoneNum}
+                      title={this.renderPhoneNumList(itemData)}
                     />
                 }
               </h5>

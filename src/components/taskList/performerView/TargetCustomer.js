@@ -162,6 +162,9 @@ export default class TargetCustomer extends PureComponent {
       isFold,
       currentCustId,
     } = this.props;
+    if (_.isEmpty(list)) {
+      return null;
+    }
     return list.map(o => <TargetCustomerRow
       key={o.custId}
       item={o}
@@ -249,18 +252,21 @@ export default class TargetCustomer extends PureComponent {
               </div>
             </Col>
             <Col span={15}>
-              <TargetCustomerRight
-                isFold={isFold}
-                itemData={targetCustDetail}
-                handleCollapseClick={handleCollapseClick}
-                serveWay={serveWay}
-                executeTypes={executeTypes}
-                getServiceRecord={getServiceRecord}
-                serviceRecordData={serviceRecordData}
-                getCustIncome={getCustIncome}
-                monthlyProfits={monthlyProfits}
-                custIncomeReqState={custIncomeReqState}
-              />
+              {
+                !_.isEmpty(targetCustDetail) ?
+                  <TargetCustomerRight
+                    isFold={isFold}
+                    itemData={targetCustDetail}
+                    handleCollapseClick={handleCollapseClick}
+                    serveWay={serveWay}
+                    executeTypes={executeTypes}
+                    getServiceRecord={getServiceRecord}
+                    serviceRecordData={serviceRecordData}
+                    getCustIncome={getCustIncome}
+                    monthlyProfits={monthlyProfits}
+                    custIncomeReqState={custIncomeReqState}
+                  /> : null
+              }
             </Col>
           </Row>
         </div>
