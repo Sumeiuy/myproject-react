@@ -157,43 +157,6 @@ export default {
         doApprove: resultData,
       };
     },
-    getClauseNameListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      /*eslint-disable */
-      if (resultData.length) {
-        resultData.forEach((v) => {
-          v.label = v.termVal;
-          v.value = v.termName;
-          v.show = true;
-          if (v.param.length) {
-            v.param.forEach((sv) => {
-              sv.label = sv.val;
-              sv.value = sv.name;
-              sv.show = true;
-            });
-          }
-        });
-      }
-      /*eslint-disable */
-      return {
-        ...state,
-        clauseNameList: resultData,
-      };
-    },
-    getCooperDeparmentListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      return {
-        ...state,
-        cooperDeparment: resultData,
-      };
-    },
-    getFlowHistorySuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      return {
-        ...state,
-        flowHistory: resultData,
-      };
-    },
   },
   effects: {
     // 获取详情

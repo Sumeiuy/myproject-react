@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import { DatePicker, message, Input } from 'antd';
+import { DatePicker, Input } from 'antd';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -29,27 +29,26 @@ export default class Pageheader extends PureComponent {
     replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
-    // 状态
-    stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
     pageType: PropTypes.string.isRequired,
-    // 拟稿人列表
+    // 创建者列表
     drafterList: PropTypes.array.isRequired,
-    // 获取拟稿人列表
+    // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 子类型
-    subtypeOptions: PropTypes.array,
     // 视图选择
     chooseMissionViewOptions: PropTypes.array,
+    // dict字典
+    dict: PropTypes.object,
   }
 
   static defaultProps = {
     page: '',
     empInfo: {},
-    subtypeOptions: [],
+    typeOptions: [],
     chooseMissionViewOptions: [],
+    dict: {},
   }
 
   constructor(props) {
@@ -183,7 +182,7 @@ export default class Pageheader extends PureComponent {
     const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
     const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
     if (createTimeEnd && createTimeStart) {
-      if (createTimeEnd > createTimeStart) {
+      if (createTimeEnd >= createTimeStart) {
         replace({
           pathname,
           query: {
@@ -195,34 +194,50 @@ export default class Pageheader extends PureComponent {
         });
         return true;
       }
-      message.error('开始时间与结束时间不能为同一天', 1);
       return false;
     }
     replace({
       pathname,
       query: {
         ...query,
-        startDate: '',
-        endDate: '',
+        createTimeStart: '',
+        createTimeEnd: '',
         isResetPageNum: 'Y',
       },
     });
     return false;
   }
 
+  // 从字典里面拿来的数据进行数据转化
+  @autobind
+  constructorDataType(data) {
+    if (data.length) {
+      const newData = data.map((item) => {
+        const newItem = {};
+        newItem.label = item.value;
+        newItem.value = item.key;
+        newItem.show = true;
+        return {
+          ...newItem,
+        };
+      });
+      return newData;
+    }
+    return null;
+  }
+
   render() {
     const {
       getDrafterList,
-      stateOptions,
       creatSeibelModal,
       drafterList,
       page,
-      subtypeOptions,
       chooseMissionViewOptions,
+      dict,
       location: {
         query: {
-          missionViewType,
-          subType,
+          chooseMissionView,
+          type,
           status,
           drafterId,
           createTimePartFrom,
@@ -232,7 +247,18 @@ export default class Pageheader extends PureComponent {
     } = this.props;
 
     const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
+    const stateAll = { label: '所有状态', value: '', show: true };
+    const typeAll = { label: '所有类型', value: '', show: true };
 
+    const { missionStatus, missionType } = dict;
+    const stateOptions = this.constructorDataType(missionStatus);
+    const typeOptions = this.constructorDataType(missionType);
+    // 类型增加全部
+    const typeAllOptions = !_.isEmpty(typeOptions) ?
+    [typeAll, ...typeOptions] : typeOptions;
+    // 状态增加全部
+    const stateAllOptions = !_.isEmpty(stateOptions) ?
+    [stateAll, ...stateOptions] : stateOptions;
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
@@ -246,9 +272,9 @@ export default class Pageheader extends PureComponent {
     // 默认时间
     const startTime = createTimePartFrom ? moment(createTimePartFrom) : null;
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
-    const subTypeValue = !_.isEmpty(subType) ? subType : '所有类型';
+    const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
-    const missionViewTypeValue = !_.isEmpty(missionViewType) ? status : '发起者视图';
+    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '我执行的任务';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -272,8 +298,8 @@ export default class Pageheader extends PureComponent {
           <div className={styles.filterFl}>
             <Select
               name="type"
-              value={subTypeValue}
-              data={subtypeOptions}
+              value={typeValue}
+              data={typeAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>
@@ -282,7 +308,7 @@ export default class Pageheader extends PureComponent {
             <Select
               name="status"
               value={statusValue}
-              data={stateOptions}
+              data={stateAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>

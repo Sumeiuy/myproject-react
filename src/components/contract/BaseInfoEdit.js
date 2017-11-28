@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:31:53
+ * @Last Modified time: 2017-11-28 17:21:15
 */
 
 import React, { PureComponent } from 'react';
@@ -64,21 +64,6 @@ export default class BaseInfoEdit extends PureComponent {
         ...baseInfo,
       },
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { contractDetail, contractDetail: { baseInfo } } = nextProps;
-    if (contractDetail !== this.props.contractDetail) {
-      this.setState({
-        contractStarDate: time.format(baseInfo.startDt),
-        contractPalidity: time.format(baseInfo.vailDt),
-        remark: baseInfo.description,
-        tdDescription: baseInfo.tdDescription,
-        oldData: {
-          ...baseInfo,
-        },
-      });
-    }
   }
 
   // 根据code返回操作类型name

@@ -286,8 +286,11 @@ export default class Contract extends PureComponent {
       } else {
         hasEditPermission = false;
       }
+      // 新需求，将详情内的 修改 按钮拿掉，将修改触发的弹框变成了新的form界面（同文件夹内）。
+      // 应要求，不需要拿掉修改按钮触发的弹框逻辑
+      // hasEditPermission 控制详情内 修改 按钮是否显示
       this.setState({
-        hasEditPermission,
+        hasEditPermission: false,
       });
     }
 
