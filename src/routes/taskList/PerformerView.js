@@ -302,7 +302,6 @@ export default class PerformerView extends PureComponent {
       getCustIncome,
       monthlyProfits,
     } = this.props;
-    console.warn(this.props);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
