@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { dom } from '../../helper';
 import styles from './SelfSelect.less';
 
 const CheckboxGroup = Checkbox.Group;
@@ -141,16 +142,12 @@ export default class SelfSelect extends PureComponent {
   stopClick(e) {
     e.stopPropagation();
   }
-  @autobind
-  hasClass(ele, classname) {
-    return ele.className.indexOf(classname) > -1;
-  }
 
   // 收起下拉列表
   @autobind
   unExpandSelfSelect(e) {
-    const targetHasClass = this.hasClass(e.target, 'checkbox');
-    const parentHasClass = this.hasClass(e.target.parentNode, 'checkbox');
+    const targetHasClass = dom.hasClass(e.target, 'checkbox');
+    const parentHasClass = dom.hasClass(e.target.parentNode, 'checkbox');
     if (targetHasClass || parentHasClass) {
       return;
     }

@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 21:08:22
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:30:40
 */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 import styles from './baseInfoAdd.less';
 
 const { TextArea } = Input;
@@ -280,7 +280,7 @@ export default class BaseInfoEdit extends PureComponent {
         />
       </InfoForm>)
       :
-      <InfoItem label="合约开始日期" value={dateFormat(contractDetail.startDt) || ''} />;
+      <InfoItem label="合约开始日期" value={time.format(contractDetail.startDt) || ''} />;
     const contractPalidityComponent = operation !== unsubscribe ?
       (<InfoForm label="合约有效期">
         <DatePicker
@@ -296,7 +296,7 @@ export default class BaseInfoEdit extends PureComponent {
         />
       </InfoForm>)
       :
-      <InfoItem label="合约有效期" value={dateFormat(contractDetail.vailDt) || ''} />;
+      <InfoItem label="合约有效期" value={time.format(contractDetail.vailDt) || ''} />;
     const desc = operation !== unsubscribe ? remark : tdDescription;
     const remarkComponent = (<InfoForm label="备注">
       <TextArea

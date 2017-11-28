@@ -8,8 +8,8 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { feedback as api } from '../api';
-import { helper } from '../utils';
-// import config from '../config/request';
+import feedbackHelper from '../helper/page/feedback';
+
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
@@ -122,7 +122,7 @@ export default {
       // 刷新反馈列表
       yield put({
         type: 'getFeedbackList',
-        payload: helper.constructPostBody(currentQuery, curPageNum, curPageSize),
+        payload: feedbackHelper.constructPostBody(currentQuery, curPageNum, curPageSize),
       });
     },
   },

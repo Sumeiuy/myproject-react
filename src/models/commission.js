@@ -714,7 +714,6 @@ export default {
 
     // 清空在redux中保存的查询结果
     * clearReduxState({ payload }, { put }) {
-      console.warn('clearReduxState', payload);
       const { clearList } = payload;
       for (let i = 0; i < clearList.length; i++) {
         const { name, value = [] } = clearList[i];

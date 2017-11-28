@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { constants } from '../../config';
-import { trigger } from '../../utils/helper';
+import { event } from '../../helper';
 
 import styles from './seibelCustRange.less';
 
@@ -169,11 +169,7 @@ export default class CustRange extends PureComponent {
       return;
     }
     this.addDropDownMouseWheel();
-    // const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-    // const evt = document.createEvent('MouseEvent');
-    // evt.initEvent('mousedown', true, true);
-    // document.querySelector(constants.container).dispatchEvent(evt);
-    trigger(document.querySelector(constants.container), 'mousedown');
+    event.triggerMouseDown(document.querySelector(constants.container));
   }
 
   @autobind

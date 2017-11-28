@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
-import { checkFormat } from '../../../utils/helper';
+import { check } from '../../../helper';
 
 import styles from './createContactModal.less';
 // import Phone from '../../../../static/images/phone.png';
@@ -165,7 +165,7 @@ export default class CreateContactModal extends PureComponent {
     const temp = phone.toString();
     const len = temp.length;
     let flag = 4;
-    const isCellPhone = checkFormat.isCellphone(phone);
+    const isCellPhone = check.isCellphone(phone);
     if (!isCellPhone) {
       // 不是手机号
       if (phone.indexOf('-') === -1) {

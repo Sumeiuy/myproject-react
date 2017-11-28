@@ -12,13 +12,10 @@ import _ from 'lodash';
 import Resize from 'element-resize-detector';
 
 import splitConfig from './config';
-import { getEnv } from '../../../utils/helper';
+import { env } from '../../../helper';
 import '../../../css/react-split-pane-master.less';
 import styles from './SplitPanel.less';
 import nodatapng from './nodata.png';
-
-const BROWSER = getEnv();
-
 
 export default class SplitPanel extends PureComponent {
 
@@ -117,8 +114,7 @@ export default class SplitPanel extends PureComponent {
     const utb = this.UTBContentElem;
     // 视口的高度
     let viewHeight = document.documentElement.clientHeight;
-    const browser = BROWSER.$browser;
-    if (browser === 'Internet Explorer') {
+    if (env.isIE()) {
       viewHeight -= 10;
     }
     // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
@@ -276,8 +272,7 @@ export default class SplitPanel extends PureComponent {
   // 重新给pan2样式赋值
   panMov(size) {
     console.warn('后面可能需要的size', size);
-    const browser = BROWSER.$browser;
-    if (browser === 'Internet Explorer') {
+    if (env.isIE()) {
       this.rightPanel.style.paddingLeft = 0;
     }
   }

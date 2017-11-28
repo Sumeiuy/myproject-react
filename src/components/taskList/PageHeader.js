@@ -14,7 +14,7 @@ import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
-import { addClass, removeClass } from '../../utils/helper';
+import { dom } from '../../helper';
 import { fspContainer } from '../../config';
 import styles from './pageHeader.less';
 
@@ -83,11 +83,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      removeClass(this.filterMore, 'filterMoreIcon');
-      addClass(this.filterMore, 'filterNoneIcon');
+      dom.removeClass(this.filterMore, 'filterMoreIcon');
+      dom.addClass(this.filterMore, 'filterNoneIcon');
     } else {
-      removeClass(this.filterMore, 'filterNoneIcon');
-      addClass(this.filterMore, 'filterMoreIcon');
+      dom.removeClass(this.filterMore, 'filterNoneIcon');
+      dom.addClass(this.filterMore, 'filterMoreIcon');
     }
   }
 
@@ -112,9 +112,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      addClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
     } else {
-      removeClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
     }
     this.onWindowResize();
   }
