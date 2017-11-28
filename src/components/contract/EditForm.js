@@ -81,19 +81,6 @@ export default class EditForm extends PureComponent {
     onSearchCutList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { contractDetail } = nextProps;
-    if (contractDetail !== this.props.contractDetail) {
-      this.setState({
-        formData: {
-          ...this.state.formData,
-          ...contractDetail.baseInfo,
-          terms: contractDetail.baseInfo.terms,
-        },
-      });
-    }
-  }
-
   // 处理接口返回的拟稿提请时间
   @autobind
   getCreatedDate(date) {
