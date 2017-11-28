@@ -102,7 +102,6 @@ export default class PerformerViewDetail extends PureComponent {
           addServeRecord={addServeRecord}
           isEntranceFromPerformerView
           formData={{}}
-          serviceType={''}
           currentSelectedCust={currentSelectedCust}
           isFold={isFold}
         />
