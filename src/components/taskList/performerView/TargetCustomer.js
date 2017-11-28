@@ -23,9 +23,14 @@ import styles from './targetCustomer.less';
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
 
+// 指定每页可以显示多少条
+const pageSizeOptions = ['8', '16', '32'];
+
 export default class TargetCustomer extends PureComponent {
 
   static propTypes = {
+    // 当前任务的id
+    currentId: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
@@ -40,6 +45,12 @@ export default class TargetCustomer extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     // 列表中当前选中的数据
     currentCustId: PropTypes.string,
+    targetCustDetail: PropTypes.object.isRequired,
+    parameter: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    getCustDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -58,74 +69,90 @@ export default class TargetCustomer extends PureComponent {
   @autobind
   handleStateChange(key, v) {
     const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [key]: v,
-      },
+    changeParameter({
+      [key]: v,
+      targetCustomerPageSize: PAGE_SIZE,
+      targetCustomerPageNo: PAGE_NO,
     });
+    queryTargetCust({
+      state: v,
+      pageSize: PAGE_SIZE,
+      pageNo: PAGE_NO,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
   @autobind
   handlePageChange(pageNo) {
     const {
-      replace,
-      location: {
-        pathname,
-        query,
+      parameter: {
+        targetCustomerPageSize = PAGE_SIZE,
+        targetCustomerState,
       },
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNo,
-      },
+    changeParameter({
+      targetCustomerPageNo: pageNo,
     });
+    queryTargetCust({
+      state: targetCustomerState,
+      pageSize: targetCustomerPageSize,
+      pageNo,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
   @autobind
   handleSizeChange(current, pageSize) {
     const {
-      replace,
-      location: {
-        pathname,
-        query,
+      parameter: {
+        targetCustomerState,
       },
+      currentId,
+      changeParameter,
+      queryTargetCust,
+      getCustDetail,
     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageSize,
-        pageNo: 1,
-      },
+    changeParameter({
+      targetCustomerPageSize: pageSize,
+      targetCustomerPageNo: PAGE_NO,
     });
+    queryTargetCust({
+      state: targetCustomerState,
+      pageSize,
+      pageNo: PAGE_NO,
+      missionId: currentId,
+      orgId: '',
+    }).then(() => getCustDetail({ missionId: currentId }));
   }
 
+  // 查询客户列表项对应的详情
   @autobind
   handleRowClick({ id }) {
     const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
+      currentId,
+      changeParameter,
+      queryCustUuid,
+      getCustDetail,
     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        targetCustId: id,
-      },
+    changeParameter({
+      targetCustId: id,
     });
+    getCustDetail({
+      custId: id,
+      missionId: currentId,
+    });
+    queryCustUuid();
   }
 
   @autobind
@@ -135,6 +162,9 @@ export default class TargetCustomer extends PureComponent {
       isFold,
       currentCustId,
     } = this.props;
+    if (_.isEmpty(list)) {
+      return null;
+    }
     return list.map(o => <TargetCustomerRow
       key={o.custId}
       item={o}
@@ -150,27 +180,25 @@ export default class TargetCustomer extends PureComponent {
       dict,
       page,
       list,
-      location: {
-        query: {
-          pageNo = PAGE_NO,
-          pageSize = PAGE_SIZE,
-        },
+      parameter: {
+        targetCustomerPageNo,
+        targetCustomerPageSize,
+        targetCustomerState = '',
       },
-      currentCustId,
       handleCollapseClick,
       getServiceRecord,
       serviceRecordData,
       getCustIncome,
       custIncomeReqState,
       monthlyProfits,
+      targetCustDetail,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
     }
     const { executeTypes, serveWay } = dict;
-    const curPageNo = pageNo || page.pageNo;
-    const curPageSize = pageSize || page.pageSize;
-    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
+    const curPageNo = targetCustomerPageNo || page.pageNo;
+    const curPageSize = targetCustomerPageSize || page.pageSize;
     const stateData = [{
       value: '',
       label: '全部',
@@ -196,7 +224,7 @@ export default class TargetCustomer extends PureComponent {
             <span className={styles.label}>状态:</span>
             <Select
               name="targetCustomerState"
-              value={'全部客户'}
+              value={targetCustomerState}
               data={stateData}
               onChange={this.handleStateChange}
             />
@@ -211,6 +239,8 @@ export default class TargetCustomer extends PureComponent {
               showSizeChanger
               onChange={this.handlePageChange}
               onShowSizeChange={this.handleSizeChange}
+              defaultPageSize={8}
+              pageSizeOptions={pageSizeOptions}
             />
           </div>
         </div>
@@ -222,18 +252,21 @@ export default class TargetCustomer extends PureComponent {
               </div>
             </Col>
             <Col span={15}>
-              <TargetCustomerRight
-                isFold={isFold}
-                itemData={currentSelectedCust}
-                handleCollapseClick={handleCollapseClick}
-                serveWay={serveWay}
-                executeTypes={executeTypes}
-                getServiceRecord={getServiceRecord}
-                serviceRecordData={serviceRecordData}
-                getCustIncome={getCustIncome}
-                monthlyProfits={monthlyProfits}
-                custIncomeReqState={custIncomeReqState}
-              />
+              {
+                !_.isEmpty(targetCustDetail) ?
+                  <TargetCustomerRight
+                    isFold={isFold}
+                    itemData={targetCustDetail}
+                    handleCollapseClick={handleCollapseClick}
+                    serveWay={serveWay}
+                    executeTypes={executeTypes}
+                    getServiceRecord={getServiceRecord}
+                    serviceRecordData={serviceRecordData}
+                    getCustIncome={getCustIncome}
+                    monthlyProfits={monthlyProfits}
+                    custIncomeReqState={custIncomeReqState}
+                  /> : null
+              }
             </Col>
           </Row>
         </div>
