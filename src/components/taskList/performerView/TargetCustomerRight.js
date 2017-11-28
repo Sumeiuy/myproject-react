@@ -82,12 +82,36 @@ export default class TargetCustomerRight extends PureComponent {
   handleAssets(value) {
     let newValue = '--';
     let Unit = '';
-    if (value !== null) {
+    if (!_.isEmpty(value)) {
       const obj = formatAsset(value);
       newValue = obj.value;
       Unit = obj.unit;
     }
     return `${newValue}${Unit}`;
+  }
+
+  handleOpenAssetsRate(val, key) {
+    let openAsset = '--';
+    if (!_.isEmpty(val) && !_.isEmpty(key)) {
+      openAsset = val / key;
+    }
+    return openAsset;
+  }
+
+  handleOpenAssetsPercent(value) {
+    let word = '--';
+    if (value !== '--') {
+      word = `${(value) * 100}%`;
+    }
+    return word;
+  }
+
+  handleAvailablBalancePercent(value) {
+    let word = '--';
+    if (value !== '--') {
+      word = `${(1 - value) * 100}%`;
+    }
+    return word;
   }
 
   render() {
@@ -107,7 +131,7 @@ export default class TargetCustomerRight extends PureComponent {
     const firSpan = isFold ? 12 : 24;
     const sendSpan = isFold ? 16 : 24;
     const thrSpan = isFold ? 8 : 24;
-
+    const isShow = { main: true }; // 默认有主联系人
     const suspendedLayer = (
       <div className={`${styles.nameTips}`}>
         <h6><span>工号：</span><span>{this.handleEmpty(itemData.empId)}</span></h6>
@@ -117,9 +141,21 @@ export default class TargetCustomerRight extends PureComponent {
     );
     const phoneNum = (
       <div className={`${styles.nameTips}`}>
-        <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
-        <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
-        <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
+        {
+          isShow ?
+            <div>
+              <h5 className={styles.callName}>张三</h5>
+              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
+              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
+              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
+            </div>
+            :
+            <div>
+              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
+              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
+              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
+            </div>
+        }
       </div>
     );
     const inFoPerfectRate = (
@@ -160,12 +196,12 @@ export default class TargetCustomerRight extends PureComponent {
     );
     // 佣金率
     let miniFee = '--';
-    if (itemData.commissionRate !== null) {
+    if (!_.isEmpty(itemData.commissionRate)) {
       miniFee = `${(Number(itemData.commissionRate) * 1000).toFixed(2)}‰`;
     }
     // 归集率
     let hsRate = '--';
-    if (itemData.hsRate !== null) {
+    if (!_.isEmpty(itemData.hsRate)) {
       const newHsRate = Number(itemData.hsRate);
       hsRate = newHsRate < 0 ?
         Number(newHsRate.toFixed(2)) :
@@ -173,9 +209,9 @@ export default class TargetCustomerRight extends PureComponent {
     }
     // 持仓金额占余额的百分比openAssetsPercent
     // 可用余额占余额的百分比availablBalancePercent
-    const openAssetsRate = itemData.openAssets / itemData.assets;
-    const openAssetsPercent = `${(openAssetsRate) * 100}%`;
-    const availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+    const openAssetsRate = this.handleOpenAssetsRate(itemData.openAssets / itemData.assets);
+    const openAssetsPercent = this.handleOpenAssetsPercent(openAssetsRate);
+    const availablBalancePercent = this.handleAvailablBalancePercent(openAssetsRate);
     return (
       <div className={styles.box}>
         <div className={styles.titles}>
@@ -185,7 +221,7 @@ export default class TargetCustomerRight extends PureComponent {
               <h5 className={styles.custNamesCont}>
                 <span>{this.handleEmpty(itemData.custId)}</span>|
                 <span>{this.handleEmpty(itemData.genderValue)}</span>|
-                <span>{this.handleEmpty(itemData.age)}岁</span>
+                <span>{this.handleEmpty(String(itemData.age))}岁</span>
               </h5>
             </Col>
           </Row>
@@ -236,16 +272,19 @@ export default class TargetCustomerRight extends PureComponent {
                 })}
               >
                 <span>总资产：</span><span>{this.handleAssets(itemData.assets)}</span>
-                <span className={styles.wordTips}>
-                  <SixMonthEarnings
-                    listItem={itemData}
-                    monthlyProfits={monthlyProfits}
-                    custIncomeReqState={custIncomeReqState}
-                    getCustIncome={getCustIncome}
-                    formatAsset={formatAsset}
-                    displayText="峰值和最近收益"
-                  />
-                </span>
+                {_.isEmpty(itemData.assets) ?
+                  null :
+                  <span className={styles.wordTips}>
+                    <SixMonthEarnings
+                      listItem={itemData}
+                      monthlyProfits={monthlyProfits}
+                      custIncomeReqState={custIncomeReqState}
+                      getCustIncome={getCustIncome}
+                      formatAsset={formatAsset}
+                      displayText="峰值和最近收益"
+                    />
+                  </span>
+                }
               </h5>
             </Col>
             <Col span={thrSpan}>
@@ -267,7 +306,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>持仓资产：</span>
                 <span>{this.handleAssets(itemData.openAssets)}</span>
-                <em className={styles.emStyle}>/</em><span>{openAssetsPercent}</span>
+                <em className={styles.emStyle}>/</em><span>{openAssetsPercent || '--'}</span>
               </h5>
             </Col>
             <Col span={thrSpan}>
@@ -289,7 +328,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>可用余额：</span>
                 <span>{this.handleAssets(itemData.availablBalance)}</span>
-                <em className={styles.emStyle}>/</em><span>{availablBalancePercent}</span>
+                <em className={styles.emStyle}>/</em><span>{availablBalancePercent || '--'}</span>
               </h5>
             </Col>
             <Col span={thrSpan}>
@@ -300,9 +339,13 @@ export default class TargetCustomerRight extends PureComponent {
                 })}
               >
                 <span>信息完备率：</span><span>{itemData.infoCompletionRate}</span>
-                <TipsInfo
-                  title={inFoPerfectRate}
-                />
+                {
+                  _.isEmpty(itemData.contactPhone) ?
+                    null :
+                    <TipsInfo
+                      title={inFoPerfectRate}
+                    />
+                }
               </h5>
             </Col>
           </Row>
