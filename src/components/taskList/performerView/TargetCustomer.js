@@ -180,6 +180,7 @@ export default class TargetCustomer extends PureComponent {
       parameter: {
         targetCustomerPageNo,
         targetCustomerPageSize,
+        targetCustomerState = '',
       },
       handleCollapseClick,
       getServiceRecord,
@@ -220,7 +221,7 @@ export default class TargetCustomer extends PureComponent {
             <span className={styles.label}>状态:</span>
             <Select
               name="targetCustomerState"
-              value={'全部客户'}
+              value={targetCustomerState}
               data={stateData}
               onChange={this.handleStateChange}
             />
