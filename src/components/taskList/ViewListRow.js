@@ -54,12 +54,12 @@ export default function AppItem(props) {
     [styles.active]: active,
   });
   const tagStatusType = cx({
-    processing: data.statusCode === PROCESSING && !active,
-    reject: data.statusCode === REJECT && !active,
-    close: data.statusCode === CLOSE && !active,
-    end: data.statusCode === END && !active,
-    executing: data.statusCode === EXECUTING && !active,
-    result: data.statusCode === RESULT && !active,
+    pvProcessing: data.statusCode === PROCESSING && !active,
+    pvReject: data.statusCode === REJECT && !active,
+    pvClose: data.statusCode === CLOSE && !active,
+    pvEnd: data.statusCode === END && !active,
+    pvExecuting: data.statusCode === EXECUTING && !active,
+    pvResult: data.statusCode === RESULT && !active,
     transparent: active,
   });
   function handleClick() {
