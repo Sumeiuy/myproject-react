@@ -11,7 +11,7 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import _ from 'lodash';
 
 import ReportHome from './Home';
-import { getCssStyle } from '../../utils/helper';
+import { dom } from '../../helper';
 import { PublishConfirmModal } from '../../components/modals';
 
 import styles from './PreviewReport.less';
@@ -75,7 +75,6 @@ export default class PreviewReport extends PureComponent {
     const { boardInfo: preboard } = this.props;
     const { boardInfo } = nextProps;
     if (!_.isEqual(preboard, boardInfo)) {
-      // const boardInfo = this.findBoardById(boardId);
       this.setState({
         boardInfo,
       });
@@ -92,13 +91,6 @@ export default class PreviewReport extends PureComponent {
   componentWillUnmount() {
     this.props.delBoardInfo();
   }
-
-  // @autobind
-  // findBoardById(boardId) {
-  //   const { editableBoards } = this.props;
-  //   const boardInfo = _.find(editableBoards, o => o.id === Number.parseInt(boardId, 10));
-  //   return boardInfo;
-  // }
 
   @autobind
   closeModal(modal) {
@@ -161,7 +153,7 @@ export default class PreviewReport extends PureComponent {
         <div
           className={styles.previewLayout}
           style={{
-            left: contentWrapper ? getCssStyle(contentWrapper, 'left') : '0',
+            left: contentWrapper ? dom.getCssStyle(contentWrapper, 'left') : '0',
           }}
         >
           <Button onClick={this.handlePubClick} key="publish" className={styles.preButton} size="large" type="primary">发布</Button>

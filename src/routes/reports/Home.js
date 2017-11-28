@@ -10,7 +10,7 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
+import { emp, url, time } from '../../helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
@@ -123,7 +123,7 @@ export default class ReportHome extends PureComponent {
     // 1.首先判断是否预览页面
     const { preView } = this.props;
     // 时间段默认值为 'month'
-    const duration = getDurationString('month');
+    const duration = time.getDurationString('month');
     const initialState = {};
     if (!preView) {
       // 正常普通页面，从页面中获取boardId
@@ -163,7 +163,7 @@ export default class ReportHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
       const { custRange } = this.props;
-      const { begin, end, cycleType } = getDurationString('month');
+      const { begin, end, cycleType } = time.getDurationString('month');
       // 修改state
       this.setState({
         showCharts: {},
@@ -230,7 +230,7 @@ export default class ReportHome extends PureComponent {
   getInfo() {
     const { getAllInfo } = this.props;
     const { boardId, begin, end, cycleType, orgId, custRangeLevel, scope } = this.state;
-    const empId = getEmpId(); // 用户ID
+    const empId = emp.getId(); // 用户ID
     // 整理数据
     const payload = {
       orgId,
@@ -319,7 +319,7 @@ export default class ReportHome extends PureComponent {
   handleExportExcel(param) {
     const { exportExcel } = this.props;
     const payload = this.getApiParams(param);
-    exportExcel({ query: queryToString(payload) });
+    exportExcel({ query: url.stringify(payload) });
   }
 
   @autobind

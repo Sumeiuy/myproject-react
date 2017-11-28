@@ -6,7 +6,7 @@
 import request from './request';
 
 import config from '../config/request';
-import { queryToString, getEmpId } from './helper';
+import { emp, url as urlHelper } from '../helper';
 
 /**
  * api生成器
@@ -41,9 +41,9 @@ export default function createApi() {
     get(url, query = {}) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
-      const queryString = queryToString(resetQuery);
+      const queryString = urlHelper.stringify(resetQuery);
       return request(
-        `${finalUrl}?${queryString}&empId=${getEmpId()}`,
+        `${finalUrl}?${queryString}&empId=${emp.getId()}`,
         {
           method: 'GET',
           ignoreCatch,
@@ -66,10 +66,10 @@ export default function createApi() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            empId: getEmpId(),
+            empId: emp.getId(),
           },
           ignoreCatch,
-          body: JSON.stringify({ ...resetQuery, empId: getEmpId() }),
+          body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
         },
       );
     },

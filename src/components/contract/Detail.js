@@ -2,8 +2,8 @@
  * @Description: 合作合约详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:25:39
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:35:20
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -18,7 +18,7 @@ import styles from './detail.less';
 import CommonUpload from '../common/biz/CommonUpload';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
@@ -77,7 +77,8 @@ export default class Detail extends PureComponent {
   @autobind
   getCreatedDate(date) {
     if (date) {
-      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+      // return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+      return time.format(date, 'YYYY-MM-DD HH:mm:ss');
     }
     return EMPTY_PARAM;
   }
@@ -141,8 +142,8 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约编号" value={baseInfo.contractNum || EMPTY_PARAM} />
-          <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
-          <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="合约开始日期" value={time.format(baseInfo.startDt) || EMPTY_PARAM} />
+          <InfoItem label="合约有效期" value={time.format(baseInfo.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

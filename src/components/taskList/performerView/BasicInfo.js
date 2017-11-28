@@ -14,8 +14,10 @@ import styles from './basicInfo.less';
 export default class BasicInfo extends PureComponent {
 
   static propTypes = {
-    // 有效期
-    validPeriod: PropTypes.string,
+    // 有效期开始时间
+    triggerTime: PropTypes.string,
+    // 有效期结束时间
+    endTime: PropTypes.string,
     // 任务目标
     missionTarget: PropTypes.string,
     // 服务策略
@@ -25,7 +27,8 @@ export default class BasicInfo extends PureComponent {
   }
 
   static defaultProps = {
-    validPeriod: '',
+    triggerTime: '',
+    endTime: '',
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
@@ -33,7 +36,8 @@ export default class BasicInfo extends PureComponent {
 
   render() {
     const {
-      validPeriod,
+      triggerTime,
+      endTime,
       missionTarget,
       servicePolicy,
       isFold,
@@ -46,7 +50,7 @@ export default class BasicInfo extends PureComponent {
           <Row className={styles.rowItem}>
             <Col span={colSpanValue} className={styles.colItem}>
               <span className={styles.label}>任务有效期:&nbsp;</span>
-              <span className={styles.content}>{validPeriod}</span>
+              <span className={styles.content}>{triggerTime}&nbsp;~&nbsp;{endTime}</span>
             </Col>
             <Col span={colSpanValue} className={styles.colItem}>
               <span className={styles.label}>任务目标:&nbsp;</span>

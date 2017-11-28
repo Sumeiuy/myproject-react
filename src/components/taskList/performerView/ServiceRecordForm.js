@@ -1,25 +1,19 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 17:30:26
+ * @Last Modified by:   K0240008
+ * @Last Modified time: 2017-11-28 11:50:09
  * 服务记录表单
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
-
-// 客户任务所处待处理和处理中时服务记录可编辑
-// 处理中 106110
-// 待处理  106112
-// 此处code码待修改
-const EDITABLE = ['106110', '106112'];
 
 export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
@@ -29,8 +23,8 @@ export default class ServiceRecordForm extends PureComponent {
     isEntranceFromPerformerView: PropTypes.bool,
     // 表单数据
     formData: PropTypes.object,
-    currentSelectedCust: PropTypes.object.isRequired,
     isFold: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -110,21 +104,14 @@ export default class ServiceRecordForm extends PureComponent {
     const {
       dict,
       isEntranceFromPerformerView,
-      currentSelectedCust,
       isFold,
       formData,
+      isReadOnly,
     } = this.props;
 
     if (!dict) {
       return null;
     }
-
-    const { missionStatusCode } = currentSelectedCust;
-
-    // 处理中 和 待处理 时表单可编辑
-    // 完成状态时表单是只读状态
-    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
-
     return (
       <div className={styles.serviceRecordWrapper}>
         <div className={styles.title}>
@@ -147,7 +134,6 @@ export default class ServiceRecordForm extends PureComponent {
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
           formData={formData}
-          currentSelectedCust={currentSelectedCust}
           isFold={isFold}
         />
 

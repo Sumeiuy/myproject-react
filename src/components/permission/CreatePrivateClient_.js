@@ -8,7 +8,7 @@ import ServerPersonel from './ServerPersonel';
 import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
-import { getEmpId } from '../../utils/helper';
+import { emp } from '../../helper';
 import confirm from '../common/Confirm/confirm';
 
 const columns = [
@@ -170,7 +170,7 @@ export default class CreatePrivateClient extends PureComponent {
     } = this.state;
 
     // 登录人Id，新建私密客户必传
-    const empId = getEmpId();
+    const empId = emp.getId();
     // 登录人custName，新建私密客户必传
     const empName = empInfo.empName;
     // 登录人orgId，新建私密客户必传

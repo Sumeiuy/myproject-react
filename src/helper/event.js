@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:08:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-23 15:07:15
+ * @Last Modified time: 2017-11-28 17:01:52
  * @description 此处存放公用的事件相关的方法
  */
 import _ from 'lodash';
@@ -28,6 +28,22 @@ const event = {
     ele.removeEventListener('mousewheel', handler);
     ele.removeEventListener('DOMMouseScroll', handler);
   },
+
+  /**
+   * 给window注册resize事件
+   * @param {Functio} handler 事件
+   */
+  addWindowResize(handler) {
+    window.addEventListener('resize', handler, false);
+  },
+  /**
+   * 注销window的resize事件
+   * @param {Functio} handler 事件
+   */
+  removeWindowResize(handler) {
+    window.removeEventListener('resize', handler);
+  },
+
   /**
    * 给DOM元素添加点击事件
    * @param {HTMLElement} ele DOM元素
@@ -57,7 +73,7 @@ const event = {
    * @param {*} reset 剩余参数的数组，自定义事件的其他参数
    */
   trigger(dom, type, name, ...reset) {
-    if (typeof type !== 'string' && _.includes(['UIEvents', 'MouseEvents', 'HTMLEvents'], type)) return;
+    if (typeof type !== 'string' && !_.includes(['UIEvents', 'MouseEvents', 'HTMLEvents'], type)) return;
     const e = document.createEvent(type);
     if (type === 'MouseEvents') {
       e.initMouseEvent(name, ...reset);
@@ -77,6 +93,16 @@ const event = {
    */
   triggerClick(dom, canBubble = true, cancelable = true) {
     event.trigger(dom, 'MouseEvents', 'click', canBubble, cancelable);
+  },
+  /**
+   * 触发mousedown事件
+   * @author sunweibin
+   * @param {HEMLElement} dom DOM元素
+   * @param {Boolean} canBubble=true 是否冒泡
+   * @param {Boolean} cancelable=true 是否可以阻止事件默认行为
+   */
+  triggerMouseDown(dom, canBubble = true, cancelable = true) {
+    event.trigger(dom, 'MouseEvents', 'mousedown', canBubble, cancelable);
   },
 
 };

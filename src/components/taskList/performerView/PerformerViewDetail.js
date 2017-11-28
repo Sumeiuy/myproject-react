@@ -14,11 +14,16 @@ import ServiceRecordForm from './ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
+// 客户任务所处待处理和处理中时服务记录可编辑
+// 处理中 106110
+// 待处理  106112
+// 此处code码待修改
+const EDITABLE = ['106110', '106112'];
+
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
+    currentId: PropTypes.string.isRequired,
     basicInfo: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
@@ -30,6 +35,14 @@ export default class PerformerViewDetail extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool,
+    targetCustDetail: PropTypes.object.isRequired,
+    parameter: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryTargetCustDetail: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    getCustDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -41,8 +54,7 @@ export default class PerformerViewDetail extends PureComponent {
 
   render() {
     const {
-      location,
-      replace,
+      currentId,
       basicInfo,
       dict,
       addServeRecord,
@@ -54,6 +66,14 @@ export default class PerformerViewDetail extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
+      targetCustDetail,
+      changeParameter,
+      parameter,
+      parameter: { targetCustId = '' },
+      queryTargetCust,
+      queryCustUuid,
+      custUuid,
+      getCustDetail,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -65,18 +85,46 @@ export default class PerformerViewDetail extends PureComponent {
       hasSurvey,
       ...otherProps
     } = basicInfo;
-    const {
-      query: { targetCustId = '' },
-    } = location;
-    const { list, list: [{ custId = '' }] } = targetCustList;
+    const { list = [] } = targetCustList;
     // 获取当前选中的数据的custId
-    const currentCustId = targetCustId || custId;
-    // 根据当前选中的数据的custId来获取这条数据
-    const currentSelectedCust = _.find(list, obj => obj.custId === currentCustId);
+    const currentCustId = targetCustId || (list[0] || {}).custId;
+
+    const { missionStatusCode } = targetCustDetail;
+
+    // 处理中 和 待处理 时表单可编辑
+    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
+    const {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceStatusName,
+      serviceStatusCode,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      attachmentRecord,
+      custId,
+    } = targetCustDetail;
+    // 服务记录的props
+    const serviceReocrd = {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceStatusName,
+      serviceStatusCode,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      attachmentRecord,
+      custId,
+      custUuid,
+    };
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
-          {`编号${missionId} ${missionName}: ${missionStatusName}`}
+          {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
@@ -84,9 +132,8 @@ export default class PerformerViewDetail extends PureComponent {
           {...otherProps}
         />
         <TargetCustomer
+          currentId={currentId}
           isFold={isFold}
-          location={location}
-          replace={replace}
           currentCustId={currentCustId}
           handleCollapseClick={handleCollapseClick}
           dict={dict}
@@ -95,15 +142,22 @@ export default class PerformerViewDetail extends PureComponent {
           getCustIncome={getCustIncome}
           custIncomeReqState={custIncomeReqState}
           monthlyProfits={monthlyProfits}
+          targetCustDetail={targetCustDetail}
+          changeParameter={changeParameter}
+          parameter={parameter}
+          queryTargetCust={queryTargetCust}
+          queryCustUuid={queryCustUuid}
+          getCustDetail={getCustDetail}
           {...targetCustList}
         />
         <ServiceRecordForm
           dict={dict}
           addServeRecord={addServeRecord}
+          isReadOnly={isReadOnly}
           isEntranceFromPerformerView
           formData={{}}
-          currentSelectedCust={currentSelectedCust}
           isFold={isFold}
+          serviceReocrd={serviceReocrd}
         />
       </div>
     );

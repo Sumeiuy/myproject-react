@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-20 17:56:12
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 16:02:25
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,8 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { permission, fspGlobal, helper } from '../../utils';
+import { permission, fspGlobal } from '../../utils';
+import { emp } from '../../helper';
 import { fspContainer } from '../../config';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
@@ -24,7 +25,7 @@ import styles from './taskFlow.less';
 const Step = Steps.Step;
 const { toString } = Mention;
 
-const orgId = helper.getOrgId();
+const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
@@ -358,7 +359,7 @@ export default class TaskFlow extends PureComponent {
     } else {
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
-          ptyMngId: helper.getEmpId(),
+          ptyMngId: emp.getId(),
         },
       }));
     }
