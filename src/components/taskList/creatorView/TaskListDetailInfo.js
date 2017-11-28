@@ -8,11 +8,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
-import { viewPageConfig } from '../../../config';
+import pageConfig from '../pageConfig';
 
 import styles from './detailInfo.less';
 
-const { creatorView: { status } } = viewPageConfig;
+const { taskList: { status } } = pageConfig;
 
 // 完成状态对应的 key 值
 const COMPLETE_CODE = '02';
