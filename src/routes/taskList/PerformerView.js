@@ -39,7 +39,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
-  addServiceRecord: 'customerPool/addServiceRecord',
+  addServiceRecord: 'performerView/addMotServeRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',

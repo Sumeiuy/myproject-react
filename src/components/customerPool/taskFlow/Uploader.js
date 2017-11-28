@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 16:32:12
+ * @Last Modified time: 2017-11-28 20:01:26
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -69,7 +69,6 @@ export default class Uploader extends PureComponent {
       upData,
     } = props;
     this.state = {
-      fList: [],
       lastFile: attachModel,
       fileList: [],
       uploadedFileKey: fileKey,
@@ -80,6 +79,7 @@ export default class Uploader extends PureComponent {
       showUploadList: true,
       upData,
       originUpData: upData,
+      custUuid: '',
     };
   }
 
@@ -108,7 +108,7 @@ export default class Uploader extends PureComponent {
   @autobind
   handleFileChange(info) {
     const { onOperateFile } = this.props;
-    const { upData } = this.state;
+    const { upData, custUuid } = this.state;
     // 当前列表
     const fileList = info.fileList;
     // 当前操作upload项
@@ -187,6 +187,7 @@ export default class Uploader extends PureComponent {
         originFileName: name,
         totalCount: totalCustNum,
         attachment,
+        custUuid,
       });
       this.setState({
         lastFile: currentFile,
@@ -201,6 +202,7 @@ export default class Uploader extends PureComponent {
           ...upData,
           attachment,
         },
+        fileList: [...fileList, currentFile],
       });
     }
 
@@ -236,8 +238,8 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleUpload() {
-    const { fileList, upData: { attachment, empId } } = this.state;
-    const { uploadTarget } = this.props;
+    const { fileList, upData: { attachment, empId }, custUuid } = this.state;
+    const { uploadTarget, onOperateFile } = this.props;
     const formData = new FormData();
     fileList.forEach((file) => {
       formData.append('file', file);
@@ -256,8 +258,13 @@ export default class Uploader extends PureComponent {
       data: formData,
       success: () => {
         this.setState({
-          fileList: [],
+          // fileList: [],
           uploading: false,
+        });
+        onOperateFile({
+          currentFile: fileList,
+          attachment,
+          custUuid,
         });
         message.success('upload successfully.');
       },
@@ -271,26 +278,32 @@ export default class Uploader extends PureComponent {
   }
 
   /**
-   * 在上传文件之前，
+   * 在文件上传之前
+   * @param {*} file 文件
    */
   @autobind
   handleBeforeUpload(file) {
-    const { fileList } = this.state;
+    const { fileList, custUuid } = this.state;
     const { isUploadFileManually } = this.props;
     if (isUploadFileManually) {
-      const { upData } = this.state;
-      api().post(beforeUploadPostUrl, {
-        empId: helper.getEmpId(),
-      }).then((res) => {
-        console.log(res);
-        const { resultData } = res;
-        this.setState({
-          upData: {
-            ...upData,
-            attachment: resultData,
-          },
-          fileList: [...fileList, file],
+      if (_.isEmpty(custUuid)) {
+        const { upData } = this.state;
+        api().post(beforeUploadPostUrl, {
+          empId: helper.getEmpId(),
+        }).then((res) => {
+          console.log(res);
+          const { resultData } = res;
+          this.setState({
+            upData: {
+              ...upData,
+              attachment: resultData,
+            },
+            custUuid: resultData,
+          });
         });
+      }
+      this.setState({
+        fileList: [...fileList, file],
       });
       return false;
     }
@@ -300,15 +313,20 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
-    const { uploadTitle, uploadTarget } = this.props;
+    const { uploadTitle, uploadTarget, isUploadFileManually } = this.props;
     const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
+    let uploadProps = {};
+    if (isUploadFileManually) {
+      uploadProps = {
+        fileList,
+      };
+    }
 
     return (
       <Dragger
         key={uploadKey}
         name="file"
-        defaultFileList={fileList}
         data={upData}
         action={uploadTarget}
         onRemove={this.handleFileRemove}
@@ -316,7 +334,7 @@ export default class Uploader extends PureComponent {
         customRequest={this.fileCustomRequest}
         showUploadList={showUploadList}
         beforeUpload={this.handleBeforeUpload}
-        fileList={fileList}
+        {...uploadProps}
       >
         <div className="upload_txt">
           + {uploadTitle}
@@ -372,11 +390,12 @@ export default class Uploader extends PureComponent {
       // 删除完毕之后，打开上传进度开关
       showUploadList: true,
       upData: originUpData,
+      custUuid: '',
     });
   }
 
   render() {
-    const { isNeedDelete, isNeedPreview } = this.props;
+    const { isNeedDelete, isNeedPreview, isUploadFileManually } = this.props;
     const { isShowUpload, isShowError, originFileName, uploading, fileList } = this.state;
     return (
       <div>
@@ -385,6 +404,7 @@ export default class Uploader extends PureComponent {
             isShowUpload ? this.createUpload() : null
           }
           {
+            !isUploadFileManually ? null :
             <Button
               className="uploadBtn"
               type="primary"
@@ -392,7 +412,7 @@ export default class Uploader extends PureComponent {
               disabled={fileList.length === 0}
               loading={uploading}
             >
-              {uploading ? 'Uploading' : 'Start Upload'}
+              {uploading ? 'Uploading' : 'Upload'}
             </Button>
           }
           {

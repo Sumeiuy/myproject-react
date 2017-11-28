@@ -140,8 +140,8 @@ export default {
       }
     },
     // 添加服务记录
-    * addServiceRecord({ payload }, { call }) {
-      yield call(api.addServiceRecord, payload);
+    * addMotServeRecord({ payload }, { call }) {
+      yield call(api.addMotServeRecord, payload);
     },
     // 上传文件之前，先查询uuid
     * queryCustUuid({ payload }, { call, put }) {

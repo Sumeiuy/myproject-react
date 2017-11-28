@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 16:19:34
+ * @Last Modified time: 2017-11-28 20:29:07
  * 服务记录表单
  */
 
@@ -46,11 +46,11 @@ export default class ServiceRecordForm extends PureComponent {
       feedbackType,
       feedbackTypeChild,
       serviceStatus,
-      uploadedFileKey,
       serviceContent,
+      custUuid,
     } = this.serviceRecordContentRef.getData();
 
-    // const { custUuid } = this.props;
+    const { formData: { custId = '', missionFlowId = '' }, addServeRecord } = this.props;
 
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
@@ -62,11 +62,9 @@ export default class ServiceRecordForm extends PureComponent {
       return;
     }
 
-    const { addServeRecord, isEntranceFromPerformerView } = this.props;
-
     let postBody = {
       // 经纪客户号
-      custId: '',
+      custId,
       serveWay: serviceWay,
       serveType: serviceType,
       type: serviceType,
@@ -76,27 +74,18 @@ export default class ServiceRecordForm extends PureComponent {
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
       // 从客户列表带过来
-      custUuid: '',
+      custUuid,
+      missionFlowId,
     };
 
-    if (uploadedFileKey) {
-      postBody = {
-        ...postBody,
-        file: uploadedFileKey,
-      };
-    } else if (isEntranceFromPerformerView) {
-      postBody = {
-        ...postBody,
-        serviceStatus,
-      };
-    }
+    postBody = {
+      ...postBody,
+      flowStatus: serviceStatus,
+      uuid: custUuid,
+    };
 
     // 添加服务记录
-    addServeRecord(postBody).then((res) => {
-      console.log(res);
-    }, (err) => {
-      console.log(err);
-    });
+    addServeRecord(postBody);
   }
 
   @autobind
@@ -110,6 +99,7 @@ export default class ServiceRecordForm extends PureComponent {
       isEntranceFromPerformerView,
       isFold,
       formData,
+      formData: { serviceTips },
       queryCustUuid,
       custUuid,
       isReadOnly,
@@ -128,7 +118,7 @@ export default class ServiceRecordForm extends PureComponent {
             服务提示:
           </div>
           <div className={styles.content}>
-            静态文本
+            {serviceTips || '--'}
           </div>
         </div>
 

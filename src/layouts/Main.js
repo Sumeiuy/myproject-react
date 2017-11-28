@@ -18,7 +18,7 @@ const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
 };
 

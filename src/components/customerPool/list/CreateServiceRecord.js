@@ -75,6 +75,7 @@ export default class CreateServiceRecord extends PureComponent {
       // serviceStatus,
       // uploadedFileKey,
       serviceContent,
+      custUuid,
     } = this.serviceRecordContentRef.getData();
 
     if (!serviceContent) {
@@ -91,9 +92,6 @@ export default class CreateServiceRecord extends PureComponent {
       addServeRecord,
     } = this.props;
 
-    // TODO
-    // 需要添加上传附件的入参
-    // 在旧的页面上先保证能用
     addServeRecord({
       custId: id,
       serveWay: serviceWay,
@@ -104,6 +102,7 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
+      uuid: custUuid,
     });
   }
 

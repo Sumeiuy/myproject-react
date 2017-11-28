@@ -219,9 +219,11 @@
   }
   .uploadSection {
     padding: 10px 0;
+    margin-top: 20px;
     :global {
       .uploadBox {
-        width: 400px;
+        width: 100%;
+        display: flex;
         font-size: 12px;
         color: #108ee9;
         letter-spacing: -0.07px;
@@ -235,6 +237,14 @@
         }
         .upload_txt {
           padding: 5px;
+          width: 100%;
+        }
+        .ant-upload.ant-upload-drag {
+          height: 30px;
+          width: 200px;
+        }
+        .uploadBtn {
+          margin-left: 10px;
         }
       }
     }
