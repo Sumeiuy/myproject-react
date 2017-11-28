@@ -8,6 +8,7 @@ import { request } from '../../../config';
 import { helper } from '../../../utils';
 
 const EMPTY_OBJECT = {};
+const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
 
 export default class ServiceRecordItem extends PureComponent {
   static propTypes = {
@@ -16,8 +17,6 @@ export default class ServiceRecordItem extends PureComponent {
     type: PropTypes.string,
     executeTypes: PropTypes.array,
     isShowChild: PropTypes.bool,
-    files: PropTypes.string,
-    onDown: PropTypes.func.isRequired,
     filesList: PropTypes.array,
   }
   static defaultProps = {
@@ -26,7 +25,6 @@ export default class ServiceRecordItem extends PureComponent {
     type: 'left',
     executeTypes: [],
     isShowChild: false,
-    files: '',
     filesList: [],
   }
 
@@ -34,35 +32,26 @@ export default class ServiceRecordItem extends PureComponent {
     super(props);
     this.state = {
       filesListData: [],
-      isFile: false, // 用于判断 isFollows更改
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { filesList: prevFileList } = this.props;
-    const { filesList: nextFileList } = nextProps;
-    if (prevFileList !== nextFileList) {
-      this.setState({
-        filesListData: nextFileList,
-        isFile: true,
-      });
-    }
-  }
-  componentDidUpdate() {
-    // const { filesList } = this.props;
-    const { isFile, filesListData } = this.state;
-    console.warn('filesListData-->', filesListData);
-    // 在此以isEmail判断是否是isFollows更新渲染完成
-    if (!_.isEmpty(filesListData) && isFile) {
-      // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
-      helper.trigger(this.sendEmail, 'click', false, false);
-    }
+  renderIcon(value) {
+    const renderSpan = _.map(value, item =>
+      <span title={item.name} className={styles.iconsWords}>
+        <Icon type="excel" className={styles.excel} />
+        <a
+          className={styles.seeCust}
+          ref={ref => this.sendEmail = ref}
+          href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
+            `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${helper.getEmpId()}&filename=${item.name}`}
+        >{'我的附件'}</a>
+      </span>,
+    );
+    return renderSpan;
   }
 
   render() {
-    const { title, type, content, executeTypes, isShowChild, files, onDown } = this.props;
-    const { filesListData } = this.state;
-    console.log(filesListData[0]);
+    const { title, type, content, executeTypes, isShowChild, filesList } = this.props;
     let newContent = content;
     if (!_.isEmpty(executeTypes)) {
       // 当前为执行方式
@@ -71,7 +60,6 @@ export default class ServiceRecordItem extends PureComponent {
       newContent = _.find(executeTypes, item => item.key === content) || EMPTY_OBJECT;
       newContent = newContent.value;
     }
-    //  href={`${request.prefix}/file/ceFileDownload?attachId=${newContent}&empId=${helper.getEmpId()}&filename=${files}`}
     return (
       <div
         className={classnames({
@@ -82,13 +70,7 @@ export default class ServiceRecordItem extends PureComponent {
         <span>{title || '--'}</span>
         {
           isShowChild ?
-            <span title={newContent} onClick={() => onDown(newContent)}><Icon type="excel" className={styles.excel} />
-              <a
-                className={styles.seeCust}
-                ref={ref => this.sendEmail = ref}
-                
-              >{'我的附件'}</a>
-            </span>
+            <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
             :
             <span title={newContent}>{newContent || '--'}</span>
         }

@@ -585,10 +585,20 @@ export default {
     * getServiceLog({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
-      yield put({
-        type: 'getServiceLogSuccess',
-        payload: { resultData },
-      });
+      if (!_.isEmpty(resultData)) {
+        const { uuid = '' } = resultData[0];
+        const fileListRes = yield call(api.ceFileList, uuid);
+        const { resultData: fileResultData } = fileListRes;
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData, fileResultData },
+        });
+      } else {
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData },
+        });
+      }
     },
     // 文件下载文件列表数据
     * getCeFileList({ payload }, { call, put }) {
@@ -1092,10 +1102,11 @@ export default {
     },
     // 360服务记录查询成功
     getServiceLogSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { resultData, fileResultData } } = action;
       return {
         ...state,
         serviceLogData: resultData,
+        filesList: fileResultData,
       };
     },
     // 文件下载文件列表

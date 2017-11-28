@@ -295,6 +295,7 @@ export default class CreateTaskForm extends PureComponent {
                 serveWay={serveWay}
                 handleCollapseClick={handleCollapseClick}
                 loading={loading}
+                ref={ref => this.collapse = ref}
               />
             </Col>
           </Row>

@@ -64,19 +64,16 @@ export default class CreateCollapse extends PureComponent {
    */
   @autobind
   handleCollapseChange(currentKey) {
-    const { handleCollapseClick } = this.props;
+    const { handleCollapseClick, data, getCeFileList } = this.props;
+    // const index = this.collapse.props.defaultActiveKey;
+    const service = data[currentKey];
+    const { uuid } = service;
     // 手动上报日志
     handleCollapseClick({ currentKey });
     this.setState({
       currentActiveIndex: currentKey,
     });
-  }
-
-  @autobind
-  handleDown(value) {
-    console.log('value-->', value);
-    const { getCeFileList } = this.props;
-    getCeFileList({ value });
+    getCeFileList({ uuid });
   }
 
   /**
@@ -165,7 +162,6 @@ export default class CreateCollapse extends PureComponent {
   renderPanel(serveTime) {
     const { data, executeTypes, filesList } = this.props;
     const { currentActiveIndex } = this.state;
-
     if (_.isEmpty(data)) {
       return null;
     }
@@ -178,6 +174,7 @@ export default class CreateCollapse extends PureComponent {
           className={styles.serviceCollapse}
           defaultActiveKey={['0']}
           onChange={this.handleCollapseChange}
+          ref={ref => this.collapse = ref}
         >
           {
             _.map(data, (item, index) =>
