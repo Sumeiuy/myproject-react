@@ -51,15 +51,6 @@ export default class Detail extends PureComponent {
     // hasEditPermission: false,
   }
 
-  // 处理接口返回的拟稿提请时间
-  @autobind
-  getCreatedDate(date) {
-    if (date) {
-      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
-    }
-    return EMPTY_PARAM;
-  }
-
   @autobind
   changeEdit() {
     this.setState({
@@ -88,6 +79,8 @@ export default class Detail extends PureComponent {
     const isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     // 判断是否显示下挂客户
     const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
+    // 判断是否显示协议编号
+    const isShowProtocolNum = !(protocolDetail.operationType === '协议订购');
     let statusLabel = '';
     if (protocolDetail.status) {
       statusLabel = status[Number(protocolDetail.status)].label;
@@ -105,6 +98,12 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
+          {
+            isShowProtocolNum ?
+              <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
+              :
+              null
+          }
           <InfoItem label="协议模板" value={protocolDetail.templateId} />
           {
             isTenLevel ?
@@ -122,7 +121,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={`${protocolDetail.divisionName || EMPTY_PARAM} ${protocolDetail.createdName || EMPTY_PARAM}`} />
-          <InfoItem label="提请时间" value={this.getCreatedDate(protocolDetail.createdDt)} />
+          <InfoItem label="提请时间" value={protocolDetail.createdDt} />
           <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
