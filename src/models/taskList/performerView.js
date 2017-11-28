@@ -15,6 +15,8 @@ const PAGE_NO = 1;
 export default {
   namespace: 'performerView',
   state: {
+    // 记录详情中的参数
+    parameter: {},
     // 执行者视图、管理者视图、创建者视图公共列表
     taskList: EMPTY_OBJ,
     // 任务详情中基本信息
@@ -28,8 +30,18 @@ export default {
         totalCount: 0,
       },
     },
+    // 任务详情中目标客户列表当前选中的详情信息
+    targetCustDetail: EMPTY_OBJ,
+    custUuid: '',
   },
   reducers: {
+    changeParameterSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        parameter: payload,
+      };
+    },
     getTaskListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJ } } = action;
       const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData;
@@ -58,8 +70,31 @@ export default {
         },
       };
     },
+    queryTargetCustDetailSuccess(state, action) {
+      return {
+        ...state,
+        targetCustDetail: action.payload,
+      };
+    },
+    queryCustUuidSuccess(state, action) {
+      return {
+        ...state,
+        custUuid: action.payload,
+      };
+    },
   },
   effects: {
+    * changeParameter({ payload }, { select, put }) {
+      const prevParameter = yield select(state => state.performerView.parameter);
+      yield put({
+        type: 'changeParameterSuccess',
+        payload: {
+          ...prevParameter,
+          ...payload,
+        },
+      });
+    },
+
     // 执行者视图、管理者视图、创建者视图公共列表
     * getTaskList({ payload }, { call, put }) {
       const listResponse = yield call(api.queryTaskList, payload);
@@ -68,6 +103,7 @@ export default {
         payload: listResponse,
       });
     },
+
     // 执行者视图的详情基本信息
     * getTaskDetailBasicInfo({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, payload);
@@ -78,6 +114,7 @@ export default {
         });
       }
     },
+
     // 执行者视图的详情目标客户
     * queryTargetCust({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryTargetCust, payload);
@@ -88,34 +125,36 @@ export default {
         });
       }
     },
+
+    // 根据目标客户列表的当前选中项的custId查询详情
+    // 此处接口依赖列表接口返回的数据，列表接口中有数据时才能去查详情，
+    // 列表接口中的没有数据时，先查询列表接口
+    * queryTargetCustDetail({ payload }, { call, put }) {
+      const { custId } = payload;
+      const { resultData } = yield call(api.queryTargetCustDetail, { custId });
+      if (resultData) {
+        yield put({
+          type: 'queryTargetCustDetailSuccess',
+          payload: resultData,
+        });
+      }
+    },
+
+    // 获取Uuid,用于添加服务记录和附件上传
+    * queryCustUuid({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustUuid);
+      if (resultData) {
+        yield put({
+          type: 'queryCustUuidSuccess',
+          payload: resultData,
+        });
+      }
+    },
+
     * addServiceRecord({ payload }, { call }) {
       yield call(api.addServiceRecord, payload);
     },
   },
   subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
-        if (pathname === '/taskList/performerView') {
-          const {
-            currentId = '',
-            orgId = '',
-            pageSize = PAGE_SIZE,
-            pageNo = PAGE_NO,
-            targetCustomerState = '',
-          } = query;
-          dispatch({ type: 'getTaskDetailBasicInfo', payload: { missionId: currentId } });
-          dispatch({
-            type: 'queryTargetCust',
-            payload: {
-              state: targetCustomerState,
-              missionId: currentId,
-              orgId,
-              pageSize,
-              pageNo,
-            },
-          });
-        }
-      });
-    },
   },
 };
