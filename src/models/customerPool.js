@@ -112,6 +112,8 @@ export default {
     storedCreateTaskData: {},
     // 任务列表-任务详情基本信息
     taskBasicInfo: {},
+    // 文件下载文件列表数据
+    filesList: [],
   },
 
   subscriptions: {
@@ -125,6 +127,7 @@ export default {
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
           params.pageNum = 1; // 默认显示第一页
+          params.custId = '02001404';
           dispatch({
             type: 'getServiceLog',
             payload: params,
@@ -584,6 +587,15 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getServiceLogSuccess',
+        payload: { resultData },
+      });
+    },
+    // 文件下载文件列表数据
+    * getCeFileList({ payload }, { call, put }) {
+      const response = yield call(api.ceFileList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCeFileListSuccess',
         payload: { resultData },
       });
     },
@@ -1084,6 +1096,14 @@ export default {
       return {
         ...state,
         serviceLogData: resultData,
+      };
+    },
+    // 文件下载文件列表
+    getCeFileListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filesList: resultData,
       };
     },
     getSearchServerPersonListSuccess(state, action) {

@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+// import { routerRedux, withRouter } from 'dva-react-router-3/router';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
 import styles from './createCollapse.less';
@@ -16,18 +18,37 @@ import styles from './createCollapse.less';
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
 
+const effects = {
+  getCeFileList: 'customerPool/getCeFileList',
+};
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+const mapStateToProps = state => ({
+  filesList: state.customerPool.filesList,
+});
+const mapDispatchToProps = {
+  getCeFileList: fetchDataFunction(true, effects.getCeFileList),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class CreateCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
     executeTypes: PropTypes.array.isRequired,
     serveWay: PropTypes.array.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
     loading: PropTypes.bool,
   };
 
   static defaultProps = {
     data: EMPTY_LIST,
     loading: false,
+    filesList: [],
   };
 
   constructor(props) {
@@ -49,6 +70,13 @@ export default class CreateCollapse extends PureComponent {
     this.setState({
       currentActiveIndex: currentKey,
     });
+  }
+
+  @autobind
+  handleDown(value) {
+    console.log('value-->', value);
+    const { getCeFileList } = this.props;
+    getCeFileList({ value });
   }
 
   /**
@@ -135,7 +163,7 @@ export default class CreateCollapse extends PureComponent {
   }
 
   renderPanel(serveTime) {
-    const { data, executeTypes } = this.props;
+    const { data, executeTypes, filesList } = this.props;
     const { currentActiveIndex } = this.state;
 
     if (_.isEmpty(data)) {
@@ -216,6 +244,8 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
+                  onDown={this.handleDown}
+                  filesList={filesList}
                 />
               </Panel>,
             )

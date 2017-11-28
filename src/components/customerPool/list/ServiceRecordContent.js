@@ -4,7 +4,7 @@ import ServiceRecordItem from './ServiceRecordItem';
 import styles from './createCollapse.less';
 
 export default function ServiceRecordContent(props) {
-  const { item, executeTypes } = props;
+  const { item, executeTypes, onDown } = props;
   const { subtypeCd = '' } = item;
   const isShowChild = true; // 默认有文件名这个字段
   const files = 'eeeee';// 默认文件名
@@ -33,10 +33,11 @@ export default function ServiceRecordContent(props) {
             />
             {isShowChild ?
               <ServiceRecordItem
-                content={item.serveStatus}
+                content={item.custFeedback}
                 title={'附件'}
                 files={files}
                 isShowChild={isShowChild}
+                onDown={onDown}
               /> :
               null
             }
@@ -91,10 +92,11 @@ export default function ServiceRecordContent(props) {
         />
         {isShowChild ?
           <ServiceRecordItem
-            content={item.serveStatus}
+            content={item.custFeedback}
             title={'附件'}
             files={files}
             isShowChild={isShowChild}
+            onDown={onDown}
           /> :
           null
         }
@@ -120,6 +122,7 @@ ServiceRecordContent.propTypes = {
   item: PropTypes.object,
   type: PropTypes.string,
   executeTypes: PropTypes.array,
+  onDown: PropTypes.func.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {
