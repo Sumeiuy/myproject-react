@@ -28,6 +28,7 @@ export default {
     underCustList: EMPTY_LIST,  // 客户列表
     itemId: '', // 保存成功后返回itemId,提交审批流程所需
     flowStepInfo: EMPTY_OBJECT, // 审批人
+    protocolList: EMPTY_LIST, // 协议 ID 列表
   },
   reducers: {
     // 获取协议详情
@@ -109,6 +110,14 @@ export default {
         underCustList: resultData,
       };
     },
+    // 清除详情及相关数据
+    clearDetailDataSuccess(state) {
+      return {
+        ...state,
+        protocolDetail: {},
+        protocolList: [],
+      };
+    },
     // 保存详情
     saveProtocolDataSuccess(state, action) {
       const { payload: { resultData = '' } } = action;
@@ -136,44 +145,56 @@ export default {
         flowStepInfo: payload,
       };
     },
+    queryProtocolListSuccess(state, action) {
+      const { paylaod: { resultData = [] } } = action;
+      return {
+        ...state,
+        protocolList: resultData,
+      };
+    },
   },
   effects: {
     // 获取协议详情
     * getProtocolDetail({ payload }, { call, put }) {
       const empId = emp.getId();
-      const response = yield call(api.getProtocolDetail, payload);
+      const response = yield call(api.getProtocolDetail, payload.data);
       yield put({
         type: 'getProtocolDetailSuccess',
         payload: response,
       });
-      const attachment = response.resultData.attachment;
-      const attachmentArray = [];
-      for (let i = 0; i < attachment.length; i++) {
-        const item = attachment[i];
-        const attachmentPayload = {
-          attachment: item.uuid,
-        };
-        const attachmentResponse = yield call(api.getAttachmentList, attachmentPayload);
-        const responsePayload = {
-          attachmentList: attachmentResponse.resultData,
-          title: item.attachmentType,
-        };
-        attachmentArray.push(responsePayload);
+      if (payload.needAttachment) {
+        const attachment = response.resultData.attachment;
+        const attachmentArray = [];
+        for (let i = 0; i < attachment.length; i++) {
+          const item = attachment[i];
+          const attachmentPayload = {
+            attachment: item.uuid,
+          };
+          const attachmentResponse = yield call(api.getAttachmentList, attachmentPayload);
+          const responsePayload = {
+            attachmentList: attachmentResponse.resultData,
+            title: item.attachmentType,
+            uuid: item.uuid,
+          };
+          attachmentArray.push(responsePayload);
+        }
+        yield put({
+          type: 'getAttachmentListSuccess',
+          payload: attachmentArray,
+        });
       }
-      yield put({
-        type: 'getAttachmentListSuccess',
-        payload: attachmentArray,
-      });
       // 获取审批记录的 payload
-      const flowPayload = {
-        flowCode: response.resultData.flowid || '',
-        loginuser: empId,
-      };
-      const flowHistoryResponse = yield call(seibelApi.getFlowHistory, flowPayload);
-      yield put({
-        type: 'getFlowHistorySuccess',
-        payload: flowHistoryResponse,
-      });
+      if (payload.needFlowHistory) {
+        const flowPayload = {
+          flowCode: response.resultData.flowid || '',
+          loginuser: empId,
+        };
+        const flowHistoryResponse = yield call(seibelApi.getFlowHistory, flowPayload);
+        yield put({
+          type: 'getFlowHistorySuccess',
+          payload: flowHistoryResponse,
+        });
+      }
     },
     // 获取附件信息
     * getAttachmentList({ payload }, { call, put }) {
@@ -206,7 +227,6 @@ export default {
     },
     // 查询操作类型/子类型
     * queryTypeVaules({ payload }, { call, put }) {
-      console.log('payload', payload);
       const response = yield call(api.queryTypeVaules, payload);
       if (payload.typeCode === 'operationType' || payload.typeCode === 'subType') {
         /*eslint-disable */
@@ -263,6 +283,15 @@ export default {
         },
       });
     },
+    // 清除协议产品列表
+    * clearDetailData({ payload }, { call, put }) {
+      yield put({
+        type: 'clearDetailDataSuccess',
+        payload: {
+          resultData: {},
+        },
+      });
+    },
     // 客户验证
     * getCustValidate({ payload }, { call, put }) {
       const response = yield call(api.getCustValidate, payload);
@@ -305,6 +334,14 @@ export default {
         type: 'app/getSeibleList',
         payload: payload.params,
       });
+    },
+    // 根据操作类型返回可用的协议列表
+    * queryProtocolList({ payload }, { call, put }) {
+      const response = yield call(api.queryProtocolList, payload);
+      yield put({
+        type: 'queryProtocolListSuccess',
+        paylaod: response,
+      })
     }
   },
   subscriptions: {
