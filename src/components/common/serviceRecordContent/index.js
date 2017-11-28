@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 10:01:05
+ * @Last Modified time: 2017-11-28 16:42:27
  */
 
 
@@ -116,6 +116,7 @@ export default class ServiceRecordContent extends PureComponent {
       isReadOnly,
     } = props;
 
+    this.isReadOnly = isReadOnly;
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
     let formObject = {};
@@ -436,11 +437,14 @@ export default class ServiceRecordContent extends PureComponent {
       dict,
       isEntranceFromPerformerView,
       isFold,
+      formData,
       isReadOnly,
       beforeUpload,
       custUuid,
       isUploadFileManually,
     } = this.props;
+
+    console.log('serviceReocrd>>>>', formData);
 
     const {
       serviceWay,

@@ -10,6 +10,8 @@ export default function performerView(api) {
     queryTaskDetailBasicInfo: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionDetailedInfo', query),
     // 执行者视图的目标客户
     queryTargetCust: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListOfMission', query),
+    // 执行者视图的目标客户的详情
+    queryTargetCustDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustDetail', query),
     // 执行视图下添加服务记录
     addServiceRecord: query => api.post('/groovynoauth/fsp/campaign/mot/addServiceRecord', query),
     // 上传文件需要先上传uuid

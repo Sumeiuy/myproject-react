@@ -43,12 +43,18 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
+  changeParameter: 'performerView/changeParameter',
+  queryTargetCust: 'performerView/queryTargetCust',
+  queryTargetCustDetail: 'performerView/queryTargetCustDetail',
+  getTaskDetailBasicInfo: 'performerView/getTaskDetailBasicInfo',
+  queryCustUuid: 'performerView/queryCustUuid',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
-  queryCustUuid: 'performerView/queryCustUuid',
 };
 
 const mapStateToProps = state => ({
+  // 记录详情中的参数
+  parameter: state.performerView.parameter,
   // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
   list: state.performerView.taskList,
@@ -60,11 +66,13 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 6个月收益数据
   monthlyProfits: state.customerPool.monthlyProfits,
+  // 任务详情中目标客户列表当前选中的详情信息
+  targetCustDetail: state.performerView.targetCustDetail,
+  // 添加服务记录和上传附件用的custUuid
+  custUuid: state.performerView.custUuid,
   // 客户细分导入数据
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
-  // 客户uuid
-  custUuid: state.performerView.custUuid,
 });
 
 const mapDispatchToProps = {
@@ -76,19 +84,28 @@ const mapDispatchToProps = {
   // 手动上传日志
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 最近五次服务记录
-  getServiceRecord: fetchDataFunction(false, effects.getServiceRecord),
+  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   // 获取最近6个月收益
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
+  // 改变详情中的用来查询的参数
+  changeParameter: fetchDataFunction(false, effects.changeParameter),
+  // 查询详情中目标客户列表
+  queryTargetCust: fetchDataFunction(true, effects.queryTargetCust),
+  // 查询详情中目标客户的详情
+  queryTargetCustDetail: fetchDataFunction(true, effects.queryTargetCustDetail),
+  // 右侧详情的基本信息
+  getTaskDetailBasicInfo: fetchDataFunction(true, effects.getTaskDetailBasicInfo),
+  // 获取添加服务记录和上传附件用的custUuid
+  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
-  // 获取uuid
-  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class PerformerView extends PureComponent {
   static propTypes = {
+    parameter: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
@@ -105,12 +122,17 @@ export default class PerformerView extends PureComponent {
     interfaceState: PropTypes.object.isRequired,
     // 6个月收益数据
     monthlyProfits: PropTypes.object.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
+    changeParameter: PropTypes.func.isRequired,
+    queryTargetCust: PropTypes.func.isRequired,
+    queryTargetCustDetail: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    getTaskDetailBasicInfo: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object,
     previewCustFile: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
-    custUuid: PropTypes.string.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -226,19 +248,32 @@ export default class PerformerView extends PureComponent {
     }
   }
 
+  // 获取目标客户列表项的对应浮层详情
+  @autobind
+  getCustDetail({ missionId = '', custId = '' }) {
+    const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
+    const { list = [] } = targetCustList;
+    if (_.isEmpty(list)) {
+      return;
+    }
+    queryTargetCustDetail({
+      missionId,
+      custId: custId || (list[0] || EMPTY_OBJECT).custId,
+    });
+  }
+
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { currentView: st } = record;
+    const { currentView: st = EXECUTOR } = record;
     const {
       getTaskBasicInfo,
-      taskDetailBasicInfo,
     } = this.props;
     switch (st) {
       case INITIATOR:
         getTaskBasicInfo({});
         break;
       case EXECUTOR:
-        taskDetailBasicInfo({});
+        this.loadDetailContent(record);
         break;
       default:
         break;
@@ -252,6 +287,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   getDetailComponentByView(st) {
     const {
+      parameter,
       location,
       replace,
       dict,
@@ -266,9 +302,15 @@ export default class PerformerView extends PureComponent {
       monthlyProfits,
       taskBasicInfo,
       priviewCustFileData,
-      custUuid,
+      targetCustDetail,
+      changeParameter,
+      queryTargetCust,
       queryCustUuid,
+      custUuid,
     } = this.props;
+    const {
+      query: { currentId },
+    } = location;
     let detailComponent = null;
     switch (st) {
       case INITIATOR:
@@ -283,6 +325,8 @@ export default class PerformerView extends PureComponent {
       case EXECUTOR:
         detailComponent = (
           <PerformerViewDetail
+            currentId={currentId}
+            parameter={parameter}
             location={location}
             replace={replace}
             dict={dict}
@@ -295,8 +339,12 @@ export default class PerformerView extends PureComponent {
             getCustIncome={getCustIncome}
             monthlyProfits={monthlyProfits}
             custIncomeReqState={interfaceState[effects.getCustIncome]}
+            targetCustDetail={targetCustDetail}
+            changeParameter={changeParameter}
+            queryTargetCust={queryTargetCust}
             queryCustUuid={queryCustUuid}
             custUuid={custUuid}
+            getCustDetail={this.getCustDetail}
           />
         );
         break;
@@ -304,6 +352,21 @@ export default class PerformerView extends PureComponent {
         break;
     }
     return detailComponent;
+  }
+
+  // 加载右侧panel中的详情内容
+  @autobind
+  loadDetailContent(obj) {
+    const {
+      getTaskDetailBasicInfo,
+      queryTargetCust,
+    } = this.props;
+    getTaskDetailBasicInfo({
+      missionId: obj.id,
+    });
+    queryTargetCust({
+      missionId: obj.id,
+    }).then(() => this.getCustDetail({ missionId: obj.id }));
   }
 
   // 切换页码
