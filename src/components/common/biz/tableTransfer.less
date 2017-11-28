@@ -85,6 +85,39 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          &[data-transferSort="true"] {
+            border: 1px solid transparent;
+            cursor: pointer;
+            user-select: none;
+            &:hover {
+              border: 1px solid #4897f1;
+              color: #4897f1;
+              span {
+                color: #4897f1;
+              }
+            }
+          }
+          &[data-transferSort="true"].ant-table-column-sort {
+            background-color: #4897f1;
+            border: 1px solid transparent;
+            color: #fff;
+            & .ant-table-column-sorter .ant-table-column-sorter-up,
+            & .ant-table-column-sorter .ant-table-column-sorter-down {
+              &.off .anticon-caret-up,
+              &.off .anticon-caret-down {
+                color: fade(#fff, 50%);
+              }
+              &.on .anticon-caret-up,
+              &.on .anticon-caret-down {
+                color: #fff;
+              }
+            }
+            &:hover {
+              span {
+                color: #fff;
+              }
+            }
+          }
         }
         .ant-table-thead > tr > th:last-child {
           color: #333;
