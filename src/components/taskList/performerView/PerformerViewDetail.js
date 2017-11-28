@@ -155,9 +155,8 @@ export default class PerformerViewDetail extends PureComponent {
           addServeRecord={addServeRecord}
           isReadOnly={isReadOnly}
           isEntranceFromPerformerView
-          formData={{}}
+          formData={serviceReocrd}
           isFold={isFold}
-          serviceReocrd={serviceReocrd}
         />
       </div>
     );
