@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 14:56:13
+ * @Last Modified time: 2017-11-28 10:05:09
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -32,6 +32,7 @@ export default class Uploader extends PureComponent {
     isNeedDelete: PropTypes.bool,
     uploadTitle: PropTypes.string.isRequired,
     uploadTarget: PropTypes.string.isRequired,
+    upData: PropTypes.object,
   }
 
   static defaultProps = {
@@ -44,24 +45,31 @@ export default class Uploader extends PureComponent {
     onOperateFile: () => { },
     isNeedPreview: false,
     isNeedDelete: false,
+    upData: {
+      empId: helper.getEmpId(),
+    },
   }
 
   constructor(props) {
     super(props);
-    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '', totalCount = 0 } = props;
+    const {
+      attachModel = EMPTY_OBJECT,
+      fileKey = '',
+      originFileName = '',
+      totalCount = 0,
+      upData,
+    } = props;
     this.state = {
       fList: [],
       lastFile: attachModel,
       fileList: [],
       uploadedFileKey: fileKey,
-      upData: {
-        empId: helper.getEmpId(),
-      },
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
       totalCount,
       showUploadList: true,
+      upData,
     };
   }
 
@@ -83,6 +91,7 @@ export default class Uploader extends PureComponent {
   @autobind
   handleFileChange(info) {
     const { onOperateFile } = this.props;
+    const { upData } = this.state;
     // 当前列表
     const fileList = info.fileList;
     // 当前操作upload项
@@ -153,13 +162,14 @@ export default class Uploader extends PureComponent {
     }
 
     if (status === 'done') {
-      const { fileName, totalCustNum } = resultData;
+      const { fileName, totalCustNum, attachment = '' } = resultData;
       message.success('文件上传成功', 2);
       onOperateFile({
         currentFile,
         uploadedFileKey: fileName,
         originFileName: name,
         totalCount: totalCustNum,
+        attachment,
       });
       this.setState({
         lastFile: currentFile,
@@ -170,6 +180,10 @@ export default class Uploader extends PureComponent {
         originFileName: name,
         totalCount: totalCustNum,
         showUploadList: true,
+        upData: {
+          ...upData,
+          attachment,
+        },
       });
     }
 

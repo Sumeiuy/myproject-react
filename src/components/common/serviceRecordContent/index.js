@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 17:21:49
+ * @Last Modified time: 2017-11-28 10:01:05
  */
 
 
@@ -15,7 +15,7 @@ import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../customerPool/taskFlow/Uploader';
 import { request } from '../../../config';
-// import { helper } from '../../../utils';
+import { helper } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
@@ -668,7 +668,12 @@ export default class ServiceRecordContent extends PureComponent {
               fileKey={uploadedFileKey}
               originFileName={originFileName}
               uploadTitle={'上传附件'}
-              uploadTarget={`${request.prefix}/file/khxfFileUpload`}
+              upData={{
+                empId: helper.getEmpId(),
+                // 第一次上传没有，如果曾经返回过，则必须传
+                attachment: '',
+              }}
+              uploadTarget={`${request.prefix}/file/ceFileUpload`}
             /> :
             <div className={styles.uploadList}>
               <span>附件:</span>
