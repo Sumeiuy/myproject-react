@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-23 10:21:03
+ * @Last Modified time: 2017-11-28 16:13:59
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -19,14 +19,11 @@ import Resize from 'element-resize-detector';
 import { Icon } from 'antd';
 
 import splitConfig from './config';
-import { getEnv } from '../../../utils/helper';
+import { env } from '../../../helper';
 
 import '../../../css/react-split-pane-master.less';
 import styles from './SplitPanel.less';
 import nodatapng from './nodata.png';
-
-const BROWSER = getEnv();
-const isInIE = BROWSER.$browser === 'Internet Explorer';
 
 export default class CutScreen extends PureComponent {
   static propTypes = {
@@ -106,9 +103,8 @@ export default class CutScreen extends PureComponent {
   @autobind
   setDocumentScroll() {
     // 次变量用来判断是否在FSP系统中
-    const isInFSP = this.UTBContentElem;
     let viewHeight = document.documentElement.clientHeight;
-    if (isInIE) {
+    if (env.isIE()) {
       viewHeight -= 10;
     }
     // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
@@ -139,7 +135,7 @@ export default class CutScreen extends PureComponent {
 
     // 设置系统容器高度
     let pch = viewHeight;
-    if (isInFSP) {
+    if (env.isInFsp()) {
       pch = viewHeight - fspTabHeight;
     }
     this.setElementStyle(pageContainer, `${pch}px`);
@@ -181,7 +177,7 @@ export default class CutScreen extends PureComponent {
   initPanel() {
     const { leftWidth } = this.props;
     let leftSectionWidth = leftWidth;
-    if (isInIE) {
+    if (env.isIE()) {
       leftSectionWidth += 20;
     }
     this.setElementStyle(this.leftSection, `${leftSectionWidth}px`, 'width');

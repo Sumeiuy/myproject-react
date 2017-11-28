@@ -11,7 +11,7 @@ import { Button } from 'antd';
 import _ from 'lodash';
 import Icon from '../common/Icon';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
-import { fspContainer } from '../../config';
+import { env } from '../../helper';
 
 // 选择项字典
 import styles from './indicatorOverviewHeader.less';
@@ -20,7 +20,6 @@ import styles from './indicatorOverviewHeader.less';
 const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
-const fsp = document.querySelector(fspContainer.container);
 
 export default class IndicatorOverviewHeader extends PureComponent {
   static propTypes = {
@@ -36,7 +35,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
   }
 
   static contextTypes = {
-    history: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -49,12 +48,12 @@ export default class IndicatorOverviewHeader extends PureComponent {
   }
 
   componentDidMount() {
-    const { history } = this.context;
-    this.removeHistoryListener = history.listenBefore(
+    const { router } = this.context;
+    this.removeHistoryListener = router.listenBefore(
       () => {
         if (!_.isEmpty(this.props.selectKeys)) {
           /*eslint-disable*/
-          if (fsp) {
+          if (env.isInFsp()) {
             window.$confirm = window.confirm;
             window.confirm = function (...argus) {
               window.confirm = window.$confirm;

@@ -7,8 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
-import { fspContainer } from '../../../config';
-import { fspGlobal, helper } from '../../../utils';
+import { fspGlobal } from '../../../utils';
+import { url as urlHelper, env } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
@@ -75,8 +75,8 @@ export default class BusinessProcessing extends PureComponent {
       orgId: orgId || '',
       cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
-    if (document.querySelector(fspContainer.container)) {
-      const url = `${pathname}?${helper.queryToString(obj)}`;
+    if (env.isInFsp()) {
+      const url = `${pathname}?${urlHelper.stringify(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,

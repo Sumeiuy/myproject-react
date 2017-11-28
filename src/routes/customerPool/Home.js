@@ -11,14 +11,14 @@ import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 import _ from 'lodash';
 
-import { getDurationString } from '../../utils/helper';
 import { optionsMap, fspContainer } from '../../config';
 import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
 import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
-import { helper, permission } from '../../utils';
+import { permission } from '../../utils';
+import { emp, time } from '../../helper';
 import Search from '../../components/customerPool/home/Search';
 import styles from './home.less';
 
@@ -251,7 +251,7 @@ export default class Home extends PureComponent {
     // 经营指标新增客户数指标
     getCustCount({
       ...param,
-      empId: helper.getEmpId(),
+      empId: emp.getId(),
     });
     getManageIndicators(param);
 
@@ -261,7 +261,7 @@ export default class Home extends PureComponent {
         ...param,
         end,
         begin,
-        empId: helper.getEmpId(),
+        empId: emp.getId(),
       });
     }
   }
@@ -277,7 +277,7 @@ export default class Home extends PureComponent {
       ) || {};
       return itemData.name === a.name;
     }) || {}; // 本月
-    const nowDuration = getDurationString(currentSelect.key);
+    const nowDuration = time.getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     return {
@@ -324,7 +324,7 @@ export default class Home extends PureComponent {
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
-      empId: helper.getEmpId(),
+      empId: emp.getId(),
       begin,
       end,
     });
@@ -357,7 +357,7 @@ export default class Home extends PureComponent {
     const { getHotPossibleWds } = this.props;
     const setData = {
       orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
+      empNo: emp.getId(), // 用户ID
     };
     getHotPossibleWds({
       ...setData,
@@ -371,7 +371,7 @@ export default class Home extends PureComponent {
     const { getHistoryWdsList } = this.props;
     const setData = {
       orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
+      empNo: emp.getId(), // 用户ID
     };
     getHistoryWdsList({
       ...setData,
@@ -384,7 +384,7 @@ export default class Home extends PureComponent {
     const { clearSearchHistoryList } = this.props;
     const setData = {
       orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
+      empNo: emp.getId(), // 用户ID
     };
     clearSearchHistoryList({
       ...setData,

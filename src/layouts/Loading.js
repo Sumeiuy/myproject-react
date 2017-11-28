@@ -5,7 +5,8 @@
 
 import React, { PropTypes } from 'react';
 import { Spin } from 'antd';
-import { getCssStyle } from '../utils/helper';
+import { dom } from '../helper';
+
 import styles from './Loading.less';
 
 // 首先判断wrap存在与否
@@ -16,7 +17,7 @@ function Loading({ loading, forceFull }) {
     return null;
   }
   let top = contentWrapper ? '55px' : '0';
-  let left = contentWrapper ? getCssStyle(contentWrapper, 'left') : '0';
+  let left = contentWrapper ? dom.getCssStyle(contentWrapper, 'left') : '0';
   // 新增判断如果forceFull有值，则需要判断是Y或者N，
   // 无值则按默认的方式处理
   if (forceFull) {

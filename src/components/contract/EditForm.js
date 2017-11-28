@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 11:26:46
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:35:31
 */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,7 @@ import Button from '../common/Button';
 import AddClause from './AddClause';
 
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 import styles from './editForm.less';
 
 // const EMPTY_OBJECT = {};
@@ -81,24 +81,12 @@ export default class EditForm extends PureComponent {
     onSearchCutList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { contractDetail } = nextProps;
-    if (contractDetail !== this.props.contractDetail) {
-      this.setState({
-        formData: {
-          ...this.state.formData,
-          ...contractDetail.baseInfo,
-          terms: contractDetail.baseInfo.terms,
-        },
-      });
-    }
-  }
-
   // 处理接口返回的拟稿提请时间
   @autobind
   getCreatedDate(date) {
     if (date) {
-      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+      // return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+      return time.format(date, 'YYYY-MM-DD HH:mm:ss');
     }
     return EMPTY_PARAM;
   }

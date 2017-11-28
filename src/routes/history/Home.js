@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { message, Row, Col } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId, getDurationString } from '../../utils/helper';
+import { emp, time } from '../../helper';
 import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
@@ -144,7 +144,7 @@ export default class HistoryHome extends PureComponent {
     super(props);
     // 此处针对一些常用参数，存放在stata里面
     const { custRange, location: { query: { boardId, boardType } } } = props;
-    const empId = getEmpId(); // 用户ID
+    const empId = emp.getId(); // 用户ID
     const ownerOrg = custRange[0];
 
     const defaultMoment = this.setDefaultMoment();
@@ -257,7 +257,7 @@ export default class HistoryHome extends PureComponent {
   @autobind
   setDefaultMoment() {
     const cycleType = 'month';
-    const nowDuration = getDurationString(cycleType);
+    const nowDuration = time.getDurationString(cycleType);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     const distanceDays = moment(end).diff(moment(begin), 'days') + 1;

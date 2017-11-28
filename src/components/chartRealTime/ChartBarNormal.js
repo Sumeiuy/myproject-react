@@ -22,7 +22,7 @@ import {
   toFixedCI,
   toFixedGE,
 } from './FixNumber';
-import { transform2array } from '../../utils/helper';
+import { data } from '../../helper';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
 import Icon from '../common/Icon';
@@ -71,7 +71,7 @@ export default class ChartBarNormal extends PureComponent {
   }
 
   componentDidMount() {
-    this.custRange = transform2array(this.props.custRange);
+    this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {

@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-07 16:12:55
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:36:26
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -16,7 +16,7 @@ import styles from './detail.less';
 import MultiUploader from '../common/biz/MultiUploader';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 
 const {
   underCustTitleList,  // 下挂客户表头集合
@@ -55,7 +55,7 @@ export default class Detail extends PureComponent {
   @autobind
   getCreatedDate(date) {
     if (date) {
-      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+      return time.format(date, 'YYYY-MM-DD HH:mm:ss');
     }
     return EMPTY_PARAM;
   }
@@ -115,8 +115,8 @@ export default class Detail extends PureComponent {
                 <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
               </div>
           }
-          <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
-          <InfoItem label="协议有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="协议开始日期" value={time.format(protocolDetail.startDt) || EMPTY_PARAM} />
+          <InfoItem label="协议有效期" value={time.format(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

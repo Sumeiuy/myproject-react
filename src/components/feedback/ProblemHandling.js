@@ -9,7 +9,7 @@ import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { helper } from '../../utils';
+import { emp } from '../../helper';
 import Icon from '../common/Icon';
 import uploadRequest from '../../utils/uploadRequest';
 import { feedbackOptions, request } from '../../config';
@@ -55,7 +55,7 @@ export default class ProblemHandling extends PureComponent {
         multiple: true,
         showUploadList: true,
         data: {
-          empId: helper.getEmpId(),
+          empId: emp.getId(),
         },
         action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {

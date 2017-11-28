@@ -8,8 +8,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-import { trigger } from '../../utils/helper';
+
+import { event } from '../../helper';
 import { constants } from '../../config';
 import styles from './custRange.less';
 
@@ -168,12 +168,8 @@ export default class CustRange extends PureComponent {
       return;
     }
     this.addDropDownMouseWheel();
-    // const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-    // const evt = document.createEvent('MouseEvent');
-    // evt.initEvent('mousedown', true, true);
-    // document.querySelector(constants.container).dispatchEvent(evt);
     // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
-    trigger(document.querySelector(constants.container), 'mousedown');
+    event.triggerMouseDown(document.querySelector(constants.container));
   }
 
   @autobind
