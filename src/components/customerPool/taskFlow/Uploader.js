@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:33:04
+ * @Last Modified time: 2017-11-28 20:42:33
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -290,7 +290,7 @@ export default class Uploader extends PureComponent {
       if (_.isEmpty(custUuid)) {
         const { upData } = this.state;
         api().post(beforeUploadPostUrl, {
-          empId: emp.getEmpId(),
+          empId: emp.getId(),
         }).then((res) => {
           console.log(res);
           const { resultData } = res;
