@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 10:05:09
+ * @Last Modified time: 2017-11-28 10:23:21
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -70,6 +70,7 @@ export default class Uploader extends PureComponent {
       totalCount,
       showUploadList: true,
       upData,
+      originUpData: upData,
     };
   }
 
@@ -280,12 +281,14 @@ export default class Uploader extends PureComponent {
    */
   @autobind
   clearUploadFile() {
+    const { originUpData } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
       // 删除完毕之后，打开上传进度开关
       showUploadList: true,
+      upData: originUpData,
     });
   }
 
