@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import { DatePicker, message, Input } from 'antd';
+import { DatePicker, Input } from 'antd';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -40,7 +40,7 @@ export default class Pageheader extends PureComponent {
     // 获取拟稿人列表
     getDrafterList: PropTypes.func.isRequired,
     // 子类型
-    subtypeOptions: PropTypes.array,
+    typeOptions: PropTypes.array,
     // 视图选择
     chooseMissionViewOptions: PropTypes.array,
   }
@@ -48,7 +48,7 @@ export default class Pageheader extends PureComponent {
   static defaultProps = {
     page: '',
     empInfo: {},
-    subtypeOptions: [],
+    typeOptions: [],
     chooseMissionViewOptions: [],
   }
 
@@ -183,7 +183,7 @@ export default class Pageheader extends PureComponent {
     const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
     const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
     if (createTimeEnd && createTimeStart) {
-      if (createTimeEnd > createTimeStart) {
+      if (createTimeEnd >= createTimeStart) {
         replace({
           pathname,
           query: {
@@ -195,7 +195,6 @@ export default class Pageheader extends PureComponent {
         });
         return true;
       }
-      message.error('开始时间与结束时间不能为同一天', 1);
       return false;
     }
     replace({
@@ -217,12 +216,12 @@ export default class Pageheader extends PureComponent {
       creatSeibelModal,
       drafterList,
       page,
-      subtypeOptions,
+      typeOptions,
       chooseMissionViewOptions,
       location: {
         query: {
-          missionViewType,
-          subType,
+          chooseMissionView,
+          type,
           status,
           drafterId,
           createTimePartFrom,
@@ -246,9 +245,9 @@ export default class Pageheader extends PureComponent {
     // 默认时间
     const startTime = createTimePartFrom ? moment(createTimePartFrom) : null;
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
-    const subTypeValue = !_.isEmpty(subType) ? subType : '所有类型';
+    const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
-    const missionViewTypeValue = !_.isEmpty(missionViewType) ? status : '发起者视图';
+    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '发起者视图';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -272,8 +271,8 @@ export default class Pageheader extends PureComponent {
           <div className={styles.filterFl}>
             <Select
               name="type"
-              value={subTypeValue}
-              data={subtypeOptions}
+              value={typeValue}
+              data={typeOptions}
               onChange={this.handleSelectChange}
             />
           </div>
