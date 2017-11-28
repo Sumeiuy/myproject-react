@@ -24,12 +24,12 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9088,
+    port: 9083,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/fspa/mcrm/api/fsp/task/performer': {
+      '/fspa/mcrm/api/groovynoauth/fsp/campaign/mot/': {
         target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
         secure: false,
       },

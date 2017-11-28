@@ -350,13 +350,15 @@ export default class CustomerRow extends PureComponent {
               <span>总资产：</span>
               <span className="asset">{assetValue}</span>
               <span className="assetunit">{assetUnit}</span>
-              <SixMonthEarnings
-                listItem={listItem}
-                monthlyProfits={monthlyProfits}
-                custIncomeReqState={custIncomeReqState}
-                getCustIncome={getCustIncome}
-                formatAsset={formatAsset}
-              />
+              <div className={styles.sixMonthEarnings}>
+                <SixMonthEarnings
+                  listItem={listItem}
+                  monthlyProfits={monthlyProfits}
+                  custIncomeReqState={custIncomeReqState}
+                  getCustIncome={getCustIncome}
+                  formatAsset={formatAsset}
+                />
+              </div>
               <div className="department">
                 <span>
                   服务经理：
