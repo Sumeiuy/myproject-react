@@ -310,10 +310,19 @@ export default class EditForm extends PureComponent {
   deleteTableData(record, index) {
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    const newTableList = _.remove(testArr, (n, i) => i !== index);
-    this.setState({
-      cust: newTableList,
-    });
+    console.log('shanchu', record, index, testArr);
+    // 如果是详情返回的下挂客户，删除只修改状态
+    if (record.argId) {
+      testArr[index].custStatus = '退订处理中';
+      this.setState({
+        cust: testArr,
+      });
+    } else {
+      const newTableList = _.remove(testArr, (n, i) => i !== index);
+      this.setState({
+        cust: newTableList,
+      });
+    }
   }
 
   // 文件上传成功

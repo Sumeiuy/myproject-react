@@ -418,9 +418,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
+    const tipsMap = {
+      Unsubscribe: '锁定期不允许退出，是否确认要退出该协议',
+      Subscribe: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
+    };
     confirm({
       title: '提示',
-      content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
+      content: tipsMap[formData.operationType],
       onOk: () => {
         this.setState({
           ...this.state,
