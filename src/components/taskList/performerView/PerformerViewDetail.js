@@ -24,8 +24,6 @@ export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
     currentId: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     basicInfo: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     dict: PropTypes.object,
@@ -57,8 +55,6 @@ export default class PerformerViewDetail extends PureComponent {
   render() {
     const {
       currentId,
-      location,
-      replace,
       basicInfo,
       dict,
       addServeRecord,
@@ -128,7 +124,7 @@ export default class PerformerViewDetail extends PureComponent {
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
-          {`编号${missionId} ${missionName}: ${missionStatusName}`}
+          {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
@@ -138,8 +134,6 @@ export default class PerformerViewDetail extends PureComponent {
         <TargetCustomer
           currentId={currentId}
           isFold={isFold}
-          location={location}
-          replace={replace}
           currentCustId={currentCustId}
           handleCollapseClick={handleCollapseClick}
           dict={dict}

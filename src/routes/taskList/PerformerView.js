@@ -304,7 +304,6 @@ export default class PerformerView extends PureComponent {
     const {
       parameter,
       location,
-      replace,
       dict,
       addServeRecord,
       taskDetailBasicInfo,
@@ -342,8 +341,6 @@ export default class PerformerView extends PureComponent {
           <PerformerViewDetail
             currentId={currentId}
             parameter={parameter}
-            location={location}
-            replace={replace}
             dict={dict}
             addServeRecord={addServeRecord}
             basicInfo={taskDetailBasicInfo}
@@ -402,7 +399,7 @@ export default class PerformerView extends PureComponent {
       queryTargetCust,
     } = this.props;
     getTaskDetailBasicInfo({
-      missionId: obj.id,
+      taskId: obj.id,
     });
     queryTargetCust({
       missionId: obj.id,
