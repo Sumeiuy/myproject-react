@@ -44,8 +44,6 @@ const mapStateToProps = state => ({
   cooperDeparment: state.contract.cooperDeparment,
   // 审批人
   flowStepInfo: state.contract.flowStepInfo,
-  // 列表请求状态  // 获取列表数据进程
-  saveContractDataLoading: state.loading.effects['contract/saveContractData'],
 });
 
 const mapDispatchToProps = {
@@ -53,14 +51,10 @@ const mapDispatchToProps = {
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取右侧详情
   getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
-  // 获取附件列表
-  getAttachmentList: fetchDataFunction(true, 'contract/getAttachmentList'),
   // 查询条款名称列表
   getClauseNameList: fetchDataFunction(false, 'contract/getClauseNameList'),
   // 查询合作部门
   getCooperDeparmentList: fetchDataFunction(false, 'contract/getCooperDeparmentList'),
-  // 获取审批人
-  getFlowStepInfo: fetchDataFunction(true, 'contract/getFlowStepInfo'),
   // 保存合作合约
   saveContractData: fetchDataFunction(true, 'contract/saveContractData'),
 };
@@ -77,7 +71,6 @@ export default class Form extends PureComponent {
     // 审批记录
     flowHistory: PropTypes.array,
     // 附件列表
-    getAttachmentList: PropTypes.func.isRequired,
     attachmentList: PropTypes.array,
     // 查询右侧详情
     getBaseInfo: PropTypes.func.isRequired,
@@ -90,11 +83,8 @@ export default class Form extends PureComponent {
     cooperDeparment: PropTypes.array,
     // 审批人
     flowStepInfo: PropTypes.object,
-    getFlowStepInfo: PropTypes.func.isRequired,
     // 保存合作合约
     saveContractData: PropTypes.func.isRequired,
-    // 保存合作合约请求状态
-    saveContractDataLoading: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -104,7 +94,7 @@ export default class Form extends PureComponent {
     baseInfo: EMPTY_OBJECT,
     clauseNameList: EMPTY_LIST,
     cooperDeparment: EMPTY_LIST,
-    saveContractDataLoading: false,
+    doApprove: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -112,12 +102,12 @@ export default class Form extends PureComponent {
     this.state = {
       // 合作合约表单数据
       contractFormData: props.baseInfo,
+      isHiddenFooter: false,
     };
   }
 
   componentDidMount() {
     const {
-      getFlowStepInfo,
       getClauseNameList,
       getBaseInfo,
       location: { query: { flowId } },
@@ -125,7 +115,6 @@ export default class Form extends PureComponent {
     const newFolwId = (flowId && !_.isEmpty(flowId)) ? flowId : TESTFLOWID;
     getClauseNameList({});
     getBaseInfo({ flowId: newFolwId });
-    getFlowStepInfo({ operate: 1, flowId: '' });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -139,8 +128,10 @@ export default class Form extends PureComponent {
   @autobind
   onUploadComplete(formData) {
     this.setState({
-      ...this.state,
-      contractFormData: formData,
+      contractFormData: {
+        ...this.state.contractFormData,
+        ...formData,
+      },
     });
   }
 
@@ -175,7 +166,6 @@ export default class Form extends PureComponent {
   @autobind
   handleChangeContractForm(formData) {
     this.setState({
-      ...this.state,
       contractFormData: {
         ...this.state.contractFormData,
         ...formData,
@@ -194,7 +184,9 @@ export default class Form extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
-    saveContractData(payload);
+    saveContractData(payload).then(
+      () => this.setState({ isHiddenFooter: true }),
+    );
   }
 
   // 判断合约有效期是否大于开始日期
@@ -355,6 +347,10 @@ export default class Form extends PureComponent {
       baseInfo,
       flowStepInfo,
     } = this.props;
+    const { isHiddenFooter } = this.state;
+    if (_.isEmpty(baseInfo) || _.isEmpty(flowHistory)) {
+      return null;
+    }
     // 修改表单props
     const contractDetail = {
       baseInfo,
@@ -381,10 +377,14 @@ export default class Form extends PureComponent {
           {...editFormProps}
           ref={(ref) => { this.EditFormComponent = ref; }}
         />
-        <BottonGroup
-          list={flowStepInfo}
-          onEmitEvent={this.footerBtnHandle}
-        />
+        {
+          isHiddenFooter ? null : (
+            <BottonGroup
+              list={flowStepInfo}
+              onEmitEvent={this.footerBtnHandle}
+            />
+          )
+        }
       </div>
     );
   }
