@@ -29,8 +29,6 @@ export default class Pageheader extends PureComponent {
     replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
-    // 状态
-    stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
@@ -39,10 +37,10 @@ export default class Pageheader extends PureComponent {
     drafterList: PropTypes.array.isRequired,
     // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 类型
-    typeOptions: PropTypes.array,
     // 视图选择
     chooseMissionViewOptions: PropTypes.array,
+    // dict字典
+    dict: PropTypes.object,
   }
 
   static defaultProps = {
@@ -50,6 +48,7 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
     typeOptions: [],
     chooseMissionViewOptions: [],
+    dict: {},
   }
 
   constructor(props) {
@@ -209,15 +208,32 @@ export default class Pageheader extends PureComponent {
     return false;
   }
 
+  // 从字典里面拿来的数据进行数据转化
+  @autobind
+  constructorDataType(data) {
+    if (data.length) {
+      const newData = data.map((item) => {
+        const newItem = {};
+        newItem.label = item.value;
+        newItem.value = item.key;
+        newItem.show = true;
+        return {
+          ...newItem,
+        };
+      });
+      return newData;
+    }
+    return null;
+  }
+
   render() {
     const {
       getDrafterList,
-      stateOptions,
       creatSeibelModal,
       drafterList,
       page,
-      typeOptions,
       chooseMissionViewOptions,
+      dict,
       location: {
         query: {
           chooseMissionView,
@@ -231,7 +247,18 @@ export default class Pageheader extends PureComponent {
     } = this.props;
 
     const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
+    const stateAll = { label: '所有状态', value: '', show: true };
+    const typeAll = { label: '所有类型', value: '', show: true };
 
+    const { missionStatus, missionType } = dict;
+    const stateOptions = this.constructorDataType(missionStatus);
+    const typeOptions = this.constructorDataType(missionType);
+    // 类型增加全部
+    const typeAllOptions = !_.isEmpty(typeOptions) ?
+    [typeAll, ...typeOptions] : typeOptions;
+    // 状态增加全部
+    const stateAllOptions = !_.isEmpty(stateOptions) ?
+    [stateAll, ...stateOptions] : stateOptions;
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
@@ -272,7 +299,7 @@ export default class Pageheader extends PureComponent {
             <Select
               name="type"
               value={typeValue}
-              data={typeOptions}
+              data={typeAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>
@@ -281,7 +308,7 @@ export default class Pageheader extends PureComponent {
             <Select
               name="status"
               value={statusValue}
-              data={stateOptions}
+              data={stateAllOptions}
               onChange={this.handleSelectChange}
             />
           </div>

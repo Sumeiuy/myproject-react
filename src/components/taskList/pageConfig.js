@@ -11,28 +11,6 @@ const pageConfig = {
   taskList: {
     pageName: '视图',
     pageType: 'taskList', // 查询列表接口中的type值
-    viewType: [
-      {
-        show: true,
-        label: '所有类型',
-        value: '',
-      },
-      {
-        show: true,
-        label: '产品营销',
-        value: '0103',
-      },
-      {
-        show: true,
-        label: '产品售后',
-        value: '0102',
-      },
-      {
-        show: true,
-        label: '业务推荐',
-        value: '0101',
-      },
-    ], // 类型
     status: [
       {
         show: true,

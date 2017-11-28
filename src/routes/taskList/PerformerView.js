@@ -25,7 +25,7 @@ const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const {
   taskList,
-  taskList: { pageType, viewType, status, chooseMissionView },
+  taskList: { pageType, chooseMissionView },
 } = pageConfig;
 
 const EXECUTOR = 'executor'; // 执行者视图
@@ -231,13 +231,17 @@ export default class PerformerView extends PureComponent {
   // 查询不同视图的详情信息
   getDetailByView(record) {
     const { missionViewType: st } = record;
+    const { query: { currentId } } = location;
     const {
       getTaskBasicInfo,
       taskDetailBasicInfo,
     } = this.props;
     switch (st) {
       case INITIATOR:
-        getTaskBasicInfo({});
+        getTaskBasicInfo({
+          flowId: currentId,
+          systemCode: '102330',
+        });
         break;
       case EXECUTOR:
         taskDetailBasicInfo({});
@@ -436,16 +440,16 @@ export default class PerformerView extends PureComponent {
       location,
       replace,
       list,
+      dict,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
         location={location}
         replace={replace}
+        dict={dict}
         page="performerViewPage"
         pageType={pageType}
-        typeOptions={viewType}
-        stateOptions={status}
         chooseMissionViewOptions={chooseMissionView}
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl="performerView"
