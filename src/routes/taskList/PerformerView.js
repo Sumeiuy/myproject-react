@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { constructSeibelPostBody } from '../../utils/helper';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
@@ -19,12 +18,14 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
+import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const {
   taskList,
-  taskList: { pageType, viewType, status, chooseMissionView },
+  taskList: { pageType, chooseMissionView },
 } = pageConfig;
 
 const EXECUTOR = 'executor'; // 执行者视图
@@ -76,6 +77,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
   // 获取左侧列表
   getTaskList: fetchDataFunction(true, effects.getTaskList),
@@ -99,12 +101,18 @@ const mapDispatchToProps = {
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+  // 清除数据
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class PerformerView extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     parameter: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -133,6 +141,7 @@ export default class PerformerView extends PureComponent {
     previewCustFile: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
+    clearTaskFlowData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -160,7 +169,7 @@ export default class PerformerView extends PureComponent {
       },
       getTaskList,
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = this.constructViewPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getTaskList({
       ...params,
@@ -176,7 +185,7 @@ export default class PerformerView extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = this.constructViewPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
@@ -264,13 +273,19 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { currentView: st = EXECUTOR } = record;
+    const { missionViewType: st } = record;
+    const {
+      location: { query: { currentId } },
+    } = this.props;
     const {
       getTaskBasicInfo,
     } = this.props;
     switch (st) {
       case INITIATOR:
-        getTaskBasicInfo({});
+        getTaskBasicInfo({
+          flowId: currentId,
+          systemCode: '102330',
+        });
         break;
       case EXECUTOR:
         this.loadDetailContent(record);
@@ -354,6 +369,31 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
+  /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  @autobind
+  constructViewPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      pageNum: _.parseInt(newPageNum, 10),
+      pageSize: _.parseInt(newPageSize, 10),
+    };
+
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
+    finalPostData = _.merge(finalPostData, omitData);
+
+    // 对反馈状态做处理
+    if (!('missionViewType' in finalPostData)
+      || _.isEmpty(finalPostData.missionViewType)) {
+      finalPostData = _.merge(finalPostData, { missionViewType: EXECUTOR });
+    }
+
+    return finalPostData;
+  }
+
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
@@ -433,10 +473,25 @@ export default class PerformerView extends PureComponent {
     this.getDetailByView(record);
   }
 
-  // 头部新建页面
+  // 头部新建按钮，跳转到新建表单
   @autobind
-  creatPermossionModal() {
-
+  handleCreateBtnClick() {
+    const url = '/customerPool/taskFlow';
+    const { clearTaskFlowData } = this.props;
+    clearTaskFlowData();
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({
+        url,
+        param: {
+          id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+          title: '新建自建任务',
+          closable: true,
+          isSpecialTab: true,
+        },
+      });
+    } else {
+      this.props.push(url);
+    }
   }
 
   // 渲染列表项里面的每一项
@@ -461,18 +516,18 @@ export default class PerformerView extends PureComponent {
       location,
       replace,
       list,
+      dict,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
         location={location}
         replace={replace}
+        dict={dict}
         page="performerViewPage"
         pageType={pageType}
-        typeOptions={viewType}
-        stateOptions={status}
         chooseMissionViewOptions={chooseMissionView}
-        creatSeibelModal={this.creatPermossionModal}
+        creatSeibelModal={this.handleCreateBtnClick}
         filterControl="performerView"
       />
     );
