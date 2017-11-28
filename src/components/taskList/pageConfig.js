@@ -73,17 +73,17 @@ const pageConfig = {
     chooseMissionView: [
       {
         show: true,
-        label: '发起者视图',
+        label: '我创建的任务',
         value: 'initiator',
       },
       {
         show: true,
-        label: '执行者视图',
+        label: '我执行的任务',
         value: 'executor',
       },
       {
         show: true,
-        label: '管理者视图',
+        label: '我管理的任务',
         value: 'controller',
       },
     ],

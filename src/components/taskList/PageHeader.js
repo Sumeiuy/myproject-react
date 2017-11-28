@@ -35,11 +35,11 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
     pageType: PropTypes.string.isRequired,
-    // 拟稿人列表
+    // 创建者列表
     drafterList: PropTypes.array.isRequired,
-    // 获取拟稿人列表
+    // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 子类型
+    // 类型
     typeOptions: PropTypes.array,
     // 视图选择
     chooseMissionViewOptions: PropTypes.array,
@@ -201,8 +201,8 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        startDate: '',
-        endDate: '',
+        createTimeStart: '',
+        createTimeEnd: '',
         isResetPageNum: 'Y',
       },
     });
@@ -247,7 +247,7 @@ export default class Pageheader extends PureComponent {
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
-    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '发起者视图';
+    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '我执行的任务';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
