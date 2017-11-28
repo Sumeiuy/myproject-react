@@ -88,6 +88,8 @@ export default class PerformerViewDetail extends PureComponent {
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
 
+    const currentCustomer = _.find(list, o => o.custId === currentCustId);
+
     const { missionStatusCode } = targetCustDetail;
 
     // 处理中 和 待处理 时表单可编辑
@@ -104,7 +106,6 @@ export default class PerformerViewDetail extends PureComponent {
       feedbackDate,
       attachmentRecord,
       custId,
-      missionFlowId,
     } = targetCustDetail;
     // 服务记录的props
     const serviceReocrd = {
@@ -120,7 +121,7 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
-      missionFlowId,
+      missionFlowId: currentCustomer.missionFlowId,
     };
     return (
       <div className={styles.performerViewDetail}>
