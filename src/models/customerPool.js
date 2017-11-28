@@ -419,11 +419,11 @@ export default {
       });
     },
     // 列表页添加服务记录
-    * addServeRecord({ payload }, { call, put }) {
+    * addCommonServeRecord({ payload }, { call, put }) {
       yield put({
         type: 'resetServeRecord',
       });
-      const res = yield call(api.addServeRecord, payload);
+      const res = yield call(api.addCommonServeRecord, payload);
       if (res.msg === 'OK') {
         // yield put({
         //   type: 'getServiceLog',
