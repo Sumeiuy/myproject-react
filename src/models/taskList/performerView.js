@@ -43,6 +43,12 @@ export default {
         parameter: payload,
       };
     },
+    clearParameter(state) {
+      return {
+        ...state,
+        parameter: {},
+      };
+    },
     getTaskListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJ } } = action;
       const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData;
@@ -107,6 +113,8 @@ export default {
 
     // 执行者视图的详情基本信息
     * getTaskDetailBasicInfo({ payload }, { call, put }) {
+      // 清除查询上次目标客户列表的条件
+      yield put({ type: 'clearParameter' });
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, payload);
       if (resultData) {
         yield put({

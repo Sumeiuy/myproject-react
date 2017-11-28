@@ -4,8 +4,8 @@
  * @description 封装首页指标数据
  */
 import _ from 'lodash';
-import { fspContainer } from '../../../config';
-import { fspGlobal, helper } from '../../../utils';
+import { fspGlobal } from '../../../utils';
+import { url as urlHelper, env } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
@@ -319,8 +319,8 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
       obj.orgId = orgId;
     }
   }
-  if (document.querySelector(fspContainer.container)) {
-    const url = `${pathname}?${helper.queryToString(obj)}`;
+  if (env.isInFsp()) {
+    const url = `${pathname}?${urlHelper.stringify(obj)}`;
     const param = {
       closable: true,
       forceRefresh: true,

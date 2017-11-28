@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 
 import styles from './Item.less';
 import { fspContainer } from '../../config';
-import { toUnit } from '../../utils/helper';
+import report from '../../helper/page/report';
 
 const reactApp = fspContainer.reactApp;
 
@@ -30,7 +30,7 @@ export default class Item extends PureComponent {
 
   render() {
     const { data: { unit, value, name, parentName, description } } = this.props;
-    const data = toUnit(value, unit, 5);
+    const data = report.toUnit(value, unit, 5);
     const newName = parentName ? `${parentName}-${name}` : name;
     const toolTipHtnml = (<div className={styles.summuryToolTip}>
       <h3>{newName}</h3>

@@ -12,10 +12,11 @@ import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
-import { fspGlobal, helper } from '../../utils';
+import { fspGlobal } from '../../utils';
+import { emp } from '../../helper';
 
 
-const orgId = helper.getOrgId();
+const orgId = emp.getOrgId();
 const EMPTY_ARRAY = [];
 
 const effects = {

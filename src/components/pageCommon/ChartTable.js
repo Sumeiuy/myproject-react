@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-05-25 18:20:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 10:51:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
-import { getStrLen } from '../../utils/helper';
+import { data as helperData } from '../../helper';
 import { fspContainer, optionsMap } from '../../config';
 import styles from './ChartTable.less';
 
@@ -201,10 +201,10 @@ export default class ChartTable extends PureComponent {
       newUnit = `万${unitStr}`;
     }
     // 取出字符串对应的字节长度，汉字为 2，英文符号为 1，最终除以 2 当做字符串长度
-    const length = getStrLen(str) / 2;
+    const length = helperData.getStrLen(str) / 2;
     let unitLength;
     if (!_.isEmpty(newUnit)) {
-      unitLength = getStrLen(newUnit) / 2;
+      unitLength = helperData.getStrLen(newUnit) / 2;
     } else {
       unitLength = 0;
     }

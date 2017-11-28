@@ -10,8 +10,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { fspContainer } from '../../config';
-import { fspGlobal, helper } from '../../utils';
+import { fspGlobal } from '../../utils';
+import { url as urlHelper, env } from '../../helper';
 import wordSrc from '../../../static/images/word.png';
 import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
@@ -49,8 +49,8 @@ export default class ViewpointDetail extends PureComponent {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
     const newQuery = { curPageNum, pageSize };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(newQuery)}`, param });
+    if (env.isInFsp()) {
+      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(newQuery)}`, param });
     } else {
       push({ pathname: url, query: newQuery });
     }
@@ -137,7 +137,10 @@ export default class ViewpointDetail extends PureComponent {
                 </div>
               </div>
             </div>
-            <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
+            <div
+              className={styles.body}
+              dangerouslySetInnerHTML={{ __html: formateAbstract }} // eslint-disable-line
+            />
             <div className={styles.footer}>
               <div
                 className={classnames(

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-16 17:36:22
+ * @Last Modified time: 2017-11-28 15:12:03
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,12 +12,11 @@ import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
-import { constructSeibelPostBody } from '../../utils/helper';
+import seibelHelper from '../../helper/page/seibel';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
 import ChannelsTypeProtocolList from '../../components/common/appList';
-// import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
@@ -76,6 +75,8 @@ const mapStateToProps = state => ({
   flowStepInfo: state.channelsTypeProtocol.flowStepInfo,
   // 保存成功后返回itemId,提交审批流程所需
   itemId: state.channelsTypeProtocol.itemId,
+  // 协议 ID 列表
+  protocolList: state.channelsTypeProtocol.protocolList,
 });
 
 const mapDispatchToProps = {
@@ -104,6 +105,10 @@ const mapDispatchToProps = {
   doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', true),
   // 验证客户
   getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate', true),
+  // 查询协议 ID 列表
+  queryProtocolList: fetchDataFunction(true, 'channelsTypeProtocol/queryProtocolList', true),
+  // 清除详情数据
+  clearDetailData: fetchDataFunction(true, 'channelsTypeProtocol/clearDetailData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -125,7 +130,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     protocolDetail: PropTypes.object.isRequired,
     // 附件
     attachmentList: PropTypes.array,
-
     // 审批记录
     flowHistory: PropTypes.array,
     // 登陆人信息
@@ -158,6 +162,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
     doApprove: PropTypes.func.isRequired,
     // 验证客户
     getCustValidate: PropTypes.func.isRequired,
+    // 协议 ID 列表接口
+    queryProtocolList: PropTypes.func.isRequired,
+    // 协议 ID 列表
+    protocolList: PropTypes.array,
+    // 清除详情数据
+    clearDetailData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -166,6 +176,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     flowHistory: EMPTY_LIST,
     underCustList: EMPTY_LIST,
     flowStepInfo: EMPTY_OBJECT,
+    protocolList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -197,7 +208,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         },
       },
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getSeibleList({ ...params, type: pageType }).then(() => {
       if (currentId) {
@@ -215,7 +226,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        const params = constructSeibelPostBody(nextQuery,
+        const params = seibelHelper.constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
         );
@@ -267,6 +278,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
         this.setState({ activeRowIndex: 0 });
         getProtocolDetail({ id: item.id });
       }
+      this.setState({ activeRowIndex: itemIndex });
+      getProtocolDetail({
+        needAttachment: true,
+        needFlowHistory: true,
+        data: {
+          id: currentId,
+        },
+      });
     }
   }
 
@@ -336,7 +355,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       activeRowIndex: index,
     });
     getProtocolDetail({
-      id,
+      needAttachment: true,
+      needFlowHistory: true,
+      data: {
+        id,
+      },
     });
   }
 
@@ -378,6 +401,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
+    console.warn('formData', formData);
     if (!formData.subType) {
       message.error('请选择子类型');
       return false;
@@ -408,21 +432,35 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    confirm({
-      title: '提示',
-      content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
-      onOk: () => {
-        this.setState({
-          ...this.state,
-          approverModal: true,
-          flowAuditors: btnItem.flowAuditors,
-          protocolData: formData,
-        });
-      },
-      onCancel: () => {
-        console.log('Cancel');
-      },
-    });
+    const tipsMap = {
+      Unsubscribe: '锁定期不允许退出，是否确认要退出该协议', // 退订时弹框提示语
+      Subscribe: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！', // 订购时弹框提示语,
+    };
+    if (formData.operationType === 'Unsubscribe' ||
+      formData.operationType === 'Subscribe') {
+      confirm({
+        title: '提示',
+        content: tipsMap[formData.operationType],
+        onOk: () => {
+          this.setState({
+            ...this.state,
+            approverModal: true,
+            flowAuditors: btnItem.flowAuditors,
+            protocolData: formData,
+          });
+        },
+        onCancel: () => {
+          console.log('Cancel');
+        },
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        approverModal: true,
+        flowAuditors: btnItem.flowAuditors,
+        protocolData: formData,
+      });
+    }
   }
 
   // 审批人弹窗点击确定
@@ -438,7 +476,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         },
       } = this.props;
       const params = {
-        ...constructSeibelPostBody(query, 1, 10),
+        ...seibelHelper.constructSeibelPostBody(query, 1, 10),
         type: pageType,
       };
       doApprove({
@@ -532,6 +570,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       getCustValidate,  // 验证客户接口
       location: { query: { pageNum = 1, pageSize = 10 } },
       seibleList: { page = {} },
+      queryProtocolList,  // 查询协议 ID 列表
+      protocolList,  // 协议 ID 列表
+      getProtocolDetail,  // 查询协议详情
+      getFlowStepInfo,  // 查询审批人
+      clearDetailData,  // 清除详情数据
     } = this.props;
     const {
       editFormModal,
@@ -586,6 +629,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     />);
     // editForm 需要的 props
     const editFormProps = {
+      location,
       // 客户列表
       canApplyCustList,
       // 查询客户
@@ -603,7 +647,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // 所选模板对应协议条款列表
       protocolClauseList,
       // 协议详情 - 编辑时传入
-      protocolDetail: EMPTY_OBJECT,
+      protocolDetail,
+      // 查询协议详情
+      getProtocolDetail,
       // 查询协议产品列表
       queryChannelProtocolProduct,
       // 协议产品列表
@@ -618,6 +664,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
       clearPropsData,
       // 验证客户
       getCustValidate,
+      // 查询协议 ID 列表
+      queryProtocolList,
+      // 协议 ID 列表
+      protocolList,
+      // 附件列表
+      attachmentList,
+      getFlowStepInfo,
+      clearDetailData,
     };
     // editFormModal 需要的 props
     const editFormModalProps = {

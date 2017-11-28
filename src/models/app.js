@@ -57,7 +57,6 @@ export default {
     },
     // 获取可申请客户列表
     getCanApplyCustListSuccess(state, action) {
-      console.warn('action', action);
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
       return {
@@ -168,7 +167,6 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(custApi.getStatisticalPeriod);
-      console.log('dict00000', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },

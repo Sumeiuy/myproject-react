@@ -1,17 +1,13 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-13 20:40:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:46:20
  */
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
-import { getEmpId } from '../utils/helper';
-// import { seibelConfig } from '../config';
+import { emp } from '../helper';
 
-// const {
-//   pageType,  // 页面类型
-// } = seibelConfig.channelsTypeProtocol;
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
@@ -121,7 +117,7 @@ export default {
   effects: {
     // 获取协议详情
     * getProtocolDetail({ payload }, { call, put }) {
-      const empId = getEmpId();
+      const empId = emp.getId();
       const response = yield call(api.getProtocolDetail, payload);
       yield put({
         type: 'getProtocolDetailSuccess',

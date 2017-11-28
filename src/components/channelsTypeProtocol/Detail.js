@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-07 16:12:55
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 13:36:26
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -16,7 +16,7 @@ import styles from './detail.less';
 import MultiUploader from '../common/biz/MultiUploader';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 
 const {
   underCustTitleList,  // 下挂客户表头集合
@@ -51,15 +51,6 @@ export default class Detail extends PureComponent {
     // hasEditPermission: false,
   }
 
-  // 处理接口返回的拟稿提请时间
-  @autobind
-  getCreatedDate(date) {
-    if (date) {
-      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
-    }
-    return EMPTY_PARAM;
-  }
-
   @autobind
   changeEdit() {
     this.setState({
@@ -88,6 +79,8 @@ export default class Detail extends PureComponent {
     const isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     // 判断是否显示下挂客户
     const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
+    // 判断是否显示协议编号
+    const isShowProtocolNum = !(protocolDetail.operationType === '协议订购');
     let statusLabel = '';
     if (protocolDetail.status) {
       statusLabel = status[Number(protocolDetail.status)].label;
@@ -105,6 +98,12 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
+          {
+            isShowProtocolNum ?
+              <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
+              :
+              null
+          }
           <InfoItem label="协议模板" value={protocolDetail.templateId} />
           {
             isTenLevel ?
@@ -115,14 +114,14 @@ export default class Detail extends PureComponent {
                 <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
               </div>
           }
-          <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
-          <InfoItem label="协议有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="协议开始日期" value={time.format(protocolDetail.startDt) || EMPTY_PARAM} />
+          <InfoItem label="协议有效期" value={time.format(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={`${protocolDetail.divisionName || EMPTY_PARAM} ${protocolDetail.createdName || EMPTY_PARAM}`} />
-          <InfoItem label="提请时间" value={this.getCreatedDate(protocolDetail.createdDt)} />
+          <InfoItem label="提请时间" value={protocolDetail.createdDt} />
           <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

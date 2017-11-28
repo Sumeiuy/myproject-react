@@ -18,13 +18,13 @@ import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { constructPostBody, getEnv } from '../../utils/helper';
+import { env } from '../../helper';
+import feedbackHelper from '../../helper/page/feedback';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const BROWSER = getEnv();
 const DEFAULTSIZE = 530;
 let splitPane;
 let PaneLeft;
@@ -76,7 +76,7 @@ export default class FeedBack extends PureComponent {
       curPageSize,
      } } } = this.props;
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
+    getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
   componentDidMount() {
@@ -97,7 +97,7 @@ export default class FeedBack extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getFeedbackList(constructPostBody(
+        getFeedbackList(feedbackHelper.constructPostBody(
           nextQuery,
           isResetPageNum === 'Y' ? 1 : curPageNum,
           isResetPageNum === 'Y' ? 10 : curPageSize,
@@ -271,7 +271,7 @@ export default class FeedBack extends PureComponent {
     splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
     PaneLeft = ReactDOM.findDOMNode(document.querySelector('.Pane1'));// eslint-disable-line
     Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
-    if (BROWSER.$browser === 'Internet Explorer') {
+    if (env.isIE()) {
       Pane.style.paddingLeft = `${size + 20}px`;
     }
   }

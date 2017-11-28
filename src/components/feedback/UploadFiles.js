@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
 import { request } from '../../config';
-import { helper } from '../../utils';
+import { emp } from '../../helper';
 import uploadRequest from '../../utils/uploadRequest';
 import './uploadFiles.less';
 
@@ -36,7 +36,7 @@ export default class UploadFiles extends PureComponent {
       previewImage: '',
       fList: [],
       upData: {
-        empId: helper.getEmpId(),
+        empId: emp.getId(),
       },
     };
   }
@@ -97,7 +97,7 @@ export default class UploadFiles extends PureComponent {
   fileOnRemove(file) {
     debugger;
     const { onCreate } = this.props;
-    const nowUserId = helper.getEmpId();
+    const nowUserId = emp.getId();
     const uids = file.uid || '';
     let uid = uids.split('a');
     uid = uid.length > 1 ? uid[0] : '';

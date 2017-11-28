@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-13 19:46:01
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-28 15:11:05
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 
 import InfoTitle from '../../components/common/InfoTitle';
 import ApproveList from '../../components/common/approveList';
-import { constructSeibelPostBody } from '../../utils/helper';
+import seibelHelper from '../../helper/page/seibel';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
@@ -250,7 +250,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
               },
             } = this.props;
             const params = {
-              ...constructSeibelPostBody(query, 1, 10),
+              ...seibelHelper.constructSeibelPostBody(query, 1, 10),
               type: pageType,
             };
             doApprove({
@@ -294,7 +294,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
         },
       } = this.props;
       const params = {
-        ...constructSeibelPostBody(query, 1, 10),
+        ...seibelHelper.constructSeibelPostBody(query, 1, 10),
         type: pageType,
       };
       doApprove({
@@ -346,6 +346,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
 
   render() {
     const {
+      location,
       flowHistory,
       queryTypeVaules, // 查询操作类型/子类型/模板列表
       templateList, // 模板列表
@@ -368,12 +369,16 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       flowAuditors,
       template,
     } = this.state;
+    if (_.isEmpty(protocolDetail)) {
+      return null;
+    }
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
     />);
     // editForm 需要的 props
     const editFormProps = {
+      location,
       // 查询操作类型/子类型/模板列表
       queryTypeVaules,
       // 协议模板列表

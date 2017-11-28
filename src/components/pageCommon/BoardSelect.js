@@ -10,7 +10,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 
 import { constants, BoardBasic, optionsMap } from '../../config';
-import { getCssStyle } from '../../utils/helper';
+import { dom, event } from '../../helper';
 import { canCustomBoard } from '../../permissions';
 import styles from './BoardSelect.less';
 
@@ -68,12 +68,8 @@ export default class BoardSelect extends PureComponent {
   componentWillUnmount() {
     const menuUl = this.menuUl;
     const subMenuUl = this.subMenuUl;
-    menuUl.removeEventListener('wheel', this.stopSpread);
-    menuUl.removeEventListener('mousewheel', this.stopSpread);
-    menuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
-    subMenuUl.removeEventListener('wheel', this.stopSpread);
-    subMenuUl.removeEventListener('mousewheel', this.stopSpread);
-    subMenuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+    event.removeWheelEvent(menuUl, this.stopSpread);
+    event.removeWheelEvent(subMenuUl, this.stopSpread);
   }
 
   @autobind
@@ -108,22 +104,14 @@ export default class BoardSelect extends PureComponent {
     const menuUl = this.menuUl;
     const subMenuUl = this.subMenuUl;
     if (showMenu) {
-      menuUl.addEventListener('wheel', this.stopSpread, false);
-      menuUl.addEventListener('mousewheel', this.stopSpread, false);
-      menuUl.addEventListener('DOMMouseScroll', this.stopSpread, false);
+      event.addWheelEvent(menuUl, this.stopSpread);
     } else {
-      menuUl.removeEventListener('wheel', this.stopSpread);
-      menuUl.removeEventListener('mousewheel', this.stopSpread);
-      menuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+      event.removeWheelEvent(menuUl, this.stopSpread);
     }
     if (showSubMenu) {
-      subMenuUl.addEventListener('wheel', this.stopSpread, false);
-      subMenuUl.addEventListener('mousewheel', this.stopSpread, false);
-      subMenuUl.addEventListener('DOMMouseScroll', this.stopSpread, false);
+      event.addWheelEvent(subMenuUl, this.stopSpread);
     } else {
-      subMenuUl.removeEventListener('wheel', this.stopSpread);
-      subMenuUl.removeEventListener('mousewheel', this.stopSpread);
-      subMenuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+      event.removeWheelEvent(subMenuUl, this.stopSpread);
     }
   }
 
@@ -153,8 +141,8 @@ export default class BoardSelect extends PureComponent {
       showSubMenu: false,
     }, () => {
       this.registerScrollEvent();
-      const height = parseInt(getCssStyle(this.menuUl, 'height'), 10);
-      const titleHeight = parseInt(getCssStyle(this.menuTitle, 'height'), 10);
+      const height = parseInt(dom.getCssStyle(this.menuUl, 'height'), 10);
+      const titleHeight = parseInt(dom.getCssStyle(this.menuTitle, 'height'), 10);
       const addScrollBar = this.menuUl.scrollHeight > height;
       this.setState({
         addScrollBar,

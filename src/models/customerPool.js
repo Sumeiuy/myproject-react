@@ -6,7 +6,7 @@
 import _ from 'lodash';
 import queryString from 'query-string';
 import { customerPool as api } from '../api';
-import { matchRoute, getEmpId } from '../utils/helper';
+import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
 
@@ -112,6 +112,8 @@ export default {
     storedCreateTaskData: {},
     // 任务列表-任务详情基本信息
     taskBasicInfo: {},
+    // 文件下载文件列表数据
+    filesList: [],
   },
 
   subscriptions: {
@@ -119,7 +121,7 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = matchRoute('serviceLog', pathname);
+        const serviceLogUrl = url.matchRoute('serviceLog', pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -132,7 +134,7 @@ export default {
           return;
         }
 
-        const custGroupUrl = matchRoute('customerGroup', pathname);
+        const custGroupUrl = url.matchRoute('customerGroup', pathname);
         if (custGroupUrl) {
           const { curPageNum, curPageSize, keyWord = null } = params;
           dispatch({
@@ -140,7 +142,7 @@ export default {
             payload: {
               pageNum: curPageNum || INITIAL_PAGE_NUM,
               pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: getEmpId(),
+              empId: emp.getId(),
               keyWord,
             },
           });
@@ -148,7 +150,7 @@ export default {
           return;
         }
 
-        const customerGroupManageUrl = matchRoute('customerGroupManage', pathname);
+        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
         const { curPageNum, curPageSize, keyWord = null } = params;
         if (customerGroupManageUrl) {
           dispatch({
@@ -163,7 +165,7 @@ export default {
           return;
         }
 
-        const todoListUrl = matchRoute('todo', pathname);
+        const todoListUrl = url.matchRoute('todo', pathname);
         if (todoListUrl) {
           const { keyword } = params;
           if (keyword) {
@@ -582,8 +584,27 @@ export default {
     * getServiceLog({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
+      if (!_.isEmpty(resultData)) {
+        const { uuid = '' } = resultData[0];
+        const fileListRes = yield call(api.ceFileList, uuid);
+        const { resultData: fileResultData } = fileListRes;
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData, fileResultData },
+        });
+      } else {
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData },
+        });
+      }
+    },
+    // 文件下载文件列表数据
+    * getCeFileList({ payload }, { call, put }) {
+      const response = yield call(api.ceFileList, payload);
+      const { resultData } = response;
       yield put({
-        type: 'getServiceLogSuccess',
+        type: 'getCeFileListSuccess',
         payload: { resultData },
       });
     },
@@ -1080,10 +1101,19 @@ export default {
     },
     // 360服务记录查询成功
     getServiceLogSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { resultData, fileResultData } } = action;
       return {
         ...state,
         serviceLogData: resultData,
+        filesList: fileResultData,
+      };
+    },
+    // 文件下载文件列表
+    getCeFileListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filesList: resultData,
       };
     },
     getSearchServerPersonListSuccess(state, action) {

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:01:26
+ * @Last Modified time: 2017-11-28 20:33:04
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -13,7 +13,8 @@ import reqwest from 'reqwest';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
 import Button from '../../common/Button';
-import { helper, apiCreator as api } from '../../../utils';
+import { apiCreator as api } from '../../../utils';
+import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
 
@@ -52,9 +53,7 @@ export default class Uploader extends PureComponent {
     onOperateFile: () => { },
     isNeedPreview: false,
     isNeedDelete: false,
-    upData: {
-      empId: helper.getEmpId(),
-    },
+    upData: {},
     beforeUpload: () => { },
     isUploadFileManually: false,
   }
@@ -72,12 +71,14 @@ export default class Uploader extends PureComponent {
       lastFile: attachModel,
       fileList: [],
       uploadedFileKey: fileKey,
+      upData: {
+        empId: emp.getId(),
+      },
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
       totalCount,
       showUploadList: true,
-      upData,
       originUpData: upData,
       custUuid: '',
     };
@@ -289,7 +290,7 @@ export default class Uploader extends PureComponent {
       if (_.isEmpty(custUuid)) {
         const { upData } = this.state;
         api().post(beforeUploadPostUrl, {
-          empId: helper.getEmpId(),
+          empId: emp.getEmpId(),
         }).then((res) => {
           console.log(res);
           const { resultData } = res;

@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import { getDurationString } from '../../../utils/helper';
+import time from '../../../helper';
 import { optionsMap } from '../../../config';
 import Icon from '../../common/Icon';
 import CustRange from '../common/CustRange';
@@ -64,7 +64,7 @@ export default class TabsExtra extends PureComponent {
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
         item.key === value).name) || {};
-    const nowDuration = getDurationString(currentSelect.key);
+    const nowDuration = time.getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     return {

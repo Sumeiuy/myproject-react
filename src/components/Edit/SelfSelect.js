@@ -8,7 +8,7 @@ import { Icon, Checkbox, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
-// import Scroll from '../common/Scroll';
+import { dom, event } from '../../helper';
 import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
 
@@ -67,6 +67,11 @@ export default class SelfSelect extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    const scrollBd = this.getScrollRef();
+    event.removeWheelEvent(scrollBd, this.stopSpread);
+  }
+
   @autobind
   setVisibleRangeNames(groupCheckedList) {
     const { getFinalLabel } = this.state;
@@ -78,8 +83,8 @@ export default class SelfSelect extends PureComponent {
   }
 
   @autobind
-  setScrollRef(dom) {
-    this.scrollBd = dom;
+  setScrollRef(input) {
+    this.scrollBd = input;
   }
 
   @autobind
@@ -99,11 +104,10 @@ export default class SelfSelect extends PureComponent {
   @autobind
   registerScrollEvent() {
     const scrollBd = this.getScrollRef();
-    // const scrollInstance = new Scroll(scrollBd);
-    // return scrollInstance;
-    scrollBd.addEventListener('wheel', this.stopSpread, false);
-    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
-    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    event.addWheelEvent(scrollBd, this.stopSpread);
+    // scrollBd.addEventListener('wheel', this.stopSpread, false);
+    // scrollBd.addEventListener('mousewheel', this.stopSpread, false);
+    // scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
 
   @autobind
@@ -153,16 +157,12 @@ export default class SelfSelect extends PureComponent {
   stopClick(e) {
     e.stopPropagation();
   }
-  @autobind
-  hasClass(ele, classname) {
-    return ele.className.indexOf(classname) > -1;
-  }
 
   // 收起下拉列表
   @autobind
   unExpandSelfSelect(e) {
-    const targetHasClass = this.hasClass(e.target, 'checkbox');
-    const parentHasClass = this.hasClass(e.target.parentNode, 'checkbox');
+    const targetHasClass = dom.hasClass(e.target, 'checkbox');
+    const parentHasClass = dom.hasClass(e.target.parentNode, 'checkbox');
     if (targetHasClass || parentHasClass) {
       return;
     }
