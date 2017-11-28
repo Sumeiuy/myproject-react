@@ -39,7 +39,6 @@ export default class PerformerViewDetail extends PureComponent {
     parameter: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
     queryTargetCust: PropTypes.func.isRequired,
-    queryTargetCustDetail: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     getCustDetail: PropTypes.func.isRequired,
