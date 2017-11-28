@@ -31,8 +31,6 @@ export default class TargetCustomer extends PureComponent {
   static propTypes = {
     // 当前任务的id
     currentId: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     isFold: PropTypes.bool.isRequired,

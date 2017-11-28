@@ -289,7 +289,6 @@ export default class PerformerView extends PureComponent {
     const {
       parameter,
       location,
-      replace,
       dict,
       addServeRecord,
       taskDetailBasicInfo,
@@ -327,8 +326,6 @@ export default class PerformerView extends PureComponent {
           <PerformerViewDetail
             currentId={currentId}
             parameter={parameter}
-            location={location}
-            replace={replace}
             dict={dict}
             addServeRecord={addServeRecord}
             basicInfo={taskDetailBasicInfo}
