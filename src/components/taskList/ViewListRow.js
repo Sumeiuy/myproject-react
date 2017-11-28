@@ -14,9 +14,10 @@ import styles from './viewListRow.less';
 
 const PROCESSING = '10'; // 执行者视图状态审批中
 const REJECT = '20'; // 执行中视图状态驳回
-const END = '30'; // 执行者视图状态结束
-const EXECUTING = '40'; // 执行者视图状态执行中
-const RESULT = '50';  // 执行中视图状态结果跟踪
+const CLOSE = '30'; // 执行中视图状态终止
+const END = '40'; // 执行者视图状态结束
+const EXECUTING = '50'; // 执行者视图状态执行中
+const RESULT = '60';  // 执行中视图状态结果跟踪
 
 
 export default function AppItem(props) {
@@ -53,11 +54,12 @@ export default function AppItem(props) {
     [styles.active]: active,
   });
   const tagStatusType = cx({
-    processing: data.statusCode === PROCESSING && !active,
-    reject: data.statusCode === REJECT && !active,
-    end: data.statusCode === END && !active,
-    executing: data.statusCode === EXECUTING && !active,
-    result: data.statusCode === RESULT && !active,
+    pvProcessing: data.statusCode === PROCESSING && !active,
+    pvReject: data.statusCode === REJECT && !active,
+    pvClose: data.statusCode === CLOSE && !active,
+    pvEnd: data.statusCode === END && !active,
+    pvExecuting: data.statusCode === EXECUTING && !active,
+    pvResult: data.statusCode === RESULT && !active,
     transparent: active,
   });
   function handleClick() {
