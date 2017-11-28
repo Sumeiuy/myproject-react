@@ -12,5 +12,7 @@ export default function performerView(api) {
     queryTargetCust: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListOfMission', query),
     // 执行视图下添加服务记录
     addServiceRecord: query => api.post('/groovynoauth/fsp/campaign/mot/addServiceRecord', query),
+    // 上传文件需要先上传uuid
+    queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
   };
 }

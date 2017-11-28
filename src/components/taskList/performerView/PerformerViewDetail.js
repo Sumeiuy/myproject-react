@@ -30,6 +30,8 @@ export default class PerformerViewDetail extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool,
+    custUuid: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -54,6 +56,8 @@ export default class PerformerViewDetail extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
+      custUuid,
+      queryCustUuid,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -104,6 +108,8 @@ export default class PerformerViewDetail extends PureComponent {
           formData={{}}
           currentSelectedCust={currentSelectedCust}
           isFold={isFold}
+          queryCustUuid={queryCustUuid}
+          custUuid={custUuid}
         />
       </div>
     );

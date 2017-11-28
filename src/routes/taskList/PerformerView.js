@@ -45,6 +45,7 @@ const effects = {
   getCustIncome: 'customerPool/getCustIncome',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+  queryCustUuid: 'performerView/queryCustUuid',
 };
 
 const mapStateToProps = state => ({
@@ -62,6 +63,8 @@ const mapStateToProps = state => ({
   // 客户细分导入数据
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
+  // 客户uuid
+  custUuid: state.performerView.custUuid,
 });
 
 const mapDispatchToProps = {
@@ -78,6 +81,8 @@ const mapDispatchToProps = {
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+  // 获取uuid
+  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -104,6 +109,8 @@ export default class PerformerView extends PureComponent {
     previewCustFile: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -126,7 +133,7 @@ export default class PerformerView extends PureComponent {
         query,
       query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
       getTaskList,
@@ -259,6 +266,8 @@ export default class PerformerView extends PureComponent {
       monthlyProfits,
       taskBasicInfo,
       priviewCustFileData,
+      custUuid,
+      queryCustUuid,
     } = this.props;
     let detailComponent = null;
     switch (st) {
@@ -286,6 +295,8 @@ export default class PerformerView extends PureComponent {
             getCustIncome={getCustIncome}
             monthlyProfits={monthlyProfits}
             custIncomeReqState={interfaceState[effects.getCustIncome]}
+            queryCustUuid={queryCustUuid}
+            custUuid={custUuid}
           />
         );
         break;

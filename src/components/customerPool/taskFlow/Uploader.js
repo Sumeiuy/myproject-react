@@ -2,22 +2,26 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 10:23:21
+ * @Last Modified time: 2017-11-28 16:32:12
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import reqwest from 'reqwest';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
-import { helper } from '../../../utils';
+import Button from '../../common/Button';
+import { helper, apiCreator as api } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
 
 let count = 0;
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
+
+const beforeUploadPostUrl = '/groovynoauth/fsp/campaign/mot/queryCustUuid';
 
 export default class Uploader extends PureComponent {
   static propTypes = {
@@ -33,6 +37,9 @@ export default class Uploader extends PureComponent {
     uploadTitle: PropTypes.string.isRequired,
     uploadTarget: PropTypes.string.isRequired,
     upData: PropTypes.object,
+    beforeUpload: PropTypes.func,
+    custUuid: PropTypes.string.isRequired,
+    isUploadFileManually: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -48,6 +55,8 @@ export default class Uploader extends PureComponent {
     upData: {
       empId: helper.getEmpId(),
     },
+    beforeUpload: () => { },
+    isUploadFileManually: false,
   }
 
   constructor(props) {
@@ -75,13 +84,20 @@ export default class Uploader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { attachModel: nextFile = EMPTY_OBJECT } = nextProps;
+    const { attachModel: nextFile = EMPTY_OBJECT, custUuid } = nextProps;
     const { attachModel: prevFile = EMPTY_OBJECT } = this.props;
     if (nextFile !== prevFile) {
       this.setState({
         lastFile: nextFile,
       });
     }
+
+    this.setState({
+      upData: {
+        ...this.state.upData,
+        attachment: custUuid,
+      },
+    });
   }
 
   @autobind
@@ -219,10 +235,75 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
+  handleUpload() {
+    const { fileList, upData: { attachment, empId } } = this.state;
+    const { uploadTarget } = this.props;
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('attachment', attachment);
+    formData.append('empId', empId);
+
+    this.setState({
+      uploading: true,
+    });
+
+    reqwest({
+      url: uploadTarget,
+      method: 'post',
+      processData: false,
+      data: formData,
+      success: () => {
+        this.setState({
+          fileList: [],
+          uploading: false,
+        });
+        message.success('upload successfully.');
+      },
+      error: () => {
+        this.setState({
+          uploading: false,
+        });
+        message.error('upload failed.');
+      },
+    });
+  }
+
+  /**
+   * 在上传文件之前，
+   */
+  @autobind
+  handleBeforeUpload(file) {
+    const { fileList } = this.state;
+    const { isUploadFileManually } = this.props;
+    if (isUploadFileManually) {
+      const { upData } = this.state;
+      api().post(beforeUploadPostUrl, {
+        empId: helper.getEmpId(),
+      }).then((res) => {
+        console.log(res);
+        const { resultData } = res;
+        this.setState({
+          upData: {
+            ...upData,
+            attachment: resultData,
+          },
+          fileList: [...fileList, file],
+        });
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  @autobind
   createUpload() {
     const { uploadTitle, uploadTarget } = this.props;
     const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
+
     return (
       <Dragger
         key={uploadKey}
@@ -234,6 +315,8 @@ export default class Uploader extends PureComponent {
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
         showUploadList={showUploadList}
+        beforeUpload={this.handleBeforeUpload}
+        fileList={fileList}
       >
         <div className="upload_txt">
           + {uploadTitle}
@@ -294,12 +377,23 @@ export default class Uploader extends PureComponent {
 
   render() {
     const { isNeedDelete, isNeedPreview } = this.props;
-    const { isShowUpload, isShowError, originFileName } = this.state;
+    const { isShowUpload, isShowError, originFileName, uploading, fileList } = this.state;
     return (
       <div>
         <div className="uploadBox">
           {
             isShowUpload ? this.createUpload() : null
+          }
+          {
+            <Button
+              className="uploadBtn"
+              type="primary"
+              onClick={this.handleUpload}
+              disabled={fileList.length === 0}
+              loading={uploading}
+            >
+              {uploading ? 'Uploading' : 'Start Upload'}
+            </Button>
           }
           {
             !isShowUpload ? <div className="previewSection">

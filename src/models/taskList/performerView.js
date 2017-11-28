@@ -28,6 +28,8 @@ export default {
         totalCount: 0,
       },
     },
+    // 客户uuid
+    custUuid: '',
   },
   reducers: {
     getTaskListSuccess(state, action) {
@@ -56,6 +58,13 @@ export default {
           list,
           page,
         },
+      };
+    },
+    queryCustUuidSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custUuid: payload,
       };
     },
   },
@@ -88,8 +97,17 @@ export default {
         });
       }
     },
+    // 添加服务记录
     * addServiceRecord({ payload }, { call }) {
       yield call(api.addServiceRecord, payload);
+    },
+    // 上传文件之前，先查询uuid
+    * queryCustUuid({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustUuid, payload);
+      yield put({
+        type: 'queryCustUuidSuccess',
+        payload: resultData,
+      });
     },
   },
   subscriptions: {

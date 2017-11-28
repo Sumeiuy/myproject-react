@@ -84,6 +84,9 @@ export default class ServiceRecordContent extends PureComponent {
     formData: PropTypes.object,
     isFold: PropTypes.bool,
     isReadOnly: PropTypes.bool,
+    beforeUpload: PropTypes.func,
+    custUuid: PropTypes.string.isRequired,
+    isUploadFileManually: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -92,6 +95,8 @@ export default class ServiceRecordContent extends PureComponent {
     isEntranceFromPerformerView: false,
     isFold: false,
     isReadOnly: false,
+    beforeUpload: () => { },
+    isUploadFileManually: true,
   }
 
   constructor(props) {
@@ -432,6 +437,9 @@ export default class ServiceRecordContent extends PureComponent {
       isEntranceFromPerformerView,
       isFold,
       isReadOnly,
+      beforeUpload,
+      custUuid,
+      isUploadFileManually,
     } = this.props;
 
     const {
@@ -673,7 +681,10 @@ export default class ServiceRecordContent extends PureComponent {
                 // 第一次上传没有，如果曾经返回过，则必须传
                 attachment: '',
               }}
+              beforeUpload={beforeUpload}
+              custUuid={custUuid}
               uploadTarget={`${request.prefix}/file/ceFileUpload`}
+              isUploadFileManually={isUploadFileManually}
             /> :
             <div className={styles.uploadList}>
               <span>附件:</span>

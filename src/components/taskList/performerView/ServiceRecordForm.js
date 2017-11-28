@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-27 17:30:26
+ * @Last Modified time: 2017-11-28 16:19:34
  * 服务记录表单
  */
 
@@ -31,6 +31,8 @@ export default class ServiceRecordForm extends PureComponent {
     formData: PropTypes.object,
     currentSelectedCust: PropTypes.object.isRequired,
     isFold: PropTypes.bool.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -53,6 +55,8 @@ export default class ServiceRecordForm extends PureComponent {
       uploadedFileKey,
       serviceContent,
     } = this.serviceRecordContentRef.getData();
+
+    // const { custUuid } = this.props;
 
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
@@ -113,6 +117,8 @@ export default class ServiceRecordForm extends PureComponent {
       currentSelectedCust,
       isFold,
       formData,
+      queryCustUuid,
+      custUuid,
     } = this.props;
 
     if (!dict) {
@@ -149,6 +155,9 @@ export default class ServiceRecordForm extends PureComponent {
           formData={formData}
           currentSelectedCust={currentSelectedCust}
           isFold={isFold}
+          beforeUpload={queryCustUuid}
+          custUuid={custUuid}
+          isUploadFileManually
         />
 
         {
