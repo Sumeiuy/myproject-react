@@ -14,11 +14,11 @@ import ServiceRecordForm from './ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
-// 客户任务所处待处理和处理中时服务记录可编辑
-// 处理中 106110
-// 待处理  106112
+// 客户任务所处未开始和处理中时服务记录可编辑
+// 处理中 20
+// 未开始  10
 // 此处code码待修改
-const EDITABLE = ['106110', '106112'];
+const EDITABLE = ['10', '20'];
 
 export default class PerformerViewDetail extends PureComponent {
 
@@ -96,14 +96,12 @@ export default class PerformerViewDetail extends PureComponent {
 
     const { missionStatusCode } = targetCustDetail;
 
-    // 处理中 和 待处理 时表单可编辑
+    // 处理中 和 未开始 时表单可编辑
     const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
     const {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName,
-      serviceStatusCode,
       serviceDate,
       serviceRecord,
       customerFeedback,
@@ -116,8 +114,8 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName,
-      serviceStatusCode,
+      serviceStatusName: (currentCustomer || {}).missionStatusCode || '',
+      serviceStatusCode: (currentCustomer || {}).missionStatusValue || '',
       serviceDate,
       serviceRecord,
       customerFeedback,
@@ -125,7 +123,7 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
-      missionFlowId: currentCustomer.missionFlowId,
+      missionFlowId: (currentCustomer || {}).missionFlowId || '',
       serviceTypeCode,
       serviceTypeName,
     };

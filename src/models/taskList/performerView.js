@@ -25,7 +25,7 @@ export default {
     targetCustList: {
       list: EMPTY_LIST,
       page: {
-        pageNo: PAGE_NO,
+        pageNum: PAGE_NO,
         pageSize: PAGE_SIZE,
         totalCount: 0,
       },
@@ -67,7 +67,15 @@ export default {
       };
     },
     queryTargetCustSuccess(state, action) {
-      const { page, list } = action.payload;
+      // 后端接口返回 { page: null, list: null } 做的处理
+      const {
+        page = {
+          pageNum: PAGE_NO,
+          pageSize: PAGE_SIZE,
+          totalCount: 0,
+        },
+        list = EMPTY_LIST,
+      } = action.payload;
       return {
         ...state,
         targetCustList: {
@@ -123,7 +131,7 @@ export default {
       }
     },
 
-    // 执行者视图的详情目标客户
+    // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryTargetCust, payload);
       if (resultData) {
