@@ -1,21 +1,21 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:41:48
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-29 17:22:22
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Upload, message } from 'antd';
+import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
-import './uploader.less';
+import './index.less';
 
-let count = 0;
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
 
@@ -32,6 +32,11 @@ export default class Uploader extends PureComponent {
     isNeedDelete: PropTypes.bool,
     uploadTitle: PropTypes.string.isRequired,
     uploadTarget: PropTypes.string.isRequired,
+    upData: PropTypes.object,
+    beforeUpload: PropTypes.func,
+    custUuid: PropTypes.string,
+    isUploadFileManually: PropTypes.bool,
+    isSupportUploadMultiple: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -44,35 +49,57 @@ export default class Uploader extends PureComponent {
     onOperateFile: () => { },
     isNeedPreview: false,
     isNeedDelete: false,
+    upData: {},
+    beforeUpload: () => { },
+    isUploadFileManually: false,
+    custUuid: '',
+    isSupportUploadMultiple: false,
   }
 
   constructor(props) {
     super(props);
-    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '', totalCount = 0 } = props;
+    const {
+      attachModel = EMPTY_OBJECT,
+      fileKey = '',
+      originFileName = '',
+      totalCount = 0,
+      upData,
+      custUuid,
+    } = props;
     this.state = {
-      fList: [],
       lastFile: attachModel,
       fileList: [],
       uploadedFileKey: fileKey,
       upData: {
         empId: emp.getId(),
+        attachment: custUuid,
       },
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
       totalCount,
       showUploadList: true,
+      originUpData: upData,
+      custUuid,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { attachModel: nextFile = EMPTY_OBJECT } = nextProps;
+    const { attachModel: nextFile = EMPTY_OBJECT, custUuid } = nextProps;
     const { attachModel: prevFile = EMPTY_OBJECT } = this.props;
     if (nextFile !== prevFile) {
       this.setState({
         lastFile: nextFile,
       });
     }
+
+    this.setState({
+      upData: {
+        ...this.state.upData,
+        attachment: custUuid,
+      },
+      custUuid,
+    });
   }
 
   @autobind
@@ -82,111 +109,71 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleFileChange(info) {
-    const { onOperateFile } = this.props;
-    // 当前列表
-    const fileList = info.fileList;
+    const { onOperateFile, isSupportUploadMultiple } = this.props;
+    const { upData, custUuid } = this.state;
     // 当前操作upload项
     const currentFile = info.file;
-    // {
-    //    uid: 'uid',      // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
-    //    name: 'xx.png'   // 文件名
-    //    status: 'done', // 状态有：uploading done error removed
-    //    response: '{"status": "success"}', // 服务端响应内容
-    // }
-
-    //  {
-    //   "lastModified": 1247549551674,
-    //   "lastModifiedDate": "2009-07-14T05:32:31.674Z",
-    //   "name": "Lighthouse.jpg",
-    //   "size": 561276,
-    //   "type": "image/jpeg",
-    //   "uid": "rc-upload-1508129119030-2",
-    //   "response": {
-    //       "code": "0",
-    //       "msg": "OK",
-    //       "resultData": {
-    //           "attachName": "Lighthouse.jpg",
-    //           "attachUrl": "10dc4bd5-2a16-408f-a380-bfb077b65e59.jpg",
-    //           "attachUploader": "002332"
-    //       }
-    //   },
-    //   "percent": 100,
-    //   "originFileObj": {
-    //       "uid": "rc-upload-1508129119030-2"
-    //   },
-    //   "status": "done"
-    // }
+    // 当前列表
+    let newFileList = info.fileList;
 
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
-    if (status === 'uploading') {
-      console.log('uploading');
-    }
-
     if (status === 'removed') {
-      console.log('removed');
-      // 移除file
-      // 保留最后一个file在state里面
-      if (!_.isEmpty(fileList)) {
-        let newFileList = fileList;
+      if (!_.isEmpty(newFileList)) {
         // 过滤掉错误的fileList
-        newFileList = newFileList.filter(file => !_.isEmpty(file.error));
-        if (!_.isEmpty(newFileList)) {
-          const lastFile = newFileList[newFileList.length - 1];
-          const { response: lastResponse } = lastFile;
-          const { resultData: lastData = {} } = lastResponse || {};
-          const { fileName, totalCustNum } = lastData;
-          this.setState({
-            lastFile,
-            uploadedFileKey: fileName,
-            totalCount: totalCustNum,
-          });
-          onOperateFile({
-            currentFile: lastFile,
-            uploadedFileKey: lastData,
-            originFileName: name,
-            totalCount: totalCustNum,
-          });
-        }
+        newFileList = newFileList.filter(file => file.status !== 'error');
       }
     }
 
     if (status === 'done') {
-      const { fileName, totalCustNum } = resultData;
+      const { fileName, totalCustNum, attachment = '' } = resultData;
       message.success('文件上传成功', 2);
+      this.setState({
+        lastFile: currentFile,
+        uploadedFileKey: fileName,
+        isShowError: false,
+        originFileName: name,
+        totalCount: totalCustNum,
+        showUploadList: true,
+        upData: {
+          ...upData,
+          attachment,
+        },
+        isShowUpload: isSupportUploadMultiple,
+      });
       onOperateFile({
         currentFile,
         uploadedFileKey: fileName,
         originFileName: name,
         totalCount: totalCustNum,
-      });
-      this.setState({
-        lastFile: currentFile,
-        uploadedFileKey: fileName,
-        // 不展示upload组件
-        isShowUpload: false,
-        isShowError: false,
-        originFileName: name,
-        totalCount: totalCustNum,
-        showUploadList: true,
+        attachment,
+        custUuid,
       });
     }
 
     if (status === 'error') {
       const errorMsg = _.isEmpty(msg) ? '文件上传失败' : msg;
       message.error(`${errorMsg}.`, 2);
+      if (!_.isEmpty(newFileList)) {
+        // 过滤掉错误的fileList
+        newFileList = newFileList.filter(file => file.status !== 'error');
+      }
       this.setState({
-        isShowError: true,
+        isShowError: !isSupportUploadMultiple,
         showUploadList: false,
       });
     }
+
+    this.setState({
+      fileList: newFileList,
+    });
   }
 
   @autobind
   handleFileRemove(file) {
-    console.log(file);
     const { error } = file;
+    this.currentfile = file;
     if (!error) {
       this.showConfirm();
     }
@@ -206,19 +193,19 @@ export default class Uploader extends PureComponent {
   @autobind
   createUpload() {
     const { uploadTitle, uploadTarget } = this.props;
-    const { upData, fileList, showUploadList } = this.state;
-    const uploadKey = `uploadKey${count++}`;
+    const { upData, fileList } = this.state;
+
     return (
       <Dragger
-        key={uploadKey}
         name="file"
-        defaultFileList={fileList}
         data={upData}
         action={uploadTarget}
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
-        showUploadList={showUploadList}
+        showUploadList={false}
+        fileList={fileList}
+        listType={'text'}
       >
         <div className="upload_txt">
           + {uploadTitle}
@@ -230,12 +217,15 @@ export default class Uploader extends PureComponent {
   @autobind
   handleDeleteConfirm() {
     const { onDeleteFile } = this.props;
+    const { fileList } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
       // 删除完毕之后，打开上传进度开关
       showUploadList: true,
+      fileList: this.currentfile && _.filter(fileList, item => item.uid !== this.currentfile.uid
+        && _.isEmpty(this.currentfile.error)),
     });
     onDeleteFile();
   }
@@ -266,18 +256,92 @@ export default class Uploader extends PureComponent {
    */
   @autobind
   clearUploadFile() {
+    const { originUpData } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
       // 删除完毕之后，打开上传进度开关
       showUploadList: true,
+      upData: originUpData,
+      fileList: [],
     });
   }
 
+  /**
+   * 渲染文件的图标
+   * @param {*} name 文件名称
+   */
+  @autobind
+  renderIcon(name) {
+    const fullName = name.split('.');
+    const suffix = fullName[fullName.length - 1];
+    let iconType = '';
+
+    switch (true) {
+      case /jpg|jpeg|png/.test(suffix):
+        iconType = 'tupian-';
+        break;
+      case /doc|docx/.test(suffix):
+        iconType = 'word';
+        break;
+      case /xls|xlsx/.test(suffix):
+        iconType = 'excel2';
+        break;
+      case /ppt|pptx/.test(suffix):
+        iconType = 'ppt';
+        break;
+      case /mp3|wav/.test(suffix):
+        iconType = 'yinpinwenjian';
+        break;
+      case /mov|mp4|avi|3gp|wmv/.test(suffix):
+        iconType = 'shipinwenjian';
+        break;
+      case /txt/.test(suffix):
+        iconType = 'txt';
+        break;
+      case /csv/.test(suffix):
+        iconType = 'CSV';
+        break;
+      default:
+        iconType = 'qitawenjian';
+    }
+
+    return iconType;
+  }
+
+  @autobind
+  renderUploadedList() {
+    const { fileList } = this.state;
+    return (
+      <div className="ant-upload-list ant-upload-list-text">
+        {
+          _.map(fileList, item => <div className="ant-upload-list-item ant-upload-list-item-done">
+            <div className="ant-upload-list-item-info">
+              <span>
+                <Icon
+                  className={classnames({
+                    uploadedFileIcon: true,
+                    [this.renderIcon(item.name)]: true,
+                  })}
+                  type={this.renderIcon(item.name)}
+                />
+                <span className="ant-upload-list-item-name" title={item.name}>
+                  {item.name}
+                </span>
+              </span>
+            </div>
+            <antdIcon title="删除文件" className="anticon anticon-cross" onClick={() => this.handleFileRemove(item)} />
+          </div>,
+          )
+        }
+      </div>
+    );
+  }
+
   render() {
-    const { isNeedDelete, isNeedPreview } = this.props;
-    const { isShowUpload, isShowError, originFileName } = this.state;
+    const { isNeedDelete, isNeedPreview, isSupportUploadMultiple } = this.props;
+    const { isShowUpload, isShowError, originFileName, fileList } = this.state;
     return (
       <div>
         <div className="uploadBox">
@@ -310,6 +374,9 @@ export default class Uploader extends PureComponent {
             </div> : null
           }
         </div>
+        {
+          (!_.isEmpty(fileList) && isSupportUploadMultiple) ? this.renderUploadedList() : null
+        }
         {
           (isShowUpload && isShowError) ?
             <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
