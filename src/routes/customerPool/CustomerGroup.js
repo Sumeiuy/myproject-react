@@ -13,6 +13,8 @@ import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
+
+import Clickable from '../../components/common/Clickable';
 import Button from '../../components/common/Button';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
@@ -388,8 +390,18 @@ export default class CustomerGroup extends PureComponent {
                         <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
                       </Col>
                       <Col span={12}>
-                        <Button onClick={this.handleCancel}>取消</Button>
-                        <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                        <Clickable
+                          onClick={this.handleCancel}
+                          eventName="/click/customerGroup/cancel"
+                        >
+                          <Button>取消</Button>
+                        </Clickable>
+                        <Clickable
+                          onClick={this.handleSubmit}
+                          eventName="/click/customerGroup/submit"
+                        >
+                          <Button type="primary">保存</Button>
+                        </Clickable>
                       </Col>
                     </Row>
                   </div>

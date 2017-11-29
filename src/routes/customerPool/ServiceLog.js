@@ -12,7 +12,9 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
+
 import Loading from '../../layouts/Loading';
+import Clickable from '../../components/common/Clickable';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
@@ -305,7 +307,12 @@ export default class CreateTaskForm extends PureComponent {
             }
           >
             <Col className={styles.more}>
-              <Button onClick={this.handleMore}>加载更多服务记录</Button>
+              <Clickable
+                onClick={this.handleMore}
+                eventName="/click/serviceLog/loadMore"
+              >
+                <Button>加载更多服务记录</Button>
+              </Clickable>
             </Col>
           </Row>
         </div>
