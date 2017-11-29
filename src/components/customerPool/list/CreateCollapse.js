@@ -68,6 +68,7 @@ export default class CreateCollapse extends PureComponent {
     // const index = this.collapse.props.defaultActiveKey;
     const service = data[currentKey];
     const { uuid } = service;
+    console.log('uuid-->', uuid);
     // 手动上报日志
     handleCollapseClick({ currentKey });
     this.setState({

@@ -36,8 +36,8 @@ export default class ServiceRecordItem extends PureComponent {
   }
 
   renderIcon(value) {
-    const renderSpan = _.map(value, item =>
-      <span title={item.name} className={styles.iconsWords}>
+    const renderSpan = _.map(value, (item, index) =>
+      <span title={item.name} className={styles.iconsWords} key={index}>
         <Icon type="excel" className={styles.excel} />
         <a
           className={styles.seeCust}
@@ -69,7 +69,7 @@ export default class ServiceRecordItem extends PureComponent {
       >
         <span>{title || '--'}</span>
         {
-          isShowChild ?
+          !isShowChild ?
             <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
             :
             <span title={newContent}>{newContent || '--'}</span>
