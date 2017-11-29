@@ -127,6 +127,8 @@ export default class EditForm extends PureComponent {
       // 下挂客户是否可编辑，默认 true
       custOperate: true,
       clearProduct: false,
+      // 操作类型
+      operationType: '',
     };
   }
 
@@ -478,6 +480,14 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // EditBaseInfo切换操作类型
+  @autobind
+  handleChangeOperationType(operationType) {
+    this.setState({
+      operationType,
+    });
+  }
+
 
   render() {
     const {
@@ -530,6 +540,7 @@ export default class EditForm extends PureComponent {
       custOperate,
       productList,
       protocolClause,
+      operationType,
     } = this.state;
     // 下挂客户表格中需要的操作
     const customerOperation = {
@@ -593,15 +604,24 @@ export default class EditForm extends PureComponent {
             onChangeProtocolNumber={this.onChangeProtocolNumber}
             getFlowStepInfo={getFlowStepInfo}
             clearDetailData={clearDetailData}
+            changeOperationType={this.handleChangeOperationType}
           />
         </div>
         <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
           <InfoTitle
             head="协议产品"
           />
-          <Transfer
-            {...transferProps}
-          />
+          {
+            (operationType && operationType !== subscribe) ?
+              <CommonTable
+                data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
+                titleList={protocolProductTitleList}
+              />
+              :
+              <Transfer
+                {...transferProps}
+              />
+          }
         </div>
         <div className={styles.editWrapper}>
           <InfoTitle

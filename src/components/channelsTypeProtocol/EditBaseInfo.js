@@ -78,6 +78,8 @@ export default class EditBaseInfo extends PureComponent {
     queryProtocolList: PropTypes.func,
     onChangeProtocolNumber: PropTypes.func,
     getFlowStepInfo: PropTypes.func,
+    // 切换操作类型时向父组件返回数据
+    changeOperationType: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -219,10 +221,17 @@ export default class EditBaseInfo extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    const { queryTypeVaules, onSearchCutList, clearPropsData, resetProduct } = this.props;
+    const {
+      queryTypeVaules,
+      onSearchCutList,
+      clearPropsData,
+      resetProduct,
+      changeOperationType,
+    } = this.props;
     let sub = true;
     if (key === 'operationType') {
       sub = value === subscribe;
+      changeOperationType(value);
     }
     clearPropsData();
     resetProduct();
