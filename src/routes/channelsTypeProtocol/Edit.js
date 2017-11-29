@@ -346,6 +346,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
 
   render() {
     const {
+      location,
       flowHistory,
       queryTypeVaules, // 查询操作类型/子类型/模板列表
       templateList, // 模板列表
@@ -368,12 +369,16 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       flowAuditors,
       template,
     } = this.state;
+    if (_.isEmpty(protocolDetail)) {
+      return null;
+    }
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
     />);
     // editForm 需要的 props
     const editFormProps = {
+      location,
       // 查询操作类型/子类型/模板列表
       queryTypeVaules,
       // 协议模板列表
