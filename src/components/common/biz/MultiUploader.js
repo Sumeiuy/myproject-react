@@ -200,7 +200,7 @@ export default class MultiUpload extends PureComponent {
     const uploadElement = edit ?
       (<Upload {...uploadProps} {...this.props}>
         <Button className={styles.commonUploadBtn}>
-          <Icon type="xiazai" />上传附件
+          <Icon type="shangchuan" />上传附件
         </Button>
       </Upload>)
       :
