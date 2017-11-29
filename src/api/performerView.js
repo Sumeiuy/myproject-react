@@ -12,9 +12,9 @@ export default function performerView(api) {
     queryTargetCust: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListOfMission', query),
     // 执行者视图的目标客户的详情
     queryTargetCustDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustDetail', query),
-    // 获取Uuid 用于上传附件和添加服务记录
-    queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
     // 执行视图下添加服务记录
-    addServiceRecord: query => api.post('/groovynoauth/fsp/campaign/mot/addServiceRecord', query),
+    addMotServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addMotServeRecord', query),
+    // 上传文件需要先上传uuid
+    queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
   };
 }
