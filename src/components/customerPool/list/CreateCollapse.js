@@ -30,7 +30,7 @@ const mapStateToProps = state => ({
   filesList: state.customerPool.filesList,
 });
 const mapDispatchToProps = {
-  getCeFileList: fetchDataFunction(true, effects.getCeFileList),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -68,12 +68,15 @@ export default class CreateCollapse extends PureComponent {
     // const index = this.collapse.props.defaultActiveKey;
     const service = data[currentKey];
     const { uuid } = service;
+    const attachment = uuid;
+    if (!_.isEmpty(uuid)) {
+      getCeFileList({ attachment });
+    }
     // 手动上报日志
     handleCollapseClick({ currentKey });
     this.setState({
       currentActiveIndex: currentKey,
     });
-    getCeFileList({ uuid });
   }
 
   /**

@@ -112,6 +112,9 @@ export default class MultiUpload extends PureComponent {
       file: uploadFile,
       statusText: '上传中',
     });
+    console.warn('info', info);
+    console.warn('uploadFile', uploadFile);
+    console.warn('uploadFile response', uploadFile.response);
     if (uploadFile.response && uploadFile.response.code) {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
@@ -192,6 +195,9 @@ export default class MultiUpload extends PureComponent {
         attachment,
       },
       action: `${request.prefix}/file/ceFileUpload`,
+      headers: {
+        accept: '*/*',
+      },
       onChange: this.onChange,
       showUploadList: false,
       fileList,
