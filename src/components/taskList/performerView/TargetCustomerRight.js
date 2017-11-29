@@ -144,32 +144,32 @@ export default class TargetCustomerRight extends PureComponent {
         <h6><span>手机号码：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.cellPhoneCR === '完善',
-              [styles.noPerfectRate]: itemData.cellPhoneCR === '不完善',
+              [styles.perfectRate]: itemData.cellPhoneCR === '完备',
+              [styles.noPerfectRate]: itemData.cellPhoneCR === '不完备',
             })}
           >{this.handleEmpty(itemData.cellPhoneCR)}</span>
         </h6>
         <h6><span>联系地址：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.contactAddressCR === '完善',
-              [styles.noPerfectRate]: itemData.contactAddressCR === '不完善',
+              [styles.perfectRate]: itemData.contactAddressCR === '完备',
+              [styles.noPerfectRate]: itemData.contactAddressCR === '不完备',
             })}
           >{this.handleEmpty(itemData.contactAddressCR)}</span>
         </h6>
         <h6><span>电子邮箱：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.emailCR === '完善',
-              [styles.noPerfectRate]: itemData.emailCR === '不完善',
+              [styles.perfectRate]: itemData.emailCR === '完备',
+              [styles.noPerfectRate]: itemData.emailCR === '不完备',
             })}
           >{this.handleEmpty(itemData.emailCR)}</span>
         </h6>
         <h6><span>风险偏好：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.riskPreferenceCR === '完善',
-              [styles.noPerfectRate]: itemData.riskPreferenceCR === '不完善',
+              [styles.perfectRate]: itemData.riskPreferenceCR === '完备',
+              [styles.noPerfectRate]: itemData.riskPreferenceCR === '不完备',
             })}
           >{this.handleEmpty(itemData.riskPreferenceCR)}</span>
         </h6>
