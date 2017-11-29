@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-27 16:13:20
+ * @Last Modified time: 2017-11-29 10:24:13
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
@@ -27,20 +27,32 @@ const percent = '%';
 const permillage = '\u2030';
 
 const number = {
+  hundred,
+  thousand,
+  wan,
+  million,
+  yi,
+  billion,
+  trillion,
+  percent,
+  permillage,
   /**
    * 数字格式化
    * @author sunweibin
    * @param {String|Number} no 需要进行千分位格式化的数字或者数字字符串
    * @param {String} thousandSeq=',' 千分位格式化符号
+   * @param {Boolean} decimalNeedFormat=true 小数部分是否进行格式化
    * @returns {String|null} 格式化后的字符串
    */
-  thousandFormat(no, thousandSeq = ',') {
-    if (_.isEmpty(no)) return null;
+  thousandFormat(no, decimalNeedFormat = true, thousandSeq = ',') {
     const replacement = `$1${thousandSeq}`;
     // 将数字差分成整数部分和小数部分
     const nArr = String(no).split('.');
     const itegerF = nArr[0].replace(reg.thousand_integer, replacement);
     let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(reg.thousand_decimal, replacement);
+    if (!decimalNeedFormat) {
+      decimalF = !_.isEmpty(nArr[1]) && nArr[1];
+    }
     if (!decimalF) {
       decimalF = '';
     } else {
@@ -51,14 +63,3 @@ const number = {
 };
 
 export default number;
-export {
-  hundred,
-  thousand,
-  wan,
-  million,
-  yi,
-  billion,
-  trillion,
-  percent,
-  permillage,
-};

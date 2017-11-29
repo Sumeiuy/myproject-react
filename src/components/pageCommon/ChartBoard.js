@@ -36,7 +36,6 @@ export default class ChartBoard extends PureComponent {
     const { chartData, location, level, style, scope, custRange, updateQueryState } = this.props;
     return (
       <div className={styles.board} style={style}>
-        {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
             chartData.map((item, index) => {
