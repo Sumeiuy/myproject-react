@@ -83,7 +83,6 @@ export default class CreateTaskForm extends PureComponent {
     };
   }
   componentWillMount() {
-    // const { serviceLogData } = this.props;
     const { logData } = this.state;
     const { serviceLogData } = this.props;
     if (_.isEmpty(logData)) {
@@ -169,14 +168,12 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleMore() {
-    console.log(this.props);
     const { location: { query },
       getServiceLogMore,
     } = this.props;
     const { logData, pageNum } = this.state;
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
-    params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
     params.pageNum = pageNum + 1;
     this.setState({
       pageNum: pageNum + 1,
@@ -221,7 +218,6 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   serveAllTypeChange(value) {
-    console.log(value);
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
     if (value === '所有类型') {

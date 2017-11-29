@@ -112,6 +112,8 @@ export default {
     storedCreateTaskData: {},
     // 任务列表-任务详情基本信息
     taskBasicInfo: {},
+    // 文件下载文件列表数据
+    filesList: [],
   },
 
   subscriptions: {
@@ -394,10 +396,32 @@ export default {
       const response = yield call(api.queryRecentServiceRecord, payload);
       const { resultData } = response;
       const { custId } = payload;
-      yield put({
-        type: 'getServiceRecordSuccess',
-        payload: { resultData, custId },
-      });
+      if (!_.isEmpty(resultData)) {
+        const { uuid } = resultData[0];
+        const attachment = uuid;
+        if (!_.isEmpty(uuid)) {
+          const fileListRes = yield call(api.ceFileList, attachment);
+          const { resultData: fileResultData } = fileListRes;
+          yield put({
+            type: 'getServiceRecordSuccess',
+            payload: { resultData, custId, fileResultData },
+          });
+        } else {
+          yield put({
+            type: 'getServiceRecordSuccess',
+            payload: { resultData, custId },
+          });
+        }
+      } else {
+        yield put({
+          type: 'getServiceRecordSuccess',
+          payload: { resultData, custId },
+        });
+      }
+      // yield put({
+      //   type: 'getServiceRecordSuccess',
+      //   payload: { resultData, custId },
+      // });
     },
     * getFollowCust({ payload }, { call, put }) {
       yield put({
@@ -583,10 +607,28 @@ export default {
     * getServiceLog({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
-      yield put({
-        type: 'getServiceLogSuccess',
-        payload: { resultData },
-      });
+      if (!_.isEmpty(resultData)) {
+        const { uuid } = resultData[0];
+        const attachment = uuid;
+        if (!_.isEmpty(uuid)) {
+          const fileListRes = yield call(api.ceFileList, { attachment });
+          const { resultData: fileResultData } = fileListRes;
+          yield put({
+            type: 'getServiceLogSuccess',
+            payload: { resultData, fileResultData },
+          });
+        } else {
+          yield put({
+            type: 'getServiceLogSuccess',
+            payload: { resultData },
+          });
+        }
+      } else {
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData },
+        });
+      }
     },
     * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
@@ -612,6 +654,15 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getServiceLogMoreSuccess',
+        payload: { resultData },
+      });
+    },
+    // 文件下载文件列表数据
+    * getCeFileList({ payload }, { call, put }) {
+      const response = yield call(api.ceFileList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCeFileListSuccess',
         payload: { resultData },
       });
     },
@@ -931,12 +982,13 @@ export default {
     },
     // 获取服务记录成功
     getServiceRecordSuccess(state, action) {
-      const { payload: { resultData, custId } } = action;
+      const { payload: { resultData, custId, fileResultData } } = action;
       return {
         ...state,
         serviceRecordData: {
           [custId]: resultData,
         },
+        filesList: fileResultData,
       };
     },
     addServeRecordSuccess(state, action) {
@@ -1073,10 +1125,19 @@ export default {
     },
     // 360服务记录查询成功
     getServiceLogSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { resultData, fileResultData } } = action;
       return {
         ...state,
         serviceLogData: resultData,
+        filesList: fileResultData,
+      };
+    },
+    // 文件下载文件列表
+    getCeFileListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filesList: resultData,
       };
     },
     getSearchServerPersonListSuccess(state, action) {
