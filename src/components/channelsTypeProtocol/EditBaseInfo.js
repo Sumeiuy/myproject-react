@@ -121,7 +121,7 @@ export default class EditBaseInfo extends PureComponent {
         client: EMPTY_OBJECT,
         // 所选协议模板
         protocolTemplate: {
-          protocolTemplate: formData.templateId,
+          prodName: formData.templateId,
           rowId: formData.templateId,
         },
         // 是否多账户
@@ -604,7 +604,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
             </div>
         }
         {

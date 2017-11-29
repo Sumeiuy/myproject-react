@@ -29,6 +29,8 @@ const {
   attachmentMap,  // 附件类型数组
 } = seibelConfig.channelsTypeProtocol;
 const attachmentRequired = {
+  // 不需要校验附件必传
+  noNeed: [],
   // 没有下挂客户时，需要必传的附件类型
   noCust: [attachmentMap[0].type],
   // 有下挂客户时，需要必传的附件类型
@@ -41,6 +43,7 @@ const attachmentRequired = {
 
 // 订购的value
 const subscribe = 'Subscribe';
+const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
 export default class EditForm extends PureComponent {
   static propTypes = {
@@ -178,13 +181,16 @@ export default class EditForm extends PureComponent {
   @autobind
   onChangeProtocolNumber(operationType) {
     const { protocolDetail, protocolDetail: { cust, item: productList, term } } = this.props;
-    const hasCust = protocolDetail.multiUsedFlag === 'Y';
+    let hasCust = protocolDetail.multiUsedFlag === 'Y';
     // 协议产品不可编辑，下挂客户不可编辑
     const productOperate = false;
     let custOperate = false;
     // 新增或删除下挂客户时可以进行下挂客户操作
     if (operationType === addDel) {
       custOperate = true;
+    }
+    if (operationType === unSubscribe) {
+      hasCust = 'noNeed';
     }
     this.setState({
       productOperate,
@@ -256,7 +262,16 @@ export default class EditForm extends PureComponent {
   setUploadConfig(hasCust) {
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
-    const requiredArr = hasCust ? attachmentRequired.hasCust : attachmentRequired.noCust;
+    let requiredArr = [];
+    if (hasCust) {
+      if (hasCust === 'noNeed') {
+        requiredArr = attachmentRequired.noNeed;
+      } else {
+        requiredArr = attachmentRequired.hasCust;
+      }
+    } else {
+      requiredArr = attachmentRequired.noCust;
+    }
     // 清空附件数组的必传项
     const defaultAttachmentArr = attachmentTypeList.map(item => ({
       ...item,
@@ -326,27 +341,12 @@ export default class EditForm extends PureComponent {
       if (filterCust[0].custStatus === '退订处理中') {
         const propsFilter = _.filter(propsCust, o => o.econNum === value.econNum);
         const newCust = cust;
-        console.warn('newCust', newCust);
         _.remove(newCust, o => o.econNum === filterCust[0].econNum);
         newCust.push(propsFilter[0]);
         this.setState({
           cust: newCust,
         });
         return;
-        // console.warn('propsFilter', propsFilter);
-        // const newFilterCust = {
-        //   ...filterCust[0],
-        //   custStatus: propsFilter[0].custStatus,
-        // };
-        // const newCust = cust.map((item) => {
-        //   return {
-        //     ...item,
-        //     custStatus: item.custStatus
-        //   }
-        // });
-        // this.setState({
-        //   cust: [...cust, filterCust[0]]
-        // })
       }
       message.error('相同客户不能重复添加');
       return;
@@ -667,18 +667,20 @@ export default class EditForm extends PureComponent {
           {
             attachmentTypeList.map((item) => {
               const uploaderElement = item.show ? (
-                <MultiUploader
-                  key={item.type}
-                  edit
-                  type={item.type}
-                  title={item.title}
-                  required={item.required}
-                  attachment={isEdit ? item.uuid : ''}
-                  attachmentList={isEdit ? item.attachmentList : []}
-                  uploadCallback={this.handleUploadCallback}
-                  deleteCallback={this.handleDeleteCallback}
-                  ref={(ref) => { this[`uploader${item.type}`] = ref; }}
-                />
+                <div className={styles.mt10}>
+                  <MultiUploader
+                    key={item.type}
+                    edit
+                    type={item.type}
+                    title={item.title}
+                    required={item.required}
+                    attachment={isEdit ? item.uuid : ''}
+                    attachmentList={isEdit ? item.attachmentList : []}
+                    uploadCallback={this.handleUploadCallback}
+                    deleteCallback={this.handleDeleteCallback}
+                    ref={(ref) => { this[`uploader${item.type}`] = ref; }}
+                  />
+                </div>
               ) : null;
               return (
                 <div key={item.type}>
