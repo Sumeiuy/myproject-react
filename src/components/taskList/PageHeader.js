@@ -131,7 +131,6 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-
   // select改变
   @autobind
   handleSelectChange(key, v) {
@@ -206,7 +205,7 @@ export default class Pageheader extends PureComponent {
       dict,
       location: {
         query: {
-          chooseMissionView,
+          missionViewType,
           type,
           status,
           drafterId,
@@ -244,7 +243,7 @@ export default class Pageheader extends PureComponent {
     const endTime = createTimePartTo ? moment(createTimePartTo) : null;
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
-    const missionViewTypeValue = !_.isEmpty(chooseMissionView) ? chooseMissionView : '我执行的任务';
+    const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -258,7 +257,7 @@ export default class Pageheader extends PureComponent {
           </div>
           <div className={styles.filterFl}>
             <Select
-              name="chooseMissionView"
+              name="missionViewType"
               value={missionViewTypeValue}
               data={chooseMissionViewOptions}
               onChange={this.handleSelectChange}
