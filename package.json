@@ -53,8 +53,7 @@
     "redux-logger": "^2.7.4",
     "redux-persist": "^4.4.0",
     "reselect": "^2.5.4",
-    "whatwg-fetch": "^2.0.1",
-    "reqwest": "^2.0.5"
+    "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
