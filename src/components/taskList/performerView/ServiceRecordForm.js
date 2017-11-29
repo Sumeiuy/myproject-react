@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:39:54
+ * @Last Modified time: 2017-11-29 16:08:45
  * 服务记录表单
  */
 
@@ -25,7 +25,6 @@ export default class ServiceRecordForm extends PureComponent {
     formData: PropTypes.object,
     isFold: PropTypes.bool.isRequired,
     custUuid: PropTypes.string.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
   }
 
@@ -94,7 +93,6 @@ export default class ServiceRecordForm extends PureComponent {
       isFold,
       formData,
       formData: { serviceTips },
-      queryCustUuid,
       custUuid,
       isReadOnly,
     } = this.props;
@@ -125,9 +123,7 @@ export default class ServiceRecordForm extends PureComponent {
           // 表单数据
           formData={formData}
           isFold={isFold}
-          beforeUpload={queryCustUuid}
           custUuid={custUuid}
-          isUploadFileManually
         />
 
         {

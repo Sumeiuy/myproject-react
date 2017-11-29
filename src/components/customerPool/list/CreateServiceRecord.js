@@ -28,6 +28,7 @@ export default class CreateServiceRecord extends PureComponent {
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -122,6 +123,7 @@ export default class CreateServiceRecord extends PureComponent {
       loading,
       name,
       id,
+      custUuid,
     } = this.props;
 
     const title = (
@@ -154,6 +156,7 @@ export default class CreateServiceRecord extends PureComponent {
               <ServiceRecordContent
                 ref={ref => (this.serviceRecordContentRef = ref)}
                 dict={dict}
+                custUuid={custUuid}
               />
             </div>
             :

@@ -86,7 +86,6 @@ export default class ServiceRecordContent extends PureComponent {
     isReadOnly: PropTypes.bool,
     beforeUpload: PropTypes.func,
     custUuid: PropTypes.string.isRequired,
-    isUploadFileManually: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -465,7 +464,6 @@ export default class ServiceRecordContent extends PureComponent {
       isReadOnly,
       beforeUpload,
       custUuid,
-      isUploadFileManually,
     } = this.props;
 
     const {
@@ -626,7 +624,6 @@ export default class ServiceRecordContent extends PureComponent {
               rows={5}
               disabled={isReadOnly}
               value={serviceContent}
-              defaultValue={serviceContent}
               onChange={this.handleServiceRecordInputChange}
             />
           </div>
@@ -705,7 +702,7 @@ export default class ServiceRecordContent extends PureComponent {
               beforeUpload={beforeUpload}
               custUuid={custUuid}
               uploadTarget={`${request.prefix}/file/ceFileUpload`}
-              isUploadFileManually={isUploadFileManually}
+              isSupportUploadMultiple
             /> :
             <div className={styles.uploadList}>
               {
