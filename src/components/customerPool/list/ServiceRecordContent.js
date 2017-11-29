@@ -8,7 +8,6 @@ export default function ServiceRecordContent(props) {
   const { subtypeCd = '' } = item;
   const isShowChild = _.isEmpty(item.uuid); // 默认有文件名这个字段
 
-
   // 包含MOT服务记录则为MOT任务服务记录
   if (!_.isEmpty(subtypeCd)) {
     if (subtypeCd.indexOf('MOT服务记录') !== -1) {
@@ -36,7 +35,7 @@ export default function ServiceRecordContent(props) {
                 content={item.custFeedback}
                 title={'附件'}
                 filesList={filesList}
-                isShowChild={isShowChild}
+                isShowChild={!isShowChild}
               /> :
               null
             }
@@ -93,7 +92,7 @@ export default function ServiceRecordContent(props) {
           <ServiceRecordItem
             content={item.custFeedback}
             title={'附件'}
-            isShowChild={isShowChild}
+            isShowChild={!isShowChild}
             filesList={filesList}
           /> :
           null

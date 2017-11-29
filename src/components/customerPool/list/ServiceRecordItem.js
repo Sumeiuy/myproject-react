@@ -69,7 +69,7 @@ export default class ServiceRecordItem extends PureComponent {
       >
         <span>{title || '--'}</span>
         {
-          !isShowChild ?
+          isShowChild ?
             <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
             :
             <span title={newContent}>{newContent || '--'}</span>
