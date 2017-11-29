@@ -28,6 +28,7 @@ export default class CreateServiceRecord extends PureComponent {
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -75,6 +76,7 @@ export default class CreateServiceRecord extends PureComponent {
       // serviceStatus,
       // uploadedFileKey,
       serviceContent,
+      custUuid,
     } = this.serviceRecordContentRef.getData();
 
     if (!serviceContent) {
@@ -91,9 +93,6 @@ export default class CreateServiceRecord extends PureComponent {
       addServeRecord,
     } = this.props;
 
-    // TODO
-    // 需要添加上传附件的入参
-    // 在旧的页面上先保证能用
     addServeRecord({
       custId: id,
       serveWay: serviceWay,
@@ -104,6 +103,7 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
+      uuid: custUuid,
     });
   }
 
@@ -123,6 +123,7 @@ export default class CreateServiceRecord extends PureComponent {
       loading,
       name,
       id,
+      custUuid,
     } = this.props;
 
     const title = (
@@ -155,6 +156,7 @@ export default class CreateServiceRecord extends PureComponent {
               <ServiceRecordContent
                 ref={ref => (this.serviceRecordContentRef = ref)}
                 dict={dict}
+                custUuid={custUuid}
               />
             </div>
             :

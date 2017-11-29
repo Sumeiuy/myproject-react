@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by:   K0240008
- * @Last Modified time: 2017-11-28 11:04:42
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-28 20:18:19
  */
 
 
@@ -13,9 +13,9 @@ import _ from 'lodash';
 import { Select, DatePicker, TimePicker, Input, Radio, Row, Col } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
-import Uploader from '../../customerPool/taskFlow/Uploader';
+import Uploader from '../../common/uploader';
 import { request } from '../../../config';
-// import { helper } from '../../../utils';
+import { helper } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
@@ -84,6 +84,8 @@ export default class ServiceRecordContent extends PureComponent {
     formData: PropTypes.object,
     isFold: PropTypes.bool,
     isReadOnly: PropTypes.bool,
+    beforeUpload: PropTypes.func,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -92,6 +94,8 @@ export default class ServiceRecordContent extends PureComponent {
     isEntranceFromPerformerView: false,
     isFold: false,
     isReadOnly: false,
+    beforeUpload: () => { },
+    isUploadFileManually: true,
   }
 
   constructor(props) {
@@ -102,12 +106,18 @@ export default class ServiceRecordContent extends PureComponent {
       // 服务类型、客户反馈类型三级字典
       custServerTypeFeedBackDict = [{}],
       // 服务状态字典
-      serveStatus = [{}],
+      serveStatus = [{
+        key: 'handling',
+        value: 'handling',
+      }, {
+        key: 'completed',
+        value: 'completed',
+      }],
     } = props.dict || {};
     const {
       isEntranceFromPerformerView,
       formData,
-      formData: { serviceType = '' },
+      formData: { serviceTypeCode = '', serviceTypeName = '' },
       isReadOnly,
     } = props;
 
@@ -122,7 +132,7 @@ export default class ServiceRecordContent extends PureComponent {
         feedbackTypeArr = [],
         feedbackTypeChild = '',
         feedbackTypeChildArr = [],
-      } = this.handleServiceType(serviceType);
+      } = this.handleServiceType(serviceTypeCode);
 
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
@@ -138,16 +148,24 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate,
           // 服务状态
-          serviceStatus,
+          serviceStatusName,
+          serviceStatusCode,
           // 服务方式
-          serviceWay,
+          serviceWayName: serviceWay,
+          // 服务方式code
+          serviceWayCode,
           // 服务记录内容
-          serviceContent,
+          serviceRecord: serviceContent,
+          // 客户反馈
+          customerFeedback,
+          // 附件记录
+          attachmentRecord,
         } = formData;
 
         formObject = {
           // 服务类型，页面上隐藏该字段
-          serviceType,
+          serviceType: serviceTypeCode,
+          serviceTypeName,
           // 客户反馈一级
           feedbackType,
           feedbackTypeArr,
@@ -161,10 +179,14 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate,
           // 服务状态
-          serviceStatus,
+          serviceStatus: serviceStatusCode,
+          serviceStatusName,
           // 服务方式
           serviceWay,
           serviceContent,
+          serviceWayCode,
+          customerFeedback,
+          attachmentRecord,
         };
       } else {
         // 当前日期的时间戳
@@ -172,7 +194,7 @@ export default class ServiceRecordContent extends PureComponent {
 
         formObject = {
           // 服务类型，页面上隐藏该字段
-          serviceType,
+          serviceType: serviceTypeCode,
           // 客户反馈一级
           feedbackType,
           feedbackTypeArr,
@@ -190,6 +212,10 @@ export default class ServiceRecordContent extends PureComponent {
           // 服务方式
           serviceWay: (serveWay[0] || {}).key,
           serviceContent: '',
+          // serviceStatusCode,
+          // serviceWayCode,
+          // customerFeedback,
+          // attachmentRecord,
         };
       }
     } else {
@@ -251,6 +277,7 @@ export default class ServiceRecordContent extends PureComponent {
       serviceStatus,
       uploadedFileKey,
       serviceContent,
+      custUuid,
     } = this.state;
 
     return {
@@ -264,6 +291,7 @@ export default class ServiceRecordContent extends PureComponent {
       feedbackTypeChild,
       serviceStatus,
       uploadedFileKey,
+      custUuid,
     };
   }
 
@@ -405,13 +433,14 @@ export default class ServiceRecordContent extends PureComponent {
    * @param {*} result 本次上传结果
    */
   @autobind
-  handleFileUpload(lastFile) {
+  handleFileUpload(file) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid = '' } = file;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
+      custUuid,
     });
   }
 
@@ -432,11 +461,10 @@ export default class ServiceRecordContent extends PureComponent {
       dict,
       isEntranceFromPerformerView,
       isFold,
-      formData,
       isReadOnly,
+      beforeUpload,
+      custUuid,
     } = this.props;
-
-    console.log('serviceReocrd>>>>', formData);
 
     const {
       serviceWay,
@@ -453,6 +481,7 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey,
       originFileName,
       serviceContent,
+      attachmentRecord,
     } = this.state;
 
     if (!dict) {
@@ -468,9 +497,7 @@ export default class ServiceRecordContent extends PureComponent {
       format: showDateFormat,
       onChange: this.handleServiceDate,
       disabledDate: this.disabledDate,
-    } : {
-      disabled: true,
-    };
+    } : { disabled: true };
 
     const serviceTimeProps = !isReadOnly ? {
       placeholder: '选择时间',
@@ -479,9 +506,7 @@ export default class ServiceRecordContent extends PureComponent {
       format: timeFormat,
       disabledHours: this.disabledHours,
       disabledMinutes: this.disabledMinutes,
-    } : {
-      disabled: true,
-    };
+    } : { disabled: true };
 
     const feedbackTimeProps = !isReadOnly ? {
       allowClear: false,
@@ -489,9 +514,7 @@ export default class ServiceRecordContent extends PureComponent {
       format: showDateFormat,
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
-    } : {
-      disabled: true,
-    };
+    } : { disabled: true };
 
     return (
       <div className={styles.serviceRecordContent}>
@@ -601,7 +624,6 @@ export default class ServiceRecordContent extends PureComponent {
               rows={5}
               disabled={isReadOnly}
               value={serviceContent}
-              defaultValue={serviceContent}
               onChange={this.handleServiceRecordInputChange}
             />
           </div>
@@ -672,16 +694,25 @@ export default class ServiceRecordContent extends PureComponent {
               fileKey={uploadedFileKey}
               originFileName={originFileName}
               uploadTitle={'上传附件'}
-              uploadTarget={`${request.prefix}/file/khxfFileUpload`}
+              upData={{
+                empId: helper.getEmpId(),
+                // 第一次上传没有，如果曾经返回过，则必须传
+                attachment: '',
+              }}
+              beforeUpload={beforeUpload}
+              custUuid={custUuid}
+              uploadTarget={`${request.prefix}/file/ceFileUpload`}
+              isSupportUploadMultiple
             /> :
             <div className={styles.uploadList}>
-              <span>附件:</span>
               {
-                originFileName.indexOf('csv') !== -1 ?
-                  <Icon className={styles.csvIcon} type="CSV" /> :
-                  <Icon className={styles.excelIcon} type="excel" />
+                !_.isEmpty(attachmentRecord) ?
+                  <div>
+                    <span>附件:</span>
+                    <Icon className={styles.excelIcon} type="excel" />
+                    <span>{attachmentRecord}</span>
+                  </div> : null
               }
-              <span>{originFileName}</span>
             </div>
           }
         </div>

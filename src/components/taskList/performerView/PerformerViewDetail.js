@@ -127,6 +127,7 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTypeCode,
       serviceTypeName,
     };
+
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
@@ -161,9 +162,10 @@ export default class PerformerViewDetail extends PureComponent {
           addServeRecord={addServeRecord}
           isReadOnly={isReadOnly}
           isEntranceFromPerformerView
-          formData={{}}
           isFold={isFold}
-          serviceReocrd={serviceReocrd}
+          queryCustUuid={queryCustUuid}
+          custUuid={custUuid}
+          formData={serviceReocrd}
         />
       </div>
     );
