@@ -84,7 +84,7 @@ export default function AppItem(props) {
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
-        <div className={styles.drafter}>拟稿人：<span>{data.creator}</span>{`-${data.orgName || ''}` || '无'}</div>
+        <div className={styles.drafter}>拟稿人：<span>{data.creator}</span>{!_.isEmpty(data.orgName) ? `-${data.orgName}` : ''}</div>
         <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
       </div>
     </div>
