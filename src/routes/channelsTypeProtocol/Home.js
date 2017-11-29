@@ -86,7 +86,7 @@ const mapDispatchToProps = {
   // 获取客户列表
   getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', true),
   // 获取右侧详情
-  getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
+  getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail', true),
   // 查询操作类型/子类型/模板列表
   queryTypeVaules: fetchDataFunction(true, 'channelsTypeProtocol/queryTypeVaules', true),
   // 根据所选模板id查询模板对应协议条款
@@ -100,7 +100,7 @@ const mapDispatchToProps = {
   // 清除协议产品列表
   clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
   // 获取审批人
-  getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
+  getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo', true),
   // 提交审批流程
   doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', true),
   // 验证客户
