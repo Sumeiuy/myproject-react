@@ -77,7 +77,7 @@ export default class EditBaseInfo extends PureComponent {
     // 获取协议 ID 列表
     queryProtocolList: PropTypes.func,
     onChangeProtocolNumber: PropTypes.func,
-    getFlowStepInfo: PropTypes.func.isRequired,
+    getFlowStepInfo: PropTypes.func,
   }
 
   static defaultProps = {
@@ -96,6 +96,7 @@ export default class EditBaseInfo extends PureComponent {
     subTypeList: [],
     isEdit: false,
     onChangeProtocolNumber: () => {},
+    getFlowStepInfo: () => {},
   }
 
   constructor(props) {
@@ -107,25 +108,49 @@ export default class EditBaseInfo extends PureComponent {
     if (!_.isEmpty(formData)) {
       flag = formData.operationType === subscribeText;
     }
-    const subType = (isEditPage && flag) ? formData.subType : '';
-    const stateObj = {
-      // 所选操作类型
-      operationType: '',
-      // 所选子类型
-      subType,
-      // 所选客户
-      client: EMPTY_OBJECT,
-      // 所选协议模板
-      protocolTemplate: EMPTY_OBJECT,
-      // 是否多账户
-      multiUsedFlag: false,
-      // 是否订购十档行情
-      levelTenFlag: false,
-      // 备注
-      content: '',
-      // 协议编号
-      protocolNumber: '',
-    };
+    let stateObj = {};
+    if (isEditPage) {
+      stateObj = {
+        // 所选操作类型
+        operationType: formData.operationType,
+        // 所选子类型
+        subType: formData.subType,
+        // 所选客户
+        client: EMPTY_OBJECT,
+        // 所选协议模板
+        protocolTemplate: {
+          protocolTemplate: formData.templateId,
+          rowId: formData.templateId,
+        },
+        // 是否多账户
+        multiUsedFlag: formData.multiUsedFlag === 'Y',
+        // 是否订购十档行情
+        levelTenFlag: formData.levelTenFlag === 'Y',
+        // 备注
+        content: '',
+        // 协议编号
+        protocolNumber: formData.agreementNum,
+      };
+    } else {
+      stateObj = {
+        // 所选操作类型
+        operationType: '',
+        // 所选子类型
+        subType: '',
+        // 所选客户
+        client: EMPTY_OBJECT,
+        // 所选协议模板
+        protocolTemplate: EMPTY_OBJECT,
+        // 是否多账户
+        multiUsedFlag: false,
+        // 是否订购十档行情
+        levelTenFlag: false,
+        // 备注
+        content: '',
+        // 协议编号
+        protocolNumber: '',
+      };
+    }
     this.state = {
       ...stateObj,
       templateList,
@@ -163,22 +188,14 @@ export default class EditBaseInfo extends PureComponent {
   @autobind
   compareFormData(next) {
     const {
-      // operationType,
-      // subType,
       contactName,
       templateId,
       multiUsedFlag,
       levelTenFlag,
       startDt,
       vailDt,
-      // content,
-      // custId,
-      // custType,
-      // econNum,
     } = next;
     this.setState({
-      // operationType,
-      // subType,
       needMutliAndTen: false,
       contactName,
       templateId,
@@ -186,8 +203,8 @@ export default class EditBaseInfo extends PureComponent {
         ...this.state.protocolTemplate,
         rowId: templateId,
       },
-      multiUsedFlag: multiUsedFlag === 'Y' || false,
-      levelTenFlag: levelTenFlag === 'Y' || false,
+      multiUsedFlag: multiUsedFlag === 'Y',
+      levelTenFlag: levelTenFlag === 'Y',
       startDt,
       vailDt,
       // content,
@@ -328,15 +345,12 @@ export default class EditBaseInfo extends PureComponent {
           if (isSubscribe) {
             // 清空协议模版
             this.selectTemplateComponent.clearValue();
-            // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-            // 选择客户之后查询协议产品列表
-            this.queryChannelProtocolProduct();
           } else {
-            // 子类型变化且不是订购时，查询协议 ID 列表
+            // 查询协议 ID 列表
             queryProtocolList({
-              custId: cusId,  // TODO 测试数据，暂时写死
+              custId: cusId,
               subType: '',
-              operationType,  // TODO 测试数据，暂时写死
+              operationType,
             });
           }
         });
@@ -504,6 +518,15 @@ export default class EditBaseInfo extends PureComponent {
         value: item.flowId,
       }));
     }
+    if (isEditPage) {
+      newProtocolList = [
+        {
+          show: true,
+          label: protocolNumber,
+          value: protocolNumber,
+        },
+      ];
+    }
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -572,7 +595,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }
         {

@@ -204,16 +204,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
         query: {
           pageNum,
           pageSize,
-          currentId,
         },
       },
     } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getSeibleList({ ...params, type: pageType }).then(() => {
-      if (currentId) {
-        this.getRightDetail();
-      }
+      this.getRightDetail();
     });
   }
 
@@ -272,20 +269,24 @@ export default class ChannelsTypeProtocol extends PureComponent {
         // 此时url中存在currentId
         item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
         this.setState({ activeRowIndex: itemIndex });
-        getProtocolDetail({ id: currentId });
+        getProtocolDetail({
+          needAttachment: true,
+          needFlowHistory: true,
+          data: {
+            id: currentId,
+          },
+        });
       } else {
         // 不存在currentId
         this.setState({ activeRowIndex: 0 });
-        getProtocolDetail({ id: item.id });
+        getProtocolDetail({
+          needAttachment: true,
+          needFlowHistory: true,
+          data: {
+            id: item.id,
+          },
+        });
       }
-      this.setState({ activeRowIndex: itemIndex });
-      getProtocolDetail({
-        needAttachment: true,
-        needFlowHistory: true,
-        data: {
-          id: currentId,
-        },
-      });
     }
   }
 
