@@ -152,15 +152,6 @@ export default class Pageheader extends PureComponent {
   // 选中客户下拉对象中对应的某个对象
   @autobind
   selectCustItem(item) {
-    // const { replace, location: { pathname, query } } = this.props;
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     custNumber: item.custNumber,
-    //     isResetPageNum: 'Y',
-    //   },
-    // });
     const { filterCallback } = this.props;
     filterCallback({
       custNumber: item.custNumber,
@@ -170,15 +161,6 @@ export default class Pageheader extends PureComponent {
   // 选中拟稿人/审批人下拉对象中对应的某个对象
   @autobind
   selectItem(name, item) {
-    // const { replace, location: { pathname, query } } = this.props;
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     [name]: item.ptyMngId,
-    //     isResetPageNum: 'Y',
-    //   },
-    // });
     const { filterCallback } = this.props;
     filterCallback({
       [name]: item.ptyMngId,
@@ -188,15 +170,6 @@ export default class Pageheader extends PureComponent {
   // 选中部门下拉对象中对应的某个对象
   @autobind
   selectCustRange(obj) {
-    // const { replace, location: { pathname, query } } = this.props;
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     orgId: obj.orgId,
-    //     isResetPageNum: 'Y',
-    //   },
-    // });
     const { filterCallback } = this.props;
     filterCallback({
       orgId: obj.orgId,
@@ -209,15 +182,6 @@ export default class Pageheader extends PureComponent {
     this.setState({
       [key]: v,
     });
-    // const { replace, location: { pathname, query } } = this.props;
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     [key]: v,
-    //     isResetPageNum: 'Y',
-    //   },
-    // });
     const { filterCallback } = this.props;
     filterCallback({
       [key]: v,
