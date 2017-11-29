@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { fspGlobal } from '../../../utils';
-import { url as urlHelper, env } from '../../../helper';
+import { url as urlHelper, env, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
@@ -17,38 +17,9 @@ export function filterEmptyToNumber(number) {
   return ((_.isEmpty(number)) ? 0 : _.toNumber(number));
 }
 
-// 数字千分位格式化(只格式化整数部分，小数部分不格式化)
-function toThousands({ isNegative = false, integerStr = '', floatStr = '' }) {
-  let formaterStr = '';
-  let count = 0;
-  for (let i = integerStr.length - 1; i >= 0; i--) {
-    if (count % 3 === 0 && count !== 0) {
-      formaterStr = `${integerStr.charAt(i)},${formaterStr}`;
-    } else {
-      formaterStr = `${integerStr.charAt(i)}${formaterStr}`;
-    }
-    count++;
-  }
-  if (_.isEmpty(floatStr)) {
-    return isNegative ? `-${formaterStr}` : formaterStr;
-  }
-  return isNegative ? `-${formaterStr}${floatStr}` : `${formaterStr}${floatStr}`;
-}
-
 // 格式化数字，逢三位加一个逗号
 export function numFormat(num) {
-  const isNegative = num < 0;
-  const positiveNum = Math.abs(num);
-  const numStrArray = _.split(positiveNum.toString(), '.');
-  let integerStr = '';
-  let floatStr = '';
-  if (!_.isEmpty(numStrArray)) {
-    integerStr = numStrArray[0];
-    if (numStrArray.length === 2) {
-      floatStr = `.${numStrArray[1]}`;
-    }
-  }
-  return toThousands({ isNegative, integerStr, floatStr });
+  return numberHelper.thousandFormat(num, false);
 }
 
 function getProgressDataSource({
