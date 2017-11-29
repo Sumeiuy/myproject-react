@@ -57,6 +57,31 @@
 }
 .contentWrapper {
   margin: 0 54px 0 36px;
+  .uploadSection {
+    :global {
+      .uploadBox {
+        display: flex;
+        width: 100%;
+        font-size: 12px;
+        color: #108ee9;
+        letter-spacing: -0.07px;
+        text-align: left;
+        .uploadedFile span {
+          font-size: 12px;
+          color: #666;
+          letter-spacing: -0.07px;
+          text-align: left;
+          margin-left: 5px;
+        }
+        .upload_txt {
+          width: 200px;
+        }
+        .uploadBtn {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
 }
 .categoryTitle {
   height: 15px;
@@ -127,23 +152,5 @@
   background-color: #4a90e2;
   &:hover {
     color: #fff;
-  }
-}
-.uploadSection {
-  :global {
-    .uploadBox {
-      width: 100px;
-      font-size: 12px;
-      color: #108ee9;
-      letter-spacing: -0.07px;
-      text-align: left;
-      .uploadedFile span {
-        font-size: 12px;
-        color: #666;
-        letter-spacing: -0.07px;
-        text-align: left;
-        margin-left: 5px;
-      }
-    }
   }
 }

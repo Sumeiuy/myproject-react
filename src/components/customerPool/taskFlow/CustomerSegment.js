@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
-import Uploader from './Uploader';
+import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import Button from '../../common/Button';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
