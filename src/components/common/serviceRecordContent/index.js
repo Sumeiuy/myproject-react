@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { Select, DatePicker, TimePicker, Input, Radio, Row, Col } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
-import Uploader from '../../customerPool/taskFlow/Uploader';
+import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
 import Icon from '../../common/Icon';

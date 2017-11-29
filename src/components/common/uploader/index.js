@@ -2,18 +2,19 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-29 16:10:06
+ * @Last Modified time: 2017-11-29 16:50:34
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
-import './uploader.less';
+import './index.less';
 
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
@@ -274,9 +275,6 @@ export default class Uploader extends PureComponent {
     let iconType = '';
 
     switch (true) {
-      case /png|jpg|jpeg/.test(suffix):
-        iconType = 'jpg';
-        break;
       case /doc|docx/.test(suffix):
         iconType = 'word';
         break;
@@ -314,7 +312,13 @@ export default class Uploader extends PureComponent {
           _.map(fileList, item => <div className="ant-upload-list-item ant-upload-list-item-done">
             <div className="ant-upload-list-item-info">
               <span>
-                <Icon className="uploadedFileIcon" type={this.renderIcon(item.name)} />
+                <Icon
+                  className={classnames({
+                    uploadedFileIcon: true,
+                    [this.renderIcon(item.name)]: true,
+                  })}
+                  type={this.renderIcon(item.name)}
+                />
                 <span className="ant-upload-list-item-name" title={item.name}>
                   {item.name}
                 </span>
