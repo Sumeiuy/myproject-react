@@ -31,7 +31,7 @@ export default class CommonTable extends PureComponent {
   render() {
     const { scroll, data, operation, titleList, ...resetProps } = this.props;
     const newTitleList = _.cloneDeep(titleList);
-    if (operation) {
+    if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
       if (_.isArray(columnKey)) {
         operation.column.render = (text, record, index) => (

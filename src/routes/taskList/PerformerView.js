@@ -33,6 +33,8 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 // const CONTROLLER = 'controller'; //管理者视图视图
 
+const SYSTEMCODE = '102330'; // 理财平台系统编号
+
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -155,6 +157,8 @@ export default class PerformerView extends PureComponent {
       currentView: '',
       isEmpty: true,
       activeRowIndex: 0,
+      typeCode: '',
+      typeName: '',
     };
   }
 
@@ -249,10 +253,12 @@ export default class PerformerView extends PureComponent {
         });
         itemIndex = 0;
       }
-      const { missionViewType: st } = item;
+      const { missionViewType: st, typeCode, typeName } = item;
       this.setState({
         currentView: st,
         activeRowIndex: itemIndex,
+        typeCode,
+        typeName,
       });
       this.getDetailByView(item);
     }
@@ -285,7 +291,7 @@ export default class PerformerView extends PureComponent {
       case INITIATOR:
         getTaskBasicInfo({
           flowId: currentId,
-          systemCode: '102330',
+          systemCode: SYSTEMCODE,
         });
         break;
       case EXECUTOR:
@@ -298,7 +304,7 @@ export default class PerformerView extends PureComponent {
 
   /**
    * 根据不同的视图获取不同的Detail组件
-   * @param  {string} st 子类型
+   * @param  {string} st 视图类型
    */
   @autobind
   getDetailComponentByView(st) {
@@ -326,6 +332,7 @@ export default class PerformerView extends PureComponent {
     const {
       query: { currentId },
     } = location;
+    const { typeCode, typeName } = this.state;
     let detailComponent = null;
     switch (st) {
       case INITIATOR:
@@ -358,6 +365,8 @@ export default class PerformerView extends PureComponent {
             queryCustUuid={queryCustUuid}
             custUuid={custUuid}
             getCustDetail={this.getCustDetail}
+            serviceTypeCode={typeCode}
+            serviceTypeName={typeName}
           />
         );
         break;
@@ -454,7 +463,7 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id, missionViewType: st } = record;
+    const { id, missionViewType: st, typeCode, typeName } = record;
     const {
       replace,
       location: { pathname, query, query: { currentId } },
@@ -467,7 +476,12 @@ export default class PerformerView extends PureComponent {
         currentId: id,
       },
     });
-    this.setState({ currentView: st, activeRowIndex: index });
+    this.setState({
+      currentView: st,
+      activeRowIndex: index,
+      typeCode,
+      typeName,
+    });
     this.getDetailByView(record);
   }
 

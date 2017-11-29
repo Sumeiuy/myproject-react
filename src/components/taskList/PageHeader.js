@@ -210,17 +210,13 @@ export default class Pageheader extends PureComponent {
 
   // 从字典里面拿来的数据进行数据转化
   @autobind
-  constructorDataType(data) {
+  constructorDataType(data = []) {
     if (data.length) {
-      const newData = data.map((item) => {
-        const newItem = {};
-        newItem.label = item.value;
-        newItem.value = item.key;
-        newItem.show = true;
-        return {
-          ...newItem,
-        };
-      });
+      const newData = data.map(item => ({
+        label: item.value,
+        value: item.key,
+        show: true,
+      }));
       return newData;
     }
     return null;

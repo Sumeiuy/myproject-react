@@ -19,6 +19,7 @@ import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
 import { protocolIsShowSwitch } from '../../utils/permission';
+import { dateFormat } from '../../utils/helper';
 
 import styles from './editBaseInfo.less';
 
@@ -32,8 +33,12 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// 订购的value
+const subscribe = 'Subscribe';
+const subscribeText = '协议订购';
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 查询客户
     onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
@@ -51,6 +56,8 @@ export default class EditBaseInfo extends PureComponent {
     // protocolNumList: PropTypes.array,
     // 编辑时传入元数据
     formData: PropTypes.object,
+    // 查询协议接口
+    getProtocolDetail: PropTypes.func,
     // 多账户切换
     onChangeMultiCustomer: PropTypes.func,
     // 清空附件
@@ -65,10 +72,17 @@ export default class EditBaseInfo extends PureComponent {
     template: PropTypes.object,
     // 是否是编辑
     isEdit: PropTypes.bool,
+    // 协议 ID 列表
+    protocolList: PropTypes.array,
+    // 获取协议 ID 列表
+    queryProtocolList: PropTypes.func,
+    onChangeProtocolNumber: PropTypes.func,
+    getFlowStepInfo: PropTypes.func,
   }
 
   static defaultProps = {
     formData: EMPTY_OBJECT,
+    getProtocolDetail: () => {},
     protocolNumList: EMPTY_ARRAY,
     operationTypeList: EMPTY_ARRAY,
     onChangeMultiCustomer: () => {},
@@ -76,38 +90,80 @@ export default class EditBaseInfo extends PureComponent {
     resetProduct: () => {},
     clearPropsData: () => {},
     getCustValidate: () => {},
+    queryProtocolList: () => {},
+    protocolList: [],
     template: {},
     subTypeList: [],
     isEdit: false,
+    onChangeProtocolNumber: () => {},
+    getFlowStepInfo: () => {},
   }
 
   constructor(props) {
     super(props);
-    const { templateList } = props;
-    const stateObj = {
-      // 所选操作类型
-      operationType: '',
-      // 所选子类型
-      subType: '',
-      // 所选客户
-      client: EMPTY_OBJECT,
-      // 所选协议模板
-      protocolTemplate: EMPTY_OBJECT,
-      // 是否多账户
-      multiUsedFlag: false,
-      // 是否订购十档行情
-      levelTenFlag: false,
-      // 备注
-      content: '',
-    };
+    const { formData = {}, templateList, location: { pathname } } = props;
+    // 是否是编辑页面
+    const isEditPage = pathname.indexOf('/edit') > -1;
+    let flag = false;
+    if (!_.isEmpty(formData)) {
+      flag = formData.operationType === subscribeText;
+    }
+    let stateObj = {};
+    if (isEditPage) {
+      stateObj = {
+        // 所选操作类型
+        operationType: formData.operationType,
+        // 所选子类型
+        subType: formData.subType,
+        // 所选客户
+        client: EMPTY_OBJECT,
+        // 所选协议模板
+        protocolTemplate: {
+          protocolTemplate: formData.templateId,
+          rowId: formData.templateId,
+        },
+        // 是否多账户
+        multiUsedFlag: formData.multiUsedFlag === 'Y',
+        // 是否订购十档行情
+        levelTenFlag: formData.levelTenFlag === 'Y',
+        // 备注
+        content: '',
+        // 协议编号
+        protocolNumber: formData.agreementNum,
+      };
+    } else {
+      stateObj = {
+        // 所选操作类型
+        operationType: '',
+        // 所选子类型
+        subType: '',
+        // 所选客户
+        client: EMPTY_OBJECT,
+        // 所选协议模板
+        protocolTemplate: EMPTY_OBJECT,
+        // 是否多账户
+        multiUsedFlag: false,
+        // 是否订购十档行情
+        levelTenFlag: false,
+        // 备注
+        content: '',
+        // 协议编号
+        protocolNumber: '',
+      };
+    }
     this.state = {
       ...stateObj,
       templateList,
+      isSubscribe: flag,
+      isEditPage,
+      needMutliAndTen: true,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { templateList: preTL, formData: preFD } = this.props;
+    const {
+      templateList: preTL,
+    } = this.props;
     const {
       templateList: nextTL,
       formData: nextFD,
@@ -121,41 +177,6 @@ export default class EditBaseInfo extends PureComponent {
         protocolTemplate: (filterTemplate && filterTemplate[0]) || {},
       });
     }
-    if (!_.isEqual(preFD, nextFD) && !_.isEmpty(nextFD)) {
-      const {
-        operationType,
-        subType,
-        contactName,
-        templateId,
-        multiUsedFlag,
-        levelTenFlag,
-        startDt,
-        vailDt,
-        content,
-        custId,
-        custType,
-        econNum,
-      } = nextFD;
-      this.setState({
-        operationType,
-        subType,
-        contactName,
-        protocolTemplate: {
-          ...this.state.protocolTemplate,
-          rowId: templateId,
-        },
-        multiUsedFlag: multiUsedFlag === 'Y' || false,
-        levelTenFlag: levelTenFlag === 'Y' || false,
-        startDt,
-        vailDt,
-        content,
-        client: {
-          cusId: custId,
-          custType,
-          brokerNumber: econNum,
-        },
-      });
-    }
   }
 
   // 向外传递数据
@@ -164,10 +185,47 @@ export default class EditBaseInfo extends PureComponent {
     return this.state;
   }
 
+  @autobind
+  compareFormData(next) {
+    const {
+      contactName,
+      templateId,
+      multiUsedFlag,
+      levelTenFlag,
+      startDt,
+      vailDt,
+    } = next;
+    this.setState({
+      needMutliAndTen: false,
+      contactName,
+      templateId,
+      protocolTemplate: {
+        ...this.state.protocolTemplate,
+        rowId: templateId,
+      },
+      multiUsedFlag: multiUsedFlag === 'Y',
+      levelTenFlag: levelTenFlag === 'Y',
+      startDt,
+      vailDt,
+      // content,
+      // client: {
+      //   cusId: custId,
+      //   custType,
+      //   brokerNumber: econNum,
+      // },
+    });
+  }
+
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    const { queryTypeVaules, onSearchCutList } = this.props;
+    const { queryTypeVaules, onSearchCutList, clearPropsData, resetProduct } = this.props;
+    let sub = true;
+    if (key === 'operationType') {
+      sub = value === subscribe;
+    }
+    clearPropsData();
+    resetProduct();
     this.setState({
       content: '',
       operationType: '',
@@ -175,16 +233,25 @@ export default class EditBaseInfo extends PureComponent {
       protocolTemplate: EMPTY_OBJECT,
       multiUsedFlag: false,
       levelTenFlag: false,
+      startDt: '',
+      vailDt: '',
+      protocolNumber: '',
+      isSubscribe: sub,
       [key]: value,
     }, () => {
-      const { onChangeMultiCustomer, resetUpload, isEdit } = this.props;
+      const { onChangeMultiCustomer, resetUpload } = this.props;
+      const { isEditPage } = this.state;
+      // 清除详情
+      this.clearDetailData();
       // 清除客户列表
       this.selectCustComponent.clearValue();
       // 清除协议模版
-      this.selectTemplateComponent.clearValue();
+      if (this.selectTemplateComponent) {
+        this.selectTemplateComponent.clearValue();
+      }
       // 清除下挂客户
       onChangeMultiCustomer(false);
-      if (!isEdit) {
+      if (!isEditPage) {
         // 清除附件
         resetUpload();
       }
@@ -202,15 +269,29 @@ export default class EditBaseInfo extends PureComponent {
         // this.clearValue();
       } else if (key === 'operationType') {
         const { subType } = this.state;
-        // 子类型发生变化查询协议模板列表
-        queryTypeVaules({
-          typeCode: 'templateId',
-          subType,
-          operationType: value,
-        });
-        // 如果切换的是操作类型，
-        // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
+        if (value === subscribe) {
+          // 子类型发生变化且为订购时查询协议模板列表
+          queryTypeVaules({
+            typeCode: 'templateId',
+            subType,
+            operationType: value,
+          });
+        }
       }
+    });
+  }
+
+  // 清除数据
+  @autobind
+  clearDetailData() {
+    this.setState({
+      contactName: '',
+      templateId: '',
+      protocolTemplate: {},
+      multiUsedFlag: false,
+      levelTenFlag: false,
+      startDt: '',
+      vailDt: '',
     });
   }
 
@@ -222,8 +303,11 @@ export default class EditBaseInfo extends PureComponent {
       clearPropsData,
       onChangeMultiCustomer,
       resetUpload,
-      isEdit,
+      queryProtocolList,
+      resetProduct,
     } = this.props;
+    // 清除详情
+    const { isSubscribe, operationType, isEditPage } = this.state;
     const { cusId, custType, brokerNumber } = value;
     const validatePayload = {
       id: cusId,
@@ -234,28 +318,41 @@ export default class EditBaseInfo extends PureComponent {
       templateId: '',
       type: 'PriCust',
     };
+    // 清除下挂客户
+    onChangeMultiCustomer(false);
+    if (!isEditPage) {
+      // 清除附件
+      resetUpload();
+    }
+    clearPropsData();
+    resetProduct();
+    this.clearDetailData();
+    this.setState({
+      ...this.state,
+      content: '',
+      protocolTemplate: EMPTY_OBJECT,
+      multiUsedFlag: false,
+      levelTenFlag: false,
+      startDt: '',
+      vailDt: '',
+      protocolNumber: '',
+    });
     getCustValidate(validatePayload).then(
       () => {
-        clearPropsData();
         this.setState({
-          ...this.state,
-          content: '',
-          protocolTemplate: EMPTY_OBJECT,
           client: value,
-          multiUsedFlag: false,
-          levelTenFlag: false,
         }, () => {
-          // 清除下挂客户
-          onChangeMultiCustomer(false);
-          if (!isEdit) {
-            // 清除附件
-            resetUpload();
+          if (isSubscribe) {
+            // 清空协议模版
+            this.selectTemplateComponent.clearValue();
+          } else {
+            // 查询协议 ID 列表
+            queryProtocolList({
+              custId: cusId,
+              subType: '',
+              operationType,
+            });
           }
-          // 清空协议模版
-          this.selectTemplateComponent.clearValue();
-          // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-          // 选择客户之后查询协议产品列表
-          this.queryChannelProtocolProduct();
         });
       },
       () => {
@@ -290,9 +387,11 @@ export default class EditBaseInfo extends PureComponent {
   handleSearchClient(v) {
     const { subType } = this.state;
     this.props.onSearchCutList({
-      keyword: v,
-      type: '05', // type 根据后端要求写死
+      type: '05',
       subType,
+      keyword: v,
+      // type: '05', // type 根据后端要求写死
+      // subType,
     });
   }
 
@@ -310,11 +409,11 @@ export default class EditBaseInfo extends PureComponent {
         onChangeMultiCustomer,
         resetUpload,
         resetProduct,
-        isEdit,
       } = this.props;
+      const { isEditPage } = this.state;
       // 清除下挂客户
       onChangeMultiCustomer(false);
-      if (!isEdit) {
+      if (!isEditPage) {
         // 清除附件
         resetUpload();
       }
@@ -357,10 +456,34 @@ export default class EditBaseInfo extends PureComponent {
     });
   }
 
-  // 查询协议编号
+  // 选择协议 ID
   @autobind
-  handleSearchProtocolNum() {
-
+  handleSelectProtocol(key, value) {
+    const {
+      getProtocolDetail,
+      onChangeProtocolNumber,
+      getFlowStepInfo,
+    } = this.props;
+    this.setState({
+      [key]: value,
+    }, () => {
+      getProtocolDetail({
+        needAttachment: false,
+        needFlowHistory: false,
+        data: {
+          flowId: value,  // TODO ,测试数据，后期用 value
+        },
+      }).then(() => {
+        const { formData: nextFD } = this.props;
+        const { operationType } = this.state;
+        getFlowStepInfo({
+          flowId: value,
+          operate: 1,
+        });
+        this.compareFormData(nextFD);
+        onChangeProtocolNumber(operationType);
+      });
+    });
   }
 
   render() {
@@ -369,9 +492,10 @@ export default class EditBaseInfo extends PureComponent {
       operationTypeList,
       subTypeList,
       formData: protocolDetail,
-      isEdit,
+      protocolList,
     } = this.props;
     const {
+      isEditPage,
       subType,
       operationType,
       multiUsedFlag,
@@ -379,12 +503,35 @@ export default class EditBaseInfo extends PureComponent {
       protocolTemplate,
       templateList,
       client,
+      isSubscribe,
+      protocolNumber,
+      content,
+      startDt,
+      vailDt,
+      needMutliAndTen,
     } = this.state;
+    let newProtocolList = [];
+    if (protocolList && protocolList.length) {
+      newProtocolList = protocolList.map(item => ({
+        show: true,
+        label: item.agreementNum,
+        value: item.flowId,
+      }));
+    }
+    if (isEditPage) {
+      newProtocolList = [
+        {
+          show: true,
+          label: protocolNumber,
+          value: protocolNumber,
+        },
+      ];
+    }
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
         {
-          isEdit ?
+          isEditPage ?
             <div>
               <InfoItem label="子类型" value={subType} />
               <InfoItem label="操作类型" value={protocolDetail.operationType} />
@@ -413,7 +560,7 @@ export default class EditBaseInfo extends PureComponent {
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={isEdit ? `${client.custName || ''} ${client.brokerNumber || ''}` : ''}
+                  value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
@@ -423,21 +570,36 @@ export default class EditBaseInfo extends PureComponent {
               </InfoForm>
             </div>
         }
-        <InfoForm label="协议模板" required>
-          <DropDownSelect
-            placeholder="协议模板"
-            showObjKey="prodName"
-            objId="rowId"
-            value={isEdit ? `${protocolTemplate.prodName || ''} ${protocolTemplate.rowId || ''}` : ''}
-            searchList={templateList}
-            emitSelectItem={this.handleSelectTemplate}
-            emitToSearch={this.handleSearchTemplate}
-            boxStyle={dropDownSelectBoxStyle}
-            ref={ref => this.selectTemplateComponent = ref}
-          />
-        </InfoForm>
         {
-          protocolIsShowSwitch(protocolTemplate.rowId || '', subType) ?
+          isSubscribe ?
+            <InfoForm label="协议模板" required>
+              <DropDownSelect
+                placeholder="协议模板"
+                showObjKey="prodName"
+                objId="rowId"
+                value={isEditPage ? `${protocolTemplate.prodName || ''} ${protocolTemplate.rowId || ''}` : ''}
+                searchList={templateList}
+                emitSelectItem={this.handleSelectTemplate}
+                emitToSearch={this.handleSearchTemplate}
+                boxStyle={dropDownSelectBoxStyle}
+                ref={ref => this.selectTemplateComponent = ref}
+              />
+            </InfoForm>
+          :
+            <div>
+              <InfoForm label="协议编号" required>
+                <Select
+                  name="protocolNumber"
+                  data={newProtocolList}
+                  value={protocolNumber}
+                  onChange={this.handleSelectProtocol}
+                />
+              </InfoForm>
+              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
+            </div>
+        }
+        {
+          protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
             <InfoForm label="是否多账户使用" >
               <CustomSwitch
                 name="multiUsedFlag"
@@ -449,7 +611,7 @@ export default class EditBaseInfo extends PureComponent {
           null
         }
         {
-          protocolIsShowSwitch(protocolTemplate.rowId || '', subType) ?
+          protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
             <InfoForm label="是否订购十档行情">
               <CustomSwitch
                 name="levelTenFlag"
@@ -460,12 +622,12 @@ export default class EditBaseInfo extends PureComponent {
             :
             null
         }
-        <InfoItem label="协议开始日期" value={''} />
-        <InfoItem label="协议有效期" value={''} />
+        <InfoItem label="协议开始日期" value={dateFormat(startDt)} />
+        <InfoItem label="协议有效期" value={dateFormat(vailDt)} />
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
-            defaultValue={isEdit ? protocolDetail.content : ''}
+            defaultValue={isEditPage ? protocolDetail.content : content}
           />
         </InfoForm>
       </div>
