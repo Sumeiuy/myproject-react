@@ -41,6 +41,8 @@ export default class Pageheader extends PureComponent {
     chooseMissionViewOptions: PropTypes.array,
     // dict字典
     dict: PropTypes.object,
+    // 头部筛选后的回调
+    filterCallback: PropTypes.func,
   }
 
   static defaultProps = {
@@ -49,6 +51,7 @@ export default class Pageheader extends PureComponent {
     typeOptions: [],
     chooseMissionViewOptions: [],
     dict: {},
+    filterCallback: () => {},
   }
 
   constructor(props) {
@@ -123,14 +126,8 @@ export default class Pageheader extends PureComponent {
   // 选中创建者下拉对象中对应的某个对象
   @autobind
   selectItem(name, item) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [name]: item.ptyMngId,
-        isResetPageNum: 'Y',
-      },
+    this.props.filterCallback({
+      [name]: item.ptyMngId,
     });
   }
 
@@ -141,28 +138,16 @@ export default class Pageheader extends PureComponent {
     this.setState({
       [key]: v,
     });
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [key]: v,
-        isResetPageNum: 'Y',
-      },
+    this.props.filterCallback({
+      [key]: v,
     });
   }
 
   // 任务名称搜索
   @autobind
   handleSearchChange(value) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        missionName: value,
-        isResetPageNum: 'Y',
-      },
+    this.props.filterCallback({
+      missionName: value,
     });
   }
 
@@ -176,34 +161,23 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   handleDateChange(dateStrings) {
-    const { replace, location: { pathname, query } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
     const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
     const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
     if (createTimeEnd && createTimeStart) {
       if (createTimeEnd >= createTimeStart) {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            createTimeStart,
-            createTimeEnd,
-            isResetPageNum: 'Y',
-          },
+        this.props.filterCallback({
+          createTimeStart,
+          createTimeEnd,
         });
         return true;
       }
       return false;
     }
-    replace({
-      pathname,
-      query: {
-        ...query,
-        createTimeStart: '',
-        createTimeEnd: '',
-        isResetPageNum: 'Y',
-      },
+    this.props.filterCallback({
+      createTimeStart: '',
+      createTimeEnd: '',
     });
     return false;
   }
