@@ -76,6 +76,7 @@ export default class CreateServiceRecord extends PureComponent {
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -327,6 +328,7 @@ export default class CreateServiceRecord extends PureComponent {
       loading,
       name,
       id,
+      custUuid,
     } = this.props;
     const {
       serviceWay,
@@ -503,7 +505,8 @@ export default class CreateServiceRecord extends PureComponent {
                       attachment: '',
                     }}
                     uploadTarget={`${request.prefix}/file/ceFileUpload`}
-                    isUploadFileManually
+                    isSupportUploadMultiple
+                    custUuid={custUuid}
                   />
                 </div>
               </div>
