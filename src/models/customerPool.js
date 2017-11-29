@@ -112,6 +112,8 @@ export default {
     storedCreateTaskData: {},
     // 任务列表-任务详情基本信息
     taskBasicInfo: {},
+    // 文件下载文件列表数据
+    filesList: [],
   },
 
   subscriptions: {
@@ -418,11 +420,11 @@ export default {
       });
     },
     // 列表页添加服务记录
-    * addServeRecord({ payload }, { call, put }) {
+    * addCommonServeRecord({ payload }, { call, put }) {
       yield put({
         type: 'resetServeRecord',
       });
-      const res = yield call(api.addServeRecord, payload);
+      const res = yield call(api.addCommonServeRecord, payload);
       if (res.msg === 'OK') {
         // yield put({
         //   type: 'getServiceLog',
@@ -582,8 +584,27 @@ export default {
     * getServiceLog({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
+      if (!_.isEmpty(resultData)) {
+        const { uuid = '' } = resultData[0];
+        const fileListRes = yield call(api.ceFileList, uuid);
+        const { resultData: fileResultData } = fileListRes;
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData, fileResultData },
+        });
+      } else {
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData },
+        });
+      }
+    },
+    // 文件下载文件列表数据
+    * getCeFileList({ payload }, { call, put }) {
+      const response = yield call(api.ceFileList, payload);
+      const { resultData } = response;
       yield put({
-        type: 'getServiceLogSuccess',
+        type: 'getCeFileListSuccess',
         payload: { resultData },
       });
     },
@@ -1080,10 +1101,19 @@ export default {
     },
     // 360服务记录查询成功
     getServiceLogSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { resultData, fileResultData } } = action;
       return {
         ...state,
         serviceLogData: resultData,
+        filesList: fileResultData,
+      };
+    },
+    // 文件下载文件列表
+    getCeFileListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filesList: resultData,
       };
     },
     getSearchServerPersonListSuccess(state, action) {

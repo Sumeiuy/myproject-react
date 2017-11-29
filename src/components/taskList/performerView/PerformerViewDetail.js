@@ -43,6 +43,8 @@ export default class PerformerViewDetail extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     getCustDetail: PropTypes.func.isRequired,
+    serviceTypeCode: PropTypes.string.isRequired,
+    serviceTypeName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -74,6 +76,8 @@ export default class PerformerViewDetail extends PureComponent {
       queryCustUuid,
       custUuid,
       getCustDetail,
+      serviceTypeCode,
+      serviceTypeName,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -120,7 +124,10 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
+      serviceTypeCode,
+      serviceTypeName,
     };
+
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
@@ -155,9 +162,10 @@ export default class PerformerViewDetail extends PureComponent {
           addServeRecord={addServeRecord}
           isReadOnly={isReadOnly}
           isEntranceFromPerformerView
-          formData={{}}
           isFold={isFold}
-          serviceReocrd={serviceReocrd}
+          queryCustUuid={queryCustUuid}
+          custUuid={custUuid}
+          formData={serviceReocrd}
         />
       </div>
     );

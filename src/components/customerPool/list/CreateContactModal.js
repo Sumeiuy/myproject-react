@@ -165,7 +165,7 @@ export default class CreateContactModal extends PureComponent {
     const temp = phone.toString();
     const len = temp.length;
     let flag = 4;
-    const isCellPhone = check.isCellphone(phone);
+    const isCellPhone = check.isCellPhone(phone);
     if (!isCellPhone) {
       // 不是手机号
       if (phone.indexOf('-') === -1) {

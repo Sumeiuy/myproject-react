@@ -61,7 +61,7 @@ const pageConfig = {
       },
       {
         show: true,
-        label: '我管理的任务',
+        label: '我部门的任务',
         value: 'controller',
       },
     ],

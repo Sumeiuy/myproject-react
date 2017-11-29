@@ -150,6 +150,8 @@ export default class TargetCustomer extends PureComponent {
       custId: id,
       missionId: currentId,
     });
+    // 前置请求
+    // 因为上传附件需要前置请求一个custUuid
     queryCustUuid();
   }
 
