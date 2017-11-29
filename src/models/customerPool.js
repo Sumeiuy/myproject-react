@@ -112,6 +112,8 @@ export default {
     storedCreateTaskData: {},
     // 任务列表-任务详情基本信息
     taskBasicInfo: {},
+    // cust uuid
+    custUuid: '',
   },
 
   subscriptions: {
@@ -419,11 +421,11 @@ export default {
       });
     },
     // 列表页添加服务记录
-    * addServeRecord({ payload }, { call, put }) {
+    * addCommonServeRecord({ payload }, { call, put }) {
       yield put({
         type: 'resetServeRecord',
       });
-      const res = yield call(api.addServeRecord, payload);
+      const res = yield call(api.addCommonServeRecord, payload);
       if (res.msg === 'OK') {
         // yield put({
         //   type: 'getServiceLog',
@@ -693,8 +695,22 @@ export default {
         payload: { resultData },
       });
     },
+    // 上传文件之前，先查询uuid
+    * queryCustUuid({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustUuid, payload);
+      yield put({
+        type: 'queryCustUuidSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
+    queryCustUuidSuccess(state, action) {
+      return {
+        ...state,
+        custUuid: action.payload,
+      };
+    },
     getCustCountSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {

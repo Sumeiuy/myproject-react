@@ -58,6 +58,7 @@ const effects = {
   handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
   handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  queryCustUuid: 'customerPool/queryCustUuid',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -130,6 +131,7 @@ const mapDispatchToProps = {
     type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
+  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -181,6 +183,7 @@ export default class CustomerList extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -230,6 +233,7 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
+    this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {
