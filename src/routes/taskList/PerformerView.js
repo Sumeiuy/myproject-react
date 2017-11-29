@@ -101,7 +101,9 @@ const mapDispatchToProps = {
   getTaskDetailBasicInfo: fetchDataFunction(true, effects.getTaskDetailBasicInfo),
   // 获取添加服务记录和上传附件用的custUuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
+  // 预览客户文件
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
+  // 创建者视图的详情接口
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
   // 清除数据
   clearTaskFlowData: query => ({
@@ -279,17 +281,14 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { missionViewType: st } = record;
-    const {
-      location: { query: { currentId } },
-    } = this.props;
+    const { missionViewType: st, flowId } = record;
     const {
       getTaskBasicInfo,
     } = this.props;
     switch (st) {
       case INITIATOR:
         getTaskBasicInfo({
-          flowId: currentId,
+          flowId,
           systemCode: SYSTEMCODE,
         });
         break;

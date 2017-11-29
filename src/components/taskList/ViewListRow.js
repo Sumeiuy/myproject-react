@@ -71,8 +71,8 @@ export default function AppItem(props) {
       <div className={styles.itemHeader}>
         <div className={styles.title}>
           <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
-          <span className={serialCls}>编号{data.id || '暂无'}</span>
-          <span className={typeCls}>{data.typeName}</span>
+          <span className={serialCls}>编号{data.id || '无'}</span>
+          <span className={typeCls}>{data.typeName || '无'}</span>
         </div>
         <div className={styles.tagArea}>
           <Tag type={tagStatusType} text={data.statusName} />
@@ -80,7 +80,7 @@ export default function AppItem(props) {
       </div>
       {/* 第二行 */}
       <div className={secondLineCls}>
-        <div className={styles.subType}>{data.missionName}</div>
+        <div className={styles.subType}>{data.missionName || '无'}</div>
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
