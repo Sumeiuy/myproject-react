@@ -76,6 +76,7 @@ export default class CreateServiceRecord extends PureComponent {
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -164,6 +165,7 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackDate,
       feedbackType,
       feedbackTypeChild,
+      custUuid,
     } = this.state;
     const {
       id,
@@ -179,6 +181,7 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveCustFeedBack: feedbackType,
       serveCustFeedBack2: feedbackTypeChild || '',
+      uuid: custUuid,
     });
     serviceContentNode.value = '';
   }
@@ -309,11 +312,12 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
+      custUuid,
     });
   }
 
@@ -324,6 +328,7 @@ export default class CreateServiceRecord extends PureComponent {
       loading,
       name,
       id,
+      custUuid,
     } = this.props;
     const {
       serviceWay,
@@ -488,12 +493,20 @@ export default class CreateServiceRecord extends PureComponent {
               <div className={styles.row}>
                 <div className={styles.uploadSection}>
                   <Uploader
+                    ref={ref => (this.uploadElem = ref)}
                     onOperateFile={this.handleFileUpload}
                     attachModel={currentFile}
                     fileKey={uploadedFileKey}
                     originFileName={originFileName}
                     uploadTitle={'上传附件'}
-                    uploadTarget={`${request.prefix}/file/khxfFileUpload`}
+                    upData={{
+                      empId: helper.getEmpId(),
+                      // 第一次上传没有，如果曾经返回过，则必须传
+                      attachment: '',
+                    }}
+                    uploadTarget={`${request.prefix}/file/ceFileUpload`}
+                    isSupportUploadMultiple
+                    custUuid={custUuid}
                   />
                 </div>
               </div>

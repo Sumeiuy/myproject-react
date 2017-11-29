@@ -67,7 +67,7 @@ export default function customerPool(api) {
     createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
     // 客户列表页添加服务记录
-    addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
+    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord', query),
 
     // 净创收数据
     queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
@@ -123,7 +123,11 @@ export default function customerPool(api) {
     // 任务列表-任务详情基本信息
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
+
     // 文件下载文件列表数据
     ceFileList: query => api.post('/file/ceFileList', query),
+
+    // 上传文件需要先上传uuid
+    queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
   };
 }

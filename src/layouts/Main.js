@@ -18,7 +18,7 @@ const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
 };
 
@@ -43,6 +43,8 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
   // 服务弹窗对应的客户的经纪客户名
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
+  // 客户uuid
+  custUuid: state.customerPool.custUuid,
 });
 
 const mapDispatchToProps = {
@@ -73,6 +75,7 @@ export default class Main extends Component {
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -100,6 +103,7 @@ export default class Main extends Component {
       serviceRecordModalVisible,
       toggleServiceRecordModal,
       handleCloseClick,
+      custUuid,
     } = this.props;
     return (
       <div>
@@ -127,6 +131,7 @@ export default class Main extends Component {
                           addServeRecord={addServeRecord}
                           addServeRecordSuccess={addServeRecordSuccess}
                           onToggleServiceRecordModal={toggleServiceRecordModal}
+                          custUuid={custUuid}
                         />
                       </div>
                       :
