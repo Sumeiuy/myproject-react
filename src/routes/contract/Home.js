@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 16:00:42
+ * @Last Modified time: 2017-11-29 17:34:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -230,17 +230,9 @@ export default class Contract extends PureComponent {
           pageSize,
         },
       },
-      getSeibleList,
       getClauseNameList,
     } = this.props;
-    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-
-    // 默认筛选条件
-    getSeibleList({
-      ...params,
-      type: pageType,
-    }).then(this.getRightDetail);
-
+    this.queryAppList(query, pageNum, pageSize);
     getClauseNameList({});
   }
 
@@ -259,24 +251,6 @@ export default class Contract extends PureComponent {
       empInfo,
     } = nextProps;
 
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
-    // 深比较值是否相等
-    // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
-      if (!this.diffObject(prevQuery, nextQuery)) {
-        // 只监测筛选条件是否变化
-        const params = seibelHelper.constructSeibelPostBody(nextQuery,
-          isResetPageNum === 'Y' ? 1 : pageNum,
-          isResetPageNum === 'Y' ? 10 : pageSize,
-        );
-        getSeibleList({
-          ...params,
-          type: pageType,
-        }).then(this.getRightDetail);
-      }
-    }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
       hasEditPermission = contractHelper.hasPermission(empInfo);
@@ -325,22 +299,6 @@ export default class Contract extends PureComponent {
       this.closeModal('editFormModal');
     }
   }
-
-  componentDidUpdate() {
-    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
-    // 重置pageNum和pageSize
-    if (isResetPageNum === 'Y') {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          isResetPageNum: 'N',
-          pageNum: 1,
-        },
-      });
-    }
-  }
-
 
   @autobind
   onOk(modalKey) {
@@ -417,6 +375,14 @@ export default class Contract extends PureComponent {
       tmpArr2 = [];
     });
     return tmpArr1;
+  }
+
+  @autobind
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getSeibleList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getSeibleList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   /**
@@ -813,6 +779,24 @@ export default class Contract extends PureComponent {
     );
   }
 
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
@@ -846,6 +830,7 @@ export default class Contract extends PureComponent {
         pageSize: currentPageSize,
       },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -861,6 +846,7 @@ export default class Contract extends PureComponent {
         pageSize: changedPageSize,
       },
     });
+    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 渲染列表项里面的每一项
@@ -919,6 +905,7 @@ export default class Contract extends PureComponent {
         operateOptions={operationList}
         needOperate
         empInfo={empInfo}
+        filterCallback={this.handleHeaderFilter}
       />
     );
     // 生成页码器，此页码器配置项与Antd的一致
