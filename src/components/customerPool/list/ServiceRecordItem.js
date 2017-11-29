@@ -36,17 +36,25 @@ export default class ServiceRecordItem extends PureComponent {
   }
 
   renderIcon(value) {
-    const renderSpan = _.map(value, (item, index) =>
-      <span title={item.name} className={styles.iconsWords} key={index}>
-        <Icon type="excel" className={styles.excel} />
-        <a
-          className={styles.seeCust}
-          ref={ref => this.sendEmail = ref}
-          href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
-            `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${helper.getEmpId()}&filename=${item.name}`}
-        >{'我的附件'}</a>
-      </span>,
-    );
+    const renderSpan = _.map(value, (item, index) => {
+      const type = this.renderIconType(item.name);
+      return (
+        <span title={item.name} className={styles.iconsWords} key={index}>
+          <Icon
+            type={this.renderIconType(item.name)}
+            className={classnames({
+              [styles[type]]: true,
+            })}
+          />
+          <a
+            className={styles.seeCust}
+            ref={ref => this.sendEmail = ref}
+            href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
+              `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${helper.getEmpId()}&filename=${item.name}`}
+          >{item.name}</a>
+        </span>
+      );
+    });
     return renderSpan;
   }
 

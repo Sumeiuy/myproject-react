@@ -118,7 +118,7 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
-      dispatch({ type: 'getCustRangeByAuthority' });
+      dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
         const serviceLogUrl = url.matchRoute('serviceLog', pathname);
@@ -130,6 +130,7 @@ export default {
           dispatch({
             type: 'getServiceLog',
             payload: params,
+            loading: true,
           });
           return;
         }
@@ -145,6 +146,7 @@ export default {
               empId: emp.getId(),
               keyWord,
             },
+            loading: true,
           });
 
           return;
@@ -160,6 +162,7 @@ export default {
               pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
               keyWord,
             },
+            loading: true,
           });
 
           return;
@@ -172,11 +175,13 @@ export default {
             dispatch({
               type: 'search',
               payload: keyword,
+              loading: true,
             });
             return;
           }
           dispatch({
             type: 'getToDoList',
+            loading: true,
           });
         }
       });
@@ -395,10 +400,33 @@ export default {
       const response = yield call(api.queryRecentServiceRecord, payload);
       const { resultData } = response;
       const { custId } = payload;
-      yield put({
-        type: 'getServiceRecordSuccess',
-        payload: { resultData, custId },
-      });
+      if (!_.isEmpty(resultData)) {
+        const { uuid } = resultData[0];
+        const attachment = uuid;
+        if (!_.isEmpty(uuid)) {
+          const fileListRes = yield call(api.ceFileList, attachment);
+          const { resultData: fileResultData } = fileListRes;
+          yield put({
+            type: 'getServiceRecordSuccess',
+            payload: { resultData, custId, fileResultData },
+          });
+        } else {
+          yield put({
+            type: 'getServiceRecordSuccess',
+            payload: { resultData, custId },
+          });
+        }
+      } else {
+        yield put({
+          type: 'getServiceRecordSuccess',
+          payload: { resultData, custId },
+        });
+      }
+      // console.log(resultData);
+      // yield put({
+      //   type: 'getServiceRecordSuccess',
+      //   payload: { resultData, custId },
+      // });
     },
     * getFollowCust({ payload }, { call, put }) {
       yield put({
@@ -585,13 +613,21 @@ export default {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
       if (!_.isEmpty(resultData)) {
-        const { uuid = '' } = resultData[0];
-        const fileListRes = yield call(api.ceFileList, uuid);
-        const { resultData: fileResultData } = fileListRes;
-        yield put({
-          type: 'getServiceLogSuccess',
-          payload: { resultData, fileResultData },
-        });
+        const { uuid } = resultData[0];
+        const attachment = uuid;
+        if (!_.isEmpty(uuid)) {
+          const fileListRes = yield call(api.ceFileList, attachment);
+          const { resultData: fileResultData } = fileListRes;
+          yield put({
+            type: 'getServiceLogSuccess',
+            payload: { resultData, fileResultData },
+          });
+        } else {
+          yield put({
+            type: 'getServiceLogSuccess',
+            payload: { resultData },
+          });
+        }
       } else {
         yield put({
           type: 'getServiceLogSuccess',
@@ -959,12 +995,13 @@ export default {
     },
     // 获取服务记录成功
     getServiceRecordSuccess(state, action) {
-      const { payload: { resultData, custId } } = action;
+      const { payload: { resultData, custId, fileResultData } } = action;
       return {
         ...state,
         serviceRecordData: {
           [custId]: resultData,
         },
+        filesList: fileResultData,
       };
     },
     addServeRecordSuccess(state, action) {
