@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-29 16:50:34
+ * @Last Modified time: 2017-11-29 17:22:22
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -122,7 +122,7 @@ export default class Uploader extends PureComponent {
     if (status === 'removed') {
       if (!_.isEmpty(newFileList)) {
         // 过滤掉错误的fileList
-        newFileList = newFileList.filter(file => !_.isEmpty(file.error));
+        newFileList = newFileList.filter(file => file.status !== 'error');
       }
     }
 
@@ -155,8 +155,12 @@ export default class Uploader extends PureComponent {
     if (status === 'error') {
       const errorMsg = _.isEmpty(msg) ? '文件上传失败' : msg;
       message.error(`${errorMsg}.`, 2);
+      if (!_.isEmpty(newFileList)) {
+        // 过滤掉错误的fileList
+        newFileList = newFileList.filter(file => file.status !== 'error');
+      }
       this.setState({
-        isShowError: true,
+        isShowError: !isSupportUploadMultiple,
         showUploadList: false,
       });
     }
@@ -221,7 +225,7 @@ export default class Uploader extends PureComponent {
       // 删除完毕之后，打开上传进度开关
       showUploadList: true,
       fileList: this.currentfile && _.filter(fileList, item => item.uid !== this.currentfile.uid
-        && !this.currentfile.error),
+        && _.isEmpty(this.currentfile.error)),
     });
     onDeleteFile();
   }
@@ -275,6 +279,9 @@ export default class Uploader extends PureComponent {
     let iconType = '';
 
     switch (true) {
+      case /jpg|jpeg|png/.test(suffix):
+        iconType = 'tupian-';
+        break;
       case /doc|docx/.test(suffix):
         iconType = 'word';
         break;
