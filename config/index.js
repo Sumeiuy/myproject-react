@@ -29,10 +29,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      // '/fspa/mcrm/api/groovynoauth/fsp/campaign/mot/': {
-      //   target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-      //   secure: false,
-      // },
+      '/fspa/mcrm/api/groovynoauth/fsp/campaign/mot/': {
+        target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
+        secure: false,
+      },
       '/fspa/mcrm/api': {
         target: 'http://168.61.8.81:5085', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
