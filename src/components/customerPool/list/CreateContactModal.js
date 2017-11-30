@@ -227,7 +227,6 @@ export default class CreateContactModal extends PureComponent {
       getCeFileList,
       filesList,
     } = this.props;
-
     if (!currentCustId || !visible) {
       return null;
     }
