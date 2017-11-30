@@ -42,7 +42,7 @@ import PermissonHome from './routes/permission/Home';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
-// import TaskListHome from './routes/taskList/Home';
+import TaskListHome from './routes/taskList/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -92,9 +92,9 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
       </Route>
-      {/* <Route path="taskList">
+      <Route path="taskList">
         <IndexRoute component={TaskListHome} />
-      </Route> */}
+      </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
   </Router>
