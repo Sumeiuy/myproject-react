@@ -633,11 +633,13 @@ export default {
         });
       } else {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
-        const { servicePeopleList = EMPTY_LIST } = resultData;
-        yield put({
-          type: 'getSearchServerPersonListSuccess',
-          payload: servicePeopleList,
-        });
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
       }
     },
     // 360服务记录查询更多服务
