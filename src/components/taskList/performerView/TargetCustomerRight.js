@@ -28,12 +28,15 @@ export default class TargetCustomerRight extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
   static defaultProps = {
     itemData: {},
     serveWay: {},
     executeTypes: {},
     serviceRecordData: {},
+    filesList: [],
   };
   constructor(props) {
     super(props);
@@ -126,6 +129,8 @@ export default class TargetCustomerRight extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
+      getCeFileList,
+      filesList,
     } = this.props;
     const { visible } = this.state;
 
@@ -383,6 +388,8 @@ export default class TargetCustomerRight extends PureComponent {
             executeTypes={executeTypes}
             serveWay={serveWay}
             handleCollapseClick={handleCollapseClick}
+            getCeFileList={getCeFileList}
+            filesList={filesList}
           />
         </Modal>
       </div>
