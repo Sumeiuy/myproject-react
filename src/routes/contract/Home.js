@@ -775,13 +775,10 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
-    const payType = payload.approveData.type;
     saveContractData(payload).then(
       () => {
         this.closeModal('addFormModal');
-        if (payType === 'add') {
-          this.queryAppList(query, query.pageNum, query.pageSize);
-        }
+        this.queryAppList(query, query.pageNum, query.pageSize);
       },
     );
   }
