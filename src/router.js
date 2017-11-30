@@ -73,6 +73,9 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="taskFlow" component={TaskFlow} />
         <Route path="taskList" component={TaskList} />
       </Route>
+      <Route path="taskList">
+        <IndexRoute component={TaskList} />
+      </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
   </Router>

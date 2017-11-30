@@ -227,7 +227,6 @@ export default class CreateContactModal extends PureComponent {
       getCeFileList,
       filesList,
     } = this.props;
-
     if (!currentCustId || !visible) {
       return null;
     }
@@ -352,12 +351,9 @@ export default class CreateContactModal extends PureComponent {
           </Clickable>,
         ]}
       >
-        {
-          (isPersonHasContact || isOrgMainContactHasTel) ?
-            <div className={styles.custName}>
-              {custName || ''}
-            </div> : null
-        }
+        <div className={styles.custName}>
+          {custName || ''}
+        </div>
         {
           custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
             <div className={styles.title}>
