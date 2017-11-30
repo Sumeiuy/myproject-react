@@ -438,7 +438,7 @@ export default class CommissionHome extends PureComponent {
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {

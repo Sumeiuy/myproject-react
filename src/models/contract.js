@@ -7,11 +7,7 @@
  */
 import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
-import seibelHelper from '../helper/page/seibel';
 import { emp } from '../helper';
-import { seibelConfig } from '../config';
-
-const { contract: { pageType } } = seibelConfig;
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -251,7 +247,7 @@ export default {
     },
     // 保存详情
     * saveContractData({ payload }, { call, put }) {
-      const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
+      // const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.saveContractData, payload.payload);
       let approvePayload = {};
       yield put({
@@ -271,15 +267,6 @@ export default {
           payload: approveResponse,
         });
         message.success('操作成功！');
-        // 新建时保存并调用审批接口后，获取列表
-        const params = seibelHelper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
-        yield put({
-          type: 'app/getSeibleList',
-          payload: {
-            ...params,
-            type: pageType,
-          },
-        });
       } else {
         approvePayload = {
           ...payload.approveData,
