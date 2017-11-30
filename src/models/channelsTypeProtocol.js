@@ -330,10 +330,10 @@ export default {
       yield call(api.postDoApprove, payload.formData);
 
       // 提交成功之后重新请求左侧列表
-      yield put({
-        type: 'app/getSeibleList',
-        payload: payload.params,
-      });
+      // yield put({
+      //   type: 'app/getSeibleList',
+      //   payload: payload.params,
+      // });
     },
     // 根据操作类型返回可用的协议列表
     * queryProtocolList({ payload }, { call, put }) {

@@ -249,7 +249,7 @@ export default class BaseInfoEdit extends PureComponent {
 
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
-    const { operation, tdDescription, remark } = this.state;
+    const { operation, tdDescription, remark, client } = this.state;
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>
         <DropDownSelect
@@ -329,7 +329,7 @@ export default class BaseInfoEdit extends PureComponent {
             placeholder="经纪客户号/客户名称"
             showObjKey="custName"
             objId="brokerNumber"
-            value={this.state.client.brokerNumber || ''}
+            value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
             searchList={custList}
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}

@@ -53,7 +53,6 @@ export default class SelectAssembly extends PureComponent {
 
   @autobind
   handleInputValue(value) {
-    console.warn('handleInputValue>value', value);
     this.setState({
       inputValue: value,
     });
