@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-29 16:46:43
+ * @Last Modified time: 2017-11-30 15:56:18
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -81,6 +81,7 @@ export default class Uploader extends PureComponent {
       showUploadList: true,
       originUpData: upData,
       custUuid,
+      attaches: [],
     };
   }
 
@@ -127,7 +128,7 @@ export default class Uploader extends PureComponent {
     }
 
     if (status === 'done') {
-      const { fileName, totalCustNum, attachment = '' } = resultData;
+      const { fileName, totalCustNum, attachment = '', attaches = [] } = resultData;
       message.success('文件上传成功', 2);
       this.setState({
         lastFile: currentFile,
@@ -141,6 +142,8 @@ export default class Uploader extends PureComponent {
           attachment,
         },
         isShowUpload: isSupportUploadMultiple,
+        // 上传成功共之后返回的attach列表
+        attaches,
       });
       onOperateFile({
         currentFile,
@@ -217,7 +220,7 @@ export default class Uploader extends PureComponent {
   @autobind
   handleDeleteConfirm() {
     const { onDeleteFile } = this.props;
-    const { fileList } = this.state;
+    const { fileList, attaches = [], custUuid } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
@@ -227,7 +230,24 @@ export default class Uploader extends PureComponent {
       fileList: this.currentfile && _.filter(fileList, item => item.uid !== this.currentfile.uid
         && _.isEmpty(this.currentfile.error)),
     });
-    onDeleteFile();
+
+    if (this.currentfile) {
+      const currentAttach = _.find(attaches, item => item.name === this.currentfile.name);
+      if (currentAttach) {
+        // 找到符合匹配要删除的文件
+        const attachId = currentAttach.attachId;
+        this.setState({
+          currentDeleteAttachId: attachId,
+        }, () => {
+          onDeleteFile({
+            attachId,
+            attachment: custUuid,
+          });
+        });
+      }
+    } else {
+      onDeleteFile();
+    }
   }
 
   @autobind
@@ -282,13 +302,13 @@ export default class Uploader extends PureComponent {
       case /jpg|jpeg|png/.test(suffix):
         iconType = 'tupian-';
         break;
-      case /doc|docx/.test(suffix):
+      case /docx?/.test(suffix):
         iconType = 'word';
         break;
-      case /xls|xlsx/.test(suffix):
+      case /xlsx?/.test(suffix):
         iconType = 'excel2';
         break;
-      case /ppt|pptx/.test(suffix):
+      case /pptx?/.test(suffix):
         iconType = 'ppt';
         break;
       case /mp3|wav/.test(suffix):
@@ -316,7 +336,10 @@ export default class Uploader extends PureComponent {
     return (
       <div className="ant-upload-list ant-upload-list-text">
         {
-          _.map(fileList, item => <div className="ant-upload-list-item ant-upload-list-item-done">
+          _.map(fileList, item => <div
+            className="ant-upload-list-item ant-upload-list-item-done"
+            key={`${item.uid}${item.name}`}
+          >
             <div className="ant-upload-list-item-info">
               <span>
                 <Icon

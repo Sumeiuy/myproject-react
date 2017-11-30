@@ -555,6 +555,7 @@ export default class CustomerList extends PureComponent {
       handleAddServiceRecord,
       handleCollapseClick,
       clearCreateTaskData,
+      queryCustUuid,
       getCeFileList,
       filesList,
     } = this.props;
@@ -652,6 +653,7 @@ export default class CustomerList extends PureComponent {
           isLoadingEnd={isLoadingEnd}
           onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
+          queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}
           filesList={filesList}
         />

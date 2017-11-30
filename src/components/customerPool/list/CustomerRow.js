@@ -125,6 +125,7 @@ export default class CustomerRow extends PureComponent {
     formatAsset: PropTypes.func.isRequired,
     mainServiceManager: PropTypes.bool,
     handleCheck: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -244,6 +245,7 @@ export default class CustomerRow extends PureComponent {
       dict,
       formatAsset,
       mainServiceManager,
+      queryCustUuid,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -283,6 +285,7 @@ export default class CustomerRow extends PureComponent {
               currentFollowCustId={currentFollowCustId}
               isFollows={isFollows}
               onAddFollow={onAddFollow}
+              queryCustUuid={queryCustUuid}
             /> : null
         }
         <div className={styles.selectIcon}>
