@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 09:58:25
+ * @Last Modified time: 2017-11-30 10:16:17
  */
 
 
@@ -571,7 +571,7 @@ export default class ServiceRecordContent extends PureComponent {
                         disabled={isReadOnly}
                       >
                         {_.map((dict.serveStatus || EMPTY_LIST), item =>
-                          item.value !== '未开始' && <Radio value={item.key}>{item.value}</Radio>,
+                          item.key !== '10' && <Radio value={item.key}>{item.value}</Radio>,
                         )}
                       </RadioGroup>
                     </div>
