@@ -133,7 +133,7 @@ export default class TargetCustomerRow extends PureComponent {
     // 根据左侧列表的收起和展开来设置数据三列显示还是两列显示
     const colSpanValue = isFold ? 12 : 24;
     // 数据三列显示时，给第三列增加左内边距35px
-    const col3Cls = classnames([styles.ln24], {
+    const col3Cls = classnames([styles.ln24], [styles.fontsize0], {
       [styles.pl35]: isFold,
     });
     // url中的targetCustId存在，就选中url中targetCustId对应的数据，否则默认选中第一条数据
@@ -145,7 +145,7 @@ export default class TargetCustomerRow extends PureComponent {
         <Row type="flex" justify="start" align="middle">
           <Col className={`${styles.textCenter} ${styles.status}`} span={7}>{missionStatusValue}</Col>
           <Col span={17} className={styles.pr14}>
-            <Row>
+            <Row type="flex" justify="start" align="middle">
               <Col span={colSpanValue} className={`${styles.ln24} ${styles.ellipsis}`}>
                 {this.renderAvator(genderCode, custNature)}
                 <span className={styles.name}>{custName}</span>
