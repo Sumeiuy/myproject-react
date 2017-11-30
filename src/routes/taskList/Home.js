@@ -42,7 +42,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
-  addServiceRecord: 'customerPool/addServiceRecord',
+  addServiceRecord: 'performerView/addMotServeRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustIncome: 'customerPool/getCustIncome',
@@ -53,6 +53,7 @@ const effects = {
   queryCustUuid: 'performerView/queryCustUuid',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+  getCeFileList: 'customerPool/getCeFileList',
 };
 
 const mapStateToProps = state => ({
@@ -76,6 +77,7 @@ const mapStateToProps = state => ({
   // 客户细分导入数据
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
+  filesList: state.customerPool.filesList,
 });
 
 const mapDispatchToProps = {
@@ -101,8 +103,11 @@ const mapDispatchToProps = {
   getTaskDetailBasicInfo: fetchDataFunction(true, effects.getTaskDetailBasicInfo),
   // 获取添加服务记录和上传附件用的custUuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
+  // 预览客户文件
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
+  // 创建者视图的详情接口
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 清除数据
   clearTaskFlowData: query => ({
     type: 'customerPool/clearTaskFlowData',
@@ -144,10 +149,13 @@ export default class PerformerView extends PureComponent {
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     clearTaskFlowData: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
     priviewCustFileData: EMPTY_OBJECT,
+    filesList: [],
   };
 
   constructor(props) {
@@ -162,64 +170,17 @@ export default class PerformerView extends PureComponent {
   }
 
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       location: {
         query,
-      query: {
-          pageNum,
-          pageSize,
-        },
-      },
-      getTaskList,
-    } = this.props;
-    const params = this.constructViewPostBody(query, pageNum || 1, pageSize || 10);
-    // 默认筛选条件
-    getTaskList({
-      ...params,
-    }).then(this.getRightDetail);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getTaskList } = this.props;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
-    // 深比较值是否相等
-    // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
-      if (!this.diffObject(prevQuery, nextQuery)) {
-        // 只监测筛选条件是否变化
-        const params = this.constructViewPostBody(nextQuery,
-          isResetPageNum === 'Y' ? 1 : pageNum,
-          isResetPageNum === 'Y' ? 10 : pageSize,
-        );
-        getTaskList({
-          ...params,
-        }).then(this.getRightDetail);
-      }
-    }
-  }
-
-  componentDidUpdate() {
-    const {
-      location: {
-        pathname,
-      query,
-      query: { isResetPageNum },
-      },
-      replace,
-    } = this.props;
-    // 重置pageNum和pageSize
-    if (isResetPageNum === 'Y') {
-      replace({
-        pathname,
         query: {
-          ...query,
-          isResetPageNum: 'N',
-          pageNum: 1,
+          pageNum,
+        pageSize,
         },
-      });
-    }
+      },
+    } = this.props;
+    this.queryAppList(query, pageNum, pageSize);
   }
 
   // 获取列表后再获取某个Detail
@@ -279,17 +240,14 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { missionViewType: st } = record;
-    const {
-      location: { query: { currentId } },
-    } = this.props;
+    const { missionViewType: st, flowId } = record;
     const {
       getTaskBasicInfo,
     } = this.props;
     switch (st) {
       case INITIATOR:
         getTaskBasicInfo({
-          flowId: currentId,
+          flowId,
           systemCode: SYSTEMCODE,
         });
         break;
@@ -327,6 +285,8 @@ export default class PerformerView extends PureComponent {
       queryTargetCust,
       queryCustUuid,
       custUuid,
+      getCeFileList,
+      filesList,
     } = this.props;
     const {
       query: { currentId },
@@ -366,6 +326,8 @@ export default class PerformerView extends PureComponent {
             getCustDetail={this.getCustDetail}
             serviceTypeCode={typeCode}
             serviceTypeName={typeName}
+            getCeFileList={getCeFileList}
+            filesList={filesList}
           />
         );
         break;
@@ -373,6 +335,14 @@ export default class PerformerView extends PureComponent {
         break;
     }
     return detailComponent;
+  }
+
+  @autobind
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getTaskList } = this.props;
+    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getTaskList({ ...params }).then(this.getRightDetail);
   }
 
   /**
@@ -417,6 +387,35 @@ export default class PerformerView extends PureComponent {
     }).then(() => this.getCustDetail({ missionId: obj.id }));
   }
 
+  @autobind
+  handlePreview({ filename, pageNum, pageSize }) {
+    const { previewCustFile } = this.props;
+    // 预览数据
+    previewCustFile({
+      filename,
+      pageNum,
+      pageSize,
+    });
+  }
+
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
@@ -430,6 +429,7 @@ export default class PerformerView extends PureComponent {
         pageSize: currentPageSize,
       },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -445,6 +445,7 @@ export default class PerformerView extends PureComponent {
         pageSize: changedPageSize,
       },
     });
+    this.queryAppList(query, 1, changedPageSize);
   }
 
   /**
@@ -542,6 +543,7 @@ export default class PerformerView extends PureComponent {
         chooseMissionViewOptions={chooseMissionView}
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl="performerView"
+        filterCallback={this.handleHeaderFilter}
       />
     );
 

@@ -32,6 +32,7 @@ export default {
     },
     // 任务详情中目标客户列表当前选中的详情信息
     targetCustDetail: EMPTY_OBJ,
+    // 客户uuid
     custUuid: '',
   },
   reducers: {
@@ -141,7 +142,6 @@ export default {
         });
       }
     },
-
     // 根据目标客户列表的当前选中项的custId查询详情
     // 此处接口依赖列表接口返回的数据，列表接口中有数据时才能去查详情，
     // 列表接口中的没有数据时，先查询列表接口
@@ -155,20 +155,17 @@ export default {
         });
       }
     },
-
-    // 获取Uuid,用于添加服务记录和附件上传
-    * queryCustUuid({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryCustUuid);
-      if (resultData) {
-        yield put({
-          type: 'queryCustUuidSuccess',
-          payload: resultData,
-        });
-      }
+    // 添加服务记录
+    * addMotServeRecord({ payload }, { call }) {
+      yield call(api.addMotServeRecord, payload);
     },
-
-    * addServiceRecord({ payload }, { call }) {
-      yield call(api.addServiceRecord, payload);
+    // 上传文件之前，先查询uuid
+    * queryCustUuid({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustUuid, payload);
+      yield put({
+        type: 'queryCustUuidSuccess',
+        payload: resultData,
+      });
     },
   },
   subscriptions: {

@@ -28,8 +28,6 @@ import { permission } from '../../utils';
 import Barable from '../../decorators/selfBar';
 import './home.less';
 
-// const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
 
@@ -283,7 +281,6 @@ export default class CommissionHome extends PureComponent {
 
   componentDidMount() {
     const {
-      getCommissionList,
       location: {
         query,
         query: {
@@ -292,53 +289,7 @@ export default class CommissionHome extends PureComponent {
         },
       },
     } = this.props;
-    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-    // 默认筛选条件
-    getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
-  }
-
-
-  componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
-    // 深比较值是否相等
-    // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
-      if (!this.diffObject(prevQuery, nextQuery)) {
-        // 只监测筛选条件是否变化
-        const params = seibelHelper.constructSeibelPostBody(nextQuery,
-          isResetPageNum === 'Y' ? 1 : pageNum,
-          isResetPageNum === 'Y' ? 10 : pageSize,
-        );
-        getCommissionList({
-          ...params,
-          type: pageType,
-        }).then(this.getRightDetail);
-      }
-    }
-  }
-
-  componentDidUpdate() {
-    const {
-      location: {
-        pathname,
-        query,
-        query: { isResetPageNum },
-      },
-      replace,
-    } = this.props;
-    // 重置pageNum和pageSize
-    if (isResetPageNum === 'Y') {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          isResetPageNum: 'N',
-          pageNum: 1,
-        },
-      });
-    }
+    this.queryAppList(query, pageNum, pageSize);
   }
 
   // 获取列表后再获取某个Detail
@@ -471,6 +422,14 @@ export default class CommissionHome extends PureComponent {
     return detailComponent;
   }
 
+  @autobind
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getCommissionList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
@@ -533,6 +492,24 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
   // 打开审批记录弹出窗
   @autobind
   openApprovalBoard() {
@@ -578,6 +555,7 @@ export default class CommissionHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -593,6 +571,7 @@ export default class CommissionHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
+    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 渲染列表项里面的每一项
@@ -656,6 +635,7 @@ export default class CommissionHome extends PureComponent {
         subtypeOptions={subType}
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
+        filterCallback={this.handleHeaderFilter}
       />
     );
 

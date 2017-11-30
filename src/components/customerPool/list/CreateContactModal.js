@@ -40,11 +40,14 @@ export default class CreateContactModal extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     currentCustName: PropTypes.string.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
     data: {},
     custType: '',
+    filesList: [],
   };
 
   constructor(props) {
@@ -165,7 +168,7 @@ export default class CreateContactModal extends PureComponent {
     const temp = phone.toString();
     const len = temp.length;
     let flag = 4;
-    const isCellPhone = check.isCellphone(phone);
+    const isCellPhone = check.isCellPhone(phone);
     if (!isCellPhone) {
       // 不是手机号
       if (phone.indexOf('-') === -1) {
@@ -220,6 +223,8 @@ export default class CreateContactModal extends PureComponent {
       executeTypes,
       serveWay,
       handleCollapseClick,
+      getCeFileList,
+      filesList,
     } = this.props;
 
     if (!currentCustId || !visible) {
@@ -418,6 +423,8 @@ export default class CreateContactModal extends PureComponent {
           executeTypes={executeTypes}
           serveWay={serveWay}
           handleCollapseClick={handleCollapseClick}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
       </Modal>
     );

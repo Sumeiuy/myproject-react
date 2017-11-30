@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import Loading from '../../layouts/Loading';
+// import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
@@ -29,6 +29,7 @@ const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  getCeFileList: 'customerPool/getCeFileList',
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -39,13 +40,15 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
-  serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
+  // serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
+  filesList: state.customerPool.filesList,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getServiceLog: fetchDataFunction(true, effects.getServiceLog),
   getServiceLogMore: fetchDataFunction(true, effects.getServiceLogMore),
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -61,6 +64,8 @@ export default class CreateTaskForm extends PureComponent {
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
     serviceLogDataLoading: PropTypes.bool,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
@@ -68,6 +73,7 @@ export default class CreateTaskForm extends PureComponent {
     serviceLogDataLoading: false,
     serviceLogData: [],
     serviceLogMoreData: [],
+    filesList: [],
   };
 
   constructor(props) {
@@ -78,12 +84,10 @@ export default class CreateTaskForm extends PureComponent {
       endValue: null,
       showBtn: true,
       logData: [],
-      loading: props.serviceLogDataLoading,
       pageNum: 1,
     };
   }
   componentWillMount() {
-    // const { serviceLogData } = this.props;
     const { logData } = this.state;
     const { serviceLogData } = this.props;
     if (_.isEmpty(logData)) {
@@ -94,10 +98,9 @@ export default class CreateTaskForm extends PureComponent {
     }
   }
   componentWillReceiveProps(nextProps) {
-    const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
+    const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
-      serviceLogData: prevServiceLogData,
-      serviceLogDataLoading: prevServiceLogDataLoading } = this.props;
+      serviceLogData: prevServiceLogData } = this.props;
     const { logData } = this.state;
     if (serviceLogData !== prevServiceLogData) {
       this.setState({
@@ -119,11 +122,6 @@ export default class CreateTaskForm extends PureComponent {
           logData: newServiceLogData,
         });
       }
-    }
-    if (!_.isEqual(serviceLogDataLoading, prevServiceLogDataLoading)) {
-      this.setState({
-        loading: serviceLogDataLoading,
-      });
     }
   }
 
@@ -175,12 +173,11 @@ export default class CreateTaskForm extends PureComponent {
     const { logData, pageNum } = this.state;
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
-    params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
     params.pageNum = pageNum + 1;
     this.setState({
       pageNum: pageNum + 1,
     });
-    // params.custId = '02001404'; // 本地测试用的数据
+    params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
@@ -238,9 +235,9 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   render() {
-    const { dict, handleCollapseClick } = this.props;
+    const { dict, handleCollapseClick, filesList, getCeFileList } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
-    const { logData, showBtn, loading } = this.state;
+    const { logData, showBtn } = this.state;
     return (
       <div className={styles.serviceInner}>
         <div
@@ -294,8 +291,8 @@ export default class CreateTaskForm extends PureComponent {
                 executeTypes={executeTypes}
                 serveWay={serveWay}
                 handleCollapseClick={handleCollapseClick}
-                loading={loading}
-                ref={ref => this.collapse = ref}
+                getCeFileList={getCeFileList}
+                filesList={filesList}
               />
             </Col>
           </Row>
@@ -310,9 +307,6 @@ export default class CreateTaskForm extends PureComponent {
               <Button onClick={this.handleMore}>加载更多服务记录</Button>
             </Col>
           </Row>
-        </div>
-        <div>
-          <Loading loading={loading} />
         </div>
       </div>
     );

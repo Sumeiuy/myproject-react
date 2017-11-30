@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 15:12:03
+ * @Last Modified time: 2017-11-29 18:05:33
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -86,7 +86,7 @@ const mapDispatchToProps = {
   // 获取客户列表
   getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', true),
   // 获取右侧详情
-  getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
+  getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail', true),
   // 查询操作类型/子类型/模板列表
   queryTypeVaules: fetchDataFunction(true, 'channelsTypeProtocol/queryTypeVaules', true),
   // 根据所选模板id查询模板对应协议条款
@@ -100,7 +100,7 @@ const mapDispatchToProps = {
   // 清除协议产品列表
   clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
   // 获取审批人
-  getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
+  getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo', true),
   // 提交审批流程
   doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove', true),
   // 验证客户
@@ -198,7 +198,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   componentDidMount() {
     const {
-      getSeibleList,
       location: {
         query,
         query: {
@@ -207,49 +206,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         },
       },
     } = this.props;
-    const params = seibelHelper.constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-    // 默认筛选条件
-    getSeibleList({ ...params, type: pageType }).then(() => {
-      this.getRightDetail();
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
-    // 深比较值是否相等
-    // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
-      if (!this.diffObject(prevQuery, nextQuery)) {
-        // 只监测筛选条件是否变化
-        const params = seibelHelper.constructSeibelPostBody(nextQuery,
-          isResetPageNum === 'Y' ? 1 : pageNum,
-          isResetPageNum === 'Y' ? 10 : pageSize,
-        );
-        getSeibleList({
-          ...params,
-          type: pageType,
-        }).then(() => {
-          this.getRightDetail();
-        });
-      }
-    }
-  }
-
-  componentDidUpdate() {
-    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
-    // 重置pageNum和pageSize
-    if (isResetPageNum === 'Y') {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          isResetPageNum: 'N',
-          pageNum: 1,
-        },
-      });
-    }
+    this.queryAppList(query, pageNum, pageSize);
   }
 
   // 获取列表后再获取某个Detail
@@ -290,6 +247,32 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
   }
 
+  @autobind
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getSeibleList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getSeibleList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
@@ -303,6 +286,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pageSize: currentPageSize,
       },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -318,6 +302,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pageSize: changedPageSize,
       },
     });
+    this.queryAppList(query, 1, changedPageSize);
   }
 
   /**
@@ -595,6 +580,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         operateOptions={operationList}
         empInfo={empInfo}
         needOperate
+        filterCallback={this.handleHeaderFilter}
       />
     );
     const paginationOptions = {
@@ -612,7 +598,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     };
     const leftPanel = (
       <ChannelsTypeProtocolList
-        list={seibleList.resultData}
+        list={seibleList.resultData || []}
         renderRow={this.renderListRow}
         pagination={paginationOptions}
       />
