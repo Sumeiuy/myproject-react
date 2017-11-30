@@ -59,21 +59,19 @@ export default class CommonDatePicker extends PureComponent {
     // 2的区别（自测出来的）：用defaultValue属性，可以手动删除日期框中的内容，不反弹。
     // :                 用value属性，手动删除日历框中的内容，有反弹的情况出现。快速删除可反弹。缓慢删除，不反弹（我试的时候是酱紫的）
     const addValueToPickProps = hasValue ? { defaultValue: value } : {};
-    const pickPorps = {
-      placeholder,
-      boxStyle,
-      disabled,
-      dateFormat,
-      allowClear,
-      ...addValueToPickProps,
-      onChange: this.handleChange,
-    };
     return (
       <div
         className={styles.commonDatePicker}
         style={boxStyle}
       >
-        <DatePicker {...pickPorps} />
+        <DatePicker
+          disabled={disabled}
+          allowClear={allowClear}
+          format={dateFormat}
+          placeholder={placeholder}
+          onChange={this.handleChange}
+          {...addValueToPickProps}
+        />
       </div>
     );
   }
