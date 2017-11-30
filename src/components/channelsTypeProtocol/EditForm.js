@@ -47,7 +47,9 @@ const subscribe = 'Subscribe';
 const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
 // 客户失败状态
-const openFailed = '开通失败';
+// const openFailed = '开通失败';
+// const unSubscribeSuccess = '退订完成';
+const cannotDelete = ['开通失败', '退订完成'];
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -387,17 +389,25 @@ export default class EditForm extends PureComponent {
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
+    console.warn('protocolDetail', this.props.protocolDetail);
+    const { protocolDetail: { cust: propsCust } } = this.props;
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    // 如果是详情返回的下挂客户，删除只修改状态
-    if (record.custStatus === openFailed) {
-      return;
-    }
-    if (record.agrId) {
-      testArr[index].custStatus = '退订处理中';
-      this.setState({
-        cust: testArr,
-      });
+    const detailCust = propsCust.map((item => ({
+      econNum: item.econNum,
+      custStatus: item.custStatus,
+    })));
+    const filterCust = _.filter(detailCust, o => o.econNum === record.econNum);
+    // 如果点击删除的在详情返回的客户中能找到，并且状态是退订完成或者开通失败的，不执行任何操作
+    if (filterCust.length) {
+      if (!_.includes(cannotDelete, filterCust[0].custStatus)) {
+        testArr[index].custStatus = '退订处理中';
+        this.setState({
+          cust: testArr,
+        });
+      } else {
+        message.error('该客户不可以删除');
+      }
     } else {
       const newTableList = _.remove(testArr, (n, i) => i !== index);
       this.setState({

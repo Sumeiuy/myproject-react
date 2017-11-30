@@ -76,8 +76,11 @@ export default class Detail extends PureComponent {
       x: true,
     };
     console.warn('protocolDetail', protocolDetail);
-    // 判断是否是十档行情
-    const isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
+    let isTenLevel = true;
+    if (protocolDetail.operationType === '协议订购') {
+      // 判断是否是十档行情
+      isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
+    }
     // 判断是否显示下挂客户
     const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
     // 判断是否显示协议编号
