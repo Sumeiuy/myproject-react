@@ -50,21 +50,23 @@ export default class CustomerService extends PureComponent {
       finishedName = `${parseFloat(finish).toFixed(0)}%`;
       unfinishedName = `${parseFloat(unfinished).toFixed(0)}%`;
     }
-    const textStyle = { fontSize: '20', fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
-    const configItems = { show: true, textStyle };
-
+    const textStyle = { show: true, fontSize: '20', fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
     return [{
       value: finish,
       name: finishedName,
       label: {
-        normal: { ...configItems, position: 'center' },
-        emphasis: { ...configItems },
+        normal: { ...textStyle, position: 'center' },
+        emphasis: { ...textStyle },
       },
     }, {
       value: unfinished,
       name: unfinishedName,
       label: {
-        emphasis: { ...configItems, backgroundColor: '#fff' }, // 此处添加背景色，是为了盖着下方的文字
+        emphasis: {
+          ...textStyle,
+          backgroundColor: 'red', // 此处添加背景色，是为了盖着下方的文字
+          padding: unfinished < 10 ? 20 : 4, // 增加背景的宽 高
+        },
       },
     }];
   }
