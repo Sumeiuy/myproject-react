@@ -20,6 +20,13 @@ import { formatAsset } from './formatNum';
 const COMPLETION = '不完备';
 const NOTCOMPLETION = '不完备';
 
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+// const ORG_CODE = 'org';
+// 产品机构对应的code码
+// const PROD_CODE = 'prod';
+
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
     isFold: PropTypes.bool.isRequired,
@@ -94,27 +101,48 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   // 联系电话的浮层信息
-  renderPhoneNumList(itemData) {
+  renderPhoneNumTips(itemData = {}) {
     const {
       contactDetail = [],
+      custNature = '',
     } = itemData;
     if (_.isEmpty(contactDetail)) {
       return null;
     }
-    return (
-      <div className={`${styles.nameTips}`}>
-        {
-          contactDetail.map(obj => (
-            <div>
-              <h5 className={styles.callName}>this.handleEmpty(obj.name)</h5>
-              <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-              <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-            </div>
-          ))
-        }
-      </div>
-    );
+    let content = '';
+    if (custNature === PER_CODE) {
+      content = (
+        <div className={`${styles.nameTips}`}>
+          {
+            contactDetail.map(obj => (
+              <div>
+                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
+                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
+                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
+              </div>
+            ))
+          }
+        </div>
+      );
+    } else {
+      content = (
+        <div className={`${styles.nameTips}`}>
+          {
+            contactDetail.map(obj => (
+              <div>
+                <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
+                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
+                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
+                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
+              </div>
+            ))
+          }
+        </div>
+      );
+    }
+    return (<TipsInfo
+      title={content}
+    />);
   }
 
   render() {
@@ -204,11 +232,18 @@ export default class TargetCustomerRight extends PureComponent {
           <Row>
             <Col span={12}><h3 className={styles.custNames}>{itemData.custName}</h3></Col>
             <Col span={12}>
-              <h5 className={styles.custNamesCont}>
-                <span>{this.handleEmpty(itemData.custId)}</span>|
-                <span>{this.handleEmpty(itemData.genderValue)}</span>|
-                <span>{this.handleEmpty(String(itemData.age))}岁</span>
-              </h5>
+              {
+                itemData.custNature === 'per' ?
+                  <h5 className={styles.custNamesCont}>
+                    <span>{this.handleEmpty(itemData.custId)}</span>|
+                    <span>{this.handleEmpty(itemData.genderValue)}</span>|
+                    <span>{this.handleEmpty(String(itemData.age))}岁</span>
+                  </h5>
+                  :
+                  <h5 className={styles.custNamesCont}>
+                    <span>{this.handleEmpty(itemData.custId)}</span>
+                  </h5>
+              }
             </Col>
           </Row>
           <Row>
@@ -229,23 +264,20 @@ export default class TargetCustomerRight extends PureComponent {
                 }
               </h5>
             </Col>
-            <Col span={firSpan}>
-              <h5
-                className={classnames({
-                  [styles.phoneRight]: isFold === true,
-                  [styles.phone]: isFold === false,
-                })}
-              >
-                <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                {
-                  _.isEmpty(itemData.contactPhone) || _.isEmpty(itemData.contactDetail) ?
-                    null :
-                    <TipsInfo
-                      title={this.renderPhoneNumList(itemData)}
-                    />
-                }
-              </h5>
-            </Col>
+            {
+              itemData.contactPhone ?
+                <Col span={firSpan}>
+                  <h5
+                    className={classnames({
+                      [styles.phoneRight]: isFold === true,
+                      [styles.phone]: isFold === false,
+                    })}
+                  >
+                    <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
+                    { this.renderPhoneNumTips(itemData) }
+                  </h5>
+                </Col> : null
+            }
           </Row>
         </div>
         <div className={styles.asset}>

@@ -89,10 +89,22 @@ export default class PerformerViewDetail extends PureComponent {
       ...otherProps
     } = basicInfo;
     const { list = [] } = targetCustList;
+    if (_.isEmpty(list)) {
+      return null;
+    }
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
 
     const currentCustomer = _.find(list, o => o.custId === currentCustId);
+
+    let serviceStatusName = '';
+    let serviceStatusCode = '';
+    let missionFlowId = '';
+    if (currentCustomer) {
+      serviceStatusName = currentCustomer.missionStatusCode;
+      serviceStatusCode = currentCustomer.missionStatusValue;
+      missionFlowId = currentCustomer.missionFlowId;
+    }
 
     const { missionStatusCode } = targetCustDetail;
 
@@ -114,8 +126,8 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName: (currentCustomer || {}).missionStatusCode || '',
-      serviceStatusCode: (currentCustomer || {}).missionStatusValue || '',
+      serviceStatusName,
+      serviceStatusCode,
       serviceDate,
       serviceRecord,
       customerFeedback,
@@ -123,7 +135,7 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
-      missionFlowId: (currentCustomer || {}).missionFlowId || '',
+      missionFlowId,
       serviceTypeCode,
       serviceTypeName,
     };
