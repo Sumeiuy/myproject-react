@@ -26,7 +26,9 @@ export default class ApplicationList extends PureComponent {
 
   componentDidMount() {
     const { queryCustUuid } = this.props;
-    queryCustUuid();
+    if (queryCustUuid) {
+      queryCustUuid();
+    }
   }
 
   render() {

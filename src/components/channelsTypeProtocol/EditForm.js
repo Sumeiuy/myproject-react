@@ -255,6 +255,9 @@ export default class EditForm extends PureComponent {
         cust,
       };
     }
+    if (!isEdit) {
+      formData.submitFlag = 'Y';
+    }
     return formData;
   }
 
