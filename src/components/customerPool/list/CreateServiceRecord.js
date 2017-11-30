@@ -97,7 +97,7 @@ export default class CreateServiceRecord extends PureComponent {
     // 反馈类型数组
     const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
     // 反馈类型value对应反馈类型数组
-    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr) || EMPTY_LIST;
     // 反馈子类型数组
     const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
     // 当前日期的时间戳
