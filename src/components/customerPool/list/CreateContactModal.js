@@ -41,11 +41,14 @@ export default class CreateContactModal extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     currentCustName: PropTypes.string.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
     data: {},
     custType: '',
+    filesList: [],
   };
 
   constructor(props) {
@@ -221,8 +224,9 @@ export default class CreateContactModal extends PureComponent {
       executeTypes,
       serveWay,
       handleCollapseClick,
+      getCeFileList,
+      filesList,
     } = this.props;
-
     if (!currentCustId || !visible) {
       return null;
     }
@@ -347,12 +351,9 @@ export default class CreateContactModal extends PureComponent {
           </Clickable>,
         ]}
       >
-        {
-          (isPersonHasContact || isOrgMainContactHasTel) ?
-            <div className={styles.custName}>
-              {custName || ''}
-            </div> : null
-        }
+        <div className={styles.custName}>
+          {custName || ''}
+        </div>
         {
           custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
             <div className={styles.title}>
@@ -442,6 +443,8 @@ export default class CreateContactModal extends PureComponent {
           executeTypes={executeTypes}
           serveWay={serveWay}
           handleCollapseClick={handleCollapseClick}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
       </Modal>
     );

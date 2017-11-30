@@ -18,8 +18,9 @@ const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
+  ceFileDelete: 'customerPool/ceFileDelete',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,8 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
   // 服务弹窗对应的客户的经纪客户名
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
+  // 客户uuid
+  custUuid: state.customerPool.custUuid,
 });
 
 const mapDispatchToProps = {
@@ -53,6 +56,7 @@ const mapDispatchToProps = {
   }),
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
+  ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
 };
 
 @withRouter
@@ -73,6 +77,8 @@ export default class Main extends Component {
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
+    custUuid: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -100,6 +106,8 @@ export default class Main extends Component {
       serviceRecordModalVisible,
       toggleServiceRecordModal,
       handleCloseClick,
+      custUuid,
+      ceFileDelete,
     } = this.props;
     return (
       <div>
@@ -127,6 +135,8 @@ export default class Main extends Component {
                           addServeRecord={addServeRecord}
                           addServeRecordSuccess={addServeRecordSuccess}
                           onToggleServiceRecordModal={toggleServiceRecordModal}
+                          custUuid={custUuid}
+                          ceFileDelete={ceFileDelete}
                         />
                       </div>
                       :

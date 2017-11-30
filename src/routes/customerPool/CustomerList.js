@@ -58,6 +58,8 @@ const effects = {
   handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
   handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  queryCustUuid: 'customerPool/queryCustUuid',
+  getCeFileList: 'customerPool/getCeFileList',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -98,6 +100,7 @@ const mapStateToProps = state => ({
   isRecordLoading: state.loading.effects[effects.getServiceRecord],
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
+  filesList: state.customerPool.filesList,
 });
 
 const mapDispatchToProps = {
@@ -119,6 +122,7 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -130,6 +134,7 @@ const mapDispatchToProps = {
     type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
+  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -181,6 +186,9 @@ export default class CustomerList extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -194,6 +202,7 @@ export default class CustomerList extends PureComponent {
     followLoading: false,
     isContactLoading: false,
     isRecordLoading: false,
+    filesList: [],
   }
 
   static childContextTypes = {
@@ -230,6 +239,7 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
+    this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -545,6 +555,9 @@ export default class CustomerList extends PureComponent {
       handleAddServiceRecord,
       handleCollapseClick,
       clearCreateTaskData,
+      queryCustUuid,
+      getCeFileList,
+      filesList,
     } = this.props;
     const {
       sortDirection,
@@ -640,6 +653,9 @@ export default class CustomerList extends PureComponent {
           isLoadingEnd={isLoadingEnd}
           onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
+          queryCustUuid={queryCustUuid}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
       </div>
     );

@@ -29,6 +29,7 @@ export default class QuickMenu extends PureComponent {
     currentFollowCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     emailCustId: PropTypes.string.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -106,11 +107,22 @@ export default class QuickMenu extends PureComponent {
     onAddFollow(listItem);
   }
 
+  @autobind
+  handleAddServiceRecordClick(listItem) {
+    const { toggleServiceRecordModal, queryCustUuid } = this.props;
+    toggleServiceRecordModal({
+      custId: listItem.custId,
+      custName: listItem.name,
+      flag: true,
+    });
+    // 上传附件之前需要先请求uuid
+    queryCustUuid();
+  }
+
   render() {
     const {
       listItem,
       createModal,
-      toggleServiceRecordModal,
       currentFollowCustId,
       isFollows,
     } = this.props;
@@ -158,11 +170,7 @@ export default class QuickMenu extends PureComponent {
             </li>
           </Clickable>
           <Clickable
-            onClick={() => toggleServiceRecordModal({
-              custId: listItem.custId,
-              custName: listItem.name,
-              flag: true,
-            })}
+            onClick={() => this.handleAddServiceRecordClick(listItem)}
             eventName="/click/quickMenu/addRecord"
           >
             <li>
