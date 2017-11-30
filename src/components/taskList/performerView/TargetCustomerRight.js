@@ -338,7 +338,7 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
         <div className={styles.asset}>
           <Row>
-            <Col span={12}>
+            <Col span={24}>
               <h5
                 className={classnames({
                   [styles.peopleFour]: isFold === true,
@@ -348,7 +348,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Col>
           </Row>
           <Row className={styles.lastCol}>
-            <Col span={12}>
+            <Col span={24}>
               <h5
                 className={classnames({
                   [styles.peopleFour]: isFold === true,
