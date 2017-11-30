@@ -12,7 +12,9 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
+
 import Loading from '../../layouts/Loading';
+import Clickable from '../../components/common/Clickable';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
@@ -29,6 +31,7 @@ const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  getCeFileList: 'customerPool/getCeFileList',
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -40,12 +43,14 @@ const mapStateToProps = state => ({
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
   serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
+  filesList: state.customerPool.filesList,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getServiceLog: fetchDataFunction(true, effects.getServiceLog),
   getServiceLogMore: fetchDataFunction(true, effects.getServiceLogMore),
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -61,6 +66,8 @@ export default class CreateTaskForm extends PureComponent {
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
     serviceLogDataLoading: PropTypes.bool,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
@@ -68,6 +75,7 @@ export default class CreateTaskForm extends PureComponent {
     serviceLogDataLoading: false,
     serviceLogData: [],
     serviceLogMoreData: [],
+    filesList: [],
   };
 
   constructor(props) {
@@ -83,7 +91,6 @@ export default class CreateTaskForm extends PureComponent {
     };
   }
   componentWillMount() {
-    // const { serviceLogData } = this.props;
     const { logData } = this.state;
     const { serviceLogData } = this.props;
     if (_.isEmpty(logData)) {
@@ -169,14 +176,12 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleMore() {
-    console.log(this.props);
     const { location: { query },
       getServiceLogMore,
     } = this.props;
     const { logData, pageNum } = this.state;
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
-    params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
     params.pageNum = pageNum + 1;
     this.setState({
       pageNum: pageNum + 1,
@@ -221,7 +226,6 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   serveAllTypeChange(value) {
-    console.log(value);
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
     if (value === '所有类型') {
@@ -241,7 +245,7 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   render() {
-    const { dict, handleCollapseClick } = this.props;
+    const { dict, handleCollapseClick, filesList, getCeFileList } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
     return (
@@ -298,6 +302,8 @@ export default class CreateTaskForm extends PureComponent {
                 serveWay={serveWay}
                 handleCollapseClick={handleCollapseClick}
                 loading={loading}
+                getCeFileList={getCeFileList}
+                filesList={filesList}
               />
             </Col>
           </Row>
@@ -309,7 +315,12 @@ export default class CreateTaskForm extends PureComponent {
             }
           >
             <Col className={styles.more}>
-              <Button onClick={this.handleMore}>加载更多服务记录</Button>
+              <Clickable
+                onClick={this.handleMore}
+                eventName="/click/serviceLog/loadMore"
+              >
+                <Button>加载更多服务记录</Button>
+              </Clickable>
             </Col>
           </Row>
         </div>

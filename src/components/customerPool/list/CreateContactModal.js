@@ -12,6 +12,7 @@ import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
 import { checkFormat } from '../../../utils/helper';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './createContactModal.less';
 // import Phone from '../../../../static/images/phone.png';
@@ -40,11 +41,14 @@ export default class CreateContactModal extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     currentCustName: PropTypes.string.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
     data: {},
     custType: '',
+    filesList: [],
   };
 
   constructor(props) {
@@ -220,6 +224,8 @@ export default class CreateContactModal extends PureComponent {
       executeTypes,
       serveWay,
       handleCollapseClick,
+      getCeFileList,
+      filesList,
     } = this.props;
     if (!currentCustId || !visible) {
       return null;
@@ -337,15 +343,17 @@ export default class CreateContactModal extends PureComponent {
         onCancel={this.handleCancel}
         closable={false}
         footer={[
-          <Button key="close" size="large" onClick={this.handleCancel}>关闭</Button>,
+          <Clickable
+            onClick={this.handleCancel}
+            eventName="/click/createContactModal/close"
+          >
+            <Button key="close" size="large">关闭</Button>
+          </Clickable>,
         ]}
       >
-        {
-          (isPersonHasContact || isOrgMainContactHasTel) ?
-            <div className={styles.custName}>
-              {custName || ''}
-            </div> : null
-        }
+        <div className={styles.custName}>
+          {custName || ''}
+        </div>
         {
           custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
             <div className={styles.title}>
@@ -367,10 +375,15 @@ export default class CreateContactModal extends PureComponent {
                   客户未预留主要联系方式，请尽快完善信息
               </div>
               <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
+                <Clickable
+                  onClick={this.handleServiceRecordClick}
+                  eventName="/click/createContactModal/addRecord"
+                >
+                  <Button>
+                    <Icon type="jia" className={styles.addIcon} />
+                    <span>添加服务记录</span>
+                  </Button>
+                </Clickable>
               </div>
             </div> :
             <div className={styles.number}>
@@ -389,10 +402,15 @@ export default class CreateContactModal extends PureComponent {
                   </div> : null
               }
               <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
+                <Clickable
+                  onClick={this.handleServiceRecordClick}
+                  eventName="/click/createContactModal/addRecord"
+                >
+                  <Button>
+                    <Icon type="jia" className={styles.addIcon} />
+                    <span>添加服务记录</span>
+                  </Button>
+                </Clickable>
               </div>
             </div>
         }
@@ -425,6 +443,8 @@ export default class CreateContactModal extends PureComponent {
           executeTypes={executeTypes}
           serveWay={serveWay}
           handleCollapseClick={handleCollapseClick}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
       </Modal>
     );

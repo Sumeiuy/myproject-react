@@ -8,6 +8,7 @@ import _ from 'lodash';
 import IECharts from '../../IECharts';
 import styles from './funney.less';
 import { fspGlobal } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 
 // 服务客户数的 key
 const SERVICE_CUST_NUM = 'custNum';
@@ -43,12 +44,14 @@ function renderIntro(data) {
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <div
-          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+        <Clickable
           onClick={() => linkToList(item)}
+          eventName="/click/fuuney/linkToList"
         >
-          {item.value}
-        </div>
+          <div className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}>
+            {item.value}
+          </div>
+        </Clickable>
         <div className={styles.count2}>{`/${item.property}`}</div>
       </div>
     ),

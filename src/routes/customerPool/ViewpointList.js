@@ -13,6 +13,7 @@ import _ from 'lodash';
 
 import { fspContainer } from '../../config';
 import { fspGlobal, helper } from '../../utils';
+import Clickable from '../../components/common/Clickable';
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
@@ -31,13 +32,17 @@ const columns = ({ actionClick }) => {
     key: 'texttitle',
     width: '30%',
     render: item => (
-      <div
-        className={classnames(styles.td, styles.headLine)}
+      <Clickable
         onClick={() => { handleClick(item); }}
-        title={formatString(item.texttitle)}
+        eventName="/click/viewpointList/clickTitle"
       >
-        <a>{formatString(item.texttitle)}</a>
-      </div>
+        <div
+          className={classnames(styles.td, styles.headLine)}
+          title={formatString(item.texttitle)}
+        >
+          <a>{formatString(item.texttitle)}</a>
+        </div>
+      </Clickable>
     ),
   }, {
     title: '类型',

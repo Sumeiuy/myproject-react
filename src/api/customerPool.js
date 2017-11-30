@@ -9,9 +9,9 @@ export default function customerPool(api) {
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
-    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
+    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryManageKPIs', query),
     // 获取客户池投顾绩效
-    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformance', query),
+    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
     getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 
@@ -67,7 +67,7 @@ export default function customerPool(api) {
     createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
     // 客户列表页添加服务记录
-    addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
+    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord', query),
 
     // 净创收数据
     queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
@@ -122,5 +122,12 @@ export default function customerPool(api) {
 
     // 任务列表-任务详情基本信息
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
+
+
+    // 文件下载文件列表数据
+    ceFileList: query => api.post('/file/ceFileList', query),
+
+    // 上传文件需要先上传uuid
+    queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
   };
 }

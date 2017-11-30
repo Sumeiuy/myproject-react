@@ -50,20 +50,24 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  handleListClick(title, index) {
+    if (!_.isEmpty(title)) {
+      this.handleDetailClick(index);
+    }
+  }
+
+  @autobind
   renderContent(titleArray) {
     return titleArray.map((item, index) => (
       <Clickable
-        onClick={() => { this.handleDetailClick(index); }}
-        eventName="/click/viewpoint"
-        payload={{ test: 1 }}
+        onClick={() => { this.handleListClick(item.subtitle, index); }}
+        eventName="/click/Home/viewpointList"
+        key={item.id}
       >
-        <div
-          className={classnames(styles.row, { [styles.none]: (index >= 12) })}
-          key={item.id}
-        >
+        <div className={classnames(styles.row, { [styles.none]: (index >= 12) })}>
           <a
-            className={styles.news}
-            title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+            className={classnames(styles.news, { [styles.emptyNews]: _.isEmpty(item.subtitle) })}
+            title={_.isEmpty(item.subtitle) ? '' : item.subtitle}
           >
             {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
           </a>
@@ -117,7 +121,12 @@ export default class Viewpoint extends PureComponent {
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <a onClick={() => { this.handleDetailClick(0); }}>详情</a>
+              <Clickable
+                onClick={() => { this.handleDetailClick(0); }}
+                eventName="/click/Home/viewpointDetail"
+              >
+                <a>详情</a>
+              </Clickable>
             </div>
           </div>
         </div>
@@ -135,7 +144,12 @@ export default class Viewpoint extends PureComponent {
           {
             isShowMore ? (
               <div className={styles.fold} >
-                <a onClick={this.handleMoreClick}>{'更多'}</a>
+                <Clickable
+                  onClick={this.handleMoreClick}
+                  eventName="/click/Home/viewpointMore"
+                >
+                  <a>{'更多'}</a>
+                </Clickable>
               </div>
             ) : (
               null
