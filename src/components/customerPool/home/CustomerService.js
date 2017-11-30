@@ -95,7 +95,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text}>{'客户服务覆盖率'}</div>
+          <div className={styles.text}>{'高净值客户服务覆盖率'}</div>
         </div>
       </div>
     );
