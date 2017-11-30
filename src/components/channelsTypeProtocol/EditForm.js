@@ -45,6 +45,8 @@ const attachmentRequired = {
 const subscribe = 'Subscribe';
 const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
+// 客户失败状态
+const openFailed = '开通失败';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -390,8 +392,10 @@ export default class EditForm extends PureComponent {
   deleteTableData(record, index) {
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    console.log('shanchu', record, index, testArr);
     // 如果是详情返回的下挂客户，删除只修改状态
+    if (record.custStatus === openFailed) {
+      return;
+    }
     if (record.agrId) {
       testArr[index].custStatus = '退订处理中';
       this.setState({

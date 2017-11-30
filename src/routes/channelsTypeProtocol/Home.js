@@ -407,10 +407,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       message.error('请选择协议产品');
       return false;
     }
-    if (formData.multiUsedFlag === 'Y' && !formData.cust.length) {
-      message.error('请添加下挂客户');
-      return false;
-    }
     return true;
   }
 
