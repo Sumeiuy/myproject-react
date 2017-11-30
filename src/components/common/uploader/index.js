@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-29 17:22:22
+ * @Last Modified time: 2017-11-30 09:44:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -282,13 +282,13 @@ export default class Uploader extends PureComponent {
       case /jpg|jpeg|png/.test(suffix):
         iconType = 'tupian-';
         break;
-      case /doc|docx/.test(suffix):
+      case /docx?/.test(suffix):
         iconType = 'word';
         break;
-      case /xls|xlsx/.test(suffix):
+      case /xlsx?/.test(suffix):
         iconType = 'excel2';
         break;
-      case /ppt|pptx/.test(suffix):
+      case /pptx?/.test(suffix):
         iconType = 'ppt';
         break;
       case /mp3|wav/.test(suffix):
