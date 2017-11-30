@@ -165,7 +165,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    params.custId = '02001404'; // 本地测试用的数据
+    // params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
