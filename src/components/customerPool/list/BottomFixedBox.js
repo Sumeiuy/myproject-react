@@ -7,8 +7,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
-import info from '../../common/info';
+import { Modal } from 'antd';
+import Button from '../../common/Button';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
@@ -91,8 +91,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -125,9 +125,7 @@ export default class BottomFixedBox extends PureComponent {
     // 临时改成30个客户限制
     // 给QA测试
     if (Number(selectCount) > 30) {
-      info({
-        content: '一次添加的客户数不能超过500个',
-      });
+      this.toggleModal();
       return;
     }
     this.handleClick(url, title, id);
@@ -211,6 +209,13 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
+  @autobind
+  toggleModal() {
+    this.setState({
+      visible: !this.state.visible,
+    });
+  }
+
   // 分组只针对服务经理，也就是说：
   // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
   renderGroup() {
@@ -260,6 +265,7 @@ export default class BottomFixedBox extends PureComponent {
   render() {
     const {
       taskAndGroupLeftPos,
+      visible,
     } = this.state;
     return (
       <div
@@ -269,11 +275,26 @@ export default class BottomFixedBox extends PureComponent {
           left: taskAndGroupLeftPos,
         }}
       >
-        { this.renderText() }
+        {this.renderText()}
         <div className="right">
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}
         </div>
+        <Modal
+          title={''}
+          closable
+          okText={'确认'}
+          width={300}
+          height={180}
+          wrapClassName={'infoModal'}
+          visible={visible}
+          onOk={this.toggleModal}
+          footer={
+            <Button className={'confirm'} type={'primary'}>确认</Button>
+          }
+        >
+          <div className={'info'}>一次添加的客户数不能超过500个</div>
+        </Modal>
       </div>
     );
   }
