@@ -88,7 +88,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: v,
       pageSize: PAGE_SIZE,
-      pageNo: PAGE_NO,
+      pageNum: PAGE_NO,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -112,7 +112,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
-      pageNo,
+      pageNum: pageNo,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -136,7 +136,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: targetCustomerState,
       pageSize,
-      pageNo: PAGE_NO,
+      pageNum: PAGE_NO,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -206,26 +206,23 @@ export default class TargetCustomer extends PureComponent {
     if (_.isEmpty(list)) {
       return null;
     }
-    const { executeTypes, serveWay } = dict;
-    const curPageNo = targetCustomerPageNo || page.pageNo;
+    const { executeTypes, serveWay, serveStatus } = dict;
+    const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
-    const stateData = [{
+    // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+    const stateData = [];
+    _(serveStatus).forEach((item) => {
+      stateData.push({
+        value: item.key,
+        label: item.value,
+        show: true,
+      });
+    });
+    stateData.unshift({
       value: '',
       label: '全部',
       show: true,
-    }, {
-      value: '01',
-      label: '处理中',
-      show: true,
-    }, {
-      value: '02',
-      label: '已完成',
-      show: true,
-    }, {
-      value: '03',
-      label: '待处理',
-      show: true,
-    }];
+    });
     return (
       <div className={styles.targetCustomer}>
         <LabelInfo value="目标客户" />
