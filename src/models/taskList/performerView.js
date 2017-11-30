@@ -25,7 +25,7 @@ export default {
     targetCustList: {
       list: EMPTY_LIST,
       page: {
-        pageNo: PAGE_NO,
+        pageNum: PAGE_NO,
         pageSize: PAGE_SIZE,
         totalCount: 0,
       },
@@ -34,6 +34,7 @@ export default {
     targetCustDetail: EMPTY_OBJ,
     // 客户uuid
     custUuid: '',
+    deleteFileResult: '',
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -68,7 +69,15 @@ export default {
       };
     },
     queryTargetCustSuccess(state, action) {
-      const { page, list } = action.payload;
+      // 后端接口返回 { page: null, list: null } 做的处理
+      const {
+        page = {
+          pageNum: PAGE_NO,
+          pageSize: PAGE_SIZE,
+          totalCount: 0,
+        },
+        list = EMPTY_LIST,
+      } = action.payload;
       return {
         ...state,
         targetCustList: {
@@ -87,6 +96,12 @@ export default {
       return {
         ...state,
         custUuid: action.payload,
+      };
+    },
+    ceFileDeleteSuccess(state, action) {
+      return {
+        ...state,
+        deleteFileResult: action.payload,
       };
     },
   },
@@ -124,7 +139,7 @@ export default {
       }
     },
 
-    // 执行者视图的详情目标客户
+    // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryTargetCust, payload);
       if (resultData) {
@@ -156,6 +171,14 @@ export default {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',
+        payload: resultData,
+      });
+    },
+    // 删除文件
+    * ceFileDelete({ payload }, { call, put }) {
+      const { resultData } = yield call(api.ceFileDelete, payload);
+      yield put({
+        type: 'ceFileDeleteSuccess',
         payload: resultData,
       });
     },

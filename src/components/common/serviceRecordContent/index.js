@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 10:16:17
+ * @Last Modified time: 2017-11-30 14:05:50
  */
 
 
@@ -86,6 +86,7 @@ export default class ServiceRecordContent extends PureComponent {
     isReadOnly: PropTypes.bool,
     beforeUpload: PropTypes.func,
     custUuid: PropTypes.string.isRequired,
+    onDeleteFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -135,33 +136,28 @@ export default class ServiceRecordContent extends PureComponent {
   // 向组件外部提供所有数据
   @autobind
   getData() {
-    const {
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      uploadedFileKey,
-      serviceContent,
-      custUuid,
-    } = this.state;
-
-    return {
-      serviceContent,
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      uploadedFileKey,
-      custUuid,
-    };
+    return _.pick(this.state,
+      // 服务方式
+      'serviceWay',
+      // 服务类型
+      'serviceType',
+      // 服务时间
+      'serviceDate',
+      // 服务时间
+      'serviceTime',
+      // 反馈时间
+      'feedbackDate',
+      // 反馈类型
+      'feedbackType',
+      // 反馈类型
+      'feedbackTypeChild',
+      // 服务状态
+      'serviceStatus',
+      // 服务记录
+      'serviceContent',
+      // cust uuid
+      'custUuid',
+    );
   }
 
   @autobind
@@ -470,6 +466,12 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  @autobind
+  handleDeleteFile(params) {
+    const { onDeleteFile } = this.props;
+    onDeleteFile(params);
+  }
+
   render() {
     const {
       dict,
@@ -571,6 +573,7 @@ export default class ServiceRecordContent extends PureComponent {
                         disabled={isReadOnly}
                       >
                         {_.map((dict.serveStatus || EMPTY_LIST), item =>
+                          // 10代表未开始
                           item.key !== '10' && <Radio value={item.key}>{item.value}</Radio>,
                         )}
                       </RadioGroup>
@@ -718,6 +721,7 @@ export default class ServiceRecordContent extends PureComponent {
               custUuid={custUuid}
               uploadTarget={`${request.prefix}/file/ceFileUpload`}
               isSupportUploadMultiple
+              onDeleteFile={this.handleDeleteFile}
             /> :
             <div className={styles.uploadList}>
               {

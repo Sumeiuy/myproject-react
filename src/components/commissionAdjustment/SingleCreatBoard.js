@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-23 17:35:51
+ * @Last Modified time: 2017-11-30 14:24:16
  * @description 单佣金申请内容区域
  */
 
@@ -146,7 +146,6 @@ export default class SingleCreateBoard extends PureComponent {
 
   @autobind
   cleanRedux() {
-    console.warn('cleanRedux');
     this.props.clearRedux({
       clearList: [
         { name: 'singleGJCommission' },

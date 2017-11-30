@@ -18,8 +18,8 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
+import { env } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
@@ -53,6 +53,7 @@ const effects = {
   queryCustUuid: 'performerView/queryCustUuid',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+  ceFileDelete: 'performerView/ceFileDelete',
   getCeFileList: 'customerPool/getCeFileList',
 };
 
@@ -113,6 +114,8 @@ const mapDispatchToProps = {
     type: 'customerPool/clearTaskFlowData',
     payload: query || {},
   }),
+  // 删除文件接口
+  ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -149,6 +152,7 @@ export default class PerformerView extends PureComponent {
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     clearTaskFlowData: PropTypes.func.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
   }
@@ -174,7 +178,7 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
         pageSize,
         },
@@ -285,6 +289,7 @@ export default class PerformerView extends PureComponent {
       queryTargetCust,
       queryCustUuid,
       custUuid,
+      ceFileDelete,
       getCeFileList,
       filesList,
     } = this.props;
@@ -326,6 +331,7 @@ export default class PerformerView extends PureComponent {
             getCustDetail={this.getCustDetail}
             serviceTypeCode={typeCode}
             serviceTypeName={typeName}
+            ceFileDelete={ceFileDelete}
             getCeFileList={getCeFileList}
             filesList={filesList}
           />
@@ -382,6 +388,8 @@ export default class PerformerView extends PureComponent {
     });
     queryTargetCust({
       missionId: obj.id,
+      pageNum: 1,
+      pageSize: 8,
     }).then(() => this.getCustDetail({ missionId: obj.id }));
   }
 
@@ -465,10 +473,11 @@ export default class PerformerView extends PureComponent {
   handleListRowClick(record, index) {
     const { id, missionViewType: st, typeCode, typeName } = record;
     const {
+      queryCustUuid,
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
@@ -483,6 +492,8 @@ export default class PerformerView extends PureComponent {
       typeName,
     });
     this.getDetailByView(record);
+    // 前置请求custuuid
+    queryCustUuid();
   }
 
   // 头部新建按钮，跳转到新建表单
@@ -491,7 +502,7 @@ export default class PerformerView extends PureComponent {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData } = this.props;
     clearTaskFlowData();
-    if (document.querySelector(fspContainer.container)) {
+    if (env.isInFsp()) {
       fspGlobal.openRctTab({
         url,
         param: {
@@ -529,6 +540,7 @@ export default class PerformerView extends PureComponent {
       replace,
       list,
       dict,
+      queryCustUuid,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
@@ -567,6 +579,7 @@ export default class PerformerView extends PureComponent {
         list={resultData}
         renderRow={this.renderListRow}
         pagination={paginationOptions}
+        queryCustUuid={queryCustUuid}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件

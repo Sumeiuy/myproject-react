@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-14 10:49:25
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-30 14:24:01
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -45,6 +45,8 @@ const attachmentRequired = {
 const subscribe = 'Subscribe';
 const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
+// 客户失败状态
+const openFailed = '开通失败';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -109,7 +111,6 @@ export default class EditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.warn('constructor props', props);
     const { underCustList, protocolDetail, location: { pathname } } = props;
     const isEdit = !_.isEmpty(protocolDetail) && pathname.indexOf('/edit') > -1;
     this.state = {
@@ -337,7 +338,6 @@ export default class EditForm extends PureComponent {
       return;
     }
     if (filterCust.length) {
-      console.warn('filterCust', filterCust[0]);
       if (filterCust[0].custStatus === '退订处理中') {
         const propsFilter = _.filter(propsCust, o => o.econNum === value.econNum);
         const newCust = cust;
@@ -392,8 +392,10 @@ export default class EditForm extends PureComponent {
   deleteTableData(record, index) {
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    console.log('shanchu', record, index, testArr);
     // 如果是详情返回的下挂客户，删除只修改状态
+    if (record.custStatus === openFailed) {
+      return;
+    }
     if (record.agrId) {
       testArr[index].custStatus = '退订处理中';
       this.setState({

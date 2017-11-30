@@ -142,7 +142,6 @@ export default class Permission extends PureComponent {
       isShowCreateModal: false,
       // 是否显示修改私密客户弹框
       isShowModifyModal: false,
-      detailMessage: {},
       // 高亮项的下标索引
       activeRowIndex: 0,
     };
@@ -181,14 +180,6 @@ export default class Permission extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
-    this.setState({ detailMessage: this.props.detailMessage });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
-    if (this.props.detailMessage !== nextProps.detailMessage) {
-      this.setState({ detailMessage: nextProps.detailMessage });
-    }
   }
 
   // 获取列表后再获取某个Detail
@@ -222,7 +213,6 @@ export default class Permission extends PureComponent {
         itemIndex = 0;
       }
       this.setState({
-        detailMessage: {},
         activeRowIndex: itemIndex,
       });
       this.props.getDetailMessage({
@@ -284,7 +274,7 @@ export default class Permission extends PureComponent {
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
@@ -292,7 +282,7 @@ export default class Permission extends PureComponent {
         currentId: id,
       },
     });
-    this.setState({ activeRowIndex: index, detailMessage: {} });
+    this.setState({ activeRowIndex: index });
     this.props.getDetailMessage({
       id,
       type: pageType,
@@ -314,7 +304,7 @@ export default class Permission extends PureComponent {
   }
 
   get detailComponent() {
-    if (_.isEmpty(this.state.detailMessage)) {
+    if (_.isEmpty(this.props.detailMessage)) {
       return null;
     }
     const {
@@ -332,7 +322,7 @@ export default class Permission extends PureComponent {
     } = this.props;
     return (
       <Detail
-        {...this.state.detailMessage}
+        {...this.props.detailMessage}
         location={location}
         canApplyCustList={canApplyCustList}
         searchServerPersonList={searchServerPersonList}
@@ -382,6 +372,24 @@ export default class Permission extends PureComponent {
     this.queryAppList(query, 1, changedPageSize);
   }
 
+  // 创建私密客户申请
+  @autobind
+  handleCreatePrivateApp(params) {
+    const { location: { query } } = this.props;
+    this.props.getCreateCustApplication(params).then(
+      () => this.queryAppList(query, query.pageNum, query.pageSize),
+    );
+  }
+
+  // 修改私密客户申请
+  @autobind
+  handleModifyPrivateApp(params) {
+    const { location: { query } } = this.props;
+    this.props.getModifyCustApplication(params).then(
+      () => this.queryAppList(query, query.pageNum, query.pageSize),
+    );
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -411,13 +419,11 @@ export default class Permission extends PureComponent {
       getHasServerPersonList,
       nextApproverList,
       getNextApproverList,
-      getCreateCustApplication,
       createCustApplication,
       addListenCreate,
       subTypeList,
       getBottonList,
       bottonList,
-      getModifyCustApplication,
       modifyCustApplication,
       addListenModify,
       empInfo: {
@@ -485,7 +491,7 @@ export default class Permission extends PureComponent {
               getHasServerPersonList={getHasServerPersonList}
               nextApproverList={nextApproverList}
               getNextApproverList={getNextApproverList}
-              getCreateCustApplication={getCreateCustApplication}
+              getCreateCustApplication={this.handleCreatePrivateApp}
               createCustApplication={createCustApplication}
               addListenCreate={addListenCreate}
               subTypeList={subTypeList}
@@ -497,14 +503,14 @@ export default class Permission extends PureComponent {
         {
           isShowModifyModal ?
             <ModifyPrivateClient
-              {...this.state.detailMessage}
+              {...this.props.detailMessage}
               location={location}
               onEmitClearModal={this.clearModal}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
               getBottonList={getBottonList}
               bottonList={bottonList}
-              getModifyCustApplication={getModifyCustApplication}
+              getModifyCustApplication={this.handleModifyPrivateApp}
               modifyCustApplication={modifyCustApplication}
               addListenModify={addListenModify}
               subTypeList={subTypeList}
