@@ -145,7 +145,7 @@ export default {
       });
     },
     * getCreateCustApplication({ payload }, { call, put }) {
-      const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
+      // const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.getCreateCustApplication, payload);
       const code = response.code;
       const msg = response.msg;
@@ -157,15 +157,6 @@ export default {
           payload: response,
         });
         message.success('私密客户创建成功！');
-        const params = seibelHelper.constructSeibelPostBody(
-          currentQuery, pageNum || 1, pageSize || 10);
-        yield put({
-          type: 'app/getSeibleList',
-          payload: {
-            ...params,
-            type: pageType,
-          },
-        });
       }
     },
   },

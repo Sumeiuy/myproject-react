@@ -132,6 +132,11 @@ export default class EditBaseInfo extends PureComponent {
         content: '',
         // 协议编号
         protocolNumber: formData.agreementNum,
+        // 协议开始时间
+        startDt: formData.startDt,
+        // 协议有效时间
+        vailDt: formData.vailDt,
+        needMutliAndTen: formData.operationType === '协议订购',
       };
     } else {
       stateObj = {
@@ -151,6 +156,7 @@ export default class EditBaseInfo extends PureComponent {
         content: '',
         // 协议编号
         protocolNumber: '',
+        needMutliAndTen: true,
       };
     }
     this.state = {
@@ -158,7 +164,6 @@ export default class EditBaseInfo extends PureComponent {
       templateList,
       isSubscribe: flag,
       isEditPage,
-      needMutliAndTen: true,
     };
   }
 
@@ -604,7 +609,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }
         {

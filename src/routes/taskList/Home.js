@@ -18,8 +18,8 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
+import { env } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
@@ -470,7 +470,7 @@ export default class PerformerView extends PureComponent {
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
@@ -493,7 +493,7 @@ export default class PerformerView extends PureComponent {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData } = this.props;
     clearTaskFlowData();
-    if (document.querySelector(fspContainer.container)) {
+    if (env.isInFsp()) {
       fspGlobal.openRctTab({
         url,
         param: {
