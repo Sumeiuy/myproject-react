@@ -9,8 +9,6 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-// import { routerRedux, withRouter } from 'dva-react-router-3/router';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
 import styles from './createCollapse.less';
@@ -18,22 +16,6 @@ import styles from './createCollapse.less';
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
 
-const effects = {
-  getCeFileList: 'customerPool/getCeFileList',
-};
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
-const mapStateToProps = state => ({
-  filesList: state.customerPool.filesList,
-});
-const mapDispatchToProps = {
-  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
 export default class CreateCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,

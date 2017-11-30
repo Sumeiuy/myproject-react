@@ -41,13 +41,16 @@ export default class ServiceRecordItem extends PureComponent {
     let iconType = '';
 
     switch (true) {
-      case /doc|docx/.test(suffix):
+      case /jpg|jpeg|png/.test(suffix):
+        iconType = 'tupian-';
+        break;
+      case /docx?/.test(suffix):
         iconType = 'word';
         break;
-      case /xls|xlsx/.test(suffix):
+      case /xlsx?/.test(suffix):
         iconType = 'excel2';
         break;
-      case /ppt|pptx/.test(suffix):
+      case /pptx?/.test(suffix):
         iconType = 'ppt';
         break;
       case /mp3|wav/.test(suffix):
@@ -65,7 +68,6 @@ export default class ServiceRecordItem extends PureComponent {
       default:
         iconType = 'qitawenjian';
     }
-
     return iconType;
   }
 
