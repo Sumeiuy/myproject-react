@@ -1,4 +1,6 @@
 .box {
+  position: relative;
+  left: -1px;
   width: 100%;
   border: 1px solid #ddd;
   h5 {
@@ -89,7 +91,7 @@
   }
   .titles {
     background: #f3f7ff;
-    padding: 10px 15px;
+    padding: 8px 15px;
     border-bottom: 1px solid #ddd;
     h3.custNames {
       font-size: 20px;
@@ -142,6 +144,7 @@
   box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.50);
   border-radius: 3px;
   padding: 10px;
+  min-width: 100px;
   .callName {
     font-size: 14px;
     font-weight: bold;
@@ -157,4 +160,13 @@
   span.perfectRate {
     color: #01723e;
   }
+}
+.block {
+  display: block;
+}
+.fl {
+  float: left;
+}
+.ml105 {
+  margin-left: 105px;
 }

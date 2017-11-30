@@ -29,6 +29,7 @@ export default class CreateServiceRecord extends PureComponent {
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -116,6 +117,12 @@ export default class CreateServiceRecord extends PureComponent {
     onToggleServiceRecordModal(false);
   }
 
+  @autobind
+  handleDeleteFile(params) {
+    const { ceFileDelete } = this.props;
+    ceFileDelete({ ...params });
+  }
+
   render() {
     const {
       isShow,
@@ -157,6 +164,7 @@ export default class CreateServiceRecord extends PureComponent {
                 ref={ref => (this.serviceRecordContentRef = ref)}
                 dict={dict}
                 custUuid={custUuid}
+                onDeleteFile={this.handleDeleteFile}
               />
             </div>
             :

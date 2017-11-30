@@ -115,6 +115,7 @@ export default class CustomerLists extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
   }
@@ -340,7 +341,13 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   showCreateContact({ custName, custId, custType }) {
-    const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
+    const {
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      onRequestLoading,
+      queryCustUuid,
+    } = this.props;
     this.setState({
       custName,
       currentCustId: custId,
@@ -361,6 +368,8 @@ export default class CustomerLists extends PureComponent {
         custId,
       });
       onRequestLoading();
+      // 前置请求custUuid
+      queryCustUuid();
     });
   }
 
@@ -521,6 +530,7 @@ export default class CustomerLists extends PureComponent {
       push,
       entertype,
       clearCreateTaskData,
+      queryCustUuid,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -650,6 +660,7 @@ export default class CustomerLists extends PureComponent {
                     custIncomeReqState={custIncomeReqState}
                     toggleServiceRecordModal={toggleServiceRecordModal}
                     formatAsset={formatAsset}
+                    queryCustUuid={queryCustUuid}
                   />,
                 )
               }

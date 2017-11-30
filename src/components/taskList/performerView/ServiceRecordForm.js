@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-29 16:08:45
+ * @Last Modified time: 2017-11-30 13:52:04
  * 服务记录表单
  */
 
@@ -26,6 +26,7 @@ export default class ServiceRecordForm extends PureComponent {
     isFold: PropTypes.bool.isRequired,
     custUuid: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -86,6 +87,12 @@ export default class ServiceRecordForm extends PureComponent {
     this.serviceRecordContentRef.resetField();
   }
 
+  @autobind
+  handleDeleteFile(params) {
+    const { ceFileDelete } = this.props;
+    ceFileDelete({ ...params });
+  }
+
   render() {
     const {
       dict,
@@ -124,6 +131,7 @@ export default class ServiceRecordForm extends PureComponent {
           formData={formData}
           isFold={isFold}
           custUuid={custUuid}
+          onDeleteFile={this.handleDeleteFile}
         />
 
         {

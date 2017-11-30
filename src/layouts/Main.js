@@ -20,6 +20,8 @@ const effects = {
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
+  // 删除文件
+  ceFileDelete: 'performerView/ceFileDelete',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -56,6 +58,7 @@ const mapDispatchToProps = {
   }),
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
+  ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
 };
 
 @withRouter
@@ -78,6 +81,7 @@ export default class Main extends Component {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -108,6 +112,7 @@ export default class Main extends Component {
       loadingForceFull,
       handleCloseClick,
       custUuid,
+      ceFileDelete,
     } = this.props;
     return (
       <div>
@@ -136,6 +141,7 @@ export default class Main extends Component {
                           addServeRecordSuccess={addServeRecordSuccess}
                           onToggleServiceRecordModal={toggleServiceRecordModal}
                           custUuid={custUuid}
+                          ceFileDelete={ceFileDelete}
                         />
                       </div>
                       :
