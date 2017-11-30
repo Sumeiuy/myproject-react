@@ -64,8 +64,8 @@ export default class CustomerService extends PureComponent {
       label: {
         emphasis: {
           ...textStyle,
-          backgroundColor: 'red', // 此处添加背景色，是为了盖着下方的文字
-          padding: unfinished < 10 ? 20 : 4, // 增加背景的宽 高
+          backgroundColor: '#fff', // 此处添加背景色，是为了盖着下方的文字
+          padding: 6, // 增加背景的宽 高
         },
       },
     }];
