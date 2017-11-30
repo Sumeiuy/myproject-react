@@ -263,6 +263,9 @@ export default class EditForm extends PureComponent {
         cust,
       };
     }
+    if (!isEdit) {
+      formData.submitFlag = 'Y';
+    }
     return formData;
   }
 
@@ -621,7 +624,7 @@ export default class EditForm extends PureComponent {
             head="协议产品"
           />
           {
-            (operationType && operationType !== subscribe) ?
+            ((operationType && operationType !== subscribe) || isEdit) ?
               <CommonTable
                 data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
                 titleList={protocolProductTitleList}
