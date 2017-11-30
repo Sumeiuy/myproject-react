@@ -17,7 +17,7 @@ import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 
 // 信息的完备，用于判断
-const COMPLETION = '不完备';
+const COMPLETION = '完备';
 const NOTCOMPLETION = '不完备';
 
 // 个人对应的code码
@@ -374,7 +374,7 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
         <div className={styles.asset}>
           <Row>
-            <Col span={12}>
+            <Col span={24}>
               <h5
                 className={classnames({
                   [styles.peopleFour]: isFold === true,
@@ -384,7 +384,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Col>
           </Row>
           <Row className={styles.lastCol}>
-            <Col span={12}>
+            <Col span={24}>
               <h5
                 className={classnames({
                   [styles.peopleFour]: isFold === true,
