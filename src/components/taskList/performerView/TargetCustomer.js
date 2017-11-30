@@ -49,12 +49,15 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     getCustDetail: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
     dict: {},
     serviceRecordData: {},
     currentCustId: '',
+    filesList: [],
   };
 
   constructor(props) {
@@ -62,6 +65,11 @@ export default class TargetCustomer extends PureComponent {
     this.state = {
       visible: false,
     };
+  }
+
+  componentDidMount() {
+    const { queryCustUuid } = this.props;
+    queryCustUuid();
   }
 
   @autobind
@@ -80,7 +88,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: v,
       pageSize: PAGE_SIZE,
-      pageNo: PAGE_NO,
+      pageNum: PAGE_NO,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -91,7 +99,7 @@ export default class TargetCustomer extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       currentId,
       changeParameter,
@@ -104,7 +112,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
-      pageNo,
+      pageNum: pageNo,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -128,7 +136,7 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust({
       state: targetCustomerState,
       pageSize,
-      pageNo: PAGE_NO,
+      pageNum: PAGE_NO,
       missionId: currentId,
       orgId: '',
     }).then(() => getCustDetail({ missionId: currentId }));
@@ -192,30 +200,29 @@ export default class TargetCustomer extends PureComponent {
       custIncomeReqState,
       monthlyProfits,
       targetCustDetail,
+      getCeFileList,
+      filesList,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
     }
-    const { executeTypes, serveWay } = dict;
-    const curPageNo = targetCustomerPageNo || page.pageNo;
+    const { executeTypes, serveWay, serveStatus } = dict;
+    const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
-    const stateData = [{
+    // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+    const stateData = [];
+    _(serveStatus).forEach((item) => {
+      stateData.push({
+        value: item.key,
+        label: item.value,
+        show: true,
+      });
+    });
+    stateData.unshift({
       value: '',
       label: '全部',
       show: true,
-    }, {
-      value: '01',
-      label: '处理中',
-      show: true,
-    }, {
-      value: '02',
-      label: '已完成',
-      show: true,
-    }, {
-      value: '03',
-      label: '待处理',
-      show: true,
-    }];
+    });
     return (
       <div className={styles.targetCustomer}>
         <LabelInfo value="目标客户" />
@@ -248,7 +255,7 @@ export default class TargetCustomer extends PureComponent {
           <Row>
             <Col span={9}>
               <div className={styles.list}>
-                { this.renderList() }
+                {this.renderList()}
               </div>
             </Col>
             <Col span={15}>
@@ -265,6 +272,8 @@ export default class TargetCustomer extends PureComponent {
                     getCustIncome={getCustIncome}
                     monthlyProfits={monthlyProfits}
                     custIncomeReqState={custIncomeReqState}
+                    getCeFileList={getCeFileList}
+                    filesList={filesList}
                   /> : null
               }
             </Col>

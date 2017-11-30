@@ -16,6 +16,17 @@ import Collapse from '../../customerPool/list/CreateCollapse';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 
+// 信息的完备，用于判断
+const COMPLETION = '不完备';
+const NOTCOMPLETION = '不完备';
+
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+// const ORG_CODE = 'org';
+// 产品机构对应的code码
+// const PROD_CODE = 'prod';
+
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
     isFold: PropTypes.bool.isRequired,
@@ -28,12 +39,15 @@ export default class TargetCustomerRight extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
   static defaultProps = {
     itemData: {},
     serveWay: {},
     executeTypes: {},
     serviceRecordData: {},
+    filesList: [],
   };
   constructor(props) {
     super(props);
@@ -71,11 +85,10 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   handleEmpty(value) {
-    const cont = '--';
-    if (!value && _.isEmpty(value)) {
-      return cont;
+    if (value && !_.isEmpty(value)) {
+      return value;
     }
-    return value;
+    return '--';
   }
 
   // 根据资产的值返回对应的格式化值和单位串起来的字符串
@@ -91,28 +104,48 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   // 联系电话的浮层信息
-  renderPhoneNumList(itemData) {
-    const isShow = true;
-    const phoneNum = (
-      <div className={`${styles.nameTips}`}>
-        {
-          isShow ?
-            <div>
-              <h5 className={styles.callName}>张三</h5>
-              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
-              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
-              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
-            </div>
-            :
-            <div>
-              <h6><span>办公电话：</span><span>{this.handleEmpty(itemData.officePhone)}</span></h6>
-              <h6><span>住宅电话电话：</span><span>{this.handleEmpty(itemData.homePhone)}</span></h6>
-              <h6><span>手机号码：</span><span>{this.handleEmpty(itemData.cellPhone)}</span></h6>
-            </div>
-        }
-      </div>
-    );
-    return phoneNum;
+  renderPhoneNumTips(itemData = {}) {
+    const {
+      contactDetail = [],
+      custNature = '',
+    } = itemData;
+    if (_.isEmpty(contactDetail)) {
+      return null;
+    }
+    let content = '';
+    if (custNature === PER_CODE) {
+      content = (
+        <div className={`${styles.nameTips}`}>
+          {
+            contactDetail.map(obj => (
+              <div>
+                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
+                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
+                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
+              </div>
+            ))
+          }
+        </div>
+      );
+    } else {
+      content = (
+        <div className={`${styles.nameTips}`}>
+          {
+            contactDetail.map(obj => (
+              <div>
+                <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
+                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
+                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
+                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
+              </div>
+            ))
+          }
+        </div>
+      );
+    }
+    return (<TipsInfo
+      title={content}
+    />);
   }
 
   render() {
@@ -126,6 +159,8 @@ export default class TargetCustomerRight extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
+      getCeFileList,
+      filesList,
     } = this.props;
     const { visible } = this.state;
 
@@ -144,32 +179,32 @@ export default class TargetCustomerRight extends PureComponent {
         <h6><span>手机号码：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.cellPhoneCR === '完善',
-              [styles.noPerfectRate]: itemData.cellPhoneCR === '不完善',
+              [styles.perfectRate]: itemData.cellPhoneCR === COMPLETION,
+              [styles.noPerfectRate]: itemData.cellPhoneCR === NOTCOMPLETION,
             })}
           >{this.handleEmpty(itemData.cellPhoneCR)}</span>
         </h6>
         <h6><span>联系地址：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.contactAddressCR === '完善',
-              [styles.noPerfectRate]: itemData.contactAddressCR === '不完善',
+              [styles.perfectRate]: itemData.contactAddressCR === COMPLETION,
+              [styles.noPerfectRate]: itemData.contactAddressCR === NOTCOMPLETION,
             })}
           >{this.handleEmpty(itemData.contactAddressCR)}</span>
         </h6>
         <h6><span>电子邮箱：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.emailCR === '完善',
-              [styles.noPerfectRate]: itemData.emailCR === '不完善',
+              [styles.perfectRate]: itemData.emailCR === COMPLETION,
+              [styles.noPerfectRate]: itemData.emailCR === NOTCOMPLETION,
             })}
           >{this.handleEmpty(itemData.emailCR)}</span>
         </h6>
         <h6><span>风险偏好：</span>
           <span
             className={classnames({
-              [styles.perfectRate]: itemData.riskPreferenceCR === '完善',
-              [styles.noPerfectRate]: itemData.riskPreferenceCR === '不完善',
+              [styles.perfectRate]: itemData.riskPreferenceCR === COMPLETION,
+              [styles.noPerfectRate]: itemData.riskPreferenceCR === NOTCOMPLETION,
             })}
           >{this.handleEmpty(itemData.riskPreferenceCR)}</span>
         </h6>
@@ -178,7 +213,10 @@ export default class TargetCustomerRight extends PureComponent {
     // 佣金率
     let miniFee = '--';
     if (!_.isEmpty(itemData.commissionRate)) {
-      miniFee = `${(Number(itemData.commissionRate) * 1000).toFixed(2)}‰`;
+      const commissionRate = Number(itemData.commissionRate);
+      miniFee = commissionRate < 0 ?
+        commissionRate :
+        `${(commissionRate * 1000).toFixed(2)}‰`;
     }
     // 归集率
     let hsRate = '--';
@@ -193,17 +231,27 @@ export default class TargetCustomerRight extends PureComponent {
     const openAssetsRate = itemData.openAssets / itemData.assets;
     const openAssetsPercent = `${(openAssetsRate) * 100}%`;
     const availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+    // 信息完备率
+    const infoCompletionRate = itemData.infoCompletionRate ?
+      `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
       <div className={styles.box}>
         <div className={styles.titles}>
           <Row>
             <Col span={12}><h3 className={styles.custNames}>{itemData.custName}</h3></Col>
             <Col span={12}>
-              <h5 className={styles.custNamesCont}>
-                <span>{this.handleEmpty(itemData.custId)}</span>|
-                <span>{this.handleEmpty(itemData.genderValue)}</span>|
-                <span>{this.handleEmpty(String(itemData.age))}岁</span>
-              </h5>
+              {
+                itemData.custNature === 'per' ?
+                  <h5 className={styles.custNamesCont}>
+                    <span>{this.handleEmpty(itemData.custId)}</span>|
+                    <span>{this.handleEmpty(itemData.genderValue)}</span>|
+                    <span>{this.handleEmpty(String(itemData.age))}岁</span>
+                  </h5>
+                  :
+                  <h5 className={styles.custNamesCont}>
+                    <span>{this.handleEmpty(itemData.custId)}</span>
+                  </h5>
+              }
             </Col>
           </Row>
           <Row>
@@ -224,23 +272,20 @@ export default class TargetCustomerRight extends PureComponent {
                 }
               </h5>
             </Col>
-            <Col span={firSpan}>
-              <h5
-                className={classnames({
-                  [styles.phoneRight]: isFold === true,
-                  [styles.phone]: isFold === false,
-                })}
-              >
-                <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                {
-                  _.isEmpty(itemData.contactPhone) ?
-                    null :
-                    <TipsInfo
-                      title={this.renderPhoneNumList(itemData)}
-                    />
-                }
-              </h5>
-            </Col>
+            {
+              itemData.contactPhone ?
+                <Col span={firSpan}>
+                  <h5
+                    className={classnames({
+                      [styles.phoneRight]: isFold === true,
+                      [styles.phone]: isFold === false,
+                    })}
+                  >
+                    <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
+                    { this.renderPhoneNumTips(itemData) }
+                  </h5>
+                </Col> : null
+            }
           </Row>
         </div>
         <div className={styles.asset}>
@@ -319,14 +364,10 @@ export default class TargetCustomerRight extends PureComponent {
                   [styles.people]: isFold === false,
                 })}
               >
-                <span>信息完备率：</span><span>{itemData.infoCompletionRate}</span>
-                {
-                  _.isEmpty(itemData.contactPhone) ?
-                    null :
-                    <TipsInfo
-                      title={inFoPerfectRate}
-                    />
-                }
+                <span>信息完备率：</span><span>{infoCompletionRate}</span>
+                <TipsInfo
+                  title={inFoPerfectRate}
+                />
               </h5>
             </Col>
           </Row>
@@ -355,15 +396,15 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
         <div className={styles.service}>
           <Row>
-            <Col span={14}>
+            <Col span={isFold ? 14 : 24}>
               <h5 className={styles.people}>
-                <span>最近服务时间：</span>
-                <span>（{this.handleEmpty(itemData.recentServiceTime)}）
+                <span className={styles.fl}>最近服务时间：</span>
+                <span className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
                   {this.handleEmpty(itemData.missionTitle)} -
                    {this.handleEmpty(itemData.missionType)}</span>
               </h5>
             </Col>
-            <Col span={10}>
+            <Col span={isFold ? 10 : 24}>
               <h5 className={styles.seeMore}><a onClick={this.showModal}>查看更多</a></h5>
             </Col>
           </Row>
@@ -383,6 +424,8 @@ export default class TargetCustomerRight extends PureComponent {
             executeTypes={executeTypes}
             serveWay={serveWay}
             handleCollapseClick={handleCollapseClick}
+            getCeFileList={getCeFileList}
+            filesList={filesList}
           />
         </Modal>
       </div>

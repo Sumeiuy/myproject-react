@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:18:19
+ * @Last Modified time: 2017-11-30 14:05:50
  */
 
 
@@ -86,6 +86,7 @@ export default class ServiceRecordContent extends PureComponent {
     isReadOnly: PropTypes.bool,
     beforeUpload: PropTypes.func,
     custUuid: PropTypes.string.isRequired,
+    onDeleteFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -100,19 +101,74 @@ export default class ServiceRecordContent extends PureComponent {
 
   constructor(props) {
     super(props);
+
+    const formData = this.handleInitOrUpdate(props);
+    this.state = {
+      ...formData,
+      currentFile: {},
+      uploadedFileKey: '',
+      originFileName: '',
+      originFormData: formData,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { formData } = this.props;
+    const { formData: nextData } = nextProps;
+    if (formData !== nextData) {
+      const formObject = this.handleInitOrUpdate(nextProps);
+      this.setState({
+        ...this.state,
+        ...formObject,
+        originFormData: formObject,
+      });
+    }
+  }
+
+  // 服务状态change事件
+  @autobind
+  onRadioChange(e) {
+    this.setState({
+      serviceStatus: e.target.value,
+    });
+  }
+
+  // 向组件外部提供所有数据
+  @autobind
+  getData() {
+    return _.pick(this.state,
+      // 服务方式
+      'serviceWay',
+      // 服务类型
+      'serviceType',
+      // 服务时间
+      'serviceDate',
+      // 服务时间
+      'serviceTime',
+      // 反馈时间
+      'feedbackDate',
+      // 反馈类型
+      'feedbackType',
+      // 反馈类型
+      'feedbackTypeChild',
+      // 服务状态
+      'serviceStatus',
+      // 服务记录
+      'serviceContent',
+      // cust uuid
+      'custUuid',
+    );
+  }
+
+  @autobind
+  handleInitOrUpdate(props) {
     const {
       // 服务方式字典
       serveWay = [{}],
       // 服务类型、客户反馈类型三级字典
       custServerTypeFeedBackDict = [{}],
       // 服务状态字典
-      serveStatus = [{
-        key: 'handling',
-        value: 'handling',
-      }, {
-        key: 'completed',
-        value: 'completed',
-      }],
+      serveStatus = [{}],
     } = props.dict || {};
     const {
       isEntranceFromPerformerView,
@@ -121,7 +177,6 @@ export default class ServiceRecordContent extends PureComponent {
       isReadOnly,
     } = props;
 
-    this.isReadOnly = isReadOnly;
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
     let formObject = {};
@@ -246,54 +301,9 @@ export default class ServiceRecordContent extends PureComponent {
       };
     }
 
-    this.state = {
-      ...formObject,
-      currentFile: {},
-      uploadedFileKey: '',
-      originFileName: '',
-      originFormData: formObject,
-    };
+    return formObject;
   }
 
-  // 服务状态change事件
-  @autobind
-  onRadioChange(e) {
-    this.setState({
-      serviceStatus: e.target.value,
-    });
-  }
-
-  // 向组件外部提供所有数据
-  @autobind
-  getData() {
-    const {
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      uploadedFileKey,
-      serviceContent,
-      custUuid,
-    } = this.state;
-
-    return {
-      serviceContent,
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      uploadedFileKey,
-      custUuid,
-    };
-  }
 
   @autobind
   resetField() {
@@ -324,10 +334,10 @@ export default class ServiceRecordContent extends PureComponent {
     if (_.isEmpty(value)) {
       return {};
     }
-    const feedbackTypeArr = this.serviceTypeObj[value];
-    const feedbackType = (feedbackTypeArr[0] || {}).value;
+    const feedbackTypeArr = this.serviceTypeObj[value] || EMPTY_LIST;
+    const feedbackType = (feedbackTypeArr[0] || {}).value || '';
     const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
-    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value;
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
     this.setState({
       serviceType: value,
       feedbackType,
@@ -456,6 +466,12 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  @autobind
+  handleDeleteFile(params) {
+    const { onDeleteFile } = this.props;
+    onDeleteFile(params);
+  }
+
   render() {
     const {
       dict,
@@ -468,7 +484,7 @@ export default class ServiceRecordContent extends PureComponent {
 
     const {
       serviceWay,
-      serviceStatus = 'handling',
+      serviceStatus,
       serviceType,
       serviceTime,
       serviceDate,
@@ -556,8 +572,10 @@ export default class ServiceRecordContent extends PureComponent {
                         value={serviceStatus}
                         disabled={isReadOnly}
                       >
-                        <Radio value={'handling'}>处理中</Radio>
-                        <Radio value={'completed'}>已完成</Radio>
+                        {_.map((dict.serveStatus || EMPTY_LIST), item =>
+                          // 10代表未开始
+                          item.key !== '10' && <Radio value={item.key}>{item.value}</Radio>,
+                        )}
                       </RadioGroup>
                     </div>
                   </div>
@@ -703,6 +721,7 @@ export default class ServiceRecordContent extends PureComponent {
               custUuid={custUuid}
               uploadTarget={`${request.prefix}/file/ceFileUpload`}
               isSupportUploadMultiple
+              onDeleteFile={this.handleDeleteFile}
             /> :
             <div className={styles.uploadList}>
               {

@@ -14,11 +14,11 @@ import ServiceRecordForm from './ServiceRecordForm';
 
 import styles from './performerViewDetail.less';
 
-// 客户任务所处待处理和处理中时服务记录可编辑
-// 处理中 106110
-// 待处理  106112
+// 客户任务所处未开始和处理中时服务记录可编辑
+// 处理中 20
+// 未开始  10
 // 此处code码待修改
-const EDITABLE = ['106110', '106112'];
+const EDITABLE = ['10', '20'];
 
 export default class PerformerViewDetail extends PureComponent {
 
@@ -39,12 +39,14 @@ export default class PerformerViewDetail extends PureComponent {
     parameter: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
     queryTargetCust: PropTypes.func.isRequired,
-    queryTargetCustDetail: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     getCustDetail: PropTypes.func.isRequired,
     serviceTypeCode: PropTypes.string.isRequired,
     serviceTypeName: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -52,6 +54,7 @@ export default class PerformerViewDetail extends PureComponent {
     isFold: false,
     serviceRecordData: {},
     custIncomeReqState: false,
+    filesList: [],
   };
 
   render() {
@@ -78,6 +81,9 @@ export default class PerformerViewDetail extends PureComponent {
       getCustDetail,
       serviceTypeCode,
       serviceTypeName,
+      ceFileDelete,
+      getCeFileList,
+      filesList,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -90,19 +96,31 @@ export default class PerformerViewDetail extends PureComponent {
       ...otherProps
     } = basicInfo;
     const { list = [] } = targetCustList;
+    if (_.isEmpty(list)) {
+      return null;
+    }
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
 
+    const currentCustomer = _.find(list, o => o.custId === currentCustId);
+
+    let serviceStatusName = '';
+    let serviceStatusCode = '';
+    let missionFlowId = '';
+    if (currentCustomer) {
+      serviceStatusName = currentCustomer.missionStatusCode;
+      serviceStatusCode = currentCustomer.missionStatusValue;
+      missionFlowId = currentCustomer.missionFlowId;
+    }
+
     const { missionStatusCode } = targetCustDetail;
 
-    // 处理中 和 待处理 时表单可编辑
+    // 处理中 和 未开始 时表单可编辑
     const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
     const {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName,
-      serviceStatusCode,
       serviceDate,
       serviceRecord,
       customerFeedback,
@@ -124,6 +142,7 @@ export default class PerformerViewDetail extends PureComponent {
       attachmentRecord,
       custId,
       custUuid,
+      missionFlowId,
       serviceTypeCode,
       serviceTypeName,
     };
@@ -156,6 +175,8 @@ export default class PerformerViewDetail extends PureComponent {
           queryCustUuid={queryCustUuid}
           getCustDetail={getCustDetail}
           {...targetCustList}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
         <ServiceRecordForm
           dict={dict}
@@ -166,6 +187,7 @@ export default class PerformerViewDetail extends PureComponent {
           queryCustUuid={queryCustUuid}
           custUuid={custUuid}
           formData={serviceReocrd}
+          ceFileDelete={ceFileDelete}
         />
       </div>
     );

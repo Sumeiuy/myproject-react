@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-27 17:16:48
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-14 13:27:41
+ * @Last Modified by:   K0240008
+ * @Last Modified time: 2017-11-29 17:08:54
  * 检查搜索框中是否包含特殊字符
  */
 

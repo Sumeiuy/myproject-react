@@ -87,12 +87,9 @@ export default class BaseInfoEdit extends PureComponent {
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    const preValue = this.state[obj.name];
-    // 手动清空内容，value为‘’
-    const nextValue = obj.value === '' ? preValue : obj.value;
     this.setState({
       ...this.state,
-      [obj.name]: nextValue,
+      [obj.name]: obj.value,
     }, this.transferDataToHome);
   }
 
@@ -128,9 +125,9 @@ export default class BaseInfoEdit extends PureComponent {
       // 客户类型--必填
       custType: oldData.custType,
       // 合约开始日期--订购状态下必填，退订不可编辑
-      startDt: data.contractStarDate || oldData.startDt,
+      startDt: data.contractStarDate,
       // 合约有效期
-      vailDt: data.contractPalidity || oldData.vailDt,
+      vailDt: data.contractPalidity,
       // 备注
       description: data.remark || oldData.description,
       tdDescription: data.tdDescription || oldData.tdDescription,
@@ -151,7 +148,6 @@ export default class BaseInfoEdit extends PureComponent {
     } = this.state;
     // 是否是退订
     const isSubscribe = baseInfo.applyType === unsubscribe;
-    // DatePicker控件，value值为‘’是，控制台报ant组件warning
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />

@@ -1,4 +1,6 @@
 .box {
+  position: relative;
+  left: -1px;
   width: 100%;
   border: 1px solid #ddd;
   h5 {
@@ -89,7 +91,7 @@
   }
   .titles {
     background: #f3f7ff;
-    padding: 10px 15px;
+    padding: 8px 15px;
     border-bottom: 1px solid #ddd;
     h3.custNames {
       font-size: 20px;
@@ -151,10 +153,19 @@
     color: #4a4a4a;
     text-align: left;
   }
-  .noPerfectRate {
+  span.noPerfectRate {
     color: #f48a8a;
    }
-  .perfectRate {
+  span.perfectRate {
     color: #01723e;
   }
+}
+.block {
+  display: block;
+}
+.fl {
+  float: left;
+}
+.ml105 {
+  margin-left: 105px;
 }
