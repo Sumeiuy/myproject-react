@@ -120,12 +120,11 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   handleCustomerGroupClick(url, title, id) {
     const {
-      page = {},
+      selectCount,
     } = this.props;
-    const { total = 0 } = page;
     // 临时改成30个客户限制
     // 给QA测试
-    if (Number(total) > 30) {
+    if (Number(selectCount) > 30) {
       info({
         content: '一次添加的客户数不能超过500个',
       });
