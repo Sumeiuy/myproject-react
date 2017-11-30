@@ -249,11 +249,12 @@ export default class Form extends PureComponent {
       itemArray.forEach((item) => {
         if (itemArray.length > 1) {
           // 检测该条款是否存在，如果存在，则不合法
-          if (clauseID[item.divIntegrationId]) {
+          // paraName 为标识条款字段
+          if (clauseID[item.paraName]) {
             clauseStatus = false;
           } else {
             // 添加条款到clauseID
-            clauseID[item.divIntegrationId] = 1;
+            clauseID[item.paraName] = 1;
           }
         }
       });
