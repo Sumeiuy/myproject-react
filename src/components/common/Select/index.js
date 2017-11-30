@@ -15,7 +15,7 @@ import styles from './index.less';
 const Option = Select.Option;
 export default class CommonSelect extends PureComponent {
   static propTypes = {
-    data: PropTypes.array.isRequired,
+    data: PropTypes.array,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string,
@@ -25,6 +25,7 @@ export default class CommonSelect extends PureComponent {
 
   static defaultProps = {
     value: '全部',
+    data: [],
     width: '',
     disabled: false,
   }
