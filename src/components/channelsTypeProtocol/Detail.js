@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -154,7 +155,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            attachmentList.length ?
+            _.isEmpty(attachmentList) ?
               attachmentList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}
