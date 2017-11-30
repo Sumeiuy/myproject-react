@@ -231,6 +231,9 @@ export default class TargetCustomerRight extends PureComponent {
     const openAssetsRate = itemData.openAssets / itemData.assets;
     const openAssetsPercent = `${(openAssetsRate) * 100}%`;
     const availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+    // 信息完备率
+    const infoCompletionRate = itemData.infoCompletionRate ?
+      `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
       <div className={styles.box}>
         <div className={styles.titles}>
@@ -361,14 +364,10 @@ export default class TargetCustomerRight extends PureComponent {
                   [styles.people]: isFold === false,
                 })}
               >
-                <span>信息完备率：</span><span>{this.handleEmpty(itemData.infoCompletionRate)}</span>
-                {
-                  _.isEmpty(itemData.contactPhone) ?
-                    null :
-                    <TipsInfo
-                      title={inFoPerfectRate}
-                    />
-                }
+                <span>信息完备率：</span><span>{infoCompletionRate}</span>
+                <TipsInfo
+                  title={inFoPerfectRate}
+                />
               </h5>
             </Col>
           </Row>
