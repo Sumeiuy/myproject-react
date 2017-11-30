@@ -87,7 +87,7 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-
+    console.log('attachmentList', attachmentList);
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -154,12 +154,17 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            attachmentList.map(item => (<MultiUploader
-              attachmentList={item.attachmentList}
-              attachment={''}
-              title={item.title}
-              key={`${protocolDetail.id}${item.title}`}
-            />))
+            attachmentList.length ?
+              attachmentList.map(item => (<MultiUploader
+                attachmentList={item.attachmentList}
+                attachment={''}
+                title={item.title}
+                key={`${protocolDetail.id}${item.title}`}
+              />))
+              :
+              <div className={styles.fileList}>
+                <div className={styles.noFile}>暂无附件</div>
+              </div>
           }
         </div>
         <div className={styles.detailWrapper}>

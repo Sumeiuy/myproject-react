@@ -6,5 +6,5 @@
 
 export default {
   timeout: 15000,
-  prefix: '/fspa/mcrm/api',
+  prefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api',
 };

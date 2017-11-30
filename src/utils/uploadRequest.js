@@ -91,6 +91,10 @@ export default function uploadRequest(option) {
   if (headers['X-Requested-With'] !== null) {
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   }
+
+  // 火狐浏览器需要单独设置
+  headers.Accept = '*/*';
+
   /* eslint-disable */
   for (const h in headers) {
     if (headers.hasOwnProperty(h) && headers[h] !== null) {
