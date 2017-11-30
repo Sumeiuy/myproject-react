@@ -221,7 +221,6 @@ export default class CreateContactModal extends PureComponent {
       serveWay,
       handleCollapseClick,
     } = this.props;
-    console.log('Collapse>>>', this.props);
     if (!currentCustId || !visible) {
       return null;
     }
