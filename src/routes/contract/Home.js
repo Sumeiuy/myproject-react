@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-29 17:34:50
+ * @Last Modified time: 2017-11-30 14:34:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -774,8 +774,14 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
+    const payType = payload.approveData.type;
     saveContractData(payload).then(
-      () => this.closeModal('addFormModal'),
+      () => {
+        this.closeModal('addFormModal');
+        if (payType === 'add') {
+          this.queryAppList(query, query.pageNum, query.pageSize);
+        }
+      },
     );
   }
 
@@ -805,7 +811,7 @@ export default class Contract extends PureComponent {
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
