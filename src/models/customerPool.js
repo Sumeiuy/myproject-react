@@ -114,6 +114,8 @@ export default {
     taskBasicInfo: {},
     // cust uuid
     custUuid: '',
+    // 删除文件结果
+    deleteFileResult: '',
   },
 
   subscriptions: {
@@ -703,8 +705,22 @@ export default {
         payload: resultData,
       });
     },
+    // 删除文件
+    * ceFileDelete({ payload }, { call, put }) {
+      const { resultData } = yield call(api.ceFileDelete, payload);
+      yield put({
+        type: 'ceFileDeleteSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
+    ceFileDeleteSuccess(state, action) {
+      return {
+        ...state,
+        deleteFileResult: action.payload,
+      };
+    },
     queryCustUuidSuccess(state, action) {
       return {
         ...state,

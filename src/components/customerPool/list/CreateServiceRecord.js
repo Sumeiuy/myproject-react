@@ -77,6 +77,7 @@ export default class CreateServiceRecord extends PureComponent {
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -321,6 +322,12 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  @autobind
+  handleDeleteFile(params) {
+    const { ceFileDelete } = this.props;
+    ceFileDelete({ ...params });
+  }
+
   render() {
     const {
       isShow,
@@ -507,6 +514,7 @@ export default class CreateServiceRecord extends PureComponent {
                     uploadTarget={`${request.prefix}/file/ceFileUpload`}
                     isSupportUploadMultiple
                     custUuid={custUuid}
+                    onDeleteFile={this.handleDeleteFile}
                   />
                 </div>
               </div>

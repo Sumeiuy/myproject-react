@@ -549,6 +549,7 @@ export default class CustomerList extends PureComponent {
       handleAddServiceRecord,
       handleCollapseClick,
       clearCreateTaskData,
+      queryCustUuid,
     } = this.props;
     const {
       sortDirection,
@@ -644,6 +645,7 @@ export default class CustomerList extends PureComponent {
           isLoadingEnd={isLoadingEnd}
           onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
+          queryCustUuid={queryCustUuid}
         />
       </div>
     );
