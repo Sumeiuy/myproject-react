@@ -44,6 +44,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     serviceTypeCode: PropTypes.string.isRequired,
     serviceTypeName: PropTypes.string.isRequired,
+    ceFileDelete: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
   }
@@ -80,6 +81,7 @@ export default class PerformerViewDetail extends PureComponent {
       getCustDetail,
       serviceTypeCode,
       serviceTypeName,
+      ceFileDelete,
       getCeFileList,
       filesList,
     } = this.props;
@@ -185,6 +187,7 @@ export default class PerformerViewDetail extends PureComponent {
           queryCustUuid={queryCustUuid}
           custUuid={custUuid}
           formData={serviceReocrd}
+          ceFileDelete={ceFileDelete}
         />
       </div>
     );

@@ -17,11 +17,17 @@ export default class ApplicationList extends PureComponent {
     list: PropTypes.array.isRequired,
     renderRow: PropTypes.func.isRequired,
     pagination: PropTypes.object,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     pagination: null,
   };
+
+  componentDidMount() {
+    const { queryCustUuid } = this.props;
+    queryCustUuid();
+  }
 
   render() {
     const {

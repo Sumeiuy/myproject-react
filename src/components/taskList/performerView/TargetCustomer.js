@@ -67,6 +67,11 @@ export default class TargetCustomer extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { queryCustUuid } = this.props;
+    queryCustUuid();
+  }
+
   @autobind
   handleStateChange(key, v) {
     const {
