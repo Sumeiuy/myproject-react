@@ -59,6 +59,7 @@ const effects = {
   handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   queryCustUuid: 'customerPool/queryCustUuid',
+  getCeFileList: 'customerPool/getCeFileList',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -99,6 +100,7 @@ const mapStateToProps = state => ({
   isRecordLoading: state.loading.effects[effects.getServiceRecord],
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
+  filesList: state.customerPool.filesList,
 });
 
 const mapDispatchToProps = {
@@ -120,6 +122,7 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -184,6 +187,8 @@ export default class CustomerList extends PureComponent {
     handleCollapseClick: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -197,6 +202,7 @@ export default class CustomerList extends PureComponent {
     followLoading: false,
     isContactLoading: false,
     isRecordLoading: false,
+    filesList: [],
   }
 
   static childContextTypes = {
@@ -549,6 +555,8 @@ export default class CustomerList extends PureComponent {
       handleAddServiceRecord,
       handleCollapseClick,
       clearCreateTaskData,
+      getCeFileList,
+      filesList,
     } = this.props;
     const {
       sortDirection,
@@ -644,6 +652,8 @@ export default class CustomerList extends PureComponent {
           isLoadingEnd={isLoadingEnd}
           onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
       </div>
     );

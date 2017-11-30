@@ -22,12 +22,15 @@ export default class CreateCollapse extends PureComponent {
     executeTypes: PropTypes.array.isRequired,
     serveWay: PropTypes.array.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
     loading: PropTypes.bool,
   };
 
   static defaultProps = {
     data: EMPTY_LIST,
     loading: false,
+    filesList: [],
   };
 
   constructor(props) {
@@ -43,7 +46,14 @@ export default class CreateCollapse extends PureComponent {
    */
   @autobind
   handleCollapseChange(currentKey) {
-    const { handleCollapseClick } = this.props;
+    const { handleCollapseClick, data, getCeFileList } = this.props;
+    // const index = this.collapse.props.defaultActiveKey;
+    const service = data[currentKey];
+    const { uuid } = service;
+    const attachment = uuid;
+    if (!_.isEmpty(uuid)) {
+      getCeFileList({ attachment });
+    }
     // 手动上报日志
     handleCollapseClick({ currentKey });
     this.setState({
@@ -135,9 +145,8 @@ export default class CreateCollapse extends PureComponent {
   }
 
   renderPanel(serveTime) {
-    const { data, executeTypes } = this.props;
+    const { data, executeTypes, filesList } = this.props;
     const { currentActiveIndex } = this.state;
-
     if (_.isEmpty(data)) {
       return null;
     }
@@ -150,6 +159,7 @@ export default class CreateCollapse extends PureComponent {
           className={styles.serviceCollapse}
           defaultActiveKey={['0']}
           onChange={this.handleCollapseChange}
+          ref={ref => this.collapse = ref}
         >
           {
             _.map(data, (item, index) =>
@@ -216,6 +226,7 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
+                  filesList={filesList}
                 />
               </Panel>,
             )

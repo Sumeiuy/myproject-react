@@ -123,6 +123,10 @@ export default function customerPool(api) {
     // 任务列表-任务详情基本信息
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
+
+    // 文件下载文件列表数据
+    ceFileList: query => api.post('/file/ceFileList', query),
+
     // 上传文件需要先上传uuid
     queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
   };

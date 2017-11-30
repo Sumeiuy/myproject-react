@@ -115,6 +115,8 @@ export default class CustomerLists extends PureComponent {
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -124,7 +126,7 @@ export default class CustomerLists extends PureComponent {
     fllowCustData: {},
     followLoading: false,
     custIncomeReqState: false,
-
+    filesList: [],
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
@@ -516,6 +518,8 @@ export default class CustomerLists extends PureComponent {
       push,
       entertype,
       clearCreateTaskData,
+      getCeFileList,
+      filesList,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -704,6 +708,8 @@ export default class CustomerLists extends PureComponent {
               currentCustName={custName}
               executeTypes={executeTypes}
               serveWay={serveWay}
+              getCeFileList={getCeFileList}
+              filesList={filesList}
             /> : null
         }
         {
