@@ -106,15 +106,13 @@ export default class PerformerViewDetail extends PureComponent {
     let serviceStatusCode = '';
     let missionFlowId = '';
     if (currentCustomer) {
-      serviceStatusName = currentCustomer.missionStatusCode;
-      serviceStatusCode = currentCustomer.missionStatusValue;
+      serviceStatusCode = currentCustomer.missionStatusCode;
+      serviceStatusName = currentCustomer.missionStatusValue;
       missionFlowId = currentCustomer.missionFlowId;
     }
 
-    const { missionStatusCode } = targetCustDetail;
-
     // 处理中 和 未开始 时表单可编辑
-    const isReadOnly = !_.includes(EDITABLE, missionStatusCode);
+    const isReadOnly = !_.includes(EDITABLE, serviceStatusCode);
     const {
       serviceTips,
       serviceWayName,
