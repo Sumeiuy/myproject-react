@@ -47,7 +47,6 @@ export default {
       pageNo: 1,
       total: 0,
     },
-    historyWdsList: [],
     clearState: {},
     cusgroupList: [],
     cusgroupPage: {
@@ -296,22 +295,6 @@ export default {
           payload: { response },
         });
       }, { type: 'takeLatest' }],
-    // 默认推荐词及热词推荐列表及历史搜索数据
-    * getHistoryWdsList({ payload }, { call, put }) {
-      const history = yield call(api.getHistoryWdsList, payload);
-      yield put({
-        type: 'getHistoryWdsListSuccess',
-        payload: { history },
-      });
-    },
-    // 清除历史搜索列表
-    * clearSearchHistoryList({ payload }, { call, put }) {
-      const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
-      yield put({
-        type: 'clearSearchHistoryListSuccess',
-        payload: { clearHistoryState },
-      });
-    },
     // 获取客户分组列表信息
     * customerGroupList({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
@@ -480,22 +463,6 @@ export default {
       yield put({
         type: 'getCustomerHotPossibleWdsSuccess',
         payload: resultData,
-      });
-    },
-    // 分组客户下默认推荐词及热词推荐列表及历史搜索数据
-    * getCustomerHistoryWdsList({ payload }, { call, put }) {
-      const history = yield call(api.getHistoryWdsList, payload);
-      yield put({
-        type: 'getCustomerHistoryWdsListSuccess',
-        payload: { history },
-      });
-    },
-    // 分组客户下清除历史搜索列表
-    * clearCustomerSearchHistoryList({ payload }, { call, put }) {
-      const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
-      yield put({
-        type: 'clearCustomerSearchHistoryListSuccess',
-        payload: { clearHistoryState },
       });
     },
     // 新增，编辑客户分组
@@ -902,22 +869,6 @@ export default {
           ...state.monthlyProfits,
           [custNumber]: monthlyProfits,
         },
-      };
-    },
-    // 历史搜索列表
-    getHistoryWdsListSuccess(state, action) {
-      const { payload: { history: { resultData: { historyWdsList } } } } = action;
-      return {
-        ...state,
-        historyWdsList,
-      };
-    },
-    // 清除历史搜索列表
-    clearSearchHistoryListSuccess(state, action) {
-      const { payload: { clearHistoryState } } = action;
-      return {
-        ...state,
-        clearState: clearHistoryState,
       };
     },
     // 获取客户分组列表
