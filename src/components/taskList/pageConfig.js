@@ -11,41 +11,36 @@ const pageConfig = {
   taskList: {
     pageName: '视图',
     pageType: 'taskList', // 查询列表接口中的type值
-    status: [
+    status: [  // 创建者视图详情页面需要做对应的翻译
       {
         show: true,
-        label: '所有状态',
+        label: '全部',
         value: '',
       },
       {
         show: true,
         label: '审批中',
-        value: '10',
-      },
-      {
-        show: true,
-        label: '驳回',
-        value: '20',
-      },
-      {
-        show: true,
-        label: '终止',
-        value: '30',
+        value: '01',
       },
       {
         show: true,
         label: '结束',
-        value: '40',
+        value: '02',
       },
       {
         show: true,
         label: '执行中',
-        value: '50',
+        value: '03',
       },
       {
         show: true,
         label: '结果跟踪',
-        value: '60',
+        value: '04',
+      },
+      {
+        show: true,
+        label: '被驳回',
+        value: '05',
       },
     ],
     chooseMissionView: [
