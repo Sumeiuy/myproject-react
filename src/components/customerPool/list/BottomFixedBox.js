@@ -289,8 +289,9 @@ export default class BottomFixedBox extends PureComponent {
           wrapClassName={'infoModal'}
           visible={visible}
           onOk={this.toggleModal}
+          onCancel={this.toggleModal}
           footer={
-            <Button className={'confirm'} type={'primary'}>确认</Button>
+            <Button className={'confirm'} type={'primary'} onClick={this.toggleModal}>确认</Button>
           }
         >
           <div className={'info'}>一次添加的客户数不能超过500个</div>
