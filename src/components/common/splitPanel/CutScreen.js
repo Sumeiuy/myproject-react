@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 16:13:59
+ * @Last Modified time: 2017-11-30 13:56:59
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -179,6 +179,8 @@ export default class CutScreen extends PureComponent {
     let leftSectionWidth = leftWidth;
     if (env.isIE()) {
       leftSectionWidth += 20;
+    } else if (env.isFirefox()) {
+      leftSectionWidth += 10;
     }
     this.setElementStyle(this.leftSection, `${leftSectionWidth}px`, 'width');
   }

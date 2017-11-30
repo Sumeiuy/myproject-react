@@ -284,7 +284,7 @@ export default class Permission extends PureComponent {
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
@@ -382,6 +382,15 @@ export default class Permission extends PureComponent {
     this.queryAppList(query, 1, changedPageSize);
   }
 
+  // 创建私密客户申请
+  @autobind
+  handleCreatePrivateApp(params) {
+    const { location: { query } } = this.props;
+    this.props.getCreateCustApplication(params).then(
+      () => this.queryAppList(query, query.pageNum, query.pageSize),
+    );
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -411,7 +420,6 @@ export default class Permission extends PureComponent {
       getHasServerPersonList,
       nextApproverList,
       getNextApproverList,
-      getCreateCustApplication,
       createCustApplication,
       addListenCreate,
       subTypeList,
@@ -485,7 +493,7 @@ export default class Permission extends PureComponent {
               getHasServerPersonList={getHasServerPersonList}
               nextApproverList={nextApproverList}
               getNextApproverList={getNextApproverList}
-              getCreateCustApplication={getCreateCustApplication}
+              getCreateCustApplication={this.handleCreatePrivateApp}
               createCustApplication={createCustApplication}
               addListenCreate={addListenCreate}
               subTypeList={subTypeList}

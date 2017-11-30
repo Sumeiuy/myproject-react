@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:39:29
+ * @Last Modified time: 2017-11-30 14:25:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -112,9 +112,6 @@ export default class MultiUpload extends PureComponent {
       file: uploadFile,
       statusText: '上传中',
     });
-    console.warn('info', info);
-    console.warn('uploadFile', uploadFile);
-    console.warn('uploadFile response', uploadFile.response);
     if (uploadFile.response && uploadFile.response.code) {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
