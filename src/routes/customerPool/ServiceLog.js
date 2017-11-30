@@ -29,6 +29,7 @@ const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  getCeFileList: 'customerPool/getCeFileList',
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -40,12 +41,14 @@ const mapStateToProps = state => ({
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
   // serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
+  filesList: state.customerPool.filesList,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getServiceLog: fetchDataFunction(true, effects.getServiceLog),
   getServiceLogMore: fetchDataFunction(true, effects.getServiceLogMore),
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -61,6 +64,8 @@ export default class CreateTaskForm extends PureComponent {
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
     serviceLogDataLoading: PropTypes.bool,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   };
 
   static defaultProps = {
@@ -68,6 +73,7 @@ export default class CreateTaskForm extends PureComponent {
     serviceLogDataLoading: false,
     serviceLogData: [],
     serviceLogMoreData: [],
+    filesList: [],
   };
 
   constructor(props) {
@@ -229,7 +235,7 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   render() {
-    const { dict, handleCollapseClick } = this.props;
+    const { dict, handleCollapseClick, filesList, getCeFileList } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn } = this.state;
     return (
@@ -285,7 +291,8 @@ export default class CreateTaskForm extends PureComponent {
                 executeTypes={executeTypes}
                 serveWay={serveWay}
                 handleCollapseClick={handleCollapseClick}
-                ref={ref => this.collapse = ref}
+                getCeFileList={getCeFileList}
+                filesList={filesList}
               />
             </Col>
           </Row>
