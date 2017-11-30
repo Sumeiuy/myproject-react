@@ -45,6 +45,8 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     serviceTypeCode: PropTypes.string.isRequired,
     serviceTypeName: PropTypes.string.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -52,6 +54,7 @@ export default class PerformerViewDetail extends PureComponent {
     isFold: false,
     serviceRecordData: {},
     custIncomeReqState: false,
+    filesList: [],
   };
 
   render() {
@@ -78,6 +81,8 @@ export default class PerformerViewDetail extends PureComponent {
       getCustDetail,
       serviceTypeCode,
       serviceTypeName,
+      getCeFileList,
+      filesList,
     } = this.props;
     if (_.isEmpty(dict) || _.isEmpty(basicInfo) || _.isEmpty(targetCustList)) {
       return null;
@@ -156,6 +161,8 @@ export default class PerformerViewDetail extends PureComponent {
           queryCustUuid={queryCustUuid}
           getCustDetail={getCustDetail}
           {...targetCustList}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
         />
         <ServiceRecordForm
           dict={dict}

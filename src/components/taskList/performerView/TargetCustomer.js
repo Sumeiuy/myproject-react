@@ -49,12 +49,15 @@ export default class TargetCustomer extends PureComponent {
     queryTargetCust: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     getCustDetail: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
     dict: {},
     serviceRecordData: {},
     currentCustId: '',
+    filesList: [],
   };
 
   constructor(props) {
@@ -91,7 +94,7 @@ export default class TargetCustomer extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       currentId,
       changeParameter,
@@ -192,6 +195,8 @@ export default class TargetCustomer extends PureComponent {
       custIncomeReqState,
       monthlyProfits,
       targetCustDetail,
+      getCeFileList,
+      filesList,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
@@ -248,7 +253,7 @@ export default class TargetCustomer extends PureComponent {
           <Row>
             <Col span={9}>
               <div className={styles.list}>
-                { this.renderList() }
+                {this.renderList()}
               </div>
             </Col>
             <Col span={15}>
@@ -265,6 +270,8 @@ export default class TargetCustomer extends PureComponent {
                     getCustIncome={getCustIncome}
                     monthlyProfits={monthlyProfits}
                     custIncomeReqState={custIncomeReqState}
+                    getCeFileList={getCeFileList}
+                    filesList={filesList}
                   /> : null
               }
             </Col>
