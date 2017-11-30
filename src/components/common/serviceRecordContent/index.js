@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-28 20:18:19
+ * @Last Modified time: 2017-11-30 09:14:39
  */
 
 
@@ -324,7 +324,7 @@ export default class ServiceRecordContent extends PureComponent {
     if (_.isEmpty(value)) {
       return {};
     }
-    const feedbackTypeArr = this.serviceTypeObj[value];
+    const feedbackTypeArr = this.serviceTypeObj[value] || [];
     const feedbackType = (feedbackTypeArr[0] || {}).value;
     const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
     const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value;
