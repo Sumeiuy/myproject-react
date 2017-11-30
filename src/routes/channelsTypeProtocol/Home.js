@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-29 18:05:33
+ * @Last Modified time: 2017-11-30 14:33:51
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -328,7 +328,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       location: { pathname, query, query: { currentId } },
       getProtocolDetail,
     } = this.props;
-    if (currentId === id) return;
+    if (currentId === String(id)) return;
     replace({
       pathname,
       query: {
@@ -387,7 +387,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
-    console.warn('formData', formData);
     if (!formData.subType) {
       message.error('请选择子类型');
       return false;
@@ -448,34 +447,27 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    console.warn('auth', auth);
     const { saveProtocolData, doApprove } = this.props;
+    const { location: { query } } = this.props;
     const { protocolData } = this.state;
-    saveProtocolData(protocolData).then(() => {
-      const {
-        location: {
-          query,
-        },
-      } = this.props;
-      const params = {
-        ...seibelHelper.constructSeibelPostBody(query, 1, 10),
-        type: pageType,
-      };
-      doApprove({
-        formData: {
-          itemId: this.props.itemId,
-          flowId: '',
-          auditors: auth.empNo,
-          groupName: auth.groupName,
-          operate: '1',
-          approverIdea: '',
-        },
-        params,
-      }).then(() => {
-        this.closeModal('editFormModal');
-        this.closeModal('approverModal');
-      });
-    });
+    saveProtocolData(protocolData).then(
+      () => {
+        doApprove({
+          formData: {
+            itemId: this.props.itemId,
+            flowId: '',
+            auditors: auth.empNo,
+            groupName: auth.groupName,
+            operate: '1',
+            approverIdea: '',
+          },
+        }).then(() => {
+          this.closeModal('editFormModal');
+          this.closeModal('approverModal');
+          this.queryAppList(query, query.pageNum, query.pageSize);
+        });
+      },
+    );
   }
 
   // 弹窗底部按钮事件
