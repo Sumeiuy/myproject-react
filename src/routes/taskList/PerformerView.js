@@ -54,6 +54,7 @@ const effects = {
   queryCustUuid: 'performerView/queryCustUuid',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+  getCeFileList: 'customerPool/getCeFileList',
 };
 
 const mapStateToProps = state => ({
@@ -77,6 +78,7 @@ const mapStateToProps = state => ({
   // 客户细分导入数据
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
+  filesList: state.customerPool.filesList,
 });
 
 const mapDispatchToProps = {
@@ -104,6 +106,7 @@ const mapDispatchToProps = {
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   previewCustFile: fetchDataFunction(true, effects.previewCustFile),
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 清除数据
   clearTaskFlowData: query => ({
     type: 'customerPool/clearTaskFlowData',
@@ -145,10 +148,13 @@ export default class PerformerView extends PureComponent {
     taskBasicInfo: PropTypes.object.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     clearTaskFlowData: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    filesList: PropTypes.array,
   }
 
   static defaultProps = {
     priviewCustFileData: EMPTY_OBJECT,
+    filesList: [],
   };
 
   constructor(props) {
@@ -328,6 +334,8 @@ export default class PerformerView extends PureComponent {
       queryTargetCust,
       queryCustUuid,
       custUuid,
+      getCeFileList,
+      filesList,
     } = this.props;
     const {
       query: { currentId },
@@ -367,6 +375,8 @@ export default class PerformerView extends PureComponent {
             getCustDetail={this.getCustDetail}
             serviceTypeCode={typeCode}
             serviceTypeName={typeName}
+            getCeFileList={getCeFileList}
+            filesList={filesList}
           />
         );
         break;

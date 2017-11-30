@@ -400,33 +400,24 @@ export default {
       const response = yield call(api.queryRecentServiceRecord, payload);
       const { resultData } = response;
       const { custId } = payload;
+      let attachment = null;
       if (!_.isEmpty(resultData)) {
         const { uuid } = resultData[0];
-        const attachment = uuid;
-        if (!_.isEmpty(uuid)) {
-          const fileListRes = yield call(api.ceFileList, attachment);
-          const { resultData: fileResultData } = fileListRes;
-          yield put({
-            type: 'getServiceRecordSuccess',
-            payload: { resultData, custId, fileResultData },
-          });
-        } else {
-          yield put({
-            type: 'getServiceRecordSuccess',
-            payload: { resultData, custId },
-          });
-        }
+        attachment = uuid;
+      }
+      if (!_.isEmpty(attachment)) {
+        const fileListRes = yield call(api.ceFileList, { attachment });
+        const { resultData: fileResultData } = fileListRes;
+        yield put({
+          type: 'getServiceRecordSuccess',
+          payload: { resultData, custId, fileResultData },
+        });
       } else {
         yield put({
           type: 'getServiceRecordSuccess',
           payload: { resultData, custId },
         });
       }
-      // console.log(resultData);
-      // yield put({
-      //   type: 'getServiceRecordSuccess',
-      //   payload: { resultData, custId },
-      // });
     },
     * getFollowCust({ payload }, { call, put }) {
       yield put({
@@ -612,22 +603,18 @@ export default {
     * getServiceLog({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
+      let attachment = null;
       if (!_.isEmpty(resultData)) {
         const { uuid } = resultData[0];
-        const attachment = uuid;
-        if (!_.isEmpty(uuid)) {
-          const fileListRes = yield call(api.ceFileList, attachment);
-          const { resultData: fileResultData } = fileListRes;
-          yield put({
-            type: 'getServiceLogSuccess',
-            payload: { resultData, fileResultData },
-          });
-        } else {
-          yield put({
-            type: 'getServiceLogSuccess',
-            payload: { resultData },
-          });
-        }
+        attachment = uuid;
+      }
+      if (!_.isEmpty(attachment)) {
+        const fileListRes = yield call(api.ceFileList, { attachment });
+        const { resultData: fileResultData } = fileListRes;
+        yield put({
+          type: 'getServiceLogSuccess',
+          payload: { resultData, fileResultData },
+        });
       } else {
         yield put({
           type: 'getServiceLogSuccess',
