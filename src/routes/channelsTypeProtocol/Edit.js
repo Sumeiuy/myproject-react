@@ -363,6 +363,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       getCustValidate,  // 验证客户接口
       attachmentList,  // 附件列表
       cleartBtnGroup,  // 清除审批人
+      getFlowStepInfo,
     } = this.props;
     const {
       approverModal,
@@ -409,6 +410,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       getCustValidate,
       // 清除审批人
       cleartBtnGroup,
+      getFlowStepInfo,
     };
     const nowStep = {
       // 当前步骤

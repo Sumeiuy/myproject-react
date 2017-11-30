@@ -129,7 +129,7 @@ export default class EditBaseInfo extends PureComponent {
         // 是否订购十档行情
         levelTenFlag: formData.levelTenFlag === 'Y',
         // 备注
-        content: '',
+        content: formData.content,
         // 协议编号
         protocolNumber: formData.agreementNum,
         // 协议开始时间
