@@ -17,7 +17,7 @@ import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 
 // 信息的完备，用于判断
-const COMPLETION = '不完备';
+const COMPLETION = '完备';
 const NOTCOMPLETION = '不完备';
 
 // 个人对应的code码
