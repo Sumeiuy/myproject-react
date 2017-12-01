@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 19:57:20
+ * @Last Modified time: 2017-12-01 15:56:53
  */
 
 
@@ -85,7 +85,7 @@ export default class ServiceRecordContent extends PureComponent {
     isFold: PropTypes.bool,
     isReadOnly: PropTypes.bool,
     beforeUpload: PropTypes.func,
-    custUuid: PropTypes.string.isRequired,
+    custUuid: PropTypes.string,
     onDeleteFile: PropTypes.func.isRequired,
   }
 
@@ -97,6 +97,7 @@ export default class ServiceRecordContent extends PureComponent {
     isReadOnly: false,
     beforeUpload: () => { },
     isUploadFileManually: true,
+    custUuid: '',
   }
 
   constructor(props) {

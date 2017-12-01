@@ -30,6 +30,8 @@ export default class CreateServiceRecord extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    deleteFileResult: PropTypes.array.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -37,6 +39,10 @@ export default class CreateServiceRecord extends PureComponent {
     name: '',
     isShow: false,
     loading: false,
+  }
+
+  componentDidMount() {
+    this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -131,6 +137,7 @@ export default class CreateServiceRecord extends PureComponent {
       name,
       id,
       custUuid,
+      deleteFileResult,
     } = this.props;
 
     const title = (
@@ -165,6 +172,7 @@ export default class CreateServiceRecord extends PureComponent {
                 dict={dict}
                 custUuid={custUuid}
                 onDeleteFile={this.handleDeleteFile}
+                deleteFileResult={deleteFileResult}
               />
             </div>
             :
