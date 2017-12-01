@@ -123,9 +123,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       selectCount,
     } = this.props;
-    // 临时改成30个客户限制
-    // 给QA测试
-    if (Number(selectCount) > 20) {
+    if (Number(selectCount) > 500) {
       this.toggleModal();
       return;
     }

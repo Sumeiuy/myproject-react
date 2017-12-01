@@ -239,7 +239,7 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
-    this.props.queryCustUuid();
+    // this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {
