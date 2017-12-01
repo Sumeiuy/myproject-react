@@ -48,12 +48,6 @@ export default function customerPool(api) {
     // 联想的推荐热词列表
     getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryPossibleHotWds', query),
 
-    // 历史搜索记录
-    getHistoryWdsList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHistoryWdsList', query),
-
-    // 清除历史搜索记录
-    clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
-
     // 客户分组列表信息
     customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
 
