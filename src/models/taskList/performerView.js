@@ -34,7 +34,7 @@ export default {
     targetCustDetail: EMPTY_OBJ,
     // 客户uuid
     custUuid: '',
-    deleteFileResult: '',
+    deleteFileResult: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -71,11 +71,7 @@ export default {
     queryTargetCustSuccess(state, action) {
       // 后端接口返回 { page: null, list: null } 做的处理
       const {
-        page = {
-          pageNum: PAGE_NO,
-          pageSize: PAGE_SIZE,
-          totalCount: 0,
-        },
+        page = { pageNum: PAGE_NO, pageSize: PAGE_SIZE, totalCount: 0 },
         list = EMPTY_LIST,
       } = action.payload;
       return {
@@ -177,9 +173,10 @@ export default {
     // 删除文件
     * ceFileDelete({ payload }, { call, put }) {
       const { resultData } = yield call(api.ceFileDelete, payload);
+      const { attaches = [] } = resultData;
       yield put({
         type: 'ceFileDeleteSuccess',
-        payload: resultData,
+        payload: attaches,
       });
     },
   },

@@ -346,7 +346,6 @@ export default class CustomerLists extends PureComponent {
       getServiceRecord,
       custContactData,
       onRequestLoading,
-      queryCustUuid,
     } = this.props;
     this.setState({
       custName,
@@ -368,8 +367,6 @@ export default class CustomerLists extends PureComponent {
         custId,
       });
       onRequestLoading();
-      // 前置请求custUuid
-      queryCustUuid();
     });
   }
 
