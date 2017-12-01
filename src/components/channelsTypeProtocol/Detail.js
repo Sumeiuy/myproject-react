@@ -82,7 +82,7 @@ export default class Detail extends PureComponent {
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }
     // 判断是否显示下挂客户
-    const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
+    const showUnderCust = protocolDetail.multiUsedFlag === 'Y';
     // 判断是否显示协议编号
     const isShowProtocolNum = !(protocolDetail.operationType === '协议订购');
     let statusLabel = '';
@@ -91,7 +91,7 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-    console.log('attachmentList', attachmentList);
+    console.log('attachmentList', attachmentList, showUnderCust);
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -158,7 +158,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            _.isEmpty(attachmentList) ?
+            !_.isEmpty(attachmentList) ?
               attachmentList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}

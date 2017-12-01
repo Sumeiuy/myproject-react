@@ -226,11 +226,16 @@ export default class TargetCustomerRight extends PureComponent {
         Number(newHsRate.toFixed(2)) :
         `${Number((newHsRate * 100).toFixed(2))}%`;
     }
+    // 总资产不为0时进行计算
     // 持仓金额占余额的百分比openAssetsPercent
     // 可用余额占余额的百分比availablBalancePercent
-    const openAssetsRate = itemData.openAssets / itemData.assets;
-    const openAssetsPercent = `${(openAssetsRate) * 100}%`;
-    const availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+    let openAssetsPercent = '--';
+    let availablBalancePercent = '--';
+    if (Number(itemData.assets)) {
+      const openAssetsRate = itemData.openAssets / itemData.assets;
+      openAssetsPercent = `${(openAssetsRate) * 100}%`;
+      availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+    }
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
