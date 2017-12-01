@@ -87,16 +87,6 @@ export default class CreateTaskForm extends PureComponent {
       pageNum: 1,
     };
   }
-  componentWillMount() {
-    const { logData } = this.state;
-    const { serviceLogData } = this.props;
-    if (_.isEmpty(logData)) {
-      this.setState({
-        logData: serviceLogData,
-        showBtn: _.isEmpty(serviceLogData),
-      });
-    }
-  }
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
@@ -105,11 +95,9 @@ export default class CreateTaskForm extends PureComponent {
     if (serviceLogData !== prevServiceLogData) {
       this.setState({
         logData: serviceLogData,
+        showBtn: _.isEmpty(serviceLogData),
       });
     }
-    this.setState({
-      showBtn: _.isEmpty(serviceLogData),
-    });
     if (serviceLogMoreData !== prevServiceLogMoreData) {
       if (_.isEmpty(serviceLogMoreData)) {
         this.setState({
@@ -177,7 +165,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    params.custId = '02001404'; // 本地测试用的数据
+    // params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,

@@ -473,10 +473,11 @@ export default class Contract extends PureComponent {
     tmpArr.forEach((v) => {
       v.forEach((sv) => {
         if (v.length > 1) {
-          if (tmpObj[sv.divIntegrationId]) {
+          // paraName 为 条款字段
+          if (tmpObj[sv.paraName]) {
             clauseStatus = false;
           } else {
-            tmpObj[sv.divIntegrationId] = 1;
+            tmpObj[sv.paraName] = 1;
           }
         }
       });
@@ -774,13 +775,10 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
-    const payType = payload.approveData.type;
     saveContractData(payload).then(
       () => {
         this.closeModal('addFormModal');
-        if (payType === 'add') {
-          this.queryAppList(query, query.pageNum, query.pageSize);
-        }
+        this.queryAppList(query, query.pageNum, query.pageSize);
       },
     );
   }
