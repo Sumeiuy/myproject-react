@@ -87,7 +87,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text}>{'必做MOT完成率'}</div>
+          <div className={styles.text} title={'必做MOT完成率'}>{'必做MOT完成率'}</div>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
@@ -97,7 +97,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text}>{'高净值客户服务覆盖率'}</div>
+          <div className={styles.text} title={'高净值客户服务覆盖率'}>{'高净值客户服务覆盖率'}</div>
         </div>
       </div>
     );
