@@ -158,6 +158,7 @@ export default {
     // 获取详情
     // TODO 增加一个参数，区分详情页与新建退订的数据
     * getBaseInfo({ payload }, { call, put }) {
+      console.log('########getBaseInfo###########3');
       const empId = emp.getId();
       const response = yield call(api.getContractDetail, payload);
 
