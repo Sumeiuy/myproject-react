@@ -14,6 +14,7 @@ import Select from '../../common/Select';
 import LabelInfo from './LabelInfo';
 import BasicInfo from './BasicInfo';
 import ServiceImplementation from './ServiceImplementation';
+import EmptyTargetCust from './EmptyTargetCust';
 
 import styles from './performerViewDetail.less';
 
@@ -186,7 +187,11 @@ export default class PerformerViewDetail extends PureComponent {
               />
             </div>
           </div>
-          { _.isEmpty(list) ? null : <ServiceImplementation {...this.props} list={list} /> }
+          {
+            _.isEmpty(list) ?
+              <EmptyTargetCust /> :
+              <ServiceImplementation {...this.props} list={list} />
+          }
         </div>
       </div>
     );
