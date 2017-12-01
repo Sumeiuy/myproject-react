@@ -28,7 +28,7 @@ export default class CreateServiceRecord extends PureComponent {
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
-    custUuid: PropTypes.string.isRequired,
+    custUuid: PropTypes.string,
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
@@ -39,6 +39,7 @@ export default class CreateServiceRecord extends PureComponent {
     name: '',
     isShow: false,
     loading: false,
+    custUuid: '',
   }
 
   componentDidMount() {
