@@ -109,14 +109,12 @@ export default class QuickMenu extends PureComponent {
 
   @autobind
   handleAddServiceRecordClick(listItem) {
-    const { toggleServiceRecordModal, queryCustUuid } = this.props;
+    const { toggleServiceRecordModal } = this.props;
     toggleServiceRecordModal({
       custId: listItem.custId,
       custName: listItem.name,
       flag: true,
     });
-    // 上传附件之前需要先请求uuid
-    queryCustUuid();
   }
 
   render() {
@@ -126,9 +124,7 @@ export default class QuickMenu extends PureComponent {
       currentFollowCustId,
       isFollows,
     } = this.props;
-    // const {
-    //   addressEmail,
-    // } = this.state;
+
     const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
       || isFollows[listItem.custId];
     return (

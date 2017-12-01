@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal } from 'antd';
 import Button from '../../common/Button';
+import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
@@ -122,9 +123,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       selectCount,
     } = this.props;
-    // 临时改成30个客户限制
-    // 给QA测试
-    if (Number(selectCount) > 30) {
+    if (Number(selectCount) > 500) {
       this.toggleModal();
       return;
     }
@@ -294,7 +293,10 @@ export default class BottomFixedBox extends PureComponent {
             <Button className={'confirm'} type={'primary'} onClick={this.toggleModal}>确认</Button>
           }
         >
-          <div className={'info'}>一次添加的客户数不能超过500个</div>
+          <div className={'info'}>
+            <Icon type="tishi1" className={'tishi'} />
+            <span>一次添加的客户数不能超过500个</span>
+          </div>
         </Modal>
       </div>
     );

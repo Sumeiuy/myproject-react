@@ -78,6 +78,8 @@ export default class CreateServiceRecord extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    queryCustUuid: PropTypes.func.isRequired,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -120,6 +122,11 @@ export default class CreateServiceRecord extends PureComponent {
       uploadedFileKey: '',
       originFileName: '',
     };
+  }
+
+  componentDidMount() {
+    // 只要改组件初次加载完成，就请求一遍custUuid
+    this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -336,6 +343,7 @@ export default class CreateServiceRecord extends PureComponent {
       name,
       id,
       custUuid,
+      deleteFileResult,
     } = this.props;
     const {
       serviceWay,
@@ -515,6 +523,7 @@ export default class CreateServiceRecord extends PureComponent {
                     isSupportUploadMultiple
                     custUuid={custUuid}
                     onDeleteFile={this.handleDeleteFile}
+                    deleteFileResult={deleteFileResult}
                   />
                 </div>
               </div>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 15:56:18
+ * @Last Modified time: 2017-12-01 15:24:51
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -37,6 +37,7 @@ export default class Uploader extends PureComponent {
     custUuid: PropTypes.string,
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -82,15 +83,25 @@ export default class Uploader extends PureComponent {
       originUpData: upData,
       custUuid,
       attaches: [],
+      // 当前剩余的附件列表
+      remainingAttachLists: [],
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { attachModel: nextFile = EMPTY_OBJECT, custUuid } = nextProps;
-    const { attachModel: prevFile = EMPTY_OBJECT } = this.props;
+    const { attachModel: nextFile = EMPTY_OBJECT, custUuid,
+      deleteFileResult: nextResult } = nextProps;
+    const { attachModel: prevFile = EMPTY_OBJECT, deleteFileResult } = this.props;
     if (nextFile !== prevFile) {
       this.setState({
         lastFile: nextFile,
+      });
+    }
+
+    // 当前剩余的附件列表
+    if (deleteFileResult !== nextResult) {
+      this.setState({
+        remainingAttachLists: nextResult,
       });
     }
 
@@ -219,8 +230,8 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleDeleteConfirm() {
-    const { onDeleteFile } = this.props;
-    const { fileList, attaches = [], custUuid } = this.state;
+    const { onDeleteFile, onOperateFile } = this.props;
+    const { fileList, attaches = [], custUuid, remainingAttachLists } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
@@ -239,6 +250,18 @@ export default class Uploader extends PureComponent {
         this.setState({
           currentDeleteAttachId: attachId,
         }, () => {
+          // 删除到最后一个的时候，将custUuid设置为空，不然查看服务记录的时候，会展示附件
+          if (_.size(remainingAttachLists) <= 1) {
+            this.setState({
+              custUuid: '',
+            }, () => {
+              onOperateFile({
+                ...this.state,
+                custUuid: '',
+              });
+            });
+          }
+
           onDeleteFile({
             attachId,
             attachment: custUuid,
