@@ -208,7 +208,7 @@ export default class Pageheader extends PureComponent {
           missionViewType,
           type,
           status,
-          drafterId,
+          creator,
           createTimeStart,
           createTimeEnd,
           missionName,
@@ -233,7 +233,7 @@ export default class Pageheader extends PureComponent {
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
     // 创建者回填
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === creator);
     let curDrafter = '所有创建者';
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
