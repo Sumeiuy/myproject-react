@@ -225,7 +225,7 @@ export default class TargetCustomer extends PureComponent {
     });
     return (
       <div className={styles.targetCustomer}>
-        <LabelInfo value="目标客户" />
+        <LabelInfo value="服务实施" />
         <div className={styles.listControl}>
           <div className={styles.stateWidget}>
             <span className={styles.label}>状态:</span>

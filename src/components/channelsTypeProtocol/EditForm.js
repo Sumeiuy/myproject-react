@@ -40,13 +40,16 @@ const attachmentRequired = {
     attachmentMap[2].type,
   ],
 };
+const custAttachment = ['noNeed', 'noCust', 'hasCust'];
 
 // 订购的value
 const subscribe = 'Subscribe';
 const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
 // 客户失败状态
-const openFailed = '开通失败';
+// const openFailed = '开通失败';
+// const unSubscribeSuccess = '退订完成';
+const cannotDelete = ['开通失败', '退订完成'];
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -96,17 +99,17 @@ export default class EditForm extends PureComponent {
   }
 
   static defaultProps = {
-    onSearchCutList: () => {},
+    onSearchCutList: () => { },
     canApplyCustList: EMPTY_LIST,
     protocolDetail: EMPTY_OBJECT,
-    getProtocolDetail: () => {},
+    getProtocolDetail: () => { },
     operationTypeList: [],
-    getCustValidate: () => {},
+    getCustValidate: () => { },
     template: {},
     subTypeList: [],
-    queryProtocolList: () => {},
+    queryProtocolList: () => { },
     protocolList: [],
-    clearDetailData: () => {},
+    clearDetailData: () => { },
   }
 
   constructor(props) {
@@ -138,7 +141,7 @@ export default class EditForm extends PureComponent {
 
   componentWillMount() {
     // 更新附件组件必传项
-    const hasCust = false;
+    const hasCust = custAttachment[1];
     this.setUploadConfig(hasCust);
   }
 
@@ -164,7 +167,7 @@ export default class EditForm extends PureComponent {
           return newItem;
         });
       }
-      const hasCust = nextPD.multiUsedFlag === 'Y';
+      const hasCust = nextPD.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
       this.setState({
         // 附件类型列表
         attachmentTypeList: assignAttachment,
@@ -182,7 +185,7 @@ export default class EditForm extends PureComponent {
   @autobind
   onChangeProtocolNumber(operationType) {
     const { protocolDetail, protocolDetail: { cust, item: productList, term } } = this.props;
-    let hasCust = protocolDetail.multiUsedFlag === 'Y';
+    let hasCust = protocolDetail.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
     // 协议产品不可编辑，下挂客户不可编辑
     const productOperate = false;
     let custOperate = false;
@@ -191,7 +194,7 @@ export default class EditForm extends PureComponent {
       custOperate = true;
     }
     if (operationType === unSubscribe) {
-      hasCust = 'noNeed';
+      hasCust = custAttachment[0];
     }
     this.setState({
       productOperate,
@@ -202,7 +205,7 @@ export default class EditForm extends PureComponent {
       // 所选协议产品列表
       productList,
       protocolClause: term,
-      multiUsedFlag: hasCust,
+      multiUsedFlag: protocolDetail.multiUsedFlag === 'Y',
     }, () => this.setUploadConfig(hasCust));
   }
 
@@ -214,13 +217,14 @@ export default class EditForm extends PureComponent {
       multiUsedFlag: boolean,
       cust: [],
       isNeedTransfer: false,
-    }, () => this.setUploadConfig(boolean));
+    }, () => this.setUploadConfig(boolean ? custAttachment[2] : custAttachment[1]));
   }
 
   // 向父组件提供数据
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
+    console.warn('baseInfoData', baseInfoData);
     const { protocolClauseList, protocolDetail } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
@@ -248,12 +252,19 @@ export default class EditForm extends PureComponent {
       // 其他操作类型的数据
       formData = {
         ...protocolDetail,
+        agreementNum: baseInfoData.protocolNumber,
+        custId: baseInfoData.client.cusId,
+        custType: baseInfoData.client.custType,
+        econNum: baseInfoData.client.brokerNumber,
         flowId: protocolDetail.flowid,
         operationType: baseInfoData.operationType,
         content: baseInfoData.content,
         attachment: attachmentTypeList,
         cust,
       };
+    }
+    if (!isEdit) {
+      formData.submitFlag = 'Y';
     }
     return formData;
   }
@@ -263,16 +274,7 @@ export default class EditForm extends PureComponent {
   setUploadConfig(hasCust) {
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
-    let requiredArr = [];
-    if (hasCust) {
-      if (hasCust === 'noNeed') {
-        requiredArr = attachmentRequired.noNeed;
-      } else {
-        requiredArr = attachmentRequired.hasCust;
-      }
-    } else {
-      requiredArr = attachmentRequired.noCust;
-    }
+    const requiredArr = attachmentRequired[hasCust];
     // 清空附件数组的必传项
     const defaultAttachmentArr = attachmentTypeList.map(item => ({
       ...item,
@@ -390,17 +392,25 @@ export default class EditForm extends PureComponent {
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
+    console.warn('protocolDetail', this.props.protocolDetail);
+    const { protocolDetail: { cust: propsCust } } = this.props;
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    // 如果是详情返回的下挂客户，删除只修改状态
-    if (record.custStatus === openFailed) {
-      return;
-    }
-    if (record.agrId) {
-      testArr[index].custStatus = '退订处理中';
-      this.setState({
-        cust: testArr,
-      });
+    const detailCust = propsCust.map((item => ({
+      econNum: item.econNum,
+      custStatus: item.custStatus,
+    })));
+    const filterCust = _.filter(detailCust, o => o.econNum === record.econNum);
+    // 如果点击删除的在详情返回的客户中能找到，并且状态是退订完成或者开通失败的，不执行任何操作
+    if (filterCust.length) {
+      if (!_.includes(cannotDelete, filterCust[0].custStatus)) {
+        testArr[index].custStatus = '退订处理中';
+        this.setState({
+          cust: testArr,
+        });
+      } else {
+        message.error('该客户不可以删除');
+      }
     } else {
       const newTableList = _.remove(testArr, (n, i) => i !== index);
       this.setState({
@@ -614,7 +624,7 @@ export default class EditForm extends PureComponent {
             head="协议产品"
           />
           {
-            (operationType && operationType !== subscribe) ?
+            ((operationType && operationType !== subscribe) || isEdit) ?
               <CommonTable
                 data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
                 titleList={protocolProductTitleList}
@@ -632,7 +642,7 @@ export default class EditForm extends PureComponent {
           <CommonTable
             data={(isEdit && _.isEmpty(protocolClauseList)) ?
               protocolClause
-            :
+              :
               protocolClauseList}
             titleList={protocolClauseTitleList}
           />
@@ -650,7 +660,7 @@ export default class EditForm extends PureComponent {
                     labelName="客户"
                     dataSource={customerSelectList}
                   />
-                :
+                  :
                   null
               }
               <div className={styles.customerTable}>
@@ -661,7 +671,7 @@ export default class EditForm extends PureComponent {
                 />
               </div>
             </div>
-          :
+            :
             null
         }
         <div className={styles.editWrapper}>

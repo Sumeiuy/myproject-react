@@ -44,6 +44,10 @@ const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   forceFull,
 });
 
+// 订购的value
+const subscribe = 'Subscribe';
+// const unSubscribe = 'Unsubscribe';
+// const addDel = 'AddDel';
 const mapStateToProps = state => ({
   // 查询左侧列表
   seibleList: state.app.seibleList,
@@ -398,6 +402,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
     if (!formData.custId) {
       message.error('请选择客户');
       return false;
+    }
+    if (formData.operationType !== subscribe) {
+      if (!formData.agreementNum) {
+        message.error('请选择协议编号');
+        return false;
+      }
     }
     if (!formData.templateId) {
       message.error('请选择协议模板');

@@ -450,7 +450,6 @@ export default class EditBaseInfo extends PureComponent {
   @autobind
   handleChangeContent(e) {
     this.setState({
-      ...this.state,
       content: e.target.value,
     }, this.transferDataToHome);
   }
@@ -541,6 +540,7 @@ export default class EditBaseInfo extends PureComponent {
         },
       ];
     }
+    console.warn('protocolTemplate', protocolTemplate);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -609,7 +609,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
             </div>
         }
         {
@@ -641,7 +641,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
-            defaultValue={isEditPage ? protocolDetail.content : content}
+            value={isEditPage ? protocolDetail.content : content}
           />
         </InfoForm>
       </div>
