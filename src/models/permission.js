@@ -7,7 +7,7 @@ import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-const creatRepeatCode = '-2'; // 客户正在处理中不能重复处理
+const CREATREPEATCODE = '-2'; // 客户正在处理中不能重复处理
 
 export default {
   namespace: 'permission',
@@ -136,7 +136,7 @@ export default {
       const response = yield call(api.getCreateCustApplication, payload);
       const code = response.code;
       const msg = response.msg;
-      if (code === creatRepeatCode) {
+      if (code === CREATREPEATCODE) {
         message.error(msg);
       } else {
         yield put({
