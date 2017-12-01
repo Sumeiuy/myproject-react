@@ -21,6 +21,7 @@ import styles from './customerRow.less';
 
 import maleAvator from '../../../../static/images/icon-avator.png';
 import femaleAvator from '../../../../static/images/female-avator.png';
+import otherAvator from '../../../../static/images/otherAvator.png';
 import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
 import iconProductAgency from '../../../../static/images/icon-product-agency.png';
 import iconMoney from '../../../../static/images/icon-money.png';
@@ -208,6 +209,8 @@ export default class CustomerRow extends PureComponent {
         imgSrc = maleAvator;
       } else if (genderCode === FEMALE_CODE) {
         imgSrc = femaleAvator;
+      } else {
+        imgSrc = otherAvator;
       }
     } else if (pOrO === ORG_CODE) {
       imgSrc = iconGeneralGgency;
