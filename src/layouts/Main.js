@@ -9,7 +9,7 @@ import { withRouter } from 'dva-react-router-3/router';
 import { connect } from 'dva-react-router-3';
 import Loading from './Loading';
 
-import CreateServiceRecord from '../components/customerPool/list/CreateServiceRecord';
+import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 
 import styles from './main.less';
 import '../css/skin.less';
@@ -128,7 +128,7 @@ export default class Main extends Component {
                     !interfaceState[effects.empInfo]) ?
                       <div>
                         {children}
-                        <CreateServiceRecord
+                        <ConnectedCreateServiceRecord
                           handleCloseClick={handleCloseClick}
                           loading={interfaceState[effects.addServeRecord]}
                           key={serviceRecordModalVisibleOfId}
