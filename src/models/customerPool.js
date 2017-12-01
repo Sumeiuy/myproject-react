@@ -116,7 +116,7 @@ export default {
     // cust uuid
     custUuid: '',
     // 删除文件结果
-    deleteFileResult: '',
+    deleteFileResult: [],
   },
 
   subscriptions: {
@@ -716,9 +716,10 @@ export default {
     // 删除文件
     * ceFileDelete({ payload }, { call, put }) {
       const { resultData } = yield call(api.ceFileDelete, payload);
+      const { attaches = EMPTY_LIST } = resultData;
       yield put({
         type: 'ceFileDeleteSuccess',
-        payload: resultData,
+        payload: attaches,
       });
     },
   },
