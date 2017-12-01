@@ -116,6 +116,10 @@ export default class EditForm extends PureComponent {
     super(props);
     const { underCustList, protocolDetail, location: { pathname } } = props;
     const isEdit = !_.isEmpty(protocolDetail) && pathname.indexOf('/edit') > -1;
+    let custOperate = false;
+    if (isEdit && protocolDetail.operationType === '新增或删除下挂客户') {
+      custOperate = true;
+    }
     this.state = {
       isEdit,
       // 附件类型列表
@@ -132,16 +136,18 @@ export default class EditForm extends PureComponent {
       // 协议产品是否可编辑，默认true
       productOperate: true,
       // 下挂客户是否可编辑，默认 true
-      custOperate: true,
+      custOperate,
       clearProduct: false,
       // 操作类型
       operationType: '',
     };
-  }
-
-  componentWillMount() {
     // 更新附件组件必传项
-    const hasCust = custAttachment[1];
+    let hasCust = custAttachment[1];
+    if (isEdit) {
+      if (protocolDetail.operationType === '协议退订') {
+        hasCust = custAttachment[0];
+      }
+    }
     this.setUploadConfig(hasCust);
   }
 
@@ -224,7 +230,6 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    console.warn('baseInfoData', baseInfoData);
     const { protocolClauseList, protocolDetail } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
@@ -392,7 +397,6 @@ export default class EditForm extends PureComponent {
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
-    console.warn('protocolDetail', this.props.protocolDetail);
     const { protocolDetail: { cust: propsCust } } = this.props;
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);

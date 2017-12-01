@@ -76,7 +76,6 @@ export default class Detail extends PureComponent {
     const scroll = {
       x: true,
     };
-    console.warn('protocolDetail', protocolDetail);
     let isTenLevel = true;
     if (protocolDetail.operationType === '协议订购') {
       // 判断是否是十档行情
