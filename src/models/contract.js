@@ -184,7 +184,8 @@ export default {
           payload: response,
         });
         // 如果详情的审批人与当前登陆人一致时，并且状态等于驳回时请求按钮接口
-        if (empId === response.resultData.approver && response.resultData.status == '04') {
+        // 2017/12/01,后端很确定地告诉，删掉状态值得判断
+        if (empId === response.resultData.approver) {
           const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
           yield put({
             type: 'getFlowStepInfoSuccess',
