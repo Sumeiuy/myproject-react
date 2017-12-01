@@ -37,8 +37,6 @@ const effects = {
   manageIndicators: 'customerPool/getManageIndicators',
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   getHotWds: 'customerPool/getHotWds',
-  getHistoryWdsList: 'customerPool/getHistoryWdsList',
-  clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
@@ -62,8 +60,6 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo, // 职位信息
   hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
-  historyWdsList: state.customerPool.historyWdsList, // 历史搜索
-  clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
@@ -80,8 +76,6 @@ const mapDispatchToProps = {
   getManageIndicators: fetchDataFunction(true, effects.manageIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
   getHotWds: fetchDataFunction(true, effects.getHotWds),
-  getHistoryWdsList: fetchDataFunction(false, effects.getHistoryWdsList),
-  clearSearchHistoryList: fetchDataFunction(false, effects.clearSearchHistoryList),
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -102,8 +96,6 @@ export default class Home extends PureComponent {
     getManageIndicators: PropTypes.func.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     getHotWds: PropTypes.func.isRequired,
-    getHistoryWdsList: PropTypes.func.isRequired,
-    clearSearchHistoryList: PropTypes.func.isRequired,
     saveSearchVal: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
@@ -112,7 +104,6 @@ export default class Home extends PureComponent {
     empInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
     hotWds: PropTypes.object,
-    historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
     searchHistoryVal: PropTypes.string,
     getInformation: PropTypes.func.isRequired,
@@ -139,7 +130,6 @@ export default class Home extends PureComponent {
     empInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
     hotWds: EMPTY_OBJECT,
-    historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
@@ -166,7 +156,6 @@ export default class Home extends PureComponent {
       getInformation,
       getToBeDone,
       getHotWds,
-      getHistoryWdsList,
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum = '', occDivnNum = '' } = empInfo;
@@ -181,8 +170,6 @@ export default class Home extends PureComponent {
     const authOrgId = this.isHasAuthorize ? this.orgId : '';
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
     getHotWds({ empNo: empNum });
-    // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
     // 待办事项
     getToBeDone({ orgId: authOrgId });
 
@@ -293,7 +280,7 @@ export default class Home extends PureComponent {
       location: {
         query: {
           cycleSelect,
-          orgId,
+        orgId,
         },
       },
     } = props;
@@ -362,32 +349,6 @@ export default class Home extends PureComponent {
     getHotPossibleWds({
       ...setData,
       ...state,
-    });
-  }
-
-  // 获取历史搜索
-  @autobind
-  queryHistoryWdsList() {
-    const { getHistoryWdsList } = this.props;
-    const setData = {
-      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
-    };
-    getHistoryWdsList({
-      ...setData,
-    });
-  }
-
-  // 清除历史搜索
-  @autobind
-  clearHistoryList() {
-    const { clearSearchHistoryList } = this.props;
-    const setData = {
-      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
-    };
-    clearSearchHistoryList({
-      ...setData,
     });
   }
 
@@ -525,8 +486,6 @@ export default class Home extends PureComponent {
       hotWds,
       hotPossibleWdsList,
       push,
-      historyWdsList,
-      clearState,
       searchHistoryVal,
       information,
       performanceIndicators,
@@ -541,12 +500,8 @@ export default class Home extends PureComponent {
         <Search
           data={hotWds}
           queryHotPossibleWds={this.queryHotPossibleWds}
-          queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
-          historyWdsList={historyWdsList}
-          clearSuccess={clearState}
-          clearFun={this.clearHistoryList}
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
           location={location}
