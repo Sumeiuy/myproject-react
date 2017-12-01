@@ -158,7 +158,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            _.isEmpty(attachmentList) ?
+            !_.isEmpty(attachmentList) ?
               attachmentList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}
