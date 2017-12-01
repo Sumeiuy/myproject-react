@@ -136,17 +136,14 @@ export default class PerformerViewDetail extends PureComponent {
     const { list, page } = targetCustList;
     const { serveStatus } = dict;
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = [];
-    _(serveStatus).forEach((item) => {
-      stateData.push({
-        value: item.key,
-        label: item.value,
-        show: true,
-      });
-    });
+    const stateData = serveStatus.map(o => ({
+      value: o.key,
+      label: o.value,
+      show: true,
+    }));
     stateData.unshift({
       value: '',
-      label: '全部',
+      label: '所有客户',
       show: true,
     });
     const curPageNo = targetCustomerPageNo || page.pageNum;
