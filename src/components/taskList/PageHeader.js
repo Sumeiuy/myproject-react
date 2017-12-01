@@ -209,8 +209,9 @@ export default class Pageheader extends PureComponent {
           type,
           status,
           drafterId,
-          createTimePartFrom,
-          createTimePartTo,
+          createTimeStart,
+          createTimeEnd,
+          missionName,
         },
       },
     } = this.props;
@@ -237,10 +238,11 @@ export default class Pageheader extends PureComponent {
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
-
+    // 搜索框回填
+    const missionNameValue = !_.isEmpty(missionName) ? missionName : '';
     // 默认时间
-    const startTime = createTimePartFrom ? moment(createTimePartFrom) : null;
-    const endTime = createTimePartTo ? moment(createTimePartTo) : null;
+    const startTime = createTimeStart ? moment(createTimeStart) : null;
+    const endTime = createTimeEnd ? moment(createTimeEnd) : null;
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
     const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
@@ -253,6 +255,7 @@ export default class Pageheader extends PureComponent {
               placeholder="任务名称"
               style={{ width: 186 }}
               onSearch={this.handleSearchChange}
+              defaultValue={missionNameValue}
             />
           </div>
           <div className={styles.filterFl}>
