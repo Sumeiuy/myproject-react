@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
+import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -15,10 +15,8 @@ import Icon from '../../common/Icon';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
-const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-let COUNT = 0;
 let searchInput;
 const NONE_INFO = '没有匹配内容';
 export default class Search extends PureComponent {
@@ -26,13 +24,9 @@ export default class Search extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     queryHotPossibleWds: PropTypes.func,
-    queryHistoryWdsList: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
     orgId: PropTypes.string,
-    historyWdsList: PropTypes.array,
-    clearSuccess: PropTypes.object,
-    clearFun: PropTypes.func,
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
@@ -41,60 +35,38 @@ export default class Search extends PureComponent {
   static defaultProps = {
     data: EMPTY_OBJECT,
     queryHotPossibleWds: () => { },
-    queryHistoryWdsList: () => { },
-    clearFun: () => { },
     saveSearchVal: () => { },
-    clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
-    historyWdsList: EMPTY_LIST,
     searchHistoryVal: '',
   }
 
-  state = {
-    dataSource: EMPTY_LIST,
-    inputVal: '',
-    isHasSearchResult: true,
-    historySource: [{
-      title: '历史搜索',
-      children: [{
-        id: `history_${COUNT++}`,
-        labelNameVal: '无',
-        labelMapping: '',
-        tagNumId: '',
-        labelDesc: '',
-      }],
-    }],
+  constructor(props) {
+    super(props);
+    const { queryHotWdsData = EMPTY_LIST, searchHistoryVal = '' } = props;
+
+    this.state = {
+      // 页面初始化的时候，选择上一次的数据，生成option
+      dataSource: this.searchResult(searchHistoryVal, queryHotWdsData),
+      inputVal: searchHistoryVal || '',
+      isHasSearchResult: !_.isEmpty(searchHistoryVal),
+    };
   }
 
+
   componentDidMount() {
-    this.handleCreatHistoryList(this.props.historyWdsList);
     searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
     if (searchInput) {
       searchInput.addEventListener('keydown', this.handleSearchInput, false);
     }
-    const { searchHistoryVal } = this.props;
-    this.handleSearch(searchHistoryVal);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { historyWdsList: preHistoryWdsList, clearSuccess: preClearSeccess } = this.props;
-    const { queryHotWdsData: nextQueryHotWdsData,
-      historyWdsList: nextHistoryWdsList,
-      clearSuccess: nextClearSeccess } = nextProps;
+    const { queryHotWdsData: nextQueryHotWdsData } = nextProps;
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
     });
-    if (!_.isEqual(nextHistoryWdsList, preHistoryWdsList)) {
-      this.handleCreatHistoryList(nextHistoryWdsList);
-    }
-    if (nextClearSeccess !== preClearSeccess) {
-      const { code, resultData } = nextClearSeccess;
-      if (code !== '0') {
-        message.error(resultData);
-      }
-    }
   }
 
   componentWillUnmount() {
@@ -108,7 +80,6 @@ export default class Search extends PureComponent {
     this.setState({
       inputVal: value,
     });
-    this.handleSearch(value);
   }
 
   @autobind
@@ -171,32 +142,6 @@ export default class Search extends PureComponent {
         state: {
           ...query,
         },
-      });
-    }
-  }
-
-  // 历史搜索数据集合
-  @autobind
-  handleCreatHistoryList(data) {
-    if (!_.isEmpty(data) && data.length > 0) {
-      const historyList = [];
-      data.forEach((item) => {
-        if (!_.isEmpty(item)) {
-          historyList.push({
-            labelNameVal: item,
-            labelMapping: '',
-            tagNumId: item,
-            // id: `historyList${COUNT++}`,
-            id: item,
-            labelDesc: '',
-          });
-        }
-      });
-      this.setState({
-        historySource: [{
-          title: '历史搜索',
-          children: historyList,
-        }],
       });
     }
   }
@@ -278,7 +223,7 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource, inputVal, isHasSearchResult } = this.state;
+    const { dataSource, inputVal, isHasSearchResult } = this.state;
     let newData;
     if (isHasSearchResult) {
       // 有搜索结果
@@ -290,9 +235,7 @@ export default class Search extends PureComponent {
     if (!_.isEmpty(inputVal)) {
       return newData;
     }
-    const history = this.renderGroup(historySource);
-    const options = newData.concat(history);
-    return options;
+    return null;
   }
 
   @autobind
@@ -327,25 +270,6 @@ export default class Search extends PureComponent {
     });
   }
 
-  // 清除历史搜索
-  @autobind
-  handleClearHistory() {
-    const { clearFun } = this.props;
-    clearFun();
-    this.setState({
-      historySource: [{
-        title: '历史搜索',
-        children: [{
-          id: `history_${COUNT++}`,
-          labelNameVal: '无',
-          labelMapping: '',
-          tagNumId: '',
-          labelDesc: '',
-        }],
-      }],
-    });
-  }
-
   @autobind
   renderOption(item) {
     const { inputVal } = this.state;
@@ -376,57 +300,6 @@ export default class Search extends PureComponent {
       <Option key={item.id} text={item.labelNameVal} disabled>
         {item.desc}
       </Option>
-    );
-  }
-
-  renderGroup(dataSource) {
-    const options = dataSource.map(group => (
-      <OptGroup
-        key={group.title}
-        label={this.renderTitle(group.title)}
-      >
-        {group.children.map(item => (
-          item.labelNameVal === '无' ?
-            <Option key={item.id} text={item.labelNameVal} disabled>
-              {item.labelNameVal}
-            </Option> :
-            <Option key={item.id} text={item.labelNameVal} >
-              <a
-                onClick={() => this.handleOpenTab({
-                  source: 'search',
-                  labelMapping: item.labelMapping || '',
-                  tagNumId: item.tagNumId || '',
-                  q: encodeURIComponent(item.labelNameVal),
-                }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-                rel="noopener noreferrer"
-              >
-                {item.labelNameVal}
-              </a>
-            </Option>
-        ))}
-      </OptGroup>
-    ));
-    return options;
-  }
-
-  renderTitle(title) {
-    const { historySource } = this.state;
-    if (historySource[0].children[0].labelNameVal === '无') {
-      return (<span>
-        {title}
-      </span>);
-    }
-    return (
-      <span>
-        {title}
-        <a
-          className={styles.delHistory_a}
-          rel="noopener noreferrer"
-          onClick={this.handleClearHistory}
-        >
-          <AntdIcon type="delete" />清除历史记录
-        </a>
-      </span>
     );
   }
 
