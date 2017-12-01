@@ -117,8 +117,12 @@ export default class EditBaseInfo extends PureComponent {
         operationType: formData.operationType,
         // 所选子类型
         subType: formData.subType,
-        // 所选客户
-        client: EMPTY_OBJECT,
+        // 客户信息
+        client: {
+          cusId: formData.custId,
+          custType: formData.custType,
+          brokerNumber: formData.econNum,
+        },
         // 所选协议模板
         protocolTemplate: {
           prodName: formData.templateId,
@@ -540,7 +544,6 @@ export default class EditBaseInfo extends PureComponent {
         },
       ];
     }
-    console.warn('protocolTemplate', protocolTemplate);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -641,7 +644,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
-            value={isEditPage ? protocolDetail.content : content}
+            value={content}
           />
         </InfoForm>
       </div>
