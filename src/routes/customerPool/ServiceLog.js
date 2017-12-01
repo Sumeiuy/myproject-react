@@ -92,6 +92,7 @@ export default class CreateTaskForm extends PureComponent {
   }
   componentWillMount() {
     const { serviceLogData } = this.props;
+    console.log(serviceLogData);
     if (!_.isEmpty(serviceLogData)) {
       this.setState({
         logData: serviceLogData,
