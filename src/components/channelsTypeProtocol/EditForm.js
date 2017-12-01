@@ -225,7 +225,7 @@ export default class EditForm extends PureComponent {
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
     console.warn('baseInfoData', baseInfoData);
-    const { protocolClauseList, protocolDetail } = this.props;
+    const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
     // 生成订购时的数据
@@ -263,9 +263,10 @@ export default class EditForm extends PureComponent {
         cust,
       };
     }
-    if (!isEdit) {
+    if (!(pathname.indexOf('/edit') > -1)) {
       formData.submitFlag = 'Y';
     }
+    console.log('abcd', !isEdit, formData);
     return formData;
   }
 
