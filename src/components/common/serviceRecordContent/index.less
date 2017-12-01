@@ -255,6 +255,17 @@
         .ant-upload-list-item-name {
           display: inline;
         }
+        .ant-upload-list-item-info {
+          width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .anticon-cross {
+          font-size: 15px;
+          position: absolute;
+          right: 0;
+        }
         .txt {
           color: #557bba;
         }
@@ -318,5 +329,16 @@
   }
   .hidden {
     display: none !important;
+  }
+  .disabledDate {
+    pointer-events: none;
+    cursor: not-allowed;
+    input {
+      background: #f7f7f7;
+      border-color: #d9d9d9;
+      background-color: #f7f7f7;
+      opacity: 1;
+      color: rgba(0, 0, 0, 0.25);
+    }
   }
 }
