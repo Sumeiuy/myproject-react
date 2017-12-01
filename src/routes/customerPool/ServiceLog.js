@@ -90,6 +90,16 @@ export default class CreateTaskForm extends PureComponent {
       pageNum: 1,
     };
   }
+  componentWillMount() {
+    const { serviceLogData } = this.props;
+    console.log(serviceLogData);
+    if (!_.isEmpty(serviceLogData)) {
+      this.setState({
+        logData: serviceLogData,
+        showBtn: _.isEmpty(serviceLogData),
+      });
+    }
+  }
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
