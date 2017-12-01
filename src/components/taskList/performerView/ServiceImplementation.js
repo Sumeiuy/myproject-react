@@ -22,7 +22,7 @@ export default function ServiceImplementation({
   dict,
   addServeRecord,
   isFold,
-  targetCustList,
+  list,
   handleCollapseClick,
   getServiceRecord,
   serviceRecordData,
@@ -31,9 +31,9 @@ export default function ServiceImplementation({
   custIncomeReqState,
   targetCustDetail,
   changeParameter,
-  parameter,
-  parameter: { targetCustId = '' },
-  queryTargetCust,
+  parameter: {
+    targetCustId = '',
+  },
   queryCustUuid,
   custUuid,
   getCustDetail,
@@ -43,10 +43,6 @@ export default function ServiceImplementation({
   getCeFileList,
   filesList,
 }) {
-  const { list = [] } = targetCustList;
-  if (_.isEmpty(list)) {
-    return null;
-  }
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
 
@@ -95,6 +91,7 @@ export default function ServiceImplementation({
   return (
     <div>
       <TargetCustomer
+        list={list}
         currentId={currentId}
         isFold={isFold}
         currentCustId={currentCustId}
@@ -107,11 +104,8 @@ export default function ServiceImplementation({
         monthlyProfits={monthlyProfits}
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
-        parameter={parameter}
-        queryTargetCust={queryTargetCust}
         queryCustUuid={queryCustUuid}
         getCustDetail={getCustDetail}
-        {...targetCustList}
         getCeFileList={getCeFileList}
         filesList={filesList}
       />
@@ -135,7 +129,7 @@ ServiceImplementation.propTypes = {
   addServeRecord: PropTypes.func.isRequired,
   dict: PropTypes.object,
   isFold: PropTypes.bool,
-  targetCustList: PropTypes.object.isRequired,
+  list: PropTypes.array.isRequired,
   handleCollapseClick: PropTypes.func.isRequired,
   getServiceRecord: PropTypes.func.isRequired,
   serviceRecordData: PropTypes.object,
@@ -145,7 +139,6 @@ ServiceImplementation.propTypes = {
   targetCustDetail: PropTypes.object.isRequired,
   parameter: PropTypes.object.isRequired,
   changeParameter: PropTypes.func.isRequired,
-  queryTargetCust: PropTypes.func.isRequired,
   queryCustUuid: PropTypes.func.isRequired,
   custUuid: PropTypes.string.isRequired,
   getCustDetail: PropTypes.func.isRequired,

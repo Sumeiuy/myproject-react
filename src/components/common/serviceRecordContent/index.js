@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 14:05:50
+ * @Last Modified time: 2017-12-01 15:56:53
  */
 
 
@@ -85,7 +85,7 @@ export default class ServiceRecordContent extends PureComponent {
     isFold: PropTypes.bool,
     isReadOnly: PropTypes.bool,
     beforeUpload: PropTypes.func,
-    custUuid: PropTypes.string.isRequired,
+    custUuid: PropTypes.string,
     onDeleteFile: PropTypes.func.isRequired,
   }
 
@@ -97,6 +97,7 @@ export default class ServiceRecordContent extends PureComponent {
     isReadOnly: false,
     beforeUpload: () => { },
     isUploadFileManually: true,
+    custUuid: '',
   }
 
   constructor(props) {
@@ -176,6 +177,7 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { serviceTypeCode = '', serviceTypeName = '' },
       isReadOnly,
     } = props;
+
 
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
@@ -507,30 +509,30 @@ export default class ServiceRecordContent extends PureComponent {
     const firstCol = isFold ? 8 : 24;
     const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
 
-    const serviceDateProps = !isReadOnly ? {
+    const serviceDateProps = {
       allowClear: false,
       value: moment(serviceDate, showDateFormat),
       format: showDateFormat,
       onChange: this.handleServiceDate,
       disabledDate: this.disabledDate,
-    } : { disabled: true };
+    };
 
-    const serviceTimeProps = !isReadOnly ? {
+    const serviceTimeProps = {
       placeholder: '选择时间',
       value: moment(serviceTime, timeFormat),
       onChange: this.handleServiceTime,
       format: timeFormat,
       disabledHours: this.disabledHours,
       disabledMinutes: this.disabledMinutes,
-    } : { disabled: true };
+    };
 
-    const feedbackTimeProps = !isReadOnly ? {
+    const feedbackTimeProps = {
       allowClear: false,
       value: moment(feedbackDate, showDateFormat),
       format: showDateFormat,
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
-    } : { disabled: true };
+    };
 
     return (
       <div className={styles.serviceRecordContent}>
@@ -620,6 +622,9 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.content}>
                   <DatePicker
                     style={width}
+                    className={classnames({
+                      [styles.disabledDate]: isReadOnly,
+                    })}
                     {...serviceDateProps}
                     defaultValue={moment(CURRENT_DATE, showDateFormat)}
                   />
@@ -694,6 +699,9 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.content}>
                   <DatePicker
                     style={width}
+                    className={classnames({
+                      [styles.disabledDate]: isReadOnly,
+                    })}
                     {...feedbackTimeProps}
                     defaultValue={moment(CURRENT_DATE, showDateFormat)}
                   />
