@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -75,8 +76,12 @@ export default class Detail extends PureComponent {
     const scroll = {
       x: true,
     };
-    // 判断是否是十档行情
-    const isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
+    console.warn('protocolDetail', protocolDetail);
+    let isTenLevel = true;
+    if (protocolDetail.operationType === '协议订购') {
+      // 判断是否是十档行情
+      isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
+    }
     // 判断是否显示下挂客户
     const showUnderCust = !isTenLevel && protocolDetail.multiUsedFlag === 'Y';
     // 判断是否显示协议编号
@@ -154,7 +159,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            attachmentList.length ?
+            _.isEmpty(attachmentList) ?
               attachmentList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}

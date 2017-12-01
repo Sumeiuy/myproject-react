@@ -120,11 +120,15 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
+    const { formData } = this.state;
+    // applyType 值 1是订购。2是退订
+    // 根据idKey，来区分是订购的，还是退订的附件
+    const idKey = formData.applyType === '2' ? 'tduuid' : 'uuid';
     this.setState({
       ...this.state,
       formData: {
-        ...this.state.formData,
-        uuid: attachment,
+        ...formData,
+        [idKey]: attachment,
       },
     }, () => {
       this.props.uploadAttachment(this.state.formData);

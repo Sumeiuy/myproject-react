@@ -87,7 +87,6 @@ export default class CreateTaskForm extends PureComponent {
       pageNum: 1,
     };
   }
-
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
