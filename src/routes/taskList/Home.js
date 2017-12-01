@@ -228,7 +228,7 @@ export default class PerformerView extends PureComponent {
     }
   }
 
-  // 获取目标客户列表项的对应浮层详情
+  // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
   getCustDetail({ missionId = '', custId = '' }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;

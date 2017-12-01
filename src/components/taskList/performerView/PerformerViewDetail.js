@@ -42,6 +42,20 @@ export default class PerformerViewDetail extends PureComponent {
     isFold: true,
   }
 
+  // 查询目标客户的列表和
+  @autobind
+  queryTargetCustInfo(obj) {
+    const {
+      currentId,
+      queryTargetCust,
+      getCustDetail,
+    } = this.props;
+    queryTargetCust({
+      ...obj,
+      missionId: currentId,
+    }).then(() => getCustDetail({ missionId: currentId }));
+  }
+
   @autobind
   handlePageChange(pageNo) {
     const {
@@ -49,21 +63,17 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageSize = PAGE_SIZE,
         targetCustomerState,
       },
-      currentId,
       changeParameter,
-      queryTargetCust,
-      getCustDetail,
     } = this.props;
     changeParameter({
       targetCustomerPageNo: pageNo,
+      targetCustId: '',
     });
-    queryTargetCust({
+    this.queryTargetCustInfo({
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
       pageNum: pageNo,
-      missionId: currentId,
-      orgId: '',
-    }).then(() => getCustDetail({ missionId: currentId }));
+    });
   }
 
   @autobind
@@ -72,44 +82,36 @@ export default class PerformerViewDetail extends PureComponent {
       parameter: {
         targetCustomerState,
       },
-      currentId,
       changeParameter,
-      queryTargetCust,
-      getCustDetail,
     } = this.props;
     changeParameter({
       targetCustomerPageSize: pageSize,
       targetCustomerPageNo: PAGE_NO,
+      targetCustId: '',
     });
-    queryTargetCust({
+    this.queryTargetCustInfo({
       state: targetCustomerState,
       pageSize,
       pageNum: PAGE_NO,
-      missionId: currentId,
-      orgId: '',
-    }).then(() => getCustDetail({ missionId: currentId }));
+    });
   }
 
   @autobind
   handleStateChange(key, v) {
     const {
-      currentId,
       changeParameter,
-      queryTargetCust,
-      getCustDetail,
     } = this.props;
     changeParameter({
       [key]: v,
       targetCustomerPageSize: PAGE_SIZE,
       targetCustomerPageNo: PAGE_NO,
+      targetCustId: '',
     });
-    queryTargetCust({
+    this.queryTargetCustInfo({
       state: v,
       pageSize: PAGE_SIZE,
       pageNum: PAGE_NO,
-      missionId: currentId,
-      orgId: '',
-    }).then(() => getCustDetail({ missionId: currentId }));
+    });
   }
 
   render() {
