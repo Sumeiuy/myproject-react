@@ -27,6 +27,7 @@ export default class ServiceRecordForm extends PureComponent {
     custUuid: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -102,6 +103,7 @@ export default class ServiceRecordForm extends PureComponent {
       formData: { serviceTips },
       custUuid,
       isReadOnly,
+      deleteFileResult,
     } = this.props;
 
     if (!dict) {
@@ -132,6 +134,7 @@ export default class ServiceRecordForm extends PureComponent {
           isFold={isFold}
           custUuid={custUuid}
           onDeleteFile={this.handleDeleteFile}
+          deleteFileResult={deleteFileResult}
         />
 
         {

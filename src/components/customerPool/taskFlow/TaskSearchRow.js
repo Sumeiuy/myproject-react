@@ -14,6 +14,7 @@ import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
+import Clickable from '../../../components/common/Clickable';
 
 
 const RadioGroup = Radio.Group;
@@ -193,9 +194,12 @@ export default class TaskSearchRow extends PureComponent {
                 className={styles.title}
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
-              <Button className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>
-                查看客户
-              </Button>
+              <Clickable
+                onClick={() => this.handleSeeCust(item)}
+                eventName="/click/taskSearchRow/checkCust"
+              >
+                <Button className={styles.seeCust}>查看客户</Button>
+              </Clickable>
             </Radio>
             <h4 className={styles.titExp}>瞄准镜标签，共有
                 <span>{item.customNum}</span>客户。创建时间：{item.createDate || '--'}，创建人：{item.createrName || '--'}
@@ -247,7 +251,12 @@ export default class TaskSearchRow extends PureComponent {
                 onCancel={this.handleCancel}
                 closable={false}
                 footer={[
-                  <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
+                  <Clickable
+                    onClick={this.handleCancel}
+                    eventName="/click/taskSearchRow/close"
+                  >
+                    <Button key="back" size="large">关闭</Button>
+                  </Clickable>,
                 ]}
                 width={700}
                 wrapClassName={styles.labelCustModalContainer}

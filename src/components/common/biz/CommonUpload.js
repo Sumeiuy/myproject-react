@@ -209,6 +209,9 @@ export default class CommonUpload extends PureComponent {
         attachment,
       },
       action: `${request.prefix}/file/ceFileUpload`,
+      headers: {
+        accept: '*/*',
+      },
       onChange: this.onChange,
       showUploadList: false,
       fileList,

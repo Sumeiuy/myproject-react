@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Paganation from '../../common/Paganation';
+import Clickable from '../../../components/common/Clickable';
 import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
@@ -185,14 +186,16 @@ export default class GroupTable extends PureComponent {
             render: (text, record) =>
               <div className={styles.operation}>
                 {
-                  _.map(actionSource, itemData =>
-                    <span
-                      className={styles.link}
-                      key={itemData.type}
+                  _.map(actionSource, itemData => (
+                    <Clickable
                       onClick={() => itemData.handler(record)}
+                      eventName="/click/groupTabel/operationLastColumn"
                     >
-                      {itemData.type}
-                    </span>,
+                      <span className={styles.link} key={itemData.type}>
+                        {itemData.type}
+                      </span>
+                    </Clickable>
+                  ),
                   )
                 }
               </div>,
@@ -204,16 +207,18 @@ export default class GroupTable extends PureComponent {
             width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
             title: item.value,
             fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
-            render: (text, record) =>
+            render: (text, record) => (
               <div className={styles.operation}>
-                <span
-                  title={record[item.key]}
-                  className={styles.link}
+                <Clickable
                   onClick={() => firstColumnHandler(record)}
+                  eventName="/click/groupTabel/operationFirstColumn"
                 >
-                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
-                </span>
-              </div>,
+                  <span title={record[item.key]} className={styles.link}>
+                    {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+                  </span>
+                </Clickable>
+              </div>
+            ),
           };
         }
 
@@ -226,13 +231,14 @@ export default class GroupTable extends PureComponent {
             if (index === 0 && isFirstColumnLink) {
               return (
                 <div className={styles.operation}>
-                  <span
-                    title={record[item.key]}
-                    className={styles.link}
+                  <Clickable
                     onClick={() => firstColumnHandler(record)}
+                    eventName="/click/groupTabel/operationColumn"
                   >
-                    {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
-                  </span>
+                    <span title={record[item.key]} className={styles.link}>
+                      {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+                    </span>
+                  </Clickable>
                 </div>
               );
             }
