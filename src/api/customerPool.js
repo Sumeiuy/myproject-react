@@ -108,7 +108,7 @@ export default function customerPool(api) {
     queryFlowStepInfo: query => api.post('/groovynoauth/fsp/cust/task/queryFlowStepInfo', query),
 
     queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
-    
+
     queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 
     // 提交任务流程
