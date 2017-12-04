@@ -21,6 +21,7 @@ import styles from './customerRow.less';
 
 import maleAvator from '../../../../static/images/icon-avator.png';
 import femaleAvator from '../../../../static/images/female-avator.png';
+import otherAvator from '../../../../static/images/otherAvator.png';
 import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
 import iconProductAgency from '../../../../static/images/icon-product-agency.png';
 import iconMoney from '../../../../static/images/icon-money.png';
@@ -30,6 +31,7 @@ import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
 // import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
+import Clickable from '../../../components/common/Clickable';
 
 // 客户男女code码
 const MALE_CODE = '109001';
@@ -207,18 +209,22 @@ export default class CustomerRow extends PureComponent {
         imgSrc = maleAvator;
       } else if (genderCode === FEMALE_CODE) {
         imgSrc = femaleAvator;
+      } else {
+        imgSrc = otherAvator;
       }
     } else if (pOrO === ORG_CODE) {
       imgSrc = iconGeneralGgency;
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    return (<img
-      className={styles.avatorImage}
-      src={imgSrc}
-      alt=""
-      onClick={this.toDetail}
-    />);
+    return (
+      <Clickable
+        onClick={this.toDetail}
+        eventName="/click/custListRow/imgClick"
+      >
+        <img className={styles.avatorImage} src={imgSrc} alt="" />
+      </Clickable>
+    );
   }
 
   renderRankImg(listItem = {}) {
@@ -297,7 +303,7 @@ export default class CustomerRow extends PureComponent {
         >
           <div className={`${styles.customerRowLeft} clear`}>
             <div className={styles.avatorContent}>
-              {this.renderAvator(listItem)}
+              { this.renderAvator(listItem) }
               <div className={styles.avatorText}>{custNatureName[listItem.pOrO] || ''}</div>
               {
                 this.renderRankImg(listItem)
@@ -307,9 +313,14 @@ export default class CustomerRow extends PureComponent {
           <div className={styles.customerRowRight}>
             <div className="row-one">
               {
-                listItem.name ?
-                  <span className="name" onClick={this.toDetail}>{listItem.name}</span> :
-                  null
+                listItem.name ? (
+                  <Clickable
+                    onClick={this.toDetail}
+                    eventName="/click/custListRow/nameClick"
+                  >
+                    <span className="name">{listItem.name}</span>
+                  </Clickable>
+                ) : null
               }
               <span>{listItem.custId}</span>
               <span className="cutOffLine">|</span>

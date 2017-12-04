@@ -36,6 +36,7 @@ export default class PerformerViewDetail extends PureComponent {
     queryTargetCust: PropTypes.func.isRequired,
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {

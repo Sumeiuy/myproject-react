@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-01 17:24:04
+ * @Last Modified time: 2017-12-04 09:40:47
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -38,7 +38,7 @@ export default class Uploader extends PureComponent {
     custUuid: PropTypes.string,
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
-    deleteFileResult: PropTypes.array.isRequired,
+    deleteFileResult: PropTypes.array,
   }
 
   static defaultProps = {
@@ -56,6 +56,7 @@ export default class Uploader extends PureComponent {
     isUploadFileManually: false,
     custUuid: '',
     isSupportUploadMultiple: false,
+    deleteFileResult: [],
   }
 
   constructor(props) {

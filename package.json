@@ -140,7 +140,7 @@
     "subTaskConcurrency": 1,
     "concurrent": false,
     "linters": {
-      "src/**/*.js": "eslint --ext .js",
+      "src/**/*.js": "eslint --ext .js --fix",
       "src/**/*.less": "stylelint --syntax less"
     }
   },

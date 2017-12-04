@@ -14,6 +14,7 @@ import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 import { fspGlobal } from '../../../utils';
+import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
 
@@ -162,8 +163,18 @@ export default class CreateTaskFormFlow extends PureComponent {
               }
             >
               <div className={styles.task_btn}>
-                <Button onClick={this.handleCancleTab}>取消</Button>
-                <Button type="primary" onClick={this.handleSubmit}>提交</Button>
+                <Clickable
+                  onClick={this.handleCancleTab}
+                  eventName="/click/createTaskForm/cancel"
+                >
+                  <Button>取消</Button>
+                </Clickable>
+                <Clickable
+                  onClick={this.handleSubmit}
+                  eventName="/click/createTaskForm/submit"
+                >
+                  <Button type="primary">提交</Button>
+                </Clickable>
               </div>
             </div>
           </div>
