@@ -17,8 +17,6 @@ export default {
   state: {
     // 记录详情中的参数
     parameter: {},
-    // 执行者视图、管理者视图、创建者视图公共列表
-    taskList: EMPTY_OBJ,
     // 任务详情中基本信息
     taskDetailBasicInfo: EMPTY_OBJ,
     // 任务详情中目标客户列表信息
@@ -110,15 +108,6 @@ export default {
           ...prevParameter,
           ...payload,
         },
-      });
-    },
-
-    // 执行者视图、管理者视图、创建者视图公共列表
-    * getTaskList({ payload }, { call, put }) {
-      const listResponse = yield call(api.queryTaskList, payload);
-      yield put({
-        type: 'getTaskListSuccess',
-        payload: listResponse,
       });
     },
 

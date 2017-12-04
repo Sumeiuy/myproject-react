@@ -6,10 +6,20 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
-
 import styles from './basicInfo.less';
+
+// 暂时的来源类型，具体需要和后端定一下
+const sourceType = [{
+  key: 'import',
+  value: '客户细分导入',
+},
+{
+  key: 'SightLabel',
+  value: '瞄准镜标签',
+}];
 
 export default class BasicInfo extends PureComponent {
 
@@ -24,6 +34,15 @@ export default class BasicInfo extends PureComponent {
     servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
+    // 客户来源
+    custSource: PropTypes.string,
+    // 客户总数
+    custTotal: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    // 客户来源说明
+    custSourceDescription: PropTypes.string,
   }
 
   static defaultProps = {
@@ -32,6 +51,9 @@ export default class BasicInfo extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
+    custSource: '',
+    custTotal: '',
+    custSourceDescription: '',
   }
 
   render() {
@@ -41,6 +63,9 @@ export default class BasicInfo extends PureComponent {
       missionTarget,
       servicePolicy,
       isFold,
+      custSource,
+      custSourceDescription,
+      custTotal,
     } = this.props;
     const colSpanValue = isFold ? 12 : 24;
     return (
@@ -65,6 +90,29 @@ export default class BasicInfo extends PureComponent {
               </p>
             </Col>
           </Row>
+          {
+            !_.isEmpty(_.find(sourceType, item => item.key === custSource)) ?
+              <div>
+                <Row className={styles.rowItem}>
+                  <Col span={colSpanValue} className={styles.colItem}>
+                    <span className={styles.label}>客户来源:&nbsp;</span>
+                    <span className={styles.content}>{custSource || '--'}</span>
+                  </Col>
+                  <Col span={colSpanValue} className={styles.colItem}>
+                    <span className={styles.label}>客户总数:&nbsp;</span>
+                    <span className={styles.content}>{Number(custTotal) || 0}</span>
+                  </Col>
+                </Row>
+                <Row className={styles.rowItem}>
+                  <Col className={styles.colItem}>
+                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
+                    <p className={`${styles.content} ${styles.servicePolicy}`}>
+                      {custSourceDescription || '--'}
+                    </p>
+                  </Col>
+                </Row>
+              </div> : null
+          }
         </div>
       </div>
     );

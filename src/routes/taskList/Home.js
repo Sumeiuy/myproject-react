@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
+import ManagerViewDetail from '../../components/taskList/managerView/ManagerViewDetail';
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
@@ -30,7 +31,7 @@ const {
 
 const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
-// const CONTROLLER = 'controller'; //管理者视图视图
+const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
@@ -41,7 +42,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const effects = {
-  getTaskList: 'performerView/getTaskList',
+  getTaskList: 'commonView/getTaskList',
   addServiceRecord: 'performerView/addMotServeRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
@@ -62,7 +63,7 @@ const mapStateToProps = state => ({
   parameter: state.performerView.parameter,
   // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
-  list: state.performerView.taskList,
+  list: state.commonView.taskList,
   dict: state.app.dict,
   // 详情中目标客户的数据
   targetCustList: state.performerView.targetCustList,
@@ -221,6 +222,7 @@ export default class PerformerView extends PureComponent {
       }
       const { missionViewType: st, typeCode, typeName } = item;
       this.setState({
+        // 当前视图（三种）
         currentView: st,
         activeRowIndex: itemIndex,
         typeCode,
@@ -259,6 +261,9 @@ export default class PerformerView extends PureComponent {
         break;
       case EXECUTOR:
         this.loadDetailContent(record);
+        break;
+      case CONTROLLER:
+        this.loadManagerViewDetailContent(record);
         break;
       default:
         break;
@@ -341,6 +346,14 @@ export default class PerformerView extends PureComponent {
           />
         );
         break;
+      case CONTROLLER:
+        detailComponent = (
+          <ManagerViewDetail
+            currentId={currentId}
+            dict={dict}
+          />
+        );
+        break;
       default:
         break;
     }
@@ -395,6 +408,18 @@ export default class PerformerView extends PureComponent {
       pageNum: 1,
       pageSize: 8,
     }).then(() => this.getCustDetail({ missionId: obj.id }));
+  }
+
+  @autobind
+  loadManagerViewDetailContent(record = {}) {
+    console.log(record);
+    const {
+      getTaskDetailBasicInfo,
+    } = this.props;
+    // 获取任务基本信息
+    getTaskDetailBasicInfo({
+      taskId: record.id,
+    });
   }
 
   @autobind
@@ -524,7 +549,7 @@ export default class PerformerView extends PureComponent {
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
-    const { activeRowIndex } = this.state;
+    const { activeRowIndex, currentView } = this.state;
     return (
       <ViewListRow
         key={record.id}
@@ -532,7 +557,7 @@ export default class PerformerView extends PureComponent {
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
         index={index}
-        pageName="performerView"
+        pageName={currentView === CONTROLLER ? 'managerView' : 'performerView'}
         pageData={taskList}
       />
     );
