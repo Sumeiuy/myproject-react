@@ -297,7 +297,8 @@ export default class TableTransfer extends Component {
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     // 第二步，是否为右表首列子项添加 check 框
     const totalData = [...firstData, ...secondData];
-    const checkFlag = this.isNeedCheckColumn(totalData);
+    const checkFlag = this.isHasChildren(totalData);
+    // check column 和 用户自定义 column，因都操作了render，故是互斥的。
     const initSecondColumns = checkFlag ? (
       this.initTableColumn(secondColumns, defaultCheckKey, disableCheckKey)
     ) : secondColumns;
@@ -365,14 +366,31 @@ export default class TableTransfer extends Component {
     return newData;
   }
 
-  // 判断，有children，则需展示check column
-  // check column 和 用户自定义 column，因都操作了render，故是互斥的。
-  isNeedCheckColumn(data) {
+  // 判断是否children，可展开。
+  isHasChildren(data) {
     const newData = _.filter(
       data,
       item => item.children,
     );
     return !_.isEmpty(newData);
+  }
+
+  // firfox浏览器上，table设置scroll的y属性时，无论是否上下滑动，竖向滚动条的位置始终存在。
+  // 选择性的设置scroll的y属性，只有在数据有children时，设置，其他，不设置。
+  @autobind
+  setTableScroll(data) {
+    const { scrollX } = this.props;
+    const hasChildren = this.isHasChildren(data);
+    if (scrollX === '') {
+      if (!hasChildren) {
+        return {};
+      }
+      return { y: 248 }; // 245 groogle
+    }
+    if (!hasChildren) {
+      return { x: scrollX };
+    }
+    return { y: 248, x: scrollX };
   }
 
   // 为child行，第一列增加check框
@@ -738,7 +756,6 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
-      scrollX,
     } = this.props;
     const {
       firstArray,
@@ -774,11 +791,9 @@ export default class TableTransfer extends Component {
       }
       return column;
     });
-    let scroll = { y: 245 };
-    // scrollX 的默认值是 ''
-    if (scrollX !== '') {
-      scroll = { y: 253, x: scrollX };
-    }
+
+    const firstScroll = this.setTableScroll(firstArray);
+    const secondScroll = this.setTableScroll(secondArray);
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -800,7 +815,7 @@ export default class TableTransfer extends Component {
             columns={newFirstColumn}
             dataSource={firstArray}
             pagination={pagination}
-            scroll={scroll}
+            scroll={firstScroll}
           />
         </div>
         <div className={styles.rightContent}>
@@ -815,7 +830,7 @@ export default class TableTransfer extends Component {
             columns={newSecondColumn}
             dataSource={secondArray}
             pagination={pagination}
-            scroll={scroll}
+            scroll={secondScroll}
           />
         </div>
       </div>

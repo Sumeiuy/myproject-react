@@ -127,8 +127,19 @@
           color: #666;
         }
         .ant-table-body {
-          height: 253px;
+          min-height: 296px;
         }
+        .ant-table-scroll {
+          .ant-table-header {
+            overflow: auto;
+            margin-bottom: 0 !important;
+          }
+          .ant-table-body {
+            min-height: 246px;
+            overflow-y: auto !important;
+          }
+        }
+
         .ant-table-tbody > tr > td {
           padding: 8px 8px 16px;
           text-align: left;
