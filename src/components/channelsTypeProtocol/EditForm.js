@@ -43,13 +43,14 @@ const attachmentRequired = {
 const custAttachment = ['noNeed', 'noCust', 'hasCust'];
 
 // 订购的value
-const subscribe = 'Subscribe';
 const unSubscribe = 'Unsubscribe';
 const addDel = 'AddDel';
+const subscribeArray = ['Subscribe', '协议订购'];
 // 客户失败状态
-// const openFailed = '开通失败';
-// const unSubscribeSuccess = '退订完成';
-const cannotDelete = ['开通失败', '退订完成'];
+const cannotDelete = ['开通失败', '退订完成', '退订处理中'];
+const canDelete = ['开通处理中'];
+const logicalDelete = ['开通完成'];
+
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -116,9 +117,18 @@ export default class EditForm extends PureComponent {
     super(props);
     const { underCustList, protocolDetail, location: { pathname } } = props;
     const isEdit = !_.isEmpty(protocolDetail) && pathname.indexOf('/edit') > -1;
-    let custOperate = false;
-    if (isEdit && protocolDetail.operationType === '新增或删除下挂客户') {
-      custOperate = true;
+    let custOperate = true;
+    // 更新附件组件必传项
+    let hasCust = custAttachment[1];
+    if (isEdit) {
+      if (protocolDetail.operationType === '新增或删除下挂客户') {
+        custOperate = true;
+      } else {
+        custOperate = false;
+      }
+      if (protocolDetail.operationType === '协议退订') {
+        hasCust = custAttachment[0];
+      }
     }
     this.state = {
       isEdit,
@@ -139,15 +149,8 @@ export default class EditForm extends PureComponent {
       custOperate,
       clearProduct: false,
       // 操作类型
-      operationType: '',
+      operationType: isEdit ? protocolDetail.operationType : '',
     };
-    // 更新附件组件必传项
-    let hasCust = custAttachment[1];
-    if (isEdit) {
-      if (protocolDetail.operationType === '协议退订') {
-        hasCust = custAttachment[0];
-      }
-    }
     this.setUploadConfig(hasCust);
   }
 
@@ -230,11 +233,12 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
+    console.warn('baseInfoData', baseInfoData);
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
-    // 生成订购时的数据
-    if (baseInfoData.operationType === subscribe) {
+    // 生成订购时的数据，如果是订购
+    if (_.includes(subscribeArray, baseInfoData.operationType)) {
       formData = {
         subType: baseInfoData.subType,
         custId: baseInfoData.client.cusId,
@@ -265,13 +269,13 @@ export default class EditForm extends PureComponent {
         operationType: baseInfoData.operationType,
         content: baseInfoData.content,
         attachment: attachmentTypeList,
+        item: productList,
         cust,
       };
     }
     if (!(pathname.indexOf('/edit') > -1)) {
       formData.submitFlag = 'Y';
     }
-    console.log('abcd', !isEdit, formData);
     return formData;
   }
 
@@ -322,7 +326,6 @@ export default class EditForm extends PureComponent {
   @autobind
   handleTransferChange(flag, newSelect, changeSecondArray) {
     this.setState({
-      ...this.state,
       productList: changeSecondArray,
     });
   }
@@ -398,28 +401,23 @@ export default class EditForm extends PureComponent {
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
-    const { protocolDetail: { cust: propsCust } } = this.props;
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);
-    const detailCust = propsCust.map((item => ({
-      econNum: item.econNum,
-      custStatus: item.custStatus,
-    })));
-    const filterCust = _.filter(detailCust, o => o.econNum === record.econNum);
-    // 如果点击删除的在详情返回的客户中能找到，并且状态是退订完成或者开通失败的，不执行任何操作
-    if (filterCust.length) {
-      if (!_.includes(cannotDelete, filterCust[0].custStatus)) {
-        testArr[index].custStatus = '退订处理中';
-        this.setState({
-          cust: testArr,
-        });
-      } else {
-        message.error('该客户不可以删除');
-      }
-    } else {
+    const { custStatus } = record;
+    // 如果在不可删除的数组中，提示不可以删除
+    if (_.includes(cannotDelete, custStatus)) {
+      message.error('该客户不可以删除');
+    } else if (_.includes(canDelete, custStatus)) {
+      // 如果在可删除的数组中，直接删除
       const newTableList = _.remove(testArr, (n, i) => i !== index);
       this.setState({
         cust: newTableList,
+      });
+    } else if (_.includes(logicalDelete, custStatus)) {
+      // 如果在逻辑删除的数组中，修改为退订处理中
+      testArr[index].custStatus = '退订处理中';
+      this.setState({
+        cust: testArr,
       });
     }
   }
@@ -577,7 +575,7 @@ export default class EditForm extends PureComponent {
       firstTitle: '待选协议产品',
       secondTitle: '已选协议产品',
       firstData: protocolProductList,
-      secondData: (isEdit && _.isEmpty(protocolProductList)) ? productList : [],
+      secondData: (isEdit && _.isEmpty(protocolProductList)) ? protocolDetail.item : [],
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
@@ -629,14 +627,14 @@ export default class EditForm extends PureComponent {
             head="协议产品"
           />
           {
-            ((operationType && operationType !== subscribe) || isEdit) ?
+            _.includes(subscribeArray, operationType) ?
+              <Transfer
+                {...transferProps}
+              />
+            :
               <CommonTable
                 data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
                 titleList={protocolProductTitleList}
-              />
-              :
-              <Transfer
-                {...transferProps}
               />
           }
         </div>

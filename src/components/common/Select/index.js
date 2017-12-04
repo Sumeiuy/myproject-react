@@ -18,7 +18,11 @@ export default class CommonSelect extends PureComponent {
     data: PropTypes.array,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.array,
+    ]),
     width: PropTypes.string,
     disabled: PropTypes.bool,
   }

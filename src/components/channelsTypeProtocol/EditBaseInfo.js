@@ -238,8 +238,12 @@ export default class EditBaseInfo extends PureComponent {
       changeOperationType,
     } = this.props;
     let sub = true;
+    let needMutliAndTen = this.state.needMutliAndTen;
     if (key === 'operationType') {
       sub = value === subscribe;
+      if (sub) {
+        needMutliAndTen = true;
+      }
       changeOperationType(value);
     }
     clearPropsData();
@@ -255,6 +259,7 @@ export default class EditBaseInfo extends PureComponent {
       vailDt: '',
       protocolNumber: '',
       isSubscribe: sub,
+      needMutliAndTen,
       [key]: value,
     }, () => {
       const { onChangeMultiCustomer, resetUpload } = this.props;
@@ -482,19 +487,19 @@ export default class EditBaseInfo extends PureComponent {
       getFlowStepInfo,
     } = this.props;
     this.setState({
-      [key]: value,
+      [key]: value.id,
     }, () => {
       getProtocolDetail({
         needAttachment: false,
         needFlowHistory: false,
         data: {
-          flowId: value,  // TODO ,测试数据，后期用 value
+          flowId: value.flowId,
         },
       }).then(() => {
         const { formData: nextFD } = this.props;
         const { operationType } = this.state;
         getFlowStepInfo({
-          flowId: value,
+          flowId: value.flowId,
           operate: 1,
         });
         this.compareFormData(nextFD);
@@ -531,8 +536,8 @@ export default class EditBaseInfo extends PureComponent {
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
         show: true,
-        label: item.agreementNum,
-        value: item.flowId,
+        label: item.id,
+        value: item,
       }));
     }
     if (isEditPage) {
