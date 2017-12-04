@@ -79,6 +79,7 @@ const mapStateToProps = state => ({
   priviewCustFileData: state.tasklist.priviewCustFileData,
   taskBasicInfo: state.tasklist.taskBasicInfo,
   filesList: state.customerPool.filesList,
+  deleteFileResult: state.performerView.deleteFileResult,
 });
 
 const mapDispatchToProps = {
@@ -155,6 +156,7 @@ export default class PerformerView extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -292,6 +294,7 @@ export default class PerformerView extends PureComponent {
       ceFileDelete,
       getCeFileList,
       filesList,
+      deleteFileResult,
     } = this.props;
     const {
       query: { currentId },
@@ -334,6 +337,7 @@ export default class PerformerView extends PureComponent {
             ceFileDelete={ceFileDelete}
             getCeFileList={getCeFileList}
             filesList={filesList}
+            deleteFileResult={deleteFileResult}
           />
         );
         break;

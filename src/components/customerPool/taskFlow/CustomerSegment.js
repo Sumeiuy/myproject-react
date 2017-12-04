@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-22 20:27:38
+ * @Last Modified time: 2017-12-04 09:39:30
  * 客户细分组件
  */
 
@@ -15,6 +15,7 @@ import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import Button from '../../common/Button';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
+import Clickable from '../../../components/common/Clickable';
 import styles from './customerSegment.less';
 
 const EMPTY_LIST = [];
@@ -283,9 +284,12 @@ export default class CustomerSegment extends PureComponent {
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
               footer={
-                <Button type="primary" size="default" onClick={this.handleCloseModal}>
-                  确定
-                </Button>
+                <Clickable
+                  onClick={this.handleCloseModal}
+                  eventName="/click/customerSegment/confirm"
+                >
+                  <Button type="primary" size="default">确定</Button>
+                </Clickable>
               }
               modalContent={
                 <GroupTable

@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-// import Loading from '../../layouts/Loading';
+import Clickable from '../../components/common/Clickable';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
@@ -40,7 +40,6 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
-  // serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
   filesList: state.customerPool.filesList,
 });
 const mapDispatchToProps = {
@@ -174,7 +173,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    // params.custId = '02001404'; // 本地测试用的数据
+    // params.custId = '118000004279'; // 本地测试用的数据 02001404
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
@@ -301,7 +300,12 @@ export default class CreateTaskForm extends PureComponent {
             }
           >
             <Col className={styles.more}>
-              <Button onClick={this.handleMore}>加载更多服务记录</Button>
+              <Clickable
+                onClick={this.handleMore}
+                eventName="/click/serviceLog/loadMore"
+              >
+                <Button>加载更多服务记录</Button>
+              </Clickable>
             </Col>
           </Row>
         </div>

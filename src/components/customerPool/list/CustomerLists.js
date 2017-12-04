@@ -128,7 +128,6 @@ export default class CustomerLists extends PureComponent {
     followLoading: false,
     custIncomeReqState: false,
     filesList: [],
-
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
