@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-01 15:48:58
+ * @Last Modified time: 2017-12-04 09:40:47
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -18,6 +18,7 @@ import './index.less';
 
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
+const EMPTY_LIST = [];
 
 export default class Uploader extends PureComponent {
   static propTypes = {
@@ -37,7 +38,7 @@ export default class Uploader extends PureComponent {
     custUuid: PropTypes.string,
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
-    deleteFileResult: PropTypes.array.isRequired,
+    deleteFileResult: PropTypes.array,
   }
 
   static defaultProps = {
@@ -55,6 +56,7 @@ export default class Uploader extends PureComponent {
     isUploadFileManually: false,
     custUuid: '',
     isSupportUploadMultiple: false,
+    deleteFileResult: [],
   }
 
   constructor(props) {
@@ -90,8 +92,9 @@ export default class Uploader extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { attachModel: nextFile = EMPTY_OBJECT, custUuid,
-      deleteFileResult: nextResult } = nextProps;
-    const { attachModel: prevFile = EMPTY_OBJECT, deleteFileResult } = this.props;
+      deleteFileResult: nextResult = EMPTY_LIST } = nextProps;
+    const { attachModel: prevFile = EMPTY_OBJECT, deleteFileResult = EMPTY_LIST,
+      onOperateFile } = this.props;
     if (nextFile !== prevFile) {
       this.setState({
         lastFile: nextFile,
@@ -102,6 +105,18 @@ export default class Uploader extends PureComponent {
     if (deleteFileResult !== nextResult) {
       this.setState({
         remainingAttachLists: nextResult,
+      }, () => {
+        // 删除到最后一个的时候，将custUuid设置为空，不然查看服务记录的时候，会展示附件
+        if (_.size(nextResult) <= 0) {
+          this.setState({
+            custUuid: '',
+          }, () => {
+            onOperateFile({
+              ...this.state,
+              custUuid: '',
+            });
+          });
+        }
       });
     }
 
@@ -230,8 +245,8 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleDeleteConfirm() {
-    const { onDeleteFile, onOperateFile } = this.props;
-    const { fileList, attaches = [], custUuid, remainingAttachLists } = this.state;
+    const { onDeleteFile } = this.props;
+    const { fileList, attaches = [], custUuid } = this.state;
     this.setState({
       lastFile: {},
       uploadedFileKey: '',
@@ -250,18 +265,6 @@ export default class Uploader extends PureComponent {
         this.setState({
           currentDeleteAttachId: attachId,
         }, () => {
-          // 删除到最后一个的时候，将custUuid设置为空，不然查看服务记录的时候，会展示附件
-          if (_.size(remainingAttachLists) <= 1) {
-            this.setState({
-              custUuid: '',
-            }, () => {
-              onOperateFile({
-                ...this.state,
-                custUuid: '',
-              });
-            });
-          }
-
           onDeleteFile({
             attachId,
             attachment: custUuid,

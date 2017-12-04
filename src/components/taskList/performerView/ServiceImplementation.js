@@ -42,6 +42,7 @@ export default function ServiceImplementation({
   ceFileDelete,
   getCeFileList,
   filesList,
+  deleteFileResult,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -119,6 +120,7 @@ export default function ServiceImplementation({
         custUuid={custUuid}
         formData={serviceReocrd}
         ceFileDelete={ceFileDelete}
+        deleteFileResult={deleteFileResult}
       />
     </div>
   );
@@ -147,6 +149,7 @@ ServiceImplementation.propTypes = {
   ceFileDelete: PropTypes.func.isRequired,
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
+  deleteFileResult: PropTypes.array,
 };
 
 ServiceImplementation.defaultProps = {
@@ -155,4 +158,5 @@ ServiceImplementation.defaultProps = {
   serviceRecordData: {},
   custIncomeReqState: false,
   filesList: [],
+  deleteFileResult: [],
 };

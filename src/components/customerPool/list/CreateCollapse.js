@@ -48,12 +48,13 @@ export default class CreateCollapse extends PureComponent {
   @autobind
   handleCollapseChange(currentKey) {
     const { handleCollapseClick, data, getCeFileList } = this.props;
-    // const index = this.collapse.props.defaultActiveKey;
-    const service = data[currentKey];
-    const { uuid } = service;
-    const attachment = uuid;
-    if (!_.isEmpty(uuid)) {
-      getCeFileList({ attachment });
+    if (!_.isEmpty(currentKey)) {
+      const service = data[currentKey];
+      const { uuid } = service;
+      const attachment = uuid;
+      if (!_.isEmpty(uuid)) {
+        getCeFileList({ attachment });
+      }
     }
     // 手动上报日志
     handleCollapseClick({ currentKey });
@@ -227,7 +228,6 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
-                  onDown={this.handleDown}
                   filesList={filesList}
                 />
               </Panel>,

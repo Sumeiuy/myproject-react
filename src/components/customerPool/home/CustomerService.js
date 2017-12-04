@@ -21,77 +21,83 @@ export default class CustomerService extends PureComponent {
   }
 
   // 创建option
-  createOption(okData, toData, colors) {
-    let data = 0;
-    let rest = 0;
-    let dataName = '';
-    if (!_.isEmpty(okData) && !_.isEmpty(toData) && _.toNumber(toData) > 0) {
-      data = (_.toNumber(okData) / _.toNumber(toData)) * 100;
-      rest = ((_.toNumber(toData) - _.toNumber(okData)) / _.toNumber(toData)) * 100;
-      dataName = `${parseFloat(data).toFixed(0)}%`;
-    } else {
-      data = 0;
-      rest = 100;
-      dataName = '暂无数据';
-    }
+  getOption(okData, toData, colors) {
+    const dataArray = this.formatterData(okData, toData);
     const options = {
+      color: colors,
       series: [{
-        // name: '访问来源',
         type: 'pie',
         radius: ['70%', '83%'], // 这里是控制环形内半径和外半径
         avoidLabelOverlap: false,
-        hoverAnimation: false, // 控制鼠标放置在环上时候的交互
+        hoverAnimation: false, // hover区域是否放大
+        data: dataArray,
         label: {
-          normal: {
-            show: true,
-            position: 'center',
-            textStyle: {
-              fontSize: '16',
-              color: '#a1a1a1',
-              fontWeight: 'bold',
-              fontFamily: 'Microsoft YaHei',
-            },
-          },
+          normal: { show: false, position: 'center' },
         },
-        selectedOffset: 4,
-        data: [{
-          value: data,
-          name: dataName,
-        },
-        {
-          value: rest,
-          name: '',
-        },
-        ],
       }],
-      color: colors, // 38d8e8
     };
     return options;
   }
+
+  formatterData(finishData, totalData) {
+    let finish = 0;
+    let unfinished = 100;
+    let finishedName = '暂无数据';
+    let unfinishedName = '';
+    if (!_.isEmpty(finishData) && !_.isEmpty(totalData) && _.toNumber(totalData) > 0) {
+      finish = (_.toNumber(finishData) / _.toNumber(totalData)) * 100;
+      unfinished = ((_.toNumber(totalData) - _.toNumber(finishData)) / _.toNumber(totalData)) * 100;
+      finishedName = `${parseFloat(finish).toFixed(0)}%`;
+      unfinishedName = `${parseFloat(unfinished).toFixed(0)}%`;
+    }
+    const textStyle = { show: true, fontSize: '20', fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
+    return [{
+      value: finish,
+      name: finishedName,
+      label: {
+        normal: { ...textStyle, position: 'center' },
+        emphasis: { ...textStyle },
+      },
+    }, {
+      value: unfinished,
+      name: unfinishedName,
+      label: {
+        emphasis: {
+          ...textStyle,
+          backgroundColor: '#fff', // 此处添加背景色，是为了盖着下方的文字
+          padding: 6, // 增加背景的宽 高
+        },
+      },
+    }];
+  }
+
   render() {
     const { data } = this.props;
     const { motOkMnt, motTotMnt, taskCust, totCust } = data;
+    const motOption = this.getOption(motOkMnt, motTotMnt, ['#33D0E2', '#d6d6d6']);
+    const serviceOption = this.getOption(taskCust, totCust, ['#6b87d8', '#d6d6d6']);
+
     return (
       <div className={styles.row}>
         <div className={classnames(styles.column, styles.firstColumn)}>
           <IECharts
-            option={this.createOption(motOkMnt, motTotMnt, ['#33D0E2', '#d6d6d6'])}
+            option={motOption}
             resizable
             style={{
               height: '115px',
             }}
           />
-          <div className={styles.text}>{'必做MOT完成率'}</div>
+          <div className={styles.text} title={'必做MOT完成率'}>{'必做MOT完成率'}</div>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
-            option={this.createOption(taskCust, totCust, ['#6b87d8', '#d6d6d6'])}
+            option={serviceOption}
             resizable
             style={{
               height: '115px',
             }}
           />
-          <div className={styles.text}>{'客户服务覆盖率'}</div>
+          <div className={styles.text} title={'高净值客户服务覆盖率'}>{'高净值客户服务覆盖率'}</div>
         </div>
       </div>
     );

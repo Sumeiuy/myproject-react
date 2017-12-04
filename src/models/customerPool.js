@@ -287,13 +287,14 @@ export default {
       });
     },
     // 联想的推荐热词列表
-    * getHotPossibleWds({ payload }, { call, put }) {
-      const response = yield call(api.getHotPossibleWds, payload);
-      yield put({
-        type: 'getHotPossibleWdsSuccess',
-        payload: { response },
-      });
-    },
+    getHotPossibleWds: [
+      function* getHotPossibleWds({ payload }, { call, put }) {
+        const response = yield call(api.getHotPossibleWds, payload);
+        yield put({
+          type: 'getHotPossibleWdsSuccess',
+          payload: { response },
+        });
+      }, { type: 'takeLatest' }],
     // 获取客户分组列表信息
     * customerGroupList({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
@@ -588,39 +589,24 @@ export default {
         });
       }
     },
-    // 文件下载文件列表数据
-    * getCeFileList({ payload }, { call, put }) {
-      const response = yield call(api.ceFileList, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getCeFileListSuccess',
-        payload: { resultData },
-      });
-    },
-    * getSearchServerPersonList({ payload }, { call, put, select }) {
-      const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
-      const { servicePeopleList = EMPTY_LIST } = resultData;
-      // 当搜索框为空的时候，给搜索结果加上‘所有人’和登录用户自己的信息
-      // 当输入信息搜索的时候，只显示搜索内容
+    * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
-        const { empInfo } = yield select(state => state.app.empInfo);
-        const myInfo = {
-          ptyMngName: empInfo.empName,
-          ptyMngId: empInfo.empNum,
-        };
-        const all = {
-          ptyMngName: '所有人',
-          ptyMngId: '',
-        };
         yield put({
           type: 'getSearchServerPersonListSuccess',
-          payload: [all, myInfo, ...servicePeopleList],
+          payload: [{
+            ptyMngName: '所有人',
+            ptyMngId: '',
+          }],
         });
       } else {
-        yield put({
-          type: 'getSearchServerPersonListSuccess',
-          payload: servicePeopleList,
-        });
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
       }
     },
     // 360服务记录查询更多服务
@@ -629,6 +615,15 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getServiceLogMoreSuccess',
+        payload: { resultData },
+      });
+    },
+    // 文件下载文件列表数据
+    * getCeFileList({ payload }, { call, put }) {
+      const response = yield call(api.ceFileList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCeFileListSuccess',
         payload: { resultData },
       });
     },
@@ -710,8 +705,37 @@ export default {
         payload: { resultData },
       });
     },
+    // 上传文件之前，先查询uuid
+    * queryCustUuid({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustUuid, payload);
+      yield put({
+        type: 'queryCustUuidSuccess',
+        payload: resultData,
+      });
+    },
+    // 删除文件
+    * ceFileDelete({ payload }, { call, put }) {
+      const { resultData } = yield call(api.ceFileDelete, payload);
+      const { attaches = EMPTY_LIST } = resultData;
+      yield put({
+        type: 'ceFileDeleteSuccess',
+        payload: attaches,
+      });
+    },
   },
   reducers: {
+    ceFileDeleteSuccess(state, action) {
+      return {
+        ...state,
+        deleteFileResult: action.payload,
+      };
+    },
+    queryCustUuidSuccess(state, action) {
+      return {
+        ...state,
+        custUuid: action.payload,
+      };
+    },
     getCustCountSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {

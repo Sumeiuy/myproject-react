@@ -9,9 +9,9 @@ export default function customerPool(api) {
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
-    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
+    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryManageKPIs', query),
     // 获取客户池投顾绩效
-    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformance', query),
+    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
     getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 
@@ -103,8 +103,6 @@ export default function customerPool(api) {
 
     // 预览客户细分数据
     previewCustFile: query => api.post('/groovynoauth/fsp/cust/custlist/previewCustFile', query),
-    // 标签圈人查询
-    labelCirclePeople: query => api.post('/groovynoauth/fsp/cust/task/labelCirclePeople', query),
 
     // 查询审批人列表
     queryFlowStepInfo: query => api.post('/groovynoauth/fsp/cust/task/queryFlowStepInfo', query),
@@ -119,5 +117,14 @@ export default function customerPool(api) {
 
     // 文件下载文件列表数据
     ceFileList: query => api.post('/file/ceFileList', query),
+
+    // 查询标签信息
+    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
+
+    // // 上传文件需要先上传uuid
+    // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
+
+    // // 删除文件
+    // ceFileDelete: query => api.post('/file/ceFileDelete', query),
   };
 }

@@ -7,10 +7,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
+import { Modal } from 'antd';
+import Button from '../../common/Button';
+import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
 import { fspGlobal } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './bottomFixedBox.less';
 
@@ -90,8 +93,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -114,6 +117,18 @@ export default class BottomFixedBox extends PureComponent {
     } else if (selectAll) {
       this.openByAllSelect(url, condition, page.total, title, id, entertype, source, fr);
     }
+  }
+
+  @autobind
+  handleCustomerGroupClick(url, title, id) {
+    const {
+      selectCount,
+    } = this.props;
+    if (Number(selectCount) > 500) {
+      this.toggleModal();
+      return;
+    }
+    this.handleClick(url, title, id);
   }
 
   @autobind
@@ -194,26 +209,37 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
+  @autobind
+  toggleModal() {
+    this.setState({
+      visible: !this.state.visible,
+    });
+  }
+
   // 分组只针对服务经理，也就是说：
   // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
   renderGroup() {
     if (this.props.mainServiceManager) {
-      return (<button
-        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
-      >
-        用户分组
-      </button>);
+      return (
+        <Clickable
+          onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
+          eventName="/click/custListBottomFixedBox/custGroup"
+        >
+          <button>用户分组</button>
+        </Clickable>
+      );
     }
     return null;
   }
 
   renderCreateTaskBtn() {
     return (
-      <button
+      <Clickable
         onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        eventName="/click/custListBottomFixedBox/launchTask"
       >
-        发起任务
-      </button>
+        <button>发起任务</button>
+      </Clickable>
     );
   }
 
@@ -239,6 +265,7 @@ export default class BottomFixedBox extends PureComponent {
   render() {
     const {
       taskAndGroupLeftPos,
+      visible,
     } = this.state;
     return (
       <div
@@ -248,11 +275,30 @@ export default class BottomFixedBox extends PureComponent {
           left: taskAndGroupLeftPos,
         }}
       >
-        { this.renderText() }
+        {this.renderText()}
         <div className="right">
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}
         </div>
+        <Modal
+          title={''}
+          closable
+          okText={'确认'}
+          width={300}
+          height={180}
+          wrapClassName={'infoModal'}
+          visible={visible}
+          onOk={this.toggleModal}
+          onCancel={this.toggleModal}
+          footer={
+            <Button className={'confirm'} type={'primary'} onClick={this.toggleModal}>确认</Button>
+          }
+        >
+          <div className={'info'}>
+            <Icon type="tishi1" className={'tishi'} />
+            <span>一次添加的客户数不能超过500个</span>
+          </div>
+        </Modal>
       </div>
     );
   }
