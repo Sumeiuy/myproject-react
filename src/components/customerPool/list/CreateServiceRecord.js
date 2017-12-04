@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
+import Clickable from '../../../components/common/Clickable';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -43,6 +44,7 @@ export default class CreateServiceRecord extends PureComponent {
   }
 
   componentDidMount() {
+    // 只要改组件初次加载完成，就请求一遍custUuid
     this.props.queryCustUuid();
   }
 
@@ -130,6 +132,21 @@ export default class CreateServiceRecord extends PureComponent {
     ceFileDelete({ ...params });
   }
 
+  /**
+   * @param {*} result 本次上传结果
+   */
+  @autobind
+  handleFileUpload(lastFile) {
+    // 当前上传的file
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid } = lastFile;
+    this.setState({
+      currentFile,
+      uploadedFileKey,
+      originFileName,
+      custUuid,
+    });
+  }
+
   render() {
     const {
       isShow,
@@ -140,7 +157,6 @@ export default class CreateServiceRecord extends PureComponent {
       custUuid,
       deleteFileResult,
     } = this.props;
-
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -150,8 +166,18 @@ export default class CreateServiceRecord extends PureComponent {
 
     const footer = (
       <div className={styles.customFooter}>
-        <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
-        <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
+        <Clickable
+          onClick={this.handleCancel}
+          eventName="/click/createServiceRecord/cancel"
+        >
+          <a className={styles.cancelBtn}>取消</a>
+        </Clickable>
+        <Clickable
+          onClick={this.handleSubmit}
+          eventName="/click/createServiceRecord/submit"
+        >
+          <a className={styles.submitBtn}>提交</a>
+        </Clickable>
       </div>
     );
 

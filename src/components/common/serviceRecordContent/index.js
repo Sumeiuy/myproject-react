@@ -87,6 +87,7 @@ export default class ServiceRecordContent extends PureComponent {
     beforeUpload: PropTypes.func,
     custUuid: PropTypes.string,
     onDeleteFile: PropTypes.func.isRequired,
+    deleteFileResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -482,6 +483,7 @@ export default class ServiceRecordContent extends PureComponent {
       isReadOnly,
       beforeUpload,
       custUuid,
+      deleteFileResult,
     } = this.props;
 
     const {
@@ -730,6 +732,7 @@ export default class ServiceRecordContent extends PureComponent {
               uploadTarget={`${request.prefix}/file/ceFileUpload`}
               isSupportUploadMultiple
               onDeleteFile={this.handleDeleteFile}
+              deleteFileResult={deleteFileResult}
             /> :
             <div className={styles.uploadList}>
               {

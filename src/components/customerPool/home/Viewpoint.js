@@ -10,6 +10,7 @@ import _ from 'lodash';
 
 import { fspGlobal } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
+import Clickable from '../../../components/common/Clickable';
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
@@ -49,20 +50,29 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  handleListClick(title, index) {
+    if (!_.isEmpty(title)) {
+      this.handleDetailClick(index);
+    }
+  }
+
+  @autobind
   renderContent(titleArray) {
     return titleArray.map((item, index) => (
-      <div
-        className={classnames(styles.row, { [styles.none]: (index >= 12) })}
-        onClick={() => { this.handleDetailClick(index); }}
+      <Clickable
+        onClick={() => { this.handleListClick(item.subtitle, index); }}
+        eventName="/click/Home/viewpointList"
         key={item.id}
       >
-        <a
-          className={styles.news}
-          title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
-        >
-          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
-        </a>
-      </div>
+        <div className={classnames(styles.row, { [styles.none]: (index >= 12) })}>
+          <a
+            className={classnames(styles.news, { [styles.emptyNews]: _.isEmpty(item.subtitle) })}
+            title={_.isEmpty(item.subtitle) ? '' : item.subtitle}
+          >
+            {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+          </a>
+        </div>
+      </Clickable>
     ));
   }
 
@@ -78,16 +88,16 @@ export default class Viewpoint extends PureComponent {
     const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      abstract.replace(
-        /<(\/?)([^\s>]+)[^>]*?>/g,
-        (all, isEnd, tagName) => {
-          if (_.includes(['p', 'pre'], tagName)) {
-            return _.isEmpty(isEnd) ? '<p>' : '</p>';
-          }
-          return '';
-        },
-      )
-    );
+        abstract.replace(
+          /<(\/?)([^\s>]+)[^>]*?>/g,
+          (all, isEnd, tagName) => {
+            if (_.includes(['p', 'pre'], tagName)) {
+              return _.isEmpty(isEnd) ? '<p>' : '</p>';
+            }
+            return '';
+          },
+        )
+      );
     // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
     const formateAbstract = newFormateAbstract.replace('↵', '');
     const isShowMore = infoVOList.length > 12;
@@ -114,7 +124,12 @@ export default class Viewpoint extends PureComponent {
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <a onClick={() => { this.handleDetailClick(0); }}>详情</a>
+              <Clickable
+                onClick={() => { this.handleDetailClick(0); }}
+                eventName="/click/Home/viewpointDetail"
+              >
+                <a>详情</a>
+              </Clickable>
             </div>
           </div>
         </div>
@@ -127,16 +142,21 @@ export default class Viewpoint extends PureComponent {
               <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
                 {this.renderContent(newInfoVOList)}
               </div>
-            )
+              )
           }
           {
             isShowMore ? (
               <div className={styles.fold} >
-                <a onClick={this.handleMoreClick}>{'更多'}</a>
+                <Clickable
+                  onClick={this.handleMoreClick}
+                  eventName="/click/Home/viewpointMore"
+                >
+                  <a>{'更多'}</a>
+                </Clickable>
               </div>
             ) : (
-              null
-            )
+                null
+              )
           }
         </div>
       </div>

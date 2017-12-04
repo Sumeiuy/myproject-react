@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Input } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
+import { constants } from '../../../config';
 import style from './style.less';
 
 const Search = Input.Search;
@@ -203,6 +204,7 @@ export default class DropdownSelect extends PureComponent {
         overlay={menu}
         trigger={['click']}
         visible={this.state.isSHowModal}
+        getPopupContainer={() => document.querySelector(constants.container)}
       >
         <div
           className={drapDownSelectCls}

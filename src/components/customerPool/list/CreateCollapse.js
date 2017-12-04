@@ -228,7 +228,6 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
-                  onDown={this.handleDown}
                   filesList={filesList}
                 />
               </Panel>,

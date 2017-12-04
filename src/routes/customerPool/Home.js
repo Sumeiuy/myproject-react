@@ -278,7 +278,7 @@ export default class Home extends PureComponent {
       location: {
         query: {
           cycleSelect,
-          orgId,
+        orgId,
         },
       },
     } = props;
@@ -498,7 +498,6 @@ export default class Home extends PureComponent {
         <Search
           data={hotWds}
           queryHotPossibleWds={this.queryHotPossibleWds}
-          queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
           searchHistoryVal={searchHistoryVal}
