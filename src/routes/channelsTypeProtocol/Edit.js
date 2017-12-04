@@ -314,6 +314,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
+    console.warn('formData', formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;
