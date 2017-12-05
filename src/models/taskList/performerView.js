@@ -33,6 +33,7 @@ export default {
     // 客户uuid
     custUuid: '',
     deleteFileResult: [],
+    taskList: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -46,17 +47,6 @@ export default {
       return {
         ...state,
         parameter: {},
-      };
-    },
-    getTaskListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJ } } = action;
-      const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData;
-      return {
-        ...state,
-        taskList: {
-          page,
-          resultData: viewBaseInfoList,
-        },
       };
     },
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -98,8 +88,28 @@ export default {
         deleteFileResult: action.payload,
       };
     },
+    getTaskListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJ } } = action;
+      const { page = EMPTY_OBJ, viewBaseInfoList = EMPTY_LIST } = resultData || EMPTY_OBJ;
+      return {
+        ...state,
+        taskList: {
+          page,
+          resultData: viewBaseInfoList,
+        },
+      };
+    },
   },
   effects: {
+    // 执行者视图、管理者视图、创建者视图公共列表
+    * getTaskList({ payload }, { call, put }) {
+      const listResponse = yield call(api.queryTaskList, payload);
+      yield put({
+        type: 'getTaskListSuccess',
+        payload: listResponse,
+      });
+    },
+
     * changeParameter({ payload }, { select, put }) {
       const prevParameter = yield select(state => state.performerView.parameter);
       yield put({

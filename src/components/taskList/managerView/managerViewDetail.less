@@ -12,7 +12,7 @@
   .missionImplementationSection {
     width: 100%;
     min-height: 180px;
-    border: 1px solid #c2c2c2;
+    // border: 1px solid #c2c2c2;
     margin-bottom: 10px;
   }
   .taskTitle {
@@ -31,5 +31,14 @@
   .basicInfoSection {
     display: block;
     margin-bottom: 10px;
+  }
+}
+.custDetailContainer {
+  :global {
+    .ant-modal-footer {
+      div .commonBtn:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
   }
 }

@@ -2,16 +2,24 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-04 16:43:20
+ * @Last Modified time: 2017-12-05 09:11:03
  * 管理者视图详情
  */
 
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+// import _ from 'lodash';
 // import { Row, Col } from 'antd';
+import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
+import MissionImplementation from './MissionImplementation';
+import CustDetail from './CustDetail';
+import Clickable from '../../common/Clickable';
+import Button from '../../common/Button';
+import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
@@ -23,6 +31,9 @@ export default class ManagerViewDetail extends PureComponent {
     isFold: PropTypes.bool,
     // 基本信息
     basicInfo: PropTypes.object,
+    previewCustDetail: PropTypes.func.isRequired,
+    // 预览客户明细结果
+    custDetailResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -30,11 +41,41 @@ export default class ManagerViewDetail extends PureComponent {
     basicInfo: EMPTY_OBJECT,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isShowCustDetailModal: false,
+    };
+  }
+
+  @autobind
+  handlePreview() {
+    const { previewCustDetail } = this.props;
+    const { isShowCustDetailModal } = this.state;
+    previewCustDetail().then(() => {
+      this.setState({
+        isShowCustDetailModal: !isShowCustDetailModal,
+      });
+    });
+  }
+
+  @autobind
+  handleCloseModal() {
+    const { isShowCustDetailModal } = this.state;
+    this.setState({
+      isShowCustDetailModal: !isShowCustDetailModal,
+    });
+  }
+
   render() {
     const {
       isFold,
       basicInfo = EMPTY_OBJECT,
+      previewCustDetail,
+      custDetailResult,
     } = this.props;
+
+    const { isShowCustDetailModal } = this.state;
 
     const {
       missionId,
@@ -44,7 +85,7 @@ export default class ManagerViewDetail extends PureComponent {
       endTime,
       missionTarget,
       servicePolicy,
-      custSource,
+      custSource = 'import',
       custTotal,
       custSourceDescription,
     } = basicInfo;
@@ -74,13 +115,60 @@ export default class ManagerViewDetail extends PureComponent {
             custTotal={custTotal}
             // 客户来源说明
             custSourceDescription={custSourceDescription}
+            onPreview={this.handlePreview}
+          />
+          <GroupModal
+            wrapperClass={
+              classnames({
+                [styles.custDetailContainer]: true,
+              })
+            }
+            visible={isShowCustDetailModal}
+            title={'客户明细'}
+            onCancelHandler={this.handleCloseModal}
+            footer={
+              <div className={styles.operationBtnSection}>
+                <Clickable
+                  // 加入节流函数
+                  onClick={this.handleLaunchTask}
+                  eventName="/click/managerViewCustDetail/launchTask"
+                >
+                  <Button
+                    className={styles.launchTask}
+                    type="primary"
+                  >
+                    发起新任务
+                  </Button>
+                </Clickable>
+                <Clickable
+                  onClick={this.handleExport}
+                  eventName="/click/managerViewCustDetail/export"
+                >
+                  <Button className={styles.export}>导出</Button>
+                </Clickable>
+                <Clickable
+                  onClick={this.handleCloseModal}
+                  eventName="/click/managerViewCustDetail/cancel"
+                >
+                  <Button className={styles.cancel}>取消</Button>
+                </Clickable>
+              </div>
+            }
+            modalContent={
+              <CustDetail
+                ref={ref => (this.custDetailRef = ref)}
+                getCustDetailData={previewCustDetail}
+                data={custDetailResult}
+              />
+            }
+            onOkHandler={this.handleUpdateGroup}
           />
         </div>
         <div className={styles.descriptionSection}>
           <MissionDescription missionDescription={''} />
         </div>
         <div className={styles.missionImplementationSection}>
-          这是任务实施简报区域
+          <MissionImplementation />
         </div>
         <div className={styles.missionFeedbackSection}>
           这是任务反馈区域

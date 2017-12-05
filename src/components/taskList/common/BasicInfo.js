@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
 import styles from './basicInfo.less';
@@ -43,6 +44,8 @@ export default class BasicInfo extends PureComponent {
     ]),
     // 客户来源说明
     custSourceDescription: PropTypes.string,
+    // 预览客户明细
+    onPreview: PropTypes.func,
   }
 
   static defaultProps = {
@@ -54,6 +57,14 @@ export default class BasicInfo extends PureComponent {
     custSource: '',
     custTotal: '',
     custSourceDescription: '',
+    onPreview: () => { },
+  }
+
+  @autobind
+  handlePreview() {
+    console.log('预览明细');
+    const { onPreview }  = this.props;
+    onPreview();
   }
 
   render() {
@@ -75,18 +86,18 @@ export default class BasicInfo extends PureComponent {
           <Row className={styles.rowItem}>
             <Col span={colSpanValue} className={styles.colItem}>
               <span className={styles.label}>任务有效期:&nbsp;</span>
-              <span className={styles.content}>{triggerTime}&nbsp;~&nbsp;{endTime}</span>
+              <span className={styles.content}>{triggerTime || '--'}&nbsp;~&nbsp;{endTime || '--'}</span>
             </Col>
             <Col span={colSpanValue} className={styles.colItem}>
               <span className={styles.label}>任务目标:&nbsp;</span>
-              <span className={styles.content}>{missionTarget}</span>
+              <span className={styles.content}>{missionTarget || '--'}</span>
             </Col>
           </Row>
           <Row className={styles.rowItem}>
             <Col className={styles.colItem}>
               <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
               <p className={`${styles.content} ${styles.servicePolicy}`}>
-                {servicePolicy}
+                {servicePolicy || '--'}
               </p>
             </Col>
           </Row>
@@ -101,6 +112,10 @@ export default class BasicInfo extends PureComponent {
                   <Col span={colSpanValue} className={styles.colItem}>
                     <span className={styles.label}>客户总数:&nbsp;</span>
                     <span className={styles.content}>{Number(custTotal) || 0}</span>
+                    <span
+                      className={styles.previewCust}
+                      onClick={this.handlePreview}
+                    >预览明细&gt;&gt;</span>
                   </Col>
                 </Row>
                 <Row className={styles.rowItem}>

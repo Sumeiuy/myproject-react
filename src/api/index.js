@@ -10,8 +10,6 @@ import channelsTypeProtocol from './channelsTypeProtocol';
 import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
-import commonView from './commonView';
-import managerView from './managerView';
 
 const api = apiCreator();
 
@@ -22,10 +20,6 @@ export default {
   common: common(api),
   // ========= 客户资源池
   customerPool: customerPool(api),
-  // ========= 公用视图
-  commonView: commonView(api),
-  // ========= 管理者视图
-  managerView: managerView(api),
   // ========= 执行者视图
   performerView: performerView(api),
   // ========= 绩效视图

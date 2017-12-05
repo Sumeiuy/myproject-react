@@ -24,6 +24,7 @@ import { env } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+
 const {
   taskList,
   taskList: { pageType, chooseMissionView },
@@ -42,7 +43,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const effects = {
-  getTaskList: 'commonView/getTaskList',
+  getTaskList: 'performerView/getTaskList',
   addServiceRecord: 'performerView/addMotServeRecord',
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   getServiceRecord: 'customerPool/getServiceRecord',
@@ -56,6 +57,8 @@ const effects = {
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
   ceFileDelete: 'performerView/ceFileDelete',
   getCeFileList: 'customerPool/getCeFileList',
+  // 预览客户明细
+  previewCustDetail: 'managerView/previewCustDetail',
 };
 
 const mapStateToProps = state => ({
@@ -63,7 +66,7 @@ const mapStateToProps = state => ({
   parameter: state.performerView.parameter,
   // 详情中基本信息
   taskDetailBasicInfo: state.performerView.taskDetailBasicInfo,
-  list: state.commonView.taskList,
+  list: state.performerView.taskList,
   dict: state.app.dict,
   // 详情中目标客户的数据
   targetCustList: state.performerView.targetCustList,
@@ -81,6 +84,7 @@ const mapStateToProps = state => ({
   taskBasicInfo: state.tasklist.taskBasicInfo,
   filesList: state.customerPool.filesList,
   deleteFileResult: state.performerView.deleteFileResult,
+  custDetailResult: state.managerView.custDetailResult,
 });
 
 const mapDispatchToProps = {
@@ -118,6 +122,8 @@ const mapDispatchToProps = {
   }),
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
+  // 预览客户明细
+  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -158,6 +164,10 @@ export default class PerformerView extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     deleteFileResult: PropTypes.array.isRequired,
+    // 预览客户细分
+    previewCustDetail: PropTypes.func.isRequired,
+    // 预览客户细分结果
+    custDetailResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -300,6 +310,8 @@ export default class PerformerView extends PureComponent {
       getCeFileList,
       filesList,
       deleteFileResult,
+      previewCustDetail,
+      custDetailResult,
     } = this.props;
     const {
       query: { currentId },
@@ -351,6 +363,8 @@ export default class PerformerView extends PureComponent {
           <ManagerViewDetail
             currentId={currentId}
             dict={dict}
+            previewCustDetail={previewCustDetail}
+            custDetailResult={custDetailResult}
           />
         );
         break;
