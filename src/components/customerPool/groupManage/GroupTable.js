@@ -65,6 +65,12 @@ export default class GroupTable extends PureComponent {
     ]),
     // 是否需要分页
     isNeedPaganation: PropTypes.bool,
+    // 选择框类型
+    selectionType: PropTypes.string,
+    // 全选，取消全选回调
+    onSelectAllChange: PropTypes.func,
+    // tableStyle
+    tableStyle: PropTypes.object,
   };
 
   static defaultProps = {
@@ -87,6 +93,9 @@ export default class GroupTable extends PureComponent {
     isNeedPaganation: true,
     onPageChange: () => { },
     onSizeChange: () => { },
+    selectionType: 'radio',
+    onSelectAllChange: () => { },
+    tableStyle: null,
   };
 
   constructor(props) {
@@ -277,13 +286,21 @@ export default class GroupTable extends PureComponent {
 
   @autobind
   renderRowSelection() {
-    const { onRowSelectionChange, onSingleRowSelectionChange, currentSelectRowKeys } = this.props;
+    const {
+      onRowSelectionChange,
+      onSingleRowSelectionChange,
+      currentSelectRowKeys,
+      selectionType,
+      onSelectAllChange,
+    } = this.props;
+
     return {
-      type: 'radio',
+      type: selectionType || 'radio',
       selectedRowKeys: currentSelectRowKeys,
       onChange: onRowSelectionChange,
       hideDefaultSelections: true,
       onSelect: onSingleRowSelectionChange,
+      onSelectAll: onSelectAllChange,
     };
   }
 
@@ -301,6 +318,7 @@ export default class GroupTable extends PureComponent {
       onSizeChange,
       isNeedRowSelection,
       isNeedPaganation,
+      tableStyle,
      } = this.props;
     const { curSelectedRow, originPageSizeUnit } = this.state;
     const paganationOption = {
@@ -333,6 +351,7 @@ export default class GroupTable extends PureComponent {
             }
             return null;
           }}
+          style={tableStyle}
         />
         {
           (isNeedPaganation && totalRecordNum > 0) ?

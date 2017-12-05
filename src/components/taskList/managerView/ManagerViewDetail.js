@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 09:11:03
+ * @Last Modified time: 2017-12-05 19:40:05
  * 管理者视图详情
  */
 
@@ -23,6 +23,8 @@ import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal'
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 5;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -52,7 +54,10 @@ export default class ManagerViewDetail extends PureComponent {
   handlePreview() {
     const { previewCustDetail } = this.props;
     const { isShowCustDetailModal } = this.state;
-    previewCustDetail().then(() => {
+    previewCustDetail({
+      curPageNum: INITIAL_PAGE_NUM,
+      curPageSize: INITIAL_PAGE_SIZE,
+    }).then(() => {
       this.setState({
         isShowCustDetailModal: !isShowCustDetailModal,
       });
@@ -65,6 +70,16 @@ export default class ManagerViewDetail extends PureComponent {
     this.setState({
       isShowCustDetailModal: !isShowCustDetailModal,
     });
+  }
+
+  @autobind
+  handleExport() {
+    console.log('导出');
+  }
+
+  @autobind
+  handleLaunchTask() {
+    console.log('发起任务');
   }
 
   render() {
@@ -161,6 +176,12 @@ export default class ManagerViewDetail extends PureComponent {
                 data={custDetailResult}
               />
             }
+            modalStyle={{
+              maxWidth: 1080,
+              minWidth: 700,
+              width: 1080,
+            }}
+            modalWidth={1080}
             onOkHandler={this.handleUpdateGroup}
           />
         </div>

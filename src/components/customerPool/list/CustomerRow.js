@@ -29,7 +29,6 @@ import iconDiamond from '../../../../static/images/icon-diamond-card.png';
 import iconGold from '../../../../static/images/icon-gold-card.png';
 import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
-// import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
 import Clickable from '../../../components/common/Clickable';
 
