@@ -71,7 +71,7 @@ app.model(require('./models/channelsTypeProtocol'));
 app.model(require('./models/channelsEdit'));
 app.model(require('./models/taskList/tasklist'));
 app.model(require('./models/taskList/performerView'));
-// app.model(require('./models/taskList/managerView'));
+app.model(require('./models/taskList/managerView'));
 
 // 4. Router
 app.router(routerConfig);

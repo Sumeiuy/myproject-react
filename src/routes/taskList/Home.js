@@ -8,11 +8,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+
+import { withRouter } from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
+import ManagerViewDetail from '../../components/taskList/managerView/ManagerViewDetail';
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
@@ -23,6 +26,7 @@ import { env } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+
 const {
   taskList,
   taskList: { pageType, chooseMissionView },
@@ -30,7 +34,7 @@ const {
 
 const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
-// const CONTROLLER = 'controller'; //管理者视图视图
+const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
@@ -55,6 +59,8 @@ const effects = {
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
   ceFileDelete: 'performerView/ceFileDelete',
   getCeFileList: 'customerPool/getCeFileList',
+  // 预览客户明细
+  previewCustDetail: 'managerView/previewCustDetail',
 };
 
 const mapStateToProps = state => ({
@@ -80,6 +86,7 @@ const mapStateToProps = state => ({
   taskBasicInfo: state.tasklist.taskBasicInfo,
   filesList: state.customerPool.filesList,
   deleteFileResult: state.performerView.deleteFileResult,
+  custDetailResult: state.managerView.custDetailResult,
 });
 
 const mapDispatchToProps = {
@@ -117,6 +124,8 @@ const mapDispatchToProps = {
   }),
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
+  // 预览客户明细
+  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -157,6 +166,10 @@ export default class PerformerView extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     deleteFileResult: PropTypes.array.isRequired,
+    // 预览客户细分
+    previewCustDetail: PropTypes.func.isRequired,
+    // 预览客户细分结果
+    custDetailResult: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -221,6 +234,7 @@ export default class PerformerView extends PureComponent {
       }
       const { missionViewType: st, typeCode, typeName } = item;
       this.setState({
+        // 当前视图（三种）
         currentView: st,
         activeRowIndex: itemIndex,
         typeCode,
@@ -260,6 +274,9 @@ export default class PerformerView extends PureComponent {
       case EXECUTOR:
         this.loadDetailContent(record);
         break;
+      case CONTROLLER:
+        this.loadManagerViewDetailContent(record);
+        break;
       default:
         break;
     }
@@ -295,6 +312,8 @@ export default class PerformerView extends PureComponent {
       getCeFileList,
       filesList,
       deleteFileResult,
+      previewCustDetail,
+      custDetailResult,
     } = this.props;
     const {
       query: { currentId },
@@ -338,6 +357,16 @@ export default class PerformerView extends PureComponent {
             getCeFileList={getCeFileList}
             filesList={filesList}
             deleteFileResult={deleteFileResult}
+          />
+        );
+        break;
+      case CONTROLLER:
+        detailComponent = (
+          <ManagerViewDetail
+            currentId={currentId}
+            dict={dict}
+            previewCustDetail={previewCustDetail}
+            custDetailResult={custDetailResult}
           />
         );
         break;
@@ -395,6 +424,18 @@ export default class PerformerView extends PureComponent {
       pageNum: 1,
       pageSize: 8,
     }).then(() => this.getCustDetail({ missionId: obj.id }));
+  }
+
+  @autobind
+  loadManagerViewDetailContent(record = {}) {
+    console.log(record);
+    const {
+      getTaskDetailBasicInfo,
+    } = this.props;
+    // 获取任务基本信息
+    getTaskDetailBasicInfo({
+      taskId: record.id,
+    });
   }
 
   @autobind
@@ -524,7 +565,7 @@ export default class PerformerView extends PureComponent {
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
-    const { activeRowIndex } = this.state;
+    const { activeRowIndex, currentView } = this.state;
     return (
       <ViewListRow
         key={record.id}
@@ -532,7 +573,7 @@ export default class PerformerView extends PureComponent {
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
         index={index}
-        pageName="performerView"
+        pageName={currentView === CONTROLLER ? 'managerView' : 'performerView'}
         pageData={taskList}
       />
     );
