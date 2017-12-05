@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 20:45:20
+ * @Last Modified time: 2017-12-05 21:07:59
  * 客户明细数据
  */
 
@@ -92,19 +92,14 @@ export default class CustDetail extends PureComponent {
     }
 
     if (listData !== nextData) {
+      let newSelectRowKeys = currentSelectRowKeys;
+      if (isSelectAll) {
+        newSelectRowKeys = _.map(nextData, item => item.custId);
+      }
       this.setState({
         dataSource: this.addIdToDataSource(nextData),
+        currentSelectRowKeys: newSelectRowKeys,
       });
-      if (isSelectAll) {
-        this.setState({
-          currentSelectRowKeys: _.concat(currentSelectRowKeys,
-            _.map(nextData, item => item.custId)),
-        });
-      } else {
-        this.setState({
-          currentSelectRowKeys: [],
-        });
-      }
     }
   }
 
@@ -188,9 +183,8 @@ export default class CustDetail extends PureComponent {
   @autobind
   handleRowSelectionChange(selectedRowKeys, selectedRows) {
     console.log(selectedRowKeys, selectedRows);
-    const { currentSelectRowKeys } = this.state;
     this.setState({
-      currentSelectRowKeys: [...selectedRowKeys, ...currentSelectRowKeys],
+      currentSelectRowKeys: selectedRowKeys,
     });
   }
 
@@ -199,17 +193,15 @@ export default class CustDetail extends PureComponent {
     console.log(record, selected, selectedRows);
     const { custId } = record;
     const { currentSelectRowKeys } = this.state;
+    let newSelectRowKeys = currentSelectRowKeys;
     if (selected) {
-      this.setState({
-        currentSelectRowKeys: [...currentSelectRowKeys, custId],
-      });
+      newSelectRowKeys = _.uniq([...newSelectRowKeys, custId]);
     } else {
-      this.setState({
-        currentSelectRowKeys: [],
-      });
+      newSelectRowKeys = _.filter(newSelectRowKeys, item => item !== custId);
     }
     this.setState({
       currentSelectRecord: record,
+      currentSelectRowKeys: newSelectRowKeys,
     });
   }
 
