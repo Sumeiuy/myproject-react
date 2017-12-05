@@ -27,6 +27,7 @@ const EMPTY_OBJECT = {};
 
 const YI = '亿';
 const WAN = '万';
+const NANJING_ORGID = 'ZZ001041093';
 
 // 按类别排序
 const sortByType = optionsMap.sortByType;
@@ -48,11 +49,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
     boardType: PropTypes.string.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
+    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     optionsData: EMPTY_LIST,
     scope: '2', // 查询数据的维度
+    orgId: '',
   };
 
   constructor(props) {
@@ -212,7 +215,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
           yAxisMax: Math.ceil(endYCood),
         };
       }
-      console.log(finalSeriesData);
       const scatterOptions = constructScatterOptions({
         ...finalSeriesData,
       });
@@ -517,6 +519,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       style,
       contrastType,
       isLvIndicator,
+      orgId,
     } = this.props;
 
     // 隐藏选项
@@ -524,7 +527,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3,
+      hideOption: Number(level) === 3 || (Number(level) === 2 && orgId !== NANJING_ORGID),
+    });
+    const toggleScope4Option = classnames({
+      hideOption: Number(level) === 4,
     });
 
 
@@ -577,8 +583,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
                     optionClass = toggleScope2Option;
                   }
                   if (index === 1) {
-                    // 按营业部
+                    // 按财富中心
                     optionClass = toggleScope3Option;
+                  }
+                  if (index === 2) {
+                    // 按营业部
+                    optionClass = toggleScope4Option;
                   }
                   return (
                     <Option

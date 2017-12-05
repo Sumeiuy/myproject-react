@@ -673,6 +673,7 @@ export default class HistoryHome extends PureComponent {
                     swtichDefault={swtichDefault}
                     custRange={custRange}
                     updateQueryState={this.updateQueryState}
+                    orgId={cOrgId}
                   />
                 </Col>
               </Row>
@@ -693,6 +694,7 @@ export default class HistoryHome extends PureComponent {
                 isLvIndicator={isLvIndicator}
                 currentSelectIndicatorKey={defaultIndicatorKey}
                 isCommissionRate={isCommissionRate}
+                orgId={cOrgId}
               />
             </div>
           </div>
