@@ -4,7 +4,7 @@
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -12,6 +12,7 @@ import { Table } from 'antd';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
 import { url as urlHelper, env } from '../../helper';
+import withRouter from '../../decorators/withRouter';
 import Clickable from '../../components/common/Clickable';
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';

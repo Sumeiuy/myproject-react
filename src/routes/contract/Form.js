@@ -8,10 +8,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva-react-router-3/router';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
+import { withRouter } from '../../decorators/withRouter';
 import { seibelConfig } from '../../config';
 import BottonGroup from '../../components/permission/BottonGroup';
 import EditForm from '../../components/contract/EditForm';

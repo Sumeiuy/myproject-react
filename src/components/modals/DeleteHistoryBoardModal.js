@@ -21,12 +21,13 @@ export default class DeleteHistoryBoardModal extends PureComponent {
     modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
     deleteBoardConfirm: PropTypes.func.isRequired,
-    boardId: PropTypes.string.isRequired,
+    boardId: PropTypes.string,
     orgId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
     visible: false,
+    boardId: '',
   }
 
   constructor(props) {

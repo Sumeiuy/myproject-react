@@ -1,14 +1,14 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-01 21:36:26
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-05 15:20:05
  * @description: 客户分组功能
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -22,6 +22,7 @@ import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal } from '../../utils';
 import { emp } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
+import withRouter from '../../decorators/withRouter';
 
 import styles from './customerGroup_.less';
 

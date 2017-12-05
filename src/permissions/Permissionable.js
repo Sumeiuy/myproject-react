@@ -6,7 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
-import { connect } from 'dva-react-router-3';
+import { connect } from 'dva';
 
 const getCheckList = (options) => {
   if (_.isArray(options)) {

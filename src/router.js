@@ -4,16 +4,16 @@
 */
 
 import React from 'react';
+// import PropTypes from 'prop-types';
 import {
   Router,
   Route,
   IndexRedirect,
   IndexRoute,
   Redirect,
-} from 'dva-react-router-3/router';
+} from 'dva/router';
 
 import { fspContainer } from './config';
-
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
@@ -99,5 +99,3 @@ const routes = ({ history }) => (// eslint-disable-line
     </Route>
   </Router>
 );
-
-export default routes;
