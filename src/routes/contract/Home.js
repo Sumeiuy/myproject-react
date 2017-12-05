@@ -474,10 +474,10 @@ export default class Contract extends PureComponent {
       v.forEach((sv) => {
         if (v.length > 1) {
           // paraName 为 条款字段
-          if (tmpObj[sv.paraName]) {
+          if (tmpObj[sv.divIntegrationId]) {
             clauseStatus = false;
           } else {
-            tmpObj[sv.paraName] = 1;
+            tmpObj[sv.divIntegrationId] = 1;
           }
         }
       });
