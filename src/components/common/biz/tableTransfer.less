@@ -127,10 +127,30 @@
           color: #666;
         }
         .ant-table-body {
-          height: 253px;
+          min-height: 296px;
         }
+        .ant-table-scroll {
+          .ant-table-header {
+            overflow: auto;
+            margin-bottom: 0 !important;
+          }
+          .ant-table-body {
+            min-height: 246px;
+            overflow-y: auto !important;
+          }
+        }
+        .ant-table-fixed-right {
+          right: -2px;
+          table {
+            border-right: 1px solid #fff;
+            td {
+              border-right: 1px solid #e9e9e9;
+            }
+          }
+        }
+
         .ant-table-tbody > tr > td {
-          padding: 8px 8px 16px;
+          padding: 8px 8px 16.5px;
           text-align: left;
           overflow: hidden;
           text-overflow: ellipsis;
