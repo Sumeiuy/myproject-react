@@ -33,7 +33,7 @@ export default {
     // 客户uuid
     custUuid: '',
     deleteFileResult: [],
-    taskList: [],
+    taskList: EMPTY_OBJ,
   },
   reducers: {
     changeParameterSuccess(state, action) {
