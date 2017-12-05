@@ -153,6 +153,13 @@ export default {
         doApprove: resultData,
       };
     },
+    clearDepartmentDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        cooperDeparment: payload,
+      };
+    },
   },
   effects: {
     // 获取详情
@@ -300,6 +307,13 @@ export default {
       yield put({
         type: 'getCooperDeparmentListSuccess',
         payload: response,
+      });
+    },
+    // 清除部门列表
+    * clearDepartmentData({ payload }, { call, put }) {
+      yield put({
+        type: 'clearDepartmentDataSuccess',
+        payload: EMPTY_LIST,
       });
     },
     // 获取审批记录
