@@ -63,7 +63,7 @@ export default class BasicInfo extends PureComponent {
   @autobind
   handlePreview() {
     console.log('预览明细');
-    const { onPreview }  = this.props;
+    const { onPreview } = this.props;
     onPreview();
   }
 
