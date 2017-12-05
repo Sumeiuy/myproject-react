@@ -454,7 +454,7 @@ export default class CustomerGroupDetail extends PureComponent {
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
       canEditDetail,
-  } = this.props;
+    } = this.props;
 
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
