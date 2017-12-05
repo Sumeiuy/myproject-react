@@ -16,6 +16,7 @@ import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
+import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
@@ -170,8 +171,8 @@ export default class ManagerViewDetail extends PureComponent {
         <div className={styles.missionImplementationSection}>
           <MissionImplementation />
         </div>
-        <div className={styles.missionFeedbackSection}>
-          这是任务反馈区域
+        <div>
+          <MissionFeedback isFold={isFold} />
         </div>
       </div>
     );
