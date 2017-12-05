@@ -358,7 +358,6 @@ export default class ReportHome extends PureComponent {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
     showScopeOrder = true;
-
     return (
       <div className="page-invest content-inner">
         <PageHeader
@@ -417,6 +416,7 @@ export default class ReportHome extends PureComponent {
                     updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
+                    orgId={orgId}
                   />
                 </div>
               );
