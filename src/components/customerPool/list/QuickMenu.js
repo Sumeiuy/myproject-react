@@ -8,8 +8,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
-import { event } from '../../../helper';
+import { url as urlHelper, env, event } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
+import { fspGlobal } from '../../../utils';
 
 import styles from './quickMenu.less';
 
@@ -25,11 +26,12 @@ export default class QuickMenu extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     custEmail: PropTypes.object.isRequired,
     onSendEmail: PropTypes.func.isRequired,
-    onAddFollow: PropTypes.func.isRequired,
-    currentFollowCustId: PropTypes.string.isRequired,
-    isFollows: PropTypes.object.isRequired,
     emailCustId: PropTypes.string.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
+    condition: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    entertype: PropTypes.string.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -98,14 +100,6 @@ export default class QuickMenu extends PureComponent {
       isEmail: true,
     });
   }
-  @autobind
-  handleAddFollow(listItem) {
-    const { onAddFollow } = this.props;
-    this.setState({
-      isEmail: false,
-    });
-    onAddFollow(listItem);
-  }
 
   @autobind
   handleAddServiceRecordClick(listItem) {
@@ -117,16 +111,56 @@ export default class QuickMenu extends PureComponent {
     });
   }
 
+  @autobind
+  addToGroup({ custId, name }) {
+    const {
+      condition,
+      location: {
+        pathname,
+        search,
+        query: {
+          source,
+        },
+      },
+      entertype,
+      push,
+    } = this.props;
+    const fr = encodeURIComponent(`${pathname}${search}`);
+    const condt = encodeURIComponent(JSON.stringify(condition));
+    const obj = {
+      ids: custId,
+      count: 1,
+      entertype,
+      source,
+      name,
+      condition: condt,
+      fr,
+    };
+    const url = '/customerPool/customerGroup';
+    if (env.isInFsp()) {
+      const newurl = `${url}?${urlHelper.stringify(obj)}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: 'RCT_FSP_CUSTOMER_LIST',
+        title: '新建分组',
+      };
+      fspGlobal.openRctTab({ url: newurl, param });
+    } else {
+      push({
+        pathname: url,
+        query: obj,
+      });
+    }
+  }
+
   render() {
     const {
       listItem,
       createModal,
-      currentFollowCustId,
-      isFollows,
     } = this.props;
 
-    const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
-      || isFollows[listItem.custId];
     return (
       <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
@@ -157,12 +191,12 @@ export default class QuickMenu extends PureComponent {
           </li>
           */}
           <Clickable
-            onClick={() => this.handleAddFollow(listItem)}
-            eventName="/click/quickMenu/guanzhu"
+            onClick={() => this.addToGroup(listItem)}
+            eventName="/click/quickMenu/addToGroup"
           >
-            <li className={isFollow ? styles.follows : ''}>
-              <Icon type="guanzhu" />
-              <span>{isFollow ? '已关注' : '关注'}</span>
+            <li>
+              <Icon type="fenzu" />
+              <span>添加到分组</span>
             </li>
           </Clickable>
           <Clickable

@@ -70,8 +70,6 @@ const formatAsset = (num) => {
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
-    fllowCustData: PropTypes.object,
-    followLoading: PropTypes.bool,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
     curPageNum: PropTypes.string,
@@ -90,7 +88,6 @@ export default class CustomerLists extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     getCustEmail: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
-    getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
     custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
@@ -124,8 +121,6 @@ export default class CustomerLists extends PureComponent {
     pageSize: null,
     curPageNum: null,
     q: '',
-    fllowCustData: {},
-    followLoading: false,
     custIncomeReqState: false,
     filesList: [],
     expandAll: false,
@@ -143,8 +138,6 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
-      isFollows: {},
-      currentFollowCustId: '',
       emailCustId: '',
     };
   }
@@ -162,8 +155,6 @@ export default class CustomerLists extends PureComponent {
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
-      followLoading: preFL,
-      custList,
       custEmail,
       location: {
         query: {
@@ -174,9 +165,6 @@ export default class CustomerLists extends PureComponent {
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
-      followLoading,
-      fllowCustData,
-      custList: nextCustList,
       custEmail: nextCustEmail,
       empInfo,
       authority,
@@ -186,14 +174,11 @@ export default class CustomerLists extends PureComponent {
         },
       },
      } = nextProps;
-    const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
+    const { currentCustId, isShowContactModal } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
     const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
-    let isFollows = {};
-    let change = {};
-    const { result } = fllowCustData || '';
     if ((prevContact !== nextContact || prevRecord !== nextRecord)) {
       if (!isShowContactModal) {
         this.setState({
@@ -204,44 +189,6 @@ export default class CustomerLists extends PureComponent {
     }
     if (custEmail !== nextCustEmail) {
       this.getEmail(nextCustEmail[currentCustId]);
-    }
-    if (preFL && !followLoading) {
-      if (result === 'success') {
-        if (!this.state.isFollows[currentFollowCustId]) {
-          message.success('关注成功，并添加到“我的关注”分组');
-          change = {
-            ...this.state.isFollows,
-            ...{ [currentFollowCustId]: true },
-          };
-          this.setState({
-            isFollows: change,
-          });
-        } else {
-          message.success('已取消关注');
-          change = {
-            ...this.state.isFollows,
-            ...{ [currentFollowCustId]: false },
-          };
-          this.setState({
-            isFollows: change,
-          });
-        }
-      }
-    }
-    // 因列表返回字段whetherExist表明是否关注，
-    // 故讲以isFollows：{[custiId]: whetherExist}的形式存入isFollows，并下穿到QuickMenu组件
-    if (nextCustList !== custList) {
-      nextCustList.map((item) => {
-        isFollows = {
-          ...isFollows,
-          [item.custId]: item.whetherExist,
-        };
-        return isFollows;
-      });
-      this.setState({
-        ...this.state.isFollows,
-        isFollows,
-      });
     }
     if (prePtyMng !== ptyMng) {
       let bool = false;
@@ -382,28 +329,6 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
-  @autobind
-  handleAddFollow(item) {
-    const { getFollowCust } = this.props;
-    const { custId, empId } = item;
-    let operateType = null;
-    if (!this.state.isFollows[custId]) {
-      operateType = 'new';
-      getFollowCust({
-        empId, operateType, custId,
-      });
-    } else {
-      operateType = 'delete';
-      getFollowCust({
-        empId, operateType, custId,
-      });
-    }
-    this.setState({
-      currentFollowCustId: custId,
-      emailCustId: '',
-    });
-  }
-
   /**
  * 回调，关闭modal打开state
  */
@@ -479,13 +404,11 @@ export default class CustomerLists extends PureComponent {
 
   render() {
     const {
-      currentFollowCustId,
       isShowContactModal,
       currentCustId,
       emailCustId,
       custType,
       modalKey,
-      isFollows,
       custName,
     } = this.state;
 
@@ -646,17 +569,17 @@ export default class CustomerLists extends PureComponent {
                     selectedIds={selectIdsArr}
                     onChange={this.handleSingleSelect}
                     onSendEmail={this.handleSendEmail}
-                    onAddFollow={this.handleAddFollow}
                     createContact={this.showCreateContact}
                     key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
                     custEmail={finalEmailData}
-                    currentFollowCustId={currentFollowCustId}
-                    isFollows={isFollows}
                     emailCustId={emailCustId}
                     custIncomeReqState={custIncomeReqState}
                     toggleServiceRecordModal={toggleServiceRecordModal}
                     formatAsset={formatAsset}
                     queryCustUuid={queryCustUuid}
+                    condition={condition}
+                    entertype={entertype}
+                    push={push}
                   />,
                 )
               }
@@ -721,7 +644,7 @@ export default class CustomerLists extends PureComponent {
             /> : null
         }
         {
-          <Loading loading={!isLoadingEnd} />
+          <Loading loading={!isLoadingEnd} forceFull />
         }
       </div>
     );
