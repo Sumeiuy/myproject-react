@@ -49,13 +49,10 @@ function getEventType(action) {
   if (EVENT_PROFILE_ACTION === type) {
     return { type: EVENT_PROFILE_KEY };
   }
-  if (/LOCATION_CHANGE$/.test(type)
-    && action.payload
-    && action.payload.pathname
-  ) {
+  if (/LOCATION_CHANGE$/.test(type)) {
     return {
       ...eventType,
-      event: format(action.payload.pathname),
+      event: '$pageview',
     };
   }
   return eventType;
@@ -106,7 +103,19 @@ function getLogData(action) {
   // 系统变量
   const env = eventType.type === EVENT_PROFILE_KEY
     ? { empId: emp.getId() } : envHelper.getEnv();
-  const extraData = getExtraData(action);
+  let extraData = getExtraData(action);
+
+  if (eventType.event === '$pageview') {
+    const { payload: { pathname, search } } = action;
+    extraData = {
+      ...extraData,
+      // $referrer: url,
+      // $referrer_host: '',
+      $url: `${pathname}${search}`,
+      $url_path: pathname,
+      $title: pathname,
+    };
+  }
 
   return {
     ...eventType,
@@ -121,11 +130,15 @@ function getLogData(action) {
   };
 }
 
+function sendAPILog(data) {
+  return api.sendLog(`${url}?project=${projectName}`, data);
+}
+
 // 发送缓冲区日志
 function flushLog() {
   const data = [...QUEUE];
   if (data.length > 1) {
-    api.sendLog(url, data).then(
+    sendAPILog(data).then(
       () => {
         QUEUE = [];
       },
@@ -145,7 +158,7 @@ function sendLog(action) {
   const data = getLogData(action);
   // profile_set拿到以后单独发送
   if (data.type === EVENT_PROFILE_KEY) {
-    api.sendLog(url, [data]);
+    sendAPILog([data]);
     return;
   }
   QUEUE.push(data);
