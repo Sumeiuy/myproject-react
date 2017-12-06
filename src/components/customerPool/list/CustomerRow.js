@@ -126,7 +126,7 @@ export default class CustomerRow extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
     entertype: PropTypes.string.isRequired,
-    push: PropTypes.func.isRequired,
+    goGroupOrTask: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -248,7 +248,7 @@ export default class CustomerRow extends PureComponent {
       queryCustUuid,
       condition,
       entertype,
-      push,
+      goGroupOrTask,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -289,7 +289,7 @@ export default class CustomerRow extends PureComponent {
               condition={condition}
               location={location}
               entertype={entertype}
-              push={push}
+              goGroupOrTask={goGroupOrTask}
             /> : null
         }
         <div className={styles.selectIcon}>

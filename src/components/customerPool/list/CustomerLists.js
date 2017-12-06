@@ -17,9 +17,9 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
-
+import { url as urlHelper, env } from '../../../helper';
 import { fspContainer } from '../../../config';
-// import { fspGlobal, helper } from '../../../utils';
+import { fspGlobal } from '../../../utils';
 import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
@@ -402,6 +402,28 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
+  // 跳转到分组页面或新建任务页面
+  @autobind
+  goGroupOrTask({ id, title, url, obj }) {
+    const { push } = this.props;
+    if (env.isInFsp()) {
+      const newurl = `${url}?${urlHelper.stringify(obj)}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id,
+        title,
+      };
+      fspGlobal.openRctTab({ url: newurl, param });
+    } else {
+      push({
+        pathname: url,
+        query: obj,
+      });
+    }
+  }
+
   render() {
     const {
       isShowContactModal,
@@ -579,7 +601,7 @@ export default class CustomerLists extends PureComponent {
                     queryCustUuid={queryCustUuid}
                     condition={condition}
                     entertype={entertype}
-                    push={push}
+                    goGroupOrTask={this.goGroupOrTask}
                   />,
                 )
               }
@@ -620,6 +642,7 @@ export default class CustomerLists extends PureComponent {
               custList={custList}
               entertype={entertype}
               clearCreateTaskData={clearCreateTaskData}
+              onClick={this.goGroupOrTask}
             /> : null
         }
         {

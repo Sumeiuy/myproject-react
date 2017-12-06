@@ -8,9 +8,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
-import { url as urlHelper, env, event } from '../../../helper';
+import { event } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
-import { fspGlobal } from '../../../utils';
 
 import styles from './quickMenu.less';
 
@@ -31,7 +30,7 @@ export default class QuickMenu extends PureComponent {
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     entertype: PropTypes.string.isRequired,
-    push: PropTypes.func.isRequired,
+    goGroupOrTask: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -123,7 +122,7 @@ export default class QuickMenu extends PureComponent {
         },
       },
       entertype,
-      push,
+      goGroupOrTask,
     } = this.props;
     const fr = encodeURIComponent(`${pathname}${search}`);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -137,22 +136,7 @@ export default class QuickMenu extends PureComponent {
       fr,
     };
     const url = '/customerPool/customerGroup';
-    if (env.isInFsp()) {
-      const newurl = `${url}?${urlHelper.stringify(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: 'RCT_FSP_CUSTOMER_LIST',
-        title: '新建分组',
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      push({
-        pathname: url,
-        query: obj,
-      });
-    }
+    goGroupOrTask({ id: 'RCT_FSP_CUSTOMER_LIST', title: '新建分组', url, obj });
   }
 
   render() {
