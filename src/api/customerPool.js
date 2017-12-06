@@ -109,6 +109,8 @@ export default function customerPool(api) {
 
     queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
 
+    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
+
     // 提交任务流程
     submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
@@ -117,9 +119,6 @@ export default function customerPool(api) {
 
     // 文件下载文件列表数据
     ceFileList: query => api.post('/file/ceFileList', query),
-
-    // 查询标签信息
-    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 
     // // 上传文件需要先上传uuid
     // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
