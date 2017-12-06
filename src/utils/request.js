@@ -72,7 +72,7 @@ export default function request(url, options) {
       .then(checkStatus)
       .then(response => parseJSON(response, options)),
     new Promise(
-      (rosolve, reject) => {// eslint-disable-line
+      (rosolve, reject) => {
         setTimeout(
           () => reject('请求超时'),
           config.timeout,

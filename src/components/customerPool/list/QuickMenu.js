@@ -3,7 +3,8 @@
  *  客户列表项中的快捷菜单
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -12,10 +13,6 @@ import { event } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 
 import styles from './quickMenu.less';
-
-const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
-
-let hrefUrl = '';
 
 export default class QuickMenu extends PureComponent {
 
@@ -87,17 +84,7 @@ export default class QuickMenu extends PureComponent {
     }
     return email;
   }
-  @autobind
-  handleIsEmail(e) {
-    const { listItem, onSendEmail } = this.props;
-    hrefUrl = e.target.getAttribute('href');
-    if (hrefUrl === NO_EMAIL_HREF) {
-      onSendEmail(listItem);
-    }
-    this.setState({
-      isEmail: true,
-    });
-  }
+
   @autobind
   handleAddFollow(listItem) {
     const { onAddFollow } = this.props;
@@ -139,23 +126,6 @@ export default class QuickMenu extends PureComponent {
               <span>电话联系</span>
             </li>
           </Clickable>
-          {/*
-          <li onClick={this.handleIsEmail}>
-            <Icon type="youjian" />
-            <span>
-              <a
-                ref={ref => this.sendEmail = ref}
-                href={
-                  _.isEmpty(addressEmail[listItem.custId]) ?
-                  NO_EMAIL_HREF :
-                  `mailto:${addressEmail[listItem.custId]}
-                }
-              >
-                &nbsp;邮件联系&nbsp;
-              </a>
-            </span>
-          </li>
-          */}
           <Clickable
             onClick={() => this.handleAddFollow(listItem)}
             eventName="/click/quickMenu/guanzhu"
