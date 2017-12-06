@@ -6,7 +6,7 @@
 import request from './request';
 
 import config from '../config/request';
-import { emp, url as urlHelper } from '../helper';
+import { emp, url as urlHelper, encode } from '../helper';
 
 /**
  * api生成器
@@ -85,7 +85,7 @@ export default function createApi() {
         url,
         {
           method: 'POST',
-          body: JSON.stringify(query),
+          body: `data_list=${encodeURIComponent(encode.base64(query))}`,
         },
       );
     },
