@@ -217,6 +217,10 @@ export default class Pageheader extends PureComponent {
       empInfo,
       location: {
         query: {
+          custNumber,
+          drafterId,
+          approvalId,
+          orgId,
           subType,
           status,
           business2,
@@ -228,14 +232,33 @@ export default class Pageheader extends PureComponent {
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+    // 客户回填
+    const curAllCustInfo = _.find(customerList, o => o.custNumber === custNumber);
+    let curCust = '全部';
+    if (curAllCustInfo && curAllCustInfo.custNumber) {
+      curCust = `${curAllCustInfo.custName}(${curAllCustInfo.custNumber})`;
+    }
 
     // 拟稿人增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
+    // 拟稿人回填
+    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    let curDrafter = '全部';
+    if (curDrafterInfo && curDrafterInfo.ptyMngId) {
+      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+    }
 
     // 审批人增加全部
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
+    // 审批人回填
+    const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
+    let curApprovePerson = '全部';
+    if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
+      curApprovePerson = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+    }
+
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -246,13 +269,14 @@ export default class Pageheader extends PureComponent {
       // 如果是通道类协议页面
       hasCreatePermission = hasPermissionOfProtocolCreate(empInfo);
     }
+    console.warn('orgId', orgId);
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value="全部"
+                value={curCust}
                 placeholder="经纪客户号/客户名称"
                 searchList={customerAllList}
                 showObjKey="custName"
@@ -300,7 +324,7 @@ export default class Pageheader extends PureComponent {
             拟稿人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value="全部"
+                value={curDrafter}
                 placeholder="工号/名称"
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
@@ -320,6 +344,7 @@ export default class Pageheader extends PureComponent {
               location={location}
               replace={replace}
               updateQueryState={this.selectCustRange}
+              orgId={orgId}
             />
           </div>
 
@@ -327,7 +352,7 @@ export default class Pageheader extends PureComponent {
             审批人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value="全部"
+                value={curApprovePerson}
                 placeholder="工号/名称"
                 searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
