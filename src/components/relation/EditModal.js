@@ -24,12 +24,11 @@
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
 import { Input, Modal } from 'antd';
-import _ from 'lodash';
+import classnames from 'classnames';
 
 import Icon from '../common/Icon';
 import Button from '../common/Button';
 import DropDownSelect from '../common/dropdownSelect';
-// import _ from 'lodash';
 
 import styles from './editModal.less';
 
@@ -45,7 +44,7 @@ const titleArray = {
 };
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 205,
+  width: 220,
   height: 32,
   border: '1px solid #d9d9d9',
 };
@@ -93,7 +92,8 @@ export default class EditModal extends Component {
 
   @autobind
   handleSelect(obj) {
-    this.setState({ select: obj });
+    const teamName = `${obj.name}团队`;
+    this.setState({ select: obj, teamName });
   }
 
   @autobind
@@ -108,14 +108,13 @@ export default class EditModal extends Component {
 
   @autobind
   handleClear() {
+    this.setState({ teamName: '' });
   }
 
   @autobind
   renderContent() {
     const { category, list } = this.props;
-    const { select } = this.state;
-    const defalutTeamName = (select.name && !_.isEmpty(select.name)) ?
-      (`${select.name}团队`) : '';
+    const { teamName } = this.state;
     const titles = titleArray[category];
     return (
       <div className={styles.modalBody}>
@@ -136,11 +135,11 @@ export default class EditModal extends Component {
         {
           titles.length > 2 ? (
             <div className={styles.row}>
-              <div className={styles.infoColumn}>{titles[2]}</div>
+              <div className={classnames(styles.infoColumn, styles.info)}>{titles[2]}</div>
               <div className={styles.inputColumn}>
                 <Input
                   addonAfter={<Icon type="guanbi" onClick={this.handleClear} />}
-                  defaultValue={defalutTeamName}
+                  value={teamName}
                   onChange={this.handleChange}
                 />
               </div>
@@ -175,6 +174,7 @@ export default class EditModal extends Component {
         visible={visible}
         footer={this.renderFooter()}
         wrapClassName={styles.modalContainer}
+        onCancel={this.handleClose}
       >
         {this.renderContent()}
       </Modal>

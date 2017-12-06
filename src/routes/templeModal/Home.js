@@ -21,6 +21,8 @@ import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import EditModal from '../../components/relation/EditModal';
+import Tree from '../../components/relation/Tree';
+import TreeDetail from '../../components/relation/TreeDetail';
 
 
 import {
@@ -337,7 +339,7 @@ export default class TemplModal extends PureComponent {
       onSearch: this.handleSearch,
       onOk: this.handleOkOfDropDown,
       onCancel: this.closeModal,
-      category: 'team',
+      category: 'manager',
     };
 
     return (
@@ -357,6 +359,10 @@ export default class TemplModal extends PureComponent {
         <Button onClick={this.openDeleteBoardModal}>删除</Button>
         <DeleteBoardModal {...deleteBoardMProps} />
         <br />
+        <div className={styles.treeContainer}>
+          <Tree />
+          <TreeDetail />
+        </div>
         <br />
         <SearchModal {...searchProps} />
         <br />
