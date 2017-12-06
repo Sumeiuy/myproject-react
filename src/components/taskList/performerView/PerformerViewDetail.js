@@ -11,8 +11,8 @@ import _ from 'lodash';
 import { Pagination } from 'antd';
 
 import Select from '../../common/Select';
-import LabelInfo from './LabelInfo';
-import BasicInfo from './BasicInfo';
+import LabelInfo from '../common/LabelInfo';
+import BasicInfo from '../common/BasicInfo';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 

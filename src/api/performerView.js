@@ -18,5 +18,9 @@ export default function performerView(api) {
     queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
     // 删除文件
     ceFileDelete: query => api.post('/fspa/mcrm/api/file/ceFileDelete', query),
+    // 获取任务简报
+    getMissionBrief: query => api.post('/groovynoauth/fsp/campaign/mot/getMissionBrief', query),
+    // 预览客户明细
+    previewCustDetail: query => api.post('/groovynoauth/fsp/campaign/mot/previewCustDetail', query),
   };
 }
