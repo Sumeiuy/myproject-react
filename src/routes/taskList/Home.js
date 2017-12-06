@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 
-import { withRouter } from '../../decorators/withRouter';
+import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';

@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
-import { withRouter } from '../../decorators/withRouter';
+import withRouter from '../../decorators/withRouter';
 import { seibelConfig } from '../../config';
 import BottonGroup from '../../components/permission/BottonGroup';
 import EditForm from '../../components/contract/EditForm';

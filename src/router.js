@@ -4,16 +4,14 @@
 */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import {
-  Router,
   Route,
-  IndexRedirect,
-  IndexRoute,
-  Redirect,
+  Switch,
+  routerRedux,
 } from 'dva/router';
 
-import { fspContainer } from './config';
+// import { fspContainer } from './config';
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
@@ -44,58 +42,52 @@ import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
 
-function switchRouter() {
-  const fsp = document.querySelector(fspContainer.container);
-  if (!((this.state.location.state || {}).noScrollTop || false)) {
-    if (fsp) {
-      fsp.scrollTop = 0;
-    } else {
-      window.scrollTo(0, 0);
-    }
-  }
-}
+const { ConnectedRouter } = routerRedux;
 
-const routes = ({ history }) => (// eslint-disable-line
-  <Router onUpdate={switchRouter} history={history}>
-    <Route path="/" component={Main}>
-      <IndexRedirect to="/empty" />
-      <Redirect from="invest" to="report" />
-      <Route path="empty" component={Empty} />
-      <Route path="report" component={ReportHome} />
-      <Route path="preview" component={PreviewReport} />
-      <Route path="history" component={HistoryHome} />
-      <Route path="feedback" component={FeedBack} />
-      <Route path="commission" component={CommissionHome} />
-      <Route path="commissionChange" component={CommissionChangeHome} />
-      <Route path="modal" component={TemplModal} />
-      <Route path="boardManage" component={BoardManageHome} />
-      <Route path="boardEdit" component={BoardEditHome} />
-      <Route path="permission" component={PermissonHome} />
-      <Route path="contract">
-        <IndexRoute component={Contract} />
-        <Route path="form" component={Form} />
-      </Route>
-      <Route path="channelsTypeProtocol">
-        <IndexRoute component={ChannelsTypeProtocol} />
-        <Route path="edit" component={ChannelsTypeProtocolEdit} />
-      </Route>
-      <Route path="approval" component={Approval} />
-      <Route path="customerPool">
-        <IndexRoute component={CustomerPoolHome} />
-        <Route path="viewpointDetail" component={ViewpointDetail} />
-        <Route path="viewpointList" component={ViewpointList} />
-        <Route path="todo" component={ToDo} />
-        <Route path="list" component={CustomerList} />
-        <Route path="customerGroup" component={CustomerGroup} />
-        <Route path="createTask" component={CreateTask} />
-        <Route path="customerGroupManage" component={CustomerGroupManage} />
-        <Route path="serviceLog" component={ServiceLog} />
-        <Route path="taskFlow" component={TaskFlow} />
-      </Route>
-      <Route path="taskList">
-        <IndexRoute component={TaskListHome} />
-      </Route>
-      <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
-    </Route>
-  </Router>
+const Routers = ({ history }) => (
+  <ConnectedRouter history={history}>
+    <Main>
+      <Route exact path="/empty" component={Empty} />
+      <Route exact path="/invest" component={ReportHome} />
+      <Route exact path="/report" component={ReportHome} />
+      <Route exact path="/boardManage" component={BoardManageHome} />
+      <Route exact path="/boardEdit" component={BoardEditHome} />
+      <Route exact path="/preview" component={PreviewReport} />
+      <Route exact path="/history" component={HistoryHome} />
+      <Route exact path="/feedback" component={FeedBack} />
+      <Route exact path="/commission" component={CommissionHome} />
+      <Route exact path="/commissionChange" component={CommissionChangeHome} />
+      <Route exact path="/modal" component={TemplModal} />
+      <Route exact path="/permission" component={PermissonHome} />
+      <Route exact path="/contract/form" component={Form} />
+      <Route exact path="/contract" component={Contract} />
+      <Route exact path="/approval" component={Approval} />
+      <Switch key="/channelsTypeProtocol">
+        <Route exact path="/channelsTypeProtocol" component={ChannelsTypeProtocol} />
+        <Route exact path="/channelsTypeProtocol/edit" component={ChannelsTypeProtocolEdit} />
+      </Switch>
+      <Switch key="/customerPool">
+        <Route exact path="/customerPool" component={CustomerPoolHome} />
+        <Route exact path="/customerPool/viewpointDetail" component={ViewpointDetail} />
+        <Route exact path="/customerPool/viewpointList" component={ViewpointList} />
+        <Route exact path="/customerPool/todo" component={ToDo} />
+        <Route exact path="/customerPool/list" component={CustomerList} />
+        <Route exact path="/customerPool/customerGroup" component={CustomerGroup} />
+        <Route exact path="/customerPool/createTask" component={CreateTask} />
+        <Route exact path="/customerPool/customerGroupManage" component={CustomerGroupManage} />
+        <Route exact path="/customerPool/serviceLog" component={ServiceLog} />
+        <Route exact path="/customerPool/taskFlow" component={TaskFlow} />
+      </Switch>
+      <Route exact path="/fullChannelServiceRecord" component={FullChannelServiceRecord} />
+      <Route exact path="/taskList" component={TaskListHome} />
+      <Route path="*" component={Empty} />
+    </Main>
+  </ConnectedRouter>
 );
+
+Routers.propTypes = {
+  history: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+};
+
+export default Routers;
