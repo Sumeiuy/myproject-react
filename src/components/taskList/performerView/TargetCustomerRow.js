@@ -15,8 +15,9 @@ import { riskLevelConfig, rankClsConfig } from './targetCustomerConfig';
 
 import styles from './targetCustomerRow.less';
 
-// 客户男女code码
+// 客户 男code码
 const MALE_CODE = '109001';
+// 客户 女code码
 const FEMALE_CODE = '109002';
 
 // 男性客户的头像
@@ -43,6 +44,8 @@ const FEMALE_COLOR = 'femaleColor';
 const ORG_COLOR = 'orgColor';
 // 产品机构的头像颜色值class名
 const PROD_COLOR = 'prodColor';
+// 性别未知的头像颜色值class名
+const OTHER_COLOR = 'otherColor';
 
 
 export default class TargetCustomerRow extends PureComponent {
@@ -77,6 +80,9 @@ export default class TargetCustomerRow extends PureComponent {
       } else if (genderCode === FEMALE_CODE) {
         type = FEMALE_ICON;
         colorCls = FEMALE_COLOR;
+      } else {
+        type = MALE_ICON;
+        colorCls = OTHER_COLOR;
       }
     } else if (custNature === ORG_CODE) {
       type = ORG_ICON;
