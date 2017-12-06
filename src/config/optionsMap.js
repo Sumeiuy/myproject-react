@@ -227,11 +227,6 @@ const optionsMap = {
       title: '明细指标展示在选定时间范围内针对该项指标的业绩排序图',
     },
   },
-  // 用于判断是否是新的组织机构
-  isNewOrg: {
-    jingzongOrgId: 'ZZ001041', // 经总orgId
-    nanjingOrgId: 'ZZ001041093', // 南京分公司新的组织机构，分公司与营业部之间增加财富中心
-  },
 };
 
 export default optionsMap;
