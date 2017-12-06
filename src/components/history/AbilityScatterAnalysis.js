@@ -16,6 +16,7 @@ import {
   EXCEPT_TOUGU_JYYJ_MAP,
 } from '../../config/SpecialIndicators';
 import { optionsMap } from '../../config';
+import report from '../../helper/page/report';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -27,8 +28,6 @@ const EMPTY_OBJECT = {};
 
 const YI = '亿';
 const WAN = '万';
-const NANJING_ORGID = 'ZZ001041093';
-
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 
@@ -527,7 +526,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 || (Number(level) === 2 && orgId !== NANJING_ORGID),
+      hideOption: Number(level) === 3 ||
+        Number(level) === 4 ||
+        (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,

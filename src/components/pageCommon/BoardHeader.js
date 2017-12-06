@@ -11,11 +11,11 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { fspContainer, optionsMap } from '../../config';
+import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './BoardHeader.less';
 
 const reactApp = fspContainer.reactApp;
-const NANJING_ORGID = 'ZZ001041093';
 // Select的选项组件
 const Option = Select.Option;
 // 自高到低、自低到高排序选项
@@ -243,7 +243,9 @@ export default class BoardHeader extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 || (Number(level) === 2 && orgId !== NANJING_ORGID),
+      hideOption: Number(level) === 3 ||
+        Number(level) === 4 ||
+        (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,

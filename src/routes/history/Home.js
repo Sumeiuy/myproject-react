@@ -13,6 +13,7 @@ import { message, Row, Col } from 'antd';
 import _ from 'lodash';
 
 import { emp, time } from '../../helper';
+import report from '../../helper/page/report';
 import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
@@ -26,7 +27,6 @@ import styles from './Home.less';
 const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
-
 const effects = {
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
@@ -187,6 +187,10 @@ export default class HistoryHome extends PureComponent {
       const ownerOrg = custRange[0];
       const timeStamp = new Date().getTime().toString();
       const defaultMoment = this.setDefaultMoment();
+      let temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 1);
+      if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+        temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 2);
+      }
       this.setState({
         swtichDefault: timeStamp,
         boardId,
@@ -196,7 +200,7 @@ export default class HistoryHome extends PureComponent {
         cycleType: defaultMoment.cycleType, // 时间段周期类型
         contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
         contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
-        scope: ownerOrg && String(Number(ownerOrg.level) + 1),
+        scope: temporaryScope,
         localScope: ownerOrg && ownerOrg.level,
         orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
         ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
@@ -398,10 +402,14 @@ export default class HistoryHome extends PureComponent {
     const { orgId, scope, localScope } = this.state;
     const { custRange } = this.props;
     const owner = custRange[0];
+    let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
+    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+      temporaryScope = scope || (owner && String(Number(owner.level) + 2));
+    }
     const org = {
       orgId: orgId || (owner && owner.id),
       localScope: localScope || (owner && owner.level),
-      scope: scope || (owner && String(Number(owner.level) + 1)),
+      scope: temporaryScope,
     };
     const selfParam = _.pick(this.state, privateParams);
     return {
@@ -577,7 +585,10 @@ export default class HistoryHome extends PureComponent {
       indicatorId,
     } = this.state;
     const level = localScope || custRange[0].level;
-    const newScope = scope || String(Number(level) + 1);
+    let newScope = scope || String(Number(level) + 1);
+    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+      newScope = scope || String(Number(level) + 2);
+    }
     const custOrg = ownerOrgId || custRange[0].id;
 
     const cOrgId = orgId || custRange[0].id;

@@ -11,6 +11,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { optionsMap } from '../../config';
+import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import HistoryRankChart from '../chartRealTime/HistoryRankChart';
 import imgStr from '../chartRealTime/noChart.png';
@@ -26,8 +27,6 @@ const sortByOrderSelect = sortByOrder.map((item, index) => {
 });
 // 按类别排序
 const sortByType = optionsMap.sortByType;
-const NANJING_ORGID = 'ZZ001041093';
-
 
 export default class HistoryCompareRankChart extends PureComponent {
   static propTypes = {
@@ -191,7 +190,9 @@ export default class HistoryCompareRankChart extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 || (Number(level) === 2 && orgId !== NANJING_ORGID),
+      hideOption: Number(level) === 3 ||
+        Number(level) === 4 ||
+        (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,
