@@ -183,6 +183,7 @@ export default class EditBaseInfo extends PureComponent {
     if (!_.isEqual(preTL, nextTL)) {
       const { templateId } = nextFD;
       const filterTemplate = _.filter(nextTL, o => o.prodName === templateId);
+      console.warn('filterTemplate', filterTemplate);
       this.setState({
         templateList: nextTL,
         protocolTemplate: (filterTemplate && filterTemplate[0]) || {},
@@ -212,7 +213,7 @@ export default class EditBaseInfo extends PureComponent {
       templateId,
       protocolTemplate: {
         ...this.state.protocolTemplate,
-        rowId: templateId,
+        prodName: templateId,
       },
       multiUsedFlag: multiUsedFlag === 'Y',
       levelTenFlag: levelTenFlag === 'Y',
@@ -617,7 +618,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }
         {

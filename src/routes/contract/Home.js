@@ -113,6 +113,8 @@ const mapDispatchToProps = {
   getFlowStepInfo: fetchDataFunction(true, 'contract/getFlowStepInfo'),
   // 审批接口
   postDoApprove: fetchDataFunction(true, 'contract/postDoApprove'),
+  // 清除部门数据
+  clearDepartmentData: fetchDataFunction(false, 'contract/clearDepartmentData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -159,6 +161,7 @@ export default class Contract extends PureComponent {
     // 查询合作部门
     getCooperDeparmentList: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array.isRequired,
+    clearDepartmentData: PropTypes.func.isRequired,
     // 审批人
     flowStepInfo: PropTypes.object,
     getFlowStepInfo: PropTypes.func.isRequired,
@@ -887,6 +890,7 @@ export default class Contract extends PureComponent {
       getFlowStepInfo,
       empInfo,
       resetUnsubscribeDetail,
+      clearDepartmentData,
     } = this.props;
     const {
       addFormModal,
@@ -969,6 +973,8 @@ export default class Contract extends PureComponent {
       getFlowStepInfo,
       // 清空退订合作合约详情
       resetUnsubscribeDetail,
+      // 清除合作部门
+      clearDepartmentData,
     };
     const addFormModalProps = {
       modalKey: 'addFormModal',
@@ -999,6 +1005,8 @@ export default class Contract extends PureComponent {
       searchCooperDeparment: this.handleSearchCooperDeparment,
       // 审批人相关信息
       flowStepInfo,
+      // 清除合作部门
+      clearDepartmentData,
     };
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
