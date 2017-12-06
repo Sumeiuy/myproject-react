@@ -67,7 +67,9 @@ export default class MatchArea extends PureComponent {
         <li>
           <span>
             <i className="label">姓名：</i>
-            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i
+              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+            />
           </span>
         </li>
       );
@@ -90,7 +92,9 @@ export default class MatchArea extends PureComponent {
         <li>
           <span>
             <i className="label">身份证号码：</i>
-            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i
+              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+            />
           </span>
         </li>
       );
@@ -113,7 +117,9 @@ export default class MatchArea extends PureComponent {
         <li>
           <span>
             <i className="label">联系电话：</i>
-            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i
+              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+            />
           </span>
         </li>
       );
@@ -136,7 +142,9 @@ export default class MatchArea extends PureComponent {
         <li>
           <span>
             <i className="label">经纪客户号：</i>
-            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i
+              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+            />
           </span>
         </li>
       );
@@ -165,7 +173,9 @@ export default class MatchArea extends PureComponent {
           <li>
             <span>
               <i className="label">匹配标签：</i>
-              <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+              <i
+                dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+              />
             </span>
           </li>
         );
