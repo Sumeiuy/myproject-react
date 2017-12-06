@@ -13,6 +13,7 @@ import { event } from '../../helper';
 import { constants } from '../../config';
 import styles from './custRange.less';
 
+const NANJING_ORGID = 'ZZ001041093';
 function transformCustRangeData(list, parent = '') {
   return list.map((item) => {
     const obj = {
@@ -157,7 +158,8 @@ export default class CustRange extends PureComponent {
       orgId,
       custRangeLevel,
       level: custRangeLevel,
-      scope: Number(custRangeLevel) + 1,
+      scope: (custRangeLevel === '2' && orgId !== NANJING_ORGID) ?
+        (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
     });
   }
 

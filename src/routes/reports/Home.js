@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import { emp, url, time } from '../../helper';
+import report from '../../helper/page/report';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
@@ -174,7 +175,8 @@ export default class ReportHome extends PureComponent {
         end,
         cycleType,
         orgId: custRange[0].id,
-        scope: (Number(custRange[0].level) + 1),
+        scope: custRange[0] && !report.isNewOrg(custRange[0].id) ?
+          (Number(custRange[0].level) + 2) : (Number(custRange[0].level) + 1),
         custRangeLevel: custRange[0].level,
       },
       () => {
@@ -188,18 +190,31 @@ export default class ReportHome extends PureComponent {
     this.props.delReportData();
   }
 
+  // 获取参数需要的scope值
+  @autobind
+  getApiScope() {
+    const { custRange } = this.props;
+    const { scope, custRangeLevel } = this.state;
+    if (scope) return scope;
+    let addNum = 1;
+    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+      addNum = 2;
+    }
+    return custRangeLevel ?
+      (Number(custRangeLevel) + addNum) : (Number(custRange[0].level) + addNum);
+  }
+
   @autobind
   getApiParams(param) {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
     const { custRange } = this.props;
     const { begin, cycleType, end, boardId } = this.state;
-    const { orgId, custRangeLevel, scope } = this.state;
+    const { orgId, custRangeLevel } = this.state;
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
-      scope: scope ||
-      (custRangeLevel ? (Number(custRangeLevel) + 1) : (Number(custRange[0].level) + 1)),
+      scope: this.getApiScope(),
       orderType: 'desc',
       begin,
       end,
@@ -350,7 +365,11 @@ export default class ReportHome extends PureComponent {
     const { showCharts, classifyScope, classifyOrder } = this.state;
     const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
-    const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    let newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+      newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 2);
+    }
+    const newOrgId = orgId || (custRange[0] && custRange[0].id);
     // 用来判断是否投顾绩效,
     const tempType = this.findBoardBy(boardId).boardType;
     let showScopeOrder = tempType === 'TYPE_TGJX';
@@ -358,7 +377,6 @@ export default class ReportHome extends PureComponent {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
     showScopeOrder = true;
-
     return (
       <div className="page-invest content-inner">
         <PageHeader
@@ -371,7 +389,7 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
-          orgId={orgId}
+          orgId={newOrgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
@@ -417,6 +435,7 @@ export default class ReportHome extends PureComponent {
                     updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
+                    orgId={newOrgId}
                   />
                 </div>
               );
