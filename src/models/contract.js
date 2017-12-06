@@ -11,6 +11,8 @@ import { emp } from '../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+// 流程状态：驳回
+const REJECT = '04';
 
 export default {
   namespace: 'contract',
@@ -185,7 +187,7 @@ export default {
         });
         // 如果详情的审批人与当前登陆人一致时，并且状态等于驳回时请求按钮接口
         // 2017/12/01,后端很确定地告诉，删掉状态值得判断
-        if (empId === response.resultData.approver) {
+        if (empId === response.resultData.approver && response.resultData.status == REJECT) {
           const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
           yield put({
             type: 'getFlowStepInfoSuccess',
