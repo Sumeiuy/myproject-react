@@ -1,7 +1,7 @@
 /**
  * @fileOverview components/customerPool/BasicInfo.js
- * @author wangjunjun
- * @description 执行者视图右侧详情的基本信息
+ * @author zhushengnan
+ * @description 管理者视图右侧详情任务反馈
  */
 
 import React, { PureComponent } from 'react';
