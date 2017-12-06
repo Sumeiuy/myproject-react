@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 19:40:05
+ * @Last Modified time: 2017-12-05 21:32:34
  * 管理者视图详情
  */
 
@@ -50,6 +50,9 @@ export default class ManagerViewDetail extends PureComponent {
     };
   }
 
+  /**
+   * 预览客户明细
+   */
   @autobind
   handlePreview() {
     const { previewCustDetail } = this.props;
@@ -64,6 +67,9 @@ export default class ManagerViewDetail extends PureComponent {
     });
   }
 
+  /**
+   * 关闭弹出框
+   */
   @autobind
   handleCloseModal() {
     const { isShowCustDetailModal } = this.state;
@@ -189,7 +195,9 @@ export default class ManagerViewDetail extends PureComponent {
           <MissionDescription missionDescription={''} />
         </div>
         <div className={styles.missionImplementationSection}>
-          <MissionImplementation />
+          <MissionImplementation
+            isFold={isFold}
+          />
         </div>
         <div className={styles.missionFeedbackSection}>
           这是任务反馈区域

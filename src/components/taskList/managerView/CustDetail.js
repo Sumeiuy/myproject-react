@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 21:07:59
+ * @Last Modified time: 2017-12-06 16:06:32
  * 客户明细数据
  */
 
@@ -154,15 +154,6 @@ export default class CustDetail extends PureComponent {
           if (!this.isFeedbackDetailMore) {
             this.isFeedbackDetailMore = true;
           }
-          return {
-            ...item,
-            id: item.custId,
-            custType: this.renderCustTypeIcon(item.custType),
-            feedbackDetail: <div className={styles.detailColumn}>
-              {_.map(item.feedbackDetail, itemData =>
-                <div key={itemData}><span>{itemData}</span></div>)}
-            </div>,
-          };
         }
 
         if (this.isFeedbackDetailMore) {
@@ -172,7 +163,6 @@ export default class CustDetail extends PureComponent {
         return {
           ...item,
           id: item.custId,
-          custType: this.renderCustTypeIcon(item.custType),
         };
       });
     }
@@ -215,6 +205,17 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
+  renderFeedbackDetail(feedbackDetail) {
+    return (
+      <div className={styles.detailColumn}>
+        {_.map(feedbackDetail, itemData =>
+          <div key={itemData}><span>{itemData}</span></div>)
+        }
+      </div>
+    );
+  }
+
+  @autobind
   renderCustTypeIcon(custType) {
     return rankImgSrcConfig[custType] ?
       <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
@@ -229,6 +230,7 @@ export default class CustDetail extends PureComponent {
     {
       key: 'custType',
       value: '客户类型',
+      render: this.renderCustTypeIcon,
     },
     {
       key: 'department',
@@ -249,6 +251,7 @@ export default class CustDetail extends PureComponent {
     {
       key: 'feedbackDetail',
       value: '反馈详情',
+      render: this.renderFeedbackDetail,
     }];
   }
 
