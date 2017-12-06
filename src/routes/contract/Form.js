@@ -17,6 +17,8 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import EditForm from '../../components/contract/EditForm';
 import styles from './form.less';
 
+// 退订的类型
+const unsubscribe = '2';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const confirm = Modal.confirm;
@@ -265,6 +267,11 @@ export default class Form extends PureComponent {
   // 检查必填项
   checkRequireFileds(contractFormData) {
     let result = true;
+    // 是否是退订（共两种类型：订购，退订）
+    const isUnsubscribe = contractFormData.applyType === unsubscribe;
+    if (isUnsubscribe) {
+      return result;
+    }
     // 编辑窗口
     if (!contractFormData.startDt) {
       message.error('请选择合约开始日期');
