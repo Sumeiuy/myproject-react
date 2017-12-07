@@ -44,9 +44,6 @@ export default class MissionImplementation extends PureComponent {
             下拉框
           </div>
         </div>
-        {/* <div className={styles.content}>
-
-        </div> */}
       </div>
     );
   }
