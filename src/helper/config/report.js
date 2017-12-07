@@ -5,7 +5,6 @@
  */
 
 const isNewOrg = {
-  rgId: 'ZZ001041', // 经总orgId
   nanjingOrgId: 'ZZ001041093', // 南京分公司新的组织机构，分公司与营业部之间增加财富中心
 };
 
