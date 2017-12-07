@@ -639,6 +639,7 @@ export default class PerformerView extends PureComponent {
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
     const rightPanel = this.getDetailComponentByView(this.state.currentView);
+
     return (
       <div>
         <SplitPanel
@@ -647,7 +648,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={420}
+          leftWidth={this.state.currentView === 'controller' ? 572 : 420}
         />
       </div>
     );

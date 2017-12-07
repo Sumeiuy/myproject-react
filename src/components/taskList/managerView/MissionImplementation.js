@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 21:31:18
+ * @Last Modified time: 2017-12-06 17:00:23
  * 任务实施简报
  */
 
@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
+import CustFeedback from './CustFeedback';
 import styles from './missionImplementation.less';
 
 const EMPTY_LIST = [];
@@ -56,7 +57,7 @@ export default class MissionImplementation extends PureComponent {
               <MissionProgress />
             </Col>
             <Col span={colSpanValue}>
-              <MissionProgress />
+              <CustFeedback />
             </Col>
           </Row>
         </div>
