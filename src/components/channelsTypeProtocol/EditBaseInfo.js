@@ -360,6 +360,9 @@ export default class EditBaseInfo extends PureComponent {
       startDt: '',
       vailDt: '',
       protocolNumber: '',
+    }, () => {
+      this.handleSearchClient('');
+      this.selectCustComponent.clearSearchValue();
     });
     getCustValidate(validatePayload).then(
       () => {
