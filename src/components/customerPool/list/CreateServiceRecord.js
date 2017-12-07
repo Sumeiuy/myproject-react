@@ -62,7 +62,7 @@ export default class CreateServiceRecord extends PureComponent {
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
         const iframeHash = iframe.contentWindow.location.hash;
-        const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
+        const newIframeHash = iframeHash.replace(/[&?]?_k=[^&]+/g, '');
         const obj = url.parse(newIframeHash);
         obj.s = Date.now();
         iframe.contentWindow.location.hash = Object.keys(obj).map(

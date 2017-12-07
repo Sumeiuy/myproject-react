@@ -7,16 +7,17 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 
-const Option = AutoComplete.Option;
+import styles from './search.less';
 
-import styles from './search.less'; // eslint-disable-line
+const Option = AutoComplete.Option;
 
 function onSelect(value) {
   console.log('onSelect', value);
 }
 
 function getRandomInt(max, min = 0) {
-  return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line
+  const v = (max - min) + 1;
+  return Math.floor(Math.random() * v) + min;
 }
 
 function searchResult(query) {

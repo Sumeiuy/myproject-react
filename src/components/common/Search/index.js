@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 15:42:14
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-06 11:13:30
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -161,7 +161,7 @@ export default class Search extends PureComponent {
 
   componentWillUnmount() {
     if (searchInputDOM) {
-      searchInputDOM.removeEventListener('keydown', this.handleEnter, false); // eslint-disable-line
+      searchInputDOM.removeEventListener('keydown', this.handleEnter, false);
     }
   }
 

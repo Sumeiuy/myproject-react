@@ -113,7 +113,7 @@ export default class Paganation extends PureComponent {
       current: parseInt(curPageNum, 10),
       defaultCurrent: 1,
       size: 'small', // 迷你版
-      total: totalRecordNum,
+      total: Number(totalRecordNum),
       pageSize: parseInt(curPageSize, 10),
       defaultPageSize: Number(curPageSize),
       onChange: onPageChange,

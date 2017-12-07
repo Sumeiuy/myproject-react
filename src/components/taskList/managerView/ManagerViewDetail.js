@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 09:11:03
+ * @Last Modified time: 2017-12-05 21:32:34
  * 管理者视图详情
  */
 
@@ -16,6 +16,7 @@ import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
+import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
@@ -23,6 +24,8 @@ import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal'
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 5;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -48,23 +51,42 @@ export default class ManagerViewDetail extends PureComponent {
     };
   }
 
+  /**
+   * 预览客户明细
+   */
   @autobind
   handlePreview() {
     const { previewCustDetail } = this.props;
     const { isShowCustDetailModal } = this.state;
-    previewCustDetail().then(() => {
+    previewCustDetail({
+      curPageNum: INITIAL_PAGE_NUM,
+      curPageSize: INITIAL_PAGE_SIZE,
+    }).then(() => {
       this.setState({
         isShowCustDetailModal: !isShowCustDetailModal,
       });
     });
   }
 
+  /**
+   * 关闭弹出框
+   */
   @autobind
   handleCloseModal() {
     const { isShowCustDetailModal } = this.state;
     this.setState({
       isShowCustDetailModal: !isShowCustDetailModal,
     });
+  }
+
+  @autobind
+  handleExport() {
+    console.log('导出');
+  }
+
+  @autobind
+  handleLaunchTask() {
+    console.log('发起任务');
   }
 
   render() {
@@ -161,6 +183,12 @@ export default class ManagerViewDetail extends PureComponent {
                 data={custDetailResult}
               />
             }
+            modalStyle={{
+              maxWidth: 1080,
+              minWidth: 700,
+              width: 1080,
+            }}
+            modalWidth={1080}
             onOkHandler={this.handleUpdateGroup}
           />
         </div>
@@ -168,10 +196,12 @@ export default class ManagerViewDetail extends PureComponent {
           <MissionDescription missionDescription={''} />
         </div>
         <div className={styles.missionImplementationSection}>
-          <MissionImplementation />
+          <MissionImplementation
+            isFold={isFold}
+          />
         </div>
-        <div className={styles.missionFeedbackSection}>
-          这是任务反馈区域
+        <div>
+          <MissionFeedback isFold={isFold} />
         </div>
       </div>
     );
