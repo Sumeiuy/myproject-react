@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-30 14:24:01
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-07 17:11:49
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -239,7 +239,6 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    console.warn('baseInfoData', baseInfoData);
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
@@ -341,7 +340,7 @@ export default class EditForm extends PureComponent {
   changeFunction(value) {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { cust } = this.state;
-    // const { protocolDetail: { cust: propsCust } } = this.props;
+    const newCust = [...cust];
     let id = '';
     if (!_.isEmpty(baseInfoData.protocolNumber)) {
       id = this.props.protocolDetail.id;
@@ -360,18 +359,7 @@ export default class EditForm extends PureComponent {
     const filterCust = _.filter(cust, o => o.econNum === value.econNum);
     // 如果已添加的客户找到了现在添加的客户
     if (filterCust.length) {
-      const newCust = [...cust];
-      // const propsFilter = _.filter(propsCust, o => o.econNum === value.econNum);
-      if (_.includes(custStatusObj.canAdd, filterCust[0].custStatus)) {
-        _.remove(newCust, o => o.econNum === filterCust[0].econNum);
-        newCust.push({
-          ...filterCust[0],
-          custStatus: '开通处理中',
-        });
-        this.setState({
-          cust: newCust,
-        });
-      } else {
+      if (!_.includes(custStatusObj.canAdd, filterCust[0].custStatus)) {
         message.error('相同客户不能重复添加');
         return;
       }
@@ -389,8 +377,19 @@ export default class EditForm extends PureComponent {
     };
     const { getCustValidate } = this.props;
     getCustValidate(validatePayload).then(() => {
+      let finalCust = [];
+      if (filterCust.length && _.includes(custStatusObj.canAdd, filterCust[0].custStatus)) {
+        _.remove(newCust, o => o.econNum === filterCust[0].econNum);
+        newCust.push({
+          ...filterCust[0],
+          custStatus: '开通处理中',
+        });
+        finalCust = newCust;
+      } else {
+        finalCust = [...cust, value];
+      }
       this.setState({
-        cust: [...cust, value],
+        cust: finalCust,
       });
     });
   }
