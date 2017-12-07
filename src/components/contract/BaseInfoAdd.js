@@ -142,7 +142,7 @@ export default class BaseInfoEdit extends PureComponent {
       ...this.state,
       client: value,
     }, () => {
-      this.handleSearchClient('');
+      this.handleSearchClient();
       this.selectCustComponent.clearSearchValue();
       this.transferDataToHome();
       const { operation } = this.state;
@@ -172,7 +172,7 @@ export default class BaseInfoEdit extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  handleSearchClient(v) {
+  handleSearchClient(v = '') {
     this.props.onSearchClient(v);
   }
 

@@ -361,7 +361,7 @@ export default class EditBaseInfo extends PureComponent {
       vailDt: '',
       protocolNumber: '',
     }, () => {
-      this.handleSearchClient('');
+      this.handleSearchClient();
       this.selectCustComponent.clearSearchValue();
     });
     getCustValidate(validatePayload).then(
@@ -411,7 +411,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  handleSearchClient(v) {
+  handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
       type: '05',
@@ -455,7 +455,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据填入关键词筛选协议模板
   @autobind
-  handleSearchTemplate(value) {
+  handleSearchTemplate(value = '') {
     console.warn('进入搜索方法', value);
   }
 
