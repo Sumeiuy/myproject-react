@@ -233,10 +233,10 @@ export default class Pageheader extends PureComponent {
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
     // 客户回填
-    const curAllCustInfo = _.find(customerList, o => o.custNumber === custNumber);
+    const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
     let curCust = '全部';
-    if (curAllCustInfo && curAllCustInfo.custNumber) {
-      curCust = `${curAllCustInfo.custName}(${curAllCustInfo.custNumber})`;
+    if (curCustInfo && curCustInfo.custNumber) {
+      curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
     }
 
     // 拟稿人增加全部
@@ -256,7 +256,7 @@ export default class Pageheader extends PureComponent {
     const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
     let curApprovePerson = '全部';
     if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-      curApprovePerson = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+      curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
     }
 
 
