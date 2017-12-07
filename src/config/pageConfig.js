@@ -762,6 +762,51 @@ const pageConfig = {
     subscribe: '0203', // 资讯订阅
     unsubscribe: '0204', // 资讯退订
   },
+  // 分公司客户划转
+  filialeCustTransfer: {
+    titleList: [
+      {
+        dataIndex: 'custId',
+        key: 'custId',
+        title: '经纪客户号',
+      },
+      {
+        dataIndex: 'custName',
+        key: 'custName',
+        title: '客户名称',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '原服务营业部',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '原服务经理',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '原职位',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '新服务营业部',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '新服务经理',
+      },
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '新职位',
+      },
+    ],
+  },
 
 };
 
