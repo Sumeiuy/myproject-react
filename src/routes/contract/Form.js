@@ -59,6 +59,8 @@ const mapDispatchToProps = {
   getCooperDeparmentList: fetchDataFunction(false, 'contract/getCooperDeparmentList'),
   // 保存合作合约
   saveContractData: fetchDataFunction(true, 'contract/saveContractData'),
+  // 清除部门数据
+  clearDepartmentData: fetchDataFunction(false, 'contract/clearDepartmentData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -83,6 +85,7 @@ export default class Form extends PureComponent {
     // 查询合作部门
     getCooperDeparmentList: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array,
+    clearDepartmentData: PropTypes.func.isRequired,
     // 审批人
     flowStepInfo: PropTypes.object,
     // 保存合作合约
@@ -354,6 +357,7 @@ export default class Form extends PureComponent {
       attachmentList,
       baseInfo,
       flowStepInfo,
+      clearDepartmentData,
     } = this.props;
     const { isHiddenFooter } = this.state;
     if (_.isEmpty(baseInfo) || _.isEmpty(flowHistory)) {
@@ -377,6 +381,8 @@ export default class Form extends PureComponent {
       cooperDeparment: this.props.cooperDeparment,
       // 根据管检测查询合作部门
       searchCooperDeparment: this.handleSearchCooperDeparment,
+      // 清除合作部门
+      clearDepartmentData,
     };
 
     return (

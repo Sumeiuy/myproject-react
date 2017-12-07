@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-07 17:11:35
+ * @Last Modified time: 2017-12-07 17:21:34
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -414,11 +414,9 @@ export default class EditBaseInfo extends PureComponent {
   handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
-      type: '05',
+      type: '05', // type 根据后端要求写死
       subType,
       keyword: v,
-      // type: '05', // type 根据后端要求写死
-      // subType,
     });
   }
 
