@@ -28,7 +28,6 @@ import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
-import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointDetail from './routes/customerPool/ViewpointDetail';
@@ -58,7 +57,6 @@ const routes = [
   { path: '/modal', component: TemplModal },
   { path: '/permission', component: PermissonHome },
   { path: '/approval', component: Approval },
-  { path: '/fullChannelServiceRecord', component: FullChannelServiceRecord },
   { path: '/taskList', component: TaskListHome },
   { path: '/Contract',
     component: Contract,

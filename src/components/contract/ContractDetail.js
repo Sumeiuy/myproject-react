@@ -35,7 +35,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @createForm()
-@withRouter()
+@withRouter
 export default class ContractDetail extends PureComponent {
   static propTypes = {
     contractDetail: PropTypes.object.isRequired,

@@ -64,7 +64,6 @@ app.model(require('./models/history'));
 app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
 app.model(require('./models/contract'));
-app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 app.model(require('./models/channelsTypeProtocol'));

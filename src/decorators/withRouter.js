@@ -20,6 +20,10 @@ const withRouter = (Component) => {
     }
 
     function hackPush(args) {
+      // TODO 针对相同的地址，不切换
+      if (typeof args === 'string') {
+        return push(args);
+      }
       const params = {
         search: `?${stringify(args.query)}`,
         ...args,
