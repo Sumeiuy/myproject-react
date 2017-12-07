@@ -70,7 +70,7 @@ export default function customerPool(api) {
     queryCustContact: query => api.post('/groovynoauth/fsp/cust/custlist/fspQueryCustContact', query),
 
     // 查询最近五次服务记录
-    queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
+    queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/service/queryRecentServiceRecord', query),
 
     // 关注与取消关注
     followCust: query => api.post('/groovynoauth/fsp/cust/custgroup/followCust', query),
@@ -99,7 +99,7 @@ export default function customerPool(api) {
     // 查询某客户的服务人员待选择列表
     getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
 
-    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllChannelServiceRecord', query),
+    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/service/queryAllChannelServiceRecord', query),
 
     // 预览客户细分数据
     previewCustFile: query => api.post('/groovynoauth/fsp/cust/custlist/previewCustFile', query),
@@ -109,6 +109,8 @@ export default function customerPool(api) {
 
     queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
 
+    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
+
     // 提交任务流程
     submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
@@ -117,9 +119,6 @@ export default function customerPool(api) {
 
     // 文件下载文件列表数据
     ceFileList: query => api.post('/file/ceFileList', query),
-
-    // 查询标签信息
-    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 
     // // 上传文件需要先上传uuid
     // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),

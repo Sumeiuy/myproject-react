@@ -103,8 +103,8 @@ export default class CreateTaskFormFlow extends PureComponent {
       }
       const formDataValidation = this.checkFormField({ ...values, isFormError });
       if (formDataValidation) {
-        values.templetDesc = toString(values.templetDesc);// eslint-disable-line
-        const value = { ...values, groupId, enterType };
+        const templetDesc = toString(values.templetDesc);
+        const value = { ...values, groupId, enterType, templetDesc };
         createTask(value);
       }
     });

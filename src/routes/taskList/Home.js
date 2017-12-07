@@ -59,6 +59,8 @@ const effects = {
   getCeFileList: 'customerPool/getCeFileList',
   // 预览客户明细
   previewCustDetail: 'managerView/previewCustDetail',
+  // 管理者视图查询任务详细信息中的基本信息
+  queryMngrMissionDetailInfo: 'managerView/queryMngrMissionDetailInfo',
 };
 
 const mapStateToProps = state => ({
@@ -85,6 +87,8 @@ const mapStateToProps = state => ({
   filesList: state.customerPool.filesList,
   deleteFileResult: state.performerView.deleteFileResult,
   custDetailResult: state.managerView.custDetailResult,
+  // 管理者视图任务详情中的基本信息
+  mngrMissionDetailInfo: state.managerView.mngrMissionDetailInfo,
 });
 
 const mapDispatchToProps = {
@@ -124,6 +128,8 @@ const mapDispatchToProps = {
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
   // 预览客户明细
   previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
+  // 查询管理者视图任务详细信息中的基本信息
+  queryMngrMissionDetailInfo: fetchDataFunction(true, effects.queryMngrMissionDetailInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -168,6 +174,8 @@ export default class PerformerView extends PureComponent {
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户细分结果
     custDetailResult: PropTypes.array.isRequired,
+    mngrMissionDetailInfo: PropTypes.object.isRequired,
+    queryMngrMissionDetailInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -185,7 +193,6 @@ export default class PerformerView extends PureComponent {
       typeName: '',
     };
   }
-
 
   componentDidMount() {
     const {
@@ -424,15 +431,20 @@ export default class PerformerView extends PureComponent {
     }).then(() => this.getCustDetail({ missionId: obj.id }));
   }
 
+  /**
+   * 管理者视图获取当前任务详细信息
+   * @param {*} record 当前记录
+   */
   @autobind
   loadManagerViewDetailContent(record = {}) {
     console.log(record);
     const {
-      getTaskDetailBasicInfo,
+      queryMngrMissionDetailInfo,
     } = this.props;
-    // 获取任务基本信息
-    getTaskDetailBasicInfo({
+    // 管理者视图获取任务基本信息
+    queryMngrMissionDetailInfo({
       taskId: record.id,
+      orgId: '', // 有权限需要传
     });
   }
 
@@ -635,6 +647,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
+          leftWidth={420}
         />
       </div>
     );
