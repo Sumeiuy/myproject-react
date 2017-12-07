@@ -5,9 +5,10 @@
 import _ from 'lodash';
 
 import { report as api } from '../api';
-import { BoardBasic } from '../config';
+import { BoardBasic, constants } from '../config';
 import report from '../helper/page/report';
 
+const defaultFilialeLevel = constants.filialeLevel;
 // const EMPTY_OBJECT = {};
 
 export default {
@@ -223,7 +224,7 @@ export default {
         payload: { contrastData: polyResponse.resultData },
       });
       let temporaryScope = String(Number(firstCust.level) + 1);
-      if (firstCust.id && !report.isNewOrg(firstCust.id)) {
+      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
         temporaryScope = String(Number(firstCust.level) + 2);
       }
       // 查询排名柱状图数据

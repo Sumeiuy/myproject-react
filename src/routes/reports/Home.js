@@ -16,12 +16,12 @@ import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import PageAnchor from '../../components/pageCommon/PageAnchor';
-
 import { constants } from '../../config';
 import styles from './Home.less';
 
 const defaultBoardId = constants.boardId;
 const defaultBoardType = constants.boardType;
+const defaultFilialeLevel = constants.filialeLevel;
 
 const effects = {
   allInfo: 'report/getAllInfo',
@@ -175,7 +175,8 @@ export default class ReportHome extends PureComponent {
         end,
         cycleType,
         orgId: custRange[0].id,
-        scope: custRange[0] && !report.isNewOrg(custRange[0].id) ?
+        scope: custRange[0].level && custRange[0].level === defaultFilialeLevel &&
+          !report.isNewOrg(custRange[0].id) ?
           (Number(custRange[0].level) + 2) : (Number(custRange[0].level) + 1),
         custRangeLevel: custRange[0].level,
       },
@@ -197,7 +198,9 @@ export default class ReportHome extends PureComponent {
     const { scope, custRangeLevel } = this.state;
     if (scope) return scope;
     let addNum = 1;
-    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+    if (((custRangeLevel && custRangeLevel === defaultFilialeLevel) ||
+      (custRange[0].level && custRange[0].level === defaultFilialeLevel)) &&
+      !report.isNewOrg(custRange[0].id)) {
       addNum = 2;
     }
     return custRangeLevel ?
@@ -366,7 +369,8 @@ export default class ReportHome extends PureComponent {
     const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     let newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
-    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+    if (custRange[0].level && custRange[0].level === defaultFilialeLevel &&
+      !report.isNewOrg(custRange[0].id)) {
       newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 2);
     }
     const newOrgId = orgId || (custRange[0] && custRange[0].id);

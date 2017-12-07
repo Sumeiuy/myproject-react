@@ -3,8 +3,10 @@
  * @author sunweibin
  */
 import { report as api } from '../api';
-import { request, BoardBasic } from '../config';
+import { request, BoardBasic, constants } from '../config';
 import report from '../helper/page/report';
+
+const defaultFilialeLevel = constants.filialeLevel;
 
 export default {
   namespace: 'report',
@@ -162,7 +164,7 @@ export default {
       });
       // 所有分类指标的数据
       let temporaryScope = String(Number(firstCust.level) + 1);
-      if (firstCust.id && !report.isNewOrg(firstCust.id)) {
+      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
         temporaryScope = String(Number(firstCust.level) + 2);
       }
       const resChartInfo = yield call(api.getChartInfo, {
