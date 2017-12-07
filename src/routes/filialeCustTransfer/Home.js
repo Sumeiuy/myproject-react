@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { message } from 'antd';
+import { message, Button } from 'antd';
 import _ from 'lodash';
 
 import { emp } from '../../helper';
@@ -113,6 +113,10 @@ export default class Contract extends PureComponent {
             data={EMPTY_LIST}
             titleList={titleList}
           />
+        </div>
+        <div className={styles.buttonBox}>
+          <Button type="primary" size="large">确认</Button>
+          <Button size="large">取消</Button>
         </div>
       </div>
     );

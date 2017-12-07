@@ -1,3 +1,4 @@
+/*eslint-disable */
 /*
  * @Description: 分公司客户划转 model
  * @Author: XuWenKang
@@ -5,8 +6,7 @@
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2017-12-06 15:13:30
  */
-// import { contract as api, seibel as seibelApi } from '../api';
-// import { emp } from '../helper';
+import { filialeCustTransfer as api } from '../api';
 
 // const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -22,3 +22,4 @@ export default {
   effects: {},
   subscriptions: {},
 };
+/*eslint-disable */
