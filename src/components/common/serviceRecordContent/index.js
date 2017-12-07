@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-01 15:56:53
+ * @Last Modified time: 2017-12-05 20:42:54
  */
 
 
@@ -178,7 +178,6 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { serviceTypeCode = '', serviceTypeName = '' },
       isReadOnly,
     } = props;
-
 
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);

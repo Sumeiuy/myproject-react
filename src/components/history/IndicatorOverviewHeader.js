@@ -57,7 +57,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             window.$confirm = window.confirm;
             window.confirm = function (...argus) {
               window.confirm = window.$confirm;
-              return window._confirm.apply(null, argus); // eslint-disable-line
+              return window._confirm.apply(null, argus);
             };
             return '您重新挑选的指标看板尚未保存，确认直接返回？';
           }

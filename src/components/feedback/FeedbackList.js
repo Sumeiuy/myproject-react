@@ -64,13 +64,13 @@ export default class FeedbackList extends PureComponent {
             },
           });
           // 选中第一行
-          this.setState({ // eslint-disable-line
+          this.setState({
             curSelectedRow: 0,
           });
         } else {
           // query上存在正确的currentId
           // 设置当前选中行
-          this.setState({ // eslint-disable-line
+          this.setState({
             curSelectedRow: _.findIndex(resultData,
               item => item.id.toString() === currentId),
           });

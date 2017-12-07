@@ -21,9 +21,6 @@ import styles from './performerViewDetail.less';
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
 
-// 指定每页可以显示多少条
-const pageSizeOptions = ['8', '16', '32'];
-
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -74,26 +71,6 @@ export default class PerformerViewDetail extends PureComponent {
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
       pageNum: pageNo,
-    });
-  }
-
-  @autobind
-  handleSizeChange(current, pageSize) {
-    const {
-      parameter: {
-        targetCustomerState,
-      },
-      changeParameter,
-    } = this.props;
-    changeParameter({
-      targetCustomerPageSize: pageSize,
-      targetCustomerPageNo: PAGE_NO,
-      targetCustId: '',
-    });
-    this.queryTargetCustInfo({
-      state: targetCustomerState,
-      pageSize,
-      pageNum: PAGE_NO,
     });
   }
 
@@ -179,11 +156,8 @@ export default class PerformerViewDetail extends PureComponent {
                 current={+curPageNo}
                 total={+page.totalCount}
                 pageSize={+curPageSize}
-                showSizeChanger
                 onChange={this.handlePageChange}
-                onShowSizeChange={this.handleSizeChange}
                 defaultPageSize={PAGE_SIZE}
-                pageSizeOptions={pageSizeOptions}
               />
             </div>
           </div>

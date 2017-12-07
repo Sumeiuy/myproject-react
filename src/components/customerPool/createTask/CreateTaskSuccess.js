@@ -6,11 +6,12 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
 import imgSrc from '../../../../static/images/createTask_success.png';
 import { fspGlobal } from '../../../utils';
+import { env } from '../../../helper';
 import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
@@ -38,16 +39,11 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   componentDidMount() {
-    /* eslint-disable */
-    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
     const docElemHeight = document.documentElement.clientHeight;
-    const taskSuccessBox = ReactDOM.findDOMNode(document.getElementById('taskSuccessBox'));// eslint-disable-line
-    if (UTBContentElem) {
-      taskSuccessBox.style.height = (docElemHeight - 55 - 60) + 'px';
+    if (env.isInFsp()) {
+      this.taskSuccessBox.style.height = `${docElemHeight - 55 - 60}px`;
     } else {
-      if (taskSuccessBox) {
-        taskSuccessBox.style.height = (docElemHeight - 40) + 'px';
-      }
+      this.taskSuccessBox.style.height = `${docElemHeight - 40}px`;
     }
     this.handleShowSuccess();
   }
@@ -56,6 +52,11 @@ export default class CreateTaskSuccess extends PureComponent {
     const { clearSubmitTaskFlowResult } = this.props;
     clearSubmitTaskFlowResult();
     this.clearTimeInterval();
+  }
+
+  @autobind
+  taskSuccessBoxRef(input) {
+    this.taskSuccessBox = input;
   }
 
   @autobind
@@ -71,7 +72,7 @@ export default class CreateTaskSuccess extends PureComponent {
     this.clearTimeInterval();
     const { onCloseTab, onRemoveTab, push, location: { state, query } } = this.props;
     if (document.querySelector(fspContainer.container)) {
-      if(typeof onRemoveTab === 'function') {
+      if (typeof onRemoveTab === 'function') {
         onRemoveTab();
         fspGlobal.switchFspTab('tab-home');
       } else {
@@ -110,7 +111,7 @@ export default class CreateTaskSuccess extends PureComponent {
     const { changeTime } = this.state;
     return (
       <div className={styles.taskSuccessBox}>
-        <div className={styles.success_inner} id="taskSuccessBox">
+        <div className={styles.success_inner} id="taskSuccessBox" ref={this.taskSuccessBoxRef}>
           <div className={styles.taskSuccess_content}>
             <div className={styles.taskSuccess_imgbox}>
               <img src={imgSrc} alt="自建任务返回图标" />
@@ -118,7 +119,7 @@ export default class CreateTaskSuccess extends PureComponent {
             <div className={styles.taskSuccess_msg}>
               <p>提交成功！</p>
               <p>创建任务请求已提交，后台需要一些时间处理。</p>
-              <p>5~10分钟后，您可以通过 任务中心-> MOT任务 查看并执行该任务。</p>
+              <p>5~10分钟后，您可以通过 任务中心-&gt; MOT任务 查看并执行该任务。</p>
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>

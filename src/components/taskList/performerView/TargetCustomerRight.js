@@ -93,14 +93,14 @@ export default class TargetCustomerRight extends PureComponent {
 
   // 根据资产的值返回对应的格式化值和单位串起来的字符串
   handleAssets(value) {
-    let newValue = '--';
-    let Unit = '';
+    let newValue = '0';
+    let unit = '元';
     if (!_.isEmpty(value)) {
       const obj = formatAsset(value);
       newValue = obj.value;
-      Unit = obj.unit;
+      unit = obj.unit;
     }
-    return `${newValue}${Unit}`;
+    return `${newValue}${unit}`;
   }
 
   // 联系电话的浮层信息
@@ -227,14 +227,20 @@ export default class TargetCustomerRight extends PureComponent {
         `${Number((newHsRate * 100).toFixed(2))}%`;
     }
     // 总资产不为0时进行计算
-    // 持仓金额占余额的百分比openAssetsPercent
-    // 可用余额占余额的百分比availablBalancePercent
-    let openAssetsPercent = '--';
-    let availablBalancePercent = '--';
+    // 持仓金额不为null或0时，持仓金额占余额的百分比openAssetsPercentNode，否则不展示百分比
+    // 可用余额不为null或0时，可用余额占余额的百分比availablBalancePercentNode，否则不展示百分比
+    let openAssetsPercentNode = '';
+    let availablBalancePercentNode = '';
     if (Number(itemData.assets)) {
       const openAssetsRate = itemData.openAssets / itemData.assets;
-      openAssetsPercent = `${(openAssetsRate) * 100}%`;
-      availablBalancePercent = `${(1 - openAssetsRate) * 100}%`;
+      openAssetsPercentNode = itemData.openAssets ?
+        <span><em className={styles.emStyle}>/</em>{openAssetsRate * 100}%</span>
+        :
+        null;
+      availablBalancePercentNode = itemData.availablBalance ?
+        <span><em className={styles.emStyle}>/</em>{(1 - openAssetsRate) * 100}%</span>
+        :
+        null;
     }
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
@@ -337,7 +343,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>持仓资产：</span>
                 <span>{this.handleAssets(itemData.openAssets)}</span>
-                <em className={styles.emStyle}>/</em><span>{openAssetsPercent || '--'}</span>
+                { openAssetsPercentNode }
               </h5>
             </Col>
             <Col span={thrSpan}>
@@ -359,7 +365,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>可用余额：</span>
                 <span>{this.handleAssets(itemData.availablBalance)}</span>
-                <em className={styles.emStyle}>/</em><span>{availablBalancePercent || '--'}</span>
+                { availablBalancePercentNode }
               </h5>
             </Col>
             <Col span={thrSpan}>

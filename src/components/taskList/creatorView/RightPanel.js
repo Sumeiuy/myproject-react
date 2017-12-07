@@ -145,9 +145,8 @@ export default class RightPanel extends PureComponent {
   renderDataSource(column, datas) {
     const dataSource = _.map(datas, (item) => {
       const rowData = {};
-      return _.merge(rowData, _.fromPairs(_.map(item, (itemData, index) => { // eslint-disable-line
-        return [column[index], itemData];
-      })));
+      return _.merge(rowData,
+        _.fromPairs(_.map(item, (itemData, index) => ([column[index], itemData]))));
     });
     return dataSource;
   }
