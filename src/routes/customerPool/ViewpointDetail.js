@@ -146,7 +146,7 @@ export default class ViewpointDetail extends PureComponent {
             </div>
             <div
               className={styles.body}
-              dangerouslySetInnerHTML={{ __html: formateAbstract }}
+              dangerouslySetInnerHTML={{ __html: formateAbstract }} // eslint-disable-line
             />
             <div className={styles.footer}>
               <div

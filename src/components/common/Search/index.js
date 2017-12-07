@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-06 11:13:30
+ * @Last Modified time: 2017-12-06 16:49:25
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -378,12 +378,12 @@ export default class Search extends PureComponent {
       <Option key={item.id} text={isContentMatch ? item.id : item.desc}>
         <a
           onClick={onOptionClick}
-          dangerouslySetInnerHTML={{ __html: newContent }}
+          dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"
         />
         <span
           className="desc"
-          dangerouslySetInnerHTML={{ __html: newDesc }}
+          dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
         />
       </Option>
     );
