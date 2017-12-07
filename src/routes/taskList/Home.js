@@ -666,7 +666,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={this.state.currentView === 'controller' ? 572 : 420}
+          leftWidth={this.state.currentView === 'controller' ? 572 : 400}
         />
       </div>
     );
