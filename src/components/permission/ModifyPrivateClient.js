@@ -47,6 +47,7 @@ export default class modifyPrivateClient extends PureComponent {
     status: PropTypes.string,
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
+    currentApproval: PropTypes.object,
     attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -75,6 +76,7 @@ export default class modifyPrivateClient extends PureComponent {
     workflowHistoryBeans: [],
     attaches: [],
     attachment: '',
+    currentApproval: {},
   }
   constructor() {
     super();
@@ -306,6 +308,7 @@ export default class modifyPrivateClient extends PureComponent {
       list={this.state.bottonList}
       onEmitEvent={this.submitModifyInfo}
     />);
+    console.warn('this.props.workflowHistoryBeans', this.props.workflowHistoryBeans);
     return (
       <CommonModal
         title="私密客户管理修改"
@@ -344,6 +347,7 @@ export default class modifyPrivateClient extends PureComponent {
           <ApprovalRecord
             head="审批记录"
             info={this.props.workflowHistoryBeans}
+            currentApproval={this.props.currentApproval}
             statusType="modify"
           />
           <TableDialog
