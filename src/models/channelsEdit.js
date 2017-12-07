@@ -5,6 +5,8 @@
  * @Last Modified time: 2017-11-28 13:46:20
  */
 
+import { message } from 'antd';
+
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { emp } from '../helper';
 
@@ -97,12 +99,13 @@ export default {
     },
     // 查询客户
     queryCustSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData } } = action;
+      if (!resultData) {
+        message.error('未找到该客户。');
+      }
       return {
         ...state,
-        protocolProductList: [],
-        protocolClauseList: [],
-        underCustList: [resultData],
+        underCustList: resultData ? [resultData] : [],
       };
     },
     // 查询审批人
