@@ -9,63 +9,58 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import classnames from 'classnames';
+import { Modal } from 'antd';
+import _ from 'lodash';
+
 import Icon from '../common/Icon';
-import EditModal from './EditModal';
+import DetailTable from './DetailTable';
 import styles from './treeDetail.less';
 
-const data = { name: '财富中心5', id: '5', category: 'manager' };
-
+const confirm = Modal.confirm;
 export default class TreeDetail extends Component {
   static propTypes = {
-    detailData: PropTypes.object,
+    tableData: PropTypes.array,
+    title: PropTypes.string,
+    category: PropTypes.string,
+    manager: PropTypes.object,
+    onDelete: PropTypes.func,
+    onUpdate: PropTypes.func,
+    onAdd: PropTypes.func,
+    onEdit: PropTypes.func,
   }
 
   static defaultProps = {
-    detailData: data,
+    title: '',
+    manager: {},
+    category: '',
+    tableData: {},
+    onDelete: () => {},
+    onUpdate: () => {},
+    onAdd: () => {},
+    onEdit: () => {},
   }
 
-  constructor(props) {
-    super(props);
-    console.log('#######constructor#########', props);
-    this.state = {
-      manager: '',
-      editModal: false,
-    };
-  }
-
-  @autobind
-  showModal() {
-    console.log('#######showModal##########');
-    this.setState({ editModal: true });
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   @autobind
-  handleSearch(keyword) {
-    console.log('#####handleSearch#########', keyword);
-  }
-
-  @autobind
-  handleOk(param) {
-    console.log('######handleOk#######', param);
-    const { modalKey, select } = param;
-    this.setState({ manager: select });
-    this.closeModal(modalKey);
-  }
-
-  @autobind
-  closeModal(modalKey) {
-    this.setState({ [modalKey]: false });
+  handleDelete(param) {
+    const that = this;
+    confirm({
+      title: '确认要删除吗?',
+      content: '确认后，操作将不可取消。',
+      onOk() { that.props.onDelete(param); },
+    });
   }
 
   @autobind
   renderHeader() {
-    const { detailData } = this.props;
-    const { manager } = this.state;
+    const { title, manager, onEdit } = this.props;
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{detailData.name}</div>
+        <div className={styles.title}>{title || '--'}</div>
         <div className={styles.managerRow}>
           <div className={styles.info}>{'负责人：'}</div>
           {
@@ -73,25 +68,24 @@ export default class TreeDetail extends Component {
               <div className={classnames(styles.info, styles.value)}>{`${manager.name}（${manager.code}）`}</div>
             )
           }
-          <Icon type={'beizhu'} onClick={this.showModal} className={styles.editIcon} />
+          <Icon type={'beizhu'} onClick={() => { onEdit(); }} className={styles.editIcon} />
         </div>
       </div>
     );
   }
 
   render() {
-    const { editModal } = this.state;
-    const { detailData } = this.props;
+    const { tableData, category } = this.props;
     return (
       <div className={styles.detailContainer}>
         {this.renderHeader()}
-        <EditModal
-          visible={editModal}
-          modalKey={'editModal'}
-          onSearch={this.handleSearch}
-          onOk={this.handleOk}
-          onCancel={this.closeModal}
-          category={detailData.category}
+        <DetailTable
+          rowKey={'id'}
+          category={category}
+          tableData={tableData}
+          onDelete={this.onDelete}
+          onUpdate={this.onUpdate}
+          onAdd={this.onAdd}
         />
       </div>
     );

@@ -9,7 +9,7 @@
  *  onSearch={func}
  *  modalKey={string}
  *  list={array}
- *  category={string}
+ *  modalType={string}
  * />
  * visible：必需的，用于控制弹框是否显示
  * onOk：必须，按钮的回调事件
@@ -17,7 +17,7 @@
  * onSearch: 必须，下拉控件中搜索事件
  * list：必须，下拉框列表
  * modalKey： 必须，容器组件用来控制modal出现和隐藏的key
- * category：非必须，值有，'manager', 'member', 'team'。默认值为manager
+ * modalType：非必须，值有，'manager', 'member', 'team'。默认值为manager
  * okText：有默认值：确定，按钮的title
  * cancelText: 有默认值：取消，按钮的title
  */
@@ -25,18 +25,13 @@ import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
 import { Input, Modal } from 'antd';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import Button from '../common/Button';
 import DropDownSelect from '../common/dropdownSelect';
-
 import styles from './editModal.less';
 
-const data = [{
-  name: '张三', code: '0987689',
-}, {
-  name: '李四', code: '09856789',
-}];
 const titleArray = {
   manager: ['编辑负责人', '负责人:'],
   member: ['添加成员', '成员:'],
@@ -52,7 +47,7 @@ const dropDownSelectBoxStyle = {
 export default class EditModal extends Component {
   static propTypes = {
     list: PropTypes.array,
-    category: PropTypes.string,
+    modalType: PropTypes.string,
     okText: PropTypes.string,
     cancelText: PropTypes.string,
     visible: PropTypes.bool.isRequired,
@@ -60,13 +55,15 @@ export default class EditModal extends Component {
     onSearch: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
+    updateItem: PropTypes.object,
   }
 
   static defaultProps = {
     okText: '确定',
     cancelText: '取消',
-    list: data,
-    category: 'manager',
+    list: [],
+    modalType: '',
+    updateItem: {},
   }
 
   constructor(props) {
@@ -79,9 +76,9 @@ export default class EditModal extends Component {
 
   @autobind
   handleOk() {
-    const { onOk, modalKey, category } = this.props;
+    const { onOk, modalKey, modalType } = this.props;
     const { select, teamName } = this.state;
-    onOk({ modalKey, category, select, teamName });
+    onOk({ modalKey, select, teamName, modalType });
   }
 
   @autobind
@@ -113,9 +110,10 @@ export default class EditModal extends Component {
 
   @autobind
   renderContent() {
-    const { category, list } = this.props;
+    const { modalType, list, updateItem } = this.props;
+    const { manager = '', title = '' } = updateItem || {};
     const { teamName } = this.state;
-    const titles = titleArray[category];
+    const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
     return (
       <div className={styles.modalBody}>
         <div className={styles.row}>
@@ -125,6 +123,7 @@ export default class EditModal extends Component {
               placeholder="工号/姓名"
               showObjKey="name"
               objId="code"
+              value={manager}
               searchList={list}
               emitSelectItem={this.handleSelect}
               emitToSearch={this.handleSearch}
@@ -139,7 +138,7 @@ export default class EditModal extends Component {
               <div className={styles.inputColumn}>
                 <Input
                   addonAfter={<Icon type="guanbi" onClick={this.handleClear} />}
-                  value={teamName}
+                  value={title || teamName}
                   onChange={this.handleChange}
                 />
               </div>
@@ -166,8 +165,8 @@ export default class EditModal extends Component {
   }
 
   render() {
-    const { visible, category } = this.props;
-    const title = titleArray[category][0];
+    const { visible, modalType } = this.props;
+    const title = _.head(titleArray[modalType]);
     return (
       <Modal
         title={title}

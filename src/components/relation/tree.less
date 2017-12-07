@@ -1,22 +1,30 @@
 .treeContainer {
-  border-right: 1px solid #e9e9e9;
+  border-right: 1px solid #c2c2c2;
   width: 30%;
+  min-width: 200px;
   .header {
     width: 100%;
     border-bottom: 1px solid #e9e9e9;
     padding-bottom: 18px;
-    .logo {
+    .logoBg {
       width: 46px;
       height: 46px;
       line-height: 46px;
       margin: auto;
       border-radius: 50%;
-      background-color: #4897f1;
-      -moz-box-shadow: -1px 0 6px rgba(75, 151, 241, 0.6); /* 老的 Firefox */
-      box-shadow: -1px 0 6px rgba(75, 151, 241, 0.6);
-      font-size: 14px;
-      color: #fff;
-      text-align: center;
+      background-color: #daeafc;
+      padding: 4px 0;
+      .logo {
+        width: 38px;
+        height: 38px;
+        line-height: 38px;
+        margin: auto;
+        border-radius: 50%;
+        background-color: #4897f1;
+        font-size: 14px;
+        color: #fff;
+        text-align: center;
+      }
     }
     .title {
       margin-top: 13px;
@@ -83,16 +91,29 @@
   :global {
     .ant-menu-submenu-inline > .ant-menu-submenu-title:after {
       right: 95px;
+      content: '\E604';
+      font-size: 18px;
+      color: #c2c2c2;
     }
     .ant-menu-inline .ant-menu-submenu-title {
       padding-left: 20px !important;
       padding-right: 20px;
+      height: 50px;
+      line-height: 50px;
     }
     .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
       background-color: #fff;
     }
     .ant-menu-inline .ant-menu-item:after, .ant-menu-vertical .ant-menu-item:after {
       display: none;
+    }
+    .ant-menu-inline {
+      border-right: 0;
+    }
+    .ant-menu-submenu-open.ant-menu-submenu-inline > .ant-menu-submenu-title:after {
+      -webkit-transform: rotate(90deg) scale(0.67);
+      transform: rotate(90deg) scale(0.67);
+      color: #fff;
     }
   }
 }

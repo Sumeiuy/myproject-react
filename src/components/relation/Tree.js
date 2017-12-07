@@ -18,43 +18,6 @@ import styles from './tree.less';
 
 const SubMenu = Menu.SubMenu;
 const NJFGS = 'njfgs';
-const data = {
-  njfgs: {
-    name: '南京分公司',
-    id: 'njfgs',
-    branchCenter: [{
-      name: '财富中心1',
-      id: '1',
-      branchTeam: [{
-        name: '张三团队',
-        id: '1',
-      }, {
-        name: '李四团队',
-        id: '2',
-      }],
-    }, {
-      name: '财富中心2',
-      id: '2',
-      branchTeam: [{
-        name: '马六团队',
-        id: '3',
-      }, {
-        name: '玄武团队',
-        id: '4',
-      }],
-    }, {
-      name: '财富中心3',
-      id: '3',
-      branchTeam: [{
-        name: '李逵团队',
-        id: '5',
-      }, {
-        name: '镇江团队',
-        id: '6',
-      }],
-    }],
-  },
-};
 
 export default class Tree extends Component {
   static propTypes = {
@@ -63,7 +26,7 @@ export default class Tree extends Component {
   }
 
   static defaultProps = {
-    treeData: data,
+    treeData: {},
     onSelect: () => {},
   }
 
@@ -94,9 +57,39 @@ export default class Tree extends Component {
   }
 
   @autobind
+  getItem(key) {
+    const { treeData } = this.props;
+    const { branchCenter = [] } = treeData[NJFGS];
+    const keys = _.split(key, '/');
+    let select = {};
+    _.forEach(
+      branchCenter,
+      (center) => {
+        if (center.id === _.head(keys)) {
+          if (keys.length === 1) {
+            select = center;
+          } else if (keys.length === 2) {
+            const { branchTeam = [] } = center;
+            _.forEach(
+              branchTeam,
+              (team) => {
+                if (team.id === _.last(keys)) {
+                  select = team;
+                }
+              },
+            );
+          }
+        }
+      },
+    );
+    return select;
+  }
+
+  @autobind
   handleSubmenuClick(submenu) {
     const { key } = submenu;
     this.setState({ selectKey: key });
+    this.props.onSelect(this.getItem(key));
   }
 
   @autobind
@@ -106,11 +99,13 @@ export default class Tree extends Component {
     if (menuKeys.indexOf(latestOpenKey) === -1) {
       const keys = _.split(selectKey, '/');
       this.setState({ openKeys, selectKey: _.head(keys) });
+      this.props.onSelect(this.getItem(_.head(keys)));
     } else {
       this.setState({
         openKeys: latestOpenKey ? [latestOpenKey] : [],
         selectKey: latestOpenKey,
       });
+      this.props.onSelect(this.getItem(latestOpenKey));
     }
   }
 
@@ -119,7 +114,7 @@ export default class Tree extends Component {
     const { title, logo } = this.getHeadLine(obj);
     return (
       <div className={styles.header}>
-        <div className={styles.logo}>{logo}</div>
+        <div className={styles.logoBg}><div className={styles.logo}>{logo}</div></div>
         <div className={styles.title}>{title}</div>
       </div>
     );
