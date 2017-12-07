@@ -116,7 +116,7 @@ export default class Viewpoint extends PureComponent {
           <div className={styles.article}>
             <div
               className={styles.text}
-              dangerouslySetInnerHTML={{ __html: formateAbstract }}
+              dangerouslySetInnerHTML={{ __html: formateAbstract }} // eslint-disable-line
             />
             <div
               className={classnames(
