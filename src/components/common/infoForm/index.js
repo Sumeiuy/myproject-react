@@ -13,7 +13,7 @@ export default function InfoForm(props) {
   const { label, required, children } = props;
   return (
     <div className={styles.infoForm}>
-      <div className={styles.infoFormLabel}>
+      <div className={`${styles.infoFormLabel} abc`}>
         {
           required ?
             <i>*</i>
