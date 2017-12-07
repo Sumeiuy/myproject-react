@@ -360,6 +360,9 @@ export default class EditBaseInfo extends PureComponent {
       startDt: '',
       vailDt: '',
       protocolNumber: '',
+    }, () => {
+      this.handleSearchClient();
+      this.selectCustComponent.clearSearchValue();
     });
     getCustValidate(validatePayload).then(
       () => {
@@ -408,7 +411,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  handleSearchClient(v) {
+  handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
       type: '05',
