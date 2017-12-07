@@ -455,7 +455,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据填入关键词筛选协议模板
   @autobind
-  handleSearchTemplate(value = '') {
+  handleSearchTemplate(value) {
     console.warn('进入搜索方法', value);
   }
 
