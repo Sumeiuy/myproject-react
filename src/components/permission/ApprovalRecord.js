@@ -45,9 +45,11 @@ export default function ApprovalRecord(props) {
             ) : (
               <div>
                 <span>当前步骤：</span>
-                <span style={{ color: '#333' }}>{currentStepObj.occupation}</span>
-                <span style={{ marginLeft: 20 }}>当前审批人：</span>
-                <span style={{ color: '#333' }}>{currentStepObj.empName}({currentStepObj.empNum})</span>
+                <span className={style.occupation}>{currentStepObj.occupation}</span>
+                <span className={style.curStepObjTitle}>当前审批人：</span>
+                <span className={style.curStepObjperson}>
+                  {currentStepObj.empName}({currentStepObj.empNum})
+                </span>
               </div>
           )
         }

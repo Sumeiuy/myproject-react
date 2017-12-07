@@ -308,7 +308,6 @@ export default class modifyPrivateClient extends PureComponent {
       list={this.state.bottonList}
       onEmitEvent={this.submitModifyInfo}
     />);
-    console.warn('this.props.workflowHistoryBeans', this.props.workflowHistoryBeans);
     return (
       <CommonModal
         title="私密客户管理修改"
