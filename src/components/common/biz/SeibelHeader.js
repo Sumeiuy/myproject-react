@@ -269,7 +269,6 @@ export default class Pageheader extends PureComponent {
       // 如果是通道类协议页面
       hasCreatePermission = hasPermissionOfProtocolCreate(empInfo);
     }
-    console.warn('orgId', orgId);
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
