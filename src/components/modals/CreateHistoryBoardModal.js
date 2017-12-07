@@ -22,8 +22,8 @@ export default class CreateHistoryBoardModal extends PureComponent {
     form: PropTypes.object.isRequired,
     createBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
-    boardId: PropTypes.string.isRequired,
-    boardType: PropTypes.string.isRequired,
+    boardId: PropTypes.string,
+    boardType: PropTypes.string,
     selectKeys: PropTypes.array.isRequired,
     createLoading: PropTypes.bool.isRequired,
     operateData: PropTypes.object.isRequired,
@@ -31,6 +31,8 @@ export default class CreateHistoryBoardModal extends PureComponent {
 
   static defaultProps = {
     visible: false,
+    boardId: '',
+    boardType: '',
   }
 
   constructor(props) {

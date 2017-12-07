@@ -45,7 +45,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
     scope: PropTypes.string,
-    boardType: PropTypes.string.isRequired,
+    boardType: PropTypes.string,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
   };
@@ -53,6 +53,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   static defaultProps = {
     optionsData: EMPTY_LIST,
     scope: '2', // 查询数据的维度
+    boardType: '',
   };
 
   constructor(props) {

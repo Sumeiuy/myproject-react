@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { message } from 'antd';
@@ -24,6 +24,7 @@ import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { fspGlobal } from '../../utils';
 import confirm from '../../components/common/confirm_';
+import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 

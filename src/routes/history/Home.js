@@ -7,11 +7,12 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message, Row, Col } from 'antd';
 import _ from 'lodash';
 
+import withRouter from '../../decorators/withRouter';
 import { emp, time } from '../../helper';
 import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
