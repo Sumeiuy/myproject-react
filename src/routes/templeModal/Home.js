@@ -20,6 +20,10 @@ import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import EditModal from '../../components/relation/EditModal';
+import Tree from '../../components/relation/Tree';
+import TreeDetail from '../../components/relation/TreeDetail';
+
 
 import {
   confirmData,
@@ -46,6 +50,7 @@ export default class TemplModal extends PureComponent {
       confirmModal: false,
       commonModal: false,
       approvalModal: false,
+      editModal: false,
     };
   }
 
@@ -112,9 +117,9 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  showModal() {
+  showModal(modal) {
     this.setState({
-      commonModal: true,
+      [modal]: true,
     });
   }
 
@@ -149,6 +154,12 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  handleOkOfDropDown(obj) {
+    console.log('#######obj########', obj);
+    this.closeModal(obj.modalKey);
+  }
+
+  @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
       <div className={styles.result}>
@@ -174,6 +185,7 @@ export default class TemplModal extends PureComponent {
       confirmModal,
       commonModal,
       approvalModal,
+      editModal,
     } = this.state;
 
     const createBMProps = {
@@ -321,6 +333,15 @@ export default class TemplModal extends PureComponent {
       },
     ];
 
+    const eidtModalProps = {
+      visible: editModal,
+      modalKey: 'editModal',
+      onSearch: this.handleSearch,
+      onOk: this.handleOkOfDropDown,
+      onCancel: this.closeModal,
+      category: 'manager',
+    };
+
     return (
       <div>
         <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
@@ -338,13 +359,19 @@ export default class TemplModal extends PureComponent {
         <Button onClick={this.openDeleteBoardModal}>删除</Button>
         <DeleteBoardModal {...deleteBoardMProps} />
         <br />
+        <div className={styles.treeContainer}>
+          <Tree />
+          <TreeDetail />
+        </div>
         <br />
         <SearchModal {...searchProps} />
+        <br />
+        <EditModal {...eidtModalProps} />
         <br />
         <Button onClick={this.openConfirmClick}>show confirm弹框</Button>
         <CommonUpload {...uploadProps} edit />
         <CommonUpload {...uploadProps} />
-        <Button onClick={this.showModal}>打开公用弹窗</Button>
+        <Button onClick={() => { this.showModal('editModal'); }}>打开公用弹窗</Button>
         <ProcessConfirm {...confirmProps} />
         <br />
         <br />
