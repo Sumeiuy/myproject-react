@@ -62,7 +62,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 处理数值（大于99+）
   processNum(num) {
-    const nowNum = parseInt(num); // eslint-disable-line
+    const nowNum = parseInt(num, 10);
     if (_.isNaN(nowNum)) {
       return '--';
     }
@@ -73,7 +73,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 数据处理
   farmtNum(num) {
-    if (_.isNaN(parseInt(num))) { // eslint-disable-line
+    if (_.isNaN(parseInt(num, 10))) {
       return '--';
     }
     return num;

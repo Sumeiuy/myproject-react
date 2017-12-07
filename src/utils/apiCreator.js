@@ -85,7 +85,7 @@ export default function createApi() {
         url,
         {
           method: 'POST',
-          body: `data_list=${encodeURIComponent(encode.base64(query))}`,
+          body: `data_list=${encodeURIComponent(encode.base64(JSON.stringify(query)))}`,
         },
       );
     },

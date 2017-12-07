@@ -24,7 +24,6 @@ import withRouter from '../../decorators/withRouter';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 
-const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const DEFAULTSIZE = 530;
 let splitPane;
@@ -67,7 +66,6 @@ export default class FeedBack extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isEmpty: true,
       paneMinSize: 200,
       paneMaxSize: 600,
     };
@@ -111,8 +109,14 @@ export default class FeedBack extends PureComponent {
 
   componentDidUpdate() {
     this.setDocumentScroll();
-    const { location: { pathname, query, query: { isResetPageNum } }, replace,
-      list: { resultData = EMPTY_LIST } } = this.props;
+    const {
+      location: {
+        pathname,
+        query,
+        query: { isResetPageNum },
+      },
+      replace,
+    } = this.props;
     // 重置pageNum和pageSize
     if (isResetPageNum === 'Y') {
       replace({
@@ -121,16 +125,6 @@ export default class FeedBack extends PureComponent {
           ...query,
           isResetPageNum: 'N',
         },
-      });
-    }
-
-    if (_.isEmpty(resultData)) {
-      this.setState({ // eslint-disable-line
-        isEmpty: true,
-      });
-    } else {
-      this.setState({ // eslint-disable-line
-        isEmpty: false,
       });
     }
   }
@@ -235,10 +229,10 @@ export default class FeedBack extends PureComponent {
       contentSectionElem.style.height = '100%';
     }
 
-    if (nullElem && this.state.isEmpty) {
+    if (nullElem && _.isEmpty(this.props.list.resultData)) {
       const top = nullElem.getBoundingClientRect().top;
       containerElem.style.height = `${docElemHeight - top}px`;
-      nullDivSectionElem.style.height = `${docElemHeight - top}px`; // eslint-disable-line
+      nullDivSectionElem.style.height = `${docElemHeight - top}px`;
     }
   }
 
@@ -327,7 +321,8 @@ export default class FeedBack extends PureComponent {
 
   render() {
     const { list, location, replace, push } = this.props;
-    const { isEmpty, paneMaxSize, paneMinSize } = this.state;
+    const isEmpty = _.isEmpty(list.resultData);
+    const { paneMaxSize, paneMinSize } = this.state;
     const emptyClass = classnames({
       none: !isEmpty,
       feedbackRow: true,

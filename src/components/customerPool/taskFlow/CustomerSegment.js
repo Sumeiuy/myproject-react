@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-04 09:39:30
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-06 13:44:05
  * 客户细分组件
  */
 
@@ -202,9 +202,8 @@ export default class CustomerSegment extends PureComponent {
   renderDataSource(column, data) {
     const dataSource = _.map(data, (item) => {
       const rowData = {};
-      return _.merge(rowData, _.fromPairs(_.map(item, (itemData, index) => { // eslint-disable-line
-        return [column[index], itemData];
-      })));
+      return _.merge(rowData,
+        _.fromPairs(_.map(item, (itemData, index) => ([column[index], itemData]))));
     });
     return dataSource;
   }

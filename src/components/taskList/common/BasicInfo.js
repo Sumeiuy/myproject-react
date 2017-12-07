@@ -18,7 +18,7 @@ const sourceType = [{
   value: '客户细分导入',
 },
 {
-  key: 'SightLabel',
+  key: 'sightLabel',
   value: '瞄准镜标签',
 }];
 

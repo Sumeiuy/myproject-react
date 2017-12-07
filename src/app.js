@@ -83,7 +83,7 @@ app.start('#exApp');
 const store = app._store; // eslint-disable-line
 
 // 暴露给fsp方法
-initFspMethod(store); // eslint-disable-line
+initFspMethod(store);
 
 // 6. redux-persist
 if (persistConfig.active) {

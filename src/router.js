@@ -9,9 +9,9 @@ import {
   Route,
   Switch,
   routerRedux,
+  Redirect,
 } from 'dva/router';
 
-// import { fspContainer } from './config';
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
@@ -44,43 +44,74 @@ import TaskListHome from './routes/taskList/Home';
 
 const { ConnectedRouter } = routerRedux;
 
+// 路由Collection
+const routes = [
+  { path: '/empty', component: Empty },
+  { path: '/report', component: ReportHome },
+  { path: '/boardManage', component: BoardManageHome },
+  { path: '/boardEdit', component: BoardEditHome },
+  { path: '/preview', component: PreviewReport },
+  { path: '/history', component: HistoryHome },
+  { path: '/feedback', component: FeedBack },
+  { path: '/commission', component: CommissionHome },
+  { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/modal', component: TemplModal },
+  { path: '/permission', component: PermissonHome },
+  { path: '/approval', component: Approval },
+  { path: '/fullChannelServiceRecord', component: FullChannelServiceRecord },
+  { path: '/taskList', component: TaskListHome },
+  { path: '/Contract',
+    component: Contract,
+    children: [
+      { path: '/form', component: Form },
+    ],
+  },
+  { path: '/channelsTypeProtocol',
+    component: ChannelsTypeProtocol,
+    children: [
+      { path: '/edit', component: ChannelsTypeProtocolEdit },
+    ],
+  },
+  { path: '/customerPool',
+    component: CustomerPoolHome,
+    children: [
+      { path: '/viewpointDetail', component: ViewpointDetail },
+      { path: '/viewpointList', component: ViewpointList },
+      { path: '/todo', component: ToDo },
+      { path: '/list', component: CustomerList },
+      { path: '/customerGroup', component: CustomerGroup },
+      { path: '/createTask', component: CreateTask },
+      { path: '/customerGroupManage', component: CustomerGroupManage },
+      { path: '/serviceLog', component: ServiceLog },
+      { path: '/taskFlow', component: TaskFlow },
+    ],
+  },
+];
+
+// 递归创建路由
+function recursiveRouter(routeArray, parentPath = '') {
+  return routeArray.map(({ path, component, children }) => {
+    const recursivePath = parentPath + path;
+    if (!children) {
+      return (<Route exact key={recursivePath} path={recursivePath} component={component} />);
+    }
+    return (
+      <Switch key={recursivePath}>
+        <Route exact path={recursivePath} component={component} />
+        {recursiveRouter(children, recursivePath)}
+      </Switch>
+    );
+  });
+}
+
+// 路由器
 const Routers = ({ history }) => (
   <ConnectedRouter history={history}>
     <Main>
-      <Route exact path="/empty" component={Empty} />
-      <Route exact path="/invest" component={ReportHome} />
-      <Route exact path="/report" component={ReportHome} />
-      <Route exact path="/boardManage" component={BoardManageHome} />
-      <Route exact path="/boardEdit" component={BoardEditHome} />
-      <Route exact path="/preview" component={PreviewReport} />
-      <Route exact path="/history" component={HistoryHome} />
-      <Route exact path="/feedback" component={FeedBack} />
-      <Route exact path="/commission" component={CommissionHome} />
-      <Route exact path="/commissionChange" component={CommissionChangeHome} />
-      <Route exact path="/modal" component={TemplModal} />
-      <Route exact path="/permission" component={PermissonHome} />
-      <Route exact path="/contract/form" component={Form} />
-      <Route exact path="/contract" component={Contract} />
-      <Route exact path="/approval" component={Approval} />
-      <Switch key="/channelsTypeProtocol">
-        <Route exact path="/channelsTypeProtocol" component={ChannelsTypeProtocol} />
-        <Route exact path="/channelsTypeProtocol/edit" component={ChannelsTypeProtocolEdit} />
-      </Switch>
-      <Switch key="/customerPool">
-        <Route exact path="/customerPool" component={CustomerPoolHome} />
-        <Route exact path="/customerPool/viewpointDetail" component={ViewpointDetail} />
-        <Route exact path="/customerPool/viewpointList" component={ViewpointList} />
-        <Route exact path="/customerPool/todo" component={ToDo} />
-        <Route exact path="/customerPool/list" component={CustomerList} />
-        <Route exact path="/customerPool/customerGroup" component={CustomerGroup} />
-        <Route exact path="/customerPool/createTask" component={CreateTask} />
-        <Route exact path="/customerPool/customerGroupManage" component={CustomerGroupManage} />
-        <Route exact path="/customerPool/serviceLog" component={ServiceLog} />
-        <Route exact path="/customerPool/taskFlow" component={TaskFlow} />
-      </Switch>
-      <Route exact path="/fullChannelServiceRecord" component={FullChannelServiceRecord} />
-      <Route exact path="/taskList" component={TaskListHome} />
-      <Route path="*" component={Empty} />
+      <Route exact path="/" render={() => (<Redirect to="/empty" />)} />
+      <Route exact path="/invest" render={() => (<Redirect to="/report" />)} />
+      {recursiveRouter(routes)}
+      <Route path="*" render={() => (<Redirect to="/empty" />)} />
     </Main>
   </ConnectedRouter>
 );

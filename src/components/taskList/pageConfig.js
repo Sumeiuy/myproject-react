@@ -20,27 +20,37 @@ const pageConfig = {
       {
         show: true,
         label: '审批中',
-        value: '01',
+        value: '10',
       },
       {
         show: true,
-        label: '结束',
-        value: '02',
+        label: '审批驳回',
+        value: '20',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '30',
+      },
+      {
+        show: true,
+        label: '等待执行',
+        value: '40',
       },
       {
         show: true,
         label: '执行中',
-        value: '03',
+        value: '50',
       },
       {
         show: true,
         label: '结果跟踪',
-        value: '04',
+        value: '60',
       },
       {
         show: true,
-        label: '被驳回',
-        value: '05',
+        label: '结束',
+        value: '70',
       },
     ],
     chooseMissionView: [

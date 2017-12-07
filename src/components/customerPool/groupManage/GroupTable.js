@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 17:09:43
+ * @Last Modified time: 2017-12-06 16:16:50
  */
 
 import React, { PureComponent } from 'react';
@@ -65,6 +65,12 @@ export default class GroupTable extends PureComponent {
     ]),
     // 是否需要分页
     isNeedPaganation: PropTypes.bool,
+    // 选择框类型
+    selectionType: PropTypes.string,
+    // 全选，取消全选回调
+    onSelectAllChange: PropTypes.func,
+    // tableStyle
+    tableStyle: PropTypes.object,
   };
 
   static defaultProps = {
@@ -87,6 +93,9 @@ export default class GroupTable extends PureComponent {
     isNeedPaganation: true,
     onPageChange: () => { },
     onSizeChange: () => { },
+    selectionType: 'radio',
+    onSelectAllChange: () => { },
+    tableStyle: null,
   };
 
   constructor(props) {
@@ -154,6 +163,17 @@ export default class GroupTable extends PureComponent {
     return paginationOptions;
   }
 
+  @autobind
+  renderColumnValue(record, item) {
+    if (_.isEmpty(record[item.key]) || record[item.key] === 0) {
+      return '--';
+    }
+    if (item.render) {
+      return item.render(record[item.key]);
+    }
+    return record[item.key];
+  }
+
   /**
    * 构造每一列
    */
@@ -214,7 +234,7 @@ export default class GroupTable extends PureComponent {
                   eventName="/click/groupTabel/operationFirstColumn"
                 >
                   <span title={record[item.key]} className={styles.link}>
-                    {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+                    {this.renderColumnValue(record, item)}
                   </span>
                 </Clickable>
               </div>
@@ -236,7 +256,7 @@ export default class GroupTable extends PureComponent {
                     eventName="/click/groupTabel/operationColumn"
                   >
                     <span title={record[item.key]} className={styles.link}>
-                      {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+                      {this.renderColumnValue(record, item)}
                     </span>
                   </Clickable>
                 </div>
@@ -244,7 +264,7 @@ export default class GroupTable extends PureComponent {
             }
             return (
               <span title={record[item.key]} className={styles.column}>
-                {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+                {this.renderColumnValue(record, item)}
               </span>
             );
           },
@@ -259,7 +279,7 @@ export default class GroupTable extends PureComponent {
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) =>
         <span title={record[item.key]} className={styles.column}>
-          {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+          {this.renderColumnValue(record, item)}
         </span>,
     }));
   }
@@ -277,13 +297,21 @@ export default class GroupTable extends PureComponent {
 
   @autobind
   renderRowSelection() {
-    const { onRowSelectionChange, onSingleRowSelectionChange, currentSelectRowKeys } = this.props;
+    const {
+      onRowSelectionChange,
+      onSingleRowSelectionChange,
+      currentSelectRowKeys,
+      selectionType,
+      onSelectAllChange,
+    } = this.props;
+
     return {
-      type: 'radio',
+      type: selectionType || 'radio',
       selectedRowKeys: currentSelectRowKeys,
       onChange: onRowSelectionChange,
       hideDefaultSelections: true,
       onSelect: onSingleRowSelectionChange,
+      onSelectAll: onSelectAllChange,
     };
   }
 
@@ -301,6 +329,7 @@ export default class GroupTable extends PureComponent {
       onSizeChange,
       isNeedRowSelection,
       isNeedPaganation,
+      tableStyle,
      } = this.props;
     const { curSelectedRow, originPageSizeUnit } = this.state;
     const paganationOption = {
@@ -333,6 +362,7 @@ export default class GroupTable extends PureComponent {
             }
             return null;
           }}
+          style={tableStyle}
         />
         {
           (isNeedPaganation && totalRecordNum > 0) ?

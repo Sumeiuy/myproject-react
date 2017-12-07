@@ -579,7 +579,7 @@ const helper = {
       return /^((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(17[0-8]{1})|(18[0-9]{1}))+\d{8}$/.test(value);
     },
     isTelephone(value) {
-      return /^(00?[0-9]{2,3}\-?)?([2-9][0-9]{6,7})(\-[0-9]{1,8})?$/.test(value); // eslint-disable-line
+      return /^(00?[0-9]{2,3}-?)?([2-9][0-9]{6,7})(-[0-9]{1,8})?$/.test(value);
     },
     isEmail(value) {
       return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
