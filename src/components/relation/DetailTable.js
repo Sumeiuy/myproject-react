@@ -138,15 +138,18 @@ export default class DetailTable extends Component {
     tableData: PropTypes.array,
     category: PropTypes.string,
     rowKey: PropTypes.string,
-    onDelete: PropTypes.func.isRequired,
-    onUpdate: PropTypes.func.isRequired,
-    onAdd: PropTypes.func.isRequired,
+    onDelete: PropTypes.func,
+    onUpdate: PropTypes.func,
+    onAdd: PropTypes.func,
   }
 
   static defaultProps = {
     tableData: [],
     category: '',
     rowKey: '',
+    onDelete: () => {},
+    onUpdate: () => {},
+    onAdd: () => {},
   }
 
   @autobind

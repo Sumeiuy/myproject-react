@@ -39,8 +39,8 @@ export default class Tree extends Component {
       menuKeys = _.map(branchCenter, item => item.id);
     }
     this.state = {
-      selectKey: '1',
-      openKeys: [_.head(menuKeys)],
+      selectKey: NJFGS,
+      openKeys: [],
       menuKeys,
     };
   }
@@ -59,7 +59,11 @@ export default class Tree extends Component {
   @autobind
   getItem(key) {
     const { treeData } = this.props;
-    const { branchCenter = [] } = treeData[NJFGS];
+    const { branchCenter = [], name, category } = treeData[NJFGS];
+    if (key === NJFGS) {
+      return { name, category };
+    }
+
     const keys = _.split(key, '/');
     let select = {};
     _.forEach(
@@ -94,12 +98,11 @@ export default class Tree extends Component {
 
   @autobind
   handleOpenClick(openKeys) {
-    const { menuKeys, selectKey } = this.state;
+    const { menuKeys } = this.state;
     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
     if (menuKeys.indexOf(latestOpenKey) === -1) {
-      const keys = _.split(selectKey, '/');
-      this.setState({ openKeys, selectKey: _.head(keys) });
-      this.props.onSelect(this.getItem(_.head(keys)));
+      this.setState({ openKeys, selectKey: NJFGS });
+      this.props.onSelect(this.getItem(NJFGS));
     } else {
       this.setState({
         openKeys: latestOpenKey ? [latestOpenKey] : [],

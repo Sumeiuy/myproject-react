@@ -18,9 +18,9 @@ const MANAGER_MODAL = 'manager';
 // const TEAM_MODAL = 'team';
 // const MEMBER_MODAL = 'member';
 // detailTable 组件的三种表格类型
-const COMPANY_TABLE = 'manager';
-const CENTER_TABLE = 'team';
-const TEAM_TABLE = 'member';
+const COMPANY_TABLE = 'company';
+const CENTER_TABLE = 'center';
+const TEAM_TABLE = 'team';
 export default class Home extends Component {
   static propTypes = {
     tableData: PropTypes.array,
@@ -40,10 +40,10 @@ export default class Home extends Component {
       editModal: false,
       manager: {},
       treeData: treeArray,
-      tableData: centerArray,
+      tableData: companyArray,
       mamagerData: managerArray,
-      headline: '财富中心1',
-      category: 'center',
+      headline: '南京分公司',
+      category: 'company',
       type: 'manager',
       updateItem: {},
     };
@@ -56,6 +56,7 @@ export default class Home extends Component {
 
   @autobind
   handleSelect(menu) {
+    console.log('#####handleSelect######', menu);
     const { category, name } = menu;
     let data = [];
     if (category === COMPANY_TABLE) {
