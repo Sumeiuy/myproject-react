@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Progress } from 'antd';
+import { Row, Col, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -236,98 +236,115 @@ export default class MissionFeedback extends PureComponent {
     return option;
   }
 
-  renderRadios() {
-    const datas = resultData.radioFeedback;
-    const { isFold } = this.props;
-    const oDiv = _.map(datas, (item) => {
-      const radios = _.map(item.radioData, itemChild =>
-        (<h5><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
-      return (
-        <div className={styles.radioFeedAll}>
-          <div
-            className={classnames({
-              [styles.firBorder]: !isFold,
-              [styles.firBorderTwo]: isFold,
-            })}
-          >
-            <h5>{item.radioTaskFeedbackDes}</h5>
+  handleShowData(onOff, nameDes, data, item, isRadio = false) {
+    return (
+      <div className={styles.radioFeedAll}>
+        <div
+          className={classnames({
+            [styles.firBorder]: !onOff,
+            [styles.firBorderTwo]: onOff,
+          })}
+        >
+          <h5>{nameDes}</h5>
+        </div>
+        <div
+          className={classnames({
+            [styles.sedBoder]: !onOff,
+            [styles.sedBoderTwo]: onOff,
+          })}
+        >
+          <div className={styles.charts}>
+            <IECharts
+              option={isRadio ? this.handleOptionCake(data, nameDes) :
+                this.handleOptionBar(data, nameDes)}
+              resizable
+              style={{
+                height: '180px',
+              }}
+            />
           </div>
-          <div
-            className={classnames({
-              [styles.sedBoder]: !isFold,
-              [styles.sedBoderTwo]: isFold,
-            })}
-          >
-            <div className={styles.charts}>
-              <IECharts
-                onReady={this.handleBusinessOpenClick}
-                option={this.handleOptionCake(item.radioData, item.radioTaskFeedbackDes)}
-                resizable
-                style={{
-                  height: '180px',
-                }}
-              />
-            </div>
-            <div className={styles.tips}>
-              <div>
-                {radios}
-              </div>
+          <div className={styles.tips}>
+            <div>
+              {item}
             </div>
           </div>
         </div>
-      );
+      </div>
+    );
+  }
+
+  @autobind
+  renderTooltipContent(type, currentCount, per = null) {
+    return (
+      <div className={styles.content}>
+
+        {_.isEmpty(per) ?
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per})</div>
+        }
+      </div>
+    );
+  }
+
+  renderAllFeedback(allCount, count, countPer) {
+    const type = '服务经理总数';
+    const per = '已反馈人数';
+    return (
+      <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
+        <div>
+          <div className="ant-progress-outer">
+            <Tooltip
+              placement="topLeft"
+              title={() => this.renderTooltipContent(per, count, countPer)}
+              arrowPointAtCenter
+              overlayClassName={styles.tooltipOverlay}
+            >
+              <div className="ant-progress-bg" />
+            </Tooltip>
+            <Tooltip
+              placement="topLeft"
+              title={() => this.renderTooltipContent(type, allCount)}
+              arrowPointAtCenter
+              overlayClassName={styles.tooltipOverlay}
+            >
+              <div className="ant-progress-inner" />
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  @autobind
+  renderRadios(data) {
+    const { isFold } = this.props;
+    const isRadio = true;
+    const oDiv = _.map(data, (item) => {
+      const radios = _.map(item.radioData, itemChild =>
+        (<h5><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+          <b>({itemChild.optionPer})</b></span></h5>));
+      return this.handleShowData(isFold, item.radioTaskFeedbackDes,
+        item.radioData, radios, isRadio);
     });
     return oDiv;
   }
 
-  renderCheckBox() {
-    const datas = resultData.checkboxFeedback;
+  @autobind
+  renderCheckBox(data) {
     const { isFold } = this.props;
-    const oDiv = _.map(datas, (item) => {
+    const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
         (<h5><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
           <b>({itemChild.optionPer})</b></span></h5>));
-      return (
-        <div className={styles.checkFeed}>
-          <div
-            className={classnames({
-              [styles.firBorder]: !isFold,
-              [styles.firBorderTwo]: isFold,
-            })}
-          >
-            <h5>{item.checkboxFeedbackDes}</h5>
-          </div>
-          <div
-            className={classnames({
-              [styles.sedBoder]: !isFold,
-              [styles.sedBoderTwo]: isFold,
-            })}
-          >
-            <div className={styles.charts}>
-              <IECharts
-                option={this.handleOptionBar(item.checkboxData, item.checkboxFeedbackDes)}
-                resizable
-                style={{
-                  height: '180px',
-                }}
-              />
-            </div>
-            <div className={styles.tips}>
-              <div>
-                {checkBox}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      return this.handleShowData(isFold, item.checkboxFeedbackDes,
+        item.checkboxData, checkBox);
     });
     return oDiv;
   }
 
   render() {
     const { isFold } = this.props;
-
+    const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
 
     return (
       <div className={styles.basicInfo}>
@@ -342,7 +359,7 @@ export default class MissionFeedback extends PureComponent {
                     [styles.firAllBorderTwo]: isFold,
                   })}
                 >
-                  总体反馈状态
+                  {allFeedback.allTaskFeedbackDes}
                 </div>
                 <div
                   className={classnames({
@@ -351,16 +368,18 @@ export default class MissionFeedback extends PureComponent {
                   })}
                 >
                   <div className={styles.charts}>
-                    <Progress percent={50} showInfo={false} />
+                    {this.renderAllFeedback(allFeedback.serviceAllNum,
+                      allFeedback.aFeedback, allFeedback.aFeedbackPer)}
                   </div>
                   <div className={styles.allService}>
-                    <span>服务经理总数：<b>33333</b></span>
-                    <span>已反馈：<b>33333</b><b>(30%)</b></span>
+                    <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
+                    <span>已反馈：<b>{allFeedback.aFeedback}</b>
+                      <b>({allFeedback.aFeedbackPer})</b></span>
                   </div>
                 </div>
               </div>
-              {this.renderRadios()}
-              {this.renderCheckBox()}
+              {this.renderRadios(radioFeedback)}
+              {this.renderCheckBox(checkboxFeedback)}
             </Col>
           </Row>
         </div>

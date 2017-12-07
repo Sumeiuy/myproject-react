@@ -276,6 +276,40 @@
         & > div {
           float: left;
         }
+        :global {
+          .ant-progress {
+            display: flex;
+            justify-content: flex-start;
+            div:first-child {
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              width: 100%;
+            }
+            .ant-progress-outer {
+              padding-right: 0;
+              margin-right: 0;
+              // background-color: #daeafc;
+              border-radius: 100px;
+              width: 100%;
+              position: relative;
+            }
+            .ant-progress-text {
+              width: 70px;
+            }
+            .ant-progress-bg {
+              // width: 50%;
+              height: 8px;
+              background-color: #756fb8;
+              cursor: pointer;
+            }
+            .ant-progress-inner {
+              height: 8px;
+              background: #e3e2f1;
+              cursor: pointer;
+            }
+          }
+        }
       }
       .radioFeedAll {
         border-top: 1px solid #e9e9e9;
