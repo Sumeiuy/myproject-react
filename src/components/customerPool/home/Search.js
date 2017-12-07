@@ -295,7 +295,7 @@ export default class Search extends PureComponent {
           eventName="/click/search/option"
         >
           <a
-            dangerouslySetInnerHTML={{ __html: newContent }}
+            dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
             rel="noopener noreferrer"
           />
         </Clickable>
