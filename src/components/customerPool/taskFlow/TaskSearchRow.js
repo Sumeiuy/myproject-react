@@ -192,7 +192,7 @@ export default class TaskSearchRow extends PureComponent {
             >
               <span
                 className={styles.title}
-                dangerouslySetInnerHTML={{ __html: newTitle }}
+                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
@@ -205,7 +205,7 @@ export default class TaskSearchRow extends PureComponent {
                 <span>{item.customNum}</span>客户。创建时间：{item.createDate || '--'}，创建人：{item.createrName || '--'}
             </h4>
             <h4
-              dangerouslySetInnerHTML={{ __html: newDesc }}
+              dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
             />
           </div>
         );
