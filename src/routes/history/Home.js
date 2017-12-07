@@ -21,12 +21,14 @@ import ScatterAnalysis from '../../components/history/ScatterAnalysis';
 import HistoryComparePolyChart from '../../components/history/HistoryComparePolyChart';
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
 import PageHeader from '../../components/pageCommon/PageHeader';
+import { constants } from '../../config';
 import styles from './Home.less';
 
 // 投顾绩效历史对比的borderId
 const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
+const defaultFilialeLevel = constants.filialeLevel;
 const effects = {
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
@@ -188,7 +190,7 @@ export default class HistoryHome extends PureComponent {
       const timeStamp = new Date().getTime().toString();
       const defaultMoment = this.setDefaultMoment();
       let temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 1);
-      if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+      if (ownerOrg && ownerOrg.level === defaultFilialeLevel && !report.isNewOrg(ownerOrg.id)) {
         temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 2);
       }
       this.setState({
@@ -403,7 +405,7 @@ export default class HistoryHome extends PureComponent {
     const { custRange } = this.props;
     const owner = custRange[0];
     let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
-    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+    if (owner && owner.level === defaultFilialeLevel && !report.isNewOrg(owner.id)) {
       temporaryScope = scope || (owner && String(Number(owner.level) + 2));
     }
     const org = {
@@ -586,7 +588,7 @@ export default class HistoryHome extends PureComponent {
     } = this.state;
     const level = localScope || custRange[0].level;
     let newScope = scope || String(Number(level) + 1);
-    if (custRange[0] && !report.isNewOrg(custRange[0].id)) {
+    if (level && level === defaultFilialeLevel && !report.isNewOrg(custRange[0].id)) {
       newScope = scope || String(Number(level) + 2);
     }
     const custOrg = ownerOrgId || custRange[0].id;
