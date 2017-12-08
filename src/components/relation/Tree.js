@@ -18,15 +18,14 @@ import styles from './tree.less';
 
 const SubMenu = Menu.SubMenu;
 const NJFGS = 'njfgs';
-
 export default class Tree extends Component {
   static propTypes = {
-    treeData: PropTypes.object,
+    treeData: PropTypes.array,
     onSelect: PropTypes.func,
   }
 
   static defaultProps = {
-    treeData: {},
+    treeData: [],
     onSelect: () => {},
   }
 
@@ -34,12 +33,14 @@ export default class Tree extends Component {
     super(props);
     const { treeData } = props;
     let menuKeys = [];
-    if (!_.isEmpty(treeData) && !_.isEmpty(treeData[NJFGS])) {
-      const { branchCenter } = treeData[NJFGS];
-      menuKeys = _.map(branchCenter, item => item.id);
+    let selectKey = '';
+    if (!_.isEmpty(treeData)) {
+      const { children, id } = _.head(treeData);
+      selectKey = id;
+      menuKeys = _.map(children, item => item.id);
     }
     this.state = {
-      selectKey: NJFGS,
+      selectKey,
       openKeys: [],
       menuKeys,
     };
@@ -49,7 +50,7 @@ export default class Tree extends Component {
     let logo = '--';
     let title = '--';
     if (!_.isEmpty(obj)) {
-      const { name } = obj[NJFGS];
+      const { name } = _.head(obj);
       title = name;
       logo = name.substr(0, 1);
     }
@@ -59,37 +60,32 @@ export default class Tree extends Component {
   @autobind
   getItem(key) {
     const { treeData } = this.props;
-    const { branchCenter = [], name, category } = treeData[NJFGS];
-    // 根节点
-    if (key === NJFGS) {
-      return { name, category };
-    }
-
+    const { children = [] } = _.head(treeData);
     const keys = _.split(key, '/');
-    let select = {};
-    _.forEach(
-      branchCenter,
-      (center) => {
-        if (center.id === _.head(keys)) {
-          // 子节点
-          if (keys.length === 1) {
-            select = center;
-          } else if (keys.length === 2) {
-            const { branchTeam = [] } = center;
-            _.forEach(
-              branchTeam,
-              (team) => {
-                // 叶子节点
-                if (team.id === _.last(keys)) {
-                  select = team;
-                }
-              },
-            );
-          }
-        }
-      },
-    );
+    const select = this.getBranchItem(_.head(treeData), children, keys);
     return select;
+  }
+
+  @autobind
+  getBranchItem(obj, array, keys) {
+    if (_.isEmpty(array) || _.isEmpty(keys)) {
+      return obj;
+    }
+    for (let i = 0; i < array.length; i++) {
+      const item = array[i];
+      for (let j = 0; j < keys.length; j++) {
+        const key = keys[j];
+        if (item.id === key) {
+          const { children = [] } = item;
+          return this.getBranchItem(
+            item,
+            children,
+            _.slice(keys, Math.min((j + 1), keys.length), keys.length),
+          );
+        }
+      }
+    }
+    return {};
   }
 
   @autobind
@@ -141,15 +137,16 @@ export default class Tree extends Component {
   }
 
   @autobind
-  renderTree(obj) {
-    if (_.isEmpty(obj)) {
+  renderTree(paramData) {
+    if (_.isEmpty(paramData)) {
       return null;
     }
     const { selectKey } = this.state;
     const keys = _.split(selectKey, '/');
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
-    const { branchCenter } = obj[NJFGS];
+    const { children } = _.head(paramData);
+    console.log('######renderTree###########', paramData, children);
     return (
       <Menu
         onClick={this.handleSubmenuClick}
@@ -159,7 +156,7 @@ export default class Tree extends Component {
         mode="inline"
       >
         {_.map(
-          branchCenter,
+          children,
           center => (
             <SubMenu
               key={center.id}
@@ -171,7 +168,7 @@ export default class Tree extends Component {
               )}
             >
               {_.map(
-                center.branchTeam,
+                center.children,
                 team => (
                   <Menu.Item
                     key={`${center.id}/${team.id}`}

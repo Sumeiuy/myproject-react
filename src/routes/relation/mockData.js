@@ -1,50 +1,48 @@
-export const treeArray = {
-  njfgs: {
-    id: 'njfgs',
-    name: '南京分公司',
-    category: 'company',
-    branchCenter: [{
+export const treeArray = [{
+  id: 'njfgs',
+  name: '南京分公司',
+  category: 'company',
+  children: [{
+    id: '1',
+    name: '财富中心1',
+    category: 'center',
+    children: [{
       id: '1',
-      name: '财富中心1',
-      category: 'center',
-      branchTeam: [{
-        id: '1',
-        name: '张三团队',
-        category: 'team',
-      }, {
-        id: '2',
-        name: '李四团队',
-        category: 'team',
-      }],
+      name: '张三团队',
+      category: 'team',
     }, {
       id: '2',
-      name: '财富中心2',
-      category: 'center',
-      branchTeam: [{
-        id: '3',
-        name: '马六团队',
-        category: 'team',
-      }, {
-        id: '4',
-        name: '玄武团队',
-        category: 'team',
-      }],
-    }, {
-      id: '3',
-      name: '财富中心3',
-      category: 'center',
-      branchTeam: [{
-        id: '5',
-        name: '李逵团队',
-        category: 'team',
-      }, {
-        id: '6',
-        name: '镇江团队',
-        category: 'team',
-      }],
+      name: '李四团队',
+      category: 'team',
     }],
-  },
-};
+  }, {
+    id: '2',
+    name: '财富中心2',
+    category: 'center',
+    children: [{
+      id: '3',
+      name: '马六团队',
+      category: 'team',
+    }, {
+      id: '4',
+      name: '玄武团队',
+      category: 'team',
+    }],
+  }, {
+    id: '3',
+    name: '财富中心3',
+    category: 'center',
+    children: [{
+      id: '5',
+      name: '李逵团队',
+      category: 'team',
+    }, {
+      id: '6',
+      name: '镇江团队',
+      category: 'team',
+    }],
+  }],
+}];
 
 export const managerArray = [{
   name: '张三', code: '0987689',

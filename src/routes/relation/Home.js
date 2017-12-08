@@ -5,7 +5,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import EditModal from '../../components/relation/EditModal';
 import TreeDetail from '../../components/relation/TreeDetail';
@@ -24,12 +24,12 @@ const TEAM_TABLE = 'team';
 export default class Home extends Component {
   static propTypes = {
     tableData: PropTypes.array,
-    treeData: PropTypes.object,
+    treeData: PropTypes.array,
     mamagerData: PropTypes.array,
   }
 
   static defaultProps = {
-    treeData: {},
+    treeData: [],
     tableData: [],
     mamagerData: [],
   }
@@ -57,6 +57,9 @@ export default class Home extends Component {
   @autobind
   handleSelect(menu) {
     console.log('#####handleSelect######', menu);
+    if (_.isEmpty(menu)) {
+      return;
+    }
     const { category, name } = menu;
     let data = [];
     if (category === COMPANY_TABLE) {
