@@ -4,7 +4,8 @@
  *  根据客户input中输入的值将所选中的对象传给添加按钮进行进一步处理
  * @author baojiajia
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
 import _ from 'lodash';

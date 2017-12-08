@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';

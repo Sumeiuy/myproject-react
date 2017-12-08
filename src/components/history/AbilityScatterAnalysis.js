@@ -2,7 +2,8 @@
  * by xuxiaoqin
  * AbilityScatterAnalysis.js
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

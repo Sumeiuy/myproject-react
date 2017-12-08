@@ -4,7 +4,8 @@
  * @author zhushengnan
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select, DatePicker, Row, Col, Button, message } from 'antd';
 import { connect } from 'react-redux';
 import { routerRedux } from 'dva/router';

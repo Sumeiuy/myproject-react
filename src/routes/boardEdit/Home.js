@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Input, Tooltip, Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';

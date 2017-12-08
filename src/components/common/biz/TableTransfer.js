@@ -29,7 +29,8 @@
  *          要考虑到，操作栏的宽度40px，虽然是组件内部添加的，用户传入的scrollX时，需要考虑在内。
  * isNeedTransfer: 不必要，默认值为true。是否有操作列，实现穿梭功能
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Input, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

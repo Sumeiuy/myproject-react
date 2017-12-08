@@ -19,7 +19,8 @@
  * cancelText：有默认值（取消），按钮的title
  * rowKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Input } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

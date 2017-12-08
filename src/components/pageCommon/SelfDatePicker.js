@@ -2,10 +2,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-08-03 16:04:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 15:34:19
+ * @Last Modified time: 2017-12-08 14:31:56
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { autobind } from 'core-decorators';

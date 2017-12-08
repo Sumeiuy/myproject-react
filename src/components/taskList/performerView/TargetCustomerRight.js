@@ -4,7 +4,8 @@
  * @description 执行者视图右侧详情的目标客户
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
