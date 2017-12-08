@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 19:56:40
+ * @Last Modified time: 2017-12-08 17:37:27
  * 任务实施简报
  */
 
@@ -15,9 +15,11 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import styles from './missionImplementation.less';
+import emptyImg from '../../../../static/images/empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const EMPTY_CONTENT = '本机构无服务客户';
 
 export default class MissionImplementation extends PureComponent {
 
@@ -45,9 +47,9 @@ export default class MissionImplementation extends PureComponent {
 
   render() {
     const {
-      missionImplementationProgress,
+      missionImplementationProgress = EMPTY_OBJECT,
       isFold,
-      custFeedback,
+      custFeedback = EMPTY_LIST,
     } = this.props;
 
     const colSpanValue = isFold ? 12 : 24;
@@ -62,21 +64,28 @@ export default class MissionImplementation extends PureComponent {
             下拉框
           </div>
         </div>
-        <div className={styles.content}>
-          <Row>
-            <Col span={colSpanValue}>
-              <MissionProgress
-                missionImplementationProgress={missionImplementationProgress}
-                onPreviewCustDetail={this.handlePreview}
-              />
-            </Col>
-            <Col span={colSpanValue}>
-              <CustFeedback
-                custFeedback={custFeedback}
-              />
-            </Col>
-          </Row>
-        </div>
+        {
+          true ?
+            <div className={styles.emptyContent}>
+              <img src={emptyImg} alt={EMPTY_CONTENT} />
+              <div className={styles.tip}>{EMPTY_CONTENT}</div>
+            </div> :
+            <div className={styles.content}>
+              <Row>
+                <Col span={colSpanValue}>
+                  <MissionProgress
+                    missionImplementationProgress={missionImplementationProgress}
+                    onPreviewCustDetail={this.handlePreview}
+                  />
+                </Col>
+                <Col span={colSpanValue}>
+                  <CustFeedback
+                    custFeedback={custFeedback}
+                  />
+                </Col>
+              </Row>
+            </div>
+        }
       </div>
     );
   }

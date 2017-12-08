@@ -7,9 +7,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
+import TipsInfo from '../performerView/TipsInfo';
 import styles from './basicInfo.less';
 
 // 暂时的来源类型，具体需要和后端定一下
@@ -112,6 +114,16 @@ export default class BasicInfo extends PureComponent {
                   <Col span={colSpanValue} className={styles.colItem}>
                     <span className={styles.label}>客户总数:&nbsp;</span>
                     <span className={styles.content}>{Number(custTotal) || 0}</span>
+                    {/**
+                     * 机构名变量，需要替换
+                     */}
+                    <TipsInfo
+                      title={'当前{机构名}有效客户总数'}
+                      position={'rightBottom'}
+                      wrapperClass={classnames({
+                        [styles.custNumberTips]: true,
+                      })}
+                    />
                     <span
                       className={styles.previewCust}
                       onClick={this.handlePreview}

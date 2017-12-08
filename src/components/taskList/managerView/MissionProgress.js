@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 20:41:31
+ * @Last Modified time: 2017-12-08 15:22:53
  * 任务进度
  */
 
@@ -68,16 +68,26 @@ export default class MissionProgress extends PureComponent {
               title={() => this.renderTooltipContent(activeType, activeCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
+              getPopupContainer={() => this.activeElem}
             >
-              <div className="ant-progress-bg" style={{ width: `${activePercent}%` }} />
+              <div
+                className="ant-progress-bg"
+                style={{ width: `${activePercent}%` }}
+                ref={ref => (this.activeElem = ref)}
+              />
             </Tooltip>
             <Tooltip
               placement="topLeft"
               title={() => this.renderTooltipContent(remainingType, remainingCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
+              getPopupContainer={() => this.remainingElem}
             >
-              <div className="ant-progress-inner" style={{ width: `${remainingPercent}%` }} />
+              <div
+                className="ant-progress-inner"
+                ref={ref => (this.remainingElem = ref)}
+                style={{ width: `${remainingPercent}%` }}
+              />
             </Tooltip>
           </div>
         </div>
