@@ -60,6 +60,7 @@ export default class Tree extends Component {
   getItem(key) {
     const { treeData } = this.props;
     const { branchCenter = [], name, category } = treeData[NJFGS];
+    // 根节点
     if (key === NJFGS) {
       return { name, category };
     }
@@ -70,6 +71,7 @@ export default class Tree extends Component {
       branchCenter,
       (center) => {
         if (center.id === _.head(keys)) {
+          // 子节点
           if (keys.length === 1) {
             select = center;
           } else if (keys.length === 2) {
@@ -77,6 +79,7 @@ export default class Tree extends Component {
             _.forEach(
               branchTeam,
               (team) => {
+                // 叶子节点
                 if (team.id === _.last(keys)) {
                   select = team;
                 }
