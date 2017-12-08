@@ -140,7 +140,7 @@ export default class TargetCustomerRow extends PureComponent {
     const colSpanValue = isFold ? 12 : 24;
     // 数据三列显示时，给第三列增加左内边距35px
     const col3Cls = classnames([styles.ln24], [styles.fontsize0], {
-      [styles.pl35]: isFold,
+      [styles.textRight]: isFold,
     });
     // url中的targetCustId存在，就选中url中targetCustId对应的数据，否则默认选中第一条数据
     const rowItemCls = classnames([styles.rowItem], {
