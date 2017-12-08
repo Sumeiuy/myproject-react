@@ -37,6 +37,12 @@ export default class ManagerViewDetail extends PureComponent {
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户明细结果
     custDetailResult: PropTypes.array.isRequired,
+    // 获取客户反馈结果
+    onGetCustFeedback: PropTypes.func.isRequired,
+    // 客户反馈结果
+    custFeedback: PropTypes.array.isRequired,
+    // 任务实施进度数据
+    missionImplementationProgressData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -95,6 +101,8 @@ export default class ManagerViewDetail extends PureComponent {
       basicInfo = EMPTY_OBJECT,
       previewCustDetail,
       custDetailResult,
+      custFeedback,
+      missionImplementationProgressData,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -198,6 +206,9 @@ export default class ManagerViewDetail extends PureComponent {
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}
+            custFeedback={custFeedback}
+            onPreviewCustDetail={this.handlePreview}
+            missionImplementationProgress={missionImplementationProgressData}
           />
         </div>
         <div>

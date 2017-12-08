@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-06 16:06:32
+ * @Last Modified time: 2017-12-07 20:30:15
  * 客户明细数据
  */
 
@@ -12,6 +12,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
+import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from '../../../../static/images/icon-money.png';
@@ -43,6 +45,11 @@ const rankImgSrcConfig = {
   // 其他
   805999: '',
 };
+
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 export default class CustDetail extends PureComponent {
 
@@ -222,6 +229,35 @@ export default class CustDetail extends PureComponent {
       : null;
   }
 
+  /**
+   * 跳转到fsp的360信息界面
+   */
+  @autobind
+  toDetail(custType, custId, rowId, ptyId) {
+    const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+    };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openFspTab({
+        url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+        param,
+      });
+    }
+  }
+
+  /**
+   * 处理客户名称点击事件
+   * @param {*object} record 当前行记录
+   */
+  @autobind
+  handleCustNameClick(record) {
+    const { custType, custId, rowId, ptyId } = record;
+    this.toDetail(custType, custId, rowId, ptyId);
+  }
+
   renderColumnTitle() {
     return [{
       key: 'custName',
@@ -297,6 +333,8 @@ export default class CustDetail extends PureComponent {
             onRowSelectionChange={this.handleRowSelectionChange}
             currentSelectRowKeys={currentSelectRowKeys}
             onSelectAllChange={this.handleSelectAllChange}
+            isFirstColumnLink
+            firstColumnHandler={this.handleCustNameClick}
           />
         </div>
       </div>
