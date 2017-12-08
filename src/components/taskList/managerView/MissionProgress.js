@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-08 15:22:53
+ * @Last Modified time: 2017-12-08 17:54:59
  * 任务进度
  */
 
@@ -51,6 +51,16 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
+  getActiveElem() {
+    return this.activeElem;
+  }
+
+  @autobind
+  getRemainingElem() {
+    return this.remainingElem;
+  }
+
+  @autobind
   renderProgressContent(
     activeType,
     remainingType,
@@ -68,7 +78,7 @@ export default class MissionProgress extends PureComponent {
               title={() => this.renderTooltipContent(activeType, activeCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
-              getPopupContainer={() => this.activeElem}
+              getPopupContainer={this.getActiveElem}
             >
               <div
                 className="ant-progress-bg"
@@ -81,7 +91,7 @@ export default class MissionProgress extends PureComponent {
               title={() => this.renderTooltipContent(remainingType, remainingCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
-              getPopupContainer={() => this.remainingElem}
+              getPopupContainer={this.getRemainingElem}
             >
               <div
                 className="ant-progress-inner"
