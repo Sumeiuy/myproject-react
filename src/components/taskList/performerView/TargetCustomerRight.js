@@ -411,8 +411,8 @@ export default class TargetCustomerRight extends PureComponent {
               <h5 className={styles.people}>
                 <span className={styles.fl}>最近服务时间：</span>
                 <span className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
-                  {this.handleEmpty(itemData.missionTitle)} -
-                   {this.handleEmpty(itemData.missionType)}</span>
+                  {this.handleEmpty(itemData.missionType)} -
+                  {this.handleEmpty(itemData.missionTitle)}</span>
               </h5>
             </Col>
             <Col span={isFold ? 10 : 24}>
