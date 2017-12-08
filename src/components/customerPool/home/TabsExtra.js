@@ -3,7 +3,8 @@
  *  Tabs的extra组件
  * @author zhangjunli
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

@@ -6,8 +6,6 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
 
 
 export default class BatchCommission extends PureComponent {
@@ -18,10 +16,6 @@ export default class BatchCommission extends PureComponent {
   static defaultProps = {
     name: '',
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
 
   render() {
     return (

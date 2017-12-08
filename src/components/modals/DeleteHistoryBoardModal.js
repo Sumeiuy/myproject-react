@@ -2,7 +2,8 @@
  * @description 删除历史看板的Modal
  * @author hongguangqing
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, Form } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';

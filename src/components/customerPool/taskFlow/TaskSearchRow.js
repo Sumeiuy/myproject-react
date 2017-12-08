@@ -3,7 +3,8 @@
  *  客户列表项中的快捷菜单
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import { Radio, Modal, Button, Icon } from 'antd';
 import _ from 'lodash';

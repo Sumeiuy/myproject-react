@@ -4,7 +4,8 @@
  * @fileOverview history/Home.js
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import { routerRedux } from 'dva/router';

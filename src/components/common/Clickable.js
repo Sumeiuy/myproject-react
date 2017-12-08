@@ -2,7 +2,8 @@
  * Clickable.js 统一封装可点击元素，便于统一日志收集行为
  * @author maoquan(maoquan@htsc.com)
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind, time } from 'core-decorators';
 

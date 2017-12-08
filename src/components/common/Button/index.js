@@ -17,7 +17,8 @@
  *  className:不必要，按钮有特殊样式需求的时候通过此参数修改
  * @author honggaungqing
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Button as AntButton } from 'antd';
 
 import './index.less';

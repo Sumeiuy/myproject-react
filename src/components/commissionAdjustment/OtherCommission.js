@@ -3,7 +3,8 @@
  *  佣金详情页面其他16个佣金率组件
  * @author baojiajia
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styles from './otherCommission.less';
 

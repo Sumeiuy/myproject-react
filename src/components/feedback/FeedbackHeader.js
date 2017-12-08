@@ -4,7 +4,8 @@
  * @description 用户反馈头部筛选
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Cascader, Select, DatePicker, message } from 'antd';

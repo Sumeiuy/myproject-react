@@ -3,8 +3,8 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
-// import { autobind } from 'core-decorators';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
 

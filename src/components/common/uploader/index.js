@@ -1,11 +1,12 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-04 09:40:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-08 14:19:04
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

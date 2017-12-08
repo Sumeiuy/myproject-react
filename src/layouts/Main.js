@@ -3,7 +3,8 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
 import Loading from './Loading';

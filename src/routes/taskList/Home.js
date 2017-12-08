@@ -63,6 +63,8 @@ const effects = {
   previewCustDetail: 'managerView/previewCustDetail',
   // 管理者视图查询任务详细信息中的基本信息
   queryMngrMissionDetailInfo: 'managerView/queryMngrMissionDetailInfo',
+  // 管理者视图一二级客户反馈
+  countFlowFeedBack: 'managerView/countFlowFeedBack',
 };
 
 const mapStateToProps = state => ({
@@ -91,6 +93,8 @@ const mapStateToProps = state => ({
   custDetailResult: state.managerView.custDetailResult,
   // 管理者视图任务详情中的基本信息
   mngrMissionDetailInfo: state.managerView.mngrMissionDetailInfo,
+  // 管理者视图一二级客户反馈
+  custFeedback: state.managerView.custFeedback,
 });
 
 const mapDispatchToProps = {
@@ -132,6 +136,8 @@ const mapDispatchToProps = {
   previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
   // 查询管理者视图任务详细信息中的基本信息
   queryMngrMissionDetailInfo: fetchDataFunction(true, effects.queryMngrMissionDetailInfo),
+  // 管理者视图一二级客户反馈
+  countFlowFeedBack: fetchDataFunction(true, effects.countFlowFeedBack),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -178,6 +184,8 @@ export default class PerformerView extends PureComponent {
     custDetailResult: PropTypes.array.isRequired,
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
+    countFlowFeedBack: PropTypes.func.isRequired,
+    custFeedback: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -321,6 +329,8 @@ export default class PerformerView extends PureComponent {
       deleteFileResult,
       previewCustDetail,
       custDetailResult,
+      countFlowFeedBack,
+      custFeedback,
     } = this.props;
     const {
       query: { currentId },
@@ -374,6 +384,8 @@ export default class PerformerView extends PureComponent {
             dict={dict}
             previewCustDetail={previewCustDetail}
             custDetailResult={custDetailResult}
+            onGetCustFeedback={countFlowFeedBack}
+            custFeedback={custFeedback}
           />
         );
         break;
@@ -442,9 +454,15 @@ export default class PerformerView extends PureComponent {
     console.log(record);
     const {
       queryMngrMissionDetailInfo,
+      countFlowFeedBack,
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
+      taskId: record.id,
+      orgId: '', // 有权限需要传
+    });
+    // 管理者视图获取客户反馈
+    countFlowFeedBack({
       taskId: record.id,
       orgId: '', // 有权限需要传
     });
@@ -641,6 +659,7 @@ export default class PerformerView extends PureComponent {
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
     const rightPanel = this.getDetailComponentByView(this.state.currentView);
+
     return (
       <div>
         <SplitPanel
@@ -649,7 +668,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={400}
+          leftWidth={this.state.currentView === 'controller' ? 572 : 400}
         />
       </div>
     );

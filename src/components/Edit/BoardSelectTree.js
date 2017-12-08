@@ -1,11 +1,12 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-08-02 17:45:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-08 14:26:07
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tree, Tooltip, message } from 'antd';
 import _ from 'lodash';

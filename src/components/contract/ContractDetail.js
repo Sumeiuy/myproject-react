@@ -4,7 +4,8 @@
  * @author wanghan
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Form, Row, Col } from 'antd';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';

@@ -2,10 +2,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 15:11:05
+ * @Last Modified time: 2017-12-08 14:34:03
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';

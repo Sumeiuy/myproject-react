@@ -2,10 +2,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 10:51:29
+ * @Last Modified time: 2017-12-08 14:31:09
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Popover } from 'antd';
 import classnames from 'classnames';

@@ -2,7 +2,8 @@
  * @description 删除看板的Modal
  * @author sunweibin
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Modal, Button, Form, Input, Tooltip } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';

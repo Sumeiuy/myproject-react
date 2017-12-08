@@ -3,7 +3,8 @@
  *  客户列表项中按营业部筛选
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import CustRange from '../common/CustRange';
 
