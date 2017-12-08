@@ -11,11 +11,11 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { fspContainer, optionsMap } from '../../config';
+import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './BoardHeader.less';
 
 const reactApp = fspContainer.reactApp;
-
 // Select的选项组件
 const Option = Select.Option;
 // 自高到低、自低到高排序选项
@@ -49,11 +49,13 @@ export default class BoardHeader extends PureComponent {
     scope: PropTypes.number.isRequired,
     getTableInfo: PropTypes.func,
     showChart: PropTypes.string.isRequired,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
     level: '',
     indexID: '',
+    orgId: '',
     selfRequestData: () => {},
     getTableInfo: () => {},
   }
@@ -199,7 +201,7 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { level, showScopeOrder, indexID, boardType } = this.props;
+    const { level, showScopeOrder, indexID, boardType, orgId } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
     let { title } = this.props;
     // 针对开通业务明细，名称进行修改
@@ -241,7 +243,12 @@ export default class BoardHeader extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3,
+      hideOption: Number(level) === 3 ||
+        Number(level) === 4 ||
+        (Number(level) === 2 && !report.isNewOrg(orgId)),
+    });
+    const toggleScope4Option = classnames({
+      hideOption: Number(level) === 4,
     });
 
     return (
@@ -266,8 +273,12 @@ export default class BoardHeader extends PureComponent {
                     optionClass = toggleScope2Option;
                   }
                   if (index === 1) {
-                    // 按营业部
+                    // 按财富中心
                     optionClass = toggleScope3Option;
+                  }
+                  if (index === 2) {
+                    // 按营业部
+                    optionClass = toggleScope4Option;
                   }
                   return (
                     <Option

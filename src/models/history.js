@@ -5,8 +5,10 @@
 import _ from 'lodash';
 
 import { report as api } from '../api';
-import { BoardBasic } from '../config';
+import { BoardBasic, constants } from '../config';
+import report from '../helper/page/report';
 
+const defaultFilialeLevel = constants.filialeLevel;
 // const EMPTY_OBJECT = {};
 
 export default {
@@ -221,6 +223,10 @@ export default {
         type: 'getContrastDataSuccess',
         payload: { contrastData: polyResponse.resultData },
       });
+      let temporaryScope = String(Number(firstCust.level) + 1);
+      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
+        temporaryScope = String(Number(firstCust.level) + 2);
+      }
       // 查询排名柱状图数据
       const barResponse = yield call(api.getHistoryRankChartData, {
         ...payload.bar,
@@ -228,7 +234,7 @@ export default {
         orderIndicatorId: firstCore.key,
         orgId: firstCust.id,
         localScope: firstCust.level,
-        scope: String(Number(firstCust.level) + 1),
+        scope: temporaryScope,
       });
       yield put({
         type: 'getRankDataSuccess',
@@ -240,7 +246,7 @@ export default {
       const scatterCommon = {
         orgId: firstCust.id,
         localScope: firstCust.level,
-        scope: String(Number(firstCust.level) + 1),
+        scope: temporaryScope,
         coreIndicatorId: firstCore.key,
       };
       // 客户散点
