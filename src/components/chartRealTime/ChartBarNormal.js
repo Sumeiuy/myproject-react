@@ -24,7 +24,8 @@ import {
 } from './FixNumber';
 import { data } from '../../helper';
 import IECharts from '../IECharts';
-import { iconTypeMap, ZHUNICODE } from '../../config';
+import { iconTypeMap, ZHUNICODE, constants } from '../../config';
+import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from './noChart.png';
@@ -41,6 +42,7 @@ const {
   UNDISTRIBUTED,
   YUANNIAN,
 } = ZHUNICODE;
+const defaultFilialeLevel = constants.filialeLevel;
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -107,7 +109,8 @@ export default class ChartBarNormal extends PureComponent {
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
-            scope: Number(item.level) + 1,
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
+              String(Number(item.level) + 2) : String(Number(item.level) + 1),
           });
         }
       });

@@ -12,10 +12,12 @@ import IECharts from '../../IECharts';
 import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
 import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
 import { data as dataHelper } from '../../../helper';
-import { ZHUNICODE } from '../../../config';
+import { ZHUNICODE, constants } from '../../../config';
+import report from '../../../helper/page/report';
 import styles from './RankChart.less';
 
 const { UNDISTRIBUTED } = ZHUNICODE;
+const defaultFilialeLevel = constants.filialeLevel;
 
 export default class RankNormalChart extends PureComponent {
   static propTypes = {
@@ -59,7 +61,8 @@ export default class RankNormalChart extends PureComponent {
           this.props.updateQueryState({
             orgId: item.id,
             level: item.level,
-            scope: Number(item.level) + 1,
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
+            String(Number(item.level) + 2) : String(Number(item.level) + 1),
           });
         }
       });

@@ -8,7 +8,7 @@ export default function report(api) {
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 
     // 获取客户范围
-    getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
+    getCustRange: query => api.post('/groovynoauth/jxzb/newEmpOrgTree', query),
 
     // 获取绩效统计接口
     getPerformance: query => api.post('/groovynoauth/jxzb/querySingleRecord', query),

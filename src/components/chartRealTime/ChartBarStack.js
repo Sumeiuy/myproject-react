@@ -23,7 +23,8 @@ import {
 import { data } from '../../helper';
 import { stackTooltip } from './chartTooltipConfig';
 import IECharts from '../IECharts';
-import { iconTypeMap, ZHUNICODE } from '../../config';
+import { iconTypeMap, ZHUNICODE, constants } from '../../config';
+import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
@@ -36,6 +37,7 @@ const {
   YUANNIAN,
 } = ZHUNICODE;
 const getIcon = iconTypeMap.getIcon;
+const defaultFilialeLevel = constants.filialeLevel;
 
 export default class ChartBarStack extends PureComponent {
 
@@ -93,7 +95,7 @@ export default class ChartBarStack extends PureComponent {
       if (arg.componentType !== 'yAxis') {
         return;
       }
-      if (Number(this.props.scope) === 4) {
+      if (Number(this.props.scope) === 5) { // 5为最底层level(投顾，服务经理)
         return;
       }
       this.custRange.forEach((item) => {
@@ -102,7 +104,8 @@ export default class ChartBarStack extends PureComponent {
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
-            scope: Number(item.level) + 1,
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
+              String(Number(item.level) + 2) : String(Number(item.level) + 1),
           });
         }
       });
