@@ -1,4 +1,3 @@
-/*eslint-disable */
 /*
  * @Description: 分公司客户划转 model
  * @Author: XuWenKang
@@ -7,72 +6,109 @@
  * @Last Modified time: 2017-12-06 15:13:30
  */
 import { filialeCustTransfer as api } from '../api';
+import { emp } from '../../src/helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+// 空值对象，用于字段占位
+const PLACEHOLDER_OBJECT = {
+  custId: '', // 客户id
+  custName: '', // 客户名称
+  orgName: '', // 原服务营业部
+  empName: '', // 原服务经理
+  postnName: '', // 原职位
+  newOrgName: '', // 新服务营业部
+  newEmpName: '', // 新服务经理
+  newPostnName: '', // 新职位
+};
 
 export default {
   namespace: 'filialeCustTransfer',
   state: {
     custList: EMPTY_LIST, // 客户列表列表
-    oldManager: EMPTY_OBJECT, // 原服务经理
+    managerData: EMPTY_LIST, // 服务经理数据
     newManagerList: EMPTY_LIST, // 新服务经理列表
   },
   reducers: {
     getCustListSuccess(state, action) {
-      const { paylaod: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
         custList: resultData,
       };
     },
-    getOldManagerSuccess(state, action) {
-      const { paylaod: { resultData = EMPTY_OBJECT } } = action;
+    compareData(state, action) {
+      const { payload } = action;
+      const prevManagerData = state.managerData[0];
+      const managerData = Object.assign({}, PLACEHOLDER_OBJECT, prevManagerData, payload);
       return {
         ...state,
-        oldManager: resultData,
+        managerData: [managerData],
       };
     },
     getNewManagerListSuccess(state, action) {
-      const { paylaod: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      // 字段转化，用于将新服务经理和原服务经理区分开
+      const newResultData = resultData.map(v => (
+        {
+          newEmpName: v.empName,
+          newIntegrationId: v.integrationId,
+          newLogin: v.login,
+          newOrgName: v.orgName,
+          newPostnId: v.postnId,
+          newPostnName: v.postnName,
+          showSelectName: `${v.empName} ${v.postnName}`,
+        }
+      ));
       return {
         ...state,
-        newManagerList: resultData,
+        newManagerList: newResultData,
       };
     },
   },
   effects: {
     // 查询客户列表
     * getCustList({ payload }, { call, put }) {
-      const response = yield call(api.getCustList, payload);
+      const newPayload = {
+        ...payload,
+        integrationId: emp.getOrgId(),
+      };
+      const response = yield call(api.getCustList, newPayload);
       yield put({
         type: 'getCustListSuccess',
-        paylaod: response,
-      })
+        payload: response,
+      });
     },
     // 获取原客户经理
     * getOldManager({ payload }, { call, put }) {
       const response = yield call(api.getOldManager, payload);
+      const { resultData = EMPTY_OBJECT } = response;
+      // 获取到原客户经理之后调用compareData，将原客户经理数据和新服务经理数据合并传入commonTable
       yield put({
-        type: 'getOldManagerSuccess',
-        paylaod: response,
-      })
+        type: 'compareData',
+        payload: resultData,
+      });
+    },
+    // 选择新客户经理
+    * selectNewManager({ payload }, { put }) {
+      console.log('select', payload);
+      // 获取到原客户经理之后调用compareData，将原客户经理数据和新服务经理数据合并传入commonTable
+      yield put({
+        type: 'compareData',
+        payload,
+      });
     },
     // 获取新客户经理列表
     * getNewManagerList({ payload }, { call, put }) {
       const response = yield call(api.getNewManagerList, payload);
       yield put({
         type: 'getNewManagerListSuccess',
-        paylaod: response,
-      })
+        payload: response,
+      });
     },
     // 提交保存
-    * saveChange({ payload }, { call, put }) {
-      const response = yield call(api.getCustList, payload);
-      yield put({
-        type: 'getNewManagerListSuccess',
-        paylaod: response,
-      })
+    * saveChange({ payload }, { call }) {
+      yield call(api.saveChange, payload);
     },
   },
   subscriptions: {
@@ -89,4 +125,3 @@ export default {
     },
   },
 };
-/*eslint-disable */

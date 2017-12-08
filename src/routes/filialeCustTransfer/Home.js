@@ -1,4 +1,3 @@
-/*eslint-disable */
 /*
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
@@ -9,12 +8,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { withRouter } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { message, Button } from 'antd';
+import { message, Button, Modal } from 'antd';
 import _ from 'lodash';
 
-import { emp } from '../../helper';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
@@ -23,7 +21,7 @@ import Barable from '../../decorators/selfBar';
 
 import styles from './home.less';
 
-
+const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -43,8 +41,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   // 客户列表
   custList: state.filialeCustTransfer.custList,
-  // 原服务经理
-  oldManager: state.filialeCustTransfer.oldManager,
+  // 服务经理数据
+  managerData: state.filialeCustTransfer.managerData,
   // 新服务经理列表
   newManagerList: state.filialeCustTransfer.newManagerList,
 });
@@ -52,10 +50,12 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   // 获取客户列表
   getCustList: fetchDataFunction(false, 'filialeCustTransfer/getCustList'),
-  // 获取原客户经理
+  // 获取原服务经理
   getOldManager: fetchDataFunction(false, 'filialeCustTransfer/getOldManager'),
-  // 获取新客户经理
+  // 获取新服务经理
   getNewManagerList: fetchDataFunction(false, 'filialeCustTransfer/getNewManagerList'),
+  // 选择新服务经理
+  selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
   saveChange: fetchDataFunction(false, 'filialeCustTransfer/saveChange'),
 };
@@ -63,22 +63,27 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class Contract extends PureComponent {
+export default class FilialeCustTransfer extends PureComponent {
   static propTypes = {
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
     custList: PropTypes.array,
-    // 获取原客户经理
+    // 获取原服务经理
     getOldManager: PropTypes.func.isRequired,
-    oldManager: PropTypes.object,
-    // 获取新客户经理
+    // 获取新服务经理
     getNewManagerList: PropTypes.func.isRequired,
     newManagerList: PropTypes.array,
+    // 选择新的服务经理
+    selectNewManager: PropTypes.func.isRequired,
+    // 服务经理数据
+    managerData: PropTypes.array,
+    // 提交保存
+    saveChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     custList: EMPTY_LIST,
-    oldManager: EMPTY_OBJECT,
+    managerData: EMPTY_LIST,
     newManagerList: EMPTY_LIST,
   }
 
@@ -92,23 +97,21 @@ export default class Contract extends PureComponent {
     };
   }
 
-  componentWillMount() {
-
-  }
-
   // 选择客户
   @autobind
   handleSelectClient(v) {
-    console.log('1',v);
     this.setState({
       client: v,
-    },()=> {
+    }, () => {
+      // 选择客户之后触发搜索，清空关键词
+      this.handleSearchClient();
+      this.selectCustComponent.clearSearchValue();
       // 选择客户之后触发查询该客户的原服务经理
       const { getOldManager } = this.props;
       getOldManager({
         custId: v.custId,
-      })
-    })
+      });
+    });
   }
 
   // 查询客户
@@ -125,7 +128,15 @@ export default class Contract extends PureComponent {
   handleSelectNewManager(v) {
     this.setState({
       newManager: v,
-    })
+    }, () => {
+      // 选择服务经理之后触发搜索，清空关键词
+      this.handleSearchNewManager();
+      this.selectManagerComponent.clearSearchValue();
+      // 将选择的新服务经理和原服务经理数据合并用作展示
+      console.log('111', v);
+      const { selectNewManager } = this.props;
+      selectNewManager(v);
+    });
   }
 
   // 查询新服务经理
@@ -134,13 +145,64 @@ export default class Contract extends PureComponent {
     const { getNewManagerList } = this.props;
     getNewManagerList({
       login: v,
-    })
+    });
+  }
+
+  // 提交
+  @autobind
+  handleSubmit() {
+    const { client, newManager } = this.state;
+    const { managerData } = this.props;
+    const managerDataItem = managerData[0];
+    if (_.isEmpty(client)) {
+      message.error('请选择客户');
+      return;
+    }
+    if (_.isEmpty(newManager)) {
+      message.error('请选择新客户经理');
+      return;
+    }
+    if (managerDataItem.hasContract) {
+      const that = this;
+      confirm({
+        title: '确认要划转吗?',
+        content: '该客户名下有生效中的合作合约，请确认是否划转?',
+        onOk() {
+          that.sendRequest();
+        },
+      });
+      return;
+    }
+    this.sendRequest();
+  }
+
+  // 发送请求
+  @autobind
+  sendRequest() {
+    const { client, newManager } = this.state;
+    const { saveChange } = this.props;
+    console.log('abcd');
+    saveChange({
+      custId: client.custId,
+      custType: client.custType,
+      integrationId: newManager.newIntegrationId,
+      orgName: newManager.newOrgName,
+      postnName: newManager.newPostnName,
+      postnId: newManager.newPostnId,
+    });
+  }
+
+  // 取消
+  @autobind
+  handleCancel() {
+    console.log('cancel');
   }
 
   render() {
     const {
       custList,
       newManagerList,
+      managerData,
     } = this.props;
     return (
       <div className={styles.filialeCustTransferWrapper} >
@@ -153,7 +215,7 @@ export default class Contract extends PureComponent {
                   placeholder="选择客户"
                   showObjKey="custName"
                   objId="custId"
-                  value=''
+                  value=""
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
@@ -166,29 +228,37 @@ export default class Contract extends PureComponent {
               <InfoForm label="选择新服务经理" required>
                 <DropDownSelect
                   placeholder="选择新服务经理"
-                  showObjKey="empName"
-                  objId="login"
-                  value=''
+                  showObjKey="showSelectName"
+                  objId="newLogin"
+                  value=""
                   searchList={newManagerList}
                   emitSelectItem={this.handleSelectNewManager}
                   emitToSearch={this.handleSearchNewManager}
                   boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.selectCustComponent = ref}
+                  ref={ref => this.selectManagerComponent = ref}
                 />
               </InfoForm>
             </div>
           </div>
           <CommonTable
-            data={EMPTY_LIST}
+            data={managerData}
             titleList={titleList}
           />
         </div>
         <div className={styles.buttonBox}>
-          <Button type="primary" size="large">确认</Button>
-          <Button size="large">取消</Button>
+          <Button
+            type="primary"
+            size="large"
+            onClick={this.handleSubmit}
+          >确认
+          </Button>
+          <Button
+            size="large"
+            onClick={this.handleCancel}
+          >取消
+          </Button>
         </div>
       </div>
     );
   }
 }
-/*eslint-disable */
