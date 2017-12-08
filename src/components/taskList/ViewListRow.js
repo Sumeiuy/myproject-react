@@ -15,7 +15,8 @@ import styles from './viewListRow.less';
 const PROCESSING = '10'; // 执行者视图状态审批中
 const REJECT = '20'; // 执行中视图状态驳回
 const CLOSE = '30'; // 执行中视图状态终止
-const END = '40'; // 执行者视图状态结束
+const WAITEXECUTE = '40'; // 等待执行
+const END = '70'; // 执行者视图状态结束
 const EXECUTING = '50'; // 执行者视图状态执行中
 const RESULT = '60';  // 执行中视图状态结果跟踪
 
@@ -60,6 +61,7 @@ export default function AppItem(props) {
     pvEnd: data.statusCode === END && !active,
     pvExecuting: data.statusCode === EXECUTING && !active,
     pvResult: data.statusCode === RESULT && !active,
+    pvWaitExecute: data.statusCode === WAITEXECUTE && !active,
     transparent: active,
   });
   function handleClick() {
