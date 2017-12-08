@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-12 10:39:48
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-12 10:52:45
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-06 11:11:56
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -71,13 +71,13 @@ export default class LeftPanel extends PureComponent {
             },
           });
           // 选中第一行
-          this.setState({ // eslint-disable-line
+          this.setState({
             curSelectedRow: 0,
           });
         } else {
           // query上存在正确的currentId
           // 设置当前选中行
-          this.setState({ // eslint-disable-line
+          this.setState({
             curSelectedRow: _.findIndex(resultData,
               item => item.id.toString() === currentId),
           });

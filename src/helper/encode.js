@@ -1,8 +1,8 @@
 /*
 * @Author: 011200
 * @Date:   2017-12-06 08:09:31
-* @Last Modified by:   011200
-* @Last Modified time: 2017-12-06 10:08:44
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-06 15:27:45
 *  一些编码的工具方法
 */
 

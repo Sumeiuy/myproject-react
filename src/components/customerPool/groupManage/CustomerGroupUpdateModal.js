@@ -23,6 +23,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     modalContent: PropTypes.node,
     onCancelHandler: PropTypes.func,
     footer: PropTypes.node,
+    modalStyle: PropTypes.string,
+    modalWidth: PropTypes.number,
   };
 
   static defaultProps = {
@@ -34,6 +36,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     modalContent: null,
     onCancelHandler: () => { },
     footer: null,
+    modalStyle: '',
+    modalWidth: 700,
   };
 
   constructor(props) {
@@ -73,6 +77,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       okType,
       onOkHandler,
       modalContent,
+      modalStyle,
+      modalWidth,
     } = this.props;
     const { visible, footer } = this.state;
     return (
@@ -86,10 +92,11 @@ export default class CustomerGroupUpdateModal extends PureComponent {
           okType={okType}
           cancelText={cancelText}
           maskClosable={false}
-          width={700}
+          width={modalWidth}
           onCancel={this.handleCancel}
           closable={false}
           footer={footer}
+          style={modalStyle}
         >
           {
             modalContent

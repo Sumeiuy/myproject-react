@@ -163,16 +163,15 @@ export default class TableTransfer extends Component {
       ...this.resetDataSource(),
       sortInfo: null,
     };
+    // 含有sort的第一个表头的index值
+    this.firstSortIndexs = [];
+    // 含有sort的第二个表头的index值
+    this.secondSortIndexs = [];
+    // firstTable表头的CSS选择器前缀
+    this.firstPrefix = `.${styles.leftContent} .ant-table .ant-table-content .ant-table-thead > tr`;
+    // secondTable表头的CSS选择器前缀
+    this.secondPrefix = `.${styles.rightContent} .ant-table .ant-table-content .ant-table-thead > tr`;
   }
-
-  // 含有sort的第一个表头的index值
-  firstSortIndexs = [] // eslint-disable-line
-  // 含有sort的第二个表头的index值
-  secondSortIndexs = []
-  // firstTable表头的CSS选择器前缀
-  firstPrefix = `.${styles.leftContent} .ant-table .ant-table-content .ant-table-header .ant-table-thead > tr`
-  // secondTable表头的CSS选择器前缀
-  secondPrefix = `.${styles.rightContent} .ant-table .ant-table-content .ant-table-header .ant-table-thead > tr`
 
   componentDidMount() {
     const { firstColumns, secondColumns } = this.props;
@@ -193,37 +192,6 @@ export default class TableTransfer extends Component {
     }
   }
 
-  @autobind
-  addClassForTableHead(sortIndexs, prefix, which) {
-    if (_.isEmpty(sortIndexs)) return;
-    _.each(sortIndexs, (item) => {
-      const ele = document.querySelector(`${prefix}>th:nth-child(${item.index + 1})`);
-      dom.setAttribute(ele, 'data-transferSort', true);
-      // 给dom添加点击事件
-      ele.addEventListener('click', this.handleSortClick(which, item.key), false);
-    });
-  }
-
-  @autobind
-  handleSortClick(which, key) {
-    return () => {
-      const { sortInfo } = this.state;
-      let orderText = 'descend';
-      if (!_.isEmpty(sortInfo)) {
-        // 如果有值则取反
-        const { order } = sortInfo;
-        if (order === 'descend') orderText = 'ascend';
-        if (order === 'ascend') orderText = 'descend';
-      }
-      this.setState({
-        sortInfo: {
-          which,
-          key,
-          order: orderText,
-        },
-      });
-    };
-  }
   // 获取所有默认选中
   getAllDefaultCheck(dataArray, rowKey, defaultCheckKey) {
     let defaultCheck = {};
@@ -260,6 +228,27 @@ export default class TableTransfer extends Component {
   }
 
   @autobind
+  handleSortClick(which, key) {
+    return () => {
+      const { sortInfo } = this.state;
+      let orderText = 'descend';
+      if (!_.isEmpty(sortInfo)) {
+        // 如果有值则取反
+        const { order } = sortInfo;
+        if (order === 'descend') orderText = 'ascend';
+        if (order === 'ascend') orderText = 'descend';
+      }
+      this.setState({
+        sortInfo: {
+          which,
+          key,
+          order: orderText,
+        },
+      });
+    };
+  }
+
+  @autobind
   fetchSortIndex(columns) {
     const sortIndexs = [];
     _.each(columns, (column, index) => {
@@ -275,6 +264,17 @@ export default class TableTransfer extends Component {
         actionColumns(type, scrollX !== '', this.handleClick) // scrollX 的默认值为 ''
       ) : {}
     );
+  }
+
+  @autobind
+  addClassForTableHead(sortIndexs, prefix, which) {
+    if (_.isEmpty(sortIndexs)) return;
+    _.each(sortIndexs, (item) => {
+      const ele = document.querySelector(`${prefix}>th:nth-child(${item.index + 1})`);
+      dom.setAttribute(ele, 'data-transferSort', true);
+      // 给dom添加点击事件
+      ele.addEventListener('click', this.handleSortClick(which, item.key), false);
+    });
   }
 
   // 重置数据源

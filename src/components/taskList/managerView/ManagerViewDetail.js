@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 09:11:03
+ * @Last Modified time: 2017-12-05 21:32:34
  * 管理者视图详情
  */
 
@@ -24,6 +24,8 @@ import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal'
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 5;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -35,6 +37,12 @@ export default class ManagerViewDetail extends PureComponent {
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户明细结果
     custDetailResult: PropTypes.array.isRequired,
+    // 获取客户反馈结果
+    onGetCustFeedback: PropTypes.func.isRequired,
+    // 客户反馈结果
+    custFeedback: PropTypes.array.isRequired,
+    // 任务实施进度数据
+    missionImplementationProgressData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -49,17 +57,26 @@ export default class ManagerViewDetail extends PureComponent {
     };
   }
 
+  /**
+   * 预览客户明细
+   */
   @autobind
   handlePreview() {
     const { previewCustDetail } = this.props;
     const { isShowCustDetailModal } = this.state;
-    previewCustDetail().then(() => {
+    previewCustDetail({
+      curPageNum: INITIAL_PAGE_NUM,
+      curPageSize: INITIAL_PAGE_SIZE,
+    }).then(() => {
       this.setState({
         isShowCustDetailModal: !isShowCustDetailModal,
       });
     });
   }
 
+  /**
+   * 关闭弹出框
+   */
   @autobind
   handleCloseModal() {
     const { isShowCustDetailModal } = this.state;
@@ -68,12 +85,24 @@ export default class ManagerViewDetail extends PureComponent {
     });
   }
 
+  @autobind
+  handleExport() {
+    console.log('导出');
+  }
+
+  @autobind
+  handleLaunchTask() {
+    console.log('发起任务');
+  }
+
   render() {
     const {
       isFold,
       basicInfo = EMPTY_OBJECT,
       previewCustDetail,
       custDetailResult,
+      custFeedback,
+      missionImplementationProgressData,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -162,6 +191,12 @@ export default class ManagerViewDetail extends PureComponent {
                 data={custDetailResult}
               />
             }
+            modalStyle={{
+              maxWidth: 1080,
+              minWidth: 700,
+              width: 1080,
+            }}
+            modalWidth={1080}
             onOkHandler={this.handleUpdateGroup}
           />
         </div>
@@ -169,7 +204,12 @@ export default class ManagerViewDetail extends PureComponent {
           <MissionDescription missionDescription={''} />
         </div>
         <div className={styles.missionImplementationSection}>
-          <MissionImplementation />
+          <MissionImplementation
+            isFold={isFold}
+            custFeedback={custFeedback}
+            onPreviewCustDetail={this.handlePreview}
+            missionImplementationProgress={missionImplementationProgressData}
+          />
         </div>
         <div>
           <MissionFeedback isFold={isFold} />

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 09:51:03
+ * @Last Modified time: 2017-12-07 20:30:15
  * 客户明细数据
  */
 
@@ -12,13 +12,44 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
+import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
+import iconMoney from '../../../../static/images/icon-money.png';
+import iconDiamond from '../../../../static/images/icon-diamond-card.png';
+import iconGold from '../../../../static/images/icon-gold-card.png';
+import iconSliver from '../../../../static/images/icon-sliver-card.png';
+import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
+import iconEmpty from '../../../../static/images/icon-empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
+
+// 客户等级的图片源
+const rankImgSrcConfig = {
+  // 钻石
+  805010: iconDiamond,
+  // 白金
+  805015: iconWhiteGold,
+  // 金卡
+  805020: iconGold,
+  // 银卡
+  805025: iconSliver,
+  // 理财
+  805030: iconMoney,
+  // 无
+  805040: iconEmpty,
+  // 其他
+  805999: '',
+};
+
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 export default class CustDetail extends PureComponent {
 
@@ -39,25 +70,42 @@ export default class CustDetail extends PureComponent {
     const {
       data: { page = EMPTY_OBJECT, listData = EMPTY_LIST },
     } = props;
-    const { totalRecordNum } = page;
+    const { totalRecordNum, curPageNum, curPageSize } = page;
     this.state = {
-      curPageNum: INITIAL_PAGE_NUM,
-      curPageSize: INITIAL_PAGE_SIZE,
+      curPageNum: curPageNum || INITIAL_PAGE_NUM,
+      curPageSize: curPageSize || INITIAL_PAGE_SIZE,
       totalRecordNum: totalRecordNum || INITIAL_PAGE_NUM,
-      dataSource: listData || EMPTY_LIST,
+      dataSource: this.addIdToDataSource(listData) || EMPTY_LIST,
+      currentSelectRecord: {},
+      currentSelectRowKeys: [],
+      isSelectAll: false,
     };
+    // 代表当前feedback详情是否是多选形式
+    this.isFeedbackDetailMore = false;
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: { page: nextPage, listData } } = nextProps;
-    const { data: { page } } = this.props;
+    const { data: { page: nextPage = EMPTY_OBJECT,
+      listData: nextData = EMPTY_LIST } } = nextProps;
+    const { data: { page = EMPTY_OBJECT, listData = EMPTY_LIST } } = this.props;
+    const { currentSelectRowKeys, isSelectAll } = this.state;
     if (page !== nextPage) {
       const { curPageNum, curPageSize, totalRecordNum } = nextPage || EMPTY_OBJECT;
       this.setState({
         curPageNum,
         curPageSize,
         totalRecordNum,
-        dataSource: listData,
+      });
+    }
+
+    if (listData !== nextData) {
+      let newSelectRowKeys = currentSelectRowKeys;
+      if (isSelectAll) {
+        newSelectRowKeys = _.map(nextData, item => item.custId);
+      }
+      this.setState({
+        dataSource: this.addIdToDataSource(nextData),
+        currentSelectRowKeys: newSelectRowKeys,
       });
     }
   }
@@ -75,7 +123,10 @@ export default class CustDetail extends PureComponent {
       curPageNum: nextPage,
       curPageSize: currentPageSize,
     });
-    getCustDetailData(nextPage, currentPageSize);
+    getCustDetailData({
+      curPageNum: nextPage,
+      curPageSize: currentPageSize,
+    });
   }
 
   /**
@@ -91,26 +142,123 @@ export default class CustDetail extends PureComponent {
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
     });
-    getCustDetailData(currentPageNum, changedPageSize);
+    getCustDetailData({
+      curPageNum: currentPageNum,
+      curPageSize: changedPageSize,
+    });
   }
 
   /**
    * 为数据源的每一项添加一个id属性
    * @param {*} listData 数据源
    */
-  addIdToDataSource(listData) {
+  @autobind
+  addIdToDataSource(listData = []) {
+    let newDataSource = listData;
     if (!_.isEmpty(listData)) {
-      return _.map(listData, item => _.merge(item, { id: item.custId }));
+      newDataSource = _.map(listData, (item) => {
+        if (_.isArray(item.feedbackDetail)) {
+          if (!this.isFeedbackDetailMore) {
+            this.isFeedbackDetailMore = true;
+          }
+        }
+
+        if (this.isFeedbackDetailMore) {
+          this.isFeedbackDetailMore = false;
+        }
+
+        return {
+          ...item,
+          id: item.custId,
+        };
+      });
     }
 
-    return [];
+    return newDataSource;
+  }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { custId } = record;
+    const { currentSelectRowKeys } = this.state;
+    let newSelectRowKeys = currentSelectRowKeys;
+    if (selected) {
+      newSelectRowKeys = _.uniq([...newSelectRowKeys, custId]);
+    } else {
+      newSelectRowKeys = _.filter(newSelectRowKeys, item => item !== custId);
+    }
+    this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: newSelectRowKeys,
+    });
+  }
+
+  @autobind
+  handleSelectAllChange(selected, selectedRows, changeRows) {
+    console.log(selected, selectedRows, changeRows);
+    this.setState({
+      isSelectAll: selected,
+      currentSelectRowKeys: selected ? _.map(selectedRows, item => item.key) : [],
+    });
+  }
+
+  @autobind
+  renderFeedbackDetail(feedbackDetail) {
+    return (
+      <div className={styles.detailColumn}>
+        {_.map(feedbackDetail, itemData =>
+          <div key={itemData}><span>{itemData}</span></div>)
+        }
+      </div>
+    );
+  }
+
+  @autobind
+  renderCustTypeIcon(custType) {
+    return rankImgSrcConfig[custType] ?
+      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
+      : null;
+  }
+
+  /**
+   * 跳转到fsp的360信息界面
+   */
+  @autobind
+  toDetail(custType, custId, rowId, ptyId) {
+    const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+    };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openFspTab({
+        url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+        param,
+      });
+    }
+  }
+
+  /**
+   * 处理客户名称点击事件
+   * @param {*object} record 当前行记录
+   */
+  @autobind
+  handleCustNameClick(record) {
+    const { custType, custId, rowId, ptyId } = record;
+    this.toDetail(custType, custId, rowId, ptyId);
   }
 
   renderColumnTitle() {
-    // "custName":"1-5TTJ-3900",
-    // "custId":"118000119822",
-    // "levelName":"钻石",
-    // "riskLevelName":"稳定"
     return [{
       key: 'custName',
       value: '客户名称',
@@ -118,6 +266,7 @@ export default class CustDetail extends PureComponent {
     {
       key: 'custType',
       value: '客户类型',
+      render: this.renderCustTypeIcon,
     },
     {
       key: 'department',
@@ -138,25 +287,21 @@ export default class CustDetail extends PureComponent {
     {
       key: 'feedbackDetail',
       value: '反馈详情',
+      render: this.renderFeedbackDetail,
     }];
   }
 
   render() {
     const {
-      data: { listData = EMPTY_LIST },
-    } = this.props;
-
-    const {
       curPageNum,
       curPageSize,
       totalRecordNum,
+      currentSelectRowKeys,
+      dataSource,
     } = this.state;
 
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
-
-    // 添加id到dataSource
-    const newDataSource = this.addIdToDataSource(listData);
 
     return (
       <div className={styles.custDetailWrapper}>
@@ -168,7 +313,7 @@ export default class CustDetail extends PureComponent {
               curPageSize,
               totalRecordNum,
             }}
-            listData={newDataSource}
+            listData={dataSource}
             onSizeChange={this.handleShowSizeChange}
             onPageChange={this.handlePageChange}
             tableClass={
@@ -177,11 +322,19 @@ export default class CustDetail extends PureComponent {
                 [styles.custDetailTable]: true,
               })
             }
-            columnWidth={[100, 100, 130, 100, 100, 110, 130]}
+            columnWidth={[100, 100, 130, 100, 100, 110, this.isFeedbackDetailMore ? 300 : 200]}
             titleColumn={titleColumn}
             // 固定标题，内容滚动
             scrollY={330}
             isFixedTitle
+            selectionType={'checkbox'}
+            isNeedRowSelection
+            onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+            onRowSelectionChange={this.handleRowSelectionChange}
+            currentSelectRowKeys={currentSelectRowKeys}
+            onSelectAllChange={this.handleSelectAllChange}
+            isFirstColumnLink
+            firstColumnHandler={this.handleCustNameClick}
           />
         </div>
       </div>
