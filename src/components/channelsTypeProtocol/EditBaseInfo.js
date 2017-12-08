@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-12-07 15:52:55
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-07 17:21:34
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -183,7 +183,6 @@ export default class EditBaseInfo extends PureComponent {
     if (!_.isEqual(preTL, nextTL)) {
       const { templateId } = nextFD;
       const filterTemplate = _.filter(nextTL, o => o.prodName === templateId);
-      console.warn('filterTemplate', filterTemplate);
       this.setState({
         templateList: nextTL,
         protocolTemplate: (filterTemplate && filterTemplate[0]) || {},
@@ -214,6 +213,7 @@ export default class EditBaseInfo extends PureComponent {
       protocolTemplate: {
         ...this.state.protocolTemplate,
         prodName: templateId,
+        rowId: templateId,
       },
       multiUsedFlag: multiUsedFlag === 'Y',
       levelTenFlag: levelTenFlag === 'Y',
