@@ -47,6 +47,11 @@ const resultData = {
           value: '40',
           optionPer: '40%',
         },
+        {
+          name: '单选选项E',
+          value: '40',
+          optionPer: '40%',
+        },
       ],
     },
     {
@@ -173,7 +178,7 @@ export default class MissionFeedback extends PureComponent {
           data: value,
         },
       ],
-      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'],
+      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'],
     };
     return option;
   }
@@ -188,12 +193,12 @@ export default class MissionFeedback extends PureComponent {
       bottom: '5%',
       containLabel: true,
     } :
-    {
-      left: '15%',
-      right: '15%',
-      bottom: '5%',
-      containLabel: true,
-    };
+      {
+        left: '15%',
+        right: '15%',
+        bottom: '5%',
+        containLabel: true,
+      };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -225,7 +230,7 @@ export default class MissionFeedback extends PureComponent {
             normal: {
               barBorderRadius: [6, 6, 0, 0],
               color: (params) => {
-                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'];
+                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'];
                 return colorList[params.dataIndex];
               },
             },
