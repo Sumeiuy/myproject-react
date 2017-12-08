@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:30:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 20:47:08
+ * @Last Modified time: 2017-12-07 17:03:53
  * 管理者视图model层
  */
 
@@ -20,6 +20,8 @@ export default {
     custDetailResult: EMPTY_LIST,
     // 任务详细信息
     mngrMissionDetailInfo: EMPTY_OBJ,
+    // 客户反馈一二级数据
+    custFeedback: EMPTY_LIST,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -41,6 +43,13 @@ export default {
       return {
         ...state,
         mngrMissionDetailInfo: payload,
+      };
+    },
+    countFlowFeedBackSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custFeedback: payload,
       };
     },
   },
@@ -67,6 +76,13 @@ export default {
       const { resultData } = yield call(api.queryMngrMissionDetailInfo, payload);
       yield put({
         type: 'queryMngrMissionDetailInfoSuccess',
+        payload: resultData,
+      });
+    },
+    * countFlowFeedBack({ payload }, { call, put }) {
+      const { resultData } = yield call(api.countFlowFeedBack, payload);
+      yield put({
+        type: 'countFlowFeedBackSuccess',
         payload: resultData,
       });
     },

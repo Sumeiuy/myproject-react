@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-06 16:16:50
+ * @Last Modified time: 2017-12-07 20:23:31
  */
 
 import React, { PureComponent } from 'react';
@@ -193,94 +193,51 @@ export default class GroupTable extends PureComponent {
       return [];
     }
 
-    if (!_.isEmpty(actionSource)) {
-      // 存在操作列
-      return _.map(titleColumn, (item, index) => {
-        if (index === len) {
-          // operation column
-          return {
-            dataIndex: item.key,
-            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
-            title: item.value,
-            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
-            render: (text, record) =>
-              <div className={styles.operation}>
-                {
-                  _.map(actionSource, itemData => (
-                    <Clickable
-                      onClick={() => itemData.handler(record)}
-                      eventName="/click/groupTabel/operationLastColumn"
-                    >
-                      <span className={styles.link} key={itemData.type}>
-                        {itemData.type}
-                      </span>
-                    </Clickable>
-                  ),
-                  )
-                }
-              </div>,
-          };
-        } else if (index === 0 && isFirstColumnLink) {
-          // 第一列可以Link，有handler
-          return {
-            dataIndex: item.key,
-            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
-            title: item.value,
-            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
-            render: (text, record) => (
-              <div className={styles.operation}>
-                <Clickable
-                  onClick={() => firstColumnHandler(record)}
-                  eventName="/click/groupTabel/operationFirstColumn"
-                >
-                  <span title={record[item.key]} className={styles.link}>
-                    {this.renderColumnValue(record, item)}
-                  </span>
-                </Clickable>
-              </div>
-            ),
-          };
-        }
-
-        return {
-          dataIndex: item.key,
-          width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
-          title: item.value,
-          fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
-          render: (text, record) => {
-            if (index === 0 && isFirstColumnLink) {
-              return (
-                <div className={styles.operation}>
-                  <Clickable
-                    onClick={() => firstColumnHandler(record)}
-                    eventName="/click/groupTabel/operationColumn"
-                  >
-                    <span title={record[item.key]} className={styles.link}>
-                      {this.renderColumnValue(record, item)}
-                    </span>
-                  </Clickable>
-                </div>
-              );
-            }
-            return (
-              <span title={record[item.key]} className={styles.column}>
-                {this.renderColumnValue(record, item)}
-              </span>
-            );
-          },
-        };
-      });
-    }
-
     return _.map(titleColumn, (item, index) => ({
       dataIndex: item.key,
       width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
       title: item.value,
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
-      render: (text, record) =>
-        <span title={record[item.key]} className={styles.column}>
-          {this.renderColumnValue(record, item)}
-        </span>,
+      render: (text, record) => {
+        if (index === 0 && isFirstColumnLink) {
+          // 第一列可以Link，有handler
+          return (
+            <div className={styles.operation}>
+              <Clickable
+                onClick={() => firstColumnHandler(record)}
+                eventName="/click/groupTabel/operationFirstColumn"
+              >
+                <span title={record[item.key]} className={styles.link}>
+                  {this.renderColumnValue(record, item)}
+                </span>
+              </Clickable>
+            </div>
+          );
+        }
+        if (index === len && !_.isEmpty(actionSource)) {
+          return (<div className={styles.operation}>
+            {
+              _.map(actionSource, itemData => (
+                <Clickable
+                  onClick={() => itemData.handler(record)}
+                  eventName="/click/groupTabel/operationLastColumn"
+                >
+                  <span className={styles.link} key={itemData.type}>
+                    {itemData.type}
+                  </span>
+                </Clickable>
+              ),
+              )
+            }
+          </div>);
+        }
+
+        return (
+          <span title={record[item.key]} className={styles.column}>
+            {this.renderColumnValue(record, item)}
+          </span>
+        );
+      },
     }));
   }
 
