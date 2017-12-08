@@ -19,7 +19,7 @@ import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
 import { protocolIsShowSwitch } from '../../utils/permission';
-import { dateFormat } from '../../utils/helper';
+import { time } from '../../helper';
 
 import styles from './editBaseInfo.less';
 
@@ -647,8 +647,8 @@ export default class EditBaseInfo extends PureComponent {
             :
             null
         }
-        <InfoItem label="协议开始日期" value={dateFormat(startDt)} />
-        <InfoItem label="协议有效期" value={dateFormat(vailDt)} />
+        <InfoItem label="协议开始日期" value={time.format(startDt)} />
+        <InfoItem label="协议有效期" value={time.format(vailDt)} />
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
