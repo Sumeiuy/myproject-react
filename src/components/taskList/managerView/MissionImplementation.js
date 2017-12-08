@@ -2,14 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-08 17:37:27
+ * @Last Modified time: 2017-12-08 17:51:36
  * 任务实施简报
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import _ from 'lodash';
 import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
@@ -65,7 +65,7 @@ export default class MissionImplementation extends PureComponent {
           </div>
         </div>
         {
-          true ?
+          _.isEmpty(missionImplementationProgress) && _.isEmpty(custFeedback) ?
             <div className={styles.emptyContent}>
               <img src={emptyImg} alt={EMPTY_CONTENT} />
               <div className={styles.tip}>{EMPTY_CONTENT}</div>
