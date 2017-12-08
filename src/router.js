@@ -34,7 +34,6 @@ import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
-import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
@@ -56,9 +55,8 @@ const routes = [
   { path: '/commissionChange', component: CommissionChangeHome },
   { path: '/modal', component: TemplModal },
   { path: '/permission', component: PermissonHome },
-  { path: '/approval', component: Approval },
   { path: '/taskList', component: TaskListHome },
-  { path: '/Contract',
+  { path: '/contract',
     component: Contract,
     children: [
       { path: '/form', component: Form },
