@@ -151,7 +151,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'pie',
-          radius: [0, 70],
+          radius: [0, 60],
           center: ['50%', '52%'],
           roseType: 'radius',
           label: {
@@ -210,6 +210,12 @@ export default class MissionFeedback extends PureComponent {
         },
         axisLabel: {
           show: false,
+        },
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: '#e2e2e2',
+          },
         },
       },
       yAxis: {
