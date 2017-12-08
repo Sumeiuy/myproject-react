@@ -483,25 +483,26 @@ export default class EditBaseInfo extends PureComponent {
   // 选择协议 ID
   @autobind
   handleSelectProtocol(key, value) {
+    const [id, flowId] = value.split('~');
     const {
       getProtocolDetail,
       onChangeProtocolNumber,
       getFlowStepInfo,
     } = this.props;
     this.setState({
-      [key]: value.id,
+      [key]: id,
     }, () => {
       getProtocolDetail({
         needAttachment: false,
         needFlowHistory: false,
         data: {
-          flowId: value.flowId,
+          flowId,
         },
       }).then(() => {
         const { formData: nextFD } = this.props;
         const { operationType } = this.state;
         getFlowStepInfo({
-          flowId: value.flowId,
+          flowId,
           operate: 1,
         });
         this.compareFormData(nextFD);
@@ -539,7 +540,7 @@ export default class EditBaseInfo extends PureComponent {
       newProtocolList = protocolList.map(item => ({
         show: true,
         label: item.id,
-        value: item,
+        value: `${item.id}~${item.flowId}`,
       }));
     }
     if (isEditPage) {
