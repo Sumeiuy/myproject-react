@@ -33,8 +33,8 @@ const columnsOne = [{
   ),
 }, {
   title: '负责人',
-  dataIndex: 'manager',
-  key: 'manager',
+  dataIndex: 'name',
+  key: 'name',
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.manager)} title={item}>
@@ -138,18 +138,15 @@ export default class DetailTable extends Component {
     tableData: PropTypes.array,
     category: PropTypes.string,
     rowKey: PropTypes.string,
-    onDelete: PropTypes.func,
-    onUpdate: PropTypes.func,
-    onAdd: PropTypes.func,
+    onDelete: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+    onAdd: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     tableData: [],
     category: '',
     rowKey: '',
-    onDelete: () => {},
-    onUpdate: () => {},
-    onAdd: () => {},
   }
 
   @autobind
@@ -171,7 +168,6 @@ export default class DetailTable extends Component {
 
   @autobind
   handleDeleteClick(type, item) {
-    console.log('######handleDeleteClick############', type, item);
     const { onDelete } = this.props;
     confirm({
       title: '确认要删除吗?',
@@ -184,7 +180,6 @@ export default class DetailTable extends Component {
 
   @autobind
   handleUpdateClick(type, item) {
-    console.log('######handleUpdateClick############', type, item);
     this.props.onUpdate(type, item);
   }
 
@@ -232,6 +227,8 @@ export default class DetailTable extends Component {
 
   render() {
     const { category, rowKey, tableData } = this.props;
+    const screenHeight = document.documentElement.clientHeight;
+    const y = screenHeight - 281;
     return (
       <div className={styles.tableContainer}>
         {this.renderExtra()}
@@ -241,6 +238,7 @@ export default class DetailTable extends Component {
             columns={this.getColumns(category)}
             dataSource={tableData}
             pagination={false}
+            scroll={{ y }}
           />
         </div>
       </div>

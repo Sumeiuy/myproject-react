@@ -23,7 +23,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
-import { Input, Modal } from 'antd';
+import { Input, Modal, message } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -68,17 +68,35 @@ export default class EditModal extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      select: {},
-      teamName: '',
-    };
+    const { updateItem } = props;
+    let select = {};
+    let teamName = '';
+    if (!_.isEmpty(updateItem)) {
+      const { name = '', title = '', code = '' } = updateItem;
+      if (!_.isEmpty(name) || !_.isEmpty(code)) {
+        select = { name, code };
+      } else {
+        select = {};
+      }
+      teamName = title;
+    }
+    this.state = { select, teamName };
   }
 
   @autobind
   handleOk() {
     const { onOk, modalKey, modalType } = this.props;
     const { select, teamName } = this.state;
-    onOk({ modalKey, select, teamName, modalType });
+    const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
+    if (_.isEmpty(select)) {
+      message.error(`${titles[1]}不能为空`);
+    }
+    if (modalType === 'team' && _.isEmpty(teamName)) {
+      message.error(`${titles[2]}不能为空`);
+    }
+    if (!_.isEmpty(select) && !_.isEmpty(teamName)) {
+      onOk({ modalKey, select, teamName, modalType });
+    }
   }
 
   @autobind
@@ -110,9 +128,9 @@ export default class EditModal extends Component {
 
   @autobind
   renderContent() {
-    const { modalType, list, updateItem } = this.props;
-    const { manager = '', title = '' } = updateItem || {};
-    const { teamName } = this.state;
+    const { modalType, list } = this.props;
+    const { teamName, select } = this.state;
+    const { name = '--', code = '--' } = select;
     const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
     return (
       <div className={styles.modalBody}>
@@ -123,7 +141,7 @@ export default class EditModal extends Component {
               placeholder="工号/姓名"
               showObjKey="name"
               objId="code"
-              value={manager}
+              value={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
               searchList={list}
               emitSelectItem={this.handleSelect}
               emitToSearch={this.handleSearch}
@@ -138,7 +156,7 @@ export default class EditModal extends Component {
               <div className={styles.inputColumn}>
                 <Input
                   addonAfter={<Icon type="guanbi" onClick={this.handleClear} />}
-                  value={title || teamName}
+                  value={teamName}
                   onChange={this.handleChange}
                 />
               </div>

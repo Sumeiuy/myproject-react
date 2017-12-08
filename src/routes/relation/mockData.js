@@ -53,19 +53,22 @@ export const managerArray = [{
 export const companyArray = [{
   id: '1',
   title: '财富中心1',
-  manager: '张三',
+  name: '张三',
+  code: '3869558',
   teamNum: '10',
   adviserNum: '1000',
 }, {
   id: '2',
   title: '财富中心2',
-  manager: '张三',
+  name: '张三',
+  code: '3867858',
   teamNum: '23',
   adviserNum: '1000',
 }, {
   id: '3',
   title: '财富中心3',
-  manager: '张三',
+  name: '张三',
+  code: '3859658',
   teamNum: '12',
   adviserNum: '1000',
 }];
@@ -73,17 +76,20 @@ export const companyArray = [{
 export const centerArray = [{
   id: '1',
   title: '张三团队',
-  manager: '张三',
+  name: '张三',
+  code: '3859488',
   adviserNum: '10000',
 }, {
   id: '2',
   title: '李斯团队',
-  manager: '张三',
+  name: '张三',
+  code: '3345409',
   adviserNum: '21000',
 }, {
   id: '3',
   title: '王二团队',
-  manager: '张三',
+  name: '张三',
+  code: '3859409',
   adviserNum: '12000',
 }];
 
@@ -97,6 +103,42 @@ export const teamArray = [{
   name: '王某某',
 }, {
   id: '3',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '4',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '5',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '6',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '7',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '8',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '9',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '10',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '11',
+  code: 'HTSC001234',
+  name: '王某某',
+}, {
+  id: '12',
   code: 'HTSC001234',
   name: '王某某',
 }];

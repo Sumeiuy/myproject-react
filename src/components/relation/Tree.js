@@ -60,32 +60,22 @@ export default class Tree extends Component {
   @autobind
   getItem(key) {
     const { treeData } = this.props;
-    const { children = [] } = _.head(treeData);
+    const { id } = _.head(treeData);
+    if (key === id) {
+      return _.head(treeData);
+    }
     const keys = _.split(key, '/');
-    const select = this.getBranchItem(_.head(treeData), children, keys);
+    const select = this.getBranchItem(_.head(treeData), keys);
     return select;
   }
 
   @autobind
-  getBranchItem(obj, array, keys) {
-    if (_.isEmpty(array) || _.isEmpty(keys)) {
-      return obj;
+  getBranchItem(list, keys) {
+    const branchItem = _.find(list.children, item => item.id === keys[0]);
+    if (keys.length === 1) {
+      return branchItem;
     }
-    for (let i = 0; i < array.length; i++) {
-      const item = array[i];
-      for (let j = 0; j < keys.length; j++) {
-        const key = keys[j];
-        if (item.id === key) {
-          const { children = [] } = item;
-          return this.getBranchItem(
-            item,
-            children,
-            _.slice(keys, Math.min((j + 1), keys.length), keys.length),
-          );
-        }
-      }
-    }
-    return {};
+    return this.getBranchItem(branchItem, keys.slice(1));
   }
 
   @autobind
@@ -114,9 +104,12 @@ export default class Tree extends Component {
   @autobind
   renderHeader(obj) {
     const { title, logo } = this.getHeadLine(obj);
+    const { id } = obj;
     return (
       <div className={styles.header}>
-        <div className={styles.logoBg}><div className={styles.logo}>{logo}</div></div>
+        <div className={styles.logoBg}>
+          <div className={styles.logo} onClick={() => { this.handleOpenClick([id]); }}>{logo}</div>
+        </div>
         <div className={styles.title}>{title}</div>
       </div>
     );
@@ -146,7 +139,6 @@ export default class Tree extends Component {
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
     const { children } = _.head(paramData);
-    console.log('######renderTree###########', paramData, children);
     return (
       <Menu
         onClick={this.handleSubmenuClick}
@@ -188,8 +180,10 @@ export default class Tree extends Component {
 
   render() {
     const { treeData } = this.props;
+    const screenHeight = document.documentElement.clientHeight;
+    const style = { height: `${(screenHeight - 109)}px` };
     return (
-      <div className={styles.treeContainer}>
+      <div className={styles.treeContainer} style={style}>
         {this.renderHeader(treeData)}
         {this.renderTree(treeData)}
       </div>

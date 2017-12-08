@@ -15,8 +15,8 @@ import { treeArray, managerArray, companyArray, centerArray, teamArray } from '.
 
 // editModal 组件的三种弹框类型
 const MANAGER_MODAL = 'manager';
-// const TEAM_MODAL = 'team';
-// const MEMBER_MODAL = 'member';
+const TEAM_MODAL = 'team';
+const MEMBER_MODAL = 'member';
 // detailTable 组件的三种表格类型
 const COMPANY_TABLE = 'company';
 const CENTER_TABLE = 'center';
@@ -51,12 +51,15 @@ export default class Home extends Component {
 
   @autobind
   closeModal() {
-    this.setState({ editModal: false });
+    this.setState({
+      editModal: false,
+      manager: {},
+      updateItem: {},
+    });
   }
 
   @autobind
   handleSelect(menu) {
-    console.log('#####handleSelect######', menu);
     if (_.isEmpty(menu)) {
       return;
     }
@@ -69,7 +72,12 @@ export default class Home extends Component {
     } else if (category === TEAM_TABLE) {
       data = teamArray;
     }
-    this.setState({ category, headline: name, tableData: data });
+    this.setState({
+      category,
+      headline: name,
+      tableData: data,
+      manager: {},
+    });
   }
 
   @autobind
@@ -84,28 +92,35 @@ export default class Home extends Component {
 
   @autobind
   handleOk(param) {
-    console.log('#####handleOk#########', param);
     const { select, modalType } = param;
     if (modalType === MANAGER_MODAL) {
       this.setState({ manager: select, editModal: false });
+    } else if (modalType === TEAM_MODAL) {
+      this.setState({ editModal: false });
+    } else if (modalType === MEMBER_MODAL) {
+      this.setState({ editModal: false });
     }
   }
 
   @autobind
-  handleAdd(type) {
-    console.log('#####handleAdd#########', type);
+  handleAdd(flag) {
+    let type = MANAGER_MODAL;
+    if (flag === CENTER_TABLE) {
+      type = TEAM_MODAL;
+    } else if (flag === TEAM_TABLE) {
+      type = MEMBER_MODAL;
+    }
     this.setState({ type, editModal: true });
   }
 
   @autobind
-  handleDelete(type, item) {
-    console.log('#####handleDelete#########', type, item);
+  handleDelete(flag, item) {
+    console.log('#####handleDelete#########', flag, item);
   }
 
   @autobind
-  handleUpdate(type, item) {
-    console.log('#####handleUpdate#########', type, item);
-    this.setState({ type, updateItem: item, editModal: true });
+  handleUpdate(flag, item) {
+    this.setState({ type: TEAM_MODAL, updateItem: item, editModal: true });
   }
 
   render() {

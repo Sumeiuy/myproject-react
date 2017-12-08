@@ -41,10 +41,6 @@ export default class TreeDetail extends Component {
     onEdit: () => {},
   }
 
-  // constructor(props) {
-  //   super(props);
-  // }
-
   @autobind
   handleDelete(param) {
     const that = this;
@@ -75,17 +71,19 @@ export default class TreeDetail extends Component {
   }
 
   render() {
-    const { tableData, category } = this.props;
+    const { tableData, category, onDelete, onUpdate, onAdd } = this.props;
+    const screenHeight = document.documentElement.clientHeight;
+    const style = { height: `${(screenHeight - 109)}px` };
     return (
-      <div className={styles.detailContainer}>
+      <div className={styles.detailContainer} style={style}>
         {this.renderHeader()}
         <DetailTable
           rowKey={'id'}
           category={category}
           tableData={tableData}
-          onDelete={this.onDelete}
-          onUpdate={this.onUpdate}
-          onAdd={this.onAdd}
+          onDelete={onDelete}
+          onUpdate={onUpdate}
+          onAdd={onAdd}
         />
       </div>
     );
