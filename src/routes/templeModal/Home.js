@@ -21,8 +21,6 @@ import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import EditModal from '../../components/relation/EditModal';
-import Tree from '../../components/relation/Tree';
-import TreeDetail from '../../components/relation/TreeDetail';
 
 
 import {
@@ -359,10 +357,6 @@ export default class TemplModal extends PureComponent {
         <Button onClick={this.openDeleteBoardModal}>删除</Button>
         <DeleteBoardModal {...deleteBoardMProps} />
         <br />
-        <div className={styles.treeContainer}>
-          <Tree />
-          <TreeDetail />
-        </div>
         <br />
         <SearchModal {...searchProps} />
         <br />
@@ -371,7 +365,7 @@ export default class TemplModal extends PureComponent {
         <Button onClick={this.openConfirmClick}>show confirm弹框</Button>
         <CommonUpload {...uploadProps} edit />
         <CommonUpload {...uploadProps} />
-        <Button onClick={() => { this.showModal('editModal'); }}>打开公用弹窗</Button>
+        <Button onClick={() => { this.showModal('confirmModal'); }}>打开公用弹窗</Button>
         <ProcessConfirm {...confirmProps} />
         <br />
         <br />

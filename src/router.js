@@ -43,6 +43,7 @@ import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
+import RelationHome from './routes/relation/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -71,6 +72,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
       <Route path="permission" component={PermissonHome} />
+      <Route path="relation" component={RelationHome} />
       <Route path="contract">
         <IndexRoute component={Contract} />
         <Route path="form" component={Form} />
