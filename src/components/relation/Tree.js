@@ -17,7 +17,6 @@ import classnames from 'classnames';
 import styles from './tree.less';
 
 const SubMenu = Menu.SubMenu;
-const NJFGS = 'njfgs';
 export default class Tree extends Component {
   static propTypes = {
     treeData: PropTypes.array,
@@ -27,34 +26,46 @@ export default class Tree extends Component {
   static defaultProps = {
     treeData: [],
     onSelect: () => {},
+    selectKey: '',
   }
 
   constructor(props) {
     super(props);
-    const { treeData } = props;
-    let menuKeys = [];
-    let selectKey = '';
-    if (!_.isEmpty(treeData)) {
-      const { children, id } = _.head(treeData);
-      selectKey = id;
-      menuKeys = _.map(children, item => item.id);
-    }
     this.state = {
-      selectKey,
+      defultKey: '',
+      selectKey: '',
       openKeys: [],
-      menuKeys,
+      menuKeys: [],
     };
   }
 
-  getHeadLine(obj) {
-    let logo = '--';
-    let title = '--';
-    if (!_.isEmpty(obj)) {
-      const { name } = _.head(obj);
-      title = name;
-      logo = name.substr(0, 1);
+  componentWillReceiveProps(nextProps) {
+    const { treeData, onSelect } = nextProps;
+    if (this.props.treeData === treeData) {
+      return;
     }
-    return { title, logo };
+    // 更新数据
+    const { selectKey, defultKey } = this.state;
+    if (!_.isEmpty(treeData)) {
+      const { children, id } = _.head(treeData);
+      const menuKeys = _.map(children, item => item.id);
+      if (_.isEmpty(selectKey) && _.isEmpty(defultKey)) {
+        this.setState(
+          { menuKeys, selectKey: id, defultKey: id },
+          () => { onSelect(this.getItem(id)); },
+        );
+      } else {
+        this.setState({ menuKeys });
+      }
+    }
+  }
+
+  getHeadLine(obj) {
+    const { name = '', id = '' } = _.head(obj) || {};
+    if (!_.isEmpty(name)) {
+      return { title: name, logo: name.substr(0, 1), id };
+    }
+    return { id };
   }
 
   @autobind
@@ -81,34 +92,67 @@ export default class Tree extends Component {
   @autobind
   handleSubmenuClick(submenu) {
     const { key } = submenu;
-    this.setState({ selectKey: key });
-    this.props.onSelect(this.getItem(key));
+    const { selectKey } = this.state;
+    // 去重
+    if (selectKey !== key) {
+      this.setState(
+        { selectKey: key },
+        () => { this.props.onSelect(this.getItem(key)); },
+      );
+    }
   }
 
   @autobind
   handleOpenClick(openKeys) {
-    const { menuKeys } = this.state;
+    const { menuKeys, selectKey } = this.state;
     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
     if (menuKeys.indexOf(latestOpenKey) === -1) {
-      this.setState({ openKeys, selectKey: NJFGS });
-      this.props.onSelect(this.getItem(NJFGS));
+      // 点击菜单
+      if (_.isEmpty(openKeys)) {
+        const keys = _.split(selectKey, '/');
+        const curKey = _.head(keys);
+        this.setState(
+          { openKeys, selectKey: curKey },
+          () => {
+            // 去重
+            if (keys.length > 1) {
+              this.props.onSelect(this.getItem(curKey));
+            }
+          },
+        );
+      }
     } else {
-      this.setState({
-        openKeys: latestOpenKey ? [latestOpenKey] : [],
-        selectKey: latestOpenKey,
-      });
-      this.props.onSelect(this.getItem(latestOpenKey));
+      this.setState(
+        { openKeys: latestOpenKey ? [latestOpenKey] : [], selectKey: latestOpenKey },
+        () => {
+          // 去重
+          if (selectKey !== latestOpenKey) {
+            this.props.onSelect(this.getItem(latestOpenKey));
+          }
+        },
+      );
+    }
+  }
+
+  @autobind
+  handleLogoClick(logoKey) {
+    const { selectKey } = this.state;
+    // 去重
+    if (logoKey !== selectKey) {
+      this.setState(
+        { openKeys: [], selectKey: logoKey },
+        () => { this.props.onSelect(this.getItem(logoKey)); },
+      );
     }
   }
 
   @autobind
   renderHeader(obj) {
-    const { title, logo } = this.getHeadLine(obj);
-    const { id } = obj;
+    const { title = '--', logo = '--', id = '' } = this.getHeadLine(obj);
     return (
       <div className={styles.header}>
         <div className={styles.logoBg}>
-          <div className={styles.logo} onClick={() => { this.handleOpenClick([id]); }}>{logo}</div>
+          <div className={styles.logo} onClick={() => { this.handleLogoClick(id); }}>{logo}</div>
         </div>
         <div className={styles.title}>{title}</div>
       </div>
@@ -134,7 +178,7 @@ export default class Tree extends Component {
     if (_.isEmpty(paramData)) {
       return null;
     }
-    const { selectKey } = this.state;
+    const { selectKey, openKeys } = this.state;
     const keys = _.split(selectKey, '/');
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
@@ -143,7 +187,7 @@ export default class Tree extends Component {
       <Menu
         onClick={this.handleSubmenuClick}
         onOpenChange={this.handleOpenClick}
-        openKeys={this.state.openKeys}
+        openKeys={openKeys}
         style={{ width: '100%' }}
         mode="inline"
       >

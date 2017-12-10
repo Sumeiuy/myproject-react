@@ -20,6 +20,9 @@ import Button from '../common/Button';
 import styles from './detailTable.less';
 
 const confirm = Modal.confirm;
+// detailTable 组件的表格类型
+const CENTER_TABLE = 'center';
+const TEAM_TABLE = 'team';
 
 const columnsOne = [{
   title: '名称',
@@ -106,7 +109,7 @@ const actionColumns = (category, action) => {
     title: '操作',
     key: 'action',
     render: (item) => {
-      const isTeam = category === 'center';
+      const isCenter = category === CENTER_TABLE;
       return (
         <div className={styles.action}>
           <div className={styles.delete}>
@@ -117,7 +120,7 @@ const actionColumns = (category, action) => {
             />
           </div>
           {
-            isTeam ? (
+            isCenter ? (
               <div className={styles.update}>
                 <Icon
                   type={'beizhu'}
@@ -150,42 +153,42 @@ export default class DetailTable extends Component {
   }
 
   @autobind
-  getColumns(type) {
-    if (type === 'center') {
+  getColumns(category) {
+    if (category === CENTER_TABLE) {
       return [
         ...columnsOne,
         _.last(columnsTwo),
         actionColumns(
-          type,
+          category,
           { deleteFunc: this.handleDeleteClick, updateFunc: this.handleUpdateClick },
         ),
       ];
-    } else if (type === 'team') {
-      return [...columnsTree, actionColumns(type, { deleteFunc: this.handleDeleteClick })];
+    } else if (category === TEAM_TABLE) {
+      return [...columnsTree, actionColumns(category, { deleteFunc: this.handleDeleteClick })];
     }
     return [...columnsOne, ...columnsTwo];
   }
 
   @autobind
-  handleDeleteClick(type, item) {
+  handleDeleteClick(category, item) {
     const { onDelete } = this.props;
     confirm({
       title: '确认要删除吗?',
       content: '确认后，操作将不可取消。',
       onOk() {
-        onDelete(type, item);
+        onDelete(category, item);
       },
     });
   }
 
   @autobind
-  handleUpdateClick(type, item) {
-    this.props.onUpdate(type, item);
+  handleUpdateClick(category, item) {
+    this.props.onUpdate(category, item, false);
   }
 
   @autobind
-  handleAddClick(type) {
-    this.props.onAdd(type);
+  handleAddClick(category) {
+    this.props.onAdd(category);
   }
 
   @autobind
@@ -215,7 +218,7 @@ export default class DetailTable extends Component {
               type="default"
               size="large"
               onClick={() => { this.handleAddClick(category); }}
-              className={classnames(styles.btn, { [styles.memberBtn]: (category === 'team') })}
+              className={classnames(styles.btn, { [styles.memberBtn]: (category === TEAM_TABLE) })}
             >
               {buttonTitle}
             </Button>

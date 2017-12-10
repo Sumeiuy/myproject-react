@@ -35,7 +35,7 @@ import styles from './editModal.less';
 const titleArray = {
   manager: ['编辑负责人', '负责人:'],
   member: ['添加成员', '成员:'],
-  team: ['添加团队', '团队负责人:', '团队名称:'],
+  team: ['添加团队/更新团队', '团队负责人:', '团队名称:'],
 };
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
@@ -43,6 +43,8 @@ const dropDownSelectBoxStyle = {
   height: 32,
   border: '1px solid #d9d9d9',
 };
+// editModal 组件的弹框类型
+const TEAM_MODAL = 'team';
 
 export default class EditModal extends Component {
   static propTypes = {
@@ -51,11 +53,10 @@ export default class EditModal extends Component {
     okText: PropTypes.string,
     cancelText: PropTypes.string,
     visible: PropTypes.bool.isRequired,
-    modalKey: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    updateItem: PropTypes.object,
+    defultItem: PropTypes.object,
   }
 
   static defaultProps = {
@@ -63,52 +64,75 @@ export default class EditModal extends Component {
     cancelText: '取消',
     list: [],
     modalType: '',
-    updateItem: {},
+    defultItem: {},
   }
 
   constructor(props) {
     super(props);
-    const { updateItem } = props;
-    let select = {};
-    let teamName = '';
-    if (!_.isEmpty(updateItem)) {
-      const { name = '', title = '', code = '' } = updateItem;
-      if (!_.isEmpty(name) || !_.isEmpty(code)) {
-        select = { name, code };
-      } else {
-        select = {};
-      }
-      teamName = title;
-    }
-    this.state = { select, teamName };
+    const { defultItem } = props;
+    this.state = this.getDefultValue(defultItem);
   }
-
+  // 弹框的默认显示
+  getDefultValue(defultItem) {
+    let select = {};
+    const { name = '', title = '', code = '' } = defultItem || {};
+    if (!_.isEmpty(name) || !_.isEmpty(code)) {
+      select = { name, code };
+    } else {
+      select = {};
+    }
+    return { select, teamName: title };
+  }
+  // 校验数据
   @autobind
-  handleOk() {
-    const { onOk, modalKey, modalType } = this.props;
+  vetifyData() {
+    let result = true;
+    const { modalType } = this.props;
     const { select, teamName } = this.state;
     const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
     if (_.isEmpty(select)) {
       message.error(`${titles[1]}不能为空`);
+      result = false;
     }
     if (modalType === 'team' && _.isEmpty(teamName)) {
       message.error(`${titles[2]}不能为空`);
+      result = false;
     }
-    if (!_.isEmpty(select) && !_.isEmpty(teamName)) {
-      onOk({ modalKey, select, teamName, modalType });
+    return result;
+  }
+
+  @autobind
+  handleOk() {
+    // 校验必填数据
+    if (!this.vetifyData()) {
+      return;
     }
+    const { onOk, modalType, defultItem } = this.props;
+    const { select, select: { name: curName, code: curCode }, teamName } = this.state;
+    const {
+      select: { name: defaultName, code: defaultCode },
+      teamName: defaultTeamName,
+    } = this.getDefultValue(defultItem);
+    // 去重
+    const isSameSelect = curName === defaultName && curCode === defaultCode;
+    const isSameTeamName = defaultTeamName === teamName;
+    let isUpdate = true; // 是否有更新
+    if (modalType === TEAM_MODAL && isSameSelect && isSameTeamName) {
+      isUpdate = false;
+    } else if (modalType !== TEAM_MODAL && isSameSelect) {
+      isUpdate = false;
+    }
+    onOk({ select, teamName, modalType, isUpdate });
   }
 
   @autobind
   handleClose() {
-    const { onCancel, modalKey } = this.props;
-    onCancel(modalKey);
+    this.props.onCancel();
   }
 
   @autobind
   handleSelect(obj) {
-    const teamName = `${obj.name}团队`;
-    this.setState({ select: obj, teamName });
+    this.setState({ select: obj, teamName: `${obj.name}团队` });
   }
 
   @autobind
@@ -183,8 +207,9 @@ export default class EditModal extends Component {
   }
 
   render() {
-    const { visible, modalType } = this.props;
-    const title = _.head(titleArray[modalType]);
+    const { visible, modalType, defultItem } = this.props;
+    const titles = _.split(_.head(titleArray[modalType]), '/');
+    const title = _.isEmpty(defultItem) ? _.head(titles) : _.last(titles);
     return (
       <Modal
         title={title}

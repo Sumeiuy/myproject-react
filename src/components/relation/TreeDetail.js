@@ -11,7 +11,6 @@ import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Modal } from 'antd';
-import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import DetailTable from './DetailTable';
@@ -20,25 +19,19 @@ import styles from './treeDetail.less';
 const confirm = Modal.confirm;
 export default class TreeDetail extends Component {
   static propTypes = {
-    tableData: PropTypes.array,
-    title: PropTypes.string,
+    detail: PropTypes.object,
     category: PropTypes.string,
-    manager: PropTypes.object,
+    onAdd: PropTypes.func,
     onDelete: PropTypes.func,
     onUpdate: PropTypes.func,
-    onAdd: PropTypes.func,
-    onEdit: PropTypes.func,
   }
 
   static defaultProps = {
-    title: '',
-    manager: {},
+    detail: {},
     category: '',
-    tableData: {},
+    onAdd: () => {},
     onDelete: () => {},
     onUpdate: () => {},
-    onAdd: () => {},
-    onEdit: () => {},
   }
 
   @autobind
@@ -53,34 +46,36 @@ export default class TreeDetail extends Component {
 
   @autobind
   renderHeader() {
-    const { title, manager, onEdit } = this.props;
+    const { detail, category, onUpdate } = this.props;
+    const { name = '--', code = '--', title = '--' } = detail || {};
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{title || '--'}</div>
+        <div className={styles.title}>{title}</div>
         <div className={styles.managerRow}>
           <div className={styles.info}>{'负责人：'}</div>
-          {
-            _.isEmpty(manager) ? null : (
-              <div className={classnames(styles.info, styles.value)}>{`${manager.name}（${manager.code}）`}</div>
-            )
-          }
-          <Icon type={'beizhu'} onClick={() => { onEdit(); }} className={styles.editIcon} />
+          <div className={classnames(styles.info, styles.value)}>{`${name}（${code}）`}</div>
+          <Icon
+            type={'beizhu'}
+            onClick={() => { onUpdate(category, { name, code }, true); }}
+            className={styles.editIcon}
+          />
         </div>
       </div>
     );
   }
 
   render() {
-    const { tableData, category, onDelete, onUpdate, onAdd } = this.props;
+    const { detail, category, onDelete, onUpdate, onAdd } = this.props;
+    const { infoList = [] } = detail || {};
     const screenHeight = document.documentElement.clientHeight;
     const style = { height: `${(screenHeight - 109)}px` };
     return (
       <div className={styles.detailContainer} style={style}>
         {this.renderHeader()}
         <DetailTable
-          rowKey={'id'}
           category={category}
-          tableData={tableData}
+          rowKey={'id'}
+          tableData={infoList}
           onDelete={onDelete}
           onUpdate={onUpdate}
           onAdd={onAdd}
