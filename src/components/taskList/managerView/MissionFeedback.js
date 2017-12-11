@@ -235,12 +235,12 @@ export default class MissionFeedback extends PureComponent {
       bottom: '5%',
       containLabel: true,
     } :
-      {
-        left: '15%',
-        right: '15%',
-        bottom: '5%',
-        containLabel: true,
-      };
+    {
+      left: '15%',
+      right: '15%',
+      bottom: '5%',
+      containLabel: true,
+    };
     const option = {
       tooltip: {
         formatter: (params) => {
