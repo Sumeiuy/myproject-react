@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 21:32:34
+ * @Last Modified time: 2017-12-11 16:58:41
  * 管理者视图详情
  */
 
@@ -43,6 +43,12 @@ export default class ManagerViewDetail extends PureComponent {
     custFeedback: PropTypes.array.isRequired,
     // 任务实施进度数据
     missionImplementationProgressData: PropTypes.object.isRequired,
+    // 客户池用户范围
+    custRange: PropTypes.array.isRequired,
+    // 职位信息
+    empInfo: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -103,6 +109,10 @@ export default class ManagerViewDetail extends PureComponent {
       custDetailResult,
       custFeedback,
       missionImplementationProgressData,
+      custRange,
+      empInfo,
+      location,
+      replace,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -159,7 +169,19 @@ export default class ManagerViewDetail extends PureComponent {
             footer={
               <div className={styles.operationBtnSection}>
                 <Clickable
-                  // 加入节流函数
+                  onClick={this.handleCloseModal}
+                  eventName="/click/managerViewCustDetail/cancel"
+                >
+                  <Button className={styles.cancel}>取消</Button>
+                </Clickable>
+
+                <Clickable
+                  onClick={this.handleExport}
+                  eventName="/click/managerViewCustDetail/export"
+                >
+                  <Button className={styles.export}>导出</Button>
+                </Clickable>
+                <Clickable
                   onClick={this.handleLaunchTask}
                   eventName="/click/managerViewCustDetail/launchTask"
                 >
@@ -169,18 +191,6 @@ export default class ManagerViewDetail extends PureComponent {
                   >
                     发起新任务
                   </Button>
-                </Clickable>
-                <Clickable
-                  onClick={this.handleExport}
-                  eventName="/click/managerViewCustDetail/export"
-                >
-                  <Button className={styles.export}>导出</Button>
-                </Clickable>
-                <Clickable
-                  onClick={this.handleCloseModal}
-                  eventName="/click/managerViewCustDetail/cancel"
-                >
-                  <Button className={styles.cancel}>取消</Button>
                 </Clickable>
               </div>
             }
@@ -209,6 +219,10 @@ export default class ManagerViewDetail extends PureComponent {
             custFeedback={custFeedback}
             onPreviewCustDetail={this.handlePreview}
             missionImplementationProgress={missionImplementationProgressData}
+            custRange={custRange}
+            empInfo={empInfo}
+            location={location}
+            replace={replace}
           />
         </div>
         <div>

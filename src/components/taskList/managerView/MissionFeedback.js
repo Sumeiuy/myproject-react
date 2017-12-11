@@ -20,8 +20,8 @@ import styles from './missionFeedback.less';
 const resultData = {
   allFeedback: {
     serviceAllNum: '1150',
-    aFeedback: '460',
-    aFeedbackPer: '40%',
+    aFeedback: '1150',
+    aFeedbackPer: 100,
     allTaskFeedbackDes: '所有问题反馈结果',
   },
   radioFeedback: [
@@ -201,13 +201,12 @@ export default class MissionFeedback extends PureComponent {
       right: '20%',
       bottom: '5%',
       containLabel: true,
-    } :
-    {
-      left: '15%',
-      right: '15%',
-      bottom: '5%',
-      containLabel: true,
-    };
+    } : {
+        left: '15%',
+        right: '15%',
+        bottom: '5%',
+        containLabel: true,
+      };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -306,7 +305,7 @@ export default class MissionFeedback extends PureComponent {
     );
   }
 
-  renderAllFeedback(allCount, count, countPer) {
+  renderAllFeedback(allCount, count, countPer, residue) {
     const type = '服务经理总数';
     const per = '已反馈人数';
     return (
@@ -319,7 +318,10 @@ export default class MissionFeedback extends PureComponent {
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
             >
-              <div className="ant-progress-bg" />
+              <div
+                className="ant-progress-bg"
+                style={{ width: `${countPer}%` }}
+              />
             </Tooltip>
             <Tooltip
               placement="topLeft"
@@ -327,7 +329,10 @@ export default class MissionFeedback extends PureComponent {
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
             >
-              <div className="ant-progress-inner" />
+              <div
+                className="ant-progress-inner"
+                style={{ width: `${residue}%` }}
+              />
             </Tooltip>
           </div>
         </div>
@@ -366,7 +371,7 @@ export default class MissionFeedback extends PureComponent {
   render() {
     const { isFold } = this.props;
     const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
-
+    const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
     return (
       <div className={styles.basicInfo}>
         <div className={styles.feedbackTitle}>
@@ -404,7 +409,7 @@ export default class MissionFeedback extends PureComponent {
                 >
                   <div className={styles.charts}>
                     {this.renderAllFeedback(allFeedback.serviceAllNum,
-                      allFeedback.aFeedback, allFeedback.aFeedbackPer)}
+                      allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
                   </div>
                   <div className={styles.allService}>
                     <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>

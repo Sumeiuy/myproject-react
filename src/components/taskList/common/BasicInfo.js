@@ -80,6 +80,7 @@ export default class BasicInfo extends PureComponent {
       custSourceDescription,
       custTotal,
     } = this.props;
+    const posi = 'rightBottom';
     const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.basicInfo}>
@@ -129,7 +130,7 @@ export default class BasicInfo extends PureComponent {
                      */}
                     <TipsInfo
                       title={'当前{机构名}有效客户总数'}
-                      position={'rightBottom'}
+                      position={posi}
                       wrapperClass={classnames({
                         [styles.custNumberTips]: true,
                       })}

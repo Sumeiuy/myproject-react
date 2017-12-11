@@ -27,7 +27,7 @@ export default class TabsExtra extends PureComponent {
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     orgId: PropTypes.string,
-    isDown: PropTypes.array,
+    isDown: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -125,6 +125,7 @@ export default class TabsExtra extends PureComponent {
                 endTime={end}
                 collectData={collectCustRange}
                 expandAll={expandAll}
+                isDown={isDown}
               /> :
               <Select
                 defaultValue="暂无数据"
