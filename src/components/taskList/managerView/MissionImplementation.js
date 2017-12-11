@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-11 15:25:59
+ * @Last Modified time: 2017-12-11 20:57:34
  * 任务实施简报
  */
 
@@ -15,8 +15,7 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
-import { fspContainer } from '../../../config';
-import { permission } from '../../../utils';
+import { permission, helper } from '../../../utils';
 import styles from './missionImplementation.less';
 import emptyImg from '../../../../static/images/empty.png';
 
@@ -60,7 +59,7 @@ export default class MissionImplementation extends PureComponent {
       isDown: true,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
-    this.isHasAuthorize = permission.hasCustomerPoolPermission();
+    this.isAuthorize = permission.hasCustomerPoolPermission();
   }
 
   componentDidMount() {
@@ -72,7 +71,7 @@ export default class MissionImplementation extends PureComponent {
     const { occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
-    if (document.querySelector(fspContainer.container)) {
+    if (helper.isInFsp()) {
       this.orgId = window.forReactPosition.orgId;
     } else {
       this.orgId = occDivnNum;
@@ -113,7 +112,7 @@ export default class MissionImplementation extends PureComponent {
     };
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
-    if (!this.isHasAuthorize) {
+    if (!this.isAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
       });
@@ -139,8 +138,8 @@ export default class MissionImplementation extends PureComponent {
     }
     // posOrgId 在机构树的营业部位置
     let department;
-    _(custRange).forEach((obj) => {
-      if (obj.children && !_.isEmpty(obj.children)) {
+    _.each(custRange, (obj) => {
+      if (!_.isEmpty(obj.children)) {
         const targetValue = _.find(obj.children, o => o.id === posOrgId);
         if (targetValue) {
           department = [targetValue, myCustomer];
@@ -182,7 +181,7 @@ export default class MissionImplementation extends PureComponent {
 
     // if (orgId) {
     //   curOrgId = orgId;
-    // } else if (!this.isHasAuthorize) {
+    // } else if (!this.isAuthorize) {
     //   curOrgId = MAIN_MAGEGER_ID;
     // }
     const extraProps = {
