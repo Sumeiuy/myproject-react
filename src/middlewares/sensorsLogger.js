@@ -32,12 +32,12 @@ let QUEUE = [];
 function validateType(type) {
   return (item) => {
     const isString = _.isString(item);
-    if (isString) {
-      // 是字符串
-      return item === type;
-    }
+    const isRegExp = _.isRegExp(item);
+    // 字符串
+    if (isString) return item === type;
     // 是正则表达式
-    return item.test(type);
+    if (isRegExp) return item.test(type);
+    return false;
   };
 }
 // 验证是否符合白名单
