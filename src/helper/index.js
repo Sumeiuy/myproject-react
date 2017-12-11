@@ -10,7 +10,7 @@ import power from './power';
 import regxp from './regexp';
 import time from './time';
 import url from './url';
-
+import encode from './encode';
 
 export default {
   check,
@@ -25,4 +25,5 @@ export default {
   regxp,
   time,
   url,
+  encode,
 };

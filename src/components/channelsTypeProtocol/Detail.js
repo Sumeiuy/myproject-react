@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:36:26
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-07 17:11:43
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -91,7 +91,6 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-    console.log('attachmentList', attachmentList, showUnderCust);
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
