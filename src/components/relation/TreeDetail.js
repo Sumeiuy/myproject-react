@@ -9,89 +9,76 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import classnames from 'classnames';
+import { Modal } from 'antd';
+
 import Icon from '../common/Icon';
-import EditModal from './EditModal';
+import DetailTable from './DetailTable';
 import styles from './treeDetail.less';
 
-const data = { name: '财富中心5', id: '5', category: 'manager' };
-
+const confirm = Modal.confirm;
 export default class TreeDetail extends Component {
   static propTypes = {
-    detailData: PropTypes.object,
+    detail: PropTypes.object,
+    category: PropTypes.string,
+    onAdd: PropTypes.func,
+    onDelete: PropTypes.func,
+    onUpdate: PropTypes.func,
   }
 
   static defaultProps = {
-    detailData: data,
-  }
-
-  constructor(props) {
-    super(props);
-    console.log('#######constructor#########', props);
-    this.state = {
-      manager: '',
-      editModal: false,
-    };
+    detail: {},
+    category: '',
+    onAdd: () => {},
+    onDelete: () => {},
+    onUpdate: () => {},
   }
 
   @autobind
-  showModal() {
-    console.log('#######showModal##########');
-    this.setState({ editModal: true });
-  }
-
-  @autobind
-  handleSearch(keyword) {
-    console.log('#####handleSearch#########', keyword);
-  }
-
-  @autobind
-  handleOk(param) {
-    console.log('######handleOk#######', param);
-    const { modalKey, select } = param;
-    this.setState({ manager: select });
-    this.closeModal(modalKey);
-  }
-
-  @autobind
-  closeModal(modalKey) {
-    this.setState({ [modalKey]: false });
+  handleDelete(param) {
+    const that = this;
+    confirm({
+      title: '确认要删除吗?',
+      content: '确认后，操作将不可取消。',
+      onOk() { that.props.onDelete(param); },
+    });
   }
 
   @autobind
   renderHeader() {
-    const { detailData } = this.props;
-    const { manager } = this.state;
+    const { detail, category, onUpdate } = this.props;
+    const { name = '--', code = '--', title = '--' } = detail || {};
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{detailData.name}</div>
+        <div className={styles.title}>{title}</div>
         <div className={styles.managerRow}>
           <div className={styles.info}>{'负责人：'}</div>
-          {
-            _.isEmpty(manager) ? null : (
-              <div className={classnames(styles.info, styles.value)}>{`${manager.name}（${manager.code}）`}</div>
-            )
-          }
-          <Icon type={'beizhu'} onClick={this.showModal} className={styles.editIcon} />
+          <div className={classnames(styles.info, styles.value)}>{`${name}（${code}）`}</div>
+          <Icon
+            type={'beizhu'}
+            onClick={() => { onUpdate(category, { name, code }, true); }}
+            className={styles.editIcon}
+          />
         </div>
       </div>
     );
   }
 
   render() {
-    const { editModal } = this.state;
-    const { detailData } = this.props;
+    const { detail, category, onDelete, onUpdate, onAdd } = this.props;
+    const { infoList = [] } = detail || {};
+    const screenHeight = document.documentElement.clientHeight;
+    const style = { height: `${(screenHeight - 109)}px` };
     return (
-      <div className={styles.detailContainer}>
+      <div className={styles.detailContainer} style={style}>
         {this.renderHeader()}
-        <EditModal
-          visible={editModal}
-          modalKey={'editModal'}
-          onSearch={this.handleSearch}
-          onOk={this.handleOk}
-          onCancel={this.closeModal}
-          category={detailData.category}
+        <DetailTable
+          category={category}
+          rowKey={'id'}
+          tableData={infoList}
+          onDelete={onDelete}
+          onUpdate={onUpdate}
+          onAdd={onAdd}
         />
       </div>
     );
