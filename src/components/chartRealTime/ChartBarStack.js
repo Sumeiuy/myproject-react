@@ -161,8 +161,10 @@ export default class ChartBarStack extends PureComponent {
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = filterOrgModelData(orgModel, 'level2Name');
+    // 财富中心名称数组
+    const levelWealthArr = filterOrgModelData(orgModel, 'level3Name');
     // 营业部名称数组
-    const levelStoreArr = filterOrgModelData(orgModel, 'level3Name');
+    const levelStoreArr = filterOrgModelData(orgModel, 'level4Name');
     // 此处为y轴刻度值
     const yAxisLabels = filterOrgModelData(orgModel, levelName);
     // 补足Y轴刻度值不够的情况
@@ -211,6 +213,7 @@ export default class ChartBarStack extends PureComponent {
         key,
         levelAndScope,
         levelCompanyArr,
+        levelWealthArr,
         levelStoreArr,
         yAxisLabels,
         stackLegend,
@@ -228,6 +231,7 @@ export default class ChartBarStack extends PureComponent {
         key,
         levelAndScope,
         levelCompanyArr,
+        levelWealthArr,
         levelStoreArr,
         yAxisLabels,
         stackLegend,
@@ -385,6 +389,7 @@ export default class ChartBarStack extends PureComponent {
       key,
       levelAndScope,
       levelCompanyArr,
+      levelWealthArr,
       levelStoreArr,
       yAxisLabels,
       stackLegend,
@@ -425,13 +430,22 @@ export default class ChartBarStack extends PureComponent {
               }
               if (!hasPushedAxis) {
                 hasPushedAxis = true;
+                const hasFundCenter = levelWealthArr[dataIndex] !== '--';
                 let title = '';
                 // 针对不同的机构级别需要显示不同的分类
-                if (levelAndScope === 3 && axisValue !== '--') {
-                  // 营业部，需要显示分公司名称
+                if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter) ||
+                  (levelAndScope === 3 && axisValue !== '--')) {
+                  // 3为财富中心，需要显示南京分公司名称
+                  // 4为营业部,只需要显示xx公司名称(非南京分公司没有财富中心)
                   title = `${levelCompanyArr[dataIndex]}`;
-                } else if (levelAndScope === 4 && axisValue !== '--') {
-                  // 投顾，需要显示分公司，营业部名称
+                } else if (levelAndScope === 4 && axisValue !== '--' && hasFundCenter) {
+                  // 4为营业部,需要显示南京公司名称-财富中心(南京分公司有财富中心)
+                  title = `${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]}`;
+                } else if (levelAndScope === 5 && axisValue !== '--' && hasFundCenter) {
+                  // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
+                  title = `${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
+                } else if (levelAndScope === 5 && axisValue !== '--' && !hasFundCenter) {
+                   // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                   title = `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
                 }
                 let toolTipNewHeader = `
