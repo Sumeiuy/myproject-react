@@ -13,6 +13,7 @@ import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 import Icon from '../../common/Icon';
+import Paganation from '../../common/Paganation';
 
 import styles from './missionFeedback.less';
 
@@ -113,6 +114,38 @@ const resultData = {
       ],
     },
   ],
+};
+
+const problems = {
+  resultData: {
+    pageInfo: {
+      curPageNum: 1,
+      curPageSize: 10,
+      totalPage: 100,
+    },
+    dataInfo: [{
+      infoProblem: '这是问题描述，问题描述',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    },
+    {
+      infoProblem: '这是问题描述222，问题描述2222',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    }],
+  },
 };
 
 export default class MissionFeedback extends PureComponent {
@@ -367,6 +400,58 @@ export default class MissionFeedback extends PureComponent {
     return oDiv;
   }
 
+  @autobind
+  handlePageChange(value, page) {
+    console.log('-->', value, page);
+  }
+
+  @autobind
+  handleSizeChange(value) {
+    console.log('value--->', value);
+  }
+
+  @autobind
+  renderProblemsInfo(key) {
+    // const problemsInfo = problems.resultData.dataInfo;
+    const { isFold } = this.props;
+    const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
+    const value = _.map(key, (item) => {
+      const info = _.map(item.infoData, (itemChild, index) =>
+        <h5 title={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+      return (
+        <div className={styles.subjective}>
+          <div
+            className={classnames({
+              [styles.problemsInfo]: !isFold,
+              [styles.problemsInfoTwo]: isFold,
+            })}
+          >
+            <h5>{item.infoProblem}</h5>
+          </div>
+          <div
+            className={classnames({
+              [styles.thrBoder]: !isFold,
+              [styles.thrBoderTwo]: isFold,
+            })}
+          >
+            <div className={styles.problems}>
+              <div>
+                {info}
+                <Paganation
+                  curPageNum={curPageNum}
+                  curPageSize={curPageSize}
+                  totalRecordNum={totalRecordNum}
+                  onPageChange={this.handlePageChange}
+                  onSizeChange={this.handleSizeChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    return value;
+  }
 
   render() {
     const { isFold } = this.props;
@@ -420,31 +505,7 @@ export default class MissionFeedback extends PureComponent {
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
-              <div className={styles.subjective}>
-                <div
-                  className={classnames({
-                    [styles.firBorder]: !isFold,
-                    [styles.firBorderTwo]: isFold,
-                  })}
-                >
-                  <h5>主观问题</h5>
-                </div>
-                <div
-                  className={classnames({
-                    [styles.sedBoder]: !isFold,
-                    [styles.thrBoderTwo]: isFold,
-                  })}
-                >
-                  <div className={styles.problems}>
-                    <div>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {this.renderProblemsInfo(problems.resultData.dataInfo)}
             </Col>
           </Row>
         </div>
