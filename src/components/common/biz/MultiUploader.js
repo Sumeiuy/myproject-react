@@ -58,6 +58,7 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: PropTypes.func,
     // 删除成功后回调方法
     deleteCallback: PropTypes.func,
+    showDelete: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -71,6 +72,7 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: () => {},
     deleteCallback: () => {},
     deleteAttachmentLoading: false,
+    showDelete: true,
   }
 
   constructor(props) {
@@ -184,7 +186,7 @@ export default class MultiUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit, title, required } = this.props;
+    const { edit, title, required, showDelete } = this.props;
     const uploadProps = {
       data: {
         empId,
@@ -229,7 +231,7 @@ export default class MultiUpload extends PureComponent {
                   <h3>
                     <span>
                       {
-                        edit ?
+                        edit && showDelete ?
                           <em>
                             <Popconfirm
                               placement="top"
