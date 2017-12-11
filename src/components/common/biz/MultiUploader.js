@@ -231,7 +231,7 @@ export default class MultiUpload extends PureComponent {
                   <h3>
                     <span>
                       {
-                        edit && showDelete ?
+                        edit && showDelete && emp.getId() === item.creator ?
                           <em>
                             <Popconfirm
                               placement="top"

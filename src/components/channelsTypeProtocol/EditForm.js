@@ -19,7 +19,6 @@ import MultiUploader from '../common/biz/MultiUploader';
 import Transfer from '../../components/common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
-import { emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -608,6 +607,7 @@ export default class EditForm extends PureComponent {
       ...item,
       custStatus: '开通处理中',
     })) : EMPTY_LIST;
+    console.warn('attachmentTypeList', attachmentTypeList);
     return (
       <div className={styles.editComponent}>
         <div className={styles.editWrapper}>
@@ -711,7 +711,7 @@ export default class EditForm extends PureComponent {
                     uploadCallback={this.handleUploadCallback}
                     deleteCallback={this.handleDeleteCallback}
                     ref={(ref) => { this[`uploader${item.type}`] = ref; }}
-                    showDelete={emp.getId() === item.creator}
+                    showDelete
                   />
                 </div>
               ) : null;
