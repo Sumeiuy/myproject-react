@@ -112,8 +112,18 @@ export default class BasicInfo extends PureComponent {
                     <span className={styles.content}>{custSource || '--'}</span>
                   </Col>
                   <Col span={colSpanValue} className={styles.colItem}>
-                    <span className={styles.label}>客户总数:&nbsp;</span>
-                    <span className={styles.content}>{Number(custTotal) || 0}</span>
+                    <span
+                      className={classnames({
+                        [styles.label]: true,
+                      })}
+                    >客户总数:&nbsp;</span>
+                    <span
+                      className={classnames({
+                        [styles.custTotal]: true,
+                        [styles.content]: true,
+                      })}
+                      onClick={this.handlePreview}
+                    >{Number(custTotal) || 0}</span>
                     {/**
                      * 机构名变量，需要替换
                      */}
@@ -124,10 +134,6 @@ export default class BasicInfo extends PureComponent {
                         [styles.custNumberTips]: true,
                       })}
                     />
-                    <span
-                      className={styles.previewCust}
-                      onClick={this.handlePreview}
-                    >预览明细&gt;&gt;</span>
                   </Col>
                 </Row>
                 <Row className={styles.rowItem}>
