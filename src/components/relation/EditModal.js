@@ -9,7 +9,7 @@
  *  onSearch={func}
  *  modalKey={string}
  *  list={array}
- *  category={string}
+ *  modalType={string}
  * />
  * visible：必需的，用于控制弹框是否显示
  * onOk：必须，按钮的回调事件
@@ -17,30 +17,25 @@
  * onSearch: 必须，下拉控件中搜索事件
  * list：必须，下拉框列表
  * modalKey： 必须，容器组件用来控制modal出现和隐藏的key
- * category：非必须，值有，'manager', 'member', 'team'。默认值为manager
+ * modalType：非必须，值有，'manager', 'member', 'team'。默认值为manager
  * okText：有默认值：确定，按钮的title
  * cancelText: 有默认值：取消，按钮的title
  */
 import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
-import { Input, Modal } from 'antd';
+import { Input, Modal, message } from 'antd';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import Button from '../common/Button';
 import DropDownSelect from '../common/dropdownSelect';
-
 import styles from './editModal.less';
 
-const data = [{
-  name: '张三', code: '0987689',
-}, {
-  name: '李四', code: '09856789',
-}];
 const titleArray = {
   manager: ['编辑负责人', '负责人:'],
   member: ['添加成员', '成员:'],
-  team: ['添加团队', '团队负责人:', '团队名称:'],
+  team: ['添加团队/更新团队', '团队负责人:', '团队名称:'],
 };
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
@@ -48,52 +43,96 @@ const dropDownSelectBoxStyle = {
   height: 32,
   border: '1px solid #d9d9d9',
 };
+// editModal 组件的弹框类型
+const TEAM_MODAL = 'team';
 
 export default class EditModal extends Component {
   static propTypes = {
     list: PropTypes.array,
-    category: PropTypes.string,
+    modalType: PropTypes.string,
     okText: PropTypes.string,
     cancelText: PropTypes.string,
     visible: PropTypes.bool.isRequired,
-    modalKey: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
+    defultItem: PropTypes.object,
   }
 
   static defaultProps = {
     okText: '确定',
     cancelText: '取消',
-    list: data,
-    category: 'manager',
+    list: [],
+    modalType: '',
+    defultItem: {},
   }
 
   constructor(props) {
     super(props);
-    this.state = {
-      select: {},
-      teamName: '',
-    };
+    const { defultItem } = props;
+    this.state = this.getDefultValue(defultItem);
+  }
+  // 弹框的默认显示
+  getDefultValue(defultItem) {
+    let select = {};
+    const { name = '', title = '', code = '' } = defultItem || {};
+    if (!_.isEmpty(name) || !_.isEmpty(code)) {
+      select = { name, code };
+    } else {
+      select = {};
+    }
+    return { select, teamName: title };
+  }
+  // 校验数据
+  @autobind
+  vetifyData() {
+    let result = true;
+    const { modalType } = this.props;
+    const { select, teamName } = this.state;
+    const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
+    if (_.isEmpty(select)) {
+      message.error(`${titles[1]}不能为空`);
+      result = false;
+    }
+    if (modalType === 'team' && _.isEmpty(teamName)) {
+      message.error(`${titles[2]}不能为空`);
+      result = false;
+    }
+    return result;
   }
 
   @autobind
   handleOk() {
-    const { onOk, modalKey, category } = this.props;
-    const { select, teamName } = this.state;
-    onOk({ modalKey, category, select, teamName });
+    // 校验必填数据
+    if (!this.vetifyData()) {
+      return;
+    }
+    const { onOk, modalType, defultItem } = this.props;
+    const { select, select: { name: curName, code: curCode }, teamName } = this.state;
+    const {
+      select: { name: defaultName, code: defaultCode },
+      teamName: defaultTeamName,
+    } = this.getDefultValue(defultItem);
+    // 去重
+    const isSameSelect = curName === defaultName && curCode === defaultCode;
+    const isSameTeamName = defaultTeamName === teamName;
+    let isUpdate = true; // 是否有更新
+    if (modalType === TEAM_MODAL && isSameSelect && isSameTeamName) {
+      isUpdate = false;
+    } else if (modalType !== TEAM_MODAL && isSameSelect) {
+      isUpdate = false;
+    }
+    onOk({ select, teamName, modalType, isUpdate });
   }
 
   @autobind
   handleClose() {
-    const { onCancel, modalKey } = this.props;
-    onCancel(modalKey);
+    this.props.onCancel();
   }
 
   @autobind
   handleSelect(obj) {
-    const teamName = `${obj.name}团队`;
-    this.setState({ select: obj, teamName });
+    this.setState({ select: obj, teamName: `${obj.name}团队` });
   }
 
   @autobind
@@ -113,9 +152,10 @@ export default class EditModal extends Component {
 
   @autobind
   renderContent() {
-    const { category, list } = this.props;
-    const { teamName } = this.state;
-    const titles = titleArray[category];
+    const { modalType, list } = this.props;
+    const { teamName, select } = this.state;
+    const { name = '--', code = '--' } = select;
+    const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
     return (
       <div className={styles.modalBody}>
         <div className={styles.row}>
@@ -125,6 +165,7 @@ export default class EditModal extends Component {
               placeholder="工号/姓名"
               showObjKey="name"
               objId="code"
+              value={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
               searchList={list}
               emitSelectItem={this.handleSelect}
               emitToSearch={this.handleSearch}
@@ -166,8 +207,9 @@ export default class EditModal extends Component {
   }
 
   render() {
-    const { visible, category } = this.props;
-    const title = titleArray[category][0];
+    const { visible, modalType, defultItem } = this.props;
+    const titles = _.split(_.head(titleArray[modalType]), '/');
+    const title = _.isEmpty(defultItem) ? _.head(titles) : _.last(titles);
     return (
       <Modal
         title={title}

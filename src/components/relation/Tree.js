@@ -17,86 +17,89 @@ import classnames from 'classnames';
 import styles from './tree.less';
 
 const SubMenu = Menu.SubMenu;
-const NJFGS = 'njfgs';
-const data = {
-  njfgs: {
-    name: '南京分公司',
-    id: 'njfgs',
-    branchCenter: [{
-      name: '财富中心1',
-      id: '1',
-      branchTeam: [{
-        name: '张三团队',
-        id: '1',
-      }, {
-        name: '李四团队',
-        id: '2',
-      }],
-    }, {
-      name: '财富中心2',
-      id: '2',
-      branchTeam: [{
-        name: '马六团队',
-        id: '3',
-      }, {
-        name: '玄武团队',
-        id: '4',
-      }],
-    }, {
-      name: '财富中心3',
-      id: '3',
-      branchTeam: [{
-        name: '李逵团队',
-        id: '5',
-      }, {
-        name: '镇江团队',
-        id: '6',
-      }],
-    }],
-  },
-};
-
 export default class Tree extends Component {
   static propTypes = {
-    treeData: PropTypes.object,
+    treeData: PropTypes.array,
     onSelect: PropTypes.func,
   }
 
   static defaultProps = {
-    treeData: data,
+    treeData: [],
     onSelect: () => {},
+    selectKey: '',
   }
 
   constructor(props) {
     super(props);
-    const { treeData } = props;
-    let menuKeys = [];
-    if (!_.isEmpty(treeData) && !_.isEmpty(treeData[NJFGS])) {
-      const { branchCenter } = treeData[NJFGS];
-      menuKeys = _.map(branchCenter, item => item.id);
-    }
     this.state = {
-      selectKey: '1',
-      openKeys: [_.head(menuKeys)],
-      menuKeys,
+      defultKey: '',
+      selectKey: '',
+      openKeys: [],
+      menuKeys: [],
     };
   }
 
-  getHeadLine(obj) {
-    let logo = '--';
-    let title = '--';
-    if (!_.isEmpty(obj)) {
-      const { name } = obj[NJFGS];
-      title = name;
-      logo = name.substr(0, 1);
+  componentWillReceiveProps(nextProps) {
+    const { treeData, onSelect } = nextProps;
+    if (this.props.treeData === treeData) {
+      return;
     }
-    return { title, logo };
+    // 更新数据
+    const { selectKey, defultKey } = this.state;
+    if (!_.isEmpty(treeData)) {
+      const { children, id } = _.head(treeData);
+      const menuKeys = _.map(children, item => item.id);
+      if (_.isEmpty(selectKey) && _.isEmpty(defultKey)) {
+        this.setState(
+          { menuKeys, selectKey: id, defultKey: id },
+          () => { onSelect(this.getItem(id)); },
+        );
+      } else {
+        this.setState({ menuKeys });
+      }
+    }
+  }
+
+  getHeadLine(obj) {
+    const { name = '', id = '' } = _.head(obj) || {};
+    if (!_.isEmpty(name)) {
+      return { title: name, logo: name.substr(0, 1), id };
+    }
+    return { id };
+  }
+
+  @autobind
+  getItem(key) {
+    const { treeData } = this.props;
+    const { id } = _.head(treeData);
+    if (key === id) {
+      return _.head(treeData);
+    }
+    const keys = _.split(key, '/');
+    const select = this.getBranchItem(_.head(treeData), keys);
+    return select;
+  }
+
+  @autobind
+  getBranchItem(list, keys) {
+    const branchItem = _.find(list.children, item => item.id === keys[0]);
+    if (keys.length === 1) {
+      return branchItem;
+    }
+    return this.getBranchItem(branchItem, keys.slice(1));
   }
 
   @autobind
   handleSubmenuClick(submenu) {
     const { key } = submenu;
-    this.setState({ selectKey: key });
+    const { selectKey } = this.state;
+    // 去重
+    if (selectKey !== key) {
+      this.setState(
+        { selectKey: key },
+        () => { this.props.onSelect(this.getItem(key)); },
+      );
+    }
   }
 
   @autobind
@@ -104,22 +107,53 @@ export default class Tree extends Component {
     const { menuKeys, selectKey } = this.state;
     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
     if (menuKeys.indexOf(latestOpenKey) === -1) {
-      const keys = _.split(selectKey, '/');
-      this.setState({ openKeys, selectKey: _.head(keys) });
+      // 点击菜单
+      if (_.isEmpty(openKeys)) {
+        const keys = _.split(selectKey, '/');
+        const curKey = _.head(keys);
+        this.setState(
+          { openKeys, selectKey: curKey },
+          () => {
+            // 去重
+            if (keys.length > 1) {
+              this.props.onSelect(this.getItem(curKey));
+            }
+          },
+        );
+      }
     } else {
-      this.setState({
-        openKeys: latestOpenKey ? [latestOpenKey] : [],
-        selectKey: latestOpenKey,
-      });
+      this.setState(
+        { openKeys: latestOpenKey ? [latestOpenKey] : [], selectKey: latestOpenKey },
+        () => {
+          // 去重
+          if (selectKey !== latestOpenKey) {
+            this.props.onSelect(this.getItem(latestOpenKey));
+          }
+        },
+      );
+    }
+  }
+
+  @autobind
+  handleLogoClick(logoKey) {
+    const { selectKey } = this.state;
+    // 去重
+    if (logoKey !== selectKey) {
+      this.setState(
+        { openKeys: [], selectKey: logoKey },
+        () => { this.props.onSelect(this.getItem(logoKey)); },
+      );
     }
   }
 
   @autobind
   renderHeader(obj) {
-    const { title, logo } = this.getHeadLine(obj);
+    const { title = '--', logo = '--', id = '' } = this.getHeadLine(obj);
     return (
       <div className={styles.header}>
-        <div className={styles.logo}>{logo}</div>
+        <div className={styles.logoBg}>
+          <div className={styles.logo} onClick={() => { this.handleLogoClick(id); }}>{logo}</div>
+        </div>
         <div className={styles.title}>{title}</div>
       </div>
     );
@@ -140,25 +174,25 @@ export default class Tree extends Component {
   }
 
   @autobind
-  renderTree(obj) {
-    if (_.isEmpty(obj)) {
+  renderTree(paramData) {
+    if (_.isEmpty(paramData)) {
       return null;
     }
-    const { selectKey } = this.state;
+    const { selectKey, openKeys } = this.state;
     const keys = _.split(selectKey, '/');
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
-    const { branchCenter } = obj[NJFGS];
+    const { children } = _.head(paramData);
     return (
       <Menu
         onClick={this.handleSubmenuClick}
         onOpenChange={this.handleOpenClick}
-        openKeys={this.state.openKeys}
+        openKeys={openKeys}
         style={{ width: '100%' }}
         mode="inline"
       >
         {_.map(
-          branchCenter,
+          children,
           center => (
             <SubMenu
               key={center.id}
@@ -170,7 +204,7 @@ export default class Tree extends Component {
               )}
             >
               {_.map(
-                center.branchTeam,
+                center.children,
                 team => (
                   <Menu.Item
                     key={`${center.id}/${team.id}`}
@@ -190,8 +224,10 @@ export default class Tree extends Component {
 
   render() {
     const { treeData } = this.props;
+    const screenHeight = document.documentElement.clientHeight;
+    const style = { height: `${(screenHeight - 109)}px` };
     return (
-      <div className={styles.treeContainer}>
+      <div className={styles.treeContainer} style={style}>
         {this.renderHeader(treeData)}
         {this.renderTree(treeData)}
       </div>
