@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-11 20:57:34
+ * @Last Modified time: 2017-12-11 21:10:52
  * 任务实施简报
  */
 
@@ -193,6 +193,7 @@ export default class MissionImplementation extends PureComponent {
       orgId: MAIN_MAGEGER_ID,
       isDown,
       collectCustRange,
+      iconType: 'juxing23',
     };
     return (<TabsExtra {...extraProps} />);
   }

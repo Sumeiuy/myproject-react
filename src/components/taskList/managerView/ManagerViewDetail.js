@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-11 16:58:41
+ * @Last Modified time: 2017-12-11 21:16:32
  * 管理者视图详情
  */
 
@@ -225,7 +225,7 @@ export default class ManagerViewDetail extends PureComponent {
             replace={replace}
           />
         </div>
-        <div>
+        <div className={styles.missionFeedbackSection}>
           <MissionFeedback isFold={isFold} />
         </div>
       </div>

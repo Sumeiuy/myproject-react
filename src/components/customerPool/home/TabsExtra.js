@@ -28,6 +28,7 @@ export default class TabsExtra extends PureComponent {
     location: PropTypes.object.isRequired,
     orgId: PropTypes.string,
     isDown: PropTypes.bool,
+    iconType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -37,6 +38,7 @@ export default class TabsExtra extends PureComponent {
     selectValue: '',
     orgId: '',
     isDown: false,
+    iconType: 'kehu',
   }
 
   constructor(props) {
@@ -104,12 +106,13 @@ export default class TabsExtra extends PureComponent {
       location,
       orgId,
       isDown = false,
+      iconType,
     } = this.props;
     const { begin, end } = this.state;
     return (
       <div className={styles.timeBox}>
         <div className={classnames(styles.icon, styles.kehuIcon)}>
-          <Icon type="kehu" />
+          <Icon type={iconType || 'kehu'} />
         </div>
         <div>
           {
