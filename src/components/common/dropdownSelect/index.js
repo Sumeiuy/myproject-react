@@ -93,8 +93,7 @@ export default class DropdownSelect extends PureComponent {
         this.setState({
           isSHowModal: false,
           value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
-          searchValue: '',
-        }, this.toSearch);
+        });
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
       return (
@@ -142,6 +141,20 @@ export default class DropdownSelect extends PureComponent {
     }
   }
 
+  @autobind
+  handleChangeSearchValue(e) {
+    this.setState({
+      searchValue: e.target.value,
+    });
+  }
+
+  @autobind
+  clearSearchValue() {
+    this.setState({
+      searchValue: '',
+    });
+  }
+
   render() {
     const { theme, disable } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
@@ -173,6 +186,8 @@ export default class DropdownSelect extends PureComponent {
               className={style.searhInput}
               placeholder={this.props.placeholder}
               onSearch={this.toSearch}
+              value={this.state.searchValue}
+              onChange={this.handleChangeSearchValue}
             />
           </div>
           {

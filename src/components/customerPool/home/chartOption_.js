@@ -4,6 +4,7 @@
  * @author zhangjunli
  */
 import _ from 'lodash';
+import { getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
 const getColourfulItem = ({
   width,
@@ -157,9 +158,12 @@ export const singleColorBar = ({
     colourfulData,
     colourfulTotal,
   });
-  const dataShadow = [];
-  // 构造一个透明的柱子，柱子高度比实际柱子高100，使其覆盖label文字，感觉文字可点击
-  _(data).forEach(v => dataShadow.push(v + 100));
+  // 柱子的最大高度
+  const maxHeightOfBar = getBarAdaptiveMax(data);
+  // 根据柱子的最大高度的18%确定柱子上的文字的高度
+  const numberHeight = maxHeightOfBar * 0.18;
+  // 构造一个透明的柱子，使其覆盖实际的柱子和柱子上的文字，使文字可点击
+  const dataShadow = _.map(data, v => v + numberHeight);
   return [
     {
       type: 'bar',
