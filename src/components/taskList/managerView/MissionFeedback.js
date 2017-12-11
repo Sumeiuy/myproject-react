@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
+import Icon from '../../common/Icon';
 
 import styles from './missionFeedback.less';
 
@@ -44,6 +45,11 @@ const resultData = {
         },
         {
           name: '单选选项D',
+          value: '40',
+          optionPer: '40%',
+        },
+        {
+          name: '单选选项E',
           value: '40',
           optionPer: '40%',
         },
@@ -109,7 +115,6 @@ const resultData = {
   ],
 };
 
-
 export default class MissionFeedback extends PureComponent {
 
   static propTypes = {
@@ -131,6 +136,15 @@ export default class MissionFeedback extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandAll: false,
+      cycleSelect: '',
+      createCustRange: [],
+    };
   }
 
   handleOptionCake(value, names) {
@@ -173,7 +187,7 @@ export default class MissionFeedback extends PureComponent {
           data: value,
         },
       ],
-      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'],
+      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'],
     };
     return option;
   }
@@ -231,7 +245,7 @@ export default class MissionFeedback extends PureComponent {
             normal: {
               barBorderRadius: [6, 6, 0, 0],
               color: (params) => {
-                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'];
+                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'];
                 return colorList[params.dataIndex];
               },
             },
@@ -348,13 +362,28 @@ export default class MissionFeedback extends PureComponent {
     return oDiv;
   }
 
+
   render() {
     const { isFold } = this.props;
     const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
 
     return (
       <div className={styles.basicInfo}>
-        <LabelInfo value="任务反馈" />
+        <div className={styles.feedbackTitle}>
+          <div>
+            <LabelInfo value="任务反馈" />
+          </div>
+          <div>
+            <div className={styles.down}>
+              <div className={styles.iconDown}>
+                <Icon type="xiazai" />
+              </div>
+              <div className={styles.downLoad}>
+                导出
+            </div>
+            </div>
+          </div>
+        </div>
         <div className={styles.feedback}>
           <Row className={styles.feedbackContent}>
             <Col span={24}>
@@ -386,6 +415,31 @@ export default class MissionFeedback extends PureComponent {
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
+              <div className={styles.subjective}>
+                <div
+                  className={classnames({
+                    [styles.firBorder]: !isFold,
+                    [styles.firBorderTwo]: isFold,
+                  })}
+                >
+                  <h5>主观问题</h5>
+                </div>
+                <div
+                  className={classnames({
+                    [styles.sedBoder]: !isFold,
+                    [styles.thrBoderTwo]: isFold,
+                  })}
+                >
+                  <div className={styles.problems}>
+                    <div>
+                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
+                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
+                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
+                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Col>
           </Row>
         </div>
