@@ -28,13 +28,32 @@ function format(type) {
 
 // 待发送日志队列
 let QUEUE = [];
-
+// 校验
+function validateType(type) {
+  return (item) => {
+    const isString = _.isString(item);
+    if (isString) {
+      // 是字符串
+      return item === type;
+    }
+    // 是正则表达式
+    return item.test(type);
+  };
+}
+// 验证是否符合白名单
+function checkInWhiteList(type) {
+  return _.some(whitelist, validateType(type));
+}
+// 验证是否符合黑名单
+function checkInBlackList(type) {
+  return _.some(blacklist, validateType(type));
+}
 function isPass(action) {
   const { type } = action;
-  if (!_.isEmpty(whitelist) && whitelist.indexOf(type) === -1) {
+  if (!_.isEmpty(whitelist) && !checkInWhiteList(type)) {
     return false;
   }
-  if (blacklist.indexOf(type) !== -1) {
+  if (checkInBlackList(type)) {
     return false;
   }
   return true;
