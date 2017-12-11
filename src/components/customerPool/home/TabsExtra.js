@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import time from '../../../helper';
+import { time } from '../../../helper';
 import { optionsMap } from '../../../config';
 import Icon from '../../common/Icon';
 import CustRange from '../common/CustRange';
