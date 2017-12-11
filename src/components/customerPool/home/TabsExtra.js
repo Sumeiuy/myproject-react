@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import time from '../../../helper';
+import { time } from '../../../helper';
 import { optionsMap } from '../../../config';
 import Icon from '../../common/Icon';
 import CustRange from '../common/CustRange';
@@ -27,6 +27,7 @@ export default class TabsExtra extends PureComponent {
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     orgId: PropTypes.string,
+    isDown: PropTypes.array,
   }
 
   static defaultProps = {
@@ -35,6 +36,7 @@ export default class TabsExtra extends PureComponent {
     expandAll: false,
     selectValue: '',
     orgId: '',
+    isDown: false,
   }
 
   constructor(props) {
@@ -42,6 +44,7 @@ export default class TabsExtra extends PureComponent {
     this.state = {
       begin: '',
       end: '',
+      isDown: false,
     };
   }
 
@@ -100,6 +103,7 @@ export default class TabsExtra extends PureComponent {
       selectValue,
       location,
       orgId,
+      isDown = false,
     } = this.props;
     const { begin, end } = this.state;
     return (
@@ -130,19 +134,32 @@ export default class TabsExtra extends PureComponent {
           }
         </div>
         <div className={styles.separateLine} />
-        <div className={styles.icon}>
-          <Icon type="rili" />
-        </div>
-        <div className={styles.select}>
-          <Select
-            style={{ width: 60 }}
-            value={selectValue}
-            onChange={this.handleChange}
-          >
-            {cycle.map(item =>
-              <Option key={item.key} value={item.key}>{item.value}</Option>)}
-          </Select>
-        </div>
+        {!isDown ?
+          <div>
+            <div className={styles.icon}>
+              <Icon type="rili" />
+            </div>
+            <div className={styles.select}>
+              <Select
+                style={{ width: 60 }}
+                value={selectValue}
+                onChange={this.handleChange}
+              >
+                {cycle.map(item =>
+                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
+              </Select>
+            </div>
+          </div> :
+          <div className={styles.downFiles}>
+            <div className={styles.iconDown}>
+              <Icon type="xiazai" />
+            </div>
+            <div className={styles.downLoad}>
+              导出
+            </div>
+          </div>
+        }
+
       </div>
     );
   }

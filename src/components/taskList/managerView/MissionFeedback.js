@@ -12,6 +12,8 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
+import Icon from '../../common/Icon';
+import Paganation from '../../common/Paganation';
 
 import styles from './missionFeedback.less';
 
@@ -44,6 +46,11 @@ const resultData = {
         },
         {
           name: '单选选项D',
+          value: '40',
+          optionPer: '40%',
+        },
+        {
+          name: '单选选项E',
           value: '40',
           optionPer: '40%',
         },
@@ -109,6 +116,37 @@ const resultData = {
   ],
 };
 
+const problems = {
+  resultData: {
+    pageInfo: {
+      curPageNum: 1,
+      curPageSize: 10,
+      totalPage: 100,
+    },
+    dataInfo: [{
+      infoProblem: '这是问题描述，问题描述',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    },
+    {
+      infoProblem: '这是问题描述222，问题描述2222',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    }],
+  },
+};
 
 export default class MissionFeedback extends PureComponent {
 
@@ -131,6 +169,15 @@ export default class MissionFeedback extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandAll: false,
+      cycleSelect: '',
+      createCustRange: [],
+    };
   }
 
   handleOptionCake(value, names) {
@@ -173,7 +220,7 @@ export default class MissionFeedback extends PureComponent {
           data: value,
         },
       ],
-      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'],
+      color: ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'],
     };
     return option;
   }
@@ -231,7 +278,7 @@ export default class MissionFeedback extends PureComponent {
             normal: {
               barBorderRadius: [6, 6, 0, 0],
               color: (params) => {
-                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#ff4e7b'];
+                const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'];
                 return colorList[params.dataIndex];
               },
             },
@@ -348,13 +395,85 @@ export default class MissionFeedback extends PureComponent {
     return oDiv;
   }
 
+  @autobind
+  handlePageChange(value, page) {
+    console.log('-->', value, page);
+  }
+
+  @autobind
+  handleSizeChange(value) {
+    console.log('value--->', value);
+  }
+
+  @autobind
+  renderProblemsInfo(key) {
+    // const problemsInfo = problems.resultData.dataInfo;
+    const { isFold } = this.props;
+    const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
+    const value = _.map(key, (item) => {
+      const info = _.map(item.infoData, (itemChild, index) =>
+        <h5 title={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+      return (
+        <div className={styles.subjective}>
+          <div
+            className={classnames({
+              [styles.problemsInfo]: !isFold,
+              [styles.problemsInfoTwo]: isFold,
+            })}
+          >
+            <h5>{item.infoProblem}</h5>
+          </div>
+          <div
+            className={classnames({
+              [styles.thrBoder]: !isFold,
+              [styles.thrBoderTwo]: isFold,
+            })}
+          >
+            <div className={styles.problems}>
+              <div>
+                {info}
+                <Paganation
+                  curPageNum={curPageNum}
+                  curPageSize={curPageSize}
+                  totalRecordNum={totalRecordNum}
+                  onPageChange={this.handlePageChange}
+                  onSizeChange={this.handleSizeChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    return value;
+  }
+
   render() {
     const { isFold } = this.props;
     const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
-
+    // const curPageNum = 1;
+    // const curPageSize = 10;
+    // const totalRecordNum = 100;
+    // const problemsInfo = problems.resultData.dataInfo;
+    // const info = _.map(problemsInfo.infoData, (item, index) =>
+    //   <h5 title={item.data}>{index + 1}.{item.data}</h5>);
     return (
       <div className={styles.basicInfo}>
-        <LabelInfo value="任务反馈" />
+        <div className={styles.feedbackTitle}>
+          <div>
+            <LabelInfo value="任务反馈" />
+          </div>
+          <div>
+            <div className={styles.down}>
+              <div className={styles.iconDown}>
+                <Icon type="xiazai" />
+              </div>
+              <div className={styles.downLoad}>
+                导出
+            </div>
+            </div>
+          </div>
+        </div>
         <div className={styles.feedback}>
           <Row className={styles.feedbackContent}>
             <Col span={24}>
@@ -386,6 +505,7 @@ export default class MissionFeedback extends PureComponent {
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
+              {this.renderProblemsInfo(problems.resultData.dataInfo)}
             </Col>
           </Row>
         </div>

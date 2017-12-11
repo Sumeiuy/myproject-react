@@ -15,9 +15,12 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import styles from './missionImplementation.less';
+import TabsExtra from '../../customerPool/home/TabsExtra';
+
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const MAIN_MAGEGER_ID = 'msm';
 
 export default class MissionImplementation extends PureComponent {
 
@@ -29,18 +32,77 @@ export default class MissionImplementation extends PureComponent {
     isFold: PropTypes.bool,
     // 预览客户明细
     onPreviewCustDetail: PropTypes.func.isRequired,
+    collectCustRange: PropTypes.func.isRequired,
+    cycle: PropTypes.array,
   }
 
   static defaultProps = {
     missionImplementationProgress: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     isFold: false,
+    cycle: EMPTY_LIST,
+    collectCustRange: () => { },
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandAll: false,
+      cycleSelect: '',
+      createCustRange: [],
+      isDown: true,
+    };
   }
 
   @autobind
   handlePreview() {
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail();
+  }
+
+  @autobind
+  renderTabsExtra() {
+    const {
+      // collectCustRange,
+      cycle,
+      // location = {},
+    } = this.props;
+    const {
+      expandAll,
+      // cycleSelect,
+      collectCustRange,
+      createCustRange,
+      isDown,
+    } = this.state;
+    // const { query: {
+    //   // orgId,
+    //   cycleSelect,
+    // } } = location;
+    // curOrgId   客户范围回填
+    // 当url中由 orgId 则使用orgId
+    // 有权限时默认取所在岗位的orgId
+    // 无权限取 MAIN_MAGEGER_ID
+    // const curOrgId = MAIN_MAGEGER_ID;
+    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
+    const curCycleSelect = (cycle[0] || {}).key;
+    // if (orgId) {
+    //   curOrgId = orgId;
+    // } else if (!this.isHasAuthorize) {
+    //   curOrgId = MAIN_MAGEGER_ID;
+    // }
+    const extraProps = {
+      custRange: createCustRange,
+      // replace,
+      updateQueryState: this.updateQueryState,
+      collectCustRange,
+      cycle,
+      expandAll,
+      selectValue: curCycleSelect,
+      location,
+      orgId: MAIN_MAGEGER_ID,
+      isDown,
+    };
+    return (<TabsExtra {...extraProps} />);
   }
 
   render() {
@@ -59,7 +121,9 @@ export default class MissionImplementation extends PureComponent {
             <LabelInfo value={'任务实施简报'} />
           </div>
           <div className={styles.rightSection}>
-            下拉框
+            <div>
+              {this.renderTabsExtra()}
+            </div>
           </div>
         </div>
         <div className={styles.content}>
