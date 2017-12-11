@@ -16,8 +16,9 @@ import _ from 'lodash';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
-import { seibelConfig } from '../../config';
+import { seibelConfig, fspContainer } from '../../config';
 import Barable from '../../decorators/selfBar';
+import { closeRctTabById } from '../../utils/fspGlobal';
 
 import styles from './home.less';
 
@@ -57,7 +58,7 @@ const mapDispatchToProps = {
   // 选择新服务经理
   selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
-  saveChange: fetchDataFunction(false, 'filialeCustTransfer/saveChange'),
+  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -103,20 +104,20 @@ export default class FilialeCustTransfer extends PureComponent {
     this.setState({
       client: v,
     }, () => {
-      // 选择客户之后触发搜索，清空关键词
-      this.handleSearchClient();
-      this.selectCustComponent.clearSearchValue();
       // 选择客户之后触发查询该客户的原服务经理
       const { getOldManager } = this.props;
       getOldManager({
-        custId: v.custId,
+        brokerNumber: v.brokerNumber,
       });
     });
   }
 
   // 查询客户
   @autobind
-  handleSearchClient(v = '') {
+  handleSearchClient(v) {
+    if (!v) {
+      return;
+    }
     const { getCustList } = this.props;
     getCustList({
       keyword: v,
@@ -129,11 +130,7 @@ export default class FilialeCustTransfer extends PureComponent {
     this.setState({
       newManager: v,
     }, () => {
-      // 选择服务经理之后触发搜索，清空关键词
-      this.handleSearchNewManager();
-      this.selectManagerComponent.clearSearchValue();
       // 将选择的新服务经理和原服务经理数据合并用作展示
-      console.log('111', v);
       const { selectNewManager } = this.props;
       selectNewManager(v);
     });
@@ -141,7 +138,10 @@ export default class FilialeCustTransfer extends PureComponent {
 
   // 查询新服务经理
   @autobind
-  handleSearchNewManager(v = '') {
+  handleSearchNewManager(v) {
+    if (!v) {
+      return;
+    }
     const { getNewManagerList } = this.props;
     getNewManagerList({
       login: v,
@@ -181,7 +181,6 @@ export default class FilialeCustTransfer extends PureComponent {
   sendRequest() {
     const { client, newManager } = this.state;
     const { saveChange } = this.props;
-    console.log('abcd');
     saveChange({
       custId: client.custId,
       custType: client.custType,
@@ -195,7 +194,9 @@ export default class FilialeCustTransfer extends PureComponent {
   // 取消
   @autobind
   handleCancel() {
-    console.log('cancel');
+    if (document.querySelector(fspContainer.container)) {
+      closeRctTabById('FSP_BUSINESS_APPLYMENT_CUST');
+    }
   }
 
   render() {
@@ -210,32 +211,29 @@ export default class FilialeCustTransfer extends PureComponent {
           <h3 className={styles.title}>分公司客户划转</h3>
           <div className={styles.selectBox}>
             <div className={styles.selectLeft}>
-              <InfoForm label="选择客户" required>
+              <InfoForm style={{ width: 'auto' }} label="选择客户" required>
                 <DropDownSelect
                   placeholder="选择客户"
                   showObjKey="custName"
-                  objId="custId"
+                  objId="brokerNumber"
                   value=""
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
                   boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.selectCustComponent = ref}
                 />
               </InfoForm>
             </div>
             <div className={styles.selectRight}>
-              <InfoForm label="选择新服务经理" required>
+              <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
                 <DropDownSelect
                   placeholder="选择新服务经理"
                   showObjKey="showSelectName"
-                  objId="newLogin"
                   value=""
                   searchList={newManagerList}
                   emitSelectItem={this.handleSelectNewManager}
                   emitToSearch={this.handleSearchNewManager}
                   boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.selectManagerComponent = ref}
                 />
               </InfoForm>
             </div>

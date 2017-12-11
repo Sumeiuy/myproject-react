@@ -766,8 +766,8 @@ const pageConfig = {
   filialeCustTransfer: {
     titleList: [
       {
-        dataIndex: 'custId',
-        key: 'custId',
+        dataIndex: 'brokerNumber',
+        key: 'brokerNumber',
         title: '经纪客户号',
       },
       {

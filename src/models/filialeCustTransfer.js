@@ -5,6 +5,7 @@
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2017-12-06 15:13:30
  */
+import { message } from 'antd';
 import { filialeCustTransfer as api } from '../api';
 import { emp } from '../../src/helper';
 
@@ -12,7 +13,7 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 空值对象，用于字段占位
 const PLACEHOLDER_OBJECT = {
-  custId: '', // 客户id
+  brokerNumber: '', // 经济客户号
   custName: '', // 客户名称
   orgName: '', // 原服务营业部
   empName: '', // 原服务经理
@@ -57,7 +58,7 @@ export default {
           newOrgName: v.orgName,
           newPostnId: v.postnId,
           newPostnName: v.postnName,
-          showSelectName: `${v.empName} ${v.postnName}`,
+          showSelectName: `${v.empName} ${v.postnName} ${v.login}`,
         }
       ));
       return {
@@ -71,7 +72,7 @@ export default {
     * getCustList({ payload }, { call, put }) {
       const newPayload = {
         ...payload,
-        integrationId: emp.getOrgId(),
+        integrationId: emp.getOrgId() || 'ZZ001041051',
       };
       const response = yield call(api.getCustList, newPayload);
       yield put({
@@ -91,7 +92,6 @@ export default {
     },
     // 选择新客户经理
     * selectNewManager({ payload }, { put }) {
-      console.log('select', payload);
       // 获取到原客户经理之后调用compareData，将原客户经理数据和新服务经理数据合并传入commonTable
       yield put({
         type: 'compareData',
@@ -100,7 +100,11 @@ export default {
     },
     // 获取新客户经理列表
     * getNewManagerList({ payload }, { call, put }) {
-      const response = yield call(api.getNewManagerList, payload);
+      const newPayload = {
+        ...payload,
+        integrationId: emp.getOrgId() || 'ZZ001041051',
+      };
+      const response = yield call(api.getNewManagerList, newPayload);
       yield put({
         type: 'getNewManagerListSuccess',
         payload: response,
@@ -108,20 +112,23 @@ export default {
     },
     // 提交保存
     * saveChange({ payload }, { call }) {
-      yield call(api.saveChange, payload);
+      const response = yield call(api.saveChange, payload);
+      if (response.msg === 'OK') {
+        message.success('提交成功');
+      }
     },
   },
   subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname }) => {
-        // 第一次进入页面查询客户列表
-        if (pathname === '/filialeCustTransfer') {
-          // 进入页面查询子类型列表
-          dispatch({ type: 'getCustList', payload: EMPTY_OBJECT });
-          // 进入页面查询新服务经理列表
-          dispatch({ type: 'getNewManagerList', payload: EMPTY_OBJECT });
-        }
-      });
-    },
+    // setup({ dispatch, history }) {
+    //   return history.listen(({ pathname }) => {
+    //     // 第一次进入页面查询客户列表
+    //     if (pathname === '/filialeCustTransfer') {
+    //       // 进入页面查询子类型列表
+    //       dispatch({ type: 'getCustList', payload: {keyword: ''} });
+    //       // 进入页面查询新服务经理列表
+    //       dispatch({ type: 'getNewManagerList', payload: {login: ''} });
+    //     }
+    //   });
+    // },
   },
 };

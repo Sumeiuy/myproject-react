@@ -101,6 +101,7 @@ export default class DropdownSelect extends PureComponent {
           key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
+          title={item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         >
           {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         </li>
