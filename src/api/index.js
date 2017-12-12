@@ -11,6 +11,7 @@ import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
 import demote from './demote';
+import filialeCustTransfer from './filialeCustTransfer';
 
 const api = apiCreator();
 
@@ -41,5 +42,7 @@ export default {
   fullChannelServiceRecord: fullChannelServiceRecord(api),
   // 降级客户接口
   demote: demote(api),
+  // 分公司客户划转接口api
+  filialeCustTransfer: filialeCustTransfer(api),
 };
 
