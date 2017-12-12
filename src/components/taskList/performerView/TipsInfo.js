@@ -16,11 +16,15 @@ export default class TipsInfo extends PureComponent {
     title: PropTypes.object.isRequired,
     position: PropTypes.string,
     wrapperClass: PropTypes.string,
+    overlayStyle: PropTypes.object,
+    getPopupContainer: PropTypes.func,
   }
 
   static defaultProps = {
     position: 'bottomLeft',
     wrapperClass: '',
+    overlayStyle: null,
+    getPopupContainer: () => { },
   };
 
   constructor(props) {
@@ -30,9 +34,8 @@ export default class TipsInfo extends PureComponent {
     };
   }
 
-
   render() {
-    const { title, position, wrapperClass } = this.props;
+    const { title, position, wrapperClass, overlayStyle, getPopupContainer } = this.props;
 
     return (
       <Tooltip
@@ -44,6 +47,8 @@ export default class TipsInfo extends PureComponent {
         mouseEnterDelay={0.2}
         autoAdjustOverflow
         placement={position}
+        overlayStyle={overlayStyle}
+        getPopupContainer={getPopupContainer}
       >
         <Icon className={styles.icon} type="tishi" />
       </Tooltip>
