@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+
 import mouseWheel from '../../common/mouseWheel';
 import { constants } from '../../../config';
 import styles from './custRange.less';
@@ -76,7 +76,7 @@ export default class CustRange extends PureComponent {
     selectBoxStyle: PropTypes.object,
     // 下拉菜单的宽度
     dropdownWidth: PropTypes.number,
-    isDown: false,
+    isDown: PropTypes.bool,
   }
 
   static defaultProps = {

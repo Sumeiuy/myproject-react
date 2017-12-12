@@ -64,13 +64,6 @@ export default class DropdownSelect extends PureComponent {
     };
   }
 
-  // componentWillMount() {
-  //   this.setState({
-  //     value: this.props.value,
-  //     id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
-  //   });
-  // }
-
   componentDidMount() {
     document.addEventListener('click', this.hideModal, false);
   }

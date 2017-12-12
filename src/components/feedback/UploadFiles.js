@@ -95,7 +95,6 @@ export default class UploadFiles extends PureComponent {
 
   @autobind
   fileOnRemove(file) {
-    debugger;
     const { onCreate } = this.props;
     const nowUserId = emp.getId();
     const uids = file.uid || '';
