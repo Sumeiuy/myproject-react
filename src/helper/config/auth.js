@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 15:24:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 15:29:41
+ * @Last Modified time: 2017-12-12 11:06:10
  * @description 此处存放权限所依据的职责ID集合
  */
 import duty from './duty';

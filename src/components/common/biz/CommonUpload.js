@@ -116,6 +116,7 @@ export default class CommonUpload extends PureComponent {
       const { deleteAttachmentList } = nextProps;
       this.setState({
         fileList: deleteAttachmentList, // 文件列表
+        oldFileList: deleteAttachmentList, // 旧的文件列表
         percent: 0,
       });
     }
@@ -147,7 +148,7 @@ export default class CommonUpload extends PureComponent {
           oldFileList: data.attaches,
           attachment: data.attachment,
         }, uploadAttachment(data.attachment));
-      } else if (uploadFile.response.code === 'MAG0005') {
+      } else {
         // 上传失败的返回值 MAG0005
         this.setState({
           status: 'active',
