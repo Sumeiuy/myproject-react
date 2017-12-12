@@ -3,3 +3,4 @@ node_modules/
 mockup/
 log/
 fastclick.js
+config/**

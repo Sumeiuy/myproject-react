@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 18:23:44
+ * @Last Modified time: 2017-12-12 11:04:37
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -212,6 +212,7 @@ export default class EditBaseInfo extends PureComponent {
       templateId,
       protocolTemplate: {
         ...this.state.protocolTemplate,
+        prodName: templateId,
         rowId: templateId,
       },
       multiUsedFlag: multiUsedFlag === 'Y',
@@ -359,6 +360,9 @@ export default class EditBaseInfo extends PureComponent {
       startDt: '',
       vailDt: '',
       protocolNumber: '',
+    }, () => {
+      this.handleSearchClient();
+      this.selectCustComponent.clearSearchValue();
     });
     getCustValidate(validatePayload).then(
       () => {
@@ -407,14 +411,12 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  handleSearchClient(v) {
+  handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
-      type: '05',
+      type: '05', // type 根据后端要求写死
       subType,
       keyword: v,
-      // type: '05', // type 根据后端要求写死
-      // subType,
     });
   }
 
@@ -481,25 +483,26 @@ export default class EditBaseInfo extends PureComponent {
   // 选择协议 ID
   @autobind
   handleSelectProtocol(key, value) {
+    const [id, flowId] = value.split('~');
     const {
       getProtocolDetail,
       onChangeProtocolNumber,
       getFlowStepInfo,
     } = this.props;
     this.setState({
-      [key]: value.id,
+      [key]: id,
     }, () => {
       getProtocolDetail({
         needAttachment: false,
         needFlowHistory: false,
         data: {
-          flowId: value.flowId,
+          flowId,
         },
       }).then(() => {
         const { formData: nextFD } = this.props;
         const { operationType } = this.state;
         getFlowStepInfo({
-          flowId: value.flowId,
+          flowId,
           operate: 1,
         });
         this.compareFormData(nextFD);
@@ -537,7 +540,7 @@ export default class EditBaseInfo extends PureComponent {
       newProtocolList = protocolList.map(item => ({
         show: true,
         label: item.id,
-        value: item,
+        value: `${item.id}~${item.flowId}`,
       }));
     }
     if (isEditPage) {
@@ -617,7 +620,7 @@ export default class EditBaseInfo extends PureComponent {
                   onChange={this.handleSelectProtocol}
                 />
               </InfoForm>
-              <InfoItem label="协议模版" value={protocolTemplate.rowId || ''} />
+              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }
         {

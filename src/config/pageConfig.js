@@ -762,6 +762,121 @@ const pageConfig = {
     subscribe: '0203', // 资讯订阅
     unsubscribe: '0204', // 资讯退订
   },
+  // 分公司客户划转
+  filialeCustTransfer: {
+    titleList: [
+      {
+        dataIndex: 'brokerNumber',
+        key: 'brokerNumber',
+        title: '经纪客户号',
+      },
+      {
+        dataIndex: 'custName',
+        key: 'custName',
+        title: '客户名称',
+      },
+      {
+        dataIndex: 'orgName',
+        key: 'orgName',
+        title: '原服务营业部',
+      },
+      {
+        dataIndex: 'empName',
+        key: 'empName',
+        title: '原服务经理',
+      },
+      {
+        dataIndex: 'postnName',
+        key: 'postnName',
+        title: '原职位',
+      },
+      {
+        dataIndex: 'newOrgName',
+        key: 'newOrgName',
+        title: '新服务营业部',
+      },
+      {
+        dataIndex: 'newEmpName',
+        key: 'newEmpName',
+        title: '新服务经理',
+      },
+      {
+        dataIndex: 'newPostnName',
+        key: 'newPostnName',
+        title: '新职位',
+      },
+    ],
+  },
+
+  // 自建任务列表
+  tasklist: {
+    pageName: '自建任务列表',
+    pageType: '04',
+    type: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '产品营销',
+        value: 'ProdMarketing',
+      },
+      {
+        show: true,
+        label: '产品售后',
+        value: 'AfterSales',
+      },
+      {
+        show: true,
+        label: '业务推荐',
+        value: 'BusinessRecomm',
+      },
+      {
+        show: true,
+        label: '账户服务',
+        value: 'AccoutService',
+      },
+      {
+        show: true,
+        label: '交易服务',
+        value: 'TradeService',
+      },
+      {
+        show: true,
+        label: '活动关怀',
+        value: 'ActiveCare',
+      },
+    ],
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
+  },
 
 };
 

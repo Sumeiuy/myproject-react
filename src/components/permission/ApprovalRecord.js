@@ -37,17 +37,23 @@ export default function ApprovalRecord(props) {
     const stepElementClass = classnames([style.approvalRecordStep,
       { hide: props.statusType !== 'ready' },
     ]);
-    return !currentStepObj || _.isEmpty(currentStepObj) ? (
-      <p className={style.notFoundApprovalList}>暂无相关审批记录</p>
-      ) : (
-        <div
-          className={stepElementClass}
-        >
-          <span>当前步骤：</span>
-          <span style={{ color: '#333' }}>{currentStepObj.occupation}</span>
-          <span style={{ marginLeft: 20 }}>当前审批人：</span>
-          <span style={{ color: '#333' }}>{currentStepObj.empName}({currentStepObj.empNum})</span>
-        </div>
+    return (
+      <div className={stepElementClass}>
+        {
+          _.isEmpty(currentStepObj) ? (
+            <p className={style.notFoundApprovalList}>暂无当前审批人记录</p>
+            ) : (
+              <div>
+                <span>当前步骤：</span>
+                <span className={style.occupation}>{currentStepObj.occupation}</span>
+                <span className={style.curStepObjTitle}>当前审批人：</span>
+                <span className={style.curStepObjperson}>
+                  {currentStepObj.empName}({currentStepObj.empNum})
+                </span>
+              </div>
+          )
+        }
+      </div>
     );
   };
   return (
