@@ -22,6 +22,7 @@ const PLACEHOLDER_OBJECT = {
   newEmpName: '', // 新服务经理
   newPostnName: '', // 新职位
 };
+const ORG_ID = 'ZZ001041051'; // 临时部门id
 
 export default {
   namespace: 'filialeCustTransfer',
@@ -72,7 +73,7 @@ export default {
     * getCustList({ payload }, { call, put }) {
       const newPayload = {
         ...payload,
-        integrationId: emp.getOrgId() || 'ZZ001041051',
+        integrationId: emp.getOrgId() || ORG_ID,
       };
       const response = yield call(api.getCustList, newPayload);
       yield put({
@@ -102,7 +103,7 @@ export default {
     * getNewManagerList({ payload }, { call, put }) {
       const newPayload = {
         ...payload,
-        integrationId: emp.getOrgId() || 'ZZ001041051',
+        integrationId: emp.getOrgId() || ORG_ID,
       };
       const response = yield call(api.getNewManagerList, newPayload);
       yield put({
