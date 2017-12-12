@@ -1,6 +1,6 @@
 .custFeedbackSection {
   display: block;
-  border: 1px solid #e2e2e2;
+  border: 1px solid #c2c2c2;
   width: 95%;
   margin: 0 auto;
   margin-bottom: 10px;
@@ -9,7 +9,7 @@
     color: #666;
     padding: 10px;
     width: 95%;
-    border-bottom: 1px solid #e2e2e2;
+    border-bottom: 1px solid #c2c2c2;
     margin: 0 auto;
   }
   & > .content {
@@ -35,7 +35,7 @@
       div:not(:last-child) {
         margin-bottom: 5px;
       }
-      div {
+      div.content {
         &:before {
           content: "";
           width: 10px;
@@ -48,6 +48,9 @@
           border-radius: 50%;
           margin-right: 10px;
         }
+      }
+      div.emptyContent {
+        font-size: 14px;
       }
     }
     :global {
@@ -76,7 +79,7 @@
           width: 100%;
           .divider {
             height: 1px;
-            border-bottom: 2px solid #fff;
+            border-bottom: 1px solid #fff;
             display: block;
             width: 100%;
             margin-bottom: 5px;
