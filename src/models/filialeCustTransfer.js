@@ -22,7 +22,7 @@ const PLACEHOLDER_OBJECT = {
   newEmpName: '', // 新服务经理
   newPostnName: '', // 新职位
 };
-const ORG_ID = 'ZZ001041051'; // 临时部门id
+const ORG_ID = 'ZZ001041059'; // 临时部门id
 
 export default {
   namespace: 'filialeCustTransfer',
