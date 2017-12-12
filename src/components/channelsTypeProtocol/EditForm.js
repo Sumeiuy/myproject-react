@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-07 17:11:49
+ * @Last Modified time: 2017-12-12 11:46:52
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -19,7 +19,6 @@ import MultiUploader from '../common/biz/MultiUploader';
 import Transfer from '../../components/common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
-import { emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -136,10 +135,29 @@ export default class EditForm extends PureComponent {
         hasCust = custAttachment[0];
       }
     }
+
+    // 找出需要必传的数组
+    const requiredArr = attachmentRequired[hasCust];
+    // 清空附件数组的必传项
+    const defaultAttachmentArr = attachmentMap.map(item => ({
+      ...item,
+      required: false,
+    }));
+    // 将附件数组做必传项配置
+    const attachmentMapRequired = defaultAttachmentArr.map((item) => {
+      if (_.includes(requiredArr, item.type)) {
+        return {
+          ...item,
+          required: true,
+        };
+      }
+      return item;
+    });
+
     this.state = {
       isEdit,
       // 附件类型列表
-      attachmentTypeList: attachmentMap,
+      attachmentTypeList: attachmentMapRequired,
       // 下挂客户表格数据
       cust: isEdit ? protocolDetail.cust : EMPTY_LIST,
       // 所选协议产品列表
@@ -157,7 +175,6 @@ export default class EditForm extends PureComponent {
       // 操作类型
       operationType: isEdit ? protocolDetail.operationType : '',
     };
-    this.setUploadConfig(hasCust);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -648,7 +665,7 @@ export default class EditForm extends PureComponent {
               <Transfer
                 {...transferProps}
               />
-            :
+              :
               <CommonTable
                 data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
                 titleList={protocolProductTitleList}
@@ -711,7 +728,7 @@ export default class EditForm extends PureComponent {
                     uploadCallback={this.handleUploadCallback}
                     deleteCallback={this.handleDeleteCallback}
                     ref={(ref) => { this[`uploader${item.type}`] = ref; }}
-                    showDelete={emp.getId() === item.creator}
+                    showDelete
                   />
                 </div>
               ) : null;
