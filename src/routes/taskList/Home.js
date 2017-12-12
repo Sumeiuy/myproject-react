@@ -23,6 +23,7 @@ import { fspGlobal } from '../../utils';
 import { env } from '../../helper';
 
 const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 
 const {
@@ -93,6 +94,10 @@ const mapStateToProps = state => ({
   mngrMissionDetailInfo: state.managerView.mngrMissionDetailInfo,
   // 管理者视图一二级客户反馈
   custFeedback: state.managerView.custFeedback,
+  // 客户池用户范围
+  custRange: state.customerPool.custRange,
+  // 职位信息
+  empInfo: state.app.empInfo,
 });
 
 const mapDispatchToProps = {
@@ -184,11 +189,15 @@ export default class PerformerView extends PureComponent {
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
     countFlowFeedBack: PropTypes.func.isRequired,
     custFeedback: PropTypes.array.isRequired,
+    custRange: PropTypes.array,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
     priviewCustFileData: EMPTY_OBJECT,
     filesList: [],
+    custRange: EMPTY_LIST,
+    empInfo: EMPTY_OBJECT,
   };
 
   constructor(props) {
@@ -329,6 +338,9 @@ export default class PerformerView extends PureComponent {
       custDetailResult,
       countFlowFeedBack,
       custFeedback,
+      custRange,
+      empInfo,
+      replace,
     } = this.props;
     const {
       query: { currentId },
@@ -384,6 +396,10 @@ export default class PerformerView extends PureComponent {
             custDetailResult={custDetailResult}
             onGetCustFeedback={countFlowFeedBack}
             custFeedback={custFeedback}
+            custRange={custRange}
+            empInfo={empInfo}
+            location={location}
+            replace={replace}
           />
         );
         break;

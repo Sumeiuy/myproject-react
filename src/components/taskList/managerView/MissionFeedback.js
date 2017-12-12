@@ -13,6 +13,7 @@ import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 import Icon from '../../common/Icon';
+import Paganation from '../../common/Paganation';
 
 import styles from './missionFeedback.less';
 
@@ -20,8 +21,8 @@ import styles from './missionFeedback.less';
 const resultData = {
   allFeedback: {
     serviceAllNum: '1150',
-    aFeedback: '460',
-    aFeedbackPer: '40%',
+    aFeedback: '1150',
+    aFeedbackPer: 100,
     allTaskFeedbackDes: '所有问题反馈结果',
   },
   radioFeedback: [
@@ -115,6 +116,38 @@ const resultData = {
   ],
 };
 
+const problems = {
+  resultData: {
+    pageInfo: {
+      curPageNum: 1,
+      curPageSize: 10,
+      totalPage: 100,
+    },
+    dataInfo: [{
+      infoProblem: '这是问题描述，问题描述',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    },
+    {
+      infoProblem: '这是问题描述222，问题描述2222',
+      infoData: [
+        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
+      ],
+    }],
+  },
+};
+
 export default class MissionFeedback extends PureComponent {
 
   static propTypes = {
@@ -201,8 +234,7 @@ export default class MissionFeedback extends PureComponent {
       right: '20%',
       bottom: '5%',
       containLabel: true,
-    } :
-    {
+    } : {
       left: '15%',
       right: '15%',
       bottom: '5%',
@@ -306,7 +338,7 @@ export default class MissionFeedback extends PureComponent {
     );
   }
 
-  renderAllFeedback(allCount, count, countPer) {
+  renderAllFeedback(allCount, count, countPer, residue) {
     const type = '服务经理总数';
     const per = '已反馈人数';
     return (
@@ -319,7 +351,10 @@ export default class MissionFeedback extends PureComponent {
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
             >
-              <div className="ant-progress-bg" />
+              <div
+                className="ant-progress-bg"
+                style={{ width: `${countPer}%` }}
+              />
             </Tooltip>
             <Tooltip
               placement="topLeft"
@@ -327,7 +362,10 @@ export default class MissionFeedback extends PureComponent {
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
             >
-              <div className="ant-progress-inner" />
+              <div
+                className="ant-progress-inner"
+                style={{ width: `${residue}%` }}
+              />
             </Tooltip>
           </div>
         </div>
@@ -362,11 +400,63 @@ export default class MissionFeedback extends PureComponent {
     return oDiv;
   }
 
+  @autobind
+  handlePageChange(value, page) {
+    console.log('-->', value, page);
+  }
+
+  @autobind
+  handleSizeChange(value) {
+    console.log('value--->', value);
+  }
+
+  @autobind
+  renderProblemsInfo(key) {
+    // const problemsInfo = problems.resultData.dataInfo;
+    const { isFold } = this.props;
+    const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
+    const value = _.map(key, (item) => {
+      const info = _.map(item.infoData, (itemChild, index) =>
+        <h5 title={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+      return (
+        <div className={styles.subjective}>
+          <div
+            className={classnames({
+              [styles.problemsInfo]: !isFold,
+              [styles.problemsInfoTwo]: isFold,
+            })}
+          >
+            <h5>{item.infoProblem}</h5>
+          </div>
+          <div
+            className={classnames({
+              [styles.thrBoder]: !isFold,
+              [styles.thrBoderTwo]: isFold,
+            })}
+          >
+            <div className={styles.problems}>
+              <div>
+                {info}
+                <Paganation
+                  curPageNum={curPageNum}
+                  curPageSize={curPageSize}
+                  totalRecordNum={totalRecordNum}
+                  onPageChange={this.handlePageChange}
+                  onSizeChange={this.handleSizeChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    return value;
+  }
 
   render() {
     const { isFold } = this.props;
     const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
-
+    const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
     return (
       <div className={styles.basicInfo}>
         <div className={styles.feedbackTitle}>
@@ -404,7 +494,7 @@ export default class MissionFeedback extends PureComponent {
                 >
                   <div className={styles.charts}>
                     {this.renderAllFeedback(allFeedback.serviceAllNum,
-                      allFeedback.aFeedback, allFeedback.aFeedbackPer)}
+                      allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
                   </div>
                   <div className={styles.allService}>
                     <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
@@ -415,31 +505,7 @@ export default class MissionFeedback extends PureComponent {
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
-              <div className={styles.subjective}>
-                <div
-                  className={classnames({
-                    [styles.firBorder]: !isFold,
-                    [styles.firBorderTwo]: isFold,
-                  })}
-                >
-                  <h5>主观问题</h5>
-                </div>
-                <div
-                  className={classnames({
-                    [styles.sedBoder]: !isFold,
-                    [styles.thrBoderTwo]: isFold,
-                  })}
-                >
-                  <div className={styles.problems}>
-                    <div>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                      <h5>1.问题描述问题描述问题描述问题描述问题描述问题描述问题描述</h5>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {this.renderProblemsInfo(problems.resultData.dataInfo)}
             </Col>
           </Row>
         </div>
