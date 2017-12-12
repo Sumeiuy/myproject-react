@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-12 11:00:36
+ * @Last Modified time: 2017-12-12 12:01:13
  */
 
 import React, { PureComponent } from 'react';
@@ -116,9 +116,6 @@ export default class Demote extends PureComponent {
     }
     // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
     // 需要给改容器设置高度，以防止页面出现滚动
-    const pageContainer = document.querySelector(config.container);
-    const pageContent = document.querySelector(config.content);
-    const childDiv = pageContent.querySelector('div');
     // FSP头部Tab的高度
     const fspTabHeight = 55;
 
@@ -127,6 +124,9 @@ export default class Demote extends PureComponent {
     if (env.isInFsp()) {
       pch = viewHeight - fspTabHeight;
     }
+    const pageContainer = document.querySelector(config.container);
+    const pageContent = document.querySelector(config.content);
+    const childDiv = pageContent.querySelector('div');
     this.setElementStyle(pageContainer, `${pch}px`);
     this.setElementStyle(pageContent, '100%');
     this.setElementStyle(childDiv, '100%');
@@ -150,6 +150,12 @@ export default class Demote extends PureComponent {
   @autobind
   cancelWindowResize() {
     window.removeEventListener('resize', this.onResizeChange, false);
+    const pageContainer = document.querySelector(config.container);
+    const pageContent = document.querySelector(config.content);
+    const childDiv = pageContent.querySelector('div');
+    this.setElementStyle(pageContainer, 'auto');
+    this.setElementStyle(pageContent, 'auto');
+    this.setElementStyle(childDiv, 'auto');
   }
 
   @autobind
