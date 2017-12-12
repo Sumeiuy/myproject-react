@@ -68,10 +68,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       scatterElemHeight: 360,
       finalData: {},
       isShowTooltip: false,
-      level1Name: '',
       level2Name: '',
       level3Name: '',
       level4Name: '',
+      level5Name: '',
       finalOptions: options,
       selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
@@ -404,16 +404,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { data: [
         xAxisData,
         yAxisData,
-        { level1Name, level2Name, level3Name, level4Name },
+        { level2Name, level3Name, level4Name, level5Name },
       ] } = params;
-
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
-        level1Name,
         level2Name,
         level3Name,
         level4Name,
+        level5Name,
       });
       this.constructTooltipInfo({
         currentSelectX: xAxisData,
@@ -499,10 +498,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       scatterElemHeight,
       isShowTooltip,
-      level1Name,
       level2Name,
       level3Name,
       level4Name,
+      level5Name,
       tooltipInfo,
       finalData,
       selectValue,
@@ -540,7 +539,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
-
     return (
       <div
         className={styles.abilityScatterAnalysis}
@@ -652,10 +650,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
                         <div className={styles.orgDes}>
                           <i className={styles.desIcon} />
                           <span>
-                            {_.isEmpty(level1Name) ? '' : `${level1Name}`}
-                            {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
+                            {_.isEmpty(level2Name) ? '' : `${level2Name}`}
                             {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
-                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
+                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}
+                            {_.isEmpty(level5Name) ? '' : `-${level5Name}`}:
                           </span>
                         </div>
                         <div className={styles.detailDesc}>
