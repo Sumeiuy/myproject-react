@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 20:45:53
+ * @Last Modified time: 2017-12-08 17:47:14
  * 客户反馈
  */
 
@@ -10,7 +10,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import constructPieOptions from './ConstructPieOptions';
+import { constructPieOptions } from './ConstructPieOptions';
+import { constructEmptyPie } from './ConstructEmptyPie';
 import IECharts from '../../IECharts';
 import styles from './custFeedback.less';
 
@@ -34,10 +35,32 @@ export default class CustFeedback extends PureComponent {
     onPieLeave: () => { },
   }
 
-  @autobind
-  renderCustFeedbackChart() {
-    const { onPieHover, onPieLeave, custFeedback = EMPTY_LIST } = this.props;
+  constructor(props) {
+    super(props);
+    const {
+      level1Data = EMPTY_LIST,
+      level2Data = EMPTY_LIST,
+    } = this.renderCustFeedbackChart(props.custFeedback);
+    this.state = {
+      level1Data,
+      level2Data,
+    };
+  }
 
+  componentWillReceiveProps(nextProps) {
+    const { custFeedback: nextFeedback } = nextProps;
+    const { custFeedback } = this.props;
+    if (custFeedback !== nextFeedback) {
+      const { level1Data, level2Data } = this.renderCustFeedbackChart(nextFeedback);
+      this.setState({
+        level1Data,
+        level2Data,
+      });
+    }
+  }
+
+  @autobind
+  renderCustFeedbackChart(custFeedback) {
     // const level1Data = [
     //   {
     //     name: '前端',
@@ -116,31 +139,32 @@ export default class CustFeedback extends PureComponent {
     // 将二维数组抹平
     level2Data = _.flatten(level2Data);
 
-    return (
-      <div>
-        <IECharts
-          option={constructPieOptions({
-            renderTooltip: this.renderTooltip,
-            level1Data,
-            level2Data,
-          })}
-          resizable
-          style={{
-            height: '162px',
-            width: '50%',
-          }}
-          onEvents={{
-            mouseover: onPieHover,
-            mouseout: onPieLeave,
-          }}
-        />
-        <div className={styles.chartExp}>
-          {_.map(level1Data, item => <div>{item.name}：
-          <span>{Number(item.value) * 100}%</span></div>,
-          )}
-        </div>
-      </div>
+    return {
+      level1Data,
+      level2Data,
+    };
+  }
+
+  @autobind
+  renderChildren(children) {
+    let childrenElem = '';
+    _.each(children, item =>
+      childrenElem += `<div class="item">
+          <span class="icon"></span>
+          <span class="type">${item.name}：</span>
+          <span class="percent">${Number(item.value) * 100}%</span>
+        </div>`,
     );
+    return childrenElem;
+  }
+
+  @autobind
+  renderParent(name, value) {
+    let parentElem = '';
+    parentElem = `<div class="title">
+        ${name}：${value * 100}%
+      </div>`;
+    return parentElem;
   }
 
   /**
@@ -176,44 +200,74 @@ export default class CustFeedback extends PureComponent {
       seriesIndex,
     } = params;
 
-    const { children } = data;
-
-    let childrenElem = '<div></div>';
-    // let parentElem = '<div></div>';
+    const { children, parent } = data;
+    const { level1Data } = this.state;
+    let childrenElem = '';
+    let parentElem = '';
 
     // 一级反馈，内部
     if (seriesIndex === 0) {
       // 一级反馈有children
-      _.each(children, item =>
-        childrenElem += `<div class="item">
-          <span class="icon"></span>
-          <span class="type">${item.name}：</span>
-          <span class="percent">${Number(item.value) * 100}%</span>
-        </div>`,
-      );
+      parentElem = this.renderParent(name, Number(value));
+      childrenElem = this.renderChildren(children);
     } else if (seriesIndex === 1) {
       // 二级反馈，外部
+      // 二级反馈有parent
+      // 找出parent对应的children
+      parentElem = this.renderParent(parent.name, Number(parent.value));
+      const parentTree = _.find(level1Data, item => item.name === parent.name);
+      if (!_.isEmpty(parentTree)) {
+        if (!_.isEmpty(parentTree.children)) {
+          childrenElem = this.renderChildren(parentTree.children);
+        }
+      }
     }
 
     return `<div class="tooltipContent">
-      <div class="title">
-        ${name}：${Number(value) * 100}%
-      </div>
+      ${parentElem}
       <div class="content">
-        ${seriesIndex === 0 ? '<div class="divider"></div>' : '<div></div>'}
+        <div class="divider"></div>
         ${childrenElem}
       </div>
     </div>`;
   }
 
   render() {
+    const { onPieHover, onPieLeave } = this.props;
+    const { level1Data, level2Data } = this.state;
+
+    const options = _.isEmpty(level1Data && level2Data) ? constructEmptyPie() :
+      constructPieOptions({
+        renderTooltip: this.renderTooltip,
+        level1Data,
+        level2Data,
+      });
+
     return (
       <div className={styles.custFeedbackSection}>
         <div className={styles.title}>
           客户反馈
         </div>
         <div className={styles.content}>
-          {this.renderCustFeedbackChart()}
+          <IECharts
+            option={options}
+            resizable
+            style={{
+              height: '162px',
+              width: '50%',
+            }}
+            onEvents={{
+              mouseover: onPieHover,
+              mouseout: onPieLeave,
+            }}
+          />
+          <div className={styles.chartExp}>
+            {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
+              <div className={styles.emptyContent}>暂无客户反馈</div> :
+              _.map(level1Data, item => <div className={styles.content}>{item.name}：
+              <span>{Number(item.value) * 100}%</span></div>,
+              )}
+          </div>
         </div>
       </div>
     );
