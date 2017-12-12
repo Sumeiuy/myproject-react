@@ -94,6 +94,7 @@ export default class DropdownSelect extends PureComponent {
           key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
+          title={item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         >
           {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         </li>
@@ -185,8 +186,8 @@ export default class DropdownSelect extends PureComponent {
           </div>
           {
             _.isEmpty(this.props.searchList)
-            ? <span className={style.notFound}>没有发现与之匹配的结果</span>
-            : null
+              ? <span className={style.notFound}>没有发现与之匹配的结果</span>
+              : null
           }
           <ul className={style.ddsDrapMenuCon}>
             {this.getSearchListDom}
