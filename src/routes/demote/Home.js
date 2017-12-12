@@ -3,39 +3,51 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-07 16:02:22
+ * @Last Modified time: 2017-12-12 11:00:36
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva-react-router-3/router';
-// import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import moment from 'moment';
+import { message } from 'antd';
 
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
+import { time, env } from '../../helper';
 import config from './config';
 import styles from './home.less';
 
-// const mapStateToProps = state => ({
-
-// });
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+const mapStateToProps = state => ({
+  custList: state.demote.custList,
+});
 
 const mapDispatchToProps = {
-
+  replace: routerRedux.replace,
+// 获取左侧列表
+  getCustList: fetchDataFunction(true, 'demote/getCustList'),
+  // 获取客户列表
+  updateCust: fetchDataFunction(false, 'demote/updateCust'),
 };
-
-@connect(mapDispatchToProps)
-// @connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
 export default class Demote extends PureComponent {
   static propTypes = {
-  }
-
-  static defaultProps = {
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    getCustList: PropTypes.func.isRequired,
+    custList: PropTypes.array.isRequired,
+    updateCust: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -43,135 +55,25 @@ export default class Demote extends PureComponent {
     this.state = {
       currentPage: 1,
       pageSize: 10,
-      data: [
-        {
-          key: '1',
-          econNum: '000001',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '2',
-          econNum: '000002',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '3',
-          econNum: '000003',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '4',
-          econNum: '000004',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '5',
-          econNum: '000005',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '6',
-          econNum: '000006',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '7',
-          econNum: '000007',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '8',
-          econNum: '000008',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '9',
-          econNum: '000009',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '10',
-          econNum: '000010',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '11',
-          econNum: '000011',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '12',
-          econNum: '000012',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '13',
-          econNum: '000013',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '14',
-          econNum: '000014',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '15',
-          econNum: '0000015',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '16',
-          econNum: '000016',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '17',
-          econNum: '000017',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '18',
-          econNum: '000018',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '19',
-          econNum: '000019',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '20',
-          econNum: '000020',
-          custName: '张三',
-          checked: true,
-        },
-        {
-          key: '21',
-          econNum: '000021',
-          custName: '张三',
-          checked: true,
-        },
-      ],
+      data: [],
+      disabled: false,
     };
+  }
+
+  componentDidMount() {
+    // 监听window.onResize事件
+    this.registerWindowResize();
+    this.setContentHeight();
+  }
+
+  componentWillUnmount() {
+    this.cancelWindowResize();
+  }
+
+  // Resize事件
+  @autobind
+  onResizeChange() {
+    this.setContentHeight();
   }
 
   @autobind
@@ -184,13 +86,74 @@ export default class Demote extends PureComponent {
 
   @autobind
   onSubmit() {
-    console.warn('点击了提交按钮');
+    const { location: { query: { notifiId } }, updateCust, replace } = this.props;
     const { data } = this.state;
-    console.warn('data', data);
+    const checkedData = _.filter(data, o => o.checked);
+    const result = checkedData.map(item => item.econNum);
+    const payload = {
+      cust: result,
+      notifiId,
+      time: '20180101', // TODO ,测试数据，等删除
+    };
+    updateCust(payload).then(() => {
+      message.success('操作成功');
+      replace('/empty');
+    });
   }
 
   @autobind
-  deleteTableData(checked, record, index) {
+  onCancel() {
+    const { replace } = this.props;
+    replace('/empty');
+  }
+
+  @autobind
+  setContentHeight() {
+    // 次变量用来判断是否在FSP系统中
+    let viewHeight = document.documentElement.clientHeight;
+    if (env.isIE()) {
+      viewHeight -= 10;
+    }
+    // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
+    // 需要给改容器设置高度，以防止页面出现滚动
+    const pageContainer = document.querySelector(config.container);
+    const pageContent = document.querySelector(config.content);
+    const childDiv = pageContent.querySelector('div');
+    // FSP头部Tab的高度
+    const fspTabHeight = 55;
+
+    // 设置系统容器高度
+    let pch = viewHeight;
+    if (env.isInFsp()) {
+      pch = viewHeight - fspTabHeight;
+    }
+    this.setElementStyle(pageContainer, `${pch}px`);
+    this.setElementStyle(pageContent, '100%');
+    this.setElementStyle(childDiv, '100%');
+  }
+
+  // 设置元素的style样式值，默认设置其height的值
+  @autobind
+  setElementStyle(e, v, p = 'height') {
+    if (e) {
+      e.style[p] = v;
+    }
+  }
+
+  // 注册window的resize事件
+  @autobind
+  registerWindowResize() {
+    window.addEventListener('resize', this.onResizeChange, false);
+  }
+
+  // 注销window的resize事件
+  @autobind
+  cancelWindowResize() {
+    window.removeEventListener('resize', this.onResizeChange, false);
+  }
+
+  @autobind
+  checkTableData(checked, record, index) {
     const { data, currentPage, pageSize } = this.state;
     const newData = [...data];
     const idx = ((currentPage - 1) * pageSize) + index;
@@ -198,8 +161,10 @@ export default class Demote extends PureComponent {
       ...newData[idx],
       checked,
     };
+    const checkedData = _.filter(newData, o => o.checked);
     this.setState({
       data: newData,
+      disabled: _.isEmpty(checkedData),
     });
   }
 
@@ -209,23 +174,33 @@ export default class Demote extends PureComponent {
         key: 'switch',
         title: '是否降级',
       },
-      operate: this.deleteTableData,
+      operate: this.checkTableData,
     };
-    const { data } = this.state;
+    const { disabled } = this.state;
+    const { custList } = this.props;
+    const noData = _.isEmpty(custList);
+    const date = noData ? '' : moment(time.format(custList[0].endDate));
+    if (noData) {
+      return (
+        <div className={styles.demoteWrapper}>
+          <h2>您的划转操作正在进行中或者您暂时没有可以划转为零售的客户。</h2>
+        </div>
+      );
+    }
     return (
       <div className={styles.demoteWrapper}>
         <h2 className={styles.title}>
           <span>提醒：</span>
-          <span>2018年度，您名下有以下客户将降级划转为零售客户，请确认！<br />
-        超过2018年1月6日，未做确认，系统将自动划转！</span>
+          <span>{date.year()}年度，您名下有以下客户将降级划转为零售客户，请确认！<br />
+            超过{date.format('YYYY年MM月DD日')}，未做确认，系统将自动划转！</span>
         </h2>
         <CommonTable
-          data={data}
+          data={custList}
           titleList={config.titleList}
           operation={operation}
           pagination={{
             size: 'small',
-            total: data.length,
+            total: custList.length,
             defaultPageSize: 10,
             current: this.state.currentPage,
             onChange: this.onChange,
@@ -237,12 +212,11 @@ export default class Demote extends PureComponent {
           <Button
             type="primary"
             onClick={this.onSubmit}
+            disabled={disabled}
           >
             提交
           </Button>
-          <Button>
-            取消
-          </Button>
+          <Button onClick={this.onCancel}>取消</Button>
         </div>
       </div>
     );

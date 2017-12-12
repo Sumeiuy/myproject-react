@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 16:02:09
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-06 16:44:06
+ * @Last Modified time: 2017-12-11 16:07:01
  */
 const config = {
   titleList: [
@@ -13,11 +13,13 @@ const config = {
       title: '经纪客户号',
     },
     {
-      dataIndex: 'custName',
-      key: 'custName',
+      dataIndex: 'name',
+      key: 'name',
       title: '客户名称',
     },
   ],
+  container: '#container',
+  content: '#content',
 };
 
 export default config;

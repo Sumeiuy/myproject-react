@@ -10,6 +10,7 @@ import channelsTypeProtocol from './channelsTypeProtocol';
 import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
+import demote from './demote';
 
 const api = apiCreator();
 
@@ -38,5 +39,7 @@ export default {
   commission: commission(api),
   // 全渠道服务记录数据接口api
   fullChannelServiceRecord: fullChannelServiceRecord(api),
+  // 降级客户接口
+  demote: demote(api),
 };
 
