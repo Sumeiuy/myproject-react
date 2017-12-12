@@ -33,7 +33,7 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   static defaultProps = {
-    displayText: '详情',
+    displayText: '峰值和最近收益',
   }
 
   constructor(props) {
