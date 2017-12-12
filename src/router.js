@@ -16,7 +16,7 @@ import { fspContainer } from './config';
 
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
-import FeedBack from './routes/feedback/Home';
+import FeedBack from './routes/feedback/NewHome';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import TemplModal from './routes/templeModal/Home';
