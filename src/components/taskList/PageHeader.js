@@ -27,9 +27,9 @@ const CONTROLLER_VIEW = 'controller';
 const EXECUTE_STATE = '50';
 const RESULT_TRACK_STATE = '60';
 const COMPLETED_STATE = '70';
-
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
