@@ -20,7 +20,7 @@ import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
 import { fspGlobal } from '../../utils';
-import { env } from '../../helper';
+import { env, emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -64,6 +64,8 @@ const effects = {
   queryMngrMissionDetailInfo: 'managerView/queryMngrMissionDetailInfo',
   // 管理者视图一二级客户反馈
   countFlowFeedBack: 'managerView/countFlowFeedBack',
+  // 管理者视图任务实施进度
+  countFlowStatus: 'managerView/countFlowStatus',
 };
 
 const mapStateToProps = state => ({
@@ -98,6 +100,8 @@ const mapStateToProps = state => ({
   custRange: state.customerPool.custRange,
   // 职位信息
   empInfo: state.app.empInfo,
+  // 管理者视图任务实施进度数据
+  missionImplementationDetail: state.managerView.missionImplementationDetail,
 });
 
 const mapDispatchToProps = {
@@ -141,6 +145,8 @@ const mapDispatchToProps = {
   queryMngrMissionDetailInfo: fetchDataFunction(true, effects.queryMngrMissionDetailInfo),
   // 管理者视图一二级客户反馈
   countFlowFeedBack: fetchDataFunction(true, effects.countFlowFeedBack),
+  // 管理者视图任务实施进度
+  countFlowStatus: fetchDataFunction(true, effects.countFlowStatus),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -191,6 +197,8 @@ export default class PerformerView extends PureComponent {
     custFeedback: PropTypes.array.isRequired,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
+    missionImplementationDetail: PropTypes.object.isRequired,
+    countFlowStatus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -305,6 +313,22 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
+   * 获取任务实施进度
+   */
+  @autobind
+  getFlowStatus() {
+    const {
+      countFlowStatus,
+      location: { query: { currentId } },
+    } = this.props;
+    // 管理者视图任务实施进度
+    countFlowStatus({
+      taskId: currentId,
+      orgId: emp.getOrgId(),
+    });
+  }
+
+  /**
    * 根据不同的视图获取不同的Detail组件
    * @param  {string} st 视图类型
    */
@@ -341,6 +365,8 @@ export default class PerformerView extends PureComponent {
       custRange,
       empInfo,
       replace,
+      missionImplementationDetail,
+      mngrMissionDetailInfo,
     } = this.props;
     const {
       query: { currentId },
@@ -400,6 +426,10 @@ export default class PerformerView extends PureComponent {
             empInfo={empInfo}
             location={location}
             replace={replace}
+            countFlowStatus={this.getFlowStatus}
+            missionImplementationDetail={missionImplementationDetail}
+            mngrMissionDetailInfo={mngrMissionDetailInfo}
+            launchNewTask={this.handleCreateBtnClick}
           />
         );
         break;
@@ -469,16 +499,22 @@ export default class PerformerView extends PureComponent {
     const {
       queryMngrMissionDetailInfo,
       countFlowFeedBack,
+      countFlowStatus,
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
       taskId: record.id,
-      orgId: '', // 有权限需要传
+      orgId: emp.getOrgId(),
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
       taskId: record.id,
-      orgId: '', // 有权限需要传
+      orgId: emp.getOrgId(),
+    });
+    // 管理者视图任务实施进度
+    countFlowStatus({
+      taskId: record.id,
+      orgId: emp.getOrgId(),
     });
   }
 
@@ -631,17 +667,18 @@ export default class PerformerView extends PureComponent {
       dict,
       queryCustUuid,
     } = this.props;
+    const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
         location={location}
         replace={replace}
         dict={dict}
-        page="performerViewPage"
+        page={currentView}
         pageType={pageType}
         chooseMissionViewOptions={chooseMissionView}
         creatSeibelModal={this.handleCreateBtnClick}
-        filterControl="performerView"
+        filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
       />
     );
@@ -682,7 +719,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={this.state.currentView === 'controller' ? 572 : 400}
+          leftWidth={this.state.currentView === 'controller' ? 562 : 400}
         />
       </div>
     );

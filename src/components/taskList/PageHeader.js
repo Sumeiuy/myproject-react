@@ -20,9 +20,16 @@ import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
-
+const CONTROLLER_VIEW = 'controller';
+// 50代表执行中
+// 60代表结果跟踪
+// 70代表结束
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -43,6 +50,8 @@ export default class Pageheader extends PureComponent {
     dict: PropTypes.object,
     // 头部筛选后的回调
     filterCallback: PropTypes.func,
+    // 当前视图名称
+    filterControl: PropTypes.string,
   }
 
   static defaultProps = {
@@ -51,7 +60,8 @@ export default class Pageheader extends PureComponent {
     typeOptions: [],
     chooseMissionViewOptions: [],
     dict: {},
-    filterCallback: () => {},
+    filterCallback: () => { },
+    filterControl: 'performerView',
   }
 
   constructor(props) {
@@ -206,14 +216,15 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          type,
-          status,
-          creator,
-          createTimeStart,
-          createTimeEnd,
-          missionName,
+        type,
+        status,
+        creator,
+        createTimeStart,
+        createTimeEnd,
+        missionName,
         },
       },
+      filterControl,
     } = this.props;
 
     const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
@@ -225,10 +236,19 @@ export default class Pageheader extends PureComponent {
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?
-    [typeAll, ...typeOptions] : typeOptions;
+      [typeAll, ...typeOptions] : typeOptions;
+
     // 状态增加全部
-    const stateAllOptions = !_.isEmpty(stateOptions) ?
-    [stateAll, ...stateOptions] : stateOptions;
+    let stateAllOptions = stateOptions || [];
+    if (filterControl === CONTROLLER_VIEW) {
+      // 管理者视图只有保留三种状态
+      stateAllOptions = _.filter(stateAllOptions,
+        item => item.value === EXECUTE_STATE
+          || item.value === RESULT_TRACK_STATE
+          || item.value === COMPLETED_STATE);
+    } else {
+      stateAllOptions = [stateAll, ...stateAllOptions];
+    }
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
