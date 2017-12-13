@@ -74,7 +74,7 @@ export default class Search extends PureComponent {
 
   componentWillUnmount() {
     if (searchInput) {
-      searchInput.removeEventListener('keydown', this.handleSearchInput, false);
+      searchInput.removeEventListener('keydown', this.handleSearchInput);
     }
   }
 
@@ -151,9 +151,9 @@ export default class Search extends PureComponent {
 
   searchResult(query, hotList) {
     if (_.isEmpty(hotList)) {
-      this.setState({
-        isHasSearchResult: false,
-      });
+      // this.setState({
+      //   isHasSearchResult: false,
+      // });
       // 提示无相关目标客户
       return [{
         query,

@@ -38,7 +38,10 @@ function Loading({ loading, forceFull }) {
 
 Loading.propTypes = {
   loading: PropTypes.bool.isRequired,
-  forceFull: PropTypes.bool.isRequired,
+  forceFull: PropTypes.bool,
+};
+Loading.defaultProps = {
+  forceFull: false,
 };
 
 export default Loading;

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 14:38:26
+ * @Last Modified time: 2017-12-13 13:24:01
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,7 @@ import SimpleSearch from '../../components/customerPool/groupManage/CustomerGrou
 import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { fspGlobal } from '../../utils';
-import confirm from '../../components/common/confirm_';
+import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
@@ -300,14 +300,11 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   handleDeleteBtnClick(record) {
-    this.setState({
-      // 当前删除行记录数据
-      record,
-    });
+    // 当前删除行记录数据
+    this.setState({ record });
     confirm({
-      type: 'delete',
-      onOkHandler: this.handleConfirmOk,
-      onCancelHandler: this.handleConfirmCancel,
+      onOk: this.handleConfirmOk,
+      onCancel: this.handleConfirmCancel,
     });
   }
 
@@ -364,8 +361,8 @@ export default class CustomerGroupManage extends PureComponent {
         // 存在custIdList,在取消的时候提示
         confirm({
           content: '客户已添加成功，如需取消添加的客户请在列表中删除',
-          onOkHandler: this.handleConfirmTipOk,
-          onCancelHandler: this.handleConfirmTipCancel,
+          onOk: this.handleConfirmTipOk,
+          onCancel: this.handleConfirmTipCancel,
         });
       } else {
         this.setState({
@@ -375,8 +372,8 @@ export default class CustomerGroupManage extends PureComponent {
     } else if (!_.isEmpty(includeCustIdList)) {
       confirm({
         content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
-        onOkHandler: this.handleNewModelConfirmTipOk,
-        onCancelHandler: this.handleNewModelConfirmTipCancel,
+        onOk: this.handleNewModelConfirmTipOk,
+        onCancel: this.handleNewModelConfirmTipCancel,
       });
     } else {
       this.setState({

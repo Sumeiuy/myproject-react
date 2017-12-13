@@ -42,6 +42,8 @@ export default class EditForm extends PureComponent {
     defaultData: PropTypes.object,
     // 是否是编辑
     edit: PropTypes.bool,
+    // 清除部门数据
+    clearDepartmentData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -82,6 +84,11 @@ export default class EditForm extends PureComponent {
       editIndex,
       edit,
     };
+  }
+
+  componentWillUnmount() {
+    const { clearDepartmentData } = this.props;
+    clearDepartmentData();
   }
 
   @autobind

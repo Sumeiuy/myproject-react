@@ -1,15 +1,40 @@
 .missionProgressSection {
   display: block;
-  border: 1px solid #e2e2e2;
+  border: 1px solid #c2c2c2;
   width: 95%;
   margin: 0 auto;
   margin-bottom: 10px;
+  .tooltipOverlay {
+    :global {
+      .ant-tooltip-inner {
+        padding: 10px 25px 20px 15px;
+      }
+      .ant-tooltip-arrow {
+        display: none;
+      }
+      .ant-tooltip-content {
+        width: 179px;
+        height: 79px;
+      }
+    }
+    .content {
+      .currentCount {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+      .linkCustDetail {
+        color: #108ee9;
+        font-size: 12px;
+        cursor: pointer;
+      }
+    }
+  }
   & > .title {
     font-size: 14px;
     color: #666;
     padding: 10px;
     width: 95%;
-    border-bottom: 1px solid #e2e2e2;
+    border-bottom: 1px solid #c2c2c2;
     margin: 0 auto;
   }
   & > .content {
@@ -43,7 +68,7 @@
           .ant-progress {
             display: flex;
             justify-content: flex-start;
-            div:first-child {
+            & > div:first-child {
               display: flex;
               justify-content: flex-start;
               align-items: center;
@@ -66,6 +91,10 @@
             }
             .ant-progress-inner {
               height: 8px;
+            }
+            .ant-progress-outer {
+              height: 8px;
+              display: flex;
             }
           }
         }
@@ -110,27 +139,6 @@
           }
         }
       }
-    }
-  }
-}
-.tooltipOverlay {
-  :global {
-    .ant-tooltip-inner {
-      padding: 10px 25px 20px 15px;
-    }
-    .ant-tooltip-arrow {
-      display: none;
-    }
-  }
-  .content {
-    .currentCount {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-    .linkCustDetail {
-      color: #108ee9;
-      font-size: 12px;
-      cursor: pointer;
     }
   }
 }

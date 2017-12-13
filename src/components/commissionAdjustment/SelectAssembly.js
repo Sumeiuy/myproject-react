@@ -11,7 +11,7 @@ import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
 
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import styles from './selectAssembly.less';
 
 const { comsubs: commadj } = seibelConfig;

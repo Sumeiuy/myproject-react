@@ -257,6 +257,9 @@ export default class ChartTable extends PureComponent {
   }
   @autobind
   handleTitleClick(item) {
+    if (!_.isEmpty(item.children)) {
+      return;
+    }
     const { getTableInfo, indexID, scope } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;

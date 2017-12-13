@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
 import Select from '../common/Select';

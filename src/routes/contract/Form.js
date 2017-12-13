@@ -17,6 +17,8 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import EditForm from '../../components/contract/EditForm';
 import styles from './form.less';
 
+// 退订的类型
+const unsubscribe = '2';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const confirm = Modal.confirm;
@@ -57,6 +59,8 @@ const mapDispatchToProps = {
   getCooperDeparmentList: fetchDataFunction(false, 'contract/getCooperDeparmentList'),
   // 保存合作合约
   saveContractData: fetchDataFunction(true, 'contract/saveContractData'),
+  // 清除部门数据
+  clearDepartmentData: fetchDataFunction(false, 'contract/clearDepartmentData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -81,6 +85,7 @@ export default class Form extends PureComponent {
     // 查询合作部门
     getCooperDeparmentList: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array,
+    clearDepartmentData: PropTypes.func.isRequired,
     // 审批人
     flowStepInfo: PropTypes.object,
     // 保存合作合约
@@ -249,12 +254,12 @@ export default class Form extends PureComponent {
       itemArray.forEach((item) => {
         if (itemArray.length > 1) {
           // 检测该条款是否存在，如果存在，则不合法
-          // paraName 为标识条款字段
-          if (clauseID[item.paraName]) {
+          // divIntegrationId 为部门字段
+          if (clauseID[item.divIntegrationId]) {
             clauseStatus = false;
           } else {
             // 添加条款到clauseID
-            clauseID[item.paraName] = 1;
+            clauseID[item.divIntegrationId] = 1;
           }
         }
       });
@@ -265,6 +270,11 @@ export default class Form extends PureComponent {
   // 检查必填项
   checkRequireFileds(contractFormData) {
     let result = true;
+    // 是否是退订（共两种类型：订购，退订）
+    const isUnsubscribe = contractFormData.applyType === unsubscribe;
+    if (isUnsubscribe) {
+      return result;
+    }
     // 编辑窗口
     if (!contractFormData.startDt) {
       message.error('请选择合约开始日期');
@@ -347,6 +357,7 @@ export default class Form extends PureComponent {
       attachmentList,
       baseInfo,
       flowStepInfo,
+      clearDepartmentData,
     } = this.props;
     const { isHiddenFooter } = this.state;
     if (_.isEmpty(baseInfo) || _.isEmpty(flowHistory)) {
@@ -370,6 +381,8 @@ export default class Form extends PureComponent {
       cooperDeparment: this.props.cooperDeparment,
       // 根据管检测查询合作部门
       searchCooperDeparment: this.handleSearchCooperDeparment,
+      // 清除合作部门
+      clearDepartmentData,
     };
 
     return (

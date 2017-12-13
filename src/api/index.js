@@ -9,6 +9,8 @@ import contract from './contract';
 import channelsTypeProtocol from './channelsTypeProtocol';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
+import demote from './demote';
+import filialeCustTransfer from './filialeCustTransfer';
 
 const api = apiCreator();
 
@@ -35,5 +37,9 @@ export default {
   channelsTypeProtocol: channelsTypeProtocol(api),
   // ==========佣金调整的数据接口end
   commission: commission(api),
+  // 降级客户接口
+  demote: demote(api),
+  // 分公司客户划转接口api
+  filialeCustTransfer: filialeCustTransfer(api),
 };
 

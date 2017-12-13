@@ -1,4 +1,6 @@
-export default function constructPieOptions(options) {
+export default {};
+
+export const constructPieOptions = (options) => {
   const { renderTooltip, level1Data, level2Data } = options;
   return {
     tooltip: {
@@ -35,21 +37,17 @@ export default function constructPieOptions(options) {
           },
         },
         data: level1Data,
-        // [
-        //   {
-        //     value: 335,
-        //     name: '直达',
-        //     children: [
-        //       {
-        //         value: 335,
-        //         name: '直达方式',
-        //       },
-        //     ],
-        //   },
-        //   { value: 679, name: '营销广告' },
-        //   { value: 1548, name: '搜索引擎' },
-        // ],
-        color: ['#4897f1', '#23d8f2', '#756fb8'],
+        color: [
+          'rgba(57,131,255,1)',
+          'rgba(74,218,213,1)',
+          'rgba(117,111,184,1)',
+          'rgba(255,78,123,1)',
+          'rgba(255,178,78,1)',
+          'rgba(112,195,129,1)',
+          'rgba(241,222,90,1)',
+          'rgba(120,146,98,1)',
+          'rgba(255,120,78,1)',
+        ],
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },
@@ -64,26 +62,11 @@ export default function constructPieOptions(options) {
           },
         },
         data: level2Data,
-        // [
-        //   {
-        //     value: 335,
-        //     name: '直达方式',
-        //     parent: {
-        //       value: 335, name: '直达',
-        //     },
-        //   },
-        //   { value: 310, name: '邮件营销' },
-        //   { value: 234, name: '联盟广告' },
-        //   { value: 135, name: '视频广告' },
-        //   { value: 1048, name: '百度' },
-        //   { value: 251, name: '谷歌' },
-        //   { value: 147, name: '必应' },
-        //   { value: 102, name: '其他' },
-        // ],
         color: ['#a7effa', '#7be8f7', '#23d8f2', '#c0bbff', '#948de9', '#756fb8', '#a3cbf8', '#4897f1'],
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },
     ],
   };
-}
+};
+
