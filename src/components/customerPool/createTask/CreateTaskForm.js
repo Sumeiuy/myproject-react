@@ -206,7 +206,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorExcuteType,
       custCount,
     } = this.props;
-    const { custServerTypeFeedBackDict, executeTypes } = dict;
+    const { motCustfeedBackDict, executeTypes } = dict;
     const {
       defaultMissionName,
       defaultMissionType,
@@ -237,7 +237,7 @@ export default class CreateTaskForm extends PureComponent {
             defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
             users={statusData}
-            taskTypes={custServerTypeFeedBackDict}
+            taskTypes={motCustfeedBackDict}
             executeTypes={executeTypes}
             form={form}
             isShowErrorInfo={isShowErrorInfo}

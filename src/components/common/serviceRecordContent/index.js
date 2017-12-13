@@ -168,7 +168,7 @@ export default class ServiceRecordContent extends PureComponent {
       // 服务方式字典
       serveWay = [{}],
       // 服务类型、客户反馈类型三级字典
-      custServerTypeFeedBackDict = [{}],
+      motCustfeedBackDict = [{}],
       // 服务状态字典
       serveStatus = [{}],
     } = props.dict || {};
@@ -180,7 +180,7 @@ export default class ServiceRecordContent extends PureComponent {
     } = props;
 
     // 服务类型value对应服务类型数组
-    this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
+    this.serviceTypeObj = generateObjOfKey(motCustfeedBackDict);
     let formObject = {};
 
     if (isEntranceFromPerformerView) {
@@ -278,14 +278,14 @@ export default class ServiceRecordContent extends PureComponent {
     } else {
       // 客户列表添加服务记录
       // 反馈类型数组
-      const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
+      const feedbackTypeArr = (motCustfeedBackDict[0] || {}).children || EMPTY_LIST;
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
       // 反馈子类型数组
       const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
       // 当前日期的时间戳
       const currentDate = new Date().getTime();
-      const serveType = (custServerTypeFeedBackDict[0] || {}).key || '';
+      const serveType = (motCustfeedBackDict[0] || {}).key || '';
       const feedbackType = (feedbackTypeArr[0] || {}).value || '';
       const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
 
@@ -606,7 +606,7 @@ export default class ServiceRecordContent extends PureComponent {
                     onChange={this.handleServiceType}
                   >
                     {
-                      (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
+                      (dict.motCustfeedBackDict || EMPTY_LIST).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }

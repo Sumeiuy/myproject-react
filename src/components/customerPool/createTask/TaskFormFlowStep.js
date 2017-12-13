@@ -224,7 +224,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowApprovalModal,
       onCancel,
     } = this.props;
-    const { executeTypes, custServerTypeFeedBackDict } = dict;
+    const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
     const steps = [{
       title: '基本信息',
@@ -247,7 +247,7 @@ export default class TaskFormFlowStep extends PureComponent {
         currentTab={currentTab}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={custServerTypeFeedBackDict}
+        taskTypes={motCustfeedBackDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
