@@ -21,6 +21,12 @@ import styles from './pageHeader.less';
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
 const CONTROLLER_VIEW = 'controller';
+// 50代表执行中
+// 60代表结果跟踪
+// 70代表结束
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -236,13 +242,10 @@ export default class Pageheader extends PureComponent {
     let stateAllOptions = stateOptions || [];
     if (filterControl === CONTROLLER_VIEW) {
       // 管理者视图只有保留三种状态
-      // 50代表执行中
-      // 60代表结果跟踪
-      // 70代表结束
       stateAllOptions = _.filter(stateAllOptions,
-        item => item.value === '50'
-          || item.value === '60'
-          || item.value === '70');
+        item => item.value === EXECUTE_STATE
+          || item.value === RESULT_TRACK_STATE
+          || item.value === COMPLETED_STATE);
     } else {
       stateAllOptions = [stateAll, ...stateAllOptions];
     }
