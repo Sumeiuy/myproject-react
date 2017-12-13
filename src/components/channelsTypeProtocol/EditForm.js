@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-12 11:46:52
+ * @Last Modified time: 2017-12-13 15:57:48
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import Transfer from '../../components/common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
+import config from '../../routes/channelsTypeProtocol/config';
 import styles from './editForm.less';
 
 const EMPTY_OBJECT = {};
@@ -42,20 +43,21 @@ const attachmentRequired = {
 };
 const custAttachment = ['noNeed', 'noCust', 'hasCust'];
 
-// 订购的value
-const unSubscribe = 'Unsubscribe';
-const addDel = 'AddDel';
-const subscribeArray = ['Subscribe', '协议订购'];
-// 客户失败状态
-const custStatusObj = {
-  cannotDelete: ['开通失败', '退订完成', '退订处理中'],
-  canDelete: ['开通处理中'],
-  logicalDelete: ['开通完成'],
-  canAdd: ['退订完成', '开通失败'],
-};
-// 可以操作下挂客户的操作类型
-const custOperateArray = ['协议订购', '新增或删除下挂客户', 'Subscribe', 'AddDel'];
+// // 订购的value
+// const unSubscribe = 'Unsubscribe';
+// const addDel = 'AddDel';
+// const subscribeArray = ['Subscribe', '协议订购'];
+// // 客户失败状态
+// const custStatusObj = {
+//   cannotDelete: ['开通失败', '退订完成', '退订处理中'],
+//   canDelete: ['开通处理中'],
+//   logicalDelete: ['开通完成'],
+//   canAdd: ['退订完成', '开通失败'],
+// };
+// // 可以操作下挂客户的操作类型
+// const custOperateArray = ['协议订购', '新增或删除下挂客户', 'Subscribe', 'AddDel'];
 
+const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -222,10 +224,10 @@ export default class EditForm extends PureComponent {
     const productOperate = false;
     let custOperate = false;
     // 新增或删除下挂客户时可以进行下挂客户操作
-    if (operationType === addDel) {
+    if (_.includes(addDelArray, operationType)) {
       custOperate = true;
     }
-    if (operationType === unSubscribe) {
+    if (_.includes(unSubscribeArray, operationType)) {
       hasCust = custAttachment[0];
     }
     this.setState({
