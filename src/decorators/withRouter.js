@@ -11,22 +11,25 @@ const withRouter = (Component) => {
   const C = (props) => {
     const { wrappedComponentRef, replace, push, ...remainingProps } = props;
 
-    function hackReplace(args) {
+    function hackReplace(...args) {
+      if (typeof args[0] === 'string') {
+        return replace(...args);
+      }
       const params = {
-        search: `?${stringify(args.query)}`,
-        ...args,
+        search: `?${stringify(args[0].query)}`,
+        ...args[0],
       };
       return replace(params);
     }
 
-    function hackPush(args) {
+    function hackPush(...args) {
       // TODO 针对相同的地址，不切换
-      if (typeof args === 'string') {
-        return push(args);
+      if (typeof args[0] === 'string') {
+        return push(...args);
       }
       const params = {
-        search: `?${stringify(args.query)}`,
-        ...args,
+        search: `?${stringify(args[0].query)}`,
+        ...args[0],
       };
       return push(params);
     }
