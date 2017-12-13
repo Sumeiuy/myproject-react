@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 16:02:21
+ * @Last Modified time: 2017-12-13 10:49:38
  */
 
 import React, { PureComponent } from 'react';
@@ -11,8 +11,8 @@ import { Input, Form, message } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-// import Button from '../../common/Button';
-import confirm from '../../common/confirm_';
+
+import confirm from '../../common/Confirm/confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 
@@ -234,9 +234,8 @@ export default class CustomerGroupDetail extends PureComponent {
     } else {
       // 直接提示删除确认框，然后删除
       confirm({
-        type: 'delete',
-        onOkHandler: this.handleConfirmOk,
-        onCancelHandler: this.handleConfirmCancel,
+        onOk: this.handleConfirmOk,
+        onCancel: this.handleConfirmCancel,
       });
     }
 

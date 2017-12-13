@@ -47,7 +47,8 @@ const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
 
 // 订购的value
 const subscribe = 'Subscribe';
-// const unSubscribe = 'Unsubscribe';
+const unSubscribe = 'Unsubscribe';
+const tenHQ = '紫金快车道十档行情';
 // const addDel = 'AddDel';
 const mapStateToProps = state => ({
   // 查询左侧列表
@@ -392,6 +393,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
+    // 如果操作类型是退订并且协议模版是十档行情，不进行验证
+    if (formData.templateId === tenHQ &&
+      formData.operationType === unSubscribe) {
+      return true;
+    }
     if (!formData.subType) {
       message.error('请选择子类型');
       return false;
@@ -428,8 +434,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       Unsubscribe: '锁定期不允许退出，是否确认要退出该协议', // 退订时弹框提示语
       Subscribe: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！', // 订购时弹框提示语,
     };
-    if (formData.operationType === 'Unsubscribe' ||
-      formData.operationType === 'Subscribe') {
+    if (formData.operationType === unSubscribe ||
+      formData.operationType === subscribe) {
       confirm({
         title: '提示',
         content: tipsMap[formData.operationType],

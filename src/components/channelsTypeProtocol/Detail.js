@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:08:58
+ * @Last Modified time: 2017-12-13 10:01:42
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -91,7 +91,6 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-    console.log('attachmentList', attachmentList, showUnderCust);
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>

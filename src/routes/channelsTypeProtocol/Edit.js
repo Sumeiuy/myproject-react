@@ -43,6 +43,9 @@ const btnEnd = 'FINISH';
 // 终止文字
 const textEnd = 'falseOver';
 
+const unSubscribe = 'Unsubscribe';
+const tenHQ = '紫金快车道十档行情';
+
 const mapStateToProps = state => ({
   // 子类型、操作类型、协议模版
   subTypeList: state.channelsEdit.subTypeList,
@@ -210,6 +213,11 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
+    // 如果操作类型是退订并且协议模版是十档行情，不进行验证
+    if (formData.templateId === tenHQ &&
+      formData.operationType === unSubscribe) {
+      return true;
+    }
     if (!formData.templateId) {
       message.error('请选择协议模板');
       return false;

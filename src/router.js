@@ -39,6 +39,8 @@ import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
+import Demote from './routes/demote/Home';
+import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -81,6 +83,14 @@ const routes = [
       { path: '/serviceLog', component: ServiceLog },
       { path: '/taskFlow', component: TaskFlow },
     ],
+  },
+  {
+    path: '/demote',
+    component: Demote,
+  },
+  {
+    path: '/filialeCustTransfer',
+    component: FilialeCustTransfer,
   },
 ];
 

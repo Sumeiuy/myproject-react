@@ -28,6 +28,8 @@ export default class TabsExtra extends PureComponent {
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     orgId: PropTypes.string,
+    isDown: PropTypes.bool,
+    iconType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -36,6 +38,8 @@ export default class TabsExtra extends PureComponent {
     expandAll: false,
     selectValue: '',
     orgId: '',
+    isDown: false,
+    iconType: 'kehu',
   }
 
   constructor(props) {
@@ -43,6 +47,7 @@ export default class TabsExtra extends PureComponent {
     this.state = {
       begin: '',
       end: '',
+      isDown: false,
     };
   }
 
@@ -101,12 +106,14 @@ export default class TabsExtra extends PureComponent {
       selectValue,
       location,
       orgId,
+      isDown = false,
+      iconType,
     } = this.props;
     const { begin, end } = this.state;
     return (
       <div className={styles.timeBox}>
         <div className={classnames(styles.icon, styles.kehuIcon)}>
-          <Icon type="kehu" />
+          <Icon type={iconType || 'kehu'} />
         </div>
         <div>
           {
@@ -122,6 +129,7 @@ export default class TabsExtra extends PureComponent {
                 endTime={end}
                 collectData={collectCustRange}
                 expandAll={expandAll}
+                isDown={isDown}
               /> :
               <Select
                 defaultValue="暂无数据"
@@ -131,19 +139,32 @@ export default class TabsExtra extends PureComponent {
           }
         </div>
         <div className={styles.separateLine} />
-        <div className={styles.icon}>
-          <Icon type="rili" />
-        </div>
-        <div className={styles.select}>
-          <Select
-            style={{ width: 60 }}
-            value={selectValue}
-            onChange={this.handleChange}
-          >
-            {cycle.map(item =>
-              <Option key={item.key} value={item.key}>{item.value}</Option>)}
-          </Select>
-        </div>
+        {!isDown ?
+          <div>
+            <div className={styles.icon}>
+              <Icon type="rili" />
+            </div>
+            <div className={styles.select}>
+              <Select
+                style={{ width: 60 }}
+                value={selectValue}
+                onChange={this.handleChange}
+              >
+                {cycle.map(item =>
+                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
+              </Select>
+            </div>
+          </div> :
+          <div className={styles.downFiles}>
+            <div className={styles.iconDown}>
+              <Icon type="xiazai" />
+            </div>
+            <div className={styles.downLoad}>
+              导出
+            </div>
+          </div>
+        }
+
       </div>
     );
   }

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:19:04
+ * @Last Modified time: 2017-12-13 10:48:53
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import confirm from '../../common/confirm_';
+import confirm from '../../common/Confirm/confirm';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
@@ -214,9 +214,8 @@ export default class Uploader extends PureComponent {
   @autobind
   showConfirm() {
     confirm({
-      type: 'delete',
-      onOkHandler: this.handleDeleteConfirm,
-      onCancelHandler: this.handleCancel,
+      onOk: this.handleDeleteConfirm,
+      onCancel: this.handleCancel,
     });
   }
 
@@ -285,9 +284,8 @@ export default class Uploader extends PureComponent {
   @autobind
   handleDeleteFile() {
     confirm({
-      type: 'delete',
-      onOkHandler: this.handleDeleteConfirm,
-      onCancelHandler: this.handleCancel,
+      onOk: this.handleDeleteConfirm,
+      onCancel: this.handleCancel,
     });
   }
 

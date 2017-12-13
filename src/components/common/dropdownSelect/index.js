@@ -64,13 +64,6 @@ export default class DropdownSelect extends PureComponent {
     };
   }
 
-  // componentWillMount() {
-  //   this.setState({
-  //     value: this.props.value,
-  //     id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
-  //   });
-  // }
-
   componentDidMount() {
     document.addEventListener('click', this.hideModal, false);
   }
@@ -93,7 +86,6 @@ export default class DropdownSelect extends PureComponent {
         this.setState({
           isSHowModal: false,
           value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
-          searchValue: '',
         });
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
@@ -102,6 +94,7 @@ export default class DropdownSelect extends PureComponent {
           key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
+          title={item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         >
           {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         </li>
@@ -142,6 +135,20 @@ export default class DropdownSelect extends PureComponent {
     }
   }
 
+  @autobind
+  handleChangeSearchValue(e) {
+    this.setState({
+      searchValue: e.target.value,
+    });
+  }
+
+  @autobind
+  clearSearchValue() {
+    this.setState({
+      searchValue: '',
+    });
+  }
+
   render() {
     const { theme, disable } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
@@ -173,12 +180,14 @@ export default class DropdownSelect extends PureComponent {
               className={style.searhInput}
               placeholder={this.props.placeholder}
               onSearch={this.toSearch}
+              value={this.state.searchValue}
+              onChange={this.handleChangeSearchValue}
             />
           </div>
           {
             _.isEmpty(this.props.searchList)
-            ? <span className={style.notFound}>没有发现与之匹配的结果</span>
-            : null
+              ? <span className={style.notFound}>没有发现与之匹配的结果</span>
+              : null
           }
           <ul className={style.ddsDrapMenuCon}>
             {this.getSearchListDom}

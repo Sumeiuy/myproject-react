@@ -6,3 +6,4 @@ fastclick.js
 static/
 dist
 build/
+config/**
