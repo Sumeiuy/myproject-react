@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-13 15:57:48
+ * @Last Modified time: 2017-12-13 16:37:17
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -42,21 +42,6 @@ const attachmentRequired = {
   ],
 };
 const custAttachment = ['noNeed', 'noCust', 'hasCust'];
-
-// // 订购的value
-// const unSubscribe = 'Unsubscribe';
-// const addDel = 'AddDel';
-// const subscribeArray = ['Subscribe', '协议订购'];
-// // 客户失败状态
-// const custStatusObj = {
-//   cannotDelete: ['开通失败', '退订完成', '退订处理中'],
-//   canDelete: ['开通处理中'],
-//   logicalDelete: ['开通完成'],
-//   canAdd: ['退订完成', '开通失败'],
-// };
-// // 可以操作下挂客户的操作类型
-// const custOperateArray = ['协议订购', '新增或删除下挂客户', 'Subscribe', 'AddDel'];
-
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
   static propTypes = {
