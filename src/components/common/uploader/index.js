@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 10:48:53
+ * @Last Modified time: 2017-12-13 13:23:36
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import confirm from '../../common/Confirm/confirm';
+import confirm from '../../common/Confirm';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';

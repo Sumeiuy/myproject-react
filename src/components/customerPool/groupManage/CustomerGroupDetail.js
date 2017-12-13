@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 10:49:38
+ * @Last Modified time: 2017-12-13 13:23:43
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import confirm from '../../common/Confirm/confirm';
+import confirm from '../../common/Confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 

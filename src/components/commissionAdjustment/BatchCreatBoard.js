@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 14:01:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-07 14:19:44
+ * @Last Modified time: 2017-12-13 13:22:58
  * @description 批量佣金调整新建独自的页面
  */
 
@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import ChoiceApproverBoard from './ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import AddCustomer from './AddCustomer';
 import InfoTitle from '../common/InfoTitle';
 import CommissionLine from './CommissionLine';

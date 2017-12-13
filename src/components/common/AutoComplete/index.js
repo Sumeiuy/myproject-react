@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../Confirm/confirm';
+import confirm from '../Confirm';
 import styles from './index.less';
 
 const Option = AutoComplete.Option;
