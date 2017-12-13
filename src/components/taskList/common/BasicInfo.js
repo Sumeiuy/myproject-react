@@ -62,11 +62,34 @@ export default class BasicInfo extends PureComponent {
     onPreview: () => { },
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      overlayTop: 0,
+    };
+  }
+
   @autobind
   handlePreview() {
-    console.log('预览明细');
     const { onPreview } = this.props;
     onPreview();
+  }
+
+  @autobind
+  handleMouseOver() {
+    if (this.custTotalTipElem) {
+      this.setState({
+        overlayTop: this.custTotalTipElem.getBoundingClientRect().top,
+      });
+    }
+  }
+
+  /**
+   * 浮层渲染到父节点
+   */
+  @autobind
+  getPopupContainer() {
+    return this.custTotalTipElem;
   }
 
   render() {
@@ -76,10 +99,11 @@ export default class BasicInfo extends PureComponent {
       missionTarget,
       servicePolicy,
       isFold,
-      custSource,
+      custSource = 'import',
       custSourceDescription,
       custTotal,
     } = this.props;
+    const { overlayTop } = this.state;
     const posi = 'rightBottom';
     const colSpanValue = isFold ? 12 : 24;
     return (
@@ -128,13 +152,23 @@ export default class BasicInfo extends PureComponent {
                     {/**
                      * 机构名变量，需要替换
                      */}
-                    <TipsInfo
-                      title={'当前{机构名}有效客户总数'}
-                      position={posi}
-                      wrapperClass={classnames({
-                        [styles.custNumberTips]: true,
-                      })}
-                    />
+                    <span
+                      className={styles.custTotalTooltip}
+                      onMouseOver={this.handleMouseOver}
+                      ref={ref => (this.custTotalTipElem = ref)}
+                    >
+                      <TipsInfo
+                        title={'当前{机构名}有效客户总数'}
+                        position={posi}
+                        wrapperClass={classnames({
+                          [styles.custNumberTips]: true,
+                        })}
+                        overlayStyle={{
+                          top: overlayTop,
+                        }}
+                        getPopupContainer={this.getPopupContainer}
+                      />
+                    </span>
                   </Col>
                 </Row>
                 <Row className={styles.rowItem}>

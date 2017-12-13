@@ -2,16 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-11 21:16:32
+ * @Last Modified time: 2017-12-12 13:56:40
  * 管理者视图详情
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
-// import { Row, Col } from 'antd';
 import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
@@ -32,8 +30,7 @@ export default class ManagerViewDetail extends PureComponent {
   static propTypes = {
     // 视图是否处于折叠状态
     isFold: PropTypes.bool,
-    // 基本信息
-    basicInfo: PropTypes.object,
+    // 预览客户明细
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户明细结果
     custDetailResult: PropTypes.array.isRequired,
@@ -41,19 +38,28 @@ export default class ManagerViewDetail extends PureComponent {
     onGetCustFeedback: PropTypes.func.isRequired,
     // 客户反馈结果
     custFeedback: PropTypes.array.isRequired,
-    // 任务实施进度数据
-    missionImplementationProgressData: PropTypes.object.isRequired,
     // 客户池用户范围
     custRange: PropTypes.array.isRequired,
     // 职位信息
     empInfo: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    // 任务实施进度
+    missionImplementationDetail: PropTypes.object.isRequired,
+    // 获取任务实施进度
+    getFlowStatus: PropTypes.func.isRequired,
+    // 任务基本信息
+    mngrMissionDetailInfo: PropTypes.object.isRequired,
+    // 发起新任务
+    launchNewTask: PropTypes.func.isRequired,
+    // 当前任务Id
+    currentId: PropTypes.string,
   }
 
   static defaultProps = {
     isFold: false,
-    basicInfo: EMPTY_OBJECT,
+    mngrMissionDetailInfo: EMPTY_OBJECT,
+    currentId: '',
   }
 
   constructor(props) {
@@ -96,23 +102,28 @@ export default class ManagerViewDetail extends PureComponent {
     console.log('导出');
   }
 
+  /**
+   * 发起新任务
+   */
   @autobind
   handleLaunchTask() {
-    console.log('发起任务');
+    const { launchNewTask } = this.props;
+    launchNewTask();
   }
 
   render() {
     const {
       isFold,
-      basicInfo = EMPTY_OBJECT,
+      mngrMissionDetailInfo = EMPTY_OBJECT,
       previewCustDetail,
       custDetailResult,
       custFeedback,
-      missionImplementationProgressData,
+      missionImplementationDetail,
       custRange,
       empInfo,
       location,
       replace,
+      getFlowStatus,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -126,9 +137,13 @@ export default class ManagerViewDetail extends PureComponent {
       missionTarget,
       servicePolicy,
       custSource = 'import',
-      custTotal,
-      custSourceDescription,
-    } = basicInfo;
+      // 客户总数
+      custNumbers = 0,
+      // 客户来源说明
+      custSourceDesc,
+      // 任务描述
+      // missionDesc,
+    } = mngrMissionDetailInfo;
 
     return (
       <div className={styles.managerViewDetail}>
@@ -152,9 +167,9 @@ export default class ManagerViewDetail extends PureComponent {
             // 客户来源
             custSource={custSource}
             // 客户总数
-            custTotal={custTotal}
+            custTotal={custNumbers}
             // 客户来源说明
-            custSourceDescription={custSourceDescription}
+            custSourceDescription={custSourceDesc}
             onPreview={this.handlePreview}
           />
           <GroupModal
@@ -218,11 +233,12 @@ export default class ManagerViewDetail extends PureComponent {
             isFold={isFold}
             custFeedback={custFeedback}
             onPreviewCustDetail={this.handlePreview}
-            missionImplementationProgress={missionImplementationProgressData}
+            missionImplementationProgress={missionImplementationDetail}
             custRange={custRange}
             empInfo={empInfo}
             location={location}
             replace={replace}
+            getFlowStatus={getFlowStatus}
           />
         </div>
         <div className={styles.missionFeedbackSection}>

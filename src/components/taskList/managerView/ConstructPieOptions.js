@@ -37,7 +37,17 @@ export const constructPieOptions = (options) => {
           },
         },
         data: level1Data,
-        color: ['#4897f1', '#23d8f2', '#756fb8'],
+        color: [
+          'rgba(57,131,255,1)',
+          'rgba(74,218,213,1)',
+          'rgba(117,111,184,1)',
+          'rgba(255,78,123,1)',
+          'rgba(255,178,78,1)',
+          'rgba(112,195,129,1)',
+          'rgba(241,222,90,1)',
+          'rgba(120,146,98,1)',
+          'rgba(255,120,78,1)',
+        ],
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },

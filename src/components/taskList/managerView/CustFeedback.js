@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-08 17:47:14
+ * @Last Modified time: 2017-12-12 18:00:41
  * 客户反馈
  */
 
@@ -17,6 +17,56 @@ import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
+
+//   'rgba(57,131,255,1)',
+//   'rgba(74,218,213,1)',
+//   'rgba(117,111,184,1)',
+//   'rgba(255,78,123,1)',
+//   'rgba(255,178,78,1)',
+//   'rgba(112,195,129,1)',
+//   'rgba(241,222,90,1)',
+//   'rgba(120,146,98,1)',
+//   'rgba(255,120,78,1)',
+
+// 一级反馈颜色表
+// const level1Color = [
+//   {
+//     key: 1,
+//     color: 'rgba(57,131,255,1)',
+//   },
+//   {
+//     key: 2,
+//     color: 'rgba(74,218,213,1)',
+//   },
+//   {
+//     key: 3,
+//     color: 'rgba(117,111,184,1)',
+//   },
+//   {
+//     key: 4,
+//     color: 'rgba(255,78,123,1)',
+//   },
+//   {
+//     key: 5,
+//     color: 'rgba(255,178,78,1)',
+//   },
+//   {
+//     key: 6,
+//     color: 'rgba(112,195,129,1)',
+//   },
+//   {
+//     key: 7,
+//     color: 'rgba(241,222,90,1)',
+//   },
+//   {
+//     key: 8,
+//     color: 'rgba(120,146,98,1)',
+//   },
+//   {
+//     key: 9,
+//     color: 'rgba(255,120,78,1)',
+//   },
+// ];
 
 export default class CustFeedback extends PureComponent {
 

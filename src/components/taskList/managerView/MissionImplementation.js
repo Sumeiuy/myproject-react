@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-11 21:10:52
+ * @Last Modified time: 2017-12-12 09:49:29
  * 任务实施简报
  */
 
@@ -39,6 +39,8 @@ export default class MissionImplementation extends PureComponent {
     collectCustRange: PropTypes.func,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    // 获取任务实施进度
+    getFlowStatus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -94,6 +96,8 @@ export default class MissionImplementation extends PureComponent {
   @autobind
   updateQueryState(value) {
     console.log(value);
+    const { getFlowStatus } = this.props;
+    getFlowStatus();
   }
 
   /**
