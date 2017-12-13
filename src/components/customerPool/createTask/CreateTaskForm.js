@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Form, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { RestoreScrollTop } from '../../common/hocComponent';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 

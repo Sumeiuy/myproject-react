@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 10:19:04
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-13 14:10:18
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { RestoreScrollTop } from '../../common/hocComponent';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import CustomerSegment from './CustomerSegment';
 import SelectLabelCust from './SelectLabelCust';
 import styles from './pickTargetCustomer.less';
