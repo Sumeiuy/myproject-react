@@ -7,9 +7,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
+import TipsInfo from '../performerView/TipsInfo';
 import styles from './basicInfo.less';
 
 // 暂时的来源类型，具体需要和后端定一下
@@ -60,11 +62,34 @@ export default class BasicInfo extends PureComponent {
     onPreview: () => { },
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      overlayTop: 0,
+    };
+  }
+
   @autobind
   handlePreview() {
-    console.log('预览明细');
     const { onPreview } = this.props;
     onPreview();
+  }
+
+  @autobind
+  handleMouseOver() {
+    if (this.custTotalTipElem) {
+      this.setState({
+        overlayTop: this.custTotalTipElem.getBoundingClientRect().top,
+      });
+    }
+  }
+
+  /**
+   * 浮层渲染到父节点
+   */
+  @autobind
+  getPopupContainer() {
+    return this.custTotalTipElem;
   }
 
   render() {
@@ -74,10 +99,12 @@ export default class BasicInfo extends PureComponent {
       missionTarget,
       servicePolicy,
       isFold,
-      custSource,
+      custSource = 'import',
       custSourceDescription,
       custTotal,
     } = this.props;
+    const { overlayTop } = this.state;
+    const posi = 'rightBottom';
     const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.basicInfo}>
@@ -110,12 +137,38 @@ export default class BasicInfo extends PureComponent {
                     <span className={styles.content}>{custSource || '--'}</span>
                   </Col>
                   <Col span={colSpanValue} className={styles.colItem}>
-                    <span className={styles.label}>客户总数:&nbsp;</span>
-                    <span className={styles.content}>{Number(custTotal) || 0}</span>
                     <span
-                      className={styles.previewCust}
+                      className={classnames({
+                        [styles.label]: true,
+                      })}
+                    >客户总数:&nbsp;</span>
+                    <span
+                      className={classnames({
+                        [styles.custTotal]: true,
+                        [styles.content]: true,
+                      })}
                       onClick={this.handlePreview}
-                    >预览明细&gt;&gt;</span>
+                    >{Number(custTotal) || 0}</span>
+                    {/**
+                     * 机构名变量，需要替换
+                     */}
+                    <span
+                      className={styles.custTotalTooltip}
+                      onMouseOver={this.handleMouseOver}
+                      ref={ref => (this.custTotalTipElem = ref)}
+                    >
+                      <TipsInfo
+                        title={'当前{机构名}有效客户总数'}
+                        position={posi}
+                        wrapperClass={classnames({
+                          [styles.custNumberTips]: true,
+                        })}
+                        overlayStyle={{
+                          top: overlayTop,
+                        }}
+                        getPopupContainer={this.getPopupContainer}
+                      />
+                    </span>
                   </Col>
                 </Row>
                 <Row className={styles.rowItem}>

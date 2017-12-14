@@ -2,22 +2,21 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 21:32:34
+ * @Last Modified time: 2017-12-13 13:38:16
  * 管理者视图详情
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
-// import { Row, Col } from 'antd';
 import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
+import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
@@ -32,8 +31,7 @@ export default class ManagerViewDetail extends PureComponent {
   static propTypes = {
     // 视图是否处于折叠状态
     isFold: PropTypes.bool,
-    // 基本信息
-    basicInfo: PropTypes.object,
+    // 预览客户明细
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户明细结果
     custDetailResult: PropTypes.array.isRequired,
@@ -41,13 +39,28 @@ export default class ManagerViewDetail extends PureComponent {
     onGetCustFeedback: PropTypes.func.isRequired,
     // 客户反馈结果
     custFeedback: PropTypes.array.isRequired,
-    // 任务实施进度数据
-    missionImplementationProgressData: PropTypes.object.isRequired,
+    // 客户池用户范围
+    custRange: PropTypes.array.isRequired,
+    // 职位信息
+    empInfo: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    // 任务实施进度
+    missionImplementationDetail: PropTypes.object.isRequired,
+    // 获取任务实施进度
+    getFlowStatus: PropTypes.func.isRequired,
+    // 任务基本信息
+    mngrMissionDetailInfo: PropTypes.object.isRequired,
+    // 发起新任务
+    launchNewTask: PropTypes.func.isRequired,
+    // 当前任务Id
+    currentId: PropTypes.string,
   }
 
   static defaultProps = {
     isFold: false,
-    basicInfo: EMPTY_OBJECT,
+    mngrMissionDetailInfo: EMPTY_OBJECT,
+    currentId: '',
   }
 
   constructor(props) {
@@ -90,19 +103,28 @@ export default class ManagerViewDetail extends PureComponent {
     console.log('导出');
   }
 
+  /**
+   * 发起新任务
+   */
   @autobind
   handleLaunchTask() {
-    console.log('发起任务');
+    const { launchNewTask } = this.props;
+    launchNewTask();
   }
 
   render() {
     const {
       isFold,
-      basicInfo = EMPTY_OBJECT,
+      mngrMissionDetailInfo = EMPTY_OBJECT,
       previewCustDetail,
       custDetailResult,
       custFeedback,
-      missionImplementationProgressData,
+      missionImplementationDetail,
+      custRange,
+      empInfo,
+      location,
+      replace,
+      getFlowStatus,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -116,9 +138,13 @@ export default class ManagerViewDetail extends PureComponent {
       missionTarget,
       servicePolicy,
       custSource = 'import',
-      custTotal,
-      custSourceDescription,
-    } = basicInfo;
+      // 客户总数
+      custNumbers = 0,
+      // 客户来源说明
+      custSourceDesc,
+      // 任务描述
+      missionDesc,
+    } = mngrMissionDetailInfo;
 
     return (
       <div className={styles.managerViewDetail}>
@@ -139,12 +165,17 @@ export default class ManagerViewDetail extends PureComponent {
             servicePolicy={servicePolicy}
             // 父容器宽度变化,默认宽度窄
             isFold={isFold}
+          />
+          <TargetCustomer
+            // 父容器宽度变化,默认宽度窄
+            isFold={isFold}
             // 客户来源
             custSource={custSource}
             // 客户总数
-            custTotal={custTotal}
+            custTotal={custNumbers}
             // 客户来源说明
-            custSourceDescription={custSourceDescription}
+            custSourceDescription={custSourceDesc}
+            // 预览明细客户
             onPreview={this.handlePreview}
           />
           <GroupModal
@@ -159,7 +190,19 @@ export default class ManagerViewDetail extends PureComponent {
             footer={
               <div className={styles.operationBtnSection}>
                 <Clickable
-                  // 加入节流函数
+                  onClick={this.handleCloseModal}
+                  eventName="/click/managerViewCustDetail/cancel"
+                >
+                  <Button className={styles.cancel}>取消</Button>
+                </Clickable>
+
+                <Clickable
+                  onClick={this.handleExport}
+                  eventName="/click/managerViewCustDetail/export"
+                >
+                  <Button className={styles.export}>导出</Button>
+                </Clickable>
+                <Clickable
                   onClick={this.handleLaunchTask}
                   eventName="/click/managerViewCustDetail/launchTask"
                 >
@@ -169,18 +212,6 @@ export default class ManagerViewDetail extends PureComponent {
                   >
                     发起新任务
                   </Button>
-                </Clickable>
-                <Clickable
-                  onClick={this.handleExport}
-                  eventName="/click/managerViewCustDetail/export"
-                >
-                  <Button className={styles.export}>导出</Button>
-                </Clickable>
-                <Clickable
-                  onClick={this.handleCloseModal}
-                  eventName="/click/managerViewCustDetail/cancel"
-                >
-                  <Button className={styles.cancel}>取消</Button>
                 </Clickable>
               </div>
             }
@@ -197,21 +228,25 @@ export default class ManagerViewDetail extends PureComponent {
               width: 1080,
             }}
             modalWidth={1080}
-            onOkHandler={this.handleUpdateGroup}
           />
         </div>
         <div className={styles.descriptionSection}>
-          <MissionDescription missionDescription={''} />
+          <MissionDescription missionDescription={missionDesc} />
         </div>
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}
             custFeedback={custFeedback}
             onPreviewCustDetail={this.handlePreview}
-            missionImplementationProgress={missionImplementationProgressData}
+            missionImplementationProgress={missionImplementationDetail}
+            custRange={custRange}
+            empInfo={empInfo}
+            location={location}
+            replace={replace}
+            getFlowStatus={getFlowStatus}
           />
         </div>
-        <div>
+        <div className={styles.missionFeedbackSection}>
           <MissionFeedback isFold={isFold} />
         </div>
       </div>

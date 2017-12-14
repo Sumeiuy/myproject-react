@@ -51,6 +51,8 @@ export default class EditForm extends PureComponent {
     uploadAttachment: PropTypes.func.isRequired,
     // 审批人
     flowStepInfo: PropTypes.object,
+    // 清除部门数据
+    clearDepartmentData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -208,6 +210,7 @@ export default class EditForm extends PureComponent {
       cooperDeparment,
       searchCooperDeparment,
       contractDetail: { baseInfo, attachmentList },
+      clearDepartmentData,
     } = this.props;
     const {
       formData,
@@ -303,6 +306,7 @@ export default class EditForm extends PureComponent {
               departmentList={cooperDeparment}
               searchDepartment={searchCooperDeparment}
               defaultData={defaultData}
+              clearDepartmentData={clearDepartmentData}
             />
           :
             null

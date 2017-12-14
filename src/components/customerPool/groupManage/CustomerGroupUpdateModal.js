@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-14 16:25:21
+ * @Last Modified time: 2017-12-08 15:28:02
  */
 
 import React, { PureComponent } from 'react';
@@ -16,14 +16,14 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     visible: PropTypes.bool,
     wrapperClass: PropTypes.string,
     title: PropTypes.string,
-    okText: PropTypes.string.isRequired,
+    okText: PropTypes.string,
     cancelText: PropTypes.string,
     okType: PropTypes.string,
-    onOkHandler: PropTypes.func.isRequired,
+    onOkHandler: PropTypes.func,
     modalContent: PropTypes.node,
     onCancelHandler: PropTypes.func,
     footer: PropTypes.node,
-    modalStyle: PropTypes.string,
+    modalStyle: PropTypes.object,
     modalWidth: PropTypes.number,
   };
 
@@ -36,8 +36,10 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     modalContent: null,
     onCancelHandler: () => { },
     footer: null,
-    modalStyle: '',
+    modalStyle: {},
     modalWidth: 700,
+    onOkHandler: () => { },
+    okText: '',
   };
 
   constructor(props) {

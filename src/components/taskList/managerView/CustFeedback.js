@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 20:45:53
+ * @Last Modified time: 2017-12-13 18:07:15
  * 客户反馈
  */
 
@@ -10,12 +10,49 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import constructPieOptions from './ConstructPieOptions';
+import { constructPieOptions } from './ConstructPieOptions';
+import { constructEmptyPie } from './ConstructEmptyPie';
 import IECharts from '../../IECharts';
 import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
+
+//   'rgba(57,131,255,1)',
+//   'rgba(74,218,213,1)',
+//   'rgba(117,111,184,1)',
+//   'rgba(255,78,123,1)',
+//   'rgba(255,178,78,1)',
+//   'rgba(112,195,129,1)',
+//   'rgba(241,222,90,1)',
+//   'rgba(120,146,98,1)',
+//   'rgba(255,120,78,1)',
+
+// 一级反馈颜色表
+const getLevelColor = (index, alpha = 1) => {
+  switch (Number(index)) {
+    case 0:
+      return `rgba(57,131,255,${alpha})`;
+    case 1:
+      return `rgba(74,218,213,${alpha})`;
+    case 2:
+      return `rgba(117,111,184,${alpha})`;
+    case 3:
+      return `rgba(255,78,123,${alpha})`;
+    case 4:
+      return `rgba(255,178,78,${alpha})`;
+    case 5:
+      return `rgba(112,195,129,${alpha})`;
+    case 6:
+      return `rgba(241,222,90,${alpha})`;
+    case 7:
+      return `rgba(120,146,98,${alpha})`;
+    case 8:
+      return `rgba(255,120,78,${alpha})`;
+    default:
+      return '#fff';
+  }
+};
 
 export default class CustFeedback extends PureComponent {
 
@@ -34,11 +71,33 @@ export default class CustFeedback extends PureComponent {
     onPieLeave: () => { },
   }
 
-  @autobind
-  renderCustFeedbackChart() {
-    const { onPieHover, onPieLeave, custFeedback = EMPTY_LIST } = this.props;
+  constructor(props) {
+    super(props);
+    const {
+      level1Data = EMPTY_LIST,
+      level2Data = EMPTY_LIST,
+    } = this.renderCustFeedbackChart(props.custFeedback);
+    this.state = {
+      level1Data,
+      level2Data,
+    };
+  }
 
-    // const level1Data = [
+  componentWillReceiveProps(nextProps) {
+    const { custFeedback: nextFeedback } = nextProps;
+    const { custFeedback } = this.props;
+    if (custFeedback !== nextFeedback) {
+      const { level1Data, level2Data } = this.renderCustFeedbackChart(nextFeedback);
+      this.setState({
+        level1Data,
+        level2Data,
+      });
+    }
+  }
+
+  @autobind
+  renderCustFeedbackChart(custFeedback) {
+    // let level1Data = [
     //   {
     //     name: '前端',
     //     key: 'frontend',
@@ -96,18 +155,31 @@ export default class CustFeedback extends PureComponent {
     // ];
 
     // 前后台定义返回的格式可以直接给一级饼图作数据源
-    const level1Data = custFeedback;
+    let level1Data = custFeedback;
+    // 然后添加颜色
+    // let count = 0;
+    level1Data = _.map(level1Data, (item, index) => ({
+      ...item,
+      color: getLevelColor(index, 1),
+      children: _.map(item.children, (itemData, childIndex) => ({
+        ...itemData,
+        color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
+      })),
+    }));
+
     // 构造二级数据源
     let level2Data = [];
 
-    _.each(level1Data, (item) => {
+    _.each(level1Data, (item, index) => {
       if (!_.isEmpty(item.children)) {
-        level2Data.push(_.map(item.children, itemData => ({
+        level2Data.push(_.map(item.children, (itemData, childIndex) => ({
           value: itemData.value,
           name: itemData.name,
+          color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
           parent: {
             name: item.name,
             value: item.value,
+            color: getLevelColor(index, 1),
           },
         })));
       }
@@ -116,31 +188,32 @@ export default class CustFeedback extends PureComponent {
     // 将二维数组抹平
     level2Data = _.flatten(level2Data);
 
-    return (
-      <div>
-        <IECharts
-          option={constructPieOptions({
-            renderTooltip: this.renderTooltip,
-            level1Data,
-            level2Data,
-          })}
-          resizable
-          style={{
-            height: '162px',
-            width: '50%',
-          }}
-          onEvents={{
-            mouseover: onPieHover,
-            mouseout: onPieLeave,
-          }}
-        />
-        <div className={styles.chartExp}>
-          {_.map(level1Data, item => <div>{item.name}：
-          <span>{Number(item.value) * 100}%</span></div>,
-          )}
-        </div>
-      </div>
+    return {
+      level1Data,
+      level2Data,
+    };
+  }
+
+  @autobind
+  renderChildren(children) {
+    let childrenElem = '';
+    _.each(children, item =>
+      childrenElem += `<div class="item">
+          <i class="icon" style='background: ${item.color}'></i>
+          <span class="type">${item.name}：</span>
+          <span class="percent">${Number(item.value) * 100}%</span>
+        </div>`,
     );
+    return childrenElem;
+  }
+
+  @autobind
+  renderParent(name, value) {
+    let parentElem = '';
+    parentElem = `<div class="title">
+        ${name}：${value * 100}%
+      </div>`;
+    return parentElem;
   }
 
   /**
@@ -176,44 +249,74 @@ export default class CustFeedback extends PureComponent {
       seriesIndex,
     } = params;
 
-    const { children } = data;
-
-    let childrenElem = '<div></div>';
-    // let parentElem = '<div></div>';
+    const { children, parent } = data;
+    const { level1Data } = this.state;
+    let childrenElem = '';
+    let parentElem = '';
 
     // 一级反馈，内部
     if (seriesIndex === 0) {
       // 一级反馈有children
-      _.each(children, item =>
-        childrenElem += `<div class="item">
-          <span class="icon"></span>
-          <span class="type">${item.name}：</span>
-          <span class="percent">${Number(item.value) * 100}%</span>
-        </div>`,
-      );
+      parentElem = this.renderParent(name, Number(value));
+      childrenElem = this.renderChildren(children);
     } else if (seriesIndex === 1) {
       // 二级反馈，外部
+      // 二级反馈有parent
+      // 找出parent对应的children
+      parentElem = this.renderParent(parent.name, Number(parent.value));
+      const parentTree = _.find(level1Data, item => item.name === parent.name);
+      if (!_.isEmpty(parentTree)) {
+        if (!_.isEmpty(parentTree.children)) {
+          childrenElem = this.renderChildren(parentTree.children);
+        }
+      }
     }
 
     return `<div class="tooltipContent">
-      <div class="title">
-        ${name}：${Number(value) * 100}%
-      </div>
+      ${parentElem}
       <div class="content">
-        ${seriesIndex === 0 ? '<div class="divider"></div>' : '<div></div>'}
+        <div class="divider"></div>
         ${childrenElem}
       </div>
     </div>`;
   }
 
   render() {
+    const { onPieHover, onPieLeave } = this.props;
+    const { level1Data, level2Data } = this.state;
+
+    const options = _.isEmpty(level1Data && level2Data) ? constructEmptyPie() :
+      constructPieOptions({
+        renderTooltip: this.renderTooltip,
+        level1Data,
+        level2Data,
+      });
+
     return (
       <div className={styles.custFeedbackSection}>
         <div className={styles.title}>
           客户反馈
         </div>
         <div className={styles.content}>
-          {this.renderCustFeedbackChart()}
+          <IECharts
+            option={options}
+            resizable
+            style={{
+              height: '162px',
+              width: '50%',
+            }}
+            onEvents={{
+              mouseover: onPieHover,
+              mouseout: onPieLeave,
+            }}
+          />
+          <div className={styles.chartExp}>
+            {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
+              <div className={styles.emptyContent}>暂无客户反馈</div> :
+              _.map(level1Data, item => <div className={styles.content} key={item.key}>{item.name}：
+              <span>{Number(item.value) * 100}%</span></div>,
+              )}
+          </div>
         </div>
       </div>
     );

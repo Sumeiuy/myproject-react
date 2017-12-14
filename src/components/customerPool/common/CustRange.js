@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+
 import mouseWheel from '../../common/mouseWheel';
 import { constants } from '../../../config';
 import styles from './custRange.less';
@@ -76,6 +76,7 @@ export default class CustRange extends PureComponent {
     selectBoxStyle: PropTypes.object,
     // 下拉菜单的宽度
     dropdownWidth: PropTypes.number,
+    isDown: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -85,6 +86,7 @@ export default class CustRange extends PureComponent {
     width: 200,
     dropdownWidth: 200,
     selectBoxStyle: {},
+    isDown: false,
   }
 
   constructor(props) {
@@ -143,9 +145,11 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
-    const { custRange, expandAll, selectBoxStyle, dropdownWidth } = this.props;
+    const { custRange, expandAll, selectBoxStyle, dropdownWidth, isDown } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
+    const widthDown = isDown ? 160 : dropdownWidth;
+    const placeholder = isDown ? '机构范围' : '客户范围';
     return (
       <TreeSelect
         notFoundContent="没有结果"
@@ -159,9 +163,9 @@ export default class CustRange extends PureComponent {
         style={selectBoxStyle}
         labelInValue
         dropdownMatchSelectWidth={false}
-        dropdownStyle={{ width: dropdownWidth, maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ width: widthDown, maxHeight: 400, overflow: 'auto' }}
         getPopupContainer={() => document.querySelector(constants.container)}
-        searchPlaceholder="客户范围"
+        searchPlaceholder={placeholder}
       />
     );
   }

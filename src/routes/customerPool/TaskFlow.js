@@ -448,7 +448,7 @@ export default class TaskFlow extends PureComponent {
 
     const {
       dict,
-      dict: { executeTypes, custServerTypeFeedBackDict },
+      dict: { executeTypes, motCustfeedBackDict },
       priviewCustFileData,
       currentTab,
       saveCurrentTab,
@@ -507,7 +507,7 @@ export default class TaskFlow extends PureComponent {
         currentTab={currentTab}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={custServerTypeFeedBackDict}
+        taskTypes={motCustfeedBackDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}

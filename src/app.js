@@ -63,15 +63,21 @@ app.model(require('./models/preview'));
 app.model(require('./models/history'));
 app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
+// 合作合约
 app.model(require('./models/contract'));
 app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
+// 通道类型协议
 app.model(require('./models/channelsTypeProtocol'));
 app.model(require('./models/channelsEdit'));
 app.model(require('./models/taskList/tasklist'));
 app.model(require('./models/taskList/performerView'));
 app.model(require('./models/taskList/managerView'));
+// 零售非零售客户划转
+app.model(require('./models/demote'));
+// 分公司客户划转
+app.model(require('./models/filialeCustTransfer'));
 
 // 4. Router
 app.router(routerConfig);
