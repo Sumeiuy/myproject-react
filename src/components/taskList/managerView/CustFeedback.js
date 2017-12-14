@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-13 18:07:15
+ * @Last Modified time: 2017-12-14 15:35:41
  * 客户反馈
  */
 
@@ -30,7 +30,7 @@ const EMPTY_LIST = [];
 
 // 一级反馈颜色表
 const getLevelColor = (index, alpha = 1) => {
-  switch (Number(index)) {
+  switch (Math.ceil(Number(index))) {
     case 0:
       return `rgba(57,131,255,${alpha})`;
     case 1:
@@ -158,30 +158,57 @@ export default class CustFeedback extends PureComponent {
     let level1Data = custFeedback;
     // 然后添加颜色
     // let count = 0;
-    level1Data = _.map(level1Data, (item, index) => ({
-      ...item,
-      color: getLevelColor(index, 1),
-      children: _.map(item.children, (itemData, childIndex) => ({
-        ...itemData,
-        color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
-      })),
-    }));
+    level1Data = _.map(level1Data, (item, index) => {
+      const currentLevel1ItemColor = getLevelColor(index, 1);
+      return {
+        ...item,
+        color: currentLevel1ItemColor,
+        itemStyle: {
+          normal: {
+            color: currentLevel1ItemColor,
+          },
+        },
+        children: _.map(item.children, (itemData, childIndex) => {
+          let alpha = 1 - (Number(childIndex) * 0.2);
+          if (alpha <= 0.4) {
+            alpha = 0.4;
+          }
+          const currentColor = getLevelColor(index, alpha);
+          return {
+            ...itemData,
+            color: currentColor,
+          };
+        }),
+      };
+    });
 
     // 构造二级数据源
     let level2Data = [];
 
     _.each(level1Data, (item, index) => {
       if (!_.isEmpty(item.children)) {
-        level2Data.push(_.map(item.children, (itemData, childIndex) => ({
-          value: itemData.value,
-          name: itemData.name,
-          color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
-          parent: {
-            name: item.name,
-            value: item.value,
-            color: getLevelColor(index, 1),
-          },
-        })));
+        level2Data.push(_.map(item.children, (itemData, childIndex) => {
+          let alpha = 1 - (Number(childIndex) * 0.2);
+          if (alpha <= 0.4) {
+            alpha = 0.4;
+          }
+          const currentLevel2ItemColor = getLevelColor(index, alpha);
+          return {
+            value: itemData.value,
+            name: itemData.name,
+            color: currentLevel2ItemColor,
+            itemStyle: {
+              normal: {
+                color: currentLevel2ItemColor,
+              },
+            },
+            parent: {
+              name: item.name,
+              value: item.value,
+              color: getLevelColor(index, 1),
+            },
+          };
+        }));
       }
     });
 
@@ -313,8 +340,14 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item => <div className={styles.content} key={item.key}>{item.name}：
-              <span>{Number(item.value) * 100}%</span></div>,
+              _.map(level1Data, item =>
+                <div
+                  className={styles.content}
+                  key={item.key}
+                >
+                  <i className={styles.parentIcon} style={{ background: item.color }} />
+                  <span>{item.name}</span>：<span>{Number(item.value) * 100}%</span>
+                </div>,
               )}
           </div>
         </div>
