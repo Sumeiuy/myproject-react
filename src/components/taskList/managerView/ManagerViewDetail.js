@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-12 13:56:40
+ * @Last Modified time: 2017-12-13 13:38:16
  * 管理者视图详情
  */
 
@@ -16,6 +16,7 @@ import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
+import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
@@ -142,7 +143,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 客户来源说明
       custSourceDesc,
       // 任务描述
-      // missionDesc,
+      missionDesc,
     } = mngrMissionDetailInfo;
 
     return (
@@ -164,12 +165,17 @@ export default class ManagerViewDetail extends PureComponent {
             servicePolicy={servicePolicy}
             // 父容器宽度变化,默认宽度窄
             isFold={isFold}
+          />
+          <TargetCustomer
+            // 父容器宽度变化,默认宽度窄
+            isFold={isFold}
             // 客户来源
             custSource={custSource}
             // 客户总数
             custTotal={custNumbers}
             // 客户来源说明
             custSourceDescription={custSourceDesc}
+            // 预览明细客户
             onPreview={this.handlePreview}
           />
           <GroupModal
@@ -222,11 +228,10 @@ export default class ManagerViewDetail extends PureComponent {
               width: 1080,
             }}
             modalWidth={1080}
-            onOkHandler={this.handleUpdateGroup}
           />
         </div>
         <div className={styles.descriptionSection}>
-          <MissionDescription missionDescription={''} />
+          <MissionDescription missionDescription={missionDesc} />
         </div>
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
