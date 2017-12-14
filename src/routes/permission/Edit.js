@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2017-12-07 17:41:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-14 10:05:35
+ * @Last Modified time: 2017-12-14 10:54:13
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva-react-router-3/router';
@@ -19,7 +19,7 @@ import style from './edit.less';
 
 const { permission: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
-const TESTFLOWID = 'CA423344E701C24EA21885ADEE02760A';
+const TESTFLOWID = '033A44673244674BA29F17905F825F78';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
