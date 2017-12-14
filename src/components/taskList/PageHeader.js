@@ -156,19 +156,6 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-  // 视图不同时间显示不同
-  @autobind
-  handleSelectTimeChange(key, v) {
-    console.log(key, v);
-    console.log(today, beforeToday, afterToday);
-    this.setState({
-      [key]: v,
-    });
-    this.props.filterCallback({
-      [key]: v,
-    });
-  }
-
   // 任务名称搜索
   @autobind
   handleSearchChange(value) {
@@ -361,7 +348,7 @@ export default class Pageheader extends PureComponent {
               name="missionViewType"
               value={missionViewTypeValue}
               data={chooseMissionViewOptions}
-              onChange={this.handleSelectTimeChange}
+              onChange={this.handleSelectChange}
             />
           </div>
 
