@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-11 13:22:52
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-11 20:21:03
+ * @Last Modified time: 2017-12-14 09:47:47
  */
 import { demote as api } from '../api';
 
@@ -48,17 +48,5 @@ export default {
       });
     },
   },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname }) => {
-        if (pathname === '/demote') {
-          // 进入页面查询降级客户列表
-          const payload = {
-            time: '20180101', // TODO ,测试数据，等删除
-          };
-          dispatch({ type: 'getCustList', payload });
-        }
-      });
-    },
-  },
+  subscriptions: {},
 };

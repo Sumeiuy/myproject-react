@@ -1,5 +1,9 @@
-/**
- * 分公司客户划转相关接口
+/*
+ * @Author: XuWenKang
+ * @Description 分公司客户划转相关接口
+ * @Date: 2017-12-13 10:16:45
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-12-13 10:17:28
  */
 
 export default function cust(api) {

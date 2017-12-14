@@ -1,11 +1,11 @@
 /*
- * @Description: 分公司客户划转 model
  * @Author: XuWenKang
- * @Date: 2017-12-06 15:13:30
+ * @Description: 分公司客户划转modal
+ * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-06 15:13:30
+ * @Last Modified time: 2017-12-13 14:23:47
  */
-import { message } from 'antd';
+
 import { filialeCustTransfer as api } from '../api';
 import { emp } from '../../src/helper';
 
@@ -67,6 +67,14 @@ export default {
         newManagerList: newResultData,
       };
     },
+    emptyQueryDataSuccess(state) {
+      return {
+        ...state,
+        custList: EMPTY_LIST,
+        managerData: EMPTY_LIST,
+        newManagerList: EMPTY_LIST,
+      };
+    },
   },
   effects: {
     // 查询客户列表
@@ -113,10 +121,13 @@ export default {
     },
     // 提交保存
     * saveChange({ payload }, { call }) {
-      const response = yield call(api.saveChange, payload);
-      if (response.msg === 'OK') {
-        message.success('提交成功');
-      }
+      yield call(api.saveChange, payload);
+    },
+    // 提交成功后清除上一次的数据
+    * emptyQueryData({ payload }, { put }) {
+      yield put({
+        type: 'emptyQueryDataSuccess',
+      });
     },
   },
   subscriptions: {

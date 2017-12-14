@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 09:42:54
+ * @Last Modified time: 2017-12-14 17:32:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,10 +15,11 @@ import _ from 'lodash';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
-import { seibelConfig, fspContainer } from '../../config';
+import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { closeRctTabById } from '../../utils/fspGlobal';
+import { env } from '../../helper';
 
 import styles from './home.less';
 
@@ -59,6 +60,8 @@ const mapDispatchToProps = {
   selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
   saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
+  // 提交成功后清除上一次查询的数据
+  emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -80,6 +83,8 @@ export default class FilialeCustTransfer extends PureComponent {
     managerData: PropTypes.array,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
+    // 提交成功后清除上一次查询的数据
+    emptyQueryData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -188,15 +193,38 @@ export default class FilialeCustTransfer extends PureComponent {
       orgName: newManager.newOrgName,
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
+    }).then(() => {
+      message.success('划转成功');
+      this.emptyData();
     });
   }
 
   // 取消
   @autobind
   handleCancel() {
-    if (document.querySelector(fspContainer.container)) {
-      closeRctTabById('FSP_BUSINESS_APPLYMENT_CUST');
+    if (env.isInFsp) {
+      closeRctTabById('FSP_CROSS_DEPARTMENT');
     }
+  }
+
+  // 提交成功后清空数据
+  @autobind
+  emptyData() {
+    const { emptyQueryData } = this.props;
+    this.setState({
+      client: EMPTY_OBJECT,
+      newManager: EMPTY_OBJECT,
+    }, () => {
+      if (this.queryCustComponent) {
+        this.queryCustComponent.clearValue();
+        this.queryCustComponent.clearSearchValue();
+      }
+      if (this.queryManagerComponent) {
+        this.queryManagerComponent.clearValue();
+        this.queryManagerComponent.clearSearchValue();
+      }
+      emptyQueryData();
+    });
   }
 
   render() {
@@ -221,6 +249,7 @@ export default class FilialeCustTransfer extends PureComponent {
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
                   boxStyle={dropDownSelectBoxStyle}
+                  ref={ref => this.queryCustComponent = ref}
                 />
               </InfoForm>
             </div>
@@ -234,6 +263,7 @@ export default class FilialeCustTransfer extends PureComponent {
                   emitSelectItem={this.handleSelectNewManager}
                   emitToSearch={this.handleSearchNewManager}
                   boxStyle={dropDownSelectBoxStyle}
+                  ref={ref => this.queryManagerComponent = ref}
                 />
               </InfoForm>
             </div>

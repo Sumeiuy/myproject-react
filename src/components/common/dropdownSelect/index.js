@@ -138,7 +138,7 @@ export default class DropdownSelect extends PureComponent {
   @autobind
   handleChangeSearchValue(e) {
     this.setState({
-      searchValue: e.target.value,
+      searchValue: _.trim(e.target.value),
     });
   }
 
