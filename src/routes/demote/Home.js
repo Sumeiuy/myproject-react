@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-12 12:01:13
+ * @Last Modified time: 2017-12-14 10:26:47
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import { message } from 'antd';
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import { time, env } from '../../helper';
+import { time, env, dom } from '../../helper';
 import config from './config';
 import styles from './home.less';
 
@@ -56,14 +56,29 @@ export default class Demote extends PureComponent {
       currentPage: 1,
       pageSize: 10,
       data: [],
-      disabled: false,
+      clicked: sessionStorage.demoteClicked,
     };
   }
 
   componentDidMount() {
+    const { getCustList } = this.props;
+    const payload = {
+      time: '20180101', // TODO ,测试数据，等删除
+    };
+    getCustList(payload);
     // 监听window.onResize事件
     this.registerWindowResize();
     this.setContentHeight();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { custList: preCL } = this.props;
+    const { custList: nextCL } = nextProps;
+    if (preCL !== nextCL) {
+      this.setState({
+        data: nextCL,
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -86,9 +101,9 @@ export default class Demote extends PureComponent {
 
   @autobind
   onSubmit() {
-    const { location: { query: { notifiId } }, updateCust, replace } = this.props;
+    const { location: { query: { notifiId } }, updateCust } = this.props;
     const { data } = this.state;
-    const checkedData = _.filter(data, o => o.checked);
+    const checkedData = _.filter(data, o => !o.checked);
     const result = checkedData.map(item => item.econNum);
     const payload = {
       cust: result,
@@ -97,14 +112,11 @@ export default class Demote extends PureComponent {
     };
     updateCust(payload).then(() => {
       message.success('操作成功');
-      replace('/empty');
+      sessionStorage.demoteClicked = true;
+      this.setState({
+        clicked: true,
+      });
     });
-  }
-
-  @autobind
-  onCancel() {
-    const { replace } = this.props;
-    replace('/empty');
   }
 
   @autobind
@@ -127,17 +139,9 @@ export default class Demote extends PureComponent {
     const pageContainer = document.querySelector(config.container);
     const pageContent = document.querySelector(config.content);
     const childDiv = pageContent.querySelector('div');
-    this.setElementStyle(pageContainer, `${pch}px`);
-    this.setElementStyle(pageContent, '100%');
-    this.setElementStyle(childDiv, '100%');
-  }
-
-  // 设置元素的style样式值，默认设置其height的值
-  @autobind
-  setElementStyle(e, v, p = 'height') {
-    if (e) {
-      e.style[p] = v;
-    }
+    dom.setStyle(pageContainer, 'height', `${pch}px`);
+    dom.setStyle(pageContent, 'height', '100%');
+    dom.setStyle(childDiv, 'height', '100%');
   }
 
   // 注册window的resize事件
@@ -153,11 +157,12 @@ export default class Demote extends PureComponent {
     const pageContainer = document.querySelector(config.container);
     const pageContent = document.querySelector(config.content);
     const childDiv = pageContent.querySelector('div');
-    this.setElementStyle(pageContainer, 'auto');
-    this.setElementStyle(pageContent, 'auto');
-    this.setElementStyle(childDiv, 'auto');
+    dom.setStyle(pageContainer, 'height', 'auto');
+    dom.setStyle(pageContent, 'height', 'auto');
+    dom.setStyle(childDiv, 'height', 'auto');
   }
 
+  // 切换表格的 switch 事件
   @autobind
   checkTableData(checked, record, index) {
     const { data, currentPage, pageSize } = this.state;
@@ -167,10 +172,8 @@ export default class Demote extends PureComponent {
       ...newData[idx],
       checked,
     };
-    const checkedData = _.filter(newData, o => o.checked);
     this.setState({
       data: newData,
-      disabled: _.isEmpty(checkedData),
     });
   }
 
@@ -182,11 +185,10 @@ export default class Demote extends PureComponent {
       },
       operate: this.checkTableData,
     };
-    const { disabled } = this.state;
-    const { custList } = this.props;
-    const noData = _.isEmpty(custList);
-    const date = noData ? '' : moment(time.format(custList[0].endDate));
-    if (noData) {
+    const { data, clicked } = this.state;
+    const noData = _.isEmpty(data);
+    const date = noData ? '' : moment(time.format(data[0].endDate));
+    if (noData || clicked) {
       return (
         <div className={styles.demoteWrapper}>
           <h2>您的划转操作正在进行中或者您暂时没有可以划转为零售的客户。</h2>
@@ -201,12 +203,12 @@ export default class Demote extends PureComponent {
             超过{date.format('YYYY年MM月DD日')}，未做确认，系统将自动划转！</span>
         </h2>
         <CommonTable
-          data={custList}
+          data={data}
           titleList={config.titleList}
           operation={operation}
           pagination={{
             size: 'small',
-            total: custList.length,
+            total: data.length,
             defaultPageSize: 10,
             current: this.state.currentPage,
             onChange: this.onChange,
@@ -218,11 +220,9 @@ export default class Demote extends PureComponent {
           <Button
             type="primary"
             onClick={this.onSubmit}
-            disabled={disabled}
           >
             提交
           </Button>
-          <Button onClick={this.onCancel}>取消</Button>
         </div>
       </div>
     );
