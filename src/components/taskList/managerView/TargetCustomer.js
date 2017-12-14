@@ -1,0 +1,156 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-12-13 10:41:33
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-13 13:35:59
+ * 管理者视图右侧目标客户
+ */
+
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+import classnames from 'classnames';
+import { autobind } from 'core-decorators';
+import { Row, Col } from 'antd';
+import LabelInfo from '../common/LabelInfo';
+import TipsInfo from '../performerView/TipsInfo';
+import styles from './targetCustomer.less';
+
+// 暂时的来源类型，具体需要和后端定一下
+const sourceType = [{
+  key: 'import',
+  value: '客户细分导入',
+},
+{
+  key: 'sightLabel',
+  value: '瞄准镜标签',
+}];
+
+export default class TargetCustomer extends PureComponent {
+
+  static propTypes = {
+    // 父容器宽度变化,默认宽度窄
+    isFold: PropTypes.bool,
+    // 客户来源
+    custSource: PropTypes.string,
+    // 客户总数
+    custTotal: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    // 客户来源说明
+    custSourceDescription: PropTypes.string,
+    // 预览客户明细
+    onPreview: PropTypes.func,
+  }
+
+  static defaultProps = {
+    isFold: false,
+    custSource: '',
+    custTotal: '',
+    custSourceDescription: '',
+    onPreview: () => { },
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      overlayTop: 0,
+    };
+  }
+
+  /**
+   * 浮层渲染到父节点
+   */
+  @autobind
+  getPopupContainer() {
+    return this.custTotalTipElem;
+  }
+
+  @autobind
+  handlePreview() {
+    const { onPreview } = this.props;
+    onPreview();
+  }
+
+  @autobind
+  handleMouseOver() {
+    if (this.custTotalTipElem) {
+      this.setState({
+        overlayTop: this.custTotalTipElem.getBoundingClientRect().top,
+      });
+    }
+  }
+
+  render() {
+    const {
+      isFold,
+      custSource = 'import',
+      custSourceDescription,
+      custTotal,
+    } = this.props;
+    const { overlayTop } = this.state;
+    const posi = 'rightBottom';
+    const colSpanValue = isFold ? 12 : 24;
+    return (
+      <div className={styles.targetCustomerSection}>
+        <LabelInfo value="目标客户" />
+        <div className={styles.targetCustomerContent}>
+          {
+            !_.isEmpty(_.find(sourceType, item => item.key === custSource)) ?
+              <div>
+                <Row className={styles.rowItem}>
+                  <Col span={colSpanValue} className={styles.colItem}>
+                    <span className={styles.label}>客户来源:&nbsp;</span>
+                    <span className={styles.content}>{custSource || '--'}</span>
+                  </Col>
+                  <Col span={colSpanValue} className={styles.colItem}>
+                    <span
+                      className={classnames({
+                        [styles.label]: true,
+                      })}
+                    >客户总数:&nbsp;</span>
+                    <span
+                      className={classnames({
+                        [styles.custTotal]: true,
+                        [styles.content]: true,
+                      })}
+                      onClick={this.handlePreview}
+                    >{Number(custTotal) || 0}</span>
+                    {/**
+                     * 机构名变量，需要替换
+                     */}
+                    <span
+                      className={styles.custTotalTooltip}
+                      onMouseOver={this.handleMouseOver}
+                      ref={ref => (this.custTotalTipElem = ref)}
+                    >
+                      <TipsInfo
+                        title={'当前{机构名}有效客户总数'}
+                        position={posi}
+                        wrapperClass={classnames({
+                          [styles.custNumberTips]: true,
+                        })}
+                        overlayStyle={{
+                          top: overlayTop,
+                        }}
+                        getPopupContainer={this.getPopupContainer}
+                      />
+                    </span>
+                  </Col>
+                </Row>
+                <Row className={styles.rowItem}>
+                  <Col className={styles.colItem}>
+                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
+                    <p className={`${styles.content} ${styles.servicePolicy}`}>
+                      {custSourceDescription || '--'}
+                    </p>
+                  </Col>
+                </Row>
+              </div> : null
+          }
+        </div>
+      </div>
+    );
+  }
+}

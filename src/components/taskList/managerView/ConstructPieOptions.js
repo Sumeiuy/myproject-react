@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export default {};
 
 export const constructPieOptions = (options) => {
@@ -37,17 +39,7 @@ export const constructPieOptions = (options) => {
           },
         },
         data: level1Data,
-        color: [
-          'rgba(57,131,255,1)',
-          'rgba(74,218,213,1)',
-          'rgba(117,111,184,1)',
-          'rgba(255,78,123,1)',
-          'rgba(255,178,78,1)',
-          'rgba(112,195,129,1)',
-          'rgba(241,222,90,1)',
-          'rgba(120,146,98,1)',
-          'rgba(255,120,78,1)',
-        ],
+        color: _.map(level1Data, item => item.color),
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },
@@ -62,7 +54,7 @@ export const constructPieOptions = (options) => {
           },
         },
         data: level2Data,
-        color: ['#a7effa', '#7be8f7', '#23d8f2', '#c0bbff', '#948de9', '#756fb8', '#a3cbf8', '#4897f1'],
+        color: _.map(level2Data, item => item.color),
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },

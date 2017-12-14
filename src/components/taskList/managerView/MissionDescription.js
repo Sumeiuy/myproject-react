@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 16:21:27
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-04 16:28:04
+ * @Last Modified time: 2017-12-13 13:37:47
  * 任务描述
  */
 
@@ -28,12 +28,11 @@ export default class MissionDescription extends PureComponent {
       missionDescription,
     } = this.props;
 
-    // const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.missionDescriptionSection}>
         <LabelInfo value={'描述'} />
         <div className={styles.content}>
-          {missionDescription || '这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述'}
+          {missionDescription || '--'}
         </div>
       </div>
     );

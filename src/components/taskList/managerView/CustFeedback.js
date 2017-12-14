@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-12 18:00:41
+ * @Last Modified time: 2017-12-13 18:07:15
  * 客户反馈
  */
 
@@ -29,44 +29,30 @@ const EMPTY_LIST = [];
 //   'rgba(255,120,78,1)',
 
 // 一级反馈颜色表
-// const level1Color = [
-//   {
-//     key: 1,
-//     color: 'rgba(57,131,255,1)',
-//   },
-//   {
-//     key: 2,
-//     color: 'rgba(74,218,213,1)',
-//   },
-//   {
-//     key: 3,
-//     color: 'rgba(117,111,184,1)',
-//   },
-//   {
-//     key: 4,
-//     color: 'rgba(255,78,123,1)',
-//   },
-//   {
-//     key: 5,
-//     color: 'rgba(255,178,78,1)',
-//   },
-//   {
-//     key: 6,
-//     color: 'rgba(112,195,129,1)',
-//   },
-//   {
-//     key: 7,
-//     color: 'rgba(241,222,90,1)',
-//   },
-//   {
-//     key: 8,
-//     color: 'rgba(120,146,98,1)',
-//   },
-//   {
-//     key: 9,
-//     color: 'rgba(255,120,78,1)',
-//   },
-// ];
+const getLevelColor = (index, alpha = 1) => {
+  switch (Number(index)) {
+    case 0:
+      return `rgba(57,131,255,${alpha})`;
+    case 1:
+      return `rgba(74,218,213,${alpha})`;
+    case 2:
+      return `rgba(117,111,184,${alpha})`;
+    case 3:
+      return `rgba(255,78,123,${alpha})`;
+    case 4:
+      return `rgba(255,178,78,${alpha})`;
+    case 5:
+      return `rgba(112,195,129,${alpha})`;
+    case 6:
+      return `rgba(241,222,90,${alpha})`;
+    case 7:
+      return `rgba(120,146,98,${alpha})`;
+    case 8:
+      return `rgba(255,120,78,${alpha})`;
+    default:
+      return '#fff';
+  }
+};
 
 export default class CustFeedback extends PureComponent {
 
@@ -111,7 +97,7 @@ export default class CustFeedback extends PureComponent {
 
   @autobind
   renderCustFeedbackChart(custFeedback) {
-    // const level1Data = [
+    // let level1Data = [
     //   {
     //     name: '前端',
     //     key: 'frontend',
@@ -169,18 +155,31 @@ export default class CustFeedback extends PureComponent {
     // ];
 
     // 前后台定义返回的格式可以直接给一级饼图作数据源
-    const level1Data = custFeedback;
+    let level1Data = custFeedback;
+    // 然后添加颜色
+    // let count = 0;
+    level1Data = _.map(level1Data, (item, index) => ({
+      ...item,
+      color: getLevelColor(index, 1),
+      children: _.map(item.children, (itemData, childIndex) => ({
+        ...itemData,
+        color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
+      })),
+    }));
+
     // 构造二级数据源
     let level2Data = [];
 
-    _.each(level1Data, (item) => {
+    _.each(level1Data, (item, index) => {
       if (!_.isEmpty(item.children)) {
-        level2Data.push(_.map(item.children, itemData => ({
+        level2Data.push(_.map(item.children, (itemData, childIndex) => ({
           value: itemData.value,
           name: itemData.name,
+          color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
           parent: {
             name: item.name,
             value: item.value,
+            color: getLevelColor(index, 1),
           },
         })));
       }
@@ -200,7 +199,7 @@ export default class CustFeedback extends PureComponent {
     let childrenElem = '';
     _.each(children, item =>
       childrenElem += `<div class="item">
-          <span class="icon"></span>
+          <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
           <span class="percent">${Number(item.value) * 100}%</span>
         </div>`,
@@ -314,7 +313,7 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item => <div className={styles.content}>{item.name}：
+              _.map(level1Data, item => <div className={styles.content} key={item.key}>{item.name}：
               <span>{Number(item.value) * 100}%</span></div>,
               )}
           </div>
