@@ -39,6 +39,7 @@ import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
+import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
@@ -71,7 +72,10 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
-      <Route path="permission" component={PermissonHome} />
+      <Route path="permission">
+        <IndexRoute component={PermissonHome} />
+        <Route path="edit" component={PermissonEdit} />
+      </Route>
       <Route path="relation" component={RelationHome} />
       <Route path="contract">
         <IndexRoute component={Contract} />
