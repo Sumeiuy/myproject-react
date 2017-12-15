@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-14 15:35:41
+ * @Last Modified time: 2017-12-15 12:01:01
  * 客户反馈
  */
 
@@ -97,6 +97,7 @@ export default class CustFeedback extends PureComponent {
 
   @autobind
   renderCustFeedbackChart(custFeedback) {
+    // 等联调完毕删除
     // let level1Data = [
     //   {
     //     name: '前端',
@@ -157,7 +158,6 @@ export default class CustFeedback extends PureComponent {
     // 前后台定义返回的格式可以直接给一级饼图作数据源
     let level1Data = custFeedback;
     // 然后添加颜色
-    // let count = 0;
     level1Data = _.map(level1Data, (item, index) => {
       const currentLevel1ItemColor = getLevelColor(index, 1);
       return {
@@ -169,11 +169,7 @@ export default class CustFeedback extends PureComponent {
           },
         },
         children: _.map(item.children, (itemData, childIndex) => {
-          let alpha = 1 - (Number(childIndex) * 0.2);
-          if (alpha <= 0.4) {
-            alpha = 0.4;
-          }
-          const currentColor = getLevelColor(index, alpha);
+          const currentColor = this.getCurrentColor(index, childIndex);
           return {
             ...itemData,
             color: currentColor,
@@ -188,11 +184,7 @@ export default class CustFeedback extends PureComponent {
     _.each(level1Data, (item, index) => {
       if (!_.isEmpty(item.children)) {
         level2Data.push(_.map(item.children, (itemData, childIndex) => {
-          let alpha = 1 - (Number(childIndex) * 0.2);
-          if (alpha <= 0.4) {
-            alpha = 0.4;
-          }
-          const currentLevel2ItemColor = getLevelColor(index, alpha);
+          const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
           return {
             value: itemData.value,
             name: itemData.name,
@@ -219,6 +211,20 @@ export default class CustFeedback extends PureComponent {
       level1Data,
       level2Data,
     };
+  }
+
+  /**
+   * 根据当前索引换算透明度，从1开始，0.2往下递减，减到0.2就不再递减
+   * @param {*string} index 索引
+   * @param {*string} childIndex child索引
+   */
+  @autobind
+  getCurrentColor(index, childIndex) {
+    let alpha = 1 - (Number(childIndex) * 0.2);
+    if (alpha <= 0.2) {
+      alpha = 0.2;
+    }
+    return getLevelColor(index, alpha);
   }
 
   @autobind

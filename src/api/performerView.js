@@ -26,5 +26,7 @@ export default function performerView(api) {
     queryMngrMissionDetailInfo: query => api.post('/groovynoauth/fsp/campaign/mot/queryMngrMissionDetailInfo', query),
     // 管理者视图客户反馈一二级
     countFlowFeedBack: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowFeedBack', query),
+    // 管理者视图任务实施进度
+    countFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowStatus', query),
   };
 }
