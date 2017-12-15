@@ -54,7 +54,6 @@ export default class Demote extends PureComponent {
     super(props);
     // 从 sessionStorage 中找此字段判断是否成功提交过，供前端判断是否显示数据用
     const clicked = sessionStorage.getItem('demoteClicked') || false;
-    console.warn('clicked', clicked);
     this.state = {
       currentPage: 1,
       pageSize: 10,
