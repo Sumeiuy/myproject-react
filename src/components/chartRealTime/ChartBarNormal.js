@@ -24,8 +24,7 @@ import {
 } from './FixNumber';
 import { data } from '../../helper';
 import IECharts from '../IECharts';
-import { iconTypeMap, ZHUNICODE, constants } from '../../config';
-import report from '../../helper/page/report';
+import { iconTypeMap, ZHUNICODE } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from './noChart.png';
@@ -42,7 +41,6 @@ const {
   UNDISTRIBUTED,
   YUANNIAN,
 } = ZHUNICODE;
-const defaultFilialeLevel = constants.filialeLevel;
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -109,8 +107,7 @@ export default class ChartBarNormal extends PureComponent {
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
-            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              String(Number(item.level) + 2) : String(Number(item.level) + 1),
+            scope: Number(item.level) + 1,
           });
         }
       });
@@ -262,10 +259,8 @@ export default class ChartBarNormal extends PureComponent {
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
-    // 财富中心
-    const levelWealthArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
     // 营业部
-    const levelStoreArr = this.getChartData(orgModel, 'level4Name', 'yAxis');
+    const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 取出所有的value,并将value转化成数字
@@ -379,34 +374,14 @@ export default class ChartBarNormal extends PureComponent {
         if (axisValue === '--') {
           value = '--';
         }
-
         let tooltipHead = '';
-        const hasFundCenter = levelWealthArr[dataIndex] !== '--';
-        if (levelAndScope === 5 && axisValue !== '--' && hasFundCenter) {
-          // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
-          tooltipHead = `
-            <tr>
-              <td>${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]} - ${levelStoreArr[dataIndex]}</td>
-            </tr>
-          `;
-        } else if (levelAndScope === 5 && axisValue !== '--' && !hasFundCenter) {
-          // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
+        if (levelAndScope === 4 && axisValue !== '--') {
           tooltipHead = `
             <tr>
               <td>${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}</td>
             </tr>
           `;
-        } else if (levelAndScope === 4 && axisValue !== '--' && hasFundCenter) {
-          // 4为营业部,需要显示南京公司名称-财富中心(南京分公司有财富中心)
-          tooltipHead = `
-            <tr>
-              <td>${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]}</td>
-            </tr>
-          `;
-        } else if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter) ||
-          (levelAndScope === 3 && axisValue !== '--')) {
-          // 3为财富中心，需要显示南京分公司
-          // 4为营业部,只需要显示xx公司名称(非南京分公司没有有财富中心)
+        } else if (levelAndScope === 3 && axisValue !== '--') {
           tooltipHead = `
             <tr>
               <td>${levelCompanyArr[dataIndex]}</td>

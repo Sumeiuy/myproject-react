@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-11 14:13:26
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-22 15:08:30
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 
@@ -54,9 +54,6 @@ const data = {
     arr.forEach((v) => {
       if (v.children) {
         tmpArr = [...tmpArr, ...v.children];
-        v.children.forEach((child) => {
-          tmpArr = [...tmpArr, ...child.children];
-        });
       }
     });
     return tmpArr;
