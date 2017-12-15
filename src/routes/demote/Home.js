@@ -36,7 +36,7 @@ const mapDispatchToProps = {
 // 获取左侧列表
   getCustList: fetchDataFunction(true, 'demote/getCustList'),
   // 获取客户列表
-  updateCust: fetchDataFunction(false, 'demote/updateCust'),
+  updateCust: fetchDataFunction(true, 'demote/updateCust'),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -52,11 +52,13 @@ export default class Demote extends PureComponent {
 
   constructor(props) {
     super(props);
+    // 从 sessionStorage 中找此字段判断是否成功提交过，供前端判断是否显示数据用
+    const clicked = sessionStorage.getItem('demoteClicked') || false;
     this.state = {
       currentPage: 1,
       pageSize: 10,
       data: [],
-      clicked: sessionStorage.demoteClicked,
+      clicked,
     };
   }
 
@@ -112,7 +114,8 @@ export default class Demote extends PureComponent {
     };
     updateCust(payload).then(() => {
       message.success('操作成功');
-      sessionStorage.demoteClicked = true;
+      // 设置 sessionStorage ，以此字段判断是否成功提交过，供前端判断是否显示数据用
+      sessionStorage.setItem('demoteClicked', true);
       this.setState({
         clicked: true,
       });
