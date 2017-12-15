@@ -118,11 +118,10 @@ export default class EditForm extends PureComponent {
       } else {
         custOperate = false;
       }
-      if (protocolDetail.operationType === '协议退订') {
+      if (_.includes(unSubscribeArray, protocolDetail.operationType)) {
         hasCust = custAttachment[0];
       }
     }
-
     // 找出需要必传的数组
     const requiredArr = attachmentRequired[hasCust];
     // 清空附件数组的必传项
@@ -186,7 +185,10 @@ export default class EditForm extends PureComponent {
           return newItem;
         });
       }
-      const hasCust = nextPD.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
+      let hasCust = nextPD.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
+      if (_.includes(unSubscribeArray, nextPD.operationType)) {
+        hasCust = custAttachment[0];
+      }
       this.setState({
         // 附件类型列表
         attachmentTypeList: assignAttachment,
