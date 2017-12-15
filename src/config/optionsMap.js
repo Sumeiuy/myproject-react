@@ -115,14 +115,10 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '财富中心',
-      },
-      {
-        scope: '4',
         name: '营业部',
       },
       {
-        scope: '5',
+        scope: '4',
         name: '投顾',
       },
     ],
@@ -133,14 +129,10 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '财富中心',
-      },
-      {
-        scope: '4',
         name: '营业部',
       },
       {
-        scope: '5',
+        scope: '4',
         name: '服务经理',
       },
     ],
@@ -151,14 +143,10 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '财富中心',
-      },
-      {
-        scope: '4',
         name: '营业部',
       },
       {
-        scope: '5',
+        scope: '4',
         name: '投顾',
       },
     ],
@@ -169,14 +157,10 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '财富中心',
-      },
-      {
-        scope: '4',
         name: '营业部',
       },
       {
-        scope: '5',
+        scope: '4',
         name: '服务经理',
       },
     ],

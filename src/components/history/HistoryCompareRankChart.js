@@ -11,7 +11,6 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { optionsMap } from '../../config';
-import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import HistoryRankChart from '../chartRealTime/HistoryRankChart';
 import imgStr from '../chartRealTime/noChart.png';
@@ -28,6 +27,7 @@ const sortByOrderSelect = sortByOrder.map((item, index) => {
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 
+
 export default class HistoryCompareRankChart extends PureComponent {
   static propTypes = {
     level: PropTypes.string,
@@ -38,14 +38,12 @@ export default class HistoryCompareRankChart extends PureComponent {
     changeRankBar: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
-    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     level: '1', // 当前组织结构级别
     scope: '2', // 查询数据的维度
     boardType: 'TYPE_LSDB_TGJX', // 维度下拉框选项配置的默认值
-    orgId: '',
   }
 
   constructor(props) {
@@ -178,7 +176,6 @@ export default class HistoryCompareRankChart extends PureComponent {
       boardType,
       updateQueryState,
       data: { historyCardRecordVo },
-      orgId,
     } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
     let { unit } = this.state;
@@ -190,12 +187,7 @@ export default class HistoryCompareRankChart extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 ||
-        Number(level) === 4 ||
-        (Number(level) === 2 && !report.isNewOrg(orgId)),
-    });
-    const toggleScope4Option = classnames({
-      hideOption: Number(level) === 4,
+      hideOption: Number(level) === 3,
     });
     // 是否隐藏翻页按钮
     const togglePageFlip = classnames({
@@ -252,12 +244,8 @@ export default class HistoryCompareRankChart extends PureComponent {
                     optionClass = toggleScope2Option;
                   }
                   if (index === 1) {
-                    // 按财富中心
-                    optionClass = toggleScope3Option;
-                  }
-                  if (index === 2) {
                     // 按营业部
-                    optionClass = toggleScope4Option;
+                    optionClass = toggleScope3Option;
                   }
                   return (
                     <Option

@@ -10,11 +10,9 @@ import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 
 import { event } from '../../helper';
-import report from '../../helper/page/report';
 import { constants } from '../../config';
 import styles from './custRange.less';
 
-const defaultFilialeLevel = constants.filialeLevel;
 function transformCustRangeData(list, parent = '') {
   return list.map((item) => {
     const obj = {
@@ -159,8 +157,7 @@ export default class CustRange extends PureComponent {
       orgId,
       custRangeLevel,
       level: custRangeLevel,
-      scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId)) ?
-        (String(Number(custRangeLevel) + 2)) : (String(Number(custRangeLevel) + 1)),
+      scope: Number(custRangeLevel) + 1,
     });
   }
 

@@ -8,7 +8,6 @@
 import moment from 'moment';
 import _ from 'lodash';
 import { ZHUNICODE } from '../../config';
-import isNewOrg from '../config/report';
 
 const report = {
   /**
@@ -147,15 +146,6 @@ const report = {
       end: lastEndMoment,
     };
     return compareDuration;
-  },
-
-  /**
-   * 判断是否是新的组织机构(包含财富中心层级)
-   * @param {String} orgId 组织机构的orgId
-   * @returns {bool}
-   */
-  isNewOrg(orgId) {
-    return _.includes(isNewOrg, orgId);
   },
 };
 

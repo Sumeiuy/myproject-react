@@ -3,10 +3,7 @@
  * @author sunweibin
  */
 import { report as api } from '../api';
-import { request, BoardBasic, constants } from '../config';
-import report from '../helper/page/report';
-
-const defaultFilialeLevel = constants.filialeLevel;
+import { request, BoardBasic } from '../config';
 
 export default {
   namespace: 'report',
@@ -163,15 +160,11 @@ export default {
         payload: { resPerformance },
       });
       // 所有分类指标的数据
-      let temporaryScope = String(Number(firstCust.level) + 1);
-      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
-        temporaryScope = String(Number(firstCust.level) + 2);
-      }
       const resChartInfo = yield call(api.getChartInfo, {
         ...payload.chartInfo,
         localScope: payload.chartInfo.localScope || firstCust.level,
         orgId: payload.chartInfo.orgId || firstCust.id,
-        scope: payload.chartInfo.scope || temporaryScope,
+        scope: payload.chartInfo.scope || String(Number(firstCust.level) + 1),
       });
       yield put({
         type: 'getChartInfoSuccess',
