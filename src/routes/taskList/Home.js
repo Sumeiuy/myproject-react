@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
@@ -36,6 +37,10 @@ const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
+
+const today = moment(new Date()).format('YYYY-MM-DD');
+const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
+const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -226,10 +231,16 @@ export default class PerformerView extends PureComponent {
       query: {
           pageNum,
         pageSize,
+        missionViewType,
         },
       },
     } = this.props;
-    this.queryAppList(query, pageNum, pageSize);
+    console.log('missionViewType-->', missionViewType);
+    if (missionViewType === INITIATOR) {
+      this.queryAppListInit(query, pageNum, pageSize, beforeToday, today, true);
+    } else {
+      this.queryAppListInit(query, pageNum, pageSize, today, afterToday);
+    }
   }
 
   // 获取列表后再获取某个Detail
@@ -439,10 +450,49 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
+  // 头部筛选请求
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getTaskList } = this.props;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getTaskList({ ...params }).then(this.getRightDetail);
+  }
+
+  // 第一次加载请求
+  @autobind
+  queryAppListInit(query, pageNum = 1, pageSize = 10, createTimeStart, createTimeEnd,
+    isCreat = false) {
+    const { getTaskList, location, replace } = this.props;
+    const { pathname } = location;
+    const item = this.constructViewPostBody(query, pageNum, pageSize);
+    const params = isCreat ? { ...item, createTimeEnd, createTimeStart } :
+      { ...item, endTimeStart: createTimeEnd, endTimeEnd: createTimeStart };
+    if (isCreat) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          pageNum: 1,
+          createTimeStart,
+          createTimeEnd,
+          endTimeStart: null,
+          endTimeEnd: null,
+        },
+      });
+    } else {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          pageNum: 1,
+          endTimeStart: createTimeStart,
+          endTimeEnd: createTimeEnd,
+          createTimeStart: null,
+          createTimeEnd: null,
+        },
+      });
+    }
     // 默认筛选条件
     getTaskList({ ...params }).then(this.getRightDetail);
   }
@@ -535,6 +585,7 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    console.log(obj);
     replace({
       pathname,
       query: {

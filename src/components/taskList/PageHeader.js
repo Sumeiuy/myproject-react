@@ -148,10 +148,48 @@ export default class Pageheader extends PureComponent {
   // select改变
   @autobind
   handleSelectChange(key, v) {
+    const { location: { query: {
+      createTimeStart,
+      createTimeEnd,
+      endTimeStart,
+      endTimeEnd } } } = this.props;
+    let starts;
+    let ends;
+    // 根据选择视图判断具体视图，给定默认时间请求
+    if (key === 'missionViewType') {
+      // 判断具体视图给定默认时间请求
+      if (v === 'initiator') {
+        starts = moment(beforeToday).format('YYYY-MM-DD');
+        ends = moment(today).format('YYYY-MM-DD');
+        this.props.filterCallback({
+          [key]: v,
+          createTimeStart: starts,
+          createTimeEnd: ends,
+          endTimeStart: null,
+          endTimeEnd: null,
+        });
+      } else {
+        starts = moment(today).format('YYYY-MM-DD');
+        ends = moment(afterToday).format('YYYY-MM-DD');
+        this.props.filterCallback({
+          [key]: v,
+          createTimeStart: null,
+          createTimeEnd: null,
+          endTimeStart: starts,
+          endTimeEnd: ends,
+        });
+      }
+    } else {
+      // 不是视图选择时发送请求
+      this.props.filterCallback({
+        [key]: v,
+        createTimeStart,
+        createTimeEnd,
+        endTimeStart,
+        endTimeEnd,
+      });
+    }
     this.setState({
-      [key]: v,
-    });
-    this.props.filterCallback({
       [key]: v,
     });
   }
@@ -254,19 +292,35 @@ export default class Pageheader extends PureComponent {
 
   // 选择不同视图创建时间不同是
   renderTime(startTime, endTime, isInitiator) {
-    return (
-      <div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        {isInitiator ? '创建时间' : '结束时间'}:
+    const item = isInitiator;
+    const value = item ?
+      (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
+        创建时间:
         <div className={styles.dropDownSelectBox}>
           <RangePicker
-            value={[startTime, endTime]}
+            ref={ref => this.timers = ref}
+            defaultValue={[startTime, endTime]}
             onChange={this.handleDateChange}
             placeholder={['开始时间', '结束时间']}
-            disabledDate={isInitiator ? this.disabledDateStart : this.disabledDateEnd}
+            disabledDate={this.disabledDateStart}
+            key="创建时间"
           />
         </div>
-      </div>
-    );
+      </div>) :
+      (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
+        结束时间:
+        <div className={styles.dropDownSelectBox}>
+          <RangePicker
+            defaultValue={[startTime, endTime]}
+            onChange={this.handleDateChange}
+            placeholder={['开始时间', '结束时间']}
+            disabledDate={this.disabledDateEnd}
+            key="结束时间"
+          />
+        </div>
+      </div>);
+
+    return value;
   }
 
   render() {
@@ -330,7 +384,7 @@ export default class Pageheader extends PureComponent {
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
     const statusValue = !_.isEmpty(status) ? status : '所有状态';
     const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
-    console.warn('missionViewTypeValue-->', missionViewTypeValue);
+    // console.warn('missionViewTypeValue-->', missionViewTypeValue);
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
