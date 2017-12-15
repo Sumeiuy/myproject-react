@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-15 12:00:55
+ * @Last Modified time: 2017-12-15 14:14:15
  * 任务实施简报
  */
 
@@ -36,11 +36,10 @@ export default class MissionImplementation extends PureComponent {
     onPreviewCustDetail: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
-    collectCustRange: PropTypes.func,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     // 获取任务实施进度
-    getFlowStatus: PropTypes.func.isRequired,
+    countFlowStatus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,7 +48,6 @@ export default class MissionImplementation extends PureComponent {
     isFold: false,
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
-    collectCustRange: () => { },
   }
 
   constructor(props) {
@@ -93,11 +91,13 @@ export default class MissionImplementation extends PureComponent {
     onPreviewCustDetail();
   }
 
+  /**
+   * 机构树的change回调
+   */
   @autobind
-  updateQueryState(value) {
-    console.log(value);
-    const { getFlowStatus } = this.props;
-    getFlowStatus();
+  collectCustRange(value) {
+    const { countFlowStatus } = this.props;
+    countFlowStatus(value);
   }
 
   /**
@@ -170,11 +170,11 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   renderTabsExtra() {
-    const { collectCustRange, replace, location } = this.props;
+    const { replace, location } = this.props;
     const {
       expandAll,
-      createCustRange,
       isDown,
+      createCustRange,
     } = this.state;
 
     // curOrgId   客户范围回填
@@ -191,12 +191,11 @@ export default class MissionImplementation extends PureComponent {
     const extraProps = {
       custRange: createCustRange,
       replace,
-      updateQueryState: this.updateQueryState,
+      collectCustRange: this.collectCustRange,
       expandAll,
       location,
       orgId: MAIN_MAGEGER_ID,
       isDown,
-      collectCustRange,
       iconType: 'juxing23',
     };
     return (<TabsExtra {...extraProps} />);

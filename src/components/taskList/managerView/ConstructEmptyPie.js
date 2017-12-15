@@ -12,7 +12,7 @@ export const constructEmptyPie = () => ({
           show: true,
           position: 'center',
           fontSize: 14,
-          color: '#333',
+          color: '#a1a1a1',
         },
         emphasis: {
           show: true,

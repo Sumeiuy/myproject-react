@@ -48,7 +48,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务实施进度
     missionImplementationDetail: PropTypes.object.isRequired,
     // 获取任务实施进度
-    getFlowStatus: PropTypes.func.isRequired,
+    countFlowStatus: PropTypes.func.isRequired,
     // 任务基本信息
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     // 发起新任务
@@ -124,7 +124,7 @@ export default class ManagerViewDetail extends PureComponent {
       empInfo,
       location,
       replace,
-      getFlowStatus,
+      countFlowStatus,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -243,7 +243,7 @@ export default class ManagerViewDetail extends PureComponent {
             empInfo={empInfo}
             location={location}
             replace={replace}
-            getFlowStatus={getFlowStatus}
+            countFlowStatus={countFlowStatus}
           />
         </div>
         <div className={styles.missionFeedbackSection}>
