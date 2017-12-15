@@ -37,7 +37,6 @@ const afterToday = moment(today).add(60, 'days');
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
     // 新建

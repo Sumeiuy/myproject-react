@@ -22,6 +22,8 @@ export default {
     mngrMissionDetailInfo: EMPTY_OBJ,
     // 客户反馈一二级数据
     custFeedback: EMPTY_LIST,
+    // 任务实施进度数据
+    missionImplementationDetail: EMPTY_OBJ,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -50,6 +52,13 @@ export default {
       return {
         ...state,
         custFeedback: payload,
+      };
+    },
+    countFlowStatusSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        missionImplementationDetail: payload,
       };
     },
   },
@@ -83,6 +92,13 @@ export default {
       const { resultData } = yield call(api.countFlowFeedBack, payload);
       yield put({
         type: 'countFlowFeedBackSuccess',
+        payload: resultData,
+      });
+    },
+    * countFlowStatus({ payload }, { call, put }) {
+      const { resultData } = yield call(api.countFlowStatus, payload);
+      yield put({
+        type: 'countFlowStatusSuccess',
         payload: resultData,
       });
     },

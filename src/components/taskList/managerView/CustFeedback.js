@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-13 18:07:15
+ * @Last Modified time: 2017-12-15 12:01:01
  * 客户反馈
  */
 
@@ -30,7 +30,7 @@ const EMPTY_LIST = [];
 
 // 一级反馈颜色表
 const getLevelColor = (index, alpha = 1) => {
-  switch (Number(index)) {
+  switch (Math.ceil(Number(index))) {
     case 0:
       return `rgba(57,131,255,${alpha})`;
     case 1:
@@ -97,6 +97,7 @@ export default class CustFeedback extends PureComponent {
 
   @autobind
   renderCustFeedbackChart(custFeedback) {
+    // 等联调完毕删除
     // let level1Data = [
     //   {
     //     name: '前端',
@@ -157,31 +158,49 @@ export default class CustFeedback extends PureComponent {
     // 前后台定义返回的格式可以直接给一级饼图作数据源
     let level1Data = custFeedback;
     // 然后添加颜色
-    // let count = 0;
-    level1Data = _.map(level1Data, (item, index) => ({
-      ...item,
-      color: getLevelColor(index, 1),
-      children: _.map(item.children, (itemData, childIndex) => ({
-        ...itemData,
-        color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
-      })),
-    }));
+    level1Data = _.map(level1Data, (item, index) => {
+      const currentLevel1ItemColor = getLevelColor(index, 1);
+      return {
+        ...item,
+        color: currentLevel1ItemColor,
+        itemStyle: {
+          normal: {
+            color: currentLevel1ItemColor,
+          },
+        },
+        children: _.map(item.children, (itemData, childIndex) => {
+          const currentColor = this.getCurrentColor(index, childIndex);
+          return {
+            ...itemData,
+            color: currentColor,
+          };
+        }),
+      };
+    });
 
     // 构造二级数据源
     let level2Data = [];
 
     _.each(level1Data, (item, index) => {
       if (!_.isEmpty(item.children)) {
-        level2Data.push(_.map(item.children, (itemData, childIndex) => ({
-          value: itemData.value,
-          name: itemData.name,
-          color: getLevelColor(index, 1 - ((Number(childIndex) + 1) / 10)),
-          parent: {
-            name: item.name,
-            value: item.value,
-            color: getLevelColor(index, 1),
-          },
-        })));
+        level2Data.push(_.map(item.children, (itemData, childIndex) => {
+          const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
+          return {
+            value: itemData.value,
+            name: itemData.name,
+            color: currentLevel2ItemColor,
+            itemStyle: {
+              normal: {
+                color: currentLevel2ItemColor,
+              },
+            },
+            parent: {
+              name: item.name,
+              value: item.value,
+              color: getLevelColor(index, 1),
+            },
+          };
+        }));
       }
     });
 
@@ -192,6 +211,20 @@ export default class CustFeedback extends PureComponent {
       level1Data,
       level2Data,
     };
+  }
+
+  /**
+   * 根据当前索引换算透明度，从1开始，0.2往下递减，减到0.2就不再递减
+   * @param {*string} index 索引
+   * @param {*string} childIndex child索引
+   */
+  @autobind
+  getCurrentColor(index, childIndex) {
+    let alpha = 1 - (Number(childIndex) * 0.2);
+    if (alpha <= 0.2) {
+      alpha = 0.2;
+    }
+    return getLevelColor(index, alpha);
   }
 
   @autobind
@@ -313,8 +346,14 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item => <div className={styles.content} key={item.key}>{item.name}：
-              <span>{Number(item.value) * 100}%</span></div>,
+              _.map(level1Data, item =>
+                <div
+                  className={styles.content}
+                  key={item.key}
+                >
+                  <i className={styles.parentIcon} style={{ background: item.color }} />
+                  <span>{item.name}</span>：<span>{Number(item.value) * 100}%</span>
+                </div>,
               )}
           </div>
         </div>
