@@ -75,13 +75,13 @@ export default class EditModal extends Component {
   // 弹框的默认显示
   getDefultValue(defultItem) {
     let select = {};
-    const { name = '', title = '', code = '' } = defultItem || {};
-    if (!_.isEmpty(name) || !_.isEmpty(code)) {
-      select = { name, code };
+    const { loginName = '', postnDesc = '', login = '' } = defultItem || {};
+    if (!_.isEmpty(loginName) || !_.isEmpty(login)) {
+      select = { name: loginName, code: login };
     } else {
       select = {};
     }
-    return { select, teamName: title };
+    return { select, teamName: postnDesc };
   }
   // 校验数据
   @autobind
@@ -132,7 +132,8 @@ export default class EditModal extends Component {
 
   @autobind
   handleSelect(obj) {
-    this.setState({ select: obj, teamName: `${obj.name}团队` });
+    const { ptyMngName, ptyMngId } = obj;
+    this.setState({ select: { name: ptyMngName, code: ptyMngId, ...obj }, teamName: `${ptyMngName}团队` });
   }
 
   @autobind
@@ -152,7 +153,7 @@ export default class EditModal extends Component {
 
   @autobind
   renderContent() {
-    const { modalType, list } = this.props;
+    const { modalType, list = [] } = this.props;
     const { teamName, select } = this.state;
     const { name = '--', code = '--' } = select;
     const titles = _.isEmpty(modalType) ? titleArray.manager : titleArray[modalType];
@@ -163,8 +164,8 @@ export default class EditModal extends Component {
           <div className={styles.inputColumn}>
             <DropDownSelect
               placeholder="工号/姓名"
-              showObjKey="name"
-              objId="code"
+              showObjKey="ptyMngName"
+              objId="ptyMngId"
               value={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
               searchList={list}
               emitSelectItem={this.handleSelect}

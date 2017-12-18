@@ -44,18 +44,23 @@
     .cycle {
       width: 16px;
       height: 16px;
-      line-height: 16px;
+      line-height: 14.5px;
       border-radius: 50%;
       margin-right: 19px;
       background-color: #4897f1;
       color: #fff;
       font-size: 9px;
       text-align: center;
+      padding-right: 2px;
     }
     .centerName {
       font-size: 14px;
       color: #000;
       letter-spacing: -0.09px;
+      min-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .selectMenu {
@@ -117,6 +122,13 @@
     }
     .ant-menu-item:active, .ant-menu-submenu-title:active {
       background: #fff;
+    }
+  }
+}
+.centerTreeContainer {
+  :global {
+    .ant-menu-submenu-inline > .ant-menu-submenu-title:after {
+      display: none;
     }
   }
 }
