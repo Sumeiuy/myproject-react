@@ -152,32 +152,32 @@ export default class Pageheader extends PureComponent {
       createTimeEnd,
       endTimeStart,
       endTimeEnd } } } = this.props;
-    let starts;
-    let ends;
+
     // 根据选择视图判断具体视图，给定默认时间请求
     if (key === 'missionViewType') {
       // 判断具体视图给定默认时间请求
-      if (v === 'initiator') {
-        starts = moment(beforeToday).format('YYYY-MM-DD');
-        ends = moment(today).format('YYYY-MM-DD');
-        this.props.filterCallback({
-          [key]: v,
-          createTimeStart: starts,
-          createTimeEnd: ends,
-          endTimeStart: null,
-          endTimeEnd: null,
-        });
-      } else {
-        starts = moment(today).format('YYYY-MM-DD');
-        ends = moment(afterToday).format('YYYY-MM-DD');
-        this.props.filterCallback({
-          [key]: v,
-          createTimeStart: null,
-          createTimeEnd: null,
-          endTimeStart: starts,
-          endTimeEnd: ends,
-        });
-      }
+      // if (v === 'initiator') {
+      //   starts = moment(beforeToday).format('YYYY-MM-DD');
+      //   ends = moment(today).format('YYYY-MM-DD');
+      //   this.props.filterCallback({
+      //     [key]: v,
+      //     createTimeStart: starts,
+      //     createTimeEnd: ends,
+      //     endTimeStart: null,
+      //     endTimeEnd: null,
+      //   });
+      // } else {
+      //   starts = moment(today).format('YYYY-MM-DD');
+      //   ends = moment(afterToday).format('YYYY-MM-DD');
+      //   this.props.filterCallback({
+      //     [key]: v,
+      //     createTimeStart: null,
+      //     createTimeEnd: null,
+      //     endTimeStart: starts,
+      //     endTimeEnd: ends,
+      //   });
+      // }
+      this.handleSelectTime(key, v, beforeToday, today, afterToday);
     } else {
       // 不是视图选择时发送请求
       this.props.filterCallback({
@@ -191,6 +191,33 @@ export default class Pageheader extends PureComponent {
     this.setState({
       [key]: v,
     });
+  }
+
+  // 根据已选视图给定默认时间
+  handleSelectTime(key, v, before, todays, after) {
+    let starts;
+    let ends;
+    if (v === 'initiator') {
+      starts = moment(before).format('YYYY-MM-DD');
+      ends = moment(todays).format('YYYY-MM-DD');
+      this.props.filterCallback({
+        [key]: v,
+        createTimeStart: starts,
+        createTimeEnd: ends,
+        endTimeStart: null,
+        endTimeEnd: null,
+      });
+    } else {
+      starts = moment(todays).format('YYYY-MM-DD');
+      ends = moment(after).format('YYYY-MM-DD');
+      this.props.filterCallback({
+        [key]: v,
+        createTimeStart: null,
+        createTimeEnd: null,
+        endTimeStart: starts,
+        endTimeEnd: ends,
+      });
+    }
   }
 
   // 任务名称搜索

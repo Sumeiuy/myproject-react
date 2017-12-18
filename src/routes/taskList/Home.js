@@ -235,7 +235,6 @@ export default class PerformerView extends PureComponent {
         },
       },
     } = this.props;
-    console.log('missionViewType-->', missionViewType);
     if (missionViewType === INITIATOR) {
       this.queryAppListInit(query, pageNum, pageSize, beforeToday, today, true);
     } else {
@@ -462,13 +461,13 @@ export default class PerformerView extends PureComponent {
   // 第一次加载请求
   @autobind
   queryAppListInit(query, pageNum = 1, pageSize = 10, createTimeStart, createTimeEnd,
-    isCreat = false) {
+    isCreate = false) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
     const item = this.constructViewPostBody(query, pageNum, pageSize);
-    const params = isCreat ? { ...item, createTimeEnd, createTimeStart } :
+    const params = isCreate ? { ...item, createTimeEnd, createTimeStart } :
       { ...item, endTimeStart: createTimeEnd, endTimeEnd: createTimeStart };
-    if (isCreat) {
+    if (isCreate) {
       replace({
         pathname,
         query: {
@@ -585,7 +584,6 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    console.log(obj);
     replace({
       pathname,
       query: {
