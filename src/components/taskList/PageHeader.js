@@ -155,28 +155,6 @@ export default class Pageheader extends PureComponent {
 
     // 根据选择视图判断具体视图，给定默认时间请求
     if (key === 'missionViewType') {
-      // 判断具体视图给定默认时间请求
-      // if (v === 'initiator') {
-      //   starts = moment(beforeToday).format('YYYY-MM-DD');
-      //   ends = moment(today).format('YYYY-MM-DD');
-      //   this.props.filterCallback({
-      //     [key]: v,
-      //     createTimeStart: starts,
-      //     createTimeEnd: ends,
-      //     endTimeStart: null,
-      //     endTimeEnd: null,
-      //   });
-      // } else {
-      //   starts = moment(today).format('YYYY-MM-DD');
-      //   ends = moment(afterToday).format('YYYY-MM-DD');
-      //   this.props.filterCallback({
-      //     [key]: v,
-      //     createTimeStart: null,
-      //     createTimeEnd: null,
-      //     endTimeStart: starts,
-      //     endTimeEnd: ends,
-      //   });
-      // }
       this.handleSelectTime(key, v, beforeToday, today, afterToday);
     } else {
       // 不是视图选择时发送请求
