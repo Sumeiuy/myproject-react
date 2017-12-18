@@ -35,19 +35,16 @@
       div:not(:last-child) {
         margin-bottom: 5px;
       }
-      div.content {
-        &:before {
-          content: "";
-          width: 10px;
-          height: 10px;
-          display: inline-block;
-          z-index: -1;
-          background: #000;
-          left: -15px;
-          top: -15px;
-          border-radius: 50%;
-          margin-right: 10px;
-        }
+      div > .parentIcon {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        z-index: -1;
+        background: #000;
+        left: -15px;
+        top: -15px;
+        border-radius: 50%;
+        margin-right: 10px;
       }
       div.emptyContent {
         font-size: 14px;

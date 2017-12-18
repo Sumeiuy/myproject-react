@@ -272,10 +272,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 检查资讯订阅
       const {
         approverId,
+        newSubProList,
         canShowAppover,
       } = this.subBoard.getData();
       if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
+        result = false;
+      }
+      if (_.isEmpty(newSubProList)) {
+        message.error('资讯订购产品不能为空');
         result = false;
       }
     } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
@@ -283,9 +288,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
       const {
         approverId, // 审批人工号
         canShowAppover,
+        newUnSubProList,
       } = this.unSubBoard.getData();
       if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
+        result = false;
+      }
+      if (_.isEmpty(newUnSubProList)) {
+        message.error('资讯退订产品不能为空');
         result = false;
       }
     }

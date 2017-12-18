@@ -505,17 +505,17 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      taskId: record.id,
+      missionId: record.id,
       orgId: emp.getOrgId(),
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
-      taskId: record.id,
+      missionId: record.id,
       orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
-      taskId: record.id,
+      missionId: record.id,
       orgId: emp.getOrgId(),
     });
   }

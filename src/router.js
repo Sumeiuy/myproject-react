@@ -35,12 +35,14 @@ import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 import PermissonHome from './routes/permission/Home';
+import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
 import Demote from './routes/demote/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
+import RelationHome from './routes/relation/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -56,8 +58,15 @@ const routes = [
   { path: '/commission', component: CommissionHome },
   { path: '/commissionChange', component: CommissionChangeHome },
   { path: '/modal', component: TemplModal },
-  { path: '/permission', component: PermissonHome },
+  { path: '/relation', component: RelationHome },
   { path: '/taskList', component: TaskListHome },
+  {
+    path: '/permission',
+    component: PermissonHome,
+    children: [
+      { path: '/edit', component: PermissonEdit },
+    ],
+  },
   { path: '/contract',
     component: Contract,
     children: [

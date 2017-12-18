@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 10:01:21
+ * @Last Modified time: 2017-12-18 14:24:14
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { Input } from 'antd';
-// import moment from 'moment';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -20,6 +19,7 @@ import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
 import { protocolIsShowSwitch } from '../../utils/permission';
 import { time } from '../../helper';
+import config from '../../routes/channelsTypeProtocol/config';
 
 import styles from './editBaseInfo.less';
 
@@ -33,9 +33,7 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 订购的value
-const subscribe = 'Subscribe';
-const subscribeText = '协议订购';
+const { subscribeArray } = config;
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -51,9 +49,6 @@ export default class EditBaseInfo extends PureComponent {
     queryChannelProtocolItem: PropTypes.func.isRequired,
     // 查询协议产品列表
     queryChannelProtocolProduct: PropTypes.func.isRequired,
-    // 查询协议编号
-    // onSearchProtocolNum: PropTypes.func.isRequired,
-    // protocolNumList: PropTypes.array,
     // 编辑时传入元数据
     formData: PropTypes.object,
     // 查询协议接口
@@ -85,7 +80,6 @@ export default class EditBaseInfo extends PureComponent {
   static defaultProps = {
     formData: EMPTY_OBJECT,
     getProtocolDetail: () => {},
-    protocolNumList: EMPTY_ARRAY,
     operationTypeList: EMPTY_ARRAY,
     onChangeMultiCustomer: () => {},
     resetUpload: () => {},
@@ -108,7 +102,7 @@ export default class EditBaseInfo extends PureComponent {
     const isEditPage = pathname.indexOf('/edit') > -1;
     let flag = false;
     if (!_.isEmpty(formData)) {
-      flag = formData.operationType === subscribeText;
+      flag = _.includes(subscribeArray, formData.operationType);
     }
     let stateObj = {};
     if (isEditPage) {
@@ -241,7 +235,7 @@ export default class EditBaseInfo extends PureComponent {
     let sub = true;
     let needMutliAndTen = this.state.needMutliAndTen;
     if (key === 'operationType') {
-      sub = value === subscribe;
+      sub = _.includes(subscribeArray, value);
       if (sub) {
         needMutliAndTen = true;
       }
@@ -293,7 +287,7 @@ export default class EditBaseInfo extends PureComponent {
         // this.clearValue();
       } else if (key === 'operationType') {
         const { subType } = this.state;
-        if (value === subscribe) {
+        if (_.includes(subscribeArray, value)) {
           // 子类型发生变化且为订购时查询协议模板列表
           queryTypeVaules({
             typeCode: 'templateId',

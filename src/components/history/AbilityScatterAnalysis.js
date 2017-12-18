@@ -529,11 +529,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       hideOption: Number(level) === 3,
     });
 
-
-    if (_.isEmpty(finalData)) {
-      return null;
-    }
-
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
 
     return (
@@ -549,18 +544,22 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.title}>{title}</div>
           <div className={styles.customerDimensionSelect}>
             <span className={styles.contrastType}>{contrastType}</span>
-            <Select
-              onChange={this.handleChange}
-              allowClear={false}
-              placeholder="无"
-              value={selectValue} // 默认选中项
-              dropdownClassName={styles.custDimenSelect}
-            >
-              {
-                !_.isEmpty(finalOptions) ? finalOptions.map(item =>
-                  <Option value={item.value} key={item.key}>{item.label}</Option>) : null
-              }
-            </Select>
+            {
+              _.isEmpty(finalOptions) ?
+              null :
+              <Select
+                onChange={this.handleChange}
+                allowClear={false}
+                placeholder="无"
+                value={selectValue} // 默认选中项
+                dropdownClassName={styles.custDimenSelect}
+              >
+                {
+                  !_.isEmpty(finalOptions) ? finalOptions.map(item =>
+                    <Option value={item.value} key={item.key}>{item.label}</Option>) : null
+                }
+              </Select>
+            }
           </div>
           <div className={styles.customerDimensionSelect}>
             <Select
@@ -607,7 +606,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
             <div>
               {
                 // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
-              scopeSelectValue === '4' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum') ?
+              (scopeSelectValue === '4' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum')) ||
+              _.isEmpty(finalData) ?
                 <div className={styles.noChart}>
                   <img src={imgSrc} alt="无对应数据" />
                   <div className={styles.noChartTip}>无对应数据</div>

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:34:09
+ * @Last Modified time: 2017-12-18 14:14:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -27,6 +27,8 @@ import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApp
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
+import config from './config';
+
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -38,18 +40,13 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
+const { subscribeArray, unSubscribeArray, tenHQ, tipsMap } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
   forceFull,
 });
-
-// 订购的value
-const subscribe = 'Subscribe';
-const unSubscribe = 'Unsubscribe';
-const tenHQ = '紫金快车道十档行情';
-// const addDel = 'AddDel';
 const mapStateToProps = state => ({
   // 查询左侧列表
   seibleList: state.app.seibleList,
@@ -88,7 +85,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
-  getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
+  getSeibleList: fetchDataFunction(true, 'app/getSeibleList', true),
   // 获取客户列表
   getCanApplyCustList: fetchDataFunction(true, 'app/getCanApplyCustList', true),
   // 获取右侧详情
@@ -395,7 +392,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   checkFormDataIsLegal(formData) {
     // 如果操作类型是退订并且协议模版是十档行情，不进行验证
     if (formData.templateId === tenHQ &&
-      formData.operationType === unSubscribe) {
+      _.includes(unSubscribeArray, formData.operationType)) {
       return true;
     }
     if (!formData.subType) {
@@ -410,7 +407,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       message.error('请选择客户');
       return false;
     }
-    if (formData.operationType !== subscribe) {
+    if (!_.includes(subscribeArray, formData.operationType)) {
       if (!formData.agreementNum) {
         message.error('请选择协议编号');
         return false;
@@ -430,12 +427,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    const tipsMap = {
-      Unsubscribe: '锁定期不允许退出，是否确认要退出该协议', // 退订时弹框提示语
-      Subscribe: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！', // 订购时弹框提示语,
-    };
-    if (formData.operationType === unSubscribe ||
-      formData.operationType === subscribe) {
+    if (_.includes(unSubscribeArray, formData.operationType) ||
+      _.includes(subscribeArray, formData.operationType)) {
       confirm({
         title: '提示',
         content: tipsMap[formData.operationType],

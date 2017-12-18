@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:34:03
+ * @Last Modified time: 2017-12-18 15:20:33
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,8 @@ import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApp
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
+import config from './config';
+
 import styles from './edit.less';
 
 const confirm = Modal.confirm;
@@ -38,14 +40,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   payload: query || {},
   loading: globalLoading,
 });
-// 终止按钮
-const btnEnd = 'FINISH';
-// 终止文字
-const textEnd = 'falseOver';
 
-const unSubscribe = 'Unsubscribe';
-const tenHQ = '紫金快车道十档行情';
-
+const { btnEnd, textEnd, unSubscribeArray, tenHQ } = config;
 const mapStateToProps = state => ({
   // 子类型、操作类型、协议模版
   subTypeList: state.channelsEdit.subTypeList,
@@ -215,7 +211,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   checkFormDataIsLegal(formData) {
     // 如果操作类型是退订并且协议模版是十档行情，不进行验证
     if (formData.templateId === tenHQ &&
-      formData.operationType === unSubscribe) {
+      _.includes(unSubscribeArray, formData.operationType)) {
       return true;
     }
     if (!formData.templateId) {

@@ -34,7 +34,7 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   static defaultProps = {
-    displayText: '详情',
+    displayText: '峰值和最近收益',
   }
 
   constructor(props) {
@@ -134,7 +134,7 @@ export default class SixMonthEarnings extends PureComponent {
         </div>
         <div className={styles.chartsText}>
           <div>
-            <p className="tit">12个月峰值</p>
+            <p className="tit">本年峰值</p>
             <p className="asset">
               <span className="num">{maxTotAsetYValue}</span>
               <span className="unit">{maxTotAsetYUnit}</span>
