@@ -39,6 +39,7 @@ export default class PageHeader extends PureComponent {
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     orgId: PropTypes.string,
+    maxData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -139,6 +140,7 @@ export default class PageHeader extends PureComponent {
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
+      maxData,
     } = this.props;
     const { top, left, width } = this.state;
     return (
@@ -183,6 +185,7 @@ export default class PageHeader extends PureComponent {
                   replace={replace}
                   updateQueryState={updateQueryState}
                   collectData={collectDurationSelect}
+                  maxData={maxData}
                 />
                 <div className={styles.vSplit} />
                 {/* 营业地址选择项 */}

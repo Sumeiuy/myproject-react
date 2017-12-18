@@ -24,6 +24,7 @@ const defaultBoardType = constants.boardType;
 const defaultFilialeLevel = constants.filialeLevel;
 
 const effects = {
+  maxDataDt: 'report/getMaxDataDt',
   allInfo: 'report/getAllInfo',
   delReportData: 'report/delReportData',
   chartTableInfo: 'report/getChartTableInfo',
@@ -50,11 +51,14 @@ const mapStateToProps = state => ({
   visibleBoards: state.report.visibleBoards,
   newVisibleBoards: state.report.newVisibleBoards,
   globalLoading: state.activity.global,
+  // 探测有数据的最大时间点接口
+  maxData: state.report.maxData,
 });
 
 const mapDispatchToProps = {
   delReportData: fectchDataFunction(false, effects.delReportData),
   getAllInfo: fectchDataFunction(true, effects.allInfo),
+  getMaxDataDt: fectchDataFunction(true, effects.maxDataDt),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
@@ -96,6 +100,8 @@ export default class ReportHome extends PureComponent {
     reportName: PropTypes.string,
     boardId: PropTypes.number,
     boardType: PropTypes.string,
+    maxData: PropTypes.object.isRequired,
+    getMaxDataDt: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -147,9 +153,15 @@ export default class ReportHome extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // 初始化的时候state里面还无参数
-    this.getInfo();
+    this.props.getMaxDataDt().then(() => {
+      const { maxData } = this.props;
+      const zzjgMaxData = maxData.zzjg;
+      const { begin, end, cycleType } = time.getDurationString('month', zzjgMaxData);
+      // 修改state
+      this.setState({ begin, end, cycleType }, this.getInfo);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -163,22 +175,12 @@ export default class ReportHome extends PureComponent {
 
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
-      const { custRange } = this.props;
-      const { begin, end, cycleType } = time.getDurationString('month');
       // 修改state
       this.setState({
         showCharts: {},
         classifyScope: {},
         classifyOrder: {},
         boardId,
-        begin,
-        end,
-        cycleType,
-        orgId: custRange[0].id,
-        scope: custRange[0].level && custRange[0].level === defaultFilialeLevel &&
-          !report.isNewOrg(custRange[0].id) ?
-          (Number(custRange[0].level) + 2) : (Number(custRange[0].level) + 1),
-        custRangeLevel: custRange[0].level,
       },
       () => {
         this.getInfo();
@@ -350,7 +352,7 @@ export default class ReportHome extends PureComponent {
 
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
-    const { custRange, visibleBoards, newVisibleBoards } = this.props;
+    const { custRange, visibleBoards, newVisibleBoards, maxData } = this.props;
     if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length) {
       return null;
     }
@@ -397,6 +399,7 @@ export default class ReportHome extends PureComponent {
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
+          maxData={maxData}
         />
         <div className={styles.reportBody}>
           <PerformanceItem
