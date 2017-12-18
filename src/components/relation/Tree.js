@@ -15,16 +15,17 @@ import { Menu } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import styles from './tree.less';
-
+// detailTable 组件的三种表格类型
+const TEAM_TABLE = '4';
 const SubMenu = Menu.SubMenu;
 export default class Tree extends Component {
   static propTypes = {
-    treeData: PropTypes.array,
+    treeData: PropTypes.object,
     onSelect: PropTypes.func,
   }
 
   static defaultProps = {
-    treeData: [],
+    treeData: {},
     onSelect: () => {},
     selectKey: '',
   }
@@ -47,12 +48,13 @@ export default class Tree extends Component {
     // 更新数据
     const { selectKey, defultKey } = this.state;
     if (!_.isEmpty(treeData)) {
-      const { children, id } = _.head(treeData);
-      const menuKeys = _.map(children, item => item.id);
+      // orgId 作为唯一标识符
+      const { returnPostnTree, currentPostn: { orgId } } = treeData;
+      const menuKeys = _.map(returnPostnTree, item => item.orgId);
       if (_.isEmpty(selectKey) && _.isEmpty(defultKey)) {
         this.setState(
-          { menuKeys, selectKey: id, defultKey: id },
-          () => { onSelect(this.getItem(id)); },
+          { menuKeys, selectKey: orgId, defultKey: orgId },
+          () => { onSelect(this.getItem(orgId)); },
         );
       } else {
         this.setState({ menuKeys });
@@ -61,28 +63,35 @@ export default class Tree extends Component {
   }
 
   getHeadLine(obj) {
-    const { name = '', id = '' } = _.head(obj) || {};
-    if (!_.isEmpty(name)) {
-      return { title: name, logo: name.substr(0, 1), id };
+    const { orgName = '', orgId } = obj || {};
+    if (!_.isEmpty(orgName)) {
+      return { title: orgName, logo: orgName.substr(0, 1), orgId };
     }
-    return { id };
+    return { orgId };
   }
 
   @autobind
   getItem(key) {
     const { treeData } = this.props;
-    const { id } = _.head(treeData);
-    if (key === id) {
-      return _.head(treeData);
+    const { currentPostn, currentPostn: { orgId }, returnPostnTree } = treeData;
+    if (key === orgId) {
+      return currentPostn;
     }
     const keys = _.split(key, '/');
-    const select = this.getBranchItem(_.head(treeData), keys);
+    const list = { ...(_.omit(treeData, 'returnPostnTree')), children: returnPostnTree };
+    const select = this.getBranchItem(list, keys);
     return select;
   }
 
   @autobind
   getBranchItem(list, keys) {
-    const branchItem = _.find(list.children, item => item.id === keys[0]);
+    const branchItem = _.find(list.children, (item) => {
+      const { postnTypeCD = '' } = item;
+      if (postnTypeCD === TEAM_TABLE) {
+        return item.postnId === keys[0];
+      }
+      return item.orgId === keys[0];
+    });
     if (keys.length === 1) {
       return branchItem;
     }
@@ -148,18 +157,19 @@ export default class Tree extends Component {
 
   @autobind
   renderHeader(obj) {
-    const { title = '--', logo = '--', id = '' } = this.getHeadLine(obj);
+    const { title = '--', logo = '--', orgId = '' } = this.getHeadLine(obj);
     return (
       <div className={styles.header}>
         <div className={styles.logoBg}>
-          <div className={styles.logo} onClick={() => { this.handleLogoClick(id); }}>{logo}</div>
+          <div className={styles.logo} onClick={() => { this.handleLogoClick(orgId); }}>{logo}</div>
         </div>
         <div className={styles.title}>{title}</div>
       </div>
     );
   }
 
-  renderTreeTitle(titleClass, title, isSelectMenu, isSelectSubmenu) {
+  renderTreeTitle(titleClass, item, isSelectMenu, isSelectSubmenu) {
+    const { postnTypeCD, orgName } = item;
     return (
       <div
         className={classnames(
@@ -167,8 +177,8 @@ export default class Tree extends Component {
           { [styles.selectMenu]: isSelectMenu, [styles.selectChild]: isSelectSubmenu },
         )}
       >
-        <div className={styles.cycle}>{'财'}</div>
-        <div className={titleClass}>{title}</div>
+        <div className={styles.cycle}>{(postnTypeCD === TEAM_TABLE) ? '团' : '财'}</div>
+        <div className={titleClass}>{orgName}</div>
       </div>
     );
   }
@@ -182,37 +192,37 @@ export default class Tree extends Component {
     const keys = _.split(selectKey, '/');
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
-    const { children } = _.head(paramData);
+    const screenHeight = document.documentElement.clientHeight;
     return (
       <Menu
         onClick={this.handleSubmenuClick}
         onOpenChange={this.handleOpenClick}
         openKeys={openKeys}
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: `${(screenHeight - 208)}px` }}
         mode="inline"
       >
         {_.map(
-          children,
+          paramData,
           center => (
             <SubMenu
-              key={center.id}
+              key={center.orgId}
               title={this.renderTreeTitle(
                 styles.centerName,
-                center.name,
-                (center.id === selectKey),
-                (isSelectSubmenu && center.id === menuKey),
+                center,
+                (center.orgId === selectKey),
+                (isSelectSubmenu && center.orgId === menuKey),
               )}
             >
               {_.map(
                 center.children,
                 team => (
                   <Menu.Item
-                    key={`${center.id}/${team.id}`}
+                    key={`${center.orgId}/${team.postnId}`}
                     className={classnames(
                       styles.submenu,
-                      { [styles.selectSubmenu]: (`${center.id}/${team.id}` === selectKey) },
+                      { [styles.selectSubmenu]: (`${center.orgId}/${team.postnId}` === selectKey) },
                     )}
-                  >{team.name}</Menu.Item>
+                  >{team.postnDesc}</Menu.Item>
                 ),
               )}
             </SubMenu>
@@ -223,13 +233,18 @@ export default class Tree extends Component {
   }
 
   render() {
-    const { treeData } = this.props;
+    const { treeData: { currentPostn = {}, returnPostnTree = [] } } = this.props;
     const screenHeight = document.documentElement.clientHeight;
     const style = { height: `${(screenHeight - 109)}px` };
+    const menuContainerStyle = {
+      width: '100%',
+      height: `${(screenHeight - 208)}px`,
+      overflow: 'auto',
+    };
     return (
       <div className={styles.treeContainer} style={style}>
-        {this.renderHeader(treeData)}
-        {this.renderTree(treeData)}
+        {this.renderHeader(currentPostn)}
+        <div style={menuContainerStyle}>{this.renderTree(returnPostnTree)}</div>
       </div>
     );
   }
