@@ -22,11 +22,12 @@ export default class QuickMenu extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     custEmail: PropTypes.object.isRequired,
     onSendEmail: PropTypes.func.isRequired,
-    onAddFollow: PropTypes.func.isRequired,
-    currentFollowCustId: PropTypes.string.isRequired,
-    isFollows: PropTypes.object.isRequired,
     emailCustId: PropTypes.string.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
+    condition: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    entertype: PropTypes.string.isRequired,
+    goGroupOrTask: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -84,15 +85,17 @@ export default class QuickMenu extends PureComponent {
     }
     return email;
   }
-
-  @autobind
-  handleAddFollow(listItem) {
-    const { onAddFollow } = this.props;
-    this.setState({
-      isEmail: false,
-    });
-    onAddFollow(listItem);
-  }
+  // @autobind
+  // handleIsEmail(e) {
+  //   const { listItem, onSendEmail } = this.props;
+  //   hrefUrl = e.target.getAttribute('href');
+  //   if (hrefUrl === NO_EMAIL_HREF) {
+  //     onSendEmail(listItem);
+  //   }
+  //   this.setState({
+  //     isEmail: true,
+  //   });
+  // }
 
   @autobind
   handleAddServiceRecordClick(listItem) {
@@ -104,16 +107,41 @@ export default class QuickMenu extends PureComponent {
     });
   }
 
+  @autobind
+  addToGroup({ custId, name }) {
+    const {
+      condition,
+      location: {
+        pathname,
+        search,
+        query: {
+          source,
+        },
+      },
+      entertype,
+      goGroupOrTask,
+    } = this.props;
+    const fr = encodeURIComponent(`${pathname}${search}`);
+    const condt = encodeURIComponent(JSON.stringify(condition));
+    const obj = {
+      ids: custId,
+      count: 1,
+      entertype,
+      source,
+      name,
+      condition: condt,
+      fr,
+    };
+    const url = '/customerPool/customerGroup';
+    goGroupOrTask({ id: 'RCT_FSP_CUSTOMER_LIST', title: '新建分组', url, obj });
+  }
+
   render() {
     const {
       listItem,
       createModal,
-      currentFollowCustId,
-      isFollows,
     } = this.props;
 
-    const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
-      || isFollows[listItem.custId];
     return (
       <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
@@ -127,12 +155,12 @@ export default class QuickMenu extends PureComponent {
             </li>
           </Clickable>
           <Clickable
-            onClick={() => this.handleAddFollow(listItem)}
-            eventName="/click/quickMenu/guanzhu"
+            onClick={() => this.addToGroup(listItem)}
+            eventName="/click/quickMenu/addToGroup"
           >
-            <li className={isFollow ? styles.follows : ''}>
-              <Icon type="guanzhu" />
-              <span>{isFollow ? '已关注' : '关注'}</span>
+            <li>
+              <Icon type="fenzu" />
+              <span>添加到分组</span>
             </li>
           </Clickable>
           <Clickable

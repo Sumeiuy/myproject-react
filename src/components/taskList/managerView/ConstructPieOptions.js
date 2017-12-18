@@ -1,25 +1,16 @@
-import _ from 'lodash';
+// import _ from 'lodash';
 
 export default {};
 
 export const constructPieOptions = (options) => {
   const { renderTooltip, level1Data, level2Data } = options;
+
   return {
     tooltip: {
       trigger: 'item',
-      // a系列名称
-      // b数据项名称
-      // c数值
-      // d百分比
       formatter: params => renderTooltip(params),
       position: 'right',
     },
-    // grid: {
-    //   left: '10%',
-    //   right: '10%',
-    //   bottom: '10%',
-    //   containLabel: true,
-    // },
     series: [
       {
         key: 'level1',
@@ -39,7 +30,6 @@ export const constructPieOptions = (options) => {
           },
         },
         data: level1Data,
-        color: _.map(level1Data, item => item.color),
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },
@@ -54,7 +44,6 @@ export const constructPieOptions = (options) => {
           },
         },
         data: level2Data,
-        color: _.map(level2Data, item => item.color),
         // 高亮扇区的偏移距离
         hoverOffset: 5,
       },

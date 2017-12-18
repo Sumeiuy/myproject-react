@@ -43,25 +43,26 @@ export default class CustomerService extends PureComponent {
   formatterData(finishData, totalData) {
     let finish = 0;
     let unfinished = 100;
-    let finishedName = '暂无数据';
-    let unfinishedName = '';
+    let finishedName = '';
+    let unfinishedName = '暂无数据';
     if (!_.isEmpty(finishData) && !_.isEmpty(totalData) && _.toNumber(totalData) > 0) {
       finish = (_.toNumber(finishData) / _.toNumber(totalData)) * 100;
       unfinished = ((_.toNumber(totalData) - _.toNumber(finishData)) / _.toNumber(totalData)) * 100;
       finishedName = `${parseFloat(finish).toFixed(0)}%`;
       unfinishedName = `${parseFloat(unfinished).toFixed(0)}%`;
     }
-    const textStyle = { show: true, fontSize: '20', fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
-    return [{
-      value: finish,
-      name: finishedName,
+    const isEmpty = _.isEmpty(finishedName) && unfinishedName === '暂无数据';
+    const fontSize = isEmpty ? '16' : '20';
+    const textStyle = { show: true, fontSize, fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
+    const finishLabel = isEmpty ? {} : {
       label: {
         normal: { ...textStyle, position: 'center' },
         emphasis: { ...textStyle },
       },
-    }, {
-      value: unfinished,
-      name: unfinishedName,
+    };
+    const unfinishLabel = isEmpty ? (
+      { label: { normal: { ...textStyle, position: 'center' } } }
+    ) : ({
       label: {
         emphasis: {
           ...textStyle,
@@ -69,7 +70,12 @@ export default class CustomerService extends PureComponent {
           padding: 6, // 增加背景的宽 高
         },
       },
-    }];
+    });
+
+    return [
+      { value: finish, name: finishedName, ...finishLabel },
+      { value: unfinished, name: unfinishedName, ...unfinishLabel },
+    ];
   }
 
   render() {

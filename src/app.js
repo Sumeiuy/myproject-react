@@ -77,6 +77,8 @@ app.model(require('./models/taskList/managerView'));
 app.model(require('./models/demote'));
 // 分公司客户划转
 app.model(require('./models/filialeCustTransfer'));
+// 汇报关系树
+app.model(require('./models/relation'));
 
 // 4. Router
 app.router(routerConfig);

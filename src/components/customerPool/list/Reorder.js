@@ -14,13 +14,25 @@ import Clickable from '../../../components/common/Clickable';
 
 import styles from './reorder.less';
 
+// 激活的样式class
+const ACTIVE = 'active';
+
+// 升序降序的方向值
+const DESC = 'desc';
+const ASC = 'asc';
+
+// 排序的字段
+const OPENDT = 'OpenDt';
+const FEE = 'Fee';
+const ASET = 'Aset';
+
 // 排序的字段配置，方便后面修改
-const openTimeAsc = { sortType: 'OpenDt', sortDirection: 'asc' };
-const openTimeDesc = { sortType: 'OpenDt', sortDirection: 'desc' };
-const commissionAsc = { sortType: 'Fee', sortDirection: 'asc' };
-const commissionDesc = { sortType: 'Fee', sortDirection: 'desc' };
-const totalAssetsAsc = { sortType: 'Aset', sortDirection: 'asc' };
-const totalAssetsDesc = { sortType: 'Aset', sortDirection: 'desc' };
+const openTimeAsc = { sortType: OPENDT, sortDirection: ASC };
+const openTimeDesc = { sortType: OPENDT, sortDirection: DESC };
+const commissionAsc = { sortType: FEE, sortDirection: ASC };
+const commissionDesc = { sortType: FEE, sortDirection: DESC };
+const totalAssetsAsc = { sortType: ASET, sortDirection: ASC };
+const totalAssetsDesc = { sortType: ASET, sortDirection: DESC };
 
 export default class Order extends PureComponent {
 
@@ -31,93 +43,88 @@ export default class Order extends PureComponent {
 
   // 判断点击的按钮，是否添加 class = active
   @autobind
-  getCls(obj) {
-    return _.isEqual(this.props.value, obj) ? 'active' : '';
+  getIconCls(obj) {
+    return _.isEqual(this.props.value, obj) ? ACTIVE : '';
+  }
+
+  // 设置li的class
+  @autobind
+  getItemCls(value) {
+    const { value: { sortType } } = this.props;
+    return sortType === value ? ACTIVE : '';
   }
 
   // 处理点击排序按钮
   @autobind
-  handleSort(obj) {
-    const { onChange } = this.props;
-    this.setState({
-      obj,
-    }, () => {
-      onChange(obj);
+  toggleOrder(st) {
+    const { onChange, value: { sortType, sortDirection } } = this.props;
+    let sd = DESC;
+    if (sortType === st) {
+      sd = sortDirection === DESC ? ASC : DESC;
+    }
+    onChange({
+      sortType: st,
+      sortDirection: sd,
     });
   }
 
   render() {
     return (
       <ul className={styles.reorder}>
-        <li>
-          总资产
-          <div className={styles.btn}>
-            <Clickable
-              onClick={() => this.handleSort(totalAssetsAsc)}
-              eventName="/click/custListOrder/assetsAscOrder"
-            >
+        <Clickable
+          onClick={() => this.toggleOrder(ASET)}
+          eventName="/click/custListOrder/toggleAssetsOrder"
+        >
+          <li className={this.getItemCls(ASET)}>
+            总资产
+            <div className={styles.btn}>
               <Icon
                 type="xiangshang"
-                className={this.getCls(totalAssetsAsc)}
+                className={this.getIconCls(totalAssetsAsc)}
               />
-            </Clickable>
-            <Clickable
-              onClick={() => this.handleSort(totalAssetsDesc)}
-              eventName="/click/custListOrder/assetsDescOrder"
-            >
               <Icon
                 type="xiangxia"
-                className={this.getCls(totalAssetsDesc)}
+                className={this.getIconCls(totalAssetsDesc)}
               />
-            </Clickable>
-          </div>
-        </li>
-        <li>
-          开户时间
-          <div className={styles.btn}>
-            <Clickable
-              onClick={() => this.handleSort(openTimeAsc)}
-              eventName="/click/custListOrder/timeAscOrder"
-            >
+            </div>
+          </li>
+        </Clickable>
+        <Clickable
+          onClick={() => this.toggleOrder(OPENDT)}
+          eventName="/click/custListOrder/toggleOpentimeOrder"
+        >
+          <li className={this.getItemCls(OPENDT)}>
+            开户时间
+            <div className={styles.btn}>
               <Icon
                 type="xiangshang"
-                className={this.getCls(openTimeAsc)}
+                className={this.getIconCls(openTimeAsc)}
               />
-            </Clickable>
-            <Clickable
-              onClick={() => this.handleSort(openTimeDesc)}
-              eventName="/click/custListOrder/timeDescOrder"
-            >
               <Icon
                 type="xiangxia"
-                className={this.getCls(openTimeDesc)}
+                className={this.getIconCls(openTimeDesc)}
               />
-            </Clickable>
-          </div>
-        </li>
-        <li>
-          佣金率
-          <div className={styles.btn}>
-            <Clickable
-              onClick={() => this.handleSort(commissionAsc)}
-              eventName="/click/custListOrder/commissionAscOrder"
-            >
+            </div>
+          </li>
+        </Clickable>
+        <Clickable
+          onClick={() => this.toggleOrder(FEE)}
+          eventName="/click/custListOrder/toggleFeeOrder"
+        >
+          <li className={this.getItemCls(FEE)}>
+            佣金率
+            <div className={styles.btn}>
               <Icon
                 type="xiangshang"
-                className={this.getCls(commissionAsc)}
+                className={this.getIconCls(commissionAsc)}
               />
-            </Clickable>
-            <Clickable
-              onClick={() => this.handleSort(commissionDesc)}
-              eventName="/click/custListOrder/commissionAscOrder"
-            >
               <Icon
                 type="xiangxia"
-                className={this.getCls(commissionDesc)}
+                className={this.getIconCls(commissionDesc)}
               />
-            </Clickable>
-          </div>
-        </li>
+            </div>
+          </li>
+        </Clickable>
       </ul>
     );
   }
