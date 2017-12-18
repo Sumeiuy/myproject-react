@@ -175,22 +175,12 @@ export default class ReportHome extends PureComponent {
 
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
-      const { custRange, maxData } = this.props;
-      const { begin, end, cycleType } = time.getDurationString('month', maxData);
       // 修改state
       this.setState({
         showCharts: {},
         classifyScope: {},
         classifyOrder: {},
         boardId,
-        begin,
-        end,
-        cycleType,
-        orgId: custRange[0].id,
-        scope: custRange[0].level && custRange[0].level === defaultFilialeLevel &&
-          !report.isNewOrg(custRange[0].id) ?
-          (Number(custRange[0].level) + 2) : (Number(custRange[0].level) + 1),
-        custRangeLevel: custRange[0].level,
       },
       () => {
         this.getInfo();

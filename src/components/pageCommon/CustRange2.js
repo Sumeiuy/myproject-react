@@ -103,21 +103,9 @@ export default class CustRange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { boardId } }, custRange, orgId } = nextProps;
-    const { location: { query: { boardId: preBId } }, orgId: preOrgId } = this.props;
+    const { custRange, orgId } = nextProps;
+    const { orgId: preOrgId } = this.props;
     const { formatCustRange } = this.state;
-    if (Number(boardId || '1') !== Number(preBId || '1')) {
-      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
-      const initValue = {
-        label: custRangeNameDedault,
-        value: custRange[0].id,
-      };
-      // 切换报表了，恢复默认值
-      this.setState({
-        value: initValue,
-        open: false,
-      });
-    }
     if (orgId !== preOrgId) {
       walk(formatCustRange, findOrgNameByOrgId(orgId), '');
       const initValue = {

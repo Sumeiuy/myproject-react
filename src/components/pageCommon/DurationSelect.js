@@ -75,20 +75,8 @@ export default class DurationSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 因为Url中只有boardId会变化
-    const { location: { query: { boardId }, pathname } } = nextProps;
-    const { location: { query: { boardId: preBId }, pathname: prePathname } } = this.props;
-    if (Number(boardId || '1') !== Number(preBId || '1')) {
-      const duration = time.getDurationString('month');
-      const beginMoment = moment(duration.begin);
-      const endMoment = moment(duration.end);
-      this.setState({
-        open: false,
-        beginMoment,
-        endMoment,
-        compare: compareArray[0].key,
-        ...duration,
-      });
-    }
+    const { location: { pathname } } = nextProps;
+    const { location: { pathname: prePathname } } = this.props;
     if (!_.isEqual(pathname, prePathname)) {
       const isHistory = pathname === '/history';
       this.setState({
@@ -259,8 +247,10 @@ export default class DurationSelect extends PureComponent {
   @autobind
   historyChangeDuration(e) {
     const { compare } = this.state;
+    const { maxData } = this.props;
+    const zzjgMaxData = maxData.zzjg;
     const cycleType = e.target.value;
-    const nowDuration = time.getDurationString(cycleType);
+    const nowDuration = time.getDurationString(cycleType, zzjgMaxData);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const begin = nowDuration.begin;
