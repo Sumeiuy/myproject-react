@@ -2,13 +2,12 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-13 14:20:01
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-14 17:32:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { message, Button, Modal } from 'antd';
 import _ from 'lodash';
@@ -18,6 +17,7 @@ import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
 import { closeRctTabById } from '../../utils/fspGlobal';
 import { env } from '../../helper';
 

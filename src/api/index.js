@@ -7,11 +7,11 @@ import commission from './commission';
 import customerPool from './customerPool';
 import contract from './contract';
 import channelsTypeProtocol from './channelsTypeProtocol';
-import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
+import relation from './relation';
 
 const api = apiCreator();
 
@@ -38,11 +38,11 @@ export default {
   channelsTypeProtocol: channelsTypeProtocol(api),
   // ==========佣金调整的数据接口end
   commission: commission(api),
-  // 全渠道服务记录数据接口api
-  fullChannelServiceRecord: fullChannelServiceRecord(api),
   // 降级客户接口
   demote: demote(api),
   // 分公司客户划转接口api
   filialeCustTransfer: filialeCustTransfer(api),
+  // 汇报关系树页面
+  relation: relation(api),
 };
 

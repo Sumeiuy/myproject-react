@@ -1,11 +1,12 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-06-26 17:00:40
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-01 21:18:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-08 14:30:40
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';

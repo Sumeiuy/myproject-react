@@ -4,7 +4,8 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Mention } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';

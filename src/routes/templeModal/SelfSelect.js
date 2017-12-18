@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Icon, Checkbox, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

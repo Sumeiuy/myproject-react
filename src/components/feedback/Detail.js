@@ -4,14 +4,14 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { routerRedux } from 'dva-react-router-3/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
 import RemarkList from './RemarkList';
@@ -44,8 +44,6 @@ const getDataFunction = loading => totype => query => ({
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
-  replace: routerRedux.replace,
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
   getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
   updateFeedback: getDataFunction(true)(UPDATEQUESTION),

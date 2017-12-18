@@ -2,7 +2,8 @@
  * Icon.js 图标组件，antd-mobile提供的Icon样式不方便覆盖，这里重写一个
  * @author maoquan(maoquan@htsc.com)
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function Icon(props) {
   const { type, className } = props;

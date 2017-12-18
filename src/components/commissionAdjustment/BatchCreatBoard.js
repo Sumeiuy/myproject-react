@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 14:01:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-15 10:55:41
+ * @Last Modified time: 2017-12-13 13:22:58
  * @description 批量佣金调整新建独自的页面
  */
 
@@ -10,13 +10,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-// import { withRouter } from 'dva-react-router-3/router';
 import { Icon, message } from 'antd';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from './ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import AddCustomer from './AddCustomer';
 import InfoTitle from '../common/InfoTitle';
 import CommissionLine from './CommissionLine';

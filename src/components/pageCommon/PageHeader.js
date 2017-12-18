@@ -4,7 +4,8 @@
  * @description 用于业绩页面头部区域模块
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Row } from 'antd';
 

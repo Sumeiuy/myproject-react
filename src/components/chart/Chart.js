@@ -4,7 +4,8 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import React, { PureComponent, cloneElement } from 'react';
+import PropTypes from 'prop-types';
 // 按需引入组件, 保证代码最小
 import echarts from 'echarts/lib/echarts';
 import _ from 'lodash';

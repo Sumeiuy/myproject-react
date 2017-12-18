@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by:   sunweibin
- * @Last Modified time: 2017-11-10 15:13:41
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-05 15:46:02
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import TaskPreview from '../taskFlow/TaskPreview';
 import { permission } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
+// import withRouter from '../../../decorators/withRouter';
 import styles from './taskFormFlowStep.less';
 
 const { toString } = Mention;
