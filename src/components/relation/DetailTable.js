@@ -53,8 +53,8 @@ function columnsOne(category) {
 
 const columnsTwo = [{
   title: '团队数量',
-  key: 'teamNum',
-  dataIndex: 'teamNum',
+  key: 'teamCount',
+  dataIndex: 'teamCount',
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.teamNum)} title={item}>
@@ -63,8 +63,8 @@ const columnsTwo = [{
   ),
 }, {
   title: '投顾人数',
-  dataIndex: 'adviserNum',
-  key: 'adviserNum',
+  dataIndex: 'empCount',
+  key: 'empCount',
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.adviserNum)} title={item}>

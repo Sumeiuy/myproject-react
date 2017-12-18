@@ -15,7 +15,8 @@ import { Menu } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import styles from './tree.less';
-// detailTable 组件的三种表格类型
+// detailTable 组件的表格类型
+const CENTER_TABLE = '3';
 const TEAM_TABLE = '4';
 const SubMenu = Menu.SubMenu;
 export default class Tree extends Component {
@@ -37,6 +38,7 @@ export default class Tree extends Component {
       selectKey: '',
       openKeys: [],
       menuKeys: [],
+      isCenterTree: false, // 标识：权限是 财富中心 级别的
     };
   }
 
@@ -49,11 +51,18 @@ export default class Tree extends Component {
     const { selectKey, defultKey } = this.state;
     if (!_.isEmpty(treeData)) {
       // orgId 作为唯一标识符
-      const { returnPostnTree, currentPostn: { orgId } } = treeData;
-      const menuKeys = _.map(returnPostnTree, item => item.orgId);
+      const {
+        returnPostnTree,
+        currentPostn: { orgId, postnTypeCD = CENTER_TABLE },
+      } = treeData;
+      const isCenterTree = postnTypeCD === CENTER_TABLE;
+      const menuKeys = _.map(
+        returnPostnTree,
+        item => (isCenterTree ? item.postnId : item.orgId),
+      );
       if (_.isEmpty(selectKey) && _.isEmpty(defultKey)) {
         this.setState(
-          { menuKeys, selectKey: orgId, defultKey: orgId },
+          { menuKeys, selectKey: orgId, defultKey: orgId, isCenterTree },
           () => { onSelect(this.getItem(orgId)); },
         );
       } else {
@@ -168,17 +177,21 @@ export default class Tree extends Component {
     );
   }
 
-  renderTreeTitle(titleClass, item, isSelectMenu, isSelectSubmenu) {
-    const { postnTypeCD, orgName } = item;
+  renderTreeTitle(titleClass, item, isSelectMenu, isSelectSubmenu, isCenterTree) {
+    const { orgName, postnDesc } = item;
+    const title = isCenterTree ? postnDesc : orgName;
     return (
       <div
         className={classnames(
           styles.menu,
-          { [styles.selectMenu]: isSelectMenu, [styles.selectChild]: isSelectSubmenu },
+          {
+            [styles.selectMenu]: isSelectMenu,
+            [styles.selectChild]: isSelectSubmenu,
+          },
         )}
       >
-        <div className={styles.cycle}>{(postnTypeCD === TEAM_TABLE) ? '团' : '财'}</div>
-        <div className={titleClass}>{orgName}</div>
+        <div className={styles.cycle}>{isCenterTree ? '团' : '财'}</div>
+        <div className={titleClass}>{title}</div>
       </div>
     );
   }
@@ -188,7 +201,7 @@ export default class Tree extends Component {
     if (_.isEmpty(paramData)) {
       return null;
     }
-    const { selectKey, openKeys } = this.state;
+    const { selectKey, openKeys, isCenterTree } = this.state;
     const keys = _.split(selectKey, '/');
     const isSelectSubmenu = (!_.isEmpty(keys) && keys.length > 1);
     const menuKey = _.head(keys);
@@ -205,12 +218,13 @@ export default class Tree extends Component {
           paramData,
           center => (
             <SubMenu
-              key={center.orgId}
+              key={isCenterTree ? center.postnId : center.orgId}
               title={this.renderTreeTitle(
                 styles.centerName,
                 center,
                 (center.orgId === selectKey),
                 (isSelectSubmenu && center.orgId === menuKey),
+                isCenterTree,
               )}
             >
               {_.map(
@@ -234,6 +248,8 @@ export default class Tree extends Component {
 
   render() {
     const { treeData: { currentPostn = {}, returnPostnTree = [] } } = this.props;
+    const { postnTypeCD = CENTER_TABLE } = currentPostn || {};
+    const isCenter = postnTypeCD === CENTER_TABLE;
     const screenHeight = document.documentElement.clientHeight;
     const style = { height: `${(screenHeight - 109)}px` };
     const menuContainerStyle = {
@@ -242,7 +258,10 @@ export default class Tree extends Component {
       overflow: 'auto',
     };
     return (
-      <div className={styles.treeContainer} style={style}>
+      <div
+        className={classnames(styles.treeContainer, { [styles.centerTreeContainer]: isCenter })}
+        style={style}
+      >
         {this.renderHeader(currentPostn)}
         <div style={menuContainerStyle}>{this.renderTree(returnPostnTree)}</div>
       </div>

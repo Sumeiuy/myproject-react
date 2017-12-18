@@ -122,6 +122,7 @@ export default class Home extends Component {
     if (_.isEmpty(menu)) {
       return;
     }
+    console.log('#######handleSelect##########', menu);
     const { postnId, postnTypeCD } = menu;
     const { getDetailInfo } = this.props;
     let stateParam = { centerMenu: menu };
