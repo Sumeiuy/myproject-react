@@ -12,4 +12,5 @@ export default {
   boardType: 'TYPE_TGJX',
   historyBoardId: 3,
   historyBoardType: 'TYPE_LSDB_TGJX',
+  filialeLevel: '2', // 分公司的level值
 };

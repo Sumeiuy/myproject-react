@@ -16,6 +16,7 @@ import {
   EXCEPT_TOUGU_JYYJ_MAP,
 } from '../../config/SpecialIndicators';
 import { optionsMap } from '../../config';
+import report from '../../helper/page/report';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -27,7 +28,6 @@ const EMPTY_OBJECT = {};
 
 const YI = '亿';
 const WAN = '万';
-
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 
@@ -48,11 +48,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
     boardType: PropTypes.string.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
+    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     optionsData: EMPTY_LIST,
     scope: '2', // 查询数据的维度
+    orgId: '',
   };
 
   constructor(props) {
@@ -66,10 +68,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       scatterElemHeight: 360,
       finalData: {},
       isShowTooltip: false,
-      level1Name: '',
       level2Name: '',
       level3Name: '',
       level4Name: '',
+      level5Name: '',
       finalOptions: options,
       selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
@@ -212,7 +214,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
           yAxisMax: Math.ceil(endYCood),
         };
       }
-      console.log(finalSeriesData);
       const scatterOptions = constructScatterOptions({
         ...finalSeriesData,
       });
@@ -403,16 +404,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { data: [
         xAxisData,
         yAxisData,
-        { level1Name, level2Name, level3Name, level4Name },
+        { level2Name, level3Name, level4Name, level5Name },
       ] } = params;
-
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
-        level1Name,
         level2Name,
         level3Name,
         level4Name,
+        level5Name,
       });
       this.constructTooltipInfo({
         currentSelectX: xAxisData,
@@ -498,10 +498,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       scatterElemHeight,
       isShowTooltip,
-      level1Name,
       level2Name,
       level3Name,
       level4Name,
+      level5Name,
       tooltipInfo,
       finalData,
       selectValue,
@@ -517,6 +517,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       style,
       contrastType,
       isLvIndicator,
+      orgId,
     } = this.props;
 
     // 隐藏选项
@@ -524,11 +525,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3,
+      hideOption: Number(level) === 3 ||
+        Number(level) === 4 ||
+        (Number(level) === 2 && !report.isNewOrg(orgId)),
+    });
+    const toggleScope4Option = classnames({
+      hideOption: Number(level) === 4,
     });
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
-
     return (
       <div
         className={styles.abilityScatterAnalysis}
@@ -576,8 +581,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
                     optionClass = toggleScope2Option;
                   }
                   if (index === 1) {
-                    // 按营业部
+                    // 按财富中心
                     optionClass = toggleScope3Option;
+                  }
+                  if (index === 2) {
+                    // 按营业部
+                    optionClass = toggleScope4Option;
                   }
                   return (
                     <Option
@@ -604,7 +613,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
             <div>
               {
                 // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
-              (scopeSelectValue === '4' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum')) ||
+              (scopeSelectValue === '5' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum')) ||
               _.isEmpty(finalData) ?
                 <div className={styles.noChart}>
                   <img src={imgSrc} alt="无对应数据" />
@@ -641,10 +650,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
                         <div className={styles.orgDes}>
                           <i className={styles.desIcon} />
                           <span>
-                            {_.isEmpty(level1Name) ? '' : `${level1Name}`}
-                            {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
+                            {_.isEmpty(level2Name) ? '' : `${level2Name}`}
                             {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
-                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
+                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}
+                            {_.isEmpty(level5Name) ? '' : `-${level5Name}`}:
                           </span>
                         </div>
                         <div className={styles.detailDesc}>

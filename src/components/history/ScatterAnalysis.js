@@ -26,11 +26,13 @@ export default class ScatterAnalysis extends PureComponent {
     isLvIndicator: PropTypes.bool.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
+    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     cust: EMPTY_LIST,
     invest: EMPTY_LIST,
+    orgId: '',
   };
 
   render() {
@@ -47,6 +49,7 @@ export default class ScatterAnalysis extends PureComponent {
       isLvIndicator,
       currentSelectIndicatorKey,
       isCommissionRate,
+      orgId,
     } = this.props;
 
     return (
@@ -71,11 +74,12 @@ export default class ScatterAnalysis extends PureComponent {
               style={{
                 left: '-65px',
               }}
+              orgId={orgId}
             />
           </Col>
           {
             // 投顾历史看板下的营业部不展示投顾维度散点图
-            level === '3'
+            level === '4'
               ? <div
                 style={{
                   height: '400px',
@@ -100,6 +104,7 @@ export default class ScatterAnalysis extends PureComponent {
                   style={{
                     left: '-65px',
                   }}
+                  orgId={orgId}
                 />
               </Col>
           }
