@@ -47,6 +47,7 @@ export default class DurationSelect extends PureComponent {
     replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
+    maxData: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -55,7 +56,9 @@ export default class DurationSelect extends PureComponent {
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
     const value = 'month';
-    const obj = time.getDurationString(value);
+    const { maxData } = this.props;
+    const zzjgMaxData = maxData.zzjg;
+    const obj = time.getDurationString(value, zzjgMaxData);
     const beginMoment = moment(obj.begin);
     const endMoment = moment(obj.end);
     this.state = {
@@ -97,7 +100,9 @@ export default class DurationSelect extends PureComponent {
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
-    const duration = time.getDurationString(value);
+    const { maxData } = this.props;
+    const zzjgMaxData = maxData.zzjg;
+    const duration = time.getDurationString(value, zzjgMaxData);
     const { updateQueryState, collectData } = this.props;
     collectData({
       text: duration.cycleType,
