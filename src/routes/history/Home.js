@@ -30,6 +30,7 @@ const TYPE_LSDB_TGJX = '3';
 const TYPE_LSDB_JYYJ = '4';
 const defaultFilialeLevel = constants.filialeLevel;
 const effects = {
+  maxDataDt: 'report/getMaxDataDt',
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
   getHistoryCore: 'history/getHistoryCore',
@@ -68,10 +69,13 @@ const mapStateToProps = state => ({
   updateLoading: state.history.updateLoading,
   operateData: state.history.operateData,
   message: state.history.message,
+  // 探测有数据的最大时间点接口
+  maxData: state.report.maxData,
 });
 
 const mapDispatchToProps = {
   getInitial: fectchDataFunction(true, effects.getInitial),
+  getMaxDataDt: fectchDataFunction(true, effects.maxDataDt),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
@@ -131,6 +135,8 @@ export default class HistoryHome extends PureComponent {
     collectBoardSelect: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func.isRequired,
     collectDurationSelect: PropTypes.func.isRequired,
+    maxData: PropTypes.object.isRequired,
+    getMaxDataDt: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -171,8 +177,15 @@ export default class HistoryHome extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    this.queryInitial();
+  componentDidMount() {
+    // 初始化的时候state里面还无参数
+    this.props.getMaxDataDt().then(() => {
+      const { maxData } = this.props;
+      const zzjgMaxData = maxData.zzjg;
+      const { begin, end, cycleType } = time.getDurationString('month', zzjgMaxData);
+      // 修改state
+      this.setState({ begin, end, cycleType }, this.queryInitial);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -185,27 +198,11 @@ export default class HistoryHome extends PureComponent {
     } = this.props;
     const differentId = !_.isEqual(preBoardId, boardId);
     if (differentId) {
-      const { custRange } = nextProps;
-      const ownerOrg = custRange[0];
       const timeStamp = new Date().getTime().toString();
-      const defaultMoment = this.setDefaultMoment();
-      let temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 1);
-      if (ownerOrg && ownerOrg.level === defaultFilialeLevel && !report.isNewOrg(ownerOrg.id)) {
-        temporaryScope = ownerOrg && String(Number(ownerOrg.level) + 2);
-      }
       this.setState({
         swtichDefault: timeStamp,
         boardId,
         boardType,
-        begin: defaultMoment.begin, // 本期开始时间
-        end: defaultMoment.end, // 本期结束时间
-        cycleType: defaultMoment.cycleType, // 时间段周期类型
-        contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
-        contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
-        scope: temporaryScope,
-        localScope: ownerOrg && ownerOrg.level,
-        orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
-        ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
         coreIndicatorIds: [],
         indicatorId: '', // 需要清除选中的core值
       },
@@ -262,8 +259,10 @@ export default class HistoryHome extends PureComponent {
 
   @autobind
   setDefaultMoment() {
+    const { maxData } = this.props;
     const cycleType = 'month';
-    const nowDuration = time.getDurationString(cycleType);
+    const zzjgMaxData = maxData.zzjg;
+    const nowDuration = time.getDurationString(cycleType, zzjgMaxData);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
@@ -571,6 +570,7 @@ export default class HistoryHome extends PureComponent {
       collectDurationSelect,
       createLoading,
       operateData,
+      maxData,
     } = this.props;
 
     if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) || _.isEmpty(newVisibleBoards)) {
@@ -643,6 +643,7 @@ export default class HistoryHome extends PureComponent {
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
           showSelfDatePicker
+          maxData={maxData}
         />
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>

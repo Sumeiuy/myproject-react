@@ -120,8 +120,23 @@ export default {
         chartTableInfo: {},
       };
     },
+    getMaxDataDtSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        maxData: resultData || {},
+      };
+    },
   },
   effects: {
+    // 探测有数据的最大时间点接口
+    * getMaxDataDt({ payload }, { call, put }) {
+      const response = yield call(api.getMaxDataDt, payload);
+      yield put({
+        type: 'getMaxDataDtSuccess',
+        payload: response,
+      });
+    },
     // 导出Excel表格
     * exportExcel({ payload: { query } }) {
       const { prefix } = request;
