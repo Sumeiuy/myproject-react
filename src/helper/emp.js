@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by:   K0240008
- * @Last Modified time: 2017-12-01 14:11:52
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2017-12-15 15:55:21
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -16,7 +16,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002727'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;

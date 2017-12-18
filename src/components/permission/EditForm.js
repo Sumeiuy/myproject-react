@@ -3,7 +3,6 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 // import { Modal, message } from 'antd';
 import _ from 'lodash';
-import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
 import MessageList from '../common/MessageList';
 import ApprovalRecord from './ApprovalRecord';
@@ -33,9 +32,9 @@ const columns = [
   },
 ];
 
-export default class modifyPrivateClient extends PureComponent {
+export default class EditForm extends PureComponent {
   static propTypes = {
-    id: PropTypes.number,
+    id: PropTypes.number.isRequired,
     flowId: PropTypes.string,
     type: PropTypes.string,
     subType: PropTypes.string,
@@ -53,16 +52,10 @@ export default class modifyPrivateClient extends PureComponent {
     searchServerPersonList: PropTypes.array.isRequired,
     bottonList: PropTypes.object.isRequired,
     getBottonList: PropTypes.func.isRequired,
-    canApplyCustList: PropTypes.array.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
-    modifyCustApplication: PropTypes.object.isRequired,
-    addListenModify: PropTypes.bool.isRequired,
-    subTypeList: PropTypes.array.isRequired,
-    onEmitClearModal: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
   static defaultProps = {
-    id: '',
     flowId: '',
     type: '',
     subType: '',
@@ -83,15 +76,6 @@ export default class modifyPrivateClient extends PureComponent {
     this.state = {
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
-      // 子类型
-      subType: '',
-      // 客户对象
-      customer: {
-        // 客户姓名
-        custName: '',
-        // 客户id
-        custNumber: '',
-      },
       // 备注
       remark: '',
       // 拟稿人
@@ -112,30 +96,24 @@ export default class modifyPrivateClient extends PureComponent {
       routeId: '',
       // 下一审批人列表
       nextApproverList: [],
+      // 按钮列表
       bottonList: {},
     };
   }
 
   componentWillMount() {
     const {
-      subType,
-      custName,
-      custNumber,
       remark,
       empList,
+      flowId,
     } = this.props;
 
     this.setState({
-      subType,
-      customer: {
-        custName,
-        custNumber,
-      },
       remark,
       empList,
     });
     // 获取下一步骤按钮列表
-    this.props.getBottonList({ flowId: this.props.flowId });
+    this.props.getBottonList({ flowId });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -153,21 +131,9 @@ export default class modifyPrivateClient extends PureComponent {
     // 关闭模态框
     this.setState({ isShowModal: false });
   }
-  @autobind
-  afterClose() {
-    // 模态框关闭之后执行的函数
-    this.props.onEmitClearModal('isShowModifyModal');
-  }
 
   @autobind
   updateValue(name, value) {
-    // 更新state
-    if (name === 'customer') {
-      this.setState({ customer: {
-        custName: value.custName,
-        custNumber: value.cusId,
-      } });
-    }
     this.setState({ [name]: value });
   }
 
@@ -200,7 +166,6 @@ export default class modifyPrivateClient extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
-    const { location: { query } } = this.props;
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -210,7 +175,7 @@ export default class modifyPrivateClient extends PureComponent {
       // 主类型
       type: this.props.type,
       // 子类型
-      subType: this.state.subType,
+      subType: this.props.subType,
       // 客户id
       custNumber: this.props.custNumber,
       // 客户名称
@@ -231,20 +196,19 @@ export default class modifyPrivateClient extends PureComponent {
       empList: this.state.empList,
       // 附件上传后的id
       attachment: this.state.attachment,
-      currentQuery: query,
     };
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
   get baseInfoModifyDom() {
     // 返回基本信息修改组件
-    let subTypeTxt = subTypeList.filter(item => item.value === this.state.subType);
+    let subTypeTxt = subTypeList.filter(item => item.value === this.props.subType);
     subTypeTxt = !_.isEmpty(subTypeTxt) ? subTypeTxt[0].label : '无';
 
     const info = [
       {
         title: '客户',
-        content: `${this.state.customer.custName}（${this.state.customer.custNumber}）`,
+        content: `${this.props.custName}（${this.props.custNumber}）`,
       }, {
         title: '子类型',
         content: subTypeTxt,
@@ -304,56 +268,43 @@ export default class modifyPrivateClient extends PureComponent {
       rowKey: 'login',
       searchShow: false,
     };
-    const btnGroupElement = (<BottonGroup
-      list={this.state.bottonList}
-      onEmitEvent={this.submitModifyInfo}
-    />);
     return (
-      <CommonModal
-        title="私密客户管理修改"
-        visible={this.state.isShowModal}
-        onOk={this.selectNextApproverList}
-        okText="提交"
-        closeModal={this.closeModal}
-        size="large"
-        modalKey="myModal"
-        afterClose={this.afterClose}
-        needBtn={false}
-        selfBtnGroup={btnGroupElement}
-      >
-        <div className={style.modifyPrivateClient}>
-          <div className={style.dcHeader}>
-            <span className={style.dcHaderNumb}>编号{this.props.id}</span>
-          </div>
-          {this.baseInfoModifyDom}
-          {this.draftInfo}
-          <ServerPersonel
-            head="服务人员"
-            type="empList"
-            info={this.props.empList}
-            statusType="modify"
-            onEmitEvent={this.updateValue}
-            searchServerPersonList={this.props.searchServerPersonList}
-            subType={this.state.subType}
-          />
-          <UploadFile
-            fileList={this.props.attaches}
-            edit
-            type="attachment"
-            attachment={this.props.attachment || ''}
-            onEmitEvent={this.updateValue}
-          />
-          <ApprovalRecord
-            head="审批记录"
-            info={this.props.workflowHistoryBeans}
-            currentApproval={this.props.currentApproval}
-            statusType="modify"
-          />
-          <TableDialog
-            {...searchProps}
-          />
+      <div className={style.modifyPrivateClient}>
+        <div className={style.dcHeader}>
+          <span className={style.dcHaderNumb}>编号{this.props.id}</span>
         </div>
-      </CommonModal>
+        {this.baseInfoModifyDom}
+        {this.draftInfo}
+        <ServerPersonel
+          head="服务人员"
+          type="empList"
+          info={this.props.empList}
+          statusType="modify"
+          onEmitEvent={this.updateValue}
+          searchServerPersonList={this.props.searchServerPersonList}
+          subType={this.props.subType}
+        />
+        <UploadFile
+          fileList={this.props.attaches}
+          edit
+          type="attachment"
+          attachment={this.props.attachment || ''}
+          onEmitEvent={this.updateValue}
+        />
+        <ApprovalRecord
+          head="审批记录"
+          info={this.props.workflowHistoryBeans}
+          currentApproval={this.props.currentApproval}
+          statusType="modify"
+        />
+        <BottonGroup
+          list={this.state.bottonList}
+          onEmitEvent={this.submitModifyInfo}
+        />
+        <TableDialog
+          {...searchProps}
+        />
+      </div>
     );
   }
 }

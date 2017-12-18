@@ -362,7 +362,7 @@ export default class CustomerRow extends PureComponent {
               <span className="cutOffLine">|</span>
               <span className="commission">佣金率: <em>{miniFee}</em></span>
               <span className="cutOffLine">|</span>
-              <span>峰值和最近收益:</span>
+              <span>总资产:</span>
               <span className="asset">{assetValue}</span>
               <span className="assetunit">{assetUnit}</span>
               <div className={styles.sixMonthEarnings}>

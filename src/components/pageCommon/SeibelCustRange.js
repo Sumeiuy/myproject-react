@@ -85,12 +85,12 @@ export default class CustRange extends PureComponent {
     const { custRange } = this.props;
     let initValue = {};
     let formatCustRange = null;
-    if (!_.isEmpty(custRange)) {
+    if (!_.isEmpty(custRange) && this.props.orgId) {
       formatCustRange = transformCustRangeData(custRange);
-      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+      walk(formatCustRange, findOrgNameByOrgId(this.props.orgId), '');
       initValue = {
         label: custRangeNameDedault,
-        value: custRange[0].id,
+        value: this.props.orgId,
       };
     } else {
       formatCustRange = [];
@@ -116,12 +116,12 @@ export default class CustRange extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { custRange, orgId } = nextProps;
     const { orgId: preOrgId } = this.props;
-    const { formatCustRange } = this.state;
-    if (orgId !== preOrgId) {
+    if (orgId !== preOrgId || orgId) {
+      const formatCustRange = transformCustRangeData(custRange);
       walk(formatCustRange, findOrgNameByOrgId(orgId), '');
       const initValue = {
         label: custRangeNameDedault,
-        value: custRange[0].id,
+        value: orgId,
       };
       // 切换报表了，恢复默认值
       this.setState({

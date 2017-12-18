@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 15:11:05
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-13 15:58:04
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -20,6 +20,8 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
+import config from './config';
+
 import styles from './edit.less';
 
 const confirm = Modal.confirm;
@@ -36,11 +38,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   payload: query || {},
   loading: globalLoading,
 });
-// 终止按钮
-const btnEnd = 'FINISH';
-// 终止文字
-const textEnd = 'falseOver';
 
+const { btnEnd, textEnd, unSubscribeArray, tenHQ } = config;
 const mapStateToProps = state => ({
   // 子类型、操作类型、协议模版
   subTypeList: state.channelsEdit.subTypeList,
@@ -208,6 +207,11 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
+    // 如果操作类型是退订并且协议模版是十档行情，不进行验证
+    if (formData.templateId === tenHQ &&
+      _.includes(unSubscribeArray, formData.operationType)) {
+      return true;
+    }
     if (!formData.templateId) {
       message.error('请选择协议模板');
       return false;

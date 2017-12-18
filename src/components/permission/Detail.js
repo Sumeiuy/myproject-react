@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import { message } from 'antd';
 import _ from 'lodash';
-import classnames from 'classnames';
 import style from './detail.less';
 import MessageList from '../common/MessageList';
 import ServerPersonel from './ServerPersonel';
@@ -17,7 +16,6 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
-import { emp } from '../../helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
@@ -240,10 +238,6 @@ export default class Detail extends PureComponent {
     }
     return result;
   }
-  @autobind
-  toChangeStatus() {
-    this.props.onEmitEvent();
-  }
 
   @autobind
   updateValue(name, value) { // 更新本地数据
@@ -331,11 +325,6 @@ export default class Detail extends PureComponent {
   }
 
   render() {
-    const loginUser = emp.getId();
-    const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId !== loginUser },
-    ]);
-
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
@@ -353,10 +342,6 @@ export default class Detail extends PureComponent {
       <div className={style.detailComponent}>
         <div className={style.dcHeader}>
           <span className={style.dcHaderNumb}>编号{this.props.id}</span>
-          <span
-            onClick={this.toChangeStatus}
-            className={modifyBtnClass}
-          >修改</span>
         </div>
         {this.getBaseInfoModifyDom}
         {this.draftInfo}

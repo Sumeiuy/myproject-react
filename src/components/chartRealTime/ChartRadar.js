@@ -21,7 +21,8 @@ import styles from './chartRadar.less';
 
 const orgClass = {
   level2: '分公司',
-  level3: '营业部',
+  level3: '财富中心',
+  level4: '营业部',
 };
 
 export default class ChartRadar extends PureComponent {

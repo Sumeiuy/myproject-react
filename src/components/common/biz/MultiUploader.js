@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-30 14:25:07
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-13 16:23:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,10 +18,11 @@ import { emp } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
 
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -30,7 +31,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // 删除附件
-  deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment'),
+  deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
@@ -58,6 +59,7 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: PropTypes.func,
     // 删除成功后回调方法
     deleteCallback: PropTypes.func,
+    showDelete: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -71,6 +73,7 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: () => {},
     deleteCallback: () => {},
     deleteAttachmentLoading: false,
+    showDelete: true,
   }
 
   constructor(props) {
@@ -184,7 +187,7 @@ export default class MultiUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit, title, required } = this.props;
+    const { edit, title, required, showDelete } = this.props;
     const uploadProps = {
       data: {
         empId,
@@ -229,7 +232,7 @@ export default class MultiUpload extends PureComponent {
                   <h3>
                     <span>
                       {
-                        edit ?
+                        edit && showDelete && emp.getId() === item.creator ?
                           <em>
                             <Popconfirm
                               placement="top"

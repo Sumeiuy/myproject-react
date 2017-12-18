@@ -130,6 +130,10 @@ export default {
         type: 'getModifyCustApplicationSuccess',
         payload: response,
       });
+      yield put({
+        type: 'getBottonListSuccess',
+        payload: response,
+      });
       message.success('私密客户修改成功！');
     },
     * getCreateCustApplication({ payload }, { call, put }) {

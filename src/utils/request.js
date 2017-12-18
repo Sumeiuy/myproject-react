@@ -81,3 +81,21 @@ export default function request(url, options) {
     ),
   ]);
 }
+
+/**
+ * 发送日志专用
+ */
+export function logRequest(url, options) {
+  return Promise.race([
+    fetch(url, { credentials: 'include', ...options })
+      .then(checkStatus),
+    new Promise(
+      (rosolve, reject) => {// eslint-disable-line
+        setTimeout(
+          () => reject('日志发送超时'),
+          config.timeout,
+        );
+      },
+    ),
+  ]);
+}

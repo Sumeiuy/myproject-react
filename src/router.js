@@ -16,7 +16,7 @@ import { fspContainer } from './config';
 
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
-import FeedBack from './routes/feedback/Home';
+import FeedBack from './routes/feedback/NewHome';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import TemplModal from './routes/templeModal/Home';
@@ -39,11 +39,12 @@ import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
+import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
-import TaskListHome from './routes/taskList/Home';
 import RelationHome from './routes/relation/Home';
+import TaskList from './routes/customerPool/TaskList__';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -71,7 +72,10 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
-      <Route path="permission" component={PermissonHome} />
+      <Route path="permission">
+        <IndexRoute component={PermissonHome} />
+        <Route path="edit" component={PermissonEdit} />
+      </Route>
       <Route path="relation" component={RelationHome} />
       <Route path="contract">
         <IndexRoute component={Contract} />
@@ -93,9 +97,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
-      </Route>
-      <Route path="taskList">
-        <IndexRoute component={TaskListHome} />
+        <Route path="tasklist" component={TaskList} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>

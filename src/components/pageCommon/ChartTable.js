@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 10:51:29
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2017-12-13 16:13:20
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -256,6 +256,9 @@ export default class ChartTable extends PureComponent {
   }
   @autobind
   handleTitleClick(item) {
+    if (!_.isEmpty(item.children)) {
+      return;
+    }
     const { getTableInfo, indexID, scope } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
@@ -305,8 +308,20 @@ export default class ChartTable extends PureComponent {
         </div>);
       } else if (record.level === '4') {
         toolTipTittle = (<div>
-          <p>{record.orgModel.level2Name} - {record.orgModel.level3Name}</p>
+          <p>
+            {record.orgModel.level2Name}
+            {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
+          </p>
           <p>{record.orgModel.level4Name}</p>
+        </div>);
+      } else if (record.level === '5') {
+        toolTipTittle = (<div>
+          <p>
+            {record.orgModel.level2Name}
+            {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
+            -{record.orgModel.level4Name}
+          </p>
+          <p>{record.orgModel.level5Name}</p>
         </div>);
       } else {
         toolTipTittle = '';

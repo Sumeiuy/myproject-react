@@ -42,11 +42,9 @@ module.exports = {
         // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
-      '/screenshot': {
-        target: 'http://127.0.0.1:7080', // SIT
-      },
-      '/feedback': {
-        target: 'http://192.168.71.29:9084', // SIT
+      '/fspa/log': {
+        target: 'http://168.61.8.81:5085', // SIT
+        // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
     },
