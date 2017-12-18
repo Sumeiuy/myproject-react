@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by:   sunweibin
- * @Last Modified time: 2017-11-10 15:13:41
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-18 17:23:57
  */
 
 import React, { PureComponent } from 'react';
@@ -119,7 +119,7 @@ export default class TaskFormFlowStep extends PureComponent {
   saveFormContent(values) {
     const { current } = this.state;
     const { saveCreateTaskData, location: { query: { source, count } },
-     storedCreateTaskData } = this.props;
+      storedCreateTaskData } = this.props;
     const custSource = this.handleCustSource(source);
 
     saveCreateTaskData({
@@ -149,6 +149,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       custIdList,
       custCondition,
+      custCondition: { entrance },
     } = parseQuery();
     const params = storedCreateTaskData.taskFormData || {};
     const data = {
@@ -159,11 +160,19 @@ export default class TaskFormFlowStep extends PureComponent {
       templetDesc: toString(params.templetDesc),
       timelyIntervalValue: params.timelyIntervalValue,
     };
+
+    let req = {};
+    if (entrance === 'managerView') {
+      req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
+    } else {
+      req = { searchReq: custCondition };
+    }
+
     createTask({
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: custCondition,
+      ...req,
     });
   }
 

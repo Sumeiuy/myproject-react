@@ -137,6 +137,11 @@ const mapDispatchToProps = {
     type: 'customerPool/clearTaskFlowData',
     payload: query || {},
   }),
+  // 清除自建任务数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
   // 预览客户明细
@@ -190,7 +195,7 @@ export default class PerformerView extends PureComponent {
     // 预览客户细分
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户细分结果
-    custDetailResult: PropTypes.array.isRequired,
+    custDetailResult: PropTypes.object.isRequired,
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
     countFlowFeedBack: PropTypes.func.isRequired,
@@ -199,6 +204,7 @@ export default class PerformerView extends PureComponent {
     empInfo: PropTypes.object,
     missionImplementationDetail: PropTypes.object.isRequired,
     countFlowStatus: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -371,6 +377,8 @@ export default class PerformerView extends PureComponent {
       replace,
       missionImplementationDetail,
       mngrMissionDetailInfo,
+      push,
+      clearCreateTaskData,
     } = this.props;
     const {
       query: { currentId },
@@ -434,6 +442,8 @@ export default class PerformerView extends PureComponent {
             missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
             mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
             launchNewTask={this.handleCreateBtnClick}
+            clearCreateTaskData={clearCreateTaskData}
+            push={push}
           />
         );
         break;
@@ -469,6 +479,7 @@ export default class PerformerView extends PureComponent {
       finalPostData,
       omitData,
       // { orgId: 'ZZ001041' },
+      { orgId: emp.getOrgId() },
     );
 
     // 对反馈状态做处理
@@ -511,9 +522,9 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      missionId: record.id,
+      taskId: record.id,
+      // taskId: '101111171108181',
       orgId: emp.getOrgId(),
-      // missionId: '101111171108181',
       // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
@@ -521,15 +532,15 @@ export default class PerformerView extends PureComponent {
     // 管理者视图获取客户反馈
     countFlowFeedBack({
       missionId: record.id,
-      orgId: emp.getOrgId(),
       // missionId: '101111171108181',
       // orgId: 'ZZ001041',
+      orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: record.id,
-      orgId: emp.getOrgId(),
       // missionId: '101111171108181',
+      orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
     });
   }
