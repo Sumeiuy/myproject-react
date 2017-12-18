@@ -12,6 +12,7 @@ import seibelCommon from './seibelCommon';
 import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
+import relation from './relation';
 
 const api = apiCreator();
 
@@ -44,5 +45,7 @@ export default {
   demote: demote(api),
   // 分公司客户划转接口api
   filialeCustTransfer: filialeCustTransfer(api),
+  // 汇报关系树页面
+  relation: relation(api),
 };
 
