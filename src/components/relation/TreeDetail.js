@@ -70,7 +70,9 @@ export default class TreeDetail extends Component {
     const title = this.getTitle(headerLine, category, postnDesc, orgName);
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{title}</div>
+        <div className={styles.titleContainer}>
+          <div className={styles.title}>{title}</div>
+        </div>
         <div className={styles.managerRow}>
           <div className={styles.info}>{'负责人：'}</div>
           {

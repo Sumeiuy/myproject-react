@@ -29,6 +29,11 @@
   .column {
     font-size: 14px;
     color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 151px;
+    margin: auto;
   }
   .action {
     display: flex;
@@ -63,6 +68,12 @@
       .ant-table-tbody > tr:hover > td {
         background: #fff;
       }
+    }
+    .ant-table-fixed-header .ant-table-scroll .ant-table-header {
+      overflow-y: auto;
+    }
+    .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body {
+      overflow-y: auto !important;
     }
   }
 }
