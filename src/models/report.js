@@ -18,6 +18,7 @@ export default {
     allCategory: [],
     visibleBoards: [], // 可见看板
     newVisibleBoards: [], // 新可见看板
+    maxData: {}, // 探测有数据的最大时间点
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {

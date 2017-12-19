@@ -156,6 +156,7 @@ export default class ReportHome extends PureComponent {
   componentDidMount() {
     // 初始化的时候state里面还无参数
     this.props.getMaxDataDt().then(() => {
+      console.warn('进来了');
       const { maxData } = this.props;
       const zzjgMaxData = maxData.zzjg;
       const { begin, end, cycleType } = time.getDurationString('month', zzjgMaxData);
@@ -353,7 +354,7 @@ export default class ReportHome extends PureComponent {
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
     const { custRange, visibleBoards, newVisibleBoards, maxData } = this.props;
-    if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length) {
+    if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length || !maxData) {
       return null;
     }
     const { performance, chartInfo, chartTableInfo } = this.props;
