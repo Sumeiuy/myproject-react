@@ -213,7 +213,6 @@ export default class PageHeader extends PureComponent {
                 /> :
               null
             }
-
           </div>
         </div>
         <div style={{ height: '40px' }} />
