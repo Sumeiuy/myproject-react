@@ -3,10 +3,11 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:46:17
+ * @Last Modified time: 2017-12-05 15:21:42
  */
 // import _ from 'lodash';
 import { message } from 'antd';
+import { parse } from 'query-string';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { emp } from '../helper';
@@ -346,7 +347,8 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
+      return history.listen(({ pathname, search }) => {
+        const query = parse(search);
         // 查询子类型列表参数
         const subTypeListParam = {
           typeCode: 'subType',

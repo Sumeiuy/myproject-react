@@ -5,7 +5,8 @@
  * @Last Modified time: 2017-12-12 14:58:46
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';

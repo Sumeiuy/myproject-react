@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

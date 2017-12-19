@@ -2,12 +2,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 10:46:08
+ * @Last Modified time: 2017-12-08 14:33:56
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';
@@ -18,7 +19,7 @@ import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
 import ImgAdd from '../../../static/images/bg_add.png';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
-
+import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 
 import styles from './Home.less';

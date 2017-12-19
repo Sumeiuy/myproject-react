@@ -4,7 +4,8 @@
  * @author xuxiaoqin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';

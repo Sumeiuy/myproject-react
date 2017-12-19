@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-14 13:28:38
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-13 14:17:03
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
-import { RestoreScrollTop } from '../../common/hocComponent';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
 import styles from './taskPreview.less';

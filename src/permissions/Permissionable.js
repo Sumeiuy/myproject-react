@@ -4,9 +4,10 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { connect } from 'dva-react-router-3';
+import { connect } from 'dva';
 
 const getCheckList = (options) => {
   if (_.isArray(options)) {

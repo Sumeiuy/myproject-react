@@ -4,9 +4,9 @@
  */
 
 import 'babel-polyfill';
-import dva from 'dva-react-router-3';
-import { hashHistory, routerRedux } from 'dva-react-router-3/router';
-
+import dva from 'dva';
+import { routerRedux } from 'dva/router';
+import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
@@ -42,7 +42,7 @@ const onError = (e) => {
 
 // 1. Initialize
 const app = dva({
-  history: hashHistory,
+  history: createHistory(),
   onAction: [createLogger(), createSensorsLogger()],
   extraEnhancers,
   onError,
@@ -65,7 +65,6 @@ app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
 // 合作合约
 app.model(require('./models/contract'));
-app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 // 通道类型协议
@@ -78,6 +77,8 @@ app.model(require('./models/taskList/managerView'));
 app.model(require('./models/demote'));
 // 分公司客户划转
 app.model(require('./models/filialeCustTransfer'));
+// 汇报关系树
+app.model(require('./models/relation'));
 
 // 4. Router
 app.router(routerConfig);

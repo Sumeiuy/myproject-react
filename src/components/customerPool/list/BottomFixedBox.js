@@ -11,8 +11,6 @@ import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
-import { url as urlHelper, env } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 
 import styles from './bottomFixedBox.less';
@@ -28,6 +26,7 @@ export default class BottomFixedBox extends PureComponent {
     mainServiceManager: PropTypes.bool,
     entertype: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -159,22 +158,7 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
-    if (env.isInFsp()) {
-      const newurl = `${url}?${urlHelper.stringify(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      this.props.push({
-        pathname: url,
-        query: obj,
-      });
-    }
+    this.props.onClick({ id, title, url, obj });
   }
 
   // 全选按钮选中时跳转到新建分组或者发起任务
@@ -191,22 +175,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
     };
-    if (env.isInFsp()) {
-      const newurl = `${url}?${urlHelper.stringify(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      this.props.push({
-        pathname: url,
-        query: obj,
-      });
-    }
+    this.props.onClick({ id, title, url, obj });
   }
 
   @autobind

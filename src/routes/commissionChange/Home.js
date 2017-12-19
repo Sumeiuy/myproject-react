@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'dva-react-router-3/router';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 
@@ -15,6 +14,7 @@ import SubscribDeatilChange from '../../components/commissionChange/SubscribDeat
 import UnSubscribDeatilChange from '../../components/commissionChange/UnSubscribDeatilChange';
 import SingleDetailChange from '../../components/commissionChange/SingleDetailChange';
 import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
 import { env, dom } from '../../helper';
 import styles from './home.less';
 

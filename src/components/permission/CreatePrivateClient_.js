@@ -9,7 +9,7 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
 import { emp } from '../../helper';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 
 const columns = [
   {

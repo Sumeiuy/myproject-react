@@ -11,7 +11,7 @@ import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
 
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import styles from './selectAssembly.less';
 
 const { comsubs: commadj } = seibelConfig;
@@ -36,6 +36,7 @@ export default class SelectAssembly extends PureComponent {
     validResult: {},
     shouldeCheck: true,
     onValidateCust: () => {},
+    dataSource: [],
   }
 
   constructor(props) {
@@ -43,7 +44,18 @@ export default class SelectAssembly extends PureComponent {
     this.state = {
       inputValue: '',
       typeStyle: 'search',
+      dataSource: [],
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { dataSource: nextData } = nextProps;
+    const { dataSource: prevData } = this.props;
+    if (nextData !== prevData) {
+      this.setState({
+        dataSource: _.cloneDeep(nextData),
+      });
+    }
   }
 
   // 该用户是否能够被选中
@@ -83,6 +95,9 @@ export default class SelectAssembly extends PureComponent {
       } else {
         onSelectValue(this.selectedCust);
       }
+      this.setState({
+        typeStyle: 'close',
+      });
     } else {
       // 干掉客户
       this.clearCust();
@@ -141,13 +156,7 @@ export default class SelectAssembly extends PureComponent {
       return;
     }
     this.canSelected = true;
-    // });
     this.handleOKAfterValidate();
-    // const { custName, custEcom, riskLevelLabel } = this.selectedCust;
-    // this.setState({
-    //   inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
-    //   typeStyle: 'close',
-    // });
   }
 
   // 根据用户选中的option的value值获取对应的数组值
@@ -156,13 +165,13 @@ export default class SelectAssembly extends PureComponent {
     if (value) {
       const keyId = value.substr(0, value.length - 3);
       // 找出那个用户选择的客户数据
-      const { dataSource, shouldeCheck } = this.props;
+      const { shouldeCheck } = this.props;
+      const { dataSource } = this.state;
       const item = _.filter(dataSource, o => o.id === keyId)[0];
       // 首先需要做客户校验
       this.selectedCust = null;
       const { id, custType } = item;
       this.selectedCust = item;
-      // this.props.onSelectValue(item);
       if (shouldeCheck) {
         this.props.onValidateCust({
           custRowId: id,
@@ -190,6 +199,7 @@ export default class SelectAssembly extends PureComponent {
       this.props.onSearchValue(this.state.inputValue);
     } else if (this.state.typeStyle === 'close') {
       this.setState({
+        dataSource: [],
         inputValue: '',
         typeStyle: 'search',
       });
@@ -197,8 +207,8 @@ export default class SelectAssembly extends PureComponent {
   }
 
   render() {
-    const { dataSource, width } = this.props;
-    const { inputValue, typeStyle } = this.state;
+    const { width } = this.props;
+    const { inputValue, typeStyle, dataSource } = this.state;
     const options = dataSource.map((opt) => {
       const { custName, custEcom, riskLevelLabel } = opt;
       const levelText = riskLevelLabel ? ` - ${riskLevelLabel}` : '';

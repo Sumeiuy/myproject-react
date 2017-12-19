@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-15 13:49:49
+ * @Last Modified time: 2017-12-13 13:23:24
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import DisabledSelect from './DisabledSelect';
 import RejectButtons from './RejectButtons';
 import InfoTitle from '../common/InfoTitle';

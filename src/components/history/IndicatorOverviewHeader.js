@@ -4,14 +4,15 @@
  * @description 用于历史对比头部区域模块
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Button } from 'antd';
 import _ from 'lodash';
+import { Prompt } from 'dva/router';
 import Icon from '../common/Icon';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
-import { env } from '../../helper';
 
 // 选择项字典
 import styles from './indicatorOverviewHeader.less';
@@ -44,34 +45,24 @@ export default class IndicatorOverviewHeader extends PureComponent {
       createHistoryBoardModal: false,
       deleteHistoryBoardModal: false,
       saveHistoryBoardModal: false,
+      isBlocking: false,
     };
   }
 
   componentDidMount() {
     const { router } = this.context;
-    this.removeHistoryListener = router.listenBefore(
-      () => {
-        if (!_.isEmpty(this.props.selectKeys)) {
-          /*eslint-disable*/
-          if (env.isInFsp()) {
-            window.$confirm = window.confirm;
-            window.confirm = function (...argus) {
-              window.confirm = window.$confirm;
-              return window._confirm.apply(null, argus);
-            };
-            return '您重新挑选的指标看板尚未保存，确认直接返回？';
-          }
-          /*eslint-disable*/
-          return '您重新挑选的指标看板尚未保存，确认直接返回？';
-        }
-        return null;
-      },
-    );
+    this.historyListen = router.history.listen(() => {
+      if (!_.isEmpty(this.props.selectKeys)) {
+        this.setState({
+          isBlocking: true,
+        });
+      }
+    });
   }
 
   componentWillUnmount() {
-    if (this.removeHistoryListener) {
-      this.removeHistoryListener();
+    if (this.historyListen) {
+      this.historyListen();
     }
   }
 
@@ -133,7 +124,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
 
 
   render() {
-    const { createHistoryBoardModal, deleteHistoryBoardModal } = this.state;
+    const { createHistoryBoardModal, deleteHistoryBoardModal, isBlocking } = this.state;
     const {
       location: { query: { boardId, boardType } },
       createBoardConfirm,
@@ -220,6 +211,10 @@ export default class IndicatorOverviewHeader extends PureComponent {
             {...deleteHistoryBMProps}
           />
         </div>
+        <Prompt
+          when={isBlocking}
+          message="您重新挑选的指标看板尚未保存，确认直接返回？"
+        />
       </div>
     );
   }

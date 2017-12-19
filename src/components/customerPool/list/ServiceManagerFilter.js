@@ -3,7 +3,8 @@
  *  客户列表项中按服务经理筛选
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import DropdownSelect from '../../common/dropdownSelect';
 

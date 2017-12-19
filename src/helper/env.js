@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 14:50:24
+ * @Last Modified time: 2017-12-13 14:05:47
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -44,6 +44,13 @@ const env = {
       $browser: bowser.name,
       $browser_version: `${bowser.name} ${bowser.version}`,
     };
+  },
+
+  /**
+   * 获取Fsp容器
+   */
+  getFspContainer() {
+    return document.querySelector(fspContainer.container);
   },
   /**
    * 判断当前页面是否在FSP系统下

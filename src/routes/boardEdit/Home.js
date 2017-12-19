@@ -3,10 +3,11 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Input, Tooltip, Button, message } from 'antd';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -16,7 +17,7 @@ import SelfSelect from '../../components/Edit/SelfSelect';
 import BoardSelectTree from '../../components/Edit/BoardSelectTree';
 import selectHandlers from '../../components/Edit/selectHelper';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
-
+import withRouter from '../../decorators/withRouter';
 import styles from './Home.less';
 
 const reactApp = fspContainer.reactApp;

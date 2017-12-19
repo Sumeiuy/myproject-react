@@ -2,7 +2,8 @@
  * @description 删除历史看板的Modal
  * @author hongguangqing
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, Form } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -21,12 +22,13 @@ export default class DeleteHistoryBoardModal extends PureComponent {
     modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
     deleteBoardConfirm: PropTypes.func.isRequired,
-    boardId: PropTypes.string.isRequired,
+    boardId: PropTypes.string,
     orgId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
     visible: false,
+    boardId: '',
   }
 
   constructor(props) {

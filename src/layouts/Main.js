@@ -3,14 +3,14 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { withRouter } from 'dva-react-router-3/router';
-import { connect } from 'dva-react-router-3';
+import { connect } from 'dva';
 import Loading from './Loading';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
-
+import withRouter from '../decorators/withRouter';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -155,7 +155,4 @@ export default class Main extends Component {
     );
   }
 }
-
-
 // export default connect(({ app, loading }) => ({ app, loading: loading.models.app }))(App)
-

@@ -4,7 +4,8 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Input, Form, Button } from 'antd';
 import { createForm } from 'rc-form';
 import classnames from 'classnames';

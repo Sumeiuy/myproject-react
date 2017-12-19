@@ -3,7 +3,8 @@
  *  暂无数据组件
  * @author zhangjunli
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import styles from './ifEmpty.less';
 

@@ -3,8 +3,6 @@
  * @author yangquanjian
  */
 
-// import { routerRedux } from 'dva/router';
-
 import { message } from 'antd';
 import _ from 'lodash';
 import { feedback as api } from '../api';
