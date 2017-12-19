@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-15 12:01:01
+ * @Last Modified time: 2017-12-15 15:41:21
  * 客户反馈
  */
 
@@ -95,66 +95,22 @@ export default class CustFeedback extends PureComponent {
     }
   }
 
+  /**
+   * 根据当前索引换算透明度，从1开始，0.2往下递减，减到0.2就不再递减
+   * @param {*string} index 索引
+   * @param {*string} childIndex child索引
+   */
+  @autobind
+  getCurrentColor(index, childIndex) {
+    let alpha = 1 - (Number(childIndex) * 0.2);
+    if (alpha <= 0.2) {
+      alpha = 0.2;
+    }
+    return getLevelColor(index, alpha);
+  }
+
   @autobind
   renderCustFeedbackChart(custFeedback) {
-    // 等联调完毕删除
-    // let level1Data = [
-    //   {
-    //     name: '前端',
-    //     key: 'frontend',
-    //     value: '0.5',
-    //     children: [
-    //       {
-    //         name: '许晓钦',
-    //         key: 'frontend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '朱胜楠',
-    //         key: 'frontend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '朱飞阳',
-    //         key: 'frontend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '未知',
-    //         key: 'frontend',
-    //         value: '0.1',
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     name: '后端',
-    //     key: 'backend',
-    //     value: '0.5',
-    //     children: [
-    //       {
-    //         name: '赵昌吾',
-    //         key: 'backend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '王必强',
-    //         key: 'backend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '冯涛',
-    //         key: 'backend',
-    //         value: '0.3',
-    //       },
-    //       {
-    //         name: '未知',
-    //         key: 'backend',
-    //         value: '0.1',
-    //       },
-    //     ],
-    //   },
-    // ];
-
     // 前后台定义返回的格式可以直接给一级饼图作数据源
     let level1Data = custFeedback;
     // 然后添加颜色
@@ -211,20 +167,6 @@ export default class CustFeedback extends PureComponent {
       level1Data,
       level2Data,
     };
-  }
-
-  /**
-   * 根据当前索引换算透明度，从1开始，0.2往下递减，减到0.2就不再递减
-   * @param {*string} index 索引
-   * @param {*string} childIndex child索引
-   */
-  @autobind
-  getCurrentColor(index, childIndex) {
-    let alpha = 1 - (Number(childIndex) * 0.2);
-    if (alpha <= 0.2) {
-      alpha = 0.2;
-    }
-    return getLevelColor(index, alpha);
   }
 
   @autobind

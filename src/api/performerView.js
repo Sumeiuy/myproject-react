@@ -21,7 +21,7 @@ export default function performerView(api) {
     // 获取任务简报
     getMissionBrief: query => api.post('/groovynoauth/fsp/campaign/mot/getMissionBrief', query),
     // 预览客户明细
-    previewCustDetail: query => api.post('/groovynoauth/fsp/campaign/mot/previewCustDetail', query),
+    previewCustDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListOfMission', query),
     // 管理者视图查询任务的详细信息
     queryMngrMissionDetailInfo: query => api.post('/groovynoauth/fsp/campaign/mot/queryMngrMissionDetailInfo', query),
     // 管理者视图客户反馈一二级
