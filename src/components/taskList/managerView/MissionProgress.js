@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-08 17:54:59
+ * @Last Modified time: 2017-12-15 13:54:15
  * 任务进度
  */
 
@@ -101,7 +101,7 @@ export default class MissionProgress extends PureComponent {
             </Tooltip>
           </div>
         </div>
-        <span className="ant-progress-text">100 / {activePercent}%</span>
+        <span className="ant-progress-text">{activeCount} / {activePercent}%</span>
       </div>
     );
   }
@@ -111,19 +111,19 @@ export default class MissionProgress extends PureComponent {
     const { missionImplementationProgress } = this.props;
     const {
       // 客户总数
-      custCount = 300,
+      custCount = 0,
       // 已服务客户
-      servedNums = 100,
+      servedNums = 0,
       // 已完成客户
-      completedNums = 100,
+      completedNums = 0,
       // 结果达标客户
-      standardNums = 100,
+      standardNums = 0,
       // 已服务比例
-      servedNumsRatio = 0.5,
+      servedNumsRatio = 0,
       // 已完成比例
-      completedNumsRatio = 0.5,
+      completedNumsRatio = 0,
       // 已达标比例
-      standardNumsRatio = 0.5,
+      standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
 
     const servePercent = Number(servedNumsRatio) * 100;
@@ -140,7 +140,7 @@ export default class MissionProgress extends PureComponent {
         <div className={styles.statusCust}>
           <span className={styles.title}>{COMPLETED_CUST}</span>
           {this.renderProgressContent(COMPLETED_CUST, NOT_COMPLETED_CUST,
-            100 - completedPercent, completedPercent, completedNums, custCount - completedNums)}
+            completedPercent, 100 - completedPercent, completedNums, custCount - completedNums)}
         </div>
         <div className={styles.standardCust}>
           <span className={styles.title}>{STASIFY_CUST}</span>

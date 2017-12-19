@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-13 10:41:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-13 13:35:59
+ * @Last Modified time: 2017-12-18 13:58:11
  * 管理者视图右侧目标客户
  */
 
@@ -17,14 +17,14 @@ import TipsInfo from '../performerView/TipsInfo';
 import styles from './targetCustomer.less';
 
 // 暂时的来源类型，具体需要和后端定一下
-const sourceType = [{
-  key: 'import',
-  value: '客户细分导入',
-},
-{
-  key: 'sightLabel',
-  value: '瞄准镜标签',
-}];
+// const sourceType = [{
+//   key: 'import',
+//   value: '客户细分导入',
+// },
+// {
+//   key: 'sightLabel',
+//   value: '瞄准镜标签',
+// }];
 
 export default class TargetCustomer extends PureComponent {
 
@@ -42,6 +42,8 @@ export default class TargetCustomer extends PureComponent {
     custSourceDescription: PropTypes.string,
     // 预览客户明细
     onPreview: PropTypes.func,
+    // 当前机构名
+    orgName: PropTypes.string,
   }
 
   static defaultProps = {
@@ -50,6 +52,7 @@ export default class TargetCustomer extends PureComponent {
     custTotal: '',
     custSourceDescription: '',
     onPreview: () => { },
+    orgName: '',
   }
 
   constructor(props) {
@@ -85,9 +88,10 @@ export default class TargetCustomer extends PureComponent {
   render() {
     const {
       isFold,
-      custSource = 'import',
+      custSource,
       custSourceDescription,
       custTotal,
+      orgName,
     } = this.props;
     const { overlayTop } = this.state;
     const posi = 'rightBottom';
@@ -96,49 +100,53 @@ export default class TargetCustomer extends PureComponent {
       <div className={styles.targetCustomerSection}>
         <LabelInfo value="目标客户" />
         <div className={styles.targetCustomerContent}>
-          {
-            !_.isEmpty(_.find(sourceType, item => item.key === custSource)) ?
-              <div>
-                <Row className={styles.rowItem}>
+          <div>
+            <Row className={styles.rowItem}>
+              {
+                !_.isEmpty(custSource) ?
                   <Col span={colSpanValue} className={styles.colItem}>
                     <span className={styles.label}>客户来源:&nbsp;</span>
                     <span className={styles.content}>{custSource || '--'}</span>
                   </Col>
-                  <Col span={colSpanValue} className={styles.colItem}>
-                    <span
-                      className={classnames({
-                        [styles.label]: true,
-                      })}
-                    >客户总数:&nbsp;</span>
-                    <span
-                      className={classnames({
-                        [styles.custTotal]: true,
-                        [styles.content]: true,
-                      })}
-                      onClick={this.handlePreview}
-                    >{Number(custTotal) || 0}</span>
-                    {/**
+                  : null
+              }
+              <Col span={colSpanValue} className={styles.colItem}>
+                <span
+                  className={classnames({
+                    [styles.label]: true,
+                  })}
+                >客户总数:&nbsp;</span>
+                <span
+                  className={classnames({
+                    [styles.custTotal]: true,
+                    [styles.content]: true,
+                  })}
+                  onClick={this.handlePreview}
+                >{Number(custTotal) || 0}</span>
+                {/**
                      * 机构名变量，需要替换
                      */}
-                    <span
-                      className={styles.custTotalTooltip}
-                      onMouseOver={this.handleMouseOver}
-                      ref={ref => (this.custTotalTipElem = ref)}
-                    >
-                      <TipsInfo
-                        title={'当前{机构名}有效客户总数'}
-                        position={posi}
-                        wrapperClass={classnames({
-                          [styles.custNumberTips]: true,
-                        })}
-                        overlayStyle={{
-                          top: overlayTop,
-                        }}
-                        getPopupContainer={this.getPopupContainer}
-                      />
-                    </span>
-                  </Col>
-                </Row>
+                <span
+                  className={styles.custTotalTooltip}
+                  onMouseOver={this.handleMouseOver}
+                  ref={ref => (this.custTotalTipElem = ref)}
+                >
+                  <TipsInfo
+                    title={`当前${orgName}有效客户总数`}
+                    position={posi}
+                    wrapperClass={classnames({
+                      [styles.custNumberTips]: true,
+                    })}
+                    overlayStyle={{
+                      top: overlayTop,
+                    }}
+                    getPopupContainer={this.getPopupContainer}
+                  />
+                </span>
+              </Col>
+            </Row>
+            {
+              !_.isEmpty(custSourceDescription) ?
                 <Row className={styles.rowItem}>
                   <Col className={styles.colItem}>
                     <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
@@ -147,8 +155,9 @@ export default class TargetCustomer extends PureComponent {
                     </p>
                   </Col>
                 </Row>
-              </div> : null
-          }
+                : null
+            }
+          </div>
         </div>
       </div>
     );
