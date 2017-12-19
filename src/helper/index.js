@@ -1,6 +1,7 @@
 import check from './check';
 import data from './data';
 import dom from './dom';
+import dva from './dva';
 import emp from './emp';
 import env from './env';
 import event from './event';
@@ -16,6 +17,7 @@ export default {
   check,
   data,
   dom,
+  dva,
   emp,
   env,
   event,
