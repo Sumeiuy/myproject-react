@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 20:23:31
+ * @Last Modified time: 2017-12-18 15:19:54
  */
 
 import React, { PureComponent } from 'react';
@@ -71,6 +71,8 @@ export default class GroupTable extends PureComponent {
     onSelectAllChange: PropTypes.func,
     // tableStyle
     tableStyle: PropTypes.object,
+    // 第一列class
+    operationColumnClass: PropTypes.string,
   };
 
   static defaultProps = {
@@ -96,6 +98,7 @@ export default class GroupTable extends PureComponent {
     selectionType: 'radio',
     onSelectAllChange: () => { },
     tableStyle: null,
+    operationColumnClass: '',
   };
 
   constructor(props) {
@@ -187,6 +190,7 @@ export default class GroupTable extends PureComponent {
       isFixedColumn,
       fixedColumn,
       columnWidth,
+      operationColumnClass,
     } = this.props;
     const len = titleColumn.length - 1;
     if (_.isEmpty(listData)) {
@@ -202,7 +206,13 @@ export default class GroupTable extends PureComponent {
         if (index === 0 && isFirstColumnLink) {
           // 第一列可以Link，有handler
           return (
-            <div className={styles.operation}>
+            <div
+              className={
+                classnames({
+                  [styles.operation]: true,
+                  [operationColumnClass]: true,
+                })}
+            >
               <Clickable
                 onClick={() => firstColumnHandler(record)}
                 eventName="/click/groupTabel/operationFirstColumn"
@@ -215,7 +225,12 @@ export default class GroupTable extends PureComponent {
           );
         }
         if (index === len && !_.isEmpty(actionSource)) {
-          return (<div className={styles.operation}>
+          return (<div
+            className={
+              classnames({
+                [styles.operation]: true,
+              })}
+          >
             {
               _.map(actionSource, itemData => (
                 <Clickable

@@ -16,9 +16,9 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from './config/persist';
-import { initFspMethod } from './utils/fspGlobal';
-
-import permission from './permissions';
+import { dva as dvaHelper } from './helper';
+// import { initFspMethod } from './utils/fspGlobal';
+// import permission from './permissions';
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -91,8 +91,9 @@ app.start('#exApp');
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
 
+dvaHelper.exposeStore(store);
 // 暴露给fsp方法
-initFspMethod(store);
+// initFspMethod(store);
 
 // 6. redux-persist
 if (persistConfig.active) {
@@ -100,7 +101,7 @@ if (persistConfig.active) {
 }
 
 // 7. 初始化权限配置
-permission.init(store);
+// permission.init(store);
 
 window.navTo = (url) => {
   const state = store.getState();
