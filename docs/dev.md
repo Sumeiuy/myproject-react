@@ -16,7 +16,7 @@
     * PARAMS:
         > categoryId
         > token
-    * RESPONSE: 
+    * RESPONSE:
 
   ```
 {
@@ -57,7 +57,7 @@ export default {
 };
 ```
 
-### 2. 添加view组件 
+### 2. 添加view组件
 
 一个view组件对应一个页面入口，因产品列表是产品tab上的首页，在../src/views/test/ 下新建一个Home的view文件，主要代码：
 
@@ -107,7 +107,8 @@ test/List关键代码片段(先忽略具体逻辑，只要知道是一个标准�
 /**
  * @file test/List.js
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Table } from 'antd';
 
 import columns from './columns'; // 这个是table每列的定义，细节不用关注
@@ -230,7 +231,8 @@ export default {
  *  xx首页
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import List from '../../components/test/List';

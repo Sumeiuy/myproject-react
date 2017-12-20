@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 20:30:15
+ * @Last Modified time: 2017-12-18 15:29:29
  * 客户明细数据
  */
 
@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Icon } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { fspGlobal } from '../../../utils';
@@ -55,27 +56,27 @@ export default class CustDetail extends PureComponent {
 
   static propTypes = {
     // 表格数据
-    data: PropTypes.array,
+    data: PropTypes.object,
     // 获取下一页数据
     getCustDetailData: PropTypes.func,
   }
 
   static defaultProps = {
-    data: EMPTY_LIST,
+    data: EMPTY_OBJECT,
     getCustDetailData: () => { },
   }
 
   constructor(props) {
     super(props);
     const {
-      data: { page = EMPTY_OBJECT, listData = EMPTY_LIST },
+      data: { page = EMPTY_OBJECT, list = EMPTY_LIST },
     } = props;
-    const { totalRecordNum, curPageNum, curPageSize } = page;
+    const { totalCount, pageNum, pageSize } = page;
     this.state = {
-      curPageNum: curPageNum || INITIAL_PAGE_NUM,
-      curPageSize: curPageSize || INITIAL_PAGE_SIZE,
-      totalRecordNum: totalRecordNum || INITIAL_PAGE_NUM,
-      dataSource: this.addIdToDataSource(listData) || EMPTY_LIST,
+      curPageNum: pageNum || INITIAL_PAGE_NUM,
+      curPageSize: pageSize || INITIAL_PAGE_SIZE,
+      totalRecordNum: totalCount || 0,
+      dataSource: this.addIdToDataSource(list) || EMPTY_LIST,
       currentSelectRecord: {},
       currentSelectRowKeys: [],
       isSelectAll: false,
@@ -86,19 +87,19 @@ export default class CustDetail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { data: { page: nextPage = EMPTY_OBJECT,
-      listData: nextData = EMPTY_LIST } } = nextProps;
-    const { data: { page = EMPTY_OBJECT, listData = EMPTY_LIST } } = this.props;
+      list: nextData = EMPTY_LIST } } = nextProps;
+    const { data: { page = EMPTY_OBJECT, list = EMPTY_LIST } } = this.props;
     const { currentSelectRowKeys, isSelectAll } = this.state;
     if (page !== nextPage) {
-      const { curPageNum, curPageSize, totalRecordNum } = nextPage || EMPTY_OBJECT;
+      const { pageNum, pageSize, totalCount } = nextPage || EMPTY_OBJECT;
       this.setState({
-        curPageNum,
-        curPageSize,
-        totalRecordNum,
+        curPageNum: pageNum,
+        curPageSize: pageSize,
+        totalRecordNum: totalCount,
       });
     }
 
-    if (listData !== nextData) {
+    if (list !== nextData) {
       let newSelectRowKeys = currentSelectRowKeys;
       if (isSelectAll) {
         newSelectRowKeys = _.map(nextData, item => item.custId);
@@ -123,10 +124,10 @@ export default class CustDetail extends PureComponent {
       curPageNum: nextPage,
       curPageSize: currentPageSize,
     });
-    getCustDetailData({
-      curPageNum: nextPage,
-      curPageSize: currentPageSize,
-    });
+    getCustDetailData(
+      nextPage,
+      currentPageSize,
+    );
   }
 
   /**
@@ -142,10 +143,10 @@ export default class CustDetail extends PureComponent {
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
     });
-    getCustDetailData({
-      curPageNum: currentPageNum,
-      curPageSize: changedPageSize,
-    });
+    getCustDetailData(
+      currentPageNum,
+      changedPageSize,
+    );
   }
 
   /**
@@ -157,7 +158,7 @@ export default class CustDetail extends PureComponent {
     let newDataSource = listData;
     if (!_.isEmpty(listData)) {
       newDataSource = _.map(listData, (item) => {
-        if (_.isArray(item.feedbackDetail)) {
+        if (_.isArray(item.custFeedBack2)) {
           if (!this.isFeedbackDetailMore) {
             this.isFeedbackDetailMore = true;
           }
@@ -212,17 +213,6 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
-  renderFeedbackDetail(feedbackDetail) {
-    return (
-      <div className={styles.detailColumn}>
-        {_.map(feedbackDetail, itemData =>
-          <div key={itemData}><span>{itemData}</span></div>)
-        }
-      </div>
-    );
-  }
-
-  @autobind
   renderCustTypeIcon(custType) {
     return rankImgSrcConfig[custType] ?
       <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
@@ -233,8 +223,8 @@ export default class CustDetail extends PureComponent {
    * 跳转到fsp的360信息界面
    */
   @autobind
-  toDetail(custType, custId, rowId, ptyId) {
-    const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+  toDetail(custNature, custId, rowId, ptyId) {
+    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
@@ -254,8 +244,22 @@ export default class CustDetail extends PureComponent {
    */
   @autobind
   handleCustNameClick(record) {
-    const { custType, custId, rowId, ptyId } = record;
-    this.toDetail(custType, custId, rowId, ptyId);
+    const { custNature, custId, rowId, ptyId } = record;
+    this.toDetail(custNature, custId, rowId, ptyId);
+  }
+
+  @autobind
+  renderFeedbackDetail(feedbackDetail) {
+    if (this.isFeedbackDetailMore) {
+      return (
+        <div className={styles.detailColumn}>
+          {_.map(feedbackDetail, itemData =>
+            <div key={itemData}><span>{itemData}</span></div>)
+          }
+        </div>
+      );
+    }
+    return feedbackDetail;
   }
 
   renderColumnTitle() {
@@ -264,28 +268,28 @@ export default class CustDetail extends PureComponent {
       value: '客户名称',
     },
     {
-      key: 'custType',
+      key: 'levelCode',
       value: '客户类型',
       render: this.renderCustTypeIcon,
     },
     {
-      key: 'department',
+      key: 'orgName',
       value: '所在营业部',
     },
     {
-      key: 'serveManager',
+      key: 'empName',
       value: '服务经理',
     },
     {
-      key: 'serveStatus',
+      key: 'missionStatusValue',
       value: '服务状态',
     },
     {
-      key: 'custFeedback',
+      key: 'custFeedBack1',
       value: '客户反馈',
     },
     {
-      key: 'feedbackDetail',
+      key: 'custFeedBack2',
       value: '反馈详情',
       render: this.renderFeedbackDetail,
     }];
@@ -307,35 +311,47 @@ export default class CustDetail extends PureComponent {
       <div className={styles.custDetailWrapper}>
         <div className={styles.title}>已反馈客户共{totalRecordNum || 0}人</div>
         <div className={styles.custDetailTableSection}>
-          <GroupTable
-            pageData={{
-              curPageNum,
-              curPageSize,
-              totalRecordNum,
-            }}
-            listData={dataSource}
-            onSizeChange={this.handleShowSizeChange}
-            onPageChange={this.handlePageChange}
-            tableClass={
-              classnames({
-                [tableStyles.groupTable]: true,
-                [styles.custDetailTable]: true,
-              })
-            }
-            columnWidth={[100, 100, 130, 100, 100, 110, this.isFeedbackDetailMore ? 300 : 200]}
-            titleColumn={titleColumn}
-            // 固定标题，内容滚动
-            scrollY={330}
-            isFixedTitle
-            selectionType={'checkbox'}
-            isNeedRowSelection
-            onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
-            onRowSelectionChange={this.handleRowSelectionChange}
-            currentSelectRowKeys={currentSelectRowKeys}
-            onSelectAllChange={this.handleSelectAllChange}
-            isFirstColumnLink
-            firstColumnHandler={this.handleCustNameClick}
-          />
+          {!_.isEmpty(dataSource) ?
+            <GroupTable
+              pageData={{
+                curPageNum,
+                curPageSize,
+                totalRecordNum,
+              }}
+              listData={dataSource}
+              onSizeChange={this.handleShowSizeChange}
+              onPageChange={this.handlePageChange}
+              tableClass={
+                classnames({
+                  [styles.custDetailTable]: true,
+                  [tableStyles.groupTable]: true,
+                })
+              }
+              columnWidth={[100, 100, 130, 100, 100, 110, this.isFeedbackDetailMore ? 300 : 120]}
+              titleColumn={titleColumn}
+              // 固定标题，内容滚动
+              scrollY={330}
+              isFixedTitle
+              selectionType={'checkbox'}
+              isNeedRowSelection={false}
+              onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+              onRowSelectionChange={this.handleRowSelectionChange}
+              currentSelectRowKeys={currentSelectRowKeys}
+              onSelectAllChange={this.handleSelectAllChange}
+              isFirstColumnLink
+              firstColumnHandler={this.handleCustNameClick}
+              operationColumnClass={
+                classnames({
+                  [styles.custNameLink]: true,
+                })
+              }
+            /> :
+            <div className={styles.emptyContent}>
+              <span>
+                <Icon className={styles.emptyIcon} type="frown-o" />
+                暂无数据
+              </span>
+            </div>}
         </div>
       </div>
     );

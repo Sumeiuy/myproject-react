@@ -4,16 +4,18 @@
  * @author zhushengnan
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select, DatePicker, Row, Col, Button, message } from 'antd';
 import { connect } from 'react-redux';
-import { routerRedux, withRouter } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import Clickable from '../../components/common/Clickable';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
+import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 
 const Option = Select.Option;

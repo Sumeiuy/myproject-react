@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 
-import confirm from '../../components/common/Confirm/confirm';
+import confirm from '../../components/common/Confirm';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Detail from '../../components/commissionAdjustment/Detail';
 import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
@@ -26,6 +26,7 @@ import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
 import { permission } from '../../utils';
 import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
 import './home.less';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];

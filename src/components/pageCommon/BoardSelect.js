@@ -3,7 +3,8 @@
  * @author sunweibin
  * @description 看板切换Select
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Icon } from 'antd';
 import _ from 'lodash';

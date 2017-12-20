@@ -3,7 +3,8 @@
  * 上传附件
  * @author yangquanjian
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Upload, message, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import { createForm } from 'rc-form';

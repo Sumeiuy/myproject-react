@@ -8,9 +8,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PerformerViewDetail from '../../components/taskList/performerView/PerformerViewDetail';
@@ -142,6 +143,11 @@ const mapDispatchToProps = {
     type: 'customerPool/clearTaskFlowData',
     payload: query || {},
   }),
+  // 清除自建任务数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
   // 预览客户明细
@@ -195,7 +201,7 @@ export default class PerformerView extends PureComponent {
     // 预览客户细分
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户细分结果
-    custDetailResult: PropTypes.array.isRequired,
+    custDetailResult: PropTypes.object.isRequired,
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
     countFlowFeedBack: PropTypes.func.isRequired,
@@ -204,6 +210,7 @@ export default class PerformerView extends PureComponent {
     empInfo: PropTypes.object,
     missionImplementationDetail: PropTypes.object.isRequired,
     countFlowStatus: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -300,7 +307,10 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
-    const { missionViewType: st, flowId } = record;
+    const {
+      missionViewType: st,
+      flowId,
+    } = record;
     const {
       getTaskBasicInfo,
     } = this.props;
@@ -326,15 +336,16 @@ export default class PerformerView extends PureComponent {
    * 获取任务实施进度
    */
   @autobind
-  getFlowStatus() {
+  getFlowStatus({ orgId }) {
     const {
       countFlowStatus,
       location: { query: { currentId } },
     } = this.props;
+    const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
       taskId: currentId,
-      orgId: emp.getOrgId(),
+      orgId: newOrgId || emp.getOrgId(),
     });
   }
 
@@ -377,6 +388,8 @@ export default class PerformerView extends PureComponent {
       replace,
       missionImplementationDetail,
       mngrMissionDetailInfo,
+      push,
+      clearCreateTaskData,
     } = this.props;
     const {
       query: { currentId },
@@ -437,9 +450,11 @@ export default class PerformerView extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={this.getFlowStatus}
-            missionImplementationDetail={missionImplementationDetail}
-            mngrMissionDetailInfo={mngrMissionDetailInfo}
+            missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
+            mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
             launchNewTask={this.handleCreateBtnClick}
+            clearCreateTaskData={clearCreateTaskData}
+            push={push}
           />
         );
         break;
@@ -510,7 +525,12 @@ export default class PerformerView extends PureComponent {
     };
 
     const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
-    finalPostData = _.merge(finalPostData, omitData);
+    finalPostData = _.merge(
+      finalPostData,
+      omitData,
+      // { orgId: 'ZZ001041' },
+      { orgId: emp.getOrgId() },
+    );
 
     // 对反馈状态做处理
     if (!('missionViewType' in finalPostData)
@@ -552,18 +572,26 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      missionId: record.id,
+      taskId: record.id,
+      // taskId: '101111171108181',
       orgId: emp.getOrgId(),
+      // orgId: 'ZZ001041',
+      // 管理者视图需要eventId来查询详细信息
+      eventId: record.eventId,
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
       missionId: record.id,
+      // missionId: '101111171108181',
+      // orgId: 'ZZ001041',
       orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: record.id,
+      // missionId: '101111171108181',
       orgId: emp.getOrgId(),
+      // orgId: 'ZZ001041',
     });
   }
 

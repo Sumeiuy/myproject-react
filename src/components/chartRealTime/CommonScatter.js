@@ -2,8 +2,8 @@
  * by xuxiaoqin
  * CommonScatter.js
  */
-import React, { PropTypes } from 'react';
-// import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
 import IECharts from '../IECharts';
 
 export default function CommonScatter(props) {

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-30 13:56:59
+ * @Last Modified time: 2017-12-08 14:18:30
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -11,7 +11,8 @@
  * 并且在详情的外部容器组件上没有isCSListFold的CSS类
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';

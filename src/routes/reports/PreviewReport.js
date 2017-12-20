@@ -3,17 +3,18 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 
 import ReportHome from './Home';
 import { dom } from '../../helper';
 import { PublishConfirmModal } from '../../components/modals';
-
+import withRouter from '../../decorators/withRouter';
 import styles from './PreviewReport.less';
 
 // 首先判断wrap存在与否

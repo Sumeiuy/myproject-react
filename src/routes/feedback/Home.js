@@ -6,30 +6,20 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import _ from 'lodash';
-import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
-import { Row, Col } from 'antd';
-import SplitPane from 'react-split-pane';
-import Icon from '../../components/common/Icon';
+import { routerRedux } from 'dva/router';
+import _ from 'lodash';
+import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import LeftPanel from '../../components/common/leftPanel';
 import Detail from '../../components/feedback/Detail';
-import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { env } from '../../helper';
 import feedbackHelper from '../../helper/page/feedback';
-import '../../css/react-split-pane-master.less';
+import withRouter from '../../decorators/withRouter';
 import './home.less';
 
+const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const DEFAULTSIZE = 530;
-let splitPane;
-let PaneLeft;
-let Pane;
-let sildebarHide;
-let sildebarShow;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -42,18 +32,20 @@ const getDataFunction = loading => query => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackList: getDataFunction(true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class FeedBack extends PureComponent {
+export default class FeedBackNew extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -63,8 +55,7 @@ export default class FeedBack extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      paneMinSize: 200,
-      paneMaxSize: 600,
+      isEmpty: true,
     };
   }
 
@@ -75,14 +66,6 @@ export default class FeedBack extends PureComponent {
      } } } = this.props;
     // 默认筛选条件
     getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
-  }
-
-  componentDidMount() {
-    this.setDocumentScroll();
-    window.addEventListener('resize', this.onResizeChange, false);
-    this.panMov(DEFAULTSIZE);
-    this.initPane();
-    this.listenerLeftMenu();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -105,15 +88,8 @@ export default class FeedBack extends PureComponent {
   }
 
   componentDidUpdate() {
-    this.setDocumentScroll();
-    const {
-      location: {
-        pathname,
-        query,
-        query: { isResetPageNum },
-      },
-      replace,
-    } = this.props;
+    const { location: { pathname, query, query: { isResetPageNum } }, replace,
+      list: { resultData = EMPTY_LIST } } = this.props;
     // 重置pageNum和pageSize
     if (isResetPageNum === 'Y') {
       replace({
@@ -124,112 +100,15 @@ export default class FeedBack extends PureComponent {
         },
       });
     }
-  }
 
-  componentWillUnmount() {
-    // 重置外层容器样式
-    // 防止影响其他界面
-    /* eslint-disable */
-    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
-    if (UTBContentElem) {
-      UTBContentElem.style.marginRight = '30px';
-      UTBContentElem.style.marginBottom = '10px';
-    }
-    const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
-    /* eslint-enable */
-    containerElem.style.height = 'auto';
-
-    // 取消事件监听
-    window.removeEventListener('resize', this.onResizeChange, false);
-    this.removeListenerLeftMenu();
-  }
-
-  @autobind
-  onResizeChange() {
-    this.setDocumentScroll();
-    this.initPane();
-  }
-
-  setDocumentScroll() {
-    /* eslint-disable */
-    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
-    if (UTBContentElem) {
-      UTBContentElem.style.marginRight = '0px';
-      UTBContentElem.style.marginBottom = '0px';
-    }
-
-    const docElemHeight = document.documentElement.clientHeight;
-    const paginationElem = document.querySelector('.ant-pagination');
-    const tableElem = ReactDOM.findDOMNode(document.querySelector('.ant-table'));
-    const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
-    const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
-    const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
-    const nullElem = ReactDOM.findDOMNode(document.getElementById('empty'));
-    const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
-    const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
-    const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
-    const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
-    const feedbackListElem = ReactDOM.findDOMNode(document.querySelectorAll('.feedbackList')[1]);
-    const nullDivSectionElem = ReactDOM.findDOMNode(document.querySelector('.null_dv_section'));
-    const contentSectionElem = ReactDOM.findDOMNode(document.getElementById('content'));
-    /* eslint-enable */
-
-    let topDistance = 0;
-    const boxPadding = 12;
-    let paginationElemHeight = 0;
-    let headerHeight = 0;
-
-    if (paginationElem) {
-      const computedStyle = window.getComputedStyle(paginationElem, null);
-      paginationElemHeight = parseFloat(computedStyle.getPropertyValue('height'), 10) +
-        parseFloat(computedStyle.paddingTop) +
-        parseFloat(computedStyle.paddingBottom) +
-        parseFloat(computedStyle.marginTop) +
-        parseFloat(computedStyle.marginBottom);
-    }
-    if (feedbackHeaderElem) {
-      headerHeight = feedbackHeaderElem.getBoundingClientRect().height;
-    }
-
-    if (feedbackListElem) {
-      feedbackListElem.style.paddingLeft = '10px';
-    }
-
-    if (leftSectionElem && rightSectionElem) {
-      topDistance = leftSectionElem.getBoundingClientRect().top;
-      const sectionHeight = docElemHeight - topDistance;
-      leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
-      rightSectionElem.style.height = `${sectionHeight}px`;
-
-      if (tableElem) {
-        tableElem.style.height = `${sectionHeight - boxPadding - paginationElemHeight}px`;
-        tableElem.style.overflow = 'auto';
-      }
-      if (innerElem) {
-        innerElem.style.overflow = 'auto';
-      }
-      if (resizerElem) {
-        resizerElem.style.height = `${sectionHeight}px`;
-      }
-    }
-
-    if (containerElem) {
-      if (workspaceElem) {
-        // FSP内嵌里面
-        containerElem.style.height = `${docElemHeight - headerHeight - boxPadding}px`;
-      } else {
-        containerElem.style.height = `${docElemHeight}px`;
-      }
-    }
-
-    if (contentSectionElem) {
-      contentSectionElem.style.height = '100%';
-    }
-
-    if (nullElem && _.isEmpty(this.props.list.resultData)) {
-      const top = nullElem.getBoundingClientRect().top;
-      containerElem.style.height = `${docElemHeight - top}px`;
-      nullDivSectionElem.style.height = `${docElemHeight - top}px`;
+    if (_.isEmpty(resultData)) {
+      this.setState({ // eslint-disable-line
+        isEmpty: true,
+      });
+    } else {
+      this.setState({ // eslint-disable-line
+        isEmpty: false,
+      });
     }
   }
 
@@ -247,135 +126,45 @@ export default class FeedBack extends PureComponent {
     return true;
   }
 
-  // splitPan onChange回调函数
   @autobind
-  panchange(size) {
-    this.panMov(size);
-    this.initPane();
-    const boxWidth = splitPane.getBoundingClientRect().width;
-    if (size > boxWidth * 0.5) {
-      Pane.className = 'Pane vertical Pane2 allWidth';
-    } else {
-      Pane.className = 'Pane vertical Pane2';
-    }
-  }
-
-  // 重新给pan2样式赋值
-  panMov(size) {
-    splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
-    PaneLeft = ReactDOM.findDOMNode(document.querySelector('.Pane1'));// eslint-disable-line
-    Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
-    if (env.isIE()) {
-      Pane.style.paddingLeft = `${size + 20}px`;
-    }
-  }
-
-  // 动态配置pane参数
-  @autobind
-  initPane() {
-    const boxWidth = splitPane.getBoundingClientRect().width;
-    const paneaWidth = PaneLeft.getBoundingClientRect().width;
-    const minsize = boxWidth * 0.3 || 200;
-    const maxsize = boxWidth * 0.6 || 600;
-    const { paneboxWidth } = this.state;
-    if (paneboxWidth !== boxWidth) {
-      if (paneaWidth > maxsize) {
-        PaneLeft.style.width = `${maxsize}px`;
-        this.panMov(maxsize);
-      }
-      this.setState({
-        paneboxWidth: boxWidth,
-        paneMaxSize: maxsize,
-        paneMinSize: minsize,
-      });
-      if (paneaWidth > boxWidth * 0.5) {
-        Pane.className = 'Pane vertical Pane2 allWidth';
-      } else {
-        Pane.className = 'Pane vertical Pane2';
-      }
-    }
-  }
-  /**
-   *  嵌入FSP监听左侧菜单栏状态变化
-   *  解决点击左侧菜单栏拖拽在达到最大值后列表宽度无法自动适应问题
-   */
-  listenerLeftMenu() {
-    sildebarHide = ReactDOM.findDOMNode(document.querySelector('#sidebar-hide-btn'));// eslint-disable-line
-    sildebarShow = ReactDOM.findDOMNode(document.querySelector('#sidebar-show-btn'));// eslint-disable-line
-    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
-      sildebarHide.addEventListener('click', this.initPane, false);
-      sildebarShow.addEventListener('click', this.initPane, false);
-    }
-  }
-
-  // 取消左侧菜单控制按键事件监听
-  removeListenerLeftMenu() {
-    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
-      sildebarHide.removeEventListener('click', this.initPane, false);
-      sildebarShow.removeEventListener('click', this.initPane, false);
-    }
+  searchResult(isEmpty) {
+    this.setState({
+      isEmpty,
+    });
   }
 
   render() {
     const { list, location, replace } = this.props;
-    const isEmpty = _.isEmpty(list.resultData);
-    const { paneMaxSize, paneMinSize } = this.state;
-    const emptyClass = classnames({
-      none: !isEmpty,
-      feedbackRow: true,
-    });
-    const existClass = classnames({
-      none: isEmpty,
-      feedbackRow: true,
-    });
-    const splitPaneClass = classnames({
-      none: isEmpty,
-    });
+    // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
+    const { isEmpty } = this.state;
+    const topPanel = (
+      <FeedbackHeader
+        location={location}
+        replace={replace}
+      />
+    );
+    const leftPanel = (
+      <LeftPanel
+        list={list}
+        replace={replace}
+        location={location}
+      />
+    );
+
+    const rightPanel = (
+      <Detail
+        location={location}
+      />
+    );
     return (
       <div className="feedbackbox">
-        <FeedbackHeader
-          location={location}
-          replace={replace}
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="feedbackList"
         />
-        <Row className={emptyClass}>
-          <Col span="24" className="rightSection" id="empty">
-            <div className="feedbackList null_dv_section">
-              <div className="isnull_dv">
-                <div className="inner_dv">
-                  <Icon type="meiyouxiangguanjieguo" className="myxgjg" />
-                  <p>抱歉！没有找到相关结果</p>
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <div className={splitPaneClass}>
-          <SplitPane
-            onChange={this.panchange}
-            split="vertical"
-            minSize={paneMinSize}
-            maxSize={paneMaxSize}
-            defaultSize={DEFAULTSIZE}
-            className="primary"
-          >
-            <Row className={existClass}>
-              <Col span="24" className="leftSection" id="leftSection">
-                <FeedbackList
-                  list={list}
-                  replace={replace}
-                  location={location}
-                />
-              </Col>
-            </Row>
-            <Row className={existClass}>
-              <Col span="24" className="rightSection" id="rightSection">
-                <Detail
-                  location={location}
-                />
-              </Col>
-            </Row>
-          </SplitPane>
-        </div>
       </div>
     );
   }

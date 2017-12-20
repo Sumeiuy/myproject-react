@@ -3,7 +3,8 @@
  *  首页投顾观点区域
  * @author zhangjunli
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';

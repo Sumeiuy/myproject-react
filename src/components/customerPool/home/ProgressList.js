@@ -5,7 +5,8 @@
  * ----------------
  * @author zhangjunli
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Progress } from 'antd';
 import classnames from 'classnames';

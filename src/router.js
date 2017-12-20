@@ -4,15 +4,13 @@
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
-  Router,
   Route,
-  IndexRedirect,
-  IndexRoute,
+  Switch,
+  routerRedux,
   Redirect,
-} from 'dva-react-router-3/router';
-
-import { fspContainer } from './config';
+} from 'dva/router';
 
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
@@ -30,80 +28,112 @@ import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
-import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
-import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
+import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
 import Demote from './routes/demote/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
+import RelationHome from './routes/relation/Home';
 
-function switchRouter() {
-  const fsp = document.querySelector(fspContainer.container);
-  if (!((this.state.location.state || {}).noScrollTop || false)) {
-    if (fsp) {
-      fsp.scrollTop = 0;
-    } else {
-      window.scrollTo(0, 0);
+const { ConnectedRouter } = routerRedux;
+
+// 路由Collection
+const routes = [
+  { path: '/empty', component: Empty },
+  { path: '/report', component: ReportHome },
+  { path: '/boardManage', component: BoardManageHome },
+  { path: '/boardEdit', component: BoardEditHome },
+  { path: '/preview', component: PreviewReport },
+  { path: '/history', component: HistoryHome },
+  { path: '/feedback', component: FeedBack },
+  { path: '/commission', component: CommissionHome },
+  { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/modal', component: TemplModal },
+  { path: '/relation', component: RelationHome },
+  { path: '/taskList', component: TaskListHome },
+  {
+    path: '/permission',
+    component: PermissonHome,
+    children: [
+      { path: '/edit', component: PermissonEdit },
+    ],
+  },
+  { path: '/contract',
+    component: Contract,
+    children: [
+      { path: '/form', component: Form },
+    ],
+  },
+  { path: '/channelsTypeProtocol',
+    component: ChannelsTypeProtocol,
+    children: [
+      { path: '/edit', component: ChannelsTypeProtocolEdit },
+    ],
+  },
+  { path: '/customerPool',
+    component: CustomerPoolHome,
+    children: [
+      { path: '/viewpointDetail', component: ViewpointDetail },
+      { path: '/viewpointList', component: ViewpointList },
+      { path: '/todo', component: ToDo },
+      { path: '/list', component: CustomerList },
+      { path: '/customerGroup', component: CustomerGroup },
+      { path: '/createTask', component: CreateTask },
+      { path: '/customerGroupManage', component: CustomerGroupManage },
+      { path: '/serviceLog', component: ServiceLog },
+      { path: '/taskFlow', component: TaskFlow },
+    ],
+  },
+  {
+    path: '/demote',
+    component: Demote,
+  },
+  {
+    path: '/filialeCustTransfer',
+    component: FilialeCustTransfer,
+  },
+];
+
+// 递归创建路由
+function recursiveRouter(routeArray, parentPath = '') {
+  return routeArray.map(({ path, component, children }) => {
+    const recursivePath = parentPath + path;
+    if (!children) {
+      return (<Route exact key={recursivePath} path={recursivePath} component={component} />);
     }
-  }
+    return (
+      <Switch key={recursivePath}>
+        <Route exact path={recursivePath} component={component} />
+        {recursiveRouter(children, recursivePath)}
+      </Switch>
+    );
+  });
 }
 
-const routes = ({ history }) => (// eslint-disable-line
-  <Router onUpdate={switchRouter} history={history}>
-    <Route path="/" component={Main}>
-      <IndexRedirect to="/empty" />
-      <Redirect from="invest" to="report" />
-      <Route path="empty" component={Empty} />
-      <Route path="report" component={ReportHome} />
-      <Route path="preview" component={PreviewReport} />
-      <Route path="history" component={HistoryHome} />
-      <Route path="feedback" component={FeedBack} />
-      <Route path="commission" component={CommissionHome} />
-      <Route path="commissionChange" component={CommissionChangeHome} />
-      <Route path="modal" component={TemplModal} />
-      <Route path="boardManage" component={BoardManageHome} />
-      <Route path="boardEdit" component={BoardEditHome} />
-      <Route path="permission" component={PermissonHome} />
-      <Route path="contract">
-        <IndexRoute component={Contract} />
-        <Route path="form" component={Form} />
-      </Route>
-      <Route path="channelsTypeProtocol">
-        <IndexRoute component={ChannelsTypeProtocol} />
-        <Route path="edit" component={ChannelsTypeProtocolEdit} />
-      </Route>
-      <Route path="approval" component={Approval} />
-      <Route path="customerPool">
-        <IndexRoute component={CustomerPoolHome} />
-        <Route path="viewpointDetail" component={ViewpointDetail} />
-        <Route path="viewpointList" component={ViewpointList} />
-        <Route path="todo" component={ToDo} />
-        <Route path="list" component={CustomerList} />
-        <Route path="customerGroup" component={CustomerGroup} />
-        <Route path="createTask" component={CreateTask} />
-        <Route path="customerGroupManage" component={CustomerGroupManage} />
-        <Route path="serviceLog" component={ServiceLog} />
-        <Route path="taskFlow" component={TaskFlow} />
-      </Route>
-      <Route path="taskList">
-        <IndexRoute component={TaskListHome} />
-      </Route>
-      <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
-      <Route path="demote" component={Demote} />
-      <Route path="filialeCustTransfer">
-        <IndexRoute component={FilialeCustTransfer} />
-      </Route>
-    </Route>
-  </Router>
+// 路由器
+const Routers = ({ history }) => (
+  <ConnectedRouter history={history}>
+    <Main>
+      <Route exact path="/" render={() => (<Redirect to="/empty" />)} />
+      <Route exact path="/invest" render={() => (<Redirect to="/report" />)} />
+      {recursiveRouter(routes)}
+      <Route path="*" render={() => (<Redirect to="/empty" />)} />
+    </Main>
+  </ConnectedRouter>
 );
 
-export default routes;
+Routers.propTypes = {
+  history: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+};
+
+export default Routers;

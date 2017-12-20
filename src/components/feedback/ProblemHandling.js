@@ -4,7 +4,8 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';

@@ -4,7 +4,8 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';

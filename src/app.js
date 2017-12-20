@@ -4,9 +4,9 @@
  */
 
 import 'babel-polyfill';
-import dva from 'dva-react-router-3';
-import { hashHistory, routerRedux } from 'dva-react-router-3/router';
-
+import dva from 'dva';
+import { routerRedux } from 'dva/router';
+import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
@@ -16,9 +16,9 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from './config/persist';
-import { initFspMethod } from './utils/fspGlobal';
-
-import permission from './permissions';
+import { dva as dvaHelper } from './helper';
+// import { initFspMethod } from './utils/fspGlobal';
+// import permission from './permissions';
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -42,7 +42,7 @@ const onError = (e) => {
 
 // 1. Initialize
 const app = dva({
-  history: hashHistory,
+  history: createHistory(),
   onAction: [createLogger(), createSensorsLogger()],
   extraEnhancers,
   onError,
@@ -65,7 +65,6 @@ app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
 // 合作合约
 app.model(require('./models/contract'));
-app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 // 通道类型协议
@@ -78,6 +77,8 @@ app.model(require('./models/taskList/managerView'));
 app.model(require('./models/demote'));
 // 分公司客户划转
 app.model(require('./models/filialeCustTransfer'));
+// 汇报关系树
+app.model(require('./models/relation'));
 
 // 4. Router
 app.router(routerConfig);
@@ -88,8 +89,9 @@ app.start('#exApp');
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
 
+dvaHelper.exposeStore(store);
 // 暴露给fsp方法
-initFspMethod(store);
+// initFspMethod(store);
 
 // 6. redux-persist
 if (persistConfig.active) {
@@ -97,7 +99,7 @@ if (persistConfig.active) {
 }
 
 // 7. 初始化权限配置
-permission.init(store);
+// permission.init(store);
 
 window.navTo = (url) => {
   const state = store.getState();

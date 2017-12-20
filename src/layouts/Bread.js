@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Breadcrumb, Icon } from 'antd';
-import { Link } from 'dva-react-router-3/router';
+import { Link } from 'dva/router';
 import _ from 'lodash';
 
 import { menu } from '../config';

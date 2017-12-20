@@ -2,9 +2,10 @@
  * by xuxiaoqin
  * ScatterAnalysis.js
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
-// import _ from 'lodash';
+
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
 import { scatterType } from '../../config';
 import styles from './scatterAnalysis.less';

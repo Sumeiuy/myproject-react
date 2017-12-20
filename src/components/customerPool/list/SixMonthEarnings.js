@@ -3,7 +3,8 @@
  *  客户列表项中的近6个月的收益图
  * @author wangjunjun
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Tooltip } from 'antd';
@@ -33,7 +34,7 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   static defaultProps = {
-    displayText: '详情',
+    displayText: '峰值和最近收益',
   }
 
   constructor(props) {
@@ -133,7 +134,7 @@ export default class SixMonthEarnings extends PureComponent {
         </div>
         <div className={styles.chartsText}>
           <div>
-            <p className="tit">12个月峰值</p>
+            <p className="tit">本年峰值</p>
             <p className="asset">
               <span className="num">{maxTotAsetYValue}</span>
               <span className="unit">{maxTotAsetYUnit}</span>

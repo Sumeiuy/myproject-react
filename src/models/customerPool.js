@@ -63,9 +63,6 @@ export default {
     serviceRecordData: {}, // 服务记录
     // 添加服务记录成功的标记
     addServeRecordSuccess: true,
-    isFollow: {},
-    followLoading: false,
-    fllowCustData: {},
     custEmail: {},
     // 分组维度，客户分组列表
     customerGroupList: {},
@@ -401,25 +398,6 @@ export default {
           payload: { resultData, custId },
         });
       }
-    },
-    * getFollowCust({ payload }, { call, put }) {
-      yield put({
-        type: 'getFollowCustSuccess',
-        payload: {
-          value: true,
-          message: '开始开始',
-        },
-      });
-      const response = yield call(api.followCust, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getFollowCustSuccess',
-        payload: {
-          value: false,
-          message: '关注成功',
-          fllowCustData: resultData,
-        },
-      });
     },
     // 列表页添加服务记录
     * addCommonServeRecord({ payload }, { call, put }) {
@@ -976,16 +954,6 @@ export default {
       return {
         ...state,
         addServeRecordSuccess: false,
-      };
-    },
-    // 关注成功
-    getFollowCustSuccess(state, action) {
-      const { payload: { value, message, fllowCustData } } = action;
-      return {
-        ...state,
-        followLoading: value,
-        message,
-        fllowCustData,
       };
     },
     // 获取客户分组成功

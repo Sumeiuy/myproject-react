@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import RankNormalChart from './historyRank/RankNormalChart';
 import RankStackChart from './historyRank/RankStackChart';

@@ -9,7 +9,8 @@
  * color {string} // 背景颜色的自定义色值，可选
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 // import tagConfig from './config';

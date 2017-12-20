@@ -4,14 +4,16 @@
  * @author wanghan
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Form, Row, Col } from 'antd';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import style from './contractDetail.less';
 import TextEditor from './TextEditor';
+import withRouter from '../../decorators/withRouter';
 
 const EMPTY_OBJECT = {};
 const GETDETAIL = 'contract/getDetail';
@@ -34,6 +36,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @createForm()
+@withRouter
 export default class ContractDetail extends PureComponent {
   static propTypes = {
     contractDetail: PropTypes.object.isRequired,

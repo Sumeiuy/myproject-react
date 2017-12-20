@@ -16,7 +16,8 @@
  * contentTitle： 有默认值（流程发送成功），弹框内容的title
  * title： 有默认值（系统提示），弹框的title
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

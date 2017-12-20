@@ -113,19 +113,19 @@ export default class CustomerRow extends PureComponent {
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
     onSendEmail: PropTypes.func.isRequired,
-    onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     custEmail: PropTypes.object.isRequired,
-    currentFollowCustId: PropTypes.string.isRequired,
     emailCustId: PropTypes.string.isRequired,
-    isFollows: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
     mainServiceManager: PropTypes.bool,
     handleCheck: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
+    condition: PropTypes.object.isRequired,
+    entertype: PropTypes.string.isRequired,
+    goGroupOrTask: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -146,9 +146,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
     } = this.props;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
@@ -234,9 +234,6 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
-      onAddFollow,
-      currentFollowCustId,
-      isFollows,
       custIncomeReqState,
       toggleServiceRecordModal,
       custEmail,
@@ -248,11 +245,14 @@ export default class CustomerRow extends PureComponent {
       formatAsset,
       mainServiceManager,
       queryCustUuid,
+      condition,
+      entertype,
+      goGroupOrTask,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
     const isChecked = _.includes(selectedIds, str) || isAllSelect;
-    let assetValue = '--';
+    let assetValue = '0';
     let assetUnit = '';
     if (listItem.asset) {
       const obj = formatAsset(listItem.asset);
@@ -284,10 +284,11 @@ export default class CustomerRow extends PureComponent {
               custEmail={custEmail}
               emailCustId={emailCustId}
               onSendEmail={onSendEmail}
-              currentFollowCustId={currentFollowCustId}
-              isFollows={isFollows}
-              onAddFollow={onAddFollow}
               queryCustUuid={queryCustUuid}
+              condition={condition}
+              location={location}
+              entertype={entertype}
+              goGroupOrTask={goGroupOrTask}
             /> : null
         }
         <div className={styles.selectIcon}>
@@ -360,7 +361,7 @@ export default class CustomerRow extends PureComponent {
               <span className="cutOffLine">|</span>
               <span className="commission">佣金率: <em>{miniFee}</em></span>
               <span className="cutOffLine">|</span>
-              <span>总资产：</span>
+              <span>总资产:</span>
               <span className="asset">{assetValue}</span>
               <span className="assetunit">{assetUnit}</span>
               <div className={styles.sixMonthEarnings}>

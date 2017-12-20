@@ -2,7 +2,8 @@
  * @file invest/PerformanceItem.js
  * @author LiuJianShu
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

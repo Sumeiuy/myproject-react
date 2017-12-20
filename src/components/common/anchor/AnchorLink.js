@@ -4,12 +4,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-// export interface AnchorLinkProps {
-//   prefixCls?: string;
-//   href: string;
-//   title: React.ReactNode;
-//   children?: any;
-// }
 export default class AnchorLink extends PureComponent {
   static proptypes = {
     prefixCls: PropTypes.string,
@@ -21,7 +15,7 @@ export default class AnchorLink extends PureComponent {
     prefixCls: 'ant-anchor',
     href: '#',
   };
-  
+
   constructor(props) {
     super(props);
     this.state = {

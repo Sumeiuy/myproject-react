@@ -17,7 +17,7 @@ export default {
     // 任务详情中基本信息
     taskDetailBasicInfo: EMPTY_OBJ,
     // 预览客户明细结果
-    custDetailResult: EMPTY_LIST,
+    custDetailResult: EMPTY_OBJ,
     // 任务详细信息
     mngrMissionDetailInfo: EMPTY_OBJ,
     // 客户反馈一二级数据

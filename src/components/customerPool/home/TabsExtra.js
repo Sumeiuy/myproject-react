@@ -3,7 +3,8 @@
  *  Tabs的extra组件
  * @author zhangjunli
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -20,7 +21,7 @@ export default class TabsExtra extends PureComponent {
   static propTypes = {
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func,
     collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     expandAll: PropTypes.bool,
@@ -39,6 +40,7 @@ export default class TabsExtra extends PureComponent {
     orgId: '',
     isDown: false,
     iconType: 'kehu',
+    updateQueryState: () => { },
   }
 
   constructor(props) {

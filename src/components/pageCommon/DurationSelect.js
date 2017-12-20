@@ -4,7 +4,8 @@
  * @description 时间段选择器
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Radio, DatePicker } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

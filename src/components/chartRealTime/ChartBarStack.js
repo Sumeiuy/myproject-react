@@ -4,7 +4,8 @@
  * @description 堆叠柱状图
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import Resize from 'element-resize-detector';
 import _ from 'lodash';

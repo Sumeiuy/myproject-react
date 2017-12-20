@@ -135,6 +135,7 @@ export default class CustRange extends PureComponent {
     });
     collectData({
       text: custRangeName,
+      orgId,
     });
     updateQueryState({
       orgId,

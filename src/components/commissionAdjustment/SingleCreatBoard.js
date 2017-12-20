@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-30 14:24:16
+ * @Last Modified time: 2017-12-13 13:23:18
  * @description 单佣金申请内容区域
  */
 
@@ -14,7 +14,7 @@ import { Icon } from 'antd';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from './ChoiceApproverBoard';
-import confirm from '../common/Confirm/confirm';
+import confirm from '../common/Confirm';
 import InfoTitle from '../common/InfoTitle';
 import AutoComplete from '../common/AutoComplete';
 import CommissionLine from './CommissionLine';

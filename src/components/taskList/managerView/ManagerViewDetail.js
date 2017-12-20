@@ -2,14 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-13 13:38:16
+ * @Last Modified time: 2017-12-18 16:23:40
  * 管理者视图详情
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import _ from 'lodash';
 import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
 import MissionDescription from './MissionDescription';
@@ -20,6 +20,8 @@ import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
+import { helper, fspGlobal } from '../../../utils';
+import { env, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
@@ -34,7 +36,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 预览客户明细
     previewCustDetail: PropTypes.func.isRequired,
     // 预览客户明细结果
-    custDetailResult: PropTypes.array.isRequired,
+    custDetailResult: PropTypes.object.isRequired,
     // 获取客户反馈结果
     onGetCustFeedback: PropTypes.func.isRequired,
     // 客户反馈结果
@@ -48,13 +50,17 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务实施进度
     missionImplementationDetail: PropTypes.object.isRequired,
     // 获取任务实施进度
-    getFlowStatus: PropTypes.func.isRequired,
+    countFlowStatus: PropTypes.func.isRequired,
     // 任务基本信息
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     // 发起新任务
     launchNewTask: PropTypes.func.isRequired,
     // 当前任务Id
     currentId: PropTypes.string,
+    // push
+    push: PropTypes.func.isRequired,
+    // clearCreateTaskData
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -74,15 +80,18 @@ export default class ManagerViewDetail extends PureComponent {
    * 预览客户明细
    */
   @autobind
-  handlePreview() {
-    const { previewCustDetail } = this.props;
-    const { isShowCustDetailModal } = this.state;
+  handlePreview(pageNum, pageSize) {
+    const { previewCustDetail, currentId } = this.props;
     previewCustDetail({
-      curPageNum: INITIAL_PAGE_NUM,
-      curPageSize: INITIAL_PAGE_SIZE,
+      pageNum: pageNum || INITIAL_PAGE_NUM,
+      pageSize: pageSize || INITIAL_PAGE_SIZE,
+      orgId: helper.getOrgId(),
+      // orgId: 'ZZ001041',
+      missionId: currentId,
+      // missionId: '101111171108181',
     }).then(() => {
       this.setState({
-        isShowCustDetailModal: !isShowCustDetailModal,
+        isShowCustDetailModal: true,
       });
     });
   }
@@ -92,9 +101,8 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleCloseModal() {
-    const { isShowCustDetailModal } = this.state;
     this.setState({
-      isShowCustDetailModal: !isShowCustDetailModal,
+      isShowCustDetailModal: false,
     });
   }
 
@@ -108,15 +116,49 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleLaunchTask() {
-    const { launchNewTask } = this.props;
-    launchNewTask();
+    const { clearCreateTaskData } = this.props;
+    // 发起新的任务之前，先清除数据
+    clearCreateTaskData();
+    this.openByAllSelect('/customerPool/createTask', '发起任务', 'RCT_FSP_MANAGER_VIEW_CREATE_TASK');
+  }
+
+  // 发起任务
+  @autobind
+  openByAllSelect(url, id, title) {
+    const { currentId, push } = this.props;
+    let condition = {
+      orgId: helper.getOrgId() || 'ZZ001041',
+      // orgId: 'ZZ001041',
+      missionId: currentId,
+      // missionId: '101111171108181',
+      entrance: 'managerView',
+    };
+    condition = encodeURIComponent(JSON.stringify(condition));
+    const query = {
+      condition,
+    };
+    const finalUrl = `${url}?${urlHelper.stringify(query)}`;
+
+    if (env.isInFsp()) {
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id,
+        title,
+      };
+      fspGlobal.openRctTab({ url: finalUrl, param });
+    } else {
+      push({
+        pathname: finalUrl,
+      });
+    }
   }
 
   render() {
     const {
       isFold,
       mngrMissionDetailInfo = EMPTY_OBJECT,
-      previewCustDetail,
       custDetailResult,
       custFeedback,
       missionImplementationDetail,
@@ -124,7 +166,7 @@ export default class ManagerViewDetail extends PureComponent {
       empInfo,
       location,
       replace,
-      getFlowStatus,
+      countFlowStatus,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -137,13 +179,15 @@ export default class ManagerViewDetail extends PureComponent {
       endTime,
       missionTarget,
       servicePolicy,
-      custSource = 'import',
+      custSource,
       // 客户总数
       custNumbers = 0,
       // 客户来源说明
       custSourceDesc,
       // 任务描述
       missionDesc,
+      // 当前机构名
+      orgName,
     } = mngrMissionDetailInfo;
 
     return (
@@ -177,6 +221,8 @@ export default class ManagerViewDetail extends PureComponent {
             custSourceDescription={custSourceDesc}
             // 预览明细客户
             onPreview={this.handlePreview}
+            // 当前机构名
+            orgName={orgName}
           />
           <GroupModal
             wrapperClass={
@@ -218,7 +264,7 @@ export default class ManagerViewDetail extends PureComponent {
             modalContent={
               <CustDetail
                 ref={ref => (this.custDetailRef = ref)}
-                getCustDetailData={previewCustDetail}
+                getCustDetailData={this.handlePreview}
                 data={custDetailResult}
               />
             }
@@ -230,9 +276,13 @@ export default class ManagerViewDetail extends PureComponent {
             modalWidth={1080}
           />
         </div>
-        <div className={styles.descriptionSection}>
-          <MissionDescription missionDescription={missionDesc} />
-        </div>
+        {
+          !_.isEmpty(missionDesc) ?
+            <div className={styles.descriptionSection}>
+              <MissionDescription missionDescription={missionDesc} />
+            </div>
+            : null
+        }
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}
@@ -243,7 +293,7 @@ export default class ManagerViewDetail extends PureComponent {
             empInfo={empInfo}
             location={location}
             replace={replace}
-            getFlowStatus={getFlowStatus}
+            countFlowStatus={countFlowStatus}
           />
         </div>
         <div className={styles.missionFeedbackSection}>

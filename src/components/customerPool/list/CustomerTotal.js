@@ -4,7 +4,8 @@
  * @author wangjunjun
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 export default class CustomerTotal extends PureComponent {
   static propTypes = {
