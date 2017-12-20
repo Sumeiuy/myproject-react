@@ -21,6 +21,7 @@ import styles from './pageHeader.less';
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
 const CONTROLLER_VIEW = 'controller';
+const EXECUTE_VIEW = 'executor';
 // 50代表执行中
 // 60代表结果跟踪
 // 70代表结束
@@ -33,6 +34,9 @@ const FILTERBOX_HEIGHT = 32;
 const today = moment(new Date());
 const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
+const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
+const stateAll = { label: '所有状态', value: '', show: true };
+const typeAll = { label: '所有类型', value: '', show: true };
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -64,7 +68,7 @@ export default class Pageheader extends PureComponent {
     chooseMissionViewOptions: [],
     dict: {},
     filterCallback: () => { },
-    filterControl: 'performerView',
+    filterControl: EXECUTE_VIEW,
   }
 
   constructor(props) {
@@ -72,6 +76,25 @@ export default class Pageheader extends PureComponent {
     this.state = {
       showMore: true,
     };
+    const { dict = {} } = props;
+    const { missionStatus } = dict || {};
+    this.missionStatus = missionStatus;
+  }
+
+  componentWillMount() {
+    const { filterControl, location: { query: { status } } } = this.props;
+    this.renderStatusOptions(filterControl, status);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { status } } } = this.props;
+    const { location: nextLocation, filterControl } = nextProps;
+    const { query: nextQuery } = nextLocation;
+    const { status: nextStatus } = nextQuery;
+
+    if (status !== nextStatus) {
+      this.renderStatusOptions(filterControl, nextStatus);
+    }
   }
 
   componentDidUpdate() {
@@ -105,6 +128,14 @@ export default class Pageheader extends PureComponent {
       dom.removeClass(this.filterMore, 'filterNoneIcon');
       dom.addClass(this.filterMore, 'filterMoreIcon');
     }
+  }
+
+  @autobind
+  setStatusOptions(stateAllOptions, statusValue) {
+    this.setState({
+      stateAllOptions,
+      statusValue,
+    });
   }
 
   @autobind
@@ -250,6 +281,36 @@ export default class Pageheader extends PureComponent {
     return currentDate <= localDate;
   }
 
+  /**
+   * 构造任务状态
+   * @param {*string} filterControl 当前页面类型
+   */
+  @autobind
+  renderStatusOptions(filterControl, status) {
+    const stateOptions = this.constructorDataType(this.missionStatus);
+    // 状态增加全部
+    let stateAllOptions = [...stateOptions, stateAll];
+
+    if (filterControl === CONTROLLER_VIEW) {
+      // 管理者视图只有保留三种状态和所有状态
+      stateAllOptions = _.filter(stateAllOptions,
+        item => item.value === ''
+          || item.value === EXECUTE_STATE
+          || item.value === RESULT_TRACK_STATE
+          || item.value === COMPLETED_STATE);
+    }
+
+    let statusValue = status;
+    // 判断当前在url上的status
+    if (_.isEmpty(status) || _.isEmpty(_.find(stateAllOptions, item => item.value === status))) {
+      // 在所提供的列表中找不到
+      // 则将status置为默认的，所有
+      statusValue = '所有状态';
+    }
+
+    this.setStatusOptions(stateAllOptions, statusValue);
+  }
+
 
   // 选择不同视图创建时间不同是
   renderTime(startTime, endTime, isInitiator) {
@@ -280,38 +341,22 @@ export default class Pageheader extends PureComponent {
         query: {
           missionViewType,
         type,
-        status,
         creator,
         // createTimeStart,
         // createTimeEnd,
         missionName,
         },
       },
-      filterControl,
     } = this.props;
 
-    const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-    const stateAll = { label: '所有状态', value: '', show: true };
-    const typeAll = { label: '所有类型', value: '', show: true };
+    const { stateAllOptions, statusValue } = this.state;
 
-    const { missionStatus, missionType } = dict;
-    const stateOptions = this.constructorDataType(missionStatus);
+    const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?
       [typeAll, ...typeOptions] : typeOptions;
 
-    // 状态增加全部
-    let stateAllOptions = stateOptions || [];
-    if (filterControl === CONTROLLER_VIEW) {
-      // 管理者视图只有保留三种状态
-      stateAllOptions = _.filter(stateAllOptions,
-        item => item.value === EXECUTE_STATE
-          || item.value === RESULT_TRACK_STATE
-          || item.value === COMPLETED_STATE);
-    } else {
-      stateAllOptions = [stateAll, ...stateAllOptions];
-    }
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
@@ -327,7 +372,7 @@ export default class Pageheader extends PureComponent {
     // const startTime = createTimeStart ? moment(createTimeStart) : null;
     // const endTime = createTimeEnd ? moment(createTimeEnd) : null;
     const typeValue = !_.isEmpty(type) ? type : '所有类型';
-    const statusValue = !_.isEmpty(status) ? status : '所有状态';
+
     const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
     console.warn('missionViewTypeValue-->', missionViewTypeValue);
     return (

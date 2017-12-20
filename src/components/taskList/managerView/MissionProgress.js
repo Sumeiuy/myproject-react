@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-15 13:54:15
+ * @Last Modified time: 2017-12-20 17:54:14
  * 任务进度
  */
 
@@ -37,6 +37,40 @@ export default class MissionProgress extends PureComponent {
     onPreviewCustDetail: () => { },
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+    };
+  }
+
+  @autobind
+  getActiveElem() {
+    return this.activeElem;
+  }
+
+  @autobind
+  getRemainingElem() {
+    return this.remainingElem;
+  }
+
+  // @autobind
+  // handleClickCustDetail() {
+  //   const { onPreviewCustDetail } = this.props;
+  //   onPreviewCustDetail();
+  //   this.setState({
+  //     visible: false,
+  //   });
+  // }
+
+  // @autobind
+  // handleVisibleChange() {
+  //   const { visible } = this.state;
+  //   this.setState({
+  //     visible: !visible,
+  //   });
+  // }
+
   @autobind
   renderTooltipContent(type, currentCount) {
     return (
@@ -51,16 +85,6 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
-  getActiveElem() {
-    return this.activeElem;
-  }
-
-  @autobind
-  getRemainingElem() {
-    return this.remainingElem;
-  }
-
-  @autobind
   renderProgressContent(
     activeType,
     remainingType,
@@ -69,6 +93,7 @@ export default class MissionProgress extends PureComponent {
     activeCount,
     remainingCount,
   ) {
+    // const { visible } = this.state;
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
