@@ -15,7 +15,6 @@ export default class TaskFeedback extends PureComponent {
 
   static defaultProps = {}
 
-  
 
   render() {
     return (
