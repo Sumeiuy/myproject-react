@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-20 15:19:40
+ * @Last Modified time: 2017-12-20 17:57:46
  * 管理者视图详情
  */
 
@@ -129,8 +129,8 @@ export default class ManagerViewDetail extends PureComponent {
   openByAllSelect(url, id, title) {
     const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
     const urlParam = {
-      // orgId: helper.getOrgId(),
-      orgId: 'ZZ001041',
+      orgId: helper.getOrgId(),
+      // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
       entrance: 'managerView',
