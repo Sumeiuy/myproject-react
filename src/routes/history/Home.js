@@ -259,10 +259,8 @@ export default class HistoryHome extends PureComponent {
 
   @autobind
   setDefaultMoment() {
-    const { maxData } = this.props;
     const cycleType = 'month';
-    const zzjgMaxData = maxData.zzjg;
-    const nowDuration = time.getDurationString(cycleType, zzjgMaxData);
+    const nowDuration = time.getDurationString(cycleType);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
@@ -573,7 +571,8 @@ export default class HistoryHome extends PureComponent {
       maxData,
     } = this.props;
 
-    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) || _.isEmpty(newVisibleBoards)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) ||
+       _.isEmpty(newVisibleBoards) || _.isEmpty(maxData)) {
       return null;
     }
     const {
