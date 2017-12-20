@@ -146,6 +146,10 @@ export default class PageHeader extends PureComponent {
     } = this.props;
     const { top, left, width } = this.state;
     const zzjgMaxData = maxData.zzjg;
+    // 后台返回有数据的最大时间
+    const maxDataSeconds = moment(zzjgMaxData, formatTxt).valueOf();
+    // 当前日期减1天
+    const momentDataSeconds = moment().subtract(1, 'days').valueOf();
     return (
       <div>
         <div
@@ -203,7 +207,7 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
             {
-              moment(zzjgMaxData, formatTxt).valueOf() < moment(moment().format(formatTxt)).subtract(1, 'days').valueOf() ?
+              maxDataSeconds < momentDataSeconds ?
                 <Alert
                   message="提示"
                   description="因当前数据后台未核算完成，目前展现的是前一日的数据"
