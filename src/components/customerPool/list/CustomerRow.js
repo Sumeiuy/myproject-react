@@ -127,6 +127,8 @@ export default class CustomerRow extends PureComponent {
     condition: PropTypes.object.isRequired,
     entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
+    toDetailAuthority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -147,9 +149,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
     } = this.props;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
@@ -181,6 +183,18 @@ export default class CustomerRow extends PureComponent {
       custId,
       custType: (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE,
     });
+  }
+
+  // 是否允许进入列表项对应的360详情
+  toDetailPermissibility() {
+    const {
+      toDetailAuthority,
+      empInfo,
+      listItem: {
+        empId,
+      },
+    } = this.props;
+    return toDetailAuthority || empInfo.rowId === empId;
   }
 
   @autobind
@@ -217,14 +231,21 @@ export default class CustomerRow extends PureComponent {
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    return (
-      <Clickable
-        onClick={this.toDetail}
-        eventName="/click/custListRow/imgClick"
-      >
-        <img className={styles.avatorImage} src={imgSrc} alt="" />
-      </Clickable>
-    );
+    if (this.toDetailPermissibility()) {
+      return (
+        <Clickable
+          onClick={this.toDetail}
+          eventName="/click/custListRow/imgClick"
+        >
+          <img
+            className={`${styles.avatorImage} ${styles.clickable}`}
+            src={imgSrc}
+            alt=""
+          />
+        </Clickable>
+      );
+    }
+    return <img className={styles.avatorImage} src={imgSrc} alt="" />;
   }
 
   renderRankImg(listItem = {}) {
@@ -233,22 +254,67 @@ export default class CustomerRow extends PureComponent {
       : null;
   }
 
-  render() {
-    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
-      custIncomeReqState,
+  // 是否显示快捷菜单
+  renderQuickMenu() {
+    const {
+      empInfo: { rowId },
+      listItem,
       toggleServiceRecordModal,
       custEmail,
       onSendEmail,
       emailCustId,
+      queryCustUuid,
+      condition,
+      location,
+      entertype,
+      goGroupOrTask,
+    } = this.props;
+    if (listItem.empId === rowId) {
+      return (<QuickMenu
+        listItem={listItem}
+        createModal={this.createModal}
+        toggleServiceRecordModal={toggleServiceRecordModal}
+        custEmail={custEmail}
+        emailCustId={emailCustId}
+        onSendEmail={onSendEmail}
+        queryCustUuid={queryCustUuid}
+        condition={condition}
+        location={location}
+        entertype={entertype}
+        goGroupOrTask={goGroupOrTask}
+      />);
+    }
+    return null;
+  }
+
+  // 显示用户名称
+  renderCustName() {
+    const {
+      listItem: {
+        name,
+      },
+    } = this.props;
+    if (this.toDetailPermissibility()) {
+      return name ? (
+        <Clickable
+          onClick={this.toDetail}
+          eventName="/click/custListRow/nameClick"
+        >
+          <span className="name clickable">{name}</span>
+        </Clickable>
+      ) : null;
+    }
+    return <span className="name">{name}</span>;
+  }
+
+  render() {
+    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
+      custIncomeReqState,
       getCustIncome,
       location,
       dict,
       formatAsset,
       mainServiceManager,
-      queryCustUuid,
-      condition,
-      entertype,
-      goGroupOrTask,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -276,22 +342,7 @@ export default class CustomerRow extends PureComponent {
       <div
         className={styles.customerRow}
       >
-        {
-          mainServiceManager ?
-            <QuickMenu
-              listItem={listItem}
-              createModal={this.createModal}
-              toggleServiceRecordModal={toggleServiceRecordModal}
-              custEmail={custEmail}
-              emailCustId={emailCustId}
-              onSendEmail={onSendEmail}
-              queryCustUuid={queryCustUuid}
-              condition={condition}
-              location={location}
-              entertype={entertype}
-              goGroupOrTask={goGroupOrTask}
-            /> : null
-        }
+        { this.renderQuickMenu() }
         <div className={styles.selectIcon}>
           <Checkbox
             disabled={isAllSelect}
@@ -313,16 +364,7 @@ export default class CustomerRow extends PureComponent {
           </div>
           <div className={styles.customerRowRight}>
             <div className="row-one">
-              {
-                listItem.name ? (
-                  <Clickable
-                    onClick={this.toDetail}
-                    eventName="/click/custListRow/nameClick"
-                  >
-                    <span className="name">{listItem.name}</span>
-                  </Clickable>
-                ) : null
-              }
+              { this.renderCustName() }
               <span>{listItem.custId}</span>
               <span className="cutOffLine">|</span>
               {
