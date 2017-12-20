@@ -1,12 +1,13 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-15 15:55:21
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-12-19 16:53:18
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
+import duty from './config/duty';
 
 const emp = {
   /**
@@ -27,7 +28,8 @@ const emp = {
    * @returns {String|null}
    */
   getOrgId() {
-    let orgId = null;
+    // 临时id
+    let orgId = 'ZZ001041104';
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
@@ -45,6 +47,15 @@ const emp = {
       pstnId = window.forReactPosition.pstnId;
     }
     return pstnId;
+  },
+
+  /**
+   * 判断当前登录人部门是否是分公司
+   * @author XuWenKang
+   * @returns {Boolean}
+   */
+  isFiliale(level) {
+    return level === duty.bm_fgs;
   },
 };
 
