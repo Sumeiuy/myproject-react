@@ -153,9 +153,9 @@ export default class Pageheader extends PureComponent {
       endTimeStart,
       endTimeEnd } } } = this.props;
 
-    // 根据选择视图判断具体视图，给定默认时间请求
+    // 判断是否改变的是视图选择
     if (key === 'missionViewType') {
-      this.handleSelectTime(key, v, beforeToday, today, afterToday);
+      this.handleViewTypeTime(key, v, beforeToday, today, afterToday);
     } else {
       // 不是视图选择时发送请求
       this.props.filterCallback({
@@ -171,31 +171,30 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-  // 根据已选视图给定默认时间
-  handleSelectTime(key, v, before, todays, after) {
-    let starts;
-    let ends;
+  // 选择不同视图给定时间入参
+  handleViewTypeTime(key, v, before, todays, after) {
+    let timerValue;
     if (v === 'initiator') {
-      starts = moment(before).format('YYYY-MM-DD');
-      ends = moment(todays).format('YYYY-MM-DD');
-      this.props.filterCallback({
-        [key]: v,
-        createTimeStart: starts,
-        createTimeEnd: ends,
-        endTimeStart: null,
-        endTimeEnd: null,
-      });
+      timerValue = this.handleDefaultTime({ before, todays });
     } else {
-      starts = moment(todays).format('YYYY-MM-DD');
-      ends = moment(after).format('YYYY-MM-DD');
-      this.props.filterCallback({
-        [key]: v,
-        createTimeStart: null,
-        createTimeEnd: null,
-        endTimeStart: starts,
-        endTimeEnd: ends,
-      });
+      timerValue = this.handleDefaultTime({ todays, after });
     }
+    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
+    this.props.filterCallback({
+      [key]: v,
+      createTimeStart,
+      createTimeEnd,
+      endTimeStart,
+      endTimeEnd,
+    });
+  }
+  // 选择不同视图给定时间默认值入参修改
+  handleDefaultTime({ before, todays, after }) {
+    const createTimeStart = _.isEmpty(before) ? null : moment(before).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
   }
 
   // 任务名称搜索
@@ -216,16 +215,15 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   handleDateChange(dateStrings) {
+    const { location: { query: { missionViewType } } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
-    const createTimeStart = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
-    const createTimeEnd = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
-    if (createTimeEnd && createTimeStart) {
-      if (createTimeEnd >= createTimeStart) {
-        this.props.filterCallback({
-          createTimeStart,
-          createTimeEnd,
-        });
+    const createTimeStarts = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
+    const createTimeEnds = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
+    const param = this.handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds });
+    if (createTimeEnds && createTimeStarts) {
+      if (createTimeEnds >= createTimeStarts) {
+        this.props.filterCallback(param);
         return true;
       }
       return false;
@@ -235,6 +233,21 @@ export default class Pageheader extends PureComponent {
       createTimeEnd: '',
     });
     return false;
+  }
+  // 视图不变下，选择不同时间入参修改
+  @autobind
+  handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds }) {
+    let endTimeStart = null;
+    let endTimeEnd = null;
+    let createTimeStart = createTimeStarts;
+    let createTimeEnd = createTimeEnds;
+    if (missionViewType !== 'initiator') {
+      endTimeStart = createTimeStarts;
+      endTimeEnd = createTimeEnds;
+      createTimeStart = null;
+      createTimeEnd = null;
+    }
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
   }
 
   // 从字典里面拿来的数据进行数据转化

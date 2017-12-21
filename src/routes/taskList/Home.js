@@ -243,9 +243,9 @@ export default class PerformerView extends PureComponent {
       },
     } = this.props;
     if (missionViewType === INITIATOR) {
-      this.queryAppListInit(query, pageNum, pageSize, beforeToday, today, true);
+      this.queryAppListInit({ query, pageNum, pageSize, beforeToday, today });
     } else {
-      this.queryAppListInit(query, pageNum, pageSize, today, afterToday);
+      this.queryAppListInit({ query, pageNum, pageSize, today, afterToday });
     }
   }
 
@@ -473,40 +473,35 @@ export default class PerformerView extends PureComponent {
     getTaskList({ ...params }).then(this.getRightDetail);
   }
 
+  // 默认时间设置
+  handleDefaultTime({ before, todays, after }) {
+    const createTimeStart = before || null;
+    const createTimeEnd = _.isEmpty(before) ? null : todays;
+    const endTimeStart = _.isEmpty(after) ? null : todays;
+    const endTimeEnd = after || null;
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
   // 第一次加载请求
   @autobind
-  queryAppListInit(query, pageNum = 1, pageSize = 10, createTimeStart, createTimeEnd,
-    isCreate = false) {
+  queryAppListInit({ query, pageNum = 1, pageSize = 10,
+    beforeToday: before, today: todays, afterToday: after }) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
     const item = this.constructViewPostBody(query, pageNum, pageSize);
-    const params = isCreate ? { ...item, createTimeEnd, createTimeStart } :
-      { ...item, endTimeStart: createTimeEnd, endTimeEnd: createTimeStart };
-    if (isCreate) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          pageNum: 1,
-          createTimeStart,
-          createTimeEnd,
-          endTimeStart: null,
-          endTimeEnd: null,
-        },
-      });
-    } else {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          pageNum: 1,
-          endTimeStart: createTimeStart,
-          endTimeEnd: createTimeEnd,
-          createTimeStart: null,
-          createTimeEnd: null,
-        },
-      });
-    }
+    const timersValue = this.handleDefaultTime({ before, todays, after });
+    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
+    const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        createTimeStart,
+        createTimeEnd,
+        endTimeStart,
+        endTimeEnd,
+      },
+    });
     // 默认筛选条件
     getTaskList({ ...params }).then(this.getRightDetail);
   }
@@ -610,6 +605,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
+    console.log(obj);
     const { replace, location } = this.props;
     const { query, pathname } = location;
     replace({
