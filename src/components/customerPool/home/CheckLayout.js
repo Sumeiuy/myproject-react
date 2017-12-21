@@ -22,7 +22,7 @@ function CheckLayout({ dataSource = [] }) {
             <span>{dataSource[0].item}</span>
             <span>{dataSource[0].unit}</span>
           </div>
-          <div className={styles.title}>{'净新增客户资产'}</div>
+          <div className={styles.title}>{'净转入资产'}</div>
         </div>
         <div className={classnames(styles.check)}>
           <div className={styles.count}>
