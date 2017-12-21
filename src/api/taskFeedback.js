@@ -7,4 +7,4 @@ export default function taskFeedback(api) {
     // 获取问题列表
     queryQuestions: query => api.post('/groovynoauth/fsp/assess/common/queryQuesFromPoolByType', query),
   };
-};
+}
