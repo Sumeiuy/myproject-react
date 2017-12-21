@@ -25,15 +25,15 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9083,
+    port: 9088,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       [prefix + '/groovynoauth/jxzb/queryMaxDataDt']: {
         // target: 'http://160.9.230.146:8083/', // 张宝成 接口访问地址
-        target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-        // target: 'http://168.61.8.81:5085', // SIT
+        // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
+        target: 'http://168.61.8.81:5085', // SIT
         secure: false,
       },
       [prefix]: {
