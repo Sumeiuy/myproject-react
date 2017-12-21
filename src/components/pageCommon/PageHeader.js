@@ -6,7 +6,8 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Row } from 'antd';
+import { Row, Alert } from 'antd';
+import moment from 'moment';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
@@ -22,7 +23,8 @@ const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
 const marginWidth = fspContainer.marginWidth;
 const marginLeftWidth = fspContainer.marginLeftWidth;
-
+// 时间格式化样式
+const formatTxt = 'YYYYMMDD';
 
 export default class PageHeader extends PureComponent {
   static propTypes = {
@@ -143,6 +145,11 @@ export default class PageHeader extends PureComponent {
       maxData,
     } = this.props;
     const { top, left, width } = this.state;
+    const zzjgMaxData = maxData.zzjg;
+    // 后台返回有数据的最大时间
+    const maxDataSeconds = moment(zzjgMaxData, formatTxt).valueOf();
+    // 当前日期减1天
+    const momentDataSeconds = moment().subtract(1, 'days').valueOf();
     return (
       <div>
         <div
@@ -199,6 +206,17 @@ export default class PageHeader extends PureComponent {
                 />
               </div>
             </Row>
+            {
+              maxDataSeconds < momentDataSeconds ?
+                <Alert
+                  message="提示"
+                  description="因当前数据后台未核算完成，目前展现的是前一日的数据"
+                  type="warning"
+                  closable
+                  showIcon
+                /> :
+              null
+            }
           </div>
         </div>
         <div style={{ height: '40px' }} />
