@@ -74,6 +74,7 @@ export default class Pageheader extends PureComponent {
     dict: {},
     filterCallback: () => { },
     filterControl: EXECUTE_VIEW,
+    hasPermissionOfManagerView: false,
   }
 
   constructor(props) {
@@ -339,11 +340,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-        type,
-        creator,
-        // createTimeStart,
-        // createTimeEnd,
-        missionName,
+          type,
+          creator,
+          // createTimeStart,
+          // createTimeEnd,
+          missionName,
         },
       },
     } = this.props;

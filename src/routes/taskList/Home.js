@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspGlobal } from '../../utils';
+import { fspGlobal, permission } from '../../utils';
 import { env, emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
@@ -233,6 +233,13 @@ export default class PerformerView extends PureComponent {
       typeCode: '',
       typeName: '',
     };
+    this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
+    let newMissionView = chooseMissionView;
+    if (!this.hasPermissionOfManagerView) {
+      // 没有管理者视图查看权限
+      newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+    }
+    this.missionView = newMissionView;
   }
 
   componentDidMount() {
@@ -343,7 +350,28 @@ export default class PerformerView extends PureComponent {
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
-      taskId: currentId,
+      missionId: currentId,
+      // missionId: '101111171108181',
+      orgId: newOrgId || emp.getOrgId(),
+      // orgId: 'ZZ001041',
+    });
+  }
+
+  /**
+   * 获取客户反馈饼图
+   */
+  @autobind
+  getFlowFeedback({ orgId }) {
+    const {
+      countFlowFeedBack,
+      location: { query: { currentId } },
+    } = this.props;
+    const newOrgId = orgId === 'msm' ? '' : orgId;
+    // 管理者视图获取客户反馈饼图
+    countFlowFeedBack({
+      missionId: currentId,
+      // missionId: '101111171108181',
+      // orgId: 'ZZ001041',
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -449,6 +477,7 @@ export default class PerformerView extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={this.getFlowStatus}
+            countFlowFeedBack={this.getFlowFeedback}
             missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
             mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
             launchNewTask={this.handleCreateBtnClick}
@@ -515,8 +544,8 @@ export default class PerformerView extends PureComponent {
     finalPostData = _.merge(
       finalPostData,
       omitData,
-      { orgId: 'ZZ001041' },
-      // { orgId: emp.getOrgId() },
+      // { orgId: 'ZZ001041' },
+      { orgId: emp.getOrgId() },
     );
 
     // 对反馈状态做处理
@@ -559,26 +588,26 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      // taskId: record.id,
-      taskId: '101111171108181',
-      // orgId: emp.getOrgId(),
-      orgId: 'ZZ001041',
+      taskId: record.id,
+      // taskId: '101111171108181',
+      orgId: emp.getOrgId(),
+      // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
-      // missionId: record.id,
-      missionId: '101111171108181',
-      orgId: 'ZZ001041',
-      // orgId: emp.getOrgId(),
+      missionId: record.id,
+      // missionId: '101111171108181',
+      // orgId: 'ZZ001041',
+      orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
-      // missionId: record.id,
-      missionId: '101111171108181',
-      // orgId: emp.getOrgId(),
-      orgId: 'ZZ001041',
+      missionId: record.id,
+      // missionId: '101111171108181',
+      orgId: emp.getOrgId(),
+      // orgId: 'ZZ001041',
     });
   }
 
@@ -742,7 +771,7 @@ export default class PerformerView extends PureComponent {
         dict={dict}
         page={currentView}
         pageType={pageType}
-        chooseMissionViewOptions={chooseMissionView}
+        chooseMissionViewOptions={this.missionView}
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={missionViewType}
         filterCallback={this.handleHeaderFilter}

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-20 17:57:46
+ * @Last Modified time: 2017-12-21 14:33:19
  * 管理者视图详情
  */
 
@@ -63,6 +63,8 @@ export default class ManagerViewDetail extends PureComponent {
     clearCreateTaskData: PropTypes.func.isRequired,
     // 任务类型
     missionType: PropTypes.string.isRequired,
+    // 反馈饼图数据
+    countFlowFeedBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -178,6 +180,7 @@ export default class ManagerViewDetail extends PureComponent {
       location,
       replace,
       countFlowStatus,
+      countFlowFeedBack,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -309,6 +312,7 @@ export default class ManagerViewDetail extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={countFlowStatus}
+            countFlowFeedBack={countFlowFeedBack}
           />
         </div>
         <div className={styles.missionFeedbackSection}>
