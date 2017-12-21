@@ -303,7 +303,7 @@ export default class Pageheader extends PureComponent {
   }
 
 
-  // 选择不同视图创建时间不同是
+  // 选择不同视图创建时间不同
   renderTime(startTime, endTime, isInitiator, isController) {
     const item = isInitiator;
     const controller = isController === 'controller' ?
@@ -363,8 +363,6 @@ export default class Pageheader extends PureComponent {
         type,
         status,
         creator,
-        // createTimeStart,
-        // createTimeEnd,
         missionName,
         },
       },
@@ -463,18 +461,9 @@ export default class Pageheader extends PureComponent {
           </div>
 
           {missionViewTypeValue === 'initiator' ?
-            this.renderTime(beforeToday, today, true) : this.renderTime(today, afterToday, false, missionViewType)
+            this.renderTime(beforeToday, today, true) :
+            this.renderTime(today, afterToday, false, missionViewType)
           }
-          {/* <div className={`${styles.filterFl} ${styles.dateWidget}`}>
-            创建时间:
-            <div className={styles.dropDownSelectBox}>
-              <RangePicker
-                defaultValue={[startTime, endTime]}
-                onChange={this.handleDateChange}
-                placeholder={['开始时间', '结束时间']}
-              />
-            </div>
-          </div> */}
           {
             this.state.showMore ?
               <div
