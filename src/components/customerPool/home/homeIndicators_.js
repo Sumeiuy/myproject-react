@@ -7,7 +7,13 @@ import _ from 'lodash';
 import { fspGlobal } from '../../../utils';
 import { url as urlHelper, env, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
-import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
+import {
+  toFomatterCust,
+  toFixedCust,
+  getPercentage,
+  getBarAdaptiveMax,
+  transformItemUnit,
+} from '../../chartRealTime/FixNumber';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -22,13 +28,45 @@ export function numFormat(num) {
   return numberHelper.thousandFormat(num, false);
 }
 
+export function getNewFormattedUnitAndItem(data) {
+  let newData = data;
+  newData = _.map(newData, (item) => {
+    const { newUnit, newItem } = transformItemUnit(item);
+    const thousandsFormatItem = numFormat(newItem);
+    return {
+      unit: newUnit,
+      item: thousandsFormatItem,
+    };
+  });
+  return newData;
+}
+
 function getProgressDataSource({
   dataArray,
   categoryArray,
   colorArray,
   formatterMethod,
+  type,
 }) {
   const percenteArray = getPercentage(dataArray);
+  let finalData = [];
+  if (type === 'productSale') {
+    finalData = formatterMethod(dataArray);
+    const items = _.map(
+      categoryArray,
+      (item, index) => ({
+        cust: item,
+        thousandsCount: finalData[index].item,
+        count: finalData[index].item,
+        percent: percenteArray[index],
+        color: colorArray[index],
+        id: index,
+        unit: finalData[index].unit,
+        value: finalData[index].item,
+      }),
+    );
+    return items;
+  }
   const { newUnit, newSeries } = formatterMethod(dataArray);
   const thousandsFormatSeries = _.map(
     newSeries,
@@ -69,7 +107,8 @@ export function getProductSale({
     dataArray: productSaleData,
     categoryArray: nameArray,
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
-    formatterMethod: toFixedMoney,
+    formatterMethod: getNewFormattedUnitAndItem,
+    type: 'productSale',
   };
   return getProgressDataSource(param);
 }
@@ -141,12 +180,9 @@ export function getClientsNumber({
 
 // 经营指标的资产和交易量
 export function getTradingVolume({ tradeingVolumeData }) {
-  const { newUnit, newSeries } = toFixedMoney(tradeingVolumeData);
-  const thousandsFormatSeries = _.map(
-    newSeries,
-    item => numFormat(item),
-  );
-  return { newUnit, items: thousandsFormatSeries || [] };
+  const finalTradingData = getNewFormattedUnitAndItem(tradeingVolumeData);
+  // { newUnit, items: thousandsFormatSeries || [] };
+  return finalTradingData;
 }
 
 // 经营指标的服务指标
@@ -211,10 +247,11 @@ export function getCustAndProperty(dataArray) {
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
-  const { newUnit: propertyUnit, newSeries } = toFixedMoney(properyArray);
+  // const { newUnit: propertyUnit, newSeries } = toFixedMoney(properyArray);
+  const finalData = getNewFormattedUnitAndItem(properyArray);
   const datas = _.map(
-    newSeries,
-    (item, index) => ({ ...(custArray[index]), property: item }),
+    finalData,
+    (item, index) => ({ ...(custArray[index]), property: item.item, unit: item.unit }),
   );
   // 降序排列
   const descData = _.orderBy(datas, ['value'], ['desc']);
@@ -224,7 +261,7 @@ export function getCustAndProperty(dataArray) {
     descData,
     (item, index) => ({ ...item, bgColor: colors[index] }),
   );
-  return { color: '#000', propertyUnit, data: newDatas };
+  return { color: '#000', data: newDatas };
 }
 
 // 投顾绩效/经营指标的沪深归集率
