@@ -28,6 +28,11 @@ const EXECUTE_VIEW = 'executor';
 const EXECUTE_STATE = '50';
 const RESULT_TRACK_STATE = '60';
 const COMPLETED_STATE = '70';
+const MANAGER_VIEW_STATUS = [
+  EXECUTE_STATE,
+  RESULT_TRACK_STATE,
+  COMPLETED_STATE,
+];
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
 // 时间设置
@@ -73,17 +78,15 @@ export default class Pageheader extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      showMore: true,
-    };
-    const { dict = {} } = props;
+    const { dict = {}, filterControl, location: { query: { status } } } = props;
     const { missionStatus } = dict || {};
     this.missionStatus = missionStatus;
-  }
-
-  componentWillMount() {
-    const { filterControl, location: { query: { status } } } = this.props;
-    this.renderStatusOptions(filterControl, status);
+    const { stateAllOptions, statusValue } = this.renderStatusOptions(filterControl, status);
+    this.state = {
+      stateAllOptions,
+      statusValue,
+      showMore: true,
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -93,7 +96,11 @@ export default class Pageheader extends PureComponent {
     const { status: nextStatus } = nextQuery;
 
     if (status !== nextStatus) {
-      this.renderStatusOptions(filterControl, nextStatus);
+      const { stateAllOptions, statusValue } = this.renderStatusOptions(filterControl, nextStatus);
+      this.setState({
+        stateAllOptions,
+        statusValue,
+      });
     }
   }
 
@@ -128,14 +135,6 @@ export default class Pageheader extends PureComponent {
       dom.removeClass(this.filterMore, 'filterNoneIcon');
       dom.addClass(this.filterMore, 'filterMoreIcon');
     }
-  }
-
-  @autobind
-  setStatusOptions(stateAllOptions, statusValue) {
-    this.setState({
-      stateAllOptions,
-      statusValue,
-    });
   }
 
   @autobind
@@ -289,15 +288,12 @@ export default class Pageheader extends PureComponent {
   renderStatusOptions(filterControl, status) {
     const stateOptions = this.constructorDataType(this.missionStatus);
     // 状态增加全部
-    let stateAllOptions = [...stateOptions, stateAll];
+    let stateAllOptions = stateOptions;
 
     if (filterControl === CONTROLLER_VIEW) {
       // 管理者视图只有保留三种状态和所有状态
       stateAllOptions = _.filter(stateAllOptions,
-        item => item.value === ''
-          || item.value === EXECUTE_STATE
-          || item.value === RESULT_TRACK_STATE
-          || item.value === COMPLETED_STATE);
+        item => _.includes(MANAGER_VIEW_STATUS, item.value));
     }
 
     let statusValue = status;
@@ -308,7 +304,10 @@ export default class Pageheader extends PureComponent {
       statusValue = '所有状态';
     }
 
-    this.setStatusOptions(stateAllOptions, statusValue);
+    return {
+      stateAllOptions: [stateAll, ...stateAllOptions],
+      statusValue,
+    };
   }
 
 

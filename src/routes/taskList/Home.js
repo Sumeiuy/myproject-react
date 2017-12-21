@@ -559,26 +559,26 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      taskId: record.id,
-      // taskId: '101111171108181',
-      orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
+      // taskId: record.id,
+      taskId: '101111171108181',
+      // orgId: emp.getOrgId(),
+      orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
-      missionId: record.id,
-      // missionId: '101111171108181',
-      // orgId: 'ZZ001041',
-      orgId: emp.getOrgId(),
+      // missionId: record.id,
+      missionId: '101111171108181',
+      orgId: 'ZZ001041',
+      // orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
-      missionId: record.id,
-      // missionId: '101111171108181',
-      orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
+      // missionId: record.id,
+      missionId: '101111171108181',
+      // orgId: emp.getOrgId(),
+      orgId: 'ZZ001041',
     });
   }
 
