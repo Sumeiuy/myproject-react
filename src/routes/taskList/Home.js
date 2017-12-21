@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-
+import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -38,6 +38,10 @@ const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
+
+const today = moment(new Date()).format('YYYY-MM-DD');
+const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
+const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -234,10 +238,15 @@ export default class PerformerView extends PureComponent {
       query: {
           pageNum,
         pageSize,
+        missionViewType,
         },
       },
     } = this.props;
-    this.queryAppList(query, pageNum, pageSize);
+    if (missionViewType === INITIATOR) {
+      this.queryAppListInit({ query, pageNum, pageSize, beforeToday, today });
+    } else {
+      this.queryAppListInit({ query, pageNum, pageSize, today, afterToday });
+    }
   }
 
   // 获取列表后再获取某个Detail
@@ -455,10 +464,45 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
+  // 头部筛选请求
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getTaskList } = this.props;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getTaskList({ ...params }).then(this.getRightDetail);
+  }
+
+  // 默认时间设置
+  handleDefaultTime({ before, todays, after }) {
+    const createTimeStart = _.isEmpty(before) ? null : moment(before).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
+
+  // 第一次加载请求
+  @autobind
+  queryAppListInit({ query, pageNum = 1, pageSize = 10,
+    beforeToday: before, today: todays, afterToday: after }) {
+    const { getTaskList, location, replace } = this.props;
+    const { pathname } = location;
+    const item = this.constructViewPostBody(query, pageNum, pageSize);
+    const timersValue = this.handleDefaultTime({ before, todays, after });
+    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
+    const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        createTimeStart,
+        createTimeEnd,
+        endTimeStart,
+        endTimeEnd,
+      },
+    });
     // 默认筛选条件
     getTaskList({ ...params }).then(this.getRightDetail);
   }
@@ -709,6 +753,7 @@ export default class PerformerView extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
+        filterTimer={this.handleDefaultTime}
       />
     );
 
