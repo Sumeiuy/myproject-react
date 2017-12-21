@@ -51,27 +51,32 @@ function columnsOne(category) {
   }];
 }
 
-const columnsTwo = [{
-  title: '团队数量',
-  key: 'teamCount',
-  dataIndex: 'teamCount',
-  width: '25%',
-  render: item => (
-    <div className={classnames(styles.column, styles.teamNum)} title={item}>
-      {item || '--'}
-    </div>
-  ),
-}, {
-  title: '投顾人数',
-  dataIndex: 'empCount',
-  key: 'empCount',
-  width: '25%',
-  render: item => (
-    <div className={classnames(styles.column, styles.adviserNum)} title={item}>
-      {item || '--'}
-    </div>
-  ),
-}];
+function columnsTwo(category) {
+  // 临时改的（投顾人数：后端的key对应错了）
+  const empCount = category === CENTER_TABLE ? 'teamCount' : 'empCount';
+  return [{
+    title: '团队数量',
+    key: 'teamCount',
+    dataIndex: 'teamCount',
+    width: '25%',
+    render: item => (
+      <div className={classnames(styles.column, styles.teamNum)} title={item}>
+        {item || '--'}
+      </div>
+    ),
+  }, {
+    title: '投顾人数',
+    dataIndex: empCount,
+    key: empCount,
+    width: '25%',
+    render: item => (
+      <div className={classnames(styles.column, styles.adviserNum)} title={item}>
+        {item || '--'}
+      </div>
+    ),
+  }];
+}
+
 const columnsTree = [{
   title: '工号',
   key: 'login',
@@ -163,7 +168,7 @@ export default class DetailTable extends Component {
     if (category === CENTER_TABLE) {
       return [
         ...(columnsOne(category)),
-        _.last(columnsTwo),
+        _.last(columnsTwo(category)),
         actionColumns(
           category,
           { deleteFunc: this.handleDeleteClick, updateFunc: this.handleUpdateClick },
@@ -172,7 +177,7 @@ export default class DetailTable extends Component {
     } else if (category === TEAM_TABLE) {
       return [...columnsTree, actionColumns(category, { deleteFunc: this.handleDeleteClick })];
     }
-    return [...(columnsOne(category)), ...columnsTwo];
+    return [...(columnsOne(category)), ...(columnsTwo(category))];
   }
 
   @autobind
@@ -237,6 +242,7 @@ export default class DetailTable extends Component {
     const { category, rowKey, tableData } = this.props;
     const screenHeight = document.documentElement.clientHeight;
     const y = screenHeight - 296;
+    console.log('######render########', this.getColumns(category));
     return (
       <div className={styles.tableContainer}>
         {this.renderExtra()}
