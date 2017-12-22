@@ -18,6 +18,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const TextArea = Input.TextArea;
 
+// 表单的布局
 const formLayout = 'horizontal';
 const formItemLayout = {
   labelCol: { span: 3 },
