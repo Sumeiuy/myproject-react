@@ -148,7 +148,8 @@ export default class Home extends Component {
       return;
     }
     const { searchManager } = this.props;
-    searchManager({ keyword });
+    // 应后台要求，传入固定的key-value：org: 'ZZ001041093'，只用于搜索南京分公司的
+    searchManager({ keyword, org: 'ZZ001041093' });
   }
 
   @autobind
