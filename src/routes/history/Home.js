@@ -692,7 +692,6 @@ export default class HistoryHome extends PureComponent {
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     const summaryType = type || defaultSummaryType;
-    console.warn('summaryType', summaryType);
     return (
       <div className="pageHistory">
         <PageHeader

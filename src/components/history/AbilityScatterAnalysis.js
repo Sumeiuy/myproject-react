@@ -541,7 +541,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     if (summaryType === hbgxSummaryType) {
       sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
     }
-    console.warn('sortByTypeArr', sortByTypeArr);
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
     return (

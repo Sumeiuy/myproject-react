@@ -185,7 +185,6 @@ export default class HistoryCompareRankChart extends PureComponent {
       summaryType,
     } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
-    console.warn('boardType', boardType);
     let { unit } = this.state;
     if (_.isEmpty(historyCardRecordVo)) {
       unit = '--';
