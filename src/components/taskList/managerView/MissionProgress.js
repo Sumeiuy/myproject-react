@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-15 13:54:15
+ * @Last Modified time: 2017-12-21 13:18:47
  * 任务进度
  */
 
@@ -37,6 +37,23 @@ export default class MissionProgress extends PureComponent {
     onPreviewCustDetail: () => { },
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+    };
+  }
+
+  @autobind
+  getActiveElem() {
+    return this.activeElem;
+  }
+
+  @autobind
+  getRemainingElem() {
+    return this.remainingElem;
+  }
+
   @autobind
   renderTooltipContent(type, currentCount) {
     return (
@@ -48,16 +65,6 @@ export default class MissionProgress extends PureComponent {
         >点击查看明细&gt;&gt;</div>
       </div>
     );
-  }
-
-  @autobind
-  getActiveElem() {
-    return this.activeElem;
-  }
-
-  @autobind
-  getRemainingElem() {
-    return this.remainingElem;
   }
 
   @autobind

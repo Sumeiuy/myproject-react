@@ -33,6 +33,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorTaskType: PropTypes.bool.isRequired,
     isShowErrorExcuteType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
+    missionType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -43,6 +44,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowTitle: false,
     isShowErrorInfo: false,
     custCount: 0,
+    missionType: '',
   }
 
   constructor(props) {
@@ -104,7 +106,7 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    const { dict: { custIndexPlaceHolders } } = this.props;
+    const { dict: { custIndexPlaceHolders }, missionType } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
@@ -170,6 +172,10 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         // {14日内开通的业务}
+        break;
+      case 'managerView':
+        defaultMissionType = missionType || '请选择';
+        defaultExecutionType = '请选择';
         break;
       case 'custGroupList':
         defaultMissionName = '';

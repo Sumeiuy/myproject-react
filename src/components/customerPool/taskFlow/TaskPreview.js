@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 14:17:03
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-20 13:29:22
  */
 
 import React, { PureComponent } from 'react';
@@ -394,7 +394,7 @@ export default class TaskPreview extends PureComponent {
                         onRowSelectionChange={onRowSelectionChange}
                         currentSelectRowKeys={currentSelectRowKeys}
                       />
-                    :
+                      :
                       <div className={styles.emptyContent}>
                         <span>
                           <Icon className={styles.emptyIcon} type="frown-o" />

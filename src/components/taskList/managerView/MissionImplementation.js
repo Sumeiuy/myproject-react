@@ -40,6 +40,8 @@ export default class MissionImplementation extends PureComponent {
     replace: PropTypes.func.isRequired,
     // 获取任务实施进度
     countFlowStatus: PropTypes.func.isRequired,
+    // 客户反馈饼图
+    countFlowFeedBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -96,8 +98,9 @@ export default class MissionImplementation extends PureComponent {
    */
   @autobind
   collectCustRange(value) {
-    const { countFlowStatus } = this.props;
+    const { countFlowStatus, countFlowFeedBack } = this.props;
     countFlowStatus(value);
+    countFlowFeedBack(value);
   }
 
   /**
