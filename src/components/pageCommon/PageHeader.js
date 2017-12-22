@@ -219,11 +219,11 @@ export default class PageHeader extends PureComponent {
                   orgId={orgId}
                   collectData={collectCustRange}
                 />
-                <div className={styles.vSplit} />
                 {/* 汇总方式切换 */}
                 {
                   summaryTypeIsShow ?
                     <div className={styles.SummaryTypeSelect}>
+                      <div className={styles.vSplit} />
                       <Select
                         style={{ width: 150 }}
                         value={summaryTypeValue}

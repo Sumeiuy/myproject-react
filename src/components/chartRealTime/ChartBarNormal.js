@@ -73,7 +73,6 @@ export default class ChartBarNormal extends PureComponent {
   }
 
   componentDidMount() {
-    console.warn('custRange>', this.props.custRange);
     this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 

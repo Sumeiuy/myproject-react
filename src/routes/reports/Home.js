@@ -22,7 +22,8 @@ import styles from './Home.less';
 const defaultBoardId = constants.boardId;
 const defaultBoardType = constants.boardType;
 const defaultFilialeLevel = constants.filialeLevel;
-const defaultSummaryType = constants.summaryType;
+const jxstSummaryType = constants.jxstSummaryType;
+const hbgxSummaryType = constants.hbgxSummaryType;
 
 const effects = {
   maxDataDt: 'report/getMaxDataDt',
@@ -159,11 +160,9 @@ export default class ReportHome extends PureComponent {
       classifyOrder: {},
     };
   }
-
   componentDidMount() {
     // 初始化的时候state里面还无参数
     this.props.getMaxDataDt().then(() => {
-      console.warn('custRange', this.props.custRange);
       const { maxData } = this.props;
       const maxDataDt = maxData.maxDataDt;
       const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
@@ -209,7 +208,7 @@ export default class ReportHome extends PureComponent {
     if (scope) return scope;
     let addNum = 1;
     if (((custRangeLevel && custRangeLevel === defaultFilialeLevel) ||
-      (custRange[0].level && custRange[0].level === defaultFilialeLevel)) &&
+      (custRange[0] && custRange[0].level === defaultFilialeLevel)) &&
       !report.isNewOrg(custRange[0].id)) {
       addNum = 2;
     }
@@ -221,8 +220,10 @@ export default class ReportHome extends PureComponent {
   getApiParams(param) {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
-    const { custRange } = this.props;
+    const { custRange, maxData } = this.props;
     const { begin, cycleType, end, boardId, orgId, custRangeLevel, type } = this.state;
+    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
@@ -233,7 +234,7 @@ export default class ReportHome extends PureComponent {
       cycleType,
       localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
-      type,
+      type: type || defaultSummaryType,
       ...param,
     };
     return payload;
@@ -256,13 +257,11 @@ export default class ReportHome extends PureComponent {
 
   @autobind
   getInfo() {
-    const { getAllInfo, custRange } = this.props;
-    const { boardId, begin, end, cycleType, orgId, custRangeLevel, scope, type } = this.state;
-    let newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
-    if (custRange[0] && custRange[0].level === defaultFilialeLevel &&
-      !report.isNewOrg(custRange[0].id)) {
-      newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 2);
-    }
+    const { getAllInfo, custRange, maxData } = this.props;
+    const { boardId, begin, end, cycleType, orgId, custRangeLevel, type } = this.state;
+    const newscope = this.getApiScope();
+    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理数据
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
@@ -272,7 +271,7 @@ export default class ReportHome extends PureComponent {
       localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
       scope: newscope,
-      type,
+      type: type || defaultSummaryType,
     };
 
     getAllInfo({
@@ -353,11 +352,7 @@ export default class ReportHome extends PureComponent {
     const { location: { query: { boardId } }, custRange, maxData } = this.props;
     const maxDataDt = maxData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
-    let newscope = custRange[0] && Number(custRange[0].level) + 1;
-    if (custRange[0] && custRange[0].level === defaultFilialeLevel &&
-      !report.isNewOrg(custRange[0].id)) {
-      newscope = custRange[0] && Number(custRange[0].level) + 2;
-    }
+    const newscope = this.getApiScope();
     // 修改state
     this.setState({
       type,
@@ -382,7 +377,7 @@ export default class ReportHome extends PureComponent {
     const { getCustRange, getReportTree } = this.props;
     const empId = emp.getId(); // 用户ID
     let getOrgFn = getCustRange;
-    if (v === defaultSummaryType) {
+    if (v === hbgxSummaryType) {
       getOrgFn = getReportTree;
     }
     getOrgFn({ empId }).then(() => {
@@ -424,13 +419,9 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, scope, boardType, orgId, type } = this.state;
+    const { boardId, custRangeLevel, boardType, orgId, type } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
-    let newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
-    if (custRange[0] && custRange[0].level === defaultFilialeLevel &&
-      !report.isNewOrg(custRange[0].id)) {
-      newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 2);
-    }
+    const newscope = this.getApiScope();
     const newOrgId = orgId || (custRange[0] && custRange[0].id);
     // 用来判断是否投顾绩效,
     const tempType = this.findBoardBy(boardId).boardType;
@@ -439,7 +430,9 @@ export default class ReportHome extends PureComponent {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
     showScopeOrder = true;
-    // 汇总方式（组织机构/汇报关系），默认为汇报关系
+    // 汇总方式（组织机构/汇报关系）
+    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     const summaryType = type || defaultSummaryType;
     return (
       <div className="page-invest content-inner">

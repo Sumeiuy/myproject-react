@@ -128,7 +128,7 @@ export default {
   },
   effects: {
     // 探测有数据的最大时间点接口
-    * getMaxDataDt({ payload }, { call, put, select }) {
+    * getMaxDataDt({ payload }, { call, put, select, take }) {
       const response = yield call(api.getMaxDataDt, payload);
       yield put({
         type: 'getMaxDataDtSuccess',
@@ -138,17 +138,16 @@ export default {
       const maxData = yield select(state => state.report.maxData);
       const summaryTypeIsShow = maxData.summaryTypeIsShow;
       // 汇总方式切换是否显示字段
+      let actionType = 'getCustRange';
       if (summaryTypeIsShow) {
-        yield put({
-          type: 'getReportTree',
-          payload: {},
-        });
-      } else {
-        yield put({
-          type: 'getCustRange',
-          payload: {},
-        });
+        actionType = 'getReportTree';
       }
+      yield put({
+        type: actionType,
+        payload: {},
+      });
+      // 让put同步调用结束
+      yield take(`${actionType}/@@end`);
     },
     // 组织机构树
     * getCustRange({ payload }, { call, put }) {
