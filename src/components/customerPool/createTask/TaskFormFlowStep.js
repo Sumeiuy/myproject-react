@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-19 09:56:33s
+ * @Last Modified time: 2017-12-21 20:55:24
  */
 
 import React, { PureComponent } from 'react';
@@ -97,6 +97,9 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
+      case 'managerView':
+        custSources = '任务实施细分客户';
+        break;
       default:
         break;
     }
@@ -122,7 +125,6 @@ export default class TaskFormFlowStep extends PureComponent {
     const { saveCreateTaskData, location: { query: { source, count } },
       storedCreateTaskData } = this.props;
     const custSource = this.handleCustSource(source);
-
     saveCreateTaskData({
       ...storedCreateTaskData,
       taskFormData: values,
@@ -218,7 +220,6 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
     } = this.state;
-
     const {
       dict,
       location,
@@ -232,9 +233,11 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
+      location: { query: { missionType } },
     } = this.props;
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
+    console.warn('count--->', count);
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm
@@ -246,6 +249,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorExcuteType={isShowErrorExcuteType}
         isShowErrorTaskType={isShowErrorTaskType}
         custCount={Number(count)}
+        missionType={missionType}
       />,
     }, {
       title: '目标客户',

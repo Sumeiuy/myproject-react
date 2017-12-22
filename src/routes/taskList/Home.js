@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspGlobal } from '../../utils';
+import { fspGlobal, permission } from '../../utils';
 import { env, emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
@@ -36,6 +36,13 @@ const {
 const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
+
+// 50代表执行中
+// 60代表结果跟踪
+// 70代表结束
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
@@ -222,13 +229,21 @@ export default class PerformerView extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { location: { query: { missionViewType } } } = props;
     this.state = {
-      currentView: '',
+      currentView: missionViewType || '',
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
       typeName: '',
     };
+    this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
+    let newMissionView = chooseMissionView;
+    if (!this.hasPermissionOfManagerView) {
+      // 没有管理者视图查看权限
+      newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+    }
+    this.missionView = newMissionView;
   }
 
   componentDidMount() {
@@ -344,7 +359,28 @@ export default class PerformerView extends PureComponent {
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
-      taskId: currentId,
+      missionId: currentId,
+      // missionId: '101111171108181',
+      orgId: newOrgId || emp.getOrgId(),
+      // orgId: 'ZZ001041',
+    });
+  }
+
+  /**
+   * 获取客户反馈饼图
+   */
+  @autobind
+  getFlowFeedback({ orgId }) {
+    const {
+      countFlowFeedBack,
+      location: { query: { currentId } },
+    } = this.props;
+    const newOrgId = orgId === 'msm' ? '' : orgId;
+    // 管理者视图获取客户反馈饼图
+    countFlowFeedBack({
+      missionId: currentId,
+      // missionId: '101111171108181',
+      // orgId: 'ZZ001041',
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -450,11 +486,13 @@ export default class PerformerView extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={this.getFlowStatus}
+            countFlowFeedBack={this.getFlowFeedback}
             missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
             mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
             launchNewTask={this.handleCreateBtnClick}
             clearCreateTaskData={clearCreateTaskData}
             push={push}
+            missionType={typeCode}
           />
         );
         break;
@@ -467,8 +505,34 @@ export default class PerformerView extends PureComponent {
   // 头部筛选请求
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
-    const { getTaskList } = this.props;
-    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    const { getTaskList, dict: { missionStatus }, replace,
+      location: { pathname } } = this.props;
+    let newQuery = query;
+    let newMissionStatus = missionStatus;
+    const { status, missionViewType } = newQuery;
+
+    // 从其他视图切过来
+    // 如果当前视图是管理者视图，并且当前url上的status在过滤以后的status字典里面找不到对应的
+    // 那么将当前status置为空
+    if (missionViewType === CONTROLLER) {
+      newMissionStatus = _.filter(newMissionStatus, item => item.key === EXECUTE_STATE
+        || item.key === RESULT_TRACK_STATE || item.key === COMPLETED_STATE);
+      if (_.isEmpty(_.find(newMissionStatus, item => item.key === status))) {
+        newQuery = {
+          ...newQuery,
+          status: '',
+        };
+        // 替换无效的status为空
+        replace({
+          pathname,
+          query: {
+            ...newQuery,
+          },
+        });
+      }
+    }
+    const params = this.constructViewPostBody(newQuery, pageNum, pageSize);
+
     // 默认筛选条件
     getTaskList({ ...params }).then(this.getRightDetail);
   }
@@ -739,9 +803,11 @@ export default class PerformerView extends PureComponent {
       list,
       dict,
       queryCustUuid,
+      location: { query: { missionViewType } },
     } = this.props;
     const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
+
     const topPanel = (
       <ConnectedPageHeader
         location={location}
@@ -749,9 +815,9 @@ export default class PerformerView extends PureComponent {
         dict={dict}
         page={currentView}
         pageType={pageType}
-        chooseMissionViewOptions={chooseMissionView}
+        chooseMissionViewOptions={this.missionView}
         creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={currentView}
+        filterControl={missionViewType}
         filterCallback={this.handleHeaderFilter}
         filterTimer={this.handleDefaultTime}
       />
