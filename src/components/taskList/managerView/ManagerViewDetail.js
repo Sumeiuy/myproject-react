@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-22 14:20:11
+ * @Last Modified time: 2017-12-22 14:46:34
  * 管理者视图详情
  */
 
@@ -78,16 +78,7 @@ export default class ManagerViewDetail extends PureComponent {
     super(props);
     this.state = {
       isShowCustDetailModal: false,
-      isDisabled: true,
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { custDetailResult = {} } = nextProps;
-    const { list = [] } = custDetailResult;
-    this.setState({
-      isDisabled: _.isEmpty(list),
-    });
   }
 
   /**
@@ -193,7 +184,7 @@ export default class ManagerViewDetail extends PureComponent {
       countFlowFeedBack,
     } = this.props;
 
-    const { isShowCustDetailModal, isDisabled } = this.state;
+    const { isShowCustDetailModal } = this.state;
 
     const {
       missionId,
@@ -213,6 +204,9 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前机构名
       orgName,
     } = mngrMissionDetailInfo;
+
+    const { list } = custDetailResult || {};
+    const isDisabled = _.isEmpty(list);
 
     return (
       <div className={styles.managerViewDetail}>
