@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { fspContainer, optionsMap } from '../../config';
+import { fspContainer, optionsMap, constants } from '../../config';
 import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './BoardHeader.less';
@@ -24,6 +24,8 @@ const sortByOrderSelect = sortByOrder.map((item, index) => {
   const optionKey = `Order-${index}`;
   return (React.createElement(Option, { key: optionKey, value: `${item.key}` }, `${item.name}`));
 });
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 
@@ -174,7 +176,7 @@ export default class BoardHeader extends PureComponent {
     });
     const { collectScopeSelect, boardType, summaryType } = this.props;
     let sortByTypeArr = sortByType[boardType];
-    if (summaryType === 'hbgx') {
+    if (summaryType === hbgxSummaryType) {
       sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
     }
     const scopeText = _.find(sortByTypeArr, { scope: String(v) }).name;
@@ -257,7 +259,7 @@ export default class BoardHeader extends PureComponent {
     });
 
     let sortByTypeArr = sortByType[boardType];
-    if (summaryType === 'hbgx') {
+    if (summaryType === hbgxSummaryType) {
       sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
     }
     return (

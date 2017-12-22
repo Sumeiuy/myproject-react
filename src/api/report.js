@@ -7,10 +7,10 @@ export default function report(api) {
     // 员工职责与职位
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 
-    // 获取客户范围
+    // 获取绩效视图的组织机构
     getCustRange: query => api.post('/groovynoauth/jxzb/newEmpOrgTree', query),
 
-    // 获取客户范围
+    // 获取汇报关系的组织机构
     getReportTree: query => api.post('/groovynoauth/jxzb/newReportTree', query),
 
     // 获取绩效统计接口

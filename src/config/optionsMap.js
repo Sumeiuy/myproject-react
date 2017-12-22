@@ -2,7 +2,7 @@
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-21 20:22:34
+ * @Last Modified time: 2017-12-22 15:14:11
 */
 
 const optionsMap = {
@@ -246,7 +246,7 @@ const optionsMap = {
     },
   },
   // 关系树筛选
-  summaryType: [
+  summaryTypeSelect: [
     {
       value: 'hbgx',
       name: '汇报关系汇总',

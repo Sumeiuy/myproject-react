@@ -11,7 +11,7 @@ import moment from 'moment';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
-import { fspContainer, optionsMap } from '../../config';
+import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
 import { dom } from '../../helper';
 // 选择项字典
@@ -24,7 +24,9 @@ const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
 const marginWidth = fspContainer.marginWidth;
 const marginLeftWidth = fspContainer.marginLeftWidth;
-const summaryType = optionsMap.summaryType;
+const summaryTypeSelect = optionsMap.summaryTypeSelect;
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 // 时间格式化样式
 const formatTxt = 'YYYYMMDD';
 
@@ -69,7 +71,7 @@ export default class PageHeader extends PureComponent {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
-      summaryTypeValue: 'hbgx',
+      summaryTypeValue: hbgxSummaryType,
     };
   }
 
@@ -230,18 +232,18 @@ export default class PageHeader extends PureComponent {
                         onChange={this.handleSummaryTypeChange}
                       >
                         {
-                        summaryType.map((item, index) => {
-                          const summaryTypeIndex = `summaryType-${index}`;
-                          return (
-                            <Option
-                              key={summaryTypeIndex}
-                              value={item.value}
-                            >
-                                按{item.name}
-                            </Option>
-                          );
-                        })
-                      }
+                          summaryTypeSelect.map((item, index) => {
+                            const summaryTypeIndex = `summaryType-${index}`;
+                            return (
+                              <Option
+                                key={summaryTypeIndex}
+                                value={item.value}
+                              >
+                                  按{item.name}
+                              </Option>
+                            );
+                          })
+                        }
                       </Select>
                     </div>
                   :

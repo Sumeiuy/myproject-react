@@ -84,6 +84,7 @@ export default class DurationSelect extends PureComponent {
         isHistory,
       });
     }
+    // 切换汇总方式的时候，需要把时间恢复到初始值
     if (!_.isEqual(custRange, preCustRange)) {
       const { maxData } = this.props;
       const maxDataDt = maxData.maxDataDt;
