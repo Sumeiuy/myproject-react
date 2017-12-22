@@ -47,7 +47,7 @@ export default class DurationSelect extends PureComponent {
     replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
-    maxData: PropTypes.object.isRequired,
+    initialData: PropTypes.object.isRequired,
     custRange: PropTypes.array.isRequired,
   }
 
@@ -57,8 +57,8 @@ export default class DurationSelect extends PureComponent {
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
     const value = 'month';
-    const { maxData } = this.props;
-    const maxDataDt = maxData.maxDataDt;
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const obj = time.getDurationString(value, maxDataDt);
     const beginMoment = moment(obj.begin);
     const endMoment = moment(obj.end);
@@ -86,8 +86,8 @@ export default class DurationSelect extends PureComponent {
     }
     // 切换汇总方式的时候，需要把时间恢复到初始值
     if (!_.isEqual(custRange, preCustRange)) {
-      const { maxData } = this.props;
-      const maxDataDt = maxData.maxDataDt;
+      const { initialData } = this.props;
+      const maxDataDt = initialData.maxDataDt;
       const value = 'month';
       const duration = time.getDurationString(value, maxDataDt);
       this.state = { ...duration };
@@ -97,8 +97,8 @@ export default class DurationSelect extends PureComponent {
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
-    const { maxData } = this.props;
-    const maxDataDt = maxData.maxDataDt;
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const duration = time.getDurationString(value, maxDataDt);
     const { updateQueryState, collectData } = this.props;
     collectData({
@@ -256,8 +256,8 @@ export default class DurationSelect extends PureComponent {
   @autobind
   historyChangeDuration(e) {
     const { compare } = this.state;
-    const { maxData } = this.props;
-    const maxDataDt = maxData.maxDataDt;
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const cycleType = e.target.value;
     const nowDuration = time.getDurationString(cycleType, maxDataDt);
     const beginMoment = moment(nowDuration.begin);

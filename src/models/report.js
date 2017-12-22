@@ -15,7 +15,7 @@ export default {
     allCategory: [],
     visibleBoards: [], // 可见看板
     newVisibleBoards: [], // 新可见看板
-    maxData: {}, // 探测有数据的最大时间点
+    initialData: {}, // 探测接口（有数据的最大时间点，是否显示汇报方式切换）
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
@@ -122,21 +122,21 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        maxData: resultData || {},
+        initialData: resultData || {},
       };
     },
   },
   effects: {
-    // 探测有数据的最大时间点接口
-    * getMaxDataDt({ payload }, { call, put, select, take }) {
-      const response = yield call(api.getMaxDataDt, payload);
+    // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
+    * getInitialData({ payload }, { call, put, select, take }) {
+      const response = yield call(api.getInitialData, payload);
       yield put({
         type: 'getMaxDataDtSuccess',
         payload: response,
       });
       // 初始化的时是调组织机构数，还是调汇报机构树
-      const maxData = yield select(state => state.report.maxData);
-      const summaryTypeIsShow = maxData.summaryTypeIsShow;
+      const initialData = yield select(state => state.report.initialData);
+      const summaryTypeIsShow = initialData.summaryTypeIsShow;
       // 汇总方式切换是否显示字段
       let actionType = 'getCustRange';
       if (summaryTypeIsShow) {

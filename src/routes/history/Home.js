@@ -30,7 +30,7 @@ const TYPE_LSDB_TGJX = '3';
 const TYPE_LSDB_JYYJ = '4';
 const defaultFilialeLevel = constants.filialeLevel;
 const effects = {
-  maxDataDt: 'report/getMaxDataDt',
+  initialData: 'report/getInitialData',
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
   getHistoryCore: 'history/getHistoryCore',
@@ -70,12 +70,12 @@ const mapStateToProps = state => ({
   operateData: state.history.operateData,
   message: state.history.message,
   // 探测有数据的最大时间点接口
-  maxData: state.report.maxData,
+  initialData: state.report.initialData,
 });
 
 const mapDispatchToProps = {
   getInitial: fectchDataFunction(true, effects.getInitial),
-  getMaxDataDt: fectchDataFunction(true, effects.maxDataDt),
+  getInitialData: fectchDataFunction(true, effects.maxDataDt),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
@@ -135,8 +135,8 @@ export default class HistoryHome extends PureComponent {
     collectBoardSelect: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func.isRequired,
     collectDurationSelect: PropTypes.func.isRequired,
-    maxData: PropTypes.object.isRequired,
-    getMaxDataDt: PropTypes.func.isRequired,
+    initialData: PropTypes.object.isRequired,
+    getInitialData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -179,9 +179,9 @@ export default class HistoryHome extends PureComponent {
 
   componentDidMount() {
     // 初始化的时候state里面还无参数
-    this.props.getMaxDataDt().then(() => {
-      const { maxData } = this.props;
-      const maxDataDt = maxData.maxDataDt;
+    this.props.getInitialData().then(() => {
+      const { initialData } = this.props;
+      const maxDataDt = initialData.maxDataDt;
       const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
       // 修改state
       this.setState({ begin, end, cycleType }, this.queryInitial);
@@ -568,11 +568,11 @@ export default class HistoryHome extends PureComponent {
       collectDurationSelect,
       createLoading,
       operateData,
-      maxData,
+      initialData,
     } = this.props;
 
     if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) ||
-       _.isEmpty(newVisibleBoards) || _.isEmpty(maxData)) {
+       _.isEmpty(newVisibleBoards) || _.isEmpty(initialData)) {
       return null;
     }
     const {
@@ -642,7 +642,7 @@ export default class HistoryHome extends PureComponent {
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
           showSelfDatePicker
-          maxData={maxData}
+          initialData={initialData}
         />
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>

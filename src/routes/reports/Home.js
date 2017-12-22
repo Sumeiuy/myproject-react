@@ -26,7 +26,7 @@ const jxstSummaryType = constants.jxstSummaryType;
 const hbgxSummaryType = constants.hbgxSummaryType;
 
 const effects = {
-  maxDataDt: 'report/getMaxDataDt',
+  initialData: 'report/getInitialData',
   custRange: 'report/getCustRange',
   reportTree: 'report/getReportTree',
   allInfo: 'report/getAllInfo',
@@ -56,13 +56,13 @@ const mapStateToProps = state => ({
   newVisibleBoards: state.report.newVisibleBoards,
   globalLoading: state.activity.global,
   // 探测有数据的最大时间点接口
-  maxData: state.report.maxData,
+  initialData: state.report.initialData,
 });
 
 const mapDispatchToProps = {
   delReportData: fectchDataFunction(false, effects.delReportData),
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getMaxDataDt: fectchDataFunction(true, effects.maxDataDt),
+  getInitialData: fectchDataFunction(true, effects.initialData),
   getCustRange: fectchDataFunction(true, effects.custRange),
   getReportTree: fectchDataFunction(true, effects.reportTree),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
@@ -106,8 +106,8 @@ export default class ReportHome extends PureComponent {
     reportName: PropTypes.string,
     boardId: PropTypes.number,
     boardType: PropTypes.string,
-    maxData: PropTypes.object.isRequired,
-    getMaxDataDt: PropTypes.func.isRequired,
+    initialData: PropTypes.object.isRequired,
+    getInitialData: PropTypes.func.isRequired,
     getCustRange: PropTypes.func.isRequired,
     getReportTree: PropTypes.func.isRequired,
   }
@@ -162,9 +162,9 @@ export default class ReportHome extends PureComponent {
   }
   componentDidMount() {
     // 初始化的时候state里面还无参数
-    this.props.getMaxDataDt().then(() => {
-      const { maxData } = this.props;
-      const maxDataDt = maxData.maxDataDt;
+    this.props.getInitialData().then(() => {
+      const { initialData } = this.props;
+      const maxDataDt = initialData.maxDataDt;
       const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
       // 修改state
       this.setState({ begin, end, cycleType }, this.getInfo);
@@ -220,9 +220,9 @@ export default class ReportHome extends PureComponent {
   getApiParams(param) {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
-    const { custRange, maxData } = this.props;
+    const { custRange, initialData } = this.props;
     const { begin, cycleType, end, boardId, orgId, custRangeLevel, type } = this.state;
-    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
@@ -257,10 +257,10 @@ export default class ReportHome extends PureComponent {
 
   @autobind
   getInfo() {
-    const { getAllInfo, custRange, maxData } = this.props;
+    const { getAllInfo, custRange, initialData } = this.props;
     const { boardId, begin, end, cycleType, orgId, custRangeLevel, type } = this.state;
     const newscope = this.getApiScope();
-    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理数据
     const payload = {
@@ -349,8 +349,8 @@ export default class ReportHome extends PureComponent {
   // 切换SummaryType时候，需要将数据全部恢复到默认值
   @autobind
   updateSummaryTypeState(type) {
-    const { location: { query: { boardId } }, custRange, maxData } = this.props;
-    const maxDataDt = maxData.maxDataDt;
+    const { location: { query: { boardId } }, custRange, initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
     const newscope = this.getApiScope();
     // 修改state
@@ -403,8 +403,9 @@ export default class ReportHome extends PureComponent {
 
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
-    const { custRange, visibleBoards, newVisibleBoards, maxData } = this.props;
-    if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length || !maxData) {
+    const { custRange, visibleBoards, newVisibleBoards, initialData } = this.props;
+    if (!custRange || !custRange.length ||
+      !visibleBoards || !visibleBoards.length || !initialData) {
       return null;
     }
     const { performance, chartInfo, chartTableInfo } = this.props;
@@ -431,7 +432,7 @@ export default class ReportHome extends PureComponent {
     }
     showScopeOrder = true;
     // 汇总方式（组织机构/汇报关系）
-    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     const summaryType = type || defaultSummaryType;
     return (
@@ -450,7 +451,7 @@ export default class ReportHome extends PureComponent {
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
-          maxData={maxData}
+          initialData={initialData}
           updateOrgTreeValue={this.updateOrgTreeValue}
         />
         <div className={styles.reportBody}>

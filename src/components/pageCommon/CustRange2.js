@@ -153,7 +153,7 @@ export default class CustRange extends PureComponent {
       custRangeLevel,
       level: custRangeLevel,
       scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId)) ?
-        (String(Number(custRangeLevel) + 2)) : (String(Number(custRangeLevel) + 1)),
+        (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
     });
   }
 

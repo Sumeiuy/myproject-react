@@ -45,7 +45,7 @@ export default class PageHeader extends PureComponent {
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     orgId: PropTypes.string,
-    maxData: PropTypes.object.isRequired,
+    initialData: PropTypes.object.isRequired,
     updateOrgTreeValue: PropTypes.func.isRequired,
   }
 
@@ -156,12 +156,12 @@ export default class PageHeader extends PureComponent {
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
-      maxData,
+      initialData,
     } = this.props;
     const { top, left, width, summaryTypeValue } = this.state;
-    const maxDataDt = maxData.maxDataDt;
+    const maxDataDt = initialData.maxDataDt;
     // 汇总方式的切换是否显示
-    const summaryTypeIsShow = maxData.summaryTypeIsShow;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
     // 后台返回有数据的最大时间
     const maxDataSeconds = moment(maxDataDt, formatTxt).valueOf();
     // 当前日期减1天
@@ -208,7 +208,7 @@ export default class PageHeader extends PureComponent {
                   replace={replace}
                   updateQueryState={updateQueryState}
                   collectData={collectDurationSelect}
-                  maxData={maxData}
+                  initialData={initialData}
                   custRange={custRange}
                 />
                 <div className={styles.vSplit} />

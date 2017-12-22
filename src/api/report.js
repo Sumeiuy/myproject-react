@@ -79,6 +79,6 @@ export default function report(api) {
     distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
 
     // 探测有数据的最大时间点接口
-    getMaxDataDt: query => api.post('/groovynoauth/jxzb/queryMaxDataDt', query),
+    getInitialData: query => api.post('/groovynoauth/jxzb/queryMaxDataDt', query),
   };
 }
