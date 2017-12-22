@@ -43,6 +43,7 @@ import TaskListHome from './routes/taskList/Home';
 import Demote from './routes/demote/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import RelationHome from './routes/relation/Home';
+import TaskFeedback from './routes/taskFeedback/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -100,6 +101,10 @@ const routes = [
   {
     path: '/filialeCustTransfer',
     component: FilialeCustTransfer,
+  },
+  {
+    path: '/taskFeedback',
+    component: TaskFeedback,
   },
 ];
 
