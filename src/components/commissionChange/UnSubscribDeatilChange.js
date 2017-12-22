@@ -365,9 +365,13 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   @autobind
   submitCheck() {
     let result = true;
-    const { approverId, canShowAppover } = this.state;
+    const { approverId, canShowAppover, unSubProList } = this.state;
     if (_.isEmpty(approverId) && canShowAppover) {
       message.error('审批人员不能为空');
+      result = false;
+    }
+    if (_.isEmpty(unSubProList)) {
+      message.error('资讯退订的产品列表不能为空');
       result = false;
     }
     return result;
