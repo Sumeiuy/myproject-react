@@ -3,11 +3,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:29:18
+ * @Last Modified time: 2017-12-22 12:04:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Radio } from 'antd';
+import { Table, Radio, Switch } from 'antd';
 import _ from 'lodash';
 import Icon from '../Icon';
 import styles from './commonTable.less';
@@ -79,6 +79,19 @@ export default class CommonTable extends PureComponent {
               </span>
             );
             newTitleList.unshift(operation.column);
+            break;
+          case 'switch':
+            operation.column.render = (text, record, index) => (
+              <span>
+                <Switch
+                  checkedChildren="是"
+                  unCheckedChildren="否"
+                  onChange={checked => operation.operate(checked, record, index)}
+                  defaultChecked
+                />
+              </span>
+            );
+            newTitleList.push(operation.column);
             break;
           default:
             break;
