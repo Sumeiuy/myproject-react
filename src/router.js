@@ -106,10 +106,6 @@ const routes = [
     path: '/taskFeedback',
     component: TaskFeedback,
   },
-  {
-    path: '/recommendationTags',
-    component: TaskFeedback,
-  },
 ];
 
 // 递归创建路由

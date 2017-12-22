@@ -26,7 +26,7 @@ export default class AddQuestionModal extends PureComponent {
     visible: PropTypes.bool,
     footer: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.ReactNode,
+      PropTypes.node,
     ]),
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
