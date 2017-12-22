@@ -8,5 +8,7 @@ export default function taskFeedback(api) {
     queryQuestions: query => api.post('/groovynoauth/fsp/assess/common/queryQuesFromPoolByType', query),
     // 删除单条问题
     deleteQuestion: query => api.post('/groovynoauth/fsp/assess/common/deleteQuesFromPoolByType', query),
+    // 新增单条问题
+    addOneQuestion: query => api.post('/groovynoauth/fsp/assess/common/saveQuesToPoolByType', query),
   };
 }

@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
-import { LETTER_ARR } from './config';
 
 import styles from './questionList.less';
 
@@ -31,18 +30,24 @@ const ListItem = (props) => {
   };
 
   /**
+   * 根据数组的索引生成大写的英文字母，0=>A, 1=>B, 2=>C ...
+   */
+  const getLetter = i => (i < 26 ? String.fromCharCode(i + 65) : 'error letter');
+
+  /**
    * 根据选择题答案的数组生成 带选项序号的答案 的html
    * @param {*} list 答案数组
    */
   const choiceAnswer = (list) => {
     if (!_.isEmpty(list)) {
-      return _.map(list, (o, i) => <p key={o.optionId} >{LETTER_ARR[i]}. {o.optionValue}</p>);
+      return _.map(list, (o, i) => <p key={o.optionId} >{getLetter(i)}. {o.optionValue}</p>);
     }
     return null;
   };
 
   /**
    * 根据题目的类型，生成选择题和主观题的答案或者描述
+   * quesTypeCode = 2 时显示主观题描述， 0、 1显示选择题答案
    */
   const showAnswerOrDescription = () => {
     if (quesTypeCode === 2) {

@@ -9,11 +9,12 @@ import PropTypes from 'prop-types';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 
 import withRouter from '../../decorators/withRouter';
 import choosePage from '../../components/operationManage/choosePage';
 import QuestionList from '../../components/operationManage/taskFeedback/QuestionList';
+import AddQuestionModal from '../../components/operationManage/taskFeedback/AddQuestionModal';
 
 import styles from './home.less';
 
@@ -26,18 +27,24 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const effects = {
   queryQuestions: 'taskFeedback/queryQuestions',
   deleteQuestion: 'taskFeedback/deleteQuestion',
+  addOneQuestion: 'taskFeedback/addOneQuestion',
 };
 
 const mapStateToProps = state => ({
   questionInfoList: state.taskFeedback.questionInfoList,
   deleteSuccess: state.taskFeedback.deleteSuccess,
+  addSuccess: state.taskFeedback.addSuccess,
 });
 
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
+  // 查询问题列表
   queryQuestions: fetchDataFunction(true, effects.queryQuestions),
+  // 删除一个问题
   deleteQuestion: fetchDataFunction(true, effects.deleteQuestion),
+  // 添加一个问题
+  addOneQuestion: fetchDataFunction(true, effects.addOneQuestion),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -49,10 +56,19 @@ export default class TaskFeedback extends PureComponent {
     questionInfoList: PropTypes.object.isRequired,
     queryQuestions: PropTypes.func.isRequired,
     deleteQuestion: PropTypes.func.isRequired,
+    addOneQuestion: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     deleteSuccess: PropTypes.bool.isRequired,
+    addSuccess: PropTypes.bool.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+    };
   }
 
   componentDidMount() {
@@ -62,13 +78,61 @@ export default class TaskFeedback extends PureComponent {
     });
   }
 
-  // 添加问题
+  // 显示隐藏添加问题的对话框
+  @autobind
+  setModalVisible(bool) {
+    this.setState({
+      modalVisible: bool,
+    });
+  }
+
+  // 显示添加问题的对话框
   @autobind
   addQuestion() {
-    console.log('add a question');
+    this.setModalVisible(true);
+  }
+
+  /**
+   * 提交问题
+   * 添加问题成功后，重新获取问题列表
+   */
+  @autobind
+  submitOneQuestion(values) {
+    const {
+      addOneQuestion,
+      queryQuestions,
+      location: {
+        query: {
+          pageNum = 1,
+          pageSize = 10,
+        },
+      },
+    } = this.props;
+    const {
+      quesValue,
+      quesTypeCode,
+      quesOptions,
+      quesDesp,
+    } = values;
+    addOneQuestion({
+      quesValue,
+      quesTypeCode,
+      quesOptions,
+      quesDesp,
+    }).then(() => {
+      if (this.props.addSuccess) {
+        message.success('添加成功');
+        queryQuestions({
+          pageNum,
+          pageSize,
+        });
+      }
+      this.setState({ modalVisible: false });
+    });
   }
 
   render() {
+    const { modalVisible } = this.state;
     return (
       <div className={styles.taskFeedback}>
         <p className={styles.pageDescription}>
@@ -86,6 +150,13 @@ export default class TaskFeedback extends PureComponent {
         </div>
         <QuestionList
           {...this.props}
+        />
+        <AddQuestionModal
+          title="新增任务反馈问题"
+          visible={modalVisible}
+          closable
+          onOk={values => this.submitOneQuestion(values)}
+          onCancel={() => this.setModalVisible(false)}
         />
       </div>
     );

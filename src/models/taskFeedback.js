@@ -19,6 +19,7 @@ export default {
       },
     },
     deleteSuccess: false,
+    addSuccess: false,
   },
   reducers: {
     queryQuestionsSuccess(state, action) {
@@ -36,10 +37,16 @@ export default {
         },
       };
     },
-    deleteQuestionsSuccess(state, action) {
+    deleteQuestionSuccess(state, action) {
       return {
         ...state,
         deleteSuccess: action.payload === 'success',
+      };
+    },
+    addOneQuestionSuccess(state, action) {
+      return {
+        ...state,
+        addSuccess: action.payload === 'success',
       };
     },
   },
@@ -58,7 +65,15 @@ export default {
     * deleteQuestion({ payload }, { call, put }) {
       const { resultData } = yield call(api.deleteQuestion, payload);
       yield put({
-        type: 'deleteQuestionsSuccess',
+        type: 'deleteQuestionSuccess',
+        payload: resultData,
+      });
+    },
+    // 新增一个问题
+    * addOneQuestion({ payload }, { call, put }) {
+      const { resultData } = yield call(api.addOneQuestion, payload);
+      yield put({
+        type: 'addOneQuestionSuccess',
         payload: resultData,
       });
     },

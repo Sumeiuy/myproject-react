@@ -1,7 +1,18 @@
-const LETTER_ARR = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-  'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-  'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+const questionType = [
+  {
+    name: '单选',
+    code: '0',
+  },
+  {
+    name: '多选',
+    code: '1',
+  },
+  {
+    name: '主观',
+    code: '2',
+  },
+];
 
 export default {
-  LETTER_ARR,
+  questionType,
 };
