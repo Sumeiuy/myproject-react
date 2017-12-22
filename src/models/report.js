@@ -118,7 +118,7 @@ export default {
         chartTableInfo: {},
       };
     },
-    getMaxDataDtSuccess(state, action) {
+    getInitialDataSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
@@ -131,7 +131,7 @@ export default {
     * getInitialData({ payload }, { call, put, select, take }) {
       const response = yield call(api.getInitialData, payload);
       yield put({
-        type: 'getMaxDataDtSuccess',
+        type: 'getInitialDataSuccess',
         payload: response,
       });
       // 初始化的时是调组织机构数，还是调汇报机构树

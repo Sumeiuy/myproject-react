@@ -78,7 +78,7 @@ export default function report(api) {
     // 看板名称重复验证
     distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
 
-    // 探测有数据的最大时间点接口
+    // 探测接口，暴扣有数据的最大时间点和是否有权限显示切换汇报方式的字段
     getInitialData: query => api.post('/groovynoauth/jxzb/queryMaxDataDt', query),
   };
 }
