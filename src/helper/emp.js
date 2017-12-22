@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-21 14:30:22
+ * @Last Modified time: 2017-12-22 09:43:46
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -50,12 +50,31 @@ const emp = {
   },
 
   /**
+   * 根据传入的部门id和组织机构数数组返回部门id对应的对象
+   * @author XuWenKang
+   * @returns {Object}
+   */
+  getOrgDataByOrgId(arr, id) {
+    const data = _.find(arr, (item) => {
+      if (item.id === id) {
+        return item;
+      }
+      return this.getOrgDataByOrgId(item.children, id);
+    });
+    if (data) {
+      return (data.id === id) ? data : this.getOrgDataByOrgId(data.children, id);
+    }
+    return data;
+  },
+
+  /**
    * 判断当前登录人部门是否是分公司
    * @author XuWenKang
    * @returns {Boolean}
    */
-  isFiliale(level) {
-    return level === duty.bm_fgs;
+  isFiliale(arr, id) {
+    const orgData = this.getOrgDataByOrgId(arr, id);
+    return orgData.level === duty.bm_fgs;
   },
 };
 

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-21 14:51:01
+ * @Last Modified time: 2017-12-22 09:40:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -66,20 +66,6 @@ const mapDispatchToProps = {
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
 };
 
-// 根据部门id查找对应部门对象
-function getOrgDataByOrgId(arr, id) {
-  const data = _.find(arr, (item) => {
-    if (item.id === id) {
-      return item;
-    }
-    return getOrgDataByOrgId(item.children, id);
-  });
-  if (data) {
-    return (data.id === id) ? data : getOrgDataByOrgId(data.children, id);
-  }
-  return data;
-}
-
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
@@ -135,8 +121,7 @@ export default class FilialeCustTransfer extends PureComponent {
     const { custRangeList } = this.props;
     const that = this;
     if (!_.isEmpty(custRangeList)) {
-      const orgData = getOrgDataByOrgId(custRangeList, emp.getOrgId());
-      if (!emp.isFiliale(orgData.level)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
         Modal.warning({
           title: '提示',
           content: '您不是分公司人员，无权操作！',
