@@ -143,6 +143,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
     } = this.state;
+    console.log('location-->', location);
     return (
       <div className={styles.taskInner}>
         {showBtn ?

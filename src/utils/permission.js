@@ -149,6 +149,13 @@ const permission = {
     const hasPermission = (filterRespYYBZXG.length > 0) || (filterRespYYBFWG.length > 0);
     return hasPermission;
   },
+
+  // 是否有权限查看管理者视图
+  hasPermissionOfManagerView() {
+    return permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
+  },
 };
 
 export default permission;

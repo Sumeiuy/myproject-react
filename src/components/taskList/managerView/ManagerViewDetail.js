@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-18 16:23:40
+ * @Last Modified time: 2017-12-22 14:51:00
  * 管理者视图详情
  */
 
@@ -61,6 +61,10 @@ export default class ManagerViewDetail extends PureComponent {
     push: PropTypes.func.isRequired,
     // clearCreateTaskData
     clearCreateTaskData: PropTypes.func.isRequired,
+    // 任务类型
+    missionType: PropTypes.string.isRequired,
+    // 反馈饼图数据
+    countFlowFeedBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -125,17 +129,22 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push } = this.props;
-    let condition = {
-      orgId: helper.getOrgId() || 'ZZ001041',
+    const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
+    const urlParam = {
+      orgId: helper.getOrgId(),
       // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
       entrance: 'managerView',
+      source: 'managerView',
+      count: mngrMissionDetailInfo.custNumbers,
+      // 任务类型
+      missionType,
     };
-    condition = encodeURIComponent(JSON.stringify(condition));
+    const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
       condition,
+      ...urlParam,
     };
     const finalUrl = `${url}?${urlHelper.stringify(query)}`;
 
@@ -150,7 +159,11 @@ export default class ManagerViewDetail extends PureComponent {
       fspGlobal.openRctTab({ url: finalUrl, param });
     } else {
       push({
-        pathname: finalUrl,
+        pathname: url,
+        query: {
+          condition,
+          ...urlParam,
+        },
       });
     }
   }
@@ -167,6 +180,7 @@ export default class ManagerViewDetail extends PureComponent {
       location,
       replace,
       countFlowStatus,
+      countFlowFeedBack,
     } = this.props;
 
     const { isShowCustDetailModal } = this.state;
@@ -189,6 +203,9 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前机构名
       orgName,
     } = mngrMissionDetailInfo;
+
+    const { list = [] } = custDetailResult || EMPTY_OBJECT;
+    const isDisabled = _.isEmpty(list);
 
     return (
       <div className={styles.managerViewDetail}>
@@ -241,12 +258,11 @@ export default class ManagerViewDetail extends PureComponent {
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
-
                 <Clickable
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export}>导出</Button>
+                  <Button className={styles.export} disabled={isDisabled}>导出</Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleLaunchTask}
@@ -255,6 +271,7 @@ export default class ManagerViewDetail extends PureComponent {
                   <Button
                     className={styles.launchTask}
                     type="primary"
+                    disabled={isDisabled}
                   >
                     发起新任务
                   </Button>
@@ -294,6 +311,7 @@ export default class ManagerViewDetail extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={countFlowStatus}
+            countFlowFeedBack={countFlowFeedBack}
           />
         </div>
         <div className={styles.missionFeedbackSection}>
