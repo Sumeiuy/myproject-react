@@ -460,11 +460,15 @@ export default class SubscribeDetailToChange extends PureComponent {
 // 提交前检查各项输入的值是否符合要求
   @autobind
   submitCheck() {
-    const { approverId, canShowAppover } = this.state;
+    const { approverId, canShowAppover, subProSubList } = this.state;
     let result = true;
     if (_.isEmpty(approverId) && canShowAppover) {
       message.error('审批人员不能为空');
       result = false;
+    }
+    if (_.isEmpty(subProSubList)) {
+      message.error('资讯产品列表不能为空');
+      return false;
     }
     return result;
   }
