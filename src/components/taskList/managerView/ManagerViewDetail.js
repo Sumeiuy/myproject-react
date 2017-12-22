@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-22 14:43:42
+ * @Last Modified time: 2017-12-22 15:14:42
  * 管理者视图详情
  */
 
@@ -258,7 +258,6 @@ export default class ManagerViewDetail extends PureComponent {
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
-
                 <Clickable
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
