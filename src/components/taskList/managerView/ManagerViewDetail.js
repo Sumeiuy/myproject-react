@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-22 14:46:34
+ * @Last Modified time: 2017-12-22 14:49:43
  * 管理者视图详情
  */
 
@@ -205,7 +205,7 @@ export default class ManagerViewDetail extends PureComponent {
       orgName,
     } = mngrMissionDetailInfo;
 
-    const { list } = custDetailResult || {};
+    const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
 
     return (
