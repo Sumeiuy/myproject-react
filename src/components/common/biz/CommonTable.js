@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:29:18
+ * @Last Modified time: 2017-12-21 19:45:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -78,7 +78,11 @@ export default class CommonTable extends PureComponent {
                 />
               </span>
             );
-            newTitleList.unshift(operation.column);
+            if (operation.column.align === 'right') {
+              newTitleList.push(operation.column);
+            } else {
+              newTitleList.unshift(operation.column);
+            }
             break;
           default:
             break;

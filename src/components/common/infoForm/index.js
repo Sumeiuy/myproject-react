@@ -3,21 +3,21 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-28 17:14:03
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-28 17:25:53
+ * @Last Modified time: 2017-12-21 16:29:51
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
 
 export default function InfoForm(props) {
-  const { label, required, children } = props;
+  const { label, required, children, style } = props;
   return (
     <div className={styles.infoForm}>
-      <div className={styles.infoFormLabel}>
+      <div style={style} className={styles.infoFormLabel}>
         {
           required ?
             <i>*</i>
-          :
+            :
             null
         }
         {label}
@@ -38,9 +38,11 @@ InfoForm.propTypes = {
     PropTypes.object,
     PropTypes.element,
   ]),
+  style: PropTypes.object,
 };
 InfoForm.defaultProps = {
   label: 'label',
   required: false,
   children: 'form内容区域',
+  style: {},
 };
