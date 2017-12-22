@@ -50,7 +50,7 @@ const ListItem = (props) => {
    * quesTypeCode = 2 时显示主观题描述， 0、 1显示选择题答案
    */
   const showAnswerOrDescription = () => {
-    if (quesTypeCode === 2) {
+    if (+quesTypeCode === 2) {
       return (
         <div className={`${styles.row} ${styles.mt20}`}>
           <span className={styles.label}>描述：</span>
