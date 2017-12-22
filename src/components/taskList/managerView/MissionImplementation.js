@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-18 10:40:53
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-20 15:58:28
  * 任务实施简报
  */
 
@@ -17,7 +17,7 @@ import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import { permission, helper } from '../../../utils';
 import styles from './missionImplementation.less';
-import emptyImg from '../../../../static/images/empty.png';
+import emptyImg from './img/empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};

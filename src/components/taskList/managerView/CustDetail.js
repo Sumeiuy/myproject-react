@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-18 15:29:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-20 15:57:27
  * 客户明细数据
  */
 
@@ -17,12 +17,12 @@ import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
-import iconMoney from '../../../../static/images/icon-money.png';
-import iconDiamond from '../../../../static/images/icon-diamond-card.png';
-import iconGold from '../../../../static/images/icon-gold-card.png';
-import iconSliver from '../../../../static/images/icon-sliver-card.png';
-import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
-import iconEmpty from '../../../../static/images/icon-empty.png';
+import iconMoney from './img/icon-money.png';
+import iconDiamond from './img/icon-diamond-card.png';
+import iconGold from './img/icon-gold-card.png';
+import iconSliver from './img/icon-sliver-card.png';
+import iconWhiteGold from './img/icon-white-gold.png';
+import iconEmpty from './img/icon-empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
