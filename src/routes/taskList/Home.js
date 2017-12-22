@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-
+import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspGlobal } from '../../utils';
+import { fspGlobal, permission } from '../../utils';
 import { env, emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
@@ -37,7 +37,18 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+// 50代表执行中
+// 60代表结果跟踪
+// 70代表结束
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
+
 const SYSTEMCODE = '102330'; // 理财平台系统编号
+
+const today = moment(new Date()).format('YYYY-MM-DD');
+const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
+const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -218,13 +229,21 @@ export default class PerformerView extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { location: { query: { missionViewType } } } = props;
     this.state = {
-      currentView: '',
+      currentView: missionViewType || '',
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
       typeName: '',
     };
+    this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
+    let newMissionView = chooseMissionView;
+    if (!this.hasPermissionOfManagerView) {
+      // 没有管理者视图查看权限
+      newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+    }
+    this.missionView = newMissionView;
   }
 
   componentDidMount() {
@@ -234,10 +253,15 @@ export default class PerformerView extends PureComponent {
       query: {
           pageNum,
         pageSize,
+        missionViewType,
         },
       },
     } = this.props;
-    this.queryAppList(query, pageNum, pageSize);
+    if (missionViewType === INITIATOR) {
+      this.queryAppListInit({ query, pageNum, pageSize, beforeToday, today });
+    } else {
+      this.queryAppListInit({ query, pageNum, pageSize, today, afterToday });
+    }
   }
 
   // 获取列表后再获取某个Detail
@@ -335,7 +359,28 @@ export default class PerformerView extends PureComponent {
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
-      taskId: currentId,
+      missionId: currentId,
+      // missionId: '101111171108181',
+      orgId: newOrgId || emp.getOrgId(),
+      // orgId: 'ZZ001041',
+    });
+  }
+
+  /**
+   * 获取客户反馈饼图
+   */
+  @autobind
+  getFlowFeedback({ orgId }) {
+    const {
+      countFlowFeedBack,
+      location: { query: { currentId } },
+    } = this.props;
+    const newOrgId = orgId === 'msm' ? '' : orgId;
+    // 管理者视图获取客户反馈饼图
+    countFlowFeedBack({
+      missionId: currentId,
+      // missionId: '101111171108181',
+      // orgId: 'ZZ001041',
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -441,11 +486,13 @@ export default class PerformerView extends PureComponent {
             location={location}
             replace={replace}
             countFlowStatus={this.getFlowStatus}
+            countFlowFeedBack={this.getFlowFeedback}
             missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
             mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
             launchNewTask={this.handleCreateBtnClick}
             clearCreateTaskData={clearCreateTaskData}
             push={push}
+            missionType={typeCode}
           />
         );
         break;
@@ -455,10 +502,71 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
+  // 头部筛选请求
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
-    const { getTaskList } = this.props;
-    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    const { getTaskList, dict: { missionStatus }, replace,
+      location: { pathname } } = this.props;
+    let newQuery = query;
+    let newMissionStatus = missionStatus;
+    const { status, missionViewType } = newQuery;
+
+    // 从其他视图切过来
+    // 如果当前视图是管理者视图，并且当前url上的status在过滤以后的status字典里面找不到对应的
+    // 那么将当前status置为空
+    if (missionViewType === CONTROLLER) {
+      newMissionStatus = _.filter(newMissionStatus, item => item.key === EXECUTE_STATE
+        || item.key === RESULT_TRACK_STATE || item.key === COMPLETED_STATE);
+      if (_.isEmpty(_.find(newMissionStatus, item => item.key === status))) {
+        newQuery = {
+          ...newQuery,
+          status: '',
+        };
+        // 替换无效的status为空
+        replace({
+          pathname,
+          query: {
+            ...newQuery,
+          },
+        });
+      }
+    }
+    const params = this.constructViewPostBody(newQuery, pageNum, pageSize);
+
+    // 默认筛选条件
+    getTaskList({ ...params }).then(this.getRightDetail);
+  }
+
+  // 默认时间设置
+  handleDefaultTime({ before, todays, after }) {
+    const createTimeStart = _.isEmpty(before) ? null : moment(before).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
+
+  // 第一次加载请求
+  @autobind
+  queryAppListInit({ query, pageNum = 1, pageSize = 10,
+    beforeToday: before, today: todays, afterToday: after }) {
+    const { getTaskList, location, replace } = this.props;
+    const { pathname } = location;
+    const item = this.constructViewPostBody(query, pageNum, pageSize);
+    const timersValue = this.handleDefaultTime({ before, todays, after });
+    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
+    const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        createTimeStart,
+        createTimeEnd,
+        endTimeStart,
+        endTimeEnd,
+      },
+    });
     // 默认筛选条件
     getTaskList({ ...params }).then(this.getRightDetail);
   }
@@ -695,9 +803,11 @@ export default class PerformerView extends PureComponent {
       list,
       dict,
       queryCustUuid,
+      location: { query: { missionViewType } },
     } = this.props;
     const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
+
     const topPanel = (
       <ConnectedPageHeader
         location={location}
@@ -705,10 +815,11 @@ export default class PerformerView extends PureComponent {
         dict={dict}
         page={currentView}
         pageType={pageType}
-        chooseMissionViewOptions={chooseMissionView}
+        chooseMissionViewOptions={this.missionView}
         creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={currentView}
+        filterControl={missionViewType}
         filterCallback={this.handleHeaderFilter}
+        filterTimer={this.handleDefaultTime}
       />
     );
 
