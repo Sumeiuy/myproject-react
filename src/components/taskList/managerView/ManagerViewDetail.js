@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-21 14:38:14
+ * @Last Modified time: 2017-12-22 14:20:11
  * 管理者视图详情
  */
 
@@ -27,6 +27,7 @@ import styles from './managerViewDetail.less';
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
+// let modalCount = 0;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -77,7 +78,16 @@ export default class ManagerViewDetail extends PureComponent {
     super(props);
     this.state = {
       isShowCustDetailModal: false,
+      isDisabled: true,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { custDetailResult = {} } = nextProps;
+    const { list = [] } = custDetailResult;
+    this.setState({
+      isDisabled: _.isEmpty(list),
+    });
   }
 
   /**
@@ -183,7 +193,7 @@ export default class ManagerViewDetail extends PureComponent {
       countFlowFeedBack,
     } = this.props;
 
-    const { isShowCustDetailModal } = this.state;
+    const { isShowCustDetailModal, isDisabled } = this.state;
 
     const {
       missionId,
@@ -203,9 +213,6 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前机构名
       orgName,
     } = mngrMissionDetailInfo;
-
-    const { list = [] } = custDetailResult || EMPTY_OBJECT;
-    const isDisabled = _.isEmpty(list);
 
     return (
       <div className={styles.managerViewDetail}>
@@ -258,7 +265,6 @@ export default class ManagerViewDetail extends PureComponent {
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
-
                 <Clickable
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
