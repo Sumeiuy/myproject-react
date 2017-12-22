@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-22 19:15:34
+ * @Last Modified time: 2017-12-22 20:02:11
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -55,7 +55,7 @@ const data = {
     func(orgArr, parent);
     if (Array.isArray(orgArr)) {
       const childrenLen = orgArr.length;
-      for (let i=0; i < childrenLen; i++) {
+      for (let i = 0; i < childrenLen; i++) {
         const children = orgArr[i].children;
         data.walk(children, func, orgArr[i]);
       }
@@ -67,7 +67,7 @@ const data = {
    * @param {Array} orgArr 组织机构树
    */
   pickOrgInfo(prev, next) {
-    const newPrev = prev;
+    const newPrev = [ ...prev ];
     const { children, ...reset } = next;
     newPrev.push(reset);
     return newPrev;
