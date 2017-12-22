@@ -52,14 +52,18 @@ function renderIntro(data) {
             {item.value}
           </div>
         </Clickable>
-        <div className={styles.count2}>{`/${item.property}`}</div>
+        <div className={styles.count2}>
+          <span>/</span>
+          <span>{item.property}</span>
+          <span>{item.unit}</span>
+        </div>
       </div>
     ),
   );
 }
 
 function Funney({ dataSource }) {
-  const { data, color, propertyUnit } = dataSource;
+  const { data, color } = dataSource;
   const funnelOption = {
     series: [
       {
@@ -113,7 +117,7 @@ function Funney({ dataSource }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.uintRow}>{`户数/资产(${propertyUnit})`}</div>
+      <div className={styles.uintRow}>{'户数/资产'}</div>
       <div className={styles.content}>
         <div className={styles.left}>
           <IECharts
