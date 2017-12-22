@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:13:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-18 18:40:17
+ * @Last Modified time: 2017-12-22 16:04:36
  * @description 此处存放与时间相关的公用方法
  */
 import moment from 'moment';
@@ -39,7 +39,7 @@ const time = {
    * @author sunweibin
    * @param {String} cycleType 周期字符串
    */
-  getDurationString(cycleType, maxData) {
+  getDurationString(cycleType, maxDataDt) {
     const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
     let durationStart = '';
@@ -48,10 +48,10 @@ const time = {
     let year = moment().year();
     const lastYear = year - 1;
     let temp;
-    if (_.isEmpty(maxData)) {
+    if (_.isEmpty(maxDataDt)) {
       temp = moment().subtract(1, 'days');
     } else {
-      temp = moment(maxData, fomater);
+      temp = moment(maxDataDt, fomater);
     }
     const dateText = temp.format('YYYY/MM/DD');
     switch (cycleType) {

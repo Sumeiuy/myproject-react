@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { optionsMap } from '../../config';
+import { optionsMap, constants } from '../../config';
 import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import HistoryRankChart from '../chartRealTime/HistoryRankChart';
@@ -27,6 +27,8 @@ const sortByOrderSelect = sortByOrder.map((item, index) => {
 });
 // 按类别排序
 const sortByType = optionsMap.sortByType;
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 
 export default class HistoryCompareRankChart extends PureComponent {
   static propTypes = {
@@ -39,6 +41,7 @@ export default class HistoryCompareRankChart extends PureComponent {
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     orgId: PropTypes.string,
+    summaryType: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -179,6 +182,7 @@ export default class HistoryCompareRankChart extends PureComponent {
       updateQueryState,
       data: { historyCardRecordVo },
       orgId,
+      summaryType,
     } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
     let { unit } = this.state;
@@ -227,6 +231,11 @@ export default class HistoryCompareRankChart extends PureComponent {
       [styles.fixPadRight]: _.isEmpty(historyCardRecordVo),
     });
 
+    let sortByTypeArr = sortByType[boardType];
+    if (summaryType === hbgxSummaryType) {
+      sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
+    }
+
     return (
       <div className={styles.historyRange}>
         <div className={styles.chartHd}>
@@ -243,7 +252,7 @@ export default class HistoryCompareRankChart extends PureComponent {
               dropdownClassName={styles.rankSelectDropdown}
             >
               {
-                sortByType[boardType].map((item, index) => {
+                sortByTypeArr.map((item, index) => {
                   const sortByTypeIndex = index;
                   let optionClass = '';
                   // 按投顾所有级别均存在

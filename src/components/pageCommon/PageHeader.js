@@ -6,23 +6,27 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Row, Alert } from 'antd';
+import { Row, Alert, Select } from 'antd';
 import moment from 'moment';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
-import { fspContainer } from '../../config';
+import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
 import { dom } from '../../helper';
 // 选择项字典
 import styles from './PageHeader.less';
 
+const Option = Select.Option;
 const fsp = document.querySelector(fspContainer.container);
 const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
 const marginWidth = fspContainer.marginWidth;
 const marginLeftWidth = fspContainer.marginLeftWidth;
+const summaryTypeSelect = optionsMap.summaryTypeSelect;
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 // 时间格式化样式
 const formatTxt = 'YYYYMMDD';
 
@@ -41,7 +45,8 @@ export default class PageHeader extends PureComponent {
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     orgId: PropTypes.string,
-    maxData: PropTypes.object.isRequired,
+    initialData: PropTypes.object.isRequired,
+    updateOrgTreeValue: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -66,6 +71,7 @@ export default class PageHeader extends PureComponent {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
+      summaryTypeValue: hbgxSummaryType,
     };
   }
 
@@ -127,6 +133,14 @@ export default class PageHeader extends PureComponent {
       left: leftWidth,
     });
   }
+
+  // 汇总方式切换,按绩效视图汇总，按组织机构汇总
+  @autobind
+  handleSummaryTypeChange(v) {
+    this.setState({ summaryTypeValue: v });
+    this.props.updateOrgTreeValue(v);
+  }
+
   render() {
     const {
       preView,
@@ -142,12 +156,14 @@ export default class PageHeader extends PureComponent {
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
-      maxData,
+      initialData,
     } = this.props;
-    const { top, left, width } = this.state;
-    const zzjgMaxData = maxData.zzjg;
+    const { top, left, width, summaryTypeValue } = this.state;
+    const maxDataDt = initialData.maxDataDt;
+    // 汇总方式的切换是否显示
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
     // 后台返回有数据的最大时间
-    const maxDataSeconds = moment(zzjgMaxData, formatTxt).valueOf();
+    const maxDataSeconds = moment(maxDataDt, formatTxt).valueOf();
     // 当前日期减1天
     const momentDataSeconds = moment().subtract(1, 'days').valueOf();
     return (
@@ -192,7 +208,8 @@ export default class PageHeader extends PureComponent {
                   replace={replace}
                   updateQueryState={updateQueryState}
                   collectData={collectDurationSelect}
-                  maxData={maxData}
+                  initialData={initialData}
+                  custRange={custRange}
                 />
                 <div className={styles.vSplit} />
                 {/* 营业地址选择项 */}
@@ -204,6 +221,34 @@ export default class PageHeader extends PureComponent {
                   orgId={orgId}
                   collectData={collectCustRange}
                 />
+                {/* 汇总方式切换 */}
+                {
+                  summaryTypeIsShow ?
+                    <div className={styles.SummaryTypeSelect}>
+                      <div className={styles.vSplit} />
+                      <Select
+                        style={{ width: 150 }}
+                        value={summaryTypeValue}
+                        onChange={this.handleSummaryTypeChange}
+                      >
+                        {
+                          summaryTypeSelect.map((item, index) => {
+                            const summaryTypeIndex = `summaryType-${index}`;
+                            return (
+                              <Option
+                                key={summaryTypeIndex}
+                                value={item.value}
+                              >
+                                  按{item.name}
+                              </Option>
+                            );
+                          })
+                        }
+                      </Select>
+                    </div>
+                  :
+                  null
+                }
               </div>
             </Row>
             {
