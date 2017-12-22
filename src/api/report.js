@@ -10,6 +10,9 @@ export default function report(api) {
     // 获取客户范围
     getCustRange: query => api.post('/groovynoauth/jxzb/newEmpOrgTree', query),
 
+    // 获取客户范围
+    getReportTree: query => api.post('/groovynoauth/jxzb/newReportTree', query),
+
     // 获取绩效统计接口
     getPerformance: query => api.post('/groovynoauth/jxzb/querySingleRecord', query),
 

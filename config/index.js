@@ -36,6 +36,12 @@ module.exports = {
         // target: 'http://168.61.8.81:5085', // SIT
         secure: false,
       },
+      [prefix + '/groovynoauth/jxzb/newReportTree']: {
+        // target: 'http://160.9.230.146:8083/', // 张宝成 接口访问地址
+        target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
+        // target: 'http://168.61.8.81:5085', // SIT
+        secure: false,
+      },
       [prefix]: {
         target: 'http://168.61.8.81:5188/', // 调试汇报关系树接口
         // target: 'http://168.61.8.81:5085', // SIT

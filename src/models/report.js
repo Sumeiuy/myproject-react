@@ -3,10 +3,7 @@
  * @author sunweibin
  */
 import { report as api } from '../api';
-import { request, BoardBasic, constants } from '../config';
-import report from '../helper/page/report';
-
-const defaultFilialeLevel = constants.filialeLevel;
+import { request, BoardBasic } from '../config';
 
 export default {
   namespace: 'report',
@@ -97,7 +94,7 @@ export default {
         },
       };
     },
-    getCustRangeSuccess(state, action) {
+    getOrgTreeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
       if (resultData.level === '1') {
@@ -131,11 +128,42 @@ export default {
   },
   effects: {
     // 探测有数据的最大时间点接口
-    * getMaxDataDt({ payload }, { call, put }) {
+    * getMaxDataDt({ payload }, { call, put, select }) {
       const response = yield call(api.getMaxDataDt, payload);
       yield put({
         type: 'getMaxDataDtSuccess',
         payload: response,
+      });
+      // 初始化的时是调组织机构数，还是调汇报机构树
+      const maxData = yield select(state => state.report.maxData);
+      const summaryTypeIsShow = maxData.summaryTypeIsShow;
+      // 汇总方式切换是否显示字段
+      if (summaryTypeIsShow) {
+        yield put({
+          type: 'getReportTree',
+          payload: {},
+        });
+      } else {
+        yield put({
+          type: 'getCustRange',
+          payload: {},
+        });
+      }
+    },
+    // 组织机构树
+    * getCustRange({ payload }, { call, put }) {
+      const response = yield call(api.getCustRange, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
+      });
+    },
+    // 汇报机构树
+    * getReportTree({ payload }, { call, put }) {
+      const response = yield call(api.getReportTree, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
       });
     },
     // 导出Excel表格
@@ -145,22 +173,10 @@ export default {
     },
     // 初始化只需要取总量指标和该报表下的所有分类指标数据
     // 以及用户组织机构树
-    * getAllInfo({ payload }, { call, put, select }) {
-      const cust = yield select(state => state.report.custRange);
-      let firstCust;
-      if (cust.length) {
-        firstCust = cust[0];
-      } else {
-        const response = yield call(api.getCustRange, payload.custRange);
-        yield put({
-          type: 'getCustRangeSuccess',
-          response,
-        });
-        firstCust = response.resultData;
-      }
+    * getAllInfo({ payload }, { call, put }) {
       // 查询当前用户所能够看到的看板报表
       const allVisibleReports = yield call(api.getAllVisibleReports, {
-        orgId: firstCust.id,
+        orgId: payload.visibleReports.orgId,
       });
       yield put({
         type: 'getAllVisibleReportsSuccess',
@@ -170,24 +186,19 @@ export default {
       // 总量指标
       const resPerformance = yield call(api.getPerformance, {
         ...payload.performance,
-        localScope: payload.performance.localScope || firstCust.level,
-        orgId: payload.performance.orgId || firstCust.id,
-        scope: payload.performance.scope || firstCust.level,
+        localScope: payload.performance.localScope,
+        orgId: payload.performance.orgId,
+        scope: payload.performance.scope,
       });
       yield put({
         type: 'getPerformanceSuccess',
         payload: { resPerformance },
       });
-      // 所有分类指标的数据
-      let temporaryScope = String(Number(firstCust.level) + 1);
-      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
-        temporaryScope = String(Number(firstCust.level) + 2);
-      }
       const resChartInfo = yield call(api.getChartInfo, {
         ...payload.chartInfo,
-        localScope: payload.chartInfo.localScope || firstCust.level,
-        orgId: payload.chartInfo.orgId || firstCust.id,
-        scope: payload.chartInfo.scope || temporaryScope,
+        localScope: payload.chartInfo.localScope,
+        orgId: payload.chartInfo.orgId,
+        scope: payload.chartInfo.scope,
       });
       yield put({
         type: 'getChartInfoSuccess',

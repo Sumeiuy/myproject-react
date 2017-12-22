@@ -181,8 +181,8 @@ export default class HistoryHome extends PureComponent {
     // 初始化的时候state里面还无参数
     this.props.getMaxDataDt().then(() => {
       const { maxData } = this.props;
-      const zzjgMaxData = maxData.zzjg;
-      const { begin, end, cycleType } = time.getDurationString('month', zzjgMaxData);
+      const maxDataDt = maxData.maxDataDt;
+      const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
       // 修改state
       this.setState({ begin, end, cycleType }, this.queryInitial);
     });

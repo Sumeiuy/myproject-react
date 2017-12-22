@@ -48,6 +48,7 @@ export default class DurationSelect extends PureComponent {
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     maxData: PropTypes.object.isRequired,
+    custRange: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -57,8 +58,8 @@ export default class DurationSelect extends PureComponent {
     const isHistory = pathname === '/history';
     const value = 'month';
     const { maxData } = this.props;
-    const zzjgMaxData = maxData.zzjg;
-    const obj = time.getDurationString(value, zzjgMaxData);
+    const maxDataDt = maxData.maxDataDt;
+    const obj = time.getDurationString(value, maxDataDt);
     const beginMoment = moment(obj.begin);
     const endMoment = moment(obj.end);
     this.state = {
@@ -75,13 +76,20 @@ export default class DurationSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 因为Url中只有boardId会变化
-    const { location: { pathname } } = nextProps;
-    const { location: { pathname: prePathname } } = this.props;
+    const { location: { pathname }, custRange } = nextProps;
+    const { location: { pathname: prePathname }, custRange: preCustRange } = this.props;
     if (!_.isEqual(pathname, prePathname)) {
       const isHistory = pathname === '/history';
       this.setState({
         isHistory,
       });
+    }
+    if (!_.isEqual(custRange, preCustRange)) {
+      const { maxData } = this.props;
+      const maxDataDt = maxData.maxDataDt;
+      const value = 'month';
+      const duration = time.getDurationString(value, maxDataDt);
+      this.state = { ...duration };
     }
   }
   // 期间变化
@@ -89,8 +97,8 @@ export default class DurationSelect extends PureComponent {
   handleDurationChange(e) {
     const value = e.target.value;
     const { maxData } = this.props;
-    const zzjgMaxData = maxData.zzjg;
-    const duration = time.getDurationString(value, zzjgMaxData);
+    const maxDataDt = maxData.maxDataDt;
+    const duration = time.getDurationString(value, maxDataDt);
     const { updateQueryState, collectData } = this.props;
     collectData({
       text: duration.cycleType,
@@ -248,9 +256,9 @@ export default class DurationSelect extends PureComponent {
   historyChangeDuration(e) {
     const { compare } = this.state;
     const { maxData } = this.props;
-    const zzjgMaxData = maxData.zzjg;
+    const maxDataDt = maxData.maxDataDt;
     const cycleType = e.target.value;
-    const nowDuration = time.getDurationString(cycleType, zzjgMaxData);
+    const nowDuration = time.getDurationString(cycleType, maxDataDt);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const begin = nowDuration.begin;

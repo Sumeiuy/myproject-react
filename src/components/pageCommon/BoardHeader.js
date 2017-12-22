@@ -50,6 +50,7 @@ export default class BoardHeader extends PureComponent {
     getTableInfo: PropTypes.func,
     showChart: PropTypes.string.isRequired,
     orgId: PropTypes.string,
+    summaryType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -171,8 +172,12 @@ export default class BoardHeader extends PureComponent {
     this.setState({
       scopeSelectValue: v,
     });
-    const { collectScopeSelect, boardType } = this.props;
-    const scopeText = _.find(sortByType[boardType], { scope: String(v) }).name;
+    const { collectScopeSelect, boardType, summaryType } = this.props;
+    let sortByTypeArr = sortByType[boardType];
+    if (summaryType === 'hbgx') {
+      sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
+    }
+    const scopeText = _.find(sortByTypeArr, { scope: String(v) }).name;
     const text = `按${scopeText}`;
     collectScopeSelect({
       text,
@@ -201,7 +206,7 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { level, showScopeOrder, indexID, boardType, orgId } = this.props;
+    const { level, showScopeOrder, indexID, boardType, orgId, summaryType } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
     let { title } = this.props;
     // 针对开通业务明细，名称进行修改
@@ -251,6 +256,10 @@ export default class BoardHeader extends PureComponent {
       hideOption: Number(level) === 4,
     });
 
+    let sortByTypeArr = sortByType[boardType];
+    if (summaryType === 'hbgx') {
+      sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
+    }
     return (
       <div className={styles.titleBar}>
         <div className={styles.titleText}>{title}</div>
@@ -264,7 +273,7 @@ export default class BoardHeader extends PureComponent {
               getPopupContainer={this.getPopupContainer}
             >
               {
-                sortByType[boardType].map((item, index) => {
+                sortByTypeArr.map((item, index) => {
                   const sortByTypeIndex = index;
                   let optionClass = '';
                   // 按投顾所有级别均存在

@@ -13,4 +13,5 @@ export default {
   historyBoardId: 3,
   historyBoardType: 'TYPE_LSDB_TGJX',
   filialeLevel: '2', // 分公司的level值
+  summaryType: 'hbgx', // 汇总方式（汇报关系）
 };

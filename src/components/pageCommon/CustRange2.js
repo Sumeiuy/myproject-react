@@ -104,8 +104,13 @@ export default class CustRange extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custRange, orgId } = nextProps;
-    const { orgId: preOrgId } = this.props;
-    const { formatCustRange } = this.state;
+    const { orgId: preOrgId, custRange: preOrgTree } = this.props;
+    let { formatCustRange } = this.state;
+    if (custRange !== preOrgTree) {
+      // 组织结构树变化，保存数据
+      formatCustRange = transformCustRangeData(custRange);
+      this.setState({ formatCustRange });
+    }
     if (orgId !== preOrgId) {
       walk(formatCustRange, findOrgNameByOrgId(orgId), '');
       const initValue = {
