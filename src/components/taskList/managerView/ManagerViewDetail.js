@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-22 14:49:43
+ * @Last Modified time: 2017-12-22 14:51:00
  * 管理者视图详情
  */
 
@@ -27,7 +27,6 @@ import styles from './managerViewDetail.less';
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
-// let modalCount = 0;
 
 export default class ManagerViewDetail extends PureComponent {
 
