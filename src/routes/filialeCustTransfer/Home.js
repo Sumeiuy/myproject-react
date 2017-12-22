@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-20 14:36:03
+ * @Last Modified time: 2017-12-21 14:51:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -66,24 +66,18 @@ const mapDispatchToProps = {
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
 };
 
-// 保存找到的部门对象
-let orgData = null;
-
 // 根据部门id查找对应部门对象
 function getOrgDataByOrgId(arr, id) {
-  for (let i = 0; i < arr.length; i++) {
-    if (orgData) {
-      break;
-    } else if (arr[i].id === id) {
-      orgData = arr[i];
-      break;
-    } else {
-      const children = arr[i].children || EMPTY_LIST;
-      if (!_.isEmpty(children)) {
-        getOrgDataByOrgId(children, id);
-      }
+  const data = _.find(arr, (item) => {
+    if (item.id === id) {
+      return item;
     }
+    return getOrgDataByOrgId(item.children, id);
+  });
+  if (data) {
+    return (data.id === id) ? data : getOrgDataByOrgId(data.children, id);
   }
+  return data;
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -141,7 +135,7 @@ export default class FilialeCustTransfer extends PureComponent {
     const { custRangeList } = this.props;
     const that = this;
     if (!_.isEmpty(custRangeList)) {
-      getOrgDataByOrgId(custRangeList, emp.getOrgId());
+      const orgData = getOrgDataByOrgId(custRangeList, emp.getOrgId());
       if (!emp.isFiliale(orgData.level)) {
         Modal.warning({
           title: '提示',
