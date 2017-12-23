@@ -162,10 +162,8 @@ export default class PageHeader extends PureComponent {
     const maxDataDt = initialData.maxDataDt;
     // 汇总方式的切换是否显示
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    // 后台返回有数据的最大时间
-    const maxDataSeconds = moment(maxDataDt, formatTxt).valueOf();
-    // 当前日期减1天
-    const momentDataSeconds = moment().subtract(1, 'days').valueOf();
+    // 当前日期减1天,并转化为YYYYMMDD格式日期
+    const momentDataDt = moment(moment().subtract(1, 'days')).format(formatTxt);
     return (
       <div>
         <div
@@ -252,7 +250,7 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
             {
-              maxDataSeconds < momentDataSeconds ?
+              moment(maxDataDt).isBefore(momentDataDt) ?
                 <Alert
                   message="提示"
                   description="因当前数据后台未核算完成，目前展现的是前一日的数据"

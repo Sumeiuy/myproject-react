@@ -207,7 +207,6 @@ export default {
     * getInitial({ payload }, { call, put, select }) {
       // 组织机构树
       const custRange = yield select(state => state.history.custRange);
-      console.warn('custRange', custRange);
       const firstCust = custRange[0];
       // 查询当前用户所能够看到的看板报表
       const allVisibleReports = yield call(api.getAllVisibleReports, {

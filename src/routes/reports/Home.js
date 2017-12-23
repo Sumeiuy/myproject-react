@@ -352,8 +352,12 @@ export default class ReportHome extends PureComponent {
     const { location: { query: { boardId } }, custRange, initialData } = this.props;
     const maxDataDt = initialData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
-    const newscope = this.getApiScope();
-    // 修改state
+    let newscope = (Number(custRange[0].level) + 1);
+    if ((custRange[0] && custRange[0].level === defaultFilialeLevel) &&
+      !report.isNewOrg(custRange[0].id)) {
+      newscope = (Number(custRange[0].level) + 1);
+    }
+    // 恢复为初始的state
     this.setState({
       type,
       showCharts: {},
