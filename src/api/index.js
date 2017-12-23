@@ -12,6 +12,7 @@ import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
 import relation from './relation';
+import taskFeedback from './taskFeedback';
 
 const api = apiCreator();
 
@@ -44,5 +45,7 @@ export default {
   filialeCustTransfer: filialeCustTransfer(api),
   // 汇报关系树页面
   relation: relation(api),
+  // 任务反馈
+  taskFeedback: taskFeedback(api),
 };
 
