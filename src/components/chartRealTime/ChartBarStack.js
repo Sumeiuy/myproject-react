@@ -69,7 +69,6 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
-    // this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
