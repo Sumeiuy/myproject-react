@@ -10,9 +10,6 @@ import classnames from 'classnames';
 
 import styles from './matchArea.less';
 
-// import iconClose from '../../../../static/images/icon-close.png';
-// import iconOpen from '../../../../static/images/icon-open.png';
-
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {

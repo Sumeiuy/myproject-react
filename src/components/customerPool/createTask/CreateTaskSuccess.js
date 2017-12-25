@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
-import imgSrc from '../../../../static/images/createTask_success.png';
+import imgSrc from './img/createTask_success.png';
 import { fspGlobal } from '../../../utils';
 import { env } from '../../../helper';
 import { fspContainer } from '../../../config';

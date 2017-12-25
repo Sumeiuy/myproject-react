@@ -19,17 +19,17 @@ import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import styles from './customerRow.less';
 
-import maleAvator from '../../../../static/images/icon-avator.png';
-import femaleAvator from '../../../../static/images/female-avator.png';
-import otherAvator from '../../../../static/images/otherAvator.png';
-import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
-import iconProductAgency from '../../../../static/images/icon-product-agency.png';
-import iconMoney from '../../../../static/images/icon-money.png';
-import iconDiamond from '../../../../static/images/icon-diamond-card.png';
-import iconGold from '../../../../static/images/icon-gold-card.png';
-import iconSliver from '../../../../static/images/icon-sliver-card.png';
-import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
-import iconEmpty from '../../../../static/images/icon-empty.png';
+import maleAvator from './img/icon-avator.png';
+import femaleAvator from './img/female-avator.png';
+import otherAvator from './img/otherAvator.png';
+import iconGeneralGgency from './img/icon-general-agency.png';
+import iconProductAgency from './img/icon-product-agency.png';
+import iconMoney from './img/icon-money.png';
+import iconDiamond from './img/icon-diamond-card.png';
+import iconGold from './img/icon-gold-card.png';
+import iconSliver from './img/icon-sliver-card.png';
+import iconWhiteGold from './img/icon-white-gold.png';
+import iconEmpty from './img/icon-empty.png';
 import Clickable from '../../../components/common/Clickable';
 
 // 客户男女code码

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import styles from './emptyData.less';
-import emptyImg from '../../../static/images/empty.png';
+import emptyImg from './img/empty.png';
 
 export default function EmptyData() {
   return (
