@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:01:59
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-22 10:23:23
+ * @Last Modified time: 2017-12-25 10:38:44
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,7 @@ import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
+import { emp } from '../../helper';
 import config from './config';
 import styles from './home.less';
 
@@ -62,6 +63,14 @@ export default class MainPosition extends PureComponent {
   constructor(props) {
     super(props);
     const h = document.body.clientHeight;
+    // TODO-权限
+    // 权限：
+    // 拥有“HTSC 部门系统管理员”职责，
+    // 且登录人当前部门为分公司的员工才可操作；
+    // 若登录人有“HTSC 部门系统管理员”职责，
+    // 但所在部门不是分公司，
+    // 点击菜单时弹框提示“您不是分公司人员，无权操作！”，
+    // 点击确定后，页面关闭。
     this.state = {
       height: `${h - 40}px`,
       checkedRadio: -1,
@@ -70,17 +79,7 @@ export default class MainPosition extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { positionList: prePL } = this.props;
-    const { positionList: nextPL } = nextProps;
-    if (prePL !== nextPL) {
-      const checkedRadio = _.findIndex(nextPL, ['primary', true]);
-      this.setState({
-        checkedRadio,
-      });
-    }
-  }
-
+  // 提交按钮
   @autobind
   onSubmit() {
     const { checkedEmployee, employeeId } = this.state;
@@ -95,6 +94,7 @@ export default class MainPosition extends PureComponent {
     }
   }
 
+  // 选择某个职位
   @autobind
   checkTableData(record, index) {
     console.warn(record, index);
@@ -104,19 +104,24 @@ export default class MainPosition extends PureComponent {
     });
   }
 
+  // 点击具体的员工
   @autobind
   selectHandle(value) {
     const { searchPosition } = this.props;
     searchPosition({
       login: value.login,
-      integrationId: '123', // 测试数据
+      integrationId: emp.getOrgId() || 'ZZ001041062',  // TODO，逻辑或后面为测试数据，需删掉
     }).then(() => {
+      const { positionList } = this.props;
+      const checkedRadio = _.findIndex(positionList, ['primary', 'Y']);  // TODO， Y 需要改为 boolean
       this.setState({
+        checkedRadio,
         employeeId: value.login,
       });
     });
   }
 
+  // 搜索员工
   @autobind
   searchHandle(value) {
     const { searchEmployee } = this.props;
