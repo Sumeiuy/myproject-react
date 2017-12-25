@@ -71,7 +71,9 @@
   width: 38px;
   height: 40px;
   vertical-align: top;
-  cursor: pointer;
+  &.clickable {
+    cursor: pointer;
+  }
 }
 .avatorText {
   height: 22px;
@@ -104,9 +106,11 @@
         color: #4a4a4a;
         font-weight: bold;
         font-size: 15px;
-        cursor: pointer;
-        &:hover {
-          color: #63aee5;
+        &.clickable {
+          cursor: pointer;
+          &:hover {
+            color: #63aee5;
+          }
         }
       }
       .iconSingned {
