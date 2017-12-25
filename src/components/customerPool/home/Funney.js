@@ -48,14 +48,17 @@ function renderIntro(data) {
           onClick={() => linkToList(item)}
           eventName="/click/fuuney/linkToList"
         >
-          <div className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}>
+          <div
+            title={item.value}
+            className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+          >
             {item.value}
           </div>
         </Clickable>
         <div className={styles.count2}>
           <span>/</span>
-          <span>{item.property}</span>
-          <span>{item.unit}</span>
+          <span title={item.property}>{item.property}</span>
+          <span title={item.unit}>{item.unit}</span>
         </div>
       </div>
     ),
@@ -117,7 +120,10 @@ function Funney({ dataSource }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.uintRow}>{'户数/资产'}</div>
+      <div className={styles.uintRow}>
+        <div />
+        <div>{'户数/资产'}</div>
+      </div>
       <div className={styles.content}>
         <div className={styles.left}>
           <IECharts
