@@ -298,8 +298,8 @@ export default class HistoryHome extends PureComponent {
   // 初始查询数据
   @autobind
   queryInitial() {
-    const { getInitial } = this.props;
-    const { empId, boardType, boardId } = this.state;
+    const { getInitial, initialData } = this.props;
+    const { empId, boardType, boardId, queryType } = this.state;
     const selfNeed = ['boardId'];
     const coreQuery = this.makeQueryParams({}, selfNeed);
     const radarQuery = this.makeQueryParams({ isMultiple: 0 }, selfNeed);
@@ -312,6 +312,8 @@ export default class HistoryHome extends PureComponent {
     }, selfNeed);
     const custScatterQuery = this.makeQueryParams({ type: 'cust' }, selfNeed);
     const investScatterQuery = this.makeQueryParams({ type: 'invest' }, selfNeed);
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
 
     getInitial({
       custRang: { empId },
@@ -322,7 +324,10 @@ export default class HistoryHome extends PureComponent {
       custScatter: custScatterQuery,
       investScatter: investScatterQuery,
       dic: { boardId },
-      lib: { type: boardType },
+      lib: {
+        type: boardType,
+        queryType: queryType || defaultSummaryType,
+      },
     });
   }
 

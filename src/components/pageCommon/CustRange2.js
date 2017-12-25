@@ -21,9 +21,9 @@ function transformCustRangeData(list, parent = '') {
       label: item.name,
       value: parent
               ?
-              `${item.level}-${item.id}-${parent}-${item.name}`
+              `${item.level}#${item.id}#${parent}#${item.name}`
               :
-              `${item.level}-${item.id}-${item.name}`,
+              `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -131,7 +131,7 @@ export default class CustRange extends PureComponent {
       return;
     }
     const { updateQueryState, custRange, collectData } = this.props;
-    const tmpArr = value.value.split('-');
+    const tmpArr = value.value.split('#');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
     const custRangeName = tmpArr.slice(2).join('/');
@@ -139,7 +139,7 @@ export default class CustRange extends PureComponent {
       label: custRangeName,
       value: custRangeName
                 ?
-                `${custRangeLevel}-${orgId}-${custRangeName}`
+                `${custRangeLevel}#${orgId}#${custRangeName}`
                 : custRange[0].id,
     };
     this.setState({
