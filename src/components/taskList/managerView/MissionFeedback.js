@@ -198,7 +198,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'pie',
-          radius: [0, 60],
+          radius: [0, 55],
           center: ['50%', '52%'],
           roseType: 'radius',
           label: {

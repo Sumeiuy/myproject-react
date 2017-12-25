@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-15 15:55:21
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-25 17:11:53
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';

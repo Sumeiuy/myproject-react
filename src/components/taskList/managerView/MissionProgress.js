@@ -55,13 +55,19 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
+  handlePreview(title) {
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail({ title });
+  }
+
+  @autobind
   renderTooltipContent(type, currentCount) {
     return (
       <div className={styles.content}>
         <div className={styles.currentType}>{type}{currentCount || 0}位</div>
         <div
           className={styles.linkCustDetail}
-          onClick={this.props.onPreviewCustDetail}
+          onClick={() => this.handlePreview(type)}
         >点击查看明细&gt;&gt;</div>
       </div>
     );
