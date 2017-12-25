@@ -69,14 +69,18 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
-    this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
+    const { scope: preScope, chartData: preData, custRange: preCustRange } = this.props;
+    const { scope, chartData, custRange } = nextProps;
     if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
       this.initialData(nextProps);
+    }
+    // 切换汇报方式custRange发生变化
+    if (!_.isEqual(custRange, preCustRange)) {
+      const custRangeValue = data.convertCustRange2Array(custRange);
+      this.setState({ custRangeValue });
     }
   }
 
@@ -98,14 +102,14 @@ export default class ChartBarStack extends PureComponent {
       if (Number(this.props.scope) === 5) { // 5为最底层level(投顾，服务经理)
         return;
       }
-      this.custRange.forEach((item) => {
+      this.state.custRangeValue.forEach((item) => {
         if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
             scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              String(Number(item.level) + 2) : String(Number(item.level) + 1),
+              (Number(item.level) + 2) : (Number(item.level) + 1),
           });
         }
       });
@@ -200,7 +204,7 @@ export default class ChartBarStack extends PureComponent {
     }
 
     const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
-
+    const custRangeValue = data.convertCustRange2Array(this.props.custRange);
     // 初始化所有的数据，并存入state
     // 此为后面需要修改echarts的series做准备
     if (flag) {
@@ -222,6 +226,7 @@ export default class ChartBarStack extends PureComponent {
         totals,
         grid,
         legendState: {},
+        custRangeValue,
       };
     } else {
       this.setState({

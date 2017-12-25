@@ -29,20 +29,29 @@ export default class RankNormalChart extends PureComponent {
     custRange: PropTypes.array.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    const custRangeValue = dataHelper.convertCustRange2Array(this.props.custRange);
+    this.state = {
+      custRangeValue,
+    };
+  }
+
   componentWillMount() {
     this.initialChartData(this.props);
   }
 
-  componentDidMount() {
-    this.custRange = dataHelper.convertCustRange2Array(this.props.custRange);
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { chartData: preData } = this.props;
-    const { chartData } = nextProps;
+    const { chartData: preData, custRange: preCustRange } = this.props;
+    const { chartData, custRange } = nextProps;
     if (!_.isEqual(chartData, preData)) {
       this.state.echart.clear();
       this.initialChartData(nextProps);
+    }
+    // 切换汇报方式custRange发生变化
+    if (!_.isEqual(custRange, preCustRange)) {
+      const custRangeValue = dataHelper.convertCustRange2Array(custRange);
+      this.setState({ custRangeValue });
     }
   }
 
@@ -56,7 +65,7 @@ export default class RankNormalChart extends PureComponent {
       if (arg.componentType !== 'series') {
         return;
       }
-      this.custRange.forEach((item) => {
+      this.state.custRangeValue.forEach((item) => {
         if (arg.name === item.name) {
           this.props.updateQueryState({
             orgId: item.id,

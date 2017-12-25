@@ -67,18 +67,21 @@ export default class ChartBarNormal extends PureComponent {
 
   constructor(props) {
     super(props);
+    const custRangeValue = data.convertCustRange2Array(this.props.custRange);
     this.state = {
       mouseoverLabelIndex: '',
+      custRangeValue,
     };
   }
 
-  componentDidMount() {
-    this.custRange = data.convertCustRange2Array(this.props.custRange);
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { scope, chartData: { orgModel: nextOrgModel } } = nextProps;
-    const { chartData: { orgModel: prevOrgModel } } = this.props;
+    const { scope, chartData: { orgModel: nextOrgModel }, custRange } = nextProps;
+    const { chartData: { orgModel: prevOrgModel }, custRange: preCustRange } = this.props;
+    // 切换汇报方式custRange发生变化
+    if (!_.isEqual(custRange, preCustRange)) {
+      const custRangeValue = data.convertCustRange2Array(custRange);
+      this.setState({ custRangeValue });
+    }
     if (!_.isEqual(nextOrgModel, prevOrgModel)) {
       const echart = this.instance;
       this.yAxisLabels = this.makeYaxisLabels(scope, nextOrgModel);
@@ -103,14 +106,14 @@ export default class ChartBarNormal extends PureComponent {
       if (arg.componentType !== 'yAxis') {
         return;
       }
-      this.custRange.forEach((item) => {
+      this.state.custRangeValue.forEach((item) => {
         if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
             scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              String(Number(item.level) + 2) : String(Number(item.level) + 1),
+              (Number(item.level) + 2) : (Number(item.level) + 1),
           });
         }
       });
