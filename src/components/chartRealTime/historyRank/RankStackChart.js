@@ -40,10 +40,7 @@ export default class RankStackChart extends PureComponent {
 
   constructor(props) {
     super(props);
-    const custRangeValue = dataHelper.convertCustRange2Array(this.props.custRange);
-    this.state = {
-      custRangeValue,
-    };
+    this.custRange = dataHelper.convertCustRange2Array(props.custRange);
   }
 
   componentWillMount() {
@@ -59,8 +56,7 @@ export default class RankStackChart extends PureComponent {
     }
     // 切换汇报方式custRange发生变化
     if (!_.isEqual(custRange, preCustRange)) {
-      const custRangeValue = dataHelper.convertCustRange2Array(custRange);
-      this.setState({ custRangeValue });
+      this.custRange = dataHelper.convertCustRange2Array(custRange);
     }
   }
 
@@ -77,7 +73,7 @@ export default class RankStackChart extends PureComponent {
       if (arg.name === '--') {
         return;
       }
-      this.state.custRangeValue.forEach((item) => {
+      this.custRange.forEach((item) => {
         if (arg.name === item.name) {
           this.props.updateQueryState({
             orgId: item.id,

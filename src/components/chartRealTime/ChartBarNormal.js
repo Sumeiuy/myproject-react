@@ -67,10 +67,9 @@ export default class ChartBarNormal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const custRangeValue = data.convertCustRange2Array(this.props.custRange);
+    this.custRange = data.convertCustRange2Array(props.custRange);
     this.state = {
       mouseoverLabelIndex: '',
-      custRangeValue,
     };
   }
 
@@ -79,8 +78,7 @@ export default class ChartBarNormal extends PureComponent {
     const { chartData: { orgModel: prevOrgModel }, custRange: preCustRange } = this.props;
     // 切换汇报方式custRange发生变化
     if (!_.isEqual(custRange, preCustRange)) {
-      const custRangeValue = data.convertCustRange2Array(custRange);
-      this.setState({ custRangeValue });
+      this.custRange = data.convertCustRange2Array(custRange);
     }
     if (!_.isEqual(nextOrgModel, prevOrgModel)) {
       const echart = this.instance;
@@ -106,7 +104,7 @@ export default class ChartBarNormal extends PureComponent {
       if (arg.componentType !== 'yAxis') {
         return;
       }
-      this.state.custRangeValue.forEach((item) => {
+      this.custRange.forEach((item) => {
         if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,

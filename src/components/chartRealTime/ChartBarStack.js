@@ -59,6 +59,7 @@ export default class ChartBarStack extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.custRange = data.convertCustRange2Array(props.custRange);
     // 堆数据进行初步的分析
     // 初始化的时候，可能不存在值
     this.initialData(props, true);
@@ -79,8 +80,7 @@ export default class ChartBarStack extends PureComponent {
     }
     // 切换汇报方式custRange发生变化
     if (!_.isEqual(custRange, preCustRange)) {
-      const custRangeValue = data.convertCustRange2Array(custRange);
-      this.setState({ custRangeValue });
+      this.custRange = data.convertCustRange2Array(custRange);
     }
   }
 
@@ -102,7 +102,7 @@ export default class ChartBarStack extends PureComponent {
       if (Number(this.props.scope) === 5) { // 5为最底层level(投顾，服务经理)
         return;
       }
-      this.state.custRangeValue.forEach((item) => {
+      this.custRange.forEach((item) => {
         if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,
@@ -204,7 +204,6 @@ export default class ChartBarStack extends PureComponent {
     }
 
     const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
-    const custRangeValue = data.convertCustRange2Array(this.props.custRange);
     // 初始化所有的数据，并存入state
     // 此为后面需要修改echarts的series做准备
     if (flag) {
@@ -226,7 +225,6 @@ export default class ChartBarStack extends PureComponent {
         totals,
         grid,
         legendState: {},
-        custRangeValue,
       };
     } else {
       this.setState({

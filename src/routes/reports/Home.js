@@ -221,7 +221,7 @@ export default class ReportHome extends PureComponent {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
     const { custRange, initialData } = this.props;
-    const { begin, cycleType, end, boardId, orgId, custRangeLevel, type } = this.state;
+    const { begin, cycleType, end, boardId, orgId, custRangeLevel, queryType } = this.state;
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理参数数据，如果么有数据，全部使用默认的值
@@ -234,7 +234,7 @@ export default class ReportHome extends PureComponent {
       cycleType,
       localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
-      type: type || defaultSummaryType,
+      queryType: queryType || defaultSummaryType,
       ...param,
     };
     return payload;
@@ -258,7 +258,7 @@ export default class ReportHome extends PureComponent {
   @autobind
   getInfo() {
     const { getAllInfo, custRange, initialData } = this.props;
-    const { boardId, begin, end, cycleType, orgId, custRangeLevel, type } = this.state;
+    const { boardId, begin, end, cycleType, orgId, custRangeLevel, queryType } = this.state;
     const newscope = this.getApiScope();
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
@@ -271,7 +271,7 @@ export default class ReportHome extends PureComponent {
       localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
       scope: newscope,
-      type: type || defaultSummaryType,
+      queryType: queryType || defaultSummaryType,
     };
 
     getAllInfo({
@@ -348,7 +348,7 @@ export default class ReportHome extends PureComponent {
 
   // 切换SummaryType时候，需要将数据全部恢复到默认值
   @autobind
-  updateSummaryTypeState(type) {
+  updateSummaryTypeState(queryType) {
     const { location: { query: { boardId } }, custRange, initialData } = this.props;
     const maxDataDt = initialData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
@@ -359,7 +359,7 @@ export default class ReportHome extends PureComponent {
     }
     // 恢复为初始的state
     this.setState({
-      type,
+      queryType,
       showCharts: {},
       classifyScope: {},
       classifyOrder: {},
@@ -424,7 +424,7 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, boardType, orgId, type } = this.state;
+    const { boardId, custRangeLevel, boardType, orgId, queryType } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = this.getApiScope();
     const newOrgId = orgId || (custRange[0] && custRange[0].id);
@@ -438,7 +438,7 @@ export default class ReportHome extends PureComponent {
     // 汇总方式（组织机构/汇报关系）
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
-    const summaryType = type || defaultSummaryType;
+    const summaryType = queryType || defaultSummaryType;
     return (
       <div className="page-invest content-inner">
         <PageHeader
