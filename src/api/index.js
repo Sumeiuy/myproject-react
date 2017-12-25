@@ -11,6 +11,7 @@ import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 import performerView from './performerView';
 import relation from './relation';
+import demote from './demote';
 
 const api = apiCreator();
 
@@ -41,5 +42,7 @@ export default {
   fullChannelServiceRecord: fullChannelServiceRecord(api),
   // 汇报关系树页面
   relation: relation(api),
+  // 降级客户接口
+  demote: demote(api),
 };
 

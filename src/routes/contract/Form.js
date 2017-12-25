@@ -14,6 +14,7 @@ import _ from 'lodash';
 
 import { seibelConfig } from '../../config';
 import BottonGroup from '../../components/permission/BottonGroup';
+import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import EditForm from '../../components/contract/EditForm';
 import styles from './form.less';
 
@@ -107,7 +108,18 @@ export default class Form extends PureComponent {
     this.state = {
       // 合作合约表单数据
       contractFormData: props.baseInfo,
+      // 是否隐藏底部按钮
       isHiddenFooter: false,
+      // 审批人弹窗是否可见
+      approverModal: false,
+      // 审批人列表
+      flowAuditors: EMPTY_LIST,
+      // 弹窗底部按钮数据
+      footerBtnData: EMPTY_OBJECT,
+      // 最终传递的数据
+      payload: EMPTY_OBJECT,
+      // 临时审批人数据
+      tempApproveData: EMPTY_OBJECT,
     };
   }
 
@@ -157,6 +169,39 @@ export default class Form extends PureComponent {
       sameKeyArray = [];
     });
     return clauseList;
+  }
+
+  // 审批人弹出框确认按钮
+  @autobind
+  handleApproverModalOK(approver) {
+    const { payload, footerBtnData, tempApproveData } = this.state;
+    const selectApproveData = {
+      approverName: approver.empName,
+      approverId: approver.empNo,
+    };
+    const sendPayload = {
+      payload,
+      approveData: {
+        ...tempApproveData,
+        groupName: footerBtnData.nextGroupName,
+        auditors: approver.empNo,
+      },
+      footerBtnData,
+      selectApproveData,
+    };
+    this.sendRequest(sendPayload);
+  }
+
+  // 打开弹窗
+  @autobind
+  showModal() {
+    this.setState({ approverModal: true });
+  }
+
+  // 关闭弹窗
+  @autobind
+  closeModal() {
+    this.setState({ approverModal: false });
   }
 
   // 根据关键词查询合作部门
@@ -312,41 +357,63 @@ export default class Form extends PureComponent {
     }
     const payload = contractFormData;
     // 编辑
-    const newApproveData = {
+    const tempApproveData = {
       type: 'edit',
       flowId: contractFormData.flowid,
       approverIdea: contractFormData.appraval || '',
       operate: btnItem.operate || '',
     };
-    // 设置审批人信息
-    const selectApproveData = {
-      approverName: btnItem.flowAuditors[0].empName,
-      approverId: btnItem.flowAuditors[0].login,
-    };
-    // 设置按钮信息
-    const footerBtnData = btnItem;
-    const sendPayload = {
-      payload,
-      approveData: {
-        ...newApproveData,
-        groupName: btnItem.nextGroupName,
-        auditors: btnItem.flowAuditors[0].login,
-      },
-      selectApproveData,
-      footerBtnData,
-    };
-    // 按钮是终止时，弹出确认框，确定之后调用接口
-    if (btnItem.btnName === '终止') {
-      const that = this;
-      confirm({
-        title: '确认要终止此任务吗?',
-        content: '确认后，操作将不可取消。',
-        onOk() {
-          that.sendRequest(sendPayload);
-        },
+    // item 不为空，并且 approverNum 不等于 'none'，
+    // 需要选择审批人
+    if (!_.isEmpty(btnItem) && btnItem.approverNum !== 'none') {
+      const listData = btnItem.flowAuditors;
+      const newApproverList = listData.map((item, index) => {
+        const key = `${new Date().getTime()}-${index}`;
+        return {
+          empNo: item.login || '',
+          empName: item.empName || '无',
+          belowDept: item.occupation || '无',
+          key,
+        };
       });
+      this.setState({
+        flowAuditors: newApproverList,
+        footerBtnData: btnItem,
+        payload,
+        tempApproveData,
+      }, this.showModal('approverModal'));
     } else {
-      this.sendRequest(sendPayload);
+      // 不需要审批人
+      // 设置审批人信息
+      const selectApproveData = {
+        approverName: btnItem.flowAuditors[0].empName,
+        approverId: btnItem.flowAuditors[0].login,
+      };
+      // 设置按钮信息
+      const footerBtnData = btnItem;
+      const sendPayload = {
+        payload,
+        approveData: {
+          ...tempApproveData,
+          groupName: btnItem.nextGroupName,
+          auditors: btnItem.flowAuditors[0].login,
+        },
+        selectApproveData,
+        footerBtnData,
+      };
+      // 按钮是终止时，弹出确认框，确定之后调用接口
+      if (btnItem.btnName === '终止') {
+        const that = this;
+        confirm({
+          title: '确认要终止此任务吗?',
+          content: '确认后，操作将不可取消。',
+          onOk() {
+            that.sendRequest(sendPayload);
+          },
+        });
+      } else {
+        this.sendRequest(sendPayload);
+      }
     }
   }
 
@@ -359,7 +426,7 @@ export default class Form extends PureComponent {
       flowStepInfo,
       clearDepartmentData,
     } = this.props;
-    const { isHiddenFooter } = this.state;
+    const { isHiddenFooter, approverModal, flowAuditors } = this.state;
     if (_.isEmpty(baseInfo) || _.isEmpty(flowHistory)) {
       return null;
     }
@@ -398,6 +465,17 @@ export default class Form extends PureComponent {
               onEmitEvent={this.footerBtnHandle}
             />
           )
+        }
+        {
+          approverModal ?
+            <ChoiceApproverBoard
+              visible={approverModal}
+              approverList={flowAuditors}
+              onClose={() => this.closeModal('approverModal')}
+              onOk={this.handleApproverModalOK}
+            />
+          :
+            null
         }
       </div>
     );

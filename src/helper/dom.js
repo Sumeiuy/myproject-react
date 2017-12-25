@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-27 16:14:36
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-12-22 12:05:58
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';
@@ -57,6 +57,7 @@ const dom = {
       ele.className = newCls.trim();
     }
   },
+
   /**
    * 给DOM元素添加自定义属性
    * @author sunweibin
@@ -66,6 +67,20 @@ const dom = {
    */
   setAttribute(ele, key, value) {
     ele.setAttribute(key, value);
+  },
+
+  /**
+   * 给DOM元素设置 style 属性
+   * @author sunweibin
+   * @param {HTMLElement} ele DOM元素
+   * @param {String} prop 属性名称
+   * @param {String} value 属性的值
+   */
+  setStyle(ele, prop, value) {
+    const tempEle = ele;
+    if (ele) {
+      tempEle.style[prop] = value;
+    }
   },
 };
 

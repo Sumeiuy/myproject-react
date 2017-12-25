@@ -526,13 +526,7 @@ export default {
     // 查询咨询订阅详情数据
     * getSubscribeDetail({ payload }, { call, put }) {
       const { loginuser, ...resetPayload } = payload;
-      const detailRes = yield call(api.queryConsultDetail,
-        {
-          action: 'query',
-          applyType: 'Internal',
-          operationType: 'subscribe',
-          ...resetPayload,
-        });
+      const detailRes = yield call(api.queryConsultDetail, resetPayload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
@@ -558,13 +552,7 @@ export default {
     // 查询咨询退订详情数据
     * getUnSubscribeDetail({ payload }, { call, put }) {
       const { loginuser, ...resetPayload } = payload;
-      const detailRes = yield call(api.queryConsultDetail,
-        {
-          action: 'query',
-          applyType: 'Internal',
-          operationType: 'unsubscribe',
-          ...resetPayload,
-        });
+      const detailRes = yield call(api.queryConsultDetail, resetPayload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
