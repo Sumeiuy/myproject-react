@@ -2,8 +2,8 @@
  * @Description: 降级客户页面的相关配置
  * @Author: LiuJianShu
  * @Date: 2017-12-06 16:02:09
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-11 16:07:01
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-25 16:25:20
  */
 const config = {
   titleList: [

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-14 10:08:42
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-25 16:28:03
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';

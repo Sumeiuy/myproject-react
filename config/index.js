@@ -42,10 +42,14 @@ module.exports = {
         target: 'http://168.61.8.81:5085', // SIT
         secure: false,
       },
-      [prefix]: {
-        // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址
+      [prefix + '/groovynoauth/fsp/biz/mailsubscription']: {
         target: 'http://168.61.8.81:5085', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
+        secure: false,
+      },
+      [prefix]: {
+        // target: 'http://168.61.8.81:5188', // SIT
+        target: 'http://168.61.8.81:5086', // UAT
         secure: false,
       },
       '/fspa/log': {
