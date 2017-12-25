@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-25 15:18:38
+ * @Last Modified time: 2017-12-25 17:11:53
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -31,7 +31,7 @@ const emp = {
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
-    return orgId || 'ZZ001041';
+    return orgId;
   },
 
   /**
