@@ -44,6 +44,7 @@ import Demote from './routes/demote/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import RelationHome from './routes/relation/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
+import CustomerFeedback from './routes/customerFeedback/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -105,6 +106,10 @@ const routes = [
   {
     path: '/taskFeedback',
     component: TaskFeedback,
+  },
+  {
+    path: '/customerFeedback',
+    component: CustomerFeedback,
   },
 ];
 

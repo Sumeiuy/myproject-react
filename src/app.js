@@ -81,6 +81,8 @@ app.model(require('./models/filialeCustTransfer'));
 app.model(require('./models/relation'));
 // 任务反馈
 app.model(require('./models/taskFeedback'));
+// 客户反馈
+app.model(require('./models/customerFeedback'));
 
 // 4. Router
 app.router(routerConfig);

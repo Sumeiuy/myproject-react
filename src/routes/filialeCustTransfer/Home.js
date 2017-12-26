@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-14 17:32:18
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-12-22 09:40:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -19,7 +19,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { closeRctTabById } from '../../utils/fspGlobal';
-import { env } from '../../helper';
+import { env, emp } from '../../helper';
 
 import styles from './home.less';
 
@@ -47,6 +47,8 @@ const mapStateToProps = state => ({
   managerData: state.filialeCustTransfer.managerData,
   // 新服务经理列表
   newManagerList: state.filialeCustTransfer.newManagerList,
+  // 组织机构树
+  custRangeList: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
@@ -85,6 +87,8 @@ export default class FilialeCustTransfer extends PureComponent {
     saveChange: PropTypes.func.isRequired,
     // 提交成功后清除上一次查询的数据
     emptyQueryData: PropTypes.func.isRequired,
+    // 组织机构树
+    custRangeList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -95,12 +99,38 @@ export default class FilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.checkUserIsFiliale();
     this.state = {
       // 所选客户
       client: EMPTY_OBJECT,
       // 所选新服务经理
       newManager: EMPTY_OBJECT,
     };
+  }
+
+  componentWillReceiveProps({ custRangeList }) {
+    const oldCustRangeList = this.props;
+    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+      this.checkUserIsFiliale();
+    }
+  }
+
+  // 判断当前登录用户部门是否是分公司
+  @autobind
+  checkUserIsFiliale() {
+    const { custRangeList } = this.props;
+    const that = this;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+        Modal.warning({
+          title: '提示',
+          content: '您不是分公司人员，无权操作！',
+          onOk() {
+            that.handleCancel();
+          },
+        });
+      }
+    }
   }
 
   // 选择客户
@@ -228,6 +258,7 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   render() {
+    console.log('props', this.props);
     const {
       custList,
       newManagerList,
