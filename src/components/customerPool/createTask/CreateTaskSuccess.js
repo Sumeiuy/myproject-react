@@ -11,16 +11,14 @@ import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
 import imgSrc from './img/createTask_success.png';
-import { fspGlobal } from '../../../utils';
+import { dispatchTabPane } from '../../../utils';
 import { env } from '../../../helper';
-import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     successType: PropTypes.bool,
     push: PropTypes.func.isRequired,
-    onCloseTab: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func,
     onRemoveTab: PropTypes.func,
@@ -71,21 +69,21 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { onCloseTab, onRemoveTab, push, location: { state, query } } = this.props;
-    if (document.querySelector(fspContainer.container)) {
-      if (typeof onRemoveTab === 'function') {
-        onRemoveTab();
-        fspGlobal.switchFspTab('tab-home');
-      } else {
-        onCloseTab();
-      }
-    } else {
-      push({
-        pathname: '/customerPool',
-        query,
-        state: _.omit(state, 'noScrollTop'),
-      });
-    }
+    const { push, location: { state } } = this.props;
+    const url = 'customerPool';
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    dispatchTabPane({
+      fspAction: 'navtoOtherAndClose',
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      url,
+      param,
+      routerAction: push,
+      pathname: url,
+      query: _.omit(state, 'noScrollTop'),
+    });
   }
 
   @autobind

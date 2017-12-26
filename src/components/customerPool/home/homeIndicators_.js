@@ -4,8 +4,8 @@
  * @description 封装首页指标数据
  */
 import _ from 'lodash';
-import { fspGlobal } from '../../../utils';
-import { url as urlHelper, env, number as numberHelper } from '../../../helper';
+import { dispatchTabPane } from '../../../utils';
+import { url as urlHelper, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
@@ -290,20 +290,20 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
       obj.orgId = orgId;
     }
   }
-  if (env.isInFsp()) {
-    const url = `${pathname}?${urlHelper.stringify(obj)}`;
-    const param = {
-      closable: true,
-      forceRefresh: true,
-      isSpecialTab: true,
-      id: 'RCT_FSP_CUSTOMER_LIST',
-      title: '客户列表',
-    };
-    fspGlobal.openRctTab({ url, param });
-  } else {
-    push({
-      pathname,
-      query: obj,
-    });
-  }
+  const url = `${pathname}?${urlHelper.stringify(obj)}`;
+  const param = {
+    closable: true,
+    forceRefresh: true,
+    isSpecialTab: true,
+    id: 'RCT_FSP_CUSTOMER_LIST',
+    title: '客户列表',
+  };
+  dispatchTabPane({
+    fspAction: 'openRctTab',
+    routerAction: push,
+    url,
+    param,
+    pathname,
+    query: obj,
+  });
 }

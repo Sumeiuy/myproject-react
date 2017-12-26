@@ -12,8 +12,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Clickable from '../../../components/common/Clickable';
-import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
+// import { fspContainer } from '../../../config';
+import { dispatchTabPane } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './search.less';
 
@@ -127,26 +127,26 @@ export default class Search extends PureComponent {
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: ids, // 'FSP_SERACH',
-        title: titles, // '搜索目标客户',
-      };
-      fspGlobal.openRctTab({ url, param });
-    } else {
-      push({
-        pathname: firstUrl,
-        query: obj,
-        // 方便返回页面时，记住首页的query，在本地环境里
-        state: {
-          ...query,
-        },
-      });
-    }
+    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: ids, // 'FSP_SERACH',
+      title: titles, // '搜索目标客户',
+    };
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url,
+      param,
+      pathname: firstUrl,
+      query: obj,
+      // 方便返回页面时，记住首页的query，在本地环境里
+      state: {
+        ...query,
+      },
+    });
   }
 
   searchResult(query, hotList) {

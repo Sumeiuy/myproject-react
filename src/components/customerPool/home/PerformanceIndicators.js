@@ -194,13 +194,14 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 客户及资产（投顾绩效）
   renderCustAndPropertyIndicator(param) {
+    const { push } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <Funney dataSource={data} />
+            <Funney dataSource={data} push={push} />
           </IfEmpty>
         </RectFrame>
       </Col>

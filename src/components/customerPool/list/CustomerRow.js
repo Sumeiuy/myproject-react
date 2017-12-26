@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import {
-  fspGlobal,
+  dispatchTabPane,
   // helper,
 } from '../../../utils';
 import QuickMenu from './QuickMenu';
@@ -128,6 +128,7 @@ export default class CustomerRow extends PureComponent {
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     toDetailAuthority: PropTypes.bool.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -145,12 +146,13 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   toDetail() {
+    const { push } = this.props;
     const {
       listItem: {
         pOrO,
-        custId,
-        rowId,
-        ptyId,
+      custId,
+      rowId,
+      ptyId,
       },
     } = this.props;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
@@ -159,9 +161,16 @@ export default class CustomerRow extends PureComponent {
       title: '客户360视图-客户信息',
       forceRefresh: true,
     };
-    fspGlobal.openFspTab({
+    // TODO: 需要修改,
+    dispatchTabPane({
+      fspAction: 'openFspTab',
+      routerAction: push,
       url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      pathname: '/customerCenter/fspcustomerDetail',
       param,
+      data: {
+        url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      },
     });
   }
 

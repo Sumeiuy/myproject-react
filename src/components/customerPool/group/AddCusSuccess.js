@@ -9,14 +9,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Button from '../../common/Button';
-import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
-import { fspGlobal } from '../../../utils';
+import { dispatchTabPane } from '../../../utils';
+
 import Clickable from '../../../components/common/Clickable';
 
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
-    closeTab: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired,
     onDestroy: PropTypes.func.isRequired,
@@ -69,13 +68,12 @@ export default class AddCusSuccess extends PureComponent {
       id: 'FSP_CUST_GROUP_MANAGE',
       title: '客户分组管理',
     };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
-    } else {
-      push({
-        pathname: url,
-      });
-    }
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      url,
+      param,
+      routerAction: push,
+    });
   }
 
   @autobind
@@ -95,22 +93,22 @@ export default class AddCusSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { closeTab, push, location: { state } } = this.props;
+    const { push, location: { state } } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
     };
 
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
-      closeTab();
-    } else {
-      push({
-        pathname: url,
-        query: _.omit(state, 'noScrollTop'),
-      });
-    }
+    dispatchTabPane({
+      fspAction: 'navtoOtherAndClose',
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      url,
+      param,
+      routerAction: push,
+      pathname: url,
+      query: _.omit(state, 'noScrollTop'),
+    });
   }
 
   render() {
@@ -134,7 +132,7 @@ export default class AddCusSuccess extends PureComponent {
           <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
           <div className={styles.successBtn}>
             <Clickable
-              onClick={this.goToIndex}
+              onClick={this.goToHome}
               eventName="/click/addCustSuccess/backHome"
             >
               <Button type="primary">返回首页</Button>

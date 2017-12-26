@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:24:01
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2017-12-26 18:27:22
  */
 
 import React, { PureComponent } from 'react';
@@ -20,9 +20,8 @@ import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
-import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
-import { fspGlobal } from '../../utils';
+import { dispatchTabPane } from '../../utils';
 import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
@@ -241,22 +240,22 @@ export default class CustomerGroupManage extends PureComponent {
     const { groupId, count, enterType, source } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
-    if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}&source=${source}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: ids, // tab的id
-        title: titles, // tab标题
-      };
-      fspGlobal.openRctTab({ url, param }); // 打开react tab
-    } else {
-      push({
-        pathname: firstUrl,
-        query: obj,
-      });
-    }
+    const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}&source=${source}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: ids, // tab的id
+      title: titles, // tab标题
+    };
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url,
+      param,
+      pathname: firstUrl,
+      query: obj,
+    });
   }
 
   @autobind

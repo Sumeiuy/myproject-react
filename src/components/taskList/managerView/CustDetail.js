@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-25 16:27:26
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2017-12-26 17:25:57
  * 客户明细数据
  */
 
@@ -13,8 +13,8 @@ import _ from 'lodash';
 import { Icon } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
-import { fspGlobal } from '../../../utils';
-import { fspContainer } from '../../../config';
+import { dispatchTabPane } from '../../../utils';
+// import { fspContainer } from '../../../config';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -61,6 +61,7 @@ export default class CustDetail extends PureComponent {
     getCustDetailData: PropTypes.func,
     // 当前对应的客户类型
     title: PropTypes.string,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -228,17 +229,22 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const { push } = this.props;
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
       forceRefresh: true,
     };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openFspTab({
+    dispatchTabPane({
+      fspAction: 'openFspTab',
+      routerAction: push,
+      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      pathname: '/customerCenter/fspcustomerDetail',
+      param,
+      data: {
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-        param,
-      });
-    }
+      },
+    });
   }
 
   /**

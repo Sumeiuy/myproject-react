@@ -11,8 +11,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
-import { fspGlobal } from '../../utils';
-import { url as urlHelper, env } from '../../helper';
+import { dispatchTabPane } from '../../utils';
+import { url as urlHelper } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Clickable from '../../components/common/Clickable';
 import Paganation from '../../components/common/Paganation';
@@ -148,18 +148,18 @@ export default class ViewpointList extends PureComponent {
   @autobind
   handleTitleClick(item) {
     const { curPageSize, curPageNum } = this.state;
+    const { push } = this.props;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointDetail';
     const query = { detailIndex: item.id, pageSize: curPageSize, curPageNum };
-    if (env.isInFsp()) {
-      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(query)}`, param });
-    } else {
-      const { push } = this.props;
-      push({
-        pathname: url,
-        query,
-      });
-    }
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
   }
 
   @autobind

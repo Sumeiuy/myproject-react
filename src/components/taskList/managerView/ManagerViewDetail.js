@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-26 14:25:27
+ * @Last Modified time: 2017-12-26 18:26:24
  * 管理者视图详情
  */
 
@@ -20,8 +20,8 @@ import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { helper, fspGlobal } from '../../../utils';
-import { env, url as urlHelper } from '../../../helper';
+import { helper, dispatchTabPane } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
@@ -152,30 +152,27 @@ export default class ManagerViewDetail extends PureComponent {
       ...urlParam,
     };
     const finalUrl = `${url}?${urlHelper.stringify(query)}`;
-
-    if (env.isInFsp()) {
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: finalUrl, param });
-    } else {
-      push({
-        pathname: url,
-        query: {
-          condition,
-          ...urlParam,
-        },
-      });
-    }
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id,
+      title,
+    };
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url: finalUrl,
+      param,
+      pathname: url,
+      query,
+    });
   }
 
   render() {
     const {
       isFold,
+      push,
       mngrMissionDetailInfo = EMPTY_OBJECT,
       custDetailResult,
       custFeedback,
@@ -289,6 +286,7 @@ export default class ManagerViewDetail extends PureComponent {
                 getCustDetailData={this.handlePreview}
                 data={custDetailResult}
                 title={title}
+                push={push}
               />
             }
             modalStyle={{
