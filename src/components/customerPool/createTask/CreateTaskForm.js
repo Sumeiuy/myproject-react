@@ -212,7 +212,10 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorExcuteType,
       custCount,
     } = this.props;
-    const { motCustfeedBackDict, executeTypes } = dict;
+    const { executeTypes, missionType = [] } = dict || {};
+    // 拿到自建任务需要的missionType
+    // descText为1
+    const motMissionType = _.filter(missionType, item => item.descText === '1') || [];
     const {
       defaultMissionName,
       defaultMissionType,
@@ -243,7 +246,7 @@ export default class CreateTaskForm extends PureComponent {
             defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
             users={statusData}
-            taskTypes={motCustfeedBackDict}
+            taskTypes={motMissionType}
             executeTypes={executeTypes}
             form={form}
             isShowErrorInfo={isShowErrorInfo}

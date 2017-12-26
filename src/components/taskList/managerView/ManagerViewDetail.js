@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-26 18:26:24
+ * @Last Modified time: 2017-12-26 18:41:59
  * 管理者视图详情
  */
 
@@ -40,7 +40,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 获取客户反馈结果
     onGetCustFeedback: PropTypes.func.isRequired,
     // 客户反馈结果
-    custFeedback: PropTypes.array.isRequired,
+    custFeedback: PropTypes.array,
     // 客户池用户范围
     custRange: PropTypes.array.isRequired,
     // 职位信息
@@ -71,6 +71,7 @@ export default class ManagerViewDetail extends PureComponent {
     isFold: false,
     mngrMissionDetailInfo: EMPTY_OBJECT,
     currentId: '',
+    custFeedback: [],
   }
 
   constructor(props) {
@@ -110,6 +111,9 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleCloseModal() {
+    // if (env.isInFsp) {
+    //   fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+    // }
     this.setState({
       isShowCustDetailModal: false,
     });
@@ -128,7 +132,7 @@ export default class ManagerViewDetail extends PureComponent {
     const { clearCreateTaskData } = this.props;
     // 发起新的任务之前，先清除数据
     clearCreateTaskData();
-    this.openByAllSelect('/customerPool/createTask', '发起任务', 'RCT_FSP_MANAGER_VIEW_CREATE_TASK');
+    this.openByAllSelect('/customerPool/createTask', 'RCT_FSP_CREATE_TASK', '自建任务');
   }
 
   // 发起任务
@@ -264,7 +268,7 @@ export default class ManagerViewDetail extends PureComponent {
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export} disabled={isDisabled}>导出</Button>
+                  <Button className={styles.export} disabled>导出</Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleLaunchTask}
