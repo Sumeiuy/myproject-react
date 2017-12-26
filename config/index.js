@@ -35,13 +35,9 @@ module.exports = {
         secure: false,
       },
       [prefix]: {
+        // target: 'http://160.9.230.159:8082/', // 王必强接口访问地址
         target: 'http://168.61.8.81:5188/', // 调试汇报关系树接口
         // target: 'http://168.61.8.82:5086', // UAT
-        secure: false,
-      },
-      [prefix]: {
-        // target: 'http://168.61.8.81:5188', // SIT
-        target: 'http://168.61.8.81:5086', // UAT
         secure: false,
       },
       '/fspa/log': {
