@@ -260,6 +260,7 @@ export default class ReportHome extends PureComponent {
     const { getAllInfo, custRange, initialData } = this.props;
     const { boardId, begin, end, cycleType, orgId, custRangeLevel, queryType } = this.state;
     const newscope = this.getApiScope();
+    const loginOrgId = emp.getOrgId(); // 登录人的orgId
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     // 整理数据
@@ -276,7 +277,7 @@ export default class ReportHome extends PureComponent {
 
     getAllInfo({
       visibleReports: {
-        orgId: custRange[0] && custRange[0].id,
+        orgId: loginOrgId,
       },
       performance: {
         ...payload,
