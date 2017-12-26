@@ -22,7 +22,7 @@ function execOpenTab(method, ...args) {
 }
 
 function execSwitchTab(tabId) {
-  // 全局的data有溢出，这里不用try catch，作用域变了
+  // try catch里面data找不到
   if (data && data.getChainPropertyFromObject) {
     const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
     activeReactTab($('#UTB'), { tabId });
@@ -38,7 +38,7 @@ function closeTab(arg) {
 }
 
 function removeTabMenu(tabId) {
-  // 全局的data有溢出，这里不用try catch，作用域变了
+  // try catch里面data找不到
   if (data && data.getChainPropertyFromObject) {
     const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
     removeTab($('#UTB'), { tabId });
