@@ -6,6 +6,7 @@
 
 const isNewOrg = {
   nanjingOrgId: 'ZZ001041093', // 南京分公司新的组织机构，分公司与营业部之间增加财富中心
+  reportTreeOrgId: '1-460XFDL', // 汇报关系树的分公司（有财富中心）
 };
 
 export default isNewOrg;

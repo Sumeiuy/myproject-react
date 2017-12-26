@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { report as api } from '../api';
 import { BoardBasic, constants } from '../config';
 import report from '../helper/page/report';
+import { emp } from '../helper';
 
 const defaultFilialeLevel = constants.filialeLevel;
 // const EMPTY_OBJECT = {};
@@ -208,9 +209,10 @@ export default {
       // 组织机构树
       const custRange = yield select(state => state.history.custRange);
       const firstCust = custRange[0];
+      const loginOrgId = emp.getOrgId(); // 登录人的orgId
       // 查询当前用户所能够看到的看板报表
       const allVisibleReports = yield call(api.getAllVisibleReports, {
-        orgId: firstCust.id,
+        orgId: loginOrgId,
       });
       yield put({
         type: 'getAllVisibleReportsSuccess',

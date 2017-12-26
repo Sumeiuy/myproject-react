@@ -72,8 +72,12 @@ app.model(require('./models/channelsEdit'));
 app.model(require('./models/taskList/tasklist'));
 app.model(require('./models/taskList/performerView'));
 app.model(require('./models/relation'));
+// 主职位 model
+app.model(require('./models/mainPosition'));
 // 降级客户
 app.model(require('./models/demote'));
+// 分公司客户划转
+app.model(require('./models/filialeCustTransfer'));
 
 // 4. Router
 app.router(routerConfig);

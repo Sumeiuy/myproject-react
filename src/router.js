@@ -45,7 +45,9 @@ import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import RelationHome from './routes/relation/Home';
 import TaskList from './routes/customerPool/TaskList__';
+import MainPosition from './routes/mainPosition/Home';
 import Demote from './routes/demote/Home';
+import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -101,7 +103,9 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="tasklist" component={TaskList} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
+      <Route path="mainPosition" component={MainPosition} />
       <Route path="demote" component={Demote} />
+      <Route path="filialeCustTransfer" component={FilialeCustTransfer} />
     </Route>
   </Router>
 );
