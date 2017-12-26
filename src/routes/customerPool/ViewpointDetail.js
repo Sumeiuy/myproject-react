@@ -14,9 +14,9 @@ import _ from 'lodash';
 import withRouter from '../../decorators/withRouter';
 import { fspGlobal } from '../../utils';
 import { url as urlHelper, env } from '../../helper';
-import wordSrc from '../../../static/images/word.png';
+import wordSrc from './img/word.png';
+import pdfSrc from './img/pdf.png';
 import Clickable from '../../components/common/Clickable';
-import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
 import styles from './viewpointDetail.less';
 

@@ -198,7 +198,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'pie',
-          radius: [0, 60],
+          radius: [0, 55],
           center: ['50%', '52%'],
           roseType: 'radius',
           label: {
@@ -379,7 +379,7 @@ export default class MissionFeedback extends PureComponent {
     const isRadio = true;
     const oDiv = _.map(data, (item) => {
       const radios = _.map(item.radioData, itemChild =>
-        (<h5><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
           <b>({itemChild.optionPer})</b></span></h5>));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
         item.radioData, radios, isRadio);
@@ -392,7 +392,7 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
-        (<h5><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
           <b>({itemChild.optionPer})</b></span></h5>));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
         item.checkboxData, checkBox);
@@ -417,7 +417,7 @@ export default class MissionFeedback extends PureComponent {
     const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
-        <h5 title={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+        <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
       return (
         <div className={styles.subjective}>
           <div

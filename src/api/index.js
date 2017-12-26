@@ -13,6 +13,7 @@ import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
 import relation from './relation';
 import customerFeedback from './customerFeedback';
+import taskFeedback from './taskFeedback';
 
 const api = apiCreator();
 
@@ -47,5 +48,7 @@ export default {
   relation: relation(api),
   // 客户反馈
   customerFeedback: customerFeedback(api),
+  // 任务反馈
+  taskFeedback: taskFeedback(api),
 };
 

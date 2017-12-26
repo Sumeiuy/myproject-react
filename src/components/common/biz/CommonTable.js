@@ -2,8 +2,8 @@
  * @Description: 公用的表格组件
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-06 16:54:08
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-25 16:28:38
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

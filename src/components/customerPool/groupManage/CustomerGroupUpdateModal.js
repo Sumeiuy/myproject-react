@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-08 15:28:02
+ * @Last Modified time: 2017-12-22 13:39:31
  */
 
 import React, { PureComponent } from 'react';
@@ -46,7 +46,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
-      footer: props.footer,
     };
   }
 
@@ -81,8 +80,9 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       modalContent,
       modalStyle,
       modalWidth,
+      footer,
     } = this.props;
-    const { visible, footer } = this.state;
+    const { visible } = this.state;
     return (
       <div className={styles.groupUpdateWrapper}>
         <Modal

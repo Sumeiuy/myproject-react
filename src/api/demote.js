@@ -2,8 +2,8 @@
  * @Description: 降级客户接口文件
  * @Author: LiuJianShu
  * @Date: 2017-12-11 13:25:29
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-11 13:30:04
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-12-25 16:30:08
  */
 
 export default function channels(api) {
