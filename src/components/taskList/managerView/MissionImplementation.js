@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-20 15:58:28
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-25 17:04:38
  * 任务实施简报
  */
 
@@ -88,9 +88,9 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  handlePreview() {
+  handlePreview(title) {
     const { onPreviewCustDetail } = this.props;
-    onPreviewCustDetail();
+    onPreviewCustDetail(title);
   }
 
   /**
@@ -113,16 +113,16 @@ export default class MissionImplementation extends PureComponent {
     posOrgId,
     empPostnList,
   }) {
-    const myCustomer = {
-      id: MAIN_MAGEGER_ID,
-      name: '我的客户',
-    };
+    // const myCustomer = {
+    //   id: MAIN_MAGEGER_ID,
+    //   name: '我的客户',
+    // };
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
     if (!this.isAuthorize) {
-      this.setState({
-        createCustRange: [myCustomer],
-      });
+    //   this.setState({
+    //     createCustRange: [myCustomer],
+    //   });
       return;
     }
     // 只要不是我的客户，都展开组织机构树
@@ -139,7 +139,7 @@ export default class MissionImplementation extends PureComponent {
     if (groupInCustRange) {
       this.setState({
         expandAll: true,
-        createCustRange: [groupInCustRange, myCustomer],
+        createCustRange: [groupInCustRange],
       });
       return;
     }
@@ -149,7 +149,7 @@ export default class MissionImplementation extends PureComponent {
       if (!_.isEmpty(obj.children)) {
         const targetValue = _.find(obj.children, o => o.id === posOrgId);
         if (targetValue) {
-          department = [targetValue, myCustomer];
+          department = [targetValue];
         }
       }
     });

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-20 15:57:27
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-25 16:27:26
  * 客户明细数据
  */
 
@@ -59,11 +59,14 @@ export default class CustDetail extends PureComponent {
     data: PropTypes.object,
     // 获取下一页数据
     getCustDetailData: PropTypes.func,
+    // 当前对应的客户类型
+    title: PropTypes.string,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     getCustDetailData: () => { },
+    title: '',
   }
 
   constructor(props) {
@@ -124,10 +127,10 @@ export default class CustDetail extends PureComponent {
       curPageNum: nextPage,
       curPageSize: currentPageSize,
     });
-    getCustDetailData(
-      nextPage,
-      currentPageSize,
-    );
+    getCustDetailData({
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+    });
   }
 
   /**
@@ -143,10 +146,10 @@ export default class CustDetail extends PureComponent {
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
     });
-    getCustDetailData(
-      currentPageNum,
-      changedPageSize,
-    );
+    getCustDetailData({
+      pageNum: currentPageNum,
+      pageSize: changedPageSize,
+    });
   }
 
   /**
@@ -304,12 +307,14 @@ export default class CustDetail extends PureComponent {
       dataSource,
     } = this.state;
 
+    const { title } = this.props;
+
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
     return (
       <div className={styles.custDetailWrapper}>
-        <div className={styles.title}>已反馈客户共{totalRecordNum || 0}人</div>
+        <div className={styles.title}>{title}共{totalRecordNum || 0}人</div>
         <div className={styles.custDetailTableSection}>
           {!_.isEmpty(dataSource) ?
             <GroupTable
