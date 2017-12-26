@@ -215,8 +215,10 @@ export default class DurationSelect extends PureComponent {
   }
   @autobind
   disabledDate(current) {
-    // 不能选择大于今天的日期
-    return current && current.valueOf() > moment(moment().format(formatTxt)).subtract(1, 'days').valueOf();
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
+    // 不能选择大于后端返回有数据的最大日期
+    return current && current.valueOf() > moment(maxDataDt, formatTxt).valueOf();
   }
   // 用户自己选的时间段事件
   @autobind
