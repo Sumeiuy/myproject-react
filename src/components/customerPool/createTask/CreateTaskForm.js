@@ -137,7 +137,7 @@ export default class CreateTaskForm extends PureComponent {
     switch (source) {
       case 'business':
         defaultMissionName = '提醒客户办理已满足条件的业务'; // 任务名称
-        defaultMissionType = 'BusinessRecomm'; // 任务类型
+        defaultMissionType = '25'; // 任务类型
         defaultExecutionType = 'Mission'; // 执行方式
         defaultKey = 'UNRIGHTS';
         // 任务提示
@@ -158,7 +158,7 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
-        defaultMissionType = 'AccoutService';
+        defaultMissionType = '26';
         defaultExecutionType = 'Chance';
         defaultKey = 'ACCOUNT_OPEN_DATE';
         defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
@@ -166,7 +166,7 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
-        defaultMissionType = 'AccoutService';
+        defaultMissionType = '26';
         defaultExecutionType = 'Chance';
         defaultKey = 'RIGHTS';
         defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
