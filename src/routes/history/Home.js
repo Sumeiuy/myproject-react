@@ -188,11 +188,15 @@ export default class HistoryHome extends PureComponent {
   componentDidMount() {
     // 初始化的时候state里面还无参数
     this.props.getInitialData().then(() => {
-      const { initialData } = this.props;
-      const maxDataDt = initialData.maxDataDt;
-      const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
+      const defaultMoment = this.setDefaultMoment();
       // 修改state
-      this.setState({ begin, end, cycleType }, this.queryInitial);
+      this.setState({
+        begin: defaultMoment.begin, // 本期开始时间
+        end: defaultMoment.end, // 本期结束时间
+        cycleType: defaultMoment.cycleType, // 时间段周期类型
+        contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
+        contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
+      }, this.queryInitial);
     });
   }
 
