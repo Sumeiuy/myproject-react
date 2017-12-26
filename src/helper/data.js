@@ -67,7 +67,7 @@ const data = {
    * @param {Array} orgArr 组织机构树
    */
   pickOrgInfo(prev, next) {
-    const newPrev = [ ...prev ];
+    const newPrev = [...prev];
     const { children, ...reset } = next;
     newPrev.push(reset);
     return newPrev;
