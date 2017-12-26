@@ -145,11 +145,11 @@ export default class ProgressList extends PureComponent {
                 }
                 {
                   type === 'productSale' ?
-                    <span>
-                      <span>{item.value}</span>
-                      <span>{item.unit}</span>
-                    </span> :
-                    <span>{item.thousandsCount}</span>
+                    <div>
+                      <span title={item.value}>{item.value}</span>
+                      <span title={item.unit}>{item.unit}</span>
+                    </div> :
+                    <span title={item.thousandsCount}>{item.thousandsCount}</span>
                 }</div>
             </div>
             <Progress

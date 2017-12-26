@@ -281,7 +281,7 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <ProgressList dataSource={finalData} key={param.key} />
+            <ProgressList dataSource={finalData} key={param.key} type={'productSale'} />
           </IfEmpty>
         </RectFrame>
       </Col>

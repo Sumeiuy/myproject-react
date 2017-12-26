@@ -21,7 +21,7 @@ export default function commission(api) {
     // 提交单佣金调整申请
     submitSingleCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveSingleJustCommionInfo', query),
     // 查询咨询订阅/退订详情接口
-    queryConsultDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
+    queryConsultDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/querySubscriptionOrderInfo', query),
     // 获取附件信息
     getAttachment: query => api.post('/file/ceFileList', query),
     // 根据用户输入的数值查询目标股基佣金率的码值

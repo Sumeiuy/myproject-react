@@ -298,8 +298,8 @@ export default class HistoryHome extends PureComponent {
   // 初始查询数据
   @autobind
   queryInitial() {
-    const { getInitial } = this.props;
-    const { empId, boardType, boardId } = this.state;
+    const { getInitial, initialData } = this.props;
+    const { empId, boardType, boardId, queryType } = this.state;
     const selfNeed = ['boardId'];
     const coreQuery = this.makeQueryParams({}, selfNeed);
     const radarQuery = this.makeQueryParams({ isMultiple: 0 }, selfNeed);
@@ -312,6 +312,8 @@ export default class HistoryHome extends PureComponent {
     }, selfNeed);
     const custScatterQuery = this.makeQueryParams({ type: 'cust' }, selfNeed);
     const investScatterQuery = this.makeQueryParams({ type: 'invest' }, selfNeed);
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
 
     getInitial({
       custRang: { empId },
@@ -322,7 +324,10 @@ export default class HistoryHome extends PureComponent {
       custScatter: custScatterQuery,
       investScatter: investScatterQuery,
       dic: { boardId },
-      lib: { type: boardType },
+      lib: {
+        type: boardType,
+        queryType: queryType || defaultSummaryType,
+      },
     });
   }
 
@@ -408,7 +413,7 @@ export default class HistoryHome extends PureComponent {
     // 时间段是共同的参数
     const duration = _.pick(this.state, ['begin', 'end', 'cycleType', 'contrastBegin', 'contrastEnd']);
     // 组织机构信息
-    const { orgId, scope, localScope, type } = this.state;
+    const { orgId, scope, localScope, queryType } = this.state;
     const { custRange, initialData } = this.props;
     const owner = custRange[0];
     let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
@@ -428,7 +433,7 @@ export default class HistoryHome extends PureComponent {
       ...org,
       ...selfParam,
       ...special,
-      type: type || defaultSummaryType,
+      queryType: queryType || defaultSummaryType,
     };
   }
 
@@ -562,7 +567,7 @@ export default class HistoryHome extends PureComponent {
 
   // 切换SummaryType时候，需要将数据全部恢复到默认值
   @autobind
-  updateSummaryTypeState(type) {
+  updateSummaryTypeState(queryType) {
     const { location: { query: { boardId, boardType } }, custRange } = this.props;
     const ownerOrg = custRange[0];
     let newScope = ownerOrg && String(Number(ownerOrg.level) + 1);
@@ -572,7 +577,7 @@ export default class HistoryHome extends PureComponent {
     const timeStamp = new Date().getTime().toString();
     const defaultMoment = this.setDefaultMoment();
     this.setState({
-      type,
+      queryType,
       swtichDefault: timeStamp,
       boardId,
       boardType,
@@ -644,7 +649,7 @@ export default class HistoryHome extends PureComponent {
       swtichDefault,
       orgId,
       indicatorId,
-      type,
+      queryType,
     } = this.state;
     const level = localScope || custRange[0].level;
     let newScope = scope || String(Number(level) + 1);
@@ -691,7 +696,7 @@ export default class HistoryHome extends PureComponent {
     // 汇总方式（组织机构/汇报关系）
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
-    const summaryType = type || defaultSummaryType;
+    const summaryType = queryType || defaultSummaryType;
     return (
       <div className="pageHistory">
         <PageHeader
