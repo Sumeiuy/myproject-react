@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-25 16:27:26
+ * @Last Modified time: 2017-12-26 17:43:38
  * 客户明细数据
  */
 
@@ -61,12 +61,15 @@ export default class CustDetail extends PureComponent {
     getCustDetailData: PropTypes.func,
     // 当前对应的客户类型
     title: PropTypes.string,
+    // 关闭弹框
+    onClose: PropTypes.func,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     getCustDetailData: () => { },
     title: '',
+    onClose: () => { },
   }
 
   constructor(props) {
@@ -234,6 +237,8 @@ export default class CustDetail extends PureComponent {
       forceRefresh: true,
     };
     if (document.querySelector(fspContainer.container)) {
+      // 关闭弹框
+      this.props.onClose();
       fspGlobal.openFspTab({
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
         param,
