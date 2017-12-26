@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-12-26 14:10:59
+ * @Last Modified time: 2017-12-26 15:36:26
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -55,15 +55,13 @@ const emp = {
    */
   getOrgDataByOrgId(arr, id) {
     const data = _.find(arr, (item) => {
-      if (item.id === id) {
-        return item;
-      }
-      return this.getOrgDataByOrgId(item.children, id);
+      return (item.id === id) ? true : this.getOrgDataByOrgId(item.children, id);
     });
     if (data) {
       return (data.id === id) ? data : this.getOrgDataByOrgId(data.children, id);
     }
     return data;
+
   },
 
   /**
