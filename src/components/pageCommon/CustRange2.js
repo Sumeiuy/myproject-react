@@ -21,9 +21,9 @@ function transformCustRangeData(list, parent = '') {
       label: item.name,
       value: parent
               ?
-              `${item.level}-${item.id}-${parent}-${item.name}`
+              `${item.level}#${item.id}#${parent}#${item.name}`
               :
-              `${item.level}-${item.id}-${item.name}`,
+              `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -104,8 +104,13 @@ export default class CustRange extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custRange, orgId } = nextProps;
-    const { orgId: preOrgId } = this.props;
-    const { formatCustRange } = this.state;
+    const { orgId: preOrgId, custRange: preOrgTree } = this.props;
+    let { formatCustRange } = this.state;
+    if (custRange !== preOrgTree) {
+      // 组织结构树变化，保存数据
+      formatCustRange = transformCustRangeData(custRange);
+      this.setState({ formatCustRange });
+    }
     if (orgId !== preOrgId) {
       walk(formatCustRange, findOrgNameByOrgId(orgId), '');
       const initValue = {
@@ -126,7 +131,7 @@ export default class CustRange extends PureComponent {
       return;
     }
     const { updateQueryState, custRange, collectData } = this.props;
-    const tmpArr = value.value.split('-');
+    const tmpArr = value.value.split('#');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
     const custRangeName = tmpArr.slice(2).join('/');
@@ -134,7 +139,7 @@ export default class CustRange extends PureComponent {
       label: custRangeName,
       value: custRangeName
                 ?
-                `${custRangeLevel}-${orgId}-${custRangeName}`
+                `${custRangeLevel}#${orgId}#${custRangeName}`
                 : custRange[0].id,
     };
     this.setState({
@@ -148,7 +153,7 @@ export default class CustRange extends PureComponent {
       custRangeLevel,
       level: custRangeLevel,
       scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId)) ?
-        (String(Number(custRangeLevel) + 2)) : (String(Number(custRangeLevel) + 1)),
+        (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
     });
   }
 

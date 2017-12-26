@@ -2,9 +2,10 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-11 14:13:26
+ * @Last Modified time: 2017-12-22 20:02:11
  * @description 此处存放通用的数据格式/类型处理的方法
  */
+import _ from 'lodash';
 
 const data = {
   /**
@@ -46,21 +47,46 @@ const data = {
   },
 
   /**
+   * 递归遍历组织机构树
+   * @param {Array} orgArr 组织机构数
+   * @param {*} func 对组织机构数进行的处理
+   */
+  walk(orgArr, func, parent) {
+    func(orgArr, parent);
+    if (Array.isArray(orgArr)) {
+      const childrenLen = orgArr.length;
+      for (let i = 0; i < childrenLen; i++) {
+        const children = orgArr[i].children;
+        data.walk(children, func, orgArr[i]);
+      }
+    }
+  },
+
+  /**
+   * 提取组织机构数中的信息
+   * @param {Array} orgArr 组织机构树
+   */
+  pickOrgInfo(prev, next) {
+    const newPrev = [...prev];
+    const { children, ...reset } = next;
+    newPrev.push(reset);
+    return newPrev;
+  },
+
+  /**
    * 将CustRange转换成一维数组
    * @param {Array} arr CustRange机构树
    */
   convertCustRange2Array(arr) {
-    let tmpArr = arr.slice();
-    arr.forEach((v) => {
-      if (v.children) {
-        tmpArr = [...tmpArr, ...v.children];
-        v.children.forEach((child) => {
-          tmpArr = [...tmpArr, ...child.children];
-        });
-      }
-    });
+    let tmpArr = [];
+    function reduce(orgArr) {
+      const result = _.reduce(orgArr, data.pickOrgInfo, []);
+      tmpArr = [...tmpArr, ...result];
+    }
+    data.walk(arr, reduce);
     return tmpArr;
   },
+
 };
 
 export default data;

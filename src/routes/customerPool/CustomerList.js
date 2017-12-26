@@ -212,6 +212,9 @@ export default class CustomerList extends PureComponent {
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.authority = permission.hasCustomerPoolPermission();
+    // 总部 - 营销活动管理岗, 分公司 - 营销活动管理岗
+    this.toDetailAuthority = permission.hasHqMampPermission()
+      || permission.hasBoMampPermission();
   }
 
   getChildContext() {
@@ -641,6 +644,7 @@ export default class CustomerList extends PureComponent {
           queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          toDetailAuthority={this.toDetailAuthority}
         />
       </div>
     );

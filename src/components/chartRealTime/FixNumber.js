@@ -78,6 +78,37 @@ const FixNumber = {
     };
   },
 
+  // 针对每一个金额作处理，换算成相应单位的unit和item
+  // 譬如123455.76747 换算成 12.34万元
+  transformItemUnit(item) {
+    let newUnit = '元';
+    let newItem = Math.abs(item);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (newItem >= 100000000) {
+      newUnit = '亿元';
+      newItem = FixNumber.toFixedDecimal(newItem / 100000000);
+    } else if (newItem > 10000) {
+      newUnit = '万元';
+      newItem = FixNumber.toFixedDecimal(newItem / 10000);
+    } else {
+      newUnit = '元';
+      newItem = FixNumber.toFixedDecimal(newItem);
+    }
+
+    // 保留符号
+    if (item < 0) {
+      // 负数
+      newItem = `-${newItem}`;
+    }
+
+    return {
+      newUnit,
+      newItem,
+    };
+  },
+
   // 针对元/年这种单位进行特殊处理
   toFixedNewMoney(series) {
     let newUnit = '元/年';

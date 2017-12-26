@@ -59,6 +59,7 @@ export default class ChartBarStack extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.custRange = data.convertCustRange2Array(props.custRange);
     // 堆数据进行初步的分析
     // 初始化的时候，可能不存在值
     this.initialData(props, true);
@@ -69,14 +70,17 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
-    this.custRange = data.convertCustRange2Array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
+    const { scope: preScope, chartData: preData, custRange: preCustRange } = this.props;
+    const { scope, chartData, custRange } = nextProps;
     if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
       this.initialData(nextProps);
+    }
+    // 切换汇报方式custRange发生变化
+    if (!_.isEqual(custRange, preCustRange)) {
+      this.custRange = data.convertCustRange2Array(custRange);
     }
   }
 
@@ -105,7 +109,7 @@ export default class ChartBarStack extends PureComponent {
             custRangeLevel: item.level,
             level: item.level,
             scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              String(Number(item.level) + 2) : String(Number(item.level) + 1),
+              (Number(item.level) + 2) : (Number(item.level) + 1),
           });
         }
       });
@@ -200,7 +204,6 @@ export default class ChartBarStack extends PureComponent {
     }
 
     const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
-
     // 初始化所有的数据，并存入state
     // 此为后面需要修改echarts的series做准备
     if (flag) {

@@ -12,14 +12,15 @@ import { autobind } from 'core-decorators';
 import { withRouter } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 
 import Button from '../../components/common/Button';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import { emp } from '../../helper';
+import { closeRctTabById } from '../../utils/fspGlobal';
+import { env, emp } from '../../helper';
 import config from './config';
 import styles from './home.less';
 
@@ -39,6 +40,8 @@ const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
 const mapStateToProps = state => ({
   employeeList: state.mainPosition.employeeList,
   positionList: state.mainPosition.positionList,
+  // 组织机构树
+  custRangeList: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
@@ -59,10 +62,13 @@ export default class MainPosition extends PureComponent {
     updatePosition: PropTypes.func.isRequired,
     employeeList: PropTypes.array.isRequired,
     positionList: PropTypes.array.isRequired,
+    // 组织机构树
+    custRangeList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
     super(props);
+    this.checkUserIsFiliale();
     const h = document.body.clientHeight;
     this.state = {
       height: `${h - 40}px`,
@@ -70,6 +76,13 @@ export default class MainPosition extends PureComponent {
       checkedEmployee: {},
       employeeId: '',
     };
+  }
+
+  componentWillReceiveProps({ custRangeList }) {
+    const oldCustRangeList = this.props;
+    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+      this.checkUserIsFiliale();
+    }
   }
 
   // 提交按钮
@@ -84,6 +97,32 @@ export default class MainPosition extends PureComponent {
       }).then(() => {
         message.success('提交成功');
       });
+    }
+  }
+
+  // 判断当前登录用户部门是否是分公司
+  @autobind
+  checkUserIsFiliale() {
+    const { custRangeList } = this.props;
+    const that = this;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+        Modal.warning({
+          title: '提示',
+          content: '您不是分公司人员，无权操作！',
+          onOk() {
+            that.handleCancel();
+          },
+        });
+      }
+    }
+  }
+
+  // 关闭 FSP tab 页
+  @autobind
+  handleCancel() {
+    if (env.isInFsp) {
+      closeRctTabById('FSP_MAIN_POSTN_MANAGE');
     }
   }
 

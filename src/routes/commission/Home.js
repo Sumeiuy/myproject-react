@@ -333,7 +333,7 @@ export default class CommissionHome extends PureComponent {
 
   // 查询佣金调整4个子类型的详情信息
   getDetail4Subtye(record) {
-    const { subType: st, business1, custType } = record;
+    const { subType: st, business1 } = record;
     const {
       getBatchCommissionDetail,
       getSubscribeDetail,
@@ -349,10 +349,10 @@ export default class CommissionHome extends PureComponent {
         getSingleDetail({ orderId: business1, loginuser });
         break;
       case comsubs.subscribe:
-        getSubscribeDetail({ orderId: business1, type: custType, loginuser });
+        getSubscribeDetail({ orderId: business1, loginuser });
         break;
       case comsubs.unsubscribe:
-        getUnSubscribeDetail({ orderId: business1, type: custType, loginuser });
+        getUnSubscribeDetail({ orderId: business1, loginuser });
         break;
       default:
         break;

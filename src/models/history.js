@@ -30,6 +30,7 @@ export default {
     operateData: {}, // 各种操作后，返回的数据集
     indicatorLib: {}, // 指标库
     rankData: {}, // 历史对比排名数据
+    initialData: {}, // 探测接口（有数据的最大时间点，是否显示汇报方式切换）
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -68,7 +69,7 @@ export default {
     },
 
     // 获取组织机构树
-    getCustRangeSuccess(state, action) {
+    getOrgTreeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
       if (resultData.level === '1') {
@@ -141,6 +142,7 @@ export default {
         operateData,
       };
     },
+
     // 历史对比排名
     getRankDataSuccess(state, action) {
       let { payload: { rankData } } = action;
@@ -152,23 +154,60 @@ export default {
         rankData,
       };
     },
+
+    // 探测接口
+    getInitialDataSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        initialData: resultData || {},
+      };
+    },
   },
   effects: {
+     // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
+    * getInitialData({ payload }, { call, put, select, take }) {
+      const response = yield call(api.getInitialData, payload);
+      yield put({
+        type: 'getInitialDataSuccess',
+        payload: response,
+      });
+      // 初始化的时是调组织机构数，还是调汇报机构树
+      const initialData = yield select(state => state.history.initialData);
+      const summaryTypeIsShow = initialData.summaryTypeIsShow;
+      // 汇总方式切换是否显示字段
+      let actionType = 'getCustRange';
+      if (summaryTypeIsShow) {
+        actionType = 'getReportTree';
+      }
+      yield put({
+        type: actionType,
+        payload: {},
+      });
+      // 让put同步调用结束
+      yield take(`${actionType}/@@end`);
+    },
+    // 组织机构树
+    * getCustRange({ payload }, { call, put }) {
+      const response = yield call(api.getCustRange, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
+      });
+    },
+    // 汇报机构树
+    * getReportTree({ payload }, { call, put }) {
+      const response = yield call(api.getReportTree, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
+      });
+    },
     // 加载页面，提前需要获取的数据
     * getInitial({ payload }, { call, put, select }) {
       // 组织机构树
       const custRange = yield select(state => state.history.custRange);
-      let firstCust;
-      if (custRange.length) {
-        firstCust = custRange[0];
-      } else {
-        const response = yield call(api.getCustRange, payload.custRang);
-        yield put({
-          type: 'getCustRangeSuccess',
-          response,
-        });
-        firstCust = response.resultData;
-      }
+      const firstCust = custRange[0];
       // 查询当前用户所能够看到的看板报表
       const allVisibleReports = yield call(api.getAllVisibleReports, {
         orgId: firstCust.id,

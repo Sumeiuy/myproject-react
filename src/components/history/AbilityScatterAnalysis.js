@@ -15,7 +15,7 @@ import {
   EXCEPT_CUST_TOUGU_TGJX_MAP,
   EXCEPT_TOUGU_JYYJ_MAP,
 } from '../../config/SpecialIndicators';
-import { optionsMap } from '../../config';
+import { optionsMap, constants } from '../../config';
 import report from '../../helper/page/report';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
@@ -30,6 +30,8 @@ const YI = '亿';
 const WAN = '万';
 // 按类别排序
 const sortByType = optionsMap.sortByType;
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
@@ -49,6 +51,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
     orgId: PropTypes.string,
+    summaryType: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -518,6 +521,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       contrastType,
       isLvIndicator,
       orgId,
+      summaryType,
     } = this.props;
 
     // 隐藏选项
@@ -532,6 +536,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,
     });
+
+    let sortByTypeArr = sortByType[boardType];
+    if (summaryType === hbgxSummaryType) {
+      sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
+    }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
     return (
@@ -572,7 +581,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
               getPopupContainer={this.getPopupContainer}
             >
               {
-                sortByType[boardType].map((item, index) => {
+                sortByTypeArr.map((item, index) => {
                   const sortByTypeIndex = index;
                   let optionClass = '';
                   // 按投顾所有级别均存在

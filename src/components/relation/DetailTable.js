@@ -58,7 +58,7 @@ const columnsTwo = [{
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.teamNum)} title={item}>
-      {item || '--'}
+      {item || '0'}
     </div>
   ),
 }, {
@@ -68,10 +68,11 @@ const columnsTwo = [{
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.adviserNum)} title={item}>
-      {item || '--'}
+      {item || '0'}
     </div>
   ),
 }];
+
 const columnsTree = [{
   title: '工号',
   key: 'login',

@@ -36,6 +36,7 @@ export default class PerformanceChartBoard extends PureComponent {
     custRange: PropTypes.array.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     orgId: PropTypes.string,
+    summaryType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -77,6 +78,7 @@ export default class PerformanceChartBoard extends PureComponent {
       collectOrderTypeSelect,
       boardType,
       orgId,
+      summaryType,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -104,6 +106,7 @@ export default class PerformanceChartBoard extends PureComponent {
           collectScopeSelect={collectScopeSelect}
           collectOrderTypeSelect={collectOrderTypeSelect}
           orgId={orgId}
+          summaryType={summaryType}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
