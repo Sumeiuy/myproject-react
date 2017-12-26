@@ -1,4 +1,5 @@
 /*
+ * @Description: 主职位界面
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:01:59
  * @Last Modified by: LiuJianShu
@@ -42,11 +43,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // 搜索员工列表
-  searchEmployee: fetchDataFunction(true, 'mainPosition/searchEmployee'),
+  searchEmployee: fetchDataFunction(true, 'mainPosition/searchEmployee', true),
   // 搜索员工职位列表
-  searchPosition: fetchDataFunction(true, 'mainPosition/searchPosition'),
+  searchPosition: fetchDataFunction(true, 'mainPosition/searchPosition', true),
   // 设置主职位
-  updatePosition: fetchDataFunction(true, 'mainPosition/updatePosition'),
+  updatePosition: fetchDataFunction(true, 'mainPosition/updatePosition', true),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -63,14 +64,6 @@ export default class MainPosition extends PureComponent {
   constructor(props) {
     super(props);
     const h = document.body.clientHeight;
-    // TODO-权限
-    // 权限：
-    // 拥有“HTSC 部门系统管理员”职责，
-    // 且登录人当前部门为分公司的员工才可操作；
-    // 若登录人有“HTSC 部门系统管理员”职责，
-    // 但所在部门不是分公司，
-    // 点击菜单时弹框提示“您不是分公司人员，无权操作！”，
-    // 点击确定后，页面关闭。
     this.state = {
       height: `${h - 40}px`,
       checkedRadio: -1,
@@ -110,10 +103,10 @@ export default class MainPosition extends PureComponent {
     const { searchPosition } = this.props;
     searchPosition({
       login: value.login,
-      integrationId: emp.getOrgId() || 'ZZ001041062',  // TODO，逻辑或后面为测试数据，需删掉
+      integrationId: emp.getOrgId(),
     }).then(() => {
       const { positionList } = this.props;
-      const checkedRadio = _.findIndex(positionList, ['primary', 'Y']);  // TODO， Y 需要改为 boolean
+      const checkedRadio = _.findIndex(positionList, ['primary', true]);
       this.setState({
         checkedRadio,
         employeeId: value.login,
