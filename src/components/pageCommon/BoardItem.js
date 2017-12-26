@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-26 17:00:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:30:40
+ * @Last Modified time: 2017-12-20 15:54:28
  */
 
 import React, { PureComponent } from 'react';
@@ -13,8 +13,8 @@ import _ from 'lodash';
 
 import selectHandlers from '../Edit/selectHelper';
 import styles from './BoardItem.less';
-import ImgTGJX from '../../../static/images/bg_tgjx.png';
-import ImgJYYJ from '../../../static/images/bg_jyyj.png';
+import ImgTGJX from './img/bg_tgjx.png';
+import ImgJYYJ from './img/bg_jyyj.png';
 import { optionsMap } from '../../config';
 
 const boardTypeMap = optionsMap.boardTypeMap;

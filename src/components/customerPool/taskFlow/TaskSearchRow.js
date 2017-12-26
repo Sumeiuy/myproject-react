@@ -182,17 +182,17 @@ export default class TaskSearchRow extends PureComponent {
         let newTitle = item.labelName;
         // debugger
         if (!_.isEmpty(condition)) {
-          newDesc = _.isEmpty(item.labelDesc) ? '--' : newDesc.replace(condition, `<span>${condition}</span>`);
-          newTitle = newTitle.replace(condition, `<span>${condition}</span>`);
+          newDesc = _.isEmpty(newDesc) ? '--' : newDesc.replace(condition, `<span>${condition}</span>`);
+          newTitle = _.isEmpty(newTitle) ? '--' : newTitle.replace(condition, `<span>${condition}</span>`);
         }
         console.log(newDesc);
         console.log(newTitle);
         // debugger
         return (
-          <div className={styles.divRows} key={item.labelName}>
+          <div className={styles.divRows} key={item.id || item.labelMapping}>
             <Radio
               value={item.id}
-              key={item.labelName}
+              key={item.tagNumId || item.labelMapping}
             >
               <span
                 className={styles.title}

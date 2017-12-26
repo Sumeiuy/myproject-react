@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-26 13:54:05
+ * @Last Modified time: 2017-12-26 14:25:27
  * 管理者视图详情
  */
 
@@ -77,6 +77,7 @@ export default class ManagerViewDetail extends PureComponent {
     super(props);
     this.state = {
       isShowCustDetailModal: false,
+      title: '已反馈客户',
     };
   }
 
@@ -84,8 +85,11 @@ export default class ManagerViewDetail extends PureComponent {
    * 预览客户明细
    */
   @autobind
-  handlePreview(pageNum, pageSize) {
-    const { previewCustDetail, currentId } = this.props;
+  handlePreview(params = {}) {
+    const { title, pageNum, pageSize } = params;
+    const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
+    const { orgName } = mngrMissionDetailInfo;
+
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
@@ -96,6 +100,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
+        title: title || `当前${orgName}有效客户总数`,
       });
     });
   }
@@ -183,7 +188,7 @@ export default class ManagerViewDetail extends PureComponent {
       countFlowFeedBack,
     } = this.props;
 
-    const { isShowCustDetailModal } = this.state;
+    const { isShowCustDetailModal, title } = this.state;
 
     const {
       missionId,
@@ -283,6 +288,7 @@ export default class ManagerViewDetail extends PureComponent {
                 ref={ref => (this.custDetailRef = ref)}
                 getCustDetailData={this.handlePreview}
                 data={custDetailResult}
+                title={title}
               />
             }
             modalStyle={{

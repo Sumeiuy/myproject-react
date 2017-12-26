@@ -79,6 +79,8 @@ app.model(require('./models/demote'));
 app.model(require('./models/filialeCustTransfer'));
 // 汇报关系树
 app.model(require('./models/relation'));
+// 任务反馈
+app.model(require('./models/taskFeedback'));
 
 // 4. Router
 app.router(routerConfig);

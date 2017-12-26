@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
-import imgSrc from '../../../static/images/noChart.png';
+import imgSrc from './img/noChart.png';
 import {
   EXCEPT_CUST_JYYJ_MAP,
   EXCEPT_CUST_TGJX_MAP,

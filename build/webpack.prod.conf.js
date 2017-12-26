@@ -144,25 +144,8 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
-        ignore: ['.*', 'img/*', 'font/iconfont/*', 'screenshot/**']
+        ignore: ['.*', 'font/iconfont/*']
       }
-    ]),
-    // 因为缓存策略不一致
-    // screenshot单独复制到dist/screenshot下
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static/screenshot/**'),
-        to: config.build.assetsRoot + '/screenshot',
-        ignore: ['*.html', '*.json'],
-        toType: 'dir',
-        flatten: true,
-        transform: function (content, path) {
-          if (path.slice(path.lastIndexOf('.') + 1) === 'css') {
-            return content.toString().replace(/\.\.\/img\//g, '');
-          }
-          return content;
-        }
-      },
     ]),
     new ScriptExtHtmlWebpackPlugin({
       async: 'app',
