@@ -3,7 +3,6 @@
  *  封装fsp系统中window方法
  * @author wangjunjun
  */
-import _ from 'lodash';
 import { data } from '../helper';
 
 function exec(method, ...args) {
@@ -24,13 +23,9 @@ function execOpenTab(method, ...args) {
 
 function execSwitchTab(tabId) {
   // 全局的data有溢出，这里不用try catch，作用域变了
-  if (!_.isEmpty(data)) {
-    if ('getChainPropertyFromObject' in data) {
-      const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
-      if (!_.isEmpty(activeReactTab)) {
-        activeReactTab($('#UTB'), { tabId });
-      }
-    }
+  if (data && data.getChainPropertyFromObject) {
+    const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
+    activeReactTab($('#UTB'), { tabId });
   }
 }
 
@@ -44,13 +39,9 @@ function closeTab(arg) {
 
 function removeTabMenu(tabId) {
   // 全局的data有溢出，这里不用try catch，作用域变了
-  if (!_.isEmpty(data)) {
-    if ('getChainPropertyFromObject' in data) {
-      const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
-      if (!_.isEmpty(removeTab)) {
-        removeTab($('#UTB'), { tabId });
-      }
-    }
+  if (data && data.getChainPropertyFromObject) {
+    const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
+    removeTab($('#UTB'), { tabId });
   }
 }
 
