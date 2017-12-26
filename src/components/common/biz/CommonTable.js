@@ -78,7 +78,11 @@ export default class CommonTable extends PureComponent {
                 />
               </span>
             );
-            newTitleList.unshift(operation.column);
+            if (operation.column.align === 'right') {
+              newTitleList.push(operation.column);
+            } else {
+              newTitleList.unshift(operation.column);
+            }
             break;
           case 'switch':
             operation.column.render = (text, record, index) => (
