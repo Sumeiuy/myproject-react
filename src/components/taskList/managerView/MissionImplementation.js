@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-25 17:04:38
+ * @Last Modified time: 2017-12-26 13:46:51
  * 任务实施简报
  */
 
@@ -120,11 +120,12 @@ export default class MissionImplementation extends PureComponent {
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
     if (!this.isAuthorize) {
-    //   this.setState({
-    //     createCustRange: [myCustomer],
-    //   });
+      //   this.setState({
+      //     createCustRange: [myCustomer],
+      //   });
       return;
     }
+
     // 只要不是我的客户，都展开组织机构树
     // 用户职位是经总
     if (posOrgId === (custRange[0] || {}).id) {
@@ -184,20 +185,20 @@ export default class MissionImplementation extends PureComponent {
     // 当url中由 orgId 则使用orgId
     // 有权限时默认取所在岗位的orgId
     // 无权限取 MAIN_MAGEGER_ID
-    // const curOrgId = MAIN_MAGEGER_ID;
+    let curOrgId = MAIN_MAGEGER_ID;
 
-    // if (orgId) {
-    //   curOrgId = orgId;
-    // } else if (!this.isAuthorize) {
-    //   curOrgId = MAIN_MAGEGER_ID;
-    // }
+    if (this.orgId) {
+      curOrgId = this.orgId;
+    } else if (!this.isAuthorize) {
+      curOrgId = MAIN_MAGEGER_ID;
+    }
     const extraProps = {
       custRange: createCustRange,
       replace,
       collectCustRange: this.collectCustRange,
       expandAll,
       location,
-      orgId: MAIN_MAGEGER_ID,
+      orgId: curOrgId,
       isDown,
       iconType: 'juxing23',
     };

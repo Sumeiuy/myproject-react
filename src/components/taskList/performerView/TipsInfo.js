@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-12 14:56:58
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-12 14:58:46
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-12-26 10:22:09
  */
 
 import React, { PureComponent } from 'react';
@@ -26,7 +26,7 @@ export default class TipsInfo extends PureComponent {
     position: 'bottomLeft',
     wrapperClass: '',
     overlayStyle: null,
-    getPopupContainer: () => { },
+    getPopupContainer: () => document.body,
   };
 
   constructor(props) {

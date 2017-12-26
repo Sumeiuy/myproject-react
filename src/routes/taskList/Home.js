@@ -212,7 +212,7 @@ export default class PerformerView extends PureComponent {
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
     countFlowFeedBack: PropTypes.func.isRequired,
-    custFeedback: PropTypes.array.isRequired,
+    custFeedback: PropTypes.array,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
     missionImplementationDetail: PropTypes.object.isRequired,
@@ -225,6 +225,7 @@ export default class PerformerView extends PureComponent {
     filesList: [],
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
+    custFeedback: EMPTY_LIST,
   };
 
   constructor(props) {
