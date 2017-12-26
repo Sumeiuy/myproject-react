@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-26 18:41:59
+ * @Last Modified time: 2017-12-26 18:59:57
  * 管理者视图详情
  */
 
@@ -20,7 +20,8 @@ import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { helper, dispatchTabPane } from '../../../utils';
+import { helper, dispatchTabPane, fspGlobal } from '../../../utils';
+import { env } from '../../../config';
 import { url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
@@ -111,9 +112,9 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleCloseModal() {
-    // if (env.isInFsp) {
-    //   fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
-    // }
+    if (env.isInFsp) {
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+    }
     this.setState({
       isShowCustDetailModal: false,
     });

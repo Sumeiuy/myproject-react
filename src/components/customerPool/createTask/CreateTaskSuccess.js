@@ -70,7 +70,7 @@ export default class CreateTaskSuccess extends PureComponent {
   goToHome() {
     this.clearTimeInterval();
     const { push, location: { state } } = this.props;
-    const url = 'customerPool';
+    const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
