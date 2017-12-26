@@ -81,7 +81,7 @@ const ListItem = (props) => {
         </div>
         { showAnswerOrDescription() }
       </div>
-      <div className={styles.actionZoom}>
+      <div className={styles.actionZone}>
         <span className={styles.button} onClick={handleDelete}>
           <Icon type="shanchu" /> 删除
         </span>
