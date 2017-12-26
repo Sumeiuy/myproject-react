@@ -22,7 +22,7 @@ const resultData = {
   allFeedback: {
     serviceAllNum: '1150',
     aFeedback: '1150',
-    aFeedbackPer: 100,
+    aFeedbackPer: '100%',
     allTaskFeedbackDes: '所有问题反馈结果',
   },
   radioFeedback: [
