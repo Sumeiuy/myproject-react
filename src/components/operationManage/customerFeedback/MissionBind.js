@@ -4,7 +4,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-25 21:01:26
+ * @Last Modified time: 2017-12-26 11:10:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -40,6 +40,7 @@ const TAB_LIST = [
 @withRouter
 export default class MissionBind extends PureComponent {
   static propTypes = {
+    replace: PropTypes.func.isRequired,
     // 获取任务列表
     getMissionList: PropTypes.func.isRequired,
     missionData: PropTypes.object.isRequired,
@@ -85,13 +86,27 @@ export default class MissionBind extends PureComponent {
   // 查询任务列表
   @autobind
   queryMissionList(type = 1, pageNum = 1, pageSize = 20) {
-    const { getMissionList } = this.props;
+    const {
+      getMissionList,
+      replace,
+      location: { pathname, query, },
+    } = this.props;
     const params = {
       type,
       pageNum,
       pageSize,
     };
-    getMissionList(params);
+    getMissionList(params).then(()=> {
+      const { missionData } = this.props;
+      const missionPage = missionData.page;
+      replace({
+        pathname,
+        query: {
+          pageNum: missionPage.pageNum,
+          pageSize: missionPage.pageSize,
+        },
+      });
+    })
   }
 
   // 查询客户反馈列表

@@ -4,12 +4,13 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-25 20:57:57
+ * @Last Modified time: 2017-12-26 11:02:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
+import { routerRedux } from 'dva/router';
 import { message, Button, Modal, Tabs } from 'antd';
 import _ from 'lodash';
 
@@ -53,6 +54,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  replace: routerRedux.replace,
   // 获取任务列表
   getMissionList: fetchDataFunction(true, 'customerFeedback/getMissionList'),
   // 删除任务下所关联客户反馈选项
@@ -70,6 +72,7 @@ const mapDispatchToProps = {
 @Barable
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
+    replace: PropTypes.func.isRequired,
     // 获取任务列表
     getMissionList: PropTypes.func.isRequired,
     missionData: PropTypes.object.isRequired,
@@ -109,6 +112,7 @@ export default class CustomerFeedback extends PureComponent {
       delCustomerFeedback,
       addCustomerFeedback,
       emptyMissionData,
+      replace,
      } = this.props;
     const {
       activeKey,
@@ -121,6 +125,7 @@ export default class CustomerFeedback extends PureComponent {
       delCustomerFeedback,
       addCustomerFeedback,
       emptyMissionData,
+      replace,
     }
     const missionBindComponent = <MissionBind {...missionBindProps} />;
     switch (activeKey) {
