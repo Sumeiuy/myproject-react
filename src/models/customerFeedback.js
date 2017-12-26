@@ -3,33 +3,40 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-21 14:53:14
+ * @Last Modified time: 2017-12-26 09:18:46
  */
 
 import { customerFeedback as api } from '../api';
 
-// const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+// const EMPTY_LIST = [];
 
 export default {
   namespace: 'customerFeedback',
   state: {
-    missionList: EMPTY_LIST, // 任务列表
-    feedbackList: EMPTY_LIST, // 客户反馈列表
+    missionData: EMPTY_OBJECT, // 任务列表
+    feedbackData: EMPTY_OBJECT, // 客户反馈列表
   },
   reducers: {
     getMissionListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        missionList: resultData,
+        missionData: resultData,
       };
     },
-    queryFeedbackListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+    getFeedbackListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        feedbackList: resultData,
+        feedbackData: resultData,
+      };
+    },
+    emptyMissionDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        missionData: payload,
       };
     },
   },
@@ -51,10 +58,10 @@ export default {
       yield call(api.addCustomerFeedback, payload);
     },
     // 查询客户反馈列表
-    * queryFeedbackList({ payload }, { call, put }) {
-      const response = yield call(api.queryFeedbackList, payload);
+    * getFeedbackList({ payload }, { call, put }) {
+      const response = yield call(api.getFeedbackList, payload);
       yield put({
-        type: 'queryFeedbackListSuccess',
+        type: 'getFeedbackListSuccess',
         payload: response,
       });
     },
@@ -66,8 +73,14 @@ export default {
     * addFeedback({ payload }, { call }) {
       yield call(api.addFeedback, payload);
     },
+    // 清空任务列表数据
+    * emptyMissionData({ payload }, { put }) {
+      yield put({
+        type: 'emptyMissionDataSuccess',
+        payload: EMPTY_OBJECT,
+      });
+    },
   },
   subscriptions: {
-
   },
 };

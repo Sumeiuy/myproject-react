@@ -4,7 +4,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-22 09:02:40
+ * @Last Modified time: 2017-12-25 20:57:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -46,13 +46,23 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  // 客户列表
-  custList: state.filialeCustTransfer.custList,
+  // 任务列表
+  missionData: state.customerFeedback.missionData,
+  // 客户反馈列表
+  feedbackData: state.customerFeedback.feedbackData,
 });
 
 const mapDispatchToProps = {
-  // 获取客户列表
-  getCustList: fetchDataFunction(false, 'filialeCustTransfer/getCustList'),
+  // 获取任务列表
+  getMissionList: fetchDataFunction(true, 'customerFeedback/getMissionList'),
+  // 删除任务下所关联客户反馈选项
+  delCustomerFeedback: fetchDataFunction(false, 'customerFeedback/delCustomerFeedback'),
+  // 添加任务下所关联客户反馈选项
+  addCustomerFeedback: fetchDataFunction(false, 'customerFeedback/addCustomerFeedback'),
+  // 查询客户反馈列表
+  getFeedbackList: fetchDataFunction(true, 'customerFeedback/getFeedbackList'),
+  // 清空任务列表数据
+  emptyMissionData: fetchDataFunction(true, 'customerFeedback/emptyMissionData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -60,8 +70,16 @@ const mapDispatchToProps = {
 @Barable
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
-    // 获取客户列表
-    getCustList: PropTypes.func.isRequired,
+    // 获取任务列表
+    getMissionList: PropTypes.func.isRequired,
+    missionData: PropTypes.object.isRequired,
+    // 删除任务下所关联客户反馈选项
+    delCustomerFeedback: PropTypes.func.isRequired,
+    // 添加任务下所关联客户反馈选项
+    addCustomerFeedback: PropTypes.func.isRequired,
+    // 查询客户反馈列表
+    getFeedbackList: PropTypes.func.isRequired,
+    feedbackData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -73,7 +91,7 @@ export default class CustomerFeedback extends PureComponent {
       activeKey: '1',
     };
   }
-
+  
   @autobind
   handleChangeTab(key) {
     this.setState({
@@ -84,17 +102,36 @@ export default class CustomerFeedback extends PureComponent {
   render() {
     let componentNode = null;
     const {
+      getMissionList,
+      missionData,
+      getFeedbackList,
+      feedbackData,
+      delCustomerFeedback,
+      addCustomerFeedback,
+      emptyMissionData,
+     } = this.props;
+    const {
       activeKey,
     } = this.state;
+    const missionBindProps = {
+      getMissionList,
+      missionData,
+      getFeedbackList,
+      feedbackData,
+      delCustomerFeedback,
+      addCustomerFeedback,
+      emptyMissionData,
+    }
+    const missionBindComponent = <MissionBind {...missionBindProps} />;
     switch (activeKey) {
       case '1':
-        componentNode = <MissionBind />;
+        componentNode = missionBindComponent;
         break;
       case '2':
         componentNode = '222';
         break;
       default:
-        componentNode = <MissionBind />;
+        componentNode = missionBindComponent;
         break;
     }
     return (
