@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:33:56
+ * @Last Modified time: 2017-12-20 16:03:49
  */
 
 import React, { PureComponent } from 'react';
@@ -17,8 +17,8 @@ import { dom, emp } from '../../helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
-import ImgAdd from '../../../static/images/bg_add.png';
-import ImgTGJX from '../../../static/images/bg_tgjx.png';
+import ImgAdd from './img/bg_add.png';
+import ImgTGJX from './img/bg_tgjx.png';
 import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 

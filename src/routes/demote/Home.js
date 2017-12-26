@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-14 17:33:06
+ * @Last Modified time: 2017-12-25 16:26:08
  */
 
 import React, { PureComponent } from 'react';
@@ -65,10 +65,7 @@ export default class Demote extends PureComponent {
 
   componentDidMount() {
     const { getCustList } = this.props;
-    const payload = {
-      time: '20180101', // TODO ,测试数据，等删除
-    };
-    getCustList(payload);
+    getCustList({});
     // 监听window.onResize事件
     this.registerWindowResize();
     this.setContentHeight();
@@ -111,7 +108,7 @@ export default class Demote extends PureComponent {
     const payload = {
       cust: result,
       notifiId,
-      time: '20180101', // TODO ,测试数据，等删除
+      time: data[0].time,
     };
     updateCust(payload).then(() => {
       message.success('操作成功');

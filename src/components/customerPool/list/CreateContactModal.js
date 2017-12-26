@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-// import classnames from 'classnames';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
@@ -16,7 +15,6 @@ import { check } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 
 import styles from './createContactModal.less';
-// import Phone from '../../../../static/images/phone.png';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
