@@ -141,7 +141,6 @@ export default class SelectLabelCust extends PureComponent {
       visible,
       isHasAuthorize,
     } = this.props;
-    console.log(circlePeopleData);
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
