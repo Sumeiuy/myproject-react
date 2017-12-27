@@ -742,6 +742,7 @@ export default class HistoryHome extends PureComponent {
               saveIndcatorToHome={this.saveIndcatorToHome}
               changeCore={this.changeCore}
               level={level}
+              summaryType={summaryType}
             />
           </div>
           <div className={styles.indicatorAnalyse}>
