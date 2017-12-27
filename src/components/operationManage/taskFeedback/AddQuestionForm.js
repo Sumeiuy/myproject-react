@@ -18,6 +18,9 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const TextArea = Input.TextArea;
 
+// 主观题对应的code码
+const subjectiveType = '3';
+
 // 表单的布局
 const formLayout = 'horizontal';
 const formItemLayout = {
@@ -54,8 +57,6 @@ const answerRules = [
   { max: 30, message: '答案长度不能超过30' },
 ];
 
-let uuid = 0;
-
 @Form.create()
 export default class AddQuestionForm extends PureComponent {
   static propTypes = {
@@ -72,6 +73,7 @@ export default class AddQuestionForm extends PureComponent {
     this.state = {
       quesDescVisible: false,
     };
+    this.uuid = 0;
   }
 
   componentDidMount() {
@@ -86,8 +88,8 @@ export default class AddQuestionForm extends PureComponent {
     const { form } = this.props;
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
-    const nextKeys = keys.concat(uuid);
-    uuid++;
+    const nextKeys = keys.concat(this.uuid);
+    this.uuid++;
     // can use data-binding to set
     // important! notify form to detect changes
     form.setFieldsValue({
@@ -113,12 +115,12 @@ export default class AddQuestionForm extends PureComponent {
 
   /**
    * 问题类型改变
-   * quesTypeCode = 2 时主观题描述， 0、 1显示选择题答案
+   * quesTypeCode = 3 时主观题描述， 1、 2显示选择题答案
    */
   @autobind
   handleSelectChange(v) {
     this.setState({
-      quesDescVisible: +v === 2,
+      quesDescVisible: v === subjectiveType,
     });
   }
 
