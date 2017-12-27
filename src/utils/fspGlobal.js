@@ -22,11 +22,10 @@ function execOpenTab(method, ...args) {
 }
 
 function execSwitchTab(tabId) {
-  try {
+  // try catch里面data找不到
+  if (data && data.getChainPropertyFromObject) {
     const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
     activeReactTab($('#UTB'), { tabId });
-  } catch (e) {
-    console.log(e);
   }
 }
 
@@ -39,11 +38,10 @@ function closeTab(arg) {
 }
 
 function removeTabMenu(tabId) {
-  try {
+  // try catch里面data找不到
+  if (data && data.getChainPropertyFromObject) {
     const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
     removeTab($('#UTB'), { tabId });
-  } catch (e) {
-    console.log(e);
   }
 }
 
