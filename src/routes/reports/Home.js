@@ -350,7 +350,7 @@ export default class ReportHome extends PureComponent {
   // 切换SummaryType时候，需要将数据全部恢复到默认值
   @autobind
   updateSummaryTypeState(queryType) {
-    const { location: { query: { boardId } }, custRange, initialData } = this.props;
+    const { boardId, custRange, initialData } = this.props;
     const maxDataDt = initialData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
     let newscope = (Number(custRange[0].level) + 1);
