@@ -12,6 +12,9 @@ import Icon from '../../common/Icon';
 
 import styles from './questionList.less';
 
+// 主观题对应的code码
+const subjectiveType = '3';
+
 const ListItem = (props) => {
   const {
     item,
@@ -47,10 +50,10 @@ const ListItem = (props) => {
 
   /**
    * 根据题目的类型，生成选择题和主观题的答案或者描述
-   * quesTypeCode = 2 时显示主观题描述， 0、 1显示选择题答案
+   * quesTypeCode = 3 时显示主观题描述， 1、2显示选择题答案
    */
   const showAnswerOrDescription = () => {
-    if (+quesTypeCode === 2) {
+    if (quesTypeCode === subjectiveType) {
       return (
         <div className={`${styles.row} ${styles.mt20}`}>
           <span className={styles.label}>描述：</span>

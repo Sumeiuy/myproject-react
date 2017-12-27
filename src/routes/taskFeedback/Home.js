@@ -151,14 +151,17 @@ export default class TaskFeedback extends PureComponent {
         <QuestionList
           {...this.props}
         />
-        <AddQuestionModal
-          title="新增任务反馈问题"
-          visible={modalVisible}
-          closable
-          maskClosable={false}
-          onOk={values => this.submitOneQuestion(values)}
-          onCancel={() => this.setModalVisible(false)}
-        />
+        {
+          modalVisible ?
+            <AddQuestionModal
+              title="新增任务反馈问题"
+              visible={modalVisible}
+              closable
+              maskClosable={false}
+              onOk={values => this.submitOneQuestion(values)}
+              onCancel={() => this.setModalVisible(false)}
+            /> : null
+        }
       </div>
     );
   }
