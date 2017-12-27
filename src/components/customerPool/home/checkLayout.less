@@ -22,16 +22,23 @@
         align-items: center;
         span:first-child {
           display: inline-block;
-          max-width: 53px;
+          max-width: 90%;
           overflow: hidden;
-          text-overflow: ellipsis;
+          text-overflow: clip;
           white-space: nowrap;
+          font-size: 20px;
+          width: 90%;
+          & > span:last-child {
+            font-size: 15px;
+            transform: scale(0.857, 0.857);
+            vertical-align: middle;
+          }
         }
-        span:last-child {
-          font-size: 15px;
-          display: inline-block;
-          max-width: 50%;
-        }
+        // span:last-child {
+        //   font-size: 15px;
+        //   display: inline-block;
+        //   max-width: 50%;
+        // }
       }
     }
   }
