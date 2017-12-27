@@ -439,6 +439,7 @@ export default class PerformerView extends PureComponent {
     } = location;
     const { typeCode, typeName } = this.state;
     let detailComponent = null;
+    const { missionType = [] } = dict || {};
     switch (st) {
       case INITIATOR:
         detailComponent = (
@@ -500,6 +501,7 @@ export default class PerformerView extends PureComponent {
             clearCreateTaskData={clearCreateTaskData}
             push={push}
             missionType={typeCode}
+            missionTypeDict={missionType}
           />
         );
         break;
