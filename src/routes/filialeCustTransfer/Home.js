@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-12-26 15:28:23
+ * @Last Modified time: 2017-12-26 18:07:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -109,7 +109,7 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   componentWillReceiveProps({ custRangeList }) {
-    const { oldCustRangeList } = this.props;
+    const oldCustRangeList = this.props.custRangeList;
     if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
       this.checkUserIsFiliale();
     }
