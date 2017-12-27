@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 15:52:14
+ * @Last Modified time: 2017-12-26 17:43:40
  * 管理者视图详情
  */
 
@@ -293,6 +293,7 @@ export default class ManagerViewDetail extends PureComponent {
                 getCustDetailData={this.handlePreview}
                 data={custDetailResult}
                 title={title}
+                onClose={this.handleCloseModal}
               />
             }
             modalStyle={{
