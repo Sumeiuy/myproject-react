@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 18:10:09
+ * @Last Modified time: 2017-12-27 13:23:37
  */
 
 import React, { PureComponent } from 'react';
@@ -13,9 +13,8 @@ import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { permission, fspGlobal } from '../../utils';
-import { emp } from '../../helper';
+import { emp, env } from '../../helper';
 import Clickable from '../../components/common/Clickable';
-import { fspContainer } from '../../config';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -404,7 +403,7 @@ export default class TaskFlow extends PureComponent {
    */
   @autobind
   handleCloseTab() {
-    if (document.querySelector(fspContainer.container)) {
+    if (env.isInFsp()) {
       fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
     } else {
       console.log('close tab');
@@ -416,8 +415,8 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleRemoveTab() {
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.closeTabMenu('FSP_ST_TAB_MOT_SELFBUILD_ADD');
+    if (env.isInFsp()) {
+      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
     }
   }
 
@@ -535,7 +534,6 @@ export default class TaskFlow extends PureComponent {
           push={push}
           location={location}
           onCloseTab={this.handleCloseTab}
-          onRemoveTab={this.handleRemoveTab}
         /> :
         <div className={styles.taskFlowContainer}>
           <Steps current={current} className={styles.stepsSection}>
