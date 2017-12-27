@@ -10,7 +10,6 @@ import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
 import imgSrc from '../../../../static/images/createTask_success.png';
-import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
@@ -21,13 +20,11 @@ export default class CreateTaskSuccess extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func,
-    onRemoveTab: PropTypes.func,
   }
 
   static defaultProps = {
     successType: false,
-    clearSubmitTaskFlowResult: () => {},
-    onRemoveTab: null,
+    clearSubmitTaskFlowResult: () => { },
   }
 
   constructor(props) {
@@ -69,14 +66,9 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { onCloseTab, onRemoveTab, push, location: { state, query } } = this.props;
+    const { onCloseTab, push, location: { state, query } } = this.props;
     if (document.querySelector(fspContainer.container)) {
-      if(typeof onRemoveTab === 'function') {
-        onRemoveTab();
-        fspGlobal.switchFspTab('tab-home');
-      } else {
-        onCloseTab();
-      }
+      onCloseTab();
     } else {
       push({
         pathname: '/customerPool',
