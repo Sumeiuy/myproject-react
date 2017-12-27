@@ -5,6 +5,11 @@
  */
 import _ from 'lodash';
 
+const WAN_YUAN = '万元';
+const YI_YUAN = '亿元';
+const YUAN = '元';
+const WAN_YI = '万亿';
+
 function padFixedMoney(m, method) {
   const money = Math.abs(m);
   let value = 0;
@@ -95,6 +100,22 @@ const FixNumber = {
     } else {
       newUnit = '元';
       newItem = FixNumber.toFixedDecimal(newItem);
+    }
+
+    // 对于太大的数字再做特殊处理，这样页面上能展示的下，不然展示不下
+    // 譬如5035.34万转换成0.50亿
+    if (String(newItem).split('.')[0].length >= 4) {
+      newItem = FixNumber.toFixedDecimal(newItem / 10000);
+      // 将亿元转换成万亿
+      if (newUnit.indexOf(YI_YUAN) !== -1) {
+        newUnit = WAN_YI;
+      } else if (newUnit.indexOf(WAN_YUAN) !== -1) {
+        // 将万元转换成亿元
+        newUnit = YI_YUAN;
+      } else if (newUnit.indexOf(YUAN) !== -1) {
+        // 将元转成万元
+        newUnit = WAN_YUAN;
+      }
     }
 
     // 保留符号
