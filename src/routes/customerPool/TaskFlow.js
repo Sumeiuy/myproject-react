@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 17:04:55
+ * @Last Modified time: 2017-12-27 14:01:16
  */
 
 import React, { PureComponent } from 'react';
@@ -530,7 +530,6 @@ export default class TaskFlow extends PureComponent {
           push={push}
           location={location}
           onCloseTab={this.handleCloseTab}
-          onRemoveTab={this.handleRemoveTab}
         /> :
         <div className={styles.taskFlowContainer}>
           <Steps current={current} className={styles.stepsSection}>
