@@ -1,21 +1,18 @@
-/* eslint-disable */
 /*
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-25 20:22:35
+ * @Last Modified time: 2017-12-27 15:00:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
 import { Input } from 'antd';
-import _ from 'lodash';
+// import _ from 'lodash';
 
-import withRouter from '../../../decorators/withRouter';
 import CommonTable from '../../../components/common/biz/CommonTable';
-import { seibelConfig } from '../../../config'
+import { seibelConfig } from '../../../config';
 
 import styles from './feedbackAdd.less';
 
@@ -24,7 +21,6 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const { customerFeedback: { parentTitleList, childTitleList } } = seibelConfig;
 
-@withRouter
 export default class MissionBind extends PureComponent {
   static propTypes = {
     // 获取客户反馈列表
@@ -44,9 +40,22 @@ export default class MissionBind extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { queryFeedbackList } = this.props;
+    queryFeedbackList();
+  }
+
+  // 向父组件提供数据
+  @autobind
+  getData() {
+    const { currentFeedback } = this.state;
+    return currentFeedback;
+  }
+
+  // 查询客户反馈
   @autobind
   handleSearchFeedback(keyword) {
-    console.log(keyword)
+    console.log(keyword);
     const { queryFeedbackList } = this.props;
     queryFeedbackList(keyword);
   }
@@ -55,29 +64,24 @@ export default class MissionBind extends PureComponent {
   handleChangeKeyword(e) {
     this.setState({
       keyword: e.target.value,
-    })
+    });
   }
 
+  // 选中一级客户反馈
   @autobind
   handleSelectRow(currentFeedback) {
     console.log(currentFeedback);
     this.setState({
       currentFeedback,
-    })
+    });
   }
 
   @autobind
-  handlePageChange(v) {
-    console.log(v);
+  handlePageChange(value) {
+    console.log(value);
     const { keyword } = this.state;
     const { queryFeedbackList } = this.props;
-    queryFeedbackList(keyword, v);
-  }
-
-  @autobind
-  getData() {
-    const { currentFeedback } = this.state;
-    return currentFeedback;
+    queryFeedbackList(keyword, value);
   }
 
   render() {
@@ -86,7 +90,7 @@ export default class MissionBind extends PureComponent {
       keyword,
     } = this.state;
     const {
-      feedbackData
+      feedbackData,
     } = this.props;
     const feedbackDataPage = feedbackData.page || EMPTY_OBJECT;
     const feedbackList = feedbackData.feedbackList || EMPTY_LIST;
@@ -97,7 +101,7 @@ export default class MissionBind extends PureComponent {
       pageSize: Number(feedbackDataPage.pageSize),
       current: Number(feedbackDataPage.pageNum),
       total: Number(feedbackDataPage.totalCount),
-    }
+    };
 
     return (
       <div className={styles.feedbackAddWapper}>
@@ -105,23 +109,23 @@ export default class MissionBind extends PureComponent {
           <Search
             onSearch={this.handleSearchFeedback}
             onChange={this.handleChangeKeyword}
-            style={{width: 320}}
+            style={{ width: 320 }}
             value={keyword}
           />
         </div>
         <div className={styles.tableBox}>
           <div className={styles.leftTable}>
-            <CommonTable 
+            <CommonTable
               titleList={parentTitleList}
               data={feedbackList}
               pagination={pagination}
-              scroll={{ y: 240 }} 
+              scroll={{ y: 240 }}
               onRowClick={this.handleSelectRow}
-              rowClassName={(record, index)=>record.id === currentFeedback.id?'current':''}
+              rowClassName={record => (record.id === currentFeedback.id ? 'current' : '')}
             />
           </div>
           <div className={styles.rightTable}>
-            <CommonTable 
+            <CommonTable
               titleList={childTitleList}
               data={childList}
               scroll={{ y: 240 }}
@@ -132,4 +136,3 @@ export default class MissionBind extends PureComponent {
     );
   }
 }
-/* eslint-disable */
