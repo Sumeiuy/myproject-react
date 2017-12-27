@@ -2,8 +2,8 @@
  * @Description: 主职位界面
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:01:59
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-25 10:38:44
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-12-26 18:07:37
  */
 
 import React, { PureComponent } from 'react';
@@ -79,7 +79,7 @@ export default class MainPosition extends PureComponent {
   }
 
   componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props;
+    const oldCustRangeList = this.props.custRangeList;
     if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
       this.checkUserIsFiliale();
     }
