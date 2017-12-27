@@ -18,7 +18,6 @@ function renderItem(data, title, itemStyle = null) {
     <div className={classnames(styles.check, itemStyle)}>
       <div className={styles.count}>
         <span title={data.item}>{data.item}<span>{data.unit}</span></span>
-        {/* <span title={data.unit}>{data.unit}</span> */}
       </div>
       <div className={styles.title}>{title}</div>
     </div>
