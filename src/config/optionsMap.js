@@ -270,7 +270,7 @@ const optionsMap = {
       level3: '财富中心',
       level4: '团队',
     },
-  }
+  },
 };
 
 export default optionsMap;
