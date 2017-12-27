@@ -2,7 +2,7 @@
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-22 15:14:11
+ * @Last Modified time: 2017-12-27 14:45:48
 */
 
 const optionsMap = {
@@ -256,6 +256,21 @@ const optionsMap = {
       name: '绩效视图汇总',
     },
   ],
+  // 雷达图字典
+  charRadarOrgClass: {
+    // 雷达图组织机构对应字典
+    custRangeOrgClass: {
+      level2: '分公司',
+      level3: '财富中心',
+      level4: '营业部',
+    },
+    // 雷达图汇报关系对应字典
+    reportOrgClass: {
+      level2: '分公司',
+      level3: '财富中心',
+      level4: '团队',
+    },
+  }
 };
 
 export default optionsMap;
