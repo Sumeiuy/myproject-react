@@ -13,28 +13,27 @@ import classnames from 'classnames';
 
 import styles from './checkLayout.less';
 
-function CheckLayout({ dataSource }) {
+function renderItem(data, title, itemStyle = null) {
+  return (
+    <div className={classnames(styles.check, itemStyle)}>
+      <div className={styles.count}>
+        <span title={data.item}>{data.item}<span>{data.unit}</span></span>
+      </div>
+      <div className={styles.title}>{title}</div>
+    </div>
+  );
+}
+
+function CheckLayout({ dataSource = [] }) {
   return (
     <div className={styles.container}>
       <div className={classnames(styles.content, styles.left)}>
-        <div className={classnames(styles.check, styles.bottomBorder)}>
-          <div className={styles.count}>{dataSource[0] || '--'}</div>
-          <div className={styles.title}>{'净新增客户资产'}</div>
-        </div>
-        <div className={classnames(styles.check)}>
-          <div className={styles.count}>{dataSource[1] || '--'}</div>
-          <div className={styles.title}>{'累计基础交易量'}</div>
-        </div>
+        {renderItem(dataSource[0], '净新增客户资产', styles.bottomBorder)}
+        {renderItem(dataSource[1], '累计基础交易量')}
       </div>
       <div className={classnames(styles.content, styles.right)}>
-        <div className={classnames(styles.check, styles.bottomBorder)}>
-          <div className={styles.count}>{dataSource[2] || '--'}</div>
-          <div className={styles.title}>{'累计综合交易量'}</div>
-        </div>
-        <div className={classnames(styles.check)}>
-          <div className={styles.count}>{dataSource[3] || '--'}</div>
-          <div className={styles.title}>{'股基累计净佣金'}</div>
-        </div>
+        {renderItem(dataSource[2], '累计综合交易量', styles.bottomBorder)}
+        {renderItem(dataSource[3], '股基累计净佣金')}
       </div>
     </div>
   );

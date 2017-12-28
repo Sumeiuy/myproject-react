@@ -115,6 +115,7 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    toDetailAuthority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -472,6 +473,7 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
+      toDetailAuthority,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -578,6 +580,7 @@ export default class CustomerLists extends PureComponent {
               {
                 custList.map(
                   item => <CustomerRow
+                    empInfo={empInfo}
                     handleCheck={handleCheck}
                     mainServiceManager={this.mainServiceManager}
                     authority={authority}
@@ -602,6 +605,7 @@ export default class CustomerLists extends PureComponent {
                     condition={condition}
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
+                    toDetailAuthority={toDetailAuthority}
                   />,
                 )
               }

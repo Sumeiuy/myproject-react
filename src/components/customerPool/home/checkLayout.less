@@ -1,6 +1,6 @@
 @import "../../../css/variable.less";
 .container {
-  padding: 23.5px 14px;
+  padding: 23.5px 11px;
   display: -webkit-flex; /* Safari */
   display: flex;
   .content {
@@ -13,6 +13,32 @@
     .check:last-child {
       .count {
         margin-top: 14px;
+      }
+    }
+    .check {
+      .count {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        & > span:first-child {
+          display: inline-block;
+          max-width: 92%;
+          overflow: hidden;
+          text-overflow: clip;
+          white-space: nowrap;
+          font-size: 20px;
+          width: 100%;
+          & > span:last-child {
+            font-size: 15px;
+            transform: scale(0.857, 0.857);
+            vertical-align: middle;
+          }
+        }
+        // span:last-child {
+        //   font-size: 15px;
+        //   display: inline-block;
+        //   max-width: 50%;
+        // }
       }
     }
   }

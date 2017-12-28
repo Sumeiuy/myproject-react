@@ -27,6 +27,7 @@ export default class ScatterAnalysis extends PureComponent {
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
     orgId: PropTypes.string,
+    summaryType: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -50,6 +51,7 @@ export default class ScatterAnalysis extends PureComponent {
       currentSelectIndicatorKey,
       isCommissionRate,
       orgId,
+      summaryType,
     } = this.props;
 
     return (
@@ -75,6 +77,7 @@ export default class ScatterAnalysis extends PureComponent {
                 left: '-65px',
               }}
               orgId={orgId}
+              summaryType={summaryType}
             />
           </Col>
           {
@@ -105,6 +108,7 @@ export default class ScatterAnalysis extends PureComponent {
                     left: '-65px',
                   }}
                   orgId={orgId}
+                  summaryType={summaryType}
                 />
               </Col>
           }

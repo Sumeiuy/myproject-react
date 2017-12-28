@@ -274,14 +274,14 @@ export default class PerformanceIndicators extends PureComponent {
         nameArray.push(item.name);
       },
     );
-    const { newUnit, items } = getProductSale({ productSaleData: valueArray, nameArray });
+    const finalData = getProductSale({ productSaleData: valueArray, nameArray });
     const icon = param.key === 'chanpinxiaoshou' ? 'chanpinxiaoshou' : 'shouru';
-    const headLine = { icon, title: `${param.headLine}（${newUnit}）` };
+    const headLine = { icon, title: param.headLine };
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <ProgressList dataSource={items} key={param.key} />
+            <ProgressList dataSource={finalData} key={param.key} type={'productSale'} />
           </IfEmpty>
         </RectFrame>
       </Col>

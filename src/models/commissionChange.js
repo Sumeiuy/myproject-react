@@ -460,14 +460,8 @@ export default {
     // 驳回后修改查询咨询订阅详情数据
     * getSubscribeDetailToChange({ payload }, { call, put, select }) {
       const { empInfo } = yield select(state => state.app.empInfo);
-      const { flowId } = payload;
       const { postnId, occDivnNum, empNum } = empInfo;
-      const detailRes = yield call(api.queryConsultDetail,
-        {
-          action: 'query',
-          operationType: 'subscribe',
-          flowId,
-        });
+      const detailRes = yield call(api.queryConsultDetail, payload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
@@ -499,14 +493,8 @@ export default {
     // 驳回后修改查询咨讯退订详情数据
     * getUnSubscribeDetailToChange({ payload }, { call, put, select }) {
       const { empInfo } = yield select(state => state.app.empInfo);
-      const { flowId } = payload;
       const { postnId, occDivnNum, empNum } = empInfo;
-      const detailRes = yield call(api.queryConsultDetail,
-        {
-          action: 'query',
-          operationType: 'unsubscribe',
-          flowId,
-        });
+      const detailRes = yield call(api.queryConsultDetail, payload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });

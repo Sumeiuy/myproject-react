@@ -148,7 +148,11 @@ export default class Home extends Component {
       return;
     }
     const { searchManager } = this.props;
-    searchManager({ keyword });
+    const { selectMenu = {}, centerMenu = {} } = this.state;
+    const { orgId: selectOrgId, postnTypeCD: selectCD } = selectMenu;
+    const { orgId: centerOrgId } = centerMenu;
+    // 应后台要求，org改为中心的org
+    searchManager({ keyword, org: (selectCD === TEAM_TABLE ? centerOrgId : selectOrgId) });
   }
 
   @autobind

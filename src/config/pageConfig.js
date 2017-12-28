@@ -832,6 +832,51 @@ const pageConfig = {
       },
     ],
   },
+  // 分公司客户划转
+  filialeCustTransfer: {
+    titleList: [
+      {
+        dataIndex: 'brokerNumber',
+        key: 'brokerNumber',
+        title: '经纪客户号',
+      },
+      {
+        dataIndex: 'custName',
+        key: 'custName',
+        title: '客户名称',
+      },
+      {
+        dataIndex: 'orgName',
+        key: 'orgName',
+        title: '原服务营业部',
+      },
+      {
+        dataIndex: 'empName',
+        key: 'empName',
+        title: '原服务经理',
+      },
+      {
+        dataIndex: 'postnName',
+        key: 'postnName',
+        title: '原职位',
+      },
+      {
+        dataIndex: 'newOrgName',
+        key: 'newOrgName',
+        title: '新服务营业部',
+      },
+      {
+        dataIndex: 'newEmpName',
+        key: 'newEmpName',
+        title: '新服务经理',
+      },
+      {
+        dataIndex: 'newPostnName',
+        key: 'newPostnName',
+        title: '新职位',
+      },
+    ],
+  },
 
 };
 
