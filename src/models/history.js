@@ -344,9 +344,10 @@ export default {
     // 获取历史对比折线图数据
     * getContrastData({ payload }, { call, put }) {
       const response = yield call(api.getHistoryContrastLineChartData, payload);
+      const { resultData } = response;
       yield put({
         type: 'getContrastDataSuccess',
-        payload: { contrastData: response },
+        payload: { contrastData: resultData },
       });
     },
     // 创建历史对比看板
