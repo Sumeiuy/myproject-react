@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-27 15:50:01
+ * @Last Modified time: 2017-12-28 16:34:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
+import _ from 'lodash';
 
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import Barable from '../../decorators/selfBar';
@@ -88,12 +89,37 @@ export default class CustomerFeedback extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    // 第一次进入页面时将tab状态初始化到url中，避免subscriptions中重复请求
+    const {
+      replace,
+      location: {
+        pathname,
+        query,
+        query: {
+          parentActiveKey,
+          childActiveKey,
+        },
+      },
+    } = this.props;
+    if (_.isEmpty(parentActiveKey) || _.isEmpty(childActiveKey)) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          parentActiveKey: parentActiveKey || '1',
+          childActiveKey: childActiveKey || '1',
+        },
+      });
+    }
+  }
+
   // 查询任务列表
   @autobind
   queryMissionList(type = 1, pageNum = 1, pageSize = 20) {
     const {
-      getMissionList,
       replace,
+      getMissionList,
       location: {
         pathname,
         query,
@@ -145,6 +171,7 @@ export default class CustomerFeedback extends PureComponent {
       query: {
         ...query,
         parentActiveKey: key,
+        pageNum: 1,
       },
     });
   }

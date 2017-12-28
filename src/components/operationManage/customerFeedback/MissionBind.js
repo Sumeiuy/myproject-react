@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-27 15:49:13
+ * @Last Modified time: 2017-12-28 16:52:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -66,40 +66,6 @@ export default class MissionBind extends PureComponent {
       // 被添加客户反馈的任务id
       beAddMissionId: '',
     };
-  }
-
-  componentDidMount() {
-    const {
-      location: {
-        query: {
-          childActiveKey,
-        },
-      },
-      queryMissionList,
-    } = this.props;
-    queryMissionList(childActiveKey);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // 判断url内参数变化时重新请求对应参数的数据
-    const {
-      queryMissionList,
-      location: {
-        query: {
-          childActiveKey: oldChildActiveKey,
-        },
-      },
-    } = this.props;
-    const {
-      location: {
-        query: {
-          childActiveKey: newChildActiveKey,
-        },
-      },
-    } = nextProps;
-    if (oldChildActiveKey !== newChildActiveKey) {
-      queryMissionList(newChildActiveKey);
-    }
   }
 
   // 获取客户反馈气泡
@@ -223,7 +189,6 @@ export default class MissionBind extends PureComponent {
     const {
       replace,
       emptyMissionData,
-      queryMissionList,
       location: {
         pathname,
         query,
@@ -234,11 +199,10 @@ export default class MissionBind extends PureComponent {
       query: {
         ...query,
         childActiveKey: key,
+        pageNum: 1,
       },
     });
-    emptyMissionData().then(() => {
-      queryMissionList(key);
-    });
+    emptyMissionData();
   }
 
   render() {
