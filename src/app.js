@@ -90,12 +90,10 @@ app.router(routerConfig);
 // 5. Start
 app.start('#exApp');
 
+dvaHelper.initApp(app);
+
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
-
-dvaHelper.exposeStore(store);
-// 暴露给fsp方法
-// initFspMethod(store);
 
 // 6. redux-persist
 if (persistConfig.active) {

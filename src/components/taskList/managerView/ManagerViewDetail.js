@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 17:43:40
+ * @Last Modified time: 2017-12-27 17:17:35
  * 管理者视图详情
  */
 
@@ -65,6 +65,8 @@ export default class ManagerViewDetail extends PureComponent {
     missionType: PropTypes.string.isRequired,
     // 反馈饼图数据
     countFlowFeedBack: PropTypes.func.isRequired,
+    // 任务类型字典
+    missionTypeDict: PropTypes.array,
   }
 
   static defaultProps = {
@@ -72,6 +74,7 @@ export default class ManagerViewDetail extends PureComponent {
     mngrMissionDetailInfo: EMPTY_OBJECT,
     currentId: '',
     custFeedback: [],
+    missionTypeDict: [],
   }
 
   constructor(props) {
@@ -138,8 +141,8 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
-    const urlParam = {
+    const { currentId, push, mngrMissionDetailInfo, missionType, missionTypeDict } = this.props;
+    let urlParam = {
       orgId: helper.getOrgId(),
       // orgId: 'ZZ001041',
       missionId: currentId,
@@ -147,9 +150,23 @@ export default class ManagerViewDetail extends PureComponent {
       entrance: 'managerView',
       source: 'managerView',
       count: mngrMissionDetailInfo.custNumbers,
-      // 任务类型
-      missionType,
     };
+
+    let descText;
+    const currentMissionType = _.find(missionTypeDict, item => item.key === missionType);
+    if (currentMissionType) {
+      descText = currentMissionType.descText;
+    }
+
+    // 只有descText为1，才需要传给自建任务
+    // descText为0，代表是MOT任务类型
+    if (descText === 1) {
+      urlParam = {
+        ...urlParam,
+        missionType,
+      };
+    }
+
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
       condition,

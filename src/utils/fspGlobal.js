@@ -3,7 +3,6 @@
  *  封装fsp系统中window方法
  * @author wangjunjun
  */
-import { data } from '../helper';
 
 function exec(method, ...args) {
   try {
@@ -21,27 +20,11 @@ function execOpenTab(method, ...args) {
   }
 }
 
-function execSwitchTab(tabId) {
-  // try catch里面data找不到
-  if (data && data.getChainPropertyFromObject) {
-    const activeReactTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
-    activeReactTab($('#UTB'), { tabId });
-  }
-}
-
 function closeTab(arg) {
   try {
     window.$(`${arg} .close`).click();
   } catch (e) {
     console.log(e);
-  }
-}
-
-function removeTabMenu(tabId) {
-  // try catch里面data找不到
-  if (data && data.getChainPropertyFromObject) {
-    const removeTab = data.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
-    removeTab($('#UTB'), { tabId });
   }
 }
 
@@ -81,10 +64,6 @@ const fspGlobal = {
     );
   },
 
-  switchFspTab(tabId) {
-    execSwitchTab(tabId);
-  },
-
   /**
    *  在fsp中新开一个iframe的tab
    */
@@ -118,10 +97,6 @@ const fspGlobal = {
   // 参数 id 为对应得tab标签的id
   closeRctTabById(id) {
     closeTab(`#exApp_${id}`);
-  },
-
-  closeTabMenu(tabId) {
-    removeTabMenu(tabId);
   },
 };
 
