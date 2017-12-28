@@ -492,14 +492,16 @@ export default class MissionFeedback extends PureComponent {
                     [styles.allSedBoderTwo]: isFold,
                   })}
                 >
-                  <div className={styles.charts}>
-                    {this.renderAllFeedback(allFeedback.serviceAllNum,
-                      allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
-                  </div>
-                  <div className={styles.allService}>
-                    <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
-                    <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                      <b>({allFeedback.aFeedbackPer})</b></span>
+                  <div className={styles.layBox}>
+                    <div className={styles.charts}>
+                      {this.renderAllFeedback(allFeedback.serviceAllNum,
+                        allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
+                    </div>
+                    <div className={styles.allService}>
+                      <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
+                      <span>已反馈：<b>{allFeedback.aFeedback}</b>
+                        <b>({allFeedback.aFeedbackPer})</b></span>
+                    </div>
                   </div>
                 </div>
               </div>
