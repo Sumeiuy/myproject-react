@@ -8,21 +8,23 @@
 import { initFspMethod } from '../utils/fspGlobal';
 import permission from '../permissions';
 
-let dvaStore = null;
+let app = null;
+const noop = () => {};
 
 const dva = {
   /**
-   * 将dva生成的redux的store暴露给组件
-   * @param {Object} store dva生成的redux的store树
+   * 初始化dva引用
+   * @param {Object} app_ dva生成的实例
    */
-  exposeStore(store) {
-    // 保存store
-    dvaStore = store;
+  initApp(app_) {
+    app = app_;
+    const store = dva.getStore();
     // 将store暴露给FSP
     initFspMethod(store);
     // 初始化权限配置
     permission.init(store);
   },
+
   /**
    * 暴露dva的store的dispatch方法
    * @param {Object} action 传递的action
@@ -30,18 +32,42 @@ const dva = {
    * @param {Object} action.payload
    */
   dispatch({ type, payload = {} }) {
-    if (dvaStore && dvaStore.dispatch) {
-      dvaStore.dispatch({ type, payload });
-    } else {
-      console.error('未将store暴露给组件');
-    }
+    const store = dva.getStore();
+    store.dispatch({ type, payload });
   },
+
   /**
    * 获取保存的Store
    * @returns {Object} redux的store
    */
   getStore() {
-    return dvaStore;
+    if (app) {
+      return app._store; // eslint-disable-line
+    }
+    return {
+      getState: noop,
+      dispatch: () => {
+        console.error('未将store暴露给组件');
+      },
+    };
+  },
+
+  getHistory() {
+    if (app) {
+      return app._history; // eslint-disable-line
+    }
+    return {
+      listen: noop,
+    };
+  },
+
+  getLastLocation() {
+    const store = dva.getStore();
+    const state = store.getState();
+    if (state && state.routing) {
+      return state.routing.location;
+    }
+    return null;
   },
 };
 
