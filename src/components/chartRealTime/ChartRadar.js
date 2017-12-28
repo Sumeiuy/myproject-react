@@ -17,13 +17,13 @@ import {
   contrastLabel,
 } from './chartRadarOptions';
 import IECharts from '../IECharts';
+import { optionsMap, constants } from '../../config';
 import styles from './chartRadar.less';
 
-const orgClass = {
-  level2: '分公司',
-  level3: '财富中心',
-  level4: '营业部',
-};
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
+// levelName
+const orgClass = optionsMap.charRadarOrgClass;
 
 export default class ChartRadar extends PureComponent {
 
@@ -32,22 +32,31 @@ export default class ChartRadar extends PureComponent {
     total: PropTypes.string.isRequired,
     localScope: PropTypes.string.isRequired,
     selectCore: PropTypes.number.isRequired,
+    summaryType: PropTypes.string.isRequired,
   }
 
   constructor(props) {
     super(props);
-    const { localScope } = props;
+    const { localScope, summaryType } = props;
+    let orgClassObj = orgClass.custRangeOrgClass;
+    if (summaryType === hbgxSummaryType) {
+      orgClassObj = orgClass.reportOrgClass;
+    }
     this.state = {
-      levelName: orgClass[`level${localScope}`],
+      levelName: orgClassObj[`level${localScope}`],
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { localScope: preLevel, radarData: preRadar } = this.props;
-    const { localScope, radarData } = nextProps;
+    const { localScope, radarData, summaryType } = nextProps;
+    let orgClassObj = orgClass.custRangeOrgClass;
+    if (summaryType === hbgxSummaryType) {
+      orgClassObj = orgClass.reportOrgClass;
+    }
     if (preLevel !== localScope) {
       this.setState({
-        levelName: orgClass[`level${localScope}`],
+        levelName: orgClassObj[`level${localScope}`],
       });
     }
     if (!_.isEqual(radarData, preRadar)) {

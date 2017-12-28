@@ -23,6 +23,7 @@ export default class IndicatorOverview extends PureComponent {
     saveIndcatorToHome: PropTypes.func.isRequired,
     changeCore: PropTypes.func.isRequired,
     level: PropTypes.string.isRequired,
+    summaryType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -112,6 +113,7 @@ export default class IndicatorOverview extends PureComponent {
       summuryLib,
       saveIndcatorToHome,
       level,
+      summaryType,
     } = this.props;
     if (_.isEmpty(overviewData)) {
       return null;
@@ -201,6 +203,7 @@ export default class IndicatorOverview extends PureComponent {
                       total={indexData.scopeNum}
                       selectCore={clickItemIndex}
                       localScope={level}
+                      summaryType={summaryType}
                     />
                   </div>
                 </Col>

@@ -17,8 +17,7 @@ function renderItem(data, title, itemStyle = null) {
   return (
     <div className={classnames(styles.check, itemStyle)}>
       <div className={styles.count}>
-        <span title={data.item}>{data.item}</span>
-        <span title={data.unit}>{data.unit}</span>
+        <span title={data.item}>{data.item}<span>{data.unit}</span></span>
       </div>
       <div className={styles.title}>{title}</div>
     </div>
@@ -29,7 +28,7 @@ function CheckLayout({ dataSource = [] }) {
   return (
     <div className={styles.container}>
       <div className={classnames(styles.content, styles.left)}>
-        {renderItem(dataSource[0], '净转入资产', styles.bottomBorder)}
+        {renderItem(dataSource[0], '净新增客户资产', styles.bottomBorder)}
         {renderItem(dataSource[1], '累计基础交易量')}
       </div>
       <div className={classnames(styles.content, styles.right)}>

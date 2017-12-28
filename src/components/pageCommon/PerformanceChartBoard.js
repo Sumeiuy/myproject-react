@@ -121,6 +121,7 @@ export default class PerformanceChartBoard extends PureComponent {
               location={location}
               indexID={indexID}
               boardType={boardType}
+              summaryType={summaryType}
             />
           )
           :

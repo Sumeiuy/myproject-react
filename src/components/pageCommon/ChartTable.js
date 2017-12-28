@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-13 16:13:20
+ * @Last Modified time: 2017-12-27 10:59:48
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -13,14 +13,15 @@ import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
 import { data as helperData } from '../../helper';
-import { fspContainer, optionsMap } from '../../config';
+import { fspContainer, optionsMap, constants } from '../../config';
 import styles from './ChartTable.less';
 
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
 const fsp = document.querySelector(fspContainer.container);
-
+// 汇报关系的汇总方式
+const hbgxSummaryType = constants.hbgxSummaryType;
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -35,6 +36,7 @@ export default class ChartTable extends PureComponent {
     scope: PropTypes.number.isRequired,
     indexID: PropTypes.string,
     boardType: PropTypes.string.isRequired,
+    summaryType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -394,7 +396,7 @@ export default class ChartTable extends PureComponent {
   }
   @autobind
   changeTableData(nextProps) {
-    const { chartTableInfo, scope, boardType } = nextProps;
+    const { chartTableInfo, scope, boardType, summaryType } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
@@ -433,7 +435,11 @@ export default class ChartTable extends PureComponent {
       });
       // 匹配第一列标题文字，分公司、营业部、投顾
       // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
-      const keyName = sortByType[boardType][Number(scope) - 2].name;
+      let sortByTypeArr = sortByType[boardType];
+      if (summaryType === hbgxSummaryType) {
+        sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
+      }
+      const keyName = sortByTypeArr[Number(scope) - 2].name;
       tempArr.unshift({
         title: keyName,
         dataIndex: 'city',
