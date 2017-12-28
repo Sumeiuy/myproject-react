@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-27 14:59:05
+ * @Last Modified time: 2017-12-27 15:50:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,21 +11,14 @@ import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
-// import _ from 'lodash';
 
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
-// import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-// import { closeRctTabById } from '../../utils/fspGlobal';
-// import { env, emp } from '../../helper';
 
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-// const confirm = Modal.confirm;
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
 
 // tab切换选项
 const TAB_LIST = [

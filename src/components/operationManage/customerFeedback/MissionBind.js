@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-27 15:40:15
+ * @Last Modified time: 2017-12-27 15:49:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -97,7 +97,6 @@ export default class MissionBind extends PureComponent {
         },
       },
     } = nextProps;
-    console.log('111', oldChildActiveKey, newChildActiveKey);
     if (oldChildActiveKey !== newChildActiveKey) {
       queryMissionList(newChildActiveKey);
     }
