@@ -95,8 +95,16 @@ module.exports = merge(baseWebpackConfig, {
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
-      inject: true
+      inject: false,
+      template: 'index.ejs',
+      lang: 'en',
+      title: '»ªÌ©Ö¤È¯',
+      meta: [
+        {
+          name: 'charset',
+          content: 'utf-8'
+        }
+      ]
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,

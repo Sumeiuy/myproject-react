@@ -38,6 +38,10 @@ module.exports = {
       //   }
       // },
       {
+        test: /\.ejs$/,
+        loader: 'ejs-loader'
+      },
+      {
         test: /\.tsx?$/,
         loader: 'ts-loader'
       },
