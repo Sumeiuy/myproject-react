@@ -5,11 +5,9 @@
 import _ from 'lodash';
 
 import { report as api } from '../api';
-import { BoardBasic, constants } from '../config';
-import report from '../helper/page/report';
+import { BoardBasic } from '../config';
 import { emp } from '../helper';
 
-const defaultFilialeLevel = constants.filialeLevel;
 // const EMPTY_OBJECT = {};
 
 export default {
@@ -221,7 +219,6 @@ export default {
       // 获取散点图对比值字典
       const dicResponse = yield call(api.queryHistoryContrast, {
         ...payload.dic,
-        orgId: firstCust.id,
       });
       yield put({
         type: 'queryHistoryContrastSuccess',
@@ -230,9 +227,6 @@ export default {
       // 查询HistoryCore
       const resHistoryCore = yield call(api.getHistoryCore, {
         ...payload.core,
-        orgId: firstCust.id,
-        scope: firstCust.level,
-        localScope: firstCust.level,
       });
       yield put({
         type: 'getHistoryCoreSuccess',
@@ -243,9 +237,6 @@ export default {
       if (firstCust.level !== '1') {
         const currentRanking = yield call(api.getCurrentRankingRecord, {
           ...payload.radar,
-          orgId: firstCust.id,
-          scope: firstCust.level,
-          localScope: firstCust.level,
         });
         yield put({
           type: 'getCurrentRankingRecordSuccess',
@@ -256,26 +247,16 @@ export default {
       const polyResponse = yield call(api.getHistoryContrastLineChartData, {
         ...payload.poly,
         coreIndicatorId: firstCore.key,
-        orgId: firstCust.id,
-        scope: firstCust.level,
-        localScope: firstCust.level,
       });
       yield put({
         type: 'getContrastDataSuccess',
         payload: { contrastData: polyResponse.resultData },
       });
-      let temporaryScope = String(Number(firstCust.level) + 1);
-      if (firstCust.id && firstCust.id === defaultFilialeLevel && !report.isNewOrg(firstCust.id)) {
-        temporaryScope = String(Number(firstCust.level) + 2);
-      }
       // 查询排名柱状图数据
       const barResponse = yield call(api.getHistoryRankChartData, {
         ...payload.bar,
         indicatorId: firstCore.key,
         orderIndicatorId: firstCore.key,
-        orgId: firstCust.id,
-        localScope: firstCust.level,
-        scope: temporaryScope,
       });
       yield put({
         type: 'getRankDataSuccess',
@@ -284,16 +265,10 @@ export default {
 
       // 散点图数据
       const { cust, invest } = yield select(state => state.history.historyContrastDic);
-      const scatterCommon = {
-        orgId: firstCust.id,
-        localScope: firstCust.level,
-        scope: temporaryScope,
-        coreIndicatorId: firstCore.key,
-      };
       // 客户散点
       const custScatterRes = yield call(api.queryContrastAnalyze, {
         ...payload.custScatter,
-        ...scatterCommon,
+        coreIndicatorId: firstCore.key,
         contrastIndicatorId: cust && cust[0].key,
       });
       yield put({
@@ -304,7 +279,7 @@ export default {
       if (!_.isEmpty(invest)) {
         const investScatterRes = yield call(api.queryContrastAnalyze, {
           ...payload.investScatter,
-          ...scatterCommon,
+          coreIndicatorId: firstCore.key,
           contrastIndicatorId: invest[0].key,
         });
         yield put({
@@ -316,7 +291,6 @@ export default {
       // 获取指标树数据
       const indicatorResult = yield call(api.getIndicators, {
         ...payload.lib,
-        orgId: firstCust.id,
       });
       yield put({
         type: 'getIndicatorLibSuccess',
@@ -324,15 +298,8 @@ export default {
       });
     },
     // 获取历史对比核心指标
-    * getHistoryCore({ payload }, { call, put, select }) {
-      const custRange = yield select(state => state.history.custRange);
-      const firstCust = custRange[0];
-      const resHistoryCore = yield call(api.getHistoryCore, {
-        ...payload,
-        scope: payload.scope || firstCust.level,
-        localScope: payload.localScope || firstCust.level,
-        orgId: payload.orgId || firstCust.id,
-      });
+    * getHistoryCore({ payload }, { call, put }) {
+      const resHistoryCore = yield call(api.getHistoryCore, payload);
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
@@ -375,19 +342,11 @@ export default {
       });
     },
     // 获取历史对比折线图数据
-    * getContrastData({ payload }, { call, put, select }) {
-      const custRange = yield select(state => state.history.custRange);
-      const firstCust = custRange[0];
-      const response = yield call(api.getHistoryContrastLineChartData, {
-        ...payload,
-        scope: payload.scope || firstCust.level,
-        localScope: payload.localScope || firstCust.level,
-        orgId: payload.orgId || firstCust.id,
-      });
-      const { resultData } = response;
+    * getContrastData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryContrastLineChartData, payload);
       yield put({
         type: 'getContrastDataSuccess',
-        payload: { contrastData: resultData },
+        payload: { contrastData: response },
       });
     },
     // 创建历史对比看板

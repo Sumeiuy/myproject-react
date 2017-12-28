@@ -302,12 +302,13 @@ export default class HistoryHome extends PureComponent {
   // 初始查询数据
   @autobind
   queryInitial() {
-    const { getInitial, initialData } = this.props;
-    const { empId, boardType, boardId, queryType } = this.state;
+    const { getInitial, initialData, custRange } = this.props;
+    const { empId, boardType, boardId, queryType, localScope, orgId } = this.state;
+    const newLocalScope = localScope || custRange[0].level;
     const selfNeed = ['boardId'];
-    const coreQuery = this.makeQueryParams({}, selfNeed);
-    const radarQuery = this.makeQueryParams({ isMultiple: 0 }, selfNeed);
-    const polyQuery = this.makeQueryParams({}, selfNeed);
+    const coreQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
+    const radarQuery = this.makeQueryParams({ scope: newLocalScope, isMultiple: 0 }, selfNeed);
+    const polyQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
     const barQuery = this.makeQueryParams({
       pageSize: 10,
       pageNum: 1,
@@ -327,9 +328,13 @@ export default class HistoryHome extends PureComponent {
       bar: barQuery,
       custScatter: custScatterQuery,
       investScatter: investScatterQuery,
-      dic: { boardId },
+      dic: {
+        boardId,
+        orgId: orgId || custRange[0].id,
+      },
       lib: {
         type: boardType,
+        orgId: orgId || custRange[0].id,
         queryType: queryType || defaultSummaryType,
       },
     });
