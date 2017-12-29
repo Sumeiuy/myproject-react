@@ -108,7 +108,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: config.build.index,
       inject: false,
-      template: 'index.ejs',
+      template: 'index.html',
       lang: 'en',
       title: '华泰证券',
       meta: [

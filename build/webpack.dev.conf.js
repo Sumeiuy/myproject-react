@@ -96,9 +96,9 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       inject: false,
-      template: 'index.ejs',
+      template: 'index.html',
       lang: 'en',
-      title: '��̩֤ȯ',
+      title: '华泰证券',
       meta: [
         {
           name: 'charset',
