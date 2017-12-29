@@ -2,7 +2,7 @@
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-27 14:45:48
+ * @Last Modified time: 2017-12-29 17:41:07
 */
 
 const optionsMap = {
@@ -253,7 +253,7 @@ const optionsMap = {
     },
     {
       value: 'jxst',
-      name: '绩效视图汇总',
+      name: '组织机构汇总',
     },
   ],
   // 雷达图字典

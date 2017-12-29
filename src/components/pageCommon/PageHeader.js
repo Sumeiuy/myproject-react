@@ -157,13 +157,17 @@ export default class PageHeader extends PureComponent {
       collectCustRange,
       collectDurationSelect,
       initialData,
+      location: { pathname },
     } = this.props;
     const { top, left, width, summaryTypeValue } = this.state;
     const maxDataDt = initialData.maxDataDt;
+    const maxDataDtTip = moment(maxDataDt).format('YYYY/MM/DD');
     // 汇总方式的切换是否显示
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
     // 当前日期减1天,并转化为YYYYMMDD格式日期
     const momentDataDt = moment(moment().subtract(1, 'days')).format(formatTxt);
+    // 判断是否在 history 路由里
+    const isHistory = pathname === '/history';
     return (
       <div>
         <div
@@ -250,10 +254,10 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
             {
-              moment(maxDataDt).isBefore(momentDataDt) ?
+              moment(maxDataDt).isBefore(momentDataDt) && !isHistory?
                 <Alert
                   message="提示"
-                  description="因当前数据后台未核算完成，目前展现的是前一日的数据"
+                  description={`因当前数据后台未核算完成，目前展现的是截止到${maxDataDtTip}的数据`}
                   type="warning"
                   closable
                   showIcon
