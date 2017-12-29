@@ -610,14 +610,19 @@ export default class EditBaseInfo extends PureComponent {
             </InfoForm>
           :
             <div>
-              <InfoForm label="协议编号" required>
-                <Select
-                  name="protocolNumber"
-                  data={newProtocolList}
-                  value={protocolNumber}
-                  onChange={this.handleSelectProtocol}
-                />
-              </InfoForm>
+              {
+                isEditPage ?
+                  <InfoItem label="协议编号" value={protocolNumber || ''} />
+                :
+                  <InfoForm label="协议编号" required>
+                    <Select
+                      name="protocolNumber"
+                      data={newProtocolList}
+                      value={protocolNumber}
+                      onChange={this.handleSelectProtocol}
+                    />
+                  </InfoForm>
+              }
               <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }

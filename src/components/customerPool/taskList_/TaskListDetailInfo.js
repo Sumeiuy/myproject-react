@@ -63,11 +63,8 @@ export default class TaskListDetailInfo extends PureComponent {
           </div> :
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
-              <li className={styles.fir}>
+              <li className={styles.item}>
                 <InfoItem label="任务状态" value={this.changeDisplay(infoData.status, status) || '--'} />
-              </li>
-              <li className={styles.sed}>
-                <InfoItem label=" " value={' '} />
               </li>
               <li className={styles.fir}>
                 <InfoItem label="触发时间" value={infoData.triggerTime || '--'} />
