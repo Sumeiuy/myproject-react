@@ -4,9 +4,6 @@
 
 export default function report(api) {
   return {
-    // 员工职责与职位
-    getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
-
     // 获取绩效视图的组织机构
     getCustRange: query => api.post('/groovynoauth/jxzb/newEmpOrgTree', query),
 
