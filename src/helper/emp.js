@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-27 14:48:08
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-12-28 11:02:06
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -56,7 +56,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ001041028';
+    let orgId = 'ZZ323372';
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
@@ -83,7 +83,7 @@ const emp = {
    */
   isFiliale(arr, id) {
     const orgData = findOrgDataByOrgId(arr, id);
-    return orgData.level === duty.bm_fgs;
+    return (!_.isEmpty(orgData) && orgData.level === duty.bm_fgs);
   },
 };
 

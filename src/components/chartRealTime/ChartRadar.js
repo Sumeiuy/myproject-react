@@ -48,13 +48,13 @@ export default class ChartRadar extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { localScope: preLevel, radarData: preRadar } = this.props;
+    const { localScope: preLevel, radarData: preRadar, summaryType: preSummaryType } = this.props;
     const { localScope, radarData, summaryType } = nextProps;
     let orgClassObj = orgClass.custRangeOrgClass;
     if (summaryType === hbgxSummaryType) {
       orgClassObj = orgClass.reportOrgClass;
     }
-    if (preLevel !== localScope) {
+    if (preLevel !== localScope || preSummaryType !== summaryType) {
       this.setState({
         levelName: orgClassObj[`level${localScope}`],
       });
