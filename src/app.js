@@ -27,13 +27,15 @@ if (persistConfig.active) {
 
 // 错误处理
 const onError = (e) => {
-  const { message: msg } = e;
+  const { message: msg, stack } = e;
   // See src/utils/request.js
-  if (msg === 'xxx') {
+  // 后端暂时没有登录超时概念
+  // 都走门户的验证，门户返回的html，JSON parse报错即认为超时
+  if (msg === 'MAG0010') {
     message.error('登录超时，请重新登录！');
   } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
-  } else if (e.stack && e.stack.indexOf('SyntaxError') > -1) {
+  } else if (stack && stack.indexOf('SyntaxError') > -1) {
     window.location.reload();
   } else {
     message.error(msg);

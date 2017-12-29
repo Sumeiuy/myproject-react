@@ -27,7 +27,7 @@ function parseJSON(response, options) {
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
       if (!existExclude && !succeed && !ignoreCatch) {
         let error;
-        if (code === 'MAG0010') {
+        if (code) {
           // 这里使用code作为message，以便对登录错误做特殊处理
           error = new Error(code);
         } else {
