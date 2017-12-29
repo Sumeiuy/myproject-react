@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-28 16:52:46
+ * @Last Modified time: 2017-12-29 13:55:37
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -140,8 +140,17 @@ export default class MissionBind extends PureComponent {
   // 删除任务下所关联客户反馈选项
   @autobind
   handleDelCustomerFeedback(missionId, feedbackId) {
-    console.log(missionId, feedbackId);
-    const { delCustomerFeedback } = this.props;
+    const {
+      delCustomerFeedback,
+      queryMissionList,
+      location: {
+        query: {
+          childActiveKey,
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
     confirm({
       title: '提示',
       content: '确认要删除吗?',
@@ -149,6 +158,10 @@ export default class MissionBind extends PureComponent {
         delCustomerFeedback({
           missionId,
           feedbackId,
+          type: childActiveKey,
+        }).then(() => {
+          // 删除成功之后更新任务列表
+          queryMissionList(childActiveKey, pageNum, pageSize);
         });
       },
     });
@@ -167,7 +180,17 @@ export default class MissionBind extends PureComponent {
   @autobind
   handleAddFeedback() {
     const { beAddMissionId } = this.state;
-    const { addCustomerFeedback } = this.props;
+    const {
+      addCustomerFeedback,
+      queryMissionList,
+      location: {
+        query: {
+          childActiveKey,
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
     if (this.feedbackAddComponent) {
       const feedback = this.feedbackAddComponent.getData();
       if (_.isEmpty(feedback)) {
@@ -177,8 +200,11 @@ export default class MissionBind extends PureComponent {
       addCustomerFeedback({
         missionId: beAddMissionId,
         feedbackId: feedback.id,
+        type: childActiveKey,
       }).then(() => {
         this.handleCloseModal();
+        // 添加成功之后更新任务列表
+        queryMissionList(childActiveKey, pageNum, pageSize);
       });
     }
   }
@@ -273,14 +299,19 @@ export default class MissionBind extends PureComponent {
           </div>
           <div className={styles.clear} />
         </div>
-        <Modal {...modalProps}>
-          <FeedbackAdd
-            missionId={beAddMissionId}
-            queryFeedbackList={queryFeedbackList}
-            feedbackData={feedbackData}
-            ref={ref => this.feedbackAddComponent = ref}
-          />
-        </Modal>
+        {
+          showModal ?
+            <Modal {...modalProps}>
+              <FeedbackAdd
+                missionId={beAddMissionId}
+                queryFeedbackList={queryFeedbackList}
+                feedbackData={feedbackData}
+                ref={ref => this.feedbackAddComponent = ref}
+              />
+            </Modal>
+            :
+            null
+        }
       </div>
     );
   }
