@@ -133,10 +133,6 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;
-    const param = {
-      id: 'tab-home',
-      title: '首页',
-    };
     if (source === 'custGroupList') {
       // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
       // 并且用closeTabMenu关闭
@@ -144,7 +140,6 @@ export default class CreateTask extends PureComponent {
     } else {
       fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
     }
-    fspGlobal.openRctTab({ url: '/customerPool', param });
   }
 
   @autobind

@@ -15,6 +15,7 @@ import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 import { fspGlobal } from '../../../utils';
+import { env } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
@@ -119,7 +120,14 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   @autobind
   handleCancleTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+    if (env.isInFsp()) {
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+      const param = {
+        id: 'tab-home',
+        title: '首页',
+      };
+      fspGlobal.openRctTab({ url: '/customerPool', param });
+    }
   }
 
   render() {
