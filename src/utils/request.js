@@ -26,14 +26,7 @@ function parseJSON(response, options) {
       const { code, msg, succeed } = res;
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
       if (!existExclude && !succeed && !ignoreCatch) {
-        let error;
-        if (code) {
-          // 这里使用code作为message，以便对登录错误做特殊处理
-          error = new Error(code);
-        } else {
-          error = new Error(msg);
-        }
-        throw error;
+        throw new Error(`${code}${config.ERROR_SEPARATOR}${msg}`);
       }
       return res;
     },
