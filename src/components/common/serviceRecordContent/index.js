@@ -506,7 +506,7 @@ export default class ServiceRecordContent extends PureComponent {
     if (!dict) {
       return null;
     }
-
+    console.log('this.props.formData>>', this.props.formData);
     const firstCol = isFold ? 8 : 24;
     const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
 
@@ -577,7 +577,7 @@ export default class ServiceRecordContent extends PureComponent {
                       >
                         {_.map((dict.serveStatus || EMPTY_LIST), item =>
                           // 10代表未开始
-                          item.key !== '10' && <Radio value={item.key}>{item.value}</Radio>,
+                          item.key !== '10' && <Radio key={item.key} value={item.key}>{item.value}</Radio>,
                         )}
                       </RadioGroup>
                     </div>

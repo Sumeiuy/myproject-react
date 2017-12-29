@@ -119,7 +119,7 @@ export default class TargetCustomerRight extends PureComponent {
         <div className={`${styles.nameTips}`}>
           {
             contactDetail.map(obj => (
-              <div>
+              <div key={obj.cellPhone}>
                 <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
                 <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
                 <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
@@ -133,7 +133,7 @@ export default class TargetCustomerRight extends PureComponent {
         <div className={`${styles.nameTips}`}>
           {
             contactDetail.map(obj => (
-              <div>
+              <div key={obj.cellPhone}>
                 <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
                 <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
                 <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>

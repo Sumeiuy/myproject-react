@@ -126,7 +126,6 @@ export default class PerformerViewDetail extends PureComponent {
     });
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
-
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>

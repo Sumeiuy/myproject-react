@@ -50,6 +50,11 @@ const today = moment(new Date()).format('YYYY-MM-DD');
 const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
 const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
+const TASKFEEDBACK_QUERY = {
+  pageNum: 1,
+  pageSize: 10000,
+};
+
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -67,6 +72,7 @@ const effects = {
   queryTargetCustDetail: 'performerView/queryTargetCustDetail',
   getTaskDetailBasicInfo: 'performerView/getTaskDetailBasicInfo',
   queryCustUuid: 'performerView/queryCustUuid',
+  getServiceType: 'performerView/getServiceType',
   previewCustFile: 'tasklist/previewCustFile',
   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
   ceFileDelete: 'performerView/ceFileDelete',
@@ -115,6 +121,8 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 管理者视图任务实施进度数据
   missionImplementationDetail: state.managerView.missionImplementationDetail,
+  // 任务反馈的字典
+  taskFeedbackList: state.performerView.taskFeedbackList,
 });
 
 const mapDispatchToProps = {
@@ -165,6 +173,8 @@ const mapDispatchToProps = {
   countFlowFeedBack: fetchDataFunction(true, effects.countFlowFeedBack),
   // 管理者视图任务实施进度
   countFlowStatus: fetchDataFunction(true, effects.countFlowStatus),
+  // 获取添加服务记录中的任务反馈
+  getServiceType: fetchDataFunction(true, effects.getServiceType),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -218,6 +228,8 @@ export default class PerformerView extends PureComponent {
     missionImplementationDetail: PropTypes.object.isRequired,
     countFlowStatus: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    getServiceType: PropTypes.func.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -237,6 +249,7 @@ export default class PerformerView extends PureComponent {
       activeRowIndex: 0,
       typeCode: '',
       typeName: '',
+      eventId: '',
     };
     this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
     let newMissionView = chooseMissionView;
@@ -251,10 +264,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
-        missionViewType,
+          pageSize,
+          missionViewType,
         },
       },
     } = this.props;
@@ -268,6 +281,38 @@ export default class PerformerView extends PureComponent {
       this.queryAppListInit({ newQuery, pageNum, pageSize, beforeToday, today });
     } else {
       this.queryAppListInit({ newQuery, pageNum, pageSize, today, afterToday });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {
+      getServiceType,
+      dict: { missionType },
+    } = this.props;
+    const { typeCode, eventId } = this.state;
+    if (prevState.typeCode !== typeCode) {
+      /**
+       * 区分mot任务和自建任务
+       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
+       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
+       * 根据descText的值请求对应的任务类型和任务反馈的数据
+       * 再判断当前任务是属于mot任务还是自建任务
+       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       */
+      const currentItem = _.find(missionType, obj => +obj.key === +typeCode);
+      getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
+        .then(() => {
+          let currentType = {};
+          if (+currentItem.descText === 1) {
+            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
+          } else {
+            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
+          }
+          this.setState({
+            taskFeedbackList: currentType.feedbackList,
+          });
+        });
     }
   }
 
@@ -437,7 +482,7 @@ export default class PerformerView extends PureComponent {
     const {
       query: { currentId },
     } = location;
-    const { typeCode, typeName } = this.state;
+    const { typeCode, typeName, taskFeedbackList } = this.state;
     let detailComponent = null;
     const { missionType = [] } = dict || {};
     switch (st) {
@@ -477,6 +522,7 @@ export default class PerformerView extends PureComponent {
             getCeFileList={getCeFileList}
             filesList={filesList}
             deleteFileResult={deleteFileResult}
+            taskFeedbackList={taskFeedbackList}
           />
         );
         break;
@@ -742,7 +788,8 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id, missionViewType: st, typeCode, typeName } = record;
+    console.log('record>>>', record);
+    const { id, missionViewType: st, typeCode, typeName, eventId } = record;
     const {
       queryCustUuid,
       replace,
@@ -761,6 +808,7 @@ export default class PerformerView extends PureComponent {
       activeRowIndex: index,
       typeCode,
       typeName,
+      eventId,
     });
     this.getDetailByView(record);
     // 如果当前视图是执行者视图，则预先请求custUuid
@@ -819,7 +867,6 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
-
     const topPanel = (
       <ConnectedPageHeader
         location={location}

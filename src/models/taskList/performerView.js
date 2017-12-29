@@ -34,6 +34,8 @@ export default {
     custUuid: '',
     deleteFileResult: [],
     taskList: EMPTY_OBJ,
+    // 任务反馈字典
+    taskFeedbackList: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -97,6 +99,13 @@ export default {
           page,
           resultData: viewBaseInfoList,
         },
+      };
+    },
+    getServiceTypeSuccess(state, action) {
+      const { payload: { missionList = [] } } = action;
+      return {
+        ...state,
+        taskFeedbackList: missionList,
       };
     },
   },
@@ -177,6 +186,15 @@ export default {
         type: 'ceFileDeleteSuccess',
         payload: attaches,
       });
+    },
+    * getServiceType({ payload }, { call, put }) {
+      const response = yield call(api.getServiceType, payload);
+      if (response.msg === 'OK') {
+        yield put({
+          type: 'getServiceTypeSuccess',
+          payload: response.resultData,
+        });
+      }
     },
   },
   subscriptions: {

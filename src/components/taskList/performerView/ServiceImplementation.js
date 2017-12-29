@@ -43,6 +43,7 @@ export default function ServiceImplementation({
   getCeFileList,
   filesList,
   deleteFileResult,
+  taskFeedbackList,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -78,6 +79,7 @@ export default function ServiceImplementation({
     serviceWayCode,
     serviceStatusName,
     serviceStatusCode,
+    taskFeedbackList,
     serviceDate,
     serviceRecord,
     customerFeedback,
@@ -150,6 +152,7 @@ ServiceImplementation.propTypes = {
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
+  taskFeedbackList: PropTypes.array.isRequired,
 };
 
 ServiceImplementation.defaultProps = {
