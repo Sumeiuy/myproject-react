@@ -41,7 +41,9 @@ exports.getCSSLoaders = function (options) {
     options: baseOptions
   });
 
+  own.push('resolve-url-loader');
   own.push('postcss-loader');
+  nodeModules.push('resolve-url-loader');
   nodeModules.push('postcss-loader');
 
   return {

@@ -6,23 +6,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
-import classnames from 'classnames';
-import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
-import TipsInfo from '../performerView/TipsInfo';
 import styles from './basicInfo.less';
-
-// 暂时的来源类型，具体需要和后端定一下
-const sourceType = [{
-  key: 'import',
-  value: '客户细分导入',
-},
-{
-  key: 'sightLabel',
-  value: '瞄准镜标签',
-}];
 
 export default class BasicInfo extends PureComponent {
 
@@ -37,17 +23,6 @@ export default class BasicInfo extends PureComponent {
     servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
-    // 客户来源
-    custSource: PropTypes.string,
-    // 客户总数
-    custTotal: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    // 客户来源说明
-    custSourceDescription: PropTypes.string,
-    // 预览客户明细
-    onPreview: PropTypes.func,
   }
 
   static defaultProps = {
@@ -56,10 +31,6 @@ export default class BasicInfo extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
-    custSource: '',
-    custTotal: '',
-    custSourceDescription: '',
-    onPreview: () => { },
   }
 
   constructor(props) {
@@ -69,29 +40,6 @@ export default class BasicInfo extends PureComponent {
     };
   }
 
-  @autobind
-  handlePreview() {
-    const { onPreview } = this.props;
-    onPreview();
-  }
-
-  @autobind
-  handleMouseOver() {
-    if (this.custTotalTipElem) {
-      this.setState({
-        overlayTop: this.custTotalTipElem.getBoundingClientRect().top,
-      });
-    }
-  }
-
-  /**
-   * 浮层渲染到父节点
-   */
-  @autobind
-  getPopupContainer() {
-    return this.custTotalTipElem;
-  }
-
   render() {
     const {
       triggerTime,
@@ -99,12 +47,8 @@ export default class BasicInfo extends PureComponent {
       missionTarget,
       servicePolicy,
       isFold,
-      custSource = 'import',
-      custSourceDescription,
-      custTotal,
     } = this.props;
-    const { overlayTop } = this.state;
-    const posi = 'rightBottom';
+
     const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.basicInfo}>
@@ -128,59 +72,6 @@ export default class BasicInfo extends PureComponent {
               </p>
             </Col>
           </Row>
-          {
-            !_.isEmpty(_.find(sourceType, item => item.key === custSource)) ?
-              <div>
-                <Row className={styles.rowItem}>
-                  <Col span={colSpanValue} className={styles.colItem}>
-                    <span className={styles.label}>客户来源:&nbsp;</span>
-                    <span className={styles.content}>{custSource || '--'}</span>
-                  </Col>
-                  <Col span={colSpanValue} className={styles.colItem}>
-                    <span
-                      className={classnames({
-                        [styles.label]: true,
-                      })}
-                    >客户总数:&nbsp;</span>
-                    <span
-                      className={classnames({
-                        [styles.custTotal]: true,
-                        [styles.content]: true,
-                      })}
-                      onClick={this.handlePreview}
-                    >{Number(custTotal) || 0}</span>
-                    {/**
-                     * 机构名变量，需要替换
-                     */}
-                    <span
-                      className={styles.custTotalTooltip}
-                      onMouseOver={this.handleMouseOver}
-                      ref={ref => (this.custTotalTipElem = ref)}
-                    >
-                      <TipsInfo
-                        title={'当前{机构名}有效客户总数'}
-                        position={posi}
-                        wrapperClass={classnames({
-                          [styles.custNumberTips]: true,
-                        })}
-                        overlayStyle={{
-                          top: overlayTop,
-                        }}
-                        getPopupContainer={this.getPopupContainer}
-                      />
-                    </span>
-                  </Col>
-                </Row>
-                <Row className={styles.rowItem}>
-                  <Col className={styles.colItem}>
-                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
-                    <p className={`${styles.content} ${styles.servicePolicy}`}>
-                      {custSourceDescription || '--'}
-                    </p>
-                  </Col>
-                </Row>
-              </div> : null
-          }
         </div>
       </div>
     );

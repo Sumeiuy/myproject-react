@@ -10,14 +10,16 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 // import _ from 'lodash';
-import { Collapse } from 'antd';
+import { Collapse, Popconfirm, Pagination } from 'antd';
 
 import Icon from '../../../components/common/Icon';
+import Button from '../../../components/common/Button';
 import EditInput from '../../../components/common/editInput';
 import withRouter from '../../../decorators/withRouter';
 import styles from './optionsMaintain.less';
 
 const Panel = Collapse.Panel;
+const deleteTitle = '确认删除这条数据吗？';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -86,11 +88,6 @@ export default class OptionsMaintain extends PureComponent {
   }
 
   @autobind
-  onChange(key) {
-    console.warn('key', key);
-  }
-
-  @autobind
   onClick(idx = 1) {
     console.warn('点击了按钮');
     this.setState({
@@ -99,74 +96,132 @@ export default class OptionsMaintain extends PureComponent {
   }
 
   @autobind
-  onDelete() {
-    console.warn('点击了删除');
-  }
-
-  @autobind
   editCallback(value, id) {
     // 调用接口
     console.warn('value', value);
     console.warn('id', id);
-    // // TODO - 改递归
-    // const { data } = this.state;
-    // // 修改后的 data
-    // const newData = data.map((item) => {
-    //   const newItem = item;
-    //   if (newItem.id === id) {
-    //     newItem.name = value;
-    //   } else {
-    //     newItem.childList.map((child) => {
-    //       const newChild = child;
-    //       if (newChild.id === id) {
-    //         newChild.name = value;
-    //       }
-    //       return newChild;
-    //     });
-    //   }
-    //   return newItem;
-    // });
-    // console.warn('newData', newData);
-    // this.setState({
-    //   data: newData,
-    // });
+  }
+
+  @autobind
+  deleteConfirm(parentId = '', childId = '') {
+    console.warn('parentId', parentId);
+    console.warn('childId', childId);
+  }
+
+  @autobind
+  onAdd(id) {
+    console.warn('点击了新增按钮', id);
+    const { data } = this.state;
+    const newData = data.map((item) => {
+      const newItem = { ...item };
+      if (newItem.id === id) {
+        newItem.childList.push({ id: '222-333', name: '', edit: true });
+      }
+      return newItem;
+    });
+    console.warn('newData', newData);
+    this.setState({
+      data: newData,
+    });
+  }
+
+  @autobind
+  parentAddHandle() {
+    console.warn('点击了添加按钮');
+    const { data } = this.state;
+    console.warn('data', data);
+    const newData = [...data, {
+      childList: [],
+      id: '',
+      name: '',
+      edit: true,
+      length: 0,
+    }];
+    console.warn('newData', newData);
+    this.setState({
+      data: newData,
+    });
   }
 
   render() {
-    const { activeKey, data, edit } = this.state;
+    const { activeKey, data } = this.state;
     return (
       <div className={styles.optionsMaintain}>
-        <h2>请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类。</h2>
-        <Collapse accordion onChange={this.onChange} activeKey={activeKey}>
+        <div className={styles.parentAddBtn}>
+          <Button type="primary" onClick={this.parentAddHandle}>
+            <Icon type="jia" />反馈类型
+          </Button>
+        </div>
+        <h2 className={styles.title}>请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类。</h2>
+        <Collapse accordion activeKey={activeKey}>
           {
             data.map((item, index) => {
               const header = (<div className={styles.header}>
                 <EditInput
                   value={item.name}
                   id={item.id}
-                  edit={edit}
+                  edit={item.edit}
                   editCallback={this.editCallback}
                 />
-                <div onClick={() => this.onClick(index + 1)}>{item.length}项</div>
-                <div><Icon type="shanchu" title="删除" /></div>
+                <div className={styles.lengthDiv} onClick={() => this.onClick(index + 1)}>
+                  <i className="arrow" />
+                  {item.length}项
+                </div>
+                <div>
+                  <Popconfirm
+                    placement="bottom"
+                    title={deleteTitle}
+                    okText="确定"
+                    cancelText="取消"
+                    onConfirm={() => this.deleteConfirm(item.id)}
+                  >
+                    <Icon type="shanchu" title="删除" />
+                  </Popconfirm>
+                </div>
               </div>);
               return (<Panel header={header} key={`${index + 1}`}>
                 <ul>
                   {
-                    item.childList.map(child => (<li key={child.id}>
-                      <EditInput
-                        value={child.name}
-                        id={child.id}
-                        edit={edit}
-                        editCallback={this.editCallback}
-                      />
-                    </li>))
+                    item.childList.map((child) => {
+                      const btnGroup = (
+                        <Popconfirm
+                          placement="bottom"
+                          title={deleteTitle}
+                          okText="确定"
+                          cancelText="取消"
+                          onConfirm={() => this.deleteConfirm(item.id, child.id)}
+                        >
+                          <Icon
+                            type="shanchu"
+                            title="删除"
+                          />
+                        </Popconfirm>
+                        );
+                      return (
+                        <li key={child.id}>
+                          <EditInput
+                            value={child.name}
+                            id={child.id}
+                            btnGroup={btnGroup}
+                            edit={child.edit}
+                            editCallback={this.editCallback}
+                          />
+                        </li>
+                      );
+                    })
                   }
+                  <li>
+                    <Button onClick={() => this.onAdd(item.id)}>
+                      <Icon type="jia" />
+                      新增
+                    </Button>
+                  </li>
                 </ul>
               </Panel>);
             })
           }
         </Collapse>
+        <Pagination defaultCurrent={1} total={50} />
       </div>
     );
   }

@@ -212,7 +212,7 @@ export default class PerformerView extends PureComponent {
     mngrMissionDetailInfo: PropTypes.object.isRequired,
     queryMngrMissionDetailInfo: PropTypes.func.isRequired,
     countFlowFeedBack: PropTypes.func.isRequired,
-    custFeedback: PropTypes.array.isRequired,
+    custFeedback: PropTypes.array,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
     missionImplementationDetail: PropTypes.object.isRequired,
@@ -225,6 +225,7 @@ export default class PerformerView extends PureComponent {
     filesList: [],
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
+    custFeedback: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -257,10 +258,16 @@ export default class PerformerView extends PureComponent {
         },
       },
     } = this.props;
+    let newQuery = query;
+    // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
+    if (this.hasPermissionOfManagerView) {
+      newQuery = { ...newQuery, missionViewType: CONTROLLER };
+    }
+
     if (missionViewType === INITIATOR) {
-      this.queryAppListInit({ query, pageNum, pageSize, beforeToday, today });
+      this.queryAppListInit({ newQuery, pageNum, pageSize, beforeToday, today });
     } else {
-      this.queryAppListInit({ query, pageNum, pageSize, today, afterToday });
+      this.queryAppListInit({ newQuery, pageNum, pageSize, today, afterToday });
     }
   }
 
@@ -548,18 +555,18 @@ export default class PerformerView extends PureComponent {
 
   // 第一次加载请求
   @autobind
-  queryAppListInit({ query, pageNum = 1, pageSize = 10,
+  queryAppListInit({ newQuery, pageNum = 1, pageSize = 10,
     beforeToday: before, today: todays, afterToday: after }) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
-    const item = this.constructViewPostBody(query, pageNum, pageSize);
+    const item = this.constructViewPostBody(newQuery, pageNum, pageSize);
     const timersValue = this.handleDefaultTime({ before, todays, after });
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
     const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
     replace({
       pathname,
       query: {
-        ...query,
+        ...newQuery,
         pageNum: 1,
         createTimeStart,
         createTimeEnd,
@@ -754,8 +761,11 @@ export default class PerformerView extends PureComponent {
       typeName,
     });
     this.getDetailByView(record);
-    // 前置请求custuuid
-    queryCustUuid();
+    // 如果当前视图是执行者视图，则预先请求custUuid
+    if (st === EXECUTOR) {
+      // 前置请求custuuid
+      queryCustUuid();
+    }
   }
 
   // 头部新建按钮，跳转到新建表单
@@ -859,7 +869,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={this.state.currentView === 'controller' ? 562 : 400}
+          leftWidth={this.state.currentView === 'controller' ? 480 : 400}
         />
       </div>
     );

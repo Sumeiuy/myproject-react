@@ -21,20 +21,32 @@ export default class EditInput extends PureComponent {
     id: PropTypes.string,
     editCallback: PropTypes.func.isRequired,
     edit: PropTypes.bool,
+    btnGroup: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.element,
+      PropTypes.node,
+    ]),
   }
 
   static defaultProps = {
     id: '',
     value: '',
     edit: false,
+    btnGroup: '',
   }
 
   constructor(props) {
     super(props);
-    const { value } = props;
+    const { edit, value } = props;
+    console.warn('constructor value', value);
+    console.warn('constructor edit', edit);
     this.state = {
-      edit: false,
+      // 编辑状态
+      edit,
+      // 值
       value,
+      // 编辑前的值
       oldValue: value,
     };
   }
@@ -45,15 +57,19 @@ export default class EditInput extends PureComponent {
     if (preValue !== nextValue) {
       this.setState({
         value: nextValue,
+        edit: false,
       });
     }
     if (preEdit !== nextEdit) {
+      console.warn('preEdit', preEdit);
+      console.warn('nextEdit', nextEdit);
       this.setState({
         edit: nextEdit,
       });
     }
   }
 
+  // 输入框编辑事件
   @autobind
   onChange(e) {
     this.setState({
@@ -61,6 +77,7 @@ export default class EditInput extends PureComponent {
     });
   }
 
+  // 编辑按钮事件
   @autobind
   onEdit() {
     const { edit } = this.state;
@@ -69,6 +86,7 @@ export default class EditInput extends PureComponent {
     });
   }
 
+  // 提交按钮事件
   @autobind
   onSubmit() {
     const { value } = this.state;
@@ -76,6 +94,7 @@ export default class EditInput extends PureComponent {
     editCallback(value, id);
   }
 
+  // 取消按钮事件
   @autobind
   onCancel() {
     const { oldValue } = this.state;
@@ -87,13 +106,15 @@ export default class EditInput extends PureComponent {
 
   render() {
     const { edit, value } = this.state;
+    const { btnGroup } = this.props;
     return (
       <div className={styles.editInput}>
         {
           !edit ?
             <div className={styles.noInput}>
-              <span>{value}</span>
+              <em>{value}</em>
               <Icon type="edit" onClick={this.onEdit} title="编辑" />
+              {btnGroup}
             </div>
           :
             <div className={styles.hasInput}>

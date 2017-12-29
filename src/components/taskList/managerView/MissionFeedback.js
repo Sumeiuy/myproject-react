@@ -22,7 +22,7 @@ const resultData = {
   allFeedback: {
     serviceAllNum: '1150',
     aFeedback: '1150',
-    aFeedbackPer: 100,
+    aFeedbackPer: '100%',
     allTaskFeedbackDes: '所有问题反馈结果',
   },
   radioFeedback: [
@@ -198,7 +198,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'pie',
-          radius: [0, 60],
+          radius: [0, 55],
           center: ['50%', '52%'],
           roseType: 'radius',
           label: {
