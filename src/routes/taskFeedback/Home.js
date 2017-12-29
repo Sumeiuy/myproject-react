@@ -10,6 +10,7 @@ import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { Button, message } from 'antd';
+import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import choosePage from '../../components/operationManage/choosePage';
@@ -103,10 +104,11 @@ export default class TaskFeedback extends PureComponent {
       queryQuestions,
       location: {
         query: {
-          pageNum = 1,
           pageSize = 10,
         },
+        pathname,
       },
+      replace,
     } = this.props;
     const {
       quesValue,
@@ -117,14 +119,20 @@ export default class TaskFeedback extends PureComponent {
     addOneQuestion({
       quesValue,
       quesTypeCode,
-      quesOptions,
+      quesOptions: _.compact(quesOptions),
       quesDesp,
     }).then(() => {
       if (this.props.addSuccess) {
         message.success('添加成功');
         queryQuestions({
-          pageNum,
+          pageNum: 1,
           pageSize,
+        });
+        replace({
+          pathname,
+          query: {
+            pageNum: 1,
+          },
         });
       }
       this.setState({ modalVisible: false });
@@ -137,7 +145,7 @@ export default class TaskFeedback extends PureComponent {
       <div className={styles.taskFeedback}>
         <p className={styles.pageDescription}>
           任务反馈标准问题库，用于管理岗人员给服务经理创建任务时选择是否要服务经理对该任务做反馈，
-          并为需要的反馈从此标准问题库中选择问题列表组成调查问卷。管理人员在此维护问题列表，点击相应问题可进行编辑。
+          并为需要的反馈从此标准问题库中选择问题列表组成调查问卷。管理人员在此维护问题列表。
         </p>
         <div className={styles.listHeader}>
           <Button

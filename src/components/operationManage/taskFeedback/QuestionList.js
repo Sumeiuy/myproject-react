@@ -71,14 +71,18 @@ export default class QuestionList extends PureComponent {
    */
   @autobind
   confirmDelete({ quesId }) {
-    const { deleteQuestion, queryQuestions } = this.props;
+    const {
+      deleteQuestion,
+      queryQuestions,
+      replace,
+      location: { pathname },
+    } = this.props;
     deleteQuestion({ quesId })
     .then(() => {
       const {
         deleteSuccess,
         location: {
           query: {
-            pageNum = 1,
             pageSize = 10,
           },
         },
@@ -86,8 +90,14 @@ export default class QuestionList extends PureComponent {
       if (deleteSuccess) {
         message.success('删除成功');
         queryQuestions({
-          pageNum,
+          pageNum: 1,
           pageSize,
+        });
+        replace({
+          pathname,
+          query: {
+            pageNum: 1,
+          },
         });
       }
     });
@@ -139,14 +149,14 @@ export default class QuestionList extends PureComponent {
     } = this.props;
     const curPageNum = pageNum || page.pageNum;
     const curPageSize = pageSize || page.pageSize;
-
+    console.log('curPageNum curPageSize ', +curPageNum, +curPageSize);
     return (
       <div className={styles.listWrapper}>
         {this.renderList()}
         <div className={styles.pagination}>
           <Pagination
             total={+page.totalCount}
-            curPageSize={+curPageNum}
+            current={+curPageNum}
             pageSize={+curPageSize}
             showSizeChanger
             showTotal={total => `共${total}条`}
