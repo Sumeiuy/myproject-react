@@ -18,6 +18,8 @@ const config = {
       title: '部门',
     },
   ],
+  container: '#container',
+  content: '#content',
 };
 
 export default config;

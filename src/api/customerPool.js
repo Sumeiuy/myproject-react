@@ -18,9 +18,6 @@ export default function customerPool(api) {
     // 按权限获取组织机构树
     getCustRangeByAuthority: query => api.post('/groovynoauth/fsp/emp/org/queryEmpPostnsOrgTree', query),
 
-    // 员工职责与职位
-    getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
-
     // 查询待办流程记录列表
     getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
