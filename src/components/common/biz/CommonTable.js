@@ -30,7 +30,7 @@ export default class CommonTable extends PureComponent {
 
   render() {
     const { scroll, data, operation, titleList, ...resetProps } = this.props;
-    const newTitleList = _.cloneDeep(titleList);
+    let newTitleList = [...titleList];
     if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
       if (_.isArray(columnKey)) {
@@ -45,7 +45,7 @@ export default class CommonTable extends PureComponent {
             }
           </span>
         );
-        newTitleList.push(operation.column);
+        newTitleList = [...newTitleList, operation.column];
       } else {
         switch (columnKey) {
           case 'delete':
@@ -54,7 +54,7 @@ export default class CommonTable extends PureComponent {
                 <Icon type="shanchu" onClick={() => operation.operate(record, index)} />
               </span>
             );
-            newTitleList.push(operation.column);
+            newTitleList = [...newTitleList, operation.column];
             break;
           case 'view':
             operation.column.render = (text, record, index) => (
@@ -66,7 +66,7 @@ export default class CommonTable extends PureComponent {
                 查看
               </span>
             );
-            newTitleList.push(operation.column);
+            newTitleList = [...newTitleList, operation.column];
             break;
           case 'radio':
             operation.column.render = (text, record, index) => (
@@ -79,9 +79,9 @@ export default class CommonTable extends PureComponent {
               </span>
             );
             if (operation.column.align === 'right') {
-              newTitleList.push(operation.column);
+              newTitleList = [...newTitleList, operation.column];
             } else {
-              newTitleList.unshift(operation.column);
+              newTitleList = [operation.column, ...newTitleList];
             }
             break;
           case 'switch':
@@ -95,7 +95,7 @@ export default class CommonTable extends PureComponent {
                 />
               </span>
             );
-            newTitleList.push(operation.column);
+            newTitleList = [...newTitleList, operation.column];
             break;
           default:
             break;
