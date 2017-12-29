@@ -12,6 +12,7 @@ import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
+import { fspGlobal } from '../../../utils';
 import Button from '../../common/Button';
 
 export default class CreateTaskSuccess extends PureComponent {
@@ -69,7 +70,14 @@ export default class CreateTaskSuccess extends PureComponent {
     this.clearTimeInterval();
     const { onCloseTab, push, location: { state, query } } = this.props;
     if (env.isInFsp()) {
+      // 关闭tab
       onCloseTab();
+      // 跳转到首页
+      const param = {
+        id: 'tab-home',
+        title: '首页',
+      };
+      fspGlobal.openRctTab({ url: '/customerPool', param });
     } else {
       push({
         pathname: '/customerPool',
