@@ -3,33 +3,45 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-21 14:53:14
+ * @Last Modified time: 2017-12-28 17:06:07
  */
 
 import { customerFeedback as api } from '../api';
+import { dva as dvaHelper, url } from '../helper';
 
-// const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+// const EMPTY_LIST = [];
+// 第一个tab的状态
+const FIRST_TAB = '1';
+// 第二个tab的状态
+const SECOND_TAB = '2';
 
 export default {
   namespace: 'customerFeedback',
   state: {
-    missionList: EMPTY_LIST, // 任务列表
-    feedbackList: EMPTY_LIST, // 客户反馈列表
+    missionData: EMPTY_OBJECT, // 任务列表
+    feedbackData: EMPTY_OBJECT, // 客户反馈列表
   },
   reducers: {
     getMissionListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        missionList: resultData,
+        missionData: resultData,
       };
     },
-    queryFeedbackListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+    getFeedbackListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        feedbackList: resultData,
+        feedbackData: resultData,
+      };
+    },
+    emptyMissionDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        missionData: payload,
       };
     },
   },
@@ -51,10 +63,10 @@ export default {
       yield call(api.addCustomerFeedback, payload);
     },
     // 查询客户反馈列表
-    * queryFeedbackList({ payload }, { call, put }) {
-      const response = yield call(api.queryFeedbackList, payload);
+    * getFeedbackList({ payload }, { call, put }) {
+      const response = yield call(api.getFeedbackList, payload);
       yield put({
-        type: 'queryFeedbackListSuccess',
+        type: 'getFeedbackListSuccess',
         payload: response,
       });
     },
@@ -66,8 +78,51 @@ export default {
     * addFeedback({ payload }, { call }) {
       yield call(api.addFeedback, payload);
     },
+    // 清空任务列表数据
+    * emptyMissionData({ payload }, { put }) {
+      yield put({
+        type: 'emptyMissionDataSuccess',
+        payload: EMPTY_OBJECT,
+      });
+    },
   },
   subscriptions: {
+    setup({ dispatch, history }) {
+      return history.listen((location) => {
+        const {
+          pathname,
+          search: newSearch,
+        } = location;
+        if (pathname === '/customerFeedback') {
+          const {
+            search: oldSearch,
+          } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
+          const newQuery = url.parse(newSearch);
+          const oldQuery = url.parse(oldSearch);
 
+          const missionPayload = {
+            type: newQuery.childActiveKey || FIRST_TAB,
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          const feedbackPayload = {
+            keyword: '',
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          if (newQuery.parentActiveKey !== oldQuery.parentActiveKey) { // 父级tab状态发生变化请求对应面板数据
+            if (newQuery.parentActiveKey === SECOND_TAB) {
+              dispatch({ type: 'getFeedbackList', payload: feedbackPayload });
+            } else {
+              dispatch({ type: 'getMissionList', payload: missionPayload });
+            }
+          } else if (newQuery.childActiveKey !== oldQuery.childActiveKey) { // 任务类型tab状态发生变化
+            if (newQuery.parentActiveKey !== SECOND_TAB) {
+              dispatch({ type: 'getMissionList', payload: missionPayload });
+            }
+          }
+        }
+      });
+    },
   },
 };

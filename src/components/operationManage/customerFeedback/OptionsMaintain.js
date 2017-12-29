@@ -42,6 +42,7 @@ export default class OptionsMaintain extends PureComponent {
   static propTypes = {
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
+    feedbackData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,41 +50,12 @@ export default class OptionsMaintain extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { feedbackList = [], page = {} } = props.feedbackData;
     this.state = {
       activeKey: '2',
       edit: false,
-      data: [
-        {
-          id: '111',
-          name: '一级数据-111',
-          length: 3,
-          childList: [
-            {
-              id: '111-111',
-              name: '二级数据-111',
-            },
-            {
-              id: '111-222',
-              name: '二级数据-222',
-            },
-          ],
-        },
-        {
-          id: '222',
-          name: '一级数据',
-          length: 3,
-          childList: [
-            {
-              id: '222-111',
-              name: '二级数据-111',
-            },
-            {
-              id: '222-222',
-              name: '二级数据-222',
-            },
-          ],
-        },
-      ],
+      data: feedbackList,
+      page,
     };
   }
 
