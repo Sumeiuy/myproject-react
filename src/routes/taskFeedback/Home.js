@@ -137,7 +137,7 @@ export default class TaskFeedback extends PureComponent {
       <div className={styles.taskFeedback}>
         <p className={styles.pageDescription}>
           任务反馈标准问题库，用于管理岗人员给服务经理创建任务时选择是否要服务经理对该任务做反馈，
-          并为需要的反馈从此标准问题库中选择问题列表组成调查问卷。管理人员在此维护问题列表，点击相应问题可进行编辑。
+          并为需要的反馈从此标准问题库中选择问题列表组成调查问卷。管理人员在此维护问题列表。
         </p>
         <div className={styles.listHeader}>
           <Button
