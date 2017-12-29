@@ -38,7 +38,7 @@ export default (ComposedComponent) => {
     );
 
     return (
-      <div>
+      <div className={`content-inner ${styles.whiteBgColor}`}>
         <div className={styles.choosePage}>
           <Dropdown overlay={menu} trigger={['click']}>
             <span className={`ant-dropdown-link ${styles.clickable}`}>
