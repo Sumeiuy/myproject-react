@@ -107,8 +107,16 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.build.index,
+      inject: false,
       template: 'index.html',
-      inject: true,
+      lang: 'en',
+      title: '华泰证券',
+      meta: [
+        {
+          name: 'charset',
+          content: 'utf-8'
+        }
+      ],
       minify: {
         removeComments: true,
         collapseWhitespace: true,
