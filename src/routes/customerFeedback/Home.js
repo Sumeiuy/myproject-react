@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-28 16:34:08
+ * @Last Modified time: 2017-12-29 16:44:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
+import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 
@@ -58,6 +59,8 @@ const mapDispatchToProps = {
   getFeedbackList: fetchDataFunction(true, 'customerFeedback/getFeedbackList'),
   // 清空任务列表数据
   emptyMissionData: fetchDataFunction(true, 'customerFeedback/emptyMissionData'),
+  // 删除客户反馈选项
+  delFeedback: fetchDataFunction(true, 'customerFeedback/delFeedback'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -86,6 +89,7 @@ export default class CustomerFeedback extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      activeKey: '2',
     };
   }
 
@@ -213,7 +217,11 @@ export default class CustomerFeedback extends PureComponent {
         componentNode = missionBindComponent;
         break;
       case '2':
-        componentNode = '222';
+        componentNode =
+        (<OptionsMaintain
+          feedbackData={feedbackData}
+          getFeedbackList={getFeedbackList}
+        />);
         break;
       default:
         componentNode = missionBindComponent;
