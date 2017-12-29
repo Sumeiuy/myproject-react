@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-29 13:55:37
+ * @Last Modified time: 2017-12-29 16:36:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import { Tabs, Modal, Collapse, Icon, Popover, Button, Pagination, message } from 'antd';
 import _ from 'lodash';
 
-import withRouter from '../../../decorators/withRouter';
 import FeedbackAdd from './FeedbackAdd';
 
 import styles from './missionBind.less';
@@ -34,7 +33,6 @@ const TAB_LIST = [
   },
 ];
 
-@withRouter
 export default class MissionBind extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -277,8 +275,8 @@ export default class MissionBind extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs onChange={this.handleChangeTab} activeKey={childActiveKey} >
             {
-              TAB_LIST.map(v => (
-                <TabPane tab={v.tabName} key={v.key} />
+              TAB_LIST.map(item => (
+                <TabPane tab={item.tabName} key={item.key} />
               ))
             }
           </Tabs>

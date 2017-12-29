@@ -2,12 +2,39 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-28 17:09:21
+ * @Last Modified time: 2017-12-29 16:38:11
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
 import duty from './config/duty';
+
+/**
+* 根据传入的部门id和组织机构数数组返回部门id对应的对象
+* @author XuWenKang
+* @returns {Object}
+*/
+/* eslint-disable */
+// 函数互相调用在eslint中总会报 函数定义层级的问题所以禁用eslint
+function findOrgDataByOrgId(list, id) {
+  for (let i = 0, len = list.length; i < len; i++) {
+    const found = findNode(list[i], id);
+    if (found) {
+      return found;
+    }
+  }
+}
+
+function findNode(node, id) {
+  if (node.id === id) {
+    return node;
+  }
+  if (node.children) {
+    return findOrgDataByOrgId(node.children, id);
+  }
+  return null;
+}
+/* eslint-disable */
 
 const emp = {
   /**
@@ -50,31 +77,13 @@ const emp = {
   },
 
   /**
-   * 根据传入的部门id和组织机构数数组返回部门id对应的对象
-   * @author XuWenKang
-   * @returns {Object}
-   */
-  getOrgDataByOrgId(arr, id) {
-    const data = _.find(arr, (item) => {
-      if (item.id === id) {
-        return item;
-      }
-      return this.getOrgDataByOrgId(item.children, id);
-    });
-    if (data) {
-      return (data.id === id) ? data : this.getOrgDataByOrgId(data.children, id);
-    }
-    return data;
-  },
-
-  /**
    * 判断当前登录人部门是否是分公司
    * @author XuWenKang
    * @returns {Boolean}
    */
   isFiliale(arr, id) {
-    const orgData = this.getOrgDataByOrgId(arr, id);
-    return orgData.level === duty.bm_fgs;
+    const orgData = findOrgDataByOrgId(arr, id);
+    return (!_.isEmpty(orgData) && orgData.level === duty.bm_fgs);
   },
 };
 

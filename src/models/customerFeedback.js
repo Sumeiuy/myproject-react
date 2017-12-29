@@ -3,11 +3,11 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-28 17:06:07
+ * @Last Modified time: 2017-12-29 16:39:17
  */
 
 import { customerFeedback as api } from '../api';
-import { dva as dvaHelper, url } from '../helper';
+import { dva as dvaHelper, url as urlHelper } from '../helper';
 
 const EMPTY_OBJECT = {};
 // const EMPTY_LIST = [];
@@ -97,8 +97,8 @@ export default {
           const {
             search: oldSearch,
           } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
-          const newQuery = url.parse(newSearch);
-          const oldQuery = url.parse(oldSearch);
+          const newQuery = urlHelper.parse(newSearch);
+          const oldQuery = urlHelper.parse(oldSearch);
 
           const missionPayload = {
             type: newQuery.childActiveKey || FIRST_TAB,
