@@ -6,6 +6,9 @@
 
 import { taskFeedback as api } from '../api';
 
+// 任务反馈题库类型
+const QUESTION_BASE_TYPE = { assessType: 'MOT_EMP_FEEDBACK' };
+
 export default {
   namespace: 'taskFeedback',
   state: {
@@ -53,7 +56,7 @@ export default {
   effects: {
     // 获取问题列表
     * queryQuestions({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryQuestions, payload);
+      const { resultData } = yield call(api.queryQuestions, { ...payload, ...QUESTION_BASE_TYPE });
       if (resultData) {
         yield put({
           type: 'queryQuestionsSuccess',
@@ -71,7 +74,7 @@ export default {
     },
     // 新增一个问题
     * addOneQuestion({ payload }, { call, put }) {
-      const { resultData } = yield call(api.addOneQuestion, payload);
+      const { resultData } = yield call(api.addOneQuestion, { ...payload, ...QUESTION_BASE_TYPE });
       yield put({
         type: 'addOneQuestionSuccess',
         payload: resultData,

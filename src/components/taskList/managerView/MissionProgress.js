@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-21 13:18:47
+ * @Last Modified time: 2017-12-28 09:41:34
  * 任务进度
  */
 
@@ -139,9 +139,9 @@ export default class MissionProgress extends PureComponent {
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
 
-    const servePercent = Number(servedNumsRatio) * 100;
-    const completedPercent = Number(completedNumsRatio) * 100;
-    const standardPercent = Number(standardNumsRatio) * 100;
+    const servePercent = Number.parseInt(Number(servedNumsRatio) * 100, 10);
+    const completedPercent = Number.parseInt(Number(completedNumsRatio) * 100, 10);
+    const standardPercent = Number.parseInt(Number(standardNumsRatio) * 100, 10);
 
     return (
       <div className={styles.area}>
