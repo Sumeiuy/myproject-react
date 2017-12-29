@@ -347,14 +347,16 @@ export default class HistoryHome extends PureComponent {
     const {
       getHistoryCore,
       getRadarData,
+      custRange,
     } = this.props;
     const { localScope, coreIndicatorIds } = this.state;
+    const newLocalScope = localScope || custRange[0].level;
     let selfNeed = ['boardId'];
     if (!_.isEmpty(coreIndicatorIds)) {
       selfNeed = ['coreIndicatorIds'];
     }
     // 获取core数据
-    const coreQuery = this.makeQueryParams({ scope: localScope }, selfNeed);
+    const coreQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
     getHistoryCore(coreQuery);
     // 获取雷达图数据
     // localScope=1时，不查询雷达图数据
@@ -374,15 +376,17 @@ export default class HistoryHome extends PureComponent {
       getRankData,
       queryContrastAnalyze,
       historyContrastDic,
+      custRange,
     } = this.props;
     const { localScope, indicatorId, coreIndicatorIds } = this.state;
+    const owner = custRange[0];
     let selfNeed = [];
     if (!_.isEmpty(coreIndicatorIds)) {
       selfNeed = ['coreIndicatorIds'];
     }
     // 1.查询poly
     const contrastQuery = this.makeQueryParams({
-      scope: localScope,
+      scope: localScope || (owner && owner.level),
       coreIndicatorId: indicatorId,
     }, selfNeed);
     getContrastData(contrastQuery);
