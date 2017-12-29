@@ -10,6 +10,7 @@ import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { Button, message } from 'antd';
+import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import choosePage from '../../components/operationManage/choosePage';
@@ -103,10 +104,11 @@ export default class TaskFeedback extends PureComponent {
       queryQuestions,
       location: {
         query: {
-          pageNum = 1,
           pageSize = 10,
         },
+        pathname,
       },
+      replace,
     } = this.props;
     const {
       quesValue,
@@ -117,14 +119,20 @@ export default class TaskFeedback extends PureComponent {
     addOneQuestion({
       quesValue,
       quesTypeCode,
-      quesOptions,
+      quesOptions: _.compact(quesOptions),
       quesDesp,
     }).then(() => {
       if (this.props.addSuccess) {
         message.success('添加成功');
         queryQuestions({
-          pageNum,
+          pageNum: 1,
           pageSize,
+        });
+        replace({
+          pathname,
+          query: {
+            pageNum: 1,
+          },
         });
       }
       this.setState({ modalVisible: false });
