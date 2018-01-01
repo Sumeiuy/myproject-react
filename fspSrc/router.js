@@ -1,5 +1,5 @@
 /**
-* @file src/routes/.js
+* @file fspSrc/routes/.js
 * @author maoquan(maoquan@htsc.com)
 */
 
@@ -35,10 +35,15 @@ import ServiceLog from '../src/routes/customerPool/ServiceLog';
 import TaskFlow from '../src/routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from '../src/routes/channelsTypeProtocol/Home';
 import PermissonHome from '../src/routes/permission/Home';
+import PermissonEdit from '../src/routes/permission/Edit';
 import Contract from '../src/routes/contract/Home';
 import Form from '../src/routes/contract/Form';
 import ChannelsTypeProtocolEdit from '../src/routes/channelsTypeProtocol/Edit';
 import TaskListHome from '../src/routes/taskList/Home';
+import Demote from '../src/routes/demote/Home';
+import FilialeCustTransfer from '../src/routes/filialeCustTransfer/Home';
+import RelationHome from '../src/routes/relation/Home';
+import TaskFeedback from '../src/routes/taskFeedback/Home';
 import HtmlComponent from './routes/fspPage/HtmlComponent';
 import IframeComponent from './routes/fspPage/IframeComponent';
 
@@ -121,7 +126,13 @@ const routes = [
   // 模态框页面
   { path: '/modal', component: TemplModal },
   // 合约认证
-  { path: '/bizapply/permission', component: PermissonHome },
+  {
+    path: '/bizapply/permission',
+    component: PermissonHome,
+    children: [
+      { path: '/edit', component: PermissonEdit },
+    ],
+  },
   // 任务列表
   { path: '/taskList', component: TaskListHome },
   // 合约详情
@@ -139,7 +150,8 @@ const routes = [
     ],
   },
   // 用户池
-  { path: '/customerPool',
+  {
+    path: '/customerPool',
     component: CustomerPoolHome,
     children: [
       { path: '/viewpointDetail', component: ViewpointDetail },
@@ -152,6 +164,19 @@ const routes = [
       { path: '/taskFlow', component: TaskFlow },
     ],
   },
+  {
+    path: '/demote',
+    component: Demote,
+  },
+  {
+    path: '/filialeCustTransfer',
+    component: FilialeCustTransfer,
+  },
+  {
+    path: '/taskFeedback',
+    component: TaskFeedback,
+  },
+  { path: '/relation', component: RelationHome },
   // 不可匹配的路由会显示空白页
   { path: '/empty', component: Empty },
 ];

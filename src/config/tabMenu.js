@@ -136,7 +136,6 @@ const menus = [
     key: 'report',
     path: 'report',
     name: '绩效视图',
-    default: true,
   },
   {
     path: 'asset',
@@ -340,6 +339,13 @@ const menus = [
         key: 'permission',
         path: 'permission',
         name: '佣金调整',
+        child: [
+          {
+            key: 'permissionEdit',
+            path: 'edit',
+            name: '佣金申请编辑',
+          },
+        ],
       },
       {
         key: 'contract',
@@ -364,7 +370,6 @@ const menus = [
     key: 'feedback',
     path: 'feedback',
     name: '反馈管理',
-    default: true,
   },
   {
     key: 'commissionChange',
@@ -400,7 +405,26 @@ const menus = [
     key: 'taskList',
     path: 'taskList',
     name: '任务列表',
-    default: true,
+  },
+  {
+    key: 'demote',
+    path: 'demote',
+    name: '零售非零售客户划转',
+  },
+  {
+    key: 'filialeCustTransfer',
+    path: 'filialeCustTransfer',
+    name: '分公司客户划转',
+  },
+  {
+    key: 'taskFeedback',
+    path: 'taskFeedback',
+    name: '任务反馈',
+  },
+  {
+    key: 'relation',
+    path: 'relation',
+    name: '汇报关系树',
   },
 ];
 

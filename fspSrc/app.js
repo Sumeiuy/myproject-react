@@ -57,6 +57,7 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/global'));
+// 3. Model
 app.model(require('../src/models/app'));
 app.model(require('../src/models/feedback'));
 app.model(require('../src/models/report'));
@@ -66,14 +67,24 @@ app.model(require('../src/models/preview'));
 app.model(require('../src/models/history'));
 app.model(require('../src/models/permission'));
 app.model(require('../src/models/customerPool'));
+// 合作合约
 app.model(require('../src/models/contract'));
 app.model(require('../src/models/commission'));
 app.model(require('../src/models/commissionChange'));
+// 通道类型协议
 app.model(require('../src/models/channelsTypeProtocol'));
 app.model(require('../src/models/channelsEdit'));
 app.model(require('../src/models/taskList/tasklist'));
 app.model(require('../src/models/taskList/performerView'));
 app.model(require('../src/models/taskList/managerView'));
+// 零售非零售客户划转
+app.model(require('../src/models/demote'));
+// 分公司客户划转
+app.model(require('../src/models/filialeCustTransfer'));
+// 汇报关系树
+app.model(require('../src/models/relation'));
+// 任务反馈
+app.model(require('../src/models/taskFeedback'));
 
 // 4. Router
 app.router(routerConfig);
