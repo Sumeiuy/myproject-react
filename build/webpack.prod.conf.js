@@ -28,11 +28,11 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        include: [resolve('src')]
+        include: [resolve('config/index.js')].concat(config.src)
       },
       {
         test: /\.css$/,
-        include: config.appSrc,
+        include: config.src,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: cssLoaders.own
@@ -40,7 +40,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       },
       {
         test: /\.less$/,
-        include: config.appSrc,
+        include: config.src,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: (cssLoaders.own).concat({
@@ -109,6 +109,22 @@ var webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.index,
       template: 'index.html',
       inject: true,
+      chunks: ['index', 'vendor', 'manifest'],
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: config.build.fspIndex,
+      template: 'newIndex.html',
+      inject: true,
+      chunks: ['app', 'vendor', 'manifest'],
       minify: {
         removeComments: true,
         collapseWhitespace: true,

@@ -2,11 +2,14 @@
 var path = require('path');
 var devEnv = require('./dev.env');
 var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
+// 后端服务器地址前缀，在`config.dev.mock`为`false`的情况下，
+// 以此前缀开头的请求全部转发至指定服务器`targetUrl`
+
 module.exports = {
   build: {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
-    fragment: path.resolve(__dirname, '../dist/fragment.html'),
+    fspIndex: path.resolve(__dirname, '../dist/newIndex.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/fspa/',
@@ -26,6 +29,7 @@ module.exports = {
   dev: {
     env: require('./dev.env'),
     port: 9083,
+    page: 'newIndex.html',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -58,6 +62,11 @@ module.exports = {
         // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
+      '/fsp': {
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.82:5086', // UAT
+        secure: false,
+      },
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
@@ -70,6 +79,8 @@ module.exports = {
     enableHMR: true,
   },
   cssModules: true,
+  src: [path.resolve(__dirname, '../fspSrc'), path.resolve(__dirname, '../src')],
   appSrc: path.resolve(__dirname, '../src'),
+  fspSrc: path.resolve(__dirname, '../fspSrc'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
 };

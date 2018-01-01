@@ -35,7 +35,13 @@ const helper = {
     }
     return false;
   },
-
+  /**
+   * 检查当前页面路径是否为外部链接
+   * @param {*} key 当前路由的src
+   */
+  isExternal(key) {
+    return key && !(key.indexOf('http') === -1);
+  },
   // 获取元素CSS的样式
   // TODO 该方法已经提取
   getCssStyle(ele, css) {

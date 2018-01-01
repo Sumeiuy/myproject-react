@@ -12,4 +12,6 @@ export default {
   boardType: 'TYPE_TGJX',
   historyBoardId: 3,
   historyBoardType: 'TYPE_LSDB_TGJX',
+  apiPrefix: '/fspa/mcrm/api',
+  fspPrefix: '/fsp',
 };

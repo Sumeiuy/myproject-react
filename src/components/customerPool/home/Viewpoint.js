@@ -9,8 +9,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { fspGlobal } from '../../../utils';
-import { url as urlHelper, env } from '../../../helper';
+import { dispatchTabPane } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import styles from './viewpoint.less';
 
@@ -27,15 +27,15 @@ export default class Viewpoint extends PureComponent {
   @autobind
   openNewTab(url, query) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    if (env.isInFsp()) {
-      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(query)}`, param });
-    } else {
-      const { push } = this.props;
-      push({
-        pathname: url,
-        query,
-      });
-    }
+    const { push } = this.props;
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
   }
 
   @autobind

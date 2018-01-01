@@ -1,0 +1,105 @@
+@import "../../src/css/variable.less";
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+  z-index: 498;
+  width: 100%;
+  box-shadow: 0 0 6px 0 rgb(112, 121, 125);
+  position: relative;
+  height: 55px;
+  margin-bottom: 10px;
+  padding-right: 60px;
+  background-color: #fff;
+  // border: 1px solid #efefef;
+  .button {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    margin-top: 7px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: @transition-ease-in;
+
+    &:hover {
+      color: @primary-color;
+      border-radius: 50%;
+      background-color: #eee;
+    }
+  }
+  .headerLog {
+    width: 200px;
+    height: 100%;
+    margin-left: 10px;
+    background: no-repeat url(../../static/images/logo.png) left center;
+    & > h4 {
+      height: 100%;
+      line-height: 55px;
+      font-size: 20px;
+    }
+  }
+  .headerContent {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    & > div {
+      float: left;
+      height: 100%;
+    }
+    div.seatch {
+      line-height: 55px;
+    }
+    div.contentNav {
+      & > div {
+        float: left;
+        height: 100%;
+        line-height: 55px;
+        padding-left: 70px;
+        font-size: 12px;
+      }
+      ul {
+        float: left;
+        height: 100%;
+        li {
+          font-size: 12px;
+          line-height: 55px;
+          float: left;
+          padding: 0 25px 0 0;
+        }
+        li:first-child {
+          padding: 0 25px;
+        }
+      }
+    }
+    div.loaders {
+      padding: 0 0 0 40px;
+      dl {
+        font-size: 12px;
+        padding: 8px 0 0;
+      }
+    }
+  }
+}
+
+.popovermenu {
+  width: 280px;
+  margin-left: 6px;
+
+  :global .ant-popover-inner-content {
+    padding: 0;
+
+    .ant-menu-inline .ant-menu-item,
+    .ant-menu-vertical .ant-menu-item {
+      border-right: 0;
+      height: 48px;
+      line-height: 48px;
+    }
+
+    .ant-menu-inline .ant-menu-item-selected,
+    .ant-menu-inline .ant-menu-selected {
+      border-right: 0;
+    }
+  }
+}

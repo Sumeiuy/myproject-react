@@ -130,6 +130,7 @@ export default class CreateTask extends PureComponent {
   }
 
   /* 关闭当前页 */
+  // TODOTAB: 需要进行重写
   @autobind
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;

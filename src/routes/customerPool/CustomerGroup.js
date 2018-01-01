@@ -221,6 +221,7 @@ export default class CustomerGroup extends PureComponent {
     });
   }
 
+  // TODOTAB: 需要进行修正
   @autobind
   closeTab() {
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');

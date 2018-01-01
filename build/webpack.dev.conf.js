@@ -31,7 +31,7 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'happypack/loader?id=jsx',
-        include: [resolve('src')],
+        include: config.src,
         exclude: [
           resolve('node_modules'),
           resolve('build'),
@@ -41,12 +41,12 @@ module.exports = merge(baseWebpackConfig, {
       },
       {
         test: /\.css$/,
-        include: config.appSrc,
+        include: config.src,
         use: ['style-loader'].concat(cssLoaders.own)
       },
       {
         test: /\.less$/,
-        include: config.appSrc,
+        include: config.src,
         exclude: [
           resolve('node_modules'),
           resolve('build'),
@@ -96,6 +96,14 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
+      chunks: ['index'],
+      inject: true
+    }),
+    // https://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'newIndex.html',
+      template: 'newIndex.html',
+      chunks: ['app'],
       inject: true
     }),
     new webpack.DllReferencePlugin({

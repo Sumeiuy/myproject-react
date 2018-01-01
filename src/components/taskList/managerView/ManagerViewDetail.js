@@ -20,8 +20,8 @@ import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { helper, fspGlobal } from '../../../utils';
-import { env, url as urlHelper } from '../../../helper';
+import { helper, dispatchTabPane } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
@@ -112,11 +112,14 @@ export default class ManagerViewDetail extends PureComponent {
   /**
    * 关闭弹出框
    */
+  // TODOTAB: 需要进行测试
   @autobind
   handleCloseModal() {
-    if (env.isInFsp) {
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
-    }
+    dispatchTabPane({
+      fspAction: 'closeRctTabById',
+      id: 'RCT_FSP_CREATE_TASK',
+      routerAction: 'remove',
+    });
     this.setState({
       isShowCustDetailModal: false,
     });
@@ -141,8 +144,8 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push, mngrMissionDetailInfo, missionType, missionTypeDict } = this.props;
-    let urlParam = {
+    const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
+    const urlParam = {
       orgId: helper.getOrgId(),
       // orgId: 'ZZ001041',
       missionId: currentId,
@@ -150,48 +153,30 @@ export default class ManagerViewDetail extends PureComponent {
       entrance: 'managerView',
       source: 'managerView',
       count: mngrMissionDetailInfo.custNumbers,
+      // 任务类型
+      missionType,
     };
-
-    let descText;
-    const currentMissionType = _.find(missionTypeDict, item => item.key === missionType);
-    if (currentMissionType) {
-      descText = currentMissionType.descText;
-    }
-
-    // 只有descText为1，才需要传给自建任务
-    // descText为0，代表是MOT任务类型
-    if (descText === 1) {
-      urlParam = {
-        ...urlParam,
-        missionType,
-      };
-    }
-
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
       condition,
       ...urlParam,
     };
     const finalUrl = `${url}?${urlHelper.stringify(query)}`;
-
-    if (env.isInFsp()) {
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: finalUrl, param });
-    } else {
-      push({
-        pathname: url,
-        query: {
-          condition,
-          ...urlParam,
-        },
-      });
-    }
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id,
+      title,
+    };
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url: finalUrl,
+      param,
+      pathname: url,
+      query,
+    });
   }
 
   render() {

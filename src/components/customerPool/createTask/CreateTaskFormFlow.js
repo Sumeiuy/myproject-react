@@ -14,7 +14,7 @@ import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
-import { fspGlobal } from '../../../utils';
+import { dispatchTabPane } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
@@ -119,7 +119,11 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   @autobind
   handleCancleTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+    dispatchTabPane({
+      fspAction: 'closeRctTabById',
+      id: 'RCT_FSP_CREATE_TASK',
+      routerAction: 'remove',
+    });
   }
 
   render() {

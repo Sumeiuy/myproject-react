@@ -21,8 +21,8 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { fspGlobal, permission } from '../../utils';
-import { env, emp } from '../../helper';
+import { dispatchTabPane, permission } from '../../utils';
+import { emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -774,21 +774,19 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleCreateBtnClick() {
     const url = '/customerPool/taskFlow';
-    const { clearTaskFlowData } = this.props;
+    const { clearTaskFlowData, push } = this.props;
     clearTaskFlowData();
-    if (env.isInFsp()) {
-      fspGlobal.openRctTab({
-        url,
-        param: {
-          id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
-          title: '新建自建任务',
-          closable: true,
-          isSpecialTab: true,
-        },
-      });
-    } else {
-      this.props.push(url);
-    }
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url,
+      param: {
+        id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+        title: '新建自建任务',
+        closable: true,
+        isSpecialTab: true,
+      },
+    });
   }
 
   // 渲染列表项里面的每一项

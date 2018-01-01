@@ -17,9 +17,9 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
-import { url as urlHelper, env } from '../../../helper';
+import { url as urlHelper } from '../../../helper';
 import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
+import { dispatchTabPane } from '../../../utils';
 import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
@@ -407,22 +407,22 @@ export default class CustomerLists extends PureComponent {
   @autobind
   goGroupOrTask({ id, title, url, obj }) {
     const { push } = this.props;
-    if (env.isInFsp()) {
-      const newurl = `${url}?${urlHelper.stringify(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      push({
-        pathname: url,
-        query: obj,
-      });
-    }
+    const newurl = `${url}?${urlHelper.stringify(obj)}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id,
+      title,
+    };
+    dispatchTabPane({
+      fspAction: 'openRctTab',
+      routerAction: push,
+      url: newurl,
+      param,
+      pathname: url,
+      query: obj,
+    });
   }
 
   render() {
@@ -528,6 +528,7 @@ export default class CustomerLists extends PureComponent {
     if (orgId) {
       curOrgId = orgId;
     } else if (authority) {
+      // TODOTAB: 需要进一步处理
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
       } else {

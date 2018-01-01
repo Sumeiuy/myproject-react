@@ -64,7 +64,7 @@ export default class CreateTaskSuccess extends PureComponent {
       this.successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
-
+  // TODOTAB: 需要修改
   @autobind
   goToHome() {
     this.clearTimeInterval();

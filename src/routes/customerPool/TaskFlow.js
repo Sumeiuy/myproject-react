@@ -401,6 +401,7 @@ export default class TaskFlow extends PureComponent {
   /**
    * 关闭当前tab页
    */
+  // TODOTAB: 需要进一步修改
   @autobind
   handleCloseTab() {
     if (env.isInFsp()) {
