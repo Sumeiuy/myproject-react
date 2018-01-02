@@ -95,8 +95,16 @@ module.exports = merge(baseWebpackConfig, {
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: 'index.html',
+      inject: false,
       template: 'index.html',
-      inject: true
+      lang: 'en',
+      title: '华泰证券理财平台',
+      meta: [
+        {
+          name: 'charset',
+          content: 'utf-8'
+        }
+      ]
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,

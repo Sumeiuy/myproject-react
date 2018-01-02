@@ -12,4 +12,7 @@ export default {
   boardType: 'TYPE_TGJX',
   historyBoardId: 3,
   historyBoardType: 'TYPE_LSDB_TGJX',
+  filialeLevel: '2', // 分公司的level值
+  hbgxSummaryType: 'hbgx', // 汇总方式（汇报关系）
+  jxstSummaryType: 'jxst', // 汇总方式（绩效视图）
 };

@@ -15,6 +15,7 @@ import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import { emp, time } from '../../helper';
+import report from '../../helper/page/report';
 import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
@@ -22,14 +23,20 @@ import ScatterAnalysis from '../../components/history/ScatterAnalysis';
 import HistoryComparePolyChart from '../../components/history/HistoryComparePolyChart';
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
 import PageHeader from '../../components/pageCommon/PageHeader';
+import { constants } from '../../config';
 import styles from './Home.less';
 
 // 投顾绩效历史对比的borderId
 const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
-
+const defaultFilialeLevel = constants.filialeLevel;
+const jxstSummaryType = constants.jxstSummaryType;
+const hbgxSummaryType = constants.hbgxSummaryType;
 const effects = {
+  initialData: 'history/getInitialData',
+  custRange: 'history/getCustRange',
+  reportTree: 'history/getReportTree',
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
   getHistoryCore: 'history/getHistoryCore',
@@ -68,10 +75,15 @@ const mapStateToProps = state => ({
   updateLoading: state.history.updateLoading,
   operateData: state.history.operateData,
   message: state.history.message,
+  // 探测有数据的最大时间点接口
+  initialData: state.history.initialData,
 });
 
 const mapDispatchToProps = {
   getInitial: fectchDataFunction(true, effects.getInitial),
+  getInitialData: fectchDataFunction(true, effects.initialData),
+  getCustRange: fectchDataFunction(true, effects.custRange),
+  getReportTree: fectchDataFunction(true, effects.reportTree),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
@@ -131,6 +143,10 @@ export default class HistoryHome extends PureComponent {
     collectBoardSelect: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func.isRequired,
     collectDurationSelect: PropTypes.func.isRequired,
+    initialData: PropTypes.object.isRequired,
+    getInitialData: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
+    getReportTree: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -171,8 +187,19 @@ export default class HistoryHome extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    this.queryInitial();
+  componentDidMount() {
+    // 初始化的时候state里面还无参数
+    this.props.getInitialData().then(() => {
+      const defaultMoment = this.setDefaultMoment();
+      // 修改state
+      this.setState({
+        begin: defaultMoment.begin, // 本期开始时间
+        end: defaultMoment.end, // 本期结束时间
+        cycleType: defaultMoment.cycleType, // 时间段周期类型
+        contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
+        contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
+      }, this.queryInitial);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -185,23 +212,11 @@ export default class HistoryHome extends PureComponent {
     } = this.props;
     const differentId = !_.isEqual(preBoardId, boardId);
     if (differentId) {
-      const { custRange } = nextProps;
-      const ownerOrg = custRange[0];
       const timeStamp = new Date().getTime().toString();
-      const defaultMoment = this.setDefaultMoment();
       this.setState({
         swtichDefault: timeStamp,
         boardId,
         boardType,
-        begin: defaultMoment.begin, // 本期开始时间
-        end: defaultMoment.end, // 本期结束时间
-        cycleType: defaultMoment.cycleType, // 时间段周期类型
-        contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
-        contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
-        scope: ownerOrg && String(Number(ownerOrg.level) + 1),
-        localScope: ownerOrg && ownerOrg.level,
-        orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
-        ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
         coreIndicatorIds: [],
         indicatorId: '', // 需要清除选中的core值
       },
@@ -258,8 +273,10 @@ export default class HistoryHome extends PureComponent {
 
   @autobind
   setDefaultMoment() {
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const cycleType = 'month';
-    const nowDuration = time.getDurationString(cycleType);
+    const nowDuration = time.getDurationString(cycleType, maxDataDt);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
@@ -287,12 +304,13 @@ export default class HistoryHome extends PureComponent {
   // 初始查询数据
   @autobind
   queryInitial() {
-    const { getInitial } = this.props;
-    const { empId, boardType, boardId } = this.state;
+    const { getInitial, initialData, custRange } = this.props;
+    const { empId, boardType, boardId, queryType, localScope, orgId } = this.state;
+    const newLocalScope = localScope || custRange[0].level;
     const selfNeed = ['boardId'];
-    const coreQuery = this.makeQueryParams({}, selfNeed);
-    const radarQuery = this.makeQueryParams({ isMultiple: 0 }, selfNeed);
-    const polyQuery = this.makeQueryParams({}, selfNeed);
+    const coreQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
+    const radarQuery = this.makeQueryParams({ scope: newLocalScope, isMultiple: 0 }, selfNeed);
+    const polyQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
     const barQuery = this.makeQueryParams({
       pageSize: 10,
       pageNum: 1,
@@ -301,6 +319,8 @@ export default class HistoryHome extends PureComponent {
     }, selfNeed);
     const custScatterQuery = this.makeQueryParams({ type: 'cust' }, selfNeed);
     const investScatterQuery = this.makeQueryParams({ type: 'invest' }, selfNeed);
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
 
     getInitial({
       custRang: { empId },
@@ -310,8 +330,15 @@ export default class HistoryHome extends PureComponent {
       bar: barQuery,
       custScatter: custScatterQuery,
       investScatter: investScatterQuery,
-      dic: { boardId },
-      lib: { type: boardType },
+      dic: {
+        boardId,
+        orgId: orgId || custRange[0].id,
+      },
+      lib: {
+        type: boardType,
+        orgId: orgId || custRange[0].id,
+        queryType: queryType || defaultSummaryType,
+      },
     });
   }
 
@@ -322,14 +349,16 @@ export default class HistoryHome extends PureComponent {
     const {
       getHistoryCore,
       getRadarData,
+      custRange,
     } = this.props;
     const { localScope, coreIndicatorIds } = this.state;
+    const newLocalScope = localScope || custRange[0].level;
     let selfNeed = ['boardId'];
     if (!_.isEmpty(coreIndicatorIds)) {
       selfNeed = ['coreIndicatorIds'];
     }
     // 获取core数据
-    const coreQuery = this.makeQueryParams({ scope: localScope }, selfNeed);
+    const coreQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
     getHistoryCore(coreQuery);
     // 获取雷达图数据
     // localScope=1时，不查询雷达图数据
@@ -349,15 +378,17 @@ export default class HistoryHome extends PureComponent {
       getRankData,
       queryContrastAnalyze,
       historyContrastDic,
+      custRange,
     } = this.props;
     const { localScope, indicatorId, coreIndicatorIds } = this.state;
+    const owner = custRange[0];
     let selfNeed = [];
     if (!_.isEmpty(coreIndicatorIds)) {
       selfNeed = ['coreIndicatorIds'];
     }
     // 1.查询poly
     const contrastQuery = this.makeQueryParams({
-      scope: localScope,
+      scope: localScope || (owner && owner.level),
       coreIndicatorId: indicatorId,
     }, selfNeed);
     getContrastData(contrastQuery);
@@ -397,20 +428,27 @@ export default class HistoryHome extends PureComponent {
     // 时间段是共同的参数
     const duration = _.pick(this.state, ['begin', 'end', 'cycleType', 'contrastBegin', 'contrastEnd']);
     // 组织机构信息
-    const { orgId, scope, localScope } = this.state;
-    const { custRange } = this.props;
+    const { orgId, scope, localScope, queryType } = this.state;
+    const { custRange, initialData } = this.props;
     const owner = custRange[0];
+    let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
+    if (owner && owner.level === defaultFilialeLevel && !report.isNewOrg(owner.id)) {
+      temporaryScope = scope || (owner && String(Number(owner.level) + 2));
+    }
     const org = {
       orgId: orgId || (owner && owner.id),
       localScope: localScope || (owner && owner.level),
-      scope: scope || (owner && String(Number(owner.level) + 1)),
+      scope: temporaryScope,
     };
     const selfParam = _.pick(this.state, privateParams);
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
     return {
       ...duration,
       ...org,
       ...selfParam,
       ...special,
+      queryType: queryType || defaultSummaryType,
     };
   }
 
@@ -542,6 +580,53 @@ export default class HistoryHome extends PureComponent {
     this.props.queryContrastAnalyze(scatterQuery);
   }
 
+  // 切换SummaryType时候，需要将数据全部恢复到默认值
+  @autobind
+  updateSummaryTypeState(queryType) {
+    const { location: { query: { boardId, boardType } }, custRange } = this.props;
+    const ownerOrg = custRange[0];
+    let newScope = ownerOrg && String(Number(ownerOrg.level) + 1);
+    if (ownerOrg && ownerOrg.level === defaultFilialeLevel && !report.isNewOrg(custRange[0].id)) {
+      newScope = ownerOrg && String(Number(ownerOrg.level) + 2);
+    }
+    const timeStamp = new Date().getTime().toString();
+    const defaultMoment = this.setDefaultMoment();
+    this.setState({
+      queryType,
+      swtichDefault: timeStamp,
+      boardId,
+      boardType,
+      begin: defaultMoment.begin, // 本期开始时间
+      end: defaultMoment.end, // 本期结束时间
+      cycleType: defaultMoment.cycleType, // 时间段周期类型
+      contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
+      contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
+      scope: newScope,
+      localScope: ownerOrg && ownerOrg.level,
+      orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
+      ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
+      coreIndicatorIds: [],
+      indicatorId: '', // 需要清除选中的core值
+    },
+      () => {
+        this.queryInitial();
+      });
+  }
+
+  // 切换汇总类型
+  @autobind
+  updateOrgTreeValue(v) {
+    const { getCustRange, getReportTree } = this.props;
+    const empId = emp.getId(); // 用户ID
+    let getOrgFn = getCustRange;
+    if (v === hbgxSummaryType) {
+      getOrgFn = getReportTree;
+    }
+    getOrgFn({ empId }).then(() => {
+      this.updateSummaryTypeState(v);
+    });
+  }
+
   render() {
     const {
       reviewAnalysis = EMPTY_OBJECT,
@@ -563,9 +648,11 @@ export default class HistoryHome extends PureComponent {
       collectDurationSelect,
       createLoading,
       operateData,
+      initialData,
     } = this.props;
 
-    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) || _.isEmpty(newVisibleBoards)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) ||
+       _.isEmpty(newVisibleBoards) || _.isEmpty(initialData)) {
       return null;
     }
     const {
@@ -577,9 +664,13 @@ export default class HistoryHome extends PureComponent {
       swtichDefault,
       orgId,
       indicatorId,
+      queryType,
     } = this.state;
     const level = localScope || custRange[0].level;
-    const newScope = scope || String(Number(level) + 1);
+    let newScope = scope || String(Number(level) + 1);
+    if (level && level === defaultFilialeLevel && !report.isNewOrg(custRange[0].id)) {
+      newScope = scope || String(Number(level) + 2);
+    }
     const custOrg = ownerOrgId || custRange[0].id;
 
     const cOrgId = orgId || custRange[0].id;
@@ -617,6 +708,10 @@ export default class HistoryHome extends PureComponent {
         item => item.key === defaultIndicatorKey) > -1;
     }
 
+    // 汇总方式（组织机构/汇报关系）
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const summaryType = queryType || defaultSummaryType;
     return (
       <div className="pageHistory">
         <PageHeader
@@ -632,6 +727,8 @@ export default class HistoryHome extends PureComponent {
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
           showSelfDatePicker
+          initialData={initialData}
+          updateOrgTreeValue={this.updateOrgTreeValue}
         />
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>
@@ -656,6 +753,7 @@ export default class HistoryHome extends PureComponent {
               saveIndcatorToHome={this.saveIndcatorToHome}
               changeCore={this.changeCore}
               level={level}
+              summaryType={summaryType}
             />
           </div>
           <div className={styles.indicatorAnalyse}>
@@ -675,6 +773,8 @@ export default class HistoryHome extends PureComponent {
                     swtichDefault={swtichDefault}
                     custRange={custRange}
                     updateQueryState={this.updateQueryState}
+                    orgId={cOrgId}
+                    summaryType={summaryType}
                   />
                 </Col>
               </Row>
@@ -695,6 +795,8 @@ export default class HistoryHome extends PureComponent {
                 isLvIndicator={isLvIndicator}
                 currentSelectIndicatorKey={defaultIndicatorKey}
                 isCommissionRate={isCommissionRate}
+                orgId={cOrgId}
+                summaryType={summaryType}
               />
             </div>
           </div>
