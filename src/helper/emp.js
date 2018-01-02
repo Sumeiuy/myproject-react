@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-29 16:38:11
+ * @Last Modified time: 2018-01-02 17:08:48
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -44,7 +44,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -56,7 +56,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ001041';
+    let orgId = 'ZZ323372';
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }

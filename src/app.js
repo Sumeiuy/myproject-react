@@ -15,7 +15,7 @@ import { message } from 'antd';
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
-import persistConfig from './config/persist';
+import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper } from './helper';
 // import { initFspMethod } from './utils/fspGlobal';
 // import permission from './permissions';
@@ -27,13 +27,19 @@ if (persistConfig.active) {
 
 // 错误处理
 const onError = (e) => {
-  const { message: msg } = e;
-  // See src/utils/request.js
-  if (msg === 'xxx') {
-    message.error('登录超时，请重新登录！');
-  } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
+  const { message: msg, stack } = e;
+  const { ERROR_SEPARATOR } = requestConfig;
+  // 如果存在分隔符，认为是业务错误
+  // 否则根据情况判定为代码错误或者登录超时
+  // 后端暂时没有登录超时概念
+  // 都走门户的验证，门户返回的html，JSON parse报错即认为超时
+  if (msg.indexOf(ERROR_SEPARATOR) > -1) {
+    const errorMessage = msg.split(ERROR_SEPARATOR)[1];
+    message.error(errorMessage);
+  } else if (e.name === 'SyntaxError'
+    && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
-  } else if (e.stack && e.stack.indexOf('SyntaxError') > -1) {
+  } else if (stack && stack.indexOf('SyntaxError') > -1) {
     window.location.reload();
   } else {
     message.error(msg);
@@ -65,6 +71,7 @@ app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
 // 合作合约
 app.model(require('./models/contract'));
+// 服务订购
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 // 通道类型协议
@@ -83,6 +90,8 @@ app.model(require('./models/relation'));
 app.model(require('./models/customerFeedback'));
 // 任务反馈
 app.model(require('./models/taskFeedback'));
+// 主职位 model
+app.model(require('./models/mainPosition'));
 
 // 4. Router
 app.router(routerConfig);

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-22 09:40:48
+ * @Last Modified time: 2018-01-02 17:11:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -109,7 +109,7 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props;
+    const oldCustRangeList = this.props.custRangeList;
     if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
       this.checkUserIsFiliale();
     }
@@ -119,14 +119,13 @@ export default class FilialeCustTransfer extends PureComponent {
   @autobind
   checkUserIsFiliale() {
     const { custRangeList } = this.props;
-    const that = this;
     if (!_.isEmpty(custRangeList)) {
       if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
         Modal.warning({
           title: '提示',
           content: '您不是分公司人员，无权操作！',
-          onOk() {
-            that.handleCancel();
+          onOk: () => {
+            this.handleCancel();
           },
         });
       }
@@ -198,12 +197,11 @@ export default class FilialeCustTransfer extends PureComponent {
       return;
     }
     if (managerDataItem.hasContract) {
-      const that = this;
       confirm({
         title: '确认要划转吗?',
         content: '该客户名下有生效中的合作合约，请确认是否划转?',
-        onOk() {
-          that.sendRequest();
+        onOk: () => {
+          this.sendRequest();
         },
       });
       return;
