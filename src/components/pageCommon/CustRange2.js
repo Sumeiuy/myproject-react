@@ -10,18 +10,20 @@ import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 
 import { event } from '../../helper';
+import report from '../../helper/page/report';
 import { constants } from '../../config';
 import styles from './custRange.less';
 
+const defaultFilialeLevel = constants.filialeLevel;
 function transformCustRangeData(list, parent = '') {
   return list.map((item) => {
     const obj = {
       label: item.name,
       value: parent
               ?
-              `${item.level}-${item.id}-${parent}-${item.name}`
+              `${item.level}#${item.id}#${parent}#${item.name}`
               :
-              `${item.level}-${item.id}-${item.name}`,
+              `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -101,20 +103,13 @@ export default class CustRange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { boardId } }, custRange, orgId } = nextProps;
-    const { location: { query: { boardId: preBId } }, orgId: preOrgId } = this.props;
-    const { formatCustRange } = this.state;
-    if (Number(boardId || '1') !== Number(preBId || '1')) {
-      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
-      const initValue = {
-        label: custRangeNameDedault,
-        value: custRange[0].id,
-      };
-      // 切换报表了，恢复默认值
-      this.setState({
-        value: initValue,
-        open: false,
-      });
+    const { custRange, orgId } = nextProps;
+    const { orgId: preOrgId, custRange: preOrgTree } = this.props;
+    let { formatCustRange } = this.state;
+    if (custRange !== preOrgTree) {
+      // 组织结构树变化，保存数据
+      formatCustRange = transformCustRangeData(custRange);
+      this.setState({ formatCustRange });
     }
     if (orgId !== preOrgId) {
       walk(formatCustRange, findOrgNameByOrgId(orgId), '');
@@ -136,7 +131,7 @@ export default class CustRange extends PureComponent {
       return;
     }
     const { updateQueryState, custRange, collectData } = this.props;
-    const tmpArr = value.value.split('-');
+    const tmpArr = value.value.split('#');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
     const custRangeName = tmpArr.slice(2).join('/');
@@ -144,7 +139,7 @@ export default class CustRange extends PureComponent {
       label: custRangeName,
       value: custRangeName
                 ?
-                `${custRangeLevel}-${orgId}-${custRangeName}`
+                `${custRangeLevel}#${orgId}#${custRangeName}`
                 : custRange[0].id,
     };
     this.setState({
@@ -157,7 +152,8 @@ export default class CustRange extends PureComponent {
       orgId,
       custRangeLevel,
       level: custRangeLevel,
-      scope: Number(custRangeLevel) + 1,
+      scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId)) ?
+        (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
     });
   }
 

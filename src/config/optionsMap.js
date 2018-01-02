@@ -1,8 +1,8 @@
 /*
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-08-03 15:41:35
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2017-12-29 17:41:07
 */
 
 const optionsMap = {
@@ -115,10 +115,14 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '营业部',
+        name: '财富中心',
       },
       {
         scope: '4',
+        name: '营业部',
+      },
+      {
+        scope: '5',
         name: '投顾',
       },
     ],
@@ -129,10 +133,14 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '营业部',
+        name: '财富中心',
       },
       {
         scope: '4',
+        name: '营业部',
+      },
+      {
+        scope: '5',
         name: '服务经理',
       },
     ],
@@ -143,10 +151,14 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '营业部',
+        name: '财富中心',
       },
       {
         scope: '4',
+        name: '营业部',
+      },
+      {
+        scope: '5',
         name: '投顾',
       },
     ],
@@ -157,11 +169,33 @@ const optionsMap = {
       },
       {
         scope: '3',
-        name: '营业部',
+        name: '财富中心',
       },
       {
         scope: '4',
+        name: '营业部',
+      },
+      {
+        scope: '5',
         name: '服务经理',
+      },
+    ],
+    REPORT_RELATION_TYPE: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '财富中心',
+      },
+      {
+        scope: '4',
+        name: '团队',
+      },
+      {
+        scope: '5',
+        name: '成员',
       },
     ],
   },
@@ -209,6 +243,32 @@ const optionsMap = {
       key: 'detail',
       name: '明细指标',
       title: '明细指标展示在选定时间范围内针对该项指标的业绩排序图',
+    },
+  },
+  // 关系树筛选
+  summaryTypeSelect: [
+    {
+      value: 'hbgx',
+      name: '汇报关系汇总',
+    },
+    {
+      value: 'jxst',
+      name: '组织机构汇总',
+    },
+  ],
+  // 雷达图字典
+  charRadarOrgClass: {
+    // 雷达图组织机构对应字典
+    custRangeOrgClass: {
+      level2: '分公司',
+      level3: '财富中心',
+      level4: '营业部',
+    },
+    // 雷达图汇报关系对应字典
+    reportOrgClass: {
+      level2: '分公司',
+      level3: '财富中心',
+      level4: '团队',
     },
   },
 };

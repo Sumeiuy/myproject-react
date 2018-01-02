@@ -53,18 +53,25 @@ function renderIntro(data, push) {
           onClick={() => linkToList(item, push)}
           eventName="/click/fuuney/linkToList"
         >
-          <div className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}>
+          <div
+            title={item.value}
+            className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+          >
             {item.value}
           </div>
         </Clickable>
-        <div className={styles.count2}>{`/${item.property}`}</div>
+        <div className={styles.count2}>
+          <span>/</span>
+          <span title={item.property}>{item.property}</span>
+          <span title={item.unit}>{item.unit}</span>
+        </div>
       </div>
     ),
   );
 }
 
 function Funney({ dataSource, push }) {
-  const { data, color, propertyUnit } = dataSource;
+  const { data, color } = dataSource;
   const funnelOption = {
     series: [
       {
@@ -120,7 +127,10 @@ function Funney({ dataSource, push }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.uintRow}>{`户数/资产(${propertyUnit})`}</div>
+      <div className={styles.uintRow}>
+        <div />
+        <div>{'户数/资产'}</div>
+      </div>
       <div className={styles.content}>
         <div className={styles.left}>
           <IECharts

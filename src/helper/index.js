@@ -7,6 +7,7 @@ import env from './env';
 import event from './event';
 import number from './number';
 import os from './os';
+import org from './org';
 import power from './power';
 import regxp from './regexp';
 import time from './time';
@@ -23,6 +24,7 @@ export default {
   event,
   number,
   os,
+  org,
   power,
   regxp,
   time,

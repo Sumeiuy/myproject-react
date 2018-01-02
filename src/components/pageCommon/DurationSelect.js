@@ -48,6 +48,8 @@ export default class DurationSelect extends PureComponent {
     replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
+    initialData: PropTypes.object.isRequired,
+    custRange: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -56,7 +58,9 @@ export default class DurationSelect extends PureComponent {
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
     const value = 'month';
-    const obj = time.getDurationString(value);
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
+    const obj = time.getDurationString(value, maxDataDt);
     const beginMoment = moment(obj.begin);
     const endMoment = moment(obj.end);
     this.state = {
@@ -73,32 +77,30 @@ export default class DurationSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 因为Url中只有boardId会变化
-    const { location: { query: { boardId }, pathname } } = nextProps;
-    const { location: { query: { boardId: preBId }, pathname: prePathname } } = this.props;
-    if (Number(boardId || '1') !== Number(preBId || '1')) {
-      const duration = time.getDurationString('month');
-      const beginMoment = moment(duration.begin);
-      const endMoment = moment(duration.end);
-      this.setState({
-        open: false,
-        beginMoment,
-        endMoment,
-        compare: compareArray[0].key,
-        ...duration,
-      });
-    }
+    const { location: { pathname }, custRange } = nextProps;
+    const { location: { pathname: prePathname }, custRange: preCustRange } = this.props;
     if (!_.isEqual(pathname, prePathname)) {
       const isHistory = pathname === '/history';
       this.setState({
         isHistory,
       });
     }
+    // 切换汇总方式的时候，需要把时间恢复到初始值
+    if (!_.isEqual(custRange, preCustRange)) {
+      const { initialData } = this.props;
+      const maxDataDt = initialData.maxDataDt;
+      const value = 'month';
+      const duration = time.getDurationString(value, maxDataDt);
+      this.state = { ...duration };
+    }
   }
   // 期间变化
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
-    const duration = time.getDurationString(value);
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
+    const duration = time.getDurationString(value, maxDataDt);
     const { updateQueryState, collectData } = this.props;
     collectData({
       text: duration.cycleType,
@@ -214,8 +216,10 @@ export default class DurationSelect extends PureComponent {
   }
   @autobind
   disabledDate(current) {
-    // 不能选择大于今天的日期
-    return current && current.valueOf() > moment(moment().format(formatTxt)).subtract(1, 'days').valueOf();
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
+    // 不能选择大于后端返回有数据的最大日期
+    return current && current.valueOf() > moment(maxDataDt, formatTxt).valueOf();
   }
   // 用户自己选的时间段事件
   @autobind
@@ -255,8 +259,10 @@ export default class DurationSelect extends PureComponent {
   @autobind
   historyChangeDuration(e) {
     const { compare } = this.state;
+    const { initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
     const cycleType = e.target.value;
-    const nowDuration = time.getDurationString(cycleType);
+    const nowDuration = time.getDurationString(cycleType, maxDataDt);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
     const begin = nowDuration.begin;

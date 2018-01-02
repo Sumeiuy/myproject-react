@@ -107,9 +107,17 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.build.index,
+      inject: false,
       template: 'index.html',
-      inject: true,
       chunks: ['index', 'vendor', 'manifest'],
+      lang: 'en',
+      title: '华泰证券理财平台',
+      meta: [
+        {
+          name: 'charset',
+          content: 'utf-8'
+        }
+      ],
       minify: {
         removeComments: true,
         collapseWhitespace: true,
