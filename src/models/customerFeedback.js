@@ -3,7 +3,7 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-29 16:39:17
+ * @Last Modified time: 2018-01-02 15:15:46
  */
 
 import { customerFeedback as api } from '../api';
@@ -77,6 +77,10 @@ export default {
     // 增加客户反馈
     * addFeedback({ payload }, { call }) {
       yield call(api.addFeedback, payload);
+    },
+    // 编辑客户反馈
+    * modifyFeedback({ payload }, { call }) {
+      yield call(api.modifyFeedback, payload);
     },
     // 清空任务列表数据
     * emptyMissionData({ payload }, { put }) {

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-29 16:36:29
+ * @Last Modified time: 2018-01-02 13:53:14
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -262,6 +262,7 @@ export default class MissionBind extends PureComponent {
     const collapseProps = {
       activeKey: collapseActiveKey,
       onChange: this.handleChangeCollapse,
+      accordion: true,
     };
     return (
       <div className={styles.missionBindWapper}>

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-29 16:44:30
+ * @Last Modified time: 2018-01-02 16:43:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,6 +33,10 @@ const TAB_LIST = [
     key: '2',
   },
 ];
+// 第一个tab的状态
+const FIRST_TAB = '1';
+// 第二个tab的状态
+const SECOND_TAB = '2';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -61,6 +65,10 @@ const mapDispatchToProps = {
   emptyMissionData: fetchDataFunction(true, 'customerFeedback/emptyMissionData'),
   // 删除客户反馈选项
   delFeedback: fetchDataFunction(true, 'customerFeedback/delFeedback'),
+  // 增加客户反馈选项
+  addFeedback: fetchDataFunction(true, 'customerFeedback/addFeedback'),
+  // 编辑客户反馈选项
+  modifyFeedback: fetchDataFunction(true, 'customerFeedback/modifyFeedback'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -81,6 +89,12 @@ export default class CustomerFeedback extends PureComponent {
     // 查询客户反馈列表
     getFeedbackList: PropTypes.func.isRequired,
     feedbackData: PropTypes.object.isRequired,
+    // 删除客户反馈选项
+    delFeedback: PropTypes.func.isRequired,
+    // 增加客户反馈选项
+    addFeedback: PropTypes.func.isRequired,
+    // 编辑客户反馈选项
+    modifyFeedback: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -185,11 +199,13 @@ export default class CustomerFeedback extends PureComponent {
     const {
       getMissionList,
       missionData,
-      getFeedbackList,
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
       emptyMissionData,
+      delFeedback,
+      addFeedback,
+      modifyFeedback,
       replace,
       location,
       location: {
@@ -201,7 +217,6 @@ export default class CustomerFeedback extends PureComponent {
     const missionBindProps = {
       getMissionList,
       missionData,
-      getFeedbackList,
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
@@ -211,16 +226,24 @@ export default class CustomerFeedback extends PureComponent {
       queryMissionList: this.queryMissionList,
       queryFeedbackList: this.queryFeedbackList,
     };
+    const optionsMaintainProps = {
+      queryFeedbackList: this.queryFeedbackList,
+      feedbackData,
+      delFeedback,
+      addFeedback,
+      modifyFeedback,
+      location,
+      replace,
+    };
     const missionBindComponent = <MissionBind {...missionBindProps} />;
     switch (parentActiveKey) {
-      case '1':
+      case FIRST_TAB:
         componentNode = missionBindComponent;
         break;
-      case '2':
+      case SECOND_TAB:
         componentNode =
         (<OptionsMaintain
-          feedbackData={feedbackData}
-          getFeedbackList={getFeedbackList}
+          {...optionsMaintainProps}
         />);
         break;
       default:

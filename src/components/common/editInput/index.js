@@ -2,8 +2,8 @@
  * @Description: 附带编辑图标的 input
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-26 14:10:54
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-02 14:15:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,6 +21,7 @@ export default class EditInput extends PureComponent {
     id: PropTypes.string,
     editCallback: PropTypes.func.isRequired,
     edit: PropTypes.bool,
+    onCancel: PropTypes.func,
     btnGroup: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -34,13 +35,12 @@ export default class EditInput extends PureComponent {
     value: '',
     edit: false,
     btnGroup: '',
+    onCancel: () => {},
   }
 
   constructor(props) {
     super(props);
     const { edit, value } = props;
-    console.warn('constructor value', value);
-    console.warn('constructor edit', edit);
     this.state = {
       // 编辑状态
       edit,
@@ -61,8 +61,6 @@ export default class EditInput extends PureComponent {
       });
     }
     if (preEdit !== nextEdit) {
-      console.warn('preEdit', preEdit);
-      console.warn('nextEdit', nextEdit);
       this.setState({
         edit: nextEdit,
       });
@@ -79,7 +77,8 @@ export default class EditInput extends PureComponent {
 
   // 编辑按钮事件
   @autobind
-  onEdit() {
+  onEdit(e) {
+    e.stopPropagation();
     const { edit } = this.state;
     this.setState({
       edit: !edit,
@@ -88,7 +87,8 @@ export default class EditInput extends PureComponent {
 
   // 提交按钮事件
   @autobind
-  onSubmit() {
+  onSubmit(e) {
+    e.stopPropagation();
     const { value } = this.state;
     const { editCallback, id } = this.props;
     editCallback(value, id);
@@ -96,12 +96,14 @@ export default class EditInput extends PureComponent {
 
   // 取消按钮事件
   @autobind
-  onCancel() {
+  onCancel(e) {
+    e.stopPropagation();
     const { oldValue } = this.state;
+    const { onCancel } = this.props;
     this.setState({
       value: oldValue,
       edit: false,
-    });
+    }, onCancel);
   }
 
   render() {
@@ -122,6 +124,7 @@ export default class EditInput extends PureComponent {
                 value={value}
                 onChange={this.onChange}
                 onPressEnter={this.onClick}
+                onClick={e => e.stopPropagation()}
               />
               <Icon type="success" onClick={this.onSubmit} title="确定" />
               <Icon type="1" onClick={this.onCancel} title="取消" />
