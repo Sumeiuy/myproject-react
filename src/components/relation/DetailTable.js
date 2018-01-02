@@ -21,76 +21,83 @@ import styles from './detailTable.less';
 
 const confirm = Modal.confirm;
 // detailTable 组件的表格类型
-const CENTER_TABLE = 'center';
-const TEAM_TABLE = 'team';
+const COMPANY_TABLE = '2';
+const CENTER_TABLE = '3';
+const TEAM_TABLE = '4';
 
-const columnsOne = [{
-  title: '名称',
-  key: 'title',
-  dataIndex: 'title',
-  width: '25%',
-  render: item => (
-    <div className={classnames(styles.column, styles.title)} title={item}>
-      {item}
-    </div>
-  ),
-}, {
-  title: '负责人',
-  dataIndex: 'name',
-  key: 'name',
-  width: '25%',
-  render: item => (
-    <div className={classnames(styles.column, styles.manager)} title={item}>
-      {item}
-    </div>
-  ),
-}];
+function columnsOne(category) {
+  const name = category === COMPANY_TABLE ? 'orgName' : 'postnDesc';
+  const manager = category === COMPANY_TABLE ? 'loginName' : 'loginName';
+  return [{
+    title: '名称',
+    key: name,
+    dataIndex: name,
+    width: '25%',
+    render: item => (
+      <div className={classnames(styles.column, styles.title)} title={item}>
+        {item || '--'}
+      </div>
+    ),
+  }, {
+    title: '负责人',
+    dataIndex: manager,
+    key: manager,
+    width: '25%',
+    render: item => (
+      <div className={classnames(styles.column, styles.manager)} title={item}>
+        {item || '--'}
+      </div>
+    ),
+  }];
+}
+
 const columnsTwo = [{
   title: '团队数量',
-  key: 'teamNum',
-  dataIndex: 'teamNum',
+  key: 'teamCount',
+  dataIndex: 'teamCount',
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.teamNum)} title={item}>
-      {item}
+      {item || '0'}
     </div>
   ),
 }, {
   title: '投顾人数',
-  dataIndex: 'adviserNum',
-  key: 'adviserNum',
+  dataIndex: 'empCount',
+  key: 'empCount',
   width: '25%',
   render: item => (
     <div className={classnames(styles.column, styles.adviserNum)} title={item}>
-      {item}
+      {item || '0'}
     </div>
   ),
 }];
+
 const columnsTree = [{
   title: '工号',
-  key: 'code',
-  dataIndex: 'code',
+  key: 'login',
+  dataIndex: 'login',
   width: '33%',
   render: item => (
     <div className={classnames(styles.column, styles.code)} title={item}>
-      {item}
+      {item || '--'}
     </div>
   ),
 }, {
   title: '姓名',
-  dataIndex: 'name',
-  key: 'name',
+  dataIndex: 'loginName',
+  key: 'loginName',
   width: '33%',
   render: item => (
     <div className={classnames(styles.column, styles.name)} title={item}>
-      {item}
+      {item || '--'}
     </div>
   ),
 }];
 const extra = {
-  company: { title: '下属财富中心' },
-  center: { title: '下属团队', buttonTitle: '添加团队' },
-  team: { buttonTitle: '添加成员' },
+  [COMPANY_TABLE]: { title: '下属财富中心' },
+  [CENTER_TABLE]: { title: '下属团队', buttonTitle: '添加团队' },
+  [TEAM_TABLE]: { buttonTitle: '添加成员' },
 };
 
 const actionColumns = (category, action) => {
@@ -100,9 +107,9 @@ const actionColumns = (category, action) => {
       deleteFunc(type, item);
     }
   }
-  function updateClick(type, item) {
+  function updateClick(item) {
     if (_.isFunction(updateFunc)) {
-      updateFunc(type, item);
+      updateFunc(item);
     }
   }
   return {
@@ -125,7 +132,7 @@ const actionColumns = (category, action) => {
                 <Icon
                   type={'beizhu'}
                   className={styles.updateIcon}
-                  onClick={() => { updateClick(category, item); }}
+                  onClick={() => { updateClick(item); }}
                 />
               </div>
             ) : null
@@ -156,7 +163,7 @@ export default class DetailTable extends Component {
   getColumns(category) {
     if (category === CENTER_TABLE) {
       return [
-        ...columnsOne,
+        ...(columnsOne(category)),
         _.last(columnsTwo),
         actionColumns(
           category,
@@ -166,15 +173,14 @@ export default class DetailTable extends Component {
     } else if (category === TEAM_TABLE) {
       return [...columnsTree, actionColumns(category, { deleteFunc: this.handleDeleteClick })];
     }
-    return [...columnsOne, ...columnsTwo];
+    return [...(columnsOne(category)), ...columnsTwo];
   }
 
   @autobind
   handleDeleteClick(category, item) {
     const { onDelete } = this.props;
     confirm({
-      title: '确认要删除吗?',
-      content: '确认后，操作将不可取消。',
+      title: '请确认是否删除?',
       onOk() {
         onDelete(category, item);
       },
@@ -182,8 +188,8 @@ export default class DetailTable extends Component {
   }
 
   @autobind
-  handleUpdateClick(category, item) {
-    this.props.onUpdate(category, item, false);
+  handleUpdateClick(item) {
+    this.props.onUpdate(item);
   }
 
   @autobind
@@ -231,7 +237,7 @@ export default class DetailTable extends Component {
   render() {
     const { category, rowKey, tableData } = this.props;
     const screenHeight = document.documentElement.clientHeight;
-    const y = screenHeight - 281;
+    const y = screenHeight - 296;
     return (
       <div className={styles.tableContainer}>
         {this.renderExtra()}

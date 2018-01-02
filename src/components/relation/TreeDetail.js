@@ -11,14 +11,20 @@ import React, { PropTypes, Component } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Modal } from 'antd';
+import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import DetailTable from './DetailTable';
 import styles from './treeDetail.less';
+// detailTable 组件的表格类型
+const COMPANY_TABLE = '2';
+const CENTER_TABLE = '3';
+const TEAM_TABLE = '4';
 
 const confirm = Modal.confirm;
 export default class TreeDetail extends Component {
   static propTypes = {
+    headerLine: PropTypes.string,
     detail: PropTypes.object,
     category: PropTypes.string,
     onAdd: PropTypes.func,
@@ -27,11 +33,22 @@ export default class TreeDetail extends Component {
   }
 
   static defaultProps = {
+    headerLine: '',
     detail: {},
     category: '',
     onAdd: () => {},
     onDelete: () => {},
     onUpdate: () => {},
+  }
+
+  getTitle(defaultTitle, type, title1, title2) {
+    let title = defaultTitle || '--';
+    if (type === TEAM_TABLE) {
+      title = _.isEmpty(title1) ? title : title1;
+    } else if (type === CENTER_TABLE) {
+      title = _.isEmpty(title2) ? title : title2;
+    }
+    return title;
   }
 
   @autobind
@@ -45,20 +62,35 @@ export default class TreeDetail extends Component {
   }
 
   @autobind
-  renderHeader() {
-    const { detail, category, onUpdate } = this.props;
-    const { name = '--', code = '--', title = '--' } = detail || {};
+  renderHeader(obj) {
+    const { category, onUpdate, headerLine } = this.props;
+    const { orgName, postnDesc, login, loginName, postnId } = obj || {};
+    const hasManager = !_.isEmpty(postnId);
+    const isHiddenManager = _.isEmpty(login) && _.isEmpty(login);
+    const title = this.getTitle(headerLine, category, postnDesc, orgName);
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{title}</div>
+        <div className={styles.titleContainer}>
+          <div className={styles.title}>{title}</div>
+        </div>
         <div className={styles.managerRow}>
           <div className={styles.info}>{'负责人：'}</div>
-          <div className={classnames(styles.info, styles.value)}>{`${name}（${code}）`}</div>
-          <Icon
-            type={'beizhu'}
-            onClick={() => { onUpdate(category, { name, code }, true); }}
-            className={styles.editIcon}
-          />
+          {
+            isHiddenManager ? null : (
+              <div className={classnames(styles.info, styles.value)}>
+                {`${(loginName || '--')}（${(login || '--')}）`}
+              </div>
+            )
+          }
+          {
+            category === COMPANY_TABLE ? null : (
+              <Icon
+                type={'beizhu'}
+                onClick={() => { onUpdate(obj, true, category, hasManager); }}
+                className={styles.editIcon}
+              />
+            )
+          }
         </div>
       </div>
     );
@@ -66,16 +98,21 @@ export default class TreeDetail extends Component {
 
   render() {
     const { detail, category, onDelete, onUpdate, onAdd } = this.props;
-    const { infoList = [] } = detail || {};
+    const { postnTree = [], currentPostn } = detail || {};
     const screenHeight = document.documentElement.clientHeight;
     const style = { height: `${(screenHeight - 109)}px` };
+    // 给定唯一的key
+    const newInfo = _.map(
+      postnTree,
+      (item, index) => ({ ...item, curId: `${index}` }),
+    );
     return (
       <div className={styles.detailContainer} style={style}>
-        {this.renderHeader()}
+        {this.renderHeader(currentPostn)}
         <DetailTable
           category={category}
-          rowKey={'id'}
-          tableData={infoList}
+          rowKey={'curId'}
+          tableData={newInfo}
           onDelete={onDelete}
           onUpdate={onUpdate}
           onAdd={onAdd}

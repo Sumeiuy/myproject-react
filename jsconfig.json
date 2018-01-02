@@ -7,5 +7,5 @@
       "allowSyntheticDefaultImports": true
       },
   "exclude": [ "node_modules", "mockup", "build", "config", "dist", "docker", "docs" ],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "fspSrc/**/*"]
   }

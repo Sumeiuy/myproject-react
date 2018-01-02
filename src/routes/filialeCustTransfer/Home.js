@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-14 17:32:18
+ * @Last Modified time: 2018-01-02 15:52:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -19,7 +19,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { dispatchTabPane } from '../../utils';
-
+import { emp } from '../../helper';
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -46,6 +46,8 @@ const mapStateToProps = state => ({
   managerData: state.filialeCustTransfer.managerData,
   // 新服务经理列表
   newManagerList: state.filialeCustTransfer.newManagerList,
+  // 组织机构树
+  custRangeList: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
@@ -84,6 +86,8 @@ export default class FilialeCustTransfer extends PureComponent {
     saveChange: PropTypes.func.isRequired,
     // 提交成功后清除上一次查询的数据
     emptyQueryData: PropTypes.func.isRequired,
+    // 组织机构树
+    custRangeList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -94,12 +98,37 @@ export default class FilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.checkUserIsFiliale();
     this.state = {
       // 所选客户
       client: EMPTY_OBJECT,
       // 所选新服务经理
       newManager: EMPTY_OBJECT,
     };
+  }
+
+  componentWillReceiveProps({ custRangeList }) {
+    const oldCustRangeList = this.props.custRangeList;
+    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+      this.checkUserIsFiliale();
+    }
+  }
+
+  // 判断当前登录用户部门是否是分公司
+  @autobind
+  checkUserIsFiliale() {
+    const { custRangeList } = this.props;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+        Modal.warning({
+          title: '提示',
+          content: '您不是分公司人员，无权操作！',
+          onOk: () => {
+            this.handleCancel();
+          },
+        });
+      }
+    }
   }
 
   // 选择客户
@@ -167,12 +196,11 @@ export default class FilialeCustTransfer extends PureComponent {
       return;
     }
     if (managerDataItem.hasContract) {
-      const that = this;
       confirm({
         title: '确认要划转吗?',
         content: '该客户名下有生效中的合作合约，请确认是否划转?',
-        onOk() {
-          that.sendRequest();
+        onOk: () => {
+          this.sendRequest();
         },
       });
       return;
