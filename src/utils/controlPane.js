@@ -151,6 +151,8 @@ function dispatchTabPane(options) {
       data, // 可选参数，其他可附加的数据
     } = options;
 
+    // 如果没有传入任何参数，则在react框架下什么都不做，
+    // 这个是为了针对多个fsp调用，可以使用一次react框架内调用实现时，则可以只处理fsp调用，react框架则什么都不做
     if (!routerAction) { noop(); }
 
     // 兼容url的两种写法，字符串url，以及pathname+query对象
