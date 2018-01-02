@@ -2,8 +2,8 @@
  * @Description: 降级客户处理页面
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-22 13:54:26
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-01-02 13:31:47
  */
 
 import React, { PureComponent } from 'react';
@@ -181,7 +181,7 @@ export default class Demote extends PureComponent {
     const operation = {
       column: {
         key: 'switch',
-        title: '是否降级',
+        title: '是否划转',
       },
       operate: this.checkTableData,
     };
