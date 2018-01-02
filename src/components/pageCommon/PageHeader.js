@@ -27,6 +27,8 @@ const marginLeftWidth = fspContainer.marginLeftWidth;
 const summaryTypeSelect = optionsMap.summaryTypeSelect;
 // 汇报关系的汇总方式
 const hbgxSummaryType = constants.hbgxSummaryType;
+const jxstSummaryType = constants.jxstSummaryType;
+const jingZongLevel = constants.jingZongLevel;
 // 时间格式化样式
 const formatTxt = 'YYYYMMDD';
 
@@ -62,6 +64,7 @@ export default class PageHeader extends PureComponent {
     let contentWidth;
     let scrollX;
     let leftWidth;
+    const { custRange } = props;
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
@@ -71,7 +74,7 @@ export default class PageHeader extends PureComponent {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
-      summaryTypeValue: hbgxSummaryType,
+      summaryTypeValue: custRange[0].level !== jingZongLevel ? hbgxSummaryType : jxstSummaryType,
     };
   }
 
@@ -254,7 +257,7 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
             {
-              moment(maxDataDt).isBefore(momentDataDt) && !isHistory?
+              moment(maxDataDt).isBefore(momentDataDt) && !isHistory ?
                 <Alert
                   message="提示"
                   description={`因当前数据后台未核算完成，目前展现的是截止到${maxDataDtTip}的数据`}
