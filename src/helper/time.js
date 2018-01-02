@@ -1,11 +1,12 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:13:53
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 15:32:11
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2017-12-22 16:04:36
  * @description 此处存放与时间相关的公用方法
  */
 import moment from 'moment';
+import _ from 'lodash';
 
 const time = {
   /**
@@ -38,7 +39,7 @@ const time = {
    * @author sunweibin
    * @param {String} cycleType 周期字符串
    */
-  getDurationString(cycleType) {
+  getDurationString(cycleType, maxDataDt) {
     const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
     let durationStart = '';
@@ -46,8 +47,12 @@ const time = {
     let lastQuarter = quarter - 1;
     let year = moment().year();
     const lastYear = year - 1;
-
-    const temp = moment().subtract(1, 'days');
+    let temp;
+    if (_.isEmpty(maxDataDt)) {
+      temp = moment().subtract(1, 'days');
+    } else {
+      temp = moment(maxDataDt, fomater);
+    }
     const dateText = temp.format('YYYY/MM/DD');
     switch (cycleType) {
       case 'beforeLastMonth':

@@ -807,7 +807,6 @@ const pageConfig = {
       },
     ],
   },
-
   // 自建任务列表
   tasklist: {
     pageName: '自建任务列表',
@@ -877,7 +876,6 @@ const pageConfig = {
       },
     ],
   },
-
 };
 
 export default pageConfig;

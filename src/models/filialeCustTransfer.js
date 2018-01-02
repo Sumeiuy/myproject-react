@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-13 14:23:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-02 10:31:07
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -22,7 +22,6 @@ const PLACEHOLDER_OBJECT = {
   newEmpName: '', // 新服务经理
   newPostnName: '', // 新职位
 };
-const ORG_ID = 'ZZ001041051'; // 临时部门id
 
 export default {
   namespace: 'filialeCustTransfer',
@@ -42,7 +41,11 @@ export default {
     compareData(state, action) {
       const { payload } = action;
       const prevManagerData = state.managerData[0];
-      const managerData = Object.assign({}, PLACEHOLDER_OBJECT, prevManagerData, payload);
+      const managerData = {
+        ...PLACEHOLDER_OBJECT,
+        ...prevManagerData,
+        ...payload,
+      };
       return {
         ...state,
         managerData: [managerData],
@@ -81,7 +84,7 @@ export default {
     * getCustList({ payload }, { call, put }) {
       const newPayload = {
         ...payload,
-        integrationId: emp.getOrgId() || ORG_ID,
+        integrationId: emp.getOrgId(),
       };
       const response = yield call(api.getCustList, newPayload);
       yield put({
@@ -111,7 +114,7 @@ export default {
     * getNewManagerList({ payload }, { call, put }) {
       const newPayload = {
         ...payload,
-        integrationId: emp.getOrgId() || ORG_ID,
+        integrationId: emp.getOrgId(),
       };
       const response = yield call(api.getNewManagerList, newPayload);
       yield put({
