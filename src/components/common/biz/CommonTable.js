@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-01-02 16:04:25
+ * @Last Modified time: 2018-01-02 20:04:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -98,7 +98,7 @@ export default class CommonTable extends PureComponent {
                   />
                 </span>
               );
-            }
+            };
             newTitleList = [...newTitleList, operation.column];
             break;
           default:
