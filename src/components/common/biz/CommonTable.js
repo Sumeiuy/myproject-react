@@ -2,8 +2,8 @@
  * @Description: 公用的表格组件
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-22 12:04:25
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-01-02 15:56:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -91,7 +91,7 @@ export default class CommonTable extends PureComponent {
                   checkedChildren="是"
                   unCheckedChildren="否"
                   onChange={checked => operation.operate(checked, record, index)}
-                  defaultChecked
+                  checked={!!record.checked}
                 />
               </span>
             );
