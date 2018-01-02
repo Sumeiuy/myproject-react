@@ -24,6 +24,7 @@ const defaultBoardType = constants.boardType;
 const defaultFilialeLevel = constants.filialeLevel;
 const jxstSummaryType = constants.jxstSummaryType;
 const hbgxSummaryType = constants.hbgxSummaryType;
+const jingZongLevel = constants.jingZongLevel;
 
 const effects = {
   initialData: 'report/getInitialData',
@@ -216,14 +217,22 @@ export default class ReportHome extends PureComponent {
       (Number(custRangeLevel) + addNum) : (Number(custRange[0].level) + addNum);
   }
 
+  // 获取默认汇总方式的切换
+  @autobind
+  getDefaultSummaryType() {
+    const { custRange, initialData } = this.props;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    return summaryTypeIsShow && custRange[0].level !== jingZongLevel ?
+    hbgxSummaryType : jxstSummaryType;
+  }
+
   @autobind
   getApiParams(param) {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
-    const { custRange, initialData } = this.props;
+    const { custRange } = this.props;
     const { begin, cycleType, end, boardId, orgId, custRangeLevel, queryType } = this.state;
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
@@ -257,12 +266,11 @@ export default class ReportHome extends PureComponent {
 
   @autobind
   getInfo() {
-    const { getAllInfo, custRange, initialData } = this.props;
+    const { getAllInfo, custRange } = this.props;
     const { boardId, begin, end, cycleType, orgId, custRangeLevel, queryType } = this.state;
     const newscope = this.getApiScope();
     const loginOrgId = emp.getOrgId(); // 登录人的orgId
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
     // 整理数据
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
@@ -437,8 +445,7 @@ export default class ReportHome extends PureComponent {
     }
     showScopeOrder = true;
     // 汇总方式（组织机构/汇报关系）
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
     const summaryType = queryType || defaultSummaryType;
     return (
       <div className="page-invest content-inner">

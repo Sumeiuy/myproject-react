@@ -31,6 +31,7 @@ const TYPE_LSDB_JYYJ = '4';
 const defaultFilialeLevel = constants.filialeLevel;
 const jxstSummaryType = constants.jxstSummaryType;
 const hbgxSummaryType = constants.hbgxSummaryType;
+const jingZongLevel = constants.jingZongLevel;
 const effects = {
   initialData: 'history/getInitialData',
   custRange: 'history/getCustRange',
@@ -299,10 +300,19 @@ export default class HistoryHome extends PureComponent {
     return [];
   }
 
+  // 获取默认汇总方式的切换
+  @autobind
+  getDefaultSummaryType() {
+    const { custRange, initialData } = this.props;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    return summaryTypeIsShow && custRange[0].level !== jingZongLevel ?
+    hbgxSummaryType : jxstSummaryType;
+  }
+
   // 初始查询数据
   @autobind
   queryInitial() {
-    const { getInitial, initialData, custRange } = this.props;
+    const { getInitial, custRange } = this.props;
     const { empId, boardType, boardId, queryType, localScope, orgId } = this.state;
     const newLocalScope = localScope || custRange[0].level;
     const selfNeed = ['boardId'];
@@ -317,8 +327,7 @@ export default class HistoryHome extends PureComponent {
     }, selfNeed);
     const custScatterQuery = this.makeQueryParams({ type: 'cust' }, selfNeed);
     const investScatterQuery = this.makeQueryParams({ type: 'invest' }, selfNeed);
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
 
     getInitial({
       custRang: { empId },
@@ -427,7 +436,7 @@ export default class HistoryHome extends PureComponent {
     const duration = _.pick(this.state, ['begin', 'end', 'cycleType', 'contrastBegin', 'contrastEnd']);
     // 组织机构信息
     const { orgId, scope, localScope, queryType } = this.state;
-    const { custRange, initialData } = this.props;
+    const { custRange } = this.props;
     const owner = custRange[0];
     let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
     if (owner && owner.level === defaultFilialeLevel && !report.isNewOrg(owner.id)) {
@@ -439,8 +448,7 @@ export default class HistoryHome extends PureComponent {
       scope: temporaryScope,
     };
     const selfParam = _.pick(this.state, privateParams);
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
     return {
       ...duration,
       ...org,
@@ -707,8 +715,7 @@ export default class HistoryHome extends PureComponent {
     }
 
     // 汇总方式（组织机构/汇报关系）
-    const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    const defaultSummaryType = summaryTypeIsShow ? hbgxSummaryType : jxstSummaryType;
+    const defaultSummaryType = this.getDefaultSummaryType();
     const summaryType = queryType || defaultSummaryType;
     return (
       <div className="pageHistory">

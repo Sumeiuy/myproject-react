@@ -3,8 +3,9 @@
  * @author sunweibin
  */
 import { report as api } from '../api';
-import { request, BoardBasic } from '../config';
+import { request, BoardBasic, constants } from '../config';
 
+const jingZongLevel = constants.jingZongLevel;
 export default {
   namespace: 'report',
   state: {
@@ -137,11 +138,18 @@ export default {
       // 初始化的时是调组织机构数，还是调汇报机构树
       const initialData = yield select(state => state.report.initialData);
       const summaryTypeIsShow = initialData.summaryTypeIsShow;
-      // 汇总方式切换是否显示字段
       let actionType = 'getCustRange';
+      // 汇总方式切换是否显示字段,若显示，判断默认显示为汇报关系（非经总）还是组织机构（经总）
       if (summaryTypeIsShow) {
-        actionType = 'getReportTree';
+        const reportTreeResponse = yield call(api.getReportTree, payload);
+        const level = reportTreeResponse.resultData.level;
+        // summaryTypeIsShow为true时，需求要求经总默认展示组织机构，其他南京分公司默认展示汇报关系
+        // jingZongLevel为经总的level:'1'
+        if (level !== jingZongLevel) {
+          actionType = 'getReportTree';
+        }
       }
+      console.warn('actionType', actionType);
       yield put({
         type: actionType,
         payload: {},
