@@ -257,7 +257,7 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
             {
-              moment(maxDataDt).isBefore(momentDataDt) && !isHistory?
+              moment(maxDataDt).isBefore(momentDataDt) && !isHistory ?
                 <Alert
                   message="提示"
                   description={`因当前数据后台未核算完成，目前展现的是截止到${maxDataDtTip}的数据`}
