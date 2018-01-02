@@ -149,7 +149,6 @@ export default {
           actionType = 'getReportTree';
         }
       }
-      console.warn('actionType', actionType);
       yield put({
         type: actionType,
         payload: {},
