@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 13:53:14
+ * @Last Modified time: 2018-01-03 15:21:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,7 +36,6 @@ const TAB_LIST = [
 export default class MissionBind extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     // 获取任务列表
     queryMissionList: PropTypes.func.isRequired,
     missionData: PropTypes.object.isRequired,
@@ -47,8 +46,8 @@ export default class MissionBind extends PureComponent {
     // 查询客户反馈列表
     queryFeedbackList: PropTypes.func.isRequired,
     feedbackData: PropTypes.object.isRequired,
-    // 清空任务列表数据
-    emptyMissionData: PropTypes.func.isRequired,
+    // 切换tab
+    missionBindChangeTab: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -69,10 +68,10 @@ export default class MissionBind extends PureComponent {
   // 获取客户反馈气泡
   @autobind
   getFeedbackItem(list, missionId) {
-    return list.map((item) => {
+    return (list || EMPTY_LIST).map((item) => {
       const content = (<ul className={styles.popoverCentent}>
         {
-          item.childList.map((childItem, childIndex) => (
+          (item.childList || EMPTY_LIST).map((childItem, childIndex) => (
             <li key={childItem.id}>{`${String.fromCharCode(65 + childIndex)}. ${childItem.name}`}</li>
           ))
         }
@@ -207,28 +206,6 @@ export default class MissionBind extends PureComponent {
     }
   }
 
-  // 切换tab
-  @autobind
-  handleChangeTab(key) {
-    const {
-      replace,
-      emptyMissionData,
-      location: {
-        pathname,
-        query,
-      },
-     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        childActiveKey: key,
-        pageNum: 1,
-      },
-    });
-    emptyMissionData();
-  }
-
   render() {
     const {
       showModal,
@@ -236,6 +213,7 @@ export default class MissionBind extends PureComponent {
       beAddMissionId,
     } = this.state;
     const {
+      missionBindChangeTab,
       missionData,
       queryFeedbackList,
       feedbackData,
@@ -274,7 +252,7 @@ export default class MissionBind extends PureComponent {
           </p>
         </div>
         <div className={styles.tabBox}>
-          <Tabs onChange={this.handleChangeTab} activeKey={childActiveKey} >
+          <Tabs onChange={missionBindChangeTab} activeKey={childActiveKey} >
             {
               TAB_LIST.map(item => (
                 <TabPane tab={item.tabName} key={item.key} />

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 16:56:37
+ * @Last Modified time: 2018-01-03 14:09:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -92,11 +92,20 @@ export default class OptionsMaintain extends PureComponent {
         },
       },
     } = this.props;
-    modifyFeedback({
-      id,
-      name: value,
-    }).then(() => {
-      this.queryFeedbackList(pageNum);
+    if (_.isEmpty(value)) {
+      message.error('名称不能为空');
+      return;
+    }
+    Confirm({
+      content: '修改的反馈信息实时生效，会影响到已反馈的服务记录，是否确认修改？',
+      onOk: () => {
+        modifyFeedback({
+          id,
+          name: value,
+        }).then(() => {
+          this.queryFeedbackList(pageNum);
+        });
+      },
     });
   }
 

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-12-28 16:39:42
+ * @Last Modified time: 2018-01-03 13:58:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -62,6 +62,9 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   handleChangeKeyword(e) {
+    if (e.target.value.length >= 30) {
+      return;
+    }
     this.setState({
       keyword: e.target.value,
     });
