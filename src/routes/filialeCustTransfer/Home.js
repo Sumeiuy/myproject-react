@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-02 10:25:10
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-02 17:11:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,6 +20,7 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { closeRctTabById } from '../../utils/fspGlobal';
 import { env, emp } from '../../helper';
+
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -255,6 +256,7 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   render() {
+    console.log('props', this.props);
     const {
       custList,
       newManagerList,

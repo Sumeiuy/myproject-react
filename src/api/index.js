@@ -12,6 +12,7 @@ import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
 import relation from './relation';
+import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 
@@ -48,7 +49,9 @@ export default {
   demote: demote(api),
   // ========== 分公司客户划转接口api
   filialeCustTransfer: filialeCustTransfer(api),
-  // ========== 任务反馈
+  // 客户反馈
+  customerFeedback: customerFeedback(api),
+  // 任务反馈
   taskFeedback: taskFeedback(api),
 };
 
