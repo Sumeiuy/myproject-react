@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 16:43:28
+ * @Last Modified time: 2018-01-03 15:21:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
 import _ from 'lodash';
 
+import choosePage from '../../components/operationManage/choosePage';
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
 import Barable from '../../decorators/selfBar';
@@ -74,6 +75,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
+@choosePage
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -194,6 +196,28 @@ export default class CustomerFeedback extends PureComponent {
     });
   }
 
+  // 任务绑定组件切换tab状态更新到url
+  @autobind
+  missionBindChangeTab(key) {
+    const {
+      emptyMissionData,
+      replace,
+      location: {
+        pathname,
+        query,
+      },
+     } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        childActiveKey: key,
+        pageNum: 1,
+      },
+    });
+    emptyMissionData();
+  }
+
   render() {
     let componentNode = null;
     const {
@@ -202,7 +226,6 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
-      emptyMissionData,
       delFeedback,
       addFeedback,
       modifyFeedback,
@@ -220,11 +243,11 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
-      emptyMissionData,
       replace,
       location,
       queryMissionList: this.queryMissionList,
       queryFeedbackList: this.queryFeedbackList,
+      missionBindChangeTab: this.missionBindChangeTab,
     };
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,

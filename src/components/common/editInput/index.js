@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 14:15:42
+ * @Last Modified time: 2018-01-03 14:03:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ export default class EditInput extends PureComponent {
     editCallback: PropTypes.func.isRequired,
     edit: PropTypes.bool,
     onCancel: PropTypes.func,
+    maxLen: PropTypes.number,
     btnGroup: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -35,6 +36,7 @@ export default class EditInput extends PureComponent {
     value: '',
     edit: false,
     btnGroup: '',
+    maxLen: 30,
     onCancel: () => {},
   }
 
@@ -70,6 +72,10 @@ export default class EditInput extends PureComponent {
   // 输入框编辑事件
   @autobind
   onChange(e) {
+    const { maxLen } = this.props;
+    if (e.target.value.length >= maxLen) {
+      return;
+    }
     this.setState({
       value: e.target.value,
     });
