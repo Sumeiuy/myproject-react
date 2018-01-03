@@ -5,5 +5,5 @@ log/
 fastclick.js
 static/
 dist
-build/
+build/**
 config/**

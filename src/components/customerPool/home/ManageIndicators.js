@@ -176,11 +176,8 @@ export default class PerformanceIndicators extends PureComponent {
       filterEmptyToNumber(tranAmtTotpdt),
       filterEmptyToNumber(purRakeGjpdt),
     ];
-    const {
-      newUnit: tradeVolumeUnit,
-      items: tradeItems,
-    } = getTradingVolume({ tradeingVolumeData });
-    const tradeVolumeHead = { icon: 'chanpinxiaoshou', title: `资产和交易量（${tradeVolumeUnit}）` };
+    const finalTradeingVolumeData = getTradingVolume({ tradeingVolumeData });
+    const tradeVolumeHead = { icon: 'chanpinxiaoshou', title: '资产和交易量' };
 
     // 产品销售（经营指标）
     const productSaleData = [
@@ -189,11 +186,8 @@ export default class PerformanceIndicators extends PureComponent {
       filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(otcTranAmt),
     ];
-    const {
-      newUnit: productSaleUnit,
-      items: productSaleItems,
-    } = getProductSale({ productSaleData });
-    const productSaleHead = { icon: 'shouru', title: `产品销售（${productSaleUnit}）` };
+    const finalProductSaleData = getProductSale({ productSaleData });
+    const productSaleHead = { icon: 'shouru', title: '产品销售' };
 
     // 服务指标（经营业绩）
     const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
@@ -252,14 +246,14 @@ export default class PerformanceIndicators extends PureComponent {
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
                   <IfEmpty isEmpty={isEmpty}>
-                    <CheckLayout dataSource={tradeItems} />
+                    <CheckLayout dataSource={finalTradeingVolumeData} />
                   </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={productSaleHead}>
                   <IfEmpty isEmpty={isEmpty} className={styles.empty}>
-                    <ProgressList dataSource={productSaleItems} key={'productSale'} />
+                    <ProgressList type={'productSale'} dataSource={finalProductSaleData} key={'productSale'} />
                   </IfEmpty>
                 </RectFrame>
               </Col>

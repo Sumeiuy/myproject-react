@@ -5,6 +5,39 @@
       height: 55px;
       line-height: 55px;
       background-color: #fff;
+      position: relative;
+      :global {
+        .ant-alert.ant-alert-warning {
+          width: 520px;
+          position: absolute;
+          right: 20px;
+          top: 60px;
+          text-align: left;
+          border: none;
+          box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+          background-color: #fff;
+        }
+        .ant-alert-with-description .ant-alert-close-icon {
+          height: 20px;
+          width: 20px;
+          font-size: 20px;
+        }
+        .ant-alert-with-description .ant-alert-icon {
+          top: 32px;
+          left: 25px;
+        }
+        .ant-alert-with-description {
+          padding: 32px 32px 30px 60px;
+        }
+        .ant-alert-message {
+          font-size: 18px;
+          color: #333;
+        }
+        .ant-alert-description {
+          font-size: 14px;
+          color: #333;
+        }
+      }
     }
     .reportName {
       font-size: 14px;
@@ -60,6 +93,15 @@
         .ant-calendar-picker-icon {
           margin-top: -5px;
         }
+      }
+    }
+  }
+  .SummaryTypeSelect {
+    display: inline-block;
+    vertical-align: middle;
+    :global {
+      .ant-select-selection-selected-value {
+        font-size: 12px;
       }
     }
   }

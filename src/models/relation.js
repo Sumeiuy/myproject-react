@@ -6,14 +6,15 @@
 import { message } from 'antd';
 import { relation as api } from '../api';
 
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default {
   namespace: 'relation',
   state: {
-    treeInfo: EMPTY_LIST, // 菜单树信息
+    treeInfo: EMPTY_OBJECT, // 汇报树信息
     detailInfo: EMPTY_OBJECT, // 右侧详情信息
-    searchList: EMPTY_LIST, // 搜索列表
+    managerList: EMPTY_OBJECT, // 查询员工列表
+    menuItem: EMPTY_OBJECT, // 树节点信息
   },
   reducers: {
     getTreeInfoSuccess(state, action) {
@@ -30,11 +31,18 @@ export default {
         detailInfo: resultData,
       };
     },
-    getSearchListSuccess(state, action) {
+    searchManagerSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        searchList: resultData,
+        managerList: resultData,
+      };
+    },
+    setManagerSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        menuItem: resultData,
       };
     },
   },
@@ -53,12 +61,33 @@ export default {
         payload: response,
       });
     },
-    * getSearchList({ payload }, { call, put }) {
-      const response = yield call(api.getSearchList, payload);
+    * searchManager({ payload }, { call, put }) {
+      const response = yield call(api.searchManager, payload);
       yield put({
-        type: 'getSearchListSuccess',
+        type: 'searchManagerSuccess',
         payload: response,
       });
+    },
+    * setManager({ payload }, { call, put }) {
+      const response = yield call(api.setManager, payload);
+      yield put({
+        type: 'setManagerSuccess',
+        payload: response,
+      });
+    },
+    * updateManager({ payload }, { call }) {
+      const response = yield call(api.updateManager, payload);
+      const { code, msg } = response;
+      if (code !== '0') {
+        message.error(msg);
+      }
+    },
+    * updateTeam({ payload }, { call }) {
+      const response = yield call(api.updateTeam, payload);
+      const { code, msg } = response;
+      if (code !== '0') {
+        message.error(msg);
+      }
     },
     * addTeam({ payload }, { call }) {
       const response = yield call(api.addTeam, payload);
@@ -83,13 +112,6 @@ export default {
     },
     * deleteMember({ payload }, { call }) {
       const response = yield call(api.deleteMember, payload);
-      const { code, msg } = response;
-      if (code !== '0') {
-        message.error(msg);
-      }
-    },
-    * updateManager({ payload }, { call }) {
-      const response = yield call(api.updateManager, payload);
       const { code, msg } = response;
       if (code !== '0') {
         message.error(msg);
