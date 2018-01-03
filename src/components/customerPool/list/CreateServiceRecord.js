@@ -17,6 +17,28 @@ import styles from './createServiceRecord.less';
 
 const MAX_LENGTH = 100;
 
+
+/**
+ * 将数组对象中的id和name转成对应的key和value
+ * @param {*} arr 原数组
+ * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
+ */
+function transformCustFeecbackData(arr = []) {
+  return arr.map((item) => {
+    const obj = {
+      key: String(item.id),
+      value: item.name || item.parentClassName,
+    };
+    if (item.feedbackList && item.feedbackList.length) {
+      obj.children = transformCustFeecbackData(item.feedbackList);
+    }
+    if (item.childList && item.childList.length) {
+      obj.children = transformCustFeecbackData(item.childList);
+    }
+    return obj;
+  });
+}
+
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
@@ -33,6 +55,7 @@ export default class CreateServiceRecord extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -156,6 +179,7 @@ export default class CreateServiceRecord extends PureComponent {
       id,
       custUuid,
       deleteFileResult,
+      taskFeedbackList,
     } = this.props;
     const title = (
       <p className={styles.title}>
@@ -181,6 +205,10 @@ export default class CreateServiceRecord extends PureComponent {
       </div>
     );
 
+    const serviceReocrd = {
+      motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
+    };
+
     return (
       <Modal
         width={688}
@@ -200,6 +228,7 @@ export default class CreateServiceRecord extends PureComponent {
                 custUuid={custUuid}
                 onDeleteFile={this.handleDeleteFile}
                 deleteFileResult={deleteFileResult}
+                formData={serviceReocrd}
               />
             </div>
             :

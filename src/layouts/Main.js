@@ -48,6 +48,8 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
+  // 任务反馈的字典
+  taskFeedbackList: state.performerView.taskFeedbackList,
 });
 
 const mapDispatchToProps = {
@@ -82,6 +84,7 @@ export default class Main extends Component {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -113,6 +116,7 @@ export default class Main extends Component {
       handleCloseClick,
       custUuid,
       ceFileDelete,
+      taskFeedbackList,
     } = this.props;
     return (
       <div>
@@ -142,6 +146,7 @@ export default class Main extends Component {
                           onToggleServiceRecordModal={toggleServiceRecordModal}
                           custUuid={custUuid}
                           ceFileDelete={ceFileDelete}
+                          taskFeedbackList={taskFeedbackList}
                         />
                       </div>
                       :
