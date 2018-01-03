@@ -459,7 +459,6 @@ export default class ServiceRecordContent extends PureComponent {
    */
   @autobind
   handleServiceRecordInputChange(e) {
-    console.log(e.target.value);
     this.setState({
       serviceContent: e.target.value,
     });
@@ -543,7 +542,6 @@ export default class ServiceRecordContent extends PureComponent {
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
     };
-
     return (
       <div className={styles.serviceRecordContent}>
         <Row>

@@ -208,7 +208,6 @@ export default class CreateServiceRecord extends PureComponent {
     const serviceReocrd = {
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };
-
     return (
       <Modal
         width={688}
