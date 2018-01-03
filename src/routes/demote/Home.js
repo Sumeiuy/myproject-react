@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-25 16:26:08
+ * @Last Modified time: 2018-01-03 09:13:22
  */
 
 import React, { PureComponent } from 'react';
@@ -182,7 +182,7 @@ export default class Demote extends PureComponent {
     const operation = {
       column: {
         key: 'switch',
-        title: '是否降级',
+        title: '是否划转',
       },
       operate: this.checkTableData,
     };

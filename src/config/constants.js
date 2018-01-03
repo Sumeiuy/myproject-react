@@ -14,6 +14,7 @@ export default {
   historyBoardType: 'TYPE_LSDB_TGJX',
   apiPrefix: '/fspa/mcrm/api',
   fspPrefix: '/fsp',
+  jingZongLevel: '1', // 经总的level值
   filialeLevel: '2', // 分公司的level值
   hbgxSummaryType: 'hbgx', // 汇总方式（汇报关系）
   jxstSummaryType: 'jxst', // 汇总方式（绩效视图）
