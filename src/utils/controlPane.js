@@ -3,6 +3,7 @@
  *  封装fsp系统中window方法
  * @author zhufeiyang
  */
+import warning from 'warning';
 import { env, data as dataHelper } from '../helper';
 
 function noop() {}
@@ -11,7 +12,7 @@ function exec(method, ...args) {
   try {
     window[method].apply(null, args);
   } catch (e) {
-    console.log(e);
+    warning(false, `exec方法执行出错 ${e}`);
   }
 }
 
@@ -19,7 +20,7 @@ function execOpenTab(method, ...args) {
   try {
     window.eb.app[method].run.apply(null, args);
   } catch (e) {
-    console.log(e);
+    warning(false, `execOpenTab方法执行出错 ${e}`);
   }
 }
 
@@ -28,7 +29,7 @@ function execSwitchTab(tabId) {
     const activeReactTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
     activeReactTab($('#UTB'), { tabId });
   } catch (e) {
-    console.log(e);
+    warning(false, `execSwitchTab方法执行出错 ${e}`);
   }
 }
 
@@ -36,7 +37,7 @@ function closeTab(arg) {
   try {
     window.$(`${arg} .close`).click();
   } catch (e) {
-    console.log(e);
+    warning(false, `closeTab方法执行出错 ${e}`);
   }
 }
 
@@ -45,7 +46,7 @@ function removeTabMenu(tabId) {
     const removeFspTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
     removeFspTab($('#UTB'), { tabId });
   } catch (e) {
-    console.log(e);
+    warning(false, `removeTabMenu方法执行出错 ${e}`);
   }
 }
 
@@ -201,7 +202,7 @@ function dispatchTabPane(options) {
       if (elem) {
         elem.click();
       } else {
-        console.error('请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到！');
+        warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
       }
     }
   }
@@ -252,9 +253,7 @@ function closeFspTab(options) {
 // 关闭当前RctTab，跳转到指定的RcTab
 function navToTab(options) {
   const { pathname, id } = options;
-  if (!pathname) {
-    console.warn('请使用pathname参数，调用这个方法！');
-  }
+  warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
     fspAction: 'closeRctTabById',
     id,
@@ -271,10 +270,7 @@ function navToTab(options) {
 // 在fsp框架下只表现为打开新的tab，关闭操作需再调用一次closeTab方法。
 function navTo(options) {
   const { pathname } = options;
-  if (!pathname) {
-    console.warn('请使用pathname参数，调用这个方法！');
-  }
-
+  warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
     fspAction: 'openRctTab',
     shoudlRemove: true,
@@ -295,9 +291,7 @@ function removeTab(options) {
 // 需要传递pathname+query这种形式的参数
 function openInTab(options) {
   const { pathname } = options;
-  if (!pathname) {
-    console.warn('请使用pathname参数，调用这个方法！');
-  }
+  warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
     fspAction: 'openRctTab',
     shouldStay: true,
