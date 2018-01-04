@@ -148,9 +148,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
     } = this.props;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;

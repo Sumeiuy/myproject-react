@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 14:51:20
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-04 16:26:19
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

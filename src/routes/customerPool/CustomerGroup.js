@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2017-12-26 17:37:46
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-04 16:33:34
  * @description: 客户分组功能
  */
 
@@ -19,6 +19,7 @@ import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
+import { fspGlobal } from '../../utils';
 import { emp } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
@@ -220,6 +221,11 @@ export default class CustomerGroup extends PureComponent {
     });
   }
 
+  @autobind
+  closeTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+  }
+
   // 点击取消按钮回到列表页
   @autobind
   handleCancel() {
@@ -334,6 +340,7 @@ export default class CustomerGroup extends PureComponent {
           showOperateGroupSuccess || isShowSuccess ?
             <div>
               <AddCusSuccess
+                closeTab={this.closeTab}
                 groupName={groupName}
                 groupId={cusgroupId}
                 onDestroy={this.clearSuccessFlag}
