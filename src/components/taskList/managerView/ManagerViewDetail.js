@@ -20,8 +20,8 @@ import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { helper, dispatchTabPane } from '../../../utils';
-import { url as urlHelper } from '../../../helper';
+import { closeRctTab, openRctTab } from '../../../utils';
+import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
@@ -97,7 +97,7 @@ export default class ManagerViewDetail extends PureComponent {
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
-      orgId: helper.getOrgId(),
+      orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
@@ -112,13 +112,10 @@ export default class ManagerViewDetail extends PureComponent {
   /**
    * 关闭弹出框
    */
-  // TODOTAB: 需要进行测试
   @autobind
   handleCloseModal() {
-    dispatchTabPane({
-      fspAction: 'closeRctTabById',
+    closeRctTab({
       id: 'RCT_FSP_CREATE_TASK',
-      routerAction: 'remove',
     });
     this.setState({
       isShowCustDetailModal: false,
@@ -146,7 +143,7 @@ export default class ManagerViewDetail extends PureComponent {
   openByAllSelect(url, id, title) {
     const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
     const urlParam = {
-      orgId: helper.getOrgId(),
+      orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
@@ -169,8 +166,7 @@ export default class ManagerViewDetail extends PureComponent {
       id,
       title,
     };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url: finalUrl,
       param,

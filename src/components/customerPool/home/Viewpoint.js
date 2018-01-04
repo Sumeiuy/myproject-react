@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { dispatchTabPane } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import styles from './viewpoint.less';
@@ -28,8 +28,7 @@ export default class Viewpoint extends PureComponent {
   openNewTab(url, query) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const { push } = this.props;
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(query)}`,
       param,

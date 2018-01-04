@@ -19,7 +19,7 @@ import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
 import { url as urlHelper } from '../../../helper';
 import { fspContainer } from '../../../config';
-import { dispatchTabPane } from '../../../utils';
+import { openInTab } from '../../../utils';
 import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
@@ -415,8 +415,7 @@ export default class CustomerLists extends PureComponent {
       id,
       title,
     };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openInTab({
       routerAction: push,
       url: newurl,
       param,
@@ -607,6 +606,7 @@ export default class CustomerLists extends PureComponent {
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     toDetailAuthority={toDetailAuthority}
+                    push={push}
                   />,
                 )
               }

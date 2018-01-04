@@ -18,7 +18,7 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { dispatchTabPane } from '../../utils';
+import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
 import styles from './home.less';
 
@@ -229,10 +229,8 @@ export default class FilialeCustTransfer extends PureComponent {
   // 取消
   @autobind
   handleCancel() {
-    dispatchTabPane({
-      fspAction: 'closeRctTabById',
+    closeRctTab({
       id: 'FSP_CROSS_DEPARTMENT',
-      routerAction: 'remove',
     });
   }
 

@@ -130,18 +130,20 @@ export default class Tab extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location: { pathname, query, state } } = nextProps;
-    const { activeKey, addPanes, removePanes } = state || {};
-    if (pathname !== this.props.location.pathname) {
-      const config = this.getConfig(pathname);
-      let panes = this.getPanesWithPathname(pathname, query);
-      if (addPanes || removePanes) {
-        panes = getFinalPanes(panes, addPanes, removePanes);
+    const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
+    if (!shouldStay) {
+      if (pathname !== this.props.location.pathname) {
+        const config = this.getConfig(pathname);
+        let panes = this.getPanesWithPathname(pathname, query, shouldRemove);
+        if (addPanes || removePanes) {
+          panes = getFinalPanes(panes, addPanes, removePanes);
+        }
+        localStorage.set('panes', panes);
+        this.setState({
+          panes,
+          activeKey: activeKey || config.key,
+        });
       }
-      localStorage.set('panes', panes);
-      this.setState({
-        panes,
-        activeKey: activeKey || config.key,
-      });
     }
   }
 
@@ -176,8 +178,12 @@ export default class Tab extends PureComponent {
     return TAB_CONFIG[pathname] || {};
   }
 
-  getPanesWithPathname(pathname, query) {
-    const { panes = [] } = this.state || {};
+  getPanesWithPathname(pathname, query, shouldRemove = false) {
+    let { panes = [] } = this.state || {};
+    const { activeKey = '' } = this.state || {};
+    if (shouldRemove) {
+      panes = panes.filter(pane => pane.key !== activeKey);
+    }
     const paneConf = this.getConfig(pathname);
     if (!_.isEmpty(paneConf)) {
       const isExists = panes.find(item => item.key === paneConf.key);

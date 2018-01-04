@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import { dispatchTabPane } from '../../utils';
+import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
@@ -52,8 +52,7 @@ export default class ViewpointDetail extends PureComponent {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
     const newQuery = { curPageNum, pageSize };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
       param,

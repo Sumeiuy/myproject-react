@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import IECharts from '../../IECharts';
 import styles from './funney.less';
-import { dispatchTabPane } from '../../../utils';
+import { openFspTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 // 服务客户数的 key
@@ -31,8 +31,7 @@ function linkToList({ item, push }) {
     if (item.key !== SERVICE_CUST_NUM) {
       return;
     }
-    dispatchTabPane({
-      fspAction: 'openFspTab',
+    openFspTab({
       routerAction: push,
       url: '/customer/manage/showCustManageTabWin',
       param: {
@@ -111,8 +110,7 @@ function Funney({ dataSource, push }) {
       }
       // 点击'服务客户数'时，跳转到 客户中心 > 客户管理 页面
       if (arg.name === '服务客户数') {
-        dispatchTabPane({
-          fspAction: 'openFspTab',
+        openFspTab({
           routerAction: push,
           url: '/customer/manage/showCustManageTabWin',
           param: {
