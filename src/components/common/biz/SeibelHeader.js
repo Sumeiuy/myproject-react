@@ -22,7 +22,6 @@ import { fspContainer, seibelConfig } from '../../../config';
 const {
   contract: { pageType: contractPageType },
   channelsTypeProtocol: { pageType: channelsPageType },
-  developRelationship: { pageType: relationshipPageType },
 } = seibelConfig;
 
 // 头部筛选filterBox的高度
