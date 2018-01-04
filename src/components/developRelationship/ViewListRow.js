@@ -1,9 +1,9 @@
 /**
- * @Author: sunweibin
- * @Date: 2017-11-16 14:44:10
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-21 15:04:37
- * @description 合作合约、服务订购、私密申请的每一项
+ * @Author: hongguangqing
+ * @Description: 开发关系认ViewListRow
+ * @Date: 2018-01-03 16:47:24
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-01-04 10:37:46
  */
 
 import React from 'react';
