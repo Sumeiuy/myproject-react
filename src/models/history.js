@@ -5,10 +5,11 @@
 import _ from 'lodash';
 
 import { report as api } from '../api';
-import { BoardBasic } from '../config';
+import { BoardBasic, constants } from '../config';
+import { emp } from '../helper';
 
 // const EMPTY_OBJECT = {};
-
+const jingZongLevel = constants.jingZongLevel;
 export default {
   namespace: 'history',
   state: {
@@ -28,6 +29,7 @@ export default {
     operateData: {}, // 各种操作后，返回的数据集
     indicatorLib: {}, // 指标库
     rankData: {}, // 历史对比排名数据
+    initialData: {}, // 探测接口（有数据的最大时间点，是否显示汇报方式切换）
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -66,7 +68,7 @@ export default {
     },
 
     // 获取组织机构树
-    getCustRangeSuccess(state, action) {
+    getOrgTreeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
       if (resultData.level === '1') {
@@ -139,6 +141,7 @@ export default {
         operateData,
       };
     },
+
     // 历史对比排名
     getRankDataSuccess(state, action) {
       let { payload: { rankData } } = action;
@@ -150,26 +153,71 @@ export default {
         rankData,
       };
     },
+
+    // 探测接口
+    getInitialDataSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        initialData: resultData || {},
+      };
+    },
   },
   effects: {
+     // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
+    * getInitialData({ payload }, { call, put, select, take }) {
+      const response = yield call(api.getInitialData, payload);
+      yield put({
+        type: 'getInitialDataSuccess',
+        payload: response,
+      });
+      // 初始化的时是调组织机构数，还是调汇报机构树
+      const initialData = yield select(state => state.history.initialData);
+      const summaryTypeIsShow = initialData.summaryTypeIsShow;
+      // 汇总方式切换是否显示字段
+      let actionType = 'getCustRange';
+      // 汇总方式切换是否显示字段,若显示，判断默认显示为汇报关系（非经总）还是组织机构（经总）
+      if (summaryTypeIsShow) {
+        const reportTreeResponse = yield call(api.getReportTree, payload);
+        const level = reportTreeResponse.resultData.level;
+        // summaryTypeIsShow为true时，需求要求经总默认展示组织机构，其他南京分公司默认展示汇报关系
+        // jingZongLevel为经总的level:'1'
+        if (level !== jingZongLevel) {
+          actionType = 'getReportTree';
+        }
+      }
+      yield put({
+        type: actionType,
+        payload: {},
+      });
+      // 让put同步调用结束
+      yield take(`${actionType}/@@end`);
+    },
+    // 组织机构树
+    * getCustRange({ payload }, { call, put }) {
+      const response = yield call(api.getCustRange, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
+      });
+    },
+    // 汇报机构树
+    * getReportTree({ payload }, { call, put }) {
+      const response = yield call(api.getReportTree, payload);
+      yield put({
+        type: 'getOrgTreeSuccess',
+        response,
+      });
+    },
     // 加载页面，提前需要获取的数据
     * getInitial({ payload }, { call, put, select }) {
       // 组织机构树
       const custRange = yield select(state => state.history.custRange);
-      let firstCust;
-      if (custRange.length) {
-        firstCust = custRange[0];
-      } else {
-        const response = yield call(api.getCustRange, payload.custRang);
-        yield put({
-          type: 'getCustRangeSuccess',
-          response,
-        });
-        firstCust = response.resultData;
-      }
+      const firstCust = custRange[0];
+      const loginOrgId = emp.getOrgId(); // 登录人的orgId
       // 查询当前用户所能够看到的看板报表
       const allVisibleReports = yield call(api.getAllVisibleReports, {
-        orgId: firstCust.id,
+        orgId: loginOrgId,
       });
       yield put({
         type: 'getAllVisibleReportsSuccess',
@@ -178,7 +226,6 @@ export default {
       // 获取散点图对比值字典
       const dicResponse = yield call(api.queryHistoryContrast, {
         ...payload.dic,
-        orgId: firstCust.id,
       });
       yield put({
         type: 'queryHistoryContrastSuccess',
@@ -187,9 +234,6 @@ export default {
       // 查询HistoryCore
       const resHistoryCore = yield call(api.getHistoryCore, {
         ...payload.core,
-        orgId: firstCust.id,
-        scope: firstCust.level,
-        localScope: firstCust.level,
       });
       yield put({
         type: 'getHistoryCoreSuccess',
@@ -200,9 +244,6 @@ export default {
       if (firstCust.level !== '1') {
         const currentRanking = yield call(api.getCurrentRankingRecord, {
           ...payload.radar,
-          orgId: firstCust.id,
-          scope: firstCust.level,
-          localScope: firstCust.level,
         });
         yield put({
           type: 'getCurrentRankingRecordSuccess',
@@ -213,9 +254,6 @@ export default {
       const polyResponse = yield call(api.getHistoryContrastLineChartData, {
         ...payload.poly,
         coreIndicatorId: firstCore.key,
-        orgId: firstCust.id,
-        scope: firstCust.level,
-        localScope: firstCust.level,
       });
       yield put({
         type: 'getContrastDataSuccess',
@@ -226,9 +264,6 @@ export default {
         ...payload.bar,
         indicatorId: firstCore.key,
         orderIndicatorId: firstCore.key,
-        orgId: firstCust.id,
-        localScope: firstCust.level,
-        scope: String(Number(firstCust.level) + 1),
       });
       yield put({
         type: 'getRankDataSuccess',
@@ -237,16 +272,10 @@ export default {
 
       // 散点图数据
       const { cust, invest } = yield select(state => state.history.historyContrastDic);
-      const scatterCommon = {
-        orgId: firstCust.id,
-        localScope: firstCust.level,
-        scope: String(Number(firstCust.level) + 1),
-        coreIndicatorId: firstCore.key,
-      };
       // 客户散点
       const custScatterRes = yield call(api.queryContrastAnalyze, {
         ...payload.custScatter,
-        ...scatterCommon,
+        coreIndicatorId: firstCore.key,
         contrastIndicatorId: cust && cust[0].key,
       });
       yield put({
@@ -257,7 +286,7 @@ export default {
       if (!_.isEmpty(invest)) {
         const investScatterRes = yield call(api.queryContrastAnalyze, {
           ...payload.investScatter,
-          ...scatterCommon,
+          coreIndicatorId: firstCore.key,
           contrastIndicatorId: invest[0].key,
         });
         yield put({
@@ -269,7 +298,6 @@ export default {
       // 获取指标树数据
       const indicatorResult = yield call(api.getIndicators, {
         ...payload.lib,
-        orgId: firstCust.id,
       });
       yield put({
         type: 'getIndicatorLibSuccess',
@@ -277,15 +305,8 @@ export default {
       });
     },
     // 获取历史对比核心指标
-    * getHistoryCore({ payload }, { call, put, select }) {
-      const custRange = yield select(state => state.history.custRange);
-      const firstCust = custRange[0];
-      const resHistoryCore = yield call(api.getHistoryCore, {
-        ...payload,
-        scope: payload.scope || firstCust.level,
-        localScope: payload.localScope || firstCust.level,
-        orgId: payload.orgId || firstCust.id,
-      });
+    * getHistoryCore({ payload }, { call, put }) {
+      const resHistoryCore = yield call(api.getHistoryCore, payload);
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
@@ -328,15 +349,8 @@ export default {
       });
     },
     // 获取历史对比折线图数据
-    * getContrastData({ payload }, { call, put, select }) {
-      const custRange = yield select(state => state.history.custRange);
-      const firstCust = custRange[0];
-      const response = yield call(api.getHistoryContrastLineChartData, {
-        ...payload,
-        scope: payload.scope || firstCust.level,
-        localScope: payload.localScope || firstCust.level,
-        orgId: payload.orgId || firstCust.id,
-      });
+    * getContrastData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryContrastLineChartData, payload);
       const { resultData } = response;
       yield put({
         type: 'getContrastDataSuccess',

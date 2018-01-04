@@ -1,8 +1,9 @@
 @import "../../../css/variable.less";
 .container {
-  padding: 23.5px 14px;
+  padding: 23.5px 5px;
   display: -webkit-flex; /* Safari */
   display: flex;
+  text-align: center;
   .content {
     width: 50%;
     .check:first-child {
@@ -15,13 +16,39 @@
         margin-top: 14px;
       }
     }
+    .check {
+      .count {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        & > span:first-child {
+          display: inline-block;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: clip;
+          white-space: nowrap;
+          font-size: 20px;
+          width: 100%;
+          & > span:last-child {
+            font-size: 15px;
+            transform: scale(0.857, 0.857);
+            vertical-align: middle;
+          }
+        }
+        // span:last-child {
+        //   font-size: 15px;
+        //   display: inline-block;
+        //   max-width: 50%;
+        // }
+      }
+    }
   }
   .left {
     border-right: 1px solid #ccc;
   }
   .right {
     .check {
-      padding-left: 14px;
+      padding-left: 5px;
     }
   }
   .bottomBorder {

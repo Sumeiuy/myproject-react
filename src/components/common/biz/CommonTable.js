@@ -4,6 +4,8 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-03 09:13:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -30,7 +32,7 @@ export default class CommonTable extends PureComponent {
 
   render() {
     const { scroll, data, operation, titleList, ...resetProps } = this.props;
-    const newTitleList = _.cloneDeep(titleList);
+    let newTitleList = [...titleList];
     if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
       if (_.isArray(columnKey)) {
@@ -45,7 +47,7 @@ export default class CommonTable extends PureComponent {
             }
           </span>
         );
-        newTitleList.push(operation.column);
+        newTitleList = [...newTitleList, operation.column];
       } else {
         switch (columnKey) {
           case 'delete':
@@ -54,7 +56,7 @@ export default class CommonTable extends PureComponent {
                 <Icon type="shanchu" onClick={() => operation.operate(record, index)} />
               </span>
             );
-            newTitleList.push(operation.column);
+            newTitleList = [...newTitleList, operation.column];
             break;
           case 'view':
             operation.column.render = (text, record, index) => (
@@ -66,7 +68,7 @@ export default class CommonTable extends PureComponent {
                 查看
               </span>
             );
-            newTitleList.push(operation.column);
+            newTitleList = [...newTitleList, operation.column];
             break;
           case 'radio':
             operation.column.render = (text, record, index) => (
@@ -78,20 +80,28 @@ export default class CommonTable extends PureComponent {
                 />
               </span>
             );
-            newTitleList.unshift(operation.column);
+            if (operation.column.align === 'right') {
+              newTitleList = [...newTitleList, operation.column];
+            } else {
+              newTitleList = [operation.column, ...newTitleList];
+            }
             break;
           case 'switch':
-            operation.column.render = (text, record, index) => (
-              <span>
-                <Switch
-                  checkedChildren="是"
-                  unCheckedChildren="否"
-                  onChange={checked => operation.operate(checked, record, index)}
-                  defaultChecked
-                />
-              </span>
-            );
-            newTitleList.push(operation.column);
+            operation.column.render = (text, record, index) => {
+              console.log(record);
+              return (
+                <span>
+                  <Switch
+                    checkedChildren="是"
+                    unCheckedChildren="否"
+                    onChange={checked => operation.operate(checked, record, index)}
+                    checked={!!record.checked}
+                    defaultChecked
+                  />
+                </span>
+              );
+            };
+            newTitleList = [...newTitleList, operation.column];
             break;
           default:
             break;

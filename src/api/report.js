@@ -4,11 +4,11 @@
 
 export default function report(api) {
   return {
-    // 员工职责与职位
-    getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+    // 获取绩效视图的组织机构
+    getCustRange: query => api.post('/groovynoauth/jxzb/newEmpOrgTree', query),
 
-    // 获取客户范围
-    getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
+    // 获取汇报关系的组织机构
+    getReportTree: query => api.post('/groovynoauth/jxzb/newReportTree', query),
 
     // 获取绩效统计接口
     getPerformance: query => api.post('/groovynoauth/jxzb/querySingleRecord', query),
@@ -74,5 +74,8 @@ export default function report(api) {
 
     // 看板名称重复验证
     distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
+
+    // 探测接口，暴扣有数据的最大时间点和是否有权限显示切换汇报方式的字段
+    getInitialData: query => api.post('/groovynoauth/jxzb/queryMaxDataDt', query),
   };
 }

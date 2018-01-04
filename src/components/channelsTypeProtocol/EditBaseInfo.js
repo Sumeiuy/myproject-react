@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-03 17:33:03
+ * @Last Modified time: 2018-01-04 14:51:20
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -226,8 +226,6 @@ export default class EditBaseInfo extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    // console.log(key, '===', value);
-    // console.log(value === '507070' && key === 'subType');
     const {
       queryTypeVaules,
       onSearchCutList,
@@ -539,7 +537,6 @@ export default class EditBaseInfo extends PureComponent {
       needMutliAndTen,
       isHightSpeed,
     } = this.state;
-    console.warn('isHightSpeed--->', isHightSpeed);
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
@@ -637,14 +634,19 @@ export default class EditBaseInfo extends PureComponent {
             </InfoForm>
             :
             <div>
-              <InfoForm label="协议编号" required>
-                <Select
-                  name="protocolNumber"
-                  data={newProtocolList}
-                  value={protocolNumber}
-                  onChange={this.handleSelectProtocol}
-                />
-              </InfoForm>
+              {
+                isEditPage ?
+                  <InfoItem label="协议编号" value={protocolNumber || ''} />
+                :
+                  <InfoForm label="协议编号" required>
+                    <Select
+                      name="protocolNumber"
+                      data={newProtocolList}
+                      value={protocolNumber}
+                      onChange={this.handleSelectProtocol}
+                    />
+                  </InfoForm>
+              }
               <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
             </div>
         }

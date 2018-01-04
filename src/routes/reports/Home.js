@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import { emp, url, time } from '../../helper';
+import report from '../../helper/page/report';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
@@ -22,8 +23,15 @@ import styles from './Home.less';
 
 const defaultBoardId = constants.boardId;
 const defaultBoardType = constants.boardType;
+const defaultFilialeLevel = constants.filialeLevel;
+const jxstSummaryType = constants.jxstSummaryType;
+const hbgxSummaryType = constants.hbgxSummaryType;
+const jingZongLevel = constants.jingZongLevel;
 
 const effects = {
+  initialData: 'report/getInitialData',
+  custRange: 'report/getCustRange',
+  reportTree: 'report/getReportTree',
   allInfo: 'report/getAllInfo',
   delReportData: 'report/delReportData',
   chartTableInfo: 'report/getChartTableInfo',
@@ -50,11 +58,16 @@ const mapStateToProps = state => ({
   visibleBoards: state.report.visibleBoards,
   newVisibleBoards: state.report.newVisibleBoards,
   globalLoading: state.activity.global,
+  // 探测有数据的最大时间点接口
+  initialData: state.report.initialData,
 });
 
 const mapDispatchToProps = {
   delReportData: fectchDataFunction(false, effects.delReportData),
   getAllInfo: fectchDataFunction(true, effects.allInfo),
+  getInitialData: fectchDataFunction(true, effects.initialData),
+  getCustRange: fectchDataFunction(true, effects.custRange),
+  getReportTree: fectchDataFunction(true, effects.reportTree),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
@@ -96,6 +109,10 @@ export default class ReportHome extends PureComponent {
     reportName: PropTypes.string,
     boardId: PropTypes.number,
     boardType: PropTypes.string,
+    initialData: PropTypes.object.isRequired,
+    getInitialData: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
+    getReportTree: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -146,10 +163,15 @@ export default class ReportHome extends PureComponent {
       classifyOrder: {},
     };
   }
-
-  componentWillMount() {
+  componentDidMount() {
     // 初始化的时候state里面还无参数
-    this.getInfo();
+    this.props.getInitialData().then(() => {
+      const { initialData } = this.props;
+      const maxDataDt = initialData.maxDataDt;
+      const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
+      // 修改state
+      this.setState({ begin, end, cycleType }, this.getInfo);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -163,20 +185,12 @@ export default class ReportHome extends PureComponent {
 
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
-      const { custRange } = this.props;
-      const { begin, end, cycleType } = time.getDurationString('month');
       // 修改state
       this.setState({
         showCharts: {},
         classifyScope: {},
         classifyOrder: {},
         boardId,
-        begin,
-        end,
-        cycleType,
-        orgId: custRange[0].id,
-        scope: (Number(custRange[0].level) + 1),
-        custRangeLevel: custRange[0].level,
       },
       () => {
         this.getInfo();
@@ -189,24 +203,49 @@ export default class ReportHome extends PureComponent {
     this.props.delReportData();
   }
 
+  // 获取参数需要的scope值
+  @autobind
+  getApiScope() {
+    const { custRange } = this.props;
+    const { scope, custRangeLevel } = this.state;
+    if (scope) return scope;
+    let addNum = 1;
+    if (((custRangeLevel && custRangeLevel === defaultFilialeLevel) ||
+      (custRange[0] && custRange[0].level === defaultFilialeLevel)) &&
+      !report.isNewOrg(custRange[0].id)) {
+      addNum = 2;
+    }
+    return custRangeLevel ?
+      (Number(custRangeLevel) + addNum) : (Number(custRange[0].level) + addNum);
+  }
+
+  // 获取默认汇总方式的切换
+  @autobind
+  getDefaultSummaryType() {
+    const { custRange, initialData } = this.props;
+    const summaryTypeIsShow = initialData.summaryTypeIsShow;
+    return summaryTypeIsShow && custRange[0].level !== jingZongLevel ?
+    hbgxSummaryType : jxstSummaryType;
+  }
+
   @autobind
   getApiParams(param) {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
     const { custRange } = this.props;
-    const { begin, cycleType, end, boardId } = this.state;
-    const { orgId, custRangeLevel, scope } = this.state;
+    const { begin, cycleType, end, boardId, orgId, custRangeLevel, queryType } = this.state;
+    const defaultSummaryType = this.getDefaultSummaryType();
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
       orgId: orgId || (custRange[0] && custRange[0].id),
-      scope: scope ||
-      (custRangeLevel ? (Number(custRangeLevel) + 1) : (Number(custRange[0].level) + 1)),
+      scope: this.getApiScope(),
       orderType: 'desc',
       begin,
       end,
       cycleType,
       localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
+      queryType: queryType || defaultSummaryType,
       ...param,
     };
     return payload;
@@ -229,27 +268,30 @@ export default class ReportHome extends PureComponent {
 
   @autobind
   getInfo() {
-    const { getAllInfo } = this.props;
-    const { boardId, begin, end, cycleType, orgId, custRangeLevel, scope } = this.state;
-    const empId = emp.getId(); // 用户ID
+    const { getAllInfo, custRange } = this.props;
+    const { boardId, begin, end, cycleType, orgId, custRangeLevel, queryType } = this.state;
+    const newscope = this.getApiScope();
+    const loginOrgId = emp.getOrgId(); // 登录人的orgId
+    const defaultSummaryType = this.getDefaultSummaryType();
     // 整理数据
     const payload = {
-      orgId,
+      orgId: orgId || (custRange[0] && custRange[0].id),
       begin,
       end,
       cycleType,
-      localScope: custRangeLevel,
+      localScope: custRangeLevel || (custRange[0] && custRange[0].level),
       boardId,
-      scope,
+      scope: newscope,
+      queryType: queryType || defaultSummaryType,
     };
 
     getAllInfo({
-      custRange: {
-        empId,
+      visibleReports: {
+        orgId: loginOrgId,
       },
       performance: {
         ...payload,
-        scope: custRangeLevel,
+        scope: custRangeLevel || (custRange[0] && custRange[0].level),
       },
       chartInfo: {
         ...payload,
@@ -315,6 +357,49 @@ export default class ReportHome extends PureComponent {
     });
   }
 
+  // 切换SummaryType时候，需要将数据全部恢复到默认值
+  @autobind
+  updateSummaryTypeState(queryType) {
+    const { boardId, custRange, initialData } = this.props;
+    const maxDataDt = initialData.maxDataDt;
+    const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
+    let newscope = (Number(custRange[0].level) + 1);
+    if ((custRange[0] && custRange[0].level === defaultFilialeLevel) &&
+      !report.isNewOrg(custRange[0].id)) {
+      newscope = (Number(custRange[0].level) + 1);
+    }
+    // 恢复为初始的state
+    this.setState({
+      queryType,
+      showCharts: {},
+      classifyScope: {},
+      classifyOrder: {},
+      boardId,
+      begin,
+      end,
+      cycleType,
+      orgId: custRange[0].id,
+      scope: newscope,
+      custRangeLevel: custRange[0].level,
+    }, () => {
+      this.getInfo();
+    });
+  }
+
+  // 切换汇总类型
+  @autobind
+  updateOrgTreeValue(v) {
+    const { getCustRange, getReportTree } = this.props;
+    const empId = emp.getId(); // 用户ID
+    let getOrgFn = getCustRange;
+    if (v === hbgxSummaryType) {
+      getOrgFn = getReportTree;
+    }
+    getOrgFn({ empId }).then(() => {
+      this.updateSummaryTypeState(v);
+    });
+  }
+
   // 导出 excel 文件
   @autobind
   handleExportExcel(param) {
@@ -333,8 +418,9 @@ export default class ReportHome extends PureComponent {
 
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
-    const { custRange, visibleBoards, newVisibleBoards } = this.props;
-    if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length) {
+    const { custRange, visibleBoards, newVisibleBoards, initialData } = this.props;
+    if (!custRange || !custRange.length ||
+      !visibleBoards || !visibleBoards.length || !initialData) {
       return null;
     }
     const { performance, chartInfo, chartTableInfo } = this.props;
@@ -349,9 +435,10 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
+    const { boardId, custRangeLevel, boardType, orgId, queryType } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
-    const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    const newscope = this.getApiScope();
+    const newOrgId = orgId || (custRange[0] && custRange[0].id);
     // 用来判断是否投顾绩效,
     const tempType = this.findBoardBy(boardId).boardType;
     let showScopeOrder = tempType === 'TYPE_TGJX';
@@ -359,7 +446,9 @@ export default class ReportHome extends PureComponent {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
     showScopeOrder = true;
-
+    // 汇总方式（组织机构/汇报关系）
+    const defaultSummaryType = this.getDefaultSummaryType();
+    const summaryType = queryType || defaultSummaryType;
     return (
       <div className="page-invest content-inner">
         <PageHeader
@@ -372,10 +461,12 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
-          orgId={orgId}
+          orgId={newOrgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
+          initialData={initialData}
+          updateOrgTreeValue={this.updateOrgTreeValue}
         />
         <div className={styles.reportBody}>
           <PerformanceItem
@@ -418,6 +509,8 @@ export default class ReportHome extends PureComponent {
                     updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
+                    orgId={newOrgId}
+                    summaryType={summaryType}
                   />
                 </div>
               );

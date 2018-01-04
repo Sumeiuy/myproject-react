@@ -807,7 +807,6 @@ const pageConfig = {
       },
     ],
   },
-
   // 自建任务列表
   tasklist: {
     pageName: '自建任务列表',
@@ -874,6 +873,23 @@ const pageConfig = {
         show: true,
         label: '驳回',
         value: '04',
+      },
+    ],
+  },
+  // 客户反馈
+  customerFeedback: {
+    parentTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '一级反馈',
+      },
+    ],
+    childTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '二级反馈',
       },
     ],
   },

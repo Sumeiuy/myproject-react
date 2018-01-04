@@ -31,13 +31,15 @@ export default class ProgressList extends PureComponent {
     push: PropTypes.func,
     location: PropTypes.object,
     empInfo: PropTypes.object,
+    type: PropTypes.string,
   }
 
   static defaultProps = {
     cycle: [],
     location: {},
-    push: () => {},
+    push: () => { },
     empInfo: {},
+    type: '',
   }
 
   componentDidMount() {
@@ -77,9 +79,9 @@ export default class ProgressList extends PureComponent {
       },
     );
   }
-/*
 
-*/
+  /*
+  */
   @autobind
   handleClick(index, item) {
     const { cycle, push, location, empInfo } = this.props;
@@ -115,7 +117,7 @@ export default class ProgressList extends PureComponent {
   @autobind
   renderList() {
     // const { cycle, push, location, empInfo } = this.props;
-    const { dataSource, location } = this.props;
+    const { dataSource, location, type } = this.props;
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
@@ -136,7 +138,20 @@ export default class ProgressList extends PureComponent {
                   styles.count,
                   { [styles.supportClick]: !_.isEmpty(location) },
                 )}
-              >{item.thousandsCount}</div>
+              >
+                {
+                  /**
+                   * 当为产品销售的时候，特殊处理一下展示单位和数值
+                  */
+                }
+                {
+                  type === 'productSale' ?
+                    <div>
+                      <span title={item.value}>{item.value}</span>
+                      <span title={item.unit}>{item.unit}</span>
+                    </div> :
+                    <span title={item.thousandsCount}>{item.thousandsCount}</span>
+                }</div>
             </div>
             <Progress
               percent={(item.percent < 0 ? 0 : item.percent)}

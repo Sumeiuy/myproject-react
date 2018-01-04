@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 14:20:40
+ * @Last Modified time: 2018-01-04 14:52:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -224,7 +224,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
-      console.log('subType--->', subType);
+      // console.log('subType--->', subType);
       let item = list.resultData[0];
       let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
       const { subType: st } = item;
