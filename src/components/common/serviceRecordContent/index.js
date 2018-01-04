@@ -118,7 +118,7 @@ export default class ServiceRecordContent extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { formData } = this.props;
     const { formData: nextData } = nextProps;
-    if (!_.isEqual(formData, nextData)) {
+    if (formData !== nextData) {
       const formObject = this.handleInitOrUpdate(nextProps);
       this.setState({
         ...this.state,
@@ -389,7 +389,7 @@ export default class ServiceRecordContent extends PureComponent {
     const curFeedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].value,
+      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].key,
       feedbackTypeChildArr: curFeedbackTypeArr,
     });
   }

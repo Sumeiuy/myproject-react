@@ -36,6 +36,7 @@ export default {
     taskList: EMPTY_OBJ,
     // 任务反馈字典
     taskFeedbackList: [],
+    addMotServeRecordSuccess: false,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -108,6 +109,13 @@ export default {
         taskFeedbackList: missionList,
       };
     },
+    addMotServeRecordSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        addMotServeRecordSuccess: payload === 'success',
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -167,8 +175,12 @@ export default {
       }
     },
     // 添加服务记录
-    * addMotServeRecord({ payload }, { call }) {
-      yield call(api.addMotServeRecord, payload);
+    * addMotServeRecord({ payload }, { call, put }) {
+      const { resultData } = yield call(api.addMotServeRecord, payload);
+      yield put({
+        type: 'addMotServeRecordSuccess',
+        payload: resultData,
+      });
     },
     // 上传文件之前，先查询uuid
     * queryCustUuid({ payload }, { call, put }) {

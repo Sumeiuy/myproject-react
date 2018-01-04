@@ -34,6 +34,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -89,6 +90,25 @@ export default class PerformerViewDetail extends PureComponent {
       state: v,
       pageSize: PAGE_SIZE,
       pageNum: PAGE_NO,
+    });
+  }
+
+  /**
+   * 添加服务记录成功后重新加载目标客户的列表信息
+   */
+  @autobind
+  reloadTargetCustInfo() {
+    const {
+      parameter: {
+        targetCustomerPageSize = PAGE_SIZE,
+        targetCustomerPageNo = PAGE_NO,
+        targetCustomerState,
+      },
+    } = this.props;
+    this.queryTargetCustInfo({
+      state: targetCustomerState,
+      pageSize: targetCustomerPageSize,
+      pageNum: targetCustomerPageNo,
     });
   }
 
@@ -163,7 +183,11 @@ export default class PerformerViewDetail extends PureComponent {
           {
             _.isEmpty(list) ?
               <EmptyTargetCust /> :
-              <ServiceImplementation {...this.props} list={list} />
+              <ServiceImplementation
+                {...this.props}
+                list={list}
+                reloadTargetCustInfo={this.reloadTargetCustInfo}
+              />
           }
         </div>
       </div>

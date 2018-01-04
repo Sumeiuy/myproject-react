@@ -123,6 +123,8 @@ const mapStateToProps = state => ({
   missionImplementationDetail: state.managerView.missionImplementationDetail,
   // 任务反馈的字典
   taskFeedbackList: state.performerView.taskFeedbackList,
+  // 执行者视图添加服务记录是否成功
+  addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
 });
 
 const mapDispatchToProps = {
@@ -230,6 +232,7 @@ export default class PerformerView extends PureComponent {
     clearCreateTaskData: PropTypes.func.isRequired,
     getServiceType: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -478,6 +481,7 @@ export default class PerformerView extends PureComponent {
       mngrMissionDetailInfo,
       push,
       clearCreateTaskData,
+      addMotServeRecordSuccess,
     } = this.props;
     const {
       query: { currentId },
@@ -523,6 +527,7 @@ export default class PerformerView extends PureComponent {
             filesList={filesList}
             deleteFileResult={deleteFileResult}
             taskFeedbackList={taskFeedbackList}
+            addMotServeRecordSuccess={addMotServeRecordSuccess}
           />
         );
         break;
@@ -679,7 +684,6 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   loadManagerViewDetailContent(record = {}) {
-    console.log(record);
     const {
       queryMngrMissionDetailInfo,
       countFlowFeedBack,
@@ -788,7 +792,6 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    console.log('record>>>', record);
     const { id, missionViewType: st, typeCode, typeName, eventId } = record;
     const {
       queryCustUuid,

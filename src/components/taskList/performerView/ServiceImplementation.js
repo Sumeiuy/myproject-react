@@ -62,6 +62,8 @@ export default function ServiceImplementation({
   filesList,
   deleteFileResult,
   taskFeedbackList,
+  addMotServeRecordSuccess,
+  reloadTargetCustInfo,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -148,6 +150,8 @@ export default function ServiceImplementation({
             formData={serviceReocrd}
             ceFileDelete={ceFileDelete}
             deleteFileResult={deleteFileResult}
+            addMotServeRecordSuccess={addMotServeRecordSuccess}
+            reloadTargetCustInfo={reloadTargetCustInfo}
           /> : null
       }
     </div>
@@ -179,6 +183,8 @@ ServiceImplementation.propTypes = {
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
   taskFeedbackList: PropTypes.array.isRequired,
+  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  reloadTargetCustInfo: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {
