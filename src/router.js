@@ -42,6 +42,7 @@ import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 import TaskListHome from './routes/taskList/Home';
 import Demote from './routes/demote/Home';
 import RelationHome from './routes/relation/Home';
+import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
@@ -111,6 +112,10 @@ const routes = [
   {
     path: '/filialeCustTransfer',
     component: FilialeCustTransfer,
+  },
+  {
+    path: '/customerFeedback',
+    component: CustomerFeedback,
   },
   {
     path: '/taskFeedback',

@@ -4,6 +4,8 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-03 09:13:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -85,16 +87,20 @@ export default class CommonTable extends PureComponent {
             }
             break;
           case 'switch':
-            operation.column.render = (text, record, index) => (
-              <span>
-                <Switch
-                  checkedChildren="是"
-                  unCheckedChildren="否"
-                  onChange={checked => operation.operate(checked, record, index)}
-                  defaultChecked
-                />
-              </span>
-            );
+            operation.column.render = (text, record, index) => {
+              console.log(record);
+              return (
+                <span>
+                  <Switch
+                    checkedChildren="是"
+                    unCheckedChildren="否"
+                    onChange={checked => operation.operate(checked, record, index)}
+                    checked={!!record.checked}
+                    defaultChecked
+                  />
+                </span>
+              );
+            };
             newTitleList = [...newTitleList, operation.column];
             break;
           default:

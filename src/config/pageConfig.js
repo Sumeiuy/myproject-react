@@ -908,6 +908,23 @@ const pageConfig = {
       },
     ],
   },
+  // 客户反馈
+  customerFeedback: {
+    parentTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '一级反馈',
+      },
+    ],
+    childTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '二级反馈',
+      },
+    ],
+  },
 };
 
 export default pageConfig;
