@@ -2,8 +2,8 @@
  * @Description: 权限申请的驳回修改页面
  * @Author: hongguangqing
  * @Date: 2017-12-07 17:41:58
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-18 15:14:41
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-01-04 11:00:12
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,7 @@ import Barable from '../../decorators/selfBar';
 import { seibelConfig } from '../../config';
 import style from './edit.less';
 
-
+const testEslint = true;
 const { permission: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
 const TESTFLOWID = '033A44673244674BA29F17905F825F78';
