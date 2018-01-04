@@ -3,7 +3,7 @@
  * @Description: 开发关系认ViewListRow
  * @Date: 2018-01-03 16:47:24
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-04 10:37:46
+ * @Last Modified time: 2018-01-04 10:39:53
  */
 
 import React from 'react';
@@ -35,7 +35,6 @@ const changeDisplay = (st, options) => {
 export default function ViewListRow(props) {
   const {
     data,
-    pageName,
     type,
     pageData,
     active,
