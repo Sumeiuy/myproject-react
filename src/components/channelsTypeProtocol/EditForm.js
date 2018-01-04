@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-18 10:02:09
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-04 14:44:05
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -580,6 +580,7 @@ export default class EditForm extends PureComponent {
       protocolClause,
       operationType,
     } = this.state;
+    console.log(operationType);
     // 下挂客户表格中需要的操作
     const customerOperation = {
       column: {

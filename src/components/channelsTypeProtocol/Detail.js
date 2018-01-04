@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-18 14:24:41
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-04 14:22:58
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -42,14 +42,16 @@ export default class Detail extends PureComponent {
     attachmentList: PropTypes.array,
     // showEditModal: PropTypes.func,
     // hasEditPermission: PropTypes.bool,
+    currentView: PropTypes.string,
   }
 
   static defaultProps = {
     attachmentList: EMPTY_ARRAY,
     flowHistory: EMPTY_ARRAY,
-    uploadAttachment: () => {},
+    uploadAttachment: () => { },
     // showEditModal: () => {},
     // hasEditPermission: false,
+    currentView: '',
   }
 
   @autobind
@@ -66,6 +68,8 @@ export default class Detail extends PureComponent {
       attachmentList,
       // showEditModal,
       // hasEditPermission,
+      // 传入视图不同，判断是否显示申请单编号
+      currentView,
     } = this.props;
     const nowStep = {
       // 当前步骤
@@ -101,6 +105,11 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
+          {
+            currentView === '0501' ?
+              <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
+              : null
+          }
           {
             protocolDetail.agreementNum ?
               <InfoItem label="协议编号" value={protocolDetail.agreementNum} />

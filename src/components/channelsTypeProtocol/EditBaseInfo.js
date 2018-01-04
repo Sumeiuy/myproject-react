@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-18 14:24:14
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-03 17:33:03
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -79,20 +79,20 @@ export default class EditBaseInfo extends PureComponent {
 
   static defaultProps = {
     formData: EMPTY_OBJECT,
-    getProtocolDetail: () => {},
+    getProtocolDetail: () => { },
     operationTypeList: EMPTY_ARRAY,
-    onChangeMultiCustomer: () => {},
-    resetUpload: () => {},
-    resetProduct: () => {},
-    clearPropsData: () => {},
-    getCustValidate: () => {},
-    queryProtocolList: () => {},
+    onChangeMultiCustomer: () => { },
+    resetUpload: () => { },
+    resetProduct: () => { },
+    clearPropsData: () => { },
+    getCustValidate: () => { },
+    queryProtocolList: () => { },
     protocolList: [],
     template: {},
     subTypeList: [],
     isEdit: false,
-    onChangeProtocolNumber: () => {},
-    getFlowStepInfo: () => {},
+    onChangeProtocolNumber: () => { },
+    getFlowStepInfo: () => { },
   }
 
   constructor(props) {
@@ -162,6 +162,7 @@ export default class EditBaseInfo extends PureComponent {
       templateList,
       isSubscribe: flag,
       isEditPage,
+      isHightSpeed: false,
     };
   }
 
@@ -225,6 +226,8 @@ export default class EditBaseInfo extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
+    // console.log(key, '===', value);
+    // console.log(value === '507070' && key === 'subType');
     const {
       queryTypeVaules,
       onSearchCutList,
@@ -233,6 +236,7 @@ export default class EditBaseInfo extends PureComponent {
       changeOperationType,
     } = this.props;
     let sub = true;
+    let isHightSpeed = false;
     let needMutliAndTen = this.state.needMutliAndTen;
     if (key === 'operationType') {
       sub = _.includes(subscribeArray, value);
@@ -240,6 +244,10 @@ export default class EditBaseInfo extends PureComponent {
         needMutliAndTen = true;
       }
       changeOperationType(value);
+    } else if (key === 'subTyp') {
+      if (value !== '507070') {
+        isHightSpeed = true;
+      }
     }
     clearPropsData();
     resetProduct();
@@ -256,6 +264,7 @@ export default class EditBaseInfo extends PureComponent {
       isSubscribe: sub,
       needMutliAndTen,
       [key]: value,
+      isHightSpeed,
     }, () => {
       const { onChangeMultiCustomer, resetUpload } = this.props;
       const { isEditPage } = this.state;
@@ -528,7 +537,9 @@ export default class EditBaseInfo extends PureComponent {
       startDt,
       vailDt,
       needMutliAndTen,
+      isHightSpeed,
     } = this.state;
+    console.warn('isHightSpeed--->', isHightSpeed);
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
@@ -546,6 +557,26 @@ export default class EditBaseInfo extends PureComponent {
         },
       ];
     }
+    const accountNumber = protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
+      (<InfoForm label="是否多账户使用" >
+        <CustomSwitch
+          name="multiUsedFlag"
+          value={multiUsedFlag}
+          onChange={this.handleChangeSwitchValue}
+        />
+      </InfoForm>)
+      :
+      null;
+    const orderTen = protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
+      (<InfoForm label="是否订购十档行情">
+        <CustomSwitch
+          name="levelTenFlag"
+          value={levelTenFlag}
+          onChange={this.handleChangeSwitchValue}
+        />
+      </InfoForm>)
+      :
+      null;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -556,7 +587,7 @@ export default class EditBaseInfo extends PureComponent {
               <InfoItem label="操作类型" value={protocolDetail.operationType} />
               <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName)} ${protocolDetail.econNum}`} />
             </div>
-          :
+            :
             <div className={styles.editWrapperThree}>
               <InfoForm label="子类型" required>
                 <Select
@@ -604,7 +635,7 @@ export default class EditBaseInfo extends PureComponent {
                 ref={ref => this.selectTemplateComponent = ref}
               />
             </InfoForm>
-          :
+            :
             <div>
               <InfoForm label="协议编号" required>
                 <Select
@@ -618,28 +649,10 @@ export default class EditBaseInfo extends PureComponent {
             </div>
         }
         {
-          protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
-            <InfoForm label="是否多账户使用" >
-              <CustomSwitch
-                name="multiUsedFlag"
-                value={multiUsedFlag}
-                onChange={this.handleChangeSwitchValue}
-              />
-            </InfoForm>
-          :
-          null
+          !isHightSpeed ? accountNumber : null
         }
         {
-          protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
-            <InfoForm label="是否订购十档行情">
-              <CustomSwitch
-                name="levelTenFlag"
-                value={levelTenFlag}
-                onChange={this.handleChangeSwitchValue}
-              />
-            </InfoForm>
-            :
-            null
+          !isHightSpeed ? orderTen : null
         }
         <InfoItem label="协议开始日期" value={time.format(startDt)} />
         <InfoItem label="协议有效期" value={time.format(vailDt)} />

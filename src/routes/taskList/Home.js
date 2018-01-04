@@ -253,8 +253,8 @@ export default class PerformerView extends PureComponent {
         query,
       query: {
           pageNum,
-        pageSize,
-        missionViewType,
+          pageSize,
+          missionViewType,
         },
       },
     } = this.props;
@@ -329,6 +329,7 @@ export default class PerformerView extends PureComponent {
 
   // 查询不同视图的详情信息
   getDetailByView(record) {
+    console.log('record--->', record);
     const {
       missionViewType: st,
       flowId,
@@ -819,7 +820,7 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
-
+    console.log(this.state.currentView);
     const topPanel = (
       <ConnectedPageHeader
         location={location}
