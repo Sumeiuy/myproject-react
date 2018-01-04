@@ -879,7 +879,7 @@ const pageConfig = {
   // 开发关系认定
   developRelationship: {
     pageName: '开发关系认定',
-    pageType: '01', // 查询列表接口中的type值
+    pageType: '06', // 查询列表接口中的type值
     status: [
       {
         show: true,
