@@ -178,9 +178,9 @@ export default class MainPosition extends PureComponent {
   // 关闭 FSP tab 页
   @autobind
   handleCancel() {
-      closeRctTab({
-        id: 'FSP_MAIN_POSTN_MANAGE',
-      });
+    closeRctTab({
+      id: 'FSP_MAIN_POSTN_MANAGE',
+    });
   }
 
   // 选择某个职位

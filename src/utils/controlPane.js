@@ -42,8 +42,8 @@ function closeTab(arg) {
 
 function removeTabMenu(tabId) {
   try {
-    const removeTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
-    removeTab($('#UTB'), { tabId });
+    const removeFspTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
+    removeFspTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);
   }
@@ -223,15 +223,9 @@ function openFspTab(options) {
   });
 }
 
-// 加载页面到当前tab
-// 需要传递pathname+query这种形式的参数
-function openInTab(options) {
-  const { pathname } = options;
-  if (!pathname) {
-    console.warn('请使用pathname参数，调用这个方法！');
-  }
+// 当前页面内的链接跳转
+function linkTo(options) {
   dispatchTabPane({
-    fspAction: 'openRctTab',
     shouldStay: true,
     ...options,
   });
@@ -272,14 +266,6 @@ function navToTab(options) {
   });
 }
 
-// 当前页面内的链接跳转
-function linkTo(options) {
-  dispatchTabPane({
-    shouldStay: true,
-    ...options,
-  });
-}
-
 // 此函数为兼容处理函数，一般情况下不要调用
 // 在react框架下表现为关闭当前tab，跳转到指定的tab
 // 在fsp框架下只表现为打开新的tab，关闭操作需再调用一次closeTab方法。
@@ -303,6 +289,23 @@ function removeTab(options) {
     ...options,
   });
 }
+
+// 兼容处理函数，不建议使用，使用LinkTo代替
+// 加载页面到当前tab
+// 需要传递pathname+query这种形式的参数
+function openInTab(options) {
+  const { pathname } = options;
+  if (!pathname) {
+    console.warn('请使用pathname参数，调用这个方法！');
+  }
+  dispatchTabPane({
+    fspAction: 'openRctTab',
+    shouldStay: true,
+    ...options,
+  });
+}
+
+
 export default {
   dispatchTabPane,
   openRctTab,
