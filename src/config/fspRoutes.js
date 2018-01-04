@@ -1,4 +1,8 @@
-// 路由和請求的url之間的映射表
+/**
+ * @file config/fspRoutes.js
+ *  路由和請求的url之間的映射表
+ * @author zhufeiyang
+ */
 
 const fspRoutes = [
   // 任务中心

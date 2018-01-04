@@ -1,7 +1,7 @@
 /**
- * @file components/common/Tab.js
+ * @file components/layout/Tab.js
  *  切换切换用tab,具体展示的页面使用路由控制
- * @author maoquan(maoquan@htsc.com)
+ * @author zhufeiyang
  */
 
 import React, { PureComponent } from 'react';

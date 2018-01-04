@@ -1,3 +1,9 @@
+/**
+ * @file routes/fspPage/IframeComponent.js
+ * fsp iframe页面封装组件
+ * @author zhufeiyang
+ */
+
 // 由于内联式脚本无法成功运行，这里的代码经过重写
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

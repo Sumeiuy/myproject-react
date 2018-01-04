@@ -1,3 +1,9 @@
+/**
+ * @file layouts/Menu.js
+ * 侧边栏菜单组件
+ * @author zhufeiyang
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Icon } from 'antd';
@@ -6,7 +12,10 @@ import _ from 'lodash';
 
 import { menu } from '../../src/config';
 
-import { isExternal } from '../../src/utils/helper';
+// 暂时这么写着，这个Menu组件暂时用不到
+function isExternal() {
+  return false;
+}
 
 // 当前展开的菜单项
 const getSelectedKeys = (location) => {
