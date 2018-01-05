@@ -1,54 +1,39 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
-<<<<<<< HEAD
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-05 14:28:06
-=======
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-05 14:25:34
->>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
+ * @Last Modified time: 2018-01-05 16:08:06
  * @description 新头部导航
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
 import Logo from './widget/Logo';
 import EmpRsp from './widget/EmpRp';
+import NavItem from './widget/NavItem';
 import styles from './header.less';
 
 export default class Header extends PureComponent {
   static propTypes = {
-<<<<<<< HEAD
     secondaryMenu: PropTypes.array.isRequired,
-    empInfo: PropTypes.object.isRequired,
-=======
-    navList: PropTypes.array.isRequired,
     loginInfo: PropTypes.object.isRequired,
->>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     empRspList: PropTypes.array.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
-<<<<<<< HEAD
     secondaryMenu: [],
-    onExit: () => {},
-=======
-    navList: [],
->>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     onSearch: () => {},
     onSwitchRsp: () => {},
   }
 
   @autobind
   handleSwitchRsp(rsp) {
-    console.warn('handleSwitchRsp>>rsp', rsp);
     this.props.onSwitchRsp(rsp);
   }
 
@@ -79,49 +64,22 @@ export default class Header extends PureComponent {
             />
           </div> */}
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>
-                常用工具<Icon type="down" style={{ marginLeft: '2px' }} />
-              </span>
-              <span className={styles.splitLine} />
-            </div>
+            <NavItem label="常用工具" />
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>移动版</span>
-              <span className={styles.splitLine} />
-            </div>
+            <NavItem label="移动版" downIcon={false} />
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>
-                知识库<Icon type="down" style={{ marginLeft: '2px' }} />
-              </span>
-              <span className={styles.splitLine} />
-            </div>
+            <NavItem label="知识库" />
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>
-                运维管理<Icon type="down" style={{ marginLeft: '2px' }} />
-              </span>
-              <span className={styles.splitLine} />
-            </div>
+            <NavItem label="运维管理" />
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>
-                通知提醒<Icon type="down" style={{ marginLeft: '2px' }} />
-              </span>
-              <span className={styles.splitLine} />
-            </div>
+            <NavItem label="业务申请" />
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <div>
-              <span className={styles.navItem}>
-                帮助<Icon type="down" style={{ marginLeft: '2px' }} />
-              </span>
-            </div>
+            <NavItem label="帮助" downIcon={false} line={false} />
           </Dropdown>
           {
             (!_.isEmpty(empRspList) && !_.isEmpty(loginInfo)) ?
