@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import Clickable from '../../../components/common/Clickable';
 import imgSrc from './img/createTask_success.png';
@@ -68,7 +67,7 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { onCloseTab, push, location: { state, query } } = this.props;
+    const { onCloseTab, push, location: { query } } = this.props;
     if (env.isInFsp()) {
       // 关闭tab
       onCloseTab();
@@ -82,7 +81,6 @@ export default class CreateTaskSuccess extends PureComponent {
       push({
         pathname: '/customerPool',
         query,
-        state: _.omit(state, 'noScrollTop'),
       });
     }
   }

@@ -116,6 +116,7 @@ export default class CustomerLists extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     toDetailAuthority: PropTypes.bool.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -255,9 +256,6 @@ export default class CustomerLists extends PureComponent {
         selectedIds: tmpStr,
         selectAll: false,
       },
-      state: {
-        noScrollTop: true,
-      },
     });
   }
 
@@ -279,9 +277,6 @@ export default class CustomerLists extends PureComponent {
         ...query,
         selectedIds: '',
         selectAll: status,
-      },
-      state: {
-        noScrollTop: true,
       },
     });
   }
