@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import LeftPanel from '../../components/common/leftPanel';
 import Detail from '../../components/feedback/Detail';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';

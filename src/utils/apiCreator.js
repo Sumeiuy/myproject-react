@@ -3,7 +3,7 @@
 * @author maoquan(maoquan@htsc.com)
 */
 
-import request, { logRequest } from './request';
+import { request, logRequest, fspRequest } from './request';
 
 import config from '../config/request';
 import { emp, url as urlHelper, encode } from '../helper';
@@ -14,15 +14,21 @@ import { emp, url as urlHelper, encode } from '../helper';
  * @return {Fucntion}
  */
 export default function createApi() {
-  const { prefix } = config;
+  const { apiPrefix, fspPrefix } = config;
   // 如果没有前缀，自动补上
   const padPrefix = (url) => {
-    if (url.indexOf(prefix) === -1) {
-      return prefix + url;
+    if (url.indexOf(apiPrefix) === -1) {
+      return apiPrefix + url;
     }
     return url;
   };
 
+  const fillPrefix = (url) => {
+    if (url.indexOf(fspPrefix) === -1) {
+      return fspPrefix + url;
+    }
+    return url;
+  };
   // 授权信息: empId, deviceId, token
   // const authInfo = {
   //   empId: '002332',
@@ -86,6 +92,21 @@ export default function createApi() {
         {
           method: 'POST',
           body: `data_list=${encodeURIComponent(encode.base64(JSON.stringify(query)))}`,
+        },
+      );
+    },
+     /**
+     * @param {string} url fsp 数据请求url
+     * @param {Object} query 可能的一些参数
+     *
+     * @return {Promise}
+     */
+    getFspData(url) {
+      const finalUrl = fillPrefix(url);
+      return fspRequest(
+        `${finalUrl}`,
+        {
+          method: 'GET',
         },
       );
     },

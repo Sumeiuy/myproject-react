@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-04 15:31:59
+ * @Last Modified time: 2018-01-05 17:20:50
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -37,6 +37,16 @@ function findNode(node, id) {
 /* eslint-disable */
 
 const emp = {
+  /**
+   * 初始化页面后将用户信息保存到相关的变量中去
+   * @param {Object} empInfo 用户信息
+   */
+  setEmpInfo(loginInfo) {
+    const { empId, postId, orgId } = loginInfo;
+    window.curUserCode = empId;
+    window.curOrgCode = orgId;
+    window.forReactPosition = { postnId: postId, orgId };
+  },
   /**
    * 获取登录的ID 002332
    * @param {null}

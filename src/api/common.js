@@ -1,9 +1,7 @@
-/*
+/**
  * @Description: 公用的接口
- * @Author: LiuJianShu
- * @Date: 2017-09-27 14:24:57
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-27 15:11:33
+ * @Last Modified by: ouchangzhi
+ * @Last Modified time: 2018-01-05 14:36:04
  */
 export default function common(api) {
   return {
@@ -11,5 +9,9 @@ export default function common(api) {
     getCustRange: query => api.post('/groovynoauth/fsp/queryOrgInfo', query),
     // 员工职责与职位
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+    // 获取用户有权限查看的菜单
+    getMenus: query => api.post('/groovynoauth/fsp/emp/menu/queryMenus4Emp', query),
+    // 用户切换岗位
+    changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
   };
 }

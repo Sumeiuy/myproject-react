@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 17:11:06
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-04 17:50:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,9 +18,8 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { closeRctTabById } from '../../utils/fspGlobal';
-import { env, emp } from '../../helper';
-
+import { closeRctTab } from '../../utils';
+import { emp } from '../../helper';
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -230,9 +229,9 @@ export default class FilialeCustTransfer extends PureComponent {
   // 取消
   @autobind
   handleCancel() {
-    if (env.isInFsp) {
-      closeRctTabById('FSP_CROSS_DEPARTMENT');
-    }
+    closeRctTab({
+      id: 'FSP_CROSS_DEPARTMENT',
+    });
   }
 
   // 提交成功后清空数据

@@ -7,6 +7,7 @@
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { permission } from '../utils';
+import { emp } from '../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -36,6 +37,10 @@ export default {
     deleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
+    // 根据用户权限可以查看的菜单
+    menus: EMPTY_OBJECT,
+    // 改变职位是否成功，默认失败
+    changePost: false,
   },
   reducers: {
     // 获取员工职责与职位
@@ -138,6 +143,26 @@ export default {
         approvePersonList: servicePeopleList,
       };
     },
+    // 根据用户权限可以查看的菜单
+    getMenusSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      const { secondaryMenu = [], majorMenu = [] } = resultData;
+      return {
+        ...state,
+        menus: {
+          secondaryMenu,
+          majorMenu,
+        },
+      };
+    },
+    // 根据用户权限可以查看的菜单
+    changePostSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        changePost: !!resultData,
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -147,6 +172,13 @@ export default {
       if (data) {
         // 初始化权方法
         permission.init(data.empRespList);
+        // 设置保存用户信息
+        emp.setEmpInfo(data.loginInfo);
+        // 初始化查询到用户信息后，立即查询用户的菜单权限
+        yield put({
+          type: 'getMenus',
+          payload: { postnId: emp.getPstnId() },
+        });
         yield put({
           type: 'getEmpInfoSuccess',
           payload: data,
@@ -225,6 +257,22 @@ export default {
       const response = yield call(seibelApi.getSearchServerPersonelList, payload);
       yield put({
         type: 'getApprovePersonListSuccess',
+        payload: response,
+      });
+    },
+    // 获取用户有权限查看的菜单
+    * getMenus({ payload }, { call, put }) {
+      const response = yield call(api.getMenus, payload);
+      yield put({
+        type: 'getMenusSuccess',
+        payload: response,
+      });
+    },
+    // 用户切换岗位
+    * changePost({ payload }, { call, put }) {
+      const response = yield call(api.changePost, payload);
+      yield put({
+        type: 'changePostSuccess',
         payload: response,
       });
     },

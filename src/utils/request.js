@@ -33,6 +33,9 @@ function parseJSON(response, options) {
   );
 }
 
+function parseText(response) {
+  return response.text();
+}
 /**
  * Checks if a network request came back fine, and throws an error if not
  *
@@ -59,27 +62,46 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-export default function request(url, options) {
-  return Promise.race([
+const request = (url, options) => (
+  Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus)
       .then(response => parseJSON(response, options)),
     new Promise(
-      (rosolve, reject) => {
+      (rosolve, reject) => {// eslint-disable-line
         setTimeout(
           () => reject('请求超时'),
           config.timeout,
         );
       },
     ),
-  ]);
-}
+  ])
+);
+
+const myHeaders = new Headers({
+  'Content-Type': 'text/html',
+});
+
+const fspRequest = (url, options) => (
+  Promise.race([
+    fetch(url, { credentials: 'include', ...options, myHeaders })
+      .then(parseText),
+    new Promise(
+      (rosolve, reject) => {// eslint-disable-line
+        setTimeout(
+          () => reject('请求超时'),
+          config.timeout,
+        );
+      },
+    ),
+  ])
+);
 
 /**
  * 发送日志专用
  */
-export function logRequest(url, options) {
-  return Promise.race([
+const logRequest = (url, options) => (
+  Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus),
     new Promise(
@@ -90,5 +112,11 @@ export function logRequest(url, options) {
         );
       },
     ),
-  ]);
-}
+  ])
+);
+
+export default {
+  request,
+  fspRequest,
+  logRequest,
+};
