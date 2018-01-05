@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'dva/router';
 // import PropTypes from 'prop-types';
-import { Menu, Input, Dropdown } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 
 // import Icon from "../../src/components/common/Icon";
 import styles from './header.less';
@@ -12,20 +12,8 @@ import styles from './header.less';
 function Header(/* {user, logout} */) {
   // const handleClickMenu = e => e.key === 'logout' && logout();
   // const menusProps = {};
-  const menu = (
-    <Menu mode="vertical-right">
-      <Menu.Item key="0">
-        <a href="http://www.alipay.com/">1st menu item</a>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <a href="http://www.taobao.com/">2nd menu item</a>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="3">3rd menu item</Menu.Item>
-    </Menu>
-  );
   const statisticalMenu = (
-    <Menu mode="vertical-right">
+    <Menu mode="vertical">
       <Menu.Item key="0">
         <a href="http://www.alipay.com/">1st menu item</a>
       </Menu.Item>
@@ -53,25 +41,52 @@ function Header(/* {user, logout} */) {
             style={{ width: 155 }}
           />
         </div> */}
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>常用工具</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>
+              常用工具<Icon type="down" style={{ marginLeft: '2px' }} />
+            </span>
+            <span className={styles.splitLine} />
+          </div>
         </Dropdown>
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>移动版</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>移动版</span>
+            <span className={styles.splitLine} />
+          </div>
         </Dropdown>
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>知识库</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>
+              知识库<Icon type="down" style={{ marginLeft: '2px' }} />
+            </span>
+            <span className={styles.splitLine} />
+          </div>
         </Dropdown>
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>运维管理</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>
+              运维管理<Icon type="down" style={{ marginLeft: '2px' }} />
+            </span>
+            <span className={styles.splitLine} />
+          </div>
         </Dropdown>
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>通知提醒</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>
+              通知提醒<Icon type="down" style={{ marginLeft: '2px' }} />
+            </span>
+            <span className={styles.splitLine} />
+          </div>
         </Dropdown>
-        <Dropdown overlay={statisticalMenu} trigger={['hover']}>
-          <spn className={styles.navItem}>帮助</spn>
+        <Dropdown overlay={statisticalMenu}>
+          <div>
+            <span className={styles.navItem}>
+              帮助<Icon type="down" style={{ marginLeft: '2px' }} />
+            </span>
+          </div>
         </Dropdown>
-        <Dropdown overlay={Menu} trigger={['hover']}>
+        <Dropdown overlay={Menu}>
           <dl className={styles.position}>
             <dt>王华</dt>
             <dd>服务部营业岗位</dd>
