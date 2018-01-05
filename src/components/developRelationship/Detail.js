@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的详情页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-04 17:44:07
+ * @Last Modified time: 2018-01-05 09:31:46
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,11 @@ import styles from './detail.less';
 
 // 表头
 const tableHeader = [
+  {
+    dataIndex: 'empId',
+    key: 'empId',
+    title: '工号',
+  },
   {
     dataIndex: 'empName',
     key: 'empName',
