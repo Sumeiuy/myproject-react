@@ -35,6 +35,24 @@ const width = { width: 142 };
 
 const EMPTY_LIST = [];
 
+/**
+ * 服务状态转化map
+ * 字典中服务状态有4中，分别是：
+ * {key: "10", value: "未开始"}
+ * {key: "20", value: "处理中"}
+ * {key: "30", value: "完成"}
+ * {key: "40", value: "结果达标"}
+ * 页面中展示'处理中'和'完成'
+ * 任务状态 未开始 ，页面展示处理中，传给后端的key为 '20'
+ * 任务状态 结果达标 ，页面展示完成，传给后端的key为 '30'
+ */
+const serviceStateMap = {
+  10: '20',
+  20: '20',
+  30: '30',
+  40: '30',
+};
+
 function range(start, end) {
   const result = [];
   for (let i = start; i < end; i++) {
@@ -54,22 +72,6 @@ function generateObjOfKey(arr) {
       subObj[obj.key] = obj.children;
     } else {
       subObj[obj.key] = EMPTY_LIST;
-    }
-  });
-  return subObj;
-}
-
-// {value:2, children: [{key: 222}]} 转成 {2: [{key: 222}]}
-function generateObjOfValue(arr) {
-  const subObj = {};
-  if (_.isEmpty(arr)) {
-    return subObj;
-  }
-  arr.forEach((obj) => {
-    if (obj.children && !_.isEmpty(obj.children)) {
-      subObj[obj.value] = obj.children;
-    } else {
-      subObj[obj.value] = EMPTY_LIST;
     }
   });
   return subObj;
@@ -103,7 +105,6 @@ export default class ServiceRecordContent extends PureComponent {
 
   constructor(props) {
     super(props);
-
     const formData = this.handleInitOrUpdate(props);
     this.state = {
       ...formData,
@@ -167,17 +168,15 @@ export default class ServiceRecordContent extends PureComponent {
     const {
       // 服务方式字典
       serveWay = [{}],
-      // 服务类型、客户反馈类型三级字典
-      motCustfeedBackDict = [{}],
-      // 服务状态字典
-      serveStatus = [{}],
     } = props.dict || {};
     const {
       isEntranceFromPerformerView,
       formData,
-      formData: { serviceTypeCode = '', serviceTypeName = '' },
       isReadOnly,
+      // 服务类型、客户反馈类型三级字典
+      formData: { motCustfeedBackDict },
     } = props;
+    const [{ key: serviceTypeCode = '', value: serviceTypeName = '' }] = motCustfeedBackDict;
 
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(motCustfeedBackDict);
@@ -192,7 +191,7 @@ export default class ServiceRecordContent extends PureComponent {
       } = this.handleServiceType(serviceTypeCode);
 
       // 反馈类型value对应反馈类型数组
-      this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+      this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
 
       // 执行者视图
       if (isReadOnly) {
@@ -205,7 +204,6 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate,
           // 服务状态
-          serviceStatusName,
           serviceStatusCode,
           // 服务方式
           serviceWayName: serviceWay,
@@ -236,8 +234,7 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate,
           // 服务状态
-          serviceStatus: serviceStatusCode,
-          serviceStatusName,
+          serviceStatus: serviceStateMap[serviceStatusCode],
           // 服务方式
           serviceWay,
           serviceContent,
@@ -265,7 +262,7 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate: moment(currentDate).format(dateFormat),
           // 服务状态
-          serviceStatus: (serveStatus[0] || {}).key,
+          serviceStatus: serviceStateMap[formData.serviceStatusCode],
           // 服务方式
           serviceWay: (serveWay[0] || {}).key,
           serviceContent: '',
@@ -280,14 +277,14 @@ export default class ServiceRecordContent extends PureComponent {
       // 反馈类型数组
       const feedbackTypeArr = (motCustfeedBackDict[0] || {}).children || EMPTY_LIST;
       // 反馈类型value对应反馈类型数组
-      this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+      this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
       // 反馈子类型数组
       const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
       // 当前日期的时间戳
       const currentDate = new Date().getTime();
       const serveType = (motCustfeedBackDict[0] || {}).key || '';
-      const feedbackType = (feedbackTypeArr[0] || {}).value || '';
-      const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
+      const feedbackType = (feedbackTypeArr[0] || {}).key || '';
+      const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).key || '';
 
       formObject = {
         serviceContent: '',
@@ -337,9 +334,9 @@ export default class ServiceRecordContent extends PureComponent {
       return {};
     }
     const feedbackTypeArr = this.serviceTypeObj[value] || EMPTY_LIST;
-    const feedbackType = (feedbackTypeArr[0] || {}).value || '';
+    const feedbackType = (feedbackTypeArr[0] || {}).key || '';
     const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
-    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).key || '';
     this.setState({
       serviceType: value,
       feedbackType,
@@ -388,11 +385,11 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   handleFeedbackType(value) {
     const { feedbackTypeArr } = this.state;
-    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
     const curFeedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].value,
+      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].key,
       feedbackTypeChildArr: curFeedbackTypeArr,
     });
   }
@@ -462,7 +459,6 @@ export default class ServiceRecordContent extends PureComponent {
    */
   @autobind
   handleServiceRecordInputChange(e) {
-    console.log(e.target.value);
     this.setState({
       serviceContent: e.target.value,
     });
@@ -474,6 +470,20 @@ export default class ServiceRecordContent extends PureComponent {
     onDeleteFile(params);
   }
 
+  @autobind
+  renderServiceStatusChoice() {
+    const {
+      dict: {
+        serveStatus = [],
+      },
+    } = this.props;
+    return _.map(serveStatus, item =>
+      // 20代表处理中 30代表完成
+      (item.key === '20' || item.key === '30')
+      && <Radio key={item.key} value={item.key}>{item.value}</Radio>,
+    );
+  }
+
   render() {
     const {
       dict,
@@ -483,8 +493,8 @@ export default class ServiceRecordContent extends PureComponent {
       beforeUpload,
       custUuid,
       deleteFileResult,
+      formData: { motCustfeedBackDict },
     } = this.props;
-
     const {
       serviceWay,
       serviceStatus,
@@ -502,11 +512,9 @@ export default class ServiceRecordContent extends PureComponent {
       serviceContent,
       attachmentRecord,
     } = this.state;
-
     if (!dict) {
       return null;
     }
-
     const firstCol = isFold ? 8 : 24;
     const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
 
@@ -534,7 +542,6 @@ export default class ServiceRecordContent extends PureComponent {
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
     };
-
     return (
       <div className={styles.serviceRecordContent}>
         <Row>
@@ -575,10 +582,7 @@ export default class ServiceRecordContent extends PureComponent {
                         value={serviceStatus}
                         disabled={isReadOnly}
                       >
-                        {_.map((dict.serveStatus || EMPTY_LIST), item =>
-                          // 10代表未开始
-                          item.key !== '10' && <Radio value={item.key}>{item.value}</Radio>,
-                        )}
+                        { this.renderServiceStatusChoice() }
                       </RadioGroup>
                     </div>
                   </div>
@@ -606,7 +610,7 @@ export default class ServiceRecordContent extends PureComponent {
                     onChange={this.handleServiceType}
                   >
                     {
-                      (dict.motCustfeedBackDict || EMPTY_LIST).map(obj => (
+                      (motCustfeedBackDict || EMPTY_LIST).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
@@ -671,7 +675,7 @@ export default class ServiceRecordContent extends PureComponent {
                   >
                     {
                       (feedbackTypeArr).map(obj => (
-                        <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
                   </Select>
@@ -685,7 +689,7 @@ export default class ServiceRecordContent extends PureComponent {
                     >
                       {
                         (feedbackTypeChildArr).map(obj => (
-                          <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                          <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                         ))
                       }
                     </Select>

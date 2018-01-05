@@ -14,7 +14,7 @@ import styles from './choosePage.less';
 // 运维管理中的页面路由配置
 // key值对应url中的pathname
 const ITOM_ROUTE = {
-  recommendationTags: '推荐标签',
+  // recommendationTags: '推荐标签',
   customerFeedback: '客户反馈',
   taskFeedback: '任务反馈',
 };
