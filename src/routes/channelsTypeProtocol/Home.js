@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 15:03:27
+ * @Last Modified time: 2018-01-05 14:49:12
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,6 +36,8 @@ const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
+// subType = '0501' 高速通道
+const heightSpeed = '0501';
 const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
@@ -204,9 +206,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
     } = this.props;
@@ -526,7 +528,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const { activeRowIndex } = this.state;
     // 判断不同的视图，icon图标不一致
     const { subType: viewType } = record;
-    const typeIcon = viewType === '0501' ? 'yongjin' : 'kehu1';
+    const typeIcon = viewType === heightSpeed ? 'yongjin' : 'kehu1';
     return (
       <AppItem
         key={record.id}

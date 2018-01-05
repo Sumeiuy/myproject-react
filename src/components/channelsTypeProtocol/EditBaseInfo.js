@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-04 16:26:19
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-05 14:54:19
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,6 +33,8 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// 紫金通道 subType，新建协议判断切换的子类型
+const violetGold = '507070';
 const { subscribeArray } = config;
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
@@ -243,7 +245,8 @@ export default class EditBaseInfo extends PureComponent {
       }
       changeOperationType(value);
     } else if (key === 'subTyp') {
-      if (value !== '507070') {
+      // 判断子类型是否为紫金通道，不是则不展现多用户和十档行情选择
+      if (value !== violetGold) {
         isHightSpeed = true;
       }
     }
