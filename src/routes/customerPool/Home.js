@@ -188,7 +188,7 @@ export default class Home extends PureComponent {
     } else {
       this.orgId = occDivnNum;
     }
-    // 权限控制是否传给后端orgId  1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
+    // 权限控制是否传给后端orgId  PERMITS1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
     const authOrgId = this.permissionType === PERMITS1 ? this.orgId : '';
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
     getHotWds({ empNo: empNum });
