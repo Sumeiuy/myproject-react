@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-05 09:52:36
+ * @Last Modified time: 2018-01-05 14:28:06
  * @description 新头部导航
  */
 
@@ -18,7 +18,7 @@ import styles from './header.less';
 
 export default class Header extends PureComponent {
   static propTypes = {
-    navList: PropTypes.array.isRequired,
+    secondaryMenu: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
     empRspList: PropTypes.array.isRequired,
     onExit: PropTypes.func,
@@ -27,7 +27,7 @@ export default class Header extends PureComponent {
   }
 
   static defaultProps = {
-    navList: [],
+    secondaryMenu: [],
     onExit: () => {},
     onSearch: () => {},
     onSwitchRsp: () => {},
@@ -66,7 +66,7 @@ export default class Header extends PureComponent {
           {/* <div className={styles.search}>
             <Search
               placeholder="搜索"
-              onSearch={value => console.log(value)}
+              onSearch={this.handleOnSearch}
               style={{ width: 155 }}
             />
           </div> */}
