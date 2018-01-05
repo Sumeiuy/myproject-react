@@ -15,6 +15,7 @@ import relation from './relation';
 import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
+import developRelationship from './developRelationship';
 
 const api = apiCreator();
 
@@ -53,5 +54,7 @@ export default {
   customerFeedback: customerFeedback(api),
   // 任务反馈
   taskFeedback: taskFeedback(api),
+  // 开发关系认定
+  developRelationship: developRelationship(api),
 };
 
