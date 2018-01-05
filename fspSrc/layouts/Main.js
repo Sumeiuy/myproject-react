@@ -27,6 +27,8 @@ const effects = {
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
+   // 删除文件
+  ceFileDelete: 'performerView/ceFileDelete',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
