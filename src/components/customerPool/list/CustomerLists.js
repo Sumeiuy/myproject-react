@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox, message } from 'antd';
-
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
@@ -255,9 +254,6 @@ export default class CustomerLists extends PureComponent {
         selectedIds: tmpStr,
         selectAll: false,
       },
-      state: {
-        noScrollTop: true,
-      },
     });
   }
 
@@ -279,9 +275,6 @@ export default class CustomerLists extends PureComponent {
         ...query,
         selectedIds: '',
         selectAll: status,
-      },
-      state: {
-        noScrollTop: true,
       },
     });
   }
