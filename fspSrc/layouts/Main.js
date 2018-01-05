@@ -145,9 +145,7 @@ export default class Main extends PureComponent {
         <Helmet>
           <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
         </Helmet>
-        <div
-          className={styles.layout}
-        >
+        <div className={styles.layout}>
           <Header {...headerProps} />
           <div className={styles.main}>
             <div className={styles.content}>
