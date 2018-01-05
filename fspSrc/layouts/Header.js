@@ -1,14 +1,14 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-04 17:34:09
+ * @Last Modified by: ouchangzhi
+ * @Last Modified time: 2018-01-05 09:52:36
  * @description 新头部导航
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
@@ -71,22 +71,49 @@ export default class Header extends PureComponent {
             />
           </div> */}
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>常用工具</spn>
+            <div>
+              <span className={styles.navItem}>
+                常用工具<Icon type="down" style={{ marginLeft: '2px' }} />
+              </span>
+              <span className={styles.splitLine} />
+            </div>
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>移动版</spn>
+            <div>
+              <span className={styles.navItem}>移动版</span>
+              <span className={styles.splitLine} />
+            </div>
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>知识库</spn>
+            <div>
+              <span className={styles.navItem}>
+                知识库<Icon type="down" style={{ marginLeft: '2px' }} />
+              </span>
+              <span className={styles.splitLine} />
+            </div>
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>运维管理</spn>
+            <div>
+              <span className={styles.navItem}>
+                运维管理<Icon type="down" style={{ marginLeft: '2px' }} />
+              </span>
+              <span className={styles.splitLine} />
+            </div>
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>通知提醒</spn>
+            <div>
+              <span className={styles.navItem}>
+                通知提醒<Icon type="down" style={{ marginLeft: '2px' }} />
+              </span>
+              <span className={styles.splitLine} />
+            </div>
           </Dropdown>
           <Dropdown overlay={statisticalMenu}>
-            <spn className={styles.navItem}>帮助</spn>
+            <div>
+              <span className={styles.navItem}>
+                帮助<Icon type="down" style={{ marginLeft: '2px' }} />
+              </span>
+            </div>
           </Dropdown>
           {
             (!_.isEmpty(empRspList) && !_.isEmpty(empInfo)) ?

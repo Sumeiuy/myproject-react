@@ -1,52 +1,55 @@
 @import "../../src/css/variable.less";
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 498;
-  width: 100%;
-  box-shadow: 0 0 6px 0 rgb(112, 121, 125);
-  position: relative;
-  height: 58px;
-  padding: 0 16px;
-  background-color: #212e49;
-  .button {
-    width: 40px;
-    height: 40px;
-    margin-left: 10px;
-    margin-top: 7px;
-    line-height: 40px;
-    text-align: center;
-    font-size: 18px;
-    cursor: pointer;
-    transition: @transition-ease-in;
-    &:hover {
-      color: @primary-color;
-      border-radius: 50%;
-      background-color: #eee;
-    }
-  }
-  .headerContent {
-    display: flex; // flex: 1 1 auto;
-    justify-content: flex-end;
-    align-items: center;
-    color: #fff;
-    .navItem {
-      &:after {
-        content: "|";
-        display: inline-block;
-        margin: 0 10px;
-        font-size: 9px;
-        color: #fff;
-      }
-      &:last-child {
-        &:after {
-          content: "";
-          margin: 0;
-        }
-      }
-    }
-  }
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	position: relative;
+	height: 58px;
+	padding: 0 16px;
+	background-color: #212e49;
+	.button {
+			width: 40px;
+			height: 40px;
+			margin-left: 10px;
+			margin-top: 7px;
+			line-height: 40px;
+			text-align: center;
+			font-size: 18px;
+			cursor: pointer;
+			transition: @transition-ease-in;
+			&:hover {
+					color: @primary-color;
+					border-radius: 50%;
+					background-color: #eee;
+			}
+	}
+	.headerContent {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		color: #fff;
+		.navItem {
+			line-height: 16px;
+			padding: 3px 6px;
+			border-radius: 3px;
+			font-size: 12px;
+			&:hover {
+				background-color: #e1e7f3;
+				color: #4a4a4a;
+			}
+		}
+		.splitLine {
+			display: inline-block;
+			width: 1px;
+			height: 9px;
+			background-color: #fff;
+			margin: 0 4px;
+		}
+		.position {
+			margin-left: 28px;
+		}
+	}
 }
 
 .popovermenu {
