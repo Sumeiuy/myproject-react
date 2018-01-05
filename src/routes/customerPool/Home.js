@@ -20,17 +20,20 @@ import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { permission } from '../../utils';
 import { emp, time } from '../../helper';
 import Search from '../../components/customerPool/home/Search';
+import {
+  NOPERMIT,
+  PERMITS1,
+  PERMITS2,
+  CUST_MANAGER,
+  ORG,
+  MAIN_MAGEGER_ID,
+} from './config';
+
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-const CUST_MANAGER = '1'; // 客户经理
-const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
-// 主服务经理id，用于url和custrange组件中，不传给后端
-const MAIN_MAGEGER_ID = 'msm';
-// const LOCAL_MONTH = '518003';
 
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
@@ -143,8 +146,29 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
-    this.isHasAuthorize = permission.hasCustomerPoolPermission();
+    // 总部-营销活动管理岗,分公司-营销活动管理岗,控制绩效数据的客户范围展示
+    // 默认展示组织机构树中的第一个组织机构的数据
+    const permission1 = permission.hasCustomerPoolPermission();
+    // HTSC 首页指标查询， HTSC 营销活动-营业部执行岗,控制绩效数据的客户范围展示
+    // 默认展示 '我的客户' 的数据
+    const permission2 = permission.hasIndexViewPermission() || permission.hasBdMampPermission();
+    /**
+     * this.permissionType 当前用户的权限类型
+     * NOPERMIT 表示当前用户没有目标客户池的权限
+     * PERMITS1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
+     * PERMITS2 表示当前用户有 ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动-营业部执行岗’
+     */
+    this.permissionType = NOPERMIT;
+    /**
+     * 先判断是否有‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动-营业部执行岗’权限
+     * 再判断有‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
+     */
+    if (permission2) {
+      this.permissionType = PERMITS2;
+    }
+    if (permission1) {
+      this.permissionType = PERMITS1;
+    }
   }
 
   componentDidMount() {
@@ -164,8 +188,8 @@ export default class Home extends PureComponent {
     } else {
       this.orgId = occDivnNum;
     }
-    // 权限控制是否传给后端orgId
-    const authOrgId = this.isHasAuthorize ? this.orgId : '';
+    // 权限控制是否传给后端orgId  1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
+    const authOrgId = this.permissionType === PERMITS1 ? this.orgId : '';
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
     getHotWds({ empNo: empNum });
     // 待办事项
@@ -206,7 +230,7 @@ export default class Home extends PureComponent {
     let custType = CUST_MANAGER;
     if (orgId) {
       custType = orgId !== MAIN_MAGEGER_ID ? ORG : CUST_MANAGER;
-    } else if (this.isHasAuthorize) {
+    } else if (this.permissionType === PERMITS1) {
       custType = ORG;
     }
     return custType;
@@ -293,7 +317,7 @@ export default class Home extends PureComponent {
     };
     if (orgId) {
       tempObj.orgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
-    } else if (this.isHasAuthorize) {
+    } else if (this.permissionType === PERMITS1) {
       tempObj.orgId = this.orgId;
     }
     // 绩效指标
@@ -341,7 +365,7 @@ export default class Home extends PureComponent {
   queryHotPossibleWds(state) {
     const { getHotPossibleWds } = this.props;
     const setData = {
-      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
+      orgId: this.permissionType === PERMITS1 ? this.orgId : '', // 组织ID
       empNo: emp.getId(), // 用户ID
     };
     getHotPossibleWds({
@@ -366,7 +390,7 @@ export default class Home extends PureComponent {
     };
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
-    if (!this.isHasAuthorize) {
+    if (this.permissionType === NOPERMIT) {
       this.setState({
         createCustRange: [myCustomer],
       });
@@ -457,7 +481,7 @@ export default class Home extends PureComponent {
     const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
     if (orgId) {
       curOrgId = orgId;
-    } else if (!this.isHasAuthorize) {
+    } else if (this.permissionType !== PERMITS1) {
       curOrgId = MAIN_MAGEGER_ID;
     }
     const extraProps = {
@@ -493,6 +517,7 @@ export default class Home extends PureComponent {
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
+
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -511,7 +536,7 @@ export default class Home extends PureComponent {
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
-              authority={this.isHasAuthorize}
+              authority={this.permissionType === PERMITS1}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
@@ -527,6 +552,7 @@ export default class Home extends PureComponent {
                   location={location}
                   cycle={cycle}
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
+                  permissionType={this.permissionType}
                 />
               </TabPane>
               {
@@ -538,6 +564,7 @@ export default class Home extends PureComponent {
                       indicators={performanceIndicators}
                       location={location}
                       cycle={cycle}
+                      permissionType={this.permissionType}
                     />
                   </TabPane>
                 ) : (null)

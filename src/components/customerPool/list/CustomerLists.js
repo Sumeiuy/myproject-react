@@ -92,7 +92,6 @@ export default class CustomerLists extends PureComponent {
     custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
-    authority: PropTypes.bool.isRequired,
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     reorderValue: PropTypes.object.isRequired,
@@ -115,7 +114,7 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    toDetailAuthority: PropTypes.bool.isRequired,
+    permissionType: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -144,12 +143,7 @@ export default class CustomerLists extends PureComponent {
   }
 
   componentDidMount() {
-    const { location: { query: { ptyMng } }, authority, empInfo } = this.props;
-    let bool = false;
-    if (ptyMng) {
-      bool = ptyMng.split('_')[1] === empInfo.empNum;
-    }
-    this.mainServiceManager = !!(bool) || !authority;
+    this.checkMainServiceManager(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -167,8 +161,6 @@ export default class CustomerLists extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
       custEmail: nextCustEmail,
-      empInfo,
-      authority,
       location: {
         query: {
           ptyMng,
@@ -192,11 +184,7 @@ export default class CustomerLists extends PureComponent {
       this.getEmail(nextCustEmail[currentCustId]);
     }
     if (prePtyMng !== ptyMng) {
-      let bool = false;
-      if (ptyMng) {
-        bool = ptyMng.split('_')[1] === empInfo.empNum;
-      }
-      this.mainServiceManager = !!(bool) || !authority;
+      this.checkMainServiceManager(nextProps);
     }
   }
 
@@ -218,6 +206,20 @@ export default class CustomerLists extends PureComponent {
     if (finded === -1) {
       message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
     }
+  }
+
+  /**
+   * 判断当前登录用户是否为主服务经理
+   */
+  @autobind
+  checkMainServiceManager(props) {
+    const { location: { query: { ptyMng } }, permissionType, empInfo } = props;
+    let bool = false;
+    if (ptyMng) {
+      bool = ptyMng.split('_')[1] === empInfo.empNum;
+    }
+    // 1表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
+    this.mainServiceManager = !!(bool) || permissionType !== 1;
   }
 
   /**
@@ -450,7 +452,7 @@ export default class CustomerLists extends PureComponent {
       custContactData,
       serviceRecordData,
       dict,
-      authority,
+      permissionType,
       custIncomeReqState,
       toggleServiceRecordModal,
       onReorderChange,
@@ -473,7 +475,6 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      toDetailAuthority,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -512,10 +513,10 @@ export default class CustomerLists extends PureComponent {
     const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
-    console.log('authority', authority);
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    if (authority) {
+    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
+    if (permissionType !== 0) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
       } else {
@@ -527,7 +528,7 @@ export default class CustomerLists extends PureComponent {
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
-    } else if (authority) {
+    } else if (permissionType !== 0) {
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
       } else {
@@ -565,7 +566,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={!authority}
+                disable={permissionType === 0}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}
@@ -583,7 +584,6 @@ export default class CustomerLists extends PureComponent {
                     empInfo={empInfo}
                     handleCheck={handleCheck}
                     mainServiceManager={this.mainServiceManager}
-                    authority={authority}
                     dict={dict}
                     location={location}
                     getCustIncome={getCustIncome}
@@ -605,7 +605,7 @@ export default class CustomerLists extends PureComponent {
                     condition={condition}
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
-                    toDetailAuthority={toDetailAuthority}
+                    permissionType={permissionType}
                   />,
                 )
               }

@@ -44,7 +44,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001490'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -56,7 +56,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ323372';
+    let orgId = 'ZZ001041';
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }

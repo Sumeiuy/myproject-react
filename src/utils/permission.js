@@ -44,10 +44,8 @@ const permission = {
 
   // 目标客户池首页和列表页权限
   hasCustomerPoolPermission() {
-    return permission.hasIndexViewPermission()
-      || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+    return permission.hasHqMampPermission()
+      || permission.hasBoMampPermission();
   },
 
   // 目标客户池创建任务权限

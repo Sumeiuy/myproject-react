@@ -37,6 +37,7 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
+    permissionType: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -56,6 +57,7 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       empInfo,
       indicators,
+      permissionType,
     } = this.props;
     let formatIndicator = [];
     const tempArr = this.formatIndicators(indicators);
@@ -71,6 +73,7 @@ export default class PerformanceIndicators extends PureComponent {
         location: this.props.location,
         empInfo,
         bname: arg.name || arg.value,
+        permissionType,
       };
       // 点击柱子，arg.name，arg.value都有值
       // 点击x轴， arg.value有值，不存在arg.name
