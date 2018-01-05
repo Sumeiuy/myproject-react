@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-04 16:05:30
+ * @Last Modified time: 2018-01-05 14:46:38
  */
 // import _ from 'lodash';
 import { message } from 'antd';
@@ -159,7 +159,7 @@ export default {
     * getProtocolDetail({ payload }, { call, put }) {
       const param = {
         ...payload.data,
-        subType: '507050', // 按后端要求详情接口subType写死
+        subType: '507050', // 按后端要求详情接口子类型写死
       };
       const empId = emp.getId();
       const response = yield call(api.getProtocolDetail, param);

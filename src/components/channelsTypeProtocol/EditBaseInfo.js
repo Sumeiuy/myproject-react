@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-04 16:27:13
+ * @Last Modified time: 2018-01-05 13:47:18
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -332,7 +332,7 @@ export default class EditBaseInfo extends PureComponent {
       custType,
       econNum: brokerNumber,
       agrId: '',
-      agrType: '',
+      agrType: subType,
       templateId: '',
       type: 'PriCust',
     };
