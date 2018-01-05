@@ -6,7 +6,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 
 import Button from '../../common/Button';
 import { fspContainer } from '../../../config';
@@ -95,7 +94,7 @@ export default class AddCusSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { closeTab, push, location: { state } } = this.props;
+    const { closeTab, push } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
@@ -108,7 +107,6 @@ export default class AddCusSuccess extends PureComponent {
     } else {
       push({
         pathname: url,
-        query: _.omit(state, 'noScrollTop'),
       });
     }
   }
