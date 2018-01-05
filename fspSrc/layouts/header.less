@@ -24,26 +24,6 @@
 					background-color: #eee;
 			}
 	}
-	.headerLogo {
-		display: flex;
-		align-items: center;
-		.logo {
-			display: inline-block;
-			width: 25px;
-			height: 28px;
-			background: url(./img/logo.png) no-repeat;
-			background-size: 25px 28px;
-		}
-		.name {
-			margin-left: 8px;
-			line-height: 28px;
-			font-size: 20px;
-			color: #fff;
-			&:hover {
-				color: #fff;
-			}
-		}
-	}
 	.headerContent {
 		display: flex;
 		justify-content: flex-end;
@@ -73,19 +53,19 @@
 }
 
 .popovermenu {
-    width: 280px;
-    margin-left: 6px;
-     :global .ant-popover-inner-content {
-        padding: 0;
-        .ant-menu-inline .ant-menu-item,
-        .ant-menu-vertical .ant-menu-item {
-            border-right: 0;
-            height: 48px;
-            line-height: 48px;
-        }
-        .ant-menu-inline .ant-menu-item-selected,
-        .ant-menu-inline .ant-menu-selected {
-            border-right: 0;
-        }
+  width: 280px;
+  margin-left: 6px;
+   :global .ant-popover-inner-content {
+    padding: 0;
+    .ant-menu-inline .ant-menu-item,
+    .ant-menu-vertical .ant-menu-item {
+      border-right: 0;
+      height: 48px;
+      line-height: 48px;
     }
+    .ant-menu-inline .ant-menu-item-selected,
+    .ant-menu-inline .ant-menu-selected {
+      border-right: 0;
+    }
+  }
 }

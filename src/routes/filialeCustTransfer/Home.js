@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-02 15:52:44
+ * @Last Modified time: 2018-01-04 17:50:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -257,6 +257,7 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   render() {
+    console.log('props', this.props);
     const {
       custList,
       newManagerList,
