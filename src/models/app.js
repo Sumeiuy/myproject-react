@@ -172,8 +172,8 @@ export default {
       if (data) {
         // 初始化权方法
         permission.init(data.empRespList);
-        // 设置保存用户信息
-        emp.setEmpInfo(data.loginInfo);
+        // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
+        emp.setEmpInfo(data.loginInfo || data.empInfo);
         // 初始化查询到用户信息后，立即查询用户的菜单权限
         yield put({
           type: 'getMenus',

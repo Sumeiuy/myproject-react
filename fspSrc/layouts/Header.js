@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-05 16:08:06
+ * @Last Modified time: 2018-01-05 17:39:07
  * @description 新头部导航
  */
 
@@ -21,6 +21,7 @@ export default class Header extends PureComponent {
   static propTypes = {
     secondaryMenu: PropTypes.array.isRequired,
     loginInfo: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     empRspList: PropTypes.array.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
@@ -28,6 +29,8 @@ export default class Header extends PureComponent {
 
   static defaultProps = {
     secondaryMenu: [],
+    loginInfo: {},
+    empInfo: {},
     onSearch: () => {},
     onSwitchRsp: () => {},
   }
@@ -38,7 +41,7 @@ export default class Header extends PureComponent {
   }
 
   render() {
-    const { loginInfo, empRspList } = this.props;
+    const { loginInfo, empRspList, empInfo } = this.props;
     const statisticalMenu = (
       <Menu mode="vertical">
         <Menu.Item key="0">
@@ -86,6 +89,7 @@ export default class Header extends PureComponent {
             (<EmpRsp
               empRspList={empRspList}
               empCurRsp={loginInfo}
+              empInfo={empInfo}
               onSwitchRsp={this.handleSwitchRsp}
             />) :
             null
