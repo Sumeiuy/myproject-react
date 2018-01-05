@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-03 14:03:20
+ * @Last Modified time: 2018-01-05 11:06:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -133,7 +133,7 @@ export default class EditInput extends PureComponent {
                 onClick={e => e.stopPropagation()}
               />
               <Icon type="success" onClick={this.onSubmit} title="确定" />
-              <Icon type="1" onClick={this.onCancel} title="取消" />
+              <Icon type="close" onClick={this.onCancel} title="取消" />
             </div>
         }
       </div>
