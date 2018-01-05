@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Clickable from '../../../components/common/Clickable';
-import { dispatchTabPane } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './search.less';
 
@@ -134,8 +134,7 @@ export default class Search extends PureComponent {
       id: ids, // 'FSP_SERACH',
       title: titles, // '搜索目标客户',
     };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url,
       param,

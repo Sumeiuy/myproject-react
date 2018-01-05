@@ -9,9 +9,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Button from '../../common/Button';
-import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
-import { dispatchTabPane, fspGlobal } from '../../../utils';
+import { openRctTab, navTo } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 export default class AddCusSuccess extends PureComponent {
@@ -69,8 +68,7 @@ export default class AddCusSuccess extends PureComponent {
       id: 'FSP_CUST_GROUP_MANAGE',
       title: '客户分组管理',
     };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       url,
       param,
       routerAction: push,
@@ -91,7 +89,6 @@ export default class AddCusSuccess extends PureComponent {
   }
 
   // 返回首页
-  // TODOTAB: 需要进行进一步修改
   @autobind
   goToHome() {
     this.clearTimeInterval();
@@ -101,16 +98,14 @@ export default class AddCusSuccess extends PureComponent {
       id: 'tab-home',
       title: '首页',
     };
-
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
-      closeTab();
-    } else {
-      push({
-        pathname: url,
-        query: _.omit(state, 'noScrollTop'),
-      });
-    }
+    closeTab();
+    navTo({
+      url,
+      param,
+      routerAction: push,
+      pathname: url,
+      query: _.omit(state, 'noScrollTop'),
+    });
   }
 
   render() {

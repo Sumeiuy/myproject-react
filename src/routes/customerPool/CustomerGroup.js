@@ -19,8 +19,8 @@ import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
-import { fspGlobal } from '../../utils';
-import { emp } from '../../helper';
+import { removeTab, linkTo } from '../../utils';
+import { emp, url } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
 
@@ -221,10 +221,11 @@ export default class CustomerGroup extends PureComponent {
     });
   }
 
-  // TODOTAB: 需要进行修正
   @autobind
   closeTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    removeTab({
+      id: 'RCT_FSP_CUSTOMER_LIST',
+    });
   }
 
   // 点击取消按钮回到列表页
@@ -236,7 +237,12 @@ export default class CustomerGroup extends PureComponent {
         query: { fr },
       },
     } = this.props;
-    push(decodeURIComponent(fr));
+    const { pathname, query } = url.parseUrl(decodeURIComponent(fr));
+    linkTo({
+      routerAction: push,
+      pathname,
+      query,
+    });
   }
 
   /**

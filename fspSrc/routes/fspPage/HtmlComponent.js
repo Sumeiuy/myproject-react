@@ -1,3 +1,9 @@
+/**
+ * @file routes/fspPage/HtmlComponent.js
+ * fsp页面封装组件
+ * @author zhufeiyang
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';

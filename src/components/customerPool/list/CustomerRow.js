@@ -10,7 +10,7 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { dispatchTabPane } from '../../../utils';
+import { openFspTab } from '../../../utils';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
@@ -159,13 +159,12 @@ export default class CustomerRow extends PureComponent {
       forceRefresh: true,
     };
     // TODOTAB: 如何与后端是动态接口
-    dispatchTabPane({
-      fspAction: 'openFspTab',
+    openFspTab({
       routerAction: push,
       url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
       pathname: '/customerCenter/fspcustomerDetail',
       param,
-      data: {
+      state: {
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
       },
     });

@@ -1,6 +1,7 @@
 /**
  * @file layouts/Main.js
- * @author maoquan(maoquan@htsc.com)
+ * 最外层的框架主组件
+ * @author zhufeiyang
  */
 
 import React, { PureComponent } from 'react';

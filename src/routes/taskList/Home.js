@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import appListTool from '../../components/common/appList/tool';
-import { dispatchTabPane, permission } from '../../utils';
+import { openRctTab, permission } from '../../utils';
 import { emp } from '../../helper';
 
 const EMPTY_OBJECT = {};
@@ -776,8 +776,7 @@ export default class PerformerView extends PureComponent {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData, push } = this.props;
     clearTaskFlowData();
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url,
       param: {

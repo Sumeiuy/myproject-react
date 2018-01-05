@@ -28,6 +28,21 @@ const url = {
     return qs.stringify(query);
   },
   /**
+   * 将JS对象转化成url上的参数字符串
+   * @author sunweibin
+   * @param {Object} query={} 需要转换成字符串的对象
+   * @returns {String} 无?号的url参数字符串
+   */
+  parseUrl(inputUrl = '') {
+    const match = /([^?]*)\?(.*)/.exec(inputUrl);
+    const pathname = match[1];
+    const query = this.parse(match[2]);
+    return {
+      pathname,
+      query,
+    };
+  },
+  /**
    * 检查当前页面路径是否匹配指定路径的子路由
    * @author xuxiaoqin
    * @param {String} route 当前子路由

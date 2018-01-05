@@ -4,7 +4,7 @@
  * @description 封装首页指标数据
  */
 import _ from 'lodash';
-import { dispatchTabPane } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import { url as urlHelper, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
@@ -335,8 +335,7 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
     id: 'RCT_FSP_CUSTOMER_LIST',
     title: '客户列表',
   };
-  dispatchTabPane({
-    fspAction: 'openRctTab',
+  openRctTab({
     routerAction: push,
     url,
     param,
