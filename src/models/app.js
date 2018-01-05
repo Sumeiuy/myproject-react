@@ -145,9 +145,10 @@ export default {
     },
     // 根据用户权限可以查看的菜单
     getMenusSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { secondaryMenu = EMPTY_LIST, majorMenu = EMPTY_LIST } = resultData;
+      const { payload: { resultData = {} } } = action;
+      const { secondaryMenu = [], majorMenu = [] } = resultData;
       return {
+        ...state,
         menus: {
           secondaryMenu,
           majorMenu,
@@ -172,7 +173,12 @@ export default {
         // 初始化权方法
         permission.init(data.empRespList);
         // 设置保存用户信息
-        emp.setEmpInfo(data.empInfo);
+        emp.setEmpInfo(data.loginInfo);
+        // 初始化查询到用户信息后，立即查询用户的菜单权限
+        yield put({
+          type: 'getMenus',
+          payload: { postnId: emp.getPstnId() },
+        });
         yield put({
           type: 'getEmpInfoSuccess',
           payload: data,

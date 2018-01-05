@@ -28,6 +28,8 @@ export default class ServiceRecordForm extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
+    reloadTargetCustInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -51,8 +53,11 @@ export default class ServiceRecordForm extends PureComponent {
       custUuid,
     } = this.serviceRecordContentRef.getData();
 
-    const { formData: { custId = '', missionFlowId = '' }, addServeRecord } = this.props;
-
+    const {
+      formData: { custId = '', missionFlowId = '' },
+      addServeRecord,
+      reloadTargetCustInfo,
+    } = this.props;
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
       return;
@@ -62,7 +67,6 @@ export default class ServiceRecordForm extends PureComponent {
       message.error('服务的内容字数不能超过100');
       return;
     }
-
     const postBody = {
       // 经纪客户号
       custId,
@@ -80,7 +84,14 @@ export default class ServiceRecordForm extends PureComponent {
     };
 
     // 添加服务记录
-    addServeRecord(postBody);
+    addServeRecord(postBody)
+      .then(() => {
+        if (this.props.addMotServeRecordSuccess) {
+          // 服务记录添加成功后重新获取目标客户列表的信息
+          reloadTargetCustInfo();
+          message.success('添加服务记录成功');
+        }
+      });
   }
 
   @autobind

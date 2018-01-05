@@ -1,7 +1,7 @@
 /**
  * @file layouts/Sider.js
  *  侧栏
- * @author maoquan(maoquan@htsc.com)
+ * @author zhufeiyang
  */
 
 import React from 'react';

@@ -21,7 +21,7 @@ import GroupModal from '../../components/customerPool/groupManage/CustomerGroupU
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
-import { dispatchTabPane } from '../../utils';
+import { openRctTab } from '../../utils';
 import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
@@ -248,8 +248,7 @@ export default class CustomerGroupManage extends PureComponent {
       id: ids, // tab的id
       title: titles, // tab标题
     };
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url,
       param,

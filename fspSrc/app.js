@@ -1,6 +1,7 @@
 /**
  * @file app.js
- * @author maoquan(maoquan@htsc.com)
+ * 项目入口文件
+ * @author 朱飞阳
  */
 
 import 'babel-polyfill';

@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './toBeDone.less';
-import { dispatchTabPane } from '../../../utils';
+import { dispatchTabPane, openRctTab, openFspTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -92,12 +92,19 @@ export default class PerformanceIndicators extends PureComponent {
       title: '客户列表',
     };
     const authOrgId = authority ? window.forReactPosition.orgId : '';
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    const data = {
+      source: 'business',
+      orgId: authOrgId,
+    };
+    openRctTab({
       routerAction: push,
       url: `${url}?source=business&orgId=${authOrgId}`,
+      pathname: url,
+      query: data,
       param,
-      data: query,
+      state: {
+        ...query,
+      },
     });
   }
 
@@ -122,8 +129,7 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'MESSAGE_CENTER',
       title: '消息中心',
     };
-    dispatchTabPane({
-      fspAction: 'openFspTab',
+    openFspTab({
       routerAction: push,
       url: notificationUrl,
       param: notificationParam,
@@ -142,8 +148,7 @@ export default class PerformanceIndicators extends PureComponent {
       title: '待办流程列表',
     };
     const { push } = this.props;
-    dispatchTabPane({
-      fspAction: 'openRctTab',
+    openRctTab({
       routerAction: push,
       url,
       param,

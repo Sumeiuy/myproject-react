@@ -14,7 +14,7 @@ import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTa
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
-import { fspGlobal } from '../../utils';
+import { removeTab } from '../../utils';
 import { emp } from '../../helper';
 
 
@@ -130,16 +130,19 @@ export default class CreateTask extends PureComponent {
   }
 
   /* 关闭当前页 */
-  // TODOTAB: 需要进行重写
   @autobind
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;
     if (source === 'custGroupList') {
       // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
       // 并且用closeTabMenu关闭
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+      removeTab({
+        id: 'RCT_FSP_CREATE_TASK',
+      });
     } else {
-      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+      removeTab({
+        id: 'RCT_FSP_CUSTOMER_LIST',
+      });
     }
   }
 
@@ -175,7 +178,6 @@ export default class CreateTask extends PureComponent {
             getApprovalList={getApprovalList}
             push={push}
             orgId={orgId}
-            onCloseTab={this.handleCancleTab}
             isShowApprovalModal={isShowApprovalModal}
             isApprovalListLoadingEnd={isApprovalListLoadingEnd}
             onCancel={this.resetLoading}

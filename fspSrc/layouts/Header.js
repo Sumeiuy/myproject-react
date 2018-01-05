@@ -1,8 +1,13 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
+<<<<<<< HEAD
  * @Last Modified by: ouchangzhi
  * @Last Modified time: 2018-01-05 14:28:06
+=======
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-05 14:25:34
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
  * @description 新头部导航
  */
 
@@ -18,34 +23,37 @@ import styles from './header.less';
 
 export default class Header extends PureComponent {
   static propTypes = {
+<<<<<<< HEAD
     secondaryMenu: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
+=======
+    navList: PropTypes.array.isRequired,
+    loginInfo: PropTypes.object.isRequired,
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     empRspList: PropTypes.array.isRequired,
-    onExit: PropTypes.func,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
+<<<<<<< HEAD
     secondaryMenu: [],
     onExit: () => {},
+=======
+    navList: [],
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     onSearch: () => {},
     onSwitchRsp: () => {},
   }
 
   @autobind
-  handleLoginout() {
-    this.props.onExit();
-  }
-
-  @autobind
   handleSwitchRsp(rsp) {
     console.warn('handleSwitchRsp>>rsp', rsp);
-    this.props.onSwitchRsp();
+    this.props.onSwitchRsp(rsp);
   }
 
   render() {
-    const { empInfo, empRspList } = this.props;
+    const { loginInfo, empRspList } = this.props;
     const statisticalMenu = (
       <Menu mode="vertical">
         <Menu.Item key="0">
@@ -116,11 +124,10 @@ export default class Header extends PureComponent {
             </div>
           </Dropdown>
           {
-            (!_.isEmpty(empRspList) && !_.isEmpty(empInfo)) ?
+            (!_.isEmpty(empRspList) && !_.isEmpty(loginInfo)) ?
             (<EmpRsp
               empRspList={empRspList}
-              empCurRsp={empInfo}
-              onExit={this.handleLoginout}
+              empCurRsp={loginInfo}
               onSwitchRsp={this.handleSwitchRsp}
             />) :
             null

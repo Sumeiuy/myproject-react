@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { Icon } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
-import { dispatchTabPane } from '../../../utils';
+import { openFspTab } from '../../../utils';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -237,13 +237,12 @@ export default class CustDetail extends PureComponent {
       title: '客户360视图-客户信息',
       forceRefresh: true,
     };
-    dispatchTabPane({
-      fspAction: 'openFspTab',
+    openFspTab({
       routerAction: push,
       url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
       pathname: '/customerCenter/fspcustomerDetail',
       param,
-      data: {
+      state: {
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
       },
     });
