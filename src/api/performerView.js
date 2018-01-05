@@ -28,5 +28,7 @@ export default function performerView(api) {
     countFlowFeedBack: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowFeedBack', query),
     // 管理者视图任务实施进度
     countFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowStatus', query),
+    // 添加服务记录中 服务类型
+    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
   };
 }
