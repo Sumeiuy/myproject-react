@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-04 17:34:09
+ * @Last Modified time: 2018-01-05 09:50:20
  * @description 新头部导航
  */
 
@@ -21,21 +21,14 @@ export default class Header extends PureComponent {
     navList: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
     empRspList: PropTypes.array.isRequired,
-    onExit: PropTypes.func,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
     navList: [],
-    onExit: () => {},
     onSearch: () => {},
     onSwitchRsp: () => {},
-  }
-
-  @autobind
-  handleLoginout() {
-    this.props.onExit();
   }
 
   @autobind
@@ -93,7 +86,6 @@ export default class Header extends PureComponent {
             (<EmpRsp
               empRspList={empRspList}
               empCurRsp={empInfo}
-              onExit={this.handleLoginout}
               onSwitchRsp={this.handleSwitchRsp}
             />) :
             null

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 14:19:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-04 17:22:14
+ * @Last Modified time: 2018-01-05 09:49:23
  * @description 头部用户名称以及岗位信息展示部件
  */
 
@@ -20,12 +20,10 @@ export default class EmpRp extends PureComponent {
   static propTypes = {
     empRspList: PropTypes.array.isRequired,
     empCurRsp: PropTypes.object.isRequired,
-    onExit: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
-    onExit: () => {},
     onSwitchRsp: () => {},
   }
 
@@ -74,24 +72,12 @@ export default class EmpRp extends PureComponent {
     onSwitchRsp(empRsp);
   }
 
-  // 退出系统操作
-  @autobind
-  loginout() {
-    this.props.onExit();
-  }
   // 选择某个
   @autobind
   handleRspChange({ key }) {
     const { rspId } = this.state;
     if (key === rspId) return;
-    switch (key) {
-      case 'loginout':
-        this.loginout();
-        break;
-      default:
-        this.changeRsp(key);
-        break;
-    }
+    this.changeRsp(key);
   }
 
   // 根据empRspList生成Menu
@@ -104,9 +90,6 @@ export default class EmpRp extends PureComponent {
             <span className={styles.empRspItem} title={item.postnName}>{item.postnName}</span>
           </Menu.Item>))
         }
-        <Menu.Item key="loginout">
-          <span className={styles.empRspItem}><Icon type="tuichu" />&nbsp;退出系统</span>
-        </Menu.Item>
       </Menu>
     );
   }
