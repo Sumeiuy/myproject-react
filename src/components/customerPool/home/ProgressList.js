@@ -40,6 +40,7 @@ export default class ProgressList extends PureComponent {
     push: () => { },
     empInfo: {},
     type: '',
+    // 0 表示没有权限
     permissionType: 0,
   }
 

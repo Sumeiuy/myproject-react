@@ -24,6 +24,9 @@ import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
 
+// 0 表示没有任何权限
+const NOPERTMIT = 0;
+
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
@@ -516,7 +519,8 @@ export default class CustomerLists extends PureComponent {
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
-    if (permissionType !== 0) {
+    // ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动- 营业部执行岗’
+    if (permissionType !== NOPERTMIT) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
       } else {
@@ -528,7 +532,9 @@ export default class CustomerLists extends PureComponent {
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
-    } else if (permissionType !== 0) {
+    } else if (permissionType !== NOPERTMIT) {
+      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
+      // ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动- 营业部执行岗’
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
       } else {
@@ -566,7 +572,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={permissionType === 0}
+                disable={permissionType === NOPERTMIT}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}

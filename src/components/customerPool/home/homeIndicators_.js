@@ -327,6 +327,7 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
       obj.orgId = orgId;
     }
   } else if (permissionType !== 1) {
+    // 1 表示用户有总部执行岗和分中心执行岗权限
     obj.ptyMng = `${empName}_${empNum}`;
   }
   if (env.isInFsp()) {
