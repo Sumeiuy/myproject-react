@@ -30,7 +30,7 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
    // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
-  post: 'app/changePost',
+  switchPosition: 'global/changePost',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -72,7 +72,7 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
-  switchPost: fectchDataFunction(false, effects.post),
+  switchPosition: fectchDataFunction(false, effects.switchPosition),
 };
 
 @withRouter
@@ -101,7 +101,7 @@ export default class Main extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     changePost: PropTypes.bool.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
-    switchPost: PropTypes.func.isRequired,
+    switchPosition: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -128,7 +128,7 @@ export default class Main extends PureComponent {
 
   @autobind
   handleHeaderSwitchRsp(rsp) {
-    this.props.switchPost(rsp).then(this.switchRspAfter);
+    this.props.switchPosition(rsp).then(this.switchRspAfter);
   }
 
   render() {
