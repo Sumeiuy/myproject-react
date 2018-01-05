@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 14:19:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-05 14:02:45
+ * @Last Modified time: 2018-01-05 16:06:52
  * @description 头部用户名称以及岗位信息展示部件
  */
 
@@ -38,15 +38,21 @@ export default class EmpRp extends PureComponent {
   changeRsp(key) {
     const { empRspList, onSwitchRsp } = this.props;
     const empRsp = this.findEmpResp(empRspList, key);
-    // TODO 添加切换岗位后的操作
-    onSwitchRsp(empRsp);
+    // 取出需要传递给后端的参数
+    const param = {
+      postId: empRsp.postnId,
+      postName: empRsp.postnName,
+      orgId: empRsp.orgId,
+      name: empRsp.loginName,
+    };
+    onSwitchRsp(param);
   }
 
   // 选择某个岗位
   @autobind
   handleRspChange({ key }) {
-    const { rspId } = this.state;
-    if (key === rspId) return;
+    const { empCurRsp } = this.props;
+    if (key === empCurRsp.postId) return;
     this.changeRsp(key);
   }
 

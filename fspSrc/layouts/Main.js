@@ -9,6 +9,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
+import { autobind } from 'core-decorators';
 import { routerRedux, withRouter } from 'dva/router';
 
 import Header from './Header';
@@ -29,6 +30,7 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
    // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
+  post: 'app/changePost',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -56,6 +58,8 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
+  // 任务反馈的字典
+  taskFeedbackList: state.performerView.taskFeedbackList,
 });
 
 const mapDispatchToProps = {
@@ -68,6 +72,7 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
+  switchPost: fectchDataFunction(false, effects.post),
 };
 
 @withRouter
@@ -95,6 +100,8 @@ export default class Main extends PureComponent {
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     changePost: PropTypes.bool.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
+    switchPost: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -107,6 +114,21 @@ export default class Main extends PureComponent {
   componentDidMount() {
     const { getCustomerScope } = this.props;
     getCustomerScope(); // 加载客户池客户范围
+  }
+
+  @autobind
+  switchRspAfter() {
+    const { changePost } = this.props;
+    if (changePost) {
+      console.warn('TO DO Refresh window');
+    } else {
+      console.warn('DO NOT Refresh window');
+    }
+  }
+
+  @autobind
+  handleHeaderSwitchRsp(rsp) {
+    this.props.switchPost(rsp).then(this.switchRspAfter);
   }
 
   render() {
@@ -130,6 +152,7 @@ export default class Main extends PureComponent {
       handleCloseClick,
       custUuid,
       ceFileDelete,
+      taskFeedbackList,
     } = this.props;
 
     return (
@@ -140,7 +163,11 @@ export default class Main extends PureComponent {
         <div
           className={styles.layout}
         >
-          <Header loginInfo={loginInfo} empRspList={empPostnList} />
+          <Header
+            loginInfo={loginInfo}
+            empRspList={empPostnList}
+            onSwitchRsp={this.handleHeaderSwitchRsp}
+          />
           <div className={styles.main}>
             <div className={styles.content}>
               <Tab
@@ -172,6 +199,7 @@ export default class Main extends PureComponent {
                             onToggleServiceRecordModal={toggleServiceRecordModal}
                             custUuid={custUuid}
                             ceFileDelete={ceFileDelete}
+                            taskFeedbackList={taskFeedbackList}
                           />
                         </div>
                         :

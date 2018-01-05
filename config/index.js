@@ -34,7 +34,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      [prefix+ '/groovynoauth/fsp/emp']: {
+      [prefix + '/groovynoauth/fsp/emp']: {
         target: 'http://168.61.8.81:5090', // DOClever
         secure: false,
       },
