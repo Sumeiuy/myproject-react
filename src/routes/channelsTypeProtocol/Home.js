@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-18 14:14:25
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-12-25 15:21:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

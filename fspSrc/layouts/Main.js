@@ -80,9 +80,7 @@ export default class Main extends PureComponent {
     loading: PropTypes.bool.isRequired,
     loadingForceFull: PropTypes.bool,
     isBlockRemovePane: PropTypes.bool.isRequired,
-
     push: PropTypes.func.isRequired,
-
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
@@ -121,7 +119,7 @@ export default class Main extends PureComponent {
       push,
       interfaceState,
       dict,
-      empInfo: { empInfo = {} },
+      empInfo: { empInfo = {}, empPostnList = [] },
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
@@ -133,20 +131,15 @@ export default class Main extends PureComponent {
       ceFileDelete,
     } = this.props;
 
-    const headerProps = {
-      location,
-      logout() {
-        console.log('logout...');
-      },
-    };
-
     return (
       <div>
         <Helmet>
           <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
         </Helmet>
-        <div className={styles.layout}>
-          <Header {...headerProps} />
+        <div
+          className={styles.layout}
+        >
+          <Header empInfo={empInfo} empRspList={empPostnList} />
           <div className={styles.main}>
             <div className={styles.content}>
               <Tab
