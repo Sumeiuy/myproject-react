@@ -1,6 +1,7 @@
 /**
-* @file fspSrc/routes/.js
-* @author maoquan(maoquan@htsc.com)
+* @file fspSrc/routes.js
+* 前端路由配置文件
+* @author zhufeiyang
 */
 
 import React from 'react';

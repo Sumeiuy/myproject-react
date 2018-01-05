@@ -1,7 +1,7 @@
 /**
- * @file config/menu.js
- *  侧边栏菜单配置
- * @author maoquan(maoquan@htsc.com)
+ * @file config/tabMenu.js
+ *  tab导航菜单配置
+ * @author zhufeiyang
  */
 
 import _ from 'lodash';

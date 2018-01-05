@@ -37,6 +37,8 @@ export default {
     deleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
+    // 根据用户权限可以查看的菜单
+    menus: EMPTY_OBJECT,
   },
   reducers: {
     // 获取员工职责与职位
@@ -139,6 +141,18 @@ export default {
         approvePersonList: servicePeopleList,
       };
     },
+    // 根据用户权限可以查看的菜单
+    getMenusSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      const { secondaryMenu = [], majorMenu = [] } = resultData;
+      return {
+        ...state,
+        menus: {
+          secondaryMenu,
+          majorMenu,
+        },
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -149,7 +163,12 @@ export default {
         // 初始化权方法
         permission.init(data.empRespList);
         // 设置保存用户信息
-        emp.setEmpInfo(data.empInfo);
+        emp.setEmpInfo(data.loginInfo);
+        // 初始化查询到用户信息后，立即查询用户的菜单权限
+        yield put({
+          type: 'getMenus',
+          payload: { postnId: emp.getPstnId() },
+        });
         yield put({
           type: 'getEmpInfoSuccess',
           payload: data,
@@ -228,6 +247,14 @@ export default {
       const response = yield call(seibelApi.getSearchServerPersonelList, payload);
       yield put({
         type: 'getApprovePersonListSuccess',
+        payload: response,
+      });
+    },
+    // 获取用户有权限查看的菜单
+    * getMenus({ payload }, { call, put }) {
+      const response = yield call(api.getMenus, payload);
+      yield put({
+        type: 'getMenusSuccess',
         payload: response,
       });
     },

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 14:19:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-05 09:49:23
+ * @Last Modified time: 2018-01-05 14:02:45
  * @description 头部用户名称以及岗位信息展示部件
  */
 
@@ -27,32 +27,6 @@ export default class EmpRp extends PureComponent {
     onSwitchRsp: () => {},
   }
 
-  constructor(props) {
-    super(props);
-    const { empCurRsp, empRspList } = props;
-    const { postnId } = empCurRsp;
-    const empRsp = this.findEmpResp(empRspList, postnId);
-    this.state = {
-      name: empCurRsp.empName,
-      empRsp: empRsp.postnName,
-      rspId: postnId,
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { empRspList: prevRspList, empCurRsp: prevEmp } = this.props;
-    const { empRspList: nextRspList, empCurRsp: nextEmp } = nextProps;
-    if (prevRspList !== nextRspList || prevEmp !== nextEmp) {
-      const { postnId } = nextEmp;
-      const empRsp = this.findEmpResp(nextRspList, postnId);
-      this.setState({
-        name: nextEmp.empName,
-        empRsp: empRsp.postnName,
-        rspId: empRsp.postnId,
-      });
-    }
-  }
-
   // 找到当前用户的岗位对象
   @autobind
   findEmpResp(list, postnId) {
@@ -64,15 +38,11 @@ export default class EmpRp extends PureComponent {
   changeRsp(key) {
     const { empRspList, onSwitchRsp } = this.props;
     const empRsp = this.findEmpResp(empRspList, key);
-    this.setState({
-      empRsp: empRsp.postnName,
-      rspId: empRsp.postnId,
-    });
     // TODO 添加切换岗位后的操作
     onSwitchRsp(empRsp);
   }
 
-  // 选择某个
+  // 选择某个岗位
   @autobind
   handleRspChange({ key }) {
     const { rspId } = this.state;
@@ -95,14 +65,13 @@ export default class EmpRp extends PureComponent {
   }
 
   render() {
-    const { empRspList } = this.props;
+    const { empRspList, empCurRsp } = this.props;
     const empRspMenu = this.createMenu(empRspList);
-    const { name = '', empRsp = '' } = this.state;
     return (
-      <Dropdown overlay={empRspMenu} className="xxx">
+      <Dropdown overlay={empRspMenu}>
         <dl className={styles.position}>
-          <dt className={styles.empName}><Icon type="touxiang" />&nbsp;{name}</dt>
-          <dd className={styles.empRsp}>{empRsp}</dd>
+          <dt className={styles.empName}><Icon type="touxiang" />&nbsp;{empCurRsp.name}</dt>
+          <dd className={styles.empRsp}>{empCurRsp.postName}</dd>
         </dl>
       </Dropdown>
     );

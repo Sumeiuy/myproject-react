@@ -1,7 +1,7 @@
 /**
- * @file models/app.js
+ * @file models/global.js
  *  全局模型管理
- * @author maoquan(maoquan@htsc.com)
+ * @author zhufeiyang
  */
 
 export default {
