@@ -39,6 +39,8 @@ export default {
     approvePersonList: EMPTY_LIST,
     // 根据用户权限可以查看的菜单
     menus: EMPTY_OBJECT,
+    // 改变职位是否成功，默认失败
+    changePost: false,
   },
   reducers: {
     // 获取员工职责与职位
@@ -153,6 +155,14 @@ export default {
         },
       };
     },
+    // 根据用户权限可以查看的菜单
+    changePostSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        changePost: !!resultData,
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -255,6 +265,14 @@ export default {
       const response = yield call(api.getMenus, payload);
       yield put({
         type: 'getMenusSuccess',
+        payload: response,
+      });
+    },
+    // 用户切换岗位
+    * changePost({ payload }, { call, put }) {
+      const response = yield call(api.changePost, payload);
+      yield put({
+        type: 'changePostSuccess',
         payload: response,
       });
     },

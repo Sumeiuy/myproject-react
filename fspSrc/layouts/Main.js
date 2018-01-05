@@ -94,6 +94,7 @@ export default class Main extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    changePost: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {

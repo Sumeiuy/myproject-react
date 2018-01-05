@@ -1,8 +1,13 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
+<<<<<<< HEAD
+ * @Last Modified by: ouchangzhi
+ * @Last Modified time: 2018-01-05 14:28:06
+=======
  * @Last Modified by: sunweibin
  * @Last Modified time: 2018-01-05 14:25:34
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
  * @description 新头部导航
  */
 
@@ -18,15 +23,25 @@ import styles from './header.less';
 
 export default class Header extends PureComponent {
   static propTypes = {
+<<<<<<< HEAD
+    secondaryMenu: PropTypes.array.isRequired,
+    empInfo: PropTypes.object.isRequired,
+=======
     navList: PropTypes.array.isRequired,
     loginInfo: PropTypes.object.isRequired,
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     empRspList: PropTypes.array.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
+<<<<<<< HEAD
+    secondaryMenu: [],
+    onExit: () => {},
+=======
     navList: [],
+>>>>>>> 2e086200c1301fa4daac35c75626cabd4f20227c
     onSearch: () => {},
     onSwitchRsp: () => {},
   }
@@ -59,7 +74,7 @@ export default class Header extends PureComponent {
           {/* <div className={styles.search}>
             <Search
               placeholder="搜索"
-              onSearch={value => console.log(value)}
+              onSearch={this.handleOnSearch}
               style={{ width: 155 }}
             />
           </div> */}

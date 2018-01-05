@@ -1,7 +1,7 @@
 /**
  * @Description: 公用的接口
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-04 17:31:38
+ * @Last Modified time: 2018-01-05 14:36:04
  */
 export default function common(api) {
   return {
@@ -11,5 +11,7 @@ export default function common(api) {
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
     // 获取用户有权限查看的菜单
     getMenus: query => api.post('/groovynoauth/fsp/emp/menu/queryMenus4Emp', query),
+    // 用户切换岗位
+    changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
   };
 }
