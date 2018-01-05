@@ -119,7 +119,7 @@ export default class Main extends PureComponent {
       push,
       interfaceState,
       dict,
-      empInfo: { empInfo = {}, empPostnList = [] },
+      empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
@@ -139,7 +139,7 @@ export default class Main extends PureComponent {
         <div
           className={styles.layout}
         >
-          <Header empInfo={empInfo} empRspList={empPostnList} />
+          <Header loginInfo={loginInfo} empRspList={empPostnList} />
           <div className={styles.main}>
             <div className={styles.content}>
               <Tab

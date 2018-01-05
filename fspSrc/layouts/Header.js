@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-05 09:52:36
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-05 14:25:34
  * @description 新头部导航
  */
 
@@ -19,33 +19,26 @@ import styles from './header.less';
 export default class Header extends PureComponent {
   static propTypes = {
     navList: PropTypes.array.isRequired,
-    empInfo: PropTypes.object.isRequired,
+    loginInfo: PropTypes.object.isRequired,
     empRspList: PropTypes.array.isRequired,
-    onExit: PropTypes.func,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
   }
 
   static defaultProps = {
     navList: [],
-    onExit: () => {},
     onSearch: () => {},
     onSwitchRsp: () => {},
   }
 
   @autobind
-  handleLoginout() {
-    this.props.onExit();
-  }
-
-  @autobind
   handleSwitchRsp(rsp) {
     console.warn('handleSwitchRsp>>rsp', rsp);
-    this.props.onSwitchRsp();
+    this.props.onSwitchRsp(rsp);
   }
 
   render() {
-    const { empInfo, empRspList } = this.props;
+    const { loginInfo, empRspList } = this.props;
     const statisticalMenu = (
       <Menu mode="vertical">
         <Menu.Item key="0">
@@ -116,11 +109,10 @@ export default class Header extends PureComponent {
             </div>
           </Dropdown>
           {
-            (!_.isEmpty(empRspList) && !_.isEmpty(empInfo)) ?
+            (!_.isEmpty(empRspList) && !_.isEmpty(loginInfo)) ?
             (<EmpRsp
               empRspList={empRspList}
-              empCurRsp={empInfo}
-              onExit={this.handleLoginout}
+              empCurRsp={loginInfo}
               onSwitchRsp={this.handleSwitchRsp}
             />) :
             null

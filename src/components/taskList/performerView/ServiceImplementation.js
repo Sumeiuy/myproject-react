@@ -17,6 +17,24 @@ import ServiceRecordForm from './ServiceRecordForm';
 // 此处code码待修改
 const EDITABLE = ['10', '20'];
 
+/**
+ * 将数组对象中的id和name转成对应的key和value
+ * @param {*} arr 原数组
+ * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
+ */
+function transformCustFeecbackData(arr = []) {
+  return _.map(arr, (item) => {
+    const obj = {
+      key: String(item.id),
+      value: item.name,
+    };
+    if (item.childList && item.childList.length) {
+      obj.children = transformCustFeecbackData(item.childList);
+    }
+    return obj;
+  });
+}
+
 export default function ServiceImplementation({
   currentId,
   dict,
@@ -43,12 +61,14 @@ export default function ServiceImplementation({
   getCeFileList,
   filesList,
   deleteFileResult,
+  taskFeedbackList,
+  addMotServeRecordSuccess,
+  reloadTargetCustInfo,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
 
   const currentCustomer = _.find(list, o => o.custId === currentCustId);
-
   let serviceStatusName = '';
   let serviceStatusCode = '';
   let missionFlowId = '';
@@ -71,6 +91,13 @@ export default function ServiceImplementation({
     attachmentRecord,
     custId,
   } = targetCustDetail;
+
+  // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
+  const motCustfeedBackDict = [{
+    key: String(serviceTypeCode),
+    value: serviceTypeName,
+    children: transformCustFeecbackData(taskFeedbackList),
+  }];
   // 服务记录的props
   const serviceReocrd = {
     serviceTips,
@@ -78,6 +105,7 @@ export default function ServiceImplementation({
     serviceWayCode,
     serviceStatusName,
     serviceStatusCode,
+    taskFeedbackList,
     serviceDate,
     serviceRecord,
     customerFeedback,
@@ -86,8 +114,7 @@ export default function ServiceImplementation({
     custId,
     custUuid,
     missionFlowId,
-    serviceTypeCode,
-    serviceTypeName,
+    motCustfeedBackDict,
   };
   return (
     <div>
@@ -110,18 +137,23 @@ export default function ServiceImplementation({
         getCeFileList={getCeFileList}
         filesList={filesList}
       />
-      <ServiceRecordForm
-        dict={dict}
-        addServeRecord={addServeRecord}
-        isReadOnly={isReadOnly}
-        isEntranceFromPerformerView
-        isFold={isFold}
-        queryCustUuid={queryCustUuid}
-        custUuid={custUuid}
-        formData={serviceReocrd}
-        ceFileDelete={ceFileDelete}
-        deleteFileResult={deleteFileResult}
-      />
+      {
+        !_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict)
+          ? <ServiceRecordForm
+            dict={dict}
+            addServeRecord={addServeRecord}
+            isReadOnly={isReadOnly}
+            isEntranceFromPerformerView
+            isFold={isFold}
+            queryCustUuid={queryCustUuid}
+            custUuid={custUuid}
+            formData={serviceReocrd}
+            ceFileDelete={ceFileDelete}
+            deleteFileResult={deleteFileResult}
+            addMotServeRecordSuccess={addMotServeRecordSuccess}
+            reloadTargetCustInfo={reloadTargetCustInfo}
+          /> : null
+      }
     </div>
   );
 }
@@ -150,6 +182,9 @@ ServiceImplementation.propTypes = {
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
+  taskFeedbackList: PropTypes.array.isRequired,
+  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  reloadTargetCustInfo: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

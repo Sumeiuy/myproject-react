@@ -115,6 +115,7 @@ export default class CustomerLists extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     toDetailAuthority: PropTypes.bool.isRequired,
+    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
