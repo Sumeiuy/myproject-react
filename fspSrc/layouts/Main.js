@@ -165,6 +165,7 @@ export default class Main extends PureComponent {
         >
           <Header
             loginInfo={loginInfo}
+            empInfo={empInfo}
             empRspList={empPostnList}
             onSwitchRsp={this.handleHeaderSwitchRsp}
           />
