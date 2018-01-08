@@ -16,7 +16,7 @@ import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
 import Clickable from '../../../components/common/Clickable';
-
+import FilterCustomers from './step1/FilterCustomers';
 
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
@@ -49,6 +49,7 @@ const renderColumnTitle = [{
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
+    dict: PropTypes.object.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     condition: PropTypes.string,
     peopleOfLabelData: PropTypes.object.isRequired,
@@ -78,6 +79,7 @@ export default class TaskSearchRow extends PureComponent {
       isLoadingEnd: true,
       title: '',
       custTableData: [],
+      filter: {},
     };
   }
 
@@ -107,12 +109,13 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} curPageNum 当前页
    * @param {*} pageSize 当前页条目
    */
-  queryPeopleOfLabel(labelId, curPageNum, pageSize) {
+  queryPeopleOfLabel(labelId, curPageNum, pageSize, filter) {
     const { isHasAuthorize, orgId, getLabelPeople } = this.props;
     let postBody = {
       labelId,
       curPageNum,
       pageSize,
+      filter,
     };
     if (isHasAuthorize) {
       postBody = {
@@ -133,7 +136,8 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleSeeCust(value = {}) {
-    this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE);
+    const { filter } = this.state;
+    this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE, filter);
 
     this.setState({
       title: value.labelName,
@@ -154,8 +158,13 @@ export default class TaskSearchRow extends PureComponent {
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { labelId } = this.state;
-    this.queryPeopleOfLabel(labelId, INITIAL_PAGE_NUM, changedPageSize);
+    const { labelId, filter } = this.state;
+    this.queryPeopleOfLabel(
+      labelId,
+      INITIAL_PAGE_NUM,
+      changedPageSize,
+      filter,
+    );
 
     this.setState({
       curPageNum: INITIAL_PAGE_NUM,
@@ -165,27 +174,63 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { labelId } = this.state;
-    this.queryPeopleOfLabel(labelId, nextPage, currentPageSize);
+    const { labelId, filter } = this.state;
+    this.queryPeopleOfLabel(
+      labelId,
+      nextPage,
+      currentPageSize,
+      filter,
+    );
 
     this.setState({
       curPageNum: nextPage,
     });
   }
+
+  /**
+   * 筛查客户弹窗中的 筛选项 变化值
+   */
+  @autobind
+  handleFilterChange(obj) {
+    const { labelId, filter } = this.state;
+    this.setState({
+      filter: {
+        ...filter,
+        [obj.name]: obj.value,
+      },
+    }, () => {
+      this.queryPeopleOfLabel(
+        labelId,
+        INITIAL_PAGE_NUM,
+        INITIAL_PAGE_SIZE,
+        this.state.filter,
+      );
+    });
+  }
+
   // Y为高净值、N为非高净值
   @autobind
   renderRadioSection() {
-    const { condition, circlePeopleData } = this.props;
+    const { condition, circlePeopleData, currentSelectLabel } = this.props;
+    const { totalCustNums } = this.state;
     return _.map(circlePeopleData,
       (item) => {
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
-          newDesc = _.isEmpty(newDesc) ? '--' : newDesc.replace(condition, `<span>${condition}</span>`);
-          newTitle = _.isEmpty(newTitle) ? '--' : newTitle.replace(condition, `<span>${condition}</span>`);
+          newDesc = _.isEmpty(newDesc)
+            ? '--'
+            : newDesc.replace(condition, `<span class=${styles.keyword}>${condition}</span>`);
+          newTitle = _.isEmpty(newTitle)
+          ? '--'
+            : newTitle.replace(condition, `<span class=${styles.keyword}>${condition}</span>`);
         }
+        const cls = classnames({
+          [styles.divRows]: true,
+          [styles.active]: currentSelectLabel === item.id,
+        });
         return (
-          <div className={styles.divRows} key={item.id || item.labelMapping}>
+          <div className={cls} key={item.id || item.labelMapping}>
             <Radio
               value={item.id}
               key={item.tagNumId || item.labelMapping}
@@ -194,15 +239,20 @@ export default class TaskSearchRow extends PureComponent {
                 className={styles.title}
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
+              <span className={styles.filterCount}>
+                已筛选客户数：<i>{totalCustNums || item.customNum}</i>
+              </span>
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
                 eventName="/click/taskSearchRow/checkCust"
               >
-                <Button className={styles.seeCust}>查看客户</Button>
+                <Button className={styles.seeCust}>筛查客户</Button>
               </Clickable>
             </Radio>
-            <h4 className={styles.titExp}>瞄准镜标签，共有
-                <span>{item.customNum}</span>客户。创建时间：{item.createDate || '--'}，创建人：{item.createrName || '--'}
+            <h4 className={styles.titExp}>
+              <span>创建人：<i>{item.createrName || '--'}</i></span>
+              <span>创建时间：<i>{item.createDate || '--'}</i></span>
+              <span>客户总数：<i>{item.customNum}</i></span>
             </h4>
             <h4
               dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
@@ -218,15 +268,16 @@ export default class TaskSearchRow extends PureComponent {
       pageSize = INITIAL_PAGE_SIZE,
       totalRecordNum = 0,
       visible,
-      totalCustNums,
-      title,
+      // title,
       custTableData,
+      filter,
     } = this.state;
 
     const {
       currentSelectLabel,
       isLoadingEnd,
       condition,
+      dict,
     } = this.props;
 
     if (_.isEmpty(condition)) {
@@ -245,7 +296,7 @@ export default class TaskSearchRow extends PureComponent {
             (isLoadingEnd && visible) ?
               <Modal
                 visible
-                title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
+                title="筛查客户"
                 onOk={this.handleOk}
                 maskClosable={false}
                 onCancel={this.handleCancel}
@@ -261,6 +312,16 @@ export default class TaskSearchRow extends PureComponent {
                 width={700}
                 wrapClassName={styles.labelCustModalContainer}
               >
+                {
+                  !_.isEmpty(custTableData) ?
+                    <div className={styles.filter}>
+                      <FilterCustomers
+                        dict={dict}
+                        currentItems={filter}
+                        onFilterChange={this.handleFilterChange}
+                      />
+                    </div> : null
+                }
                 {
                   _.isEmpty(custTableData) ?
                     <div className={styles.emptyContent}>
@@ -282,7 +343,7 @@ export default class TaskSearchRow extends PureComponent {
                         })
                       }
                       isFixedTitle
-                      scrollY={400}
+                      scrollY={200}
                       onSizeChange={this.handleShowSizeChange}
                       onPageChange={this.handlePageChange}
                       listData={custTableData}

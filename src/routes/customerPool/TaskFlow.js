@@ -19,6 +19,7 @@ import { validateFormContent } from '../../decorators/validateFormContent';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
+import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
 import styles from './taskFlow.less';
@@ -208,6 +209,8 @@ export default class TaskFlow extends PureComponent {
     let isFormValidate = false;
     let isSelectCust = true;
     if (current === 0) {
+      console.log('FFFF', this.SelectTargetCustomerRef);
+    } else if (current === 1) {
       this.formRef.props.form.validateFields((err, values) => {
         let isFormError = false;
         console.log('err-->', err);
@@ -222,7 +225,7 @@ export default class TaskFlow extends PureComponent {
         }
         this.props.clearTaskFlowData();
       });
-    } else if (current === 1) {
+    } else if (current === 2) {
       isFormValidate = true;
       pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
       const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
@@ -247,6 +250,9 @@ export default class TaskFlow extends PureComponent {
         current: current + 1,
       });
     }
+    // this.setState({
+    //   current: current + 1,
+    // });
   }
 
   @autobind
@@ -470,6 +476,34 @@ export default class TaskFlow extends PureComponent {
     const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
     const isShowTitle = true;
     const steps = [{
+      title: '选择目标客户',
+      content: <div className={styles.taskInner}>
+        <SelectTargetCustomer
+          ref={inst => (this.SelectTargetCustomerRef = inst)}
+          dict={dict}
+          location={location}
+          previousData={{ ...taskFormData }}
+          isShowTitle={isShowTitle}
+          isShowErrorInfo={isShowErrorInfo}
+          isShowErrorExcuteType={isShowErrorExcuteType}
+          isShowErrorTaskType={isShowErrorTaskType}
+
+          onPreview={this.handlePreview}
+          priviewCustFileData={priviewCustFileData}
+          storedTaskFlowData={storedTaskFlowData}
+
+          onCancel={this.resetLoading}
+          isLoadingEnd={isLoadingEnd}
+          circlePeopleData={circlePeopleData}
+          getLabelInfo={getLabelInfo}
+          peopleOfLabelData={peopleOfLabelData}
+          getLabelPeople={getLabelPeople}
+          isHasAuthorize={this.isHasAuthorize}
+          filterModalvisible={visible}
+          orgId={orgId}
+        />
+      </div>,
+    }, {
       title: '基本信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
@@ -481,10 +515,11 @@ export default class TaskFlow extends PureComponent {
           isShowErrorInfo={isShowErrorInfo}
           isShowErrorExcuteType={isShowErrorExcuteType}
           isShowErrorTaskType={isShowErrorTaskType}
+          orgId={orgId}
         />
       </div>,
     }, {
-      title: '目标客户',
+      title: '结果跟踪&任务调查',
       content: <PickTargetCustomer
         ref={ref => (this.pickTargetCustomerRef = ref)}
         currentTab={currentTab}
@@ -503,7 +538,7 @@ export default class TaskFlow extends PureComponent {
         isHasAuthorize={this.isHasAuthorize}
       />,
     }, {
-      title: '提交',
+      title: '确认&提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
         storedData={storedTaskFlowData}

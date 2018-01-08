@@ -1,19 +1,18 @@
 .task_title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #33393c;
-  border-bottom: 1px solid #ddd;
-  padding: 5px 0 10px;
+  font-size: 15px;
+  color: #4a4a4a;
+  border-bottom: 1px solid #ccc;
+  padding: 5px 0 17px;
   b {
     color: #ff784e;
   }
 }
 .task_from {
-  font-size: 14px;
+  font-size: 12px;
   padding: 20px 0;
   .info {
     color: #666;
-    font-size: 14px;
+    font-size: 12px;
   }
   .task_selectList {
     overflow: hidden;
@@ -33,11 +32,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         float: left;
-        padding-right: 5px;
-        font-size: 14px;
+        padding-right: 15px;
+        font-size: 12px;
         color: #666;
-        width: 80px;
-        text-align: left;
+        width: 110px;
+        text-align: right;
       }
       .required_i {
         color: #f00;
@@ -46,7 +45,7 @@
       :global {
         .ant-form-item-label {
           label {
-            font-size: 14px;
+            font-size: 12px;
             color: #666;
           }
         }
@@ -67,18 +66,31 @@
           white-space: nowrap;
         }
       }
+      .hint {
+        position: absolute;
+        top: 6px;
+        right: -95px;
+      }
     }
   }
   .task_textArea {
     p {
-      padding: 5px 0;
+      padding: 5px 15px 5px 0;
+      float: left;
+      width: 110px;
+      text-align: right;
       label {
-        font-size: 14px;
+        font-size: 12px;
         color: #666;
         i {
           font-style: normal;
           color: #f00;
         }
+      }
+    }
+    :global {
+      .ant-row {
+        margin-left: 110px;
       }
     }
   }
@@ -126,5 +138,17 @@
       -webkit-transform: rotate(1turn);
       transform: rotate(1turn);
     }
+  }
+}
+
+.wrapper {
+  position: relative;
+  span.insert {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    font-size: 12px;
+    color: #108ee9;
+    cursor: pointer;
   }
 }

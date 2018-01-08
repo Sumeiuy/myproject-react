@@ -180,17 +180,20 @@ export default class TaskFormInfo extends PureComponent {
         rules: [{ validator: this.checkMention }],
         initialValue: toContentState(defaultMissionDesc),
       })(
-        <Mention
-          mentionStyle={mentionTextStyle}
-          style={{ width: '100%', height: 100 }}
-          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
-          prefix={PREFIX}
-          onSearchChange={this.handleSearchChange}
-          suggestions={suggestions}
-          getSuggestionContainer={() => this.fatherMention}
-          onBlur={this.handleMentionBlur}
-          multiLines
-        />,
+        <div className={styles.wrapper}>
+          <Mention
+            mentionStyle={mentionTextStyle}
+            style={{ width: '100%', height: 100 }}
+            placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
+            prefix={PREFIX}
+            onSearchChange={this.handleSearchChange}
+            suggestions={suggestions}
+            getSuggestionContainer={() => this.fatherMention}
+            onBlur={this.handleMentionBlur}
+            multiLines
+          />
+          <span className={styles.insert}>插入参数</span>
+        </div>,
       )
     );
   }
@@ -244,7 +247,7 @@ export default class TaskFormInfo extends PureComponent {
       <Form >
         <ul className={styles.task_selectList}>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称</label>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称:</label>
             <FormItem
               wrapperCol={{ span: 12 }}
             >
@@ -256,7 +259,7 @@ export default class TaskFormInfo extends PureComponent {
             </FormItem>
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务类型</label>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务类型:</label>
             {
               !_.isEmpty(taskTypes) ?
                 <FormItem
@@ -284,7 +287,35 @@ export default class TaskFormInfo extends PureComponent {
             }
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>执行方式</label>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务子类型:</label>
+            {
+              !_.isEmpty(taskTypes) ?
+                <FormItem
+                  wrapperCol={{ span: 12 }}
+                  {...taskTypeErrorSelectProps}
+                >
+                  {getFieldDecorator('taskType',
+                    {
+                      initialValue: defaultMissionType,
+                    })(<Select
+                      onChange={this.handleTaskTypeChange}
+                    >
+                      {this.handleCreatOptions(taskTypes)}
+                    </Select>,
+                  )}
+                </FormItem>
+                :
+                <FormItem
+                  wrapperCol={{ span: 12 }}
+                >
+                  <Select defaultValue="暂无数据">
+                    <Option key="null" value="0">暂无数据</Option>
+                  </Select>
+                </FormItem>
+            }
+          </li>
+          <li>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>执行方式:</label>
             {
               !_.isEmpty(executeTypes) ?
                 <FormItem
@@ -310,7 +341,7 @@ export default class TaskFormInfo extends PureComponent {
             }
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>有效期(天)</label>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>有效期(天):</label>
             <FormItem
               wrapperCol={{ span: 12 }}
             >
@@ -320,11 +351,12 @@ export default class TaskFormInfo extends PureComponent {
                   initialValue: defaultInitialValue,
                 })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
+            <p className={styles.hint}>有效期自任务审批通过后开始计算</p>
           </li>
         </ul>
         <div className={styles.task_textArea}>
           <p>
-            <label htmlFor="desc"><i>*</i>服务策略（适用于所有客户）</label>
+            <label htmlFor="desc"><i>*</i>服务策略:<br />（适用于所有客户）</label>
           </p>
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
@@ -353,7 +385,7 @@ export default class TaskFormInfo extends PureComponent {
           }
         >
           <p>
-            <label htmlFor="desc"><i>*</i>任务提示</label>
+            <label htmlFor="desc"><i>*</i>任务提示:</label>
           </p>
           <FormItem
             {...errorProps}

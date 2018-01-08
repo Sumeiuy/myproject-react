@@ -56,7 +56,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ323372';
+    let orgId = 'ZZ001041051';
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }

@@ -11,6 +11,7 @@ import styles from './selectLabelCust.less';
 const EMPTY_OBJECT = {};
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
+    dict: PropTypes.object.isRequired,
     getLabelInfo: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
@@ -88,7 +89,6 @@ export default class SelectLabelCust extends PureComponent {
   @autobind
   handleSearchClick(value) {
     const { getLabelInfo, isHasAuthorize, orgId } = this.props;
-
     const param = {
       condition: value,
     };
@@ -107,7 +107,6 @@ export default class SelectLabelCust extends PureComponent {
       });
       return;
     }
-
     if (isHasAuthorize) {
       // 有首页绩效指标查看权限
       getLabelInfo({
@@ -140,11 +139,14 @@ export default class SelectLabelCust extends PureComponent {
       onCancel,
       visible,
       isHasAuthorize,
+      dict,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
         <SimpleSearch
+          titleNode={<span className={styles.searchTitle}>瞄准镜：</span>}
+          placeholder="标签名称"
           onSearch={this.handleSearchClick}
           searchStyle={{
             height: '30px',
@@ -159,6 +161,7 @@ export default class SelectLabelCust extends PureComponent {
           null
         }
         <TaskSearchRow
+          dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
           visible={visible}
