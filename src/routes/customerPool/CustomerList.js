@@ -204,7 +204,8 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    this.permissionType = permissionType();
+    this.permissionType = permissionType().customerPoolPermit;
+    this.view360Permit = permissionType().view360Permit;
   }
 
   getChildContext() {
@@ -633,6 +634,7 @@ export default class CustomerList extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
           permissionType={this.permissionType}
+          view360Permit={this.view360Permit}
         />
       </div>
     );

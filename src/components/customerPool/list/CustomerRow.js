@@ -128,7 +128,7 @@ export default class CustomerRow extends PureComponent {
     entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
-    permissionType: PropTypes.number.isRequired,
+    view360Permit: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -188,14 +188,14 @@ export default class CustomerRow extends PureComponent {
   // 是否允许进入列表项对应的360详情
   toDetailPermissibility() {
     const {
-      permissionType,
+      view360Permit,
       empInfo,
       listItem: {
         empId,
       },
     } = this.props;
-    // 有HTSC 首页指标查询， HTSC 营销活动-营业部执行岗,控制绩效数据的客户范围展示权限 或为 主服务径路
-    return permissionType === 2 || empInfo.rowId === empId;
+    // 有HTSC 首页指标查询， HTSC 营销活动-营业部执行岗,控制绩效数据的客户范围展示权限 或为 主服务经理
+    return view360Permit || empInfo.rowId === empId;
   }
 
   @autobind

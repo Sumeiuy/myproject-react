@@ -44,7 +44,8 @@ const permission = {
 
   // 目标客户池首页和列表页权限
   hasCustomerPoolPermission() {
-    return permission.hasHqMampPermission()
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
       || permission.hasBoMampPermission();
   },
 
@@ -52,8 +53,7 @@ const permission = {
   hasCreateTaskPermission() {
     return permission.hasIndexViewPermission()
       || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+      || permission.hasBoMampPermission();
   },
 
   // 佣金调整资讯订阅权限

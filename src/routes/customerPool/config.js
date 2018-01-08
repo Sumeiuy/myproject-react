@@ -2,12 +2,10 @@
 
 /**
  * NOPERMIT = 0 表示当前用户没有目标客户池的权限
- * PERMITS1 = 1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
- * PERMITS2 = 2 表示当前用户有 ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动-营业部执行岗’
+ * PERMITS1 = 1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’
  */
 const NOPERMIT = 0;
 const PERMITS1 = 1;
-const PERMITS2 = 2;
 
 /**
  * 根据权限判断传给后端的custType的值
@@ -33,7 +31,6 @@ const ENTER_TYPE = {
 export default {
   NOPERMIT,
   PERMITS1,
-  PERMITS2,
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,

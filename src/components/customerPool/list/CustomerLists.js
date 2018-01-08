@@ -118,6 +118,7 @@ export default class CustomerLists extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     permissionType: PropTypes.number.isRequired,
+    view360Permit: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -221,8 +222,8 @@ export default class CustomerLists extends PureComponent {
     if (ptyMng) {
       bool = ptyMng.split('_')[1] === empInfo.empNum;
     }
-    // 1表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
-    this.mainServiceManager = !!(bool) || permissionType !== 1;
+    // 0表示当前用户没有权限
+    this.mainServiceManager = !!(bool) || permissionType === 0;
   }
 
   /**
@@ -478,6 +479,7 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
+      view360Permit,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -518,8 +520,8 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
-    // ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动- 营业部执行岗’
+    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
+    // ‘HTSC 首页指标查询’ 权限
     if (permissionType !== NOPERTMIT) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
@@ -533,8 +535,7 @@ export default class CustomerLists extends PureComponent {
     if (orgId) {
       curOrgId = orgId;
     } else if (permissionType !== NOPERTMIT) {
-      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’权限
-      // ‘HTSC 首页指标查询’ 和 ‘HTSC 营销活动- 营业部执行岗’
+      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
       } else {
@@ -611,7 +612,7 @@ export default class CustomerLists extends PureComponent {
                     condition={condition}
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
-                    permissionType={permissionType}
+                    view360Permit={view360Permit}
                   />,
                 )
               }

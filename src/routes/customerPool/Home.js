@@ -145,7 +145,7 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    this.permissionType = permissionType();
+    this.permissionType = permissionType().customerPoolPermit;
   }
 
   componentDidMount() {
@@ -165,8 +165,9 @@ export default class Home extends PureComponent {
     } else {
       this.orgId = occDivnNum;
     }
-    // 权限控制是否传给后端orgId  PERMITS1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
-    const authOrgId = this.permissionType === PERMITS1 ? this.orgId : '';
+    // 权限控制是否传给后端orgId  PERMITS1 表示当前用户有
+    // ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘首页指标查询’
+    const authOrgId = this.permissionType !== NOPERMIT ? this.orgId : '';
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
     getHotWds({ empNo: empNum });
     // 待办事项
@@ -359,63 +360,53 @@ export default class Home extends PureComponent {
   handleCreateCustRange({
     custRange,
     posOrgId,
-    empPostnList,
   }) {
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
-    // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
-    if (this.permissionType === NOPERMIT) {
-      this.setState({
-        createCustRange: [myCustomer],
-      });
-      return;
-    }
-    // 只要不是我的客户，都展开组织机构树
-    // 用户职位是经总
-    if (posOrgId === (custRange[0] || {}).id) {
-      this.setState({
-        expandAll: true,
-        createCustRange: custRange,
-      });
-      return;
-    }
-    // posOrgId 在机构树中所处的分公司位置
-    const groupInCustRange = _.find(custRange, item => item.id === posOrgId);
-    if (groupInCustRange) {
-      this.setState({
-        expandAll: true,
-        createCustRange: [groupInCustRange, myCustomer],
-      });
-      return;
-    }
-    // posOrgId 在机构树的营业部位置
-    let department;
-    _(custRange).forEach((obj) => {
-      if (obj.children && !_.isEmpty(obj.children)) {
-        const targetValue = _.find(obj.children, o => o.id === posOrgId);
-        if (targetValue) {
-          department = [targetValue, myCustomer];
-        }
+    // 有‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
+    // ‘分公司-营销活动管理岗’,职责的普通用户
+    if (this.permissionType !== NOPERMIT) {
+      // 只要不是我的客户，都展开组织机构树
+      // 用户职位是经总
+      if (posOrgId === (custRange[0] || {}).id) {
+        this.setState({
+          expandAll: true,
+          createCustRange: [...custRange, myCustomer],
+        });
+        return;
       }
-    });
-
-    if (department) {
-      this.setState({
-        createCustRange: department,
+      // posOrgId 在机构树中所处的分公司位置
+      const groupInCustRange = _.find(custRange, item => item.id === posOrgId);
+      if (groupInCustRange) {
+        this.setState({
+          expandAll: true,
+          createCustRange: [groupInCustRange, myCustomer],
+        });
+        return;
+      }
+      // posOrgId 在机构树的营业部位置
+      let department;
+      _(custRange).forEach((obj) => {
+        if (obj.children && !_.isEmpty(obj.children)) {
+          const targetValue = _.find(obj.children, o => o.id === posOrgId);
+          if (targetValue) {
+            department = [targetValue, myCustomer];
+          }
+        }
       });
-      return;
+
+      if (department) {
+        this.setState({
+          createCustRange: department,
+        });
+        return;
+      }
     }
-    // 有权限，但是posOrgId不在empOrg（组织机构树）中，
-    // 用posOrgId去empPostnList中匹配，找出对应岗位的信息显示出来
-    const curJob = _.find(empPostnList, obj => obj.orgId === posOrgId);
+    // 无权限或者有权限，但是posOrgId不在empOrg（组织机构树）中
     this.setState({
-      createCustRange: [{
-        id: curJob.orgId,
-        name: curJob.orgName,
-      }],
+      createCustRange: [myCustomer],
     });
   }
 
