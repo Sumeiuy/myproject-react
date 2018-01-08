@@ -201,7 +201,7 @@ export default class TaskFlow extends PureComponent {
   @autobind
   handleNextStep() {
     // 下一步
-    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT, currentTab } = this.props;
+    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT } = this.props;
     const { current } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData;
@@ -209,7 +209,40 @@ export default class TaskFlow extends PureComponent {
     let isFormValidate = false;
     let isSelectCust = true;
     if (current === 0) {
-      console.log('FFFF', this.SelectTargetCustomerRef);
+      const obj = {};
+      const {
+        currentEntry,
+        importCustomers,
+        sightingTelescope,
+      } = this.SelectTargetCustomerRef.getData();
+      const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
+      const { labelCust, labelCust: { labelId } } = sightingTelescope;
+      // currentEntry为0 时 表示当前是导入客户
+      // 为1 时 表示当前是瞄准镜
+      if (currentEntry === 0) {
+        if (!uploadedFileKey) {
+          isSelectCust = false;
+          message.error('请导入Excel或CSV文件');
+        }
+        // customerSourceForm.validateFields((err, values) => {
+        //   if (err) {
+        //     if (!values.source) {
+        //       isSelectCust = false;
+        //       message.error('请填写对筛选客户的来源说明');
+        //     }
+        //   }
+        //   obj.customerSource = values.source;
+        // });
+      } else if (currentEntry === 1) {
+        if (!labelId) {
+          isSelectCust = false;
+          message.error('请利用标签圈出目标客户');
+        }
+      }
+      this.setState({
+        currentEntry,
+      });
+      pickTargetCustomerData = { labelCust, custSegment, ...obj };
     } else if (current === 1) {
       this.formRef.props.form.validateFields((err, values) => {
         let isFormError = false;
@@ -226,19 +259,21 @@ export default class TaskFlow extends PureComponent {
         this.props.clearTaskFlowData();
       });
     } else if (current === 2) {
-      isFormValidate = true;
-      pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
-      const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
-      if (currentTab === '2' && _.isEmpty(labelId)) {
-        isSelectCust = false;
-        message.error('请利用标签圈出目标客户');
-      }
-      if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
-        isSelectCust = false;
-        message.error('请导入Excel或CSV文件');
-      }
+      // isFormValidate = true;
+      // pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
+      // const {
+      //   labelCust: { labelId },
+      //   custSegment: { uploadedFileKey },
+      // } = pickTargetCustomerData;
+      // if (currentTab === '2' && _.isEmpty(labelId)) {
+      //   isSelectCust = false;
+      //   message.error('请利用标签圈出目标客户');
+      // }
+      // if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
+      //   isSelectCust = false;
+      //   message.error('请导入Excel或CSV文件');
+      // }
     }
-
     if (isFormValidate && isSelectCust) {
       saveTaskFlowData({
         ...storedTaskFlowData,
@@ -466,6 +501,7 @@ export default class TaskFlow extends PureComponent {
       push,
       clearSubmitTaskFlowResult,
     } = this.props;
+    const { currentEntry } = this.state;
 
     // 拿到自建任务需要的missionType
     // descText为1
@@ -477,6 +513,7 @@ export default class TaskFlow extends PureComponent {
       title: '选择目标客户',
       content: <div className={styles.taskInner}>
         <SelectTargetCustomer
+          currentEntry={currentEntry}
           ref={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}

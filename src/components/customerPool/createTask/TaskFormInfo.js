@@ -287,34 +287,6 @@ export default class TaskFormInfo extends PureComponent {
             }
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务子类型:</label>
-            {
-              !_.isEmpty(taskTypes) ?
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...taskTypeErrorSelectProps}
-                >
-                  {getFieldDecorator('taskType',
-                    {
-                      initialValue: defaultMissionType,
-                    })(<Select
-                      onChange={this.handleTaskTypeChange}
-                    >
-                      {this.handleCreatOptions(taskTypes)}
-                    </Select>,
-                  )}
-                </FormItem>
-                :
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                >
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0">暂无数据</Option>
-                  </Select>
-                </FormItem>
-            }
-          </li>
-          <li>
             <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>执行方式:</label>
             {
               !_.isEmpty(executeTypes) ?
@@ -351,7 +323,6 @@ export default class TaskFormInfo extends PureComponent {
                   initialValue: defaultInitialValue,
                 })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
-            <p className={styles.hint}>有效期自任务审批通过后开始计算</p>
           </li>
         </ul>
         <div className={styles.task_textArea}>

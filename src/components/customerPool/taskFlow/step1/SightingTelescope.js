@@ -1,5 +1,5 @@
 /**
- * @file customerPool/createTask/SightingTelescope.js
+ * @file customerPool/taskFlow/SightingTelescope.js
  *  客户池-自建任务表单-瞄准镜圈人
  * @author wangjunjun
  */
@@ -37,6 +37,10 @@ export default class SightingTelescope extends PureComponent {
     orgId: null,
     isHasAuthorize: false,
     filterModalvisible: false,
+  }
+
+  getData() {
+    return this.selectLabelCustRef.getData();
   }
 
   render() {

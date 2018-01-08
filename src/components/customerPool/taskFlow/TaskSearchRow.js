@@ -16,7 +16,7 @@ import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
 import Clickable from '../../../components/common/Clickable';
-import FilterCustomers from './step1/FilterCustomers';
+// import FilterCustomers from './step1/FilterCustomers';
 
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
@@ -270,14 +270,14 @@ export default class TaskSearchRow extends PureComponent {
       visible,
       // title,
       custTableData,
-      filter,
+      // filter,
     } = this.state;
 
     const {
       currentSelectLabel,
       isLoadingEnd,
       condition,
-      dict,
+      // dict,
     } = this.props;
 
     if (_.isEmpty(condition)) {
@@ -312,15 +312,14 @@ export default class TaskSearchRow extends PureComponent {
                 width={700}
                 wrapClassName={styles.labelCustModalContainer}
               >
-                {
-                  !_.isEmpty(custTableData) ?
-                    <div className={styles.filter}>
-                      <FilterCustomers
-                        dict={dict}
-                        currentItems={filter}
-                        onFilterChange={this.handleFilterChange}
-                      />
-                    </div> : null
+                {/*
+                  <div className={styles.filter}>
+                    <FilterCustomers
+                      dict={dict}
+                      currentItems={filter}
+                      onFilterChange={this.handleFilterChange}
+                    />
+                  </div> */
                 }
                 {
                   _.isEmpty(custTableData) ?

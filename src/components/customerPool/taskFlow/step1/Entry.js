@@ -1,5 +1,5 @@
 /**
- * @file customerPool/createTask/step1/Entry.js
+ * @file customerPool/taskFlow/step1/Entry.js
  *  客户池-自建任务表单-入口
  * @author wangjunjun
  */
@@ -42,7 +42,7 @@ function Entry({
         onClick={findPeople}
       >
         <Col>
-          <Icon type="touxiang" className={styles.icon} />
+          <Icon type="miaozhunjing" className={styles.icon} />
           <p className={styles.iconTxt}>瞄准镜圈人</p>
         </Col>
       </Row>

@@ -1,5 +1,5 @@
 /**
- * @file customerPool/createTask/steps/SelectTargetCustomer.js
+ * @file customerPool/taskFlow/steps/SelectTargetCustomer.js
  *  客户池-自建任务表单-选择客户
  * @author wangjunjun
  */
@@ -16,6 +16,7 @@ import styles from './selectTargetCustomer.less';
 
 export default class SelectTargetCustomer extends PureComponent {
   static propTypes = {
+    currentEntry: PropTypes.number,
     dict: PropTypes.object.isRequired,
     isShowTitle: PropTypes.bool,
     onPreview: PropTypes.func.isRequired,
@@ -34,6 +35,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   static defaultProps = {
+    currentEntry: -1,
     isShowTitle: false,
     orgId: null,
     isHasAuthorize: false,
@@ -42,10 +44,22 @@ export default class SelectTargetCustomer extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { currentEntry } = props;
     this.state = {
-      showEntry: true,
-      showImportCustomers: false,
-      showSightingTelescope: false,
+      showEntry: currentEntry === -1,
+      showImportCustomers: currentEntry === 0,
+      showSightingTelescope: currentEntry === 1,
+    };
+  }
+
+  getData() {
+    const { showSightingTelescope } = this.state;
+    // current为0 时 表示当前是导入客户
+    // 为1 时 表示当前是瞄准镜
+    return {
+      currentEntry: +showSightingTelescope,
+      importCustomers: this.importCustRef.getFileData(),
+      sightingTelescope: this.sightingTelescopeRef.getData(),
     };
   }
 
@@ -99,7 +113,7 @@ export default class SelectTargetCustomer extends PureComponent {
           findPeople={this.findPeople}
         />
         <ImportCustomers
-          ref={r => this.importCustRef = r}
+          ref={inst => this.importCustRef = inst}
           visible={showImportCustomers}
           switchTo={this.findPeople}
           onPreview={onPreview}
@@ -117,7 +131,7 @@ export default class SelectTargetCustomer extends PureComponent {
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}
           getLabelPeople={getLabelPeople}
-          storedData={storedTaskFlowData}
+          storedTaskFlowData={storedTaskFlowData}
           orgId={orgId}
           isHasAuthorize={isHasAuthorize}
           filterModalvisible={filterModalvisible}
