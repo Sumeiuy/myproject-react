@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
-import { helper } from '../../../utils';
+import { emp } from '../../../helper';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
@@ -87,7 +87,7 @@ export default class ServiceRecordItem extends PureComponent {
             className={styles.seeCust}
             ref={ref => this.sendEmail = ref}
             href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
-              `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${helper.getEmpId()}&filename=${item.name}`}
+              `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
           >{item.name}</a>
         </span>
       );
