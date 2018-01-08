@@ -31,7 +31,7 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'happypack/loader?id=jsx',
-        include: [resolve('src')],
+        include: config.src,
         exclude: [
           resolve('node_modules'),
           resolve('build'),
@@ -41,12 +41,12 @@ module.exports = merge(baseWebpackConfig, {
       },
       {
         test: /\.css$/,
-        include: config.appSrc,
+        include: config.src,
         use: ['style-loader'].concat(cssLoaders.own)
       },
       {
         test: /\.less$/,
-        include: config.appSrc,
+        include: config.src,
         exclude: [
           resolve('node_modules'),
           resolve('build'),
@@ -97,6 +97,8 @@ module.exports = merge(baseWebpackConfig, {
       filename: 'index.html',
       inject: false,
       template: 'index.html',
+      chunks: ['index'],
+      inject: true,
       lang: 'en',
       title: '华泰证券理财平台',
       meta: [
@@ -105,6 +107,13 @@ module.exports = merge(baseWebpackConfig, {
           content: 'utf-8'
         }
       ]
+    }),
+    // https://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'newIndex.html',
+      template: 'newIndex.html',
+      chunks: ['app'],
+      inject: true
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,

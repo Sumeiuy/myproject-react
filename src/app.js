@@ -17,8 +17,6 @@ import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper } from './helper';
-// import { initFspMethod } from './utils/fspGlobal';
-// import permission from './permissions';
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -92,6 +90,8 @@ app.model(require('./models/customerFeedback'));
 app.model(require('./models/taskFeedback'));
 // 主职位 model
 app.model(require('./models/mainPosition'));
+// 开发关系认定
+app.model(require('./models/developRelationship'));
 
 // 4. Router
 app.router(routerConfig);

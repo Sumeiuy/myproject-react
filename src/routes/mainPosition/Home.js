@@ -19,7 +19,7 @@ import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import { closeRctTabById } from '../../utils/fspGlobal';
+import { closeRctTab } from '../../utils';
 import { env, emp, dom } from '../../helper';
 import config from './config';
 import styles from './home.less';
@@ -186,9 +186,9 @@ export default class MainPosition extends PureComponent {
   // 关闭 FSP tab 页
   @autobind
   handleCancel() {
-    if (env.isInFsp) {
-      closeRctTabById('FSP_MAIN_POSTN_MANAGE');
-    }
+    closeRctTab({
+      id: 'FSP_MAIN_POSTN_MANAGE',
+    });
   }
 
   // 选择某个职位

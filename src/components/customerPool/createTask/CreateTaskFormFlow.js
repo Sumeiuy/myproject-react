@@ -14,8 +14,7 @@ import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
-import { fspGlobal } from '../../../utils';
-import { env } from '../../../helper';
+import { closeRctTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
@@ -34,7 +33,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     saveCreateTaskData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
-    onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     push: PropTypes.func.isRequired,
     isShowApprovalModal: PropTypes.bool.isRequired,
@@ -120,14 +118,9 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   @autobind
   handleCancleTab() {
-    if (env.isInFsp()) {
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
-      const param = {
-        id: 'tab-home',
-        title: '首页',
-      };
-      fspGlobal.openRctTab({ url: '/customerPool', param });
-    }
+    closeRctTab({
+      id: 'RCT_FSP_CREATE_TASK',
+    });
   }
 
   render() {
@@ -140,7 +133,6 @@ export default class CreateTaskFormFlow extends PureComponent {
       getApprovalList,
       approvalList,
       orgId,
-      onCloseTab,
       push,
       isShowApprovalModal,
       isApprovalListLoadingEnd,
@@ -200,7 +192,6 @@ export default class CreateTaskFormFlow extends PureComponent {
             parseQuery={this.parseQuery}
             push={push}
             orgId={orgId}
-            onCloseTab={onCloseTab}
             isShowApprovalModal={isShowApprovalModal}
             isApprovalListLoadingEnd={isApprovalListLoadingEnd}
             onCancel={onCancel}

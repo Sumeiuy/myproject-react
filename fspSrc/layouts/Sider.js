@@ -1,8 +1,13 @@
+/**
+ * @file layouts/Sider.js
+ *  侧栏
+ * @author zhufeiyang
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Switch } from 'antd';
 
-import { constants } from '../config';
 import Menus from './Menu';
 import styles from './main.less';
 
@@ -23,10 +28,6 @@ function Sider({
   };
   return (
     <div>
-      <div className={styles.logo}>
-        <img alt={'logo'} src={constants.logoSrc} />
-        {siderFold ? '' : <span>{constants.logoText}</span>}
-      </div>
       <Menus {...menusProps} />
       {!siderFold ? <div className={styles.switchtheme}>
         <span><Icon type="bulb" />切换主题</span>

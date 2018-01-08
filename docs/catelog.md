@@ -18,8 +18,12 @@
     └── utils              # Utils
     └── app.js             # 项目入口文件
     └── router.js          # 路径配置文件
+├── fspSrc                 # fsp特有的代码
+    └── app.js             # 项目入口文件
+    └── router.js          # 路径配置文件
 ├── static                 # 静态资源，图片、字体文件等
 ├── index.html             # 入口html
+├── newIndex.html          # react框架入口html
 ├── .eslintrc              # Eslint config
 ├── .gitignore             #
 └── package.json           # 
