@@ -13,16 +13,16 @@ import styles from './customerService.less';
 export default class CustomerService extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.object,
+    data: PropTypes.array,
   }
 
   static defaultProps = {
-    data: {},
+    data: [],
   }
 
   // 创建option
-  getOption(okData, toData, colors) {
-    const dataArray = this.formatterData(okData, toData);
+  getOption(item, colors) {
+    const dataArray = this.formatterData(item);
     const options = {
       color: colors,
       series: [{
@@ -39,18 +39,13 @@ export default class CustomerService extends PureComponent {
     return options;
   }
 
-  formatterData(finishData, totalData) {
-    let finish = 0;
-    let unfinished = 100;
-    let finishedName = '';
-    let unfinishedName = '暂无数据';
-    if (!_.isEmpty(finishData) && !_.isEmpty(totalData) && _.toNumber(totalData) > 0) {
-      finish = (_.toNumber(finishData) / _.toNumber(totalData)) * 100;
-      unfinished = ((_.toNumber(totalData) - _.toNumber(finishData)) / _.toNumber(totalData)) * 100;
-      finishedName = `${parseFloat(finish).toFixed(0)}%`;
-      unfinishedName = `${parseFloat(unfinished).toFixed(0)}%`;
-    }
-    const isEmpty = _.isEmpty(finishedName) && unfinishedName === '暂无数据';
+  formatterData(item) {
+    const { hasNumber, value } = item;
+    const finish = value;
+    const unfinished = 100 - value;
+    const finishedName = hasNumber ? `${parseFloat(finish).toFixed(0)}%` : '';
+    const unfinishedName = hasNumber ? `${parseFloat(unfinished).toFixed(0)}%` : '暂无数据';
+    const isEmpty = !hasNumber;
     const fontSize = isEmpty ? '16' : '20';
     const textStyle = { show: true, fontSize, fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
     const finishLabel = isEmpty ? {} : {
@@ -79,9 +74,8 @@ export default class CustomerService extends PureComponent {
 
   render() {
     const { data } = this.props;
-    const { motOkMnt, motTotMnt, taskCust, totCust } = data;
-    const motOption = this.getOption(motOkMnt, motTotMnt, ['#33D0E2', '#d6d6d6']);
-    const serviceOption = this.getOption(taskCust, totCust, ['#6b87d8', '#d6d6d6']);
+    const motOption = this.getOption(_.head(data), ['#33D0E2', '#d6d6d6']);
+    const serviceOption = this.getOption(_.last(data), ['#6b87d8', '#d6d6d6']);
 
     return (
       <div className={styles.row}>

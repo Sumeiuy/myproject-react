@@ -14,7 +14,6 @@ import _ from 'lodash';
 import { optionsMap, fspContainer } from '../../config';
 import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
-import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
 import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { permission } from '../../utils';
@@ -34,12 +33,11 @@ const MAIN_MAGEGER_ID = 'msm';
 
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
-  manageIndicators: 'customerPool/getManageIndicators',
+  getManagerIndicators: 'customerPool/getManagerIndicators',
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   getHotWds: 'customerPool/getHotWds',
   saveSearchVal: 'customerPool/saveSearchVal',
   getInformation: 'customerPool/getInformation',
-  getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
@@ -52,7 +50,6 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  manageIndicators: state.customerPool.manageIndicators, // 经营指标
   custRange: state.customerPool.custRange, // 客户池用户范围
   cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   process: state.customerPool.process, // 代办流程(首页总数)
@@ -63,17 +60,16 @@ const mapStateToProps = state => ({
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
-  hsRateAndBusinessIndicator: state.customerPool.hsRateAndBusinessIndicator, // 沪深归集率和业务开通指标（经营指标）
-  custCount: state.customerPool.custCount, // 绩效指标
+  managerIndicators: state.customerPool.managerIndicators, // 经营指标
+  custCount: state.customerPool.custCount, // （经营指标）新增客户指标
 });
 
 const mapDispatchToProps = {
   getCustCount: fetchDataFunction(true, effects.getCustCount),
-  getHSRateAndBusinessIndicator: fetchDataFunction(true, effects.getHSRateAndBusinessIndicator),
+  getManagerIndicators: fetchDataFunction(true, effects.getManagerIndicators),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
   getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
-  getManageIndicators: fetchDataFunction(true, effects.manageIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
   getHotWds: fetchDataFunction(true, effects.getHotWds),
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
@@ -91,9 +87,9 @@ export default class Home extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getToBeDone: PropTypes.func.isRequired,
-    manageIndicators: PropTypes.object,
+    managerIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
-    getManageIndicators: PropTypes.func.isRequired,
+    getManagerIndicators: PropTypes.func.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     getHotWds: PropTypes.func.isRequired,
     saveSearchVal: PropTypes.func.isRequired,
@@ -109,8 +105,6 @@ export default class Home extends PureComponent {
     information: PropTypes.object,
     performanceIndicators: PropTypes.object,
     getPerformanceIndicators: PropTypes.func.isRequired,
-    hsRateAndBusinessIndicator: PropTypes.array,
-    getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
     custCount: React.PropTypes.oneOfType([
       PropTypes.object,
@@ -120,7 +114,7 @@ export default class Home extends PureComponent {
   }
 
   static defaultProps = {
-    manageIndicators: EMPTY_OBJECT,
+    managerIndicators: EMPTY_OBJECT,
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
     collectCustRange: () => { },
@@ -132,7 +126,6 @@ export default class Home extends PureComponent {
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_OBJECT,
-    hsRateAndBusinessIndicator: EMPTY_LIST,
     custCount: EMPTY_LIST,
   }
 
@@ -173,8 +166,8 @@ export default class Home extends PureComponent {
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
-    // 发送绩效指标和沪深归集率请求
-    this.sendIndicatorAndHSRateReq(this.props);
+    // 请求指标
+    this.requstIndicator(this.props);
     // 根据岗位orgId生成对应的组织机构树
     this.handleCreateCustRange({
       custRange,
@@ -195,8 +188,8 @@ export default class Home extends PureComponent {
     // 重新请求绩效指标数据和净创收数据
     if (prevQuery.orgId !== nextQuery.orgId
       || prevQuery.cycleSelect !== nextQuery.cycleSelect) {
-      // 发送绩效指标和沪深归集率请求
-      this.sendIndicatorAndHSRateReq(nextProps);
+      // 请求指标数据
+      this.requstIndicator(nextProps);
     }
   }
 
@@ -223,7 +216,7 @@ export default class Home extends PureComponent {
   getIndicators({ begin, end, orgId, cycleSelect, custType }) {
     const {
       getPerformanceIndicators,
-      getManageIndicators,
+      getManagerIndicators,
       getCustCount,
       empInfo = {},
     } = this.props;
@@ -232,22 +225,15 @@ export default class Home extends PureComponent {
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
+      empId: emp.getId(),
     };
     // 经营指标新增客户数指标
-    getCustCount({
-      ...param,
-      empId: emp.getId(),
-    });
-    getManageIndicators(param);
-
+    getCustCount({ ...param });
+    // 经营指标
+    getManagerIndicators({ ...param, end, begin });
     // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
     if (tgQyFlag) {
-      getPerformanceIndicators({
-        ...param,
-        end,
-        begin,
-        empId: emp.getId(),
-      });
+      getPerformanceIndicators({ ...param, end, begin });
     }
   }
 
@@ -271,8 +257,8 @@ export default class Home extends PureComponent {
     };
   }
 
-  // 发送绩效指标和沪深归集率请求
-  sendIndicatorAndHSRateReq(props) {
+  // 请求指标数据
+  requstIndicator(props) {
     const {
       cycle,
       location: {
@@ -298,21 +284,6 @@ export default class Home extends PureComponent {
     }
     // 绩效指标
     this.getIndicators(tempObj);
-    // 沪深归集率和业务开通指标（经营指标）
-    this.fetchHSRateAndBusinessIndicator(tempObj);
-  }
-
-  @autobind
-  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect, custType }) {
-    const { getHSRateAndBusinessIndicator } = this.props;
-    getHSRateAndBusinessIndicator({
-      custType, // 客户范围类型
-      dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId, // 组织ID
-      empId: emp.getId(),
-      begin,
-      end,
-    });
   }
 
   // 此方法用来修改Duration 和 Org数据
@@ -476,7 +447,7 @@ export default class Home extends PureComponent {
 
   render() {
     const {
-      manageIndicators,
+      managerIndicators,
       location,
       process,
       cycle,
@@ -487,7 +458,6 @@ export default class Home extends PureComponent {
       searchHistoryVal,
       information,
       performanceIndicators,
-      hsRateAndBusinessIndicator,
       empInfo = {},
       custCount, // 经营指标新增客户指标数据
     } = this.props;
@@ -519,14 +489,14 @@ export default class Home extends PureComponent {
               onTabClick={this.handleTabClick}
             >
               <TabPane tab="经营指标" key="manage">
-                <ManageIndicators
+                <PerformanceIndicators
                   empInfo={empInfo}
                   push={push}
                   custCount={custCount}
-                  indicators={manageIndicators}
+                  indicators={managerIndicators}
                   location={location}
                   cycle={cycle}
-                  hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
+                  category={'manager'}
                 />
               </TabPane>
               {
@@ -538,6 +508,8 @@ export default class Home extends PureComponent {
                       indicators={performanceIndicators}
                       location={location}
                       cycle={cycle}
+                      custCount={custCount}
+                      category={'performance'}
                     />
                   </TabPane>
                 ) : (null)

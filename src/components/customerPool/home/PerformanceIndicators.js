@@ -10,6 +10,8 @@ import { Row, Col } from 'antd';
 import _ from 'lodash';
 import 'echarts-liquidfill';
 
+import CheckLayout from './CheckLayout';
+import CustomerService from './CustomerService';
 import Funney from './Funney';
 import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
@@ -25,6 +27,8 @@ import {
   filterEmptyToInteger,
   getServiceIndicatorOfPerformance,
   linkTo,
+  getPureAddCust,
+  getTradingVolume,
 } from './homeIndicators_';
 
 // [{name: 1}, {name: 2}] 转成 [1,2]
@@ -32,16 +36,23 @@ const getLabelList = arr => arr.map(v => (v || {}).name);
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
+    category: PropTypes.string,
     indicators: PropTypes.object,
     push: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
+    custCount: React.PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
   }
 
   static defaultProps = {
+    category: 'manager',
     indicators: {},
     cycle: [],
+    custCount: {},
   }
 
   // 过滤掉假值(false, null, 0, '', undefined, NaN)的数组
@@ -95,14 +106,38 @@ export default class PerformanceIndicators extends PureComponent {
     });
   }
 
-  formatIndicators(indicator) {
+  formatIndicators(indicator, category) {
     const isEmpty = _.isEmpty(indicator);
     const { custNum, totAset, currSignCustNum, currSignCustAset, otcTranAmt,
       newCustInAset, purRake, prdtPurFee, purInteIncome, motCompletePercent,
       serviceCompPercent, feeConfigPercent, infoCompPercent, newCustNum,
       ttfBusiCurr, hgtBusiCurr, sgtBusiCurr, rzrqBusiCurr, xsbBusiCurr,
       gpqqBusiCurr, cybBusiCurr, shzNpRate, kfTranAmt, smTranAmt, taTranAmt,
+      purFinAset, zhTranAmt, tradTranAmt, gjPurRake, gjzMotCompletePercent,
+      gjzServiceCompPercent,
     } = (isEmpty ? {} : indicator);
+    // 资产和交易量
+    const assetAndTrade = {
+      key: 'zichanhejiaoyiliang',
+      headLine: '资产和交易量',
+      data: isEmpty ? [] : [
+        { ...purFinAset, name: '净新增客户资产' },  // 净新增客户资产
+        { ...tradTranAmt, name: '累计基础交易量' },  // 累计基础交易量
+        { ...zhTranAmt, name: '累计综合交易量' },  // 累计综合交易量
+        { ...gjPurRake, name: '股基累计净佣金' }, // 股基累计净佣金
+      ],
+    };
+
+    // 服务指标
+    const managerSevice = {
+      key: 'fuwuzhibiao',
+      headLine: '服务指标',
+      data: isEmpty ? [] : [
+        gjzMotCompletePercent,  // 必做MOT任务完成率
+        { ...gjzServiceCompPercent, name: '高净值客户服务覆盖率' },  // 高净值客户服务覆盖率
+      ],
+    };
+    // 客户及资产
     const custAndProperty = {
       key: 'kehujizichan',
       headLine: '客户及资产',
@@ -115,6 +150,7 @@ export default class PerformanceIndicators extends PureComponent {
         newCustInAset,  // 新开客户资产
       ],
     };
+    // 业务开通
     const establishBusiness = {
       key: 'yewukaitong',
       headLine: '业务开通',
@@ -128,6 +164,7 @@ export default class PerformanceIndicators extends PureComponent {
         cybBusiCurr, // 创业板
       ],
     };
+    // 沪深归集率
     const hsRate = {
       key: 'hushenguijilv',
       headLine: '沪深归集率',
@@ -135,6 +172,7 @@ export default class PerformanceIndicators extends PureComponent {
         shzNpRate, // 沪深归集率
       ],
     };
+    // 产品销售
     const productSale = {
       key: 'chanpinxiaoshou',
       headLine: '产品销售',
@@ -145,6 +183,7 @@ export default class PerformanceIndicators extends PureComponent {
         otcTranAmt, // OTC
       ],
     };
+    // 净创收
     const pureIcome = {
       key: 'jingchuangshou',
       headLine: '净创收',
@@ -154,6 +193,7 @@ export default class PerformanceIndicators extends PureComponent {
         purInteIncome, // 净利息收入
       ],
     };
+    // 服务指标
     const serviceIndicator = {
       key: 'fuwuzhibiao',
       headLine: '服务指标',
@@ -164,19 +204,30 @@ export default class PerformanceIndicators extends PureComponent {
         infoCompPercent,  // 客户信息完善率
       ],
     };
-    const newIndicators = [
-      { ...custAndProperty, data: this.filterFalsityArray(custAndProperty.data) },  // 客户及资产指标块
-      { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
-      { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
-      { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
-      { ...pureIcome, data: this.filterFalsityArray(pureIcome.data) },  // 净创收指标块
-      { ...serviceIndicator, data: this.filterFalsityArray(serviceIndicator.data) },  // 服务指标
-    ];
+    let newIndicators = [];
+    if (category === 'manager') {
+      newIndicators = [
+        { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
+        { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
+        { ...assetAndTrade, data: this.filterFalsityArray(assetAndTrade.data) }, // 资产与交易量指标块
+        { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
+        { ...managerSevice, data: this.filterFalsityArray(managerSevice.data) },  // 产品销售指标块
+      ];
+    } else {
+      newIndicators = [
+        { ...custAndProperty, data: this.filterFalsityArray(custAndProperty.data) },  // 客户及资产指标块
+        { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
+        { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
+        { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
+        { ...pureIcome, data: this.filterFalsityArray(pureIcome.data) },  // 净创收指标块
+        { ...serviceIndicator, data: this.filterFalsityArray(serviceIndicator.data) },  // 服务指标
+      ];
+    }
     return newIndicators;
   }
 
   @autobind
-  renderIndictors(item) {
+  renderIndictors(item, category) {
     if (item.key === 'kehujizichan') {
       return this.renderCustAndPropertyIndicator(item);
     } else if (item.key === 'yewukaitong') {
@@ -185,10 +236,40 @@ export default class PerformanceIndicators extends PureComponent {
       return this.renderHSRateIndicators(item);
     } else if (item.key === 'chanpinxiaoshou' || item.key === 'jingchuangshou') {
       return this.renderProductSaleAndPureIcomeIndicators(item);
-    } else if (item.key === 'fuwuzhibiao') {
+    } else if (item.key === 'fuwuzhibiao' && category === 'performance') {
       return this.renderServiceIndicators(item);
+    } else if (item.key === 'fuwuzhibiao' && category === 'manager') {
+      return this.renderManagerServiceIndicators(item);
+    } else if (item.key === 'xinzengkehu') {
+      return this.renderPureAddCustIndicators(item);
+    } else if (item.key === 'zichanhejiaoyiliang') {
+      return this.renderAssetAndTradeIndicators(item);
     }
     return null;
+  }
+
+  // 服务指标（经营指标）
+  renderManagerServiceIndicators(param) {
+    const data = _.map(
+      param.data,
+      (item) => {
+        const { value = '' } = item || {};
+        if (_.isEmpty(value)) {
+          return { hasNumber: false, value: 0 };
+        }
+        return { hasNumber: true, value: _.toNumber(item.value) };
+      },
+    );
+    const headLine = { icon: 'kehufuwu', title: param.headLine };
+    return (
+      <Col span={8} key={param.key}>
+        <RectFrame dataSource={headLine}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <CustomerService data={data} />
+          </IfEmpty>
+        </RectFrame>
+      </Col>
+    );
   }
 
   // 客户及资产（投顾绩效）
@@ -196,7 +277,7 @@ export default class PerformanceIndicators extends PureComponent {
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
-      <Col span={8}>
+      <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <Funney dataSource={data} />
@@ -224,7 +305,7 @@ export default class PerformanceIndicators extends PureComponent {
     const { newUnit, items } = getClientsNumber(argument);
     const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
     return (
-      <Col span={8}>
+      <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
@@ -247,7 +328,7 @@ export default class PerformanceIndicators extends PureComponent {
     const data = getHSRate([filterEmptyToNumber(value)]);
     const headLine = { icon: 'jiaoyiliang', title: param.headLine };
     return (
-      <Col span={8}>
+      <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
@@ -275,10 +356,9 @@ export default class PerformanceIndicators extends PureComponent {
       },
     );
     const finalData = getProductSale({ productSaleData: valueArray, nameArray });
-    const icon = param.key === 'chanpinxiaoshou' ? 'chanpinxiaoshou' : 'shouru';
-    const headLine = { icon, title: param.headLine };
+    const headLine = { icon: 'shouru', title: param.headLine };
     return (
-      <Col span={8}>
+      <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <ProgressList dataSource={finalData} key={param.key} type={'productSale'} />
@@ -304,7 +384,7 @@ export default class PerformanceIndicators extends PureComponent {
     const option = getServiceIndicatorOfPerformance({ performanceData });
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
-      <Col span={8}>
+      <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
@@ -320,24 +400,86 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  render() {
-    const { indicators } = this.props;
-    const formatIndicator = this.formatIndicators(indicators);
+  // 新增客户
+  @autobind
+  renderPureAddCustIndicators(param) {
+    const { cycle, push, location, empInfo, custCount } = this.props;
+    const isEmpty = _.isEmpty(custCount);
+    const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
+      pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
+    });
+    const headLine = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
+    return (
+      <Col span={8} key={param.key}>
+        <RectFrame dataSource={headLine}>
+          <IfEmpty isEmpty={isEmpty}>
+            <ProgressList
+              key={'pureAdd'}
+              dataSource={pureAddItems}
+              cycle={cycle}
+              push={push}
+              location={location}
+              empInfo={empInfo}
+            />
+          </IfEmpty>
+        </RectFrame>
+      </Col>
+    );
+  }
 
+  // 资产和交易量
+  @autobind
+  renderAssetAndTradeIndicators(param) {
+    // 资产和交易量（经营指标）
+    const tradeingVolumeData = _.map(
+      param.data,
+      (item) => {
+        const { value = '' } = item || {};
+        return filterEmptyToNumber(value);
+      },
+    );
+    const finalTradeingVolumeData = getTradingVolume({ tradeingVolumeData });
+    const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
+
+    return (
+      <Col span={8} key={param.key}>
+        <RectFrame dataSource={headLine}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <CheckLayout dataSource={finalTradeingVolumeData} />
+          </IfEmpty>
+        </RectFrame>
+      </Col>
+    );
+  }
+
+  render() {
+    const { indicators, category } = this.props;
+    let formatIndicator = this.formatIndicators(indicators, category);
+    if (category === 'manager') {
+      formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
+    }
+    const firstRowData = _.slice(formatIndicator, 0, 3);
+    const secondRowData = _.slice(formatIndicator, 3);
     return (
       <div className={styles.indexBox}>
         <div className={`${styles.listItem} ${styles.firstListItem}`}>
           <Row gutter={28}>
-            {this.renderIndictors(formatIndicator[0])}
-            {this.renderIndictors(formatIndicator[1])}
-            {this.renderIndictors(formatIndicator[2])}
+            {
+              _.map(
+                firstRowData,
+                item => this.renderIndictors(item, category),
+              )
+            }
           </Row>
         </div>
         <div className={styles.listItem}>
           <Row gutter={28}>
-            {this.renderIndictors(formatIndicator[3])}
-            {this.renderIndictors(formatIndicator[4])}
-            {this.renderIndictors(formatIndicator[5])}
+            {
+              _.map(
+                secondRowData,
+                item => this.renderIndictors(item, category),
+              )
+            }
           </Row>
         </div>
       </div>
