@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-21 16:13:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-21 17:09:06
+ * @Last Modified time: 2018-01-08 17:29:12
  */
 
 import { mainPosition as api } from '../api';
@@ -32,6 +32,13 @@ export default {
         positionList: resultData,
       };
     },
+    clearPropsSuccess(state) {
+      return {
+        ...state,
+        employeeList: [],
+        positionList: [],
+      };
+    },
   },
   effects: {
     // 搜索员工信息
@@ -57,6 +64,13 @@ export default {
       //   type: 'updatePositionSuccess',
       //   payload: response,
       // });
+    },
+    // 清除员工列表、员工职位列表
+    * clearProps({ payload }, { put }) {
+      yield put({
+        type: 'clearPropsSuccess',
+        payload: [],
+      });
     },
   },
   subscriptions: {},
