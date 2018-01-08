@@ -32,6 +32,13 @@ export default {
         positionList: resultData,
       };
     },
+    clearPropsSuccess(state) {
+      return {
+        ...state,
+        employeeList: [],
+        positionList: [],
+      };
+    },
   },
   effects: {
     // 搜索员工信息
@@ -57,6 +64,13 @@ export default {
       //   type: 'updatePositionSuccess',
       //   payload: response,
       // });
+    },
+    // 清除员工列表、员工职位列表
+    * clearProps({ payload }, { put }) {
+      yield put({
+        type: 'clearPropsSuccess',
+        payload: [],
+      });
     },
   },
   subscriptions: {},
