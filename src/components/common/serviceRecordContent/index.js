@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-05 20:42:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-08 13:39:47
  */
 
 
@@ -15,7 +15,7 @@ import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
-import { helper } from '../../../utils';
+import { emp } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
@@ -726,7 +726,7 @@ export default class ServiceRecordContent extends PureComponent {
               originFileName={originFileName}
               uploadTitle={'上传附件'}
               upData={{
-                empId: helper.getEmpId(),
+                empId: emp.getId(),
                 // 第一次上传没有，如果曾经返回过，则必须传
                 attachment: '',
               }}
