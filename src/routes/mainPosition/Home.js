@@ -51,6 +51,8 @@ const mapDispatchToProps = {
   searchPosition: fetchDataFunction(true, 'mainPosition/searchPosition', true),
   // 设置主职位
   updatePosition: fetchDataFunction(true, 'mainPosition/updatePosition', true),
+  // 清除 员工列表、员工职位列表
+  clearProps: fetchDataFunction(true, 'mainPosition/clearProps', true),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -60,6 +62,7 @@ export default class MainPosition extends PureComponent {
     searchEmployee: PropTypes.func.isRequired,
     searchPosition: PropTypes.func.isRequired,
     updatePosition: PropTypes.func.isRequired,
+    clearProps: PropTypes.func.isRequired,
     employeeList: PropTypes.array.isRequired,
     positionList: PropTypes.array.isRequired,
     // 组织机构树
@@ -71,8 +74,10 @@ export default class MainPosition extends PureComponent {
     this.checkUserIsFiliale();
     this.state = {
       checkedRadio: -1,
+      defaultChecked: -1,
       checkedEmployee: {},
       employeeId: '',
+      disabled: true,
     };
   }
 
@@ -91,6 +96,8 @@ export default class MainPosition extends PureComponent {
 
   componentWillUnmount() {
     this.cancelWindowResize();
+    const { clearProps } = this.props;
+    clearProps();
   }
 
   // Resize事件
@@ -103,13 +110,14 @@ export default class MainPosition extends PureComponent {
   @autobind
   onSubmit() {
     const { checkedEmployee, employeeId } = this.state;
-    const { updatePosition } = this.props;
+    const { updatePosition, clearProps } = this.props;
     if (!_.isEmpty(checkedEmployee)) {
       updatePosition({
         employeeId,
         positionId: checkedEmployee.positionId,
       }).then(() => {
         message.success('提交成功');
+        clearProps();
       });
     }
   }
@@ -186,10 +194,12 @@ export default class MainPosition extends PureComponent {
   // 选择某个职位
   @autobind
   checkTableData(record, index) {
-    console.warn(record, index);
+    const { defaultChecked } = this.state;
+    const disabled = defaultChecked === index;
     this.setState({
       checkedRadio: index,
       checkedEmployee: record,
+      disabled,
     });
   }
 
@@ -205,6 +215,7 @@ export default class MainPosition extends PureComponent {
       const checkedRadio = _.findIndex(positionList, ['primary', true]);
       this.setState({
         checkedRadio,
+        defaultChecked: checkedRadio,
         employeeId: value.login,
       });
     });
@@ -224,7 +235,7 @@ export default class MainPosition extends PureComponent {
   }
 
   render() {
-    const { checkedRadio } = this.state;
+    const { checkedRadio, disabled } = this.state;
     const { employeeList, positionList } = this.props;
     const operation = {
       column: {
@@ -264,6 +275,7 @@ export default class MainPosition extends PureComponent {
           <Button
             type="primary"
             onClick={this.onSubmit}
+            disabled={disabled}
           >
             提交
           </Button>
