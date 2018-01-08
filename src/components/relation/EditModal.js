@@ -133,7 +133,10 @@ export default class EditModal extends Component {
   @autobind
   handleSelect(obj) {
     const { ptyMngName, ptyMngId } = obj;
-    this.setState({ select: { name: ptyMngName, code: ptyMngId, ...obj }, teamName: `${ptyMngName}团队` });
+    this.setState({
+      select: { name: ptyMngName, code: ptyMngId, ...obj },
+      teamName: `${ptyMngName}(${ptyMngId})团队长`,
+    });
   }
 
   @autobind
