@@ -18,7 +18,6 @@ import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
 import { url as urlHelper, env } from '../../../helper';
-import { fspContainer } from '../../../config';
 import { fspGlobal } from '../../../utils';
 import NoData from '../common/NoData';
 
@@ -536,7 +535,7 @@ export default class CustomerLists extends PureComponent {
       curOrgId = orgId;
     } else if (permissionType !== NOPERTMIT) {
       // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
-      if (document.querySelector(fspContainer.container)) {
+      if (env.isInFsp()) {
         curOrgId = window.forReactPosition.orgId;
       } else {
         curOrgId = empInfo.occDivnNum;

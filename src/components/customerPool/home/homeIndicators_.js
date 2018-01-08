@@ -306,7 +306,17 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ source, value, bname, cycle, push, location, empInfo, type = 'rightType', permissionType }) {
+export function linkTo({
+  source,
+  value,
+  bname,
+  cycle,
+  push,
+  location,
+  empInfo,
+  type = 'rightType',
+  permissionType,
+}) {
   if (_.isEmpty(location)) {
     return;
   }
