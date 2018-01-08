@@ -17,6 +17,7 @@ import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
+import fspRoutes from './fspRoutes';
 
 export default {
   constants,
@@ -39,4 +40,5 @@ export default {
   permissionOptions,
   seibelConfig,
   contract,
+  fspRoutes,
 };

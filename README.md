@@ -1,6 +1,6 @@
-# React Seed (PC)
+# fsp项目
 
-基于react技术栈的种子站点, 适用于企业中后台管理系统的快速搭建。
+基于react技术栈开发的企业PC端OA办公系统。
 
 ## 开发环境
 
@@ -8,14 +8,17 @@ windows下推荐安装终端环境：[cmder.net](http://cmder.net/)
 
 安装nodejs: https://nodejs.org/en/
 
-### 启动项目
+相关开发工具的安装文件可以在云桌面的开发测试网盘的**fsp项目工具**中找到
 
-进入项目目录,运行
+### 启动项
 
-```
-npm install
-npm run dev
-```
+使用git从gitlab上拉取fsp项目到本地
+
+cmd命令行进入本地项目目录，执行`npm install`,
+
+待安装完成后，首次运行项目执行`npm start`,
+
+以后只要不更改**node_modules**文件夹，运行项目请执行`npm run dev`
 
 等待一会儿，系统自动打开浏览器，即可进行开发。
 
@@ -37,7 +40,9 @@ javascript规范主要参考[airbnb规范](https://github.com/airbnb/javascript)
 
 ### git commit hook
 
-git commit时会运行lint进行代码静态检查，代码检查通过才可以正常commit
+git commit时会运行lint进行代码静态检查，代码检查通过才可以正常commit，git commit 时需要注意message的格式
+
+`git commit -m "#FSP-<你的story编号>#[该条消息正文]"`
 
 ## 目录说明
 
@@ -94,6 +99,11 @@ http://leonshi.com/redux-saga-in-chinese/
 基于react的UI组件库，蚂蚁金服团队出品，github star 12000+
 
 文档： https://ant.design
+
+### DocClever工具
+
+DOClever是一个可视化免费开源的接口管理工具 ,可以分析接口结构，校验接口正确性， 围绕接口定义文档，通过一系列自动化工具提升我们的协作效率。
+文档：http://168.61.9.250:10005/html/web/controller/help/help.html
 
 ### webpack ⭐️⭐️ (构建工具，业务开发中一般不需要关注)
 

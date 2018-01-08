@@ -16,7 +16,8 @@
     "test": "npm run unit",
     "lint-staged": "lint-staged",
     "lint": "eslint --ext .js src",
-    "lint:less": "stylelint src/**/*.less --config .stylelintrc"
+    "lint:less": "stylelint src/**/*.less --config .stylelintrc",
+    "lint:fsp": "stylelint fspSrc/**/*.less --config .stylelintrc"
   },
   "keywords": [],
   "dependencies": {
@@ -54,6 +55,8 @@
     "redux-logger": "^2.7.4",
     "redux-persist": "^4.4.0",
     "reselect": "^2.5.4",
+    "store": "^2.0.12",
+    "warning": "^3.0.0",
     "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {

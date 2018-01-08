@@ -12,8 +12,8 @@ import { routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { permission, fspGlobal } from '../../utils';
-import { emp, env } from '../../helper';
+import { permission, removeTab, closeRctTab } from '../../utils';
+import { emp } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
@@ -409,21 +409,19 @@ export default class TaskFlow extends PureComponent {
    */
   @autobind
   handleCloseTab() {
-    if (env.isInFsp()) {
-      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
-    } else {
-      console.log('close tab');
-      this.setState({
-        isSuccess: false,
-      });
-    }
+    removeTab({
+      id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+    });
+    this.setState({
+      isSuccess: false,
+    });
   }
 
   @autobind
   handleRemoveTab() {
-    if (env.isInFsp()) {
-      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
-    }
+    closeRctTab({
+      id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+    });
   }
 
   @autobind
@@ -582,7 +580,7 @@ export default class TaskFlow extends PureComponent {
               current === 0
               &&
               <Clickable
-                onClick={this.handleCloseTab}
+                onClick={this.handleRemoveTab}
                 eventName="/click/taskFlow/cancel"
               >
                 <Button className={styles.cancelBtn} type="default">取消</Button>

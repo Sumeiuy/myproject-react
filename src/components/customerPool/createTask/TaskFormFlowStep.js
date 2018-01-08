@@ -11,7 +11,8 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { permission } from '../../../utils';
+import { permission, linkTo } from '../../../utils';
+import { url } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 // import withRouter from '../../../decorators/withRouter';
@@ -207,7 +208,12 @@ export default class TaskFormFlowStep extends PureComponent {
         query: { fr },
       },
     } = this.props;
-    push(decodeURIComponent(fr));
+    const { pathname, query } = url.parseUrl(decodeURIComponent(fr));
+    linkTo({
+      routerAction: push,
+      pathname,
+      query,
+    });
   }
 
   render() {
