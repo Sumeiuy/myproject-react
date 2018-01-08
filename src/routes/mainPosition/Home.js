@@ -2,8 +2,8 @@
  * @Description: 主职位界面
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:01:59
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-02 11:00:01
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-08 15:19:47
  */
 
 import React, { PureComponent } from 'react';
@@ -19,8 +19,9 @@ import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
+import SetHeight from '../../decorators/setHeight';
 import { closeRctTab } from '../../utils';
-import { env, emp, dom } from '../../helper';
+import { emp } from '../../helper';
 import config from './config';
 import styles from './home.less';
 
@@ -57,6 +58,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
+@SetHeight
 export default class MainPosition extends PureComponent {
   static propTypes = {
     searchEmployee: PropTypes.func.isRequired,
@@ -81,12 +83,6 @@ export default class MainPosition extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    // 监听window.onResize事件
-    this.registerWindowResize();
-    this.setContentHeight();
-  }
-
   componentWillReceiveProps({ custRangeList }) {
     const oldCustRangeList = this.props.custRangeList;
     if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
@@ -95,15 +91,8 @@ export default class MainPosition extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.cancelWindowResize();
     const { clearProps } = this.props;
     clearProps();
-  }
-
-  // Resize事件
-  @autobind
-  onResizeChange() {
-    this.setContentHeight();
   }
 
   // 提交按钮
@@ -122,49 +111,6 @@ export default class MainPosition extends PureComponent {
     }
   }
 
-  @autobind
-  setContentHeight() {
-    // 次变量用来判断是否在FSP系统中
-    let viewHeight = document.documentElement.clientHeight;
-    if (env.isIE()) {
-      viewHeight -= 10;
-    }
-    // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
-    // 需要给改容器设置高度，以防止页面出现滚动
-    // FSP头部Tab的高度
-    const fspTabHeight = 55;
-
-    // 设置系统容器高度
-    let pch = viewHeight;
-    if (env.isInFsp()) {
-      pch = viewHeight - fspTabHeight;
-    }
-    const pageContainer = document.querySelector(config.container);
-    const pageContent = document.querySelector(config.content);
-    const childDiv = pageContent.querySelector('div');
-    dom.setStyle(pageContainer, 'height', `${pch}px`);
-    dom.setStyle(pageContent, 'height', '100%');
-    dom.setStyle(childDiv, 'height', '100%');
-  }
-
-
-  // 注册window的resize事件
-  @autobind
-  registerWindowResize() {
-    window.addEventListener('resize', this.onResizeChange, false);
-  }
-
-  // 注销window的resize事件
-  @autobind
-  cancelWindowResize() {
-    window.removeEventListener('resize', this.onResizeChange, false);
-    const pageContainer = document.querySelector(config.container);
-    const pageContent = document.querySelector(config.content);
-    const childDiv = pageContent.querySelector('div');
-    dom.setStyle(pageContainer, 'height', 'auto');
-    dom.setStyle(pageContent, 'height', 'auto');
-    dom.setStyle(childDiv, 'height', 'auto');
-  }
   // 判断当前登录用户部门是否是分公司
   @autobind
   checkUserIsFiliale() {
