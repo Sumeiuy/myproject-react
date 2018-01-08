@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-03 14:09:49
+ * @Last Modified time: 2018-01-08 13:40:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -235,6 +235,7 @@ export default class OptionsMaintain extends PureComponent {
       current: Number(feedbackDataPage.pageNum),
       total: Number(feedbackDataPage.totalCount),
     };
+    console.log('list', feedbackList);
     return (
       <div className={styles.optionsMaintain}>
         <div className={styles.parentAddBtn}>
