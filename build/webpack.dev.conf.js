@@ -98,7 +98,6 @@ module.exports = merge(baseWebpackConfig, {
       inject: false,
       template: 'index.html',
       chunks: ['index'],
-      inject: true,
       lang: 'en',
       title: '华泰证券理财平台',
       meta: [
