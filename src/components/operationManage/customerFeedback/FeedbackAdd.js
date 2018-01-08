@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-03 13:58:25
+ * @Last Modified time: 2018-01-08 14:07:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -55,9 +55,12 @@ export default class MissionBind extends PureComponent {
   // 查询客户反馈
   @autobind
   handleSearchFeedback(keyword) {
-    console.log(keyword);
     const { queryFeedbackList } = this.props;
-    queryFeedbackList(keyword);
+    this.setState({
+      currentFeedback: EMPTY_OBJECT,
+    }, () => {
+      queryFeedbackList(keyword);
+    });
   }
 
   @autobind

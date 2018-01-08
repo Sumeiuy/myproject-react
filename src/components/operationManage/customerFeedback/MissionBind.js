@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-03 15:21:42
+ * @Last Modified time: 2018-01-08 14:56:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -138,6 +138,7 @@ export default class MissionBind extends PureComponent {
   @autobind
   handleDelCustomerFeedback(missionId, feedbackId) {
     const {
+      missionData,
       delCustomerFeedback,
       queryMissionList,
       location: {
@@ -148,6 +149,12 @@ export default class MissionBind extends PureComponent {
         },
       },
     } = this.props;
+    const { missionList } = missionData;
+    const missionItem = _.find(missionList, v => v.id === missionId);
+    if (missionItem.feedbackList.length < 2) {
+      message.error('每条任务绑定的客户反馈不能少于一条');
+      return;
+    }
     confirm({
       title: '提示',
       content: '确认要删除吗?',
