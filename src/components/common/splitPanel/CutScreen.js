@@ -23,7 +23,7 @@ export default class CutScreen extends PureComponent {
   render() {
     const props = this.props;
     return (
-      env.isInFsp() ?
+      (env.isInFsp() || !window.ISINREACT) ?
         <OldCutScreen {...props} /> :
         <FspCutScreen {...props} />
     );
