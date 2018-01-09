@@ -194,7 +194,7 @@ export default class CustomerRow extends PureComponent {
         empId,
       },
     } = this.props;
-    // 有HTSC 首页指标查询， HTSC 营销活动-营业部执行岗,控制绩效数据的客户范围展示权限 或为 主服务经理
+    // 有HTSC 总部执行岗， HTSC 分中心执行岗,或是客户的主服务经理 控制绩效数据的客户范围展示权限
     return view360Permit || empInfo.rowId === empId;
   }
 
