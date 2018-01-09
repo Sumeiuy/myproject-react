@@ -272,7 +272,8 @@ export default class CustomerSegment extends PureComponent {
           />
         </div>
         <div className={styles.tipSection}>
-          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段。
+          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，导入格式参见：
+          <a href="../../../../static/selfBuiltTemplate.xls">导入模板</a>。
         </div>
         {
           isShowTable ?

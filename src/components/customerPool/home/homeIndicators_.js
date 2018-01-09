@@ -306,7 +306,17 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ source, value, bname, cycle, push, location, empInfo, type = 'rightType' }) {
+export function linkTo({
+  source,
+  value,
+  bname,
+  cycle,
+  push,
+  location,
+  empInfo,
+  type = 'rightType',
+  permissionType,
+}) {
   if (_.isEmpty(location)) {
     return;
   }
@@ -326,6 +336,9 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
     } else {
       obj.orgId = orgId;
     }
+  } else if (permissionType === 0) {
+    // 0 表示用户没有权限
+    obj.ptyMng = `${empName}_${empNum}`;
   }
   if (env.isInFsp()) {
     const url = `${pathname}?${urlHelper.stringify(obj)}`;
