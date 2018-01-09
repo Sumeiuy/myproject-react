@@ -117,10 +117,16 @@ export default function customerPool(api) {
     // 文件下载文件列表数据
     ceFileList: query => api.post('/file/ceFileList', query),
 
-    // // 上传文件需要先上传uuid
+    // 生成问卷模板id
+    generateTemplateId: query => api.post('/groovynoauth/fsp/assess/common/saveTemplate', query),
+
+    // 查询一级指标数据
+    queryIndicatorData: query => api.post('/groovynoauth/fsp/campaign/mot/queryTraceIndexDic', query),
+
+    // 上传文件需要先上传uuid
     // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
 
-    // // 删除文件
+    // 删除文件
     // ceFileDelete: query => api.post('/file/ceFileDelete', query),
   };
 }

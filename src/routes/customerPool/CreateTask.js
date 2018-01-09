@@ -24,6 +24,7 @@ const EMPTY_ARRAY = [];
 const effects = {
   createTask: 'customerPool/createTask',
   getApprovalList: 'customerPool/getApprovalList',
+  generateTemplateId: 'customerPool/generateTemplateId',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -38,6 +39,7 @@ const mapStateToProps = state => ({
   storedCreateTaskData: state.customerPool.storedCreateTaskData,
   approvalList: state.customerPool.approvalList,
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
+  templateId: state.customerPool.templateId,
 });
 
 const mapDispatchToProps = {
@@ -49,6 +51,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   goBack: routerRedux.goBack,
   getApprovalList: fectchDataFunction(true, effects.getApprovalList),
+  generateTemplateId: fectchDataFunction(true, effects.generateTemplateId),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -68,6 +71,9 @@ export default class CreateTask extends PureComponent {
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalListLoading: PropTypes.bool,
+    // 新增
+    templateId: PropTypes.string.isRequired,
+    generateTemplateId: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -134,11 +140,14 @@ export default class CreateTask extends PureComponent {
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;
     if (source === 'custGroupList') {
-      // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
-      // 并且用closeTabMenu关闭
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+      // 从客户分组发起任务
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
+    } else if (source === 'managerView') {
+      // 从管理者视图发起任务
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW');
     } else {
-      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+      // 从客户列表发起任务
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_CUSTLIST');
     }
   }
 
@@ -159,6 +168,8 @@ export default class CreateTask extends PureComponent {
       saveCreateTaskData,
       approvalList,
       getApprovalList,
+      templateId,
+      generateTemplateId,
     } = this.props;
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
@@ -178,6 +189,8 @@ export default class CreateTask extends PureComponent {
             isShowApprovalModal={isShowApprovalModal}
             isApprovalListLoadingEnd={isApprovalListLoadingEnd}
             onCancel={this.resetLoading}
+            templateId={templateId}
+            generateTemplateId={generateTemplateId}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

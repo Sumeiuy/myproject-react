@@ -75,9 +75,10 @@ export default class SelectLabelCust extends PureComponent {
       labelMapping,
       labelDesc,
       condition,
-      customNum,
+      custNum: customNum,
       tipsSize,
       labelName,
+      custSource: '瞄准镜标签',
     };
 
     return {
@@ -97,7 +98,7 @@ export default class SelectLabelCust extends PureComponent {
       condition: value,
       labelId: '',
       labelDesc: '',
-      customNum: 0,
+      custNum: 0,
       currentSelectLabel: '',
     });
 

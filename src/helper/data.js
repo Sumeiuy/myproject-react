@@ -87,6 +87,24 @@ const data = {
     return tmpArr;
   },
 
+  /**
+   * 数字转换成26个字母，1输出A
+   * @param {*number} num 需要转换的数字
+   */
+  convert(num) {
+    const result = [];
+    let n = num;
+    while (n) {
+      let t = n % 26;
+      if (!t) {
+        t = 26;
+        --n;
+      }
+      result.push(String.fromCodePoint(t + 64));
+      n = ~~(n / 26); // eslint-disable-line
+    }
+    return result.reverse().join('');
+  },
 };
 
 export default data;

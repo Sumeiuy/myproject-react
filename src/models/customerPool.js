@@ -16,6 +16,8 @@ const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_TEN_SIZE = 10;
 const INITIAL_PAGE_FIVE_SIZE = 5;
+// 题目类型，暂时写死，以后可能需要改成从接口获取，可能有多个
+const assessType = 'MOT_EMP_FEEDBACK';
 
 export default {
   namespace: 'customerPool',
@@ -109,6 +111,10 @@ export default {
     taskBasicInfo: {},
     // 文件下载文件列表数据
     filesList: [],
+    // 问卷调查模板Id
+    templateId: '',
+    // 一级指标数据
+    indicatorData: [],
   },
 
   subscriptions: {
@@ -700,6 +706,22 @@ export default {
         payload: attaches,
       });
     },
+    // 根据问题IdList生成模板id
+    * generateTemplateId({ payload }, { call, put }) {
+      const { resultData } = yield call(api.generateTemplateId, { ...payload, assessType });
+      yield put({
+        type: 'generateTemplateIdSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询指标数据
+    * queryIndicatorData({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryIndicatorData, payload);
+      yield put({
+        type: 'queryIndicatorDataSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1203,6 +1225,22 @@ export default {
       return {
         ...state,
         taskBasicInfo: resultData,
+      };
+    },
+    // 生成问卷模板id成功
+    generateTemplateIdSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        templateId: resultData,
+      };
+    },
+    // 查询指标数据
+    queryIndicatorDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        indicatorData: payload,
       };
     },
   },

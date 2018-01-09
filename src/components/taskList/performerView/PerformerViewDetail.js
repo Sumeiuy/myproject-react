@@ -8,19 +8,22 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination } from 'antd';
+import { Pagination, Form } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
 import BasicInfo from '../common/BasicInfo';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
+import QuestionnaireSurvey from './QuestionnaireSurvey';
 
 import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
+const create = Form.create;
 
+@create()
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -34,10 +37,18 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
+    form: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     isFold: true,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+    };
   }
 
   // 查询目标客户的列表和
@@ -59,7 +70,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -92,6 +103,42 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
+  @autobind
+  showModal() {
+    console.log(1111);
+    this.setState({
+      visible: true,
+    });
+  }
+
+  @autobind
+  handleOk() {
+    let isErr = false;
+    console.log('===>', this.questionForm);
+    this.props.form.validateFields((err, values) => {
+      console.log('err--->', err);
+      console.log('values--->', values);
+      if (!_.isEmpty(err)) {
+        isErr = true;
+      }
+    });
+    this.setState({
+      visible: isErr,
+    });
+  }
+
+  @autobind
+  handleCancel() {
+    this.setState({
+      visible: false,
+    });
+  }
+
+  @autobind
+  handleCheckboxChange(key, value) {
+    console.log(key, '==>', value);
+  }
+
   render() {
     const {
       basicInfo,
@@ -103,7 +150,9 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageSize,
         targetCustomerState = '',
       },
+      form,
     } = this.props;
+    const { visible } = this.state;
     const {
       missionId,
       missionName,
@@ -167,6 +216,14 @@ export default class PerformerViewDetail extends PureComponent {
               <ServiceImplementation {...this.props} list={list} />
           }
         </div>
+        <QuestionnaireSurvey
+          ref={ref => this.questionForm = ref}
+          form={form}
+          visible={visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          onChange={this.handleCheckboxChange}
+        />
       </div>
     );
   }

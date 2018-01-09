@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:24:01
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-09 14:30:54
  */
 
 import React, { PureComponent } from 'react';
@@ -75,6 +75,11 @@ const mapDispatchToProps = {
   deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  // 清除数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
 };
 
 let modalKeyCount = 0;
@@ -98,6 +103,7 @@ export default class CustomerGroupManage extends PureComponent {
     deleteGroup: PropTypes.func.isRequired,
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
     deleteCustomerFromGroup: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -228,12 +234,16 @@ export default class CustomerGroupManage extends PureComponent {
       message.error('该分组下没有客户，不能发起任务');
       return;
     }
+    // 发起任务之前，清除数据
+    const { clearCreateTaskData } = this.props;
+    clearCreateTaskData();
+
     this.handleOpenTab({
       groupId,
       count: relatCust,
       enterType: 'custGroupList',
       source: 'custGroupList',
-    }, '自建任务', 'RCT_FSP_CREATE_TASK');
+    }, '自建任务', 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
   }
 
   @autobind

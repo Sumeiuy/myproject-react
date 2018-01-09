@@ -32,6 +32,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: PropTypes.bool,
     isShowErrorTaskType: PropTypes.bool.isRequired,
     isShowErrorExcuteType: PropTypes.bool.isRequired,
+    isShowErrorTaskSubType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
     missionType: PropTypes.string,
   }
@@ -50,13 +51,10 @@ export default class CreateTaskForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      fromShow: true,
-      successShow: false,
       firstUserName: '',
       searchReq: null,
       custIdList: null,
       statusData: [],
-      defauleData: {},
     };
   }
 
@@ -80,6 +78,7 @@ export default class CreateTaskForm extends PureComponent {
       this.setState({
         defaultMissionName: previousData.taskName,
         defaultMissionType: previousData.taskType, // 'Mission'
+        defaultTaskSubType: previousData.taskSubType, // ''
         defaultExecutionType: previousData.executionType,
         defaultMissionDesc: toString(previousData.templetDesc),
         defaultInitialValue: previousData.timelyIntervalValue,
@@ -109,6 +108,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict: { custIndexPlaceHolders }, missionType } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
+    let defaultTaskSubType = '';
     let defaultExecutionType = '';
     const defaultServiceStrategySuggestion = '';
     let defaultInitialValue = null;
@@ -138,6 +138,7 @@ export default class CreateTaskForm extends PureComponent {
       case 'business':
         defaultMissionName = '提醒客户办理已满足条件的业务'; // 任务名称
         defaultMissionType = '25'; // 任务类型
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Mission'; // 执行方式
         defaultKey = 'UNRIGHTS';
         // 任务提示
@@ -146,12 +147,14 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case 'search':
         defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         defaultInitialValue = 4;
         break;
       case 'tag':
         defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         defaultInitialValue = 4;
@@ -159,6 +162,7 @@ export default class CreateTaskForm extends PureComponent {
       case 'custIndicator':
         defaultMissionName = '新客户回访';
         defaultMissionType = '26';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultKey = 'ACCOUNT_OPEN_DATE';
         defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
@@ -167,6 +171,7 @@ export default class CreateTaskForm extends PureComponent {
       case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
         defaultMissionType = '26';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultKey = 'RIGHTS';
         defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
@@ -175,15 +180,18 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case 'managerView':
         defaultMissionType = missionType || '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
       case 'custGroupList':
         defaultMissionName = '';
         defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
       default:
         defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
     }
@@ -198,6 +206,7 @@ export default class CreateTaskForm extends PureComponent {
       count,
       custIdList,
       searchReq,
+      defaultTaskSubType,
     });
   }
 
@@ -210,6 +219,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
+      isShowErrorTaskSubType,
       custCount,
     } = this.props;
     const { executeTypes, missionType = [] } = dict || {};
@@ -223,6 +233,7 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionDesc,
       defaultInitialValue,
       defaultServiceStrategySuggestion,
+      defaultTaskSubType,
       firstUserName,
       count,
       statusData,
@@ -252,6 +263,8 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorInfo={isShowErrorInfo}
             isShowErrorExcuteType={isShowErrorExcuteType}
             isShowErrorTaskType={isShowErrorTaskType}
+            defaultTaskSubType={defaultTaskSubType}
+            isShowErrorTaskSubType={isShowErrorTaskSubType}
           />
         </div>
       </div>

@@ -42,7 +42,7 @@ export default class CustomerSegment extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { custSegment = EMPTY_OBJECT } = storedData;
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = custSegment;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0 } = custSegment;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
@@ -52,7 +52,7 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
-      totalCount,
+      custTotal,
     };
   }
 
@@ -65,7 +65,7 @@ export default class CustomerSegment extends PureComponent {
      } = nextProps;
     const { custInfos = EMPTY_LIST } = priviewCustFileData;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
-    const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
+    const { custTotal: nextTotalCount, pageNum, pageSize } = nextPage;
 
     if (custInfos !== nextInfos) {
       // 展示预览数据
@@ -85,13 +85,14 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   getData() {
-    const { currentFile, uploadedFileKey, originFileName, totalCount } = this.state;
+    const { currentFile, uploadedFileKey, originFileName, custTotal } = this.state;
     return {
       custSegment: {
         currentFile,
         uploadedFileKey,
         originFileName,
-        totalCount,
+        custTotal,
+        custSource: '导入客户',
       },
     };
   }
@@ -166,12 +167,12 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0 } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
-      totalCount,
+      custTotal,
     });
   }
 
@@ -228,7 +229,7 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
-      totalCount,
+      custTotal,
     } = this.state;
 
     const scrollX = (columnSize * COLUMN_WIDTH);
@@ -263,7 +264,7 @@ export default class CustomerSegment extends PureComponent {
             fileKey={uploadedFileKey}
             onDeleteFile={this.handleDeleteFile}
             originFileName={originFileName}
-            totalCount={totalCount}
+            custTotal={custTotal}
             isNeedPreview
             isNeedDelete
             uploadTitle={'上传客户列表'}

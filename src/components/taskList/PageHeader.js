@@ -341,7 +341,7 @@ export default class Pageheader extends PureComponent {
   renderStatusOptions(filterControl, status) {
     const stateOptions = this.constructorDataType(this.missionStatus);
     // 状态增加全部
-    let stateAllOptions = stateOptions;
+    let stateAllOptions = stateOptions || [];
 
     if (filterControl === CONTROLLER_VIEW) {
       // 管理者视图只有保留三种状态和所有状态
@@ -421,11 +421,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          type,
-          creator,
-          // createTimeStart,
-          // createTimeEnd,
-          missionName,
+        type,
+        creator,
+        // createTimeStart,
+        // createTimeEnd,
+        missionName,
         },
       },
     } = this.props;

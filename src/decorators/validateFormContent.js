@@ -22,10 +22,11 @@ export const validateFormContent = (target, name, descriptor) => {
       if (_.isEmpty(args)) {
         return false;
       }
-      const { templetDesc, executionType, taskType, isFormError } = args[0];
+      const { templetDesc, executionType, taskType, taskSubType, isFormError } = args[0];
       let isShowErrorInfo = false;
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
+      let isShowErrorTaskSubType = false;
       if (toString(templetDesc).length < 10) {
         isShowErrorInfo = true;
         this.setState({
@@ -44,7 +45,17 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskType = true;
       }
-      if (isFormError || isShowErrorInfo || isShowErrorExcuteType || isShowErrorTaskType) {
+      if (_.isEmpty(taskSubType) || taskSubType === '请选择' || taskSubType === '暂无数据') {
+        this.setState({
+          isShowErrorTaskSubType: true,
+        });
+        isShowErrorTaskSubType = true;
+      }
+      if (isFormError
+        || isShowErrorInfo
+        || isShowErrorExcuteType
+        || isShowErrorTaskType
+        || isShowErrorTaskSubType) {
         message.error('请填写任务基本信息');
         return false;
       }
