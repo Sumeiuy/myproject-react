@@ -43,9 +43,7 @@ export default class CustomerService extends PureComponent {
     const { value } = item;
     // 数据是否为空
     const isEmpty = value === null;
-    // 是否需要 *100(临时加，因现请求回来的数据为null)
-    const isNeed = _.toNumber(value) < 1;
-    const finish = isNeed ? _.toNumber(value) * 100 : _.toNumber(value);
+    const finish = _.toNumber(value) * 100;
     const unfinished = 100 - finish;
     const finishedName = isEmpty ? '' : `${parseFloat(finish).toFixed(0)}%`;
     const unfinishedName = isEmpty ? '暂无数据' : `${parseFloat(unfinished).toFixed(0)}%`;
