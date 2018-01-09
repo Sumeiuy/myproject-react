@@ -116,6 +116,7 @@ export default class PerformanceIndicators extends PureComponent {
       purFinAset, zhTranAmt, tradTranAmt, gjPurRake, gjzMotCompletePercent,
       gjzServiceCompPercent,
     } = (isEmpty ? {} : indicator);
+    const isManager = category === 'manager';
     // 资产和交易量
     const assetAndTrade = {
       key: 'zichanhejiaoyiliang',
@@ -177,9 +178,9 @@ export default class PerformanceIndicators extends PureComponent {
       key: 'chanpinxiaoshou',
       headLine: '产品销售',
       data: isEmpty ? [] : [
-        kfTranAmt, // 公募
-        smTranAmt, // 私模
-        taTranAmt, // 紫金
+        isManager ? { ...kfTranAmt, name: '公募基金' } : kfTranAmt, // 公募
+        isManager ? { ...smTranAmt, name: '证券投资类私募' } : smTranAmt, // 私模
+        isManager ? { ...taTranAmt, name: '资金产品' } : taTranAmt, // 紫金
         otcTranAmt, // OTC
       ],
     };
@@ -205,7 +206,7 @@ export default class PerformanceIndicators extends PureComponent {
       ],
     };
     let newIndicators = [];
-    if (category === 'manager') {
+    if (isManager) {
       newIndicators = [
         { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
         { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
