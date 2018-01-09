@@ -2,8 +2,8 @@
  * @Description: 降级客户处理页面
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-03 09:13:22
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-08 15:19:45
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,8 @@ import { message } from 'antd';
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import { time, env, dom } from '../../helper';
+import SetHeight from '../../decorators/setHeight';
+import { time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
 import styles from './home.less';
@@ -42,6 +43,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
+@SetHeight
 export default class Demote extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
@@ -66,9 +68,6 @@ export default class Demote extends PureComponent {
   componentDidMount() {
     const { getCustList } = this.props;
     getCustList({});
-    // 监听window.onResize事件
-    this.registerWindowResize();
-    this.setContentHeight();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -79,16 +78,6 @@ export default class Demote extends PureComponent {
         data: nextCL,
       });
     }
-  }
-
-  componentWillUnmount() {
-    this.cancelWindowResize();
-  }
-
-  // Resize事件
-  @autobind
-  onResizeChange() {
-    this.setContentHeight();
   }
 
   @autobind
@@ -118,49 +107,6 @@ export default class Demote extends PureComponent {
         clicked: true,
       });
     });
-  }
-
-  @autobind
-  setContentHeight() {
-    // 次变量用来判断是否在FSP系统中
-    let viewHeight = document.documentElement.clientHeight;
-    if (env.isIE()) {
-      viewHeight -= 10;
-    }
-    // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
-    // 需要给改容器设置高度，以防止页面出现滚动
-    // FSP头部Tab的高度
-    const fspTabHeight = 55;
-
-    // 设置系统容器高度
-    let pch = viewHeight;
-    if (env.isInFsp()) {
-      pch = viewHeight - fspTabHeight;
-    }
-    const pageContainer = document.querySelector(config.container);
-    const pageContent = document.querySelector(config.content);
-    const childDiv = pageContent.querySelector('div');
-    dom.setStyle(pageContainer, 'height', `${pch}px`);
-    dom.setStyle(pageContent, 'height', '100%');
-    dom.setStyle(childDiv, 'height', '100%');
-  }
-
-  // 注册window的resize事件
-  @autobind
-  registerWindowResize() {
-    window.addEventListener('resize', this.onResizeChange, false);
-  }
-
-  // 注销window的resize事件
-  @autobind
-  cancelWindowResize() {
-    window.removeEventListener('resize', this.onResizeChange, false);
-    const pageContainer = document.querySelector(config.container);
-    const pageContent = document.querySelector(config.content);
-    const childDiv = pageContent.querySelector('div');
-    dom.setStyle(pageContainer, 'height', 'auto');
-    dom.setStyle(pageContent, 'height', 'auto');
-    dom.setStyle(childDiv, 'height', 'auto');
   }
 
   // 切换表格的 switch 事件

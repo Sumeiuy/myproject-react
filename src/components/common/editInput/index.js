@@ -2,8 +2,8 @@
  * @Description: 附带编辑图标的 input
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-08 14:02:16
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-09 10:58:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -95,9 +95,16 @@ export default class EditInput extends PureComponent {
   @autobind
   onSubmit(e) {
     e.stopPropagation();
-    const { value } = this.state;
-    const { editCallback, id } = this.props;
-    editCallback(value, id);
+    const { value, oldValue } = this.state;
+    const { editCallback, id, onCancel } = this.props;
+    if (value === oldValue) {
+      this.setState({
+        value: oldValue,
+        edit: false,
+      }, onCancel);
+    } else {
+      editCallback(value, id);
+    }
   }
 
   // 取消按钮事件
