@@ -83,7 +83,7 @@ export default class QuestionnaireSurvey extends PureComponent {
             <FormItem>
               {getFieldDecorator('questionThr', {
                 rules: [{
-                  required: true, maxLength: '250', message: '问题答案不能小于10个字符，最多250个字符!'
+                  required: true, maxLength: '250', message: '问题答案不能小于10个字符，最多250个字符!',
                 }],
               })(
                 <div className={styles.radioContent}>
