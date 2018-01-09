@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-27 16:34:43
+ * @Last Modified time: 2018-01-08 16:12:48
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
@@ -28,10 +28,9 @@ const url = {
     return qs.stringify(query);
   },
   /**
-   * 将JS对象转化成url上的参数字符串
-   * @author sunweibin
-   * @param {Object} query={} 需要转换成字符串的对象
-   * @returns {String} 无?号的url参数字符串
+   * 将url转化为对象
+   * @param {String} url
+   * @returns {Object} 包含pathname,query的对象
    */
   parseUrl(inputUrl = '') {
     const match = /([^?]*)\?(.*)/.exec(inputUrl);

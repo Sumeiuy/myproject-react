@@ -8,8 +8,8 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: './fspSrc/app.js',
-    index: './src/app.js'
+    index: './fspSrc/app.js',
+    app: './src/app.js'
   },
   output: {
     path: config.build.assetsRoot,
