@@ -9,7 +9,7 @@ export default function customerPool(api) {
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
-    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryManageKPIs', query),
+    getManagerIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryManageKPIs', query),
     // 获取客户池投顾绩效
     getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
@@ -22,7 +22,7 @@ export default function customerPool(api) {
     getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
     // 获取客户池经营指标
-    getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
+    // getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
     getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
