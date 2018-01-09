@@ -876,6 +876,55 @@ const pageConfig = {
       },
     ],
   },
+  // 开发关系认定
+  developRelationship: {
+    pageName: '开发关系认定',
+    pageType: '06', // 查询列表接口中的type值
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
+  },
+  // 客户反馈
+  customerFeedback: {
+    parentTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '一级反馈',
+      },
+    ],
+    childTitleList: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '二级反馈',
+      },
+    ],
+  },
 };
 
 export default pageConfig;

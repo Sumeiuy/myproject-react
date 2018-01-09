@@ -38,6 +38,7 @@ export default class PerformerViewDetail extends PureComponent {
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -139,6 +140,25 @@ export default class PerformerViewDetail extends PureComponent {
     console.log(key, '==>', value);
   }
 
+  /**
+   * 添加服务记录成功后重新加载目标客户的列表信息
+   */
+  @autobind
+  reloadTargetCustInfo() {
+    const {
+      parameter: {
+        targetCustomerPageSize = PAGE_SIZE,
+      targetCustomerPageNo = PAGE_NO,
+      targetCustomerState,
+      },
+    } = this.props;
+    this.queryTargetCustInfo({
+      state: targetCustomerState,
+      pageSize: targetCustomerPageSize,
+      pageNum: targetCustomerPageNo,
+    });
+  }
+
   render() {
     const {
       basicInfo,
@@ -175,7 +195,6 @@ export default class PerformerViewDetail extends PureComponent {
     });
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
-
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
@@ -213,7 +232,11 @@ export default class PerformerViewDetail extends PureComponent {
           {
             _.isEmpty(list) ?
               <EmptyTargetCust /> :
-              <ServiceImplementation {...this.props} list={list} />
+              <ServiceImplementation
+                {...this.props}
+                list={list}
+                reloadTargetCustInfo={this.reloadTargetCustInfo}
+              />
           }
         </div>
         <QuestionnaireSurvey

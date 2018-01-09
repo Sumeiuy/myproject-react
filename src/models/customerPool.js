@@ -115,6 +115,8 @@ export default {
     templateId: '',
     // 一级指标数据
     indicatorData: [],
+    // 当前rukou
+    currentEntry: 0,
   },
 
   subscriptions: {
@@ -1187,6 +1189,14 @@ export default {
       return {
         ...state,
         currentTab: payload,
+      };
+    },
+    // 保存当前选中的客户选择类型
+    saveCurrentEntry(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentEntry: payload,
       };
     },
     // 清除保存的tab

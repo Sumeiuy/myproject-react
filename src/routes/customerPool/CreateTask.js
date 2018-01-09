@@ -14,7 +14,7 @@ import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTa
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
-import { fspGlobal } from '../../utils';
+import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
 
 
@@ -141,13 +141,13 @@ export default class CreateTask extends PureComponent {
     const { location: { query: { source = '' } } } = this.props;
     if (source === 'custGroupList') {
       // 从客户分组发起任务
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
+      closeRctTab('RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
     } else if (source === 'managerView') {
       // 从管理者视图发起任务
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW');
+      closeRctTab('RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW');
     } else {
       // 从客户列表发起任务
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK_FROM_CUSTLIST');
+      closeRctTab('RCT_FSP_CREATE_TASK_FROM_CUSTLIST');
     }
   }
 
@@ -185,12 +185,12 @@ export default class CreateTask extends PureComponent {
             getApprovalList={getApprovalList}
             push={push}
             orgId={orgId}
-            onCloseTab={this.handleCancleTab}
             isShowApprovalModal={isShowApprovalModal}
             isApprovalListLoadingEnd={isApprovalListLoadingEnd}
             onCancel={this.resetLoading}
             templateId={templateId}
             generateTemplateId={generateTemplateId}
+            onCloseTab={this.handleCancleTab}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

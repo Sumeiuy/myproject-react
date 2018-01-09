@@ -38,6 +38,19 @@ function findNode(node, id) {
 
 const emp = {
   /**
+   * 初始化页面后将用户信息保存到相关的变量中去
+   * @param {Object} empInfo 用户信息
+   */
+  setEmpInfo(loginInfo) {
+    const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
+    window.curUserCode = empId || empNum;
+    window.curOrgCode = orgId || occDivnNum;
+    window.forReactPosition = {
+      postnId: postId || postnId,
+      orgId: orgId || occDivnNum,
+    };
+  },
+  /**
    * 获取登录的ID 002332
    * @param {null}
    * @returns {String}

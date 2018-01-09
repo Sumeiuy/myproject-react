@@ -10,8 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './toBeDone.less';
-import { fspGlobal } from '../../../utils';
-import { fspContainer } from '../../../config';
+import { dispatchTabPane, openRctTab, openFspTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -83,7 +82,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 跳转到满足业务办理客户列表
   @autobind
   linkToBusiness() {
-    const { location: { query }, authority } = this.props;
+    const { location: { query }, authority, push } = this.props;
     const url = '/customerPool/list';
     const param = {
       closable: true,
@@ -92,49 +91,54 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    if (document.querySelector(fspContainer.container)) {
-      const authOrgId = authority ? window.forReactPosition.orgId : '';
-      fspGlobal.openRctTab({ url: `${url}?source=business&orgId=${authOrgId}`, param });
-    } else {
-      this.props.push({
-        pathname: url,
-        query: {
-          source: 'business',
-        },
-        // 方便返回页面时，记住首页的query，在本地环境里
-        state: {
-          ...query,
-        },
-      });
-    }
+    const authOrgId = authority ? window.forReactPosition.orgId : '';
+    const data = {
+      source: 'business',
+      orgId: authOrgId,
+    };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?source=business&orgId=${authOrgId}`,
+      pathname: url,
+      query: data,
+      param,
+      state: {
+        ...query,
+      },
+    });
   }
 
   @autobind
   handleMotClick() {
     // 点击事件
-    fspGlobal.myMotTask();
+    const { push } = this.props;
+    dispatchTabPane({
+      fspAction: 'myMotTask',
+      routerAction: push,
+      url: '/task/fspmotTask',
+    });
   }
 
   @autobind
   handleMessageClick() {
     // 点击事件
+    const { push } = this.props;
     const notificationUrl = '/messgeCenter';
     const notificationParam = {
       forceRefresh: false,
       id: 'MESSAGE_CENTER',
       title: '消息中心',
     };
-    fspGlobal.openFspTab({
+    openFspTab({
+      routerAction: push,
       url: notificationUrl,
       param: notificationParam,
     });
   }
 
-  render() {
-    const { data: { businessNumbers,
-      notificationNumbers,
-      todayToDoNumbers,
-      workFlowNumbers } } = this.props;
+  @autobind
+  handleTodoClick() {
+    // 点击事件
     const url = '/customerPool/todo';
     const param = {
       closable: true,
@@ -143,6 +147,19 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
     };
+    const { push } = this.props;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+    });
+  }
+
+  render() {
+    const { data: { businessNumbers,
+      notificationNumbers,
+      todayToDoNumbers,
+      workFlowNumbers } } = this.props;
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.title}>
@@ -188,7 +205,7 @@ export default class PerformanceIndicators extends PureComponent {
           </div>
           <div className={`${styles.item} ${styles.item_c}`}>
             <Clickable
-              onClick={() => fspGlobal.openRctTab({ url, param })}
+              onClick={this.handleTodoClick}
               eventName="/click/taskOverview/toDoFlow"
             >
               <a className="item">

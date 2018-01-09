@@ -6,12 +6,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 
 import Button from '../../common/Button';
-import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
-import { fspGlobal } from '../../../utils';
+import { openRctTab, navTo } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 export default class AddCusSuccess extends PureComponent {
@@ -69,13 +67,11 @@ export default class AddCusSuccess extends PureComponent {
       id: 'FSP_CUST_GROUP_MANAGE',
       title: '客户分组管理',
     };
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
-    } else {
-      push({
-        pathname: url,
-      });
-    }
+    openRctTab({
+      url,
+      param,
+      routerAction: push,
+    });
   }
 
   @autobind
@@ -95,22 +91,19 @@ export default class AddCusSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { closeTab, push, location: { state } } = this.props;
+    const { closeTab, push } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
     };
-
-    if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
-      closeTab();
-    } else {
-      push({
-        pathname: url,
-        query: _.omit(state, 'noScrollTop'),
-      });
-    }
+    closeTab();
+    navTo({
+      url,
+      param,
+      routerAction: push,
+      pathname: url,
+    });
   }
 
   render() {

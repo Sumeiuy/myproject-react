@@ -41,6 +41,8 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 操作类型
     needOperate: PropTypes.bool,
+    // 是否需要子类型
+    needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
     // 新建权限
     empInfo: PropTypes.object,
@@ -69,6 +71,7 @@ export default class Pageheader extends PureComponent {
   static defaultProps = {
     page: '',
     needOperate: false,
+    needSubType: true,
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
@@ -214,6 +217,7 @@ export default class Pageheader extends PureComponent {
       pageType,
       operateOptions,
       needOperate,
+      needSubType,
       empInfo,
       location: {
         query: {
@@ -300,15 +304,19 @@ export default class Pageheader extends PureComponent {
               </div>
             : null
           }
-          <div className={styles.filterFl}>
-            子类型:
-            <Select
-              name="subType"
-              value={subType}
-              data={subtypeOptions}
-              onChange={this.handleSelectChange}
-            />
-          </div>
+          {
+            needSubType ?
+              <div className={styles.filterFl}>
+                子类型:
+                <Select
+                  name="subType"
+                  value={subType}
+                  data={subtypeOptions}
+                  onChange={this.handleSelectChange}
+                />
+              </div>
+            : null
+          }
           <div className={styles.filterFl}>
             状态:
             <Select

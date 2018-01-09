@@ -50,7 +50,7 @@ export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
-    currentTab: PropTypes.string.isRequired,
+    currentEntry: PropTypes.string.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired,
     taskTypes: PropTypes.array.isRequired,
@@ -184,7 +184,7 @@ export default class TaskPreview extends PureComponent {
     const {
       storedData,
       isNeedApproval,
-      currentTab = '1',
+      currentEntry = 0,
       executeTypes,
       taskTypes,
       currentSelectRowKeys,
@@ -207,13 +207,13 @@ export default class TaskPreview extends PureComponent {
       ...taskFormData,
     };
 
-    if (currentTab === '1') {
+    if (currentEntry === 0) {
       // 第一个tab
       finalData = {
         ...finalData,
         ...custSegment,
       };
-    } else if (currentTab === '2') {
+    } else if (currentEntry === 1) {
       // 第二个tab
       finalData = {
         ...finalData,

@@ -21,9 +21,9 @@ export default function (params) {
     // 确认框类型，用于提示(primary)还是警告(danger)
     type = 'primary',
     // 确认框确认按钮调用
-    onOk,
+    onOk = () => {},
     // 确认框取消按钮调用
-    onCancel,
+    onCancel = () => {},
   } = params;
 
   // 判断content和preDefinedContent传了哪个？优先content

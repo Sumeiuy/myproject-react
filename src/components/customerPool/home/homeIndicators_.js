@@ -4,8 +4,8 @@
  * @description 封装首页指标数据
  */
 import _ from 'lodash';
-import { fspGlobal } from '../../../utils';
-import { url as urlHelper, env, number as numberHelper } from '../../../helper';
+import { openRctTab } from '../../../utils';
+import { url as urlHelper, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -327,20 +327,19 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
       obj.orgId = orgId;
     }
   }
-  if (env.isInFsp()) {
-    const url = `${pathname}?${urlHelper.stringify(obj)}`;
-    const param = {
-      closable: true,
-      forceRefresh: true,
-      isSpecialTab: true,
-      id: 'RCT_FSP_CUSTOMER_LIST',
-      title: '客户列表',
-    };
-    fspGlobal.openRctTab({ url, param });
-  } else {
-    push({
-      pathname,
-      query: obj,
-    });
-  }
+  const url = `${pathname}?${urlHelper.stringify(obj)}`;
+  const param = {
+    closable: true,
+    forceRefresh: true,
+    isSpecialTab: true,
+    id: 'RCT_FSP_CUSTOMER_LIST',
+    title: '客户列表',
+  };
+  openRctTab({
+    routerAction: push,
+    url,
+    param,
+    pathname,
+    query: obj,
+  });
 }

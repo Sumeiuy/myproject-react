@@ -3,13 +3,13 @@
 ## 环境
 
   1. npm install 安装所有依赖
-  2. npm run dev 恩，就可以开发了
+  2. npm start 恩，就可以开发了
 
 ## 以开发一个简单列表页面为例
 
-### 1. 接口 && mockup文件
+### 1. 接口 && DocClever平台使用
 
-首先前后端定好接口, 并添加到[接口文档](./api.md)中:
+首先前后端定好接口
 
     * URL: /api/test/list
     * METHOD: GET
@@ -35,27 +35,9 @@
     ]
 }
   ```
+定好接口之后，使用DocClever平台提供mock接口与数据，这部分文档参考[DocClever接口管理工具文档](http://168.61.9.250:10005/html/web/controller/help/help.html)
 
-根据接口url在mock中新建目录mockup/test,并新建文件list.js,根据接口创建一些假数据，供本地开发使用:
-
-参考[mockup/test/list.js](../mockup/test/list.js)
-
-mockup文件建好后，即可通过 http://localhost:8080/api/test/list 访问到该文件
-
-同时将该接口添加到[src/api/index.js](../src/api/index.js)中
-
-```
-import apiCreator from '../utils/apiCreator';
-
-const api = apiCreator();
-
-export default {
-  /**
-   * 获取产品列表
-   */
-  getList: () => api.get('/test/list'),
-};
-```
+主要关注**接口管理**与**接口调试**菜单。
 
 ### 2. 添加view组件
 

@@ -13,8 +13,7 @@ import _ from 'lodash';
 import { Icon } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
-import { fspGlobal } from '../../../utils';
-import { fspContainer } from '../../../config';
+import { openFspTab } from '../../../utils';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -63,6 +62,7 @@ export default class CustDetail extends PureComponent {
     title: PropTypes.string,
     // 关闭弹框
     onClose: PropTypes.func,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -231,19 +231,21 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const { push } = this.props;
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
       forceRefresh: true,
     };
-    if (document.querySelector(fspContainer.container)) {
-      // 关闭弹框
-      this.props.onClose();
-      fspGlobal.openFspTab({
+    openFspTab({
+      routerAction: push,
+      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      pathname: '/customerCenter/fspcustomerDetail',
+      param,
+      state: {
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-        param,
-      });
-    }
+      },
+    });
   }
 
   /**

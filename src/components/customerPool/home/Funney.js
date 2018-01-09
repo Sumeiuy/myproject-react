@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import IECharts from '../../IECharts';
 import styles from './funney.less';
-import { fspGlobal } from '../../../utils';
+import { openFspTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 // 服务客户数的 key
@@ -26,27 +26,30 @@ function getDataConfig(data) {
   }));
 }
 
-function linkToList(data) {
-  if (data.key !== SERVICE_CUST_NUM) {
-    return;
-  }
-  fspGlobal.openFspTab({
-    url: '/customer/manage/showCustManageTabWin',
-    param: {
-      id: 'FSP_CUST_TAB_CENTER_MANAGE',
-      title: '客户管理',
-      forceRefresh: true,
-    },
-  });
+function linkToList({ item, push }) {
+  return function linkToListHandle() {
+    if (item.key !== SERVICE_CUST_NUM) {
+      return;
+    }
+    openFspTab({
+      routerAction: push,
+      url: '/customer/manage/showCustManageTabWin',
+      param: {
+        id: 'FSP_CUST_TAB_CENTER_MANAGE',
+        title: '客户管理',
+        forceRefresh: true,
+      },
+    });
+  };
 }
 
-function renderIntro(data) {
+function renderIntro(data, push) {
   return _.map(
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
         <Clickable
-          onClick={() => linkToList(item)}
+          onClick={() => linkToList(item, push)}
           eventName="/click/fuuney/linkToList"
         >
           <div
@@ -66,7 +69,7 @@ function renderIntro(data) {
   );
 }
 
-function Funney({ dataSource }) {
+function Funney({ dataSource, push }) {
   const { data, color } = dataSource;
   const funnelOption = {
     series: [
@@ -107,7 +110,8 @@ function Funney({ dataSource }) {
       }
       // 点击'服务客户数'时，跳转到 客户中心 > 客户管理 页面
       if (arg.name === '服务客户数') {
-        fspGlobal.openFspTab({
+        openFspTab({
+          routerAction: push,
           url: '/customer/manage/showCustManageTabWin',
           param: {
             id: 'FSP_CUST_TAB_CENTER_MANAGE',
@@ -137,7 +141,7 @@ function Funney({ dataSource }) {
           />
         </div>
         <div className={styles.right}>
-          {renderIntro(data)}
+          {renderIntro(data, push)}
         </div>
       </div>
     </div>
@@ -146,6 +150,7 @@ function Funney({ dataSource }) {
 
 Funney.propTypes = {
   dataSource: PropTypes.object.isRequired,
+  push: PropTypes.func.isRequired,
 };
 
 export default Funney;

@@ -12,15 +12,15 @@ import { routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { permission, fspGlobal } from '../../utils';
-import { emp, env } from '../../helper';
+import { permission, removeTab, closeRctTab } from '../../utils';
+import { emp } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
-import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
+import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
 import styles from './taskFlow.less';
@@ -76,6 +76,11 @@ const mapDispatchToProps = {
   // 保存选中的tab
   saveCurrentTab: query => ({
     type: 'customerPool/saveCurrentTab',
+    payload: query,
+  }),
+  // 保存选中的入口
+  saveCurrentEntry: query => ({
+    type: 'customerPool/saveCurrentEntry',
     payload: query,
   }),
   // 清除数据
@@ -214,9 +219,9 @@ export default class TaskFlow extends PureComponent {
     const {
       saveTaskFlowData,
       storedTaskFlowData = EMPTY_OBJECT,
-      currentTab,
       generateTemplateId,
     } = this.props;
+
     const { current } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData;
@@ -227,21 +232,61 @@ export default class TaskFlow extends PureComponent {
     let isSelectCust = false;
     let isResultTrackValidate = false;
     let isMissionInvestigationValidate = false;
+    let currentEntry;
     // 第一步是选择客户界面
     if (current === 0) {
-      isFormValidate = true;
-      pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
-      const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
-      if (currentTab === '2' && _.isEmpty(labelId)) {
-        isSelectCust = false;
-        message.error('请利用标签圈出目标客户');
+      //   isFormValidate = true;
+      //   pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
+      //   const { labelCust: { labelId },
+      // custSegment: { uploadedFileKey } } = pickTargetCustomerData;
+      //   if (currentTab === '2' && _.isEmpty(labelId)) {
+      //     isSelectCust = false;
+      //     message.error('请利用标签圈出目标客户');
+      //   }
+      //   if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
+      //     isSelectCust = false;
+      //     message.error('请导入Excel或CSV文件');
+      //   }
+      // } else if (current === 1) {
+      //   // 第二步是基本信息界面
+      // 第一步是选择客户界面
+      const obj = {};
+      const {
+        currentEntry: entry,
+        importCustomers,
+        sightingTelescope,
+      } = this.SelectTargetCustomerRef.getData();
+      currentEntry = entry;
+      const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
+      const { labelCust, labelCust: { labelId } } = sightingTelescope;
+      // currentEntry为0 时 表示当前是导入客户
+      // 为1 时 表示当前是瞄准镜
+      if (currentEntry === 0) {
+        if (!uploadedFileKey) {
+          isSelectCust = false;
+          message.error('请导入Excel或CSV文件');
+        }
+        // customerSourceForm.validateFields((err, values) => {
+        //   if (err) {
+        //     if (!values.source) {
+        //       isSelectCust = false;
+        //       message.error('请填写对筛选客户的来源说明');
+        //     }
+        //   }
+        //   obj.customerSource = values.source;
+        // });
+      } else if (currentEntry === 1) {
+        if (!labelId) {
+          isSelectCust = false;
+          message.error('请利用标签圈出目标客户');
+        }
       }
-      if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
-        isSelectCust = false;
-        message.error('请导入Excel或CSV文件');
-      }
+      this.setState({
+        currentEntry,
+      });
+      pickTargetCustomerData = { labelCust, custSegment, ...obj };
     } else if (current === 1) {
-      // 第二步是基本信息界面
+      // 第二步基本信息界面
       this.formRef.props.form.validateFields((err, values) => {
         let isFormError = false;
         console.log('err-->', err);
@@ -342,11 +387,16 @@ export default class TaskFlow extends PureComponent {
         resultTrackData,
         missionInvestigationData,
         current: current + 1,
+        // 选择客户当前入口
+        currentEntry,
       });
       this.setState({
         current: current + 1,
       });
     }
+    // this.setState({
+    //   current: current + 1,
+    // });
   }
 
   @autobind
@@ -389,9 +439,9 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleSubmitTaskFlow() {
-    const { submitTaskFlow, storedTaskFlowData, currentTab = '1', templateId } = this.props;
+    const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
 
-    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+    const { currentSelectRecord: { login: flowAuditorId = null }, currentEntry } = this.state;
 
     const {
       taskFormData = EMPTY_OBJECT,
@@ -506,7 +556,7 @@ export default class TaskFlow extends PureComponent {
     };
 
     // 当前tab是第一个，则代表导入客户
-    if (currentTab === '1') {
+    if (currentEntry === 0) {
       submitTaskFlow({
         fileId,
         ...postBody,
@@ -565,21 +615,19 @@ export default class TaskFlow extends PureComponent {
    */
   @autobind
   handleCloseTab() {
-    if (env.isInFsp()) {
-      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
-    } else {
-      console.log('close tab');
-      this.setState({
-        isSuccess: false,
-      });
-    }
+    removeTab({
+      id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+    });
+    this.setState({
+      isSuccess: false,
+    });
   }
 
   @autobind
   handleRemoveTab() {
-    if (env.isInFsp()) {
-      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
-    }
+    closeRctTab({
+      id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
+    });
   }
 
   @autobind
@@ -612,8 +660,6 @@ export default class TaskFlow extends PureComponent {
       dict,
       dict: { executeTypes, missionType },
       priviewCustFileData,
-      currentTab,
-      saveCurrentTab,
       storedTaskFlowData,
       getLabelInfo,
       getLabelPeople,
@@ -624,6 +670,7 @@ export default class TaskFlow extends PureComponent {
       push,
       clearSubmitTaskFlowResult,
     } = this.props;
+    const { currentEntry } = this.state;
 
     // 拿到自建任务需要的missionType
     // descText为1
@@ -633,23 +680,33 @@ export default class TaskFlow extends PureComponent {
     const isShowTitle = true;
     const steps = [{
       title: '选择目标客户',
-      content: <PickTargetCustomer
-        ref={ref => (this.pickTargetCustomerRef = ref)}
-        currentTab={currentTab}
-        saveCurrentTab={saveCurrentTab}
-        onPreview={this.handlePreview}
-        priviewCustFileData={priviewCustFileData}
-        storedTaskFlowData={storedTaskFlowData}
-        getLabelInfo={getLabelInfo}
-        circlePeopleData={circlePeopleData}
-        getLabelPeople={getLabelPeople}
-        peopleOfLabelData={peopleOfLabelData}
-        orgId={orgId}
-        isLoadingEnd={isLoadingEnd}
-        visible={visible}
-        onCancel={this.resetLoading}
-        isHasAuthorize={this.isHasAuthorize}
-      />,
+      content: <div className={styles.taskInner}>
+        <SelectTargetCustomer
+          currentEntry={currentEntry}
+          ref={inst => (this.SelectTargetCustomerRef = inst)}
+          dict={dict}
+          location={location}
+          previousData={{ ...taskFormData }}
+          isShowTitle={isShowTitle}
+          isShowErrorInfo={isShowErrorInfo}
+          isShowErrorExcuteType={isShowErrorExcuteType}
+          isShowErrorTaskType={isShowErrorTaskType}
+
+          onPreview={this.handlePreview}
+          priviewCustFileData={priviewCustFileData}
+          storedTaskFlowData={storedTaskFlowData}
+
+          onCancel={this.resetLoading}
+          isLoadingEnd={isLoadingEnd}
+          circlePeopleData={circlePeopleData}
+          getLabelInfo={getLabelInfo}
+          peopleOfLabelData={peopleOfLabelData}
+          getLabelPeople={getLabelPeople}
+          isHasAuthorize={this.isHasAuthorize}
+          filterModalvisible={visible}
+          orgId={orgId}
+        />
+      </div>,
     }, {
       title: '基本信息',
       content: <div className={styles.taskInner}>
@@ -687,7 +744,7 @@ export default class TaskFlow extends PureComponent {
         ref={ref => (this.taskPreviewRef = ref)}
         storedData={storedTaskFlowData}
         approvalList={approvalList}
-        currentTab={currentTab}
+        currentEntry={currentEntry}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
         taskTypes={motMissionType}
@@ -725,7 +782,7 @@ export default class TaskFlow extends PureComponent {
               current === 0
               &&
               <Clickable
-                onClick={this.handleCloseTab}
+                onClick={this.handleRemoveTab}
                 eventName="/click/taskFlow/cancel"
               >
                 <Button className={styles.cancelBtn} type="default">取消</Button>

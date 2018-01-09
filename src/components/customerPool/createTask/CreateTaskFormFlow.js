@@ -22,12 +22,12 @@ export default class CreateTaskFormFlow extends PureComponent {
     saveCreateTaskData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
-    onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     push: PropTypes.func.isRequired,
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
     enterType: PropTypes.string,
     // 新增
     templateId: PropTypes.string.isRequired,
@@ -97,11 +97,11 @@ export default class CreateTaskFormFlow extends PureComponent {
       getApprovalList,
       approvalList,
       orgId,
-      onCloseTab,
       push,
       isShowApprovalModal,
       isApprovalListLoadingEnd,
       onCancel,
+      onCloseTab,
     } = this.props;
 
     return (
