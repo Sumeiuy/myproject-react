@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-08 14:56:31
+ * @Last Modified time: 2018-01-09 17:11:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -77,7 +77,7 @@ export default class MissionBind extends PureComponent {
         }
       </ul>);
       return (<div className={styles.feedbackItem} key={item.id}>
-        <Popover placement="rightTop" content={content}>
+        <Popover placement="rightTop" content={content} overlayClassName={styles.opcityPopover}>
           <span>{item.name}</span>
         </Popover>
         <Icon type="delete" onClick={() => this.handleDelCustomerFeedback(missionId, item.id)} />

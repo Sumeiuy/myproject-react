@@ -2,12 +2,24 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-25 16:28:03
+ * @Last Modified time: 2018-01-09 10:34:31
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';
 
 const dom = {
+  /**
+   * 获取浏览器视口高度
+   */
+  getViewPortHeight() {
+    let e = window;
+    let a = 'inner';
+    if (!('innerHeight' in window)) {
+      a = 'client';
+      e = document.documentElement || document.body;
+    }
+    return e[`${a}Height`];
+  },
   /**
    * 获取DOM节点的某个CSS属性的最终值
    * @author sunweibin

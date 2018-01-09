@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 14:05:47
+ * @Last Modified time: 2018-01-09 10:34:33
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -60,6 +60,15 @@ const env = {
   isInFsp() {
     const fsp = document.querySelector(fspContainer.container);
     return !!fsp;
+  },
+  /**
+   * 判断当前页面是否在React框架系统下
+   * @author sunweibin
+   * @returns {Boolean}
+   */
+  isInReact() {
+    const rc = document.querySelector('#react-content');
+    return !!rc;
   },
   /**
    * 判断当前浏览器是否IE
