@@ -11,7 +11,7 @@ import { Modal, Button, Radio, Checkbox, Input, Form } from 'antd';
 // import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 // import _ from 'lodash';
 
-import styles from './performerViewDetail.less';
+import styles from './questionnaireSurvey.less';
 
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
@@ -27,7 +27,6 @@ export default class QuestionnaireSurvey extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
   }
-
 
 
   render() {
@@ -55,7 +54,7 @@ export default class QuestionnaireSurvey extends PureComponent {
         >
           <Form layout="vertical" >
             <FormItem>
-              {getFieldDecorator('questionOne', { rules: [{ required: true }] })(
+              {getFieldDecorator('questionOne', { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
                 <div className={styles.radioContent}>
                   <p>1.此任务是否合理？</p>
                   <RadioGroup name="radiogroup" className={styles.radioGroup}>
@@ -68,7 +67,7 @@ export default class QuestionnaireSurvey extends PureComponent {
               )}
             </FormItem>
             <FormItem>
-              {getFieldDecorator('questionTwo', { rules: [{ required: true }] })(
+              {getFieldDecorator('questionTwo', { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
                 <div className={styles.radioContent}>
                   <p>1.此任务是否合理？</p>
                   <Checkbox.Group style={{ width: '100%' }} className={styles.radioGroup} onChange={onChange}>
@@ -83,7 +82,9 @@ export default class QuestionnaireSurvey extends PureComponent {
             </FormItem>
             <FormItem>
               {getFieldDecorator('questionThr', {
-                rules: [{ required: true, maxLength: '250', message: 'Please input the title of collection!' }],
+                rules: [{
+                  required: true, maxLength: '250', message: '问题答案不能小于10个字符，最多250个字符!'
+                }],
               })(
                 <div className={styles.radioContent}>
                   <p>1.此任务是否合理？</p>
@@ -92,19 +93,6 @@ export default class QuestionnaireSurvey extends PureComponent {
               )}
             </FormItem>
           </Form>
-
-          {/*<div className={styles.radioContent}>
-              <p>1.此任务是否合理？</p>
-              <RadioGroup name="radiogroupTwo" className={styles.radioGroup}>
-                <Radio value={1} className={styles.radioOption}>合理</Radio>
-                <Radio value={2} className={styles.radioOption}>偏多，来不及联系</Radio>
-                <Radio value={3} className={styles.radioOption}>筛选精确率不够，客户不适合本产品</Radio>
-                <Radio value={4} className={styles.radioOption}>近期重复营销</Radio>
-                <Radio value={5} className={styles.radioOption}>近期重复营销</Radio>
-              </RadioGroup>
-            </div>*/}
-
-
         </Modal>
       </div>
     );

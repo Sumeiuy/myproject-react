@@ -153,8 +153,8 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
-  handleCheckboxChange(key, value) {
-    console.log(key, '==>', value);
+  handleCheckboxChange(key) {
+    console.log(key, '==>');
   }
 
   render() {
