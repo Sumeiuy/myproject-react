@@ -40,12 +40,15 @@ export default class CustomerService extends PureComponent {
   }
 
   formatterData(item) {
-    const { hasNumber, value } = item;
-    const finish = value;
-    const unfinished = 100 - value;
-    const finishedName = hasNumber ? `${parseFloat(finish).toFixed(0)}%` : '';
-    const unfinishedName = hasNumber ? `${parseFloat(unfinished).toFixed(0)}%` : '暂无数据';
-    const isEmpty = !hasNumber;
+    const { value } = item;
+    // 数据是否为空
+    const isEmpty = value === null;
+    // 是否需要 *100(临时加，因现请求回来的数据为null)
+    const isNeed = _.toNumber(value) < 1;
+    const finish = isNeed ? _.toNumber(value) * 100 : _.toNumber(value);
+    const unfinished = 100 - finish;
+    const finishedName = isEmpty ? '' : `${parseFloat(finish).toFixed(0)}%`;
+    const unfinishedName = isEmpty ? '暂无数据' : `${parseFloat(unfinished).toFixed(0)}%`;
     const fontSize = isEmpty ? '16' : '20';
     const textStyle = { show: true, fontSize, fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
     const finishLabel = isEmpty ? {} : {
@@ -87,7 +90,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text} title={'必做MOT完成率'}>{'必做MOT完成率'}</div>
+          <div className={styles.text} title={_.head(data).name || ''}>{_.head(data).name || '--'}</div>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
@@ -97,7 +100,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text} title={'高净值客户服务覆盖率'}>{'高净值客户服务覆盖率'}</div>
+          <div className={styles.text} title={_.last(data).name || ''}>{_.last(data).name || '--'}</div>
         </div>
       </div>
     );
