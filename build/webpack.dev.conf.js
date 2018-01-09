@@ -97,8 +97,7 @@ module.exports = merge(baseWebpackConfig, {
       filename: 'index.html',
       inject: false,
       template: 'index.html',
-      chunks: ['index'],
-      inject: true,
+      chunks: ['app'],
       lang: 'en',
       title: '华泰证券理财平台',
       meta: [
@@ -112,7 +111,7 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'newIndex.html',
       template: 'newIndex.html',
-      chunks: ['app'],
+      chunks: ['index'],
       inject: true
     }),
     new webpack.DllReferencePlugin({
