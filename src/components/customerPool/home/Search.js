@@ -20,7 +20,7 @@ const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let searchInput;
-const NONE_INFO = '没有匹配内容';
+const NONE_INFO = '按回车键发起搜索';
 export default class Search extends PureComponent {
 
   static propTypes = {
