@@ -2,8 +2,13 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
+<<<<<<< HEAD
  * @Last Modified by: zhushengnan
  * @Last Modified time: 2018-01-05 14:54:19
+=======
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-05 13:47:18
+>>>>>>> e1ee7f6a05b721e4723b6fc2b2e6bdf21fde8801
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -335,14 +340,14 @@ export default class EditBaseInfo extends PureComponent {
       resetProduct,
     } = this.props;
     // 清除详情
-    const { isSubscribe, operationType, isEditPage } = this.state;
+    const { isSubscribe, operationType, isEditPage, subType } = this.state;
     const { cusId, custType, brokerNumber } = value;
     const validatePayload = {
       id: cusId,
       custType,
       econNum: brokerNumber,
       agrId: '',
-      agrType: '',
+      agrType: subType,
       templateId: '',
       type: 'PriCust',
     };
@@ -380,7 +385,7 @@ export default class EditBaseInfo extends PureComponent {
             // 查询协议 ID 列表
             queryProtocolList({
               custId: cusId,
-              subType: '',
+              subType,
               operationType,
             });
           }
@@ -399,10 +404,11 @@ export default class EditBaseInfo extends PureComponent {
   // 查询协议产品列表
   @autobind
   queryChannelProtocolProduct() {
-    const { client, protocolTemplate } = this.state;
+    const { client, protocolTemplate, subType } = this.state;
     const { queryChannelProtocolProduct } = this.props;
     if (!_.isEmpty(client) && !_.isEmpty(protocolTemplate)) {
       queryChannelProtocolProduct({
+        subType,
         custId: client.cusId,
         custType: client.custType,
         promotionId: protocolTemplate.rowId,
@@ -439,7 +445,7 @@ export default class EditBaseInfo extends PureComponent {
         resetUpload,
         resetProduct,
       } = this.props;
-      const { isEditPage } = this.state;
+      const { isEditPage, subType } = this.state;
       // 清除下挂客户
       onChangeMultiCustomer(false);
       if (!isEditPage) {
@@ -448,6 +454,7 @@ export default class EditBaseInfo extends PureComponent {
       }
       resetProduct();
       queryChannelProtocolItem({
+        subType,
         keyword: value.rowId,
       });
       // 触发查询协议产品列表

@@ -17,8 +17,6 @@ import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper } from './helper';
-// import { initFspMethod } from './utils/fspGlobal';
-// import permission from './permissions';
 
 const extraEnhancers = [];
 if (persistConfig.active) {

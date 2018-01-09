@@ -12,8 +12,8 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import { fspGlobal } from '../../utils';
-import { url as urlHelper, env } from '../../helper';
+import { openRctTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
 import Clickable from '../../components/common/Clickable';
@@ -52,11 +52,13 @@ export default class ViewpointDetail extends PureComponent {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
     const newQuery = { curPageNum, pageSize };
-    if (env.isInFsp()) {
-      fspGlobal.openRctTab({ url: `${url}?${urlHelper.stringify(newQuery)}`, param });
-    } else {
-      push({ pathname: url, query: newQuery });
-    }
+    openRctTab({
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(newQuery)}`,
+      param,
+      pathname: url,
+      query: newQuery,
+    });
   }
 
   @autobind
