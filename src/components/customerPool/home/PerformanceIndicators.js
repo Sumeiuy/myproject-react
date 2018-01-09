@@ -56,9 +56,22 @@ export default class PerformanceIndicators extends PureComponent {
     custCount: {},
   }
 
+  getNameAndValue(data, formatterNumber) {
+    const numberArray = [];
+    const nameArray = [];
+    _.forEach(
+      data,
+      (item) => {
+        numberArray.push(formatterNumber(item.value));
+        nameArray.push(item.name);
+      },
+    );
+    return { nameArray, numberArray };
+  }
+
   // 过滤掉假值(false, null, 0, '', undefined, NaN)的数组
   filterFalsityArray(array) {
-    return _.isEmpty(_.compact(array)) ? [] : array;
+    return _.isEmpty(_.compact(array)) ? [] : _.compact(array);
   }
 
   @autobind
@@ -110,124 +123,83 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   formatIndicators(indicator, category) {
-    const isEmpty = _.isEmpty(indicator);
-    const { custNum, totAset, currSignCustNum, currSignCustAset, otcTranAmt,
-      newCustInAset, purRake, prdtPurFee, purInteIncome, motCompletePercent,
-      serviceCompPercent, feeConfigPercent, infoCompPercent, newCustNum,
-      ttfBusiCurr, hgtBusiCurr, sgtBusiCurr, rzrqBusiCurr, xsbBusiCurr,
-      gpqqBusiCurr, cybBusiCurr, shzNpRate, kfTranAmt, smTranAmt, taTranAmt,
-      purFinAset, zhTranAmt, tradTranAmt, gjPurRake, gjzMotCompletePercent,
-      gjzServiceCompPercent,
-    } = (isEmpty ? {} : indicator);
-    const isManager = category === 'manager';
-    // 资产和交易量
-    const assetAndTrade = {
-      key: 'zichanhejiaoyiliang',
-      headLine: '资产和交易量',
-      data: isEmpty ? [] : [
-        { ...purFinAset, name: '净新增客户资产' },  // 净新增客户资产
-        { ...tradTranAmt, name: '累计基础交易量' },  // 累计基础交易量
-        { ...zhTranAmt, name: '累计综合交易量' },  // 累计综合交易量
-        { ...gjPurRake, name: '股基累计净佣金' }, // 股基累计净佣金
-      ],
-    };
-
-    // 服务指标
-    const managerSevice = {
-      key: 'fuwuzhibiao',
-      headLine: '服务指标',
-      data: isEmpty ? [] : [
-        gjzMotCompletePercent,  // 必做MOT任务完成率
-        { ...gjzServiceCompPercent, name: '高净值客户服务覆盖率' },  // 高净值客户服务覆盖率
-      ],
-    };
-    // 客户及资产
-    const custAndProperty = {
-      key: 'kehujizichan',
-      headLine: '客户及资产',
-      data: isEmpty ? [] : [
-        custNum,  // 服务客户数
-        totAset,  // 服务客户资产
-        currSignCustNum,  // 签约客户数
-        currSignCustAset,  // 签约客户资产
-        newCustNum,  // 新开客户数
-        newCustInAset,  // 新开客户资产
-      ],
-    };
+    // 资产和交易量指标数据
+    const assetAndTradeData = [
+      indicator.purFinAset,  // 净新增客户资产
+      indicator.tradTranAmt,  // 累计基础交易量
+      indicator.zhTranAmt,  // 累计综合交易量
+      indicator.gjPurRake,  // 股基累计净佣金
+    ];
+    // 服务指标数据
+    const managerSeviceData = [
+      indicator.gjzMotCompletePercent,   // 必做MOT任务完成率
+      indicator.gjzServiceCompPercent,   // 高净值客户服务覆盖率
+    ];
+    // 客户及资产数据
+    const custAndPropertyData = [
+      indicator.custNum,  // 服务客户数
+      indicator.totAset,  // 服务客户资产
+      indicator.currSignCustNum,  // 签约客户数
+      indicator.currSignCustAset,  // 签约客户资产
+      indicator.newCustNum,  // 新开客户数
+      indicator.newCustInAset,  // 新开客户资产
+    ];
     // 业务开通
-    const establishBusiness = {
-      key: 'yewukaitong',
-      headLine: '业务开通',
-      data: isEmpty ? [] : [
-        ttfBusiCurr, // 天天发
-        hgtBusiCurr, // 港股通
-        sgtBusiCurr, // 深港通
-        rzrqBusiCurr, // 融资融券
-        xsbBusiCurr, // 新三板
-        gpqqBusiCurr, // 个股期权
-        cybBusiCurr, // 创业板
-      ],
-    };
-    // 沪深归集率
-    const hsRate = {
-      key: 'hushenguijilv',
-      headLine: '沪深归集率',
-      data: isEmpty ? [] : [
-        shzNpRate, // 沪深归集率
-      ],
-    };
-    // 产品销售
-    const productSale = {
-      key: 'chanpinxiaoshou',
-      headLine: '产品销售',
-      data: isEmpty ? [] : [
-        isManager ? { ...kfTranAmt, name: '公募基金' } : kfTranAmt, // 公募
-        isManager ? { ...smTranAmt, name: '证券投资类私募' } : smTranAmt, // 私模
-        isManager ? { ...taTranAmt, name: '资金产品' } : taTranAmt, // 紫金
-        otcTranAmt, // OTC
-      ],
-    };
-    // 净创收
-    const pureIcome = {
-      key: 'jingchuangshou',
-      headLine: '净创收',
-      data: isEmpty ? [] : [
-        purRake, // 净佣金收入
-        prdtPurFee, // 产品净手续费收入
-        purInteIncome, // 净利息收入
-      ],
-    };
-    // 服务指标
-    const serviceIndicator = {
-      key: 'fuwuzhibiao',
-      headLine: '服务指标',
-      data: isEmpty ? [] : [
-        motCompletePercent,  // 必做MOT任务完成率
-        serviceCompPercent,  // 服务覆盖率
-        feeConfigPercent,  // 多元产品覆盖率
-        infoCompPercent,  // 客户信息完善率
-      ],
-    };
-    let newIndicators = [];
+    const establishBusinessData = [
+      indicator.tfBusiCurr, // 天天发
+      indicator.hgtBusiCurr, // 港股通
+      indicator.sgtBusiCurr, // 深港通
+      indicator.rzrqBusiCurr, // 融资融券
+      indicator.xsbBusiCurr, // 新三板
+      indicator.gpqqBusiCurr, // 个股期权
+      indicator.cybBusiCurr, // 创业板
+    ];
+    // 沪深归集率数据
+    const hsRateData = [
+      indicator.shzNpRate, // 沪深归集率
+    ];
+    // 产品销售数据
+    const productSaleData = [
+      indicator.kfTranAmt, // 公募
+      indicator.smTranAmt, // 私模
+      indicator.taTranAmt, // 紫金
+      indicator.otcTranAmt, // OTC
+    ];
+    // 净创收数据
+    const pureIcomeData = [
+      indicator.purRake, // 净佣金收入
+      indicator.prdtPurFee, // 产品净手续费收入
+      indicator.purInteIncome, // 净利息收入
+    ];
+    // 服务指标数据
+    const serviceIndicatorData = [
+      indicator.motCompletePercent,  // 必做MOT任务完成率
+      indicator.serviceCompPercent,  // 服务覆盖率
+      indicator.feeConfigPercent,  // 多元产品覆盖率
+      indicator.infoCompPercent,  // 客户信息完善率
+    ];
+
+    // 是否是经营指标的展示
+    const isManager = category === 'manager';
     if (isManager) {
-      newIndicators = [
-        { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
-        { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
-        { ...assetAndTrade, data: this.filterFalsityArray(assetAndTrade.data) }, // 资产与交易量指标块
-        { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
-        { ...managerSevice, data: this.filterFalsityArray(managerSevice.data) },  // 产品销售指标块
-      ];
-    } else {
-      newIndicators = [
-        { ...custAndProperty, data: this.filterFalsityArray(custAndProperty.data) },  // 客户及资产指标块
-        { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
-        { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
-        { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
-        { ...pureIcome, data: this.filterFalsityArray(pureIcome.data) },  // 净创收指标块
-        { ...serviceIndicator, data: this.filterFalsityArray(serviceIndicator.data) },  // 服务指标
+      // 展示经营指标区域
+      return [
+        { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) },  // 业务开通指标块
+        { key: 'hushenguijilv', headLine: '沪深归集率', data: this.filterFalsityArray(hsRateData) }, // 沪深归集率指标块
+        { key: 'zichanhejiaoyiliang', headLine: '资产和交易量', data: this.filterFalsityArray(assetAndTradeData) }, // 资产与交易量指标块
+        { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) },  // 产品销售指标块
+        { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(managerSeviceData) },  // 服务指标块
       ];
     }
-    return newIndicators;
+    // 展示投顾绩效
+    return [
+      { key: 'kehujizichan', headLine: '客户及资产', data: this.filterFalsityArray(custAndPropertyData) },  // 客户及资产指标块
+      { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) },  // 业务开通指标块
+      { key: 'hushenguijilv', headLine: '沪深归集率', data: this.filterFalsityArray(hsRateData) }, // 沪深归集率指标块
+      { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) },  // 产品销售指标块
+      { key: 'jingchuangshou', headLine: '净创收', data: this.filterFalsityArray(pureIcomeData) },  // 净创收指标块
+      { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(serviceIndicatorData) },  // 服务指标
+    ];
   }
 
   @autobind
@@ -254,22 +226,12 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 服务指标（经营指标）
   renderManagerServiceIndicators(param) {
-    const data = _.map(
-      param.data,
-      (item) => {
-        const { value = '' } = item || {};
-        if (_.isEmpty(value)) {
-          return { hasNumber: false, value: 0 };
-        }
-        return { hasNumber: true, value: _.toNumber(item.value) };
-      },
-    );
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CustomerService data={data} />
+            <CustomerService data={param.data} />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -293,19 +255,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 业务开通数（投顾绩效）
   renderBusinessIndicator(param) {
-    const numberArray = [];
-    const nameArray = [];
-    _.forEach(
-      param.data,
-      (item) => {
-        numberArray.push(filterEmptyToInteger(item.value));
-        nameArray.push(item.name);
-      },
-    );
-    const argument = {
-      names: nameArray,
-      clientNumberData: numberArray,
-    };
+    const argument = this.getNameAndValue(param.data, filterEmptyToInteger);
     const { newUnit, items } = getClientsNumber(argument);
     const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
     return (
@@ -350,16 +300,8 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 产品销售 & 净创收（投顾绩效）
   renderProductSaleAndPureIcomeIndicators(param) {
-    const valueArray = [];
-    const nameArray = [];
-    _.forEach(
-      param.data,
-      (item) => {
-        valueArray.push(filterEmptyToNumber(item.value));
-        nameArray.push(item.name);
-      },
-    );
-    const finalData = getProductSale({ productSaleData: valueArray, nameArray });
+    const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
+    const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
@@ -435,14 +377,8 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   renderAssetAndTradeIndicators(param) {
     // 资产和交易量（经营指标）
-    const tradeingVolumeData = _.map(
-      param.data,
-      (item) => {
-        const { value = '' } = item || {};
-        return filterEmptyToNumber(value);
-      },
-    );
-    const finalTradeingVolumeData = getTradingVolume({ tradeingVolumeData });
+    const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
+    const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
 
     return (
@@ -462,6 +398,7 @@ export default class PerformanceIndicators extends PureComponent {
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
     }
+    console.log('#######formatIndicator########', formatIndicator);
     const firstRowData = _.slice(formatIndicator, 0, 3);
     const secondRowData = _.slice(formatIndicator, 3);
     return (
