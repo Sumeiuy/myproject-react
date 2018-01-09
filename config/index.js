@@ -28,15 +28,15 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9083,
+    port: 9088,
     page: '',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      [prefix + '/groovynoauth/fsp/emp']: {
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
+      // [prefix + '/groovynoauth/fsp/emp']: {
+      //   target: 'http://168.61.8.81:5090', // DOClever
+      // },
       [prefix + '/groovynoauth/fsp/assess/common']: {
         // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址
         // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
@@ -77,7 +77,7 @@ module.exports = {
     enableHMR: true,
   },
   cssModules: true,
-  src: [path.resolve(__dirname, '../fspSrc'), path.resolve(__dirname, '../src')],
+  src: [path.resolve(__dirname, '../src'), path.resolve(__dirname, '../fspSrc')],
   appSrc: path.resolve(__dirname, '../src'),
   fspSrc: path.resolve(__dirname, '../fspSrc'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
