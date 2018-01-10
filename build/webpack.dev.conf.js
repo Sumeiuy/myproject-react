@@ -111,7 +111,7 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'newIndex.html',
       template: 'newIndex.html',
-      chunks: ['app'],
+      chunks: ['newIndex'],
       inject: true
     }),
     new webpack.DllReferencePlugin({
