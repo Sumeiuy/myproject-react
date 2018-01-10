@@ -170,7 +170,7 @@ export default class Main extends PureComponent {
             onSwitchRsp={this.handleHeaderSwitchRsp}
           />
           <div className={styles.main}>
-            <div className={styles.content}>
+            <div id="react-content" className={styles.content}>
               <Tab
                 location={location}
                 push={push}

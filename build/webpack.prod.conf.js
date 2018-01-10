@@ -132,7 +132,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.fspIndex,
       template: 'newIndex.html',
       inject: true,
-      chunks: ['app', 'vendor', 'manifest'],
+      chunks: ['newIndex', 'vendor', 'manifest'],
       minify: {
         removeComments: true,
         collapseWhitespace: true,

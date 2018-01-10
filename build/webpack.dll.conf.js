@@ -7,7 +7,6 @@ module.exports = {
     vendor: [
       'react',
       'react-dom',
-      'react-router',
       'react-dnd',
       'react-dnd-html5-backend',
       'react-style-proptype',
@@ -19,7 +18,6 @@ module.exports = {
       'zrender',
       'react-redux',
       'react-split-pane',
-      'react-router-redux',
       'redux-saga',
       'babel-polyfill',
       'antd',
