@@ -5,6 +5,18 @@
 export default function developRelationship(api) {
   return {
     // 获取详情信息
-    getDetailInfo: query => api.post('/groovynoauth/fsp/biz/developRelationship/queryDevelopRelationshipDetail', query),
+    getDetailInfo: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryDevelopRelationshipDetail', query),
+    // 新建开发关系认定
+    createDevelopRelationship: query => api.post('/groovynoauth/fsp/biz/developrelationship/createDevelopRelationship', query),
+    // 查询可申请开发关系认定的客户
+    getCreateCust: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryDevelopRelationshipCust', query),
+    // 查询可申请开发关系认定的客户是否可用
+    isValidCust: query => api.post('/groovynoauth/fsp/biz/developrelationship/isValidCust', query),
+    // 查询新建时原开发团队
+    getOldDevelopTeamList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryOldDevelopTeamList', query),
+    // 查询可添加新开发团队服务经理的接口
+    getAddEmpList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryAddEmpList', query),
+    // 获取按钮列表和下一步审批人
+    getButtonList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryButtonList', query),
   };
 }

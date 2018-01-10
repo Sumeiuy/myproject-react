@@ -907,6 +907,55 @@ const pageConfig = {
         value: '04',
       },
     ],
+    developTeamTableHeader: [ // 开发团队表头
+      {
+        dataIndex: 'empId',
+        key: 'empId',
+        title: '工号',
+      },
+      {
+        dataIndex: 'empName',
+        key: 'empName',
+        title: '姓名',
+      },
+      {
+        dataIndex: 'orgName',
+        key: 'orgName',
+        title: '部门',
+      },
+      {
+        dataIndex: 'postnName',
+        key: 'poatnName',
+        title: '职位',
+      },
+      {
+        dataIndex: 'weight',
+        key: 'weight',
+        title: '权重',
+      },
+      {
+        dataIndex: 'isRugang',
+        key: 'isRugang',
+        title: '是否入岗投顾',
+      },
+    ],
+    // 附件类型
+    attachmentMap: [
+      {
+        type: 'develop',
+        title: '开发关系认定书（首次认定时必输）',
+        show: true,
+        length: 0,
+        required: true,
+      },
+      {
+        type: 'other',
+        title: '其他',
+        show: true,
+        length: 0,
+        required: false,
+      },
+    ],
   },
   // 客户反馈
   customerFeedback: {
