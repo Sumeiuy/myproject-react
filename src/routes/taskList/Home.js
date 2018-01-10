@@ -85,6 +85,7 @@ const effects = {
   countFlowFeedBack: 'managerView/countFlowFeedBack',
   // 管理者视图任务实施进度
   countFlowStatus: 'managerView/countFlowStatus',
+  getQueryQues: 'performerView/getQueryQues',
 };
 
 const mapStateToProps = state => ({
@@ -125,6 +126,7 @@ const mapStateToProps = state => ({
   taskFeedbackList: state.performerView.taskFeedbackList,
   // 执行者视图添加服务记录是否成功
   addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
+  answersList: state.performerView.answersList,
 });
 
 const mapDispatchToProps = {
@@ -177,6 +179,7 @@ const mapDispatchToProps = {
   countFlowStatus: fetchDataFunction(true, effects.countFlowStatus),
   // 获取添加服务记录中的任务反馈
   getServiceType: fetchDataFunction(true, effects.getServiceType),
+  getQueryQues: fetchDataFunction(false, effects.getQueryQues),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -233,6 +236,8 @@ export default class PerformerView extends PureComponent {
     getServiceType: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
+    getQueryQues: PropTypes.func.isRequired,
+    answersList: PropTypes.obj,
   }
 
   static defaultProps = {
@@ -241,6 +246,7 @@ export default class PerformerView extends PureComponent {
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
+    answersList: EMPTY_OBJECT,
   };
 
   constructor(props) {
@@ -267,10 +273,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
-          missionViewType,
+        pageSize,
+        missionViewType,
         },
       },
     } = this.props;
@@ -482,6 +488,8 @@ export default class PerformerView extends PureComponent {
       push,
       clearCreateTaskData,
       addMotServeRecordSuccess,
+      getQueryQues,
+      answersList,
     } = this.props;
     const {
       query: { currentId },
@@ -528,6 +536,8 @@ export default class PerformerView extends PureComponent {
             deleteFileResult={deleteFileResult}
             taskFeedbackList={taskFeedbackList}
             addMotServeRecordSuccess={addMotServeRecordSuccess}
+            getQueryQues={getQueryQues}
+            answersList={answersList}
           />
         );
         break;

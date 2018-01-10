@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-05 14:49:28
+ * @Last Modified time: 2018-01-10 09:25:07
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -111,7 +111,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           {
             currentView === heightSpeed ?
-              <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
+              <InfoItem label="申请单编号" value={protocolDetail.appId} />
               : null
           }
           {

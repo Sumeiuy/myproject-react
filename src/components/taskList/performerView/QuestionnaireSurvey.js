@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import { Modal, Button, Radio, Checkbox, Input, Form } from 'antd';
 // import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import styles from './questionnaireSurvey.less';
 
@@ -25,19 +25,93 @@ export default class QuestionnaireSurvey extends PureComponent {
     visible: PropTypes.bool.isRequired,
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onCheckChange: PropTypes.func.isRequired,
+    onRadioChange: PropTypes.func.isRequired,
+    answersList: PropTypes.object,
   }
 
+  static defaultProps = {
+    answersList: {},
+  };
+
+  // 根据返回的问题列表，判断不同类型显示
+  renderOption() {
+    const { form, onCheckChange, answersList = {}, onRadioChange } = this.props;
+    // console.log(answersList);
+    const { quesInfoList } = answersList;
+    const { getFieldDecorator } = form;
+    let content = null;
+    const itemForm = _.map(quesInfoList, (item, key) => {
+      const { quesId } = item;
+      if (item.quesTypeCode === '1') {
+        content = (<FormItem>
+          {getFieldDecorator(quesId, { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
+            <div className={styles.radioContent}>
+              <p>{key + 1}.{item.quesValue}</p>
+              <RadioGroup
+                name={item.quesTypeCode}
+                className={styles.radioGroup}
+                onChange={onRadioChange}
+              >
+                {
+                  item.optionInfoList.map(itemChild =>
+                    <Radio
+                      value={itemChild.optionValue}
+                      dataId={itemChild.optionId}
+                      className={styles.radioOption}
+                      dataQuesId={quesId}
+                    >
+                      {itemChild.optionValue}
+                    </Radio>)
+                }
+              </RadioGroup>
+            </div>,
+          )}
+        </FormItem>);
+      } else if (item.quesTypeCode === '2') {
+        // const dataQues = itemChild.optionValue - itemChild.optionId
+        content = (<FormItem>
+          {getFieldDecorator(quesId, { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
+            <div className={styles.radioContent}>
+              <p>{key + 1}.{item.quesValue}</p>
+              <Checkbox.Group style={{ width: '100%' }} className={styles.radioGroup} onChange={onCheckChange}>
+                {
+                  item.optionInfoList.map(itemChild => <Checkbox
+                    value={`${itemChild.optionValue}-${itemChild.optionId}-${quesId}`}
+                    className={styles.radioOption}
+                  >
+                    {itemChild.optionValue}
+                  </Checkbox>)
+                }
+              </Checkbox.Group>
+            </div>,
+          )}
+        </FormItem>);
+      } else if (item.quesTypeCode === '3') {
+        content = (<FormItem>
+          {getFieldDecorator(quesId, {
+            rules: [{
+              required: true, maxLength: '250', message: '问题答案不能小于10个字符，最多250个字符!',
+            }],
+          })(
+            <div className={styles.radioContent}>
+              <p>{key + 1}.{item.quesValue}</p>
+              <TextArea rows={4} className={styles.radioGroup} />
+            </div>,
+          )}
+        </FormItem>);
+      }
+      return content;
+    });
+    return itemForm;
+  }
 
   render() {
     const {
-      form,
       visible,
       onOk,
       onCancel,
-      onChange,
     } = this.props;
-    const { getFieldDecorator } = form;
     return (
       <div>
         <Modal
@@ -49,49 +123,11 @@ export default class QuestionnaireSurvey extends PureComponent {
           footer={[
             <Button key="submit" type="primary" onClick={onOk}>
               提交
-              </Button>,
+            </Button>,
           ]}
         >
           <Form layout="vertical" >
-            <FormItem>
-              {getFieldDecorator('questionOne', { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
-                <div className={styles.radioContent}>
-                  <p>1.此任务是否合理？</p>
-                  <RadioGroup name="radiogroup" className={styles.radioGroup}>
-                    <Radio value={1} className={styles.radioOption}>A</Radio>
-                    <Radio value={2}>B</Radio>
-                    <Radio value={3}>C</Radio>
-                    <Radio value={4}>D</Radio>
-                  </RadioGroup>
-                </div>,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('questionTwo', { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
-                <div className={styles.radioContent}>
-                  <p>1.此任务是否合理？</p>
-                  <Checkbox.Group style={{ width: '100%' }} className={styles.radioGroup} onChange={onChange}>
-                    <Checkbox value="A" className={styles.radioOption}>E</Checkbox>
-                    <Checkbox value="B" className={styles.radioOption}>E</Checkbox>
-                    <Checkbox value="C" className={styles.radioOption}>E</Checkbox>
-                    <Checkbox value="D" className={styles.radioOption}>E</Checkbox>
-                    <Checkbox value="E" className={styles.radioOption}>E</Checkbox>
-                  </Checkbox.Group>
-                </div>,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('questionThr', {
-                rules: [{
-                  required: true, maxLength: '250', message: '问题答案不能小于10个字符，最多250个字符!',
-                }],
-              })(
-                <div className={styles.radioContent}>
-                  <p>1.此任务是否合理？</p>
-                  <TextArea rows={4} className={styles.radioGroup} />
-                </div>,
-              )}
-            </FormItem>
+            {this.renderOption()}
           </Form>
         </Modal>
       </div>
