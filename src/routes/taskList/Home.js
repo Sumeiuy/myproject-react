@@ -275,8 +275,8 @@ export default class PerformerView extends PureComponent {
         query,
       query: {
           pageNum,
-        pageSize,
-        missionViewType,
+          pageSize,
+          missionViewType,
         },
       },
     } = this.props;
