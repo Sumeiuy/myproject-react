@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-09 14:30:54
+ * @Last Modified time: 2018-01-10 21:48:09
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import CustomerGroupDetail from '../../components/customerPool/groupManage/Custo
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { openRctTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
@@ -247,10 +248,15 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { groupId, count, enterType, source } = obj;
+    // const { groupId, count, enterType, source } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
-    const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}&source=${source}`;
+    const condition = encodeURIComponent(JSON.stringify(obj));
+    const query = {
+      condition,
+    };
+
+    const url = `${firstUrl}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
       forceRefresh: true,

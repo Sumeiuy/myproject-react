@@ -6,19 +6,19 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Mention } from 'antd';
+import { Form } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+// import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 
 const create = Form.create;
-const { toString } = Mention;
+// const { toString } = Mention;
 
-@RestoreScrollTop
-@create()
+// @RestoreScrollTop
+@create({ withRef: true })
 export default class CreateTaskForm extends PureComponent {
 
   static propTypes = {
@@ -80,11 +80,16 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType: previousData.taskType, // 'Mission'
         defaultTaskSubType: previousData.taskSubType, // ''
         defaultExecutionType: previousData.executionType,
-        defaultMissionDesc: toString(previousData.templetDesc),
+        defaultMissionDesc: previousData.templetDesc,
         defaultInitialValue: previousData.timelyIntervalValue,
         defaultServiceStrategySuggestion: previousData.serviceStrategySuggestion,
       });
     }
+  }
+
+  @autobind
+  getData() {
+    return this.taskFormInforRef.getMention();
   }
 
   // 从业务目标池客户：businessCustPool
@@ -265,6 +270,7 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorTaskType={isShowErrorTaskType}
             defaultTaskSubType={defaultTaskSubType}
             isShowErrorTaskSubType={isShowErrorTaskSubType}
+            ref={ref => (this.taskFormInforRef = ref)}
           />
         </div>
       </div>

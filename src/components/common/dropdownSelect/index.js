@@ -37,6 +37,8 @@ export default class DropdownSelect extends PureComponent {
     theme: PropTypes.string,
     // 是否可操作
     disable: PropTypes.bool,
+    // 默认搜索框值
+    defaultSearchValue: PropTypes.string,
   }
 
   static defaultProps = {
@@ -48,13 +50,14 @@ export default class DropdownSelect extends PureComponent {
     boxStyle: {},
     theme: 'theme1',
     disable: false,
+    defaultSearchValue: '',
   }
 
   constructor(props) {
     super(props);
     this.state = {
       // 查询信息
-      searchValue: '',
+      searchValue: props.defaultSearchValue,
       // 下拉选框是否展示
       isSHowModal: false,
       // 选中的值
@@ -80,9 +83,14 @@ export default class DropdownSelect extends PureComponent {
 
   get getSearchListDom() {
     const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
+    const { searchValue } = this.state;
     const result = searchList.map((item, index) => {
       const callBack = () => {
-        emitSelectItem(item);
+        // 多传一个默认输入值，有些场景下需要用到
+        emitSelectItem({
+          ...item,
+          searchValue,
+        });
         this.setState({
           isSHowModal: false,
           value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
@@ -152,10 +160,10 @@ export default class DropdownSelect extends PureComponent {
   render() {
     const { theme, disable } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
-      { [style.hide]: !this.state.isSHowModal },
+    { [style.hide]: !this.state.isSHowModal },
     ]);
     const ddsShowBoxClass = classnames([style.ddsShowBox,
-      { [style.active]: this.state.isSHowModal },
+    { [style.active]: this.state.isSHowModal },
     ]);
     const ddsShowBoxClass2 = classnames([
       style.ddsShowBox2,

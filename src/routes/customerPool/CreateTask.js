@@ -40,6 +40,7 @@ const mapStateToProps = state => ({
   approvalList: state.customerPool.approvalList,
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
+  creator: state.app.creator,
 });
 
 const mapDispatchToProps = {
@@ -74,6 +75,7 @@ export default class CreateTask extends PureComponent {
     // 新增
     templateId: PropTypes.string.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
+    creator: PropTypes.string,
   };
 
   static defaultProps = {
@@ -81,6 +83,7 @@ export default class CreateTask extends PureComponent {
     dict: {},
     createTaskResult: {},
     getApprovalListLoading: false,
+    creator: '',
   };
 
   constructor(props) {
@@ -170,7 +173,9 @@ export default class CreateTask extends PureComponent {
       getApprovalList,
       templateId,
       generateTemplateId,
+      creator,
     } = this.props;
+
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
       <div className={styles.taskBox}>
@@ -191,6 +196,7 @@ export default class CreateTask extends PureComponent {
             templateId={templateId}
             generateTemplateId={generateTemplateId}
             onCloseTab={this.handleCancleTab}
+            creator={creator}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

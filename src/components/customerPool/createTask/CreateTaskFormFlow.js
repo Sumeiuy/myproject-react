@@ -32,6 +32,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     // 新增
     templateId: PropTypes.string.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
+    creator: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -59,14 +60,16 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   @autobind
   parseQuery() {
-    const { location: { query: { ids, condition } } } = this.props;
+    const { location: { query: { ids = '', condition = {} } } } = this.props;
     let custCondition = {};
     let custIdList = null;
-    if (!_.isEmpty(ids)) {
-      custIdList = decodeURIComponent(ids).split(',');
-      custCondition = JSON.parse(decodeURIComponent(condition));
-    } else {
-      custCondition = JSON.parse(decodeURIComponent(condition));
+    if (!_.isEmpty(condition)) {
+      if (!_.isEmpty(ids)) {
+        custIdList = decodeURIComponent(ids).split(',');
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      } else {
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      }
     }
     return {
       custIdList,
@@ -102,6 +105,9 @@ export default class CreateTaskFormFlow extends PureComponent {
       isApprovalListLoadingEnd,
       onCancel,
       onCloseTab,
+      generateTemplateId,
+      templateId,
+      creator,
     } = this.props;
 
     return (
@@ -121,6 +127,9 @@ export default class CreateTaskFormFlow extends PureComponent {
           isShowApprovalModal={isShowApprovalModal}
           isApprovalListLoadingEnd={isApprovalListLoadingEnd}
           onCancel={onCancel}
+          generateTemplateId={generateTemplateId}
+          templateId={templateId}
+          creator={creator}
         />
       </div>
     );

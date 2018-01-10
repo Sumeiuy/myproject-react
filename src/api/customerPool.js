@@ -123,6 +123,9 @@ export default function customerPool(api) {
     // 查询一级指标数据
     queryIndicatorData: query => api.post('/groovynoauth/fsp/campaign/mot/queryTraceIndexDic', query),
 
+    // 查询产品接口
+    queryProduct: query => api.post('/groovynoauth/fsp/product/finprod/queryFinProductList', query),
+
     // 上传文件需要先上传uuid
     // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
 

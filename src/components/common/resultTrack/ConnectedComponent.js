@@ -20,14 +20,14 @@ const mapStateToProps = state => ({
   // 一级指标目标数据
   indicatorTargetData: state.customerPool.indicatorData,
   // 搜索出来的产品列表
-  searchedProductList: state.app.searchedProductList,
+  searchedProductList: state.customerPool.productList,
 });
 
 const mapDispatchToProps = {
-  // 搜索产品
-  onSearchProduct: fetchDataFunction(false, 'app/searchProduct'),
   // 查询一级指标数据
   queryIndicatorData: fetchDataFunction(true, 'customerPool/queryIndicatorData'),
+  // 查询产品
+  queryProduct: fetchDataFunction(true, 'customerPool/queryProduct'),
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({

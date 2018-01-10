@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-08 20:49:36
+ * @Last Modified time: 2018-01-10 21:01:13
  * 结果跟踪
  */
 
@@ -46,7 +46,7 @@ export default class ResultTrack extends PureComponent {
     // 搜索出来的产品列表
     searchedProductList: PropTypes.array,
     // 搜索产品
-    onSearchProduct: PropTypes.func,
+    queryProduct: PropTypes.func,
     // 选中某一个产品
     onSelectProductItem: PropTypes.func,
     // 是否选中结果跟踪
@@ -62,7 +62,7 @@ export default class ResultTrack extends PureComponent {
     isChecked: true,
     indicatorTargetData: [{}],
     searchedProductList: EMPTY_LIST,
-    onSearchProduct: () => { },
+    queryProduct: () => { },
     onSelectProductItem: () => { },
     queryIndicatorData: () => { },
     storedData: EMPTY_OBJECT,
@@ -83,12 +83,13 @@ export default class ResultTrack extends PureComponent {
       currentMin: 0,
       currentMax: 0,
       currentIndicatorDescription: '',
-      currentSelectedOperation: '',
+      currentSelectedOperationName: '',
+      currentSelectedOperationValue: '',
       originSelectedIndicator: {
         currentSelectedLevel1Indicator: defaultIndicatorValue,
         currentSelectedLevel2Indicator: '',
         currentUnit: '',
-        currentSelectedOperation: '',
+        currentSelectedOperationName: '',
         currentSelectedTrackDate: '',
         inputValue: '',
       },
@@ -96,6 +97,7 @@ export default class ResultTrack extends PureComponent {
       currentSelectedTrackDate: '30',
       currentSelectedOperationId: '',
       isProdBound: false,
+      currentSelectedProduct: {},
     };
   }
 
@@ -112,17 +114,11 @@ export default class ResultTrack extends PureComponent {
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { indicatorTargetData } = this.props;
-  //   const { indicatorTargetData: nextData } = nextProps;
-  //   console.log('-------------', nextData);
-  // }
-
   @autobind
   setDefaultState({
     level1Indicator,
     level2Indicator,
-    currentSelectedOperation,
+    currentSelectedOperationName,
     currentUnit,
     currentSelectedLevel2Indicator,
     currentSelectedLevel1Indicator,
@@ -135,6 +131,7 @@ export default class ResultTrack extends PureComponent {
     isProdBound,
     inputIndicator,
     isResultTrackChecked,
+    currentSelectedProduct,
     }) {
     const initialData = {
       inputValue: inputIndicator || '',
@@ -148,17 +145,16 @@ export default class ResultTrack extends PureComponent {
         key: item.key,
         value: item.name,
         id: item.key,
-        operation: item.value,
       })) : [{}],
       currentMin,
       currentMax,
       currentIndicatorDescription,
-      currentSelectedOperation,
+      currentSelectedOperationName,
       originSelectedIndicator: {
         currentSelectedLevel1Indicator,
         currentSelectedLevel2Indicator,
         currentUnit,
-        currentSelectedOperation,
+        currentSelectedOperationName,
         currentSelectedTrackDate,
         inputValue: inputIndicator || '',
       },
@@ -166,6 +162,7 @@ export default class ResultTrack extends PureComponent {
       currentSelectedTrackDate,
       currentSelectedOperationId,
       isProdBound,
+      currentSelectedProduct,
     };
 
     this.setState({
@@ -181,13 +178,13 @@ export default class ResultTrack extends PureComponent {
     // 先取一级指标的第一个，然后拿出一级指标对应的二级指标
     const { storedData = {} } = this.props;
     const { resultTrackData = {} } = storedData || {};
-    const { indicatorLevel1 } = resultTrackData || {};
+    const { indicatorLevel1Key } = resultTrackData || {};
 
     let firstIndicator = [];
     let children = [EMPTY_OBJECT];
     if (!_.isEmpty(indicatorTargetData)) {
       firstIndicator = _.find(indicatorTargetData, item =>
-        item.key === indicatorLevel1) || indicatorTargetData[0];
+        item.indexId === indicatorLevel1Key) || indicatorTargetData[0];
       children = firstIndicator.children;
     }
     return _.map(children, item => ({
@@ -199,7 +196,7 @@ export default class ResultTrack extends PureComponent {
       max: item.thresholdMax,
       isProdBound: item.isProdBound,
       traceOpList: item.traceOpList,
-      description: item.description,
+      indexRemark: item.indexRemark,
     }));
   }
 
@@ -244,9 +241,9 @@ export default class ResultTrack extends PureComponent {
     // // 跟踪窗口期
     // trackWindowDate,
     // // 一级指标
-    // indicatorLevel1,
+    // indicatorLevel1Key,
     //   // 二级指标
-    //   indicatorLevel2,
+    //   indicatorLevel2Key,
     //   // 产品编号
     //   productCode,
     //   // 产品名称
@@ -272,12 +269,11 @@ export default class ResultTrack extends PureComponent {
       currentSelectedLevel1Indicator,
       currentSelectedLevel2Indicator,
       currentSelectedOperationId = '',
-      currentSelectedOperation,
+      currentSelectedOperationName,
       currentUnit,
       inputValue = '',
       isProdBound,
-      productCode = '',
-      productName = '',
+      currentSelectedProduct,
       currentSelectedTrackDate,
       checked,
       level1Indicator,
@@ -295,30 +291,31 @@ export default class ResultTrack extends PureComponent {
     return {
       // 跟踪窗口期
       trackWindowDate: currentSelectedTrackDate,
-      // 一级指标
-      indicatorLevel1: indicatorLevel1.key || '',
-      // 二级指标
-      indicatorLevel2: indicatorLevel2.key || '',
+      // 一级指标key
+      indicatorLevel1Key: indicatorLevel1.key || '',
+      // 一级指标value
+      indicatorLevel1Value: currentSelectedLevel1Indicator || '',
+      // 二级指标key
+      indicatorLevel2Key: indicatorLevel2.key || '',
+      // 二级指标value
+      indicatorLevel2Value: currentSelectedLevel2Indicator || '',
       // 产品编号
-      productCode,
-      // 产品名称
-      productName,
+      currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey: currentSelectedOperationId,
       // 操作符name,展示用到，譬如达到/降到
-      operationValue: currentSelectedOperation,
+      operationValue: currentSelectedOperationName,
       // 当前输入的指标值
       inputIndicator: inputValue,
       // 单位
       unit: currentUnit,
-      // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      isHasState: currentSelectedOperationId === 'TRUE' || currentSelectedOperationId === 'OPEN',
+      // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善,开通，是
+      isHasState: this.judgeTraceOp(currentSelectedOperationId),
+      stateText: this.renderStateText(),
       // 是否有产品搜索
       isHasSearchedProduct: isProdBound,
       // 是否选中
       isResultTrackChecked: checked,
-      // 是否有输入情况
-      isNeedInput: !_.isEmpty(inputValue),
       currentMin,
       currentIndicatorDescription,
       currentMax,
@@ -338,15 +335,27 @@ export default class ResultTrack extends PureComponent {
         key: item.key,
         value: item.name,
         id: item.key,
-        operation: item.value,
       })) : [{}],
       currentMin: indicator.min,
       currentMax: indicator.max,
-      currentIndicatorDescription: indicator.description,
-      currentSelectedOperation: traceOpList[0].name,
+      currentIndicatorDescription: indicator.indexRemark,
+      currentSelectedOperationName: traceOpList[0].name,
+      currentSelectedOperationId: traceOpList[0].key,
       inputValue: '',
       isProdBound: indicator.isProdBound,
+      currentSelectedProduct: {},
     });
+  }
+
+  /**
+   * 判断当前操作符是否没有，只有开通，是，或者完善这种类型
+   * @param {*string} id id
+   */
+  @autobind
+  judgeTraceOp(id) {
+    return id === 'TRUE'
+      || id === 'OPEN'
+      || id === 'COMPLETE';
   }
 
   @autobind
@@ -360,46 +369,39 @@ export default class ResultTrack extends PureComponent {
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
-      indicatorLevel1,
+      indicatorLevel1Key,
       // 二级指标
-      indicatorLevel2,
-      // 产品编号
-      // productCode,
-      // 产品名称
-      // productName,
+      indicatorLevel2Key,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
-      // 操作符name,展示用到，譬如达到/降到
-      // operationValue,
       // 当前输入的指标值
       inputIndicator,
       // 单位
       unit,
-      // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      // isHasState,
       // 是否有产品搜索
       isHasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
-      // 是否有输入情况
-      // isNeedInput,
-      currentSelectedOperation,
+      operationValue,
       currentMin,
       currentMax,
       currentIndicatorDescription,
+      currentSelectedProduct = {},
     } = resultTrackData;
-    let currentSelectedOperationNew = currentSelectedOperation;
+
+    let currentSelectedOperationNew = operationValue;
     let currentSelectedLevel1Indicator = _.find(level1Indicator, item =>
-      item.key === indicatorLevel1) || {};
+      item.key === indicatorLevel1Key) || {};
     currentSelectedLevel1Indicator = currentSelectedLevel1Indicator.value || defaultIndicatorValue;
 
-    let currentSelectedLevel2Indicator = _.find(level2Indicator, item =>
-      item.key === indicatorLevel2) || {};
-    currentSelectedLevel2Indicator = currentSelectedLevel2Indicator.value
+    const currentSelectedLevel2 = _.find(level2Indicator, item =>
+      item.key === indicatorLevel2Key) || {};
+    const currentSelectedLevel2Indicator = currentSelectedLevel2.value
       || level2Indicator[0].value;
-    let traceOpList = currentSelectedLevel2Indicator.traceOpList;
+
+    let traceOpList = currentSelectedLevel2.traceOpList;
     let currentSelectedOperationId = operationKey;
-    const description = currentIndicatorDescription;
+    const indexRemark = currentIndicatorDescription;
 
     if (_.isEmpty(currentSelectedOperationNew)) {
       traceOpList = level2Indicator[0].traceOpList;
@@ -408,7 +410,7 @@ export default class ResultTrack extends PureComponent {
       }
 
       currentSelectedOperationNew = traceOpList[0].name;
-      currentSelectedOperationId = traceOpList[0].value;
+      currentSelectedOperationId = traceOpList[0].key;
     }
     const currentUnit = unit || level2Indicator[0].unit || '';
     const currentSelectedTrackDate = trackWindowDate || defaultTrackWindowDate;
@@ -416,7 +418,7 @@ export default class ResultTrack extends PureComponent {
     return {
       level1Indicator,
       level2Indicator,
-      currentSelectedOperation: currentSelectedOperationNew,
+      currentSelectedOperationName: currentSelectedOperationNew,
       currentUnit,
       currentSelectedLevel2Indicator,
       currentSelectedTrackDate,
@@ -428,7 +430,8 @@ export default class ResultTrack extends PureComponent {
       traceOpList,
       currentMin,
       currentMax,
-      currentIndicatorDescription: description || level2Indicator[0].description,
+      currentIndicatorDescription: indexRemark || level2Indicator[0].indexRemark,
+      currentSelectedProduct: currentSelectedProduct || {},
     };
   }
 
@@ -454,7 +457,7 @@ export default class ResultTrack extends PureComponent {
       max: item.thresholdMax,
       isProdBound: item.isProdBound,
       traceOpList: item.traceOpList,
-      description: item.description,
+      indexRemark: item.indexRemark,
     }));
     const currentLevel2Indicator = children[0];
 
@@ -493,7 +496,7 @@ export default class ResultTrack extends PureComponent {
       currentSelectedLevel1Indicator,
       currentSelectedLevel2Indicator,
       currentUnit,
-      currentSelectedOperation,
+      currentSelectedOperationName,
       currentSelectedTrackDate,
       inputValue,
       } = this.state;
@@ -501,7 +504,7 @@ export default class ResultTrack extends PureComponent {
       currentSelectedLevel1Indicator,
       currentSelectedLevel2Indicator,
       currentUnit,
-      currentSelectedOperation,
+      currentSelectedOperationName,
       currentSelectedTrackDate,
       inputValue,
     };
@@ -534,14 +537,15 @@ export default class ResultTrack extends PureComponent {
     const value = e.target.value;
     const { currentMin = 0, currentMax = 0 } = this.state;
     if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
-      if (Number(value) < currentMin) {
+      if (Number(value) < Number(currentMin)) {
         message.error('不能小于指标最小值');
+        return;
       }
 
-      if (Number(value) > currentMax) {
+      if (Number(value) > Number(currentMax)) {
         message.error('不能大于指标最大值');
+        return;
       }
-      return;
     }
 
     this.setState({
@@ -555,8 +559,8 @@ export default class ResultTrack extends PureComponent {
     const currentOperation = _.find(operationType, item =>
       item.value === value) || EMPTY_OBJECT;
     this.setState({
-      currentSelectedOperation: value,
-      currentSelectedOperationId: currentOperation.operation,
+      currentSelectedOperationName: currentOperation.name,
+      currentSelectedOperationId: currentOperation.key,
     });
   }
 
@@ -564,6 +568,23 @@ export default class ResultTrack extends PureComponent {
   handleTrackDateChange(value) {
     this.setState({
       currentSelectedTrackDate: value,
+    });
+  }
+
+  @autobind
+  handleSelectProductItem(value) {
+    console.log(value);
+    if (!_.isEmpty(value)) {
+      this.setState({
+        currentSelectedProduct: value,
+      });
+    }
+  }
+
+  @autobind
+  handleQueryProduct(value) {
+    this.props.queryProduct({
+      keyword: value,
     });
   }
 
@@ -575,11 +596,26 @@ export default class ResultTrack extends PureComponent {
     message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
   }
 
+  @autobind
+  renderStateText() {
+    let stateText = '';
+    const { operationType } = this.state;
+    if (!_.isEmpty(operationType)) {
+      if (operationType[0].key === 'TRUE') {
+        stateText = '是';
+      } else if (operationType[0].key === 'COMPLETE') {
+        stateText = '状态：完善';
+      } else if (operationType[0].key === 'OPEN') {
+        stateText = '状态：开通';
+      }
+    }
+
+    return stateText;
+  }
+
   render() {
     const {
       searchedProductList,
-      onSearchProduct,
-      onSelectProductItem,
     } = this.props;
 
     const {
@@ -592,13 +628,21 @@ export default class ResultTrack extends PureComponent {
       currentIndicatorDescription,
       currentSelectedLevel1Indicator,
       currentSelectedLevel2Indicator,
-      currentSelectedOperation,
+      currentSelectedOperationValue,
       level1Indicator,
       level2Indicator,
       isDataChanged,
       currentSelectedTrackDate,
       isProdBound,
+      currentSelectedProduct,
      } = this.state;
+
+    const stateText = this.renderStateText();
+
+    let currentSelectProductValue = '请输入产品';
+    if (!_.isEmpty(currentSelectedProduct)) {
+      currentSelectProductValue = `${currentSelectedProduct.aliasName || ''}${currentSelectedProduct.name ? `(${currentSelectedProduct.name || ''})` : ''}`;
+    }
 
     return (
       <div className={styles.resultTrackContainer}>
@@ -662,32 +706,34 @@ export default class ResultTrack extends PureComponent {
                       isProdBound ? <div className={styles.indicatorLevel3}>
                         <DropdownSelect
                           theme="theme2"
-                          showObjKey="productName"
-                          objId="productCode"
+                          value={currentSelectProductValue}
+                          showObjKey="aliasName"
+                          objId="name"
                           placeholder="产品编码/产品名称"
                           name="产品"
                           disable={!checked}
-                          value={'请搜索产品'}
                           searchList={searchedProductList}
-                          emitSelectItem={onSelectProductItem}
-                          emitToSearch={onSearchProduct}
+                          emitSelectItem={this.handleSelectProductItem}
+                          emitToSearch={this.handleQueryProduct}
+                          defaultSearchValue={currentSelectedProduct.searchValue || ''}
                         />
                       </div> : null
                     }
 
                     {/**
-                     * 如果operation是TRUE或者OPEN,不需要输入框，也不需要单位，只需要显示一个状态：完善/开通/是
+                     * 如果operation是TRUE或者OPEN或者COMPLETE,不需要输入框，也不需要单位，
+                     * 只需要显示一个状态：完善/开通/是
                      */}
                     {
                       ((!_.isEmpty(operationType)
                         && !_.isEmpty(operationType[0])
                         && _.isArray(operationType)
                         && _.size(operationType) === 1
-                        && (operationType[0].operation === 'TRUE'
-                          || operationType[0].operation === 'OPEN')) || (_.isEmpty(operationType[0])))
+                        && (operationType[0].key === 'TRUE'
+                          || operationType[0].key === 'OPEN'
+                          || operationType[0].key === 'COMPLETE')) || (_.isEmpty(operationType[0])))
                         ? <div className={styles.hasStateIndicator}>
-                          <span>状态：</span>
-                          <span>{operationType[0].value}</span>
+                          <span>{stateText}</span>
                         </div> :
                         <div className={styles.noStateIndicator}>
                           <div className={styles.condition}>
@@ -695,7 +741,7 @@ export default class ResultTrack extends PureComponent {
                               (_.isArray(operationType) && _.size(operationType) > 1) ?
                                 <Select
                                   disabled={!checked}
-                                  value={currentSelectedOperation}
+                                  value={currentSelectedOperationValue}
                                   onChange={this.handleOperationChange}
                                   className={classnames({
                                     [styles.operationSelect]: true,
@@ -736,10 +782,13 @@ export default class ResultTrack extends PureComponent {
             </div>
           </div>
         </div>
-        <div className={styles.indicatorDescription}>
-          <span>总净资产：</span>
-          <span>{currentIndicatorDescription}</span>
-        </div>
+        {
+          currentSelectedLevel1Indicator !== defaultIndicatorValue ?
+            <div className={styles.indicatorDescription}>
+              <span>总净资产：</span>
+              <span>{currentIndicatorDescription}</span>
+            </div> : null
+        }
         {
           (!checked && isDataChanged) ?
             this.renderCheckWarning()

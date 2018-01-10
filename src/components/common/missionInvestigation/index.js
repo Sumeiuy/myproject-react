@@ -66,7 +66,7 @@ export default class MissionInvestigation extends PureComponent {
     if (!_.isEmpty(idList)) {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
-          questionId++,
+          ++questionId,
           isMissionInvestigationChecked,
           questionList[index].quesValue,
         ));
@@ -77,7 +77,13 @@ export default class MissionInvestigation extends PureComponent {
       // 默认任务调查不选中
       checked: isMissionInvestigationChecked,
       newQuestionAndAnswerGroup,
-      currentSelectedQuestionIdList: idList,
+      currentSelectedQuestionIdList: _.map(questionList, (item, index) => {
+        const id = index + 1;
+        return {
+          key: `question_${id}`,
+          value: item.quesId,
+        };
+      }),
       questionList: list || [],
       questionId,
     };

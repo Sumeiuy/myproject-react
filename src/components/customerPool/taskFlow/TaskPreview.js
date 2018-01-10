@@ -2,12 +2,12 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-08 21:42:36
+ * @Last Modified time: 2018-01-10 21:24:10
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Icon, Mention } from 'antd';
+import { Input, Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -17,8 +17,6 @@ import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
 import styles from './taskPreview.less';
-
-const { toString } = Mention;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -50,7 +48,7 @@ export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
-    currentEntry: PropTypes.string.isRequired,
+    currentEntry: PropTypes.number,
     getApprovalList: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired,
     taskTypes: PropTypes.array.isRequired,
@@ -62,11 +60,13 @@ export default class TaskPreview extends PureComponent {
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    creator: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     isNeedApproval: false,
+    currentEntry: 0,
   };
 
   constructor(props) {
@@ -192,6 +192,7 @@ export default class TaskPreview extends PureComponent {
       onSingleRowSelectionChange,
       onRowSelectionChange,
       isApprovalListLoadingEnd,
+      creator,
     } = this.props;
     const {
       taskFormData = EMPTY_OBJECT,
@@ -199,9 +200,13 @@ export default class TaskPreview extends PureComponent {
       custSegment = EMPTY_OBJECT,
       resultTrackData = EMPTY_OBJECT,
       missionInvestigationData = EMPTY_OBJECT,
+      custSource,
+      custTotal,
     } = storedData;
 
     let finalData = {
+      custSource,
+      custTotal,
       ...resultTrackData,
       ...missionInvestigationData,
       ...taskFormData,
@@ -230,18 +235,15 @@ export default class TaskPreview extends PureComponent {
       taskName,
       taskType,
       templetDesc,
-      custTotal,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
-      indicatorLevel1,
+      indicatorLevel1Value,
       // 二级指标
-      indicatorLevel2,
-      // 产品编号
-      // productCode,
+      indicatorLevel2Value,
       // 产品名称
-      productName,
+      currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       // operationKey,
       // 操作符name,展示用到，譬如达到/降到
@@ -256,21 +258,19 @@ export default class TaskPreview extends PureComponent {
       isHasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
-      // 是否有输入情况
-      isNeedInput,
       // 是否来自瞄准镜标签
       isSelectCustFromSightLabel,
       // 瞄准镜标签条件
       sightLabelCondition,
       // 圈人规则
       sightLabelRule,
-      // 创建人
-      creator,
       // 是否选中
       isMissionInvestigationChecked,
       // 选择的问题List
       questionList,
-      custSource,
+      stateText,
+      custSource: custSourceEntry,
+      custTotal: totalCount,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -306,12 +306,15 @@ export default class TaskPreview extends PureComponent {
             <div className={styles.taskSection}>
               <div>
                 <div>客户来源：</div>
-                <div>{custSource}</div>
+                <div>{custSource || custSourceEntry}</div>
               </div>
-              <div>
-                <div>标签描述：</div>
-                <div>{labelDesc || '--'}</div>
-              </div>
+              {
+                currentEntry === 1 ?
+                  <div>
+                    <div>标签描述：</div>
+                    <div>{labelDesc || '--'}</div>
+                  </div> : null
+              }
             </div>
             {
               isSelectCustFromSightLabel ?
@@ -331,7 +334,7 @@ export default class TaskPreview extends PureComponent {
               <div>
                 <div>客户数量：</div>
                 {
-                  <div>{custTotal || custNum || 0}户</div>
+                  <div>{custTotal || custNum || totalCount || 0}户</div>
                   // : <div>{custNum || 0}户</div>
                 }
               </div>
@@ -405,7 +408,7 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>{!_.isEmpty(templetDesc) ? toString(templetDesc) : '--'}</div>
+              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
             </div>
           </div>
         </div>
@@ -417,15 +420,16 @@ export default class TaskPreview extends PureComponent {
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
                   <div>跟踪窗口期：</div>
-                  <div>{trackWindowDate || '--'}</div>
+                  <div>{`${trackWindowDate}天` || '--'}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>指标目标：</div>
                   <div>
-                    {`${indicatorLevel1 || ''}${indicatorLevel2 || ''}
-                      ${isHasSearchedProduct ? productName : ''}
-                      ${!isHasState ? `${operationValue || ''}
-                      ${isNeedInput ? inputIndicator : '' || ''}${unit || ''}` : `状态：${operationValue || ''}`}` || '--'
+                    {
+                      `${indicatorLevel1Value || ''}${indicatorLevel2Value || ''}
+                      ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
+                      ${!isHasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
+                        : stateText}` || '--'
                     }
                   </div>
                 </div>

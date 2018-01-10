@@ -35,7 +35,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       [prefix + '/groovynoauth/fsp/emp']: {
-        target: 'http://168.61.8.81:5090', // DOClever
+        // target: 'http://168.61.8.81:5090', // DOClever
+        target: 'http://168.61.8.81:5086', // SIT
       },
       [prefix + '/groovynoauth/fsp/assess/common']: {
         // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址

@@ -117,6 +117,8 @@ export default {
     indicatorData: [],
     // 当前rukou
     currentEntry: 0,
+    // 产品列表
+    productList: [],
   },
 
   subscriptions: {
@@ -724,6 +726,14 @@ export default {
         payload: resultData,
       });
     },
+    // 搜索产品列表
+    * queryProduct({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryProduct, payload);
+      yield put({
+        type: 'queryProductDataSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1239,10 +1249,10 @@ export default {
     },
     // 生成问卷模板id成功
     generateTemplateIdSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        templateId: resultData,
+        templateId: payload,
       };
     },
     // 查询指标数据
@@ -1251,6 +1261,14 @@ export default {
       return {
         ...state,
         indicatorData: payload,
+      };
+    },
+    // 查询产品列表成功
+    queryProductDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        productList: payload,
       };
     },
   },

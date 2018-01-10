@@ -37,14 +37,23 @@ export default {
     deleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
+    // 创建者,姓名（工号）
+    creator: '',
   },
   reducers: {
     // 获取员工职责与职位
     getEmpInfoSuccess(state, action) {
       const { payload } = action;
+      const { empInfo = {} } = payload;
+      let creator = '';
+      if (empInfo) {
+        creator = `${empInfo.empName}(${empInfo.login})`;
+      }
+
       return {
         ...state,
         empInfo: payload,
+        creator,
       };
     },
     // 获取已申请客户列表

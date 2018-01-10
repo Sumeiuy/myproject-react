@@ -65,18 +65,21 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-        & > .timelyIntervalValueItem {
-        :global {
-          .ant-input-number-input:after {
-            margin-left: 10px;
-            content: '有效期自任务审批通过后开始计算';
-            display: inline-block;
-          }
-          .tip {
-            margin-left: 10px;
+        .ant-input-number-input-wrap {
+          line-height: 30px;
+        }
+        .timelyIntervalValueItem {
+          :global {
+            .ant-input-number-input:after {
+              margin-left: 10px;
+              content: '有效期自任务审批通过后开始计算';
+              display: inline-block;
+            }
+            .tip {
+              margin-left: 10px;
+            }
           }
         }
-      }
       }
       .hint {
         position: absolute;

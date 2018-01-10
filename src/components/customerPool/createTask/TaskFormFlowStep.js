@@ -1,12 +1,12 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-09 15:45:31
+ * @Last Modified time: 2018-01-10 21:57:48
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Mention, message } from 'antd';
+import { Button, message, Steps } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
@@ -18,7 +18,8 @@ import ResultTrack from '../../../components/common/resultTrack/ConnectedCompone
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import styles from './taskFormFlowStep.less';
 
-const { toString } = Mention;
+// const { toString } = Mention;
+const Step = Steps.Step;
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -39,6 +40,7 @@ export default class TaskFormFlowStep extends PureComponent {
     templateId: PropTypes.string.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
+    creator: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -86,7 +88,7 @@ export default class TaskFormFlowStep extends PureComponent {
       };
     } else if (current === 1) {
       previousData = {
-        taskFormData,
+        ...taskFormData,
       };
     }
 
@@ -141,9 +143,9 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source, count } },
     } = this.props;
 
-    let isResultTrackValidate = false;
-    let isMissionInvestigationValidate = false;
-    let isFormValidate = false;
+    let isResultTrackValidate = true;
+    let isMissionInvestigationValidate = true;
+    let isFormValidate = true;
     let resultTrackData = storedCreateTaskData.resultTrackData || {};
     let missionInvestigationData = storedCreateTaskData.missionInvestigationData || {};
     let taskFormData = storedCreateTaskData.taskFormData || {};
@@ -152,7 +154,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     if (current === 0) {
       // 当前是第一步,校验表单信息
-      this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
+      this.createTaskForm.validateFields((err, values) => {
         let isFormError = false;
         if (!_.isEmpty(err)) {
           isFormError = true;
@@ -160,24 +162,42 @@ export default class TaskFormFlowStep extends PureComponent {
         }
         const formDataValidation = this.saveFormContent({ ...values, isFormError });
         if (formDataValidation) {
-          taskFormData = this.createTaskForm.getWrappedInstance().getFieldsValue();
+          taskFormData = {
+            ...taskFormData,
+            ...this.createTaskForm.getFieldsValue(),
+          };
           isFormValidate = true;
+        } else {
+          isFormValidate = false;
         }
       });
+      // 校验任务提示
+      const templetDesc = this.createTaskForm.refs
+        .wrappedComponent.refs.formWrappedComponent.getData();
+      taskFormData = { ...taskFormData, templetDesc };
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
+        isFormValidate = false;
+        this.setState({
+          isShowErrorInfo: true,
+        });
+      } else {
+        this.setState({
+          isShowErrorInfo: false,
+        });
+      }
     } else if (current === 1) {
       // 当前是第二步，校验结果跟踪和任务调查数据
-      resultTrackData = this.resultTrackRef.getWrappedInstance().getData();
+      resultTrackData = {
+        ...resultTrackData,
+        ...this.resultTrackRef.getWrappedInstance().getData(),
+      };
       const {
         // 跟踪窗口期
         // trackWindowDate,
         // 一级指标
-        indicatorLevel1,
+        indicatorLevel1Key,
         // 二级指标
-        indicatorLevel2,
-        // 产品编号
-        productCode,
-        // 产品名称
-        // productName,
+        indicatorLevel2Key,
         // 操作符key,传给后台,譬如>=/<=
         // operationKey,
         // 操作符name,展示用到，譬如达到/降到
@@ -193,22 +213,29 @@ export default class TaskFormFlowStep extends PureComponent {
         // 是否选中
         isResultTrackChecked,
         // 是否有输入情况
-        isNeedInput,
+        isHasState,
+        currentSelectedProduct,
       } = resultTrackData;
       // if (!isResultTrackChecked) {
       //   message.error('请勾选结果跟踪');
       // } else
       if (isResultTrackChecked) {
-        if (_.isEmpty(indicatorLevel1)) {
-          message.error('请选择一级指标');
-        } else if (_.isEmpty(indicatorLevel2)) {
-          message.error('请选择二级指标');
-        } else if (isHasSearchedProduct && _.isEmpty(productCode)) {
-          message.error('请选择一个产品');
-        } else if (isNeedInput && _.isEmpty(inputIndicator)) {
-          message.error('请输入指标目标值');
-        } else {
+        let errMsg = '';
+        if (_.isEmpty(indicatorLevel1Key)) {
+          errMsg = '请选择一级指标';
+        } else if (_.isEmpty(indicatorLevel2Key)) {
+          errMsg = '请选择二级指标';
+        } else if (isHasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
+          errMsg = '请选择一个产品';
+        } else if (!isHasState && _.isEmpty(inputIndicator)) {
+          errMsg = '请输入指标目标值';
+        }
+
+        if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
+        } else {
+          message.error(errMsg);
+          isResultTrackValidate = false;
         }
       } else {
         isResultTrackValidate = true;
@@ -216,7 +243,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
       // 拥有审批人权限，才能展示任务调查
       if (this.isHasAuthorize) {
-        missionInvestigationData = this.missionInvestigationRef.getWrappedInstance().getData();
+        missionInvestigationData = {
+          ...missionInvestigationData,
+          ...this.missionInvestigationRef.getWrappedInstance().getData(),
+        };
         const {
           // 是否选中
           isMissionInvestigationChecked,
@@ -273,6 +303,7 @@ export default class TaskFormFlowStep extends PureComponent {
       parseQuery,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
+      location: { query: { groupId, enterType, source } },
     } = this.props;
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
@@ -285,8 +316,13 @@ export default class TaskFormFlowStep extends PureComponent {
     let req = {};
     if (entrance === 'managerView') {
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
+    } else if (source === 'custGroupList') {
+      req = {
+        enterType,
+        groupId,
+      };
     } else {
-      req = { searchReq: custCondition };
+      req = { searchReq: custCondition, custIdList };
     }
 
     const {
@@ -307,19 +343,17 @@ export default class TaskFormFlowStep extends PureComponent {
       serviceStrategySuggestion,
       taskName,
       taskType,
-      taskSubType,
+      // taskSubType,
       templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
-      indicatorLevel1,
+      indicatorLevel1Key,
       // 二级指标
-      indicatorLevel2,
+      indicatorLevel2Key,
       // 产品编号
-      productCode,
-      // 产品名称
-      // productName,
+      currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
       // 操作符name,展示用到，譬如达到/降到
@@ -334,31 +368,24 @@ export default class TaskFormFlowStep extends PureComponent {
       isHasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
-      // 是否有输入情况
-      isNeedInput,
-
       // 是否选中
       isMissionInvestigationChecked,
       // 选择的问题List
       // questionList,
     } = finalData;
 
-    // 初始化post入参，包括基本信息和任务子类型，和客户列表
     let postBody = {
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: toString(templetDesc),
+      templetDesc,
       timelyIntervalValue,
-      // 任务子类型
-      taskSubType,
-      flowAuditorId,
-      custIdList,
+      // // 任务子类型
+      // taskSubType,
       ...req,
     };
 
-    // 如果需要审批，则添加审批人Id
     if (this.isHasAuthorize) {
       postBody = {
         ...postBody,
@@ -366,25 +393,40 @@ export default class TaskFormFlowStep extends PureComponent {
       };
     }
 
-    // 如果有任务调查
     if (isResultTrackChecked) {
       postBody = {
         ...postBody,
-        unit: !isHasState ? unit : null,
-        operationKey,
-        inputIndicator: isNeedInput ? inputIndicator : null,
-        trackWindowDate,
-        indicatorLevel1,
-        indicatorLevel2,
-        productCode: isHasSearchedProduct ? productCode : null,
+        resultTraceReq: {
+          traceOp: operationKey || '',
+          traceTime: trackWindowDate,
+          indexId: indicatorLevel1Key,
+          indexCateId: indicatorLevel2Key,
+        },
       };
+      if (isHasSearchedProduct) {
+        postBody = _.merge(postBody, {
+          resultTraceReq: {
+            financialProductId: currentSelectedProduct.name,
+          },
+        });
+      }
+      if (!isHasState) {
+        postBody = _.merge(postBody, {
+          resultTraceReq: {
+            indexUnit: unit,
+            value: inputIndicator,
+          },
+        });
+      }
     }
 
     if (this.isHasAuthorize && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
-        templateId,
+        missionSurveyReq: {
+          templateId,
+        },
       };
     }
 
@@ -443,6 +485,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowApprovalModal,
       onCancel,
       location: { query: { missionType } },
+      creator,
     } = this.props;
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
@@ -466,13 +509,13 @@ export default class TaskFormFlowStep extends PureComponent {
       content: <div>
         <ResultTrack
           ref={ref => (this.resultTrackRef = ref)}
-          storedData={previousData}
+          storedData={storedCreateTaskData}
         />
         {
           this.isHasAuthorize ?
             <MissionInvestigation
               ref={ref => (this.missionInvestigationRef = ref)}
-              storedData={previousData}
+              storedData={storedCreateTaskData}
             /> :
             null
         }
@@ -494,13 +537,16 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
+        creator={creator}
       />,
     }];
 
     const stepsCount = _.size(steps);
     return (
       <div className={styles.taskFlowContainer}>
-
+        <Steps current={current} className={styles.stepsSection}>
+          {_.map(steps, item => <Step key={item.title} title={item.title} />)}
+        </Steps>
         <div className={styles.stepsContent}>
           {steps[current].content}
         </div>

@@ -31,7 +31,7 @@ export default class TaskFormInfo extends PureComponent {
     form: PropTypes.object.isRequired,
     defaultMissionName: PropTypes.string.isRequired,
     defaultMissionType: PropTypes.string.isRequired,
-    defaultExecutionType: PropTypes.string.isRequired,
+    defaultExecutionType: PropTypes.string,
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
     defaultInitialValue: PropTypes.number,
@@ -55,6 +55,7 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorTaskType: false,
     isShowErrorExcuteType: false,
     isShowErrorTaskSubType: false,
+    defaultExecutionType: '',
   }
 
   constructor(props) {
@@ -77,6 +78,7 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskSubType,
       taskSubTypes: currentTaskSubTypeCollection,
+      currentMention: toContentState(props.defaultMissionDesc || ''),
     };
   }
 
@@ -91,6 +93,7 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType, isShowErrorTaskSubType,
      } = this.props;
+
     if (nextError !== isShowErrorInfo) {
       this.setState({
         isShowErrorInfo: nextError,
@@ -124,29 +127,10 @@ export default class TaskFormInfo extends PureComponent {
     return currentTaskSubTypeCollection;
   }
 
-  handleSearchChange = (value, trigger) => {
-    const { users } = this.props;
-    const searchValue = value.toLowerCase();
-    const dataSource = _.includes(PREFIX, trigger) ? users : {};
-    const filtered = dataSource.filter(item =>
-      item.name.toLowerCase().indexOf(searchValue) !== -1,
-    );
-    const suggestions = filtered.map(suggestion => (
-      <Nav
-        value={suggestion.type}
-        data={suggestion}
-      >
-        <span>{suggestion.name}</span>
-      </Nav>
-    ));
-    this.setState({ suggestions });
+  @autobind
+  getMention() {
+    return toString(this.state.currentMention);
   }
-
-  // @autobind
-  // handleSelect(suggestion, data) {
-  //   console.log('onSelect', typeof suggestion, 'data', data);
-  // }
-
 
   @autobind
   handleTaskTypeChange(value) {
@@ -193,9 +177,9 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  checkMention = (rule, value, callback) => {
+  checkMention = (editorState) => {
+    const content = toString(editorState);
     if (!this.isFirstLoad) {
-      const content = toString(value);
       if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
         this.setState({
           isShowErrorInfo: true,
@@ -206,7 +190,27 @@ export default class TaskFormInfo extends PureComponent {
         });
       }
     }
-    callback();
+    this.setState({
+      currentMention: editorState,
+    });
+  }
+
+  handleSearchChange = (value, trigger) => {
+    const { users } = this.props;
+    const searchValue = value.toLowerCase();
+    const dataSource = _.includes(PREFIX, trigger) ? users : {};
+    const filtered = dataSource.filter(item =>
+      item.name.toLowerCase().indexOf(searchValue) !== -1,
+    );
+    const suggestions = filtered.map(suggestion => (
+      <Nav
+        value={suggestion.type}
+        data={suggestion}
+      >
+        <span>{suggestion.name}</span>
+      </Nav>
+    ));
+    this.setState({ suggestions });
   }
 
   @autobind
@@ -241,7 +245,6 @@ export default class TaskFormInfo extends PureComponent {
     const { suggestions } = this.state;
     return (
       getFieldDecorator('templetDesc', {
-        rules: [{ validator: this.checkMention }],
         initialValue: toContentState(defaultMissionDesc),
       })(
         <div className={styles.wrapper}>
@@ -255,8 +258,10 @@ export default class TaskFormInfo extends PureComponent {
             getSuggestionContainer={() => this.fatherMention}
             onBlur={this.handleMentionBlur}
             multiLines
+            onChange={this.checkMention}
+            value={this.state.currentMention}
           />
-          <span className={styles.insert}>插入参数</span>
+          {/* <span className={styles.insert}>插入参数</span> */}
         </div>,
       )
     );
@@ -358,6 +363,7 @@ export default class TaskFormInfo extends PureComponent {
                 :
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...taskTypeErrorSelectProps}
                 >
                   <Select defaultValue="暂无数据">
                     <Option key="null" value="0">暂无数据</Option>
@@ -387,6 +393,7 @@ export default class TaskFormInfo extends PureComponent {
                 :
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...taskSubTypeErrorSelectProps}
                 >
                   <Select defaultValue="暂无数据">
                     <Option key="null" value="0">暂无数据</Option>
@@ -416,6 +423,7 @@ export default class TaskFormInfo extends PureComponent {
                 :
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...excuteTypeErrorSelectProps}
                 >
                   <Select defaultValue="暂无数据">
                     <Option key="null" value="0">暂无数据</Option>
