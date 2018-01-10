@@ -64,12 +64,12 @@ export default class ServerPersonel extends PureComponent {
 
   // 权重改变
   @autobind
-  handleChangeWeight(empId, dataIndex, value) {
+  handleChangeWeight(activeLogin, dataIndex, value) {
     if (!_.isNumber(Number(value)) || value <= 0 || value > 100) {
       message.error('您输入的权重值为0到100的数值，可以为100，但是不能为0');
     } else {
       const dataSource = [...this.state.serverInfo];
-      const target = dataSource.find(item => item.empId === empId);
+      const target = dataSource.find(item => item.activeLogin === activeLogin);
       console.warn('target', target);
       if (target) {
         console.warn('value', value);
@@ -83,10 +83,10 @@ export default class ServerPersonel extends PureComponent {
 
   // 移除新开发经理人员按钮
   @autobind
-  onDeleteServerPerson(empId) {
+  onDeleteServerPerson(activeLogin) {
     const serverInfo = [...this.state.serverInfo];
     this.setState({
-      serverInfo: serverInfo.filter(item => item.empId !== empId),
+      serverInfo: serverInfo.filter(item => item.activeLogin !== activeLogin),
     });
   }
 
@@ -109,49 +109,49 @@ export default class ServerPersonel extends PureComponent {
   constructTableColumns() {
     const columns = [
       {
-        dataIndex: 'empId',
-        key: 'empId',
+        dataIndex: 'activeLogin',
+        key: 'activeLogin',
         title: '工号',
       },
       {
-        dataIndex: 'empName',
-        key: 'empName',
+        dataIndex: 'activeLastName',
+        key: 'activeLastName',
         title: '姓名',
       },
       {
-        dataIndex: 'orgName',
-        key: 'orgName',
+        dataIndex: 'deptName',
+        key: 'deptName',
         title: '部门',
       },
       {
-        dataIndex: 'postnName',
-        key: 'poatnName',
+        dataIndex: 'positionName',
+        key: 'positionName',
         title: '职位',
       },
       {
-        dataIndex: 'weight',
-        key: 'weight',
+        dataIndex: 'weigh',
+        key: 'weigh',
         title: '权重',
         render: (text, record) => {
           console.warn('text', text);
           return (
             <Input
               value={text}
-              onChange={e => this.handleChangeWeight(record.empId, 'weight', e.target.value)}
+              onChange={e => this.handleChangeWeight(record.activeLogin, 'weigh', e.target.value)}
             />
           );
         },
       },
       {
-        dataIndex: 'isRugang',
-        key: 'isRugang',
+        dataIndex: 'tgFlag',
+        key: 'tgFlag',
         title: '是否入岗投顾',
       },
       {
         title: '操作',
         dataIndex: 'operation',
         render: (text, record) => (
-          <Popconfirm title="确定删除该开发经理?" onConfirm={() => this.onDeleteServerPerson(record.empId)}>
+          <Popconfirm title="确定删除该开发经理?" onConfirm={() => this.onDeleteServerPerson(record.activeLogin)}>
             <Icon type="shanchu" />
           </Popconfirm>
           ),
@@ -173,8 +173,8 @@ export default class ServerPersonel extends PureComponent {
               value="工号/名称"
               placeholder="请输入姓名或工号"
               searchList={addEmpList}
-              showObjKey="empName"
-              objId="empId"
+              showObjKey="activeLastName"
+              objId="activeLogin"
               emitSelectItem={this.dropdownSelectedItem}
               emitToSearch={this.dropdownToSearchInfo}
               boxStyle={{ border: '1px solid #d9d9d9' }}

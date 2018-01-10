@@ -15,7 +15,6 @@ export default {
   state: {
     detailInfo: EMPTY_OBJECT, // 详情
     createDevelopRelationship: EMPTY_OBJECT, // 获取创建开发关系认定申请的结果
-    createCustList: EMPTY_LIST, // 查询可申请开发关系认定的客户
     isValidCust: EMPTY_OBJECT, // 查询可申请开发关系认定的客户是否可用
     oldDevelopTeamList: EMPTY_LIST, // 原开发团队
     addEmpList: EMPTY_LIST, // 查询可添加新开发团队服务经理的接口
@@ -34,14 +33,6 @@ export default {
       return {
         ...state,
         createDevelopRelationship: resultData,
-      };
-    },
-    getCreateCustListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { custList = EMPTY_LIST } = resultData;
-      return {
-        ...state,
-        createCustList: custList,
       };
     },
     getIsValidCustSuccess(state, action) {
@@ -98,14 +89,6 @@ export default {
         });
         message.success('私密客户创建成功！');
       }
-    },
-    // 查询可申请开发关系认定的客户
-    * getCreateCustList({ payload }, { call, put }) {
-      const response = yield call(api.getCreateCust, payload);
-      yield put({
-        type: 'getCreateCustListSuccess',
-        payload: response,
-      });
     },
     // 查询可申请开发关系认定的客户是否可用
     * getIsValidCust({ payload }, { call, put }) {

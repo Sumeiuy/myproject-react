@@ -32,10 +32,6 @@ export default class BaseInfoModify extends PureComponent {
     });
   }
 
-  // componentWillReceiveProps(newProps) {
-
-  // }
-
   @autobind
   changeRemarks(value) {
     // 更改备注信息

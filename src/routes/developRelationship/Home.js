@@ -41,7 +41,7 @@ const mapStateToProps = state => ({
   // 新建开发关系认定
   createDevelopRelationship: state.developRelationship.createDevelopRelationship,
   // 可申请开发关系认定的客户
-  createCustList: state.developRelationship.createCustList,
+  createCustList: state.app.canApplyCustList,
   // 可申请开发关系认定的客户是否可用
   isValidCust: state.developRelationship.isValidCust,
   // 原开发团队
@@ -65,7 +65,7 @@ const mapDispatchToProps = {
   // 新建接口
   getCreateDevelopRelationship: fetchDataFunction(true, 'developRelationship/getCreateDevelopRelationship'),
   // 获取可申请开发关系认定的客户
-  getCreateCustList: fetchDataFunction(false, 'developRelationship/getCreateCustList'),
+  getCreateCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 获取可申请开发关系认定的客户是否可用
   getIsValidCust: fetchDataFunction(false, 'developRelationship/getIsValidCust'),
   // 获取原开发团队

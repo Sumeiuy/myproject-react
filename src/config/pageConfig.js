@@ -909,33 +909,33 @@ const pageConfig = {
     ],
     developTeamTableHeader: [ // 开发团队表头
       {
-        dataIndex: 'empId',
-        key: 'empId',
+        dataIndex: 'activeLogin',
+        key: 'activeLogin',
         title: '工号',
       },
       {
-        dataIndex: 'empName',
-        key: 'empName',
+        dataIndex: 'activeLastName',
+        key: 'activeLastName',
         title: '姓名',
       },
       {
-        dataIndex: 'orgName',
-        key: 'orgName',
+        dataIndex: 'deptName',
+        key: 'deptName',
         title: '部门',
       },
       {
-        dataIndex: 'postnName',
-        key: 'poatnName',
+        dataIndex: 'positionName',
+        key: 'positionName',
         title: '职位',
       },
       {
-        dataIndex: 'weight',
-        key: 'weight',
+        dataIndex: 'weigh',
+        key: 'weigh',
         title: '权重',
       },
       {
-        dataIndex: 'isRugang',
-        key: 'isRugang',
+        dataIndex: 'tgFlag',
+        key: 'tgFlag',
         title: '是否入岗投顾',
       },
     ],
@@ -954,6 +954,21 @@ const pageConfig = {
         show: true,
         length: 0,
         required: false,
+      },
+    ],
+    approvalColumns: [
+      {
+        title: '工号',
+        dataIndex: 'login',
+        key: 'login',
+      }, {
+        title: '姓名',
+        dataIndex: 'empName',
+        key: 'empName',
+      }, {
+        title: '所属营业部',
+        dataIndex: 'occupation',
+        key: 'occupation',
       },
     ],
   },

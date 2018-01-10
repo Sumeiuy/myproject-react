@@ -19,23 +19,8 @@ import styles from './createNewApprovalBoard.less';
 const {
   developTeamTableHeader, // 原开发团队表头
   attachmentMap,  // 附件类型数组
+  approvalColumns, // 审批人列表表头
 } = seibelConfig.developRelationship;
-const columns = [
-  {
-    title: '工号',
-    dataIndex: 'login',
-    key: 'login',
-  }, {
-    title: '姓名',
-    dataIndex: 'empName',
-    key: 'empName',
-  }, {
-    title: '所属营业部',
-    dataIndex: 'occupation',
-    key: 'occupation',
-  },
-];
-const overFlowBtnId = 118006; // 终止按钮的flowBtnId
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -120,14 +105,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 填写备注
-  @autobind
-  handleChangeRemark(e) {
-    this.setState({
-      remark: e.target.value,
-    });
-  }
-
   // 清空弹出层数据
   @autobind
   clearBoardAllData() {
@@ -135,9 +112,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
     that.setState({ isShowModal: false });
   }
 
+    @autobind
+    afterClose() {
+      this.props.onEmitClearModal('isShowCreateModal');
+    }
+
+  // 填写备注
   @autobind
-  afterClose() {
-    this.props.onEmitClearModal('isShowCreateModal');
+  handleChangeRemark(e) {
+    this.setState({
+      remark: e.target.value,
+    });
   }
 
   @autobind
@@ -230,10 +215,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   submitCreateInfo(item) {
     if (_.isEmpty(this.state.custId)) {
       message.error('请选择客户');
-    } else if (this.state.serverInfo) {
-      message.error('新开发团队不能为空');
-    } else if (this.state.develop) {
-      message.error('开发关系认定书,首次认定时必输');
     } else {
       // 修改状态下的提交按钮
       // 点击按钮后 弹出下一审批人 模态框
@@ -244,20 +225,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
         nextGroupId: item.nextGroupName,
         nextApproverList: item.flowAuditors,
       }, () => {
-        if (item.flowBtnId !== overFlowBtnId) {
-          this.setState({
-            nextApproverModal: true,
-          });
-        } else {
-          this.confirmSubmit();
-        }
+        this.setState({
+          nextApproverModal: true,
+        });
       });
     }
   }
 
   @autobind
   confirmSubmit(value) {
-    const { empInfo, location: { query } } = this.props;
+    const { empInfo } = this.props;
     const {
       serverInfo,
       develop,
@@ -281,13 +258,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
       empList: serverInfo,
       develop,
       other,
-      approvalIds: this.state.nextApproverList.concat(value.login),
+      approvalIds: !_.isEmpty(value) ? value.login : "",
       empId,
       empName,
       orgId,
       custName: customer.custName,
       custNumber: customer.brokerNumber,
-      currentQuery: query,
       attachment,
     };
     this.props.getCreateDevelopRelationship(queryConfig);
@@ -311,7 +287,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       onOk: this.confirmSubmit,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: this.state.nextApproverList,
-      columns,
+      columns: approvalColumns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       modalKey: 'nextApproverModal',
