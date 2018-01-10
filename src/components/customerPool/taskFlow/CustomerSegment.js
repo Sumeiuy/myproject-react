@@ -25,6 +25,9 @@ const INITIAL_PAGE_SIZE = 10;
 const INITIAL_PAGE_NUM = 1;
 const COLUMN_HEIGHT = 36;
 
+// 导入模板的路径
+const selfBuiltTemplateSrc = `${process.env.NODE_ENV === 'production' ? '/fspa' : ''}/static/selfBuiltTemplate.xls`;
+
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
@@ -253,7 +256,6 @@ export default class CustomerSegment extends PureComponent {
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
-
     return (
       <div className={styles.customerSegmentContainer}>
         <div className={styles.uploadSection}>
@@ -273,7 +275,7 @@ export default class CustomerSegment extends PureComponent {
         </div>
         <div className={styles.tipSection}>
           注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，导入格式参见：
-          <a href="../../../../static/selfBuiltTemplate.xls">导入模板</a>。
+          <a href={selfBuiltTemplateSrc}>导入模板</a>。
         </div>
         {
           isShowTable ?
