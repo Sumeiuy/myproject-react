@@ -31,7 +31,7 @@ export default class ProgressList extends PureComponent {
     location: PropTypes.object,
     empInfo: PropTypes.object,
     type: PropTypes.string,
-    permissionType: PropTypes.number,
+    permissionType: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -40,8 +40,6 @@ export default class ProgressList extends PureComponent {
     push: () => { },
     empInfo: {},
     type: '',
-    // 0 表示没有权限
-    permissionType: 0,
   }
 
   componentDidMount() {
