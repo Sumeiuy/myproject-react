@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 18:12:29
+ * @Last Modified time: 2018-01-10 18:55:50
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -26,8 +26,10 @@ const {
 } = seibelConfig.channelsTypeProtocol;
 
 // subType = '0501' 高速通道
-const heightSpeed = '0501';
-
+const SUBTYPE = {
+  heightSpeed: '0501',
+  violetGold: '0502',
+};
 
 const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
@@ -85,10 +87,12 @@ export default class Detail extends PureComponent {
       x: true,
     };
     let isTenLevel = true;
-    if (protocolDetail.operationType === '协议订购') {
+    // 判断是否是紫金快车道 并且是 协议订购
+    if (currentView === SUBTYPE.violetGold && protocolDetail.operationType === '协议订购') {
       // 判断是否是十档行情
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }
+
     // 判断是否显示下挂客户
     const showUnderCust = protocolDetail.multiUsedFlag === 'Y';
     // 判断是否显示协议编号
@@ -110,7 +114,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           {
-            currentView === heightSpeed ?
+            currentView === SUBTYPE.heightSpeed ?
               <InfoItem label="申请单编号" value={protocolDetail.appId} />
               : null
           }
