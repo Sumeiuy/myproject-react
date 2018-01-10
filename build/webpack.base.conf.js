@@ -8,7 +8,7 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: './fspSrc/app.js',
+    newIndex: './fspSrc/app.js',
     index: './src/app.js'
   },
   output: {

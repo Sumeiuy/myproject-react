@@ -1,9 +1,9 @@
-/*
+/**
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 09:25:07
+ * @Last Modified time: 2018-01-10 18:12:29
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
