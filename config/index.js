@@ -28,7 +28,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9083,
+    port: 9088,
     page: '',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
@@ -78,7 +78,7 @@ module.exports = {
     enableHMR: true,
   },
   cssModules: true,
-  src: [path.resolve(__dirname, '../fspSrc'), path.resolve(__dirname, '../src')],
+  src: [path.resolve(__dirname, '../src'), path.resolve(__dirname, '../fspSrc')],
   appSrc: path.resolve(__dirname, '../src'),
   fspSrc: path.resolve(__dirname, '../fspSrc'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),

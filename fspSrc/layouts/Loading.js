@@ -18,7 +18,7 @@ function Loading({ loading, forceFull }) {
     return null;
   }
   let top = isInFsp ? '55px' : '98px';
-  let left = isInFsp ? dom.getCssStyle(document.getElementById(fspContainer.workspaceContent), 'left') : '0';
+  let left = isInFsp ? dom.getCssStyle(document.querySelector(fspContainer.workspaceContent), 'left') : '0';
   // 新增判断如果forceFull有值，则需要判断是Y或者N，
   // 无值则按默认的方式处理
   if (forceFull) {
