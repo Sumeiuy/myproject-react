@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-11 09:27:19
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-11 15:31:47
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -658,8 +658,8 @@ export default class EditBaseInfo extends PureComponent {
         {
           !isHightSpeed ? accountNumber : null
         }
-        <InfoItem label="协议开始日期" value={time.format(startDt)} />
-        <InfoItem label="协议有效期" value={time.format(vailDt)} />
+        <InfoItem label="协议开始日期" value={startDt ? time.format(startDt) : '暂无'} />
+        <InfoItem label="协议有效期" value={vailDt ? time.format(vailDt) : '暂无'} />
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}

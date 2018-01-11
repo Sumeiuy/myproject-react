@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-09 11:10:10
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-11 16:59:18
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -272,6 +272,7 @@ export default class EditForm extends PureComponent {
       // 其他操作类型的数据
       formData = {
         ...protocolDetail,
+        subType: baseInfoData.subType,
         agreementNum: baseInfoData.protocolNumber,
         custId: baseInfoData.client.cusId,
         custType: baseInfoData.client.custType,
