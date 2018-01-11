@@ -2,13 +2,13 @@
  * @Description: 客户反馈 home 页面
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-03 15:21:46
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 16:19:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
 import _ from 'lodash';
@@ -16,7 +16,6 @@ import _ from 'lodash';
 import choosePage from '../../components/operationManage/choosePage';
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
-import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 
 import styles from './home.less';
@@ -74,7 +73,6 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@Barable
 @choosePage
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {

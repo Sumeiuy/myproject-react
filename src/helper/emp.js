@@ -69,11 +69,11 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = null;
+    let orgId = 'ZZ001041051'; // 南京长江路证券营业部
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
-    return orgId || 'ZZ001041051';
+    return orgId;
   },
 
   /**

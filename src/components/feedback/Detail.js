@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import ProblemHandling from './ProblemHandling';

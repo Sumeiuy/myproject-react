@@ -1,13 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-10 21:48:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 14:59:56
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

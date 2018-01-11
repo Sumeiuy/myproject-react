@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 import seibelHelper from '../../helper/page/seibel';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';

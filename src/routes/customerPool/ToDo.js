@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { Input, Row, Col } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';

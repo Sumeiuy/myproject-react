@@ -109,13 +109,14 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} curPageNum 当前页
    * @param {*} pageSize 当前页条目
    */
-  queryPeopleOfLabel(labelId, curPageNum, pageSize, filter) {
+  queryPeopleOfLabel(labelId, curPageNum, pageSize, filter = {}) {
     const { isHasAuthorize, orgId, getLabelPeople } = this.props;
+    console.log('filter', filter, orgId);
     let postBody = {
       labelId,
       curPageNum,
       pageSize,
-      filter,
+      // filter,
     };
     if (isHasAuthorize) {
       postBody = {

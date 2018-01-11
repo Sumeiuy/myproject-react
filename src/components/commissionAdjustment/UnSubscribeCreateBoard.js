@@ -2,13 +2,13 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 15:52:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-15 10:54:46
+ * @Last Modified time: 2018-01-11 10:34:12
  * @description 资讯退订新建的内容组件
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { Icon } from 'antd';
 import _ from 'lodash';
 

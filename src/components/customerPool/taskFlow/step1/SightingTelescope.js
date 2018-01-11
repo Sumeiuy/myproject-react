@@ -26,7 +26,7 @@ export default class SightingTelescope extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     isHasAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
   }
@@ -34,7 +34,6 @@ export default class SightingTelescope extends PureComponent {
   static defaultProps = {
     visible: false,
     switchTo: () => { },
-    orgId: null,
     isHasAuthorize: false,
     filterModalvisible: false,
   }
