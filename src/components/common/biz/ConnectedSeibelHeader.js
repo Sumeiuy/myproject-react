@@ -3,7 +3,7 @@
  * 公共头部筛选取数据
  * @author honggaunqging
  */
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import SeibelHeader from './SeibelHeader';
 
 const fetchDataFunction = (globalLoading, type) => query => ({

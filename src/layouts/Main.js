@@ -160,4 +160,3 @@ export default class Main extends Component {
     );
   }
 }
-// export default connect(({ app, loading }) => ({ app, loading: loading.models.app }))(App)

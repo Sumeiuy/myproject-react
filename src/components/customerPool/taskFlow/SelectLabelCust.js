@@ -18,7 +18,7 @@ export default class SelectLabelCust extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isHasAuthorize: PropTypes.bool,
@@ -27,7 +27,6 @@ export default class SelectLabelCust extends PureComponent {
 
   static defaultProps = {
     storedData: {},
-    orgId: null,
     isHasAuthorize: false,
   };
 
