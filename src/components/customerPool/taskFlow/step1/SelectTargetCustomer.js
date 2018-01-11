@@ -29,7 +29,7 @@ export default class SelectTargetCustomer extends PureComponent {
     getLabelInfo: PropTypes.func.isRequired,
     peopleOfLabelData: PropTypes.object.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     isHasAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
   }
@@ -38,7 +38,6 @@ export default class SelectTargetCustomer extends PureComponent {
     // 默认不展示入口
     currentEntry: -1,
     isShowTitle: false,
-    orgId: null,
     isHasAuthorize: false,
     filterModalvisible: false,
   }
