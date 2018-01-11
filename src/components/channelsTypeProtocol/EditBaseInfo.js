@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 18:17:27
+ * @Last Modified time: 2018-01-11 09:27:19
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -560,23 +560,23 @@ export default class EditBaseInfo extends PureComponent {
       ];
     }
     const accountNumber = protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
-      (<InfoForm label="是否多账户使用" >
-        <CustomSwitch
-          name="multiUsedFlag"
-          value={multiUsedFlag}
-          onChange={this.handleChangeSwitchValue}
-        />
-      </InfoForm>)
-      :
-      null;
-    const orderTen = protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
-      (<InfoForm label="是否订购十档行情">
-        <CustomSwitch
-          name="levelTenFlag"
-          value={levelTenFlag}
-          onChange={this.handleChangeSwitchValue}
-        />
-      </InfoForm>)
+      (<div>
+        <InfoForm label="是否多账户使用" >
+          <CustomSwitch
+            name="multiUsedFlag"
+            value={multiUsedFlag}
+            onChange={this.handleChangeSwitchValue}
+          />
+        </InfoForm>
+        <InfoForm label="是否订购十档行情">
+          <CustomSwitch
+            name="levelTenFlag"
+            value={levelTenFlag}
+            onChange={this.handleChangeSwitchValue}
+          />
+        </InfoForm>
+      </div>
+      )
       :
       null;
     return (
@@ -642,7 +642,7 @@ export default class EditBaseInfo extends PureComponent {
               {
                 isEditPage ?
                   <InfoItem label="协议编号" value={protocolNumber || ''} />
-                :
+                  :
                   <InfoForm label="协议编号" required>
                     <Select
                       name="protocolNumber"
@@ -657,9 +657,6 @@ export default class EditBaseInfo extends PureComponent {
         }
         {
           !isHightSpeed ? accountNumber : null
-        }
-        {
-          !isHightSpeed ? orderTen : null
         }
         <InfoItem label="协议开始日期" value={time.format(startDt)} />
         <InfoItem label="协议有效期" value={time.format(vailDt)} />

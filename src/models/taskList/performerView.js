@@ -218,12 +218,10 @@ export default {
     },
     * getQueryQues({ payload }, { call, put }) {
       const response = yield call(api.getQueryQues, payload);
-      if (response.msg === 'OK') {
-        yield put({
-          type: 'getQueryQuesSuccess',
-          payload: response.resultData,
-        });
-      }
+      yield put({
+        type: 'getQueryQuesSuccess',
+        payload: response.resultData,
+      });
     },
   },
   subscriptions: {

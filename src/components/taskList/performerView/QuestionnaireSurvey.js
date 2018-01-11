@@ -16,6 +16,12 @@ import styles from './questionnaireSurvey.less';
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
 const FormItem = Form.Item;
+// 后台返回题目类型
+const TYPE = {
+  radioType: '1',
+  checkboxType: '2',
+  textAreaType: '3',
+};
 
 // @RestoreScrollTop
 export default class QuestionnaireSurvey extends PureComponent {
@@ -43,7 +49,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     let content = null;
     const itemForm = _.map(quesInfoList, (item, key) => {
       const { quesId } = item;
-      if (item.quesTypeCode === '1') {
+      if (item.quesTypeCode === TYPE.radioType) {
         content = (<FormItem>
           {getFieldDecorator(quesId, { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
             <div className={styles.radioContent}>
@@ -68,7 +74,7 @@ export default class QuestionnaireSurvey extends PureComponent {
             </div>,
           )}
         </FormItem>);
-      } else if (item.quesTypeCode === '2') {
+      } else if (item.quesTypeCode === TYPE.checkboxType) {
         // const dataQues = itemChild.optionValue - itemChild.optionId
         content = (<FormItem>
           {getFieldDecorator(quesId, { rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }] })(
@@ -87,7 +93,7 @@ export default class QuestionnaireSurvey extends PureComponent {
             </div>,
           )}
         </FormItem>);
-      } else if (item.quesTypeCode === '3') {
+      } else if (item.quesTypeCode === TYPE.textAreaType) {
         content = (<FormItem>
           {getFieldDecorator(quesId, {
             rules: [{

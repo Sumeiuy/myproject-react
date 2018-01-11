@@ -26,7 +26,7 @@ const PAGE_NO = 1;
 const data = {
   quesInfoList: [
     {
-      optionInfoList: [{ optionId: '51', optionValue: '合理' }, { optionId: '58', optionValue: '不合理' }],
+      optionInfoList: [{ optionId: '51', optionValue: '合理ddd' }, { optionId: '58', optionValue: '不合理eeee' }],
       quesDesp: '我建议XXX',
       quesId: '5',
       quesTypeCode: '1',
@@ -34,7 +34,7 @@ const data = {
       quesValue: '此任务触发条件是否合理',
     },
     {
-      optionInfoList: [{ optionId: '51', optionValue: '合理' }, { optionId: '58', optionValue: '不合理' }],
+      optionInfoList: [{ optionId: '51', optionValue: '合理rrrr' }, { optionId: '58', optionValue: '不合理fff' }],
       quesDesp: '我建议XXX',
       quesId: '2',
       quesTypeCode: '1',
@@ -42,7 +42,7 @@ const data = {
       quesValue: '此任务触发条件是否合理',
     },
     {
-      optionInfoList: [{ optionId: '51', optionValue: '合理' }, { optionId: '58', optionValue: '不合理' }],
+      optionInfoList: [{ optionId: '51', optionValue: '合理xxxx' }, { optionId: '58', optionValue: '不合理yyyy' }],
       quesDesp: '我建议XXX',
       quesId: '3',
       quesTypeCode: '2',
@@ -223,10 +223,8 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   handleCheckboxChange(key) {
-    const { checkboxData } = this.state;
-    console.log(key, '==>', checkboxData);
+    // const { checkboxData } = this.state;
     const arr = _.map(key, item => _.split(item, '-'));
-    console.log(arr);
     const params = _.flatten(_.map(arr, (item) => {
       const childs = {
         answerId: item[1],
@@ -243,23 +241,24 @@ export default class PerformerViewDetail extends PureComponent {
   }
   @autobind
   handleRadioChange(key) {
-    const { radioData: initRadio } = this.state;
-    const radioData = [{
+    const { radioData } = this.state;
+    const initRadio = radioData;
+    const checkedData = [{
       quesId: key.target.dataQuesId,
       answerId: key.target.dataId,
       answerText: key.target.value,
     }];
     if (_.isEmpty(initRadio)) {
       this.setState({
-        radioData,
+        radioData: checkedData,
       });
     } else {
       let newRadio = [];
-      const ques = _.findIndex(initRadio, o => o.quesId === radioData[0].quesId);
+      const ques = _.findIndex(initRadio, o => o.quesId === checkedData[0].quesId);
       if (ques === -1) {
-        newRadio = _.concat(initRadio, radioData);
+        newRadio = _.concat(initRadio, checkedData);
       } else {
-        newRadio = initRadio.splice(ques, 1, radioData[0]);
+        newRadio = initRadio.splice(ques, 1, checkedData[0]);
         newRadio = initRadio;
       }
       this.setState({
@@ -303,13 +302,14 @@ export default class PerformerViewDetail extends PureComponent {
       label: '所有客户',
       show: true,
     });
+    // hasSurvey
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}

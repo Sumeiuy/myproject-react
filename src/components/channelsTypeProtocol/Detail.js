@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 18:55:50
+ * @Last Modified time: 2018-01-11 08:53:12
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -25,9 +25,10 @@ const {
   protocolProductTitleList,  // 协议产品表头集合
 } = seibelConfig.channelsTypeProtocol;
 
-// subType = '0501' 高速通道
 const SUBTYPE = {
+  // 高速通道
   heightSpeed: '0501',
+  // 紫金通道
   violetGold: '0502',
 };
 

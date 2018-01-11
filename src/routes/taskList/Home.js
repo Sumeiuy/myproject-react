@@ -274,10 +274,10 @@ export default class PerformerView extends PureComponent {
       location: {
         query,
         query: {
-            pageNum,
-            pageSize,
-            missionViewType,
-          },
+          pageNum,
+          pageSize,
+          missionViewType,
+        },
       },
     } = this.props;
     let newQuery = query;
