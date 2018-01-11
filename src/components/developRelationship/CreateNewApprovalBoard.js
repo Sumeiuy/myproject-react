@@ -222,7 +222,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   submitCreateInfo(item) {
     const { custId, serverInfo, develop } = this.state;
-    const weighSum = _.sumBy(serverInfo, Number(item.weigh));
+    const weighSum = _.sumBy(serverInfo, value => Number(value.weigh));
     console.warn('weighSum', weighSum);
     if (_.isEmpty(custId)) {
       message.error('请选择客户');
