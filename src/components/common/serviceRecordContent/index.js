@@ -551,13 +551,13 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>
                   服务方式:
                 </div>
-                <div className={styles.content} ref={r => this.selfRef = r} >
+                <div className={styles.content} ref={r => this.serviceWayRef = r} >
                   <Select
                     value={serviceWay}
                     style={width}
                     onChange={this.handleServiceWay}
                     disabled={isReadOnly}
-                    getPopupContainer={() => this.selfRef}
+                    getPopupContainer={() => this.serviceWayRef}
                   >
                     {
                       (dict.serveWay || EMPTY_LIST).map(obj => (
@@ -604,12 +604,12 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>
                   服务类型:
                 </div>
-                <div className={styles.content} ref={r => this.selfRef2 = r}>
+                <div className={styles.content} ref={r => this.serviceTypeRef = r}>
                   <Select
                     value={serviceType}
                     style={width}
                     onChange={this.handleServiceType}
-                    getPopupContainer={() => this.selfRef2}
+                    getPopupContainer={() => this.serviceTypeRef}
                   >
                     {
                       (motCustfeedBackDict || EMPTY_LIST).map(obj => (
@@ -626,7 +626,7 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>
                   服务时间:
                 </div>
-                <div className={styles.content} ref={r => this.ref5 = r}>
+                <div className={styles.content} ref={r => this.serviceTimeRef = r}>
                   <DatePicker
                     style={width}
                     className={classnames({
@@ -634,7 +634,7 @@ export default class ServiceRecordContent extends PureComponent {
                     })}
                     {...serviceDateProps}
                     defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                    getCalendarContainer={() => this.ref5}
+                    getCalendarContainer={() => this.serviceTimeRef}
                   />
                   <TimePicker
                     style={width}
@@ -669,13 +669,13 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>
                   客户反馈:
                 </div>
-                <div className={styles.content} ref={r => this.ref3 = r}>
+                <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
                   <Select
                     value={feedbackType}
                     style={width}
                     onChange={this.handleFeedbackType}
                     disabled={isReadOnly}
-                    getPopupContainer={() => this.ref3}
+                    getPopupContainer={() => this.customerFeedbackRef}
                   >
                     {
                       (feedbackTypeArr).map(obj => (
@@ -690,7 +690,7 @@ export default class ServiceRecordContent extends PureComponent {
                       style={width}
                       onChange={this.handleFeedbackTypeChild}
                       disabled={isReadOnly}
-                      getPopupContainer={() => this.ref3}
+                      getPopupContainer={() => this.customerFeedbackRef}
                     >
                       {
                         (feedbackTypeChildArr).map(obj => (
@@ -706,7 +706,7 @@ export default class ServiceRecordContent extends PureComponent {
             <Col span={secondCol.second}>
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>
-                <div className={styles.content} ref={r => this.ref4 = r}>
+                <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
                   <DatePicker
                     style={width}
                     className={classnames({
@@ -714,7 +714,7 @@ export default class ServiceRecordContent extends PureComponent {
                     })}
                     {...feedbackTimeProps}
                     defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                    getCalendarContainer={() => this.ref4}
+                    getCalendarContainer={() => this.feedbackTimeRef}
                   />
                 </div>
               </div>
