@@ -1,30 +1,31 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 16:07:31
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-11 10:07:37
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Mention } from 'antd';
+import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { permission, removeTab, closeRctTab } from '../../utils';
 import { emp } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
-import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
+import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
+import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
+import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
-const { toString } = Mention;
 
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
@@ -37,6 +38,7 @@ const effects = {
   getLabelPeople: 'customerPool/getLabelPeople',
   submitTaskFlow: 'customerPool/submitTaskFlow',
   getApprovalList: 'customerPool/getApprovalList',
+  generateTemplateId: 'customerPool/generateTemplateId',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -59,6 +61,8 @@ const mapStateToProps = state => ({
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
   getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
+  templateId: state.customerPool.templateId,
+  creator: state.app.creator,
 });
 
 const mapDispatchToProps = {
@@ -72,6 +76,11 @@ const mapDispatchToProps = {
   // 保存选中的tab
   saveCurrentTab: query => ({
     type: 'customerPool/saveCurrentTab',
+    payload: query,
+  }),
+  // 保存选中的入口
+  saveCurrentEntry: query => ({
+    type: 'customerPool/saveCurrentEntry',
     payload: query,
   }),
   // 清除数据
@@ -94,6 +103,7 @@ const mapDispatchToProps = {
   getLabelPeople: fetchData(effects.getLabelPeople, true),
   submitTaskFlow: fetchData(effects.submitTaskFlow, true),
   getApprovalList: fetchData(effects.getApprovalList, true),
+  generateTemplateId: fetchData(effects.generateTemplateId, true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -122,12 +132,17 @@ export default class TaskFlow extends PureComponent {
     resetActiveTab: PropTypes.func.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func.isRequired,
     getApprovalListLoading: PropTypes.bool,
+    templateId: PropTypes.string,
+    generateTemplateId: PropTypes.func.isRequired,
+    creator: PropTypes.string,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
     getApprovalListLoading: false,
+    templateId: '',
+    creator: '',
   };
 
   constructor(props) {
@@ -138,10 +153,10 @@ export default class TaskFlow extends PureComponent {
       currentSelectRecord: currentSelectRecord || {},
       currentSelectRowKeys: currentSelectRowKeys || [],
       isSuccess: false,
-      custSource: '',
       isLoadingEnd: true,
       isShowErrorInfo: false,
       isShowErrorTaskType: false,
+      isShowErrorTaskSubType: false,
       isShowErrorExcuteType: false,
       visible: false,
       isApprovalListLoadingEnd: false,
@@ -197,51 +212,196 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
+  /**
+   * 点击下一步，校验所有信息，然后下一步界面
+   */
   @autobind
   handleNextStep() {
     // 下一步
-    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT, currentTab } = this.props;
+    const {
+      saveTaskFlowData,
+      storedTaskFlowData = EMPTY_OBJECT,
+      generateTemplateId,
+    } = this.props;
     const { current } = this.state;
 
-    let taskFormData = storedTaskFlowData.taskFormData;
-    let pickTargetCustomerData = {};
-    let isFormValidate = false;
+    let taskFormData = storedTaskFlowData.taskFormData || {};
+    let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
+    let resultTrackData = storedTaskFlowData.resultTrackData || {};
+    let missionInvestigationData = storedTaskFlowData.missionInvestigationData || {};
+    let isFormValidate = true;
     let isSelectCust = true;
+    let isResultTrackValidate = true;
+    let isMissionInvestigationValidate = true;
+    let currentEntry = 0;
+    // 第一步是选择客户界面
     if (current === 0) {
-      this.formRef.props.form.validateFields((err, values) => {
+      const obj = {};
+      const {
+        currentEntry: entry,
+        importCustomers,
+        sightingTelescope,
+      } = this.SelectTargetCustomerRef.getData();
+      currentEntry = entry;
+      const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
+      const { labelCust, labelCust: { labelId } } = sightingTelescope;
+      // currentEntry为0 时 表示当前是导入客户
+      // 为1 时 表示当前是瞄准镜
+      if (currentEntry === 0) {
+        if (!uploadedFileKey) {
+          isSelectCust = false;
+          message.error('请导入Excel或CSV文件');
+        }
+        // customerSourceForm.validateFields((err, values) => {
+        //   if (err) {
+        //     if (!values.source) {
+        //       isSelectCust = false;
+        //       message.error('请填写对筛选客户的来源说明');
+        //     }
+        //   }
+        //   obj.customerSource = values.source;
+        // });
+      } else if (currentEntry === 1) {
+        if (!labelId) {
+          isSelectCust = false;
+          message.error('请利用标签圈出目标客户');
+        }
+      }
+      this.setState({
+        currentEntry,
+      });
+      pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
+    } else if (current === 1) {
+      // 第二步基本信息界面
+      this.formRef.validateFields((err, values) => {
         let isFormError = false;
-        console.log('err-->', err);
         if (!_.isEmpty(err)) {
           isFormError = true;
           isFormValidate = false;
         }
+
         const formDataValidation = this.checkFormField({ ...values, isFormError });
+
         if (formDataValidation) {
-          taskFormData = this.formRef.props.form.getFieldsValue();
+          taskFormData = {
+            ...taskFormData,
+            ...this.formRef.getFieldsValue(),
+          };
           isFormValidate = true;
+        } else {
+          isFormValidate = false;
         }
-        this.props.clearTaskFlowData();
       });
-    } else if (current === 1) {
-      isFormValidate = true;
-      pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
-      const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
-      if (currentTab === '2' && _.isEmpty(labelId)) {
-        isSelectCust = false;
-        message.error('请利用标签圈出目标客户');
+
+      // 校验任务提示
+      const templetDesc = this.formRef.refs.wrappedComponent.refs.formWrappedComponent.getData();
+      taskFormData = { ...taskFormData, templetDesc };
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
+        isFormValidate = false;
+        this.setState({
+          isShowErrorInfo: true,
+        });
+      } else {
+        this.setState({
+          isShowErrorInfo: false,
+        });
       }
-      if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
-        isSelectCust = false;
-        message.error('请导入Excel或CSV文件');
+    } else if (current === 2) {
+      // 第三步是结果跟踪和任务调查页面
+      resultTrackData = {
+        ...resultTrackData,
+        ...this.resultTrackRef.getWrappedInstance().getData(),
+      };
+      const {
+        // 跟踪窗口期
+        // trackWindowDate,
+        // 一级指标
+        indicatorLevel1Key,
+        // 二级指标
+        indicatorLevel2Key,
+        // 产品
+        currentSelectedProduct,
+        // 操作符key,传给后台,譬如>=/<=
+        // operationKey,
+        // 操作符name,展示用到，譬如达到/降到
+        // operationValue,
+        // 当前输入的指标值
+        inputIndicator,
+        // 单位
+        // unit,
+        // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
+        isHasState,
+        // 是否有产品搜索
+        isHasSearchedProduct,
+        // 是否选中
+        isResultTrackChecked,
+      } = resultTrackData;
+      // if (!isResultTrackChecked) {
+      //   message.error('请勾选结果跟踪');
+      // } else
+      if (isResultTrackChecked) {
+        let errMsg = '';
+        if (_.isEmpty(indicatorLevel1Key)) {
+          errMsg = '请选择一级指标';
+        } else if (_.isEmpty(indicatorLevel2Key)) {
+          errMsg = '请选择二级指标';
+        } else if (isHasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
+          errMsg = '请选择一个产品';
+        } else if (!isHasState && _.isEmpty(inputIndicator)) {
+          errMsg = '请输入指标目标值';
+        }
+
+        if (_.isEmpty(errMsg)) {
+          isResultTrackValidate = true;
+        } else {
+          message.error(errMsg);
+          isResultTrackValidate = false;
+        }
+      } else {
+        isResultTrackValidate = true;
+      }
+
+      // 拥有审批人权限，才能展示任务调查
+      if (this.isHasAuthorize) {
+        missionInvestigationData = {
+          ...missionInvestigationData,
+          ...this.missionInvestigationRef.getWrappedInstance().getData(),
+        };
+        const {
+          // 是否选中
+          isMissionInvestigationChecked,
+          // 选择的问题idList
+          questionList = [],
+        } = missionInvestigationData;
+        if (isMissionInvestigationChecked) {
+          if (_.isEmpty(questionList)) {
+            message.error('请至少选择一个问题');
+            isMissionInvestigationValidate = false;
+          } else {
+            isMissionInvestigationValidate = true;
+            const quesIds = _.map(questionList, item => item.quesId);
+            // 生成问题模板Id
+            generateTemplateId({
+              quesIds,
+            });
+          }
+        } else {
+          isMissionInvestigationValidate = true;
+        }
       }
     }
 
-    if (isFormValidate && isSelectCust) {
+    // isFormValidate && isSelectCust
+    if (isFormValidate && isSelectCust && isMissionInvestigationValidate && isResultTrackValidate) {
       saveTaskFlowData({
         ...storedTaskFlowData,
         taskFormData,
         ...pickTargetCustomerData,
+        resultTrackData,
+        missionInvestigationData,
         current: current + 1,
+        // 选择客户当前入口
+        currentEntry,
       });
       this.setState({
         current: current + 1,
@@ -254,7 +414,6 @@ export default class TaskFlow extends PureComponent {
   checkFormField(values) {
     console.log(values);
   }
-
 
   @autobind
   handlePreviousStep() {
@@ -289,14 +448,16 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleSubmitTaskFlow() {
-    const { submitTaskFlow, storedTaskFlowData, currentTab = '1' } = this.props;
+    const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
 
-    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+    const { currentSelectRecord: { login: flowAuditorId = null }, currentEntry } = this.state;
 
     const {
       taskFormData = EMPTY_OBJECT,
       labelCust = EMPTY_OBJECT,
       custSegment = EMPTY_OBJECT,
+      resultTrackData,
+      missionInvestigationData,
     } = storedTaskFlowData;
 
     let finalData = {};
@@ -304,20 +465,49 @@ export default class TaskFlow extends PureComponent {
       ...taskFormData,
       ...labelCust,
       ...custSegment,
+      ...resultTrackData,
+      ...missionInvestigationData,
     };
 
     const {
       labelMapping,
-      customNum: labelCustNums,
+      custNum: labelCustNums,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
+      // taskSubType,
       templetDesc,
       timelyIntervalValue,
       labelDesc,
       labelName,
+      // 跟踪窗口期
+      trackWindowDate,
+      // 一级指标
+      indicatorLevel1Key,
+      // 二级指标
+      indicatorLevel2Key,
+      // 产品编号
+      currentSelectedProduct,
+      // 操作符key,传给后台,譬如>=/<=
+      operationKey,
+      // 操作符name,展示用到，譬如达到/降到
+      // operationValue,
+      // 当前输入的指标值
+      inputIndicator,
+      // 单位
+      unit,
+      // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
+      isHasState,
+      // 是否有产品搜索
+      isHasSearchedProduct,
+      // 是否选中
+      isResultTrackChecked,
+      // 是否选中
+      isMissionInvestigationChecked,
+      // 选择的问题List
+      // questionList,
     } = finalData;
 
     let postBody = {
@@ -325,8 +515,10 @@ export default class TaskFlow extends PureComponent {
       serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: toString(templetDesc),
+      templetDesc,
       timelyIntervalValue,
+      // // 任务子类型
+      // taskSubType,
     };
 
     if (this.isHasAuthorize) {
@@ -336,37 +528,74 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
+    if (isResultTrackChecked) {
+      postBody = {
+        ...postBody,
+        resultTraceReq: {
+          traceOp: operationKey || '',
+          traceTime: trackWindowDate,
+          indexId: indicatorLevel1Key,
+          indexCateId: indicatorLevel2Key,
+        },
+      };
+      if (isHasSearchedProduct) {
+        postBody = _.merge(postBody, {
+          resultTraceReq: {
+            financialProductId: currentSelectedProduct.name,
+          },
+        });
+      }
+      if (!isHasState) {
+        postBody = _.merge(postBody, {
+          resultTraceReq: {
+            indexUnit: unit,
+            value: inputIndicator,
+          },
+        });
+      }
+    }
+
+    if (this.isHasAuthorize && isMissionInvestigationChecked) {
+      postBody = {
+        ...postBody,
+        // 模板Id
+        missionSurveyReq: {
+          templateId,
+        },
+      };
+    }
+
     const labelCustPostBody = {
+      ...postBody,
       labelId: labelMapping,
       queryLabelDTO: {
         labelDesc,
         labelName,
       },
       labelCustNums,
-      ...postBody,
     };
 
-    if (currentTab === '1') {
+    // 当前tab是第一个，则代表导入客户
+    if (currentEntry === 0) {
       submitTaskFlow({
         fileId,
         ...postBody,
       });
     } else if (this.isHasAuthorize) {
+      // 有审批权限，则需要传入orgId
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
           orgId,
         },
       }));
     } else {
+      // 没有审批权限，则需要传入ptyMngId
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
           ptyMngId: emp.getId(),
         },
       }));
     }
-
-    // 成功之后再clear
-    // clearTaskFlowData();
   }
 
   @autobind
@@ -434,22 +663,21 @@ export default class TaskFlow extends PureComponent {
       currentSelectRecord,
       currentSelectRowKeys,
       isSuccess,
-      custSource,
       isLoadingEnd,
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
+      isShowErrorTaskSubType,
       visible,
       isApprovalListLoadingEnd,
       isShowApprovalModal,
+      currentEntry,
     } = this.state;
 
     const {
       dict,
       dict: { executeTypes, missionType },
       priviewCustFileData,
-      currentTab,
-      saveCurrentTab,
       storedTaskFlowData,
       getLabelInfo,
       getLabelPeople,
@@ -459,6 +687,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalList,
       push,
       clearSubmitTaskFlowResult,
+      creator,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -468,10 +697,36 @@ export default class TaskFlow extends PureComponent {
     const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
     const isShowTitle = true;
     const steps = [{
+      title: '选择目标客户',
+      content: <div className={styles.taskInner}>
+        <SelectTargetCustomer
+          currentEntry={currentEntry}
+          ref={inst => (this.SelectTargetCustomerRef = inst)}
+          dict={dict}
+          location={location}
+          previousData={{ ...taskFormData }}
+          isShowTitle={isShowTitle}
+
+          onPreview={this.handlePreview}
+          priviewCustFileData={priviewCustFileData}
+          storedTaskFlowData={storedTaskFlowData}
+
+          onCancel={this.resetLoading}
+          isLoadingEnd={isLoadingEnd}
+          circlePeopleData={circlePeopleData}
+          getLabelInfo={getLabelInfo}
+          peopleOfLabelData={peopleOfLabelData}
+          getLabelPeople={getLabelPeople}
+          isHasAuthorize={this.isHasAuthorize}
+          filterModalvisible={visible}
+          orgId={orgId}
+        />
+      </div>,
+    }, {
       title: '基本信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
-          wrappedComponentRef={inst => (this.formRef = inst)}
+          ref={inst => (this.formRef = inst)}
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
@@ -479,34 +734,32 @@ export default class TaskFlow extends PureComponent {
           isShowErrorInfo={isShowErrorInfo}
           isShowErrorExcuteType={isShowErrorExcuteType}
           isShowErrorTaskType={isShowErrorTaskType}
+          isShowErrorTaskSubType={isShowErrorTaskSubType}
         />
       </div>,
     }, {
-      title: '目标客户',
-      content: <PickTargetCustomer
-        ref={ref => (this.pickTargetCustomerRef = ref)}
-        currentTab={currentTab}
-        saveCurrentTab={saveCurrentTab}
-        onPreview={this.handlePreview}
-        priviewCustFileData={priviewCustFileData}
-        storedTaskFlowData={storedTaskFlowData}
-        getLabelInfo={getLabelInfo}
-        circlePeopleData={circlePeopleData}
-        getLabelPeople={getLabelPeople}
-        peopleOfLabelData={peopleOfLabelData}
-        orgId={orgId}
-        isLoadingEnd={isLoadingEnd}
-        visible={visible}
-        onCancel={this.resetLoading}
-        isHasAuthorize={this.isHasAuthorize}
-      />,
+      title: '结果跟踪&任务调查',
+      content: <div>
+        <ResultTrack
+          ref={ref => (this.resultTrackRef = ref)}
+          storedData={storedTaskFlowData}
+        />
+        {
+          this.isHasAuthorize ?
+            <MissionInvestigation
+              ref={ref => (this.missionInvestigationRef = ref)}
+              storedData={storedTaskFlowData}
+            /> :
+            null
+        }
+      </div>,
     }, {
-      title: '提交',
+      title: '确认&提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
         storedData={storedTaskFlowData}
         approvalList={approvalList}
-        currentTab={currentTab}
+        currentEntry={currentEntry}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
         taskTypes={motMissionType}
@@ -515,10 +768,10 @@ export default class TaskFlow extends PureComponent {
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
         isNeedApproval={this.isHasAuthorize}
-        custSource={custSource}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}
+        creator={creator}
       />,
     }];
 

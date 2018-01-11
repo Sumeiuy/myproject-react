@@ -220,3 +220,30 @@
     }
   }
 }
+
+.modalTable {
+  :global {
+    .ant-modal-content {
+      .ant-modal-header {
+        .ant-modal-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #4a4a4a;
+        }
+      }
+      .ant-modal-close-x {
+        font-size: 24px;
+        color: #108ee9;
+        font-weight: bold;
+      }
+      .ant-modal-body {
+        .ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td {
+          border-right: 0;
+        }
+      }
+      .ant-modal-footer {
+        border-top: 0;
+      }
+    }
+  }
+}
