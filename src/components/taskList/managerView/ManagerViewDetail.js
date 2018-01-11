@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 15:50:50
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-10 21:51:46
  * 管理者视图详情
  */
 
@@ -115,8 +115,9 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handleCloseModal() {
     closeRctTab({
-      id: 'RCT_FSP_CREATE_TASK',
+      id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW',
     });
+
     this.setState({
       isShowCustDetailModal: false,
     });
@@ -135,7 +136,7 @@ export default class ManagerViewDetail extends PureComponent {
     const { clearCreateTaskData } = this.props;
     // 发起新的任务之前，先清除数据
     clearCreateTaskData();
-    this.openByAllSelect('/customerPool/createTask', 'RCT_FSP_CREATE_TASK', '自建任务');
+    this.openByAllSelect('/customerPool/createTask', 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW', '自建任务');
   }
 
   // 发起任务

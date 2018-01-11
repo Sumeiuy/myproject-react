@@ -83,8 +83,8 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
     form: PropTypes.object.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
     answersList: PropTypes.object,
     getQueryQues: PropTypes.func.isRequired,
   }
@@ -93,6 +93,7 @@ export default class PerformerViewDetail extends PureComponent {
     isFold: true,
     answersList: {},
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -121,7 +122,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -290,9 +291,9 @@ export default class PerformerViewDetail extends PureComponent {
       ...otherProps
     } = basicInfo;
     const { list, page } = targetCustList;
-    const { serveStatus } = dict;
+    const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = serveStatus.map(o => ({
+    const stateData = (serveStatus || []).map(o => ({
       value: o.key,
       label: o.value,
       show: true,
