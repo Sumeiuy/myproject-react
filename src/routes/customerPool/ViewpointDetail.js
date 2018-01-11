@@ -103,16 +103,16 @@ export default class ViewpointDetail extends PureComponent {
     const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      abstract.replace(
-        /<(\/?)([^\s>]+)[^>]*?>/g,
-        (all, isEnd, tagName) => {
-          if (_.includes(['p', 'pre'], tagName)) {
-            return _.isEmpty(isEnd) ? '<p>' : '</p>';
-          }
-          return '';
-        },
-      )
-    );
+        abstract.replace(
+          /<(\/?)([^\s>]+)[^>]*?>/g,
+          (all, isEnd, tagName) => {
+            if (_.includes(['p', 'pre'], tagName)) {
+              return _.isEmpty(isEnd) ? '<p>' : '</p>';
+            }
+            return '';
+          },
+        )
+      );
     // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
     const formateAbstract = newFormateAbstract.replace('↵', '');
     return (

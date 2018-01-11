@@ -37,6 +37,7 @@ export default {
     // 任务反馈字典
     taskFeedbackList: [],
     addMotServeRecordSuccess: false,
+    answersList: {},
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -114,6 +115,13 @@ export default {
       return {
         ...state,
         addMotServeRecordSuccess: payload === 'success',
+      };
+    },
+    getQueryQuesSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        answersList: payload,
       };
     },
   },
@@ -207,6 +215,13 @@ export default {
           payload: response.resultData,
         });
       }
+    },
+    * getQueryQues({ payload }, { call, put }) {
+      const response = yield call(api.getQueryQues, payload);
+      yield put({
+        type: 'getQueryQuesSuccess',
+        payload: response.resultData,
+      });
     },
   },
   subscriptions: {

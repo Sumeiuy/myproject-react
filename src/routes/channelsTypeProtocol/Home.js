@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:35:47
+ * @Last Modified time: 2018-01-11 15:00:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,6 +36,8 @@ const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
+// subType = '0501' 高速通道
+const heightSpeed = '0501';
 const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
@@ -196,6 +198,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // 审批人列表
       flowAuditors: EMPTY_LIST,
       activeRowIndex: 0,
+      currentView: '',
     };
   }
 
@@ -223,8 +226,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
+      // console.log('subType--->', subType);
       let item = list.resultData[0];
-      const itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      const { subType: st } = item;
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
         item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
@@ -234,19 +239,25 @@ export default class ChannelsTypeProtocol extends PureComponent {
           needFlowHistory: true,
           data: {
             id: currentId,
+            subType: st,
           },
         });
       } else {
         // 不存在currentId
-        this.setState({ activeRowIndex: 0 });
+        itemIndex = 0;
         getProtocolDetail({
           needAttachment: true,
           needFlowHistory: true,
           data: {
             id: item.id,
+            subType: st,
           },
         });
       }
+      this.setState({
+        activeRowIndex: itemIndex,
+        currentView: st,
+      });
     }
   }
 
@@ -325,7 +336,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id } = record;
+    const { id, subType: st } = record;
     const {
       replace,
       location: { pathname, query, query: { currentId } },
@@ -341,6 +352,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
     // 更新
     this.setState({
+      currentView: st,
       activeRowIndex: index,
     });
     getProtocolDetail({
@@ -348,6 +360,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       needFlowHistory: true,
       data: {
         id,
+        subType: st,
       },
     });
   }
@@ -514,6 +527,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex } = this.state;
+    // 判断不同的视图，icon图标不一致
+    const { subType: viewType } = record;
+    const typeIcon = viewType === heightSpeed ? 'yongjin' : 'kehu1';
     return (
       <AppItem
         key={record.id}
@@ -521,7 +537,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         onClick={this.handleListRowClick}
         index={index}
         pageName="channelsTypeProtocol"
-        type="kehu1"
+        type={typeIcon}
         pageData={channelsTypeProtocol}
         active={index === activeRowIndex}
       />
@@ -565,6 +581,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       editFormModal,
       approverModal,
       flowAuditors,
+      currentView,
     } = this.state;
     const isEmpty = _.isEmpty(seibleList.resultData);
     const topPanel = (
@@ -607,6 +624,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         protocolDetail={protocolDetail}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
+        currentView={currentView}
       />
     );
     const selfBtnGroup = (<BottonGroup

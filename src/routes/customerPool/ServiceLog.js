@@ -54,7 +54,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class CreateTaskForm extends PureComponent {
+export default class ServiceLog extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
