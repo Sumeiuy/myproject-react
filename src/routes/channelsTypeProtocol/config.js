@@ -2,9 +2,10 @@
  * @Description: 通道类协议页面配置项
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-13 16:12:15
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-11 15:29:33
  */
+import duty from '../../helper/config/duty';
 
 const config = {
   // 终止按钮
@@ -33,6 +34,10 @@ const config = {
     canDelete: ['开通处理中'],
     logicalDelete: ['开通完成'],
     canAdd: ['退订完成', '开通失败'],
+  },
+  doApproveOperate: {
+    [duty.zjkcd_id]: '1', // 子类型为紫金快车道时对应的operate
+    [duty.gstd_id]: '11', // 子类型为高速通道时对应的operate
   },
 };
 

@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 18:26:55
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-11 14:55:56
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -475,13 +475,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const { protocolData } = this.state;
     saveProtocolData(protocolData).then(
       () => {
+        const operate = config.doApproveOperate[protocolData.subType];
         doApprove({
           formData: {
             itemId: this.props.itemId,
             flowId: '',
             auditors: auth.empNo,
             groupName: auth.groupName,
-            operate: '1',
+            operate,
             approverIdea: '',
           },
         }).then(() => {
@@ -496,8 +497,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
+    console.log('click', btnItem, this.EditFormComponent);
     const formData = this.EditFormComponent.getData();
-    console.log('click', btnItem, formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;

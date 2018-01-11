@@ -28,7 +28,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9083,
+    port: 9088,
     page: '',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
@@ -43,6 +43,7 @@ module.exports = {
       [prefix]: {
         // target: 'http://168.61.8.81:5188', // SIT
         target: 'http://168.61.8.81:5085', // UAT
+        // target: 'http://160.9.228.195:8082', // 王涵本地地址
         secure: false,
       },
       '/fspa/log': {
