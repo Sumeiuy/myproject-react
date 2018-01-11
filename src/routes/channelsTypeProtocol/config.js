@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-10 17:01:22
+ * @Last Modified time: 2018-01-11 15:29:33
  */
 import duty from '../../helper/config/duty';
 
@@ -37,7 +37,7 @@ const config = {
   },
   doApproveOperate: {
     [duty.zjkcd_id]: '1', // 子类型为紫金快车道时对应的operate
-    [duty.gstd_id]: '11', // 子类型为紫金快车道时对应的operate
+    [duty.gstd_id]: '11', // 子类型为高速通道时对应的operate
   },
 };
 
