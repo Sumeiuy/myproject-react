@@ -907,6 +907,70 @@ const pageConfig = {
         value: '04',
       },
     ],
+    developTeamTableHeader: [ // 开发团队表头
+      {
+        dataIndex: 'activeLogin',
+        key: 'activeLogin',
+        title: '工号',
+      },
+      {
+        dataIndex: 'activeLastName',
+        key: 'activeLastName',
+        title: '姓名',
+      },
+      {
+        dataIndex: 'deptName',
+        key: 'deptName',
+        title: '部门',
+      },
+      {
+        dataIndex: 'positionName',
+        key: 'positionName',
+        title: '职位',
+      },
+      {
+        dataIndex: 'weigh',
+        key: 'weigh',
+        title: '权重',
+      },
+      {
+        dataIndex: 'tgFlag',
+        key: 'tgFlag',
+        title: '是否入岗投顾',
+      },
+    ],
+    // 附件类型
+    attachmentMap: [
+      {
+        type: 'develop',
+        title: '开发关系认定书（首次认定时必输）',
+        show: true,
+        length: 0,
+        required: true,
+      },
+      {
+        type: 'other',
+        title: '其他',
+        show: true,
+        length: 0,
+        required: false,
+      },
+    ],
+    approvalColumns: [
+      {
+        title: '工号',
+        dataIndex: 'login',
+        key: 'login',
+      }, {
+        title: '姓名',
+        dataIndex: 'empName',
+        key: 'empName',
+      }, {
+        title: '所属营业部',
+        dataIndex: 'occupation',
+        key: 'occupation',
+      },
+    ],
   },
   // 客户反馈
   customerFeedback: {
