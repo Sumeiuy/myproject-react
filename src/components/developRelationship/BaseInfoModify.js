@@ -19,6 +19,8 @@ export default class BaseInfoModify extends PureComponent {
     // 可申请开发关系认定的客户是否可用
     isValidCust: PropTypes.object.isRequired,
     getIsValidCust: PropTypes.func.isRequired,
+    // 清空数据
+    clearPropsData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -42,6 +44,7 @@ export default class BaseInfoModify extends PureComponent {
   clearSelectValue() {
     if (this.selectCustComponent) {
       this.selectCustComponent.clearValue();
+      this.props.clearPropsData();
     }
   }
 
@@ -53,7 +56,7 @@ export default class BaseInfoModify extends PureComponent {
       () => {
         const { isValidCust } = this.props;
         console.warn('isValidCust', isValidCust);
-        if (!_.isEmpty(isValidCust) && isValidCust.isSLMonth !== 'Y') {
+        if (!_.isEmpty(isValidCust) && isValidCust.isSLMonth !== 'N') {
           Modal.info({
             title: '提示',
             content: '该客户为同城转销户且转销户时间小于一个月（30天），不能进行开发关系认定,请重新选择客户',
@@ -68,7 +71,10 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   searchCanApplyCustList(value) {
     // 按照 关键字 查询 客户 列表
-    this.props.getCreateCustList(value);
+    this.props.getCreateCustList({
+      keyword: value,
+      type: '06', // 06为开发关系认定的type代号
+    });
   }
 
   render() {

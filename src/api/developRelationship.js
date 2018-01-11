@@ -11,7 +11,7 @@ export default function developRelationship(api) {
     // 查询可申请开发关系认定的客户是否可用
     isValidCust: query => api.post('/groovynoauth/fsp/biz/developrelationship/isValidCust', query),
     // 查询新建时原开发团队
-    getOldDevelopTeamList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryOriginTeamList', query),
+    getOldDevelopTeamList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryOriginRelation', query),
     // 查询可添加新开发团队服务经理的接口
     getAddEmpList: query => api.post('/groovynoauth/fsp/biz/developrelationship/empList', query),
     // 获取按钮列表和下一步审批人

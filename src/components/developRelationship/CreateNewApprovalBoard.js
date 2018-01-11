@@ -148,7 +148,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           custType: value.custType,
         }, () => {
           this.props.getOldDevelopTeamList({
-            brokerNumber: value.brokerNumber,
+            custId: value.cusId,
           });
         });
         break;
@@ -297,6 +297,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       addEmpList,
       getAddEmpList,
       buttonList,
+      clearPropsData,
     } = this.props;
     const { remark, customer, attachmentTypeList, custId } = this.state;
     const searchProps = {
@@ -338,6 +339,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
             onChangeBaseInfoState={this.updateValue}
             isValidCust={isValidCust}
             getIsValidCust={getIsValidCust}
+            clearPropsData={clearPropsData}
           />
           {/* 原开发团队 */}
           <div id="oldDevelopTeam_module" className={styles.module}>

@@ -126,7 +126,9 @@ export default class MultiUpload extends PureComponent {
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadCallback(type, data.attachment, attachesLastData.attachId));
+        }, () => {
+          uploadCallback(type, data.attachment, attachesLastData.attachId)
+        });
       } else {
         // 上传失败的返回值 MAG0005
         this.setState({
@@ -155,7 +157,9 @@ export default class MultiUpload extends PureComponent {
       _.remove(newFileList, o => o.attachId === attachId);
       this.setState({
         fileList: newFileList, // 文件列表
-      }, deleteCallback(type, attachId));
+      }, () => {
+        deleteCallback(type, attachId)
+      });
     });
   }
 

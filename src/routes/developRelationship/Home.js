@@ -174,7 +174,7 @@ export default class Permission extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      this.props.getDetailInfo({ id: item.id });
+      this.props.getDetailInfo({ flowId: item.flowId });
     }
   }
 
@@ -263,7 +263,7 @@ export default class Permission extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id } = record;
+    const { id, flowId } = record;
     const {
       replace,
       location: { pathname, query, query: { currentId } },
@@ -277,7 +277,7 @@ export default class Permission extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    this.props.getDetailInfo({ id });
+    this.props.getDetailInfo({ flowId });
   }
 
   // 渲染列表项里面的每一项
