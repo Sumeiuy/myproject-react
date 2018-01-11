@@ -135,7 +135,7 @@ export default class EditModal extends Component {
     const { ptyMngName, ptyMngId } = obj;
     this.setState({
       select: { name: ptyMngName, code: ptyMngId, ...obj },
-      teamName: `${ptyMngName}(${ptyMngId})团队长`,
+      teamName: `${ptyMngName}(${ptyMngId})团队`,
     });
   }
 
