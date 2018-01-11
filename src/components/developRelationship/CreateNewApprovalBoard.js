@@ -14,6 +14,7 @@ import NewDevelopTeam from './NewDevelopTeam';
 import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
 import confirm from '../common/Confirm';
+import commonHelpr from './developRelationshipHelpr';
 import styles from './createNewApprovalBoard.less';
 
 const {
@@ -46,6 +47,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 获取按钮列表和下一步审批人
     buttonList: PropTypes.object.isRequired,
     getButtonList: PropTypes.func.isRequired,
+    // 清除props数据
+    clearPropsData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -96,6 +99,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    // 销毁组件时清空数据
+    this.props.clearPropsData();
+  }
+
   @autobind
   closeModal() {
     // 关闭 新建私密客户 模态框
@@ -113,9 +121,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
   }
 
     @autobind
-    afterClose() {
-      this.props.onEmitClearModal('isShowCreateModal');
-    }
+  afterClose() {
+    this.props.onEmitClearModal('isShowCreateModal');
+  }
 
   // 填写备注
   @autobind
@@ -213,8 +221,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   @autobind
   submitCreateInfo(item) {
-    if (_.isEmpty(this.state.custId)) {
+    const { custId, serverInfo, develop } = this.state;
+    const weighSum = _.sumBy(serverInfo, Number(item.weigh));
+    console.warn('weighSum', weighSum);
+    if (_.isEmpty(custId)) {
       message.error('请选择客户');
+    } else if (_.isEmpty(serverInfo)) {
+      message.error('新开发团队不能为空');
+    } else if (_.isEmpty(develop)) {
+      message.error('开发关系认定书首次认定时必输');
+    } else if (weighSum !== 100) {
+      message.error('新开发团队的权重合计必须等于100');
     } else {
       // 修改状态下的提交按钮
       // 点击按钮后 弹出下一审批人 模态框
@@ -258,7 +275,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       empList: serverInfo,
       develop,
       other,
-      approvalIds: !_.isEmpty(value) ? value.login : "",
+      approvalIds: !_.isEmpty(value) ? value.login : '',
       empId,
       empName,
       orgId,
@@ -281,7 +298,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       getAddEmpList,
       buttonList,
     } = this.props;
-    const { remark, customer, attachmentTypeList } = this.state;
+    const { remark, customer, attachmentTypeList, custId } = this.state;
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
@@ -299,7 +316,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       list={buttonList}
       onEmitEvent={this.submitCreateInfo}
     />);
-    console.warn('buttonList', buttonList);
+    const newOldDevelopTeamList = commonHelpr.convertTgFlag(oldDevelopTeamList);
     return (
       <CommonModal
         title="新建开发关系认定"
@@ -318,7 +335,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
             customer={customerValue}
             createCustList={createCustList}
             getCreateCustList={getCreateCustList}
-            onEmitEvent={this.updateValue}
+            onChangeBaseInfoState={this.updateValue}
             isValidCust={isValidCust}
             getIsValidCust={getIsValidCust}
           />
@@ -327,7 +344,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
             <InfoTitle head="原开发团队" />
             <div className={styles.modContent}>
               <CommonTable
-                data={oldDevelopTeamList}
+                data={newOldDevelopTeamList}
                 titleList={developTeamTableHeader}
                 pagination={{
                   pageSize: 5,
@@ -344,7 +361,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 addEmpList={addEmpList}
                 getAddEmpList={getAddEmpList}
                 type="serverInfo"
-                onEmitEvent={this.updateValue}
+                onChangeNewDevelopTeam={this.updateValue}
+                custId={custId}
               />
             </div>
           </div>

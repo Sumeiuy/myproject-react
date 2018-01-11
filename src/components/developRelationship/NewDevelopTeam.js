@@ -6,7 +6,7 @@ import _ from 'lodash';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
 import DropdownSelect from '../common/dropdownSelect';
-// import CommonTable from '../common/biz/CommonTable';
+import commonHelpr from './developRelationshipHelpr';
 import styles from './newDevelopTeam.less';
 
 export default class ServerPersonel extends PureComponent {
@@ -15,8 +15,9 @@ export default class ServerPersonel extends PureComponent {
     // 可添加新开发团队的服务经理
     addEmpList: PropTypes.array.isRequired,
     getAddEmpList: PropTypes.func.isRequired,
-    onEmitEvent: PropTypes.func.isRequired,
+    onChangeNewDevelopTeam: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
+    custId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -40,9 +41,9 @@ export default class ServerPersonel extends PureComponent {
     if (newProps.data !== this.props.data) {
       this.setState({ serverInfo: newProps.data });
     }
-    // if (!_.isEqual(this.props.custId, newProps.custId)) {
-    //   this.setState({ serverInfo: [] });
-    // }
+    if (!_.isEmpty(this.props.custId) && !_.isEqual(this.props.custId, newProps.custId)) {
+      this.setState({ serverInfo: [] });
+    }
   }
 
   // 添加新开发经理人员按钮
@@ -54,30 +55,11 @@ export default class ServerPersonel extends PureComponent {
         this.setState(prevState => ({
           serverInfo: _.concat(prevState.serverInfo, this.state.addSelectedValue),
         }), () => {
-          this.props.onEmitEvent(this.props.type, this.state.serverInfo);
+          this.props.onChangeNewDevelopTeam(this.props.type, this.state.serverInfo);
         });
       }
     } else {
       message.error('新开发经理不能重复添加');
-    }
-  }
-
-  // 权重改变
-  @autobind
-  handleChangeWeight(activeLogin, dataIndex, value) {
-    if (!_.isNumber(Number(value)) || value <= 0 || value > 100) {
-      message.error('您输入的权重值为0到100的数值，可以为100，但是不能为0');
-    } else {
-      const dataSource = [...this.state.serverInfo];
-      const target = dataSource.find(item => item.activeLogin === activeLogin);
-      console.warn('target', target);
-      if (target) {
-        console.warn('value', value);
-        target[dataIndex] = value;
-        this.setState({ serverInfo: dataSource }, () => {
-          console.warn('this.state.serverInfo', this.state.serverInfo);
-        });
-      }
     }
   }
 
@@ -87,7 +69,27 @@ export default class ServerPersonel extends PureComponent {
     const serverInfo = [...this.state.serverInfo];
     this.setState({
       serverInfo: serverInfo.filter(item => item.activeLogin !== activeLogin),
+    }, () => {
+      this.props.onChangeNewDevelopTeam(this.props.type, this.state.serverInfo);
     });
+  }
+
+  // 权重改变
+  @autobind
+  handleChangeWeight(activeLogin, dataIndex, value) {
+    const reg = /^(([1-9]\d?)|100)$/;
+    if (!reg.test(Number(value))) {
+      message.error('您输入的权重值为0到100的数值，可以为100，但是不能为0');
+    } else {
+      const dataSource = [...this.state.serverInfo];
+      const target = dataSource.find(item => item.activeLogin === activeLogin);
+      if (target) {
+        target[dataIndex] = value;
+        this.setState({ serverInfo: dataSource }, () => {
+          console.warn('this.state.serverInfo', this.state.serverInfo);
+        });
+      }
+    }
   }
 
   // 下拉菜单添加选中对象
@@ -132,15 +134,14 @@ export default class ServerPersonel extends PureComponent {
         dataIndex: 'weigh',
         key: 'weigh',
         title: '权重',
-        render: (text, record) => {
-          console.warn('text', text);
-          return (
-            <Input
-              value={text}
-              onChange={e => this.handleChangeWeight(record.activeLogin, 'weigh', e.target.value)}
-            />
-          );
-        },
+        render: (text, record) =>
+          // const textValue = !_.isNull(text) ? text : '';
+           (
+             <Input
+               value={text}
+               onChange={e => this.handleChangeWeight(record.activeLogin, 'weigh', e.target.value)}
+             />
+          ),
       },
       {
         dataIndex: 'tgFlag',
@@ -161,9 +162,9 @@ export default class ServerPersonel extends PureComponent {
   }
 
   render() {
-    const {
-      addEmpList,
-    } = this.props;
+    const { addEmpList } = this.props;
+    const { serverInfo } = this.state;
+    const newServerInfo = commonHelpr.convertTgFlag(serverInfo);
     const columns = this.constructTableColumns();
     return (
       <div className={styles.newDevelopTeam}>
@@ -201,7 +202,7 @@ export default class ServerPersonel extends PureComponent {
         </div>
         <Table
           className={styles.newTeamTable}
-          dataSource={this.state.serverInfo}
+          dataSource={newServerInfo}
           columns={columns}
           pagination={{ pageSize: 5 }}
         />

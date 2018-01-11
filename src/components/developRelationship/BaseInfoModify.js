@@ -15,7 +15,7 @@ export default class BaseInfoModify extends PureComponent {
     getCreateCustList: PropTypes.func.isRequired,
     customer: PropTypes.string.isRequired,
     remark: PropTypes.string.isRequired,
-    onEmitEvent: PropTypes.func.isRequired,
+    onChangeBaseInfoState: PropTypes.func.isRequired,
     // 可申请开发关系认定的客户是否可用
     isValidCust: PropTypes.object.isRequired,
     getIsValidCust: PropTypes.func.isRequired,
@@ -32,10 +32,10 @@ export default class BaseInfoModify extends PureComponent {
     });
   }
 
+  // 更改备注信息
   @autobind
-  changeRemarks(value) {
-    // 更改备注信息
-    this.props.onEmitEvent('remark', value);
+  handleChangeRemarks(value) {
+    this.props.onChangeBaseInfoState('remark', value);
   }
 
   @autobind
@@ -47,8 +47,8 @@ export default class BaseInfoModify extends PureComponent {
 
   @autobind
   selectCustomer(item) {
-    const { onEmitEvent, getIsValidCust } = this.props;
-    onEmitEvent('customer', item);
+    const { onChangeBaseInfoState, getIsValidCust } = this.props;
+    onChangeBaseInfoState('customer', item);
     getIsValidCust({ brokerNumber: item.brokerNumber }).then(
       () => {
         const { isValidCust } = this.props;
@@ -97,7 +97,7 @@ export default class BaseInfoModify extends PureComponent {
         <TextareaComponent
           title="备注"
           value={this.props.remark}
-          onEmitEvent={this.changeRemarks}
+          onEmitEvent={this.handleChangeRemarks}
           placeholder="请输入您的备注信息"
         />
       </div>

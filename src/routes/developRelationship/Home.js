@@ -3,7 +3,7 @@
  * @Description: 开发关系认定Home
  * @Date: 2018-01-03 16:47:24
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-09 14:00:14
+ * @Last Modified time: 2018-01-10 22:27:23
  */
 
 import React, { PureComponent } from 'react';
@@ -74,6 +74,8 @@ const mapDispatchToProps = {
   getAddEmpList: fetchDataFunction(false, 'developRelationship/getAddEmpList'),
   // 获取按钮列表和下一步审批人
   getButtonList: fetchDataFunction(false, 'developRelationship/getButtonList'),
+  // 清除原开发团队列表
+  clearPropsData: fetchDataFunction(false, 'developRelationship/clearPropsData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -110,6 +112,8 @@ export default class Permission extends PureComponent {
     getButtonList: PropTypes.func.isRequired,
     // 员工信息
     empInfo: PropTypes.object.isRequired,
+    // 清除原开发团队的列表
+    clearPropsData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -315,6 +319,7 @@ export default class Permission extends PureComponent {
       getAddEmpList,
       buttonList,
       getButtonList,
+      clearPropsData,
     } = this.props;
     if (_.isEmpty(detailInfo)) {
       return null;
@@ -395,6 +400,7 @@ export default class Permission extends PureComponent {
               getAddEmpList={getAddEmpList}
               buttonList={buttonList}
               getButtonList={getButtonList}
+              clearPropsData={clearPropsData}
             />
           )
         }

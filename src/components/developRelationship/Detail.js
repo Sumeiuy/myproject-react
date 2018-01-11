@@ -16,6 +16,7 @@ import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import { seibelConfig } from '../../config';
+import commonHelpr from './developRelationshipHelpr';
 import styles from './detail.less';
 
 // 表头
@@ -33,20 +34,18 @@ export default class Detail extends PureComponent {
       develop,
       other,
     } = this.props.data;
-    const developList = {
+    const developData = {
       attachmentList: develop,
       title: '开发关系认定书（首次认定时必输）',
       uuid: attachment,
     };
-    const otherList = {
+    const otherData = {
       attachmentList: other,
       title: '其他',
       uuid: attachment,
     };
-    const attachmentList = [developList, otherList];
-    return attachmentList;
+    return [developData, otherData];
   }
-
 
   render() {
     const {
@@ -69,6 +68,8 @@ export default class Detail extends PureComponent {
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const attachmentList = this.handleAttachmentData();
+    const originTeamData = commonHelpr.convertTgFlag(originTeam);
+    const newTeamData = commonHelpr.convertTgFlag(newTeam);
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -107,7 +108,7 @@ export default class Detail extends PureComponent {
               <InfoTitle head="原开发团队" />
               <div className={styles.modContent}>
                 <CommonTable
-                  data={originTeam}
+                  data={originTeamData}
                   titleList={developTeamTableHeader}
                   pagination={{
                     pageSize: 5,
@@ -119,7 +120,7 @@ export default class Detail extends PureComponent {
               <InfoTitle head="新开发团队" />
               <div className={styles.modContent}>
                 <CommonTable
-                  data={newTeam}
+                  data={newTeamData}
                   titleList={developTeamTableHeader}
                   pagination={{
                     pageSize: 5,

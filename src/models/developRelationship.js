@@ -64,7 +64,15 @@ export default {
         buttonList: resultData,
       };
     },
-
+    // 清除数据
+    clearPropsDataSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        oldDevelopTeamList: resultData,
+        addEmpList: resultData,
+      };
+    },
   },
   effects: {
     // 右侧详情
@@ -120,6 +128,15 @@ export default {
       yield put({
         type: 'getButtonListSuccess',
         payload: response,
+      });
+    },
+    // 清除列表
+    * clearPropsData({ payload }, { put }) {
+      yield put({
+        type: 'clearPropsDataSuccess',
+        payload: {
+          resultData: EMPTY_LIST,
+        },
       });
     },
   },
