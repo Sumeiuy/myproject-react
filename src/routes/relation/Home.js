@@ -4,7 +4,7 @@
  * @Date: 2017-12-5 15:02:16
  */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 

@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:38:52
+ * @Last Modified time: 2018-01-11 10:34:18
  */
 /**
  * 常用说明
@@ -33,7 +33,7 @@ import { Progress, Popconfirm, Upload, message, Popover, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import Button from '../Button';
 import { request } from '../../../config';
 import { emp } from '../../../helper';

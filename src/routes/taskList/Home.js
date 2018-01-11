@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';

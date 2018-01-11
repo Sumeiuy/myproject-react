@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Select, DatePicker, Row, Col, Button, message } from 'antd';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';

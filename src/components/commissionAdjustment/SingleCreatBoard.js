@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:18
+ * @Last Modified time: 2018-01-11 10:33:32
  * @description 单佣金申请内容区域
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { Icon } from 'antd';
 import _ from 'lodash';
 

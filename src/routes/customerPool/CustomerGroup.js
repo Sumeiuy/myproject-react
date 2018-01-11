@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-05 15:20:05
+ * @Last Modified time: 2018-01-11 10:36:28
  * @description: 客户分组功能
  */
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
 

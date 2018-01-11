@@ -3,12 +3,12 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-04 17:50:13
+ * @Last Modified time: 2018-01-11 10:43:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { message, Button, Modal } from 'antd';
 import _ from 'lodash';
 
