@@ -16,6 +16,8 @@ const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_TEN_SIZE = 10;
 const INITIAL_PAGE_FIVE_SIZE = 5;
+// 题目类型，暂时写死，以后可能需要改成从接口获取，可能有多个
+const assessType = 'MOT_EMP_FEEDBACK';
 
 export default {
   namespace: 'customerPool',
@@ -109,6 +111,14 @@ export default {
     taskBasicInfo: {},
     // 文件下载文件列表数据
     filesList: [],
+    // 问卷调查模板Id
+    templateId: '',
+    // 一级指标数据
+    indicatorData: [],
+    // 当前rukou
+    currentEntry: 0,
+    // 产品列表
+    productList: [],
   },
 
   subscriptions: {
@@ -700,6 +710,30 @@ export default {
         payload: attaches,
       });
     },
+    // 根据问题IdList生成模板id
+    * generateTemplateId({ payload }, { call, put }) {
+      const { resultData } = yield call(api.generateTemplateId, { ...payload, assessType });
+      yield put({
+        type: 'generateTemplateIdSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询指标数据
+    * queryIndicatorData({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryIndicatorData, payload);
+      yield put({
+        type: 'queryIndicatorDataSuccess',
+        payload: resultData,
+      });
+    },
+    // 搜索产品列表
+    * queryProduct({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryProduct, payload);
+      yield put({
+        type: 'queryProductDataSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1167,6 +1201,14 @@ export default {
         currentTab: payload,
       };
     },
+    // 保存当前选中的客户选择类型
+    saveCurrentEntry(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentEntry: payload,
+      };
+    },
     // 清除保存的tab
     resetActiveTab(state) {
       return {
@@ -1203,6 +1245,30 @@ export default {
       return {
         ...state,
         taskBasicInfo: resultData,
+      };
+    },
+    // 生成问卷模板id成功
+    generateTemplateIdSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        templateId: payload,
+      };
+    },
+    // 查询指标数据
+    queryIndicatorDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        indicatorData: payload,
+      };
+    },
+    // 查询产品列表成功
+    queryProductDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        productList: payload,
       };
     },
   },
