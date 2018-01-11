@@ -235,8 +235,7 @@ export default class CustomerGroupManage extends PureComponent {
       return;
     }
     // 发起任务之前，清除数据
-    const { clearCreateTaskData } = this.props;
-    clearCreateTaskData();
+    this.props.clearCreateTaskData();
 
     this.handleOpenTab({
       groupId,

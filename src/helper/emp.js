@@ -73,7 +73,7 @@ const emp = {
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
-    return orgId || '"ZZ001041056"';
+    return orgId;
   },
 
   /**

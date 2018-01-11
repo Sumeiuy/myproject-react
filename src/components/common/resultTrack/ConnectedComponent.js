@@ -7,7 +7,7 @@
  * 避免在组件被引用多次的时候，需要传入很多次公用方法
  */
 
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import ResultTrack from './index';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -30,16 +30,10 @@ const mapDispatchToProps = {
   queryProduct: fetchDataFunction(true, 'customerPool/queryProduct'),
 };
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps,
-});
-
 // withRef暴露被包裹组件给引用的组件
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  null,
   { withRef: true },
 )(ResultTrack);

@@ -259,7 +259,7 @@ export default class MissionInvestigation extends PureComponent {
           {
             _.map(currentQuestionDetail.optionInfoList, (item, index) =>
               <div className={styles.anwser} key={item.optionId}>
-                <span>{data.convert((Number(index) + 1))}.</span>
+                <span>{data.convertNumToLetter((Number(index) + 1))}.</span>
                 <span>{item.optionValue}</span>
               </div>,
             )

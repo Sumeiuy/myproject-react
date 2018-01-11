@@ -4,6 +4,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import _ from 'lodash';
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { permission } from '../utils';
@@ -46,7 +47,7 @@ export default {
       const { payload } = action;
       const { empInfo = {} } = payload;
       let creator = '';
-      if (empInfo) {
+      if (!_.isEmpty(empInfo)) {
         creator = `${empInfo.empName}(${empInfo.login})`;
       }
 

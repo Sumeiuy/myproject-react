@@ -7,7 +7,7 @@
  * 避免在组件被引用多次的时候，需要传入很多次公用方法
  */
 
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import MissionInvestigation from './index';
 // import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
@@ -27,16 +27,10 @@ const mapDispatchToProps = {
   getQuestionList: fetchDataFunction(true, 'taskFeedback/queryQuestions'),
 };
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps,
-});
-
 // withRef暴露被包裹组件给引用的组件
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  null,
   { withRef: true },
 )(MissionInvestigation);

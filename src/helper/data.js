@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-22 20:02:11
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-11 10:00:57
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -91,7 +91,7 @@ const data = {
    * 数字转换成26个字母，1输出A
    * @param {*number} num 需要转换的数字
    */
-  convert(num) {
+  convertNumToLetter(num) {
     const result = [];
     let n = num;
     while (n) {

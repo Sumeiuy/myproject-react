@@ -15,7 +15,6 @@ import LabelInfo from '../common/LabelInfo';
 import BasicInfo from '../common/BasicInfo';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
-import QuestionnaireSurvey from './QuestionnaireSurvey';
 
 import styles from './performerViewDetail.less';
 
@@ -104,42 +103,6 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
-  @autobind
-  showModal() {
-    console.log(1111);
-    this.setState({
-      visible: true,
-    });
-  }
-
-  @autobind
-  handleOk() {
-    let isErr = false;
-    console.log('===>', this.questionForm);
-    this.props.form.validateFields((err, values) => {
-      console.log('err--->', err);
-      console.log('values--->', values);
-      if (!_.isEmpty(err)) {
-        isErr = true;
-      }
-    });
-    this.setState({
-      visible: isErr,
-    });
-  }
-
-  @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
-  }
-
-  @autobind
-  handleCheckboxChange(key, value) {
-    console.log(key, '==>', value);
-  }
-
   /**
    * 添加服务记录成功后重新加载目标客户的列表信息
    */
@@ -148,8 +111,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerPageNo = PAGE_NO,
-      targetCustomerState,
+        targetCustomerPageNo = PAGE_NO,
+        targetCustomerState,
       },
     } = this.props;
     this.queryTargetCustInfo({
@@ -170,9 +133,7 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageSize,
         targetCustomerState = '',
       },
-      form,
     } = this.props;
-    const { visible } = this.state;
     const {
       missionId,
       missionName,
@@ -181,9 +142,9 @@ export default class PerformerViewDetail extends PureComponent {
       ...otherProps
     } = basicInfo;
     const { list, page } = targetCustList;
-    const { serveStatus } = dict;
+    const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = serveStatus.map(o => ({
+    const stateData = (serveStatus || []).map(o => ({
       value: o.key,
       label: o.value,
       show: true,
@@ -239,14 +200,6 @@ export default class PerformerViewDetail extends PureComponent {
               />
           }
         </div>
-        <QuestionnaireSurvey
-          ref={ref => this.questionForm = ref}
-          form={form}
-          visible={visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          onChange={this.handleCheckboxChange}
-        />
       </div>
     );
   }
