@@ -53,7 +53,8 @@ const permission = {
   hasCreateTaskPermission() {
     return permission.hasIndexViewPermission()
       || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission();
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
   },
 
   // 佣金调整资讯订阅权限
