@@ -204,7 +204,7 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <Clickable
-        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST'); }}
         eventName="/click/custListBottomFixedBox/launchTask"
       >
         <button>发起任务</button>

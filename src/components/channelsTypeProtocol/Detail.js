@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-09 12:37:58
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-11 08:53:12
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -25,6 +25,13 @@ const {
   protocolProductTitleList,  // 协议产品表头集合
 } = seibelConfig.channelsTypeProtocol;
 
+const SUBTYPE = {
+  // 高速通道
+  heightSpeed: '0501',
+  // 紫金通道
+  violetGold: '0502',
+};
+
 const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -42,14 +49,16 @@ export default class Detail extends PureComponent {
     attachmentList: PropTypes.array,
     // showEditModal: PropTypes.func,
     // hasEditPermission: PropTypes.bool,
+    currentView: PropTypes.string,
   }
 
   static defaultProps = {
     attachmentList: EMPTY_ARRAY,
     flowHistory: EMPTY_ARRAY,
-    uploadAttachment: () => {},
+    uploadAttachment: () => { },
     // showEditModal: () => {},
     // hasEditPermission: false,
+    currentView: '',
   }
 
   @autobind
@@ -66,6 +75,8 @@ export default class Detail extends PureComponent {
       attachmentList,
       // showEditModal,
       // hasEditPermission,
+      // 传入视图不同，判断是否显示申请单编号
+      currentView,
     } = this.props;
     const nowStep = {
       // 当前步骤
@@ -77,10 +88,12 @@ export default class Detail extends PureComponent {
       x: true,
     };
     let isTenLevel = true;
-    if (protocolDetail.operationType === '协议订购') {
+    // 判断是否是紫金快车道 并且是 协议订购
+    if (currentView === SUBTYPE.violetGold && protocolDetail.operationType === '协议订购') {
       // 判断是否是十档行情
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }
+
     // 判断是否显示下挂客户
     const showUnderCust = protocolDetail.multiUsedFlag === 'Y';
     // 判断是否显示协议编号
@@ -101,6 +114,11 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
+          {
+            currentView === SUBTYPE.heightSpeed ?
+              <InfoItem label="申请单编号" value={protocolDetail.appId} />
+              : null
+          }
           {
             protocolDetail.agreementNum ?
               <InfoItem label="协议编号" value={protocolDetail.agreementNum} />

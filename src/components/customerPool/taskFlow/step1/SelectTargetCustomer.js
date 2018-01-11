@@ -35,6 +35,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   static defaultProps = {
+    // 默认不展示入口
     currentEntry: -1,
     isShowTitle: false,
     orgId: null,
@@ -46,8 +47,11 @@ export default class SelectTargetCustomer extends PureComponent {
     super(props);
     const { currentEntry } = props;
     this.state = {
+      // -1不展示入口
       showEntry: currentEntry === -1,
+      // 展示入口1，导入客户
       showImportCustomers: currentEntry === 0,
+      // 展示入口2，瞄准镜标签
       showSightingTelescope: currentEntry === 1,
     };
   }

@@ -2,12 +2,12 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-20 13:29:22
+ * @Last Modified time: 2018-01-10 21:24:10
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Icon, Mention } from 'antd';
+import { Input, Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -17,8 +17,6 @@ import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
 import styles from './taskPreview.less';
-
-const { toString } = Mention;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -50,7 +48,7 @@ export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
-    currentTab: PropTypes.string.isRequired,
+    currentEntry: PropTypes.number,
     getApprovalList: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired,
     taskTypes: PropTypes.array.isRequired,
@@ -59,18 +57,16 @@ export default class TaskPreview extends PureComponent {
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
     isNeedApproval: PropTypes.bool,
-    custSource: PropTypes.string,
-    custTotal: PropTypes.string,
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    creator: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     isNeedApproval: false,
-    custSource: '',
-    custTotal: '',
+    currentEntry: 0,
   };
 
   constructor(props) {
@@ -158,53 +154,123 @@ export default class TaskPreview extends PureComponent {
     this.filterDataSource(value);
   }
 
+  @autobind
+  renderOption(optionInfoList = []) {
+    return _.map(optionInfoList, (item, index) =>
+      <span key={item.optionId}>{`${Number(index) + 1}.${item.optionValue || '--'}；`}</span>);
+  }
+
+  @autobind
+  renderQuestionDetail(questionList) {
+    return _.map(questionList, (item) => {
+      // 1代表单选
+      if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
+        return (
+          <div className={styles.singleOrMultipleChoice} key={item.quesId}>
+            此问题为{item.quesTypeCode === '1' ? '单选' : '多选'}，
+            选项内容为：{this.renderOption(item.optionInfoList)}
+          </div>
+        );
+      }
+      return (
+        <div className={styles.subjectiveQuestion} key={item.quesId}>
+          此问题为主观题
+        </div>
+      );
+    });
+  }
+
   render() {
     const {
       storedData,
       isNeedApproval,
-      currentTab = '1',
+      currentEntry = 0,
       executeTypes,
       taskTypes,
       currentSelectRowKeys,
       currentSelectRecord,
       onSingleRowSelectionChange,
       onRowSelectionChange,
-      custSource,
-      custTotal,
       isApprovalListLoadingEnd,
+      creator,
     } = this.props;
     const {
       taskFormData = EMPTY_OBJECT,
       labelCust = EMPTY_OBJECT,
       custSegment = EMPTY_OBJECT,
+      resultTrackData = EMPTY_OBJECT,
+      missionInvestigationData = EMPTY_OBJECT,
+      custSource,
+      custTotal,
     } = storedData;
 
-    let finalData = {};
-    if (currentTab === '1') {
+    let finalData = {
+      custSource,
+      custTotal,
+      ...resultTrackData,
+      ...missionInvestigationData,
+      ...taskFormData,
+    };
+
+    if (currentEntry === 0) {
       // 第一个tab
       finalData = {
-        ...taskFormData,
+        ...finalData,
         ...custSegment,
       };
-    } else if (currentTab === '2') {
+    } else if (currentEntry === 1) {
       // 第二个tab
       finalData = {
-        ...taskFormData,
+        ...finalData,
         ...labelCust,
       };
     }
 
     const {
       labelDesc,
-      customNum,
-      originFileName,
+      custNum,
+      // originFileName,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc,
-      totalCount: custTotalCount,
       timelyIntervalValue,
+      // 跟踪窗口期
+      trackWindowDate,
+      // 一级指标
+      indicatorLevel1Value,
+      // 二级指标
+      indicatorLevel2Value,
+      // 产品名称
+      currentSelectedProduct,
+      // 操作符key,传给后台,譬如>=/<=
+      // operationKey,
+      // 操作符name,展示用到，譬如达到/降到
+      operationValue,
+      // 当前输入的指标值
+      inputIndicator,
+      // 单位
+      unit,
+      // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
+      isHasState,
+      // 是否有产品搜索
+      isHasSearchedProduct,
+      // 是否选中
+      isResultTrackChecked,
+      // 是否来自瞄准镜标签
+      isSelectCustFromSightLabel,
+      // 瞄准镜标签条件
+      sightLabelCondition,
+      // 圈人规则
+      sightLabelRule,
+      // 是否选中
+      isMissionInvestigationChecked,
+      // 选择的问题List
+      questionList,
+      stateText,
+      custSource: custSourceEntry,
+      custTotal: totalCount,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -234,7 +300,86 @@ export default class TaskPreview extends PureComponent {
     return (
       <div className={styles.taskOverViewContainer}>
         <div className={styles.basicInfoSection}>
-          <div className={styles.title}>基本任务信息</div>
+          <div className={styles.title}>目标客户</div>
+          <div className={styles.divider} />
+          <div className={styles.infoDescription}>
+            <div className={styles.taskSection}>
+              <div>
+                <div>客户来源：</div>
+                <div>{custSource || custSourceEntry}</div>
+              </div>
+              {
+                currentEntry === 1 ?
+                  <div>
+                    <div>标签描述：</div>
+                    <div>{labelDesc || '--'}</div>
+                  </div> : null
+              }
+            </div>
+            {
+              isSelectCustFromSightLabel ?
+                <div className={styles.taskSection}>
+                  <div>
+                    <div>过滤条件：</div>
+                    <div>{sightLabelCondition || '--'}</div>
+                  </div>
+                  <div>
+                    <div>圈人规则：</div>
+                    <div>{sightLabelRule || '--'}</div>
+                  </div>
+                </div>
+                : null
+            }
+            <div className={styles.taskSection}>
+              <div>
+                <div>客户数量：</div>
+                {
+                  <div>{custTotal || custNum || totalCount || 0}户</div>
+                  // : <div>{custNum || 0}户</div>
+                }
+              </div>
+              <div>
+                <div>创建人：</div>
+                <div>{creator || '--'}</div>
+              </div>
+            </div>
+
+            {/* <div className={styles.descriptionOrNameSection}>
+                  <div>客户来源：</div>
+                  <div>{_.isEmpty(custSource) ? '导入客户' : custSource}</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户数量：</div>
+                  <div>{_.isEmpty(custSource) ? custTotalCount || 0 : custTotal}户</div>
+                </div>
+                {_.isEmpty(custSource) ?
+                  <div className={styles.descriptionOrNameSection}>
+                    <div>数据来源：</div>
+                    <div>{originFileName || '--'}</div>
+                  </div>
+                  :
+                  null
+                } */}
+          </div>
+          {/* : <div className={styles.infoDescription}>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户来源：</div>
+                  <div>标签圈人</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户数量：</div>
+                  <div>{custNum || 0}户</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>标签描述：</div>
+                  <div>{labelDesc || '--'}</div>
+                </div>
+              </div> */}
+          {/* } */}
+        </div>
+
+        <div className={styles.basicInfoSection}>
+          <div className={styles.title}>基本信息</div>
           <div className={styles.divider} />
           <div className={styles.infoDescription}>
             <div className={styles.descriptionOrNameSection}>
@@ -263,50 +408,49 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>{!_.isEmpty(templetDesc) ? toString(templetDesc) : '--'}</div>
+              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
             </div>
           </div>
         </div>
-
-        <div className={styles.basicInfoSection}>
-          <div className={styles.title}>目标客户</div>
-          <div className={styles.divider} />
-          {
-            currentTab === '1' ?
+        {
+          isResultTrackChecked ?
+            <div className={styles.basicInfoSection}>
+              <div className={styles.title}>结果跟踪</div>
+              <div className={styles.divider} />
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>客户来源：</div>
-                  <div>{_.isEmpty(custSource) ? '导入客户' : custSource}</div>
+                  <div>跟踪窗口期：</div>
+                  <div>{`${trackWindowDate}天` || '--'}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>客户数量：</div>
-                  <div>{_.isEmpty(custSource) ? custTotalCount || 0 : custTotal}户</div>
-                </div>
-                {_.isEmpty(custSource) ?
-                  <div className={styles.descriptionOrNameSection}>
-                    <div>数据来源：</div>
-                    <div>{originFileName || '--'}</div>
+                  <div>指标目标：</div>
+                  <div>
+                    {
+                      `${indicatorLevel1Value || ''}${indicatorLevel2Value || ''}
+                      ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
+                      ${!isHasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
+                        : stateText}` || '--'
+                    }
                   </div>
-                  :
-                  null
-                }
-              </div>
-              : <div className={styles.infoDescription}>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>客户来源：</div>
-                  <div>标签圈人</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>客户数量：</div>
-                  <div>{customNum || 0}户</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>标签描述：</div>
-                  <div>{labelDesc || '--'}</div>
                 </div>
               </div>
-          }
-        </div>
+            </div>
+            : null
+        }
+        {
+          isMissionInvestigationChecked ?
+            <div className={styles.basicInfoSection}>
+              <div className={styles.title}>任务调查</div>
+              <div className={styles.divider} />
+              <div className={styles.infoDescription}>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>触发条件：</div>
+                  <div>{this.renderQuestionDetail(questionList)}</div>
+                </div>
+              </div>
+            </div>
+            : null
+        }
         {
           isNeedApproval ? (
             <Clickable

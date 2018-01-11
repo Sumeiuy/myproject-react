@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-17 14:38:06
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-20 14:46:20
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-04 14:06:18
  * @description 新的左侧列表组件
  */
 import React, { PureComponent } from 'react';
