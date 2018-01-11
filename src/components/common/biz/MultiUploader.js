@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-13 16:23:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:34:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import { Progress, Popconfirm, Upload, message, Popover } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 
 import Button from '../Button';
 import { request } from '../../../config';
@@ -119,13 +119,16 @@ export default class MultiUpload extends PureComponent {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
         const data = uploadFile.response.resultData;
+        const attachesLastData = _.last(data.attaches);
         this.setState({
           status: 'success',
           statusText: '上传完成',
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadCallback(type, data.attachment));
+        }, () => {
+          uploadCallback(type, data.attachment, attachesLastData.attachId);
+        });
       } else {
         // 上传失败的返回值 MAG0005
         this.setState({
@@ -154,7 +157,9 @@ export default class MultiUpload extends PureComponent {
       _.remove(newFileList, o => o.attachId === attachId);
       this.setState({
         fileList: newFileList, // 文件列表
-      }, deleteCallback(type));
+      }, () => {
+        deleteCallback(type, attachId);
+      });
     });
   }
 

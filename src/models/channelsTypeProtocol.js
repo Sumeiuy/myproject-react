@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-07 15:34:40
+ * @Last Modified time: 2018-01-11 14:31:31
  */
 // import _ from 'lodash';
 import { message } from 'antd';
@@ -11,7 +11,7 @@ import { parse } from 'query-string';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { emp } from '../helper';
-import duty from '../helper/config/duty';
+// import duty from '../helper/config/duty';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -160,7 +160,8 @@ export default {
     * getProtocolDetail({ payload }, { call, put }) {
       const param = {
         ...payload.data,
-        subType: duty.zjkcd_id,
+        // subType: duty.zjkcd_id,
+        subType: '',
       };
       const empId = emp.getId();
       const response = yield call(api.getProtocolDetail, param);

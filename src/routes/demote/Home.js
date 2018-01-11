@@ -2,15 +2,15 @@
  * @Description: 降级客户处理页面
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-08 15:19:45
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:37:47
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 import moment from 'moment';
 import { message } from 'antd';

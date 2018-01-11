@@ -1,12 +1,12 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-01 14:56:05
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-01 21:07:14
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:34:51
  * redux连接的创建服务记录
  */
 
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import CreateServiceRecord from './CreateServiceRecord';
 
 const fetchDataFunction = (globalLoading, type) => query => ({

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 15:19:30
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 17:08:26
+ * @Last Modified time: 2018-01-10 15:33:30
  * @description 华泰职责ID视图
  * duty的key值取名规范为中文拼音名称首字母小写,使用下划线'_'连接,value值为职责ID
  */
@@ -20,6 +20,8 @@ const duty = {
   ten_level_template_id: '1-43OZSYG', // 十档行情模板ID
   zjkcd_id: '507070', // 紫金快车道子类型ID
   zjkcd_name: '紫金快车道协议',  // 紫金快车道子类型名称
+  gstd_id: '507050', // 高速通道子类型ID
+  gstd_name: '高速通道类协议', // 高速通道子类型名称
   bm_fgs: '2', // 部门为分公司
 };
 

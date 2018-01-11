@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-11 16:59:18
+ * @Last Modified time: 2018-01-11 17:57:53
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,6 +20,7 @@ import Transfer from '../../components/common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
 import config from '../../routes/channelsTypeProtocol/config';
 import styles from './editForm.less';
+import duty from '../../helper/config/duty';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -40,8 +41,14 @@ const attachmentRequired = {
     attachmentMap[1].type,
     attachmentMap[2].type,
   ],
+  // 高速通道订购，续订必传的附件类型,
+  highSpeedProtocol: [
+    attachmentMap[0].type,
+    attachmentMap[3].type,
+    attachmentMap[5].type,
+  ],
 };
-const custAttachment = ['noNeed', 'noCust', 'hasCust'];
+const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol'];
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
   static propTypes = {
@@ -238,7 +245,15 @@ export default class EditForm extends PureComponent {
       multiUsedFlag: boolean,
       cust: [],
       isNeedTransfer: false,
-    }, () => this.setUploadConfig(boolean ? custAttachment[2] : custAttachment[1]));
+    }, () => {
+      if (this.editBaseInfoComponent) {
+        const baseInfoData = this.editBaseInfoComponent.getData();
+        if (baseInfoData.subType === duty.zjkcd_id) {
+          // 如果子类型是紫金快车道时切换多账户才改变上传文件的必填项
+          this.setUploadConfig(boolean ? custAttachment[2] : custAttachment[1]);
+        }
+      }
+    });
   }
 
   // 向父组件提供数据
@@ -267,6 +282,7 @@ export default class EditForm extends PureComponent {
         attachment: attachmentTypeList,
         cust,
         flowid: isEdit ? protocolDetail.flowid : '',
+        id: '',
       };
     } else {
       // 其他操作类型的数据
@@ -294,6 +310,7 @@ export default class EditForm extends PureComponent {
   // 设置上传配置项
   @autobind
   setUploadConfig(hasCust) {
+    console.log('setupload');
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
     const requiredArr = attachmentRequired[hasCust];
@@ -527,6 +544,14 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // EditBaseInfo切换子类型和操作类型时改变对应的上传文件必填项
+  @autobind
+  handleChangeRequiredFile(subType, operateType) {
+    // 子类型是高速通道协议并且操作类型是订购
+    if (subType === duty.gstd_id && operateType === config.subscribeArray[0]) {
+      this.setUploadConfig(custAttachment[3]);
+    }
+  }
 
   render() {
     const {
@@ -581,6 +606,7 @@ export default class EditForm extends PureComponent {
       protocolClause,
       operationType,
     } = this.state;
+    console.log('attachmentTypeList', attachmentTypeList);
     // 下挂客户表格中需要的操作
     const customerOperation = {
       column: {
@@ -644,6 +670,7 @@ export default class EditForm extends PureComponent {
             getFlowStepInfo={getFlowStepInfo}
             clearDetailData={clearDetailData}
             changeOperationType={this.handleChangeOperationType}
+            changeRequiredFile={this.handleChangeRequiredFile}
           />
         </div>
         <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>

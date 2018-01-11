@@ -1,30 +1,13 @@
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Radio } from 'antd';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-// import Button from '../../components/common/Button';
 import Search from '../../components/common/Search';
 import TaskSearchRow from '../../components/customerPool/taskFlow/TaskSearchRow';
 import withRouter from '../../decorators/withRouter';
 import styles from './taskFlowSecond.less';
 
-// const Search = Input.Search;
 const RadioGroup = Radio.Group;
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-
-// const effects = {
-//   getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
-// };
-
-// const fetchData = (type, loading) => query => ({
-//   type,
-//   payload: query || EMPTY_OBJECT,
-//   loading,
-// });
 
 const mapStateToProps = state => ({
   // 字典信息

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-11 15:31:47
+ * @Last Modified time: 2018-01-11 17:58:09
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -77,6 +77,8 @@ export default class EditBaseInfo extends PureComponent {
     getFlowStepInfo: PropTypes.func,
     // 切换操作类型时向父组件返回数据
     changeOperationType: PropTypes.func.isRequired,
+    // 操作类型子类型发生变化时数据传递到父组件用来判断上传文件必填项
+    changeRequiredFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -234,6 +236,7 @@ export default class EditBaseInfo extends PureComponent {
       clearPropsData,
       resetProduct,
       changeOperationType,
+      changeRequiredFile,
     } = this.props;
     let sub = true;
     let isHightSpeed = false;
@@ -268,7 +271,7 @@ export default class EditBaseInfo extends PureComponent {
       isHightSpeed,
     }, () => {
       const { onChangeMultiCustomer, resetUpload } = this.props;
-      const { isEditPage } = this.state;
+      const { isEditPage, subType, operationType } = this.state;
       // 清除详情
       this.clearDetailData();
       // 清除客户列表
@@ -284,6 +287,7 @@ export default class EditBaseInfo extends PureComponent {
         resetUpload();
       }
       if (key === 'subType') {
+        changeRequiredFile(subType, operationType);
         // 子类型发生变化查询操作类型
         queryTypeVaules({
           typeCode: 'operationType',
@@ -296,7 +300,8 @@ export default class EditBaseInfo extends PureComponent {
         });
         // this.clearValue();
       } else if (key === 'operationType') {
-        const { subType } = this.state;
+        // const { subType, operationType } = this.state;
+        changeRequiredFile(subType, operationType);
         if (_.includes(subscribeArray, value)) {
           // 子类型发生变化且为订购时查询协议模板列表
           queryTypeVaules({

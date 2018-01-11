@@ -5,7 +5,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
