@@ -52,7 +52,7 @@ module.exports = {
       },
       [prefix]: {
         // target: 'http://168.61.8.81:5188', // SIT
-        target: 'http://168.61.8.81:5085', // UAT
+        target: 'http://168.61.8.81:5086', // UAT
         secure: false,
       },
       '/fspa/log': {

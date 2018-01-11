@@ -1165,9 +1165,11 @@ export default {
     // 清除自建任务数据
     clearCreateTaskData(state, action) {
       const { payload = {} } = action;
+      const { storedCreateTaskData } = state;
+      storedCreateTaskData[`${payload}`] = {};
       return {
         ...state,
-        storedCreateTaskData: payload,
+        storedCreateTaskData,
       };
     },
     getCustRangeByAuthoritySuccess(state, action) {
