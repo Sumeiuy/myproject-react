@@ -90,12 +90,48 @@ export default class CreateTaskFormFlow extends PureComponent {
   //   }
   // }
 
+  /**
+   * 判断入口来源
+   */
+  @autobind
+  judgeSource(source) {
+    return source === 'custGroupList' || source === 'managerView';
+  }
+
+  @autobind
+  getStoredCreateTaskData() {
+    const { location: { query: { source } }, storedCreateTaskData } = this.props;
+    let storedData = {};
+    if (this.judgeSource(source)) {
+      storedData = storedCreateTaskData[`${source}`] || {};
+    } else {
+      storedData = storedCreateTaskData.custList || {};
+    }
+
+    return storedData;
+  }
+
+  @autobind
+  storeCreateTaskData(data) {
+    const { saveCreateTaskData, location: { query: { source } },
+      storedCreateTaskData } = this.props;
+    if (this.judgeSource(source)) {
+      saveCreateTaskData({
+        ...storedCreateTaskData,
+        [source]: data,
+      });
+    } else {
+      saveCreateTaskData({
+        ...storedCreateTaskData,
+        custList: data,
+      });
+    }
+  }
+
   render() {
     const {
       dict,
       location,
-      storedCreateTaskData,
-      saveCreateTaskData,
       createTask,
       getApprovalList,
       approvalList,
@@ -115,8 +151,8 @@ export default class CreateTaskFormFlow extends PureComponent {
         <TaskFormFlowStep
           location={location}
           dict={dict}
-          saveCreateTaskData={saveCreateTaskData}
-          storedCreateTaskData={storedCreateTaskData}
+          saveCreateTaskData={this.storeCreateTaskData}
+          storedCreateTaskData={this.getStoredCreateTaskData()}
           createTask={createTask}
           approvalList={approvalList}
           getApprovalList={getApprovalList}
