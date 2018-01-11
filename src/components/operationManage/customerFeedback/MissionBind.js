@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-09 17:11:47
+ * @Last Modified time: 2018-01-11 13:29:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -243,6 +243,7 @@ export default class MissionBind extends PureComponent {
       onOk: this.handleAddFeedback,
       onCancel: this.handleCloseModal,
       width: 650,
+      wrapClassName: styles.feedbackAddModalWarp,
     };
     const collapseProps = {
       activeKey: collapseActiveKey,
