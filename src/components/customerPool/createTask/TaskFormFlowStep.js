@@ -51,11 +51,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { storedCreateTaskData: {
-      taskFormData,
-      current,
-      custSource,
-     } } = props;
+    const {
+      storedCreateTaskData: { taskFormData, current, custSource },
+      location: { query: { source } },
+    } = props;
     this.state = {
       current: current || 0,
       previousData: taskFormData || {},
@@ -66,7 +65,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskSubType: false,
     };
     // 创建任务权限
-    this.isHasAuthorize = permission.hasCreateTaskPermission();
+    this.isHasAuthorize = permission.hasCreateTaskPermission() && source !== 'custGroupList';
   }
 
   @autobind
@@ -386,7 +385,7 @@ export default class TaskFormFlowStep extends PureComponent {
       ...req,
     };
 
-    if (this.isHasAuthorize) {
+    if (this.isHasAuthorize && source !== 'custGroupList') {
       postBody = {
         ...postBody,
         flowAuditorId,

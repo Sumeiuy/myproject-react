@@ -280,8 +280,8 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
-      isShowErrorTaskSubType,
-      taskSubTypes,
+      // isShowErrorTaskSubType,
+      // taskSubTypes,
     } = this.state;
     const {
       defaultMissionName,
@@ -292,7 +292,7 @@ export default class TaskFormInfo extends PureComponent {
       taskTypes,
       executeTypes,
       form,
-      defaultTaskSubType,
+      // defaultTaskSubType,
     } = this.props;
 
     const { getFieldDecorator } = form;
@@ -309,11 +309,11 @@ export default class TaskFormInfo extends PureComponent {
       help: '请选择任务类型',
     } : null;
 
-    const taskSubTypeErrorSelectProps = isShowErrorTaskSubType ? {
-      hasFeedback: true,
-      validateStatus: 'error',
-      help: '请选择任务子类型',
-    } : null;
+    // const taskSubTypeErrorSelectProps = isShowErrorTaskSubType ? {
+    //   hasFeedback: true,
+    //   validateStatus: 'error',
+    //   help: '请选择任务子类型',
+    // } : null;
 
     const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
       hasFeedback: true,
@@ -374,8 +374,9 @@ export default class TaskFormInfo extends PureComponent {
           {/**
            * 任务子类型
            */}
-          <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务子类型</label>
+          {/* <li>
+            <label htmlFor="dd" className={styles.task_label}>
+            <i className={styles.required_i}>*</i>任务子类型</label>
             {
               !_.isEmpty(taskSubTypes) ?
                 <FormItem
@@ -400,7 +401,7 @@ export default class TaskFormInfo extends PureComponent {
                   </Select>
                 </FormItem>
             }
-          </li>
+          </li> */}
           {/**
            * 执行方式
            */}
