@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, Input, Popconfirm, message } from 'antd';
+import { Table, Popconfirm, message, InputNumber } from 'antd';
 import _ from 'lodash';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
@@ -78,17 +78,16 @@ export default class ServerPersonel extends PureComponent {
 
   // 权重改变
   @autobind
-  handleChangeWeight(activeLogin, dataIndex, value) {
+  handleChangeWeight(value, activeLogin) {
     const reg = /^(([1-9]\d?)|100)$/;
     if (!reg.test(Number(value))) {
-      message.error('您输入的权重值为0到100的数值，可以为100，但是不能为0');
-    } else {
-      const dataSource = [...this.state.serverInfo];
-      const target = dataSource.find(item => item.activeLogin === activeLogin);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ serverInfo: dataSource });
-      }
+      message.error('您输入的权重值为1到100的数值');
+    }
+    const dataSource = [...this.state.serverInfo];
+    const target = dataSource.find(item => item.activeLogin === activeLogin);
+    if (target) {
+      target.weigh = value;
+      this.setState({ serverInfo: dataSource });
     }
   }
 
@@ -135,13 +134,14 @@ export default class ServerPersonel extends PureComponent {
         key: 'weigh',
         title: '权重',
         render: (text, record) =>
-          // const textValue = !_.isNull(text) ? text : '';
-           (
-             <Input
-               value={text}
-               onChange={e => this.handleChangeWeight(record.activeLogin, 'weigh', e.target.value)}
-             />
-          ),
+          (
+            <InputNumber
+              min={1}
+              max={100}
+              value={text}
+              onChange={v => this.handleChangeWeight(v, record.activeLogin)}
+            />
+        ),
       },
       {
         dataIndex: 'tgFlag',

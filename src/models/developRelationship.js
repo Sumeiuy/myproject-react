@@ -51,7 +51,7 @@ export default {
     },
     getAddEmpListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empList = EMPTY_LIST  } = resultData;
+      const { empList = EMPTY_LIST } = resultData;
       return {
         ...state,
         addEmpList: empList,
