@@ -90,11 +90,19 @@ export default class CreateTaskFormFlow extends PureComponent {
   //   }
   // }
 
+  /**
+   * 判断入口来源
+   */
+  @autobind
+  judgeSource(source) {
+    return source === 'custGroupList' || source === 'managerView';
+  }
+
   @autobind
   getStoredCreateTaskData() {
     const { location: { query: { source } }, storedCreateTaskData } = this.props;
     let storedData = {};
-    if (source === 'custGroupList' || source === 'managerView') {
+    if (this.judgeSource(source)) {
       storedData = storedCreateTaskData[`${source}`] || {};
     } else {
       storedData = storedCreateTaskData.custList || {};
@@ -106,8 +114,8 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   storeCreateTaskData(data) {
     const { saveCreateTaskData, location: { query: { source } },
-    storedCreateTaskData } = this.props;
-    if (source === 'custGroupList' || source === 'managerView') {
+      storedCreateTaskData } = this.props;
+    if (this.judgeSource(source)) {
       saveCreateTaskData({
         ...storedCreateTaskData,
         [source]: data,
