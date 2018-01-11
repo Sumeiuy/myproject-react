@@ -49,8 +49,10 @@ export default class ServerPersonel extends PureComponent {
   // 添加新开发经理人员按钮
   @autobind
   onAddServerPerson() {
+    const { serverInfo, addSelectedValue } = this.state;
     // 新开发经理不能重复添加
-    if (_.isEmpty(_.find(this.state.serverInfo, this.state.addSelectedValue))) {
+    const exist = _.findIndex(serverInfo, o => o.activeLogin === addSelectedValue.activeLogin) > -1;
+    if (!exist) {
       if (!_.isEmpty(this.state.addSelectedValue)) {
         this.setState(prevState => ({
           serverInfo: _.concat(prevState.serverInfo, this.state.addSelectedValue),
@@ -85,9 +87,7 @@ export default class ServerPersonel extends PureComponent {
       const target = dataSource.find(item => item.activeLogin === activeLogin);
       if (target) {
         target[dataIndex] = value;
-        this.setState({ serverInfo: dataSource }, () => {
-          console.warn('this.state.serverInfo', this.state.serverInfo);
-        });
+        this.setState({ serverInfo: dataSource });
       }
     }
   }
@@ -101,7 +101,7 @@ export default class ServerPersonel extends PureComponent {
   // 下拉菜单搜错查询关键字
   @autobind
   dropdownToSearchInfo(value) {
-    this.props.getAddEmpList(value);
+    this.props.getAddEmpList({ keyword: value });
   }
 
   /**

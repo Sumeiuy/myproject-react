@@ -37,7 +37,6 @@ export default {
     },
     getIsValidCustSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         isValidCust: resultData,
@@ -51,10 +50,11 @@ export default {
       };
     },
     getAddEmpListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { empList = EMPTY_LIST  } = resultData;
       return {
         ...state,
-        addEmpList: resultData,
+        addEmpList: empList,
       };
     },
     getButtonListSuccess(state, action) {
