@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 11:15:57
+ * @Last Modified time: 2018-01-11 14:55:56
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -480,7 +480,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
           formData: {
             itemId: this.props.itemId,
             flowId: '',
-            auditors: auth.empNo || '002332',
+            auditors: auth.empNo,
             groupName: auth.groupName,
             operate,
             approverIdea: '',
