@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-12-13 16:23:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:34:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import { Progress, Popconfirm, Upload, message, Popover } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 
 import Button from '../Button';
 import { request } from '../../../config';
@@ -127,7 +127,7 @@ export default class MultiUpload extends PureComponent {
           oldFileList: data.attaches,
           attachment: data.attachment,
         }, () => {
-          uploadCallback(type, data.attachment, attachesLastData.attachId)
+          uploadCallback(type, data.attachment, attachesLastData.attachId);
         });
       } else {
         // 上传失败的返回值 MAG0005
@@ -158,7 +158,7 @@ export default class MultiUpload extends PureComponent {
       this.setState({
         fileList: newFileList, // 文件列表
       }, () => {
-        deleteCallback(type, attachId)
+        deleteCallback(type, attachId);
       });
     });
   }

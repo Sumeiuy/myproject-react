@@ -132,9 +132,8 @@ export default class BottomFixedBox extends PureComponent {
 
   @autobind
   handleCreateTaskClick(url, title, id) {
-    const { clearCreateTaskData } = this.props;
     // 发起新的任务之前，先清除数据
-    clearCreateTaskData();
+    this.props.clearCreateTaskData('custList');
 
     this.handleClick(url, title, id);
   }

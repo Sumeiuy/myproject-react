@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { Input, Tooltip, Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 
 import { fspContainer /* , responseCode */} from '../../config';

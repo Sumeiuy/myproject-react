@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 14:01:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:22:58
+ * @Last Modified time: 2018-01-11 10:33:12
  * @description 批量佣金调整新建独自的页面
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { Icon, message } from 'antd';
 import _ from 'lodash';
 

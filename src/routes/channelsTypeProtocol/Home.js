@@ -3,13 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 16:45:53
+ * @Last Modified time: 2018-01-11 19:32:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
