@@ -255,6 +255,7 @@ export default class MatchArea extends PureComponent {
       && listItem.serviceRecord
       && listItem.serviceRecord.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.serviceRecord, q);
+      // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
           <span>

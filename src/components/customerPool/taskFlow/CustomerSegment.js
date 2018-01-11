@@ -18,12 +18,15 @@ import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
 import styles from './customerSegment.less';
 
+import selfBuiltTemplate from './selfBuiltTemplate.xls';
+
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const COLUMN_WIDTH = 115;
 const INITIAL_PAGE_SIZE = 10;
 const INITIAL_PAGE_NUM = 1;
 const COLUMN_HEIGHT = 36;
+
 
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
@@ -253,7 +256,6 @@ export default class CustomerSegment extends PureComponent {
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
-
     return (
       <div className={styles.customerSegmentContainer}>
         <div className={styles.uploadSection}>
@@ -272,8 +274,8 @@ export default class CustomerSegment extends PureComponent {
           />
         </div>
         <div className={styles.tipSection}>
-          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，导入格式参见：
-          <a href="../../../../static/selfBuiltTemplate.xls">导入模板</a>。
+          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，excel导入格式参见：
+          <a href={selfBuiltTemplate}>导入模板</a>。
         </div>
         {
           isShowTable ?
