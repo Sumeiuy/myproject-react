@@ -3,7 +3,7 @@
  * 执行者视图/操作者视图筛选取数据
  * @author honggaunqging
  */
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import PageHeader from './PageHeader';
 
 const fetchDataFunction = (globalLoading, type) => query => ({

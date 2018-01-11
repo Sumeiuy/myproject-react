@@ -2,11 +2,11 @@
  * @Description: 权限申请的驳回修改页面
  * @Author: hongguangqing
  * @Date: 2017-12-07 17:41:58
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-04 11:03:18
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:44:18
  */
 import React, { PureComponent, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 

@@ -2,15 +2,15 @@
  * @Author: hongguangqing
  * @Description: 开发关系认定Home
  * @Date: 2018-01-03 16:47:24
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-10 22:27:23
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 16:19:07
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
