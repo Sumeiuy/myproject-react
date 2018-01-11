@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 09:56:39
+ * @Last Modified time: 2018-01-11 16:59:49
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -260,6 +260,7 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
+    console.log('baseInfoData', baseInfoData);
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
