@@ -13,4 +13,3 @@ iconfont.css
 *.sublime-project
 *.sublime-workspace
 .editorconfig
-package-lock.json
