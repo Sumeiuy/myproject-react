@@ -346,7 +346,7 @@ export default class CustomerRow extends PureComponent {
       <div
         className={styles.customerRow}
       >
-        { this.renderQuickMenu() }
+        {this.renderQuickMenu()}
         <div className={styles.selectIcon}>
           <Checkbox
             disabled={isAllSelect}
@@ -359,7 +359,7 @@ export default class CustomerRow extends PureComponent {
         >
           <div className={`${styles.customerRowLeft} clear`}>
             <div className={styles.avatorContent}>
-              { this.renderAvator(listItem) }
+              {this.renderAvator(listItem)}
               <div className={styles.avatorText}>{custNatureName[listItem.pOrO] || ''}</div>
               {
                 this.renderRankImg(listItem)
@@ -368,7 +368,7 @@ export default class CustomerRow extends PureComponent {
           </div>
           <div className={styles.customerRowRight}>
             <div className="row-one">
-              { this.renderCustName() }
+              {this.renderCustName()}
               <span>{listItem.custId}</span>
               <span className="cutOffLine">|</span>
               {

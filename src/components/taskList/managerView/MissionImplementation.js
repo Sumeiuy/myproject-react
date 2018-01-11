@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 13:46:51
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-09 16:46:41
  * 任务实施简报
  */
 
@@ -15,7 +15,8 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
-import { permission, helper } from '../../../utils';
+import { env } from '../../../helper';
+import { permission } from '../../../utils';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 
@@ -73,7 +74,7 @@ export default class MissionImplementation extends PureComponent {
     const { occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
-    if (helper.isInFsp()) {
+    if (env.isInFsp()) {
       this.orgId = window.forReactPosition.orgId;
     } else {
       this.orgId = occDivnNum;
