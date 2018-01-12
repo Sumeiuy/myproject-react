@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-12 09:11:30
+ * @Last Modified time: 2018-01-12 13:19:53
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -69,7 +69,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ323372';
+    let orgId = 'ZZ001041051'; // 南京长江路证券营业部
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }

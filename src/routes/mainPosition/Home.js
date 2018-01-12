@@ -2,14 +2,14 @@
  * @Description: 主职位界面
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:01:59
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-08 15:19:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 10:47:19
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import _ from 'lodash';
 import { message, Modal } from 'antd';
 

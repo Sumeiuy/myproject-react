@@ -39,8 +39,8 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
     form: PropTypes.object.isRequired,
+    addMotServeRecordSuccess: PropTypes.bool.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
@@ -52,6 +52,7 @@ export default class PerformerViewDetail extends PureComponent {
     answersList: {},
     saveAnswersSucce: false,
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -153,13 +154,15 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   handleOk() {
-    let isErr = false;
+    // let isErr = false;
     const { saveAnswersByType, form } = this.props;
     const { checkboxData, radioData, areaTextData } = this.state;
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
     form.validateFields((err) => {
       if (!_.isEmpty(err)) {
-        isErr = true;
+        this.setState({
+          visible: true,
+        });
       } else {
         const params = {
           // 提交问卷传参测试
@@ -168,14 +171,25 @@ export default class PerformerViewDetail extends PureComponent {
           examineeId: emp.getId(),
           templateId: '1104',
         };
-        saveAnswersByType(params);
+        saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
     this.setState({
-      visible: isErr,
       keyIndex: this.state.keyIndex + 1,
     });
   }
+  // 处理提交成功
+  handleSaveSuccess() {
+    const { saveAnswersSucce } = this.props;
+    let isShow = false;
+    if (saveAnswersSucce !== 'success') {
+      isShow = true;
+    }
+    this.setState({
+      visible: isShow,
+    });
+  }
+
   @autobind
   handleCancel() {
     this.setState({
@@ -271,9 +285,9 @@ export default class PerformerViewDetail extends PureComponent {
       ...otherProps
     } = basicInfo;
     const { list, page } = targetCustList;
-    const { serveStatus } = dict;
+    const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = serveStatus.map(o => ({
+    const stateData = (serveStatus || []).map(o => ({
       value: o.key,
       label: o.value,
       show: true,

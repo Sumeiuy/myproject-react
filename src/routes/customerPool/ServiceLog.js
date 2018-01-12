@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Select, DatePicker, Row, Col, Button, message } from 'antd';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -54,7 +54,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class CreateTaskForm extends PureComponent {
+export default class ServiceLog extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,

@@ -132,9 +132,8 @@ export default class BottomFixedBox extends PureComponent {
 
   @autobind
   handleCreateTaskClick(url, title, id) {
-    const { clearCreateTaskData } = this.props;
     // 发起新的任务之前，先清除数据
-    clearCreateTaskData();
+    this.props.clearCreateTaskData('custList');
 
     this.handleClick(url, title, id);
   }
@@ -204,7 +203,7 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <Clickable
-        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST'); }}
         eventName="/click/custListBottomFixedBox/launchTask"
       >
         <button>发起任务</button>

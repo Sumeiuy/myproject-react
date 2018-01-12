@@ -1,13 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-04 15:57:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-11 14:59:56
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -22,6 +22,7 @@ import CustomerGroupDetail from '../../components/customerPool/groupManage/Custo
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { openRctTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
@@ -74,6 +75,11 @@ const mapDispatchToProps = {
   deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  // 清除数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
 };
 
 let modalKeyCount = 0;
@@ -97,6 +103,7 @@ export default class CustomerGroupManage extends PureComponent {
     deleteGroup: PropTypes.func.isRequired,
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
     deleteCustomerFromGroup: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -227,20 +234,28 @@ export default class CustomerGroupManage extends PureComponent {
       message.error('该分组下没有客户，不能发起任务');
       return;
     }
+    // 发起任务之前，清除数据
+    this.props.clearCreateTaskData('custGroupList');
+
     this.handleOpenTab({
       groupId,
       count: relatCust,
       enterType: 'custGroupList',
       source: 'custGroupList',
-    }, '自建任务', 'RCT_FSP_CREATE_TASK');
+    }, '自建任务', 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
   }
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { groupId, count, enterType, source } = obj;
+    // const { groupId, count, enterType, source } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
-    const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}&source=${source}`;
+    const condition = encodeURIComponent(JSON.stringify(obj));
+    const query = {
+      condition,
+    };
+
+    const url = `${firstUrl}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
       forceRefresh: true,

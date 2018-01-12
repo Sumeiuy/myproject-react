@@ -11,13 +11,14 @@ import styles from './selectLabelCust.less';
 const EMPTY_OBJECT = {};
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
+    dict: PropTypes.object.isRequired,
     getLabelInfo: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isHasAuthorize: PropTypes.bool,
@@ -26,7 +27,6 @@ export default class SelectLabelCust extends PureComponent {
 
   static defaultProps = {
     storedData: {},
-    orgId: null,
     isHasAuthorize: false,
   };
 
@@ -75,9 +75,10 @@ export default class SelectLabelCust extends PureComponent {
       labelMapping,
       labelDesc,
       condition,
-      customNum,
+      custNum: customNum,
       tipsSize,
       labelName,
+      custSource: '瞄准镜标签',
     };
 
     return {
@@ -88,7 +89,6 @@ export default class SelectLabelCust extends PureComponent {
   @autobind
   handleSearchClick(value) {
     const { getLabelInfo, isHasAuthorize, orgId } = this.props;
-
     const param = {
       condition: value,
     };
@@ -97,7 +97,7 @@ export default class SelectLabelCust extends PureComponent {
       condition: value,
       labelId: '',
       labelDesc: '',
-      customNum: 0,
+      custNum: 0,
       currentSelectLabel: '',
     });
 
@@ -107,7 +107,6 @@ export default class SelectLabelCust extends PureComponent {
       });
       return;
     }
-
     if (isHasAuthorize) {
       // 有首页绩效指标查看权限
       getLabelInfo({
@@ -140,11 +139,14 @@ export default class SelectLabelCust extends PureComponent {
       onCancel,
       visible,
       isHasAuthorize,
+      dict,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
         <SimpleSearch
+          titleNode={<span className={styles.searchTitle}>瞄准镜：</span>}
+          placeholder="标签名称"
           onSearch={this.handleSearchClick}
           searchStyle={{
             height: '30px',
@@ -159,6 +161,7 @@ export default class SelectLabelCust extends PureComponent {
           null
         }
         <TaskSearchRow
+          dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
           visible={visible}

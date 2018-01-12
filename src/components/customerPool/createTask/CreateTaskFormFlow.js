@@ -1,26 +1,15 @@
 /**
- * @file customerPool/CreateTaskForm.js
+ * @file customerPool/CreateTaskFormFlow.js
  *  客户池-自建任务表单
  * @author yangquanjian
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Mention } from 'antd';
 import _ from 'lodash';
-import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import Button from '../../common/Button';
-import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
-import { closeRctTab } from '../../../utils';
-import Clickable from '../../../components/common/Clickable';
-import { validateFormContent } from '../../../decorators/validateFormContent';
-
-
-const { toString } = Mention;
-
 
 export default class CreateTaskFormFlow extends PureComponent {
 
@@ -38,7 +27,12 @@ export default class CreateTaskFormFlow extends PureComponent {
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
     enterType: PropTypes.string,
+    // 新增
+    templateId: PropTypes.string.isRequired,
+    generateTemplateId: PropTypes.func.isRequired,
+    creator: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -51,20 +45,12 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query: { source } } } = props;
     this.state = {
-      showBtn: _.includes(['custGroupList'], source),
       isShowErrorInfo: false,
       isShowErrorTaskType: false,
+      isShowErrorTaskSubType: false,
       isShowErrorExcuteType: false,
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location: { query: { source } } } = nextProps;
-    this.setState({
-      showBtn: _.includes(['custGroupList'], source),
-    });
   }
 
   // 从业务目标池客户：businessCustPool
@@ -72,17 +58,18 @@ export default class CreateTaskFormFlow extends PureComponent {
   // 绩效目标客户 - 净新增客户： performanceCustPool
   // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
 
-
   @autobind
   parseQuery() {
-    const { location: { query: { ids, condition } } } = this.props;
+    const { location: { query: { ids = '', condition = {} } } } = this.props;
     let custCondition = {};
     let custIdList = null;
-    if (!_.isEmpty(ids)) {
-      custIdList = decodeURIComponent(ids).split(',');
-      custCondition = JSON.parse(decodeURIComponent(condition));
-    } else {
-      custCondition = JSON.parse(decodeURIComponent(condition));
+    if (!_.isEmpty(condition)) {
+      if (!_.isEmpty(ids)) {
+        custIdList = decodeURIComponent(ids).split(',');
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      } else {
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      }
     }
     return {
       custIdList,
@@ -90,45 +77,61 @@ export default class CreateTaskFormFlow extends PureComponent {
     };
   }
 
-  // 自建任务提交
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { createTask, location: { query } } = this.props;
-    const { groupId, enterType } = query;
-    this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
-      let isFormError = false;
-      console.log(err);
-      if (!_.isEmpty(err)) {
-        isFormError = true;
-      }
-      const formDataValidation = this.checkFormField({ ...values, isFormError });
-      if (formDataValidation) {
-        const templetDesc = toString(values.templetDesc);
-        const value = { ...values, groupId, enterType, templetDesc };
-        createTask(value);
-      }
-    });
+  // @autobind
+  // handleCancleTab() {
+  //   const { onCloseTab } = this.props;
+  //   if (env.isInFsp()) {
+  //     onCloseTab();
+  //     const param = {
+  //       id: 'tab-home',
+  //       title: '首页',
+  //     };
+  //     fspGlobal.openRctTab({ url: '/customerPool', param });
+  //   }
+  // }
+
+  /**
+   * 判断入口来源
+   */
+  @autobind
+  judgeSource(source) {
+    return source === 'custGroupList' || source === 'managerView';
   }
 
   @autobind
-  @validateFormContent
-  checkFormField(values) {
-    console.log(values);
+  getStoredCreateTaskData() {
+    const { location: { query: { source } }, storedCreateTaskData } = this.props;
+    let storedData = {};
+    if (this.judgeSource(source)) {
+      storedData = storedCreateTaskData[`${source}`] || {};
+    } else {
+      storedData = storedCreateTaskData.custList || {};
+    }
+
+    return storedData;
   }
 
   @autobind
-  handleCancleTab() {
-    closeRctTab({
-      id: 'RCT_FSP_CREATE_TASK',
-    });
+  storeCreateTaskData(data) {
+    const { saveCreateTaskData, location: { query: { source } },
+      storedCreateTaskData } = this.props;
+    if (this.judgeSource(source)) {
+      saveCreateTaskData({
+        ...storedCreateTaskData,
+        [source]: data,
+      });
+    } else {
+      saveCreateTaskData({
+        ...storedCreateTaskData,
+        custList: data,
+      });
+    }
   }
 
   render() {
     const {
       dict,
       location,
-      storedCreateTaskData,
-      saveCreateTaskData,
       createTask,
       getApprovalList,
       approvalList,
@@ -137,66 +140,33 @@ export default class CreateTaskFormFlow extends PureComponent {
       isShowApprovalModal,
       isApprovalListLoadingEnd,
       onCancel,
+      onCloseTab,
+      generateTemplateId,
+      templateId,
+      creator,
     } = this.props;
-    const { showBtn,
-      isShowErrorInfo,
-      isShowErrorExcuteType,
-      isShowErrorTaskType,
-    } = this.state;
-    console.log('location-->', location);
+
     return (
       <div className={styles.taskInner}>
-        {showBtn ?
-          <div className={styles.taskcontent}>
-            <CreateTaskForm
-              location={location}
-              dict={dict}
-              ref={ref => this.createTaskForm = ref}
-              isShowErrorInfo={isShowErrorInfo}
-              isShowErrorExcuteType={isShowErrorExcuteType}
-              isShowErrorTaskType={isShowErrorTaskType}
-            />
-            <div
-              className={
-                classnames({
-                  [styles.hideTextArea]: !showBtn,
-                  [styles.showTextArea]: showBtn,
-                })
-              }
-            >
-              <div className={styles.task_btn}>
-                <Clickable
-                  onClick={this.handleCancleTab}
-                  eventName="/click/createTaskForm/cancel"
-                >
-                  <Button>取消</Button>
-                </Clickable>
-                <Clickable
-                  onClick={this.handleSubmit}
-                  eventName="/click/createTaskForm/submit"
-                >
-                  <Button type="primary">提交</Button>
-                </Clickable>
-              </div>
-            </div>
-          </div>
-          :
-          <TaskFormFlowStep
-            location={location}
-            dict={dict}
-            saveCreateTaskData={saveCreateTaskData}
-            storedCreateTaskData={storedCreateTaskData}
-            createTask={createTask}
-            approvalList={approvalList}
-            getApprovalList={getApprovalList}
-            parseQuery={this.parseQuery}
-            push={push}
-            orgId={orgId}
-            isShowApprovalModal={isShowApprovalModal}
-            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
-            onCancel={onCancel}
-          />
-        }
+        <TaskFormFlowStep
+          location={location}
+          dict={dict}
+          saveCreateTaskData={this.storeCreateTaskData}
+          storedCreateTaskData={this.getStoredCreateTaskData()}
+          createTask={createTask}
+          approvalList={approvalList}
+          getApprovalList={getApprovalList}
+          parseQuery={this.parseQuery}
+          push={push}
+          orgId={orgId}
+          onCloseTab={onCloseTab}
+          isShowApprovalModal={isShowApprovalModal}
+          isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+          onCancel={onCancel}
+          generateTemplateId={generateTemplateId}
+          templateId={templateId}
+          creator={creator}
+        />
       </div>
     );
   }

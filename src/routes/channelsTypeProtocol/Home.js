@@ -3,13 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-11 09:45:29
+ * @Last Modified time: 2018-01-12 13:25:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { connect } from 'dva';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
@@ -475,13 +475,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const { protocolData } = this.state;
     saveProtocolData(protocolData).then(
       () => {
+        const operate = config.doApproveOperate[protocolData.subType];
         doApprove({
           formData: {
             itemId: this.props.itemId,
             flowId: '',
             auditors: auth.empNo,
             groupName: auth.groupName,
-            operate: '1',
+            operate,
             approverIdea: '',
           },
         }).then(() => {
@@ -625,7 +626,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         attachmentList={attachmentList}
         flowHistory={flowHistory}
         currentView={currentView}
-        subscribeArray={subscribeArray}
       />
     );
     const selfBtnGroup = (<BottonGroup

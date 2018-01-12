@@ -4,6 +4,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import _ from 'lodash';
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { permission } from '../utils';
@@ -37,14 +38,23 @@ export default {
     deleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
+    // 创建者,姓名（工号）
+    creator: '',
   },
   reducers: {
     // 获取员工职责与职位
     getEmpInfoSuccess(state, action) {
       const { payload } = action;
+      const { empInfo = {} } = payload;
+      let creator = '';
+      if (!_.isEmpty(empInfo)) {
+        creator = `${empInfo.empName}(${empInfo.login})`;
+      }
+
       return {
         ...state,
         empInfo: payload,
+        creator,
       };
     },
     // 获取已申请客户列表

@@ -1,6 +1,6 @@
 /**
  * @Author: hongguangqing
- * @Description: 开发关系认定的详情页面
+ * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
  * @Last Modified time: 2018-01-05 09:31:46
@@ -8,50 +8,43 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
-import CommonUpload from '../common/biz/CommonUpload';
+import MultiUploader from '../common/biz/MultiUploader';
 import ApprovalRecord from '../permission/ApprovalRecord';
+import { seibelConfig } from '../../config';
+import commonHelpr from './developRelationshipHelpr';
 import styles from './detail.less';
 
 // 表头
-const tableHeader = [
-  {
-    dataIndex: 'empId',
-    key: 'empId',
-    title: '工号',
-  },
-  {
-    dataIndex: 'empName',
-    key: 'empName',
-    title: '姓名',
-  },
-  {
-    dataIndex: 'orgName',
-    key: 'orgName',
-    title: '部门',
-  },
-  {
-    dataIndex: 'postnName',
-    key: 'poatnName',
-    title: '职位',
-  },
-  {
-    dataIndex: 'weight',
-    key: 'weight',
-    title: '权重',
-  },
-  {
-    dataIndex: 'isRugang',
-    key: 'isRugang',
-    title: '是否入岗投顾',
-  },
-];
+const { developTeamTableHeader } = seibelConfig.developRelationship;
 export default class Detail extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
+  }
+
+  @autobind
+  handleAttachmentData() {
+    const {
+      attachment,
+      develop,
+      other,
+    } = this.props.data;
+    const developData = {
+      attachmentList: develop,
+      title: '开发关系认定书（首次认定时必输）',
+      uuid: attachment,
+    };
+    const otherData = {
+      attachmentList: other,
+      title: '其他',
+      uuid: attachment,
+    };
+    return [developData, otherData];
   }
 
   render() {
@@ -65,16 +58,18 @@ export default class Detail extends PureComponent {
       orgName,
       createTime,
       status,
-      oldDevelopTeamList,
-      newDevelopTeamList,
+      originTeam,
+      newTeam,
       currentApproval,
       workflowHistoryBeans,
-      attachInfoList,
     } = this.props.data;
     // 客户信息
     const custInfo = `${custName} ${custNumber}`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
+    const attachmentList = this.handleAttachmentData();
+    const originTeamData = commonHelpr.convertTgFlag(originTeam);
+    const newTeamData = commonHelpr.convertTgFlag(newTeam);
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -113,8 +108,8 @@ export default class Detail extends PureComponent {
               <InfoTitle head="原开发团队" />
               <div className={styles.modContent}>
                 <CommonTable
-                  data={oldDevelopTeamList}
-                  titleList={tableHeader}
+                  data={originTeamData}
+                  titleList={developTeamTableHeader}
                   pagination={{
                     pageSize: 5,
                   }}
@@ -125,19 +120,31 @@ export default class Detail extends PureComponent {
               <InfoTitle head="新开发团队" />
               <div className={styles.modContent}>
                 <CommonTable
-                  data={newDevelopTeamList}
-                  titleList={tableHeader}
+                  data={newTeamData}
+                  titleList={developTeamTableHeader}
                   pagination={{
                     pageSize: 5,
                   }}
                 />
               </div>
             </div>
-            <div id="enclosure" className={styles.module}>
-              <InfoTitle head="附件" />
-              <CommonUpload
-                attachmentList={attachInfoList}
-              />
+            <div id="developAttachment" className={styles.module}>
+              <InfoTitle head="附件信息" />
+              {
+                !_.isEmpty(attachmentList) ?
+                  attachmentList.map(item => (
+                    <MultiUploader
+                      attachmentList={item.attachmentList}
+                      attachment={''}
+                      title={item.title}
+                      key={`${item.title}`}
+                    />
+                  ))
+                  :
+                  <div className={styles.fileList}>
+                    <div className={styles.noFile}>暂无附件</div>
+                  </div>
+              }
             </div>
             <div id="approvalRecord_module">
               <ApprovalRecord
