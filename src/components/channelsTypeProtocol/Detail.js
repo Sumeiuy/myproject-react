@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-11 08:53:12
+ * @Last Modified time: 2018-01-11 09:50:15
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -50,6 +50,7 @@ export default class Detail extends PureComponent {
     // showEditModal: PropTypes.func,
     // hasEditPermission: PropTypes.bool,
     currentView: PropTypes.string,
+    subscribeArray: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -77,6 +78,7 @@ export default class Detail extends PureComponent {
       // hasEditPermission,
       // 传入视图不同，判断是否显示申请单编号
       currentView,
+      subscribeArray,
     } = this.props;
     const nowStep = {
       // 当前步骤
@@ -89,7 +91,7 @@ export default class Detail extends PureComponent {
     };
     let isTenLevel = true;
     // 判断是否是紫金快车道 并且是 协议订购
-    if (currentView === SUBTYPE.violetGold && protocolDetail.operationType === '协议订购') {
+    if (currentView === SUBTYPE.violetGold && _.includes(subscribeArray, '协议订购')) {
       // 判断是否是十档行情
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-10 18:26:55
+ * @Last Modified time: 2018-01-11 09:45:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -625,6 +625,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         attachmentList={attachmentList}
         flowHistory={flowHistory}
         currentView={currentView}
+        subscribeArray={subscribeArray}
       />
     );
     const selfBtnGroup = (<BottonGroup

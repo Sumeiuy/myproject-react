@@ -36,17 +36,17 @@ module.exports = {
     proxyTable: {
       [prefix + '/groovynoauth/fsp/emp']: {
         // target: 'http://168.61.8.81:5090', // DOClever
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:50865', // SIT
       },
       [prefix + '/groovynoauth/fsp/assess/common']: {
         // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址
         // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5085', // SIT
         secure: false,
       },
       [prefix + '/groovynoauth/fsp/biz']: {
         // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5085', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
@@ -57,13 +57,13 @@ module.exports = {
       },
       '/fspa/log': {
         // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5085', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
       '/fsp': {
         // target: 'http://168.61.8.81:5085', // SIT
-        target: 'http://168.61.8.82:5086', // UAT
+        target: 'http://168.61.8.82:5085', // UAT
         secure: false,
       },
     },

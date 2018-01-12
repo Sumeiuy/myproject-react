@@ -13,6 +13,7 @@ import { Pagination, Form } from 'antd';
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
 import BasicInfo from '../common/BasicInfo';
+import { emp } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
@@ -22,51 +23,6 @@ import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
-// 问卷调查题目测试数据
-const data = {
-  quesInfoList: [
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理ddd' }, { optionId: '58', optionValue: '不合理eeee' }],
-      quesDesp: '我建议XXX',
-      quesId: '5',
-      quesTypeCode: '1',
-      quesTypeValue: '单选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理rrrr' }, { optionId: '58', optionValue: '不合理fff' }],
-      quesDesp: '我建议XXX',
-      quesId: '2',
-      quesTypeCode: '1',
-      quesTypeValue: '单选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理xxxx' }, { optionId: '58', optionValue: '不合理yyyy' }],
-      quesDesp: '我建议XXX',
-      quesId: '3',
-      quesTypeCode: '2',
-      quesTypeValue: '多选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理aaaa' }, { optionId: '58', optionValue: '不合理yyyyy' }],
-      quesDesp: '我建议XXX',
-      quesId: '4',
-      quesTypeCode: '2',
-      quesTypeValue: '多选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [],
-      quesDesp: '我建议XXX',
-      quesId: '6',
-      quesTypeCode: '3',
-      quesTypeValue: '文本域',
-      quesValue: '此任务触发条件是否合理',
-    },
-  ],
-};
 
 const create = Form.create;
 @create()
@@ -86,12 +42,15 @@ export default class PerformerViewDetail extends PureComponent {
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     form: PropTypes.object.isRequired,
     answersList: PropTypes.object,
-    getQueryQues: PropTypes.func.isRequired,
+    getTempQuesAndAnswer: PropTypes.func.isRequired,
+    saveAnswersSucce: PropTypes.bool,
+    saveAnswersByType: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     isFold: true,
     answersList: {},
+    saveAnswersSucce: false,
   }
   constructor(props) {
     super(props);
@@ -99,6 +58,8 @@ export default class PerformerViewDetail extends PureComponent {
       visible: false,
       checkboxData: [],
       radioData: [],
+      areaTextData: [],
+      keyIndex: Number(emp.getId()),
     };
   }
 
@@ -121,7 +82,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -162,8 +123,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerPageNo = PAGE_NO,
-        targetCustomerState,
+      targetCustomerPageNo = PAGE_NO,
+      targetCustomerState,
       },
     } = this.props;
     this.queryTargetCustInfo({
@@ -175,12 +136,13 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   showModal() {
-    const { getQueryQues } = this.props;
-    getQueryQues({
+    const { getTempQuesAndAnswer } = this.props;
+    getTempQuesAndAnswer({
       // 问卷传参测试
-      templateId: '0502',
+      templateId: '1104',
       pageNum: 1,
       pageSize: 200,
+      examineeId: emp.getId(),
       assessType: 'MOT_EMP_FEEDBACK',
     });
     // 发送请求
@@ -192,11 +154,10 @@ export default class PerformerViewDetail extends PureComponent {
   @autobind
   handleOk() {
     let isErr = false;
-    const { checkboxData, radioData } = this.state;
-    const checkedData = _.concat(checkboxData, radioData);
-    // console.log('===>', this.questionForm);
-    this.props.form.validateFields((err, values) => {
-      console.log('values--->', values);
+    const { saveAnswersByType, form } = this.props;
+    const { checkboxData, radioData, areaTextData } = this.state;
+    const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
+    form.validateFields((err) => {
       if (!_.isEmpty(err)) {
         isErr = true;
       } else {
@@ -204,27 +165,30 @@ export default class PerformerViewDetail extends PureComponent {
           // 提交问卷传参测试
           answerReqs: checkedData,
           examineetype: 'employee',
-          examineeId: '02053703',
-          templateId: '0502',
+          examineeId: emp.getId(),
+          templateId: '1104',
         };
-        console.log(params);
+        saveAnswersByType(params);
       }
     });
     this.setState({
       visible: isErr,
+      keyIndex: this.state.keyIndex + 1,
     });
   }
   @autobind
   handleCancel() {
     this.setState({
       visible: false,
+      keyIndex: this.state.keyIndex + 1,
     });
   }
-
   @autobind
   handleCheckboxChange(key) {
-    // const { checkboxData } = this.state;
-    const arr = _.map(key, item => _.split(item, '-'));
+    const { checkboxData } = this.state;
+    let initCheck = checkboxData;
+    // +-+在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
+    const arr = _.map(key, item => _.split(item, '+-+'));
     const params = _.flatten(_.map(arr, (item) => {
       const childs = {
         answerId: item[1],
@@ -233,10 +197,10 @@ export default class PerformerViewDetail extends PureComponent {
       };
       return childs;
     }));
+    initCheck = _.concat(checkboxData, params);
+    initCheck = _.uniqBy(initCheck, 'answerId', 'quesId');
     this.setState({
-      checkboxData: params,
-    }, () => {
-      console.log('checkboxData==>', this.state.checkboxData);
+      checkboxData: initCheck,
     });
   }
   @autobind
@@ -245,26 +209,43 @@ export default class PerformerViewDetail extends PureComponent {
     const initRadio = radioData;
     const checkedData = [{
       quesId: key.target.dataQuesId,
-      answerId: key.target.dataId,
-      answerText: key.target.value,
+      answerId: key.target.value,
+      answerText: key.target.dataVale,
     }];
-    if (_.isEmpty(initRadio)) {
+    this.handleRepeatData(initRadio, checkedData, radioData);
+  }
+
+  // 处理问卷选中重复答案
+  @autobind
+  handleRepeatData(initData, checkedData, stv) {
+    if (_.isEmpty(initData)) {
       this.setState({
-        radioData: checkedData,
+        [stv]: checkedData,
       });
     } else {
       let newRadio = [];
-      const ques = _.findIndex(initRadio, o => o.quesId === checkedData[0].quesId);
+      const ques = _.findIndex(initData, o => o.quesId === checkedData[0].quesId);
       if (ques === -1) {
-        newRadio = _.concat(initRadio, checkedData);
+        newRadio = _.concat(initData, checkedData);
       } else {
-        newRadio = initRadio.splice(ques, 1, checkedData[0]);
-        newRadio = initRadio;
+        newRadio = initData.splice(ques, 1, checkedData[0]);
+        newRadio = initData;
       }
       this.setState({
         radioData: newRadio,
       });
     }
+  }
+
+  @autobind
+  handleAreaText(e) {
+    const { areaTextData } = this.state;
+    const initAreaText = areaTextData;
+    const params = [{
+      quesId: e.target.getAttribute('data'),
+      answerText: e.target.value,
+    }];
+    this.handleRepeatData(initAreaText, params, areaTextData);
   }
 
   render() {
@@ -279,9 +260,9 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerState = '',
       },
       form,
-      // answersList,
+      answersList,
     } = this.props;
-    const { visible } = this.state;
+    const { visible, keyIndex } = this.state;
     const {
       missionId,
       missionName,
@@ -357,7 +338,9 @@ export default class PerformerViewDetail extends PureComponent {
           onCancel={this.handleCancel}
           onCheckChange={this.handleCheckboxChange}
           onRadioChange={this.handleRadioChange}
-          answersList={data}
+          onAreaText={this.handleAreaText}
+          answersList={answersList}
+          key={keyIndex}
         />
       </div>
     );
