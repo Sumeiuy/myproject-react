@@ -54,10 +54,9 @@ export default class QuestionnaireSurvey extends PureComponent {
     const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
       const { quesId } = item;
       // 判断是否已回答问卷
-      const answerData = _.isEmpty(answerVOList) ?
-        null : _.find(answerVOList, o => o.quesId === quesId);
+      const answerData = _.find(answerVOList, o => o.quesId === quesId) || EMPTY_OBJECT;
       // 已回答则查询该问题答案
-      let defaultData = answerData || EMPTY_OBJECT;
+      let defaultData = answerData;
       if (item.quesTypeCode === TYPE.radioType) {
         // 设置该问题默认值
         defaultData = answerData.answerdIds || EMPTY_ARRAY;
