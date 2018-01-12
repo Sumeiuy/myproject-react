@@ -54,14 +54,12 @@ export default class QuestionnaireSurvey extends PureComponent {
       const { quesId } = item;
       // 判断是否已回答问卷
       const answerIndex = _.isEmpty(answerVOList) ?
-        null : _.findIndex(answerVOList, o => o.quesId === quesId);
+        null : _.find(answerVOList, o => o.quesId === quesId);
       // 已回答则查询该问题答案
-      const children = (answerIndex === null || answerIndex === -1 ?
-        {} : answerVOList[answerIndex]);
-      let defaultData = null;
+      let defaultData = answerIndex;
       if (item.quesTypeCode === TYPE.radioType) {
         // 设置该问题默认值
-        defaultData = children.answerdIds || EMPTY_ARRAY;
+        defaultData = answerIndex.answerdIds || EMPTY_ARRAY;
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData[0] || '',
@@ -76,15 +74,15 @@ export default class QuestionnaireSurvey extends PureComponent {
                 defaultValue={defaultData[0] || ''}
               >
                 {
-                  item.optionInfoList.map(itemChild =>
+                  item.optionInfoList.map(childItem =>
                     <Radio
-                      value={itemChild.optionId}
-                      dataVale={itemChild.optionValue}
+                      value={childItem.optionId}
+                      dataVale={childItem.optionValue}
                       className={styles.radioOption}
                       dataQuesId={quesId}
-                      key={itemChild.optionId}
+                      key={childItem.optionId}
                     >
-                      {itemChild.optionValue}
+                      {childItem.optionValue}
                     </Radio>)
                 }
               </RadioGroup>
@@ -92,7 +90,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.checkboxType) {
-        defaultData = _.map(children.answerdIds, (val) => {
+        defaultData = _.map(answerIndex.answerdIds, (val) => {
           // 拼接字符串
           const checkedId = _.findIndex(item.optionInfoList, count => count.optionId === val);
           const values = `${item.optionInfoList[checkedId].optionValue}+-+${val}+-+${quesId}`;
@@ -112,12 +110,12 @@ export default class QuestionnaireSurvey extends PureComponent {
                 defaultValue={defaultData}
               >
                 {
-                  item.optionInfoList.map(itemChild => <Checkbox
-                    value={`${itemChild.optionValue}+-+${itemChild.optionId}+-+${quesId}`}
+                  item.optionInfoList.map(childItem => <Checkbox
+                    value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
                     className={styles.radioOption}
-                    key={itemChild.optionId}
+                    key={childItem.optionId}
                   >
-                    {itemChild.optionValue}
+                    {childItem.optionValue}
                   </Checkbox>)
                 }
               </CheckboxGroup>
@@ -125,7 +123,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.textAreaType) {
-        defaultData = children.answertext || '';
+        defaultData = answerIndex.answertext || '';
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
