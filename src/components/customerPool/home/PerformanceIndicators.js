@@ -146,7 +146,7 @@ export default class PerformanceIndicators extends PureComponent {
     ];
     // 业务开通
     const establishBusinessData = [
-      indicator.tfBusiCurr, // 天天发
+      indicator.ttfBusiCurr, // 天天发
       indicator.hgtBusiCurr, // 港股通
       indicator.sgtBusiCurr, // 深港通
       indicator.rzrqBusiCurr, // 融资融券
