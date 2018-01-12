@@ -24,6 +24,7 @@ const TYPE = {
   textAreaType: '3',
 };
 const EMPTY_ARRAY = [];
+const EMPTY_OBJECT = {};
 
 
 export default class QuestionnaireSurvey extends PureComponent {
@@ -53,13 +54,13 @@ export default class QuestionnaireSurvey extends PureComponent {
     const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
       const { quesId } = item;
       // 判断是否已回答问卷
-      const answerIndex = _.isEmpty(answerVOList) ?
+      const answerData = _.isEmpty(answerVOList) ?
         null : _.find(answerVOList, o => o.quesId === quesId);
       // 已回答则查询该问题答案
-      let defaultData = answerIndex;
+      let defaultData = answerData || EMPTY_OBJECT;
       if (item.quesTypeCode === TYPE.radioType) {
         // 设置该问题默认值
-        defaultData = answerIndex.answerdIds || EMPTY_ARRAY;
+        defaultData = answerData.answerdIds || EMPTY_ARRAY;
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData[0] || '',
@@ -90,10 +91,10 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.checkboxType) {
-        defaultData = _.map(answerIndex.answerdIds, (val) => {
+        defaultData = _.map(answerData.answerdIds, (childVal) => {
           // 拼接字符串
-          const checkedId = _.findIndex(item.optionInfoList, count => count.optionId === val);
-          const values = `${item.optionInfoList[checkedId].optionValue}+-+${val}+-+${quesId}`;
+          const checkedId = _.find(item.optionInfoList, count => count.optionId === childVal);
+          const values = `${checkedId.optionValue}+-+${childVal}+-+${quesId}`;
           return values;
         }) || [];
         content = (<FormItem key={quesId}>
@@ -123,7 +124,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.textAreaType) {
-        defaultData = answerIndex.answertext || '';
+        defaultData = answerData.answertext || '';
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
