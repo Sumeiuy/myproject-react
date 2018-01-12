@@ -93,8 +93,8 @@ export default class QuestionnaireSurvey extends PureComponent {
       } else if (item.quesTypeCode === TYPE.checkboxType) {
         defaultData = _.map(answerData.answerdIds, (childVal) => {
           // 拼接字符串
-          const checkedId = _.find(item.optionInfoList, count => count.optionId === childVal);
-          const values = `${checkedId.optionValue}+-+${childVal}+-+${quesId}`;
+          const checkedData = _.find(item.optionInfoList, count => count.optionId === childVal);
+          const values = `${checkedData.optionValue}+-+${childVal}+-+${quesId}`;
           return values;
         }) || [];
         content = (<FormItem key={quesId}>
