@@ -118,6 +118,11 @@ export default class ManagerViewDetail extends PureComponent {
       id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW',
     });
 
+    this.hideCustDetailModal();
+  }
+
+  @autobind
+  hideCustDetailModal() {
     this.setState({
       isShowCustDetailModal: false,
     });
@@ -293,6 +298,7 @@ export default class ManagerViewDetail extends PureComponent {
                 data={custDetailResult}
                 title={title}
                 onClose={this.handleCloseModal}
+                hideCustDetailModal={this.hideCustDetailModal}
               />
             }
             modalStyle={{
@@ -303,13 +309,9 @@ export default class ManagerViewDetail extends PureComponent {
             modalWidth={1080}
           />
         </div>
-        {
-          !_.isEmpty(missionDesc) ?
-            <div className={styles.descriptionSection}>
-              <MissionDescription missionDescription={missionDesc} />
-            </div>
-            : null
-        }
+        <div className={styles.descriptionSection}>
+          <MissionDescription missionDescription={missionDesc} />
+        </div>
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}
