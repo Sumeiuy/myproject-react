@@ -63,6 +63,9 @@ export default class Detail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
     } = this.props.data;
+    if (_.isEmpty(this.props.data)) {
+      return null;
+    }
     // 客户信息
     const custInfo = `${custName} (${custNumber})`;
     // 拟稿人信息
