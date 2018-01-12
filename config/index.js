@@ -6,12 +6,12 @@ var devEnv = require('./dev.env');
 var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 
 function generateProxy(proxyList) {
-  var res = {};
+  var result = {};
   var len = proxyList.length;
-  for (var i=0; i<len; i=i+2) {
-    res[proxyList[i]] = proxyList[i+1];
+  for (var i = 0; i < len; i = i + 2) {
+    result[proxyList[i]] = proxyList[i + 1];
   }
-  return res;
+  return result;
 }
 
 module.exports = {
