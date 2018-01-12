@@ -312,6 +312,7 @@ export default class PerformerViewDetail extends PureComponent {
     });
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
+    // hasSurvey
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>

@@ -56,10 +56,9 @@ export default class QuestionnaireSurvey extends PureComponent {
       // 判断是否已回答问卷
       const answerData = _.find(answerVOList, o => o.quesId === quesId) || EMPTY_OBJECT;
       // 已回答则查询该问题答案
-      let defaultData = answerData;
       if (item.quesTypeCode === TYPE.radioType) {
         // 设置该问题默认值
-        defaultData = answerData.answerdIds || EMPTY_ARRAY;
+        const defaultData = answerData.answerdIds || EMPTY_ARRAY;
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData[0] || '',
@@ -90,7 +89,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.checkboxType) {
-        defaultData = _.map(answerData.answerdIds, (childVal) => {
+        const defaultData = _.map(answerData.answerdIds, (childVal) => {
           // 拼接字符串
           const checkedData = _.find(item.optionInfoList, count => count.optionId === childVal);
           const values = `${checkedData.optionValue}+-+${childVal}+-+${quesId}`;
@@ -123,7 +122,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           )}
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.textAreaType) {
-        defaultData = answerData.answertext || '';
+        const defaultData = answerData.answertext || '';
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
