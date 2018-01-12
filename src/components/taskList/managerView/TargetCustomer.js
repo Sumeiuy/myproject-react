@@ -2,13 +2,13 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-13 10:41:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-18 13:58:11
+ * @Last Modified time: 2018-01-12 16:29:31
  * 管理者视图右侧目标客户
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+// import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
@@ -96,20 +96,17 @@ export default class TargetCustomer extends PureComponent {
     const { overlayTop } = this.state;
     const posi = 'rightBottom';
     const colSpanValue = isFold ? 12 : 24;
+
     return (
       <div className={styles.targetCustomerSection}>
         <LabelInfo value="目标客户" />
         <div className={styles.targetCustomerContent}>
           <div>
             <Row className={styles.rowItem}>
-              {
-                !_.isEmpty(custSource) ?
-                  <Col span={colSpanValue} className={styles.colItem}>
-                    <span className={styles.label}>客户来源:&nbsp;</span>
-                    <span className={styles.content}>{custSource || '--'}</span>
-                  </Col>
-                  : null
-              }
+              <Col span={colSpanValue} className={styles.colItem}>
+                <span className={styles.label}>客户来源:&nbsp;</span>
+                <span className={styles.content}>{custSource || '--'}</span>
+              </Col>
               <Col span={colSpanValue} className={styles.colItem}>
                 <span
                   className={classnames({
@@ -145,18 +142,14 @@ export default class TargetCustomer extends PureComponent {
                 </span>
               </Col>
             </Row>
-            {
-              !_.isEmpty(custSourceDescription) ?
-                <Row className={styles.rowItem}>
-                  <Col className={styles.colItem}>
-                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
-                    <p className={`${styles.content} ${styles.servicePolicy}`}>
-                      {custSourceDescription || '--'}
-                    </p>
-                  </Col>
-                </Row>
-                : null
-            }
+            <Row className={styles.rowItem}>
+              <Col className={styles.colItem}>
+                <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
+                <p className={`${styles.content} ${styles.servicePolicy}`}>
+                  {custSourceDescription || '--'}
+                </p>
+              </Col>
+            </Row>
           </div>
         </div>
       </div>

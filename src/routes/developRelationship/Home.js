@@ -27,10 +27,11 @@ import styles from './home.less';
 
 const { developRelationship, developRelationship: { pageType, status } } = seibelConfig;
 
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -59,11 +60,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
-  getList: fetchDataFunction(true, 'app/getSeibleList'),
+  getList: fetchDataFunction(true, 'app/getSeibleList', true),
   // 获取右侧详情信息
-  getDetailInfo: fetchDataFunction(true, 'developRelationship/getDetailInfo'),
+  getDetailInfo: fetchDataFunction(true, 'developRelationship/getDetailInfo', true),
   // 新建接口
-  getCreateDevelopRelationship: fetchDataFunction(true, 'developRelationship/getCreateDevelopRelationship'),
+  getCreateDevelopRelationship: fetchDataFunction(true, 'developRelationship/getCreateDevelopRelationship', true),
   // 获取可申请开发关系认定的客户
   getCreateCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 获取可申请开发关系认定的客户是否可用
@@ -321,9 +322,6 @@ export default class Permission extends PureComponent {
       getButtonList,
       clearPropsData,
     } = this.props;
-    if (_.isEmpty(detailInfo)) {
-      return null;
-    }
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (

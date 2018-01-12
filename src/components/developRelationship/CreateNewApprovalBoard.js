@@ -228,10 +228,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
       message.error('请选择客户');
     } else if (_.isEmpty(serverInfo)) {
       message.error('新开发团队不能为空');
-    } else if (_.isEmpty(develop)) {
-      message.error('开发关系认定书首次认定时必输');
     } else if (weighSum !== 100) {
       message.error('新开发团队的权重合计必须等于100');
+    } else if (_.isEmpty(develop)) {
+      message.error('开发关系认定书首次认定时必输');
     } else {
       // 修改状态下的提交按钮
       // 点击按钮后 弹出下一审批人 模态框
@@ -328,7 +328,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         afterClose={this.afterClose}
         selfBtnGroup={btnGroupElement}
       >
-        <div className={styles.createModalBox}>
+        <div className={styles.devRelcreateModalBox}>
           {/* 基本信息 */}
           <BaseInfoModify
             head="基本信息"
