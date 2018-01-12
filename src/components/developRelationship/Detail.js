@@ -36,7 +36,7 @@ export default class Detail extends PureComponent {
     } = this.props.data;
     const developData = {
       attachmentList: develop,
-      title: '开发关系认定书',
+      title: '开发关系认定书（首次认定时必输）',
       uuid: attachment,
     };
     const otherData = {
