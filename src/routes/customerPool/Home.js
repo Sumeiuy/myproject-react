@@ -456,7 +456,7 @@ export default class Home extends PureComponent {
     // 无权限取 MAIN_MAGEGER_ID
     let curOrgId = this.orgId;
     // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
-    const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
+    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? cycle[0] : {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.isHasAuthorize) {

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-10 21:24:10
+ * @Last Modified time: 2018-01-12 14:05:17
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
+import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
@@ -157,24 +158,24 @@ export default class TaskPreview extends PureComponent {
   @autobind
   renderOption(optionInfoList = []) {
     return _.map(optionInfoList, (item, index) =>
-      <span key={item.optionId}>{`${Number(index) + 1}.${item.optionValue || '--'}；`}</span>);
+      <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}；`}</span>);
   }
 
   @autobind
   renderQuestionDetail(questionList) {
-    return _.map(questionList, (item) => {
+    return _.map(questionList, (item, index) => {
       // 1代表单选
       if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
         return (
           <div className={styles.singleOrMultipleChoice} key={item.quesId}>
-            此问题为{item.quesTypeCode === '1' ? '单选' : '多选'}，
+            {Number(index) + 1}.{item.quesValue}  此问题为{item.quesTypeCode === '1' ? '单选' : '多选'}，
             选项内容为：{this.renderOption(item.optionInfoList)}
           </div>
         );
       }
       return (
         <div className={styles.subjectiveQuestion} key={item.quesId}>
-          此问题为主观题
+          {Number(index) + 1}.{item.quesValue}  此问题为主观问答题，问题描述为：{item.quesDesp}
         </div>
       );
     });
@@ -444,7 +445,7 @@ export default class TaskPreview extends PureComponent {
               <div className={styles.divider} />
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>触发条件：</div>
+                  <div>调查内容：</div>
                   <div>{this.renderQuestionDetail(questionList)}</div>
                 </div>
               </div>

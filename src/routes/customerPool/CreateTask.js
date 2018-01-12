@@ -73,7 +73,7 @@ export default class CreateTask extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     getApprovalListLoading: PropTypes.bool,
     // 新增
-    templateId: PropTypes.string.isRequired,
+    templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string,
   };

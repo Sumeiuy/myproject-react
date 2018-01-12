@@ -37,7 +37,7 @@ export default class TaskFormFlowStep extends PureComponent {
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     // 新增
-    templateId: PropTypes.string.isRequired,
+    templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
