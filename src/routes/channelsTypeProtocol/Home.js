@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 16:20:08
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-11 19:32:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -497,8 +497,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
-    console.log('click', btnItem, this.EditFormComponent);
     const formData = this.EditFormComponent.getData();
+    console.log('click', btnItem, formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;

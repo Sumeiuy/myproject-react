@@ -275,7 +275,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       empList: serverInfo,
       develop,
       other,
-      approvalIds: !_.isEmpty(value) ? value.login : '',
+      approvalId: !_.isEmpty(value) ? value.login : '',
       empId,
       empName,
       orgId,

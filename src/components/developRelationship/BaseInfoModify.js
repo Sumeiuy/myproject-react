@@ -27,13 +27,6 @@ export default class BaseInfoModify extends PureComponent {
 
   }
 
-  constructor(props) {
-    super(props);
-    this.setState({
-      visible: true,
-    });
-  }
-
   // 更改备注信息
   @autobind
   handleChangeRemarks(value) {
@@ -55,7 +48,6 @@ export default class BaseInfoModify extends PureComponent {
     getIsValidCust({ brokerNumber: item.brokerNumber }).then(
       () => {
         const { isValidCust } = this.props;
-        console.warn('isValidCust', isValidCust);
         if (!_.isEmpty(isValidCust) && isValidCust.isSLMonth !== 'N') {
           Modal.info({
             title: '提示',
