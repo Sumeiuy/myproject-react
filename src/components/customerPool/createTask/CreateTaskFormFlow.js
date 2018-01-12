@@ -30,7 +30,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     enterType: PropTypes.string,
     // 新增
-    templateId: PropTypes.string.isRequired,
+    templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
   }
