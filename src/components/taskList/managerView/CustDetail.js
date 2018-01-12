@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-04 16:31:56
+ * @Last Modified time: 2018-01-12 16:27:39
  * 客户明细数据
  */
 
@@ -63,6 +63,7 @@ export default class CustDetail extends PureComponent {
     // 关闭弹框
     onClose: PropTypes.func,
     push: PropTypes.func.isRequired,
+    hideCustDetailModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -218,20 +219,15 @@ export default class CustDetail extends PureComponent {
     });
   }
 
-  @autobind
-  renderCustTypeIcon(custType) {
-    return rankImgSrcConfig[custType] ?
-      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
-      : null;
-  }
-
   /**
    * 跳转到fsp的360信息界面
    */
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push } = this.props;
+    const { push, hideCustDetailModal } = this.props;
+    // 跳转前关闭模态框
+    hideCustDetailModal();
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
@@ -256,6 +252,13 @@ export default class CustDetail extends PureComponent {
   handleCustNameClick(record) {
     const { custNature, custId, rowId, ptyId } = record;
     this.toDetail(custNature, custId, rowId, ptyId);
+  }
+
+  @autobind
+  renderCustTypeIcon(custType) {
+    return rankImgSrcConfig[custType] ?
+      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
+      : null;
   }
 
   @autobind
