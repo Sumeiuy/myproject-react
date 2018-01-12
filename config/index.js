@@ -1,17 +1,17 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path');
 var devEnv = require('./dev.env');
-var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 // 后端服务器地址前缀，在`config.dev.mock`为`false`的情况下，
 // 以此前缀开头的请求全部转发至指定服务器`targetUrl`
+var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 
-function generateProxy(arr) {
-  var obj = {};
-  var len = arr.length;
-  for (var  i=0; i<len; i=i+2) {
-    obj[arr[i]] = arr[i+1];
+function generateProxy(proxyList) {
+  var res = {};
+  var len = proxyList.length;
+  for (var i=0; i<len; i=i+2) {
+    res[proxyList[i]] = proxyList[i+1];
   }
-  return obj;
+  return res;
 }
 
 module.exports = {
@@ -43,32 +43,20 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      // prefix + '/groovynoauth/fsp/biz',
-      // {
-      //   // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-      //   target: 'http://168.61.8.81:5089', // SIT
-      //   // target: 'http://168.61.8.82:5086', // UAT
-      //   secure: false,
-      // },
       prefix,
       {
-        // target: 'http://168.61.8.81:5188', // SIT
         target: 'http://168.61.8.81:5086', // UAT
         // target: 'http://160.9.228.195:8082', // 王涵本地地址
-        secure: false,
       },
       '/fspa/log',
       {
         // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址
         target: 'http://168.61.8.81:5086', // SIT
-        // target: 'http://168.61.8.82:5086', // UAT
-        secure: false,
       },
       '/fsp',
       {
         // target: 'http://168.61.8.81:5085', // SIT
         target: 'http://168.61.8.82:5086', // UAT
-        secure: false,
       }
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
