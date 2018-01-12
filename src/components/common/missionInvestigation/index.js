@@ -267,7 +267,14 @@ export default class MissionInvestigation extends PureComponent {
         </div>
       );
     }
-    return null;
+
+    return (
+      <div className={styles.content}>
+        <div className={styles.anwser}>
+          <span>{currentQuestionDetail.quesDesp || ''}</span>
+        </div>
+      </div>
+    );
   }
 
   @autobind
@@ -286,7 +293,12 @@ export default class MissionInvestigation extends PureComponent {
           <span>{currentQuestionDetail.quesValue}？</span>
         </div>
         <div className={styles.answerSection}>
-          <div className={styles.title}>答案：</div>
+          <div className={styles.title}>
+            {
+              currentQuestionDetail.quesTypeCode === '1' || currentQuestionDetail.quesTypeCode === '2' ?
+                '答案：' : '描述：'
+            }
+          </div>
           {this.renderOption(currentQuestionDetail)}
         </div>
       </div>

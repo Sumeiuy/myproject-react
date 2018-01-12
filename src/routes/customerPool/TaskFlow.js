@@ -132,7 +132,7 @@ export default class TaskFlow extends PureComponent {
     resetActiveTab: PropTypes.func.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func.isRequired,
     getApprovalListLoading: PropTypes.bool,
-    templateId: PropTypes.string,
+    templateId: PropTypes.number,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string,
   };
