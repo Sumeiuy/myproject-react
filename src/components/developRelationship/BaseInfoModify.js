@@ -56,6 +56,14 @@ export default class BaseInfoModify extends PureComponent {
             onOk: this.clearSelectValue,
           });
         }
+        if (!_.isEmpty(isValidCust) && isValidCust.isYxry !== 'N') {
+          Modal.info({
+            title: '提示',
+            content: '该客户的原开发团队中有营销人员，不能进行开发关系认定,请重新选择客户',
+            okText: '确定',
+            onOk: this.clearSelectValue,
+          });
+        }
       },
     );
   }

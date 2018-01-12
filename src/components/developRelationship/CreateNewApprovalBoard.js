@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import BottonGroup from '../permission/BottonGroup';
@@ -220,10 +220,28 @@ export default class CreateNewApprovalBoard extends PureComponent {
   }
 
   @autobind
+  handleButtonInfo(item) {
+    console.warn('item', item);
+    // 修改状态下的提交按钮
+    // 点击按钮后 弹出下一审批人 模态框
+    this.setState({
+      routeId: item.operate,
+      btnName: item.btnName,
+      btnId: item.flowBtnId,
+      nextGroupId: item.nextGroupName,
+      nextApproverList: item.flowAuditors,
+    }, () => {
+      this.setState({
+        nextApproverModal: true,
+      });
+    });
+  }
+
+  @autobind
   submitCreateInfo(item) {
+    const { oldDevelopTeamList } = this.props;
     const { custId, serverInfo, develop } = this.state;
     const weighSum = _.sumBy(serverInfo, value => Number(value.weigh));
-    console.warn('weighSum', weighSum);
     if (_.isEmpty(custId)) {
       message.error('请选择客户');
     } else if (_.isEmpty(serverInfo)) {
@@ -232,19 +250,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
       message.error('新开发团队的权重合计必须等于100');
     } else if (_.isEmpty(develop)) {
       message.error('开发关系认定书首次认定时必输');
+    } else if (_.isEmpty(oldDevelopTeamList)) {
+      this.handleButtonInfo(item);
     } else {
-      // 修改状态下的提交按钮
-      // 点击按钮后 弹出下一审批人 模态框
-      this.setState({
-        routeId: item.operate,
-        btnName: item.btnName,
-        btnId: item.flowBtnId,
-        nextGroupId: item.nextGroupName,
-        nextApproverList: item.flowAuditors,
-      }, () => {
-        this.setState({
-          nextApproverModal: true,
-        });
+      // 获取一个服务经理名称的数组
+      const oldDevelopEmpArr = _.map(oldDevelopTeamList, 'activeLastName');
+      // 用、连接服务经理名称的数组中的元素
+      const oldDevelopEmpTip = _.join(oldDevelopEmpArr, '、');
+      // 已有开发经理的提示语
+      const custEmpTip = `该客户已有开发经理${oldDevelopEmpTip}`;
+      // 过滤出是入岗投顾的对象数组
+      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList,  { 'tgFlag': 'Y' });
+      // 获取是入岗投顾的服务经理名称的数组
+      const tgFlagEmpArr = _.map(tgFlagOldDevelopEmpList, 'activeLastName');
+      // 用、连接是入岗投顾的服务经理名称的数组中的元素
+      const tgFlagoldDevelopEmp = _.join(tgFlagEmpArr, '、');
+      // 是入岗投顾的服务经理提示语
+      const tgFlagEmpTip = _.isEmpty(tgFlagoldDevelopEmp) ? '' : `且${tgFlagoldDevelopEmp}是入岗投顾,`;
+      Modal.confirm({
+        title: '提示',
+        content: `${custEmpTip},${tgFlagEmpTip}是否需要重新认定开发关系！`,
+        okText: '确认',
+        onOk: () => this.handleButtonInfo(item),
+        cancelText: '取消',
       });
     }
   }
