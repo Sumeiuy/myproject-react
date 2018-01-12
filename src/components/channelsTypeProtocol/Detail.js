@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-11 08:53:12
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-11 19:56:03
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -18,6 +18,7 @@ import MultiUploader from '../common/biz/MultiUploader';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
+import config from '../../routes/channelsTypeProtocol/config';
 
 const {
   underCustTitleList,  // 下挂客户表头集合
@@ -89,7 +90,8 @@ export default class Detail extends PureComponent {
     };
     let isTenLevel = true;
     // 判断是否是紫金快车道 并且是 协议订购
-    if (currentView === SUBTYPE.violetGold && protocolDetail.operationType === '协议订购') {
+    if (currentView === SUBTYPE.violetGold &&
+        _.includes(config.subscribeArray, protocolDetail.operationType)) {
       // 判断是否是十档行情
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }
@@ -111,7 +113,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
+          <InfoItem label="操作类型" value={protocolDetail.operationTypeText || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           {

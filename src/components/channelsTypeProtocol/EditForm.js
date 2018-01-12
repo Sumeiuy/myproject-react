@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-11 17:57:53
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-11 19:57:27
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -260,6 +260,7 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
+    console.log('editBaseInfoComponentGetData', baseInfoData);
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
@@ -310,7 +311,6 @@ export default class EditForm extends PureComponent {
   // 设置上传配置项
   @autobind
   setUploadConfig(hasCust) {
-    console.log('setupload');
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
     const requiredArr = attachmentRequired[hasCust];
@@ -606,7 +606,6 @@ export default class EditForm extends PureComponent {
       protocolClause,
       operationType,
     } = this.state;
-    console.log('attachmentTypeList', attachmentTypeList);
     // 下挂客户表格中需要的操作
     const customerOperation = {
       column: {
