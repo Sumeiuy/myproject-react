@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-12 16:20:06
+ * @Last Modified time: 2018-01-12 16:34:53
  * 任务调查
  */
 
@@ -296,6 +296,7 @@ export default class MissionInvestigation extends PureComponent {
         <div className={styles.answerSection}>
           <div className={styles.title}>
             {
+              // 1代表单选，2代表多选
               quesTypeCode === '1' || quesTypeCode === '2' ?
                 '答案：' : '描述：'
             }
