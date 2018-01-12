@@ -117,7 +117,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem
             label="客户"
-            value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} 
+            value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`}
           />
           {
             currentView === SUBTYPE.heightSpeed ?
