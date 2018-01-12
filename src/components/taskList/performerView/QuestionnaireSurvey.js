@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, Button, Radio, Checkbox, Input, Form } from 'antd';
-// import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import _ from 'lodash';
 
 import styles from './questionnaireSurvey.less';
@@ -17,6 +16,7 @@ const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 const { TextArea } = Input;
 const FormItem = Form.Item;
+
 // 后台返回题目类型
 const TYPE = {
   radioType: '1',
@@ -25,7 +25,7 @@ const TYPE = {
 };
 const EMPTY_ARRAY = [];
 
-// @RestoreScrollTop
+
 export default class QuestionnaireSurvey extends PureComponent {
 
   static propTypes = {

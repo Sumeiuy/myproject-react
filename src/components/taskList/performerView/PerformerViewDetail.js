@@ -145,7 +145,6 @@ export default class PerformerViewDetail extends PureComponent {
       pageSize: 200,
       examineeId: emp.getId(),
     });
-    // 发送请求
     this.setState({
       visible: true,
     });
@@ -153,7 +152,6 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   handleOk() {
-    // let isErr = false;
     const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
     const { checkboxData, radioData, areaTextData } = this.state;
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
@@ -178,7 +176,9 @@ export default class PerformerViewDetail extends PureComponent {
       keyIndex: this.state.keyIndex + 1,
     });
   }
+
   // 处理提交成功
+  @autobind
   handleSaveSuccess() {
     const { saveAnswersSucce } = this.props;
     let isShow = false;
@@ -190,6 +190,7 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
+  // 关闭modal
   @autobind
   handleCancel() {
     this.setState({
@@ -197,11 +198,13 @@ export default class PerformerViewDetail extends PureComponent {
       keyIndex: this.state.keyIndex + 1,
     });
   }
+
+  // 处理选中答案数据
   @autobind
   handleCheckboxChange(key) {
     const { checkboxData } = this.state;
     let initCheck = checkboxData;
-    // +-+在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
+    // +-+ 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
     const arr = _.map(key, item => _.split(item, '+-+'));
     const params = _.flatten(_.map(arr, (item) => {
       const childs = {
@@ -217,6 +220,7 @@ export default class PerformerViewDetail extends PureComponent {
       checkboxData: initCheck,
     });
   }
+
   @autobind
   handleRadioChange(key) {
     const { radioData } = this.state;
