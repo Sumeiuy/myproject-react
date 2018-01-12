@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination, Form } from 'antd';
+import { Pagination, Form, message } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -144,10 +144,18 @@ export default class PerformerViewDetail extends PureComponent {
       pageNum: 1,
       pageSize: 200,
       examineeId: emp.getId(),
-    });
-    this.setState({
-      visible: true,
-    });
+    }).then(this.handleGetQuesSuccess);
+  }
+
+  // 处理请求问卷题目是否成功
+  @autobind
+  handleGetQuesSuccess() {
+    const { answersList } = this.props;
+    if (!_.isEmpty(answersList)) {
+      this.setState({
+        visible: true,
+      });
+    }
   }
 
   @autobind
@@ -177,13 +185,14 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
-  // 处理提交成功
+  // 处理问卷提交成功
   @autobind
   handleSaveSuccess() {
     const { saveAnswersSucce } = this.props;
     let isShow = false;
     if (saveAnswersSucce !== 'success') {
       isShow = true;
+      message.error('提交失败！');
     }
     this.setState({
       visible: isShow,
@@ -301,14 +310,13 @@ export default class PerformerViewDetail extends PureComponent {
       label: '所有客户',
       show: true,
     });
-    // hasSurvey
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}
