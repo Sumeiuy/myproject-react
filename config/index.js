@@ -46,7 +46,7 @@ module.exports = {
       },
       [prefix + '/groovynoauth/fsp/biz']: {
         // target: 'http://168.61.8.81:5090', // DOClever 接口访问地址
-        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.81:5085', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },

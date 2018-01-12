@@ -23,7 +23,6 @@ import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
-
 const create = Form.create;
 @create()
 export default class PerformerViewDetail extends PureComponent {
@@ -137,14 +136,14 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   showModal() {
-    const { getTempQuesAndAnswer } = this.props;
+    const { getTempQuesAndAnswer, basicInfo: { templateId } } = this.props;
     getTempQuesAndAnswer({
       // 问卷传参测试
-      templateId: '1104',
+      templateId,
+      // 分页信息固定参数
       pageNum: 1,
       pageSize: 200,
       examineeId: emp.getId(),
-      assessType: 'MOT_EMP_FEEDBACK',
     });
     // 发送请求
     this.setState({
@@ -155,7 +154,7 @@ export default class PerformerViewDetail extends PureComponent {
   @autobind
   handleOk() {
     // let isErr = false;
-    const { saveAnswersByType, form } = this.props;
+    const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
     const { checkboxData, radioData, areaTextData } = this.state;
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
     form.validateFields((err) => {
@@ -167,9 +166,10 @@ export default class PerformerViewDetail extends PureComponent {
         const params = {
           // 提交问卷传参测试
           answerReqs: checkedData,
+          // 答题者类型参数固定
           examineetype: 'employee',
           examineeId: emp.getId(),
-          templateId: '1104',
+          templateId,
         };
         saveAnswersByType(params).then(this.handleSaveSuccess);
       }
