@@ -39,6 +39,8 @@ export default class DropdownSelect extends PureComponent {
     disable: PropTypes.bool,
     // 默认搜索框值
     defaultSearchValue: PropTypes.string,
+    // 菜单渲染父节点
+    getPopupContainer: PropTypes.func,
   }
 
   static defaultProps = {
@@ -51,6 +53,7 @@ export default class DropdownSelect extends PureComponent {
     theme: 'theme1',
     disable: false,
     defaultSearchValue: '',
+    getPopupContainer: () => document.querySelector(constants.container),
   }
 
   constructor(props) {
@@ -158,7 +161,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    const { theme, disable } = this.props;
+    const { theme, disable, getPopupContainer } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
     { [style.hide]: !this.state.isSHowModal },
     ]);
@@ -221,7 +224,7 @@ export default class DropdownSelect extends PureComponent {
         overlay={menu}
         trigger={['click']}
         visible={this.state.isSHowModal}
-        getPopupContainer={() => document.querySelector(constants.container)}
+        getPopupContainer={getPopupContainer}
       >
         <div
           className={drapDownSelectCls}

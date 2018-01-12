@@ -36,7 +36,7 @@ export default class Detail extends PureComponent {
     } = this.props.data;
     const developData = {
       attachmentList: develop,
-      title: '开发关系认定书（首次认定时必输）',
+      title: '开发关系认定书',
       uuid: attachment,
     };
     const otherData = {
@@ -64,7 +64,7 @@ export default class Detail extends PureComponent {
       workflowHistoryBeans,
     } = this.props.data;
     // 客户信息
-    const custInfo = `${custName} ${custNumber}`;
+    const custInfo = `${custName} (${custNumber})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const attachmentList = this.handleAttachmentData();
