@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-14 13:26:52
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-10 22:12:35
+ * @Last Modified time: 2018-01-15 15:27:10
  * 校验表单内容
  */
 
@@ -64,6 +64,7 @@ export const validateFormContent = (target, name, descriptor) => {
         isShowErrorTaskSubType: false,
         isShowErrorTaskType: false,
         isShowErrorExcuteType: false,
+        // isShowErrorInfo: false,
       });
       origin.apply(this, args);
       return true;
