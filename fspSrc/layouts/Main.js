@@ -42,6 +42,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   ...state.global,
   ...state.app,
+  navs: state.global.menus,
   loading: state.activity.global,
   loadingForceFull: state.activity.forceFull,
   custRange: state.customerPool.custRange,
@@ -90,6 +91,7 @@ export default class Main extends PureComponent {
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
+    navs: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
     serviceRecordModalVisibleOfName: PropTypes.string,
@@ -143,6 +145,7 @@ export default class Main extends PureComponent {
       interfaceState,
       dict,
       empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
+      navs: { secondaryMenu = [], majorMenu = [] },
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
@@ -164,6 +167,7 @@ export default class Main extends PureComponent {
           className={styles.layout}
         >
           <Header
+            navs={secondaryMenu}
             loginInfo={loginInfo}
             empInfo={empInfo}
             empRspList={empPostnList}
