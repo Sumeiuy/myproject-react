@@ -25,12 +25,11 @@ export default {
     custCount: [],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
     performanceIndicators: EMPTY_OBJECT,  // 投顾指标
-    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
+    managerIndicators: EMPTY_OBJECT,  // 经营指标
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
     todolistRecord: [],
-    manageIndicators: {},
     // 组织机构树
     custRange: [],
     // 时间周期：本年、本季、本月
@@ -209,11 +208,11 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率和开通业务指标（经营指标）
-    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
+    // 经营指标）
+    * getManagerIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getManagerIndicators, payload);
       yield put({
-        type: 'getHSRateAndBusinessIndicatorSuccess',
+        type: 'getManagerIndicatorsSuccess',
         payload: response,
       });
     },
@@ -239,15 +238,6 @@ export default {
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
-      });
-    },
-    // 绩效指标
-    * getManageIndicators({ payload }, { call, put }) {
-      const indicators =
-        yield call(api.getManageIndicators, payload);
-      yield put({
-        type: 'getManageIndicatorsSuccess',
-        payload: { indicators },
       });
     },
     // (首页总数)
@@ -762,11 +752,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateAndBusinessIndicatorSuccess(state, action) {
+    getManagerIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        hsRateAndBusinessIndicator: resultData,
+        managerIndicators: resultData,
       };
     },
     getInformationSuccess(state, action) {
@@ -814,15 +804,6 @@ export default {
       return {
         ...state,
         custRange,
-      };
-    },
-    // 经营指标
-    getManageIndicatorsSuccess(state, action) {
-      const { payload: { indicators } } = action;
-      const manageIndicators = indicators.resultData;
-      return {
-        ...state,
-        manageIndicators,
       };
     },
     // (首页总数)

@@ -6,6 +6,7 @@ import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import TextareaComponent from '../common/textareacomponent';
 import DropdownSelect from '../common/dropdownSelect';
+import { emp } from '../../helper';
 import style from './baseInfoModify.less';
 
 export default class BaseInfoModify extends PureComponent {
@@ -71,9 +72,12 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   searchCanApplyCustList(value) {
     // 按照 关键字 查询 客户 列表
+    // 登录人orgId
+    const orgId = emp.getOrgId();
     this.props.getCreateCustList({
       keyword: value,
       type: '06', // 06为开发关系认定的type代号
+      orgId,
     });
   }
 

@@ -85,7 +85,8 @@ const effects = {
   countFlowFeedBack: 'managerView/countFlowFeedBack',
   // 管理者视图任务实施进度
   countFlowStatus: 'managerView/countFlowStatus',
-  getQueryQues: 'performerView/getQueryQues',
+  getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
+  saveAnswersByType: 'performerView/saveAnswersByType',
 };
 
 const mapStateToProps = state => ({
@@ -127,6 +128,7 @@ const mapStateToProps = state => ({
   // 执行者视图添加服务记录是否成功
   addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
   answersList: state.performerView.answersList,
+  saveAnswersSucce: state.performerView.saveAnswersSucce,
 });
 
 const mapDispatchToProps = {
@@ -179,7 +181,8 @@ const mapDispatchToProps = {
   countFlowStatus: fetchDataFunction(true, effects.countFlowStatus),
   // 获取添加服务记录中的任务反馈
   getServiceType: fetchDataFunction(true, effects.getServiceType),
-  getQueryQues: fetchDataFunction(false, effects.getQueryQues),
+  getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
+  saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -236,8 +239,10 @@ export default class PerformerView extends PureComponent {
     getServiceType: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    getQueryQues: PropTypes.func.isRequired,
-    answersList: PropTypes.obj,
+    getTempQuesAndAnswer: PropTypes.func.isRequired,
+    answersList: PropTypes.object,
+    saveAnswersByType: PropTypes.func.isRequired,
+    saveAnswersSucce: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -247,6 +252,7 @@ export default class PerformerView extends PureComponent {
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     answersList: EMPTY_OBJECT,
+    saveAnswersSucce: false,
   };
 
   constructor(props) {
@@ -488,8 +494,10 @@ export default class PerformerView extends PureComponent {
       push,
       clearCreateTaskData,
       addMotServeRecordSuccess,
-      getQueryQues,
+      getTempQuesAndAnswer,
       answersList,
+      saveAnswersByType,
+      saveAnswersSucce,
     } = this.props;
     const {
       query: { currentId },
@@ -536,8 +544,10 @@ export default class PerformerView extends PureComponent {
             deleteFileResult={deleteFileResult}
             taskFeedbackList={taskFeedbackList}
             addMotServeRecordSuccess={addMotServeRecordSuccess}
-            getQueryQues={getQueryQues}
+            getTempQuesAndAnswer={getTempQuesAndAnswer}
             answersList={answersList}
+            saveAnswersByType={saveAnswersByType}
+            saveAnswersSucce={saveAnswersSucce}
           />
         );
         break;

@@ -38,6 +38,7 @@ export default {
     taskFeedbackList: [],
     addMotServeRecordSuccess: false,
     answersList: {},
+    saveAnswersSucce: false,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -117,11 +118,18 @@ export default {
         addMotServeRecordSuccess: payload === 'success',
       };
     },
-    getQueryQuesSuccess(state, action) {
+    getTempQuesAndAnswerSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         answersList: payload,
+      };
+    },
+    saveAnswersByTypeSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        saveAnswersSucce: payload === 'success',
       };
     },
   },
@@ -216,10 +224,17 @@ export default {
         });
       }
     },
-    * getQueryQues({ payload }, { call, put }) {
-      const response = yield call(api.getQueryQues, payload);
+    * getTempQuesAndAnswer({ payload }, { call, put }) {
+      const response = yield call(api.getTempQuesAndAnswer, payload);
       yield put({
-        type: 'getQueryQuesSuccess',
+        type: 'getTempQuesAndAnswerSuccess',
+        payload: response.resultData,
+      });
+    },
+    * saveAnswersByType({ payload }, { call, put }) {
+      const response = yield call(api.saveAnswersByType, payload);
+      yield put({
+        type: 'saveAnswersByTypeSuccess',
         payload: response.resultData,
       });
     },

@@ -31,6 +31,8 @@ export default function performerView(api) {
     // 添加服务记录中 服务类型
     getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
     // 问卷调查
-    getQueryQues: query => api.post('/groovynoauth/fsp/assess/common/queryQues', query),
+    getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
+    // 问卷调查保存答案
+    saveAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/saveAnswersByType', query),
   };
 }
