@@ -49,6 +49,9 @@ import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import DevelopRelationshipHome from './routes/developRelationship/Home';
 import DevelopRelationshipEdit from './routes/developRelationship/Edit';
 
+// 晨间播报
+import BroadcastDetail from './routes/morningBroadcast/BroadcastDetail';
+
 const { ConnectedRouter } = routerRedux;
 
 // 路由Collection
@@ -125,6 +128,8 @@ const routes = [
     path: '/mainPosition',
     component: MainPosition,
   },
+  // 晨间播报
+  { path: '/broadcastDetail', component: BroadcastDetail },
 ];
 
 // 递归创建路由
