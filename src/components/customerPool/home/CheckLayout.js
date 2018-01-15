@@ -14,13 +14,13 @@ import classnames from 'classnames';
 
 import styles from './checkLayout.less';
 
-function renderItem(data, title, itemStyle = null) {
+function renderItem(data, itemStyle = null) {
   return (
     <div className={classnames(styles.check, itemStyle)}>
       <div className={styles.count}>
         <span title={`${data.item}${data.unit}`}>{data.item}<span>{data.unit}</span></span>
       </div>
-      <div className={styles.title}>{title}</div>
+      <div className={styles.title}>{data.title}</div>
     </div>
   );
 }
@@ -29,12 +29,12 @@ function CheckLayout({ dataSource = [] }) {
   return (
     <div className={styles.container}>
       <div className={classnames(styles.content, styles.left)}>
-        {renderItem(dataSource[0], '净新增客户资产', styles.bottomBorder)}
-        {renderItem(dataSource[1], '累计基础交易量')}
+        {renderItem(dataSource[0], styles.bottomBorder)}
+        {renderItem(dataSource[1])}
       </div>
       <div className={classnames(styles.content, styles.right)}>
-        {renderItem(dataSource[2], '累计综合交易量', styles.bottomBorder)}
-        {renderItem(dataSource[3], '股基累计净佣金')}
+        {renderItem(dataSource[2], styles.bottomBorder)}
+        {renderItem(dataSource[3])}
       </div>
     </div>
   );

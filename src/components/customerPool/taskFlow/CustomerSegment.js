@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-06 13:44:05
+ * @Last Modified time: 2018-01-15 09:36:01
  * 客户细分组件
  */
 
@@ -26,6 +26,7 @@ const COLUMN_WIDTH = 115;
 const INITIAL_PAGE_SIZE = 10;
 const INITIAL_PAGE_NUM = 1;
 const COLUMN_HEIGHT = 36;
+
 
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
@@ -255,7 +256,6 @@ export default class CustomerSegment extends PureComponent {
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
-
     return (
       <div className={styles.customerSegmentContainer}>
         <div className={styles.uploadSection}>
@@ -275,7 +275,7 @@ export default class CustomerSegment extends PureComponent {
         </div>
         <div className={styles.tipSection}>
           注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，excel导入格式参见：
-          <a href={selfBuiltTemplate}>导入模板。</a>
+          <a href={selfBuiltTemplate}>导入模板</a>。
         </div>
         {
           isShowTable ?
