@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-12 16:34:53
+ * @Last Modified time: 2018-01-15 09:49:04
  * 任务调查
  */
 
@@ -325,6 +325,12 @@ export default class MissionInvestigation extends PureComponent {
           onChange={value => this.handleSelectChange(questionId, value)}
           disabled={!checked}
           defaultValue={defaultQues || defaultQuestion}
+          showSearch
+          optionFilterProp="children"
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+          filterOption={(input, option) =>
+            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {
             _.map(list, item =>

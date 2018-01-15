@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-11 11:24:07
+ * @Last Modified time: 2018-01-15 10:15:36
  */
 
 import React, { PureComponent } from 'react';
@@ -168,7 +168,7 @@ export default class GroupTable extends PureComponent {
 
   @autobind
   renderColumnValue(record, item) {
-    if (_.isEmpty(record[item.key]) || record[item.key] === 0) {
+    if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
       return '--';
     }
     if (item.render) {
