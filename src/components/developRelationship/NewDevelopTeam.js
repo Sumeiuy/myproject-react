@@ -179,6 +179,7 @@ export default class ServerPersonel extends PureComponent {
               emitSelectItem={this.dropdownSelectedItem}
               emitToSearch={this.dropdownToSearchInfo}
               boxStyle={{ border: '1px solid #d9d9d9' }}
+              getPopupContainer={() => document.body}
             />
           </div>
           {
