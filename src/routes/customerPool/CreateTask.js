@@ -144,13 +144,13 @@ export default class CreateTask extends PureComponent {
     const { location: { query: { source = '' } } } = this.props;
     if (source === 'custGroupList') {
       // 从客户分组发起任务
-      closeRctTab('RCT_FSP_CREATE_TASK_FROM_CUSTGROUP');
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP' });
     } else if (source === 'managerView') {
       // 从管理者视图发起任务
-      closeRctTab('RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW');
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW' });
     } else {
       // 从客户列表发起任务
-      closeRctTab('RCT_FSP_CREATE_TASK_FROM_CUSTLIST');
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
     }
   }
 

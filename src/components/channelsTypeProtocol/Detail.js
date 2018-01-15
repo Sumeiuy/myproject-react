@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 19:56:03
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-12 15:25:24
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -79,6 +79,7 @@ export default class Detail extends PureComponent {
       // 传入视图不同，判断是否显示申请单编号
       currentView,
     } = this.props;
+    const custName = `${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`;
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
@@ -115,7 +116,10 @@ export default class Detail extends PureComponent {
           <InfoTitle head="基本信息" />
           <InfoItem label="操作类型" value={protocolDetail.operationTypeText || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
-          <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
+          <InfoItem
+            label="客户"
+            value={custName}
+          />
           {
             currentView === SUBTYPE.heightSpeed ?
               <InfoItem label="申请单编号" value={protocolDetail.appId} />
