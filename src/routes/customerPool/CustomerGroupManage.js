@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 14:59:56
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-12 17:39:10
  */
 
 import React, { PureComponent } from 'react';
@@ -248,14 +248,15 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleOpenTab(obj, titles, ids) {
     // const { groupId, count, enterType, source } = obj;
+    console.log('XXXXX', obj, titles, ids);
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
-    const condition = encodeURIComponent(JSON.stringify(obj));
-    const query = {
-      condition,
-    };
+    // const condition = encodeURIComponent(JSON.stringify(obj));
+    // const query = {
+    //   condition,
+    // };
 
-    const url = `${firstUrl}?${urlHelper.stringify(query)}`;
+    const url = `${firstUrl}?${urlHelper.stringify(obj)}`;
     const param = {
       closable: true,
       forceRefresh: true,

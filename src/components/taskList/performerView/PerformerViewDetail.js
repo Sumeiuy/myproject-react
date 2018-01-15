@@ -8,11 +8,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination, Form } from 'antd';
+import { Pagination, Form, message } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
 import BasicInfo from '../common/BasicInfo';
+import { emp } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
@@ -22,52 +23,6 @@ import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 8;
 const PAGE_NO = 1;
-// 问卷调查题目测试数据
-const data = {
-  quesInfoList: [
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理ddd' }, { optionId: '58', optionValue: '不合理eeee' }],
-      quesDesp: '我建议XXX',
-      quesId: '5',
-      quesTypeCode: '1',
-      quesTypeValue: '单选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理rrrr' }, { optionId: '58', optionValue: '不合理fff' }],
-      quesDesp: '我建议XXX',
-      quesId: '2',
-      quesTypeCode: '1',
-      quesTypeValue: '单选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理xxxx' }, { optionId: '58', optionValue: '不合理yyyy' }],
-      quesDesp: '我建议XXX',
-      quesId: '3',
-      quesTypeCode: '2',
-      quesTypeValue: '多选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [{ optionId: '51', optionValue: '合理aaaa' }, { optionId: '58', optionValue: '不合理yyyyy' }],
-      quesDesp: '我建议XXX',
-      quesId: '4',
-      quesTypeCode: '2',
-      quesTypeValue: '多选',
-      quesValue: '此任务触发条件是否合理',
-    },
-    {
-      optionInfoList: [],
-      quesDesp: '我建议XXX',
-      quesId: '6',
-      quesTypeCode: '3',
-      quesTypeValue: '文本域',
-      quesValue: '此任务触发条件是否合理',
-    },
-  ],
-};
-
 const create = Form.create;
 @create()
 export default class PerformerViewDetail extends PureComponent {
@@ -86,12 +41,15 @@ export default class PerformerViewDetail extends PureComponent {
     form: PropTypes.object.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     answersList: PropTypes.object,
-    getQueryQues: PropTypes.func.isRequired,
+    getTempQuesAndAnswer: PropTypes.func.isRequired,
+    saveAnswersSucce: PropTypes.bool,
+    saveAnswersByType: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     isFold: true,
     answersList: {},
+    saveAnswersSucce: false,
   }
 
   constructor(props) {
@@ -100,6 +58,8 @@ export default class PerformerViewDetail extends PureComponent {
       visible: false,
       checkboxData: [],
       radioData: [],
+      areaTextData: [],
+      keyIndex: Number(emp.getId()),
     };
   }
 
@@ -163,8 +123,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerPageNo = PAGE_NO,
-        targetCustomerState,
+      targetCustomerPageNo = PAGE_NO,
+      targetCustomerState,
       },
     } = this.props;
     this.queryTargetCustInfo({
@@ -176,56 +136,85 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   showModal() {
-    const { getQueryQues } = this.props;
-    getQueryQues({
+    const { getTempQuesAndAnswer, basicInfo: { templateId } } = this.props;
+    getTempQuesAndAnswer({
       // 问卷传参测试
-      templateId: '0502',
+      templateId,
+      // 分页信息固定参数
       pageNum: 1,
       pageSize: 200,
-      assessType: 'MOT_EMP_FEEDBACK',
-    });
-    // 发送请求
-    this.setState({
-      visible: true,
-    });
+      examineeId: emp.getId(),
+    }).then(this.handleGetQuesSuccess);
+  }
+
+  // 处理请求问卷题目是否成功
+  @autobind
+  handleGetQuesSuccess() {
+    const { answersList } = this.props;
+    if (!_.isEmpty(answersList)) {
+      this.setState({
+        visible: true,
+      });
+    }
   }
 
   @autobind
   handleOk() {
-    let isErr = false;
-    const { checkboxData, radioData } = this.state;
-    const checkedData = _.concat(checkboxData, radioData);
-    // console.log('===>', this.questionForm);
-    this.props.form.validateFields((err, values) => {
-      console.log('values--->', values);
+    const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
+    const { checkboxData, radioData, areaTextData } = this.state;
+    const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
+    form.validateFields((err) => {
       if (!_.isEmpty(err)) {
-        isErr = true;
+        this.setState({
+          visible: true,
+        });
       } else {
         const params = {
           // 提交问卷传参测试
           answerReqs: checkedData,
+          // 答题者类型参数固定
           examineetype: 'employee',
-          examineeId: '02053703',
-          templateId: '0502',
+          examineeId: emp.getId(),
+          templateId,
         };
-        console.log(params);
+        saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
     this.setState({
-      visible: isErr,
+      keyIndex: this.state.keyIndex + 1,
     });
   }
+
+  // 处理问卷提交成功
+  @autobind
+  handleSaveSuccess() {
+    const { saveAnswersSucce } = this.props;
+    let isShow = false;
+    if (saveAnswersSucce !== 'success') {
+      isShow = true;
+      message.error('提交失败！');
+    }
+    this.setState({
+      visible: isShow,
+    });
+  }
+
+  // 关闭modal
   @autobind
   handleCancel() {
     this.setState({
       visible: false,
+      keyIndex: this.state.keyIndex + 1,
     });
   }
 
+  // 处理选中答案数据
   @autobind
   handleCheckboxChange(key) {
-    // const { checkboxData } = this.state;
-    const arr = _.map(key, item => _.split(item, '-'));
+    const { checkboxData } = this.state;
+    let initCheck = checkboxData;
+    // +-+ 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
+    const arr = _.map(key, item => _.split(item, '+-+'));
     const params = _.flatten(_.map(arr, (item) => {
       const childs = {
         answerId: item[1],
@@ -234,38 +223,56 @@ export default class PerformerViewDetail extends PureComponent {
       };
       return childs;
     }));
+    initCheck = _.concat(checkboxData, params);
+    initCheck = _.uniqBy(initCheck, 'answerId', 'quesId');
     this.setState({
-      checkboxData: params,
-    }, () => {
-      console.log('checkboxData==>', this.state.checkboxData);
+      checkboxData: initCheck,
     });
   }
+
   @autobind
   handleRadioChange(key) {
     const { radioData } = this.state;
     const initRadio = radioData;
     const checkedData = [{
       quesId: key.target.dataQuesId,
-      answerId: key.target.dataId,
-      answerText: key.target.value,
+      answerId: key.target.value,
+      answerText: key.target.dataVale,
     }];
-    if (_.isEmpty(initRadio)) {
+    this.handleRepeatData(initRadio, checkedData, radioData);
+  }
+
+  // 处理问卷选中重复答案
+  @autobind
+  handleRepeatData(initData, checkedData, stv) {
+    if (_.isEmpty(initData)) {
       this.setState({
-        radioData: checkedData,
+        [stv]: checkedData,
       });
     } else {
       let newRadio = [];
-      const ques = _.findIndex(initRadio, o => o.quesId === checkedData[0].quesId);
+      const ques = _.findIndex(initData, o => o.quesId === checkedData[0].quesId);
       if (ques === -1) {
-        newRadio = _.concat(initRadio, checkedData);
+        newRadio = _.concat(initData, checkedData);
       } else {
-        newRadio = initRadio.splice(ques, 1, checkedData[0]);
-        newRadio = initRadio;
+        newRadio = initData.splice(ques, 1, checkedData[0]);
+        newRadio = initData;
       }
       this.setState({
         radioData: newRadio,
       });
     }
+  }
+
+  @autobind
+  handleAreaText(e) {
+    const { areaTextData } = this.state;
+    const initAreaText = areaTextData;
+    const params = [{
+      quesId: e.target.getAttribute('data'),
+      answerText: e.target.value,
+    }];
+    this.handleRepeatData(initAreaText, params, areaTextData);
   }
 
   render() {
@@ -280,9 +287,9 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerState = '',
       },
       form,
-      // answersList,
+      answersList,
     } = this.props;
-    const { visible } = this.state;
+    const { visible, keyIndex } = this.state;
     const {
       missionId,
       missionName,
@@ -303,14 +310,14 @@ export default class PerformerViewDetail extends PureComponent {
       label: '所有客户',
       show: true,
     });
-    // hasSurvey
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
+    // hasSurvey
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}
@@ -358,7 +365,9 @@ export default class PerformerViewDetail extends PureComponent {
           onCancel={this.handleCancel}
           onCheckChange={this.handleCheckboxChange}
           onRadioChange={this.handleRadioChange}
-          answersList={data}
+          onAreaText={this.handleAreaText}
+          answersList={answersList}
+          key={keyIndex}
         />
       </div>
     );

@@ -34,7 +34,12 @@ const dropDownSelectBoxStyle = {
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 // 紫金通道 subType，新建协议判断切换的子类型
-const violetGold = '507070';
+const subTypeObject = {
+  // 快车道
+  fastConnect: '507070',
+  // 高速通道
+  expressConnect: '507050',
+};
 const { subscribeArray } = config;
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
@@ -237,6 +242,7 @@ export default class EditBaseInfo extends PureComponent {
       resetProduct,
       changeOperationType,
       changeRequiredFile,
+      getFlowStepInfo,
     } = this.props;
     let sub = true;
     let isHightSpeed = false;
@@ -247,9 +253,21 @@ export default class EditBaseInfo extends PureComponent {
         needMutliAndTen = true;
       }
       changeOperationType(value);
-    } else if (key === 'subTyp') {
+    } else if (key === 'subType') {
+      let operate;
+      if (value === subTypeObject.fastConnect) {
+        // 快车道
+        operate = 1;
+      } else if (value === subTypeObject.expressConnect) {
+        // 高速通道
+        operate = 11;
+      }
+      getFlowStepInfo({
+        flowId: '',
+        operate,
+      });
       // 判断子类型是否为紫金通道，不是则不展现多用户和十档行情选择
-      if (value !== violetGold) {
+      if (value !== subTypeObject.fastConnect) {
         isHightSpeed = true;
       }
     }
@@ -512,6 +530,7 @@ export default class EditBaseInfo extends PureComponent {
       }).then(() => {
         const { formData: nextFD } = this.props;
         const { operationType } = this.state;
+        // TODO 高速通道退订、续订等操作时，需要对 operate 进行判断
         getFlowStepInfo({
           flowId,
           operate: 1,
@@ -591,7 +610,7 @@ export default class EditBaseInfo extends PureComponent {
           isEditPage ?
             <div>
               <InfoItem label="子类型" value={subType} />
-              <InfoItem label="操作类型" value={protocolDetail.operationType} />
+              <InfoItem label="操作类型" value={protocolDetail.operationTypeText} />
               <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName)} ${protocolDetail.econNum}`} />
             </div>
             :
@@ -634,7 +653,7 @@ export default class EditBaseInfo extends PureComponent {
                 placeholder="协议模板"
                 showObjKey="prodName"
                 objId="rowId"
-                value={isEditPage ? `${protocolTemplate.prodName || ''} ${protocolTemplate.rowId || ''}` : ''}
+                value={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
                 searchList={templateList}
                 emitSelectItem={this.handleSelectTemplate}
                 emitToSearch={this.handleSearchTemplate}
