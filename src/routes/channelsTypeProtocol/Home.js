@@ -375,13 +375,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    const { getFlowStepInfo } = this.props;
-    getFlowStepInfo({
-      flowId: '',
-      operate: 1,
-    }).then(() => {
-      this.showModal('editFormModal');
-    });
+    // const { getFlowStepInfo } = this.props;
+    // getFlowStepInfo({
+    //   flowId: '',
+    //   operate: 1,
+    // }).then(() => {
+    //   this.showModal('editFormModal');
+    // });
+    this.showModal('editFormModal');
   }
 
   // 打开弹窗
@@ -498,7 +499,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
-    console.log('click', btnItem, formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;
