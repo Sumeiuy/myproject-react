@@ -46,8 +46,7 @@ const permission = {
   hasCustomerPoolPermission() {
     return permission.hasIndexViewPermission()
       || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+      || permission.hasBoMampPermission();
   },
 
   // 目标客户池创建任务权限

@@ -17,26 +17,21 @@ import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
 import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { fspContainer } from '../../config';
-import { permission } from '../../utils';
 import withRouter from '../../decorators/withRouter';
+import permissionType from './permissionType';
+import {
+  NOPERMIT,
+  CUST_MANAGER,
+  ORG,
+  ENTER_TYPE,
+} from './config';
+
 import styles from './customerlist.less';
 
-const CUST_MANAGER = '1'; // 客户经理
-const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
-
-// 根据不同的url中source的值，传给后端enterType值不同
-const ENTER_TYPE = {
-  search: 'searchCustPool',
-  tag: 'searchCustPool',
-  association: 'searchCustPool',
-  business: 'businessCustPool',
-  custIndicator: 'performanceCustPool',
-  numOfCustOpened: 'performanceCustPool',
-};
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
@@ -215,11 +210,8 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
-    this.authority = permission.hasCustomerPoolPermission();
-    // 总部 - 营销活动管理岗, 分公司 - 营销活动管理岗
-    this.toDetailAuthority = permission.hasHqMampPermission()
-      || permission.hasBoMampPermission();
+    this.permissionType = permissionType().customerPoolPermit;
+    this.view360Permit = permissionType().view360Permit;
   }
 
   getChildContext() {
@@ -325,7 +317,7 @@ export default class CustomerList extends PureComponent {
       param.custType = CUST_MANAGER;
       if (query.ptyMng && query.ptyMng.split('_')[1] === empNum) {
         param.custType = CUST_MANAGER;
-      } else if (this.authority) {
+      } else if (this.permissionType !== NOPERMIT) {
         param.custType = ORG;
       }
     }
@@ -346,7 +338,7 @@ export default class CustomerList extends PureComponent {
     // orgId默认取岗位对应的orgId，服务营业部选 '所有' 不传，其余情况取对应的orgId
     if (query.orgId && query.orgId !== 'all') {
       param.orgId = query.orgId;
-    } else if (!query.orgId && this.authority) {
+    } else if (!query.orgId && this.permissionType !== NOPERMIT) {
       // 有权限，第一次进入列表页传所处岗位对应orgId
       // 在fsp外壳中取岗位切换的id， 本地取empinfo中的occDivnNum
       if (document.querySelector(fspContainer.container)) {
@@ -356,7 +348,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 服务经理ptyMngId
-    if (!this.authority) {
+    if (this.permissionType === NOPERMIT) {
       param.ptyMngId = empNum;
     }
     if (query.ptyMng) {
@@ -613,7 +605,6 @@ export default class CustomerList extends PureComponent {
           handleSearch={handleSearch}
           handleCheck={handleCheck}
           handleSelect={handleSelect}
-          authority={this.authority}
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
@@ -650,7 +641,8 @@ export default class CustomerList extends PureComponent {
           queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}
           filesList={filesList}
-          toDetailAuthority={this.toDetailAuthority}
+          permissionType={this.permissionType}
+          view360Permit={this.view360Permit}
         />
       </div>
     );
