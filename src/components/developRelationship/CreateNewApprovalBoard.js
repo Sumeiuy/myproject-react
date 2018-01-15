@@ -291,7 +291,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 登录人custName，新建私密客户必传
     const empName = empInfo.empName;
     // 登录人orgId，新建私密客户必传
-    const orgId = empInfo.occDivnNum;
+    const orgId = emp.getOrgId();
 
     const queryConfig = {
       subType,
