@@ -221,7 +221,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   @autobind
   handleButtonInfo(item) {
-    console.warn('item', item);
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
     this.setState({
@@ -230,10 +229,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       btnId: item.flowBtnId,
       nextGroupId: item.nextGroupName,
       nextApproverList: item.flowAuditors,
-    }, () => {
-      this.setState({
-        nextApproverModal: true,
-      });
+      nextApproverModal: true,
     });
   }
 
@@ -260,7 +256,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 已有开发经理的提示语
       const custEmpTip = `该客户已有开发经理${oldDevelopEmpTip}`;
       // 过滤出是入岗投顾的对象数组
-      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList,  { 'tgFlag': 'Y' });
+      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList, { 'tgFlag': 'Y' });
       // 获取是入岗投顾的服务经理名称的数组
       const tgFlagEmpArr = _.map(tgFlagOldDevelopEmpList, 'activeLastName');
       // 用、连接是入岗投顾的服务经理名称的数组中的元素
@@ -295,7 +291,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 登录人custName，新建私密客户必传
     const empName = empInfo.empName;
     // 登录人orgId，新建私密客户必传
-    const orgId = empInfo.occDivnNum;
+    const orgId = emp.getOrgId();
 
     const queryConfig = {
       subType,

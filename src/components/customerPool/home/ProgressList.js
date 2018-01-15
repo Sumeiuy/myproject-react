@@ -32,6 +32,7 @@ export default class ProgressList extends PureComponent {
     location: PropTypes.object,
     empInfo: PropTypes.object,
     type: PropTypes.string,
+    permissionType: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -84,7 +85,7 @@ export default class ProgressList extends PureComponent {
   */
   @autobind
   handleClick(index, item) {
-    const { cycle, push, location, empInfo } = this.props;
+    const { cycle, push, location, empInfo, permissionType } = this.props;
     const bname = this.transformName(item.cust);
     const param = {
       source: 'custIndicator',
@@ -95,6 +96,7 @@ export default class ProgressList extends PureComponent {
       push,
       location,
       empInfo,
+      permissionType,
     };
     linkTo(param);
   }
