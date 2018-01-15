@@ -11,18 +11,19 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 import _ from 'lodash';
-
 import { optionsMap, fspContainer } from '../../config';
-import TabsExtra from '../../components/customerPool/home/TabsExtra';
-import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
-import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
-import Viewpoint from '../../components/customerPool/home/Viewpoint';
-import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { permission } from '../../utils';
 import { emp, time } from '../../helper';
-import Search from '../../components/customerPool/home/Search';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
+import
+{ MorningBroadcast,
+  ToBeDone,
+  Viewpoint,
+  ManageIndicators,
+  PerformanceIndicators,
+  TabsExtra,
+  Search } from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
 const CUST_MANAGER = '1'; // 客户经理
@@ -33,6 +34,22 @@ const EMPTY_OBJECT = {};
 // 主服务经理id，用于url和custrange组件中，不传给后端
 const MAIN_MAGEGER_ID = 'msm';
 // const LOCAL_MONTH = '518003';
+const DATA_LIST = [
+  {
+    id: 1,
+    fullName: '产品销售晨报',
+    simpleName: '销售晨报',
+    desc: '创业板反弹，沪指突破3300点压力区后',
+    source: 'http://www.w3school.com.cn/i/horse.ogg',
+  },
+  {
+    id: 2,
+    fullName: '产品销售晨报',
+    simpleName: '销售晨报',
+    desc: '创业板反弹，沪指突破3300点压力区后',
+    source: 'http://www.w3school.com.cn/i/horse.ogg',
+  },
+];
 
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
@@ -497,17 +514,17 @@ export default class Home extends PureComponent {
     const { tgQyFlag = false } = empInfo.empInfo || {};
     return (
       <div className={styles.customerPoolWrap}>
-        <Search
-          data={hotWds}
-          queryHotPossibleWds={this.queryHotPossibleWds}
-          queryHotWdsData={hotPossibleWdsList}
-          push={push}
-          searchHistoryVal={searchHistoryVal}
-          saveSearchVal={this.handleSaveSearchVal}
-          location={location}
-        />
         <div className={styles.poolContainer}>
           <div className={styles.content}>
+            <Search
+              data={hotWds}
+              queryHotPossibleWds={this.queryHotPossibleWds}
+              queryHotWdsData={hotPossibleWdsList}
+              push={push}
+              searchHistoryVal={searchHistoryVal}
+              saveSearchVal={this.handleSaveSearchVal}
+              location={location}
+            />
             <ToBeDone
               location={location}
               push={push}
@@ -547,6 +564,7 @@ export default class Home extends PureComponent {
             </Tabs>
           </div>
           <div className={styles.viewpoint}>
+            <MorningBroadcast dataList={DATA_LIST} />
             <Viewpoint
               information={information}
               push={push}
