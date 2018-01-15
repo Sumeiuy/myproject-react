@@ -138,7 +138,7 @@ export default class Detail extends PureComponent {
                   attachmentList.map(item => (
                     <MultiUploader
                       attachmentList={item.attachmentList}
-                      attachment={''}
+                      attachment={item.uuid}
                       title={item.title}
                       key={`${item.title}`}
                     />
