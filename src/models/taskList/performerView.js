@@ -181,8 +181,7 @@ export default {
     // 此处接口依赖列表接口返回的数据，列表接口中有数据时才能去查详情，
     // 列表接口中的没有数据时，先查询列表接口
     * queryTargetCustDetail({ payload }, { call, put }) {
-      const { custId } = payload;
-      const { resultData } = yield call(api.queryTargetCustDetail, { custId });
+      const { resultData } = yield call(api.queryTargetCustDetail, payload);
       if (resultData) {
         yield put({
           type: 'queryTargetCustDetailSuccess',
