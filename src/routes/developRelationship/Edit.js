@@ -17,7 +17,7 @@ import { seibelConfig } from '../../config';
 
 const { developRelationship: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
-const TESTFLOWID = '28AE5217264D4444A3DBAD58DFBA7A0D';
+const TESTFLOWID = '6576AF013232CA46A76A10FA0859B0F2';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -98,7 +98,7 @@ export default class DevelopRelationshipEdit extends PureComponent {
     this.setState({ [name]: value });
   }
 
-  // 修改私密客户申请
+  // 修改开发关系认定申请
   @autobind
   handleModifyPrivateApp(params) {
     const { location: { query } } = this.props;
