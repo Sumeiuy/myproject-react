@@ -50,7 +50,7 @@ import DevelopRelationshipHome from './routes/developRelationship/Home';
 import DevelopRelationshipEdit from './routes/developRelationship/Edit';
 
 // 晨间播报
-import BroadcastDetail from './routes/morningBroadcast/BroadcastDetail';
+import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -130,6 +130,7 @@ const routes = [
   },
   // 晨间播报
   { path: '/broadcastDetail', component: BroadcastDetail },
+  { path: '/broadcastList', component: BroadcastList },
 ];
 
 // 递归创建路由
