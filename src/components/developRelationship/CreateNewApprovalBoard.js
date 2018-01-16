@@ -220,7 +220,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 已有开发经理的提示语
       const custEmpTip = `该客户已有开发经理${oldDevelopEmpTip}`;
       // 过滤出是入岗投顾的对象数组
-      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList, { tgFlag: 'Y' });
+      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList, { 'tgFlag': 'Y' });
       // 获取是入岗投顾的服务经理名称的数组
       const tgFlagEmpArr = _.map(tgFlagOldDevelopEmpList, 'activeLastName');
       // 用、连接是入岗投顾的服务经理名称的数组中的元素
@@ -285,7 +285,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       clearPropsData,
     } = this.props;
     const { remark, customer, attachmentTypeList, custId } = this.state;
-    console.warn('attachmentTypeList', attachmentTypeList);
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
