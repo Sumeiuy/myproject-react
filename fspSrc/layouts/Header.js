@@ -31,13 +31,20 @@ export default class Header extends PureComponent {
     secondaryMenu: [],
     loginInfo: {},
     empInfo: {},
-    onSearch: () => {},
-    onSwitchRsp: () => {},
+    onSearch: () => { },
+    onSwitchRsp: () => { },
   }
 
   @autobind
   handleSwitchRsp(rsp) {
     this.props.onSwitchRsp(rsp);
+  }
+
+  @autobind
+  onClick() {
+    if (process.env.NODE_ENV === 'development') {
+      window.open('fsp/login?iv-user=002727#/report', '_blank');
+    }
   }
 
   render() {
@@ -57,7 +64,7 @@ export default class Header extends PureComponent {
 
     return (
       <div className={styles.header}>
-        <Logo />
+        <div onClick={this.onClick}><Logo /></div>
         <div className={styles.headerContent}>
           {/* <div className={styles.search}>
             <Search
@@ -86,13 +93,13 @@ export default class Header extends PureComponent {
           </Dropdown>
           {
             (!_.isEmpty(empRspList) && !_.isEmpty(loginInfo)) ?
-            (<EmpRsp
-              empRspList={empRspList}
-              empCurRsp={loginInfo}
-              empInfo={empInfo}
-              onSwitchRsp={this.handleSwitchRsp}
-            />) :
-            null
+              (<EmpRsp
+                empRspList={empRspList}
+                empCurRsp={loginInfo}
+                empInfo={empInfo}
+                onSwitchRsp={this.handleSwitchRsp}
+              />) :
+              null
           }
         </div>
       </div>
