@@ -79,19 +79,15 @@ const routes = [
    { path: '/custcomplaint/fspall', component: HtmlComponent },
    { path: '/custcomplaint/fspnew', component: HtmlComponent },
    { path: '/custcomplaint/fspreport', component: HtmlComponent },
- 
     // 资金业务
     { path: '/bizapply/finance/fspexcessCache', component: HtmlComponent },
     { path: '/bizapply/finance/fspappointDrawTab', component: HtmlComponent },
     { path: '/bizapply/finance/fspappointBook', component: HtmlComponent },
- 
    // 适当性申请
    { path: '/bizapply/priReuqest/fsppriProd', component: HtmlComponent },
    { path: '/bizapply/priReuqest/fspappropriate', component: HtmlComponent },
- 
    // 通道类业务
    { path: '/bizapply/tunnel/fsppbbiz', component: HtmlComponent },
- 
    // 信用业务
    { path: '/bizapply/credit/fsppostApplyManage', component: IframeComponent },
    { path: '/bizapply/credit/fspcreditRequest', component: IframeComponent },
@@ -102,7 +98,6 @@ const routes = [
    { path: '/bizapply/credit/fspriskFollow', component: IframeComponent },
    { path: '/bizapply/credit/fspinitialTrade', component: IframeComponent },
    { path: '/bizapply/credit/fspfollowingSearch', component: IframeComponent },
- 
    // 期权业务
    { path: '/bizapply/option/fspoptionfund', component: HtmlComponent },
    { path: '/bizapply/option/fspoptionResearch', component: HtmlComponent }, */
@@ -134,8 +129,8 @@ const routes = [
       { path: '/edit', component: PermissonEdit },
     ],
   },
-  // 任务列表
-  { path: '/taskList', component: TaskListHome },
+  // 自建任务管理
+  { path: '/taskCenter/selfbuildTask', component: TaskListHome },
   // 合约详情
   {
     path: '/bizapply/contract',
@@ -208,7 +203,7 @@ const Routers = ({ history }) => (
         <Route exact path="/" render={() => (<Redirect to="/customerPool" />)} />
         <Route exact path="/invest" render={() => (<Redirect to="/report" />)} />
         {recursiveRouter(routes)}
-        <Route exact path="/fsp/(.*)" component={FSPComponent} />
+        <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </div>
     </App>

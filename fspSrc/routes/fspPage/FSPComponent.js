@@ -11,6 +11,31 @@ export default class FSPComponent extends PureComponent {
   constructor(props) {
     super(props);
     const { location: { pathname, state } } = props;
+    this.getRouteConfig(pathname, state);
+    this.getFspData();
+    this.state = {
+      loading: true,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: { pathname, state } } = nextProps;
+    this.getRouteConfig(pathname, state);
+    this.getFspData();
+    this.setState({
+      loading: true,
+    });
+  }
+
+  @autobind
+  onLoad() {
+    this.setState({
+      loading: false,
+    });
+  }
+
+  @autobind
+  getRouteConfig(pathname, state) {
     const routeConfig = _.find(fspRoutes, obj => pathname.indexOf(obj.path) !== -1);
     this.url = routeConfig.url;
     this.action = routeConfig.action;
@@ -18,11 +43,10 @@ export default class FSPComponent extends PureComponent {
     if (state && state.url) {
       this.url = state.url;
     }
+  }
 
-    this.state = {
-      loading: true,
-    };
-
+  @autobind
+  getFspData() {
     // 如果请求的是html文档
     if (this.action === 'loadInTab') {
       // 请求html数据并进行插入
@@ -35,20 +59,14 @@ export default class FSPComponent extends PureComponent {
 
           // 由于上面获取的node元素可能为数组，原生DOM插入方法不支持直接插入多个node元素
           // 所以这里同样借助juery的方法
-          const elem = $(this.elem);
-          elem.append(node);
+          const jqelem = $(this.elem);
+          jqelem.empty();
+          jqelem.append(node);
           this.setState({
             loading: false,
           });
         });
     }
-  }
-
-  @autobind
-  onLoad() {
-    this.setState({
-      loading: false,
-    });
   }
 
   render() {

@@ -11,9 +11,14 @@ const fspRoutes = [
     url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
   },
   {
-    path: 'selfbuildTask',
-    url: '/mot/selfbuildTask/selfBuildTaskMain',
+    path: '/taskCenter/serviceManage',
+    action: 'loadInTab',
+    url: '/mot/service/showList',
   },
+  /*  {
+     path: 'selfbuildTask',
+     url: '/mot/selfbuildTask/selfBuildTaskMain',
+   }, */
   {
     path: 'motService',
     url: '/mot/statistics/showList',
@@ -108,44 +113,6 @@ const fspRoutes = [
     url: '/bizapply/pbbiz/list',
   },
 
-  // 信用业务
-  /*   {
-      path: 'postApplyManage',
-      url: '/cbs/login?defaultTargetUrl=/cbspages/postnApplyManage/postnApp',
-    },
-    {
-      path: 'creditRequest',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'changeRequest',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'thought',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'projectInvest',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'projectScore',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'riskFollow',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'initialTrade',
-      url: '/priProd/initmain',
-    },
-    {
-      path: 'followingSearch',
-      url: '/priProd/initmain',
-    }, */
-
   // 期权业务
   {
     path: 'optionResearch',
@@ -159,6 +126,44 @@ const fspRoutes = [
   {
     path: 'messageCenter',
     url: '/messgeCenter',
+  },
+  // 产品中心
+  {
+    path: '/productCenter/productPool',
+    action: 'loadInTab',
+    url: '/product/pool/selectProduct',
+  },
+  {
+    path: '/productCenter/salesCalendar',
+    action: 'loadInIframe',
+    url: '/htsc-product-base/product_sales_calendar.do?clientType=crm',
+  },
+  {
+    path: '/productCenter/financeProducts',
+    action: 'loadInIframe',
+    url: '/htsc-product-base/product_search_currency.do?clientType=crm&special_enter=1',
+  },
+  // 服务中心
+  {
+    path: '/serviceCenter/custcomplaint',
+    action: 'loadInTab',
+    url: '/custcomplaint/manage/listContent',
+  },
+  {
+    path: '/serviceCenter/asset/implementation',
+    action: 'loadInTab',
+    url: '/asset/implementation/main',
+  },
+  {
+    path: '/serviceCenter/asset/basis',
+    action: 'loadInTab',
+    url: '/asset/basis/mainTab',
+  },
+  // 策略中心
+  {
+    path: '/strategyCenter/informationCenter',
+    action: 'loadInIframe',
+    url: '/jeip/psso/htscsso.jsp?biz_sys_key=zxzx',
   },
 ];
 
