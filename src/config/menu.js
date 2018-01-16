@@ -33,7 +33,7 @@ const menus = [
         url: '/customer/manage/showCustManageTabWin',
         type: 'link',
         action: 'loadInTab',
-        path: '/customerCenter/fspacustomerManage',
+        path: '/fsp/customerCenter/customerManage',
       },
       {
         id: 'FSP_CUST_GROUP_MANAGE',
@@ -65,7 +65,7 @@ const menus = [
         url: '/mot/selfbuildTask/selfBuildTaskMain',
         type: 'link',
         action: 'loadInTab',
-        path: '/taskCenter/fspaselfbuildTask',
+        path: '/fsp/taskCenter/fspaselfbuildTask',
       },
       {
         id: 'FSP_MOT_M_SERVICELIST',
@@ -75,7 +75,7 @@ const menus = [
         url: '/mot/service/showList',
         type: 'link',
         action: 'loadInTab',
-        path: '/taskCenter/fspaserviceManage',
+        path: '/fsp/taskCenter/fspaserviceManage',
       },
     ],
   },
@@ -97,7 +97,7 @@ const menus = [
         url: '/product/pool/selectProduct',
         type: 'link',
         action: 'loadInTab',
-        path: '/productCenter/productPool',
+        path: '/fsp/productCenter/productPool',
       },
       {
         id: 'FSP_PRD_CALENDAR',
@@ -107,7 +107,7 @@ const menus = [
         url: '/htsc-product-base/product_sales_calendar.do?clientType=crm',
         type: 'link',
         action: 'loadInTab',
-        path: '/productCenter/salesCalendar',
+        path: '/fsp/productCenter/salesCalendar',
       },
       {
         id: 'FSP_PUBLIC_FUND',
@@ -117,7 +117,7 @@ const menus = [
         url: '/htsc-product-base/financial_product_search.do?clientType=crm',
         type: 'link',
         action: 'loadExternSystemPage',
-        path: '/productCenter/publicFund',
+        path: '',
       },
       {
         id: 'FSP_PRD_FINANCE',
@@ -127,7 +127,7 @@ const menus = [
         url: '/htsc-product-base/product_search_currency.do?clientType=crm&special_enter=1',
         type: 'link',
         action: 'loadInTab',
-        path: '/productCenter/financeProducts',
+        path: '/fsp/productCenter/financeProducts',
       },
       {
         id: 'FSP_DAILY_PAPER',
@@ -159,7 +159,7 @@ const menus = [
         url: '/custcomplaint/manage/listContent',
         type: 'link',
         action: 'loadInTab',
-        path: '/serviceCenter/custcomplaint',
+        path: '/fsp/serviceCenter/custcomplaint',
       },
       {
         id: 'FSP_ASSET_ALLOCATION',
@@ -179,7 +179,7 @@ const menus = [
             url: '/asset/implementation/main',
             type: 'link',
             action: 'loadInTab',
-            path: '/serviceCenter/asset/fspImplementation',
+            path: '/fsp/serviceCenter/asset/fspImplementation',
           },
           {
             id: 'FSP_ASSET_ALLOCATION_BASIS',
@@ -189,7 +189,7 @@ const menus = [
             url: '/asset/basis/mainTab',
             type: 'link',
             action: 'loadInTab',
-            path: '/serviceCenter/asset/fspBasis',
+            path: '/fsp/serviceCenter/asset/fspBasis',
           },
         ],
       },
@@ -203,7 +203,7 @@ const menus = [
     url: '/jeip/psso/htscsso.jsp?biz_sys_key=zxzx',
     type: 'link',
     action: 'loadInTab',
-    path: '/informationCenter',
+    path: '/fsp/informationCenter',
   },
 ];
 

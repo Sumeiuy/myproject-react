@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import localStorage from 'store';
-import FSPUnwrap from './FspUnwrap';
+import FSPUnwrap from './FSPUnwrap';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
 import tabConfig, { indexPaneKey } from '../../../src/config/tabMenu';
