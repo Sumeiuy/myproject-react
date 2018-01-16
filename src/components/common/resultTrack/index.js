@@ -785,7 +785,7 @@ export default class ResultTrack extends PureComponent {
         {
           currentSelectedLevel1Indicator !== defaultIndicatorValue ?
             <div className={styles.indicatorDescription}>
-              <span>总净资产：</span>
+              <span>{currentSelectedLevel2Indicator || ''}：</span>
               <span>{currentIndicatorDescription}</span>
             </div> : null
         }
