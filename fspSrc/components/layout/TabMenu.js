@@ -38,7 +38,8 @@ export default class TabMenu extends PureComponent {
             title={item.name}
             className={classnames({
               [styles.activeItem]: item.path ? path.indexOf(item.path) !== -1 : false,
-              [styles.subMenuItem]: true,
+              [styles.subMenuItem]: isMoreMenu,
+              [styles.subMenuLink]: !isMoreMenu,
             })}
           >
             {this.getMenus(item.children, isMoreMenu)}
