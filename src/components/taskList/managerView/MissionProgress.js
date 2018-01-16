@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-28 09:41:34
+ * @Last Modified time: 2018-01-16 11:09:54
  * 任务进度
  */
 
@@ -30,11 +30,14 @@ export default class MissionProgress extends PureComponent {
     missionImplementationProgress: PropTypes.object,
     // 查看客户明细
     onPreviewCustDetail: PropTypes.func,
+    // 任务进度字典
+    missionProgressStatusDic: PropTypes.object,
   }
 
   static defaultProps = {
     missionImplementationProgress: EMPTY_OBJECT,
     onPreviewCustDetail: () => { },
+    missionProgressStatusDic: {},
   }
 
   constructor(props) {
@@ -55,19 +58,63 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
-  handlePreview(title) {
+  handlePreview({
+    title,
+    missionProgressStatus,
+    progressFlag,
+  }) {
     const { onPreviewCustDetail } = this.props;
-    onPreviewCustDetail({ title });
+    onPreviewCustDetail({
+      title,
+      missionProgressStatus,
+      progressFlag,
+    });
   }
 
   @autobind
   renderTooltipContent(type, currentCount) {
+    const { missionProgressStatusDic: dic = {} } = this.props;
+    const propertyNames = Object.getOwnPropertyNames(dic);
+    let missionProgressStatus = '';
+    let progressFlag = '';
+    switch (type) {
+      case SERVED_CUST:
+        missionProgressStatus = propertyNames[1];
+        progressFlag = 'Y';
+        break;
+      case NOT_SERVED_CUST:
+        missionProgressStatus = propertyNames[1];
+        progressFlag = 'N';
+        break;
+      case STASIFY_CUST:
+        missionProgressStatus = propertyNames[2];
+        progressFlag = 'Y';
+        break;
+      case NOT_STASIFY_CUST:
+        missionProgressStatus = propertyNames[2];
+        progressFlag = 'N';
+        break;
+      case COMPLETED_CUST:
+        missionProgressStatus = propertyNames[0];
+        progressFlag = 'Y';
+        break;
+      case NOT_COMPLETED_CUST:
+        missionProgressStatus = propertyNames[0];
+        progressFlag = 'N';
+        break;
+      default:
+        break;
+    }
     return (
       <div className={styles.content}>
         <div className={styles.currentType}>{type}{currentCount || 0}位</div>
         <div
           className={styles.linkCustDetail}
-          onClick={() => this.handlePreview(type)}
+          onClick={() => this.handlePreview({
+            type,
+            missionProgressStatus,
+            progressFlag,
+          })}
         >点击查看明细&gt;&gt;</div>
       </div>
     );

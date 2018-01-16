@@ -34,5 +34,9 @@ export default function performerView(api) {
     getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
     // 问卷调查保存答案
     saveAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/saveAnswersByType', query),
+    // 任务反馈统计接口
+    countAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/countAnswersByType', query),
+    // 任务反馈已反馈总数统计
+    countExamineeByType: query => api.post('/groovynoauth/fsp/assess/common/countExamineeByType', query),
   };
 }

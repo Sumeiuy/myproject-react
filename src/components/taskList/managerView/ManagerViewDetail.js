@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-11 16:17:05
+ * @Last Modified time: 2018-01-16 14:19:18
  * 管理者视图详情
  */
 
@@ -67,6 +67,10 @@ export default class ManagerViewDetail extends PureComponent {
     countFlowFeedBack: PropTypes.func.isRequired,
     // 任务类型字典
     missionTypeDict: PropTypes.array,
+    missionProgressStatusDic: PropTypes.object.isRequired,
+    missionFeedbackData: PropTypes.array.isRequired,
+    missionFeedbackCount: PropTypes.number.isRequired,
+    serveManagerCount: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -90,9 +94,13 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handlePreview(params = {}) {
-    const { title, pageNum, pageSize } = params;
+    const { title, pageNum, pageSize, missionProgressStatus, progressFlag } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
+    const progressParam = {
+      missionProgressStatus,
+      progressFlag,
+    };
 
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
@@ -101,6 +109,7 @@ export default class ManagerViewDetail extends PureComponent {
       // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
+      ...progressParam,
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
@@ -194,6 +203,10 @@ export default class ManagerViewDetail extends PureComponent {
       replace,
       countFlowStatus,
       countFlowFeedBack,
+      missionProgressStatusDic,
+      missionFeedbackData,
+      missionFeedbackCount,
+      serveManagerCount,
     } = this.props;
 
     const { isShowCustDetailModal, title } = this.state;
@@ -324,10 +337,16 @@ export default class ManagerViewDetail extends PureComponent {
             replace={replace}
             countFlowStatus={countFlowStatus}
             countFlowFeedBack={countFlowFeedBack}
+            missionProgressStatusDic={missionProgressStatusDic}
           />
         </div>
         <div className={styles.missionFeedbackSection}>
-          <MissionFeedback isFold={isFold} />
+          <MissionFeedback
+            missionFeedbackData={missionFeedbackData}
+            isFold={isFold}
+            missionFeedbackCount={missionFeedbackCount}
+            serveManagerCount={serveManagerCount}
+          />
         </div>
       </div>
     );

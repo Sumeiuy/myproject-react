@@ -43,6 +43,8 @@ export default class MissionImplementation extends PureComponent {
     countFlowStatus: PropTypes.func.isRequired,
     // 客户反馈饼图
     countFlowFeedBack: PropTypes.func.isRequired,
+    // 进度条字典
+    missionProgressStatusDic: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -211,6 +213,7 @@ export default class MissionImplementation extends PureComponent {
       missionImplementationProgress = EMPTY_OBJECT,
       isFold,
       custFeedback = EMPTY_LIST,
+      missionProgressStatusDic = EMPTY_OBJECT,
     } = this.props;
 
     const colSpanValue = isFold ? 12 : 24;
@@ -239,6 +242,7 @@ export default class MissionImplementation extends PureComponent {
                   <MissionProgress
                     missionImplementationProgress={missionImplementationProgress}
                     onPreviewCustDetail={this.handlePreview}
+                    missionProgressStatusDic={missionProgressStatusDic}
                   />
                 </Col>
                 <Col span={colSpanValue}>
