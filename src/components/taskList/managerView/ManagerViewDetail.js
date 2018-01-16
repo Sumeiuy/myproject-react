@@ -207,6 +207,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       serveManagerCount,
+      push,
     } = this.props;
 
     const { isShowCustDetailModal, title } = this.state;
@@ -312,6 +313,7 @@ export default class ManagerViewDetail extends PureComponent {
                 title={title}
                 onClose={this.handleCloseModal}
                 hideCustDetailModal={this.hideCustDetailModal}
+                push={push}
               />
             }
             modalStyle={{

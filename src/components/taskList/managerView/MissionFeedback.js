@@ -17,38 +17,8 @@ import Paganation from '../../common/Paganation';
 
 import styles from './missionFeedback.less';
 
-// 任务反馈接口本迭代不开发， 故用死数据展示
-const problems = {
-  resultData: {
-    pageInfo: {
-      curPageNum: 1,
-      curPageSize: 10,
-      totalPage: 100,
-    },
-    dataInfo: [{
-      infoProblem: '这是问题描述，问题描述',
-      infoData: [
-        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-      ],
-    },
-    {
-      infoProblem: '这是问题描述222，问题描述2222',
-      infoData: [
-        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-      ],
-    }],
-  },
-};
+// const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class MissionFeedback extends PureComponent {
 
@@ -78,20 +48,49 @@ export default class MissionFeedback extends PureComponent {
         radioFeedback: [],
         checkboxFeedback: [],
       },
+      problems: {
+        resultData: {
+          pageInfo: {
+            curPageNum: 1,
+            curPageSize: 10,
+            totalPage: 10,
+          },
+          dataInfo: [],
+        },
+      },
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { missionFeedbackCount, missionFeedbackData, serveManagerCount } = nextProps;
-    const { missionFeedbackCount: count, missionFeedbackData: data } = this.props;
+    const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
+    const { missionFeedbackCount: count, missionFeedbackData: data = EMPTY_LIST } = this.props;
     if (data !== missionFeedbackData && count !== missionFeedbackCount) {
       const finalData = this.formatData(
         missionFeedbackData,
         missionFeedbackCount,
         serveManagerCount,
       );
+      const { allFeedback, radioFeedback, checkboxFeedback, dataInfo } = finalData;
+      const originProblemData = _.merge(this.state.problems, {
+        resultData: {
+          dataInfo,
+          pageInfo: {
+            curPageNum: 1,
+            curPageSize: 10,
+            totalPage: _.size(dataInfo),
+          },
+        },
+      });
+
       this.setState({
-        finalData,
+        finalData: {
+          allFeedback,
+          radioFeedback,
+          checkboxFeedback,
+          dataInfo,
+        },
+        problems: originProblemData,
+        originProblemData,
       });
     }
   }
@@ -111,6 +110,8 @@ export default class MissionFeedback extends PureComponent {
     let radioData = [];
     let checkboxData = [];
     let answerTotalCount = 0;
+    let dataInfo = [];
+    let infoData = [];
     _.each(missionFeedbackData, (item) => {
       if (_.isArray(item)) {
         // 拿到当前题目所有count之和,下面需要计算每一个答案占的比率
@@ -132,8 +133,14 @@ export default class MissionFeedback extends PureComponent {
               // 多选题
               checkboxData = _.concat(checkboxData, tempData);
             }
+          } else if (quesTypeCode === '3' || quesTypeCode === 3) {
+            // 主观题
+            infoData = _.concat(infoData, [
+              { data: childItem.answerText },
+            ]);
           }
         });
+
         radioFeedback = _.concat(radioFeedback, [{
           radioTaskFeedbackDes: item[0].quesValue,
           radioData,
@@ -141,6 +148,10 @@ export default class MissionFeedback extends PureComponent {
         checkboxFeedback = _.concat(checkboxFeedback, [{
           checkboxFeedbackDes: item[0].quesValue,
           checkboxData,
+        }]);
+        dataInfo = _.concat(dataInfo, [{
+          infoProblem: item[0].quesValue,
+          infoData,
         }]);
       }
     });
@@ -154,6 +165,7 @@ export default class MissionFeedback extends PureComponent {
       },
       radioFeedback,
       checkboxFeedback,
+      dataInfo,
     };
 
     console.table(radioFeedback);
@@ -326,13 +338,65 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  handlePageChange(value, page) {
-    console.log('-->', value, page);
+  renderProblemsData(curPageNum, curPageSize) {
+    const { problems: { resultData: { dataInfo } } } = this.state;
+    let curDataInfo = [];
+    if (curPageNum <= 1) {
+      // 第一页
+      curDataInfo = _.slice(dataInfo, 0, curPageSize);
+    } else {
+      // 大于一页
+      curDataInfo = _.slice(dataInfo,
+        (curPageNum - 1) * curPageSize, curPageSize);
+    }
+
+    return {
+      curDataInfo,
+    };
   }
 
+  /**
+   * 页码改变事件，翻页事件
+   * @param {*} nextPage 下一页码
+   * @param {*} curPageSize 当前页条目
+   */
   @autobind
-  handleSizeChange(value) {
-    console.log('value--->', value);
+  handlePageChange(nextPage, currentPageSize) {
+    const { problems } = this.state;
+    const { curDataInfo } = this.renderProblemsData(nextPage, currentPageSize);
+    this.setState({
+      problems: _.merge(problems, {
+        resultData: {
+          pageInfo: {
+            curPageNum: nextPage,
+            curPageSize: currentPageSize,
+          },
+          dataInfo: curDataInfo,
+        },
+      }),
+    });
+  }
+
+  /**
+   * 改变每一页的条目
+   * @param {*} currentPageNum 当前页码
+   * @param {*} changedPageSize 当前每页条目
+   */
+  @autobind
+  handleSizeChange(currentPageNum, changedPageSize) {
+    const { problems } = this.state;
+    const { curDataInfo } = this.renderProblemsData(currentPageNum, changedPageSize);
+    this.setState({
+      problems: _.merge(problems, {
+        resultData: {
+          pageInfo: {
+            curPageNum: currentPageNum,
+            curPageSize: changedPageSize,
+          },
+          dataInfo: curDataInfo,
+        },
+      }),
+    });
   }
 
   renderAllFeedback(allCount, count, countPer, residue) {
@@ -385,9 +449,9 @@ export default class MissionFeedback extends PureComponent {
 
   @autobind
   renderProblemsInfo(key) {
-    // const problemsInfo = problems.resultData.dataInfo;
     const { isFold } = this.props;
-    const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
+    const { problems: { resultData: { pageInfo } } } = this.state;
+    const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
         <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
@@ -428,7 +492,7 @@ export default class MissionFeedback extends PureComponent {
 
   render() {
     const { isFold } = this.props;
-    const { finalData = {} } = this.state;
+    const { problems: { resultData: { dataInfo } }, finalData } = this.state;
     const { allFeedback, radioFeedback, checkboxFeedback } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
     return (
@@ -474,14 +538,14 @@ export default class MissionFeedback extends PureComponent {
                     <div className={styles.allService}>
                       <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
                       <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                        <b>({allFeedback.aFeedbackPer})</b></span>
+                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer})` : ''}</b></span>
                     </div>
                   </div>
                 </div>
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
-              {this.renderProblemsInfo(problems.resultData.dataInfo)}
+              {this.renderProblemsInfo(dataInfo)}
             </Col>
           </Row>
         </div>
