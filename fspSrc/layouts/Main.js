@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import { routerRedux, withRouter } from 'dva/router';
 
 import Header from './Header';
-// import Footer from './Footer';
+import Footer from './Footer';
 import Tab from '../components/layout/Tab';
 
 import { constants } from '../../src/config';
@@ -28,7 +28,7 @@ const effects = {
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
-   // 删除文件
+  // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
   switchPosition: 'global/changePost',
 };
@@ -184,32 +184,32 @@ export default class Main extends PureComponent {
                       !interfaceState[effects.dictionary] &&
                       !interfaceState[effects.customerScope] &&
                       !interfaceState[effects.empInfo]) ?
-                        <div>
-                          {children}
-                          <ConnectedCreateServiceRecord
-                            handleCloseClick={handleCloseClick}
-                            loading={interfaceState[effects.addServeRecord]}
-                            key={serviceRecordModalVisibleOfId}
-                            id={serviceRecordModalVisibleOfId}
-                            name={serviceRecordModalVisibleOfName}
-                            dict={dict}
-                            empInfo={empInfo}
-                            isShow={serviceRecordModalVisible}
-                            addServeRecord={addServeRecord}
-                            addServeRecordSuccess={addServeRecordSuccess}
-                            onToggleServiceRecordModal={toggleServiceRecordModal}
-                            custUuid={custUuid}
-                            ceFileDelete={ceFileDelete}
-                            taskFeedbackList={taskFeedbackList}
-                          />
-                        </div>
-                        :
-                        null
+                      <div>
+                        {children}
+                        <ConnectedCreateServiceRecord
+                          handleCloseClick={handleCloseClick}
+                          loading={interfaceState[effects.addServeRecord]}
+                          key={serviceRecordModalVisibleOfId}
+                          id={serviceRecordModalVisibleOfId}
+                          name={serviceRecordModalVisibleOfName}
+                          dict={dict}
+                          empInfo={empInfo}
+                          isShow={serviceRecordModalVisible}
+                          addServeRecord={addServeRecord}
+                          addServeRecordSuccess={addServeRecordSuccess}
+                          onToggleServiceRecordModal={toggleServiceRecordModal}
+                          custUuid={custUuid}
+                          ceFileDelete={ceFileDelete}
+                          taskFeedbackList={taskFeedbackList}
+                        />
+                        <Footer />
+                      </div>
+                      :
+                      null
                   }
                 </div>
               </Tab>
             </div>
-            {/*  <Footer /> */}
           </div>
         </div>
       </div>
