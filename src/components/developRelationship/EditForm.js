@@ -198,7 +198,6 @@ export default class EditForm extends PureComponent {
   confirmSubmit(value) {
     const { flowId } = this.props.data;
     const { serverInfo, remark, attachmentTypeList } = this.state;
-    console.warn('serverInfo', serverInfo);
     // 登录人Id，新建私密客户必传
     const empId = emp.getId();
     // 登录人orgId，新建私密客户必传
@@ -250,8 +249,6 @@ export default class EditForm extends PureComponent {
       searchShow: false,
     };
     const { remark, attachmentTypeList, serverInfo } = this.state;
-    console.warn('serverInfo', serverInfo);
-    console.warn('attachmentTypeList', attachmentTypeList);
     if (_.isEmpty(this.props.data)) {
       return null;
     }
@@ -268,7 +265,7 @@ export default class EditForm extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户" value={custInfo} width='93px' />
+                    <InfoItem label="客户" value={custInfo} width="93px" />
                   </li>
                   <li className={styles.item}>
                     <TextareaComponent
