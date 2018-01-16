@@ -3,13 +3,12 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-05 09:31:46
+ * @Last Modified time: 2018-01-16 09:48:20
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
@@ -23,28 +22,7 @@ import styles from './detail.less';
 const { developTeamTableHeader } = seibelConfig.developRelationship;
 export default class Detail extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
-  }
-
-  @autobind
-  handleAttachmentData() {
-    const {
-      attachment,
-      develop,
-      other,
-    } = this.props.data;
-    const developData = {
-      attachmentList: develop,
-      title: '开发关系认定书（首次认定时必输）',
-      uuid: attachment,
-    };
-    const otherData = {
-      attachmentList: other,
-      title: '其他',
-      uuid: attachment,
-    };
-    return [developData, otherData];
   }
 
   render() {
@@ -62,14 +40,22 @@ export default class Detail extends PureComponent {
       newTeam,
       currentApproval,
       workflowHistoryBeans,
+      develop,
+      other,
+      developAttachment,
+      otherAttachment,
     } = this.props.data;
+    if (_.isEmpty(this.props.data)) {
+      return null;
+    }
     // 客户信息
-    const custInfo = `${custName} ${custNumber}`;
+    const custInfo = `${custName} (${custNumber})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
-    const attachmentList = this.handleAttachmentData();
-    const originTeamData = commonHelpr.convertTgFlag(originTeam);
-    const newTeamData = commonHelpr.convertTgFlag(newTeam);
+    const attachmentList = commonHelpr.handleAttachmentData(develop, other,
+      developAttachment, otherAttachment);
+    const originTeamData = commonHelpr.convertTgFlag(originTeam, true);
+    const newTeamData = commonHelpr.convertTgFlag(newTeam, true);
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -135,7 +121,7 @@ export default class Detail extends PureComponent {
                   attachmentList.map(item => (
                     <MultiUploader
                       attachmentList={item.attachmentList}
-                      attachment={''}
+                      attachment={item.uuid}
                       title={item.title}
                       key={`${item.title}`}
                     />

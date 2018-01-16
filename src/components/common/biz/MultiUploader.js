@@ -119,7 +119,6 @@ export default class MultiUpload extends PureComponent {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
         const data = uploadFile.response.resultData;
-        const attachesLastData = _.last(data.attaches);
         this.setState({
           status: 'success',
           statusText: '上传完成',
@@ -127,7 +126,7 @@ export default class MultiUpload extends PureComponent {
           oldFileList: data.attaches,
           attachment: data.attachment,
         }, () => {
-          uploadCallback(type, data.attachment, attachesLastData.attachId);
+          uploadCallback(type, data.attachment);
         });
       } else {
         // 上传失败的返回值 MAG0005
@@ -158,7 +157,7 @@ export default class MultiUpload extends PureComponent {
       this.setState({
         fileList: newFileList, // 文件列表
       }, () => {
-        deleteCallback(type, attachId);
+        deleteCallback(type);
       });
     });
   }

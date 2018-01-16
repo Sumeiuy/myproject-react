@@ -17,11 +17,12 @@ export default class ServerPersonel extends PureComponent {
     getAddEmpList: PropTypes.func.isRequired,
     onChangeNewDevelopTeam: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    custId: PropTypes.string.isRequired,
+    custId: PropTypes.string,
   }
 
   static defaultProps = {
     data: [],
+    custId: '',
   }
 
   constructor(props) {
@@ -33,6 +34,7 @@ export default class ServerPersonel extends PureComponent {
       addSelectedValue: {},
     };
   }
+
   componentWillMount() {
     this.setState({ serverInfo: this.props.data });
   }
@@ -164,7 +166,7 @@ export default class ServerPersonel extends PureComponent {
   render() {
     const { addEmpList } = this.props;
     const { serverInfo } = this.state;
-    const newServerInfo = commonHelpr.convertTgFlag(serverInfo);
+    const newServerInfo = commonHelpr.convertTgFlag(serverInfo, true);
     const columns = this.constructTableColumns();
     return (
       <div className={styles.newDevelopTeam}>
@@ -179,6 +181,7 @@ export default class ServerPersonel extends PureComponent {
               emitSelectItem={this.dropdownSelectedItem}
               emitToSearch={this.dropdownToSearchInfo}
               boxStyle={{ border: '1px solid #d9d9d9' }}
+              getPopupContainer={() => document.body}
             />
           </div>
           {

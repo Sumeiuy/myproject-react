@@ -16,5 +16,7 @@ export default function developRelationship(api) {
     getAddEmpList: query => api.post('/groovynoauth/fsp/biz/developrelationship/empList', query),
     // 获取按钮列表和下一步审批人
     getButtonList: query => api.post('/groovynoauth/fsp/biz/developrelationship/queryButtonList', query),
+    // 修改开发关系认定
+    updateApplication: query => api.post('/groovynoauth/fsp/biz/developrelationship/updateApplication', query),
   };
 }

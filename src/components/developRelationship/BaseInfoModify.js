@@ -6,6 +6,7 @@ import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import TextareaComponent from '../common/textareacomponent';
 import DropdownSelect from '../common/dropdownSelect';
+import { emp } from '../../helper';
 import style from './baseInfoModify.less';
 
 export default class BaseInfoModify extends PureComponent {
@@ -56,6 +57,14 @@ export default class BaseInfoModify extends PureComponent {
             onOk: this.clearSelectValue,
           });
         }
+        if (!_.isEmpty(isValidCust) && isValidCust.isYxry !== 'N') {
+          Modal.info({
+            title: '提示',
+            content: '该客户的原开发团队中有营销人员，不能进行开发关系认定,请重新选择客户',
+            okText: '确定',
+            onOk: this.clearSelectValue,
+          });
+        }
       },
     );
   }
@@ -63,9 +72,12 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   searchCanApplyCustList(value) {
     // 按照 关键字 查询 客户 列表
+    // 登录人orgId
+    const orgId = emp.getOrgId();
     this.props.getCreateCustList({
       keyword: value,
       type: '06', // 06为开发关系认定的type代号
+      orgId,
     });
   }
 
