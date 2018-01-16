@@ -41,8 +41,9 @@ const fspRoutes = [
     url: '/tgcontract/list/listContent',
   },
   {
-    path: 'customerManage',
-    url: '/customer/manage/showCustManageTabWin',
+    path: '/customerCenter/customerManage',
+    action: 'loadInTab',
+    url: 'customer/manage/showCustManageTabWin',
   },
   {
     path: 'customerDetail',
@@ -108,42 +109,42 @@ const fspRoutes = [
   },
 
   // 信用业务
-/*   {
-    path: 'postApplyManage',
-    url: '/cbs/login?defaultTargetUrl=/cbspages/postnApplyManage/postnApp',
-  },
-  {
-    path: 'creditRequest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'changeRequest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'thought',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'projectInvest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'projectScore',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'riskFollow',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'initialTrade',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'followingSearch',
-    url: '/priProd/initmain',
-  }, */
+  /*   {
+      path: 'postApplyManage',
+      url: '/cbs/login?defaultTargetUrl=/cbspages/postnApplyManage/postnApp',
+    },
+    {
+      path: 'creditRequest',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'changeRequest',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'thought',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'projectInvest',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'projectScore',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'riskFollow',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'initialTrade',
+      url: '/priProd/initmain',
+    },
+    {
+      path: 'followingSearch',
+      url: '/priProd/initmain',
+    }, */
 
   // 期权业务
   {

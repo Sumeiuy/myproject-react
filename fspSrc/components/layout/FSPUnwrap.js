@@ -11,7 +11,7 @@ import styles from './fspUnwrap.less';
 // 包装当前路由内容到Loading组件内
 // 对fsp页面进行去loading处理
 export default function FSPUnwrap({ path, children, loading, loadingForceFull }) {
-  if (path.indexOf('fsp/') === -1) {
+  if (path.indexOf('/fsp/') === -1) {
     return (
       <div className={styles.tabpanel}>
         <Loading loading={loading} forceFull={loadingForceFull} />

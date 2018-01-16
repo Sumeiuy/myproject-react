@@ -184,28 +184,28 @@ export default class Main extends PureComponent {
                       !interfaceState[effects.dictionary] &&
                       !interfaceState[effects.customerScope] &&
                       !interfaceState[effects.empInfo]) ?
-                      <div>
-                        {children}
-                        <ConnectedCreateServiceRecord
-                          handleCloseClick={handleCloseClick}
-                          loading={interfaceState[effects.addServeRecord]}
-                          key={serviceRecordModalVisibleOfId}
-                          id={serviceRecordModalVisibleOfId}
-                          name={serviceRecordModalVisibleOfName}
-                          dict={dict}
-                          empInfo={empInfo}
-                          isShow={serviceRecordModalVisible}
-                          addServeRecord={addServeRecord}
-                          addServeRecordSuccess={addServeRecordSuccess}
-                          onToggleServiceRecordModal={toggleServiceRecordModal}
-                          custUuid={custUuid}
-                          ceFileDelete={ceFileDelete}
-                          taskFeedbackList={taskFeedbackList}
-                        />
-                        <Footer />
-                      </div>
-                      :
-                      null
+                        <div>
+                          {children}
+                          <ConnectedCreateServiceRecord
+                            handleCloseClick={handleCloseClick}
+                            loading={interfaceState[effects.addServeRecord]}
+                            key={serviceRecordModalVisibleOfId}
+                            id={serviceRecordModalVisibleOfId}
+                            name={serviceRecordModalVisibleOfName}
+                            dict={dict}
+                            empInfo={empInfo}
+                            isShow={serviceRecordModalVisible}
+                            addServeRecord={addServeRecord}
+                            addServeRecordSuccess={addServeRecordSuccess}
+                            onToggleServiceRecordModal={toggleServiceRecordModal}
+                            custUuid={custUuid}
+                            ceFileDelete={ceFileDelete}
+                            taskFeedbackList={taskFeedbackList}
+                          />
+                          <Footer />
+                        </div>
+                        :
+                        null
                   }
                 </div>
               </Tab>
