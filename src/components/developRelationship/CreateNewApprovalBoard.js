@@ -61,6 +61,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       attachmentTypeList: attachmentMap,
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
+      // 备注信息
       remark: '',
       customer: {},
       // 新建时 选择的客户
@@ -69,14 +70,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       custType: '',
       // 新建时 选择的该客户姓名
       custName: '',
-      // 开发关系附件
-      develop: [],
-      // 其他附件
-      other: [],
-      // 附件的key
-      developAttachment: '',
-      // 附件的key
-      otherAttachment: '',
       // 审批人弹框
       nextApproverModal: false,
       // 下一审批人列表
@@ -152,8 +145,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 文件上传成功
   @autobind
-  handleUploadCallback(attachmentType, attachment, attachId) {
-    const { attachmentTypeList, develop, other } = this.state;
+  handleUploadCallback(attachmentType, attachment) {
+    const { attachmentTypeList } = this.state;
     const newAttachmentTypeList = attachmentTypeList.map((item) => {
       const { type, length } = item;
       if (type === attachmentType) {
@@ -165,29 +158,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
       return item;
     });
-    if (attachmentType === 'develop') {
-      const newDevelop = develop;
-      newDevelop.push(attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        develop: newDevelop,
-        developAttachment: attachment,
-      });
-    } else {
-      const newOther = other;
-      newOther.push(attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        other: newOther,
-        otherAttachment: attachment,
-      });
-    }
+    this.setState({
+      attachmentTypeList: newAttachmentTypeList,
+    });
   }
 
   // 文件删除成功
   @autobind
-  handleDeleteCallback(attachmentType, attachId) {
-    const { attachmentTypeList, develop, other } = this.state;
+  handleDeleteCallback(attachmentType) {
+    const { attachmentTypeList } = this.state;
     const newAttachmentTypeList = attachmentTypeList.map((item) => {
       const { type, length } = item;
       if (type === attachmentType && length > 0) {
@@ -198,19 +177,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
       return item;
     });
-    if (attachmentType === 'develop') {
-      const newDevelop = _.pull(develop, attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        develop: newDevelop,
-      });
-    } else {
-      const newOther = _.pull(other, attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        other: newOther,
-      });
-    }
+    this.setState({
+      attachmentTypeList: newAttachmentTypeList,
+    });
   }
 
   @autobind
@@ -230,7 +199,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   submitCreateInfo(item) {
     const { oldDevelopTeamList } = this.props;
-    const { custId, serverInfo, develop } = this.state;
+    const { custId, serverInfo, attachmentTypeList } = this.state;
+    const develop = attachmentTypeList[0].length;
     const weighSum = _.sumBy(serverInfo, value => Number(value.weigh));
     if (_.isEmpty(custId)) {
       message.error('请选择客户');
@@ -238,7 +208,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       message.error('新开发团队不能为空');
     } else if (weighSum !== 100) {
       message.error('新开发团队的权重合计必须等于100');
-    } else if (_.isEmpty(develop)) {
+    } else if (Number(develop) === 0) {
       message.error('开发关系认定书首次认定时必输');
     } else if (_.isEmpty(oldDevelopTeamList)) {
       this.handleButtonInfo(item);
@@ -272,13 +242,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { empInfo } = this.props;
     const {
       serverInfo,
-      develop,
-      other,
       subType,
       customer,
       remark,
-      developAttachment,
-      otherAttachment,
+      attachmentTypeList,
     } = this.state;
 
     // 登录人Id，新建私密客户必传
@@ -292,16 +259,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subType,
       remark,
       empList: serverInfo,
-      develop,
-      other,
       approvalId: !_.isEmpty(value) ? value.login : '',
       empId,
       empName,
       orgId,
       custName: customer.custName,
       custNumber: customer.brokerNumber,
-      developAttachment,
-      otherAttachment,
+      developAttachment: attachmentTypeList[0].uuid,
+      otherAttachment: attachmentTypeList[1].uuid,
     };
     this.props.getCreateDevelopRelationship(queryConfig);
     this.setState({ nextApproverModal: false });
@@ -320,6 +285,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       clearPropsData,
     } = this.props;
     const { remark, customer, attachmentTypeList, custId } = this.state;
+    console.warn('attachmentTypeList', attachmentTypeList);
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
