@@ -57,7 +57,7 @@ export default class TabMenu extends PureComponent {
           {
             isMoreMenu ?
               <div className={styles.moreMenuItem}>
-                <a title={`${item.name}`} onClick={() => this.change(item.id, activeKey)}>{item.name}</a>
+                <div className={styles.link} title={`${item.name}`} onClick={() => this.change(item.id, activeKey)}>{item.name}</div>
                 {
                   <div id={item.path === path ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(item.id)}>
                     <Icon type="close" />
@@ -136,7 +136,7 @@ export default class TabMenu extends PureComponent {
             tabIndex="0"
             className={styles.text}
           >
-            <a title={`${menu.name}`}>{menu.name}</a>
+            <div className={styles.link} title={`${menu.name}`}>{menu.name}</div>
             <i className="anticon anticon-change" />
           </div>
         </Dropdown>
@@ -157,7 +157,7 @@ export default class TabMenu extends PureComponent {
         })}
       >
         <div className={styles.text}>
-          <a title={`${menu.name}`} onClick={() => this.change(menu.id, activeKey)}>{menu.name}</a>
+          <div className={styles.link} title={`${menu.name}`} onClick={() => this.change(menu.id, activeKey)}>{menu.name}</div>
           {
             closeable ?
               <div id={menu.id === activeKey ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(menu.id)}>

@@ -23,12 +23,15 @@ export default class FSPComponent extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location: { pathname, state } } = nextProps;
-    this.getRouteConfig(pathname, state);
-    this.getFspData();
-    this.setState({
-      loading: true,
-    });
-    setTimeout(() => !unmountFlag && this.setState({ loading: false }), 10000);
+    const { location } = this.props;
+    if (location.pathname !== pathname || location.state !== state) {
+      this.getRouteConfig(pathname, state);
+      this.getFspData();
+      this.setState({
+        loading: true,
+      });
+      setTimeout(() => !unmountFlag && this.setState({ loading: false }), 10000);
+    }
   }
 
   componentWillUnmount() {

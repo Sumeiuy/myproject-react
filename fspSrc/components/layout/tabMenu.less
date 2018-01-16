@@ -4,13 +4,13 @@
   border-bottom: 4px solid #2e669a;
   background: #fff;
   flex-direction: row;
+
   .menuItem {
     flex: 0 0 auto;
     width: 86px;
     height: 36px;
     text-align: center;
     font-size: 14px;
-    color: #4a4a4a;
     cursor: pointer;
     transform: translateY(4px);
     .text {
@@ -20,9 +20,9 @@
         display: inline-block;
         font-size: 12px;
       }
-      a {
+      .link {
+        color: black;
         display: inline-block;
-        color: #4a4a4a;
         width: 56px;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -52,19 +52,18 @@
     }
     &.activeLink {
       background: #2e669a;
-      color: #fff;
       border-radius: 4px 4px 0 0;
-     /*  .text {
-        font-family: PingFangSC-Semibold !important;
-      } */
-      a, a:active {
-        color: #fff;
+     .text {
+        .link, i {
+          color: #fff !important;
+        }
       }
     }
     &:first-child {
       margin-left: 35px;
     }
   }
+
   .menuItem.widerItem.moreButton {
     position: absolute;
     top: 9px;
@@ -83,7 +82,7 @@
       color: #2e669a;
       transform: translateY(-4px);
     }
-    a {
+    .link {
       font-size: 12px;
       width: auto;
       color: #2e669a;
@@ -93,8 +92,7 @@
       border: none;
       border-radius: 3px;
       background: #2e669a;
-      color: #fff;
-      a, a:active, i, i:active {
+      .link, i {
         color: #fff;
       }
     }
@@ -103,12 +101,11 @@
 
 .subItem {
   background: none;
-  color: #4a4a4a;
   .moreMenuItem {
     width: 66px;
-    a {
+    .link {
       display: inline-block;
-      color: #4a4a4a;
+      color: black;
       width: 56px;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -122,9 +119,8 @@
   }
   &.activeItem {
     background: #ecf6fd;
-    color: #2e669a;
     .moreMenuItem {
-      a {
+      .link {
         display: inline-block;
         color: #2e669a;
         width: 56px;
