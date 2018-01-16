@@ -39,8 +39,8 @@ const menus = [
   },
   {
     name: '策略中心',
-    id: 'FSP_INFORMATION_M_CENTER',
-    path: '/informationCenter',
+    id: 'FSP_STRATEGY_CENTER',
+    path: '/strategyCenter',
     pid: 'ROOT',
   },
 ];

@@ -75,15 +75,6 @@ const fspRoutes = [
     path: 'fspreport',
     url: '/complaint/report',
   },
-  // 资产配置
-  {
-    path: 'mainTab',
-    url: '/asset/basis/mainTab',
-  },
-  {
-    path: 'implementation',
-    url: '/asset/implementation/main',
-  },
   // 资金业务
   {
     path: 'excessCache',

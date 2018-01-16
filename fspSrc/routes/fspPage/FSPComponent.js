@@ -8,6 +8,8 @@ import Loading from '../../layouts/Loading';
 
 import styles from './fspComponent.less';
 
+let unmountFlag = false;
+
 export default class FSPComponent extends PureComponent {
   constructor(props) {
     super(props);
@@ -26,7 +28,11 @@ export default class FSPComponent extends PureComponent {
     this.setState({
       loading: true,
     });
-    setTimeout(() => this.setState({ loading: false }), 10000);
+    setTimeout(() => !unmountFlag && this.setState({ loading: false }), 10000);
+  }
+
+  componentWillUnmount() {
+    unmountFlag = true;
   }
 
   @autobind
@@ -77,7 +83,7 @@ export default class FSPComponent extends PureComponent {
         <Loading loading={this.state.loading} />
         {
           this.action === 'loadInTab' ?
-            <div ref={ref => this.elem = ref} /> :
+            <div className={styles.fspContent} ref={ref => this.elem = ref} /> :
             <iframe className={styles.iframe} onLoad={this.onLoad} src={this.url} frameBorder="0">
               你的浏览器不支持iframe,请升级或者更换浏览器
             </iframe>

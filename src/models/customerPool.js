@@ -139,6 +139,22 @@ export default {
           return;
         }
 
+        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
+        if (customerGroupManageUrl) {
+          const { curPageNum, curPageSize, keyWord = null } = params;
+          dispatch({
+            type: 'getCustomerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+              keyWord,
+            },
+            loading: true,
+          });
+
+          return;
+        }
+
         const custGroupUrl = url.matchRoute('customerGroup', pathname);
         if (custGroupUrl) {
           const { curPageNum, curPageSize, keyWord = null } = params;
@@ -148,22 +164,6 @@ export default {
               pageNum: curPageNum || INITIAL_PAGE_NUM,
               pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
               empId: emp.getId(),
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
-        const { curPageNum, curPageSize, keyWord = null } = params;
-        if (customerGroupManageUrl) {
-          dispatch({
-            type: 'getCustomerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
               keyWord,
             },
             loading: true,
