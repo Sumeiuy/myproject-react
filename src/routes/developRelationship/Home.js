@@ -363,10 +363,7 @@ export default class Permission extends PureComponent {
     );
 
     const rightPanel = (
-      <Detail
-        location={location}
-        data={detailInfo}
-      />
+      <Detail data={detailInfo} />
     );
 
     return (
