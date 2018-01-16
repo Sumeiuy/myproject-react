@@ -8,47 +8,15 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
+import _ from 'lodash';
 
+import { openRctTab } from '../../../utils';
 import styles from './toDoList.less';
 
 import emptyImg from './img/empty.png';
 
-const columns = [
-  {
-    title: '任务名称',
-    dataIndex: 'task',
-    key: 'task',
-    render: item => <a
-      className={styles.title}
-      href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      title={item.text}
-    >
-      {item.text}
-    </a>,
-  },
-  {
-    title: '当前步骤',
-    dataIndex: 'stepName',
-    key: 'stepName',
-  },
-  {
-    title: '提交人工号',
-    dataIndex: 'originator',
-    key: 'originator',
-  },
-  {
-    title: '提交人姓名',
-    dataIndex: 'originatorName',
-    key: 'originatorName',
-  },
-  {
-    title: '提交日期',
-    dataIndex: 'applyDate',
-    key: 'applyDate',
-  },
-];
+const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+
 
 export default class ToDoList extends PureComponent {
 
@@ -59,6 +27,13 @@ export default class ToDoList extends PureComponent {
     onPageChange: PropTypes.func.isRequired,
     onSizeChange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    getTaskBasicInfo: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
+  }
+
+  static defaultProps = {
+    taskBasicInfo: {},
   }
 
   componentDidMount() {
@@ -103,9 +78,92 @@ export default class ToDoList extends PureComponent {
     });
   }
 
+  @autobind
+  handleOpenNew(e) {
+    const { data, getTaskBasicInfo } = this.props;
+    const tardetLab = e.target;
+    const flowId = tardetLab.getAttribute('data');
+    const flowData = _.find(data, ['id', Number(flowId)]);
+    let newUrl = null;
+    if (true) {
+      newUrl = "javascript:void(0);"; //eslint-disable-line
+      getTaskBasicInfo({
+        flowId: flowData.flowId,
+        systemCode,
+      }).then(this.handleSuccess);
+    } else {
+      newUrl = `${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`;
+    }
+    tardetLab.setAttribute('href', newUrl);
+  }
+
+  @autobind
+  handleSuccess() {
+    const { push, location: { query }, taskBasicInfo } = this.props;
+    if (!_.isEmpty(taskBasicInfo)) {
+      const param = {
+        id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST',
+        title: '发起任务',
+      };
+      openRctTab({
+        routerAction: push,
+        url: '/customerPool/createTask',
+        param,
+        pathname: '/customerPool/createTask',
+        query,
+        state: {
+          flowData: taskBasicInfo,
+        },
+      });
+    }
+  }
+
   render() {
     const { className, data, todolist, location } = this.props;
     const { query: { curPageNum = 1, pageSize = 10 } } = location;
+
+    const columns = [
+      {
+        title: '任务名称',
+        dataIndex: 'task',
+        key: 'task',
+        render: (item, recode) => {
+          // console.log(recode);
+          return (<a
+            className={styles.title}
+            href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.id}
+            data={recode.id}
+            onClick={this.handleOpenNew}
+          >
+            {item.text}
+          </a>);
+        },
+      },
+      {
+        title: '当前步骤',
+        dataIndex: 'stepName',
+        key: 'stepName',
+      },
+      {
+        title: '提交人工号',
+        dataIndex: 'originator',
+        key: 'originator',
+      },
+      {
+        title: '提交人姓名',
+        dataIndex: 'originatorName',
+        key: 'originatorName',
+      },
+      {
+        title: '提交日期',
+        dataIndex: 'applyDate',
+        key: 'applyDate',
+      },
+    ];
+
     // 没有待办流程
     if (todolist.length === 0) {
       return (<div className={styles.empty}>
