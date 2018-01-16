@@ -8,80 +8,46 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Tabs } from 'antd';
 import localStorage from 'store';
-import Loading from '../../layouts/Loading';
-import menuConfig, { getDefaultMenus } from '../../../src/config/tabMenu';
+import FSPUnwrap from './FspUnwrap';
+import TabMenu from './TabMenu';
+import menuConfig from '../../../src/config/menu';
+import tabConfig, { indexPaneKey } from '../../../src/config/tabMenu';
+import { enableLocalStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 
-const TabPane = Tabs.TabPane;
-
-function preProcess(config, parentPath = '/', result = {}) {
-  for (let i = 0, len = config.length; i < len; i++) {
-    const item = config[i];
-    const path = parentPath + item.path;
-    result[path] = { ...item, path }; // eslint-disable-line
-    if (item.child) {
-      preProcess(item.child, `${path}/`, result);
-    }
-  }
-  return result;
-}
-
-const TAB_CONFIG = preProcess(menuConfig);
-
-// 包装当前路由内容到Loading组件内
-// 对fsp页面进行去loading处理
-function FspUnwrap(key = 'react', activeKey = 'react', { children, loading, loadingForceFull }) {
-  if (key === activeKey) {
-    if (key.indexOf('fsp') === -1) {
-      return (
-        <div>
-          <Loading loading={loading} forceFull={loadingForceFull} />
-          {children}
-        </div>
-      );
-    }
-    return (
-      <div>{children}</div>
-    );
-  }
-
-  return null;
-}
-
-FspUnwrap.propTypes = {
-  key: PropTypes.string.isRequired,
-  activeKey: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  loading: PropTypes.bool.isRequired,
-  loadingForceFull: PropTypes.bool.isRequired,
-};
-
-const defaultMenus = getDefaultMenus();
-
-const indexPaneKey = defaultMenus[0].key;
-
-function getDefaultPanes() {
-  return defaultMenus.map(menu => ({
-    ...menu,
-    closable: false,
-    path: `/${menu.key}`,
-  }));
-}
-
+// 判断pane是否在paneArray中
 function isPaneInArray(panes, paneArray) {
   return panes.length !== 0 ?
-    _.some(paneArray, pane => pane.key === panes[0].key) : false;
+    _.some(paneArray, pane => pane.id === panes[0].id) : false;
 }
 
+// 获取最终的pane数组
 function getFinalPanes(panes, addPanes = [], removePanes = []) {
-  const filterPanes = panes.filter(pane => !_.find(removePanes, key => key === pane.key));
-  const paneArray = addPanes.filter(pane => !_.find(panes, tabPane => tabPane.key === pane.key));
+  const filterPanes = panes.filter(pane => !_.find(removePanes, key => key === pane.id));
+  const paneArray = addPanes.filter(pane => !_.find(panes, tabPane => tabPane.id === pane.id));
   return [
     ...filterPanes,
     ...paneArray,
   ];
+}
+
+// 将pane数组根据视口范围进行划分的工具方法
+function splitPanesArray(panes, menuWidth) {
+  // 预设置按钮的大小
+  const moreButtonWidth = 90;
+  const firstButtonWidth = 121;
+  const menuButtonWidth = 96;
+  // tab菜单除了必有的首页之外，所有其他的tab都是96px，可以由此算出视口宽度内可以放下多少个
+  const tabCount = Math.floor((menuWidth - moreButtonWidth - firstButtonWidth) / menuButtonWidth);
+  return {
+    mainArray: panes.slice(0, tabCount + 1),
+    moreMenuObject: {
+      id: 'MORE',
+      name: '更多',
+      children: panes.slice(tabCount + 1),
+    },
+  };
 }
 
 @withRouter
@@ -96,18 +62,16 @@ export default class Tab extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.menuWidth = document.documentElement.clientWidth;
     const { location: { pathname, query } } = props;
-    // 根据当前路由找到的tab配置
+    // 根据当前路由找到对应的tabpane
     const config = this.getConfig(pathname);
-
-    /**
-     * 这里获取到的location对应的pane配置只可能是0或者1个
-     * 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
-     */
+    // 这里获取到的location对应的pane配置只可能是0或者1个
+    // 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
     let panes = this.getPanesWithPathname(pathname, query);
-    const localPanes = localStorage.get('panes');
+    const localPanes = enableLocalStorage ? localStorage.get('panes') : [];
     const isPaneInLocal = isPaneInArray(panes, localPanes);
-    const isDefaultpane = isPaneInArray(panes, defaultMenus);
+    const isDefaultpane = isPaneInArray(panes, menuConfig);
     // 默认tab必须得出现
     if (!isDefaultpane && isPaneInLocal) {
       panes = [
@@ -115,17 +79,24 @@ export default class Tab extends PureComponent {
       ];
     } else if (!isDefaultpane) {
       panes = [
-        ...getDefaultPanes(),
+        ...menuConfig,
         ...panes,
       ];
     } else if (isDefaultpane) {
-      panes = getDefaultPanes();
+      panes = menuConfig;
     }
 
     this.state = {
+      forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
       panes,
-      activeKey: config.key || indexPaneKey,
+      activeKey: (config && config.id) || indexPaneKey,
     };
+  }
+
+  componentDidMount() {
+    this.elem = document.querySelector('#tabMenu');
+    this.menuWidth = this.elem.getBoundingClientRect().width;
+    window.addEventListener('resize', this.onResize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -138,12 +109,32 @@ export default class Tab extends PureComponent {
         if (addPanes || removePanes) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
-        localStorage.set('panes', panes);
+        if (enableLocalStorage) {
+          localStorage.set('panes', panes);
+        }
         this.setState({
           panes,
-          activeKey: activeKey || config.key,
+          activeKey: activeKey || config.id,
         });
       }
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  @autobind
+  onResize() {
+    const { panes, activeKey, forceRender } = this.state;
+    const menuWidth = this.elem && this.elem.getBoundingClientRect().width;
+    if (menuWidth !== this.menuWidth) {
+      this.menuWidth = menuWidth;
+      this.setState({
+        forceRender: !forceRender,
+        panes,
+        activeKey,
+      });
     }
   }
 
@@ -151,7 +142,7 @@ export default class Tab extends PureComponent {
   onChange(activeKey) {
     const { push } = this.props;
     const { panes } = this.state;
-    const pane = panes.find(item => item.key === activeKey);
+    const pane = panes.find(item => item.id === activeKey);
     // 调用push时同时传递pathname，query
     push({
       pathname: pane.path,
@@ -159,40 +150,79 @@ export default class Tab extends PureComponent {
     });
   }
 
-
   @autobind
-  onEdit(targetKey, action) {
-    this[action](targetKey);
-  }
-
-   // 工具方法
-  getConfig(pathname) {
-    let path = pathname;
-    while (path) {
-      const config = TAB_CONFIG[path];
-      if (config) {
-        return config;
+  onRemove(targetKey) {
+    const { push, isBlockRemovePane, location: { pathname } } = this.props;
+    const { activeKey, panes } = this.state;
+    const index = _.findIndex(panes, pane => pane.id === targetKey);
+    const changePanes = panes.filter(pane => pane.id !== targetKey);
+    let pane;
+    // 如果移除的是当前的tabKey
+    if (activeKey === targetKey) {
+      // 如果当前的tabKey是最后一个tab,向前跳转
+      if (panes[panes.length - 1].id === targetKey) {
+        pane = changePanes[changePanes.length - 1];
+        // 如前向跳转无path，回到首页
+        if (!pane.path) {
+          pane = changePanes[0];
+        }
+      } else { // 如果移除的当前tab不是最后一个,向后跳转
+        pane = changePanes[index];
       }
-      path = path.slice(0, path.lastIndexOf('/'));
+    } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
+      pane = changePanes.find(item => item.id === activeKey);
     }
-    return TAB_CONFIG[pathname] || {};
+    if (isBlockRemovePane) {
+      const shouldJumpPane = window.confirm(`请确定你要跳转到 ${pane.path}，未保存的数据会丢失!`); // eslint-disable-line
+      if (shouldJumpPane) {
+        this.setState(
+          { panes: changePanes },
+          () => {
+            if (pane.path !== pathname) {
+              push({
+                pathname: pane.path,
+                query: pane.query,
+              });
+            }
+          },
+        );
+      }
+    } else {
+      this.setState(
+        { panes: changePanes },
+        () => {
+          if (pane.path !== pathname) {
+            push({
+              pathname: pane.path,
+              query: pane.query,
+            });
+          }
+        },
+      );
+    }
   }
 
+  // 从配置文件中获取pathname对应的tabPane对象
+  getConfig(pathname) {
+    return _.find(tabConfig, pane => pathname.indexOf(pane.path) !== -1);
+  }
+
+  // 根据pathname获取一个初步的pane数组
   getPanesWithPathname(pathname, query, shouldRemove = false) {
     let { panes = [] } = this.state || {};
     const { activeKey = '' } = this.state || {};
     if (shouldRemove) {
-      panes = panes.filter(pane => pane.key !== activeKey);
+      panes = panes.filter(pane => pane.id !== activeKey);
     }
     const paneConf = this.getConfig(pathname);
     if (!_.isEmpty(paneConf)) {
-      const isExists = panes.find(item => item.key === paneConf.key);
+      const isExists = panes.find(item => item.id === paneConf.id);
       paneConf.query = query;
       if (!isExists) {
         panes.push(paneConf);
       } else {
         panes.map((pane) => {
-          if (pane.key === paneConf.key) {
+          if (pane.id === paneConf.id) {
             return paneConf;
           }
           return pane;
@@ -202,69 +232,24 @@ export default class Tab extends PureComponent {
     return panes;
   }
 
-  @autobind
-  remove(targetKey) {
-    const { push, isBlockRemovePane } = this.props;
-    const panes = this.state.panes.filter(pane => pane.key !== targetKey);
-    const lastIndex = panes.length - 1;
-    const pane = panes[lastIndex];
-
-    if (isBlockRemovePane) {
-      const shouldJumpPane = window.confirm(`请确定你要跳转到 ${pane.path}，未保存的数据会丢失!`); // eslint-disable-line
-      if (shouldJumpPane) {
-        this.setState(
-          { panes },
-          () => {
-            push({
-              pathname: pane.path,
-              query: pane.query,
-            });
-          },
-        );
-      }
-    } else {
-      this.setState(
-        { panes },
-        () => {
-          push({
-            pathname: pane.path,
-            query: pane.query,
-          });
-        },
-      );
-    }
-  }
-
-  @autobind
-  renderTabPane(pane) {
-    const { name, key, closable } = pane;
-    const { activeKey } = this.state;
-    return (
-      <TabPane
-        tab={name}
-        key={key}
-        closable={closable}
-        id="container"
-      >
-        {
-          FspUnwrap(key, activeKey, this.props)
-        }
-      </TabPane>
-    );
-  }
-
   render() {
     const { activeKey, panes } = this.state;
+    const { push, location } = this.props;
+    // 将panes数组划分为两个数组，一个是视口可以容纳的tab，一个是放在更多下拉菜单中的tab
+    const finalpanesObj = splitPanesArray(panes, this.menuWidth);
     return (
-      <Tabs
-        hideAdd
-        onChange={this.onChange}
-        activeKey={activeKey}
-        onEdit={this.onEdit}
-        type="editable-card"
-      >
-        {_.isEmpty(panes) ? FspUnwrap('react', 'react', this.props) : panes.map(this.renderTabPane)}
-      </Tabs>
+      <div>
+        <TabMenu
+          mainArray={finalpanesObj.mainArray}
+          moreMenuObject={finalpanesObj.moreMenuObject}
+          onChange={this.onChange}
+          activeKey={activeKey}
+          onRemove={this.onRemove}
+          push={push}
+          path={location.pathname}
+        />
+        <FSPUnwrap path={location.pathname} {...this.props} />
+      </div>
     );
   }
 }
