@@ -2,13 +2,13 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-15 17:23:19
+ * @Last Modified time: 2018-01-16 16:05:26
  * @description 新头部导航
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon, Modal, Input } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import { Link } from 'dva/router';
 import { autobind } from 'core-decorators';
@@ -24,17 +24,19 @@ export default class Header extends PureComponent {
     navs: PropTypes.array.isRequired,
     loginInfo: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
+    // 用户岗位列表
     empRspList: PropTypes.array.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
+    onIsolationWallModalShow: PropTypes.func,
   }
-
   static defaultProps = {
     navs: [],
     loginInfo: {},
     empInfo: {},
     onSearch: () => { },
     onSwitchRsp: () => { },
+    onIsolationWallModalShow: () => { },
   }
 
   constructor(props) {
@@ -51,16 +53,7 @@ export default class Header extends PureComponent {
 
   @autobind
   handleShowDialog() {
-    this.setState({
-      visible: true,
-    });
-  }
-
-  @autobind
-  handleHideDialog() {
-    this.setState({
-      visible: false,
-    });
+    this.props.onIsolationWallModalShow();
   }
 
   render() {
@@ -138,14 +131,6 @@ export default class Header extends PureComponent {
               null
           }
         </div>
-        <Modal
-          title="隔离墙"
-          visible={this.state.visible}
-          onCancel={this.handleHideDialog}
-        >
-          <span>股票代码：</span>
-          <Input />
-        </Modal>
       </div>
     );
   }

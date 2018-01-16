@@ -11,6 +11,7 @@ import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
 import { routerRedux, withRouter } from 'dva/router';
+import { Modal, Input } from 'antd';
 
 import Header from './Header';
 // import Footer from './Footer';
@@ -79,6 +80,13 @@ const mapDispatchToProps = {
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 隔离墙modal是否可见
+      isolationWallModalVisible: false,
+    };
+  }
 
   static propTypes = {
     children: PropTypes.object.isRequired,
@@ -133,6 +141,20 @@ export default class Main extends PureComponent {
     this.props.switchPosition(rsp).then(this.switchRspAfter);
   }
 
+  @autobind
+  handleIsolationWallModalShow() {
+    this.setState({
+      isolationWallModalVisible: true,
+    });
+  }
+
+  @autobind
+  handleIsolationWallModalHide() {
+    this.setState({
+      isolationWallModalVisible: false,
+    });
+  }
+
   render() {
     const {
       children,
@@ -172,6 +194,7 @@ export default class Main extends PureComponent {
             empInfo={empInfo}
             empRspList={empPostnList}
             onSwitchRsp={this.handleHeaderSwitchRsp}
+            onIsolationWallModalShow={this.handleIsolationWallModalShow}
           />
           <div className={styles.main}>
             <div id="react-content" className={styles.content}>
@@ -216,6 +239,14 @@ export default class Main extends PureComponent {
             {/*  <Footer /> */}
           </div>
         </div>
+        <Modal
+          title="隔离墙"
+          visible={this.state.isolationWallModalVisible}
+          onCancel={this.handleIsolationWallModalHide}
+        >
+          <span>股票代码：</span>
+          <Input />
+        </Modal>
       </div>
     );
   }
