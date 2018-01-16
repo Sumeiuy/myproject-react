@@ -10,6 +10,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import Tag from '../common/tag';
+import ProgressBar from './ProgressBar';
 import styles from './viewListRow.less';
 
 const PROCESSING = '10'; // 执行者视图状态审批中
@@ -19,6 +20,9 @@ const WAITEXECUTE = '40'; // 等待执行
 const END = '70'; // 执行者视图状态结束
 const EXECUTING = '50'; // 执行者视图状态执行中
 const RESULT = '60';  // 执行中视图状态结果跟踪
+
+// 执行者视图和创建者视图左侧列表项需要显示进度条
+const needProgress = ['executor', 'initiator'];
 
 
 export default function AppItem(props) {
@@ -64,9 +68,14 @@ export default function AppItem(props) {
     pvWaitExecute: data.statusCode === WAITEXECUTE && !active,
     transparent: active,
   });
+  const progressCls = cx({
+    [styles.progress]: true,
+    [styles.active]: active,
+  });
   function handleClick() {
     onClick(data, index);
   }
+  console.log('XXX', data);
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}
@@ -82,7 +91,18 @@ export default function AppItem(props) {
       </div>
       {/* 第二行 */}
       <div className={secondLineCls}>
-        <div className={styles.subType}>{data.missionName || '无'}</div>
+        {
+          _.includes(needProgress, data.missionViewType) ?
+            <div className={progressCls}>
+              <ProgressBar
+                servicedCustomer={data.servicedCustomer || 160}
+                totalCustomer={data.totalCustomer || 320}
+                showInfo={false}
+                size="small"
+              />
+            </div> : null
+        }
+        <div className={styles.taskName}>{data.missionName || '无'}</div>
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
