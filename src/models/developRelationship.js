@@ -102,7 +102,7 @@ export default {
           type: 'getCreateDevelopRelationshipSuccess',
           payload: response,
         });
-        message.success('私密客户创建成功！');
+        message.success('开发关系认定创建成功！');
       }
     },
     // 查询可申请开发关系认定的客户是否可用
@@ -156,7 +156,7 @@ export default {
         type: 'getButtonListSuccess',
         payload: response,
       });
-      message.success('私密客户修改成功！');
+      message.success('开发关系认定修改成功！');
     },
   },
   subscriptions: {},

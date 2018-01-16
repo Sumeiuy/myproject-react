@@ -337,7 +337,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       list={buttonList}
       onEmitEvent={this.submitCreateInfo}
     />);
-    const newOldDevelopTeamList = commonHelpr.convertTgFlag(oldDevelopTeamList);
+    const newOldDevelopTeamList = commonHelpr.convertTgFlag(oldDevelopTeamList, true);
     return (
       <CommonModal
         title="新建开发关系认定"
