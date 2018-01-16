@@ -131,7 +131,6 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustId,
       },
     } = this.props;
-    console.log('reloadTargetCustInfo>>>', this.props.parameter);
     this.queryTargetCustInfo({
       custId: targetCustId,
       state: targetCustomerState,
