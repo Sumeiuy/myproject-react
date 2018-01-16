@@ -74,7 +74,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 其他附件
       other: [],
       // 附件的key
-      attachment: [],
+      developAttachment: '',
+      // 附件的key
+      otherAttachment: '',
       // 审批人弹框
       nextApproverModal: false,
       // 下一审批人列表
@@ -125,14 +127,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onEmitClearModal('isShowCreateModal');
   }
 
-  // 填写备注
-  @autobind
-  handleChangeRemark(e) {
-    this.setState({
-      remark: e.target.value,
-    });
-  }
-
   @autobind
   updateValue(name, value) {
     this.setState({ [name]: value });
@@ -177,7 +171,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       this.setState({
         attachmentTypeList: newAttachmentTypeList,
         develop: newDevelop,
-        attachment,
+        developAttachment: attachment,
       });
     } else {
       const newOther = other;
@@ -185,7 +179,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       this.setState({
         attachmentTypeList: newAttachmentTypeList,
         other: newOther,
-        attachment,
+        otherAttachment: attachment,
       });
     }
   }
@@ -256,7 +250,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 已有开发经理的提示语
       const custEmpTip = `该客户已有开发经理${oldDevelopEmpTip}`;
       // 过滤出是入岗投顾的对象数组
-      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList, { 'tgFlag': 'Y' });
+      const tgFlagOldDevelopEmpList = _.filter(oldDevelopTeamList, { tgFlag: 'Y' });
       // 获取是入岗投顾的服务经理名称的数组
       const tgFlagEmpArr = _.map(tgFlagOldDevelopEmpList, 'activeLastName');
       // 用、连接是入岗投顾的服务经理名称的数组中的元素
@@ -283,7 +277,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subType,
       customer,
       remark,
-      attachment,
+      developAttachment,
+      otherAttachment,
     } = this.state;
 
     // 登录人Id，新建私密客户必传
@@ -305,7 +300,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       orgId,
       custName: customer.custName,
       custNumber: customer.brokerNumber,
-      attachment,
+      developAttachment,
+      otherAttachment,
     };
     this.props.getCreateDevelopRelationship(queryConfig);
     this.setState({ nextApproverModal: false });

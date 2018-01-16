@@ -64,6 +64,13 @@ export default {
         buttonList: resultData,
       };
     },
+    updateApplicationSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        modifyCustApplication: resultData,
+      };
+    },
     // 清除数据
     clearPropsDataSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -138,6 +145,18 @@ export default {
           resultData: EMPTY_LIST,
         },
       });
+    },
+    * updateApplication({ payload }, { call, put }) {
+      const response = yield call(api.updateApplication, payload);
+      yield put({
+        type: 'updateApplicationSuccess',
+        payload: response,
+      });
+      yield put({
+        type: 'getButtonListSuccess',
+        payload: response,
+      });
+      message.success('私密客户修改成功！');
     },
   },
   subscriptions: {},
