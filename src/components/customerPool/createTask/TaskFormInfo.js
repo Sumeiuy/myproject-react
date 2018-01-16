@@ -133,6 +133,22 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  handleMentionChange(contentState) {
+    if (!this.isFirstLoad) {
+      let isShowErrorInfo = false;
+      const content = toString(contentState);
+      if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
+        isShowErrorInfo = true;
+      }
+
+      this.setState({
+        currentMention: contentState,
+        isShowErrorInfo,
+      });
+    }
+  }
+
+  @autobind
   handleTaskTypeChange(value) {
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       const currentTaskSubTypeCollection = this.getCurrentTaskSubTypes(value);
@@ -177,25 +193,8 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  checkMention = (editorState) => {
-    const content = toString(editorState);
-    if (!this.isFirstLoad) {
-      if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
-        this.setState({
-          isShowErrorInfo: true,
-        });
-      } else {
-        this.setState({
-          isShowErrorInfo: false,
-        });
-      }
-    }
-    this.setState({
-      currentMention: editorState,
-    });
-  }
-
-  handleSearchChange = (value, trigger) => {
+  @autobind
+  handleSearchChange(value, trigger) {
     const { users } = this.props;
     const searchValue = value.toLowerCase();
     const dataSource = _.includes(PREFIX, trigger) ? users : {};
@@ -236,34 +235,26 @@ export default class TaskFormInfo extends PureComponent {
     return null;
   }
 
-  // getSuggestionContainer = () => {
-  //   return this.popover.getPopupDomNode();
-  // }
-
   renderMention() {
-    const { form: { getFieldDecorator }, defaultMissionDesc } = this.props;
+    const { defaultMissionDesc } = this.props;
     const { suggestions } = this.state;
     return (
-      getFieldDecorator('templetDesc', {
-        initialValue: toContentState(defaultMissionDesc),
-      })(
-        <div className={styles.wrapper}>
-          <Mention
-            mentionStyle={mentionTextStyle}
-            style={{ width: '100%', height: 100 }}
-            placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
-            prefix={PREFIX}
-            onSearchChange={this.handleSearchChange}
-            suggestions={suggestions}
-            getSuggestionContainer={() => this.fatherMention}
-            onBlur={this.handleMentionBlur}
-            multiLines
-            onChange={this.checkMention}
-            value={this.state.currentMention}
-          />
-          {/* <span className={styles.insert}>插入参数</span> */}
-        </div>,
-      )
+      <div className={styles.wrapper}>
+        <Mention
+          mentionStyle={mentionTextStyle}
+          style={{ width: '100%', height: 100 }}
+          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
+          prefix={PREFIX}
+          onSearchChange={this.handleSearchChange}
+          suggestions={suggestions}
+          getSuggestionContainer={() => this.fatherMention}
+          multiLines
+          defaultValue={defaultMissionDesc}
+          onChange={this.handleMentionChange}
+          onBlur={this.handleMentionBlur}
+        />
+        {/* <span className={styles.insert}>插入参数</span> */}
+      </div>
     );
   }
 
@@ -322,7 +313,7 @@ export default class TaskFormInfo extends PureComponent {
     } : null;
 
     return (
-      <Form >
+      <Form>
         <ul className={styles.task_selectList}>
           {/**
            * 任务名称

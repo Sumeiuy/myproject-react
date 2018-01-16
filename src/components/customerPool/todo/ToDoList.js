@@ -127,20 +127,19 @@ export default class ToDoList extends PureComponent {
         title: '任务名称',
         dataIndex: 'task',
         key: 'task',
-        render: (item, recode) => {
+        render: (item, recode) =>
           // console.log(recode);
-          return (<a
-            className={styles.title}
-            href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={item.id}
-            data={recode.id}
-            onClick={this.handleOpenNew}
-          >
-            {item.text}
-          </a>);
-        },
+           (<a
+             className={styles.title}
+             href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
+             target="_blank"
+             rel="noopener noreferrer"
+             title={item.id}
+             data={recode.id}
+             onClick={this.handleOpenNew}
+           >
+             {item.text}
+           </a>),
       },
       {
         title: '当前步骤',

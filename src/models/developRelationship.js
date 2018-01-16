@@ -64,6 +64,13 @@ export default {
         buttonList: resultData,
       };
     },
+    updateApplicationSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        modifyCustApplication: resultData,
+      };
+    },
     // 清除数据
     clearPropsDataSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -95,7 +102,7 @@ export default {
           type: 'getCreateDevelopRelationshipSuccess',
           payload: response,
         });
-        message.success('私密客户创建成功！');
+        message.success('开发关系认定创建成功！');
       }
     },
     // 查询可申请开发关系认定的客户是否可用
@@ -138,6 +145,18 @@ export default {
           resultData: EMPTY_LIST,
         },
       });
+    },
+    * updateApplication({ payload }, { call, put }) {
+      const response = yield call(api.updateApplication, payload);
+      yield put({
+        type: 'updateApplicationSuccess',
+        payload: response,
+      });
+      yield put({
+        type: 'getButtonListSuccess',
+        payload: response,
+      });
+      message.success('开发关系认定修改成功！');
     },
   },
   subscriptions: {},
