@@ -74,9 +74,13 @@ export default class MissionProgress extends PureComponent {
   @autobind
   renderTooltipContent(type, currentCount) {
     const { missionProgressStatusDic: dic = {} } = this.props;
-    const propertyNames = Object.getOwnPropertyNames(dic);
+    const propertyNames = Object.getOwnPropertyNames(dic) || [];
     let missionProgressStatus = '';
     let progressFlag = '';
+    // 需要传给后台3*2类型
+    // missionProgressStatus是字典的属性名
+    // progressFlag是标记位,Y或者N
+    // 但是这个需要后台将字典顺序固定
     switch (type) {
       case SERVED_CUST:
         missionProgressStatus = propertyNames[1];

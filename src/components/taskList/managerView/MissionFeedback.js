@@ -168,9 +168,6 @@ export default class MissionFeedback extends PureComponent {
       dataInfo,
     };
 
-    console.table(radioFeedback);
-    console.table(checkboxFeedback);
-
     return finalData;
   }
 
@@ -311,20 +308,6 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  renderRadios(data) {
-    const { isFold } = this.props;
-    const isRadio = true;
-    const oDiv = _.map(data, (item) => {
-      const radios = _.map(item.radioData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
-      return this.handleShowData(isFold, item.radioTaskFeedbackDes,
-        item.radioData, radios, isRadio);
-    });
-    return oDiv;
-  }
-
-  @autobind
   renderCheckBox(data) {
     const { isFold } = this.props;
     const oDiv = _.map(data, (item) => {
@@ -397,6 +380,20 @@ export default class MissionFeedback extends PureComponent {
         },
       }),
     });
+  }
+
+  @autobind
+  renderRadios(data) {
+    const { isFold } = this.props;
+    const isRadio = true;
+    const oDiv = _.map(data, (item) => {
+      const radios = _.map(item.radioData, itemChild =>
+        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+          <b>({itemChild.optionPer})</b></span></h5>));
+      return this.handleShowData(isFold, item.radioTaskFeedbackDes,
+        item.radioData, radios, isRadio);
+    });
+    return oDiv;
   }
 
   renderAllFeedback(allCount, count, countPer, residue) {
