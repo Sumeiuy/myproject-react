@@ -4,8 +4,9 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { fspRoutes } from '../../../src/config';
 import api from '../../../src/api';
-
 import Loading from '../../layouts/Loading';
+
+import styles from './fspComponent.less';
 
 export default class FSPComponent extends PureComponent {
   constructor(props) {
@@ -25,6 +26,7 @@ export default class FSPComponent extends PureComponent {
     this.setState({
       loading: true,
     });
+    setTimeout(() => this.setState({ loading: false }), 10000);
   }
 
   @autobind
@@ -71,12 +73,12 @@ export default class FSPComponent extends PureComponent {
 
   render() {
     return (
-      <div>
+      <div tabIndex="0">
         <Loading loading={this.state.loading} />
         {
           this.action === 'loadInTab' ?
             <div ref={ref => this.elem = ref} /> :
-            <iframe onLoad={this.onLoad} src={this.url} frameBorder="0">
+            <iframe className={styles.iframe} onLoad={this.onLoad} src={this.url} frameBorder="0">
               你的浏览器不支持iframe,请升级或者更换浏览器
             </iframe>
         }

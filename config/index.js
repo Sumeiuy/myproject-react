@@ -58,7 +58,12 @@ module.exports = {
       {
         // target: 'http://168.61.8.81:5085', // SIT
         target: 'http://168.61.8.82:5086', // UAT
-      }
+      },
+      '/htsc-product-base',
+      {
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.82:5086', // UAT
+      },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
