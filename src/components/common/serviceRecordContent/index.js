@@ -15,7 +15,7 @@ import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
-import { emp } from '../../../helper';
+import { emp, getIconType } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
@@ -501,7 +501,7 @@ export default class ServiceRecordContent extends PureComponent {
           attachmentList.map(item => (
             <div key={item.attachId}>
               <span>附件:</span>
-              <Icon className={styles.excelIcon} type="excel" />
+              <Icon className={styles.excelIcon} type={getIconType(item.name)} />
               <span>
                 <a
                   href={
