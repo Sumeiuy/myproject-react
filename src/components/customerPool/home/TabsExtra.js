@@ -151,7 +151,7 @@ export default class TabsExtra extends PureComponent {
                 value={selectValue}
                 onChange={this.handleChange}
               >
-                {cycle.map(item =>
+                {cycle && cycle.map(item =>
                   <Option key={item.key} value={item.key}>{item.value}</Option>)}
               </Select>
             </div>
