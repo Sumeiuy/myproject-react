@@ -1,22 +1,11 @@
 @import "../../src/css/variable.less";
 .layout {
   position: relative;
+  background: #e4e4ea;
   .main {
     transition: @transition-ease-out;
     .content {
-      &> :first-child {
-        background: #fff;
-      }
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .layout {
-    .main {
-      .content {
-        min-height: e("calc(100vh - 58px)");
-      }
+      min-height: e("calc(100vh - 138px)");
     }
   }
 }
