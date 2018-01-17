@@ -204,7 +204,16 @@ export default class Tab extends PureComponent {
 
   // 从配置文件中获取pathname对应的tabPane对象
   getConfig(pathname) {
-    return _.find(tabConfig, pane => pathname.indexOf(pane.path) !== -1);
+    // 获取pathname的匹配数组
+    const matchArray = _.map(tabConfig, (pane) => {
+      const match = RegExp(pane.path).exec(pathname);
+      return !match ? 0 : match[0].length;
+    });
+    // 最佳匹配下标
+    const index = _.indexOf(matchArray, _.max(matchArray));
+
+    // 如果没找到匹配的tab菜单，会默认首页菜单展示
+    return tabConfig[index];
   }
 
   // 根据pathname获取一个初步的pane数组

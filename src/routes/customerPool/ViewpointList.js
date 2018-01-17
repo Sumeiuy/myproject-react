@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
-import { openRctTab } from '../../utils';
+import { linkTo } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Clickable from '../../components/common/Clickable';
@@ -152,7 +152,7 @@ export default class ViewpointList extends PureComponent {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointDetail';
     const query = { detailIndex: item.id, pageSize: curPageSize, curPageNum };
-    openRctTab({
+    linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(query)}`,
       param,
