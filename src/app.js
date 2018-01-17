@@ -92,6 +92,8 @@ app.model(require('./models/taskFeedback'));
 app.model(require('./models/mainPosition'));
 // 开发关系认定
 app.model(require('./models/developRelationship'));
+// 晨报
+app.model(require('./models/morningBoradcast'));
 
 // 4. Router
 app.router(routerConfig);

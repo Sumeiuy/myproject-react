@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
+import Marquee from 'react-marquee';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
@@ -15,14 +16,10 @@ export default class MorningBroadcast extends PureComponent {
     dataList: PropTypes.array.isRequired,
   };
 
-  static defaultProps = {
-    dataList: [],
-  };
-
   constructor(props) {
     super(props);
     this.state = {
-      activeMusic: 0,
+      activeMusic: '',
     };
   }
 
@@ -50,34 +47,37 @@ export default class MorningBroadcast extends PureComponent {
         </div>
         <div className={styles.listWrap}>
           {
-            dataList.map((item) => {
-              if (activeMusic === item.id) {
-                return (
-                  <div key={item.id} className={styles.item}>
-                    <div className={styles.simpleName}>{item.simpleName}</div>
-                    <div className={styles.music}>
-                      <audio src={item.source} controls="controls">
-                        Your browser does not support the audio element.
-                      </audio>
-                      <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
+            dataList
+              .filter((item, index) => index <= 1)
+              .map((item) => {
+                if (activeMusic === item.key) {
+                  return (
+                    <div key={item.key} className={styles.item}>
+                      <div className={styles.simpleName}>
+                        <Marquee loop hoverToStop text={`${item.type}`} />
+                      </div>
+                      <div className={styles.music}>
+                        <audio src={item.source} controls="controls">
+                          Your browser does not support the audio element.
+                        </audio>
+                        <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
+                      </div>
                     </div>
+                  );
+                }
+                return (
+                  <div key={item.key} className={styles.item}>
+                    <span className={styles.desc}>{`${item.type}:${item.title}`}</span>
+                    <span
+                      onClick={() => { this.onHandleListen(item.key); }}
+                      className={styles.listen}
+                    >收听</span>
                   </div>
                 );
-              }
-              return (
-                <div key={item.id} className={styles.item}>
-                  <span className={styles.desc}>{`${item.fullName}:${item.desc}`}</span>
-                  <span
-                    onClick={() => { this.onHandleListen(item.id); }}
-                    className={styles.listen}
-                  >收听</span>
-                </div>
-              );
-            })
+              })
           }
         </div>
       </div>
     );
   }
 }
-

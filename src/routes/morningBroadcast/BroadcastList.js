@@ -4,6 +4,7 @@
  * @author xzqiang(crazy_zhiqiang@sina.com)
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'dva';
 import { Select, DatePicker, Input, Button, Table, Icon } from 'antd';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
@@ -50,36 +51,45 @@ const columns = [{
     </span>
   ),
 }];
-const data = [{
-  key: '1',
-  title: '金牛实盘模拟投资组合20170918：大盘蓄势待发金牛实盘模拟投资组合20170918：大170918：大',
-  type: '产品销售晨报',
-  date: '2017-09-08',
-  author: '陈慧琴',
-}, {
-  key: '2',
-  title: '金牛实盘模拟投资组合20170918：大盘蓄势待发金牛实盘',
-  type: '财经V2晨报',
-  date: '2017-09-08',
-  author: '陈慧琴',
-}, {
-  key: '3',
-  title: '金牛实盘模拟投资组合20170918：大盘蓄势待发金牛实盘',
-  type: '产品销售晨报',
-  date: '2017-09-08',
-  author: '陈慧琴',
-}];
 
+
+const effects = {
+  getBoradcastList: 'morningBoradcast/getBoradcastList',
+};
+
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  boradcastList: state.morningBoradcast.boradcastList,
+});
+
+const mapDispatchToProps = {
+  getBoradcastList: fetchDataFunction(false, effects.getBoradcastList),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class BroadcastList extends PureComponent {
+  static propTypes = {
+    boradcastList: PropTypes.array.isRequired,
+    getBoradcastList: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = { visible: false };
   }
 
-  static propTypes = {
-    handleOk: PropTypes.func.isRequired,
-    handleCancel: PropTypes.func.isRequired,
-  };
+  componentDidMount() {
+    const { boradcastList, getBoradcastList } = this.props;
+    // 如果当前每日播报列表中没有数据则去获取
+    if (!boradcastList.length) {
+      getBoradcastList();
+    }
+  }
 
   onHandleDataChange(date, dateString) {
     console.log(date, dateString);
@@ -110,6 +120,7 @@ export default class BroadcastList extends PureComponent {
 
   render() {
     const { handleOk, handleCancel } = this;
+    const { boradcastList } = this.props;
     const { visible } = this.state;
     return (
       <div className={styles.broadcastListWrap} >
@@ -145,7 +156,7 @@ export default class BroadcastList extends PureComponent {
         </div>
         <div className={styles.body}>
           <div className={styles.broadcastList}>
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={boradcastList} />
           </div>
         </div>
       </div>
