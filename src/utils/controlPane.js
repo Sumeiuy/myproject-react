@@ -6,7 +6,7 @@
 import warning from 'warning';
 import { env, data as dataHelper } from '../helper';
 
-function noop() {}
+function noop() { }
 
 function exec(method, ...args) {
   try {
@@ -161,9 +161,9 @@ function dispatchTabPane(options) {
   } else { // 如果是react则执行react操作
     const {
       routerAction, // {function或者string类型} react框架必须传入该参数，通常是push方法，或者replace方法,
-                    // 如果只是fsp框架操作则不需要传入该参数，
-                    // 如果只是移除当前tabpane，跳转到前一个tabpane，则需要传入'remove'字符串作为参数，
-                    // 之所以这个参数设置为两种类型，是为了fsp与react框架的兼容
+      // 如果只是fsp框架操作则不需要传入该参数，
+      // 如果只是移除当前tabpane，跳转到前一个tabpane，则需要传入'remove'字符串作为参数，
+      // 之所以这个参数设置为两种类型，是为了fsp与react框架的兼容
 
       url, // {string} 需要打开的path,如果有查询字字符串直接写在后面
       pathname, // pathname
@@ -198,7 +198,7 @@ function dispatchTabPane(options) {
       routerAction(url);
     } else if (routerAction === 'remove') { // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
       // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
-      const elem = document.querySelector('.ant-tabs-tab-active.ant-tabs-tab .anticon-close');
+      const elem = document.querySelector('#activeTabPane');
       if (elem) {
         elem.click();
       } else {

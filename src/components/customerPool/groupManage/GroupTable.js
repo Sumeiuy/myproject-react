@@ -232,8 +232,9 @@ export default class GroupTable extends PureComponent {
               })}
           >
             {
-              _.map(actionSource, itemData => (
+              _.map(actionSource, (itemData, key) => (
                 <Clickable
+                  key={key}
                   onClick={() => itemData.handler(record)}
                   eventName="/click/groupTabel/operationLastColumn"
                 >

@@ -47,6 +47,14 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  fakeLogin() {
+    if (process.env.NODE_ENV === 'development') {
+      window.open('fsp/login?iv-user=002727#/report', '_blank');
+    }
+  }
+
+
+  @autobind
   handleSwitchRsp(rsp) {
     this.props.onSwitchRsp(rsp);
   }
@@ -73,7 +81,7 @@ export default class Header extends PureComponent {
     );
     return (
       <div className={styles.header}>
-        <Logo />
+        <div onClick={this.fakeLogin}><Logo /></div>
         <div className={styles.headerContent}>
           {/* <div className={styles.search}>
               <Search
