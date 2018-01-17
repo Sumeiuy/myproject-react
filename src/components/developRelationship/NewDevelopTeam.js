@@ -59,6 +59,7 @@ export default class ServerPersonel extends PureComponent {
         this.setState(prevState => ({
           serverInfo: _.concat(prevState.serverInfo, this.state.addSelectedValue),
         }), () => {
+          console.warn('this.state.serverInfo', this.state.serverInfo);
           this.props.onChangeNewDevelopTeam(this.props.type, this.state.serverInfo);
         });
       }
@@ -166,7 +167,7 @@ export default class ServerPersonel extends PureComponent {
   render() {
     const { addEmpList } = this.props;
     const { serverInfo } = this.state;
-    const newServerInfo = commonHelpr.convertTgFlag(serverInfo, true);
+    const newServerInfo = commonHelpr.convertTgFlag(serverInfo);
     const columns = this.constructTableColumns();
     return (
       <div className={styles.newDevelopTeam}>

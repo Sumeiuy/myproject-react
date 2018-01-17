@@ -54,8 +54,8 @@ export default class Detail extends PureComponent {
     const drafter = `${orgName} - ${empName} (${empId})`;
     const attachmentList = commonHelpr.handleAttachmentData(develop, other,
       developAttachment, otherAttachment);
-    const originTeamData = commonHelpr.convertTgFlag(originTeam, true);
-    const newTeamData = commonHelpr.convertTgFlag(newTeam, true);
+    const originTeamData = commonHelpr.convertTgFlag(originTeam);
+    const newTeamData = commonHelpr.convertTgFlag(newTeam);
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
