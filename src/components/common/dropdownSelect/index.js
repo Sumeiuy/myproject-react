@@ -85,7 +85,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   get getSearchListDom() {
-    const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
+    const { searchList = [], emitSelectItem, showObjKey, objId, name } = this.props;
     const { searchValue } = this.state;
     const result = searchList.map((item, index) => {
       const callBack = () => {

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-// import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -17,7 +17,7 @@ import TaskFormInfo from './TaskFormInfo';
 const create = Form.create;
 // const { toString } = Mention;
 
-// @RestoreScrollTop
+@RestoreScrollTop
 @create({ withRef: true })
 export default class CreateTaskForm extends PureComponent {
 

@@ -27,14 +27,14 @@ export default class SightingTelescope extends PureComponent {
     getLabelPeople: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
     orgId: PropTypes.string.isRequired,
-    isHasAuthorize: PropTypes.bool,
+    isAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
   }
 
   static defaultProps = {
     visible: false,
     switchTo: () => { },
-    isHasAuthorize: false,
+    isAuthorize: false,
     filterModalvisible: false,
   }
 
@@ -55,7 +55,7 @@ export default class SightingTelescope extends PureComponent {
       getLabelPeople,
       storedTaskFlowData,
       orgId,
-      isHasAuthorize,
+      isAuthorize,
       filterModalvisible,
     } = this.props;
     const cls = classnames({
@@ -83,7 +83,7 @@ export default class SightingTelescope extends PureComponent {
             storedData={storedTaskFlowData}
             ref={ref => (this.selectLabelCustRef = ref)}
             orgId={orgId}
-            isHasAuthorize={isHasAuthorize}
+            isAuthorize={isAuthorize}
           />
         </div>
       </div>

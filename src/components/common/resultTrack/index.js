@@ -13,6 +13,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import DropdownSelect from '../dropdownSelect';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
 const EMPTY_LIST = [];
@@ -36,6 +37,7 @@ const trackWindowDateList = [{
 // 跟踪窗口期默认30天
 const defaultTrackWindowDate = '30';
 
+@RestoreScrollTop
 export default class ResultTrack extends PureComponent {
 
   static propTypes = {

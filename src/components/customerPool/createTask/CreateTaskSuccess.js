@@ -13,7 +13,9 @@ import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
 import { navTo } from '../../../utils';
 import Button from '../../common/Button';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
+@RestoreScrollTop
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     successType: PropTypes.bool,

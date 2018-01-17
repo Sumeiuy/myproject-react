@@ -295,10 +295,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
-        missionViewType,
+          pageSize,
+          missionViewType,
         },
       },
     } = this.props;
@@ -744,6 +744,16 @@ export default class PerformerView extends PureComponent {
       // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
+    }, () => {
+      const { mngrMissionDetailInfo: { templateId } } = this.props;
+      // 管理者视图任务反馈统计
+      countAnswersByType({
+        templateId,
+      });
+      // 任务反馈已反馈总数
+      countExamineeByType({
+        templateId,
+      });
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({
@@ -758,14 +768,6 @@ export default class PerformerView extends PureComponent {
       // missionId: '101111171108181',
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
-    });
-    // 管理者视图任务反馈统计
-    countAnswersByType({
-      templateId: 1621,
-    });
-    // 任务反馈已反馈总数
-    countExamineeByType({
-      templateId: 1621,
     });
   }
 

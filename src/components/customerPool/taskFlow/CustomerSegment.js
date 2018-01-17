@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-15 09:36:01
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-17 11:08:18
  * 客户细分组件
  */
 
@@ -68,7 +68,7 @@ export default class CustomerSegment extends PureComponent {
      } = nextProps;
     const { custInfos = EMPTY_LIST } = priviewCustFileData;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
-    const { custTotal: nextTotalCount, pageNum, pageSize } = nextPage;
+    const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
 
     if (custInfos !== nextInfos) {
       // 展示预览数据
