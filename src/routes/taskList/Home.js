@@ -137,6 +137,7 @@ const mapStateToProps = state => ({
   missionFeedbackData: state.performerView.missionFeedbackData,
   // 任务反馈已反馈
   missionFeedbackCount: state.performerView.missionFeedbackCount,
+  attachmentList: state.performerView.attachmentList,
 });
 
 const mapDispatchToProps = {
@@ -257,6 +258,7 @@ export default class PerformerView extends PureComponent {
     countAnswersByType: PropTypes.func.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     countExamineeByType: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -514,6 +516,7 @@ export default class PerformerView extends PureComponent {
       saveAnswersSucce,
       missionFeedbackData,
       missionFeedbackCount,
+      attachmentList,
     } = this.props;
     const {
       query: { currentId },
@@ -565,6 +568,7 @@ export default class PerformerView extends PureComponent {
             answersList={answersList}
             saveAnswersByType={saveAnswersByType}
             saveAnswersSucce={saveAnswersSucce}
+            attachmentList={attachmentList}
           />
         );
         break;

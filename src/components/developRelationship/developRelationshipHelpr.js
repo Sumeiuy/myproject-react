@@ -6,26 +6,17 @@
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 
-/**
+  /**
  * 将后端返回的数据翻译成对应的中文
  * @param {Array} arr 是否投顾入岗
- * @param {flag} flag为true转化为中文作为页面展示，flag为false转化为英文作为入参
  */
-function convertTgFlag(arr, flag) {
+function convertTgFlag(arr) {
   let newArr = [];
   if (arr && arr.length) {
-    newArr = arr.map((item) => {
-      let tgFlag;
-      if (flag) {
-        tgFlag = item.tgFlag === 'Y' ? '是' : '否';
-      } else {
-        tgFlag = item.tgFlag === '是' ? 'Y' : 'N';
-      }
-      return {
-        ...item,
-        tgFlag,
-      };
-    });
+    newArr = arr.map(item => ({
+      ...item,
+      tgFlag: item.tgFlag === 'Y' ? '是' : '否',
+    }));
   }
   return newArr;
 }
@@ -36,7 +27,7 @@ function convertTgFlag(arr, flag) {
 function handleAttachmentData(develop, other, developAttachment, otherAttachment) {
   const developData = {
     attachmentList: develop,
-    title: '开发关系认定书（首次认定时必输）',
+    title: '开发关系认定书（首次认定时必传）',
     uuid: developAttachment,
   };
   const otherData = {

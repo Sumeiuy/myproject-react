@@ -23,7 +23,7 @@ import NewDevelopTeam from './NewDevelopTeam';
 import { seibelConfig } from '../../config';
 import commonHelpr from './developRelationshipHelpr';
 import { emp } from '../../helper';
-import styles from './detail.less';
+import styles from './editForm.less';
 
 // 表头
 const {
@@ -40,14 +40,13 @@ export default class EditForm extends PureComponent {
     // 获取按钮列表和下一步审批人
     buttonList: PropTypes.object.isRequired,
     getButtonList: PropTypes.func.isRequired,
+    // 开发关系认定修改
     handleModifyPrivateApp: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     const { newTeam, developAttachment, otherAttachmnet, develop, other } = props.data;
-    const oldDevelop = _.map(develop, 'attachId');
-    const oldOther = _.map(other, 'attachId');
     this.state = {
       // 附件类型列表
       attachmentTypeList: commonHelpr.handleAttachmentData(develop, other,
@@ -55,10 +54,6 @@ export default class EditForm extends PureComponent {
       remark: '',
       // 审批人弹框
       nextApproverModal: false,
-      // 开发关系附件
-      develop: oldDevelop,
-      // 其他附件
-      other: oldOther,
       // 附件的key
       developAttachment: '',
       // 附件的key
@@ -66,7 +61,7 @@ export default class EditForm extends PureComponent {
       // 下一审批人列表
       nextApproverList: [],
       // 新开发团队列表
-      serverInfo: commonHelpr.convertTgFlag(newTeam, true),
+      serverInfo: newTeam,
       // 下一组ID
       nextGroupId: '',
       // 下一组Name
@@ -89,21 +84,21 @@ export default class EditForm extends PureComponent {
 
   // 更改备注信息
   @autobind
-  handleChangeRemark(e) {
+  handleChangeRemark(value) {
     this.setState({
-      remark: e.target.value,
+      remark: value,
     });
   }
 
   @autobind
-  updateValue(name, value) {
+  handleChangeNewTeam(name, value) {
     this.setState({ [name]: value });
   }
 
   // 文件上传成功
   @autobind
-  handleUploadCallback(attachmentType, attachment, attachId) {
-    const { attachmentTypeList, develop, other } = this.state;
+  handleUploadCallback(attachmentType, attachment) {
+    const { attachmentTypeList } = this.state;
     const newAttachmentTypeList = attachmentTypeList.map((item) => {
       const { type, length } = item;
       if (type === attachmentType) {
@@ -115,29 +110,15 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
-    if (attachmentType === 'develop') {
-      const newDevelop = develop;
-      newDevelop.push(attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        develop: newDevelop,
-        developAttachmnet: attachment,
-      });
-    } else {
-      const newOther = other;
-      newOther.push(attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        other: newOther,
-        otherAttachmnet: attachment,
-      });
-    }
+    this.setState({
+      attachmentTypeList: newAttachmentTypeList,
+    });
   }
 
   // 文件删除成功
   @autobind
-  handleDeleteCallback(attachmentType, attachId) {
-    const { attachmentTypeList, develop, other } = this.state;
+  handleDeleteCallback(attachmentType) {
+    const { attachmentTypeList } = this.state;
     const newAttachmentTypeList = attachmentTypeList.map((item) => {
       const { type, length } = item;
       if (type === attachmentType && length > 0) {
@@ -148,19 +129,9 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
-    if (attachmentType === 'develop') {
-      const newDevelop = _.pull(develop, attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        develop: newDevelop,
-      });
-    } else {
-      const newOther = _.pull(other, attachId);
-      this.setState({
-        attachmentTypeList: newAttachmentTypeList,
-        other: newOther,
-      });
-    }
+    this.setState({
+      attachmentTypeList: newAttachmentTypeList,
+    });
   }
 
   @autobind
@@ -187,12 +158,15 @@ export default class EditForm extends PureComponent {
   @autobind
   submitCreateInfo(item) {
     const { originTeam } = this.props.data;
-    const { serverInfo } = this.state;
+    const { serverInfo, attachmentTypeList } = this.state;
+    const develop = attachmentTypeList[0].length;
     const weighSum = _.sumBy(serverInfo, value => Number(value.weigh));
     if (_.isEmpty(serverInfo)) {
       message.error('新开发团队不能为空');
     } else if (weighSum !== 100) {
       message.error('新开发团队的权重合计必须等于100');
+    } else if (Number(develop) === 0) {
+      message.error('开发关系认定书首次认定时必传');
     } else if (_.isEmpty(originTeam)) {
       this.handleButtonInfo(item);
     } else {
@@ -223,15 +197,7 @@ export default class EditForm extends PureComponent {
   @autobind
   confirmSubmit(value) {
     const { flowId } = this.props.data;
-    const {
-      serverInfo,
-      develop,
-      other,
-      remark,
-      developAttachment,
-      otherAttachment,
-    } = this.state;
-    const empList = commonHelpr.convertTgFlagToParam(serverInfo, false);
+    const { serverInfo, remark, attachmentTypeList } = this.state;
     // 登录人Id，新建私密客户必传
     const empId = emp.getId();
     // 登录人orgId，新建私密客户必传
@@ -240,14 +206,12 @@ export default class EditForm extends PureComponent {
     const queryConfig = {
       flowId,
       remark,
-      empList,
-      develop,
-      other,
+      empList: serverInfo,
       approvalId: !_.isEmpty(value) ? value.login : '',
       empId,
       orgId,
-      developAttachment,
-      otherAttachment,
+      developAttachment: attachmentTypeList[0].uuid,
+      otherAttachment: attachmentTypeList[1].uuid,
       // 下一组ID
       nextGroupId: this.state.nextGroupId,
       nextGroupName: this.state.nextGroupName,
@@ -285,16 +249,14 @@ export default class EditForm extends PureComponent {
       searchShow: false,
     };
     const { remark, attachmentTypeList, serverInfo } = this.state;
-    console.warn('serverInfo', serverInfo);
-    console.warn('attachmentTypeList', attachmentTypeList);
     if (_.isEmpty(this.props.data)) {
       return null;
     }
     // 客户信息
     const custInfo = `${custName} (${custNumber})`;
-    const originTeamData = commonHelpr.convertTgFlag(originTeam, true);
+    const originTeamData = commonHelpr.convertTgFlag(originTeam);
     return (
-      <div className={styles.detailBox}>
+      <div className={styles.editFormBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
@@ -303,7 +265,7 @@ export default class EditForm extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="客户" value={custInfo} />
+                    <InfoItem label="客户" value={custInfo} width="93px" />
                   </li>
                   <li className={styles.item}>
                     <TextareaComponent
@@ -337,7 +299,7 @@ export default class EditForm extends PureComponent {
                   addEmpList={addEmpList}
                   getAddEmpList={getAddEmpList}
                   type="serverInfo"
-                  onChangeNewDevelopTeam={this.updateValue}
+                  onChangeNewDevelopTeam={this.handleChangeNewTeam}
                 />
               </div>
             </div>

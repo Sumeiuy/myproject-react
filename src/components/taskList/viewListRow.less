@@ -127,3 +127,34 @@
       color: #fff;
     }
   }
+  .taskName {
+    margin-right: 130px;
+    .textEllipse;
+  }
+  .progress {
+    width: 120px;
+    float: right;
+    &.active {
+      :global {
+        .ant-progress-line .ant-progress-inner {
+          background-color: #fff;
+        }
+        .progressText {
+          color: #fff;
+        }
+      }
+    }
+    :global {
+      .ant-progress-line {
+        display: block;
+        height: 3px;
+        font-size: 0;
+        line-height: 0;
+      }
+      .ant-progress-outer {
+        height: 3px;
+        font-size: 0;
+        line-height: 0;
+      }
+    }
+  }

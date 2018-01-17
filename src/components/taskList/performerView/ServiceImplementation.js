@@ -64,6 +64,7 @@ export default function ServiceImplementation({
   taskFeedbackList,
   addMotServeRecordSuccess,
   reloadTargetCustInfo,
+  attachmentList,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -88,7 +89,7 @@ export default function ServiceImplementation({
     serviceRecord,
     customerFeedback,
     feedbackDate,
-    attachmentRecord,
+    // attachmentRecord,
     custId,
   } = targetCustDetail;
 
@@ -110,11 +111,11 @@ export default function ServiceImplementation({
     serviceRecord,
     customerFeedback,
     feedbackDate,
-    attachmentRecord,
     custId,
     custUuid,
     missionFlowId,
     motCustfeedBackDict,
+    attachmentList,
   };
   return (
     <div>
@@ -152,6 +153,7 @@ export default function ServiceImplementation({
             deleteFileResult={deleteFileResult}
             addMotServeRecordSuccess={addMotServeRecordSuccess}
             reloadTargetCustInfo={reloadTargetCustInfo}
+            getCeFileList={getCeFileList}
           /> : null
       }
     </div>
@@ -185,6 +187,7 @@ ServiceImplementation.propTypes = {
   taskFeedbackList: PropTypes.array.isRequired,
   addMotServeRecordSuccess: PropTypes.bool.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
+  attachmentList: PropTypes.array.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

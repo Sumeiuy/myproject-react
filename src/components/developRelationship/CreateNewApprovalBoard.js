@@ -209,7 +209,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     } else if (weighSum !== 100) {
       message.error('新开发团队的权重合计必须等于100');
     } else if (Number(develop) === 0) {
-      message.error('开发关系认定书首次认定时必输');
+      message.error('开发关系认定书首次认定时必传');
     } else if (_.isEmpty(oldDevelopTeamList)) {
       this.handleButtonInfo(item);
     } else {
@@ -302,7 +302,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       list={buttonList}
       onEmitEvent={this.submitCreateInfo}
     />);
-    const newOldDevelopTeamList = commonHelpr.convertTgFlag(oldDevelopTeamList, true);
+    const newOldDevelopTeamList = commonHelpr.convertTgFlag(oldDevelopTeamList);
     return (
       <CommonModal
         title="新建开发关系认定"
