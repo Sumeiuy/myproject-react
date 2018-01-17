@@ -46,8 +46,6 @@ import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
-import DevelopRelationshipHome from './routes/developRelationship/Home';
-import DevelopRelationshipEdit from './routes/developRelationship/Edit';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -70,13 +68,6 @@ const routes = [
     component: PermissonHome,
     children: [
       { path: '/edit', component: PermissonEdit },
-    ],
-  },
-  {
-    path: '/developRelationship',
-    component: DevelopRelationshipHome,
-    children: [
-      { path: '/edit', component: DevelopRelationshipEdit },
     ],
   },
   { path: '/contract',
