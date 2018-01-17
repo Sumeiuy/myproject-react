@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
-import { emp } from '../../../helper';
+import { emp, getIconType } from '../../../helper';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
@@ -35,50 +35,13 @@ export default class ServiceRecordItem extends PureComponent {
     };
   }
 
-  renderIconType(name) {
-    const fullName = name.split('.');
-    const suffix = fullName[fullName.length - 1];
-    let iconType = '';
-
-    switch (true) {
-      case /jpg|jpeg|png/.test(suffix):
-        iconType = 'tupian-';
-        break;
-      case /docx?/.test(suffix):
-        iconType = 'word';
-        break;
-      case /xlsx?/.test(suffix):
-        iconType = 'excel2';
-        break;
-      case /pptx?/.test(suffix):
-        iconType = 'ppt';
-        break;
-      case /mp3|wav/.test(suffix):
-        iconType = 'yinpinwenjian';
-        break;
-      case /mov|mp4|avi|3gp|wmv/.test(suffix):
-        iconType = 'shipinwenjian';
-        break;
-      case /txt/.test(suffix):
-        iconType = 'txt';
-        break;
-      case /csv/.test(suffix):
-        iconType = 'CSV';
-        break;
-      default:
-        iconType = 'qitawenjian';
-    }
-    return iconType;
-  }
-
-
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
-      const type = this.renderIconType(item.name);
+      const type = getIconType(item.name);
       return (
         <span title={item.name} className={styles.iconsWords} key={index}>
           <Icon
-            type={this.renderIconType(item.name)}
+            type={type}
             className={classnames({
               [styles[type]]: true,
             })}

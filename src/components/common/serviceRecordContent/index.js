@@ -15,7 +15,7 @@ import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
-import { emp } from '../../../helper';
+import { emp, getIconType } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
@@ -34,6 +34,8 @@ const CURRENT_DATE = moment(new Date(), dateFormat);
 const width = { width: 142 };
 
 const EMPTY_LIST = [];
+
+const NO_HREF = 'javascript:void(0);'; // eslint-disable-line
 
 /**
  * 服务状态转化map
@@ -214,7 +216,7 @@ export default class ServiceRecordContent extends PureComponent {
           // 客户反馈
           customerFeedback,
           // 附件记录
-          attachmentRecord,
+          attachmentList,
         } = formData;
 
         formObject = {
@@ -240,7 +242,7 @@ export default class ServiceRecordContent extends PureComponent {
           serviceContent,
           serviceWayCode,
           customerFeedback,
-          attachmentRecord,
+          attachmentList,
         };
       } else {
         // 当前日期的时间戳
@@ -484,6 +486,39 @@ export default class ServiceRecordContent extends PureComponent {
     );
   }
 
+  /**
+   * 只读的状态下，渲染附件信息
+   */
+  @autobind
+  renderFileList() {
+    const { attachmentList } = this.state;
+    if (_.isEmpty(attachmentList)) {
+      return null;
+    }
+    return (
+      <div className={styles.uploadList}>
+        {
+          attachmentList.map(item => (
+            <div key={item.attachId}>
+              <span>附件:</span>
+              <Icon className={styles.excelIcon} type={getIconType(item.name)} />
+              <span>
+                <a
+                  href={
+                    _.isEmpty(item.attachId) && _.isEmpty(item.name)
+                    ? NO_HREF :
+                    `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+                >
+                  {item.name}
+                </a>
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    );
+  }
+
   render() {
     const {
       dict,
@@ -510,7 +545,7 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey,
       originFileName,
       serviceContent,
-      attachmentRecord,
+      // attachmentRecord,
     } = this.state;
     if (!dict) {
       return null;
@@ -742,17 +777,7 @@ export default class ServiceRecordContent extends PureComponent {
               isSupportUploadMultiple
               onDeleteFile={this.handleDeleteFile}
               deleteFileResult={deleteFileResult}
-            /> :
-            <div className={styles.uploadList}>
-              {
-                !_.isEmpty(attachmentRecord) ?
-                  <div>
-                    <span>附件:</span>
-                    <Icon className={styles.excelIcon} type="excel" />
-                    <span>{attachmentRecord}</span>
-                  </div> : null
-              }
-            </div>
+            /> : this.renderFileList()
           }
         </div>
       </div>

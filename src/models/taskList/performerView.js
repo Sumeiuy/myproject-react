@@ -4,7 +4,7 @@
  * @author hongguangqing
  */
 
-import { performerView as api } from '../../api';
+import { performerView as api, customerPool as custApi } from '../../api';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
@@ -39,6 +39,8 @@ export default {
     addMotServeRecordSuccess: false,
     answersList: {},
     saveAnswersSucce: false,
+    // 执行者视图添加服务记录的附件记录
+    attachmentList: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -132,6 +134,12 @@ export default {
         saveAnswersSucce: payload === 'success',
       };
     },
+    queryFileListSuccess(state, action) {
+      return {
+        ...state,
+        attachmentList: action.payload,
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -181,13 +189,26 @@ export default {
     // 此处接口依赖列表接口返回的数据，列表接口中有数据时才能去查详情，
     // 列表接口中的没有数据时，先查询列表接口
     * queryTargetCustDetail({ payload }, { call, put }) {
-      const { custId } = payload;
-      const { resultData } = yield call(api.queryTargetCustDetail, { custId });
+      // 清空附件记录
+      yield put({
+        type: 'queryFileListSuccess',
+        payload: [],
+      });
+      const { resultData } = yield call(api.queryTargetCustDetail, payload);
       if (resultData) {
         yield put({
           type: 'queryTargetCustDetailSuccess',
           payload: resultData,
         });
+        // 记录信息中attachmentRecord不为空时，根据attachmentRecord 去查询附件信息
+        if (resultData.attachmentRecord) {
+          const { resultData: fileList }
+            = yield call(custApi.ceFileList, { attachment: resultData.attachmentRecord });
+          yield put({
+            type: 'queryFileListSuccess',
+            payload: fileList,
+          });
+        }
       }
     },
     // 添加服务记录

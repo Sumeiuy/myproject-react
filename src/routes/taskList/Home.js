@@ -129,6 +129,7 @@ const mapStateToProps = state => ({
   addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
   answersList: state.performerView.answersList,
   saveAnswersSucce: state.performerView.saveAnswersSucce,
+  attachmentList: state.performerView.attachmentList,
 });
 
 const mapDispatchToProps = {
@@ -243,6 +244,7 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
+    attachmentList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -498,6 +500,7 @@ export default class PerformerView extends PureComponent {
       answersList,
       saveAnswersByType,
       saveAnswersSucce,
+      attachmentList,
     } = this.props;
     const {
       query: { currentId },
@@ -548,6 +551,7 @@ export default class PerformerView extends PureComponent {
             answersList={answersList}
             saveAnswersByType={saveAnswersByType}
             saveAnswersSucce={saveAnswersSucce}
+            attachmentList={attachmentList}
           />
         );
         break;
