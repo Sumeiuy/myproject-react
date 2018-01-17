@@ -8,8 +8,6 @@ import Loading from '../../layouts/Loading';
 
 import styles from './fspComponent.less';
 
-let unmountFlag = false;
-
 export default class FSPComponent extends PureComponent {
   constructor(props) {
     super(props);
@@ -30,12 +28,12 @@ export default class FSPComponent extends PureComponent {
       this.setState({
         loading: true,
       });
-      setTimeout(() => !unmountFlag && this.setState({ loading: false }), 10000);
+      this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
     }
   }
 
   componentWillUnmount() {
-    unmountFlag = true;
+    return this.timeoutId && clearTimeout(this.timeoutId);
   }
 
   @autobind
