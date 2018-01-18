@@ -118,6 +118,7 @@ function Funney({ dataSource, push }) {
             title: '客户管理',
             forceRefresh: true,
           },
+          pathname: '/fsp/customerCenter/customerManage',
         });
       }
     });

@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import localStorage from 'store';
+import store from 'store';
 import FSPUnwrap from './FSPUnwrap';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
@@ -50,6 +50,32 @@ function splitPanesArray(panes, menuWidth) {
   };
 }
 
+// 获取本地保存的tab菜单
+function getLocalPanes(pathname) {
+  if (enableLocalStorage) {
+    return store.get('pathname') === pathname ?
+      store.get('panes') :
+      [];
+  }
+  return [];
+}
+
+// storeTabInfo 内部逻辑抽象的方法,条件满足执行callback
+function tureAndstore(item, callback) {
+  if (item) {
+    callback(item);
+  }
+}
+
+// 用来本地缓存tab信息的方法函数
+function storeTabInfo({ activeKey, panes, pathname }) {
+  if (enableLocalStorage) {
+    tureAndstore(activeKey, store.set.bind(store, 'activeKey'));
+    tureAndstore(panes, store.set.bind(store, 'panes'));
+    tureAndstore(pathname, store.set.bind(store, 'pathname'));
+  }
+}
+
 @withRouter
 export default class Tab extends PureComponent {
   static propTypes = {
@@ -62,34 +88,45 @@ export default class Tab extends PureComponent {
 
   constructor(props) {
     super(props);
+    // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
+    // 刷新操作会使用保存的当前tab
+    let reloadKey;
     const { location: { pathname, query } } = props;
     // 根据当前路由找到对应的tabpane
     const config = this.getConfig(pathname);
+
     // 这里获取到的location对应的pane配置只可能是0或者1个
     // 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
     let panes = this.getPanesWithPathname(pathname, query);
-    const localPanes = enableLocalStorage ? localStorage.get('panes') : [];
-    const isPaneInLocal = isPaneInArray(panes, localPanes);
+
+    // 如果开启了本地缓存，则支持刷新后保持打开的tab菜单状态
+    const localPanes = getLocalPanes(pathname);
     const isDefaultpane = isPaneInArray(panes, menuConfig);
-    // 默认tab必须得出现
-    if (!isDefaultpane && isPaneInLocal) {
+
+    // 如果是刷新操作，获取相应的reloadKey
+    if (localPanes.length !== 0) {
+      reloadKey = store.get('activeKey');
+    }
+
+    // 如果是刷新操作
+    if (reloadKey) {
       panes = [
         ...localPanes,
       ];
-    } else if (!isDefaultpane) {
+    } else if (!isDefaultpane) { // 如果不是刷新操作，而且不是默认的tab
       panes = [
         ...menuConfig,
         ...panes,
       ];
-    } else if (isDefaultpane) {
+    } else if (isDefaultpane) { // 如果是默认的tab
       panes = menuConfig;
     }
 
     this.state = {
       forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
       panes,
-      activeKey: (config && config.id) || indexPaneKey,
+      activeKey: reloadKey || (config && config.id) || indexPaneKey,
     };
   }
 
@@ -102,21 +139,32 @@ export default class Tab extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { pathname, query, state } } = nextProps;
     const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
+    let panes = [];
+    let config = {};
     if (!shouldStay) {
       if (pathname !== this.props.location.pathname) {
-        const config = this.getConfig(pathname);
-        let panes = this.getPanesWithPathname(pathname, query, shouldRemove);
+        config = this.getConfig(pathname);
+        panes = this.getPanesWithPathname(pathname, query, shouldRemove);
         if (addPanes || removePanes) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
-        if (enableLocalStorage) {
-          localStorage.set('panes', panes);
-        }
+        // 保存tab菜单信息
+        storeTabInfo({
+          activeKey: (activeKey || config.id),
+          panes,
+          pathname,
+        });
+
         this.setState({
           panes,
           activeKey: activeKey || config.id,
         });
       }
+    } else if (enableLocalStorage) {
+      // 保存tab菜单信息
+      storeTabInfo({
+        pathname,
+      });
     }
   }
 
@@ -172,6 +220,10 @@ export default class Tab extends PureComponent {
     } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
       pane = changePanes.find(item => item.id === activeKey);
     }
+    // 将tab信息保存到本地
+    storeTabInfo({
+      panes: changePanes,
+    });
     if (isBlockRemovePane) {
       const shouldJumpPane = window.confirm(`请确定你要跳转到 ${pane.path}，未保存的数据会丢失!`); // eslint-disable-line
       if (shouldJumpPane) {
@@ -204,7 +256,16 @@ export default class Tab extends PureComponent {
 
   // 从配置文件中获取pathname对应的tabPane对象
   getConfig(pathname) {
-    return _.find(tabConfig, pane => pathname.indexOf(pane.path) !== -1);
+    // 获取pathname的匹配数组
+    const matchArray = _.map(tabConfig, (pane) => {
+      const match = RegExp(pane.path).exec(pathname);
+      return !match ? 0 : match[0].length;
+    });
+    // 最佳匹配下标
+    const index = _.indexOf(matchArray, _.max(matchArray));
+
+    // 如果没找到匹配的tab菜单，会默认首页菜单展示
+    return tabConfig[index];
   }
 
   // 根据pathname获取一个初步的pane数组

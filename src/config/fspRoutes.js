@@ -7,7 +7,8 @@
 const fspRoutes = [
   // 任务中心
   {
-    path: 'motTask',
+    path: '/motTask',
+    action: 'loadInTab',
     url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
   },
   {
@@ -48,7 +49,7 @@ const fspRoutes = [
   {
     path: '/customerCenter/customerManage',
     action: 'loadInTab',
-    url: 'customer/manage/showCustManageTabWin',
+    url: '/customer/manage/showCustManageTabWin',
   },
   {
     path: 'customerDetail',
@@ -115,7 +116,8 @@ const fspRoutes = [
   },
   // 消息中心
   {
-    path: 'messageCenter',
+    path: '/messageCenter',
+    action: 'loadInTab',
     url: '/messgeCenter',
   },
   // 产品中心

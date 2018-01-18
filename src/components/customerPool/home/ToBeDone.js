@@ -115,7 +115,7 @@ export default class PerformanceIndicators extends PureComponent {
     dispatchTabPane({
       fspAction: 'myMotTask',
       routerAction: push,
-      url: '/task/fspmotTask',
+      url: '/fsp/motTask',
     });
   }
 
@@ -132,6 +132,7 @@ export default class PerformanceIndicators extends PureComponent {
     openFspTab({
       routerAction: push,
       url: notificationUrl,
+      pathname: '/fsp/messgeCenter',
       param: notificationParam,
     });
   }

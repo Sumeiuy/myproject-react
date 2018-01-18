@@ -197,56 +197,52 @@ export default class Main extends PureComponent {
             onIsolationWallModalShow={this.handleIsolationWallModalShow}
           />
           <div className={styles.main}>
-            <div id="react-content" className={styles.content}>
-              <Tab
-                location={location}
-                push={push}
-                loading={loading}
-                loadingForceFull={loadingForceFull}
-                isBlockRemovePane={isBlockRemovePane}
-              >
-                <div>
-                  {
-                    (!_.isEmpty(interfaceState) &&
-                      !interfaceState[effects.dictionary] &&
-                      !interfaceState[effects.customerScope] &&
-                      !interfaceState[effects.empInfo]) ?
-                        <div>
-                          {children}
-                          <ConnectedCreateServiceRecord
-                            handleCloseClick={handleCloseClick}
-                            loading={interfaceState[effects.addServeRecord]}
-                            key={serviceRecordModalVisibleOfId}
-                            id={serviceRecordModalVisibleOfId}
-                            name={serviceRecordModalVisibleOfName}
-                            dict={dict}
-                            empInfo={empInfo}
-                            isShow={serviceRecordModalVisible}
-                            addServeRecord={addServeRecord}
-                            addServeRecordSuccess={addServeRecordSuccess}
-                            onToggleServiceRecordModal={toggleServiceRecordModal}
-                            custUuid={custUuid}
-                            ceFileDelete={ceFileDelete}
-                            taskFeedbackList={taskFeedbackList}
-                          />
-                          <Footer />
-                        </div>
-                        :
-                        null
-                  }
-                </div>
-              </Tab>
-            </div>
+            <Tab
+              location={location}
+              push={push}
+              loading={loading}
+              loadingForceFull={loadingForceFull}
+              isBlockRemovePane={isBlockRemovePane}
+            >
+              {
+                (!_.isEmpty(interfaceState) &&
+                  !interfaceState[effects.dictionary] &&
+                  !interfaceState[effects.customerScope] &&
+                  !interfaceState[effects.empInfo]) ?
+                    <div id="react-content" className={styles.content}>
+                      {React.isValidElement(children) ? children : <div />}
+                    </div>
+                  :
+                    <div />
+              }
+              <Footer />
+            </Tab>
+            <ConnectedCreateServiceRecord
+              handleCloseClick={handleCloseClick}
+              loading={interfaceState[effects.addServeRecord]}
+              key={serviceRecordModalVisibleOfId}
+              id={serviceRecordModalVisibleOfId}
+              name={serviceRecordModalVisibleOfName}
+              dict={dict}
+              empInfo={empInfo}
+              isShow={serviceRecordModalVisible}
+              addServeRecord={addServeRecord}
+              addServeRecordSuccess={addServeRecordSuccess}
+              onToggleServiceRecordModal={toggleServiceRecordModal}
+              custUuid={custUuid}
+              ceFileDelete={ceFileDelete}
+              taskFeedbackList={taskFeedbackList}
+            />
+            <Modal
+              title="隔离墙"
+              visible={this.state.isolationWallModalVisible}
+              onCancel={this.handleIsolationWallModalHide}
+            >
+              <span>股票代码：</span>
+              <Input />
+            </Modal>
           </div>
         </div>
-        <Modal
-          title="隔离墙"
-          visible={this.state.isolationWallModalVisible}
-          onCancel={this.handleIsolationWallModalHide}
-        >
-          <span>股票代码：</span>
-          <Input />
-        </Modal>
       </div>
     );
   }

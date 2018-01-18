@@ -8,6 +8,42 @@ import _ from 'lodash';
 
 const menus = [
   {
+    name: '自建任务',
+    id: 'FSP_CUSTOMER_CREATETASK',
+    path: '/customerPool/createTask',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '客户列表',
+    id: 'FSP_CUSTOMER_LIST',
+    path: '/customerPool/list',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '待办流程',
+    id: 'FSP_TODO',
+    path: '/customerPool/todo',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '资讯列表',
+    id: 'FSP_VIEWPOINT',
+    path: '/customerPool/viewpoint',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '消息提醒',
+    id: 'FSP_MESSAGE',
+    path: '/fsp/messageCenter',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: 'MOT任务',
+    id: 'FSP_MOT_TASK',
+    path: '/fsp/motTask',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
     name: '首页',
     id: 'FSP_NEW_HOMEPAGE',
     path: '/customerPool',
