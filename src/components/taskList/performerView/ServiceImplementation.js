@@ -4,9 +4,11 @@
  * @description 执行者视图右侧详情的服务实施模块
  */
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { message } from 'antd';
 
 import TargetCustomer from './TargetCustomer';
 import ServiceRecordForm from './ServiceRecordForm';
@@ -16,6 +18,15 @@ import ServiceRecordForm from './ServiceRecordForm';
 // 未开始  10
 // 此处code码待修改
 const EDITABLE = ['10', '20'];
+
+// 目标客户的任务状态
+// 处理中 20
+// 完成   30
+const missionStatusMap = {
+  20: '处理中',
+  30: '完成',
+};
+
 
 /**
  * 将数组对象中的id和name转成对应的key和value
@@ -35,131 +46,200 @@ function transformCustFeecbackData(arr = []) {
   });
 }
 
-export default function ServiceImplementation({
-  currentId,
-  dict,
-  addServeRecord,
-  isFold,
-  list,
-  handleCollapseClick,
-  getServiceRecord,
-  serviceRecordData,
-  getCustIncome,
-  monthlyProfits,
-  custIncomeReqState,
-  targetCustDetail,
-  changeParameter,
-  parameter: {
-    targetCustId = '',
-  },
-  queryCustUuid,
-  custUuid,
-  getCustDetail,
-  serviceTypeCode,
-  serviceTypeName,
-  ceFileDelete,
-  getCeFileList,
-  filesList,
-  deleteFileResult,
-  taskFeedbackList,
-  addMotServeRecordSuccess,
-  reloadTargetCustInfo,
-  attachmentList,
-}) {
-  // 获取当前选中的数据的custId
-  const currentCustId = targetCustId || (list[0] || {}).custId;
-  // if (targetCustomerState) {
+export default class ServiceImplementation extends PureComponent {
 
-  // }
-  const currentCustomer = _.find(list, o => o.custId === currentCustId);
-  let serviceStatusName = '';
-  let serviceStatusCode = '';
-  let missionFlowId = '';
-  if (currentCustomer) {
-    serviceStatusCode = currentCustomer.missionStatusCode;
-    serviceStatusName = currentCustomer.missionStatusValue;
-    missionFlowId = currentCustomer.missionFlowId;
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: props.list,
+      targetCustDetail: props.targetCustDetail,
+    };
   }
 
-  // 处理中 和 未开始 时表单可编辑
-  const isReadOnly = !_.includes(EDITABLE, serviceStatusCode);
-  const {
-    serviceTips,
-    serviceWayName,
-    serviceWayCode,
-    serviceDate,
-    serviceRecord,
-    customerFeedback,
-    feedbackDate,
-    // attachmentRecord,
-    custId,
-  } = targetCustDetail;
-  // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
-  const motCustfeedBackDict = [{
-    key: String(serviceTypeCode),
-    value: serviceTypeName,
-    children: transformCustFeecbackData(taskFeedbackList),
-  }];
-  // 服务记录的props
-  const serviceReocrd = {
-    serviceTips,
-    serviceWayName,
-    serviceWayCode,
-    serviceStatusName,
-    serviceStatusCode,
-    taskFeedbackList,
-    serviceDate,
-    serviceRecord,
-    customerFeedback,
-    feedbackDate,
-    custId,
-    custUuid,
-    missionFlowId,
-    motCustfeedBackDict,
-    attachmentList,
-  };
-  return (
-    <div>
-      <TargetCustomer
-        list={list}
-        currentId={currentId}
-        isFold={isFold}
-        currentCustId={currentCustId}
-        handleCollapseClick={handleCollapseClick}
-        dict={dict}
-        getServiceRecord={getServiceRecord}
-        serviceRecordData={serviceRecordData}
-        getCustIncome={getCustIncome}
-        custIncomeReqState={custIncomeReqState}
-        monthlyProfits={monthlyProfits}
-        targetCustDetail={targetCustDetail}
-        changeParameter={changeParameter}
-        queryCustUuid={queryCustUuid}
-        getCustDetail={getCustDetail}
-        getCeFileList={getCeFileList}
-        filesList={filesList}
-      />
-      {
-        !_.isEmpty(taskFeedbackList)
-          && !_.isEmpty(motCustfeedBackDict)
-          ? <ServiceRecordForm
-            dict={dict}
-            addServeRecord={addServeRecord}
-            isReadOnly={isReadOnly}
-            isEntranceFromPerformerView
-            isFold={isFold}
-            queryCustUuid={queryCustUuid}
-            custUuid={custUuid}
-            formData={serviceReocrd}
-            ceFileDelete={ceFileDelete}
-            deleteFileResult={deleteFileResult}
-            addMotServeRecordSuccess={addMotServeRecordSuccess}
-            reloadTargetCustInfo={reloadTargetCustInfo}
-            getCeFileList={getCeFileList}
-          /> : null
-      }
-    </div>
-  );
+  componentWillReceiveProps(nextProps) {
+    const { targetCustDetail, list } = this.props;
+    const {
+      targetCustDetail: nextTargetCustDetail,
+      list: nextList,
+    } = nextProps;
+    if (nextTargetCustDetail !== targetCustDetail) {
+      this.setState({
+        targetCustDetail: nextTargetCustDetail,
+      });
+    }
+    if (nextList !== list) {
+      this.setState({
+        list: nextList,
+      });
+    }
+  }
+
+  @autobind
+  addServiceRecord(postBody) {
+    const {
+      addServeRecord,
+      reloadTargetCustInfo,
+    } = this.props;
+    // 执行提交服务记录的接口
+    addServeRecord(postBody)
+      .then(() => {
+        if (this.props.addMotServeRecordSuccess) {
+          // 服务记录添加成功后重新获取目标客户列表的信息
+          reloadTargetCustInfo(() => this.updateList(postBody));
+          // this.updateList(postBody);
+          message.success('添加服务记录成功');
+        }
+      });
+  }
+
+  @autobind
+  updateList({ custId, flowStatus }) {
+    const { list } = this.state;
+    const currentItem = _.find(list, o => o.custId === custId);
+    const currentItemIndex = _.findIndex(list, o => o.custId === custId);
+    const newCurrentItem = {
+      ...currentItem,
+      missionStatusCode: flowStatus,
+      missionStatusValue: missionStatusMap[+flowStatus],
+    };
+    const newList = [...list];
+    newList[currentItemIndex] = newCurrentItem;
+    this.setState({
+      list: [...newList],
+    });
+  }
+
+  render() {
+    const {
+      list,
+      targetCustDetail,
+    } = this.state;
+    const {
+      currentId,
+      dict,
+      // addServeRecord,
+      isFold,
+      // list,
+      handleCollapseClick,
+      getServiceRecord,
+      serviceRecordData,
+      getCustIncome,
+      monthlyProfits,
+      custIncomeReqState,
+      // targetCustDetail,
+      changeParameter,
+      parameter: {
+        targetCustId = '',
+      },
+      queryCustUuid,
+      custUuid,
+      getCustDetail,
+      serviceTypeCode,
+      serviceTypeName,
+      ceFileDelete,
+      getCeFileList,
+      filesList,
+      deleteFileResult,
+      taskFeedbackList,
+      addMotServeRecordSuccess,
+      reloadTargetCustInfo,
+      attachmentList,
+    } = this.props;
+    // 获取当前选中的数据的custId
+    const currentCustId = targetCustId || (list[0] || {}).custId;
+    // if (targetCustomerState) {
+
+    // }
+    const currentCustomer = _.find(list, o => o.custId === currentCustId);
+    let serviceStatusName = '';
+    let serviceStatusCode = '';
+    let missionFlowId = '';
+    if (currentCustomer) {
+      serviceStatusCode = currentCustomer.missionStatusCode;
+      serviceStatusName = currentCustomer.missionStatusValue;
+      missionFlowId = currentCustomer.missionFlowId;
+    }
+
+    // 处理中 和 未开始 时表单可编辑
+    const isReadOnly = !_.includes(EDITABLE, serviceStatusCode);
+    const {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      // attachmentRecord,
+      custId,
+    } = targetCustDetail;
+    // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
+    const motCustfeedBackDict = [{
+      key: String(serviceTypeCode),
+      value: serviceTypeName,
+      children: transformCustFeecbackData(taskFeedbackList),
+    }];
+    // 服务记录的props
+    const serviceReocrd = {
+      serviceTips,
+      serviceWayName,
+      serviceWayCode,
+      serviceStatusName,
+      serviceStatusCode,
+      taskFeedbackList,
+      serviceDate,
+      serviceRecord,
+      customerFeedback,
+      feedbackDate,
+      custId,
+      custUuid,
+      missionFlowId,
+      motCustfeedBackDict,
+      attachmentList,
+    };
+    return (
+      <div>
+        <TargetCustomer
+          list={list}
+          currentId={currentId}
+          isFold={isFold}
+          currentCustId={currentCustId}
+          handleCollapseClick={handleCollapseClick}
+          dict={dict}
+          getServiceRecord={getServiceRecord}
+          serviceRecordData={serviceRecordData}
+          getCustIncome={getCustIncome}
+          custIncomeReqState={custIncomeReqState}
+          monthlyProfits={monthlyProfits}
+          targetCustDetail={targetCustDetail}
+          changeParameter={changeParameter}
+          queryCustUuid={queryCustUuid}
+          getCustDetail={getCustDetail}
+          getCeFileList={getCeFileList}
+          filesList={filesList}
+        />
+        {
+          !_.isEmpty(taskFeedbackList)
+            && !_.isEmpty(motCustfeedBackDict)
+            ? <ServiceRecordForm
+              dict={dict}
+              addServeRecord={this.addServiceRecord}
+              isReadOnly={isReadOnly}
+              isEntranceFromPerformerView
+              isFold={isFold}
+              queryCustUuid={queryCustUuid}
+              custUuid={custUuid}
+              formData={serviceReocrd}
+              ceFileDelete={ceFileDelete}
+              deleteFileResult={deleteFileResult}
+              addMotServeRecordSuccess={addMotServeRecordSuccess}
+              reloadTargetCustInfo={reloadTargetCustInfo}
+              getCeFileList={getCeFileList}
+            /> : null
+        }
+      </div>
+    );
+  }
 }
 
 ServiceImplementation.propTypes = {

@@ -377,7 +377,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '' }) {
+  getCustDetail({ missionId = '', custId = '', callback }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = [] } = targetCustList;
     if (_.isEmpty(list)) {
@@ -386,7 +386,7 @@ export default class PerformerView extends PureComponent {
     queryTargetCustDetail({
       missionId,
       custId: custId || (list[0] || EMPTY_OBJECT).custId,
-    });
+    }).then(callback);
   }
 
   // 查询不同视图的详情信息
