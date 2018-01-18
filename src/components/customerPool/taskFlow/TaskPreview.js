@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-17 17:14:35
+ * @Last Modified time: 2018-01-18 15:50:36
  */
 
 import React, { PureComponent } from 'react';
@@ -197,14 +197,12 @@ export default class TaskPreview extends PureComponent {
 
     if (operationKey === 'COMPLETE') {
       indicatorText = `完善${indicatorLevel2Value}`;
-    } else if (unit === '%') {
-      indicatorText = `${indicatorLevel2Value || ''}${operationValue || ''}${inputIndicator || ''}%`;
     } else if (operationKey === 'OPEN') {
       indicatorText = `开通${indicatorLevel2Value}`;
     } else if (operationKey === 'TRUE') {
       indicatorText = `${indicatorLevel2Value}，状态：是`;
-    } else if (isHasSearchedProduct) {
-      indicatorText = `${indicatorLevel2Value || ''}${currentSelectedProduct.aliasName || ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
+    } else {
+      indicatorText = `${indicatorLevel2Value || ''}${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
     }
 
     return indicatorText;

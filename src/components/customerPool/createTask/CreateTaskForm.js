@@ -17,8 +17,8 @@ import TaskFormInfo from './TaskFormInfo';
 const create = Form.create;
 // const { toString } = Mention;
 
-@RestoreScrollTop
 @create({ withRef: true })
+@RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
 
   static propTypes = {

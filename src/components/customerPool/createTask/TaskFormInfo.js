@@ -249,7 +249,7 @@ export default class TaskFormInfo extends PureComponent {
           suggestions={suggestions}
           getSuggestionContainer={() => this.fatherMention}
           multiLines
-          defaultValue={defaultMissionDesc}
+          defaultValue={toContentState(defaultMissionDesc)}
           onChange={this.handleMentionChange}
           onBlur={this.handleMentionBlur}
         />
