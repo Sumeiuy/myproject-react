@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
-import FSPUnwrap from './FSPUnwrap';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
 import tabConfig, { indexPaneKey } from '../../../src/config/tabMenu';
@@ -79,10 +78,8 @@ function storeTabInfo({ activeKey, panes, pathname }) {
 @withRouter
 export default class Tab extends PureComponent {
   static propTypes = {
-    children: PropTypes.node.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
     isBlockRemovePane: PropTypes.bool.isRequired,
   }
 
@@ -90,27 +87,22 @@ export default class Tab extends PureComponent {
     super(props);
     // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
-    // 刷新操作会使用保存的当前tab
-    let reloadKey;
     const { location: { pathname, query } } = props;
     // 根据当前路由找到对应的tabpane
     const config = this.getConfig(pathname);
 
     // 这里获取到的location对应的pane配置只可能是0或者1个
     // 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
-    let panes = this.getPanesWithPathname(pathname, query);
-
+    let panes = this.getPanesWithPathname(pathname, query).panes;
     // 如果开启了本地缓存，则支持刷新后保持打开的tab菜单状态
     const localPanes = getLocalPanes(pathname);
     const isDefaultpane = isPaneInArray(panes, menuConfig);
 
     // 如果是刷新操作，获取相应的reloadKey
-    if (localPanes.length !== 0) {
-      reloadKey = store.get('activeKey');
-    }
+    const reloadKey = localPanes.length && store.get('activeKey');
 
-    // 如果是刷新操作
-    if (reloadKey) {
+
+    if (reloadKey) { // 如果是刷新操作
       panes = [
         ...localPanes,
       ];
@@ -119,7 +111,7 @@ export default class Tab extends PureComponent {
         ...menuConfig,
         ...panes,
       ];
-    } else if (isDefaultpane) { // 如果是默认的tab
+    } else if (isDefaultpane) { // 如果是默认的tab,则只显示默认即可
       panes = menuConfig;
     }
 
@@ -139,16 +131,18 @@ export default class Tab extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { pathname, query, state } } = nextProps;
     const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
-    let panes = [];
-    let config = {};
     if (!shouldStay) {
       if (pathname !== this.props.location.pathname) {
-        config = this.getConfig(pathname);
-        panes = this.getPanesWithPathname(pathname, query, shouldRemove);
-        if (addPanes || removePanes) {
+        const config = this.getConfig(pathname);
+        const paneObj = this.getPanesWithPathname(pathname, query, shouldRemove);
+        let panes = paneObj.panes;
+        if ((addPanes && addPanes.length) || (removePanes && removePanes.length)) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
-        const finalActiveKey = (activeKey || config.id || this.state.activeKey);
+
+        const finalActiveKey = (
+          activeKey || paneObj.newActiveKey || config.id || this.state.activeKey);
+
         // 保存tab菜单信息
         storeTabInfo({
           activeKey: finalActiveKey,
@@ -162,19 +156,24 @@ export default class Tab extends PureComponent {
         });
       }
     } else { // 如果shouldStay为true
-      const shouldStayPanes = this.getStayPanes(addPanes, pathname, query);
+      // 如果传递了addPanes参数，则需要修正panes数组
+      const shouldStayPanes = addPanes ?
+        this.getStayPanes(addPanes, pathname, query) :
+        null;
 
-      if (enableLocalStorage) {
-        // 保存tab菜单信息
-        storeTabInfo({
+      if (shouldStayPanes) {
+        if (enableLocalStorage) {
+          // 保存tab菜单信息
+          storeTabInfo({
+            panes: shouldStayPanes,
+            pathname,
+          });
+        }
+
+        this.setState({
           panes: shouldStayPanes,
-          pathname,
         });
       }
-
-      this.setState({
-        panes: shouldStayPanes,
-      });
     }
   }
 
@@ -267,7 +266,7 @@ export default class Tab extends PureComponent {
   // 从配置文件中获取pathname对应的tabPane对象
   getConfig(pathname) {
     // 获取pathname的匹配数组
-    const matchArray = _.map(tabConfig, (pane) => {
+    const matchArray = tabConfig.map((pane) => {
       const match = RegExp(pane.path).exec(pathname);
       return !match ? 0 : match[0].length;
     });
@@ -276,7 +275,7 @@ export default class Tab extends PureComponent {
     // 最佳匹配下标
     const index = _.indexOf(matchArray, maxMatchStringCount);
     // 如果没找到匹配的tab菜单，会默认首页菜单展示
-    return tabConfig[index];
+    return { ...tabConfig[index] };
   }
 
   // 根据pathname获取一个初步的pane数组
@@ -286,24 +285,39 @@ export default class Tab extends PureComponent {
     if (shouldRemove) {
       panes = panes.filter(pane => pane.id !== activeKey);
     }
-    const paneConf = this.getConfig(pathname);
-    if (!_.isEmpty(paneConf)) {
-      const isExists = panes.find(item => item.id === paneConf.id);
-      paneConf.query = query;
-      if (!isExists) {
-        panes.push(paneConf);
-      } else {
-        panes.map((pane) => {
-          if (pane.id === paneConf.id) {
-            return paneConf;
-          }
-          return pane;
-        });
+    // 在state中查找完全匹配的pane信息
+    const statePane = _.find(panes, pane => pane.path === pathname);
+    const newActiveKey = statePane && statePane.id;
+    if (!statePane) {
+      // 在本地找pane信息
+      const paneConf = this.getConfig(pathname);
+      if (!_.isEmpty(paneConf)) {
+        const isExists = panes.find(item => item.id === paneConf.id);
+        paneConf.query = query;
+        if (!isExists) {
+          panes.push(paneConf);
+        } else {
+          panes = panes.map((pane) => {
+            if (pane.id === paneConf.id) {
+              return paneConf;
+            }
+            return pane;
+          });
+        }
       }
+    } else {
+      statePane.query = query;
+      panes = panes.map((pane) => {
+        if (pane.id === statePane.id) {
+          return statePane;
+        }
+        return pane;
+      });
     }
-    return panes;
+    return { panes, newActiveKey };
   }
 
+  // 如果设置了shouldStay标志，使用这个
   getStayPanes(editPanes, pathname, query) {
     const { panes } = this.state;
     const finalPanes = _.map(panes, (pane) => {
@@ -326,18 +340,15 @@ export default class Tab extends PureComponent {
     // 将panes数组划分为两个数组，一个是视口可以容纳的tab，一个是放在更多下拉菜单中的tab
     const finalpanesObj = splitPanesArray(panes, this.menuWidth);
     return (
-      <div>
-        <TabMenu
-          mainArray={finalpanesObj.mainArray}
-          moreMenuObject={finalpanesObj.moreMenuObject}
-          onChange={this.onChange}
-          activeKey={activeKey}
-          onRemove={this.onRemove}
-          push={push}
-          path={location.pathname}
-        />
-        <FSPUnwrap path={location.pathname} {...this.props} />
-      </div>
+      <TabMenu
+        mainArray={finalpanesObj.mainArray}
+        moreMenuObject={finalpanesObj.moreMenuObject}
+        onChange={this.onChange}
+        activeKey={activeKey}
+        onRemove={this.onRemove}
+        push={push}
+        path={location.pathname}
+      />
     );
   }
 }

@@ -16,7 +16,7 @@ import { Modal, Input } from 'antd';
 import Header from './Header';
 import Footer from './Footer';
 import Tab from '../components/layout/Tab';
-
+import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/ConnectedCreateServiceRecord';
 
@@ -200,9 +200,12 @@ export default class Main extends PureComponent {
             <Tab
               location={location}
               push={push}
+              isBlockRemovePane={isBlockRemovePane}
+            />
+            <FSPUnwrap
+              path={location.pathname}
               loading={loading}
               loadingForceFull={loadingForceFull}
-              isBlockRemovePane={isBlockRemovePane}
             >
               {
                 (!_.isEmpty(interfaceState) &&
@@ -216,7 +219,7 @@ export default class Main extends PureComponent {
                     <div />
               }
               <Footer />
-            </Tab>
+            </FSPUnwrap>
             <ConnectedCreateServiceRecord
               handleCloseClick={handleCloseClick}
               loading={interfaceState[effects.addServeRecord]}
