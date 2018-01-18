@@ -52,21 +52,14 @@ export default class ServiceImplementation extends PureComponent {
     super(props);
     this.state = {
       list: props.list,
-      targetCustDetail: props.targetCustDetail,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { targetCustDetail, list } = this.props;
+    const { list } = this.props;
     const {
-      targetCustDetail: nextTargetCustDetail,
       list: nextList,
     } = nextProps;
-    if (nextTargetCustDetail !== targetCustDetail) {
-      this.setState({
-        targetCustDetail: nextTargetCustDetail,
-      });
-    }
     if (nextList !== list) {
       this.setState({
         list: nextList,
@@ -92,6 +85,7 @@ export default class ServiceImplementation extends PureComponent {
       });
   }
 
+  // 更新组件state的list信息
   @autobind
   updateList({ custId, flowStatus }) {
     const { list } = this.state;
@@ -112,7 +106,6 @@ export default class ServiceImplementation extends PureComponent {
   render() {
     const {
       list,
-      targetCustDetail,
     } = this.state;
     const {
       currentId,
@@ -126,7 +119,7 @@ export default class ServiceImplementation extends PureComponent {
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
-      // targetCustDetail,
+      targetCustDetail,
       changeParameter,
       parameter: {
         targetCustId = '',
