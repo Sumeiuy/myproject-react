@@ -148,22 +148,32 @@ export default class Tab extends PureComponent {
         if (addPanes || removePanes) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
+        const finalActiveKey = (activeKey || config.id || this.state.activeKey);
         // 保存tab菜单信息
         storeTabInfo({
-          activeKey: (activeKey || config.id),
+          activeKey: finalActiveKey,
           panes,
           pathname,
         });
 
         this.setState({
           panes,
-          activeKey: activeKey || config.id,
+          activeKey: finalActiveKey,
         });
       }
-    } else if (enableLocalStorage) {
-      // 保存tab菜单信息
-      storeTabInfo({
-        pathname,
+    } else { // 如果shouldStay为true
+      const shouldStayPanes = this.getStayPanes(addPanes, pathname, query);
+
+      if (enableLocalStorage) {
+        // 保存tab菜单信息
+        storeTabInfo({
+          panes: shouldStayPanes,
+          pathname,
+        });
+      }
+
+      this.setState({
+        panes: shouldStayPanes,
       });
     }
   }
@@ -261,9 +271,10 @@ export default class Tab extends PureComponent {
       const match = RegExp(pane.path).exec(pathname);
       return !match ? 0 : match[0].length;
     });
+    // 获取匹配数组里面最大的匹配字符数
+    const maxMatchStringCount = _.max(matchArray);
     // 最佳匹配下标
-    const index = _.indexOf(matchArray, _.max(matchArray));
-
+    const index = _.indexOf(matchArray, maxMatchStringCount);
     // 如果没找到匹配的tab菜单，会默认首页菜单展示
     return tabConfig[index];
   }
@@ -291,6 +302,22 @@ export default class Tab extends PureComponent {
       }
     }
     return panes;
+  }
+
+  getStayPanes(editPanes, pathname, query) {
+    const { panes } = this.state;
+    const finalPanes = _.map(panes, (pane) => {
+      const editPane = pane;
+      if (pane.id === editPanes[0].id) {
+        editPane.name = editPanes[0].name;
+        editPane.path = pathname;
+        editPane.query = query;
+        return editPane;
+      }
+      return pane;
+    });
+
+    return finalPanes;
   }
 
   render() {

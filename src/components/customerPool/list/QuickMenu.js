@@ -133,7 +133,17 @@ export default class QuickMenu extends PureComponent {
       fr,
     };
     const url = '/customerPool/customerGroup';
-    goGroupOrTask({ id: 'RCT_FSP_CUSTOMER_LIST', title: '新建分组', url, obj });
+    goGroupOrTask({
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      title: '新建分组',
+      url,
+      obj,
+      shouldStay: true,
+      addPanes: [{
+        id: 'FSP_CUSTOMER_LIST',
+        name: '新建分组',
+      }],
+    });
   }
 
   render() {

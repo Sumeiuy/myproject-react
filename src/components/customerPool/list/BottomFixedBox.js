@@ -84,7 +84,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick(url, title, id) {
+  handleClick(url, title, id, shouldStay, addPanes) {
     const {
       page,
       condition,
@@ -92,8 +92,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -112,14 +112,26 @@ export default class BottomFixedBox extends PureComponent {
         entertype,
         source,
         fr,
+        shouldStay,
+        addPanes,
       );
     } else if (selectAll) {
-      this.openByAllSelect(url, condition, page.total, title, id, entertype, source, fr);
+      this.openByAllSelect(url,
+        condition, page.total, title, id, entertype, source, fr, shouldStay, addPanes);
     }
   }
 
   @autobind
-  handleCustomerGroupClick(url, title, id) {
+  handleCustomerGroupClick() {
+    const url = '/customerPool/customerGroup';
+    const title = '新建分组';
+    const id = 'RCT_FSP_CUSTOMER_LIST';
+    const shouldStay = true;
+    const addPanes = [{
+      id: 'FSP_CUSTOMER_LIST',
+      name: '新建分组',
+    }];
+
     const {
       selectCount,
     } = this.props;
@@ -127,11 +139,14 @@ export default class BottomFixedBox extends PureComponent {
       this.toggleModal();
       return;
     }
-    this.handleClick(url, title, id);
+    this.handleClick(url, title, id, shouldStay, addPanes);
   }
 
   @autobind
-  handleCreateTaskClick(url, title, id) {
+  handleCreateTaskClick() {
+    const url = '/customerPool/createTask';
+    const title = '发起任务';
+    const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
@@ -140,7 +155,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, condition, ids, count, title, id, entertype, source, fr) {
+  openByIds(url, condition, ids, count, title, id, entertype, source, fr, shouldStay, addPanes) {
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -157,12 +172,12 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
-    this.props.onClick({ id, title, url, obj });
+    this.props.onClick({ id, title, url, obj, shouldStay, addPanes });
   }
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, entertype, source, fr) {
+  openByAllSelect(url, condition, count, title, id, entertype, source, fr, shouldStay, addPanes) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -174,7 +189,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
     };
-    this.props.onClick({ id, title, url, obj });
+    this.props.onClick({ id, title, url, obj, shouldStay, addPanes });
   }
 
   @autobind
@@ -190,7 +205,7 @@ export default class BottomFixedBox extends PureComponent {
     if (this.props.mainServiceManager) {
       return (
         <Clickable
-          onClick={() => { this.handleCustomerGroupClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
+          onClick={this.handleCustomerGroupClick}
           eventName="/click/custListBottomFixedBox/custGroup"
         >
           <button>用户分组</button>
@@ -203,7 +218,7 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <Clickable
-        onClick={() => { this.handleCreateTaskClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST'); }}
+        onClick={this.handleCreateTaskClick}
         eventName="/click/custListBottomFixedBox/launchTask"
       >
         <button>发起任务</button>

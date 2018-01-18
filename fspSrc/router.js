@@ -103,6 +103,7 @@ const routes = [
    { path: '/bizapply/option/fspoptionResearch', component: HtmlComponent }, */
   // 客户分组管理
   { path: '/customerCenter/customerGroupManage', component: CustomerGroupManage },
+  { path: '/customerCenter/customerGroupManage/createTask', component: CreateTask },
   // 绩效视图
   { path: '/report', component: ReportHome },
   // 看板管理
@@ -131,6 +132,7 @@ const routes = [
   },
   // 自建任务管理
   { path: '/taskCenter/selfbuildTask', component: TaskListHome },
+  { path: '/taskCenter/selfbuildTask/createTask', component: CreateTask },
   // 合约详情
   {
     path: '/bizapply/contract',

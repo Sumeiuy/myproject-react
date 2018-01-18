@@ -11,7 +11,25 @@ const menus = [
     name: '自建任务',
     id: 'FSP_CUSTOMER_CREATETASK',
     path: '/customerPool/createTask',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_CUSTOMER_LIST',
+  },
+  {
+    name: '自建任务',
+    id: 'FSP_CUSTOMER_CREATETASK',
+    path: '/customerCenter/customerGroupManage/createTask',
+    pid: 'FSP_CUST_GROUP_MANAGE',
+  },
+  {
+    name: '自建任务',
+    id: 'FSP_CUSTOMER_TASKFLOW',
+    path: '/customerPool/taskFlow',
+    pid: 'FSP_MOT_SELFBUILT_TASK',
+  },
+  {
+    name: '发起任务',
+    id: 'FSP_CUSTOMER_TASKFLOW',
+    path: '/taskCenter/selfbuildTask/createTask',
+    pid: 'FSP_MOT_SELFBUILT_TASK',
   },
   {
     name: '客户列表',

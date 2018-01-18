@@ -242,6 +242,10 @@ export default class CustomerGroup extends PureComponent {
       routerAction: push,
       pathname,
       query,
+      addPanes: [{
+        id: 'FSP_CUSTOMER_LIST',
+        name: '客户列表',
+      }],
     });
   }
 
