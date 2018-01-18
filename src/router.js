@@ -47,6 +47,9 @@ import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 
+// 晨间播报
+import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
+
 const { ConnectedRouter } = routerRedux;
 
 // 路由Collection
@@ -116,6 +119,9 @@ const routes = [
     path: '/mainPosition',
     component: MainPosition,
   },
+  // 晨间播报
+  { path: '/broadcastDetail', component: BroadcastDetail },
+  { path: '/broadcastList', component: BroadcastList },
 ];
 
 // 递归创建路由
