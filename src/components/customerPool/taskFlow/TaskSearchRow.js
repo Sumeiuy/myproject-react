@@ -60,7 +60,7 @@ export default class TaskSearchRow extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
-    isHasAuthorize: PropTypes.bool.isRequired,
+    isAuthorize: PropTypes.bool.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -110,7 +110,7 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} pageSize 当前页条目
    */
   queryPeopleOfLabel(labelId, curPageNum, pageSize, filter = {}) {
-    const { isHasAuthorize, orgId, getLabelPeople } = this.props;
+    const { isAuthorize, orgId, getLabelPeople } = this.props;
     console.log('filter', filter, orgId);
     let postBody = {
       labelId,
@@ -118,7 +118,7 @@ export default class TaskSearchRow extends PureComponent {
       pageSize,
       // filter,
     };
-    if (isHasAuthorize) {
+    if (isAuthorize) {
       postBody = {
         ...postBody,
         orgId,

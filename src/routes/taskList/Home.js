@@ -87,6 +87,10 @@ const effects = {
   countFlowStatus: 'managerView/countFlowStatus',
   getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
   saveAnswersByType: 'performerView/saveAnswersByType',
+  // 任务反馈统计
+  countAnswersByType: 'performerView/countAnswersByType',
+  // 任务反馈已反馈总数
+  countExamineeByType: 'performerView/countExamineeByType',
 };
 
 const mapStateToProps = state => ({
@@ -129,6 +133,10 @@ const mapStateToProps = state => ({
   addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
   answersList: state.performerView.answersList,
   saveAnswersSucce: state.performerView.saveAnswersSucce,
+  // 任务反馈统计数据
+  missionFeedbackData: state.performerView.missionFeedbackData,
+  // 任务反馈已反馈
+  missionFeedbackCount: state.performerView.missionFeedbackCount,
   attachmentList: state.performerView.attachmentList,
 });
 
@@ -184,6 +192,8 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
+  countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
+  countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -244,6 +254,10 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
+    missionFeedbackData: PropTypes.array.isRequired,
+    countAnswersByType: PropTypes.func.isRequired,
+    missionFeedbackCount: PropTypes.number.isRequired,
+    countExamineeByType: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
   }
 
@@ -500,14 +514,17 @@ export default class PerformerView extends PureComponent {
       answersList,
       saveAnswersByType,
       saveAnswersSucce,
+      missionFeedbackData,
+      missionFeedbackCount,
       attachmentList,
     } = this.props;
     const {
       query: { currentId },
     } = location;
+    const { empNum = 0 } = missionImplementationDetail || {};
     const { typeCode, typeName, taskFeedbackList } = this.state;
     let detailComponent = null;
-    const { missionType = [] } = dict || {};
+    const { missionType = [], missionProgressStatus = {} } = dict || {};
     switch (st) {
       case INITIATOR:
         detailComponent = (
@@ -577,6 +594,10 @@ export default class PerformerView extends PureComponent {
             push={push}
             missionType={typeCode}
             missionTypeDict={missionType}
+            missionProgressStatusDic={missionProgressStatus}
+            missionFeedbackData={missionFeedbackData}
+            missionFeedbackCount={missionFeedbackCount}
+            serveManagerCount={empNum}
           />
         );
         break;
@@ -712,6 +733,8 @@ export default class PerformerView extends PureComponent {
       queryMngrMissionDetailInfo,
       countFlowFeedBack,
       countFlowStatus,
+      countAnswersByType,
+      countExamineeByType,
     } = this.props;
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
@@ -721,6 +744,16 @@ export default class PerformerView extends PureComponent {
       // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
+    }, () => {
+      const { mngrMissionDetailInfo: { templateId } } = this.props;
+      // 管理者视图任务反馈统计
+      countAnswersByType({
+        templateId,
+      });
+      // 任务反馈已反馈总数
+      countExamineeByType({
+        templateId,
+      });
     });
     // 管理者视图获取客户反馈
     countFlowFeedBack({

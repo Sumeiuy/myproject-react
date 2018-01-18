@@ -21,13 +21,13 @@ export default class SelectLabelCust extends PureComponent {
     orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
-    isHasAuthorize: PropTypes.bool,
+    isAuthorize: PropTypes.bool,
     visible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     storedData: {},
-    isHasAuthorize: false,
+    isAuthorize: false,
   };
 
   constructor(props) {
@@ -88,7 +88,7 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   handleSearchClick(value) {
-    const { getLabelInfo, isHasAuthorize, orgId } = this.props;
+    const { getLabelInfo, isAuthorize, orgId } = this.props;
     const param = {
       condition: value,
     };
@@ -107,7 +107,7 @@ export default class SelectLabelCust extends PureComponent {
       });
       return;
     }
-    if (isHasAuthorize) {
+    if (isAuthorize) {
       // 有首页绩效指标查看权限
       getLabelInfo({
         ...param,
@@ -138,7 +138,7 @@ export default class SelectLabelCust extends PureComponent {
       isLoadingEnd,
       onCancel,
       visible,
-      isHasAuthorize,
+      isAuthorize,
       dict,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
@@ -172,7 +172,7 @@ export default class SelectLabelCust extends PureComponent {
           condition={condition}
           currentSelectLabel={currentSelectLabel}
           orgId={orgId}
-          isHasAuthorize={isHasAuthorize}
+          isAuthorize={isAuthorize}
         />
       </div>
     );
