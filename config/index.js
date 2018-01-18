@@ -43,6 +43,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
+      prefix + '/morningBoradcast',
+      {
+        // target: 'http://168.61.8.81:5089', // SIT
+         target: 'http://168.61.8.81:5090', // DOClever
+      },
       prefix,
       {
         target: 'http://168.61.8.81:5086', // SIT
