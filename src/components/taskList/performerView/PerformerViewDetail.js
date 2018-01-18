@@ -85,7 +85,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState,
+        targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -130,12 +130,23 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerState,
         targetCustId,
       },
+      targetCustList: { list },
+      changeParameter,
     } = this.props;
+    let currentCustId = targetCustId;
+    let currentPageNum = targetCustomerPageNo;
+    if (targetCustomerState) {
+      currentCustId = !_.isEmpty(list) ? (list[0] || {}).custId : '';
+      currentPageNum = 1;
+    }
+    changeParameter({
+      targetCustId: currentCustId,
+    });
     this.queryTargetCustInfo({
-      custId: targetCustId,
+      custId: currentCustId,
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
-      pageNum: targetCustomerPageNo,
+      pageNum: currentPageNum,
     });
   }
 
