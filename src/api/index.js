@@ -15,6 +15,7 @@ import relation from './relation';
 import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
+import morningBoradcast from './morningBoradcast';
 
 const api = apiCreator();
 
@@ -53,6 +54,7 @@ export default {
   customerFeedback: customerFeedback(api),
   // 任务反馈
   taskFeedback: taskFeedback(api),
-  // 开发关系认定
+  // ============ 晨报
+  morningBoradcast: morningBoradcast(api),
 };
 

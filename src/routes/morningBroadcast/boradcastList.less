@@ -1,0 +1,115 @@
+@head_background: #e4e4ea;
+
+.broadcastListWrap {
+  width: 100%;
+  background: @head_background;
+  .body {
+    width: 100%;
+    background: white;
+    padding: 0 10px 10px;
+    background-clip: content-box;
+    .broadcastList {
+      background: white;
+      min-height: calc(~"100vh - 58px");
+      width: 90%;
+      margin: auto;
+      padding: 30px;
+      :global {
+        .tableTitle:not(th) {
+          width: 320px;
+          color: #333;
+        }
+        .tableAuthor:not(th) {
+          color: #888;
+        }
+        .tableAction:not(th) {
+          color: #108ee9;
+        }
+        .edit {
+          margin-right: 13px;
+          vertical-align: text-bottom;
+          cursor: pointer;
+        }
+        .icon-shanchu {
+          cursor: pointer;
+          vertical-align: baseline;
+        }
+      }
+    }
+    :global {
+      .ant-pagination-item {
+        margin-bottom: 0;
+      }
+      .ant-table-tbody > tr {
+        color: #bbb;
+        &:hover .tableTitle {
+          color: #108ee9;
+        }
+      }
+      .ant-table-thead > tr, .ant-table-tbody > tr {
+        & >th, & >td {
+          text-align: left;
+          padding: 10px 8px;
+          font-size: 14px;
+          &:first-child {
+            padding-left: 5%;
+          }
+        }
+      }
+    }
+  }
+  .header {
+    width: 100%;
+    height: 48px;
+    max-width: 100%;
+    padding: 0 30px;
+    position: relative;
+    box-sizing: border-box;
+    background: @head_background;
+    border-bottom: 1px solid #d1d1d1;
+    box-shadow: 0 2px 8px #cfd0d1;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > div {
+      display: flex;
+    }
+    .timeRange {
+      margin-left: 15px;
+      color: #bbb;
+    }
+    .division {
+      margin: 0 12px;
+    }
+    :global {
+      .ant-input {
+        background: white;
+      }
+      .ant-calendar-picker-input {
+        background: @head_background;
+      }
+      .ant-calendar-picker-icon {
+        margin-top: -5px;
+      }
+      .ant-select-selection {
+        background: @head_background;
+        border: none;
+        .ant-select-selection__placeholder {
+          color: #000;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .textOverflow {
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
