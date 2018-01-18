@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import localStorage from 'store';
+import store from 'store';
 import FSPUnwrap from './FSPUnwrap';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
@@ -53,11 +53,27 @@ function splitPanesArray(panes, menuWidth) {
 // 获取本地保存的tab菜单
 function getLocalPanes(pathname) {
   if (enableLocalStorage) {
-    return localStorage.get('pathname') === pathname ?
-      localStorage.get('panes') :
+    return store.get('pathname') === pathname ?
+      store.get('panes') :
       [];
   }
   return [];
+}
+
+// storeTabInfo 内部逻辑抽象的方法,条件满足执行callback
+function tureAndstore(item, callback) {
+  if (item) {
+    callback(item);
+  }
+}
+
+// 用来本地缓存tab信息的方法函数
+function storeTabInfo({ activeKey, panes, pathname }) {
+  if (enableLocalStorage) {
+    tureAndstore(activeKey, store.set.bind(store, 'activeKey'));
+    tureAndstore(panes, store.set.bind(store, 'panes'));
+    tureAndstore(pathname, store.set.bind(store, 'pathname'));
+  }
 }
 
 @withRouter
@@ -72,7 +88,10 @@ export default class Tab extends PureComponent {
 
   constructor(props) {
     super(props);
+    // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
+    // 刷新操作会使用保存的当前tab
+    let reloadKey;
     const { location: { pathname, query } } = props;
     // 根据当前路由找到对应的tabpane
     const config = this.getConfig(pathname);
@@ -83,26 +102,31 @@ export default class Tab extends PureComponent {
 
     // 如果开启了本地缓存，则支持刷新后保持打开的tab菜单状态
     const localPanes = getLocalPanes(pathname);
-    const isPaneInLocal = isPaneInArray(panes, localPanes);
     const isDefaultpane = isPaneInArray(panes, menuConfig);
-    // 默认tab必须得出现
-    if (!isDefaultpane && isPaneInLocal) {
+
+    // 如果是刷新操作，获取相应的reloadKey
+    if (localPanes.length !== 0) {
+      reloadKey = store.get('activeKey');
+    }
+
+    // 如果是刷新操作
+    if (reloadKey) {
       panes = [
         ...localPanes,
       ];
-    } else if (!isDefaultpane) {
+    } else if (!isDefaultpane) { // 如果不是刷新操作，而且不是默认的tab
       panes = [
         ...menuConfig,
         ...panes,
       ];
-    } else if (isDefaultpane) {
+    } else if (isDefaultpane) { // 如果是默认的tab
       panes = menuConfig;
     }
 
     this.state = {
       forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
       panes,
-      activeKey: (config && config.id) || indexPaneKey,
+      activeKey: reloadKey || (config && config.id) || indexPaneKey,
     };
   }
 
@@ -124,18 +148,23 @@ export default class Tab extends PureComponent {
         if (addPanes || removePanes) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
+        // 保存tab菜单信息
+        storeTabInfo({
+          activeKey: (activeKey || config.id),
+          panes,
+          pathname,
+        });
+
         this.setState({
           panes,
           activeKey: activeKey || config.id,
         });
       }
-    }
-    if (enableLocalStorage) {
-      localStorage.set('panes', panes);
-      // 在本地缓存pathname，根据pathname来区分用户是手动输入一个新url，还是刷新操作
-      localStorage.set('pathname', pathname);
-      // 在本地缓存activeKey， 是为了支持页面不存在固定tab的情况
-      localStorage.set('activeKey', activeKey || config.id);
+    } else if (enableLocalStorage) {
+      // 保存tab菜单信息
+      storeTabInfo({
+        pathname,
+      });
     }
   }
 
@@ -191,6 +220,10 @@ export default class Tab extends PureComponent {
     } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
       pane = changePanes.find(item => item.id === activeKey);
     }
+    // 将tab信息保存到本地
+    storeTabInfo({
+      panes: changePanes,
+    });
     if (isBlockRemovePane) {
       const shouldJumpPane = window.confirm(`请确定你要跳转到 ${pane.path}，未保存的数据会丢失!`); // eslint-disable-line
       if (shouldJumpPane) {

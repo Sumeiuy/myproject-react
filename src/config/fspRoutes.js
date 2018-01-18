@@ -49,7 +49,7 @@ const fspRoutes = [
   {
     path: '/customerCenter/customerManage',
     action: 'loadInTab',
-    url: 'customer/manage/showCustManageTabWin',
+    url: '/customer/manage/showCustManageTabWin',
   },
   {
     path: 'customerDetail',

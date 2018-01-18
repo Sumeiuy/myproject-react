@@ -8,6 +8,12 @@ import _ from 'lodash';
 
 const menus = [
   {
+    name: '自建任务',
+    id: 'FSP_CUSTOMER_CREATETASK',
+    path: '/customerPool/createTask',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
     name: '客户列表',
     id: 'FSP_CUSTOMER_LIST',
     path: '/customerPool/list',
