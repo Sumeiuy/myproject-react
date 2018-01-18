@@ -298,7 +298,7 @@ export default class Tab extends PureComponent {
           panes.push(paneConf);
         } else {
           panes = panes.map((pane) => {
-            if (pane.id === paneConf.id) {
+            if ((pane.id === paneConf.id) && !pane.children) {
               return paneConf;
             }
             return pane;

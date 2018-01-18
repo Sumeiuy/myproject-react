@@ -9,13 +9,13 @@ import _ from 'lodash';
 const menus = [
   {
     name: '自建任务',
-    id: 'FSP_CUSTOMER_CREATETASK',
+    id: 'FSP_CUSTOMER_LIST_CREATETASK',
     path: '/customerPool/createTask',
     pid: 'FSP_CUSTOMER_LIST',
   },
   {
     name: '自建任务',
-    id: 'FSP_CUSTOMER_CREATETASK',
+    id: 'FSP_CUSTOMER_GROUPMANAGE_CREATETASK',
     path: '/customerCenter/customerGroupManage/createTask',
     pid: 'FSP_CUST_GROUP_MANAGE',
   },
@@ -27,7 +27,7 @@ const menus = [
   },
   {
     name: '发起任务',
-    id: 'FSP_CUSTOMER_TASKFLOW',
+    id: 'FSP_SELFBUILDTASK_CREATETASK',
     path: '/taskCenter/selfbuildTask/createTask',
     pid: 'FSP_MOT_SELFBUILT_TASK',
   },
