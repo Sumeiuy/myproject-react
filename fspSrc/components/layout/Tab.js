@@ -50,6 +50,16 @@ function splitPanesArray(panes, menuWidth) {
   };
 }
 
+// 获取本地保存的tab菜单
+function getLocalPanes(pathname) {
+  if (enableLocalStorage) {
+    return localStorage.get('pathname') === pathname ?
+      localStorage.get('panes') :
+      [];
+  }
+  return [];
+}
+
 @withRouter
 export default class Tab extends PureComponent {
   static propTypes = {
@@ -66,10 +76,13 @@ export default class Tab extends PureComponent {
     const { location: { pathname, query } } = props;
     // 根据当前路由找到对应的tabpane
     const config = this.getConfig(pathname);
+
     // 这里获取到的location对应的pane配置只可能是0或者1个
     // 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
     let panes = this.getPanesWithPathname(pathname, query);
-    const localPanes = enableLocalStorage ? localStorage.get('panes') : [];
+
+    // 如果开启了本地缓存，则支持刷新后保持打开的tab菜单状态
+    const localPanes = getLocalPanes(pathname);
     const isPaneInLocal = isPaneInArray(panes, localPanes);
     const isDefaultpane = isPaneInArray(panes, menuConfig);
     // 默认tab必须得出现
@@ -102,21 +115,27 @@ export default class Tab extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { pathname, query, state } } = nextProps;
     const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
+    let panes = [];
+    let config = {};
     if (!shouldStay) {
       if (pathname !== this.props.location.pathname) {
-        const config = this.getConfig(pathname);
-        let panes = this.getPanesWithPathname(pathname, query, shouldRemove);
+        config = this.getConfig(pathname);
+        panes = this.getPanesWithPathname(pathname, query, shouldRemove);
         if (addPanes || removePanes) {
           panes = getFinalPanes(panes, addPanes, removePanes);
-        }
-        if (enableLocalStorage) {
-          localStorage.set('panes', panes);
         }
         this.setState({
           panes,
           activeKey: activeKey || config.id,
         });
       }
+    }
+    if (enableLocalStorage) {
+      localStorage.set('panes', panes);
+      // 在本地缓存pathname，根据pathname来区分用户是手动输入一个新url，还是刷新操作
+      localStorage.set('pathname', pathname);
+      // 在本地缓存activeKey， 是为了支持页面不存在固定tab的情况
+      localStorage.set('activeKey', activeKey || config.id);
     }
   }
 
