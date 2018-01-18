@@ -218,17 +218,35 @@ export default class ServiceRecordContent extends PureComponent {
           // 附件记录
           attachmentList,
         } = formData;
-
+        let defaultFeedbackType = '';
+        let defaultFeedbackTypeArr = [];
+        let defaultFeedbackTypeChild = '';
+        let defaultFeedbackTypeChildArr = [];
+        // debugger
+        if (!_.isEmpty(customerFeedback)) {
+          const {
+            code,
+            name,
+            children: {
+              code: subCode,
+              name: subName,
+            },
+          } = customerFeedback;
+          defaultFeedbackType = subCode;
+          defaultFeedbackTypeArr = [{ key: subCode, value: subName }];
+          defaultFeedbackTypeChild = code;
+          defaultFeedbackTypeChildArr = [{ key: code, value: name }];
+        }
         formObject = {
           // 服务类型，页面上隐藏该字段
           serviceType: serviceTypeCode,
           serviceTypeName,
           // 客户反馈一级
-          feedbackType,
-          feedbackTypeArr,
+          feedbackType: defaultFeedbackType,
+          feedbackTypeArr: defaultFeedbackTypeArr,
           // 客户反馈二级
-          feedbackTypeChild,
-          feedbackTypeChildArr,
+          feedbackTypeChild: defaultFeedbackTypeChild,
+          feedbackTypeChildArr: defaultFeedbackTypeChildArr,
           // 服务时间（日期）
           serviceDate,
           // 服务时间（时分秒）
@@ -241,7 +259,7 @@ export default class ServiceRecordContent extends PureComponent {
           serviceWay,
           serviceContent,
           serviceWayCode,
-          customerFeedback,
+          // customerFeedback,
           attachmentList,
         };
       } else {

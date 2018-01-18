@@ -68,7 +68,9 @@ export default function ServiceImplementation({
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
+  // if (targetCustomerState) {
 
+  // }
   const currentCustomer = _.find(list, o => o.custId === currentCustId);
   let serviceStatusName = '';
   let serviceStatusCode = '';
@@ -92,7 +94,6 @@ export default function ServiceImplementation({
     // attachmentRecord,
     custId,
   } = targetCustDetail;
-
   // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
   const motCustfeedBackDict = [{
     key: String(serviceTypeCode),
@@ -139,7 +140,8 @@ export default function ServiceImplementation({
         filesList={filesList}
       />
       {
-        !_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict)
+        !_.isEmpty(taskFeedbackList)
+          && !_.isEmpty(motCustfeedBackDict)
           ? <ServiceRecordForm
             dict={dict}
             addServeRecord={addServeRecord}

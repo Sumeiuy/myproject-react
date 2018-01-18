@@ -1,0 +1,76 @@
+.morning_broadcast {
+  height: 83px;
+  box-sizing: border-box;
+  margin: 20px 0 10px;
+  border-top: 3px solid #d67c1e;
+  border-bottom: 2px solid #ccc;
+  .title {
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px dashed #ddd;
+    display: flex;
+    justify-content: space-between;
+    color: #d67c1e;
+    .more {
+      color: #2d86d8;
+      font-size: 14px;
+    }
+  }
+
+  .listWrap {
+    height: 48px;
+    line-height: 24px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 24px;
+    .simpleName {
+      width: 20%;
+      color: #d67c1e;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: inherit;
+      white-space: nowrap;
+    }
+    .music {
+      width: 80%;
+      overflow: hidden;
+      height: 20px;
+      position: relative;
+      background: #fafafa;
+      audio {
+        width: 90%;
+        margin-top: -6px;
+      }
+      .close {
+        position: absolute;
+        right: 8px;
+        top: 1px;
+        display: none;
+        color: #2d86d8;
+        font-size: 17px;
+        cursor: pointer;
+      }
+      &:hover {
+        .close {
+          display: block;
+        }
+      }
+    }
+    .desc {
+      width: 85%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: inherit;
+      white-space: nowrap;
+    }
+    .listen {
+      color: #2d86d8;
+      cursor: pointer;
+    }
+  }
+}

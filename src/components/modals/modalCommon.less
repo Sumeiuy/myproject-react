@@ -40,13 +40,34 @@
     background-color: lighten(#e52e2e, 10%);
   }
 }
-.boardManageModal, .selectTreeModal{
+:global {
+  .addMorningBoradcast {
+    .audioDesc {
+      vertical-align: middle;
+      margin: 0 4px;
+      line-height: 34px;
+    }
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+    .ant-form-item-control {
+      display: flex;
+      align-items: center;
+      .anticon-close {
+        vertical-align: middle;
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.boardManageModal, .selectTreeModal {
   div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, strong, .ant-form {
     font-family: @font-family;
   }
   // background-color: blue;
   .tooltipTop {
-    top:-35px !important;
+    top: -35px !important;
   }
   :global {
     .ant-form-item {
@@ -104,7 +125,7 @@
       text-align: center;
       padding-top: 0;
       padding-bottom: 40px;
-      .ant-btn-lg{
+      .ant-btn-lg {
         width: 120px;
       }
       & button + button {
@@ -112,21 +133,21 @@
       }
     }
     .ant-modal-body {
-      padding: 40px 50px 0 50px;
+      padding: 40px 50px 0;
     }
   }
 }
-.selectTreeModal{
-  :global{
-    .ant-modal{
+.selectTreeModal {
+  :global {
+    .ant-modal {
       width: 1050px !important;
       height: auto !important;
       top: 30px !important;
     }
     .ant-modal-body {
-      padding: 20px 30px 0 30px;
+      padding: 20px 30px 0;
     }
-    .ant-modal-footer{
+    .ant-modal-footer {
       padding-bottom: 18px;
     }
   }
