@@ -31,7 +31,7 @@ import {
   Viewpoint,
   PerformanceIndicators,
   TabsExtra,
-  Search
+  Search,
 } from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
