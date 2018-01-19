@@ -4,8 +4,6 @@
  * @author zhufeiyang
  */
 
-import _ from 'lodash';
-
 const menus = [
   {
     name: '首页',
@@ -103,6 +101,12 @@ export default menus;
 
 export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
-export const getDefaultMenu = () => _.find(menus, item => !!item.default);
+export const defaultMenu = [
+  'FSP_NEW_HOMEPAGE',
+  'FSP_SERVICE_CENTER',
+  'FSP_STRATEGY_CENTER',
+  'FSP_MOT_M_TASK',
+  'FSP_CUST_M_CENTER',
+  'FSP_PRD_REPOSITORY',
+];
 
-export const getDefaultMenus = () => _.filter(menus, item => !!item.default);

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import store from 'store';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
-import tabConfig, { indexPaneKey } from '../../../src/config/tabMenu';
+import tabConfig, { indexPaneKey, defaultMenu } from '../../../src/config/tabMenu';
 import { enableLocalStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 
@@ -131,7 +131,9 @@ export default class Tab extends PureComponent {
     const { location: { pathname, query, state } } = nextProps;
     const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
     if (!shouldStay) {
-      if (pathname !== this.props.location.pathname) {
+      const isUrlChange =
+        (pathname !== this.props.location.pathname) || (query !== this.props.location.query);
+      if (isUrlChange) {
         const paneObj = this.getPanesWithPathname(pathname, query, shouldRemove);
         let panes = paneObj.panes;
         if ((addPanes && addPanes.length) || (removePanes && removePanes.length)) {
@@ -152,25 +154,22 @@ export default class Tab extends PureComponent {
           activeKey: finalActiveKey,
         });
       }
-    } else { // 如果shouldStay为true
-      // 如果传递了addPanes参数，则需要修正panes数组
-      const shouldStayPanes = addPanes ?
-        this.getStayPanes(addPanes, pathname, query) :
-        null;
+    } else if (!_.includes(defaultMenu, this.state.activeKey)) {
+      // 如果shouldStay为true,并且是新开的tab内部跳转，则需要修正panes数组,以支持tab切换
+      // 对于默认的下拉菜单，则不支持修正pane，也就是不支持切换tab，这虽然是可以做的，但是为了性能考虑，放弃
+      const shouldStayPanes = this.getStayPanes(addPanes, pathname, query, this.state.activeKey);
 
-      if (shouldStayPanes) {
-        if (enableLocalStorage) {
-          // 保存tab菜单信息
-          storeTabInfo({
-            panes: shouldStayPanes,
-            pathname,
-          });
-        }
-
-        this.setState({
+      if (enableLocalStorage) {
+        // 保存tab菜单信息
+        storeTabInfo({
           panes: shouldStayPanes,
+          pathname,
         });
       }
+
+      this.setState({
+        panes: shouldStayPanes,
+      });
     }
   }
 
@@ -316,12 +315,19 @@ export default class Tab extends PureComponent {
   }
 
   // 如果设置了shouldStay标志，使用这个
-  getStayPanes(editPanes, pathname, query) {
+  getStayPanes(editPanes, pathname, query, activeKey) {
     const { panes } = this.state;
     const finalPanes = _.map(panes, (pane) => {
       const editPane = pane;
-      if (pane.id === editPanes[0].id) {
+      // 如果提供了editPanes，使用这里的pane修正
+      if (editPanes.length && (pane.id === editPanes[0].id)) {
         editPane.name = editPanes[0].name;
+        editPane.path = pathname;
+        editPane.query = query;
+        return editPane;
+      }
+      // 如果没提供，直接对当前的tab进行修正
+      if (pane.id === activeKey) {
         editPane.path = pathname;
         editPane.query = query;
         return editPane;
