@@ -11,9 +11,11 @@ import { autobind } from 'core-decorators';
 import Entry from './Entry';
 import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
+import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
 
 import styles from './selectTargetCustomer.less';
 
+@RestoreScrollTop
 export default class SelectTargetCustomer extends PureComponent {
   static propTypes = {
     currentEntry: PropTypes.number,
@@ -30,7 +32,7 @@ export default class SelectTargetCustomer extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     orgId: PropTypes.string.isRequired,
-    isHasAuthorize: PropTypes.bool,
+    isAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
   }
 
@@ -38,7 +40,7 @@ export default class SelectTargetCustomer extends PureComponent {
     // 默认不展示入口
     currentEntry: -1,
     isShowTitle: false,
-    isHasAuthorize: false,
+    isAuthorize: false,
     filterModalvisible: false,
   }
 
@@ -99,7 +101,7 @@ export default class SelectTargetCustomer extends PureComponent {
       peopleOfLabelData,
       getLabelPeople,
       orgId,
-      isHasAuthorize,
+      isAuthorize,
       filterModalvisible,
     } = this.props;
     const {
@@ -136,7 +138,7 @@ export default class SelectTargetCustomer extends PureComponent {
           getLabelPeople={getLabelPeople}
           storedTaskFlowData={storedTaskFlowData}
           orgId={orgId}
-          isHasAuthorize={isHasAuthorize}
+          isAuthorize={isAuthorize}
           filterModalvisible={filterModalvisible}
         />
       </div>

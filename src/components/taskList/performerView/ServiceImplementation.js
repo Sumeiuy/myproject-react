@@ -64,10 +64,13 @@ export default function ServiceImplementation({
   taskFeedbackList,
   addMotServeRecordSuccess,
   reloadTargetCustInfo,
+  attachmentList,
 }) {
   // 获取当前选中的数据的custId
   const currentCustId = targetCustId || (list[0] || {}).custId;
+  // if (targetCustomerState) {
 
+  // }
   const currentCustomer = _.find(list, o => o.custId === currentCustId);
   let serviceStatusName = '';
   let serviceStatusCode = '';
@@ -88,10 +91,9 @@ export default function ServiceImplementation({
     serviceRecord,
     customerFeedback,
     feedbackDate,
-    attachmentRecord,
+    // attachmentRecord,
     custId,
   } = targetCustDetail;
-
   // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
   const motCustfeedBackDict = [{
     key: String(serviceTypeCode),
@@ -110,11 +112,11 @@ export default function ServiceImplementation({
     serviceRecord,
     customerFeedback,
     feedbackDate,
-    attachmentRecord,
     custId,
     custUuid,
     missionFlowId,
     motCustfeedBackDict,
+    attachmentList,
   };
   return (
     <div>
@@ -138,7 +140,8 @@ export default function ServiceImplementation({
         filesList={filesList}
       />
       {
-        !_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict)
+        !_.isEmpty(taskFeedbackList)
+          && !_.isEmpty(motCustfeedBackDict)
           ? <ServiceRecordForm
             dict={dict}
             addServeRecord={addServeRecord}
@@ -152,6 +155,7 @@ export default function ServiceImplementation({
             deleteFileResult={deleteFileResult}
             addMotServeRecordSuccess={addMotServeRecordSuccess}
             reloadTargetCustInfo={reloadTargetCustInfo}
+            getCeFileList={getCeFileList}
           /> : null
       }
     </div>
@@ -185,6 +189,7 @@ ServiceImplementation.propTypes = {
   taskFeedbackList: PropTypes.array.isRequired,
   addMotServeRecordSuccess: PropTypes.bool.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
+  attachmentList: PropTypes.array.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

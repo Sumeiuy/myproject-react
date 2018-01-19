@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-12 14:05:17
+ * @Last Modified time: 2018-01-18 15:50:36
  */
 
 import React, { PureComponent } from 'react';
@@ -181,6 +181,33 @@ export default class TaskPreview extends PureComponent {
     });
   }
 
+  renderIndicatorTarget(indicatorData) {
+    const {
+      indicatorLevel2Value,
+      isHasSearchedProduct,
+      currentSelectedProduct,
+      // isHasState,
+      operationValue,
+      operationKey,
+      inputIndicator,
+      unit,
+    } = indicatorData;
+
+    let indicatorText = '';
+
+    if (operationKey === 'COMPLETE') {
+      indicatorText = `完善${indicatorLevel2Value}`;
+    } else if (operationKey === 'OPEN') {
+      indicatorText = `开通${indicatorLevel2Value}`;
+    } else if (operationKey === 'TRUE') {
+      indicatorText = `${indicatorLevel2Value}，状态：是`;
+    } else {
+      indicatorText = `${indicatorLevel2Value || ''}${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
+    }
+
+    return indicatorText;
+  }
+
   render() {
     const {
       storedData,
@@ -246,7 +273,7 @@ export default class TaskPreview extends PureComponent {
       // 产品名称
       currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
-      // operationKey,
+      operationKey,
       // 操作符name,展示用到，譬如达到/降到
       operationValue,
       // 当前输入的指标值
@@ -254,7 +281,7 @@ export default class TaskPreview extends PureComponent {
       // 单位
       unit,
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      isHasState,
+      // isHasState,
       // 是否有产品搜索
       isHasSearchedProduct,
       // 是否选中
@@ -269,7 +296,7 @@ export default class TaskPreview extends PureComponent {
       isMissionInvestigationChecked,
       // 选择的问题List
       questionList,
-      stateText,
+      // stateText,
       custSource: custSourceEntry,
       custTotal: totalCount,
     } = finalData;
@@ -424,14 +451,25 @@ export default class TaskPreview extends PureComponent {
                   <div>{`${trackWindowDate}天` || '--'}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>指标目标：</div>
+                  {<div>{`${indicatorLevel1Value}：` || ''}</div>}
                   <div>
                     {
-                      `${indicatorLevel1Value || ''}${indicatorLevel2Value || ''}
+                      this.renderIndicatorTarget({
+                        indicatorLevel2Value,
+                        isHasSearchedProduct,
+                        currentSelectedProduct,
+                        operationValue,
+                        operationKey,
+                        inputIndicator,
+                        unit,
+                      })
+                    }
+                    {/* {
+                      `${indicatorLevel2Value || ''}
                       ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
                       ${!isHasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
                         : stateText}` || '--'
-                    }
+                    } */}
                   </div>
                 </div>
               </div>

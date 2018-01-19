@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-18 15:43:45
+ * @Last Modified time: 2018-01-19 16:47:56
  * 管理者视图详情
  */
 
@@ -68,6 +68,11 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务类型字典
     missionTypeDict: PropTypes.array,
     exportCustListExcel: PropTypes.func.isRequired,
+    exportExcel: PropTypes.func.isRequired,
+    missionProgressStatusDic: PropTypes.object.isRequired,
+    missionFeedbackData: PropTypes.array.isRequired,
+    missionFeedbackCount: PropTypes.number.isRequired,
+    serveManagerCount: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -83,6 +88,8 @@ export default class ManagerViewDetail extends PureComponent {
     this.state = {
       isShowCustDetailModal: false,
       title: '已反馈客户',
+      missionProgressStatus: '',
+      progressFlag: '',
     };
   }
 
@@ -91,10 +98,19 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handlePreview(params = {}) {
-    const { title, pageNum, pageSize } = params;
+    const { title, pageNum, pageSize, missionProgressStatus, progressFlag } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
-
+    const progressParam = {
+      missionProgressStatus,
+      progressFlag,
+    };
+    this.setState({
+      missionProgressStatus,
+      progressFlag,
+    }, () => {
+      console.log(missionProgressStatus, '---', progressFlag);
+    });
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
@@ -102,6 +118,7 @@ export default class ManagerViewDetail extends PureComponent {
       // orgId: 'ZZ001041',
       missionId: currentId,
       // missionId: '101111171108181',
+      ...progressParam,
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
@@ -132,6 +149,23 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handleExport() {
     console.log('导出');
+    const {
+      location: { query: { currentId } },
+      mngrMissionDetailInfo,
+      exportCustListExcel,
+    } = this.props;
+    const { missionProgressStatus = null, progressFlag = null } = this.state;
+    console.log('导出', _.isEmpty(mngrMissionDetailInfo.servicePolicy) ? '' : mngrMissionDetailInfo.servicePolicy);
+    const params = {
+      missionProgressStatus,
+      progressFlag,
+      missionName: mngrMissionDetailInfo.missionName,
+      orgId: emp.getOrgId(),
+      missionId: currentId,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      servicePolicy: _.isEmpty(mngrMissionDetailInfo.servicePolicy) ? '' : mngrMissionDetailInfo.servicePolicy,
+    };
+    exportCustListExcel(params);
   }
 
   /**
@@ -195,7 +229,12 @@ export default class ManagerViewDetail extends PureComponent {
       replace,
       countFlowStatus,
       countFlowFeedBack,
-      exportCustListExcel,
+      exportExcel,
+      missionProgressStatusDic,
+      missionFeedbackData,
+      missionFeedbackCount,
+      serveManagerCount,
+      push,
     } = this.props;
 
     const { isShowCustDetailModal, title } = this.state;
@@ -276,7 +315,7 @@ export default class ManagerViewDetail extends PureComponent {
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export} disabled>导出</Button>
+                  <Button className={styles.export}>导出</Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleLaunchTask}
@@ -300,6 +339,7 @@ export default class ManagerViewDetail extends PureComponent {
                 title={title}
                 onClose={this.handleCloseModal}
                 hideCustDetailModal={this.hideCustDetailModal}
+                push={push}
               />
             }
             modalStyle={{
@@ -325,11 +365,17 @@ export default class ManagerViewDetail extends PureComponent {
             replace={replace}
             countFlowStatus={countFlowStatus}
             countFlowFeedBack={countFlowFeedBack}
-            exportCustListExcel={exportCustListExcel}
+            exportExcel={exportExcel}
+            missionProgressStatusDic={missionProgressStatusDic}
           />
         </div>
         <div className={styles.missionFeedbackSection}>
-          <MissionFeedback isFold={isFold} />
+          <MissionFeedback
+            missionFeedbackData={missionFeedbackData}
+            isFold={isFold}
+            missionFeedbackCount={missionFeedbackCount}
+            serveManagerCount={serveManagerCount}
+          />
         </div>
       </div>
     );

@@ -13,6 +13,7 @@ const HTSC_RESPID = '1-46IDNZI'; // HTSC 首页指标查询
 const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
+const HTSC_TK_MAMPID = '1-FCQM-38'; // HTSC 任务管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
@@ -42,19 +43,19 @@ const permission = {
     return judgeAuthority(permissionList, HTSC_BD_MAMPID);
   },
 
+  // HTSC 任务管理岗
+  hasTkMampPermission() {
+    return judgeAuthority(permissionList, HTSC_TK_MAMPID);
+  },
+
   // 目标客户池首页和列表页权限
   hasCustomerPoolPermission() {
-    return permission.hasIndexViewPermission()
-      || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission();
+    return permission.hasTkMampPermission();
   },
 
   // 目标客户池创建任务权限
   hasCreateTaskPermission() {
-    return permission.hasIndexViewPermission()
-      || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+    return permission.hasTkMampPermission();
   },
 
   // 佣金调整资讯订阅权限

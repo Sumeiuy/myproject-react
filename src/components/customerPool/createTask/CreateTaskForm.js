@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-// import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -17,8 +17,8 @@ import TaskFormInfo from './TaskFormInfo';
 const create = Form.create;
 // const { toString } = Mention;
 
-// @RestoreScrollTop
 @create({ withRef: true })
+@RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
 
   static propTypes = {
@@ -104,11 +104,12 @@ export default class CreateTaskForm extends PureComponent {
     return values[0].value;
   }
 
+  // 处理任务基本信息返回的任务执行方式格式
   @autobind
-  handleTaskType(key) {
+  handleTaskType(key = '') {
     const { dict: { executeTypes } } = this.props;
-    const keyWord = key.slice(0, 2);
-    const selectData = _.find(executeTypes, keyWord);
+    const keyWord = key.slice(0, 2) || '';
+    const selectData = _.find(executeTypes, keyWord) || {};
     console.log('selectData-->', selectData);
     return selectData.key;
   }
@@ -122,8 +123,7 @@ export default class CreateTaskForm extends PureComponent {
       count = query.count;
     }
     const { dict: { custIndexPlaceHolders }, missionType, baseInfo } = this.props;
-    const { motDetailModel } = baseInfo;
-    this.handleTaskType(motDetailModel.exeType);
+    const { motDetailModel = {} } = baseInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultTaskSubType = '';

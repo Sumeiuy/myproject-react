@@ -30,6 +30,8 @@ export default class ServiceRecordForm extends PureComponent {
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     reloadTargetCustInfo: PropTypes.func.isRequired,
+    getCeFileList: PropTypes.func.isRequired,
+    // attachmentRecord: PropTypes.string.isRequired,
   }
 
   static defaultProps = {

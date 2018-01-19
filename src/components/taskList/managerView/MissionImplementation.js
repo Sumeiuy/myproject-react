@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-18 15:45:24
+ * @Last Modified time: 2018-01-19 13:33:23
  * 任务实施简报
  */
 
@@ -43,7 +43,9 @@ export default class MissionImplementation extends PureComponent {
     countFlowStatus: PropTypes.func.isRequired,
     // 客户反馈饼图
     countFlowFeedBack: PropTypes.func.isRequired,
-    exportCustListExcel: PropTypes.func.isRequired,
+    exportExcel: PropTypes.func.isRequired,
+    // 进度条字典
+    missionProgressStatusDic: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -92,6 +94,7 @@ export default class MissionImplementation extends PureComponent {
   @autobind
   handlePreview(title) {
     const { onPreviewCustDetail } = this.props;
+    console.log('title--->',title);
     onPreviewCustDetail(title);
   }
 
@@ -176,7 +179,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   renderTabsExtra() {
-    const { replace, location, exportCustListExcel } = this.props;
+    const { replace, location, exportExcel } = this.props;
     const {
       expandAll,
       isDown,
@@ -203,7 +206,7 @@ export default class MissionImplementation extends PureComponent {
       orgId: curOrgId,
       isDown,
       iconType: 'juxing23',
-      exportWorld: exportCustListExcel,
+      exportWorld: exportExcel,
     };
     return (<TabsExtra {...extraProps} />);
   }
@@ -213,6 +216,7 @@ export default class MissionImplementation extends PureComponent {
       missionImplementationProgress = EMPTY_OBJECT,
       isFold,
       custFeedback = EMPTY_LIST,
+      missionProgressStatusDic = EMPTY_OBJECT,
     } = this.props;
 
     const colSpanValue = isFold ? 12 : 24;
@@ -241,6 +245,7 @@ export default class MissionImplementation extends PureComponent {
                   <MissionProgress
                     missionImplementationProgress={missionImplementationProgress}
                     onPreviewCustDetail={this.handlePreview}
+                    missionProgressStatusDic={missionProgressStatusDic}
                   />
                 </Col>
                 <Col span={colSpanValue}>

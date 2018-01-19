@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table } from 'antd';
+import { Table, message } from 'antd';
 import _ from 'lodash';
 
 import { openRctTab } from '../../../utils';
@@ -129,7 +129,10 @@ export default class ToDoList extends PureComponent {
   @autobind
   handleSuccess() {
     const { push, location: { query }, taskBasicInfo } = this.props;
-    if (!_.isEmpty(taskBasicInfo)) {
+    if (!_.isEmpty(taskBasicInfo.msg)) {
+      message.error(taskBasicInfo.msg);
+    }
+    if (!_.isEmpty(taskBasicInfo) && _.isEmpty(taskBasicInfo.msg)) {
       const param = {
         id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST',
         title: '发起任务',

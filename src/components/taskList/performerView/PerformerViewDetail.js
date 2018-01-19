@@ -74,7 +74,10 @@ export default class PerformerViewDetail extends PureComponent {
     queryTargetCust({
       ...obj,
       missionId: currentId,
-    }).then(() => getCustDetail({ missionId: currentId }));
+    }).then(() => getCustDetail({
+      missionId: currentId,
+      custId: obj.custId,
+    }));
   }
 
   @autobind
@@ -82,7 +85,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState,
+        targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -123,14 +126,27 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerPageNo = PAGE_NO,
-      targetCustomerState,
+        targetCustomerPageNo = PAGE_NO,
+        targetCustomerState,
+        targetCustId,
       },
+      targetCustList: { list },
+      changeParameter,
     } = this.props;
+    let currentCustId = targetCustId;
+    let currentPageNum = targetCustomerPageNo;
+    if (targetCustomerState) {
+      currentCustId = !_.isEmpty(list) ? (list[0] || {}).custId : '';
+      currentPageNum = 1;
+    }
+    changeParameter({
+      targetCustId: currentCustId,
+    });
     this.queryTargetCustInfo({
+      custId: currentCustId,
       state: targetCustomerState,
       pageSize: targetCustomerPageSize,
-      pageNum: targetCustomerPageNo,
+      pageNum: currentPageNum,
     });
   }
 

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 13:44:50
+ * @Last Modified time: 2018-01-18 14:57:31
  */
 
 import React, { PureComponent } from 'react';
@@ -163,7 +163,7 @@ export default class TaskFlow extends PureComponent {
       isShowApprovalModal: false,
     };
     // 首页指标查询权限
-    this.isHasAuthorize = permission.hasCreateTaskPermission();
+    this.isAuthorize = permission.hasCreateTaskPermission();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -241,7 +241,7 @@ export default class TaskFlow extends PureComponent {
         currentEntry: entry,
         importCustomers,
         sightingTelescope,
-      } = this.SelectTargetCustomerRef.getData();
+      } = this.SelectTargetCustomerRef.getWrappedInstance().getData();
       currentEntry = entry;
       const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
       const { labelCust, labelCust: { labelId } } = sightingTelescope;
@@ -272,8 +272,13 @@ export default class TaskFlow extends PureComponent {
       });
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
     } else if (current === 1) {
+      // 拿到form表单component
+      const formComponent = this.formRef;
+      // 拿到被HOC包裹的组件
+      const formWrappedComponent = formComponent.refs
+        .wrappedComponent.refs.formWrappedComponent.getWrappedInstance();
       // 第二步基本信息界面
-      this.formRef.validateFields((err, values) => {
+      formComponent.validateFields((err, values) => {
         let isFormError = false;
         if (!_.isEmpty(err)) {
           isFormError = true;
@@ -285,7 +290,7 @@ export default class TaskFlow extends PureComponent {
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
-            ...this.formRef.getFieldsValue(),
+            ...formComponent.getFieldsValue(),
           };
           isFormValidate = true;
         } else {
@@ -294,7 +299,7 @@ export default class TaskFlow extends PureComponent {
       });
 
       // 校验任务提示
-      const templetDesc = this.formRef.refs.wrappedComponent.refs.formWrappedComponent.getData();
+      const templetDesc = formWrappedComponent.getData();
       taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
         isFormValidate = false;
@@ -307,10 +312,11 @@ export default class TaskFlow extends PureComponent {
         });
       }
     } else if (current === 2) {
+      const resultTrackComponent = this.resultTrackRef.getWrappedInstance().getWrappedInstance();
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
         ...resultTrackData,
-        ...this.resultTrackRef.getWrappedInstance().getData(),
+        ...resultTrackComponent.getData(),
       };
       const {
         // 跟踪窗口期
@@ -362,10 +368,12 @@ export default class TaskFlow extends PureComponent {
       }
 
       // 拥有审批人权限，才能展示任务调查
-      if (this.isHasAuthorize) {
+      if (this.isAuthorize) {
+        const missionInvestigationComponent = this.missionInvestigationRef
+          .getWrappedInstance().getWrappedInstance();
         missionInvestigationData = {
           ...missionInvestigationData,
-          ...this.missionInvestigationRef.getWrappedInstance().getData(),
+          ...missionInvestigationComponent.getData(),
         };
         const {
           // 是否选中
@@ -521,7 +529,7 @@ export default class TaskFlow extends PureComponent {
       // taskSubType,
     };
 
-    if (this.isHasAuthorize) {
+    if (this.isAuthorize) {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -555,7 +563,7 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    if (this.isHasAuthorize && isMissionInvestigationChecked) {
+    if (this.isAuthorize && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -581,7 +589,7 @@ export default class TaskFlow extends PureComponent {
         fileId,
         ...postBody,
       });
-    } else if (this.isHasAuthorize) {
+    } else if (this.isAuthorize) {
       // 有审批权限，则需要传入orgId
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
@@ -717,7 +725,7 @@ export default class TaskFlow extends PureComponent {
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}
           getLabelPeople={getLabelPeople}
-          isHasAuthorize={this.isHasAuthorize}
+          isAuthorize={this.isAuthorize}
           filterModalvisible={visible}
           orgId={orgId}
         />
@@ -745,7 +753,7 @@ export default class TaskFlow extends PureComponent {
           storedData={storedTaskFlowData}
         />
         {
-          this.isHasAuthorize ?
+          this.isAuthorize ?
             <MissionInvestigation
               ref={ref => (this.missionInvestigationRef = ref)}
               storedData={storedTaskFlowData}
@@ -767,7 +775,7 @@ export default class TaskFlow extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={this.isHasAuthorize}
+        isNeedApproval={this.isAuthorize}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}

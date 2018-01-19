@@ -51,6 +51,7 @@ export default class TabsExtra extends PureComponent {
       begin: '',
       end: '',
       isDown: false,
+      cycleSelect: props.selectValue,
     };
   }
 
@@ -86,6 +87,7 @@ export default class TabsExtra extends PureComponent {
   handleChange(value) {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
+    console.log(value);
     updateQueryState({
       cycleSelect: value,
       begin,
@@ -93,6 +95,7 @@ export default class TabsExtra extends PureComponent {
     });
     // 记录下当前选中的timeSelect
     this.setState({
+      cycleSelect: value,
       begin,
       end,
     });
@@ -101,7 +104,8 @@ export default class TabsExtra extends PureComponent {
   @autobind
   handleExportExel() {
     const { exportWorld } = this.props;
-    exportWorld();
+    const { cycleSelect } = this.state;
+    exportWorld(cycleSelect);
   }
 
   render() {
