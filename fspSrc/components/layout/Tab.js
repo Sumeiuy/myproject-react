@@ -88,12 +88,11 @@ export default class Tab extends PureComponent {
     // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
     const { location: { pathname, query } } = props;
-    // 根据当前路由找到对应的tabpane
-    const config = this.getConfig(pathname);
 
     // 这里获取到的location对应的pane配置只可能是0或者1个
     // 这也是后面在判断本地是否有location对应的pane时，直接取panes[0]的原因
-    let panes = this.getPanesWithPathname(pathname, query).panes;
+    const paneObj = this.getPanesWithPathname(pathname, query);
+    let panes = paneObj.panes;
     // 如果开启了本地缓存，则支持刷新后保持打开的tab菜单状态
     const localPanes = getLocalPanes(pathname);
     const isDefaultpane = isPaneInArray(panes, menuConfig);
@@ -118,7 +117,7 @@ export default class Tab extends PureComponent {
     this.state = {
       forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
       panes,
-      activeKey: reloadKey || (config && config.id) || indexPaneKey,
+      activeKey: reloadKey || (paneObj.newActiveKey) || indexPaneKey,
     };
   }
 
@@ -133,15 +132,13 @@ export default class Tab extends PureComponent {
     const { activeKey, addPanes, removePanes, shouldRemove, shouldStay } = state || {};
     if (!shouldStay) {
       if (pathname !== this.props.location.pathname) {
-        const config = this.getConfig(pathname);
         const paneObj = this.getPanesWithPathname(pathname, query, shouldRemove);
         let panes = paneObj.panes;
         if ((addPanes && addPanes.length) || (removePanes && removePanes.length)) {
           panes = getFinalPanes(panes, addPanes, removePanes);
         }
 
-        const finalActiveKey = (
-          activeKey || paneObj.newActiveKey || config.id || this.state.activeKey);
+        const finalActiveKey = (activeKey || paneObj.newActiveKey || this.state.activeKey);
 
         // 保存tab菜单信息
         storeTabInfo({
@@ -287,10 +284,11 @@ export default class Tab extends PureComponent {
     }
     // 在state中查找完全匹配的pane信息
     const statePane = _.find(panes, pane => pane.path === pathname);
-    const newActiveKey = statePane && statePane.id;
+    let newActiveKey = statePane && statePane.id;
     if (!statePane) {
       // 在本地找pane信息
       const paneConf = this.getConfig(pathname);
+      newActiveKey = paneConf.id;
       if (!_.isEmpty(paneConf)) {
         const isExists = panes.find(item => item.id === paneConf.id);
         paneConf.query = query;
