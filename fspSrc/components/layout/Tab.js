@@ -24,10 +24,12 @@ function isPaneInArray(panes, paneArray) {
 // 获取最终的pane数组
 function getFinalPanes(panes, addPanes = [], removePanes = []) {
   const filterPanes = panes.filter(pane => !_.find(removePanes, key => key === pane.id));
-  const paneArray = addPanes.filter(pane => !_.find(panes, tabPane => tabPane.id === pane.id));
+  const paneArray = filterPanes.filter(
+    pane => !_.find(addPanes, tabPane => tabPane.id === pane.id));
+  // 注意下面是有序的
   return [
-    ...filterPanes,
     ...paneArray,
+    ...addPanes,
   ];
 }
 
