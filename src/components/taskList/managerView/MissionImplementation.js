@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-19 13:33:23
+ * @Last Modified time: 2018-01-19 17:20:09
  * 任务实施简报
  */
 
@@ -94,7 +94,6 @@ export default class MissionImplementation extends PureComponent {
   @autobind
   handlePreview(title) {
     const { onPreviewCustDetail } = this.props;
-    console.log('title--->',title);
     onPreviewCustDetail(title);
   }
 

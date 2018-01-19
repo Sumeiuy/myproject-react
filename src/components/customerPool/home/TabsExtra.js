@@ -87,7 +87,6 @@ export default class TabsExtra extends PureComponent {
   handleChange(value) {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
-    console.log(value);
     updateQueryState({
       cycleSelect: value,
       begin,

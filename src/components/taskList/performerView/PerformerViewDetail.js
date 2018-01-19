@@ -179,7 +179,6 @@ export default class PerformerViewDetail extends PureComponent {
     const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
     const { checkboxData, radioData, areaTextData } = this.state;
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
-    console.log('checkedData--->', checkedData);
     form.validateFields((err) => {
       if (!_.isEmpty(err)) {
         this.setState({
@@ -205,7 +204,6 @@ export default class PerformerViewDetail extends PureComponent {
   handleSaveSuccess() {
     const { saveAnswersSucce } = this.props;
     let isShow = false;
-    console.log('saveAnswersSucce-->', saveAnswersSucce);
     if (!saveAnswersSucce) {
       isShow = true;
       message.error('提交失败！');

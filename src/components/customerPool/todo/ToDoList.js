@@ -16,7 +16,8 @@ import styles from './toDoList.less';
 import emptyImg from './img/empty.png';
 
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-
+// 跳转到编辑页面是 href 不进行跳转
+const EMPTY_URL = "javascript:void(0);"; //eslint-disable-line
 
 export default class ToDoList extends PureComponent {
 
@@ -110,25 +111,29 @@ export default class ToDoList extends PureComponent {
     const flowId = tardetLab.getAttribute('data');
     const flowData = _.find(data, ['id', Number(flowId)]);
     let newUrl = null;
-    if (true) {
-      newUrl = "javascript:void(0);"; //eslint-disable-line
+    // 判断是否被驳回任务，进行不同页面跳转
+    if (true) { // 判断条件未确定
+      newUrl = EMPTY_URL;
       this.setState({
         flowId: flowData.flowId,
       });
+      // 请求任务基本信息，跳转到编辑页面
       getTaskBasicInfo({
         flowId: flowData.flowId,
         systemCode,
       }).then(this.handleSuccess);
     } else {
+      // 跳转到审批页面
       newUrl = `${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`;
-      // href = {`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`
     }
     tardetLab.setAttribute('href', newUrl);
   }
 
+  // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
     const { push, location: { query }, taskBasicInfo } = this.props;
+    // 判断返回信息中msg是否报错
     if (!_.isEmpty(taskBasicInfo.msg)) {
       message.error(taskBasicInfo.msg);
     }

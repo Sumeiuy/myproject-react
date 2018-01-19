@@ -157,9 +157,6 @@ export default class CreateTaskFormFlow extends PureComponent {
       submitSuccess,
       submitApproval,
     } = this.props;
-    console.log(location);
-    console.log(location.state);
-    console.log(JSON.parse(location.query.flowData));
     return (
       <div className={styles.taskInner}>
         <TaskFormFlowStep

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-19 16:47:56
+ * @Last Modified time: 2018-01-19 17:20:21
  * 管理者视图详情
  */
 
@@ -148,14 +148,12 @@ export default class ManagerViewDetail extends PureComponent {
 
   @autobind
   handleExport() {
-    console.log('导出');
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
       exportCustListExcel,
     } = this.props;
     const { missionProgressStatus = null, progressFlag = null } = this.state;
-    console.log('导出', _.isEmpty(mngrMissionDetailInfo.servicePolicy) ? '' : mngrMissionDetailInfo.servicePolicy);
     const params = {
       missionProgressStatus,
       progressFlag,
