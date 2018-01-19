@@ -16,7 +16,7 @@ import { linkTo } from './homeIndicators_';
 import styles from './progressList.less';
 
 /* 新增客户传给列表页的参数
- * 净新增有效户： 817001
+ * 净开增有效户： 817001
  * 净新增非零售客户： 817002
  * 净新增高端产品户： 817003
  * 新增产品客户： 817004
@@ -105,8 +105,8 @@ export default class ProgressList extends PureComponent {
   @autobind
   transformName(name) {
     switch (name) {
-      case '新增有效户':
-        return '新增有效下钻客户';
+      case '新开有效户':
+        return '新开有效下钻客户';
       case '新增非零售客户':
         return '新增非零售下钻客户';
       case '新增高端产品户':
