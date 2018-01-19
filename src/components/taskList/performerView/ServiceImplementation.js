@@ -22,10 +22,10 @@ const EDITABLE = ['10', '20'];
 // 目标客户的任务状态
 // 处理中 20
 // 完成   30
-const missionStatusMap = {
-  20: '处理中',
-  30: '完成',
-};
+const missionStatusList = [
+  { id: 20, name: '处理中' },
+  { id: 30, name: '完成' },
+];
 
 
 /**
@@ -89,17 +89,19 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   updateList({ custId, flowStatus }) {
     const { list } = this.state;
-    const currentItem = _.find(list, o => o.custId === custId);
-    const currentItemIndex = _.findIndex(list, o => o.custId === custId);
-    const newCurrentItem = {
-      ...currentItem,
-      missionStatusCode: flowStatus,
-      missionStatusValue: missionStatusMap[+flowStatus],
-    };
-    const newList = [...list];
-    newList[currentItemIndex] = newCurrentItem;
+    const newList = _.map(list, (item) => {
+      if (item.custId === custId) {
+        const { name } = _.find(missionStatusList, o => o.id === +flowStatus);
+        return {
+          ...item,
+          missionStatusCode: flowStatus,
+          missionStatusValue: name,
+        };
+      }
+      return item;
+    });
     this.setState({
-      list: [...newList],
+      list: newList,
     });
   }
 
