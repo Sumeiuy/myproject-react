@@ -39,6 +39,10 @@ export default {
     addMotServeRecordSuccess: false,
     answersList: {},
     saveAnswersSucce: false,
+    // 任务反馈
+    missionFeedbackData: [],
+    // 任务反馈已反馈总数
+    missionFeedbackCount: 0,
     // 执行者视图添加服务记录的附件记录
     attachmentList: [],
   },
@@ -132,6 +136,20 @@ export default {
       return {
         ...state,
         saveAnswersSucce: payload === 'success',
+      };
+    },
+    countAnswersByTypeSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        missionFeedbackData: payload || [],
+      };
+    },
+    countExamineeByTypeSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        missionFeedbackCount: payload || 0,
       };
     },
     queryFileListSuccess(state, action) {
@@ -257,6 +275,20 @@ export default {
       yield put({
         type: 'saveAnswersByTypeSuccess',
         payload: response.resultData,
+      });
+    },
+    * countAnswersByType({ payload }, { call, put }) {
+      const { resultData } = yield call(api.countAnswersByType, payload);
+      yield put({
+        type: 'countAnswersByTypeSuccess',
+        payload: resultData,
+      });
+    },
+    * countExamineeByType({ payload }, { call, put }) {
+      const { resultData } = yield call(api.countExamineeByType, payload);
+      yield put({
+        type: 'countExamineeByTypeSuccess',
+        payload: resultData,
       });
     },
   },

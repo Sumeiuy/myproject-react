@@ -17,167 +17,190 @@ import Paganation from '../../common/Paganation';
 
 import styles from './missionFeedback.less';
 
-// 任务反馈接口本迭代不开发， 故用死数据展示
-const resultData = {
-  allFeedback: {
-    serviceAllNum: '1150',
-    aFeedback: '1150',
-    aFeedbackPer: '100%',
-    allTaskFeedbackDes: '所有问题反馈结果',
-  },
-  radioFeedback: [
-    {
-      radioTaskFeedbackDes: '单选问题反馈结果如下11',
-      radioData: [
-        {
-          name: '单选选项A',
-          value: '10',
-          optionPer: '10%',
-        },
-        {
-          name: '单选选项B',
-          value: '20',
-          optionPer: '20%',
-        },
-        {
-          name: '单选选项C',
-          value: '30',
-          optionPer: '30%',
-        },
-        {
-          name: '单选选项D',
-          value: '40',
-          optionPer: '40%',
-        },
-        {
-          name: '单选选项E',
-          value: '40',
-          optionPer: '40%',
-        },
-      ],
-    },
-    {
-      radioTaskFeedbackDes: '单选问题反馈结果如下22',
-      radioData: [
-        {
-          name: '单选选项A',
-          value: '10',
-          optionPer: '10%',
-        },
-        {
-          name: '单选选项B',
-          value: '20',
-          optionPer: '20%',
-        },
-      ],
-    },
-  ],
-  checkboxFeedback: [
-    {
-      checkboxFeedbackDes: '多选问题反馈结果如下',
-      checkboxData: [
-        {
-          name: '多选选项A',
-          value: '10',
-          optionPer: '10%',
-        },
-        {
-          name: '多选选项B',
-          value: '20',
-          optionPer: '20%',
-        },
-        {
-          name: '多选选项C',
-          value: '30',
-          optionPer: '30%',
-        },
-        {
-          name: '多选选项D',
-          value: '40',
-          optionPer: '40%',
-        },
-      ],
-    },
-    {
-      checkboxFeedbackDes: '多选问题反馈结果如下',
-      checkboxData: [
-        {
-          name: '多选选项A',
-          value: '10',
-          optionPer: '10%',
-        },
-        {
-          name: '多选选项B',
-          value: '20',
-          optionPer: '20%',
-        },
-      ],
-    },
-  ],
-};
-
-const problems = {
-  resultData: {
-    pageInfo: {
-      curPageNum: 1,
-      curPageSize: 10,
-      totalPage: 100,
-    },
-    dataInfo: [{
-      infoProblem: '这是问题描述，问题描述',
-      infoData: [
-        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-      ],
-    },
-    {
-      infoProblem: '这是问题描述222，问题描述2222',
-      infoData: [
-        { data: '这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-        { data: '这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述这是问题描述，问题描述' },
-      ],
-    }],
-  },
-};
+// const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class MissionFeedback extends PureComponent {
 
   static propTypes = {
-    // 有效期开始时间
-    triggerTime: PropTypes.string,
-    // 有效期结束时间
-    endTime: PropTypes.string,
-    // 任务目标
-    missionTarget: PropTypes.string,
-    // 服务策略
-    servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
+    // 任务反馈统计数据
+    missionFeedbackData: PropTypes.array.isRequired,
+    // 任务反馈已反馈总数
+    missionFeedbackCount: PropTypes.number.isRequired,
+    // 服务经理总数
+    serveManagerCount: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
-    triggerTime: '',
-    endTime: '',
-    missionTarget: '',
-    servicePolicy: '',
     isFold: false,
   }
 
   constructor(props) {
     super(props);
+
+    // const { finalData, originProblemData } = this.handleData(
+    //   props.missionFeedbackData,
+    //   props.missionFeedbackCount,
+    //   props.serveManagerCount,
+    // );
+
     this.state = {
       expandAll: false,
       cycleSelect: '',
       createCustRange: [],
+      finalData: {
+        allFeedback: {},
+        radioFeedback: [],
+        checkboxFeedback: [],
+      },
+      problems: {
+        resultData: {
+          pageInfo: {
+            curPageNum: 1,
+            curPageSize: 10,
+            totalPage: 10,
+          },
+          dataInfo: [],
+        },
+      },
+      originProblemData: {},
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
+    const { missionFeedbackCount: count, missionFeedbackData: data = EMPTY_LIST } = this.props;
+    const { problems } = this.state;
+    if (data !== missionFeedbackData && count !== missionFeedbackCount) {
+      const { finalData, originProblemData } = this.handleData(
+        missionFeedbackData,
+        missionFeedbackCount,
+        serveManagerCount,
+        problems,
+      );
+
+      this.setState({
+        finalData,
+        problems: originProblemData,
+        originProblemData,
+      });
+    }
+  }
+
+  @autobind
+  handleData(missionFeedbackData, missionFeedbackCount, serveManagerCount, problems = []) {
+    const finalData = this.formatData(
+      missionFeedbackData,
+      missionFeedbackCount,
+      serveManagerCount,
+    );
+    const { dataInfo } = finalData;
+    const originProblemData = _.merge(problems, {
+      resultData: {
+        dataInfo,
+        pageInfo: {
+          curPageNum: 1,
+          curPageSize: 10,
+          totalPage: _.size(dataInfo),
+        },
+      },
+    });
+
+    return {
+      finalData,
+      originProblemData,
+    };
+  }
+
+  /**
+   * 构造饼图和进度条需要的数据结构
+   * @param {*array} missionFeedbackData 任务反馈数据
+   * @param {*number} missionFeedbackCount 任务反馈已反馈数
+   * @param {*number} serveManagerCount 服务经理总数
+   */
+  @autobind
+  formatData(missionFeedbackData, missionFeedbackCount, serveManagerCount) {
+    let finalData = [];
+    let countPercent = 0;
+    if (serveManagerCount !== 0) {
+      countPercent = ((missionFeedbackCount / serveManagerCount) * 100).toFixed(0);
+    }
+
+    let radioFeedback = [];
+    let checkboxFeedback = [];
+    let answerTotalCount = 0;
+    let dataInfo = [];
+    _.each(missionFeedbackData, (item) => {
+      if (_.isArray(item)) {
+        let radioData = [];
+        let checkboxData = [];
+        let infoData = [];
+
+        // 拿到当前题目所有count之和,下面需要计算每一个答案占的比率
+        answerTotalCount = _.reduce(_.map(item, childItem =>
+          childItem.cnt), (sum, n) => sum + n, 0);
+
+        _.each(item, (childItem) => {
+          const { quesTypeCode } = childItem;
+          if (quesTypeCode === '1' || quesTypeCode === 1 || quesTypeCode === '2' || quesTypeCode === 2) {
+            const tempData = [{
+              name: childItem.optionValue,
+              value: childItem.cnt,
+              optionPer: `${((childItem.cnt / answerTotalCount) * 100).toFixed(0) || 0}%`,
+            }];
+            if (quesTypeCode === '1') {
+              // 单选题
+              radioData = _.concat(radioData, tempData);
+            } else {
+              // 多选题
+              checkboxData = _.concat(checkboxData, tempData);
+            }
+          } else if (quesTypeCode === '3' || quesTypeCode === 3) {
+            // 主观题
+            infoData = _.concat(infoData, [
+              { data: childItem.answerText },
+            ]);
+          }
+        });
+
+        if (!_.isEmpty(radioData)) {
+          radioFeedback = _.concat(radioFeedback, [{
+            radioTaskFeedbackDes: item[0].quesValue,
+            radioData,
+          }]);
+        }
+
+        if (!_.isEmpty(checkboxData)) {
+          checkboxFeedback = _.concat(checkboxFeedback, [{
+            checkboxFeedbackDes: item[0].quesValue,
+            checkboxData,
+          }]);
+        }
+
+        if (!_.isEmpty(infoData)) {
+          dataInfo = _.concat(dataInfo, [{
+            infoProblem: item[0].quesValue,
+            infoData,
+          }]);
+        }
+      }
+    });
+
+    finalData = {
+      allFeedback: {
+        serviceAllNum: serveManagerCount || 0,
+        aFeedback: missionFeedbackCount || 0,
+        aFeedbackPer: `${countPercent}%`,
+        allTaskFeedbackDes: '所有问题反馈结果',
+      },
+      radioFeedback,
+      checkboxFeedback,
+      dataInfo,
+    };
+
+    return finalData;
   }
 
   handleOptionCake(value, names) {
@@ -229,17 +252,8 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   handleOptionBar(value, names) {
     const { isFold } = this.props;
-    const grids = isFold ? {
-      left: '20%',
-      right: '20%',
-      bottom: '5%',
-      containLabel: true,
-    } : {
-      left: '15%',
-      right: '15%',
-      bottom: '5%',
-      containLabel: true,
-    };
+    const grids = isFold ? { left: '20%', right: '20%', bottom: '5%', containLabel: true } :
+      { left: '15%', right: '15%', bottom: '5%', containLabel: true };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -325,17 +339,93 @@ export default class MissionFeedback extends PureComponent {
     );
   }
 
+  /**
+   * 页码改变事件，翻页事件
+   * @param {*} nextPage 下一页码
+   * @param {*} curPageSize 当前页条目
+   */
   @autobind
-  renderTooltipContent(type, currentCount, per = null) {
-    return (
-      <div className={styles.content}>
+  handlePageChange(nextPage, currentPageSize) {
+    const { problems } = this.state;
+    const { curDataInfo } = this.renderProblemsData(nextPage, currentPageSize);
+    this.setState({
+      problems: _.merge(problems, {
+        resultData: {
+          pageInfo: {
+            curPageNum: nextPage,
+            curPageSize: currentPageSize,
+          },
+          dataInfo: curDataInfo,
+        },
+      }),
+    });
+  }
 
-        {_.isEmpty(per) ?
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per})</div>
-        }
-      </div>
-    );
+  /**
+   * 改变每一页的条目
+   * @param {*} currentPageNum 当前页码
+   * @param {*} changedPageSize 当前每页条目
+   */
+  @autobind
+  handleSizeChange(currentPageNum, changedPageSize) {
+    const { problems } = this.state;
+    const { curDataInfo } = this.renderProblemsData(currentPageNum, changedPageSize);
+    this.setState({
+      problems: _.merge(problems, {
+        resultData: {
+          pageInfo: {
+            curPageNum: currentPageNum,
+            curPageSize: changedPageSize,
+          },
+          dataInfo: curDataInfo,
+        },
+      }),
+    });
+  }
+
+  @autobind
+  renderProblemsData(curPageNum, curPageSize) {
+    const { problems: { resultData: { dataInfo } } } = this.state;
+    let curDataInfo = [];
+    if (curPageNum <= 1) {
+      // 第一页
+      curDataInfo = _.slice(dataInfo, 0, curPageSize);
+    } else {
+      // 大于一页
+      curDataInfo = _.slice(dataInfo,
+        (curPageNum - 1) * curPageSize, curPageSize);
+    }
+
+    return {
+      curDataInfo,
+    };
+  }
+
+  @autobind
+  renderCheckBox(data) {
+    const { isFold } = this.props;
+    const oDiv = _.map(data, (item) => {
+      const checkBox = _.map(item.checkboxData, itemChild =>
+        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+          <b>({itemChild.optionPer})</b></span></h5>));
+      return this.handleShowData(isFold, item.checkboxFeedbackDes,
+        item.checkboxData, checkBox);
+    });
+    return oDiv;
+  }
+
+  @autobind
+  renderRadios(data) {
+    const { isFold } = this.props;
+    const isRadio = true;
+    const oDiv = _.map(data, (item) => {
+      const radios = _.map(item.radioData, itemChild =>
+        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
+          <b>({itemChild.optionPer})</b></span></h5>));
+      return this.handleShowData(isFold, item.radioTaskFeedbackDes,
+        item.radioData, radios, isRadio);
+    });
+    return oDiv;
   }
 
   renderAllFeedback(allCount, count, countPer, residue) {
@@ -374,47 +464,23 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  renderRadios(data) {
-    const { isFold } = this.props;
-    const isRadio = true;
-    const oDiv = _.map(data, (item) => {
-      const radios = _.map(item.radioData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
-      return this.handleShowData(isFold, item.radioTaskFeedbackDes,
-        item.radioData, radios, isRadio);
-    });
-    return oDiv;
-  }
+  renderTooltipContent(type, currentCount, per = null) {
+    return (
+      <div className={styles.content}>
 
-  @autobind
-  renderCheckBox(data) {
-    const { isFold } = this.props;
-    const oDiv = _.map(data, (item) => {
-      const checkBox = _.map(item.checkboxData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
-      return this.handleShowData(isFold, item.checkboxFeedbackDes,
-        item.checkboxData, checkBox);
-    });
-    return oDiv;
-  }
-
-  @autobind
-  handlePageChange(value, page) {
-    console.log('-->', value, page);
-  }
-
-  @autobind
-  handleSizeChange(value) {
-    console.log('value--->', value);
+        {_.isEmpty(per) ?
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per})</div>
+        }
+      </div>
+    );
   }
 
   @autobind
   renderProblemsInfo(key) {
-    // const problemsInfo = problems.resultData.dataInfo;
     const { isFold } = this.props;
-    const { curPageNum, curPageSize, totalRecordNum } = problems.resultData.pageInfo;
+    const { problems: { resultData: { pageInfo } } } = this.state;
+    const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
         <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
@@ -455,8 +521,17 @@ export default class MissionFeedback extends PureComponent {
 
   render() {
     const { isFold } = this.props;
-    const { allFeedback, radioFeedback, checkboxFeedback } = resultData;
+    const { problems: { resultData: { dataInfo } }, finalData } = this.state;
+    const { allFeedback, radioFeedback, checkboxFeedback } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
+
+    if (_.isEmpty(dataInfo) &&
+      _.isEmpty(allFeedback) &&
+      _.isEmpty(radioFeedback) &&
+      _.isEmpty(checkboxFeedback)) {
+      return null;
+    }
+
     return (
       <div className={styles.basicInfo}>
         <div className={styles.feedbackTitle}>
@@ -500,14 +575,14 @@ export default class MissionFeedback extends PureComponent {
                     <div className={styles.allService}>
                       <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
                       <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                        <b>({allFeedback.aFeedbackPer})</b></span>
+                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer})` : ''}</b></span>
                     </div>
                   </div>
                 </div>
               </div>
               {this.renderRadios(radioFeedback)}
               {this.renderCheckBox(checkboxFeedback)}
-              {this.renderProblemsInfo(problems.resultData.dataInfo)}
+              {this.renderProblemsInfo(dataInfo)}
             </Col>
           </Row>
         </div>

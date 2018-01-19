@@ -15,6 +15,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
 import { data } from '../../../helper';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
 const EMPTY_LIST = [];
@@ -23,6 +24,7 @@ const Option = Select.Option;
 const defaultQuestion = '请选择问题';
 const posi = 'bottom';
 
+@RestoreScrollTop
 export default class MissionInvestigation extends PureComponent {
 
   static propTypes = {

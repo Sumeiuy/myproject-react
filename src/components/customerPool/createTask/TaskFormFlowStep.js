@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 15:17:01
+ * @Last Modified time: 2018-01-18 15:45:51
  */
 
 import React, { PureComponent } from 'react';
@@ -65,7 +65,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskSubType: false,
     };
     // 创建任务权限
-    this.isHasAuthorize = permission.hasCreateTaskPermission() && source !== 'custGroupList';
+    this.isAuthorize = permission.hasCreateTaskPermission() && source !== 'custGroupList';
   }
 
   @autobind
@@ -152,8 +152,12 @@ export default class TaskFormFlowStep extends PureComponent {
     const custSource = this.handleCustSource(source);
 
     if (current === 0) {
+      const formComponent = this.createTaskForm;
+      const formWrappedComponent = formComponent.refs
+        .wrappedComponent.refs.formWrappedComponent.getWrappedInstance();
+
       // 当前是第一步,校验表单信息
-      this.createTaskForm.validateFields((err, values) => {
+      formComponent.validateFields((err, values) => {
         let isFormError = false;
         if (!_.isEmpty(err)) {
           isFormError = true;
@@ -163,7 +167,7 @@ export default class TaskFormFlowStep extends PureComponent {
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
-            ...this.createTaskForm.getFieldsValue(),
+            ...formComponent.getFieldsValue(),
           };
           isFormValidate = true;
         } else {
@@ -171,8 +175,7 @@ export default class TaskFormFlowStep extends PureComponent {
         }
       });
       // 校验任务提示
-      const templetDesc = this.createTaskForm.refs
-        .wrappedComponent.refs.formWrappedComponent.getData();
+      const templetDesc = formWrappedComponent.getData();
       taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
         isFormValidate = false;
@@ -185,10 +188,11 @@ export default class TaskFormFlowStep extends PureComponent {
         });
       }
     } else if (current === 1) {
+      const resultTrackComponent = this.resultTrackRef.getWrappedInstance().getWrappedInstance();
       // 当前是第二步，校验结果跟踪和任务调查数据
       resultTrackData = {
         ...resultTrackData,
-        ...this.resultTrackRef.getWrappedInstance().getData(),
+        ...resultTrackComponent.getData(),
       };
       const {
         // 跟踪窗口期
@@ -241,10 +245,12 @@ export default class TaskFormFlowStep extends PureComponent {
       }
 
       // 拥有审批人权限，才能展示任务调查
-      if (this.isHasAuthorize) {
+      if (this.isAuthorize) {
+        const missionInvestigationComponent = this.missionInvestigationRef
+          .getWrappedInstance().getWrappedInstance();
         missionInvestigationData = {
           ...missionInvestigationData,
-          ...this.missionInvestigationRef.getWrappedInstance().getData(),
+          ...missionInvestigationComponent.getData(),
         };
         const {
           // 是否选中
@@ -385,7 +391,7 @@ export default class TaskFormFlowStep extends PureComponent {
       ...req,
     };
 
-    if (this.isHasAuthorize && source !== 'custGroupList') {
+    if (this.isAuthorize && source !== 'custGroupList') {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -419,7 +425,7 @@ export default class TaskFormFlowStep extends PureComponent {
       }
     }
 
-    if (this.isHasAuthorize && isMissionInvestigationChecked) {
+    if (this.isAuthorize && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -511,7 +517,7 @@ export default class TaskFormFlowStep extends PureComponent {
           storedData={storedCreateTaskData}
         />
         {
-          this.isHasAuthorize ?
+          this.isAuthorize ?
             <MissionInvestigation
               ref={ref => (this.missionInvestigationRef = ref)}
               storedData={storedCreateTaskData}
@@ -532,7 +538,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={this.isHasAuthorize}
+        isNeedApproval={this.isAuthorize}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
