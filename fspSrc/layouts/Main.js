@@ -207,17 +207,17 @@ export default class Main extends PureComponent {
               loading={loading}
               loadingForceFull={loadingForceFull}
             >
-              {
-                (!_.isEmpty(interfaceState) &&
-                  !interfaceState[effects.dictionary] &&
-                  !interfaceState[effects.customerScope] &&
-                  !interfaceState[effects.empInfo]) ?
-                    <div id="react-content" className={styles.content}>
-                      {React.isValidElement(children) ? children : <div />}
-                    </div>
-                  :
-                    <div />
-              }
+              <div id="react-content" className={styles.content}>
+                {
+                  (!_.isEmpty(interfaceState) &&
+                    !interfaceState[effects.dictionary] &&
+                    !interfaceState[effects.customerScope] &&
+                    !interfaceState[effects.empInfo] &&
+                    React.isValidElement(children)) ?
+                      children :
+                      <div />
+                }
+              </div>
               <Footer />
             </FSPUnwrap>
             <ConnectedCreateServiceRecord
