@@ -72,6 +72,12 @@ const menus = [
     pid: 'ROOT',
   },
   {
+    name: '客户360',
+    id: 'FSP_CUST_M_360',
+    path: '/fsp/customerCenter/customer360',
+    pid: 'FSP_CUST_M_CENTER_MANAGE',
+  },
+  {
     name: '任务中心',
     id: 'FSP_MOT_M_TASK',
     path: '/taskCenter',

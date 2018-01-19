@@ -14,7 +14,7 @@ import menuConfig from '../../../src/config/menu';
 import tabConfig, { indexPaneKey, defaultMenu } from '../../../src/config/tabMenu';
 import { enableLocalStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
-
+import { os } from '../../../src/helper';
 // 判断pane是否在paneArray中
 function isPaneInArray(panes, paneArray) {
   return panes.length !== 0 ?
@@ -263,17 +263,7 @@ export default class Tab extends PureComponent {
 
   // 从配置文件中获取pathname对应的tabPane对象
   getConfig(pathname) {
-    // 获取pathname的匹配数组
-    const matchArray = tabConfig.map((pane) => {
-      const match = RegExp(pane.path).exec(pathname);
-      return !match ? 0 : match[0].length;
-    });
-    // 获取匹配数组里面最大的匹配字符数
-    const maxMatchStringCount = _.max(matchArray);
-    // 最佳匹配下标
-    const index = _.indexOf(matchArray, maxMatchStringCount);
-    // 如果没找到匹配的tab菜单，会默认首页菜单展示
-    return { ...tabConfig[index] };
+    return os.findBestMatch(pathname, tabConfig, 'path');
   }
 
   // 根据pathname获取一个初步的pane数组

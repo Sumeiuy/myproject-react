@@ -52,7 +52,8 @@ const fspRoutes = [
     url: '/customer/manage/showCustManageTabWin',
   },
   {
-    path: 'customerDetail',
+    path: '/fsp/customerCenter/customer360',
+    action: 'loadInTab',
     url: '/customerCenter/360/org/main',
   },
   // 客户投诉
