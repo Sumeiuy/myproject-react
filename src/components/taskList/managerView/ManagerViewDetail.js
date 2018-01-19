@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-19 17:20:21
+ * @Last Modified time: 2018-01-19 17:31:40
  * 管理者视图详情
  */
 
@@ -108,8 +108,6 @@ export default class ManagerViewDetail extends PureComponent {
     this.setState({
       missionProgressStatus,
       progressFlag,
-    }, () => {
-      console.log(missionProgressStatus, '---', progressFlag);
     });
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,

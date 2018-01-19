@@ -105,7 +105,7 @@ export default class ToDoList extends PureComponent {
   }
 
   @autobind
-  handleOpenNew(e) {
+  handleOpenNewPage(e) {
     const { data, getTaskBasicInfo } = this.props;
     const tardetLab = e.target;
     const flowId = tardetLab.getAttribute('data');
@@ -170,7 +170,7 @@ export default class ToDoList extends PureComponent {
              rel="noopener noreferrer"
              title={item.id}
              data={recode.id}
-             onClick={this.handleOpenNew}
+             onClick={this.handleOpenNewPage}
            >
              {item.text}
            </a>),
