@@ -56,6 +56,7 @@ const effects = {
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
   getServiceType: 'performerView/getServiceType',
+  isCustServedByPostn: 'customerPool/isCustServedByPostn',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -94,6 +95,8 @@ const mapStateToProps = state => ({
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
+  // 是否包含非本人名下客户
+  custServedByPostnResult: state.customerPool.custServedByPostnResult,
 });
 
 const mapDispatchToProps = {
@@ -130,6 +133,8 @@ const mapDispatchToProps = {
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   // 获取添加服务记录中的任务反馈
   getServiceType: fetchDataFunction(true, effects.getServiceType),
+  // 查询是否包含本人名下客户
+  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -182,6 +187,8 @@ export default class CustomerList extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     getServiceType: PropTypes.func.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -547,6 +554,8 @@ export default class CustomerList extends PureComponent {
       queryCustUuid,
       getCeFileList,
       filesList,
+      isCustServedByPostn,
+      custServedByPostnResult,
     } = this.props;
     const {
       sortDirection,
@@ -643,6 +652,8 @@ export default class CustomerList extends PureComponent {
           filesList={filesList}
           permissionType={this.permissionType}
           view360Permit={this.view360Permit}
+          custServedByPostnResult={custServedByPostnResult}
+          isCustServedByPostn={isCustServedByPostn}
         />
       </div>
     );

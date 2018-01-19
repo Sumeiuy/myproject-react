@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -126,6 +126,8 @@ export default class CustomerRow extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     view360Permit: PropTypes.bool.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -151,22 +153,30 @@ export default class CustomerRow extends PureComponent {
       rowId,
       ptyId,
       },
+      isCustServedByPostn,
     } = this.props;
-    const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
-    const param = {
-      id: 'FSP_360VIEW_M_TAB',
-      title: '客户360视图-客户信息',
-      forceRefresh: true,
-    };
-    // TODOTAB: 如何与后端是动态接口
-    openFspTab({
-      routerAction: push,
-      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-      pathname: '/customerCenter/fspcustomerDetail',
-      param,
-      state: {
-        url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-      },
+    // 跳转之前查询一下是否包含非本人名下客户
+    isCustServedByPostn().then(() => {
+      if (this.props.custServedByPostnResult) {
+        const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
+        const param = {
+          id: 'FSP_360VIEW_M_TAB',
+          title: '客户360视图-客户信息',
+          forceRefresh: true,
+        };
+        // TODOTAB: 如何与后端是动态接口
+        openFspTab({
+          routerAction: push,
+          url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+          pathname: '/customerCenter/fspcustomerDetail',
+          param,
+          state: {
+            url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+          },
+        });
+      } else {
+        message.error('客户包含非本人名下客户，不能查看客户360视图');
+      }
     });
   }
 

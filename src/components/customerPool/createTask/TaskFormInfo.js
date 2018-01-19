@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Select, Input, Mention, InputNumber } from 'antd';
+import { createForm } from 'rc-form';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
@@ -25,7 +26,7 @@ const mentionTextStyle = {
   borderColor: '#ebf3fb',
 };
 
-export default class TaskFormInfo extends PureComponent {
+class TaskFormInfo extends PureComponent {
 
   static propTypes = {
     form: PropTypes.object.isRequired,
@@ -43,6 +44,9 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorTaskType: PropTypes.bool,
     isShowErrorExcuteType: PropTypes.bool,
     isShowErrorTaskSubType: PropTypes.bool,
+    isShowErrorIntervalValue: PropTypes.bool,
+    isShowErrorStrategySuggestion: PropTypes.bool,
+    isShowErrorTaskName: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -56,6 +60,9 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorExcuteType: false,
     isShowErrorTaskSubType: false,
     defaultExecutionType: '',
+    isShowErrorIntervalValue: false,
+    isShowErrorStrategySuggestion: false,
+    isShowErrorTaskName: false,
   }
 
   constructor(props) {
@@ -69,6 +76,9 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorTaskType,
       isShowErrorInfo,
       isShowErrorTaskSubType,
+      isShowErrorIntervalValue,
+      isShowErrorTaskName,
+      isShowErrorStrategySuggestion,
      } = props;
     this.state = {
       suggestions: [],
@@ -77,6 +87,9 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorTaskType,
       isShowErrorExcuteType,
       isShowErrorTaskSubType,
+      isShowErrorIntervalValue,
+      isShowErrorTaskName,
+      isShowErrorStrategySuggestion,
       taskSubTypes: currentTaskSubTypeCollection,
       currentMention: toContentState(props.defaultMissionDesc || ''),
     };
@@ -87,11 +100,18 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorExcuteType: nextExcuteTypeError,
       isShowErrorTaskType: nextTaskTypeError,
       isShowErrorTaskSubType: nextTaskSubTypeError,
+      isShowErrorIntervalValue: nextErrorIntervalValue,
+      isShowErrorTaskName: nextErrorTaskName,
+      isShowErrorStrategySuggestion: nextErrorStrategySuggestion,
     } = nextProps;
     const {
       isShowErrorInfo,
       isShowErrorExcuteType,
-      isShowErrorTaskType, isShowErrorTaskSubType,
+      isShowErrorTaskType,
+      isShowErrorTaskSubType,
+      isShowErrorIntervalValue,
+      isShowErrorTaskName,
+      isShowErrorStrategySuggestion,
      } = this.props;
 
     if (nextError !== isShowErrorInfo) {
@@ -114,6 +134,21 @@ export default class TaskFormInfo extends PureComponent {
         isShowErrorTaskSubType: nextTaskSubTypeError,
       });
     }
+    if (nextErrorIntervalValue !== isShowErrorIntervalValue) {
+      this.setState({
+        isShowErrorIntervalValue: nextErrorIntervalValue,
+      });
+    }
+    if (nextErrorStrategySuggestion !== isShowErrorStrategySuggestion) {
+      this.setState({
+        isShowErrorStrategySuggestion: nextErrorStrategySuggestion,
+      });
+    }
+    if (nextErrorTaskName !== isShowErrorTaskName) {
+      this.setState({
+        isShowErrorTaskName: nextErrorTaskName,
+      });
+    }
   }
 
   getCurrentTaskSubTypes(currentMissionType) {
@@ -128,7 +163,7 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  getMention() {
+  getData() {
     return toString(this.state.currentMention);
   }
 
@@ -217,6 +252,48 @@ export default class TaskFormInfo extends PureComponent {
     this.isFirstLoad = false;
   }
 
+  @autobind
+  handleIntervalValueChange(value) {
+    const regxp = /^\+?[1-9][0-9]*$/;
+    if (!regxp.test(value) || Number(value) <= 0 || Number(value) > 365) {
+      this.setState({
+        isShowErrorIntervalValue: true,
+      });
+    } else {
+      this.setState({
+        isShowErrorIntervalValue: false,
+      });
+    }
+  }
+
+  @autobind
+  handleMissionNameChange(e) {
+    const value = e.target.value;
+    if (_.isEmpty(value) || value.length > 30) {
+      this.setState({
+        isShowErrorTaskName: true,
+      });
+    } else {
+      this.setState({
+        isShowErrorTaskName: false,
+      });
+    }
+  }
+
+  @autobind
+  handleStrategySuggestionChange(e) {
+    const value = e.target.value;
+    if (_.isEmpty(value) || value.length < 10 || value.length > 300) {
+      this.setState({
+        isShowErrorStrategySuggestion: true,
+      });
+    } else {
+      this.setState({
+        isShowErrorStrategySuggestion: false,
+      });
+    }
+  }
+
   handleCreatOptions(data) {
     if (!_.isEmpty(data)) {
       return data.map(item =>
@@ -273,6 +350,9 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorExcuteType,
       // isShowErrorTaskSubType,
       // taskSubTypes,
+      isShowErrorIntervalValue,
+      isShowErrorStrategySuggestion,
+      isShowErrorTaskName,
     } = this.state;
     const {
       defaultMissionName,
@@ -312,6 +392,24 @@ export default class TaskFormInfo extends PureComponent {
       help: '请选择执行方式',
     } : null;
 
+    const taskNameErrorProps = isShowErrorTaskName ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '任务名称不能为空，最多30个字符',
+    } : null;
+
+    const timelyIntervalValueErrorProps = isShowErrorIntervalValue ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '有效期只能为正整数，不能超过365天',
+    } : null;
+
+    const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '服务策略不能小于10个字符，最多300个字符',
+    } : null;
+
     return (
       <Form>
         <ul className={styles.task_selectList}>
@@ -322,12 +420,15 @@ export default class TaskFormInfo extends PureComponent {
             <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称:</label>
             <FormItem
               wrapperCol={{ span: 12 }}
+              {...taskNameErrorProps}
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空，最多30个字符', max: 30 }],
                   initialValue: defaultMissionName,
-                })(<Input placeholder="请输入任务名称" />)}
+                })(<Input
+                  placeholder="请输入任务名称"
+                  onChange={this.handleMissionNameChange}
+                />)}
             </FormItem>
           </li>
           {/**
@@ -428,12 +529,18 @@ export default class TaskFormInfo extends PureComponent {
             <FormItem
               wrapperCol={{ span: 12 }}
               className={styles.timelyIntervalValueItem}
+              {...timelyIntervalValueErrorProps}
             >
               {getFieldDecorator('timelyIntervalValue',
                 {
-                  rules: [{ required: true, message: '有效期只能为正整数', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
-                })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
+                })(<InputNumber
+                  step={1}
+                  min={0}
+                  max={365}
+                  style={{ width: '100%' }}
+                  onChange={this.handleIntervalValueChange}
+                />)}
             </FormItem>
             {/* <div className={styles.tip}>有效期自任务审批通过后开始计算</div> */}
           </li>
@@ -442,10 +549,11 @@ export default class TaskFormInfo extends PureComponent {
           <p>
             <label htmlFor="desc"><i>*</i>服务策略:<br />（适用于所有客户）</label>
           </p>
-          <FormItem>
+          <FormItem
+            {...serviceStrategySuggestionErrorProps}
+          >
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, max: 300, message: '服务策略不能小于10个字符，最多300个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(<TextArea
                 id="desc"
@@ -453,6 +561,7 @@ export default class TaskFormInfo extends PureComponent {
                 placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-300字）"
                 style={{ width: '100%' }}
                 maxLength={300}
+                onChange={this.handleStrategySuggestionChange}
               />,
             )}
           </FormItem>
@@ -486,3 +595,5 @@ export default class TaskFormInfo extends PureComponent {
     );
   }
 }
+
+export default createForm()(TaskFormInfo);

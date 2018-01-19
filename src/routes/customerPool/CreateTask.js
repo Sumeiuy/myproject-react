@@ -25,9 +25,10 @@ const effects = {
   createTask: 'customerPool/createTask',
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
+  isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -41,18 +42,20 @@ const mapStateToProps = state => ({
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
+  sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
 
 const mapDispatchToProps = {
-  createTask: fectchDataFunction(true, effects.createTask),
+  createTask: fetchDataFunction(true, effects.createTask),
   saveCreateTaskData: query => ({
     type: 'customerPool/saveCreateTaskData',
     payload: query,
   }),
   push: routerRedux.push,
   goBack: routerRedux.goBack,
-  getApprovalList: fectchDataFunction(true, effects.getApprovalList),
-  generateTemplateId: fectchDataFunction(true, effects.generateTemplateId),
+  getApprovalList: fetchDataFunction(true, effects.getApprovalList),
+  generateTemplateId: fetchDataFunction(true, effects.generateTemplateId),
+  isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -76,6 +79,8 @@ export default class CreateTask extends PureComponent {
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -174,6 +179,8 @@ export default class CreateTask extends PureComponent {
       templateId,
       generateTemplateId,
       creator,
+      sendCustsServedByPostnResult,
+      isSendCustsServedByPostn,
     } = this.props;
 
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
@@ -197,6 +204,8 @@ export default class CreateTask extends PureComponent {
             generateTemplateId={generateTemplateId}
             onCloseTab={this.handleCancleTab}
             creator={creator}
+            sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+            isSendCustsServedByPostn={isSendCustsServedByPostn}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

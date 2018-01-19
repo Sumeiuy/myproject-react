@@ -102,7 +102,7 @@ export default class TabsExtra extends PureComponent {
       replace,
       updateQueryState,
       collectCustRange,
-      cycle,
+      cycle = [],
       expandAll,
       selectValue,
       location,
@@ -151,7 +151,7 @@ export default class TabsExtra extends PureComponent {
                 value={selectValue}
                 onChange={this.handleChange}
               >
-                {cycle.map(item =>
+                {_.map(cycle, item =>
                   <Option key={item.key} value={item.key}>{item.value}</Option>)}
               </Select>
             </div>

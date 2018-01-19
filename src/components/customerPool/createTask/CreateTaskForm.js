@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'antd';
+// import { Form } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -14,16 +14,14 @@ import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 
-const create = Form.create;
+// const create = Form.create;
 // const { toString } = Mention;
 
-@create({ withRef: true })
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
-    form: PropTypes.object.isRequired,
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
@@ -35,6 +33,9 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorTaskSubType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
     missionType: PropTypes.string,
+    isShowErrorIntervalValue: PropTypes.bool.isRequired,
+    isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
+    isShowErrorTaskName: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -89,7 +90,7 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   getData() {
-    return this.taskFormInforRef.getMention();
+    return this.taskFormInfoRef.getData();
   }
 
   // 从业务目标池客户：businessCustPool
@@ -99,7 +100,10 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   handleKey(key, custIdexPlaceHolders) {
     const values = _.filter(custIdexPlaceHolders, item => item.key === key);
-    return values[0].value;
+    if (!_.isEmpty(values) && !_.isEmpty(values[0])) {
+      return values[0].value;
+    }
+    return '';
   }
 
   @autobind
@@ -219,12 +223,15 @@ export default class CreateTaskForm extends PureComponent {
   render() {
     const {
       dict,
-      form,
+      // form,
       isShowTitle = false,
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
       isShowErrorTaskSubType,
+      isShowErrorIntervalValue,
+      isShowErrorStrategySuggestion,
+      isShowErrorTaskName,
       custCount,
     } = this.props;
     const { executeTypes, missionType = [] } = dict || {};
@@ -264,13 +271,16 @@ export default class CreateTaskForm extends PureComponent {
             users={statusData}
             taskTypes={motMissionType}
             executeTypes={executeTypes}
-            form={form}
+            /* form={form} */
             isShowErrorInfo={isShowErrorInfo}
             isShowErrorExcuteType={isShowErrorExcuteType}
             isShowErrorTaskType={isShowErrorTaskType}
+            isShowErrorIntervalValue={isShowErrorIntervalValue}
+            isShowErrorStrategySuggestion={isShowErrorStrategySuggestion}
+            isShowErrorTaskName={isShowErrorTaskName}
             defaultTaskSubType={defaultTaskSubType}
             isShowErrorTaskSubType={isShowErrorTaskSubType}
-            ref={ref => (this.taskFormInforRef = ref)}
+            wrappedComponentRef={ref => this.taskFormInfoRef = ref}
           />
         </div>
       </div>

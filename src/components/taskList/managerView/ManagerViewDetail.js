@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-16 14:19:18
+ * @Last Modified time: 2018-01-19 15:35:13
  * 管理者视图详情
  */
 
@@ -71,6 +71,8 @@ export default class ManagerViewDetail extends PureComponent {
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -208,6 +210,8 @@ export default class ManagerViewDetail extends PureComponent {
       missionFeedbackCount,
       serveManagerCount,
       push,
+      isCustServedByPostn,
+      custServedByPostnResult,
     } = this.props;
 
     const { isShowCustDetailModal, title } = this.state;
@@ -314,6 +318,8 @@ export default class ManagerViewDetail extends PureComponent {
                 onClose={this.handleCloseModal}
                 hideCustDetailModal={this.hideCustDetailModal}
                 push={push}
+                isCustServedByPostn={isCustServedByPostn}
+                custServedByPostnResult={custServedByPostnResult}
               />
             }
             modalStyle={{

@@ -2,14 +2,12 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-14 13:26:52
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 15:27:10
+ * @Last Modified time: 2018-01-19 17:00:33
  * 校验表单内容
  */
 
 import { message } from 'antd';
 import _ from 'lodash';
-
-// const { toString } = Mention;
 
 export default {};
 
@@ -22,17 +20,20 @@ export const validateFormContent = (target, name, descriptor) => {
       if (_.isEmpty(args)) {
         return false;
       }
-      const { executionType, taskType, isFormError } = args[0];
-      // let isShowErrorInfo = false;
+      const {
+        executionType,
+        taskType,
+        isFormError,
+        taskName,
+        timelyIntervalValue,
+        serviceStrategySuggestion,
+      } = args[0];
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
-      // let isShowErrorTaskSubType = false;
-      // if (toString(templetDesc).length < 10 || toString(templetDesc).length > 341) {
-      //   isShowErrorInfo = true;
-      //   this.setState({
-      //     isShowErrorInfo: true,
-      //   });
-      // }
+      let isShowErrorIntervalValue = false;
+      let isShowErrorStrategySuggestion = false;
+      let isShowErrorTaskName = false;
+      const regxp = /^\+?[1-9][0-9]*$/;
       if (_.isEmpty(executionType) || executionType === '请选择' || executionType === '暂无数据') {
         this.setState({
           isShowErrorExcuteType: true,
@@ -45,15 +46,33 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskType = true;
       }
-      // 暂时去掉子类型的检验
-      // if (_.isEmpty(taskSubType) || taskSubType === '请选择' || taskSubType === '暂无数据') {
-      this.setState({
-        isShowErrorTaskSubType: false,
-      });
-      // isShowErrorTaskSubType = true;
-      // }
+      if (!regxp.test(timelyIntervalValue)
+        || Number(timelyIntervalValue) <= 0
+        || Number(timelyIntervalValue) > 365) {
+        this.setState({
+          isShowErrorIntervalValue: true,
+        });
+        isShowErrorIntervalValue = true;
+      }
+      if (_.isEmpty(taskName)
+        || taskName.length > 30) {
+        this.setState({
+          isShowErrorTaskName: true,
+        });
+        isShowErrorTaskName = true;
+      }
+      if (_.isEmpty(serviceStrategySuggestion)
+        || serviceStrategySuggestion.length < 10
+        || serviceStrategySuggestion.length > 300) {
+        this.setState({
+          isShowErrorStrategySuggestion: true,
+        });
+        isShowErrorStrategySuggestion = true;
+      }
       if (isFormError
-        // || isShowErrorInfo
+        || isShowErrorIntervalValue
+        || isShowErrorStrategySuggestion
+        || isShowErrorTaskName
         || isShowErrorExcuteType
         || isShowErrorTaskType) {
         message.error('请填写任务基本信息');
@@ -64,7 +83,9 @@ export const validateFormContent = (target, name, descriptor) => {
         isShowErrorTaskSubType: false,
         isShowErrorTaskType: false,
         isShowErrorExcuteType: false,
-        // isShowErrorInfo: false,
+        isShowErrorIntervalValue: false,
+        isShowErrorStrategySuggestion: false,
+        isShowErrorTaskName: false,
       });
       origin.apply(this, args);
       return true;

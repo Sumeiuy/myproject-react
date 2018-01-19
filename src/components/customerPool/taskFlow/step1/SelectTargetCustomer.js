@@ -34,6 +34,7 @@ export default class SelectTargetCustomer extends PureComponent {
     orgId: PropTypes.string.isRequired,
     isAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -102,6 +103,7 @@ export default class SelectTargetCustomer extends PureComponent {
       getLabelPeople,
       orgId,
       isAuthorize,
+      isSendCustsServedByPostn,
       filterModalvisible,
     } = this.props;
     const {
@@ -124,6 +126,7 @@ export default class SelectTargetCustomer extends PureComponent {
           onPreview={onPreview}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
         />
         <SightingTelescope
           ref={r => this.sightingTelescopeRef = r}
@@ -140,6 +143,7 @@ export default class SelectTargetCustomer extends PureComponent {
           orgId={orgId}
           isAuthorize={isAuthorize}
           filterModalvisible={filterModalvisible}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
         />
       </div>
     );

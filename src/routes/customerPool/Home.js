@@ -25,13 +25,14 @@ import {
 } from './config';
 
 import styles from './home.less';
-import
-{ MorningBroadcast,
+import {
+  MorningBroadcast,
   ToBeDone,
   Viewpoint,
   PerformanceIndicators,
   TabsExtra,
-  Search } from '../../components/customerPool/home';
+  Search
+} from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
 const EMPTY_LIST = [];
@@ -443,7 +444,7 @@ export default class Home extends PureComponent {
       replace,
       updateQueryState: this.updateQueryState,
       collectCustRange,
-      cycle,
+      cycle: cycle || [],
       expandAll,
       selectValue: curCycleSelect,
       location,
