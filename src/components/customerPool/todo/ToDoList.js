@@ -28,6 +28,7 @@ export default class ToDoList extends PureComponent {
     onSizeChange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
   }
@@ -36,9 +37,33 @@ export default class ToDoList extends PureComponent {
     taskBasicInfo: {},
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      flowId: null,
+    };
+  }
+
   componentDidMount() {
     this.updateEmptyHeight();
     window.addEventListener('resize', () => this.updateEmptyHeight());
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { taskBasicInfo } = nextProps;
+    const { taskBasicInfo: perInfo, location: { query, pathname }, replace } = this.props;
+    const { flowId } = this.state;
+    if (taskBasicInfo !== perInfo) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          flowData: JSON.stringify(taskBasicInfo),
+          source: 'returnTask',
+          flowId,
+        },
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -87,12 +112,16 @@ export default class ToDoList extends PureComponent {
     let newUrl = null;
     if (true) {
       newUrl = "javascript:void(0);"; //eslint-disable-line
+      this.setState({
+        flowId: flowData.flowId,
+      });
       getTaskBasicInfo({
         flowId: flowData.flowId,
         systemCode,
       }).then(this.handleSuccess);
     } else {
       newUrl = `${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`;
+      // href = {`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`
     }
     tardetLab.setAttribute('href', newUrl);
   }
@@ -121,17 +150,14 @@ export default class ToDoList extends PureComponent {
   render() {
     const { className, data, todolist, location } = this.props;
     const { query: { curPageNum = 1, pageSize = 10 } } = location;
-
     const columns = [
       {
         title: '任务名称',
         dataIndex: 'task',
         key: 'task',
         render: (item, recode) =>
-          // console.log(recode);
            (<a
              className={styles.title}
-             href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
              target="_blank"
              rel="noopener noreferrer"
              title={item.id}

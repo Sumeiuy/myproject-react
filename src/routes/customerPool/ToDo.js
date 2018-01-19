@@ -97,7 +97,7 @@ export default class ToDo extends PureComponent {
   }
 
   render() {
-    const { data, todolist, location, push, taskBasicInfo, getTaskBasicInfo } = this.props;
+    const { data, todolist, location, push, replace, taskBasicInfo, getTaskBasicInfo } = this.props;
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
@@ -124,6 +124,7 @@ export default class ToDo extends PureComponent {
           onSizeChange={this.sizeChange}
           location={location}
           push={push}
+          replace={replace}
           taskBasicInfo={taskBasicInfo}
           getTaskBasicInfo={getTaskBasicInfo}
         />

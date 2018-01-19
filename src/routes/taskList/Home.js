@@ -87,6 +87,7 @@ const effects = {
   countFlowStatus: 'managerView/countFlowStatus',
   getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
   saveAnswersByType: 'performerView/saveAnswersByType',
+  exportCustListExcel: 'managerView/exportCustListExcel',
 };
 
 const mapStateToProps = state => ({
@@ -183,6 +184,7 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
+  exportCustListExcel: fetchDataFunction(false, effects.exportCustListExcel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -243,6 +245,7 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
+    exportCustListExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -279,10 +282,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
-          missionViewType,
+        pageSize,
+        missionViewType,
         },
       },
     } = this.props;
@@ -452,6 +455,23 @@ export default class PerformerView extends PureComponent {
     });
   }
 
+  @autobind
+  handleExportWorld() {
+    const {
+      location: { query: { currentId } },
+      mngrMissionDetailInfo,
+      exportCustListExcel,
+    } = this.props;
+    const params = {
+      missionName: mngrMissionDetailInfo.missionName,
+      orgId: emp.getOrgId(),
+      missionId: currentId,
+      serviceTips: mngrMissionDetailInfo.missionDesc,
+      servicePolicy: mngrMissionDetailInfo.servicePolicy,
+    };
+    exportCustListExcel(params);
+  }
+
   /**
    * 根据不同的视图获取不同的Detail组件
    * @param  {string} st 视图类型
@@ -573,6 +593,7 @@ export default class PerformerView extends PureComponent {
             push={push}
             missionType={typeCode}
             missionTypeDict={missionType}
+            exportCustListExcel={this.handleExportWorld}
           />
         );
         break;

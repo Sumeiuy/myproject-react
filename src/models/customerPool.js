@@ -118,6 +118,10 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 审批流程按钮
+    approvalBtn: {},
+    // 审批按钮提交成功
+    submitSuccess: false,
   },
 
   subscriptions: {
@@ -724,6 +728,24 @@ export default {
         payload: resultData,
       });
     },
+    // 审批流程获取按钮
+    * getApprovalBtn({ payload }, { call, put }) {
+      const response = yield call(api.queryApprovalBtn, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getApprovalBtnSuccess',
+        payload: { resultData },
+      });
+    },
+    // 审批按钮提交
+    * submitApproval({ payload }, { call, put }) {
+      const response = yield call(api.submitApproval, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'submitApprovalSuccess',
+        payload: { resultData },
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1252,6 +1274,22 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    // 审批流程获取按钮成功
+    getApprovalBtnSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        approvalBtn: resultData,
+      };
+    },
+    // 审批按钮提交成功
+    submitApprovalSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        submitSuccess: resultData,
       };
     },
   },

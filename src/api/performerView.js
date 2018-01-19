@@ -34,5 +34,7 @@ export default function performerView(api) {
     getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
     // 问卷调查保存答案
     saveAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/saveAnswersByType', query),
+    // 导出下载
+    exportCustListExcel: query => api.post('/groovynoauth/fsp/campaign/mot/exportCustListExcel', query),
   };
 }

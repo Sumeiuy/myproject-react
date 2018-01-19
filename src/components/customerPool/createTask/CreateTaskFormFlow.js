@@ -33,6 +33,10 @@ export default class CreateTaskFormFlow extends PureComponent {
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    submitApproval: PropTypes.func,
+    submitSuccess: PropTypes.bool,
+    getApprovalBtn: PropTypes.func,
+    approvalBtn: PropTypes.object,
   }
 
   static defaultProps = {
@@ -41,6 +45,10 @@ export default class CreateTaskFormFlow extends PureComponent {
     createTask: () => { },
     orgId: null,
     enterType: null,
+    submitSuccess: false,
+    submitApproval: () => { },
+    approvalBtn: {},
+    getApprovalBtn: () => { },
   }
 
   constructor(props) {
@@ -144,8 +152,14 @@ export default class CreateTaskFormFlow extends PureComponent {
       generateTemplateId,
       templateId,
       creator,
+      approvalBtn,
+      getApprovalBtn,
+      submitSuccess,
+      submitApproval,
     } = this.props;
-
+    console.log(location);
+    console.log(location.state);
+    console.log(JSON.parse(location.query.flowData));
     return (
       <div className={styles.taskInner}>
         <TaskFormFlowStep
@@ -166,6 +180,10 @@ export default class CreateTaskFormFlow extends PureComponent {
           generateTemplateId={generateTemplateId}
           templateId={templateId}
           creator={creator}
+          approvalBtn={approvalBtn}
+          getApprovalBtn={getApprovalBtn}
+          submitSuccess={submitSuccess}
+          submitApproval={submitApproval}
         />
       </div>
     );

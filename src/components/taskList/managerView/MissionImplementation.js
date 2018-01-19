@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-09 16:46:41
+ * @Last Modified time: 2018-01-18 15:45:24
  * 任务实施简报
  */
 
@@ -43,6 +43,7 @@ export default class MissionImplementation extends PureComponent {
     countFlowStatus: PropTypes.func.isRequired,
     // 客户反馈饼图
     countFlowFeedBack: PropTypes.func.isRequired,
+    exportCustListExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -175,7 +176,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   renderTabsExtra() {
-    const { replace, location } = this.props;
+    const { replace, location, exportCustListExcel } = this.props;
     const {
       expandAll,
       isDown,
@@ -202,6 +203,7 @@ export default class MissionImplementation extends PureComponent {
       orgId: curOrgId,
       isDown,
       iconType: 'juxing23',
+      exportWorld: exportCustListExcel,
     };
     return (<TabsExtra {...extraProps} />);
   }

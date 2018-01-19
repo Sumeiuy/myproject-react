@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 15:17:01
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-19 09:27:57
  */
 
 import React, { PureComponent } from 'react';
@@ -41,12 +41,20 @@ export default class TaskFormFlowStep extends PureComponent {
     generateTemplateId: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    submitApproval: PropTypes.func,
+    submitSuccess: PropTypes.bool,
+    getApprovalBtn: PropTypes.func,
+    approvalBtn: PropTypes.object,
   };
 
   static defaultProps = {
     dict: {},
     storedCreateTaskData: {},
     orgId: null,
+    submitSuccess: false,
+    submitApproval: () => { },
+    approvalBtn: {},
+    getApprovalBtn: () => { },
   };
 
   constructor(props) {
@@ -461,6 +469,32 @@ export default class TaskFormFlowStep extends PureComponent {
     this.props.onCloseTab();
   }
 
+  @autobind
+  handleStopFlow() {
+    const { getApprovalBtn, location: { query: { flowId } } } = this.props;
+    getApprovalBtn({
+      flowId,
+    }).then(this.handleApporval);
+  }
+
+  @autobind
+  handleApporval() {
+    // const { submitApproval, approvalBtn } = this.props;
+    // const param = {
+    //   SystemCode: systemCode,
+    //   empId: empId,
+    //   flowId: flowId,
+    //   routeId: routeId,
+    //   recGenUserId: empId, //当前登录人
+    //   approvalIds: loginId,
+    //   suggestion: approverIdea,
+    //   nextGroupId: nextGroupId,
+    //   btnName: btnName,
+    //   btnId: flowBtnId.toString(),
+    //   flowClass: flowClass,
+    // }
+  }
+
   render() {
     const {
       current,
@@ -483,9 +517,11 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
-      location: { query: { missionType } },
+      location: { query: { missionType, source } },
       creator,
     } = this.props;
+    const { flowData } = location.query;
+    const baseInfo = JSON.parse(flowData);
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
 
@@ -502,6 +538,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorTaskSubType={isShowErrorTaskSubType}
         custCount={Number(count)}
         missionType={missionType}
+        baseInfo={baseInfo}
       />,
     }, {
       title: '结果跟踪&任务调查',
@@ -540,6 +577,17 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
+    const cancleBtn = source === 'returnTask' ?
+      (<Button className={styles.cancelBtn} type="default">
+        终止
+      </Button>) :
+      (<Button className={styles.cancelBtn} type="default">
+        取消
+      </Button>);
+    const stopBtn = source === 'returnTask' ?
+      (<Button className={styles.cancelBtn} type="default" onClick={this.handleStopFlow}>
+        终止
+      </Button>) : null;
     const stepsCount = _.size(steps);
     return (
       <div className={styles.taskFlowContainer}>
@@ -557,22 +605,29 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleCancel}
               eventName="/click/taskFormFlowStep/cancel"
             >
-              <Button className={styles.cancelBtn} type="default">
-                取消
-              </Button>
+              {cancleBtn}
             </Clickable>
           }
           {
             current > 0
             &&
-            <Clickable
-              onClick={this.handlePreviousStep}
-              eventName="/click/taskFormFlowStep/lastStep"
-            >
-              <Button className={styles.prevStepBtn} type="default">
-                上一步
+            <div>
+              <Clickable
+                onClick={this.handlePreviousStep}
+                eventName="/click/taskFormFlowStep/lastStep"
+              >
+                {stopBtn}
+              </Clickable>
+              <Clickable
+                onClick={this.handlePreviousStep}
+                eventName="/click/taskFormFlowStep/lastStep"
+              >
+                {stopBtn}
+                <Button className={styles.prevStepBtn} type="default">
+                  上一步
               </Button>
-            </Clickable>
+              </Clickable>
+            </div>
           }
           {
             current < stepsCount - 1

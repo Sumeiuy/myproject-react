@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-11 16:17:05
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-18 15:43:45
  * 管理者视图详情
  */
 
@@ -67,6 +67,7 @@ export default class ManagerViewDetail extends PureComponent {
     countFlowFeedBack: PropTypes.func.isRequired,
     // 任务类型字典
     missionTypeDict: PropTypes.array,
+    exportCustListExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -194,6 +195,7 @@ export default class ManagerViewDetail extends PureComponent {
       replace,
       countFlowStatus,
       countFlowFeedBack,
+      exportCustListExcel,
     } = this.props;
 
     const { isShowCustDetailModal, title } = this.state;
@@ -219,7 +221,6 @@ export default class ManagerViewDetail extends PureComponent {
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
-
     return (
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
@@ -324,6 +325,7 @@ export default class ManagerViewDetail extends PureComponent {
             replace={replace}
             countFlowStatus={countFlowStatus}
             countFlowFeedBack={countFlowFeedBack}
+            exportCustListExcel={exportCustListExcel}
           />
         </div>
         <div className={styles.missionFeedbackSection}>

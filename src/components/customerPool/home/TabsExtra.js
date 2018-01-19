@@ -30,6 +30,7 @@ export default class TabsExtra extends PureComponent {
     orgId: PropTypes.string,
     isDown: PropTypes.bool,
     iconType: PropTypes.string,
+    exportWorld: PropTypes.func,
   }
 
   static defaultProps = {
@@ -41,6 +42,7 @@ export default class TabsExtra extends PureComponent {
     isDown: false,
     iconType: 'kehu',
     updateQueryState: () => { },
+    exportWorld: () => { },
   }
 
   constructor(props) {
@@ -94,6 +96,12 @@ export default class TabsExtra extends PureComponent {
       begin,
       end,
     });
+  }
+
+  @autobind
+  handleExportExel() {
+    const { exportWorld } = this.props;
+    exportWorld();
   }
 
   render() {
@@ -156,7 +164,7 @@ export default class TabsExtra extends PureComponent {
               </Select>
             </div>
           </div> :
-          <div className={styles.downFiles}>
+          <div className={styles.downFiles} onClick={this.handleExportExel}>
             <div className={styles.iconDown}>
               <Icon type="xiazai" />
             </div>
