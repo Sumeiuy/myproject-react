@@ -169,6 +169,7 @@ function dispatchTabPane(options) {
       query, // query对象
       shoudlRemove = false,
       shouldStay = false,
+      editPane = {},
       addPanes = [],   // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
       activeTabKey = '', // 可选参数，string类型，表示当前活动的tabPane，值需要与key值相对应
@@ -185,6 +186,7 @@ function dispatchTabPane(options) {
         pathname,
         query,
         state: {
+          editPane,
           addPanes,
           removePanes,
           activeTabKey,
@@ -225,8 +227,11 @@ function openFspTab(options) {
 
 // 当前页面内的链接跳转
 function linkTo(options) {
+  const { name } = options;
+  const editPane = { name };
   dispatchTabPane({
     shouldStay: true,
+    editPane,
     ...options,
   });
 }

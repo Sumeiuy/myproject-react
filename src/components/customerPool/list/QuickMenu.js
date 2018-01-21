@@ -139,10 +139,9 @@ export default class QuickMenu extends PureComponent {
       url,
       obj,
       shouldStay: true,
-      addPanes: [{
-        id: 'FSP_CUSTOMER_LIST',
+      editPane: {
         name: '新建分组',
-      }],
+      },
     });
   }
 

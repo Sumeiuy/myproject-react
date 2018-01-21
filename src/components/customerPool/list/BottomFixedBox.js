@@ -84,7 +84,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick(url, title, id, shouldStay, addPanes) {
+  handleClick(url, title, id, shouldStay, editPane) {
     const {
       page,
       condition,
@@ -113,11 +113,11 @@ export default class BottomFixedBox extends PureComponent {
         source,
         fr,
         shouldStay,
-        addPanes,
+        editPane,
       );
     } else if (selectAll) {
       this.openByAllSelect(url,
-        condition, page.total, title, id, entertype, source, fr, shouldStay, addPanes);
+        condition, page.total, title, id, entertype, source, fr, shouldStay, editPane);
     }
   }
 
@@ -127,10 +127,9 @@ export default class BottomFixedBox extends PureComponent {
     const title = '新建分组';
     const id = 'RCT_FSP_CUSTOMER_LIST';
     const shouldStay = true;
-    const addPanes = [{
-      id: 'FSP_CUSTOMER_LIST',
+    const editPane = {
       name: '新建分组',
-    }];
+    };
 
     const {
       selectCount,
@@ -139,7 +138,7 @@ export default class BottomFixedBox extends PureComponent {
       this.toggleModal();
       return;
     }
-    this.handleClick(url, title, id, shouldStay, addPanes);
+    this.handleClick(url, title, id, shouldStay, editPane);
   }
 
   @autobind
@@ -155,7 +154,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, condition, ids, count, title, id, entertype, source, fr, shouldStay, addPanes) {
+  openByIds(url, condition, ids, count, title, id, entertype, source, fr, shouldStay, editPane) {
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -172,12 +171,12 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
-    this.props.onClick({ id, title, url, obj, shouldStay, addPanes });
+    this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, entertype, source, fr, shouldStay, addPanes) {
+  openByAllSelect(url, condition, count, title, id, entertype, source, fr, shouldStay, editPane) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -189,7 +188,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
     };
-    this.props.onClick({ id, title, url, obj, shouldStay, addPanes });
+    this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
 
   @autobind

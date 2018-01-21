@@ -25,7 +25,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  openNewTab(url, query, addPanes) {
+  openNewTab(url, query, editPane) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const { push } = this.props;
     openRctTab({
@@ -34,7 +34,7 @@ export default class Viewpoint extends PureComponent {
       param,
       pathname: url,
       query,
-      addPanes,
+      editPane,
     });
   }
 
@@ -42,25 +42,20 @@ export default class Viewpoint extends PureComponent {
   handleMoreClick() {
     // 跳转到资讯列表界面
     this.openNewTab('/customerPool/viewpointList', null,
-      [{
+      {
         name: '资讯列表',
-        id: 'FSP_VIEWPOINT',
         path: '/customerPool/viewpointList',
-        pid: 'FSP_NEW_HOMEPAGE',
-      }]);
+      });
   }
 
   @autobind
   handleDetailClick(index) {
     // 跳转到资讯详情界面
     this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index },
-      [{
+      {
         name: '资讯详情',
-        id: 'FSP_VIEWPOINT',
         path: '/customerPool/viewpointDetail',
-        query: { detailIndex: index },
-        pid: 'FSP_NEW_HOMEPAGE',
-      }]);
+      });
   }
 
   @autobind

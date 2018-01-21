@@ -158,10 +158,7 @@ export default class ViewpointList extends PureComponent {
       param,
       pathname: url,
       query,
-      addPanes: [{
-        id: 'FSP_VIEWPOINT',
-        name: '资讯详情',
-      }],
+      name: '资讯详情',
     });
   }
 

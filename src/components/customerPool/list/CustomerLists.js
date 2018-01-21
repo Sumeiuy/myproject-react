@@ -403,7 +403,7 @@ export default class CustomerLists extends PureComponent {
 
   // 跳转到分组页面或新建任务页面
   @autobind
-  goGroupOrTask({ id, title, url, obj, shouldStay, addPanes }) {
+  goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
     const { push } = this.props;
     const newurl = `${url}?${urlHelper.stringify(obj)}`;
     const param = {
@@ -420,7 +420,7 @@ export default class CustomerLists extends PureComponent {
       pathname: url,
       query: obj,
       shouldStay,
-      addPanes,
+      editPane,
     });
   }
 
