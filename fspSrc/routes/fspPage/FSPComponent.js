@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import store from 'store';
 import { fspRoutes } from '../../../src/config';
 import api from '../../../src/api';
 import Loading from '../../layouts/Loading';
@@ -10,7 +11,7 @@ import styles from './fspComponent.less';
 import { os } from '../../../src/helper';
 
 function findRoute(pathname) {
-  return os.findBestMatch(pathname, fspRoutes, 'path', true);
+  return os.findBestMatch(pathname, fspRoutes, 'path');
 }
 
 export default class FSPComponent extends PureComponent {
@@ -51,12 +52,14 @@ export default class FSPComponent extends PureComponent {
   @autobind
   getRouteConfig(pathname, state) {
     const routeConfig = findRoute(pathname);
-    this.url = routeConfig.url;
+    const localUrl = store.get(pathname);
+    this.url = !localUrl ? routeConfig.url : localUrl;
     this.action = routeConfig.action;
     // 修正后端接口，因为有些接口为动态接口
     if (state && state.url) {
       this.url = state.url;
       routeConfig.url = state.url;
+      store.set(pathname, state.url);
     }
   }
 
@@ -86,7 +89,7 @@ export default class FSPComponent extends PureComponent {
 
   render() {
     return (
-      <div tabIndex="0">
+      <div id="FSPContent" tabIndex="0">
         <Loading loading={this.state.loading} />
         {
           this.action === 'loadInTab' ?

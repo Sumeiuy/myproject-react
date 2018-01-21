@@ -51,7 +51,7 @@ function splitPanesArray(panes, menuWidth) {
   };
 }
 
-// 获取本地保存的tab菜单
+// 获取本地缓存的tab菜单
 function getLocalPanes(pathname) {
   if (enableLocalStorage) {
     return store.get('pathname') === pathname ?
@@ -290,6 +290,8 @@ export default class Tab extends PureComponent {
       newActiveKey = paneConf.id;
       if (!_.isEmpty(paneConf)) {
         const isExists = panes.find(item => item.id === paneConf.id);
+        // 修正找到的tab信息，
+        paneConf.path = pathname;
         paneConf.query = query;
         if (editPane.name) {
           paneConf.name = editPane.name;
@@ -297,6 +299,7 @@ export default class Tab extends PureComponent {
         if (!isExists) {
           panes.push(paneConf);
         } else {
+          // 注意这里仅对可以切换的tab进行修正，具有下拉菜单的tab则不会修正
           panes = panes.map((pane) => {
             if ((pane.id === paneConf.id) && !pane.children) {
               return paneConf;
@@ -320,7 +323,7 @@ export default class Tab extends PureComponent {
     return { panes, newActiveKey };
   }
 
-  // 如果设置了shouldStay标志，使用这个
+  // 如果设置了shouldStay标志，表示为页面内部跳转，使用这个修正pane
   getStayPanes(editPane, pathname, query, activeKey) {
     const { panes } = this.state;
     const finalPanes = _.map(panes, (pane) => {

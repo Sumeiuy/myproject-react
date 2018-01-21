@@ -103,7 +103,6 @@ const routes = [
    { path: '/bizapply/option/fspoptionResearch', component: HtmlComponent }, */
   // 客户分组管理
   { path: '/customerCenter/customerGroupManage', component: CustomerGroupManage },
-  { path: '/fsp/customerCenter/customer360', component: FSPComponent },
   { path: '/customerCenter/customerGroupManage/createTask', component: CreateTask },
   // 绩效视图
   { path: '/report', component: ReportHome },

@@ -54,7 +54,7 @@ const fspRoutes = [
   {
     path: '/fsp/customerCenter/customer360',
     action: 'loadInTab',
-    url: '/customerCenter/360/org/main',
+    url: '/customerCenter/360/',
   },
   // 客户投诉
   {
