@@ -50,14 +50,14 @@ export default class MorningBroadcast extends PureComponent {
             dataList
               .filter((item, index) => index <= 1)
               .map((item) => {
-                if (activeMusic === item.key) {
+                if (activeMusic === item.newsId) {
                   return (
-                    <div key={item.key} className={styles.item}>
+                    <div key={item.newsId} className={styles.item}>
                       <div className={styles.simpleName}>
-                        <Marquee loop hoverToStop text={`${item.type}`} />
+                        <Marquee loop hoverToStop text={`${item.newsTypValue}`} />
                       </div>
                       <div className={styles.music}>
-                        <audio src={item.source} controls="controls">
+                        <audio src={'http://www.w3school.com.cn/i/horse.ogg'} controls="controls">
                           Your browser does not support the audio element.
                         </audio>
                         <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
@@ -66,10 +66,10 @@ export default class MorningBroadcast extends PureComponent {
                   );
                 }
                 return (
-                  <div key={item.key} className={styles.item}>
-                    <span className={styles.desc}>{`${item.type}:${item.title}`}</span>
+                  <div key={item.newsId} className={styles.item}>
+                    <span className={styles.desc}>{`${item.newsTypValue}:${item.title}`}</span>
                     <span
-                      onClick={() => { this.onHandleListen(item.key); }}
+                      onClick={() => { this.onHandleListen(item.newsId); }}
                       className={styles.listen}
                     >收听</span>
                   </div>
