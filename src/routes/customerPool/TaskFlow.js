@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-18 14:57:31
+ * @Last Modified time: 2018-01-22 10:48:39
  */
 
 import React, { PureComponent } from 'react';
@@ -39,6 +39,7 @@ const effects = {
   submitTaskFlow: 'customerPool/submitTaskFlow',
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
+  isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -63,6 +64,7 @@ const mapStateToProps = state => ({
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
+  sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
 
 const mapDispatchToProps = {
@@ -104,6 +106,7 @@ const mapDispatchToProps = {
   submitTaskFlow: fetchData(effects.submitTaskFlow, true),
   getApprovalList: fetchData(effects.getApprovalList, true),
   generateTemplateId: fetchData(effects.generateTemplateId, true),
+  isSendCustsServedByPostn: fetchData(effects.isSendCustsServedByPostn, true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -135,19 +138,22 @@ export default class TaskFlow extends PureComponent {
     templateId: PropTypes.number,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
     getApprovalListLoading: false,
-    templateId: '',
+    templateId: 0,
     creator: '',
   };
 
   constructor(props) {
     super(props);
     const { current, currentSelectRowKeys, currentSelectRecord } = props.storedTaskFlowData || {};
+
     this.state = {
       current: current || 0,
       currentSelectRecord: currentSelectRecord || {},
@@ -158,12 +164,19 @@ export default class TaskFlow extends PureComponent {
       isShowErrorTaskType: false,
       isShowErrorTaskSubType: false,
       isShowErrorExcuteType: false,
+      isShowErrorIntervalValue: false,
+      isShowErrorStrategySuggestion: false,
+      isShowErrorTaskName: false,
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
+      // 测试用
+      isNeedApproval: permission.hasTkMampPermission(),
+      // 测试用
+      isCanGoNextStep: true,
+      // 测试用
+      isNeedMissionInvestigation: permission.hasTkMampPermission(),
     };
-    // 首页指标查询权限
-    this.isAuthorize = permission.hasCreateTaskPermission();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -212,6 +225,29 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
+  @autobind
+  handleCheckCust() {
+    this.props.isSendCustsServedByPostn().then(() => {
+      const { sendCustsServedByPostnResult } = this.props;
+      const {
+        isNeedApproval,
+        isCanGoNextStep,
+        isNeedMissionInvestigation,
+        isIncludeNotMineCust,
+      } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
+      if (isIncludeNotMineCust && !isCanGoNextStep) {
+        message.error('客户包含非本人名下客户，请重新选择');
+        return;
+      }
+
+      this.setState({
+        isNeedApproval,
+        isCanGoNextStep,
+        isNeedMissionInvestigation,
+      });
+    });
+  }
+
   /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
@@ -223,7 +259,7 @@ export default class TaskFlow extends PureComponent {
       storedTaskFlowData = EMPTY_OBJECT,
       generateTemplateId,
     } = this.props;
-    const { current } = this.state;
+    const { current, isCanGoNextStep, isNeedMissionInvestigation } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData || {};
     let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
@@ -241,7 +277,7 @@ export default class TaskFlow extends PureComponent {
         currentEntry: entry,
         importCustomers,
         sightingTelescope,
-      } = this.SelectTargetCustomerRef.getWrappedInstance().getData();
+      } = this.SelectTargetCustomerRef.getData();
       currentEntry = entry;
       const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
       const { labelCust, labelCust: { labelId } } = sightingTelescope;
@@ -252,15 +288,6 @@ export default class TaskFlow extends PureComponent {
           isSelectCust = false;
           message.error('请导入Excel或CSV文件');
         }
-        // customerSourceForm.validateFields((err, values) => {
-        //   if (err) {
-        //     if (!values.source) {
-        //       isSelectCust = false;
-        //       message.error('请填写对筛选客户的来源说明');
-        //     }
-        //   }
-        //   obj.customerSource = values.source;
-        // });
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
@@ -275,10 +302,11 @@ export default class TaskFlow extends PureComponent {
       // 拿到form表单component
       const formComponent = this.formRef;
       // 拿到被HOC包裹的组件
-      const formWrappedComponent = formComponent.refs
-        .wrappedComponent.refs.formWrappedComponent.getWrappedInstance();
+      const wrappedComponent = formComponent.taskFormInfoRef;
+      // 表单form
+      const { form: taskForm } = wrappedComponent.props;
       // 第二步基本信息界面
-      formComponent.validateFields((err, values) => {
+      taskForm.validateFields((err, values) => {
         let isFormError = false;
         if (!_.isEmpty(err)) {
           isFormError = true;
@@ -290,7 +318,7 @@ export default class TaskFlow extends PureComponent {
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
-            ...formComponent.getFieldsValue(),
+            ...taskForm.getFieldsValue(),
           };
           isFormValidate = true;
         } else {
@@ -299,7 +327,7 @@ export default class TaskFlow extends PureComponent {
       });
 
       // 校验任务提示
-      const templetDesc = formWrappedComponent.getData();
+      const templetDesc = formComponent.getData();
       taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
         isFormValidate = false;
@@ -312,7 +340,7 @@ export default class TaskFlow extends PureComponent {
         });
       }
     } else if (current === 2) {
-      const resultTrackComponent = this.resultTrackRef.getWrappedInstance().getWrappedInstance();
+      const resultTrackComponent = this.resultTrackRef;
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
         ...resultTrackData,
@@ -367,10 +395,9 @@ export default class TaskFlow extends PureComponent {
         isResultTrackValidate = true;
       }
 
-      // 拥有审批人权限，才能展示任务调查
-      if (this.isAuthorize) {
-        const missionInvestigationComponent = this.missionInvestigationRef
-          .getWrappedInstance().getWrappedInstance();
+      // 拥有任务调查权限，才能展示任务调查
+      if (isNeedMissionInvestigation) {
+        const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
           ...missionInvestigationComponent.getData(),
@@ -411,9 +438,11 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      this.setState({
-        current: current + 1,
-      });
+      if (isCanGoNextStep) {
+        this.setState({
+          current: current + 1,
+        });
+      }
     }
   }
 
@@ -458,7 +487,12 @@ export default class TaskFlow extends PureComponent {
   handleSubmitTaskFlow() {
     const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
 
-    const { currentSelectRecord: { login: flowAuditorId = null }, currentEntry } = this.state;
+    const {
+      currentSelectRecord: { login: flowAuditorId = null },
+      currentEntry,
+      isNeedApproval,
+      isNeedMissionInvestigation,
+    } = this.state;
 
     const {
       taskFormData = EMPTY_OBJECT,
@@ -529,7 +563,7 @@ export default class TaskFlow extends PureComponent {
       // taskSubType,
     };
 
-    if (this.isAuthorize) {
+    if (isNeedApproval) {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -563,7 +597,7 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    if (this.isAuthorize && isMissionInvestigationChecked) {
+    if (isNeedMissionInvestigation && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -589,7 +623,7 @@ export default class TaskFlow extends PureComponent {
         fileId,
         ...postBody,
       });
-    } else if (this.isAuthorize) {
+    } else if (isNeedApproval) {
       // 有审批权限，则需要传入orgId
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
@@ -680,6 +714,12 @@ export default class TaskFlow extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       currentEntry,
+      isNeedApproval,
+      isNeedMissionInvestigation,
+      isCanGoNextStep,
+      isShowErrorIntervalValue,
+      isShowErrorStrategySuggestion,
+      isShowErrorTaskName,
     } = this.state;
 
     const {
@@ -709,7 +749,7 @@ export default class TaskFlow extends PureComponent {
       content: <div className={styles.taskInner}>
         <SelectTargetCustomer
           currentEntry={currentEntry}
-          ref={inst => (this.SelectTargetCustomerRef = inst)}
+          wrappedComponentRef={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
@@ -725,16 +765,17 @@ export default class TaskFlow extends PureComponent {
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}
           getLabelPeople={getLabelPeople}
-          isAuthorize={this.isAuthorize}
+          isAuthorize={isNeedApproval}
           filterModalvisible={visible}
           orgId={orgId}
+          isSendCustsServedByPostn={this.handleCheckCust}
         />
       </div>,
     }, {
       title: '基本信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
-          ref={inst => (this.formRef = inst)}
+          wrappedComponentRef={inst => (this.formRef = inst)}
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
@@ -743,19 +784,22 @@ export default class TaskFlow extends PureComponent {
           isShowErrorExcuteType={isShowErrorExcuteType}
           isShowErrorTaskType={isShowErrorTaskType}
           isShowErrorTaskSubType={isShowErrorTaskSubType}
+          isShowErrorIntervalValue={isShowErrorIntervalValue}
+          isShowErrorStrategySuggestion={isShowErrorStrategySuggestion}
+          isShowErrorTaskName={isShowErrorTaskName}
         />
       </div>,
     }, {
       title: '结果跟踪&任务调查',
       content: <div>
         <ResultTrack
-          ref={ref => (this.resultTrackRef = ref)}
+          wrappedComponentRef={ref => (this.resultTrackRef = ref)}
           storedData={storedTaskFlowData}
         />
         {
-          this.isAuthorize ?
+          isNeedMissionInvestigation ?
             <MissionInvestigation
-              ref={ref => (this.missionInvestigationRef = ref)}
+              wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedTaskFlowData}
             /> :
             null
@@ -775,7 +819,7 @@ export default class TaskFlow extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={this.isAuthorize}
+        isNeedApproval={isNeedApproval}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}
@@ -829,7 +873,7 @@ export default class TaskFlow extends PureComponent {
                 onClick={_.debounce(this.handleNextStep, 250)}
                 eventName="/click/taskFlow/nextStep"
               >
-                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
+                <Button className={styles.nextStepBtn} type="primary" disabled={!isCanGoNextStep}>下一步</Button>
               </Clickable>
             }
             {

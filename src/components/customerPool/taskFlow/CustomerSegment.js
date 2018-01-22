@@ -34,6 +34,7 @@ export default class CustomerSegment extends PureComponent {
     priviewCustFileData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -177,6 +178,8 @@ export default class CustomerSegment extends PureComponent {
       originFileName,
       custTotal,
     });
+    // 导入完成之后，请求看看客户是否合法，是否需要审批
+    this.props.isSendCustsServedByPostn();
   }
 
   @autobind

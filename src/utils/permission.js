@@ -13,7 +13,7 @@ const HTSC_RESPID = '1-46IDNZI'; // HTSC 首页指标查询
 const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
-const HTSC_TK_MAMPID = '1-FCQM-38'; // HTSC 任务管理岗
+// const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
@@ -45,7 +45,12 @@ const permission = {
 
   // HTSC 任务管理岗
   hasTkMampPermission() {
-    return judgeAuthority(permissionList, HTSC_TK_MAMPID);
+    // return judgeAuthority(permissionList, HTSC_TK_MAMPID);
+    // 以下是之前的职责控制
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
   },
 
   // 目标客户池首页和列表页权限
@@ -56,6 +61,48 @@ const permission = {
   // 目标客户池创建任务权限
   hasCreateTaskPermission() {
     return permission.hasTkMampPermission();
+  },
+
+  // 判断自建任务的时候是否需要审批，是否可以进入下一步
+  judgeCreateTaskApproval({ isSendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
+    let isNeedApproval = false;
+    let isIncludeNotMineCust = false;
+    // 测试用，允许进入下一步
+    let isCanGoNextStep = true;
+    let isNeedMissionInvestigation = false;
+
+    if (!isSendCustsServedByPostn || custNumsIsExceedUpperLimit) {
+      // 包含非本人名下的客户
+      isIncludeNotMineCust = true;
+    }
+
+    if (permission.hasTkMampPermission()) {
+      // 如果是HTSC 任务管理岗
+      if (isIncludeNotMineCust) {
+        // 如果数量超过1000
+        // 则代表客户里面包含非本人名下的客户，则需要审批
+        // 如果包含非本人名下的客户，则需要审批
+        isNeedApproval = true;
+        isNeedMissionInvestigation = true;
+      } else {
+        isNeedApproval = false;
+      }
+      isCanGoNextStep = true;
+    } else if (isIncludeNotMineCust) {
+      // 如果没有职责，但是有非本人名下的客户，则禁止进入下一步
+      isCanGoNextStep = false;
+    } else {
+      // 没有职责，没有非本人名下的客户，则不需要审批，可以进入下一步
+      isNeedApproval = false;
+      isCanGoNextStep = true;
+    }
+
+    return {
+      isNeedApproval,
+      isCanGoNextStep,
+      isNeedMissionInvestigation,
+      isIncludeNotMineCust,
+    };
   },
 
   // 佣金调整资讯订阅权限

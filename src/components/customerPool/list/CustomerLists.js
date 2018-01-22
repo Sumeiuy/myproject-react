@@ -118,6 +118,8 @@ export default class CustomerLists extends PureComponent {
     taskFeedbackList: PropTypes.array.isRequired,
     permissionType: PropTypes.number.isRequired,
     view360Permit: PropTypes.bool.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -472,6 +474,8 @@ export default class CustomerLists extends PureComponent {
       clearCreateTaskData,
       queryCustUuid,
       view360Permit,
+      isCustServedByPostn,
+      custServedByPostnResult,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -606,6 +610,8 @@ export default class CustomerLists extends PureComponent {
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
                     view360Permit={view360Permit}
+                    isCustServedByPostn={isCustServedByPostn}
+                    custServedByPostnResult={custServedByPostnResult}
                   />,
                 )
               }
