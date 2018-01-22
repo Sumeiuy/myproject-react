@@ -149,14 +149,18 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
       isCustServedByPostn,
     } = this.props;
+    const postnId = window.forReactPosition && window.forReactPosition.pstnId;
     // 跳转之前查询一下是否包含非本人名下客户
-    isCustServedByPostn().then(() => {
+    isCustServedByPostn({
+      postnId,
+      custId,
+    }).then(() => {
       if (this.props.custServedByPostnResult) {
         // pOrO代表个人客户，机构客户
         const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
@@ -165,14 +169,15 @@ export default class CustomerRow extends PureComponent {
           title: '客户360视图-客户信息',
           forceRefresh: true,
         };
+        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
         // TODOTAB: 如何与后端是动态接口
         openFspTab({
           routerAction: push,
-          url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+          url,
           pathname: '/customerCenter/fspcustomerDetail',
           param,
           state: {
-            url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+            url,
           },
         });
       } else {

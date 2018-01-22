@@ -206,23 +206,15 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleExcuteTypeChange(value) {
-    let isShowErrorExcuteType = false;
-    if (_.isEmpty(value) || value === '请选择' || value === '暂无数据') {
-      isShowErrorExcuteType = true;
-    }
     this.setState({
-      isShowErrorExcuteType,
+      isShowErrorExcuteType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
     });
   }
 
   @autobind
   handleTaskSubTypeChange(value) {
-    let isShowErrorTaskSubType = false;
-    if (!_.isEmpty(value) || value === '请选择' || value === '暂无数据') {
-      isShowErrorTaskSubType = true;
-    }
     this.setState({
-      isShowErrorTaskSubType,
+      isShowErrorTaskSubType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
     });
   }
 
@@ -252,10 +244,9 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleIntervalValueChange(value) {
-    let isShowErrorIntervalValue = false;
-    if (!regxp.positive_integer.test(value) || Number(value) <= 0 || Number(value) > 365) {
-      isShowErrorIntervalValue = true;
-    }
+    const isShowErrorIntervalValue = !regxp.positive_integer.test(value)
+      || Number(value) <= 0
+      || Number(value) > 365;
     this.setState({
       isShowErrorIntervalValue,
     });
@@ -264,24 +255,16 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   handleMissionNameChange(e) {
     const value = e.target.value;
-    let isShowErrorTaskName = false;
-    if (_.isEmpty(value) || value.length > 30) {
-      isShowErrorTaskName = true;
-    }
     this.setState({
-      isShowErrorTaskName,
+      isShowErrorTaskName: _.isEmpty(value) || value.length > 30,
     });
   }
 
   @autobind
   handleStrategySuggestionChange(e) {
     const value = e.target.value;
-    let isShowErrorStrategySuggestion = false;
-    if (_.isEmpty(value) || value.length < 10 || value.length > 300) {
-      isShowErrorStrategySuggestion = true;
-    }
     this.setState({
-      isShowErrorStrategySuggestion,
+      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < 10 || value.length > 300,
     });
   }
 
