@@ -1,13 +1,14 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-16 10:04:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-22 13:58:44
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
-import duty from './config/duty';
+
+import org from './org';
 
 /**
 * 根据传入的部门id和组织机构数数组返回部门id对应的对象
@@ -96,7 +97,7 @@ const emp = {
    */
   isFiliale(arr, id) {
     const orgData = findOrgDataByOrgId(arr, id);
-    return (!_.isEmpty(orgData) && orgData.level === duty.bm_fgs);
+    return (!_.isEmpty(orgData) && org.isFiliale(orgData.level));
   },
 };
 
