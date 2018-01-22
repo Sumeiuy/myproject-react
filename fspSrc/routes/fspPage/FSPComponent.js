@@ -58,7 +58,6 @@ export default class FSPComponent extends PureComponent {
     // 修正后端接口，因为有些接口为动态接口
     if (state && state.url) {
       this.url = state.url;
-      routeConfig.url = state.url;
       store.set(pathname, state.url);
     }
   }
@@ -89,7 +88,7 @@ export default class FSPComponent extends PureComponent {
 
   render() {
     return (
-      <div className={styles.fspContainer} tabIndex="0">
+      <div className={styles.fspContainer}>
         <Loading loading={this.state.loading} />
         {
           this.action === 'loadInTab' ?
