@@ -158,6 +158,7 @@ export default class CustomerRow extends PureComponent {
     // 跳转之前查询一下是否包含非本人名下客户
     isCustServedByPostn().then(() => {
       if (this.props.custServedByPostnResult) {
+        // pOrO代表个人客户，机构客户
         const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
         const param = {
           id: 'FSP_360VIEW_M_TAB',

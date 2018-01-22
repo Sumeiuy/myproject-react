@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-19 18:11:21
+ * @Last Modified time: 2018-01-22 10:48:39
  */
 
 import React, { PureComponent } from 'react';
@@ -153,19 +153,6 @@ export default class TaskFlow extends PureComponent {
   constructor(props) {
     super(props);
     const { current, currentSelectRowKeys, currentSelectRecord } = props.storedTaskFlowData || {};
-    const {
-      sendCustsServedByPostnResult,
-    } = props;
-    const {
-      isNeedApproval,
-      isCanGoNextStep,
-      isNeedMissionInvestigation,
-      isIncludeNotMineCust,
-    } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-
-    if (isIncludeNotMineCust && !isCanGoNextStep) {
-      message.error('包含非本人名下客户，请重新选择');
-    }
 
     this.state = {
       current: current || 0,
@@ -183,9 +170,12 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
-      isNeedApproval,
-      isCanGoNextStep,
-      isNeedMissionInvestigation,
+      // 测试用
+      isNeedApproval: permission.hasTkMampPermission(),
+      // 测试用
+      isCanGoNextStep: true,
+      // 测试用
+      isNeedMissionInvestigation: permission.hasTkMampPermission(),
     };
   }
 
@@ -298,15 +288,6 @@ export default class TaskFlow extends PureComponent {
           isSelectCust = false;
           message.error('请导入Excel或CSV文件');
         }
-        // customerSourceForm.validateFields((err, values) => {
-        //   if (err) {
-        //     if (!values.source) {
-        //       isSelectCust = false;
-        //       message.error('请填写对筛选客户的来源说明');
-        //     }
-        //   }
-        //   obj.customerSource = values.source;
-        // });
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;

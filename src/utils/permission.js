@@ -13,8 +13,7 @@ const HTSC_RESPID = '1-46IDNZI'; // HTSC 首页指标查询
 const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
-// 等数据从生产拉过来，才能知道具体职责id
-// const HTSC_TK_MAMPID = '1-FCQM-35'; // HTSC 任务管理岗
+// const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
@@ -46,8 +45,8 @@ const permission = {
 
   // HTSC 任务管理岗
   hasTkMampPermission() {
-    // 等测试完毕，再改成这个岗位
     // return judgeAuthority(permissionList, HTSC_TK_MAMPID);
+    // 以下是之前的职责控制
     return permission.hasIndexViewPermission()
       || permission.hasHqMampPermission()
       || permission.hasBoMampPermission()
@@ -65,22 +64,12 @@ const permission = {
   },
 
   // 判断自建任务的时候是否需要审批，是否可以进入下一步
-  judgeCreateTaskApproval({ source, isSendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
+  judgeCreateTaskApproval({ isSendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
     let isNeedApproval = false;
     let isIncludeNotMineCust = false;
     // 测试用，允许进入下一步
     let isCanGoNextStep = true;
     let isNeedMissionInvestigation = false;
-
-    if (source === 'custGroupList') {
-      // 如果是客户分组过来的，则不需要审批，也不需要判断职责,可以进入下一步，不需要进行下面的判断了
-      return {
-        isNeedApproval,
-        isCanGoNextStep: !isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
-      };
-    }
 
     if (!isSendCustsServedByPostn || custNumsIsExceedUpperLimit) {
       // 包含非本人名下的客户

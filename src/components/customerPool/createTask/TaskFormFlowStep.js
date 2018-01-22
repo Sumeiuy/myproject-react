@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-19 17:41:37
+ * @Last Modified time: 2018-01-22 10:59:07
  */
 
 import React, { PureComponent } from 'react';
@@ -55,18 +55,7 @@ export default class TaskFormFlowStep extends PureComponent {
     super(props);
     const {
       storedCreateTaskData: { taskFormData, current, custSource },
-      sendCustsServedByPostnResult,
     } = props;
-    const {
-      isNeedApproval,
-      isCanGoNextStep,
-      isNeedMissionInvestigation,
-      isIncludeNotMineCust,
-    } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-
-    if (isIncludeNotMineCust && !isCanGoNextStep) {
-      message.error('包含非本人名下客户，请重新选择');
-    }
 
     this.state = {
       current: current || 0,
@@ -79,9 +68,12 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval,
-      isCanGoNextStep,
-      isNeedMissionInvestigation,
+      // 测试用
+      isNeedApproval: permission.hasTkMampPermission(),
+      // 测试用
+      isCanGoNextStep: true,
+      // 测试用
+      isNeedMissionInvestigation: permission.hasTkMampPermission(),
     };
   }
 

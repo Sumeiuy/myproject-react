@@ -10,6 +10,7 @@ import { Form, Select, Input, Mention, InputNumber } from 'antd';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
 
 
@@ -26,7 +27,8 @@ const mentionTextStyle = {
   borderColor: '#ebf3fb',
 };
 
-class TaskFormInfo extends PureComponent {
+@createForm()
+export default class TaskFormInfo extends PureComponent {
 
   static propTypes = {
     form: PropTypes.object.isRequired,
@@ -254,44 +256,43 @@ class TaskFormInfo extends PureComponent {
 
   @autobind
   handleIntervalValueChange(value) {
-    const regxp = /^\+?[1-9][0-9]*$/;
-    if (!regxp.test(value) || Number(value) <= 0 || Number(value) > 365) {
-      this.setState({
-        isShowErrorIntervalValue: true,
-      });
+    let isShowErrorIntervalValue = false;
+    if (!regxp.positive_integer.test(value) || Number(value) <= 0 || Number(value) > 365) {
+      isShowErrorIntervalValue = true;
     } else {
-      this.setState({
-        isShowErrorIntervalValue: false,
-      });
+      isShowErrorIntervalValue = false;
     }
+    this.setState({
+      isShowErrorIntervalValue,
+    });
   }
 
   @autobind
   handleMissionNameChange(e) {
     const value = e.target.value;
+    let isShowErrorTaskName = false;
     if (_.isEmpty(value) || value.length > 30) {
-      this.setState({
-        isShowErrorTaskName: true,
-      });
+      isShowErrorTaskName = true;
     } else {
-      this.setState({
-        isShowErrorTaskName: false,
-      });
+      isShowErrorTaskName = false;
     }
+    this.setState({
+      isShowErrorTaskName,
+    });
   }
 
   @autobind
   handleStrategySuggestionChange(e) {
     const value = e.target.value;
+    let isShowErrorStrategySuggestion = false;
     if (_.isEmpty(value) || value.length < 10 || value.length > 300) {
-      this.setState({
-        isShowErrorStrategySuggestion: true,
-      });
+      isShowErrorStrategySuggestion = true;
     } else {
-      this.setState({
-        isShowErrorStrategySuggestion: false,
-      });
+      isShowErrorStrategySuggestion = false;
     }
+    this.setState({
+      isShowErrorStrategySuggestion,
+    });
   }
 
   handleCreatOptions(data) {
@@ -596,4 +597,3 @@ class TaskFormInfo extends PureComponent {
   }
 }
 
-export default createForm()(TaskFormInfo);

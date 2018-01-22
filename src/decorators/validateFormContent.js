@@ -2,12 +2,13 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-14 13:26:52
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-19 17:00:33
+ * @Last Modified time: 2018-01-22 11:02:42
  * 校验表单内容
  */
 
 import { message } from 'antd';
 import _ from 'lodash';
+import { regxp } from '../helper';
 
 export default {};
 
@@ -33,7 +34,6 @@ export const validateFormContent = (target, name, descriptor) => {
       let isShowErrorIntervalValue = false;
       let isShowErrorStrategySuggestion = false;
       let isShowErrorTaskName = false;
-      const regxp = /^\+?[1-9][0-9]*$/;
       if (_.isEmpty(executionType) || executionType === '请选择' || executionType === '暂无数据') {
         this.setState({
           isShowErrorExcuteType: true,
@@ -46,7 +46,7 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskType = true;
       }
-      if (!regxp.test(timelyIntervalValue)
+      if (!regxp.positive_integer.test(timelyIntervalValue)
         || Number(timelyIntervalValue) <= 0
         || Number(timelyIntervalValue) > 365) {
         this.setState({
