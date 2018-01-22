@@ -89,7 +89,7 @@ export default class FSPComponent extends PureComponent {
 
   render() {
     return (
-      <div id="FSPContent" tabIndex="0">
+      <div className={styles.fspContainer} tabIndex="0">
         <Loading loading={this.state.loading} />
         {
           this.action === 'loadInTab' ?

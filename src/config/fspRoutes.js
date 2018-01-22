@@ -117,7 +117,7 @@ const fspRoutes = [
   },
   // 消息中心
   {
-    path: '/messageCenter',
+    path: '/fsp/messageCenter',
     action: 'loadInTab',
     url: '/messgeCenter',
   },
