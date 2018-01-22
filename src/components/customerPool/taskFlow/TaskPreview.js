@@ -184,7 +184,7 @@ export default class TaskPreview extends PureComponent {
   renderIndicatorTarget(indicatorData) {
     const {
       indicatorLevel2Value,
-      isHasSearchedProduct,
+      hasSearchedProduct,
       currentSelectedProduct,
       // hasState,
       operationValue,
@@ -202,7 +202,7 @@ export default class TaskPreview extends PureComponent {
     } else if (operationKey === 'TRUE') {
       indicatorText = `${indicatorLevel2Value}，状态：是`;
     } else {
-      indicatorText = `${indicatorLevel2Value || ''}${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
+      indicatorText = `${indicatorLevel2Value || ''}${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
     }
 
     return indicatorText;
@@ -283,7 +283,7 @@ export default class TaskPreview extends PureComponent {
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
       // hasState,
       // 是否有产品搜索
-      isHasSearchedProduct,
+      hasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
       // 是否来自瞄准镜标签
@@ -456,7 +456,7 @@ export default class TaskPreview extends PureComponent {
                     {
                       this.renderIndicatorTarget({
                         indicatorLevel2Value,
-                        isHasSearchedProduct,
+                        hasSearchedProduct,
                         currentSelectedProduct,
                         operationValue,
                         operationKey,
@@ -466,7 +466,7 @@ export default class TaskPreview extends PureComponent {
                     }
                     {/* {
                       `${indicatorLevel2Value || ''}
-                      ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
+                      ${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}
                       ${!hasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
                         : stateText}` || '--'
                     } */}
