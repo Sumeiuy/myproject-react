@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 10:59:07
+ * @Last Modified time: 2018-01-22 13:39:46
  */
 
 import React, { PureComponent } from 'react';
@@ -269,7 +269,7 @@ export default class TaskFormFlowStep extends PureComponent {
           errMsg = '请选择二级指标';
         } else if (isHasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
-        } else if (!isHasState && _.isEmpty(inputIndicator)) {
+        } else if (!isHasState && inputIndicator) {
           errMsg = '请输入指标目标值';
         }
 

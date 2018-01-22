@@ -537,7 +537,7 @@ export default class ResultTrack extends PureComponent {
   @autobind
   handleInputChange(value) {
     const { currentMin = 0, currentMax = 0 } = this.state;
-    if (typeof value === 'undefined') {
+    if (_.isUndefined(value)) {
       return;
     }
     if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
