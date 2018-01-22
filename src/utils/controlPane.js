@@ -4,9 +4,8 @@
  * @author zhufeiyang
  */
 import warning from 'warning';
+import _ from 'lodash';
 import { env, data as dataHelper } from '../helper';
-
-function noop() { }
 
 function exec(method, ...args) {
   try {
@@ -178,7 +177,7 @@ function dispatchTabPane(options) {
 
     // 如果没有传入任何参数，则在react框架下什么都不做，
     // 这个是为了针对多个fsp调用，可以使用一次react框架内调用实现时，则可以只处理fsp调用，react框架则什么都不做
-    if (!routerAction) { noop(); }
+    if (!routerAction) { _.noop(); }
 
     // 兼容url的两种写法，字符串url， 以及pathname+query+state对, 这两种方式是为了支持原生push方法的两种调用。
     if (pathname) {
@@ -211,8 +210,11 @@ function dispatchTabPane(options) {
 
 // 打开并跳转到新的reactTab，原tab保留
 function openRctTab(options) {
+  const { name } = options;
+  const editPane = { name };
   dispatchTabPane({
     fspAction: 'openRctTab',
+    editPane,
     ...options,
   });
 }
