@@ -381,7 +381,7 @@ export default class TaskFlow extends PureComponent {
           errMsg = '请选择二级指标';
         } else if (isHasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
-        } else if (!isHasState && inputIndicator) {
+        } else if (!isHasState && !inputIndicator) {
           errMsg = '请输入指标目标值';
         }
 
