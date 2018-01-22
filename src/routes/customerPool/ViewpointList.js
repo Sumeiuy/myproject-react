@@ -158,6 +158,7 @@ export default class ViewpointList extends PureComponent {
       param,
       pathname: url,
       query,
+      name: '资讯详情',
     });
   }
 

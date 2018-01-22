@@ -139,8 +139,7 @@ function dispatchTabPane(options) {
     // do fspAction
     if (fspAction) {
       fspGlobal[fspAction](options);
-    }
-    if (shouldStay) { // fsp框架tab内部跳转
+    } else if (shouldStay) { // fsp框架tab内部跳转
       const {
         routerAction,
         pathname, // pathname
@@ -170,6 +169,7 @@ function dispatchTabPane(options) {
       query, // query对象
       shoudlRemove = false,
       shouldStay = false,
+      editPane = {},
       addPanes = [],   // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
       activeTabKey = '', // 可选参数，string类型，表示当前活动的tabPane，值需要与key值相对应
@@ -186,6 +186,7 @@ function dispatchTabPane(options) {
         pathname,
         query,
         state: {
+          editPane,
           addPanes,
           removePanes,
           activeTabKey,
@@ -226,8 +227,11 @@ function openFspTab(options) {
 
 // 当前页面内的链接跳转
 function linkTo(options) {
+  const { name } = options;
+  const editPane = { name };
   dispatchTabPane({
     shouldStay: true,
+    editPane,
     ...options,
   });
 }
@@ -265,7 +269,7 @@ function navToTab(options) {
   });
 }
 
-// 此函数为兼容处理函数，一般情况下不要调用
+// 此函数为兼容处理函数，不要调用
 // 在react框架下表现为关闭当前tab，跳转到指定的tab
 // 在fsp框架下只表现为打开新的tab，关闭操作需再调用一次closeTab方法。
 function navTo(options) {
@@ -278,7 +282,7 @@ function navTo(options) {
   });
 }
 
-// 兼容处理函数，不需要传入push方法，一般不要调用这个函数
+// 兼容处理函数，不要调用这个函数
 function removeTab(options) {
   dispatchTabPane({
     fspAction: 'closeRctTabById',
@@ -286,7 +290,7 @@ function removeTab(options) {
   });
 }
 
-// 兼容处理函数，不建议使用，使用LinkTo代替
+// 兼容处理函数，不要使用，使用LinkTo代替
 // 加载页面到当前tab
 // 需要传递pathname+query这种形式的参数
 function openInTab(options) {
@@ -294,7 +298,6 @@ function openInTab(options) {
   warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
     fspAction: 'openRctTab',
-    shouldStay: true,
     ...options,
   });
 }

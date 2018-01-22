@@ -16,7 +16,7 @@ import { Modal, Input } from 'antd';
 import Header from './Header';
 import Footer from './Footer';
 import Tab from '../components/layout/Tab';
-
+import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/ConnectedCreateServiceRecord';
 
@@ -200,23 +200,26 @@ export default class Main extends PureComponent {
             <Tab
               location={location}
               push={push}
+              isBlockRemovePane={isBlockRemovePane}
+            />
+            <FSPUnwrap
+              path={location.pathname}
               loading={loading}
               loadingForceFull={loadingForceFull}
-              isBlockRemovePane={isBlockRemovePane}
             >
-              {
-                (!_.isEmpty(interfaceState) &&
-                  !interfaceState[effects.dictionary] &&
-                  !interfaceState[effects.customerScope] &&
-                  !interfaceState[effects.empInfo]) ?
-                    <div id="react-content" className={styles.content}>
-                      {React.isValidElement(children) ? children : <div />}
-                    </div>
-                  :
-                    <div />
-              }
+              <div id="react-content" className={styles.content}>
+                {
+                  (!_.isEmpty(interfaceState) &&
+                    !interfaceState[effects.dictionary] &&
+                    !interfaceState[effects.customerScope] &&
+                    !interfaceState[effects.empInfo] &&
+                    React.isValidElement(children)) ?
+                      children :
+                      <div />
+                }
+              </div>
               <Footer />
-            </Tab>
+            </FSPUnwrap>
             <ConnectedCreateServiceRecord
               handleCloseClick={handleCloseClick}
               loading={interfaceState[effects.addServeRecord]}
