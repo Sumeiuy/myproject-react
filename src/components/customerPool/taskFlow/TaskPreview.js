@@ -186,7 +186,7 @@ export default class TaskPreview extends PureComponent {
       indicatorLevel2Value,
       isHasSearchedProduct,
       currentSelectedProduct,
-      // isHasState,
+      // hasState,
       operationValue,
       operationKey,
       inputIndicator,
@@ -281,7 +281,7 @@ export default class TaskPreview extends PureComponent {
       // 单位
       unit,
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      // isHasState,
+      // hasState,
       // 是否有产品搜索
       isHasSearchedProduct,
       // 是否选中
@@ -467,7 +467,7 @@ export default class TaskPreview extends PureComponent {
                     {/* {
                       `${indicatorLevel2Value || ''}
                       ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
-                      ${!isHasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
+                      ${!hasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
                         : stateText}` || '--'
                     } */}
                   </div>

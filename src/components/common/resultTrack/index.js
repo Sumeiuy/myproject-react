@@ -259,7 +259,7 @@ export default class ResultTrack extends PureComponent {
     //   // 单位
     //   unit,
     //   // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-    //   isHasState,
+    //   hasState,
     //   // 是否有产品搜索
     //   isHasSearchedProduct,
     //   // 是否选中
@@ -312,7 +312,7 @@ export default class ResultTrack extends PureComponent {
       // 单位
       unit: currentUnit,
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善,开通，是
-      isHasState: this.judgeTraceOp(currentSelectedOperationId),
+      hasState: this.judgeTraceOp(currentSelectedOperationId),
       stateText: this.renderStateText(),
       // 是否有产品搜索
       isHasSearchedProduct: isProdBound,
