@@ -206,28 +206,24 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleExcuteTypeChange(value) {
-    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
-      this.setState({
-        isShowErrorExcuteType: false,
-      });
-    } else {
-      this.setState({
-        isShowErrorExcuteType: true,
-      });
+    let isShowErrorExcuteType = false;
+    if (_.isEmpty(value) || value === '请选择' || value === '暂无数据') {
+      isShowErrorExcuteType = true;
     }
+    this.setState({
+      isShowErrorExcuteType,
+    });
   }
 
   @autobind
   handleTaskSubTypeChange(value) {
-    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
-      this.setState({
-        isShowErrorTaskSubType: false,
-      });
-    } else {
-      this.setState({
-        isShowErrorTaskSubType: true,
-      });
+    let isShowErrorTaskSubType = false;
+    if (!_.isEmpty(value) || value === '请选择' || value === '暂无数据') {
+      isShowErrorTaskSubType = true;
     }
+    this.setState({
+      isShowErrorTaskSubType,
+    });
   }
 
   @autobind
@@ -259,8 +255,6 @@ export default class TaskFormInfo extends PureComponent {
     let isShowErrorIntervalValue = false;
     if (!regxp.positive_integer.test(value) || Number(value) <= 0 || Number(value) > 365) {
       isShowErrorIntervalValue = true;
-    } else {
-      isShowErrorIntervalValue = false;
     }
     this.setState({
       isShowErrorIntervalValue,
@@ -273,8 +267,6 @@ export default class TaskFormInfo extends PureComponent {
     let isShowErrorTaskName = false;
     if (_.isEmpty(value) || value.length > 30) {
       isShowErrorTaskName = true;
-    } else {
-      isShowErrorTaskName = false;
     }
     this.setState({
       isShowErrorTaskName,
@@ -287,8 +279,6 @@ export default class TaskFormInfo extends PureComponent {
     let isShowErrorStrategySuggestion = false;
     if (_.isEmpty(value) || value.length < 10 || value.length > 300) {
       isShowErrorStrategySuggestion = true;
-    } else {
-      isShowErrorStrategySuggestion = false;
     }
     this.setState({
       isShowErrorStrategySuggestion,
