@@ -249,13 +249,13 @@ export default class TaskFormFlowStep extends PureComponent {
         // 单位
         // unit,
         // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-        // isHasState,
+        // hasState,
         // 是否有产品搜索
-        isHasSearchedProduct,
+        hasSearchedProduct,
         // 是否选中
         isResultTrackChecked,
         // 是否有输入情况
-        isHasState,
+        hasState,
         currentSelectedProduct,
       } = resultTrackData;
       // if (!isResultTrackChecked) {
@@ -267,9 +267,9 @@ export default class TaskFormFlowStep extends PureComponent {
           errMsg = '请选择一级指标';
         } else if (_.isEmpty(indicatorLevel2Key)) {
           errMsg = '请选择二级指标';
-        } else if (isHasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
+        } else if (hasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
-        } else if (!isHasState && !inputIndicator) {
+        } else if (!hasState && !inputIndicator) {
           errMsg = '请输入指标目标值';
         }
 
@@ -414,9 +414,9 @@ export default class TaskFormFlowStep extends PureComponent {
       // 单位
       unit,
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      isHasState,
+      hasState,
       // 是否有产品搜索
-      isHasSearchedProduct,
+      hasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
       // 是否选中
@@ -454,14 +454,14 @@ export default class TaskFormFlowStep extends PureComponent {
           indexCateId: indicatorLevel2Key,
         },
       };
-      if (isHasSearchedProduct) {
+      if (hasSearchedProduct) {
         postBody = _.merge(postBody, {
           resultTraceReq: {
             financialProductId: currentSelectedProduct.name,
           },
         });
       }
-      if (!isHasState) {
+      if (!hasState) {
         postBody = _.merge(postBody, {
           resultTraceReq: {
             indexUnit: unit,
