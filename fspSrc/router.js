@@ -46,6 +46,7 @@ import FilialeCustTransfer from '../src/routes/filialeCustTransfer/Home';
 import RelationHome from '../src/routes/relation/Home';
 import TaskFeedback from '../src/routes/taskFeedback/Home';
 import FSPComponent from './routes/fspPage/FSPComponent';
+import PreSaleQuery from '../src/routes/preSaleQuery/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -122,6 +123,7 @@ const routes = [
   { path: '/commissionChange', component: CommissionChangeHome },
   // 模态框页面
   { path: '/modal', component: TemplModal },
+  { path: '/preSaleQuery', component: PreSaleQuery },
   // 合约认证
   {
     path: '/bizapply/permission',

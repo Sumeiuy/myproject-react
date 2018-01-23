@@ -5,7 +5,7 @@
 
 import 'babel-polyfill';
 import dva from 'dva';
-import { routerRedux } from 'dva/router';
+// import { routerRedux } from 'dva/router';
 import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
@@ -44,9 +44,10 @@ const onError = (e) => {
   }
 };
 
+const history = createHistory();
 // 1. Initialize
 const app = dva({
-  history: createHistory(),
+  history,
   onAction: [createLogger(), createSensorsLogger()],
   extraEnhancers,
   onError,
@@ -90,6 +91,8 @@ app.model(require('./models/customerFeedback'));
 app.model(require('./models/taskFeedback'));
 // 主职位 model
 app.model(require('./models/mainPosition'));
+// 售前适当性查询
+app.model(require('./models/preSaleQuery'));
 
 // 4. Router
 app.router(routerConfig);
@@ -97,7 +100,7 @@ app.router(routerConfig);
 // 5. Start
 app.start('#exApp');
 
-dvaHelper.initApp(app);
+dvaHelper.initApp(app, history);
 
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
@@ -107,17 +110,14 @@ if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
 
-// 7. 初始化权限配置
-// permission.init(store);
-
-window.navTo = (url) => {
-  const state = store.getState();
-  const tmpLocation = state.routing.locationBeforeTransitions;
-  if (tmpLocation
-    && tmpLocation.pathname === url
-    // && _.isEqual(tmpLocation.query, query)
-  ) {
-    return;
-  }
-  store.dispatch(routerRedux.push(url));
-};
+// window.navTo = (url) => {
+//   const state = store.getState();
+//   const tmpLocation = state.routing.locationBeforeTransitions;
+//   if (tmpLocation
+//     && tmpLocation.pathname === url
+//     // && _.isEqual(tmpLocation.query, query)
+//   ) {
+//     return;
+//   }
+//   store.dispatch(routerRedux.push(url));
+// };

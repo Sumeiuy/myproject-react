@@ -7,8 +7,7 @@
 import _ from 'lodash';
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
-import { permission } from '../utils';
-import { emp } from '../helper';
+import { emp, permission } from '../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -156,10 +155,10 @@ export default {
       const response = yield call(api.getEmpInfo);
       const data = response.resultData;
       if (data) {
-        // 初始化权方法
-        permission.init(data.empRespList);
         // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
         emp.setEmpInfo(data.loginInfo || data.empInfo);
+        // 初始化权方法
+        permission.init(data.empRespList);
         yield put({
           type: 'getEmpInfoSuccess',
           payload: data,
