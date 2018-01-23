@@ -218,35 +218,16 @@ export default class ServiceRecordContent extends PureComponent {
           // 附件记录
           attachmentList,
         } = formData;
-        let defaultFeedbackType = '';
-        let defaultFeedbackTypeArr = [];
-        let defaultFeedbackTypeChild = '';
-        let defaultFeedbackTypeChildArr = [];
-        // debugger
-        if (!_.isEmpty(customerFeedback)) {
-          const {
-            code,
-            name,
-            children: {
-              code: subCode,
-              name: subName,
-            },
-          } = customerFeedback;
-          defaultFeedbackType = subCode;
-          defaultFeedbackTypeArr = [{ key: subCode, value: subName }];
-          defaultFeedbackTypeChild = code;
-          defaultFeedbackTypeChildArr = [{ key: code, value: name }];
-        }
         formObject = {
           // 服务类型，页面上隐藏该字段
           serviceType: serviceTypeCode,
           serviceTypeName,
           // 客户反馈一级
-          feedbackType: defaultFeedbackType,
-          feedbackTypeArr: defaultFeedbackTypeArr,
+          feedbackType: '',
+          feedbackTypeArr: [],
           // 客户反馈二级
-          feedbackTypeChild: defaultFeedbackTypeChild,
-          feedbackTypeChildArr: defaultFeedbackTypeChildArr,
+          feedbackTypeChild: '',
+          feedbackTypeChildArr: [],
           // 服务时间（日期）
           serviceDate,
           // 服务时间（时分秒）
@@ -262,6 +243,20 @@ export default class ServiceRecordContent extends PureComponent {
           // customerFeedback,
           attachmentList,
         };
+        if (!_.isEmpty(customerFeedback)) {
+          const {
+            code,
+            name,
+            children: {
+              code: subCode,
+              name: subName,
+            },
+          } = customerFeedback;
+          formObject.feedbackType = String(code);
+          formObject.feedbackTypeArr = [{ key: String(code), value: name }];
+          formObject.feedbackTypeChild = String(subCode);
+          formObject.feedbackTypeChildArr = [{ key: String(subCode), value: subName }];
+        }
       } else {
         // 当前日期的时间戳
         const currentDate = new Date().getTime();

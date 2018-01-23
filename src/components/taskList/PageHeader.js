@@ -390,7 +390,7 @@ export default class Pageheader extends PureComponent {
       </div>);
     const value = item ?
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        创建时间:
+        创建时间&nbsp;:
         <div className={styles.dropDownSelectBox}>
           <RangePicker
             ref={ref => this.timers = ref}
@@ -403,7 +403,7 @@ export default class Pageheader extends PureComponent {
         </div>
       </div>) :
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间:
+        结束时间&nbsp;:
         {controller}
       </div>);
 
@@ -456,21 +456,22 @@ export default class Pageheader extends PureComponent {
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
-          <div className={styles.filterFl}>
-            <Search
-              className={styles.taskNameSearch}
-              placeholder="任务名称"
-              style={{ width: 186 }}
-              onSearch={this.handleSearchChange}
-              defaultValue={missionNameValue}
-            />
-          </div>
-          <div className={styles.filterFl}>
+
+          <div className={`${styles.filterFl} ${styles.mr30}`}>
             <Select
               name="missionViewType"
               value={missionViewTypeValue}
               data={chooseMissionViewOptions}
               onChange={this.handleSelectChange}
+            />
+          </div>
+
+          <div className={`${styles.filterFl} ${styles.mr15}`}>
+            <Search
+              placeholder="任务名称"
+              style={{ width: 186 }}
+              onSearch={this.handleSearchChange}
+              defaultValue={missionNameValue}
             />
           </div>
 

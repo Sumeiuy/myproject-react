@@ -80,12 +80,28 @@ export default class PerformerViewDetail extends PureComponent {
     }));
   }
 
+  /**
+   * 重新查询目标客户的详情信息
+   */
+  @autobind
+  requeryTargetCustDetail({ custId, callback }) {
+    const {
+      currentId,
+      getCustDetail,
+    } = this.props;
+    getCustDetail({
+      missionId: currentId,
+      custId,
+      callback,
+    });
+  }
+
   @autobind
   handlePageChange(pageNo) {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -122,31 +138,15 @@ export default class PerformerViewDetail extends PureComponent {
    * 添加服务记录成功后重新加载目标客户的列表信息
    */
   @autobind
-  reloadTargetCustInfo() {
+  reloadTargetCustInfo(callback) {
     const {
       parameter: {
-        targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerPageNo = PAGE_NO,
-        targetCustomerState,
         targetCustId,
       },
-      targetCustList: { list },
-      changeParameter,
     } = this.props;
-    let currentCustId = targetCustId;
-    let currentPageNum = targetCustomerPageNo;
-    if (targetCustomerState) {
-      currentCustId = !_.isEmpty(list) ? (list[0] || {}).custId : '';
-      currentPageNum = 1;
-    }
-    changeParameter({
-      targetCustId: currentCustId,
-    });
-    this.queryTargetCustInfo({
-      custId: currentCustId,
-      state: targetCustomerState,
-      pageSize: targetCustomerPageSize,
-      pageNum: currentPageNum,
+    this.requeryTargetCustDetail({
+      custId: targetCustId,
+      callback,
     });
   }
 

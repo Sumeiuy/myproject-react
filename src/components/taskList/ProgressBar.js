@@ -28,7 +28,7 @@ export default function ProgressBar({
       </div>
       <Progress
         percent={percent}
-        strokeWidth="3px"
+        strokeWidth={3}
         {...restProps}
       />
     </div>

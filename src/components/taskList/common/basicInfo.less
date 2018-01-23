@@ -5,6 +5,21 @@
   padding: 10px 0 30px 16px;
   border-bottom: 1px solid #c2c2c2;
 }
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0;
+  }
+  .col {
+    width: 380px;
+  }
+}
 .colItem {
   margin-top: 5px;
   .label {

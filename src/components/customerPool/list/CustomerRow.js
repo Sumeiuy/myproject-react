@@ -10,10 +10,11 @@ import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { openFspTab } from '../../../utils';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
+import { openFspTab } from '../../../utils';
+import { emp } from '../../../helper';
 import styles from './customerRow.less';
 
 import maleAvator from './img/icon-avator.png';
@@ -155,7 +156,7 @@ export default class CustomerRow extends PureComponent {
       },
       isCustServedByPostn,
     } = this.props;
-    const postnId = window.forReactPosition && window.forReactPosition.pstnId;
+    const postnId = emp.getPstnId();
     // 跳转之前查询一下是否包含非本人名下客户
     isCustServedByPostn({
       postnId,

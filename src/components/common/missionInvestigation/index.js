@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 09:49:04
+ * @Last Modified time: 2018-01-22 16:55:17
  * 任务调查
  */
 
@@ -292,8 +292,8 @@ export default class MissionInvestigation extends PureComponent {
     return (
       <div className={styles.detailTip}>
         <div className={styles.questionSection}>
-          <span>问题：</span>
-          <span>{currentQuestionDetail.quesValue}？</span>
+          <div>问题：</div>
+          <div>{currentQuestionDetail.quesValue}？</div>
         </div>
         <div className={styles.answerSection}>
           <div className={styles.title}>
