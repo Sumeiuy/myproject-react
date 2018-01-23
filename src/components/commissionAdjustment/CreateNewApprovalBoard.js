@@ -17,7 +17,7 @@ import Select from '../common/Select';
 import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
 import { seibelConfig } from '../../config';
-import { power } from '../../helper';
+import { permission } from '../../helper';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import BatchCreateBoard from './BatchCreatBoard';
 import SingleCreatBoard from './SingleCreatBoard';
@@ -588,14 +588,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
       const newItem = {};
       const { value } = item;
       if (value === commadj.batch) {
-        newItem.show = power.hasCommissionBatchAuthority();
+        newItem.show = permission.hasCommissionBatchAuthority();
       } else if (value === commadj.single) {
         const { empPostnList } = this.props;
-        newItem.show = power.hasCommissionSingleAuthority(empPostnList);
+        newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
       } else if (value === commadj.subscribe) {
-        newItem.show = power.hasCommissionADSubscribeAuthority();
+        newItem.show = permission.hasCommissionADSubscribeAuthority();
       } else if (value === commadj.unsubscribe) {
-        newItem.show = power.hasCommissionADUnSubscribeAuthority();
+        newItem.show = permission.hasCommissionADUnSubscribeAuthority();
       }
       return {
         ...item,
@@ -609,10 +609,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
   authorityEmp() {
     // 1. 首先判断当前登录人是否有单佣金调整的权限
     const { empPostnList } = this.props;
-    const singlePermission = power.hasCommissionSingleAuthority(empPostnList);
-    const batchPermission = power.hasCommissionBatchAuthority();
-    const subscribePermission = power.hasCommissionADSubscribeAuthority();
-    const unsubscribePermission = power.hasCommissionADUnSubscribeAuthority();
+    const singlePermission = permission.hasCommissionSingleAuthority(empPostnList);
+    const batchPermission = permission.hasCommissionBatchAuthority();
+    const subscribePermission = permission.hasCommissionADSubscribeAuthority();
+    const unsubscribePermission = permission.hasCommissionADUnSubscribeAuthority();
     if (singlePermission) return commadj.single;
     if (batchPermission) return commadj.batch;
     if (subscribePermission) return commadj.subscribe;

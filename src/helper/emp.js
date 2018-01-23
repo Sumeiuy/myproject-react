@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 13:58:44
+ * @Last Modified time: 2018-01-23 11:06:39
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
 
 import org from './org';
+import env from './env';
 
 /**
 * 根据传入的部门id和组织机构数数组返回部门id对应的对象
@@ -43,11 +44,14 @@ const emp = {
    * @param {Object} empInfo 用户信息
    */
   setEmpInfo(loginInfo) {
+    // TODO 此处需要做下容错处理
+    // 因为此处是针对新的外部React框架所使用的
+    if (!env.isInReact()) return;
     const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
     window.curOrgCode = orgId || occDivnNum;
     window.forReactPosition = {
-      postnId: postId || postnId,
+      pstnId: postId || postnId,
       orgId: orgId || occDivnNum,
     };
   },

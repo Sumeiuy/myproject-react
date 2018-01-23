@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 15:37:22
+ * @Last Modified time: 2018-01-23 09:59:12
  * 任务实施简报
  */
 
@@ -15,7 +15,7 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
-import { env, power } from '../../../helper';
+import { env, permission } from '../../../helper';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 
@@ -61,7 +61,7 @@ export default class MissionImplementation extends PureComponent {
       isDown: true,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
-    this.isAuthorize = power.hasCustomerPoolPermission();
+    this.isAuthorize = permission.hasCustomerPoolPermission();
   }
 
   componentDidMount() {

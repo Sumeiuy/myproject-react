@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 15:35:13
+ * @Last Modified time: 2018-01-23 09:58:22
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,7 +17,7 @@ import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
-import { time, power } from '../../helper';
+import { time, permission } from '../../helper';
 import config from '../../routes/channelsTypeProtocol/config';
 
 import styles from './editBaseInfo.less';
@@ -582,7 +582,7 @@ export default class EditBaseInfo extends PureComponent {
         },
       ];
     }
-    const accountNumber = power.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
+    const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
       (<div>
         <InfoForm label="是否多账户使用" >
           <CustomSwitch

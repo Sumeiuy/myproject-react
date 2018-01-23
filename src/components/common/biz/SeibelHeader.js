@@ -15,7 +15,7 @@ import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
-import { dom, power } from '../../../helper';
+import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
 
 const {
@@ -270,7 +270,7 @@ export default class Pageheader extends PureComponent {
       hasCreatePermission = contractHelper.hasPermission(empInfo);
     } else if (pageType === channelsPageType) {
       // 如果是通道类协议页面
-      hasCreatePermission = power.hasPermissionOfProtocolCreate(empInfo);
+      hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

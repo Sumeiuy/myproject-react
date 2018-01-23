@@ -22,7 +22,7 @@ import CommissionList from '../../components/common/appList';
 import AppItem from '../../components/common/appList/AppItem';
 import appListTool from '../../components/common/appList/tool';
 import seibelHelper from '../../helper/page/seibel';
-import { emp, power } from '../../helper';
+import { emp, permission } from '../../helper';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -475,7 +475,7 @@ export default class CommissionHome extends PureComponent {
       hasCommissionSingleAuthority: singleAuth,
       hasCommissionADSubscribeAuthority: subAuth,
       hasCommissionADUnSubscribeAuthority: unSubAuth,
-    } = power;
+    } = permission;
     return batchAuth() || singleAuth(empPostnList) || subAuth() || unSubAuth();
   }
 

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:19:32
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 16:15:30
+ * @Last Modified time: 2018-01-23 10:57:52
  * @description 此处存放用于权限管理相关的公用方法
  */
 import _ from 'lodash';
@@ -21,6 +21,7 @@ const power = {
   // 初始化
   init(list) {
     dutyList = list;
+    console.warn('dutyList>', list);
   },
 
   // HTSC 首页指标查询
@@ -99,16 +100,24 @@ const power = {
     const pstnId = emp.getPstnId();
     // 是否拥有第一种权限
     const isInResp1 = power.hasServiceOrderDuty(resp1);
+    console.warn('single>>isInResp1', isInResp1);
     // 是否拥有第二种权限
     const isInResp2 = power.hasServiceOrderDuty(resp2);
+    console.warn('single>>isInResp2', isInResp2);
     // 找出目前登录人的职位名称
+    console.warn('single>>empPostnList', empPostnList);
+    console.warn('single>>pstnId', pstnId);
     const postInfo = _.filter(empPostnList, item => item.postnId === pstnId)[0];
+    console.warn('single>>postInfo', postInfo);
     const postName = postInfo && postInfo.postnName;
     // 判断岗位名称
     let isServicePost = false;
+    console.warn('single>>postName', postName);
+    console.warn('single>>duty.STRING_FWGs', duty.STRING_FWG);
     if (!_.isEmpty(postName)) {
       isServicePost = postName.indexOf(duty.STRING_FWG) > -1;
     }
+    console.warn('single>>isServicePost', isServicePost);
     return isInResp2 || (isInResp1 && isServicePost);
   },
 

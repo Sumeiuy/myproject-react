@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 15:36:37
+ * @Last Modified time: 2018-01-23 09:59:10
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { power } from '../../../helper';
+import { permission } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
@@ -65,7 +65,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskSubType: false,
     };
     // 创建任务权限
-    this.isHasAuthorize = power.hasCreateTaskPermission() && source !== 'custGroupList';
+    this.isHasAuthorize = permission.hasCreateTaskPermission() && source !== 'custGroupList';
   }
 
   @autobind

@@ -2,10 +2,11 @@
  * @Author: sunweibin
  * @Date: 2017-12-18 17:32:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 15:40:05
+ * @Last Modified time: 2018-01-23 10:31:05
  * @description 统一整理的将dva以及redux需要暴露使用的方法
  */
 import initFspMethod from '../utils/initFspMethod';
+import permission from '../permissions';
 
 let app = null;
 const noop = () => {};
@@ -20,6 +21,7 @@ const dva = {
     const store = dva.getStore();
     // 将store暴露给FSP
     initFspMethod({ store, push: history.push });
+    permission.init(store);
   },
 
   /**
