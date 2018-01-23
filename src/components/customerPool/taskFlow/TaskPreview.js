@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-18 15:50:36
+ * @Last Modified time: 2018-01-23 10:06:52
  */
 
 import React, { PureComponent } from 'react';
@@ -202,6 +202,7 @@ export default class TaskPreview extends PureComponent {
     } else if (operationKey === 'TRUE') {
       indicatorText = `${indicatorLevel2Value}，状态：是`;
     } else {
+      // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
       indicatorText = `${indicatorLevel2Value || ''}${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
     }
 
