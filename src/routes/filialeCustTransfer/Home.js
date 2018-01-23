@@ -2,31 +2,36 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:43:06
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-23 15:23:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import { message, Button, Modal } from 'antd';
+import { message, Button, Modal, Upload } from 'antd';
 import _ from 'lodash';
 
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
+import Select from '../../components/common/Select';
 import CommonTable from '../../components/common/biz/CommonTable';
-import { seibelConfig } from '../../config';
+import { seibelConfig, request } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
+import config from './config';
 import styles from './home.less';
+import customerTemplet from './customerTemplet.xls';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const { filialeCustTransfer: { titleList } } = seibelConfig;
+// 划转方式默认值
+const defaultType = config.transferType[0].value;
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -104,6 +109,8 @@ export default class FilialeCustTransfer extends PureComponent {
       client: EMPTY_OBJECT,
       // 所选新服务经理
       newManager: EMPTY_OBJECT,
+      // 划转方式默认值--单客户划转
+      transferType: defaultType,
     };
   }
 
@@ -254,48 +261,139 @@ export default class FilialeCustTransfer extends PureComponent {
     });
   }
 
+  // 划转方式的 select 事件
+  @autobind
+  handleSelectChange(key, value) {
+    this.setState({
+      [key]: value,
+    });
+  }
+
+  @autobind
+  importData() {
+
+  }
+
+  // 上传事件
+  @autobind
+  onChange(info) {
+    const uploadFile = info.file;
+    this.setState({
+      file: uploadFile,
+    });
+    if (uploadFile.response && uploadFile.response.code) {
+      if (uploadFile.response.code === '0') {
+        // 上传成功的返回值 0
+        const data = uploadFile.response.resultData;
+        this.setState({
+          status: 'success',
+          statusText: '上传完成',
+          fileList: data.attaches,
+          oldFileList: data.attaches,
+          attachment: data.attachment,
+        });
+      } else {
+        // 上传失败的返回值 MAG0005
+        this.setState({
+          status: 'active',
+          fileList: this.state.oldFileList,
+          file: {},
+          percent: 0,
+        });
+        message.error(uploadFile.response.msg);
+      }
+    }
+  }
+
   render() {
-    console.log('props', this.props);
     const {
       custList,
       newManagerList,
       managerData,
     } = this.props;
+    const { transferType } = this.state;
+    const uploadProps = {
+      data: {
+        empId: emp.getId(),
+        attachment: '',
+      },
+      action: `${request.prefix}/file/ceFileUpload`,
+      headers: {
+        accept: '*/*',
+      },
+      onChange: this.onChange,
+      showUploadList: false,
+    };
     return (
       <div className={styles.filialeCustTransferWrapper} >
         <div className={styles.filialeCustTransferBox} >
           <h3 className={styles.title}>分公司客户划转</h3>
           <div className={styles.selectBox}>
             <div className={styles.selectLeft}>
-              <InfoForm style={{ width: 'auto' }} label="选择客户" required>
-                <DropDownSelect
-                  placeholder="选择客户"
-                  showObjKey="custName"
-                  objId="brokerNumber"
-                  value=""
-                  searchList={custList}
-                  emitSelectItem={this.handleSelectClient}
-                  emitToSearch={this.handleSearchClient}
-                  boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.queryCustComponent = ref}
+              <InfoForm style={{ width: 'auto' }} label="划转方式" required>
+                <Select
+                  name="transferType"
+                  data={config.transferType}
+                  value={transferType}
+                  onChange={this.handleSelectChange}
                 />
               </InfoForm>
             </div>
-            <div className={styles.selectRight}>
-              <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
-                <DropDownSelect
-                  placeholder="选择新服务经理"
-                  showObjKey="showSelectName"
-                  value=""
-                  searchList={newManagerList}
-                  emitSelectItem={this.handleSelectNewManager}
-                  emitToSearch={this.handleSearchNewManager}
-                  boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.queryManagerComponent = ref}
-                />
-              </InfoForm>
-            </div>
+            {
+              transferType !== defaultType ?
+                <div className={styles.selectRight}>
+                  <div className={styles.buttonBox}>
+                    <Upload {...uploadProps} {...this.props}>
+                      <Button
+                        type="primary"
+                      >
+                        导入
+                      </Button>
+                    </Upload>
+                    <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                  </div>
+                </div>
+              :
+                null
+            }
           </div>
+          {/* 划转方式是否等于默认值 */}
+          {
+            transferType === defaultType ?
+              <div className={styles.selectBox}>
+                <div className={styles.selectLeft}>
+                  <InfoForm style={{ width: 'auto' }} label="选择客户" required>
+                    <DropDownSelect
+                      placeholder="选择客户"
+                      showObjKey="custName"
+                      objId="brokerNumber"
+                      value=""
+                      searchList={custList}
+                      emitSelectItem={this.handleSelectClient}
+                      emitToSearch={this.handleSearchClient}
+                      boxStyle={dropDownSelectBoxStyle}
+                      ref={ref => this.queryCustComponent = ref}
+                    />
+                  </InfoForm>
+                </div>
+                <div className={styles.selectRight}>
+                  <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
+                    <DropDownSelect
+                      placeholder="选择新服务经理"
+                      showObjKey="showSelectName"
+                      value=""
+                      searchList={newManagerList}
+                      emitSelectItem={this.handleSelectNewManager}
+                      emitToSearch={this.handleSearchNewManager}
+                      boxStyle={dropDownSelectBoxStyle}
+                      ref={ref => this.queryManagerComponent = ref}
+                    />
+                  </InfoForm>
+                </div>
+              </div>
+            :
+              null
+          }
           <CommonTable
             data={managerData}
             titleList={titleList}
