@@ -13,6 +13,6 @@ export default {
   rightPanel: '.Pane2', // 右侧详情面板
   fspSidebarHideBtn: '#sidebar-hide-btn',
   fspSidebarShowBtn: '#sidebar-show-btn',
-  reactHeaderHeight: 90, // 在React框架下的头部高度
+  reactHeaderHeight: 138, // 在React框架下的头部高度
   fspHeaderHeight: 55, // 在FSP框架下的头部高度
 };

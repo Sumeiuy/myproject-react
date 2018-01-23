@@ -90,8 +90,6 @@ app.model(require('./models/customerFeedback'));
 app.model(require('./models/taskFeedback'));
 // 主职位 model
 app.model(require('./models/mainPosition'));
-// 开发关系认定
-app.model(require('./models/developRelationship'));
 // 售前适当性查询
 app.model(require('./models/preSaleQuery'));
 

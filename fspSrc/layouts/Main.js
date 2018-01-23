@@ -14,9 +14,9 @@ import { routerRedux, withRouter } from 'dva/router';
 import { Modal, Input } from 'antd';
 
 import Header from './Header';
-// import Footer from './Footer';
+import Footer from './Footer';
 import Tab from '../components/layout/Tab';
-
+import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/ConnectedCreateServiceRecord';
 
@@ -29,7 +29,7 @@ const effects = {
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
-   // 删除文件
+  // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
   switchPosition: 'global/changePost',
 };
@@ -197,56 +197,55 @@ export default class Main extends PureComponent {
             onIsolationWallModalShow={this.handleIsolationWallModalShow}
           />
           <div className={styles.main}>
-            <div id="react-content" className={styles.content}>
-              <Tab
-                location={location}
-                push={push}
-                loading={loading}
-                loadingForceFull={loadingForceFull}
-                isBlockRemovePane={isBlockRemovePane}
-              >
-                <div>
-                  {
-                    (!_.isEmpty(interfaceState) &&
-                      !interfaceState[effects.dictionary] &&
-                      !interfaceState[effects.customerScope] &&
-                      !interfaceState[effects.empInfo]) ?
-                        <div>
-                          {children}
-                          <ConnectedCreateServiceRecord
-                            handleCloseClick={handleCloseClick}
-                            loading={interfaceState[effects.addServeRecord]}
-                            key={serviceRecordModalVisibleOfId}
-                            id={serviceRecordModalVisibleOfId}
-                            name={serviceRecordModalVisibleOfName}
-                            dict={dict}
-                            empInfo={empInfo}
-                            isShow={serviceRecordModalVisible}
-                            addServeRecord={addServeRecord}
-                            addServeRecordSuccess={addServeRecordSuccess}
-                            onToggleServiceRecordModal={toggleServiceRecordModal}
-                            custUuid={custUuid}
-                            ceFileDelete={ceFileDelete}
-                            taskFeedbackList={taskFeedbackList}
-                          />
-                        </div>
-                        :
-                        null
-                  }
-                </div>
-              </Tab>
-            </div>
-            {/*  <Footer /> */}
+            <Tab
+              location={location}
+              push={push}
+              isBlockRemovePane={isBlockRemovePane}
+            />
+            <FSPUnwrap
+              path={location.pathname}
+              loading={loading}
+              loadingForceFull={loadingForceFull}
+            >
+              <div id="react-content" className={styles.content}>
+                {
+                  (!_.isEmpty(interfaceState) &&
+                    !interfaceState[effects.dictionary] &&
+                    !interfaceState[effects.customerScope] &&
+                    !interfaceState[effects.empInfo] &&
+                    React.isValidElement(children)) ?
+                      children :
+                      <div />
+                }
+              </div>
+              <Footer />
+            </FSPUnwrap>
+            <ConnectedCreateServiceRecord
+              handleCloseClick={handleCloseClick}
+              loading={interfaceState[effects.addServeRecord]}
+              key={serviceRecordModalVisibleOfId}
+              id={serviceRecordModalVisibleOfId}
+              name={serviceRecordModalVisibleOfName}
+              dict={dict}
+              empInfo={empInfo}
+              isShow={serviceRecordModalVisible}
+              addServeRecord={addServeRecord}
+              addServeRecordSuccess={addServeRecordSuccess}
+              onToggleServiceRecordModal={toggleServiceRecordModal}
+              custUuid={custUuid}
+              ceFileDelete={ceFileDelete}
+              taskFeedbackList={taskFeedbackList}
+            />
+            <Modal
+              title="隔离墙"
+              visible={this.state.isolationWallModalVisible}
+              onCancel={this.handleIsolationWallModalHide}
+            >
+              <span>股票代码：</span>
+              <Input />
+            </Modal>
           </div>
         </div>
-        <Modal
-          title="隔离墙"
-          visible={this.state.isolationWallModalVisible}
-          onCancel={this.handleIsolationWallModalHide}
-        >
-          <span>股票代码：</span>
-          <Input />
-        </Modal>
       </div>
     );
   }

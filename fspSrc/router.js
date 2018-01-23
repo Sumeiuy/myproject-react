@@ -45,70 +45,66 @@ import Demote from '../src/routes/demote/Home';
 import FilialeCustTransfer from '../src/routes/filialeCustTransfer/Home';
 import RelationHome from '../src/routes/relation/Home';
 import TaskFeedback from '../src/routes/taskFeedback/Home';
-import HtmlComponent from './routes/fspPage/HtmlComponent';
-import IframeComponent from './routes/fspPage/IframeComponent';
+import FSPComponent from './routes/fspPage/FSPComponent';
 import PreSaleQuery from '../src/routes/preSaleQuery/Home';
 
 const { ConnectedRouter } = routerRedux;
 
 // 路由Collection
 const routes = [
-  // 任务中心
-  { path: '/task/fspmotTask', component: HtmlComponent },
-  { path: '/task/fspselfbuildTask', component: HtmlComponent },
-  { path: '/task/fspmotService', component: HtmlComponent },
-  { path: '/task/fspcustomerHistory', component: HtmlComponent },
-  { path: '/task/fspibreport', component: HtmlComponent },
-  // 客户中心
-  { path: '/customerCenter/fsptest', component: HtmlComponent },
-  { path: '/customerCenter/fspcustomerManage', component: HtmlComponent },
-  { path: '/customerCenter/fspinvestContract', component: HtmlComponent },
+  /*  // 任务中心
+   { path: '/task/fspmotTask', component: HtmlComponent },
+   { path: '/task/fspselfbuildTask', component: HtmlComponent },
+   { path: '/task/fspmotService', component: HtmlComponent },
+   { path: '/task/fspcustomerHistory', component: HtmlComponent },
+   { path: '/task/fspibreport', component: HtmlComponent },
+   // 客户中心
+   { path: '/customerCenter/fsptest', component: HtmlComponent },
+   { path: '/customerCenter/fspcustomerManage', component: HtmlComponent },
+   { path: '/customerCenter/fspinvestContract', component: HtmlComponent },
+   { path: '/customerCenter/customerGroupManage', component: CustomerGroupManage },
+   { path: '/customerCenter/fspcustomerDetail', component: HtmlComponent },
+   // 资产配置
+   { path: '/asset/fspmainTab', component: HtmlComponent },
+   { path: '/asset/fspimplementation', component: HtmlComponent },
+   // 产品中心
+   { path: '/appCenter/fspproductBase', component: IframeComponent },
+   { path: '/appCenter/fspcalendar', component: IframeComponent },
+   // 消息中心
+   { path: '/messageCenter', component: HtmlComponent },
+   // 知识库
+   { path: '/knowledges/fspinitmain', component: HtmlComponent },
+   // 客户投诉
+   { path: '/custcomplaint/fsplistContent', component: HtmlComponent },
+   { path: '/custcomplaint/fsppending', component: HtmlComponent },
+   { path: '/custcomplaint/fspall', component: HtmlComponent },
+   { path: '/custcomplaint/fspnew', component: HtmlComponent },
+   { path: '/custcomplaint/fspreport', component: HtmlComponent },
+    // 资金业务
+    { path: '/bizapply/finance/fspexcessCache', component: HtmlComponent },
+    { path: '/bizapply/finance/fspappointDrawTab', component: HtmlComponent },
+    { path: '/bizapply/finance/fspappointBook', component: HtmlComponent },
+   // 适当性申请
+   { path: '/bizapply/priReuqest/fsppriProd', component: HtmlComponent },
+   { path: '/bizapply/priReuqest/fspappropriate', component: HtmlComponent },
+   // 通道类业务
+   { path: '/bizapply/tunnel/fsppbbiz', component: HtmlComponent },
+   // 信用业务
+   { path: '/bizapply/credit/fsppostApplyManage', component: IframeComponent },
+   { path: '/bizapply/credit/fspcreditRequest', component: IframeComponent },
+   { path: '/bizapply/credit/fspchangeRequest', component: IframeComponent },
+   { path: '/bizapply/credit/fspthought', component: IframeComponent },
+   { path: '/bizapply/credit/fspprojectInvest', component: IframeComponent },
+   { path: '/bizapply/credit/fspprojectScore', component: IframeComponent },
+   { path: '/bizapply/credit/fspriskFollow', component: IframeComponent },
+   { path: '/bizapply/credit/fspinitialTrade', component: IframeComponent },
+   { path: '/bizapply/credit/fspfollowingSearch', component: IframeComponent },
+   // 期权业务
+   { path: '/bizapply/option/fspoptionfund', component: HtmlComponent },
+   { path: '/bizapply/option/fspoptionResearch', component: HtmlComponent }, */
+  // 客户分组管理
   { path: '/customerCenter/customerGroupManage', component: CustomerGroupManage },
-  { path: '/customerCenter/fspcustomerDetail', component: HtmlComponent },
-  // 资产配置
-  { path: '/asset/fspmainTab', component: HtmlComponent },
-  { path: '/asset/fspimplementation', component: HtmlComponent },
-  // 产品中心
-  { path: '/appCenter/fspproductBase', component: IframeComponent },
-  { path: '/appCenter/fspcalendar', component: IframeComponent },
-  // 消息中心
-  { path: '/messageCenter', component: HtmlComponent },
-  // 知识库
-  { path: '/knowledges/fspinitmain', component: HtmlComponent },
-  // 客户投诉
-  { path: '/custcomplaint/fsplistContent', component: HtmlComponent },
-  { path: '/custcomplaint/fsppending', component: HtmlComponent },
-  { path: '/custcomplaint/fspall', component: HtmlComponent },
-  { path: '/custcomplaint/fspnew', component: HtmlComponent },
-  { path: '/custcomplaint/fspreport', component: HtmlComponent },
-
-   // 资金业务
-   { path: '/bizapply/finance/fspexcessCache', component: HtmlComponent },
-   { path: '/bizapply/finance/fspappointDrawTab', component: HtmlComponent },
-   { path: '/bizapply/finance/fspappointBook', component: HtmlComponent },
-
-  // 适当性申请
-  { path: '/bizapply/priReuqest/fsppriProd', component: HtmlComponent },
-  { path: '/bizapply/priReuqest/fspappropriate', component: HtmlComponent },
-
-  // 通道类业务
-  { path: '/bizapply/tunnel/fsppbbiz', component: HtmlComponent },
-
-  // 信用业务
-  { path: '/bizapply/credit/fsppostApplyManage', component: IframeComponent },
-  { path: '/bizapply/credit/fspcreditRequest', component: IframeComponent },
-  { path: '/bizapply/credit/fspchangeRequest', component: IframeComponent },
-  { path: '/bizapply/credit/fspthought', component: IframeComponent },
-  { path: '/bizapply/credit/fspprojectInvest', component: IframeComponent },
-  { path: '/bizapply/credit/fspprojectScore', component: IframeComponent },
-  { path: '/bizapply/credit/fspriskFollow', component: IframeComponent },
-  { path: '/bizapply/credit/fspinitialTrade', component: IframeComponent },
-  { path: '/bizapply/credit/fspfollowingSearch', component: IframeComponent },
-
-  // 期权业务
-  { path: '/bizapply/option/fspoptionfund', component: HtmlComponent },
-  { path: '/bizapply/option/fspoptionResearch', component: HtmlComponent },
-
+  { path: '/customerCenter/customerGroupManage/createTask', component: CreateTask },
   // 绩效视图
   { path: '/report', component: ReportHome },
   // 看板管理
@@ -136,17 +132,20 @@ const routes = [
       { path: '/edit', component: PermissonEdit },
     ],
   },
-  // 任务列表
-  { path: '/taskList', component: TaskListHome },
+  // 自建任务管理
+  { path: '/taskCenter/selfbuildTask', component: TaskListHome },
+  { path: '/taskCenter/selfbuildTask/createTask', component: CreateTask },
   // 合约详情
-  { path: '/bizapply/contract',
+  {
+    path: '/bizapply/contract',
     component: Contract,
     children: [
       { path: '/form', component: Form },
     ],
   },
   // 协议管理
-  { path: '/bizapply/channelsTypeProtocol',
+  {
+    path: '/bizapply/channelsTypeProtocol',
     component: ChannelsTypeProtocol,
     children: [
       { path: '/edit', component: ChannelsTypeProtocolEdit },
@@ -208,6 +207,7 @@ const Routers = ({ history }) => (
         <Route exact path="/" render={() => (<Redirect to="/customerPool" />)} />
         <Route exact path="/invest" render={() => (<Redirect to="/report" />)} />
         {recursiveRouter(routes)}
+        <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </div>
     </App>

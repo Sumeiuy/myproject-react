@@ -9,6 +9,15 @@ import { customerPool as api } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
+function matchRouteAndexec(pathname, params, routeCallbackObj) {
+  _.forOwn(routeCallbackObj, (value, key) => {
+    if (url.matchRoute(key, pathname)) {
+      routeCallbackObj[key](params);
+      return false;
+    }
+    return true;
+  });
+}
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -124,70 +133,67 @@ export default {
     setup({ dispatch, history }) {
       dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
-        const params = queryString.parse(search);
-        const serviceLogUrl = url.matchRoute('serviceLog', pathname);
-        if (serviceLogUrl) {
-          const { pageSize, serveDateToPaged } = params;
-          if (_.isEmpty(pageSize)) params.pageSize = null;
-          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
-          params.pageNum = 1; // 默认显示第一页
-          dispatch({
-            type: 'getServiceLog',
-            payload: params,
-            loading: true,
-          });
-          return;
-        }
-
-        const custGroupUrl = url.matchRoute('customerGroup', pathname);
-        if (custGroupUrl) {
-          const { curPageNum, curPageSize, keyWord = null } = params;
-          dispatch({
-            type: 'customerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: emp.getId(),
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
-        const { curPageNum, curPageSize, keyWord = null } = params;
-        if (customerGroupManageUrl) {
-          dispatch({
-            type: 'getCustomerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const todoListUrl = url.matchRoute('todo', pathname);
-        if (todoListUrl) {
-          const { keyword } = params;
-          if (keyword) {
+        const query = queryString.parse(search);
+        // 监听location的配置对象
+        // 函数名称为路径匹配字符
+        // 如匹配则执行相应的函数，只会执行第一个匹配的函数
+        // 所以是有序的
+        const routeCallbackObj = {
+          serviceLog(param) {
+            const params = param;
+            const { pageSize, serveDateToPaged } = params;
+            if (_.isEmpty(pageSize)) params.pageSize = null;
+            if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+            params.pageNum = 1; // 默认显示第一页
             dispatch({
-              type: 'search',
-              payload: keyword,
+              type: 'getServiceLog',
+              payload: params,
               loading: true,
             });
-            return;
-          }
-          dispatch({
-            type: 'getToDoList',
-            loading: true,
-          });
-        }
+          },
+          customerGroupManage(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'getCustomerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          customerGroup(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'customerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                empId: emp.getId(),
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          todo(params) {
+            const { keyword } = params;
+            if (keyword) {
+              dispatch({
+                type: 'search',
+                payload: keyword,
+                loading: true,
+              });
+              return;
+            }
+            dispatch({
+              type: 'getToDoList',
+              loading: true,
+            });
+          },
+        };
+        const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
+        matchRouteAndCallback(routeCallbackObj);
       });
     },
   },
