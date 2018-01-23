@@ -10,10 +10,13 @@ import Marquee from 'react-marquee';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
+import { openFspTab } from '../../../utils';
+import more from './img/more.svg';
 
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
+    push: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -43,7 +46,9 @@ export default class MorningBroadcast extends PureComponent {
       <div className={styles.morning_broadcast}>
         <div className={styles.title}>
           <span>晨间播报</span>
-          <span className={styles.more}> 更多&gt;&gt; </span>
+          <span className={styles.more} onClick={() => openFspTab({ url: '/broadcastList' })}> 更多
+            <img src={more} alt="" />
+          </span>
         </div>
         <div className={styles.listWrap}>
           {

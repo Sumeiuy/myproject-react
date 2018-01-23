@@ -25,7 +25,7 @@ import {
 } from './config';
 
 import styles from './home.less';
-import { BroadcastList } from '../morningBroadcast/BroadcastList';
+import { BroadcastList } from '../morningBroadcast';
 import
 { MorningBroadcast,
   ToBeDone,
@@ -163,7 +163,6 @@ export default class Home extends PureComponent {
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum = '', occDivnNum = '' } = empInfo;
-    // 初始化晨报列表数据，用于首页提供晨报展示
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
@@ -189,7 +188,7 @@ export default class Home extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-    // 如果当前每日播报列表中没有数据则去获取(首页晨报展示)
+    // 初始化晨报列表数据，用于首页提供晨报展示
     if (!initBoradcastList.length) {
       const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
       getBoradcastList({
@@ -535,7 +534,10 @@ export default class Home extends PureComponent {
             </Tabs>
           </div>
           <div className={styles.viewpoint}>
-            <MorningBroadcast dataList={initBoradcastList} />
+            <MorningBroadcast
+              dataList={initBoradcastList}
+              push={push}
+            />
             <Viewpoint
               information={information}
               push={push}

@@ -5,15 +5,24 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import { Select, DatePicker, Input, Button, Table, Icon, Popconfirm, message } from 'antd';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import styles from './boradcastList.less';
+import { linkTo } from '../../utils';
 import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
 
 const Option = Select.Option;
 const Search = Input.Search;
+// 跳转至晨报详情
+const goFspNewDetail = (newId) => {
+  linkTo({
+    url: '/broadcastList',
+    query: { newId },
+  });
+};
 
 const columns = [{
   title: '标题',
@@ -21,7 +30,19 @@ const columns = [{
   key: 'title',
   className: 'tableTitle',
   width: '35%',
-  render: text => <span className={styles.textOverflow}>{text}</span>,
+  render: (text, record) => {
+    const newId = record.newsId;
+    console.log(record);
+    return (
+      <span
+        onClick={() => { goFspNewDetail(newId); }}
+        className={styles.textOverflow}
+        style={{ cursor: 'pointer' }}
+      >
+        {text}
+      </span>
+    );
+  },
 }, {
   title: '类型',
   dataIndex: 'newsTypValue',
@@ -64,6 +85,7 @@ const mapDispatchToProps = {
   saveBoradcast: fetchDataFunction(true, effects.saveBoradcast),
   getBoradcastDetail: fetchDataFunction(true, effects.getBoradcastDetail),
   delBoradcastItem: fetchDataFunction(true, effects.delBoradcastItem),
+  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -75,6 +97,7 @@ export default class BroadcastList extends PureComponent {
     saveBoradcast: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
     delBoradcastItem: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   };
 
   /**
