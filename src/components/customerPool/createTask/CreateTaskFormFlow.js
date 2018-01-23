@@ -33,6 +33,8 @@ export default class CreateTaskFormFlow extends PureComponent {
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -144,6 +146,8 @@ export default class CreateTaskFormFlow extends PureComponent {
       generateTemplateId,
       templateId,
       creator,
+      sendCustsServedByPostnResult,
+      isSendCustsServedByPostn,
     } = this.props;
 
     return (
@@ -166,6 +170,8 @@ export default class CreateTaskFormFlow extends PureComponent {
           generateTemplateId={generateTemplateId}
           templateId={templateId}
           creator={creator}
+          sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
         />
       </div>
     );

@@ -23,6 +23,7 @@ export default class SelectLabelCust extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     isAuthorize: PropTypes.bool,
     visible: PropTypes.bool.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -127,6 +128,8 @@ export default class SelectLabelCust extends PureComponent {
       labelId: value,
       currentSelectLabel: value,
     });
+    // 查看标签选中的客户是否合法，是否需要审批
+    this.props.isSendCustsServedByPostn();
   }
 
   render() {

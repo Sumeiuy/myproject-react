@@ -2,13 +2,13 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-10 21:01:13
+ * @Last Modified time: 2018-01-19 18:10:23
  * 结果跟踪
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Checkbox, Input, message } from 'antd';
+import { Select, Checkbox, InputNumber, message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -535,9 +535,11 @@ export default class ResultTrack extends PureComponent {
    * @param {*object} e 当前事件event
    */
   @autobind
-  handleInputChange(e) {
-    const value = e.target.value;
+  handleInputChange(value) {
     const { currentMin = 0, currentMax = 0 } = this.state;
+    if (_.isUndefined(value)) {
+      return;
+    }
     if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
       if (Number(value) < Number(currentMin)) {
         message.error('不能小于指标最小值');
@@ -761,12 +763,12 @@ export default class ResultTrack extends PureComponent {
                             }
                           </div>
                           <div className={styles.text}>
-                            <Input
+                            <InputNumber
                               disabled={!checked}
                               placeholder={''}
                               value={inputValue}
-                              min={currentMin}
-                              max={currentMax}
+                              min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
+                              max={!_.isEmpty(currentMax) ? Number(currentMax) : Number.MAX_VALUE}
                               onChange={this.handleInputChange}
                             />
                           </div>

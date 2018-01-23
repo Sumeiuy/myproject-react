@@ -111,13 +111,20 @@ export default {
     // 文件下载文件列表数据
     filesList: [],
     // 问卷调查模板Id
-    templateId: '',
+    templateId: 0,
     // 一级指标数据
     indicatorData: [],
     // 当前rukou
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 查询客户的数量限制或者是否都是本人名下的客户
+    sendCustsServedByPostnResult: {
+      custNumsIsExceedUpperLimit: false,
+      isSendCustsServedByPostn: true,
+    },
+    // 查询是否都是本人名下的客户
+    custServedByPostnResult: true,
   },
 
   subscriptions: {
@@ -724,6 +731,22 @@ export default {
         payload: resultData,
       });
     },
+    // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
+    * isSendCustsServedByPostn({ payload }, { call, put }) {
+      const { resultData } = yield call(api.isSendCustsServedByPostn, payload);
+      yield put({
+        type: 'isSendCustsServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询客户是否是我名下的客户
+    * isCustServedByPostn({ payload }, { call, put }) {
+      const { resultData } = yield call(api.isCustServedByPostn, payload);
+      yield put({
+        type: 'isCustServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1252,6 +1275,22 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    // 查询客户的数量限制或者是否都是本人名下的客户
+    isSendCustsServedByPostnSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        sendCustsServedByPostnResult: payload,
+      };
+    },
+    // 查询客户是否都是本人名下的客户
+    isCustServedByPostnSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custServedByPostnResult: payload,
       };
     },
   },

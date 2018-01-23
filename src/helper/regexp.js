@@ -32,6 +32,10 @@ const regexp = {
    * 例子： 12345604 => 123,456,04
    */
   thousand_decimal: /(\d{3})(?=(\d{1,3})+)/g,
+  /**
+   * 正整数
+   */
+  positive_integer: /^\+?[1-9][0-9]*$/,
 };
 
 export default regexp;

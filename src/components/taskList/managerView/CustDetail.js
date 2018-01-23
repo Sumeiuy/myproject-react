@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-12 16:27:39
+ * @Last Modified time: 2018-01-22 13:55:46
  * 客户明细数据
  */
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
@@ -64,6 +64,8 @@ export default class CustDetail extends PureComponent {
     onClose: PropTypes.func,
     push: PropTypes.func.isRequired,
     hideCustDetailModal: PropTypes.func.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -225,22 +227,34 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, hideCustDetailModal } = this.props;
-    // 跳转前关闭模态框
-    hideCustDetailModal();
-    const param = {
-      id: 'FSP_360VIEW_M_TAB',
-      title: '客户360视图-客户信息',
-      forceRefresh: true,
-    };
-    openFspTab({
-      routerAction: push,
-      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-      pathname: '/customerCenter/fspcustomerDetail',
-      param,
-      state: {
-        url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-      },
+    const { push, hideCustDetailModal, isCustServedByPostn } = this.props;
+    const postnId = window.forReactPosition && window.forReactPosition.pstnId;
+    // 跳转之前查看一下是否都是本人名下的客户
+    isCustServedByPostn({
+      postnId,
+      custId,
+    }).then(() => {
+      if (this.props.custServedByPostnResult) {
+        // 跳转前关闭模态框
+        hideCustDetailModal();
+        const param = {
+          id: 'FSP_360VIEW_M_TAB',
+          title: '客户360视图-客户信息',
+          forceRefresh: true,
+        };
+        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+        openFspTab({
+          routerAction: push,
+          url,
+          pathname: '/customerCenter/fspcustomerDetail',
+          param,
+          state: {
+            url,
+          },
+        });
+      } else {
+        message.error('客户包含非本人名下客户，不能查看客户360视图');
+      }
     });
   }
 

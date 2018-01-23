@@ -138,6 +138,8 @@ const mapStateToProps = state => ({
   // 任务反馈已反馈
   missionFeedbackCount: state.performerView.missionFeedbackCount,
   attachmentList: state.performerView.attachmentList,
+  // 是否包含非本人名下客户
+  custServedByPostnResult: state.customerPool.custServedByPostnResult,
 });
 
 const mapDispatchToProps = {
@@ -194,6 +196,8 @@ const mapDispatchToProps = {
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
   countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
+  // 查询是否包含本人名下客户
+  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -259,6 +263,8 @@ export default class PerformerView extends PureComponent {
     missionFeedbackCount: PropTypes.number.isRequired,
     countExamineeByType: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
+    isCustServedByPostn: PropTypes.func.isRequired,
+    custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -517,6 +523,8 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
+      isCustServedByPostn,
+      custServedByPostnResult,
     } = this.props;
     const {
       query: { currentId },
@@ -598,6 +606,8 @@ export default class PerformerView extends PureComponent {
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
             serveManagerCount={empNum}
+            isCustServedByPostn={isCustServedByPostn}
+            custServedByPostnResult={custServedByPostnResult}
           />
         );
         break;
