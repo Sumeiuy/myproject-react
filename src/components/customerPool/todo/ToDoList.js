@@ -148,7 +148,8 @@ export default class ToDoList extends PureComponent {
     const flowId = tardetLab.getAttribute('data');
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
-    if (true) { // 判断条件未确定
+    // TODO: 判断条件修改
+    if (true) {
       this.setState({
         flowId: flowData.flowId,
       });

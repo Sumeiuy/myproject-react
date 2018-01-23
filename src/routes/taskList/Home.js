@@ -607,7 +607,7 @@ export default class PerformerView extends PureComponent {
             push={push}
             missionType={typeCode}
             missionTypeDict={missionType}
-            exportExcel={this.handleExportWorld}
+            exportExcel={this.handleExportExecl}
             exportCustListExcel={exportCustListExcel}
             missionProgressStatusDic={missionProgressStatus}
             missionFeedbackData={missionFeedbackData}
@@ -626,7 +626,7 @@ export default class PerformerView extends PureComponent {
 
   // 导出客户
   @autobind
-  handleExportWorld(orgId) {
+  handleExportExecl(orgId) {
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
