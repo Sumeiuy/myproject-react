@@ -66,6 +66,12 @@ const menus = [
     pid: 'FSP_NEW_HOMEPAGE',
   },
   {
+    name: 'MOT任务处理',
+    id: 'FSP_MOT_TASKHANDLE',
+    path: '/fsp/motTaskHandle',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '客户中心',
     id: 'FSP_CUST_M_CENTER',
     path: '/customerCenter',
@@ -76,6 +82,12 @@ const menus = [
     id: 'FSP_CUST_M_360',
     path: '/fsp/customerCenter/customer360',
     pid: 'FSP_CUST_M_CENTER_MANAGE',
+  },
+  {
+    name: '佣金查询',
+    id: 'FSP_CUST_M_TOCOMMISSION',
+    path: '/fsp/customerCenter/toCommission',
+    pid: 'FSP_CUST_M_360',
   },
   {
     name: '任务中心',

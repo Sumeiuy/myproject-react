@@ -145,13 +145,11 @@ export default class Viewpoint extends PureComponent {
         <div className={styles.down}>
           <div className={classnames(styles.title, styles.downTitle)}>资讯列表</div>
           {
-            _.isEmpty(newInfoVOList) ? (
-              <div className={styles.descri}>暂无数据</div>
-            ) : (
+            _.isEmpty(newInfoVOList) ?
+              <div className={styles.descri}>暂无数据</div> :
               <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
                 {this.renderContent(newInfoVOList)}
               </div>
-              )
           }
           {
             isShowMore ? (
