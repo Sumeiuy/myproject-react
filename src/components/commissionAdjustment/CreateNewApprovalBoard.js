@@ -17,7 +17,7 @@ import Select from '../common/Select';
 import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
 import { seibelConfig } from '../../config';
-import { permission } from '../../utils';
+import { permission } from '../../helper';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import BatchCreateBoard from './BatchCreatBoard';
 import SingleCreatBoard from './SingleCreatBoard';

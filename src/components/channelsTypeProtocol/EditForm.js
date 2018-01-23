@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 19:57:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-22 16:12:14
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ import Transfer from '../../components/common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
 import config from '../../routes/channelsTypeProtocol/config';
 import styles from './editForm.less';
-import duty from '../../helper/config/duty';
+import channelType from '../../helper/page/channelType';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -248,7 +248,7 @@ export default class EditForm extends PureComponent {
     }, () => {
       if (this.editBaseInfoComponent) {
         const baseInfoData = this.editBaseInfoComponent.getData();
-        if (baseInfoData.subType === duty.zjkcd_id) {
+        if (channelType.isZJKCDChannel(baseInfoData.subType)) {
           // 如果子类型是紫金快车道时切换多账户才改变上传文件的必填项
           this.setUploadConfig(boolean ? custAttachment[2] : custAttachment[1]);
         }
@@ -548,7 +548,7 @@ export default class EditForm extends PureComponent {
   @autobind
   handleChangeRequiredFile(subType, operateType) {
     // 子类型是高速通道协议并且操作类型是订购
-    if (subType === duty.gstd_id && operateType === config.subscribeArray[0]) {
+    if (channelType.isGSChannel(subType) && operateType === config.subscribeArray[0]) {
       this.setUploadConfig(custAttachment[3]);
     }
   }

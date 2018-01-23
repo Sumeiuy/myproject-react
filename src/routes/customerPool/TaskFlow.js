@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 14:59:37
+ * @Last Modified time: 2018-01-23 10:00:21
  */
 
 import React, { PureComponent } from 'react';
@@ -12,8 +12,8 @@ import { routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { permission, removeTab, closeRctTab } from '../../utils';
-import { emp } from '../../helper';
+import { removeTab, closeRctTab } from '../../utils';
+import { emp, permission } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
