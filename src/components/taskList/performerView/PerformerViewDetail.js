@@ -80,12 +80,28 @@ export default class PerformerViewDetail extends PureComponent {
     }));
   }
 
+  /**
+   * 重新查询目标客户的详情信息
+   */
+  @autobind
+  requeryTargetCustDetail({ custId, callback }) {
+    const {
+      currentId,
+      getCustDetail,
+    } = this.props;
+    getCustDetail({
+      missionId: currentId,
+      custId,
+      callback,
+    });
+  }
+
   @autobind
   handlePageChange(pageNo) {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -122,31 +138,15 @@ export default class PerformerViewDetail extends PureComponent {
    * 添加服务记录成功后重新加载目标客户的列表信息
    */
   @autobind
-  reloadTargetCustInfo() {
+  reloadTargetCustInfo(callback) {
     const {
       parameter: {
-        targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerPageNo = PAGE_NO,
-        targetCustomerState,
         targetCustId,
       },
-      targetCustList: { list },
-      changeParameter,
     } = this.props;
-    let currentCustId = targetCustId;
-    let currentPageNum = targetCustomerPageNo;
-    if (targetCustomerState) {
-      currentCustId = !_.isEmpty(list) ? (list[0] || {}).custId : '';
-      currentPageNum = 1;
-    }
-    changeParameter({
-      targetCustId: currentCustId,
-    });
-    this.queryTargetCustInfo({
-      custId: currentCustId,
-      state: targetCustomerState,
-      pageSize: targetCustomerPageSize,
-      pageNum: currentPageNum,
+    this.requeryTargetCustDetail({
+      custId: targetCustId,
+      callback,
     });
   }
 
@@ -183,6 +183,7 @@ export default class PerformerViewDetail extends PureComponent {
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,
+          keyIndex: this.state.keyIndex + 1,
         });
       } else {
         const params = {
@@ -196,9 +197,6 @@ export default class PerformerViewDetail extends PureComponent {
         saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
-    this.setState({
-      keyIndex: this.state.keyIndex + 1,
-    });
   }
 
   // 处理问卷提交成功
@@ -206,9 +204,11 @@ export default class PerformerViewDetail extends PureComponent {
   handleSaveSuccess() {
     const { saveAnswersSucce } = this.props;
     let isShow = false;
-    if (saveAnswersSucce !== 'success') {
+    if (!saveAnswersSucce) {
       isShow = true;
       message.error('提交失败！');
+    } else {
+      message.error('提交成功！');
     }
     this.setState({
       visible: isShow,
@@ -255,7 +255,7 @@ export default class PerformerViewDetail extends PureComponent {
       answerId: key.target.value,
       answerText: key.target.dataVale,
     }];
-    this.handleRepeatData(initRadio, checkedData, radioData);
+    this.handleRepeatData(initRadio, checkedData, 'radioData');
   }
 
   // 处理问卷选中重复答案
@@ -275,7 +275,7 @@ export default class PerformerViewDetail extends PureComponent {
         newRadio = initData;
       }
       this.setState({
-        radioData: newRadio,
+        [stv]: newRadio,
       });
     }
   }
@@ -288,7 +288,7 @@ export default class PerformerViewDetail extends PureComponent {
       quesId: e.target.getAttribute('data'),
       answerText: e.target.value,
     }];
-    this.handleRepeatData(initAreaText, params, areaTextData);
+    this.handleRepeatData(initAreaText, params, 'areaTextData');
   }
 
   render() {
@@ -333,7 +333,7 @@ export default class PerformerViewDetail extends PureComponent {
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}

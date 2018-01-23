@@ -18,14 +18,24 @@ import styles from './todo.less';
 const curPageNum = 1;
 const pageSize = 10;
 
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+const effects = {
+  getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+};
 const mapStateToProps = state => ({
   todolist: state.customerPool.todolist,
   data: state.customerPool.todolistRecord,
+  taskBasicInfo: state.tasklist.taskBasicInfo,
 });
 
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
+  getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -38,6 +48,12 @@ export default class ToDo extends PureComponent {
     location: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
+    getTaskBasicInfo: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
+  }
+
+  static defaultProps = {
+    taskBasicInfo: {},
   }
 
   @autobind
@@ -81,7 +97,7 @@ export default class ToDo extends PureComponent {
   }
 
   render() {
-    const { data, todolist, location } = this.props;
+    const { data, todolist, location, push, replace, taskBasicInfo, getTaskBasicInfo } = this.props;
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
@@ -107,6 +123,10 @@ export default class ToDo extends PureComponent {
           onPageChange={this.pageChange}
           onSizeChange={this.sizeChange}
           location={location}
+          push={push}
+          replace={replace}
+          taskBasicInfo={taskBasicInfo}
+          getTaskBasicInfo={getTaskBasicInfo}
         />
       </div>
     );

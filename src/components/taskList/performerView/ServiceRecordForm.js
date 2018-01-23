@@ -58,7 +58,6 @@ export default class ServiceRecordForm extends PureComponent {
     const {
       formData: { custId = '', missionFlowId = '' },
       addServeRecord,
-      reloadTargetCustInfo,
     } = this.props;
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
@@ -86,14 +85,7 @@ export default class ServiceRecordForm extends PureComponent {
     };
 
     // 添加服务记录
-    addServeRecord(postBody)
-      .then(() => {
-        if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新获取目标客户列表的信息
-          reloadTargetCustInfo();
-          message.success('添加服务记录成功');
-        }
-      });
+    addServeRecord(postBody);
   }
 
   @autobind

@@ -75,7 +75,6 @@ export default function AppItem(props) {
   function handleClick() {
     onClick(data, index);
   }
-  console.log('XXX', data);
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}

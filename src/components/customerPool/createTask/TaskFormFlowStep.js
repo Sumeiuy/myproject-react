@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 14:06:15
+ * @Last Modified time: 2018-01-23 17:38:17
  */
 
 import React, { PureComponent } from 'react';
@@ -12,12 +12,14 @@ import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission } from '../../../utils';
+import { url } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import styles from './taskFormFlowStep.less';
 
+const NOOP = _.noop;
 const Step = Steps.Step;
 
 export default class TaskFormFlowStep extends PureComponent {
@@ -40,6 +42,10 @@ export default class TaskFormFlowStep extends PureComponent {
     generateTemplateId: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    submitApproval: PropTypes.func,
+    submitSuccess: PropTypes.bool,
+    getApprovalBtn: PropTypes.func,
+    approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
   };
@@ -48,6 +54,10 @@ export default class TaskFormFlowStep extends PureComponent {
     dict: {},
     storedCreateTaskData: {},
     orgId: null,
+    submitSuccess: false,
+    submitApproval: NOOP,
+    approvalBtn: {},
+    getApprovalBtn: NOOP,
   };
 
   constructor(props) {
@@ -512,6 +522,34 @@ export default class TaskFormFlowStep extends PureComponent {
     this.props.onCloseTab();
   }
 
+  // 获取审批流程按钮
+  @autobind
+  handleStopFlow() {
+    const { getApprovalBtn, location: { query: { flowId } } } = this.props;
+    getApprovalBtn({
+      flowId,
+    }).then(this.handleApporval);
+  }
+
+  // 根据审批流程按钮返回的信息提交新的审批动作
+  @autobind
+  handleApporval() {
+    // const { submitApproval, approvalBtn } = this.props;
+    // const param = {
+    //   SystemCode: systemCode,
+    //   empId: empId,
+    //   flowId: flowId,
+    //   routeId: routeId,
+    //   recGenUserId: empId, //当前登录人
+    //   approvalIds: loginId,
+    //   suggestion: approverIdea,
+    //   nextGroupId: nextGroupId,
+    //   btnName: btnName,
+    //   btnId: flowBtnId.toString(),
+    //   flowClass: flowClass,
+    // }
+  }
+
   render() {
     const {
       current,
@@ -541,9 +579,10 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
-      location: { query: { missionType } },
+      location: { query: { missionType, source, flowData } },
       creator,
     } = this.props;
+    const baseInfo = url.parse(flowData);
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
 
@@ -563,6 +602,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorTaskName={isShowErrorTaskName}
         custCount={Number(count)}
         missionType={missionType}
+        baseInfo={baseInfo}
       />,
     }, {
       title: '结果跟踪&任务调查',
@@ -601,6 +641,18 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
+    const cancleBtn = source === 'returnTask' ?
+      (<Button className={styles.cancelBtn} type="default">
+        终止
+      </Button>) :
+      (<Button className={styles.cancelBtn} type="default">
+        取消
+      </Button>);
+    // 根据来源判断按钮类型
+    const stopBtn = source === 'returnTask' ?
+      (<Button className={styles.cancelBtn} type="default" onClick={this.handleStopFlow}>
+        终止
+      </Button>) : null;
     const stepsCount = _.size(steps);
     return (
       <div className={styles.taskFlowContainer}>
@@ -618,22 +670,29 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleCancel}
               eventName="/click/taskFormFlowStep/cancel"
             >
-              <Button className={styles.cancelBtn} type="default">
-                取消
-              </Button>
+              {cancleBtn}
             </Clickable>
           }
           {
             current > 0
             &&
-            <Clickable
-              onClick={this.handlePreviousStep}
-              eventName="/click/taskFormFlowStep/lastStep"
-            >
-              <Button className={styles.prevStepBtn} type="default">
-                上一步
+            <div>
+              <Clickable
+                onClick={this.handlePreviousStep}
+                eventName="/click/taskFormFlowStep/lastStep"
+              >
+                {stopBtn}
+              </Clickable>
+              <Clickable
+                onClick={this.handlePreviousStep}
+                eventName="/click/taskFormFlowStep/lastStep"
+              >
+                {stopBtn}
+                <Button className={styles.prevStepBtn} type="default">
+                  上一步
               </Button>
-            </Clickable>
+              </Clickable>
+            </div>
           }
           {
             current < stepsCount - 1
