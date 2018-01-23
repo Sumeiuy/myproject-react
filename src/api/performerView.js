@@ -35,7 +35,7 @@ export default function performerView(api) {
     // 问卷调查保存答案
     saveAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/saveAnswersByType', query),
     // 导出下载
-    exportCustListExcel: query => api.post('/groovynoauth/fsp/campaign/mot/exportCustListExcel2', query),
+    exportCustListExcel: query => api.post('/groovynoauth/fsp/campaign/mot/exportCustListExcel', query),
     // 任务反馈统计接口
     countAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/countAnswersByType', query),
     // 任务反馈已反馈总数统计

@@ -193,7 +193,6 @@ export default class ToDoList extends PureComponent {
     const { className, data, todolist, location } = this.props;
     const { query: { curPageNum = 1, pageSize = 10 } } = location;
 
-
     // 没有待办流程
     if (todolist.length === 0) {
       return (<div className={styles.empty}>
