@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:36
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-23 10:24:00
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import confirm from '../../common/Confirm';
+import Loading from '../../../layouts/Loading';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
@@ -88,6 +89,7 @@ export default class Uploader extends PureComponent {
       attaches: [],
       // 当前剩余的附件列表
       remainingAttachLists: [],
+      isLoading: false,
     };
   }
 
@@ -147,11 +149,20 @@ export default class Uploader extends PureComponent {
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
+    if (status === 'uploading') {
+      this.setState({
+        isLoading: true,
+      });
+    }
+
     if (status === 'removed') {
       if (!_.isEmpty(newFileList)) {
         // 过滤掉错误的fileList
         newFileList = newFileList.filter(file => file.status !== 'error');
       }
+      this.setState({
+        isLoading: false,
+      });
     }
 
     if (status === 'done') {
@@ -171,6 +182,7 @@ export default class Uploader extends PureComponent {
         isShowUpload: isSupportUploadMultiple,
         // 上传成功共之后返回的attach列表
         attaches,
+        isLoading: false,
       });
       onOperateFile({
         currentFile,
@@ -192,6 +204,7 @@ export default class Uploader extends PureComponent {
       this.setState({
         isShowError: !isSupportUploadMultiple,
         showUploadList: false,
+        isLoading: false,
       });
     }
 
@@ -389,7 +402,7 @@ export default class Uploader extends PureComponent {
 
   render() {
     const { isNeedDelete, isNeedPreview, isSupportUploadMultiple } = this.props;
-    const { isShowUpload, isShowError, originFileName, fileList } = this.state;
+    const { isShowUpload, isShowError, originFileName, fileList, isLoading } = this.state;
     return (
       <div>
         <div className="uploadBox">
@@ -429,6 +442,7 @@ export default class Uploader extends PureComponent {
           (isShowUpload && isShowError) ?
             <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
         }
+        <Loading loading={isLoading} forceFull={false} />
       </div>
     );
   }
