@@ -10,10 +10,13 @@ import Marquee from 'react-marquee';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
+import { openFspTab } from '../../../utils';
+import more from './img/more.svg';
 
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
+    push: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -43,21 +46,23 @@ export default class MorningBroadcast extends PureComponent {
       <div className={styles.morning_broadcast}>
         <div className={styles.title}>
           <span>晨间播报</span>
-          <span className={styles.more}> 更多&gt;&gt; </span>
+          <span className={styles.more} onClick={() => openFspTab({ url: '/broadcastList' })}> 更多
+            <img src={more} alt="" />
+          </span>
         </div>
         <div className={styles.listWrap}>
           {
             dataList
               .filter((item, index) => index <= 1)
               .map((item) => {
-                if (activeMusic === item.key) {
+                if (activeMusic === item.newsId) {
                   return (
-                    <div key={item.key} className={styles.item}>
+                    <div key={item.newsId} className={styles.item}>
                       <div className={styles.simpleName}>
-                        <Marquee loop hoverToStop text={`${item.type}`} />
+                        <Marquee loop hoverToStop text={`${item.newsTypValue}`} />
                       </div>
                       <div className={styles.music}>
-                        <audio src={item.source} controls="controls">
+                        <audio src={'http://www.w3school.com.cn/i/horse.ogg'} controls="controls">
                           Your browser does not support the audio element.
                         </audio>
                         <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
@@ -66,10 +71,10 @@ export default class MorningBroadcast extends PureComponent {
                   );
                 }
                 return (
-                  <div key={item.key} className={styles.item}>
-                    <span className={styles.desc}>{`${item.type}:${item.title}`}</span>
+                  <div key={item.newsId} className={styles.item}>
+                    <span className={styles.desc}>{`${item.newsTypValue}:${item.title}`}</span>
                     <span
-                      onClick={() => { this.onHandleListen(item.key); }}
+                      onClick={() => { this.onHandleListen(item.newsId); }}
                       className={styles.listen}
                     >收听</span>
                   </div>

@@ -120,8 +120,12 @@ const routes = [
     component: MainPosition,
   },
   // 晨间播报
-  { path: '/broadcastDetail', component: BroadcastDetail },
-  { path: '/broadcastList', component: BroadcastList },
+  { path: '/broadcastList',
+    component: BroadcastList,
+    children: [
+      { path: '/broadcastDetail', component: BroadcastDetail },
+    ],
+  },
 ];
 
 // 递归创建路由
