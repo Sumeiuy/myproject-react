@@ -4,9 +4,8 @@
  * @author zhufeiyang
  */
 import warning from 'warning';
+import _ from 'lodash';
 import { env, data as dataHelper } from '../helper';
-
-function noop() {}
 
 function exec(method, ...args) {
   try {
@@ -139,8 +138,7 @@ function dispatchTabPane(options) {
     // do fspAction
     if (fspAction) {
       fspGlobal[fspAction](options);
-    }
-    if (shouldStay) { // fsp框架tab内部跳转
+    } else if (shouldStay) { // fsp框架tab内部跳转
       const {
         routerAction,
         pathname, // pathname
@@ -161,15 +159,16 @@ function dispatchTabPane(options) {
   } else { // 如果是react则执行react操作
     const {
       routerAction, // {function或者string类型} react框架必须传入该参数，通常是push方法，或者replace方法,
-                    // 如果只是fsp框架操作则不需要传入该参数，
-                    // 如果只是移除当前tabpane，跳转到前一个tabpane，则需要传入'remove'字符串作为参数，
-                    // 之所以这个参数设置为两种类型，是为了fsp与react框架的兼容
+      // 如果只是fsp框架操作则不需要传入该参数，
+      // 如果只是移除当前tabpane，跳转到前一个tabpane，则需要传入'remove'字符串作为参数，
+      // 之所以这个参数设置为两种类型，是为了fsp与react框架的兼容
 
       url, // {string} 需要打开的path,如果有查询字字符串直接写在后面
       pathname, // pathname
       query, // query对象
       shoudlRemove = false,
       shouldStay = false,
+      editPane = {},
       addPanes = [],   // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
       activeTabKey = '', // 可选参数，string类型，表示当前活动的tabPane，值需要与key值相对应
@@ -178,7 +177,7 @@ function dispatchTabPane(options) {
 
     // 如果没有传入任何参数，则在react框架下什么都不做，
     // 这个是为了针对多个fsp调用，可以使用一次react框架内调用实现时，则可以只处理fsp调用，react框架则什么都不做
-    if (!routerAction) { noop(); }
+    if (!routerAction) { _.noop(); }
 
     // 兼容url的两种写法，字符串url， 以及pathname+query+state对, 这两种方式是为了支持原生push方法的两种调用。
     if (pathname) {
@@ -186,6 +185,7 @@ function dispatchTabPane(options) {
         pathname,
         query,
         state: {
+          editPane,
           addPanes,
           removePanes,
           activeTabKey,
@@ -198,7 +198,7 @@ function dispatchTabPane(options) {
       routerAction(url);
     } else if (routerAction === 'remove') { // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
       // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
-      const elem = document.querySelector('.ant-tabs-tab-active.ant-tabs-tab .anticon-close');
+      const elem = document.querySelector('#activeTabPane');
       if (elem) {
         elem.click();
       } else {
@@ -210,8 +210,11 @@ function dispatchTabPane(options) {
 
 // 打开并跳转到新的reactTab，原tab保留
 function openRctTab(options) {
+  const { name } = options;
+  const editPane = { name };
   dispatchTabPane({
     fspAction: 'openRctTab',
+    editPane,
     ...options,
   });
 }
@@ -226,8 +229,11 @@ function openFspTab(options) {
 
 // 当前页面内的链接跳转
 function linkTo(options) {
+  const { name } = options;
+  const editPane = { name };
   dispatchTabPane({
     shouldStay: true,
+    editPane,
     ...options,
   });
 }
@@ -265,7 +271,7 @@ function navToTab(options) {
   });
 }
 
-// 此函数为兼容处理函数，一般情况下不要调用
+// 此函数为兼容处理函数，不要调用
 // 在react框架下表现为关闭当前tab，跳转到指定的tab
 // 在fsp框架下只表现为打开新的tab，关闭操作需再调用一次closeTab方法。
 function navTo(options) {
@@ -278,7 +284,7 @@ function navTo(options) {
   });
 }
 
-// 兼容处理函数，不需要传入push方法，一般不要调用这个函数
+// 兼容处理函数，不要调用这个函数
 function removeTab(options) {
   dispatchTabPane({
     fspAction: 'closeRctTabById',
@@ -286,7 +292,7 @@ function removeTab(options) {
   });
 }
 
-// 兼容处理函数，不建议使用，使用LinkTo代替
+// 兼容处理函数，不要使用，使用LinkTo代替
 // 加载页面到当前tab
 // 需要传递pathname+query这种形式的参数
 function openInTab(options) {
@@ -294,7 +300,6 @@ function openInTab(options) {
   warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
     fspAction: 'openRctTab',
-    shouldStay: true,
     ...options,
   });
 }

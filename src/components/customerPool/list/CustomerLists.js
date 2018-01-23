@@ -16,12 +16,14 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
-import { url as urlHelper } from '../../../helper';
-import { fspContainer } from '../../../config';
 import { openInTab } from '../../../utils';
+import { url as urlHelper, env } from '../../../helper';
 import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
+
+// 0 表示没有任何权限
+const NOPERTMIT = 0;
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
@@ -91,7 +93,6 @@ export default class CustomerLists extends PureComponent {
     custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
-    authority: PropTypes.bool.isRequired,
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     reorderValue: PropTypes.object.isRequired,
@@ -114,8 +115,8 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    toDetailAuthority: PropTypes.bool.isRequired,
-    taskFeedbackList: PropTypes.array.isRequired,
+    permissionType: PropTypes.number.isRequired,
+    view360Permit: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -144,12 +145,7 @@ export default class CustomerLists extends PureComponent {
   }
 
   componentDidMount() {
-    const { location: { query: { ptyMng } }, authority, empInfo } = this.props;
-    let bool = false;
-    if (ptyMng) {
-      bool = ptyMng.split('_')[1] === empInfo.empNum;
-    }
-    this.mainServiceManager = !!(bool) || !authority;
+    this.checkMainServiceManager(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -167,8 +163,6 @@ export default class CustomerLists extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
       custEmail: nextCustEmail,
-      empInfo,
-      authority,
       location: {
         query: {
           ptyMng,
@@ -192,11 +186,7 @@ export default class CustomerLists extends PureComponent {
       this.getEmail(nextCustEmail[currentCustId]);
     }
     if (prePtyMng !== ptyMng) {
-      let bool = false;
-      if (ptyMng) {
-        bool = ptyMng.split('_')[1] === empInfo.empNum;
-      }
-      this.mainServiceManager = !!(bool) || !authority;
+      this.checkMainServiceManager(nextProps);
     }
   }
 
@@ -218,6 +208,20 @@ export default class CustomerLists extends PureComponent {
     if (finded === -1) {
       message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
     }
+  }
+
+  /**
+   * 判断当前登录用户是否为主服务经理
+   */
+  @autobind
+  checkMainServiceManager(props) {
+    const { location: { query: { ptyMng } }, permissionType, empInfo } = props;
+    let bool = false;
+    if (ptyMng) {
+      bool = ptyMng.split('_')[1] === empInfo.empNum;
+    }
+    // 0表示当前用户没有权限
+    this.mainServiceManager = !!(bool) || permissionType === 0;
   }
 
   /**
@@ -399,7 +403,7 @@ export default class CustomerLists extends PureComponent {
 
   // 跳转到分组页面或新建任务页面
   @autobind
-  goGroupOrTask({ id, title, url, obj }) {
+  goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
     const { push } = this.props;
     const newurl = `${url}?${urlHelper.stringify(obj)}`;
     const param = {
@@ -415,6 +419,8 @@ export default class CustomerLists extends PureComponent {
       param,
       pathname: url,
       query: obj,
+      shouldStay,
+      editPane,
     });
   }
 
@@ -443,7 +449,7 @@ export default class CustomerLists extends PureComponent {
       custContactData,
       serviceRecordData,
       dict,
-      authority,
+      permissionType,
       custIncomeReqState,
       toggleServiceRecordModal,
       onReorderChange,
@@ -466,7 +472,7 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      toDetailAuthority,
+      view360Permit,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -505,10 +511,11 @@ export default class CustomerLists extends PureComponent {
     const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
-    console.log('authority', authority);
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    if (authority) {
+    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
+    // ‘HTSC 首页指标查询’ 权限
+    if (permissionType !== NOPERTMIT) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
       } else {
@@ -520,9 +527,9 @@ export default class CustomerLists extends PureComponent {
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
-    } else if (authority) {
-      // TODOTAB: 需要进一步处理
-      if (document.querySelector(fspContainer.container)) {
+    } else if (permissionType !== NOPERTMIT) {
+      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
+      if (env.isInFsp()) {
         curOrgId = window.forReactPosition.orgId;
       } else {
         curOrgId = empInfo.occDivnNum;
@@ -559,7 +566,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={!authority}
+                disable={permissionType === NOPERTMIT}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}
@@ -577,7 +584,6 @@ export default class CustomerLists extends PureComponent {
                     empInfo={empInfo}
                     handleCheck={handleCheck}
                     mainServiceManager={this.mainServiceManager}
-                    authority={authority}
                     dict={dict}
                     location={location}
                     getCustIncome={getCustIncome}
@@ -599,8 +605,8 @@ export default class CustomerLists extends PureComponent {
                     condition={condition}
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
-                    toDetailAuthority={toDetailAuthority}
                     push={push}
+                    view360Permit={view360Permit}
                   />,
                 )
               }

@@ -6,7 +6,6 @@
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
-import pathToRegexp from 'path-to-regexp';
 
 const url = {
   /**
@@ -46,11 +45,9 @@ const url = {
    * @author xuxiaoqin
    * @param {String} route 当前子路由
    * @param {String} pathname 当前页面路径
-   * @param {String} routerPrefix='/customerPool' 路由前缀
-   * @returns {String} 全路径
    */
-  matchRoute(route, pathname, routerPrefix = '/customerPool') {
-    return pathToRegexp(`${routerPrefix}/${route}`).exec(pathname);
+  matchRoute(route, pathname) {
+    return RegExp(route).test(pathname);
   },
 };
 

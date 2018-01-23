@@ -9,6 +9,15 @@ import { customerPool as api } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
+function matchRouteAndexec(pathname, params, routeCallbackObj) {
+  _.forOwn(routeCallbackObj, (value, key) => {
+    if (url.matchRoute(key, pathname)) {
+      routeCallbackObj[key](params);
+      return false;
+    }
+    return true;
+  });
+}
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -25,12 +34,11 @@ export default {
     custCount: [],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
     performanceIndicators: EMPTY_OBJECT,  // 投顾指标
-    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
+    managerIndicators: EMPTY_OBJECT,  // 经营指标
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
     todolistRecord: [],
-    manageIndicators: {},
     // 组织机构树
     custRange: [],
     // 时间周期：本年、本季、本月
@@ -125,70 +133,67 @@ export default {
     setup({ dispatch, history }) {
       dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
-        const params = queryString.parse(search);
-        const serviceLogUrl = url.matchRoute('serviceLog', pathname);
-        if (serviceLogUrl) {
-          const { pageSize, serveDateToPaged } = params;
-          if (_.isEmpty(pageSize)) params.pageSize = null;
-          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
-          params.pageNum = 1; // 默认显示第一页
-          dispatch({
-            type: 'getServiceLog',
-            payload: params,
-            loading: true,
-          });
-          return;
-        }
-
-        const custGroupUrl = url.matchRoute('customerGroup', pathname);
-        if (custGroupUrl) {
-          const { curPageNum, curPageSize, keyWord = null } = params;
-          dispatch({
-            type: 'customerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: emp.getId(),
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
-        const { curPageNum, curPageSize, keyWord = null } = params;
-        if (customerGroupManageUrl) {
-          dispatch({
-            type: 'getCustomerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const todoListUrl = url.matchRoute('todo', pathname);
-        if (todoListUrl) {
-          const { keyword } = params;
-          if (keyword) {
+        const query = queryString.parse(search);
+        // 监听location的配置对象
+        // 函数名称为路径匹配字符
+        // 如匹配则执行相应的函数，只会执行第一个匹配的函数
+        // 所以是有序的
+        const routeCallbackObj = {
+          serviceLog(param) {
+            const params = param;
+            const { pageSize, serveDateToPaged } = params;
+            if (_.isEmpty(pageSize)) params.pageSize = null;
+            if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+            params.pageNum = 1; // 默认显示第一页
             dispatch({
-              type: 'search',
-              payload: keyword,
+              type: 'getServiceLog',
+              payload: params,
               loading: true,
             });
-            return;
-          }
-          dispatch({
-            type: 'getToDoList',
-            loading: true,
-          });
-        }
+          },
+          customerGroupManage(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'getCustomerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          customerGroup(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'customerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                empId: emp.getId(),
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          todo(params) {
+            const { keyword } = params;
+            if (keyword) {
+              dispatch({
+                type: 'search',
+                payload: keyword,
+                loading: true,
+              });
+              return;
+            }
+            dispatch({
+              type: 'getToDoList',
+              loading: true,
+            });
+          },
+        };
+        const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
+        matchRouteAndCallback(routeCallbackObj);
       });
     },
   },
@@ -209,11 +214,11 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率和开通业务指标（经营指标）
-    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
+    // 经营指标）
+    * getManagerIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getManagerIndicators, payload);
       yield put({
-        type: 'getHSRateAndBusinessIndicatorSuccess',
+        type: 'getManagerIndicatorsSuccess',
         payload: response,
       });
     },
@@ -239,15 +244,6 @@ export default {
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
-      });
-    },
-    // 绩效指标
-    * getManageIndicators({ payload }, { call, put }) {
-      const indicators =
-        yield call(api.getManageIndicators, payload);
-      yield put({
-        type: 'getManageIndicatorsSuccess',
-        payload: { indicators },
       });
     },
     // (首页总数)
@@ -762,11 +758,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateAndBusinessIndicatorSuccess(state, action) {
+    getManagerIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        hsRateAndBusinessIndicator: resultData,
+        managerIndicators: resultData,
       };
     },
     getInformationSuccess(state, action) {
@@ -814,15 +810,6 @@ export default {
       return {
         ...state,
         custRange,
-      };
-    },
-    // 经营指标
-    getManageIndicatorsSuccess(state, action) {
-      const { payload: { indicators } } = action;
-      const manageIndicators = indicators.resultData;
-      return {
-        ...state,
-        manageIndicators,
       };
     },
     // (首页总数)

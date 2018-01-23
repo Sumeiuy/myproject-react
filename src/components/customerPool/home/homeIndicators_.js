@@ -100,11 +100,11 @@ export function getPureAddCust({ pureAddData }) {
 // type：manage（经营指标）/ performance（投顾绩效）
 // 产品销售
 export function getProductSale({
-  productSaleData,
+  numberArray,
   nameArray = ['公募基金', '证券投资类私募', '紫金产品', 'OTC'],
 }) {
   const param = {
-    dataArray: productSaleData,
+    dataArray: numberArray,
     categoryArray: nameArray,
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
     formatterMethod: getNewFormattedUnitAndItem,
@@ -119,8 +119,8 @@ export const businessOpenNumLabelList = ['天天发', '沪港通', '深港通', 
 // 经营指标的开通业务数
 // 一柱多彩
 export function getClientsNumber({
-  clientNumberData,
-  names = businessOpenNumLabelList,
+  numberArray,
+  nameArray = businessOpenNumLabelList,
   colourfulIndex,
   colourfulData,
   colourfulTotalNumber,
@@ -128,7 +128,7 @@ export function getClientsNumber({
   const {
     newUnit,
     newSeries,
-  } = toFomatterCust(clientNumberData);
+  } = toFomatterCust(numberArray);
   const max = getBarAdaptiveMax(newSeries);
   const items = {
     grid: {
@@ -140,7 +140,7 @@ export function getClientsNumber({
     },
     xAxis: [
       {
-        data: names,
+        data: nameArray,
         type: 'category',
         axisTick: { show: false },
         axisLabel: {
@@ -179,10 +179,13 @@ export function getClientsNumber({
 }
 
 // 经营指标的资产和交易量
-export function getTradingVolume({ tradeingVolumeData }) {
-  const finalTradingData = getNewFormattedUnitAndItem(tradeingVolumeData);
+export function getTradingVolume({ numberArray, nameArray }) {
+  const finalTradingData = getNewFormattedUnitAndItem(numberArray);
   // { newUnit, items: thousandsFormatSeries || [] };
-  return finalTradingData;
+  return _.map(
+    finalTradingData,
+    (item, index) => ({ ...item, title: (nameArray[index] || '--') }),
+  );
 }
 
 // 经营指标的服务指标
@@ -306,7 +309,17 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ source, value, bname, cycle, push, location, empInfo, type = 'rightType' }) {
+export function linkTo({
+  source,
+  value,
+  bname,
+  cycle,
+  push,
+  location,
+  empInfo,
+  type = 'rightType',
+  permissionType,
+}) {
   if (_.isEmpty(location)) {
     return;
   }
@@ -326,6 +339,9 @@ export function linkTo({ source, value, bname, cycle, push, location, empInfo, t
     } else {
       obj.orgId = orgId;
     }
+  } else if (permissionType === 0) {
+    // 0 表示用户没有权限
+    obj.ptyMng = `${empName}_${empNum}`;
   }
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {

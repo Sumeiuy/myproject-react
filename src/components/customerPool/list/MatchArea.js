@@ -251,6 +251,31 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 服务记录的匹配
+  renderServiceRecord() {
+    const {
+      q = '',
+      listItem,
+      location: { query: { source } },
+    } = this.props;
+    if (_.includes(['search', 'association'], source)
+      && listItem.serviceRecord
+      && listItem.serviceRecord.indexOf(q) > -1) {
+      const markedEle = replaceWord(listItem.serviceRecord, q);
+      // 接口返回的接口数据是截断过的，需要前端在后面手动加...
+      return (
+        <li>
+          <span>
+            <i className="label">服务记录：</i>
+            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i>...</i>
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { mainServiceManager } = this.props;
     const cls = classnames(styles.relatedInfo, {
@@ -267,6 +292,7 @@ export default class MatchArea extends PureComponent {
           {this.renderUnrightType()}
           {this.renderUserRights()}
           {this.renderStatus()}
+          {this.renderServiceRecord()}
         </ul>
       </div>
     );

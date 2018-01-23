@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-09 17:16:13
+ * @Last Modified time: 2018-01-22 17:25:46
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -17,6 +17,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { Icon } from 'antd';
+import Resize from 'element-resize-detector';
 
 import config from './config';
 import { env, dom } from '../../../helper';
@@ -46,6 +47,9 @@ export default class CutScreen extends PureComponent {
       stretchIcon: 'caret-left',
       isFold: false, // 判断左侧列表组件是否折叠起来
     };
+    this.resize = null;
+    this.fnResize = null;
+    this.splitHeight = this.getViewHeight();
   }
 
   componentDidMount() {
@@ -57,6 +61,7 @@ export default class CutScreen extends PureComponent {
     this.registerWindowResize();
     this.initPanel();
     this.setDocumentScroll();
+    this.listenTopPanelHeightChange();
   }
 
   componentWillUnmount() {
@@ -64,6 +69,7 @@ export default class CutScreen extends PureComponent {
     this.setUTBContentMargin('10px', '30px', '10px');
     this.resetContainerStyle();
     this.cancelWindowResize();
+    this.cancelTopReszieListen();
   }
 
   // Resize事件
@@ -88,6 +94,17 @@ export default class CutScreen extends PureComponent {
     dom.setStyle(this.UTBContentElem, 'marginBottom', bottom);
   }
 
+  // 设置split下列表和详情区域的高度
+  @autobind
+  setSplitMainHeight() {
+    // 头部筛选区域的高度
+    const topHeight = dom.getRect(this.splitTop, 'height');
+    // 中间padding的高度和
+    const padding = 40;
+    const mh = this.splitHeight - topHeight - padding;
+    dom.setStyle(this.splitMain, 'height', `${mh}px`);
+  }
+
   // 设置分割区域的滚动
   @autobind
   setDocumentScroll() {
@@ -109,6 +126,34 @@ export default class CutScreen extends PureComponent {
       pch = viewportHeight - config.reactHeaderHeight;
     }
     dom.setStyle(this.splitPanel, 'height', `${pch}px`);
+    // 将split的高度保存下来;
+    this.splitHeight = pch;
+    this.setSplitMainHeight();
+  }
+
+
+  // 监听头部筛选区域高度的变化
+  @autobind
+  listenTopPanelHeightChange() {
+    const fnResize = _.debounce(this.setSplitMainHeight, 250, {
+      leading: true,
+      trailing: true,
+    });
+    const resize = Resize({ strategy: 'scroll' });
+    resize.listenTo(this.splitTop, fnResize);
+    this.resize = resize;
+    this.fnResize = fnResize;
+  }
+
+  // 注销对头部筛选区域高度的变化的监听
+  @autobind
+  cancelTopReszieListen() {
+    if (this.resize && this.resize.uninstall) {
+      this.resize.uninstall(this.splitTop);
+    }
+    if (this.fnResize && this.fnResize.cancel) {
+      this.fnResize.cancel();
+    }
   }
 
   // 重置系统容器样式
@@ -182,6 +227,17 @@ export default class CutScreen extends PureComponent {
   splitRef(input) {
     this.splitPanel = input;
   }
+  // splitWrap
+  @autobind
+  splitMainRef(input) {
+    this.splitMain = input;
+  }
+
+  // splitWrap
+  @autobind
+  splitTopRef(input) {
+    this.splitTop = input;
+  }
 
   // 左侧列表
   @autobind
@@ -210,9 +266,14 @@ export default class CutScreen extends PureComponent {
       isCSListFold: isFold,
     });
 
+    const stretchCls = classnames({
+      [styles.stretch]: true,
+      [styles.stretchGrow]: isFold,
+    });
+
     return (
       <div className={styles.splitWrap} ref={this.splitRef}>
-        <div className={styles.header}>
+        <div className={styles.header} ref={this.splitTopRef}>
           {topPanel}
         </div>
         <div className={noDataClass}>
@@ -221,9 +282,9 @@ export default class CutScreen extends PureComponent {
             <div className={styles.nodataText}>暂无数据</div>
           </div>
         </div>
-        <div className={hasDataClass}>
+        <div className={hasDataClass} ref={this.splitMainRef}>
           <div className={styles.listWrap} ref={this.listWrapRef}>{leftPanel}</div>
-          <div className={styles.stretch}>
+          <div className={stretchCls}>
             <Icon type={stretchIcon} onClick={this.handleStretchIconClick} />
           </div>
           <div className={hasFoldCls}>

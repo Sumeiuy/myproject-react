@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-09 10:34:31
+ * @Last Modified time: 2018-01-15 15:04:45
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';
@@ -29,6 +29,19 @@ const dom = {
    */
   getCssStyle(ele, css) {
     return window.getComputedStyle(ele, null).getPropertyValue(css);
+  },
+
+  /**
+   * 获取元素的ClientRect对象或者对象中的某个值
+   * @param {HTMLElement} ele DOM节点元素
+   * @param {String} [top|left|right|bottom|width|height]
+   */
+  getRect(ele, p) {
+    const domRect = ele.getBoundingClientRect();
+    if (p) {
+      return domRect[p];
+    }
+    return domRect;
   },
 
   /**
