@@ -252,10 +252,10 @@ export default class ServiceRecordContent extends PureComponent {
               name: subName,
             },
           } = customerFeedback;
-          formObject.feedbackType = code;
-          formObject.feedbackTypeArr = [{ key: code, value: name }];
-          formObject.feedbackTypeChild = subCode;
-          formObject.feedbackTypeChildArr = [{ key: subCode, value: subName }];
+          formObject.feedbackType = String(code);
+          formObject.feedbackTypeArr = [{ key: String(code), value: name }];
+          formObject.feedbackTypeChild = String(subCode);
+          formObject.feedbackTypeChildArr = [{ key: String(subCode), value: subName }];
         }
       } else {
         // 当前日期的时间戳

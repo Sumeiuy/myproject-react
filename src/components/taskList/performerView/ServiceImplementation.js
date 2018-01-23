@@ -261,7 +261,7 @@ ServiceImplementation.propTypes = {
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
-  taskFeedbackList: PropTypes.array.isRequired,
+  taskFeedbackList: PropTypes.array,
   addMotServeRecordSuccess: PropTypes.bool.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
@@ -274,4 +274,5 @@ ServiceImplementation.defaultProps = {
   custIncomeReqState: false,
   filesList: [],
   deleteFileResult: [],
+  taskFeedbackList: [],
 };
