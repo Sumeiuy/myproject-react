@@ -19,7 +19,7 @@ import ResultTrack from '../../../components/common/resultTrack/ConnectedCompone
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import styles from './taskFormFlowStep.less';
 
-// const { toString } = Mention;
+const NOOP = _.noop;
 const Step = Steps.Step;
 
 export default class TaskFormFlowStep extends PureComponent {
@@ -55,9 +55,9 @@ export default class TaskFormFlowStep extends PureComponent {
     storedCreateTaskData: {},
     orgId: null,
     submitSuccess: false,
-    submitApproval: () => { },
+    submitApproval: NOOP,
     approvalBtn: {},
-    getApprovalBtn: () => { },
+    getApprovalBtn: NOOP,
   };
 
   constructor(props) {

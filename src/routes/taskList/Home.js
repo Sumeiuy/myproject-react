@@ -61,6 +61,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   loading: globalLoading,
 });
 
+
 const effects = {
   getTaskList: 'performerView/getTaskList',
   addServiceRecord: 'performerView/addMotServeRecord',

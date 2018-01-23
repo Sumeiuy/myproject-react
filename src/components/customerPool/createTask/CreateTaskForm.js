@@ -16,6 +16,7 @@ import TaskFormInfo from './TaskFormInfo';
 
 // const create = Form.create;
 // const { toString } = Mention;
+const NOOP = _.noop;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
@@ -42,7 +43,7 @@ export default class CreateTaskForm extends PureComponent {
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => { },
+    createTask: NOOP,
     previousData: {},
     isShowTitle: false,
     isShowErrorInfo: false,
@@ -110,6 +111,7 @@ export default class CreateTaskForm extends PureComponent {
 
   // 处理任务基本信息返回的任务执行方式格式
   // 后台返回的执行方式 => '必做任务'，字典是[{key: '', value: '必做'}]
+  // 提交任务时传 key 值
   @autobind
   handleTaskType(key = '') {
     const { dict: { executeTypes } } = this.props;

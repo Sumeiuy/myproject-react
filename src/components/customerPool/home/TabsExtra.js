@@ -17,6 +17,8 @@ import CustRange from '../common/CustRange';
 import styles from './tabsExtra.less';
 
 const Option = Select.Option;
+const NOOP = _.noop;
+
 export default class TabsExtra extends PureComponent {
   static propTypes = {
     custRange: PropTypes.array,
@@ -41,8 +43,8 @@ export default class TabsExtra extends PureComponent {
     orgId: '',
     isDown: false,
     iconType: 'kehu',
-    updateQueryState: () => { },
-    exportWorld: () => { },
+    updateQueryState: NOOP,
+    exportWorld: NOOP,
   }
 
   constructor(props) {

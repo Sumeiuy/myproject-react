@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
+const NOOP = _.noop;
+
 export default class CreateTaskFormFlow extends PureComponent {
 
   static propTypes = {
@@ -44,13 +46,13 @@ export default class CreateTaskFormFlow extends PureComponent {
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => { },
+    createTask: NOOP,
     orgId: null,
     enterType: null,
     submitSuccess: false,
-    submitApproval: () => { },
+    submitApproval: NOOP,
     approvalBtn: {},
-    getApprovalBtn: () => { },
+    getApprovalBtn: NOOP,
   }
 
   constructor(props) {
