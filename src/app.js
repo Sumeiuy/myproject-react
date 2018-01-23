@@ -92,6 +92,8 @@ app.model(require('./models/taskFeedback'));
 app.model(require('./models/mainPosition'));
 // 开发关系认定
 app.model(require('./models/developRelationship'));
+// 售前适当性查询
+app.model(require('./models/preSaleQuery'));
 
 // 4. Router
 app.router(routerConfig);

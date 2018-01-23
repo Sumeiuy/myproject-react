@@ -47,6 +47,7 @@ import RelationHome from '../src/routes/relation/Home';
 import TaskFeedback from '../src/routes/taskFeedback/Home';
 import HtmlComponent from './routes/fspPage/HtmlComponent';
 import IframeComponent from './routes/fspPage/IframeComponent';
+import PreSaleQuery from '../src/routes/preSaleQuery/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -126,6 +127,7 @@ const routes = [
   { path: '/commissionChange', component: CommissionChangeHome },
   // 模态框页面
   { path: '/modal', component: TemplModal },
+  { path: '/preSaleQuery', component: PreSaleQuery },
   // 合约认证
   {
     path: '/bizapply/permission',

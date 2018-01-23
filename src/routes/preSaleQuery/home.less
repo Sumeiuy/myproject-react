@@ -1,0 +1,68 @@
+.wrap {
+  box-sizing: border-box;
+  background-color: #f3f3f4;
+  padding: 20px;
+  height: e("calc(100vh - 90px)");
+  width: 100vw;
+  .content {
+    height: 100%;
+    overflow: auto;
+    background-color: #fff;
+    padding: 20px 40px;
+    .divider {
+      width: 100%;
+      height: 0;
+      border-bottom: 1px solid #c2c2c2;
+      margin: 20px 0;
+    }
+    .resultWrap {
+      .list {
+        .listTitle {
+          display: flex;
+          align-items: center;
+          .prefix {
+            display: inline-block;
+            width: 4px;
+            height: 15px;
+            margin-right: 10px;
+            background-color: #348cf0;
+          }
+          .name {
+            line-height: 14px;
+            font-size: 14px;
+            color: #333;
+          }
+        }
+        .listContent {
+          margin-left: 14px;
+          .row {
+            margin-top: 16px;
+            .itemName {
+              display: inline-block;
+              width: 130px;
+              text-align: right;
+              line-height: 20px;
+              font-size: 14px;
+              color: #a1a1a1;
+            }
+            .itemValue {
+              line-height: 20px;
+              font-size: 14px;
+              color: #333;
+            }
+          }
+          .table {
+            margin: 20px 0;
+            border: 1px solid #e9e9e9;
+          }
+          .msg {
+            margin-top: 20px;
+            line-height: 20px;
+            font-size: 14px;
+            color: #f0b048;
+          }
+        }
+      }
+    }
+  }
+}

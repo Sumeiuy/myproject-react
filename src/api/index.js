@@ -16,6 +16,7 @@ import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 import developRelationship from './developRelationship';
+import preSaleQuery from './preSaleQuery';
 
 const api = apiCreator();
 
@@ -56,5 +57,7 @@ export default {
   taskFeedback: taskFeedback(api),
   // 开发关系认定
   developRelationship: developRelationship(api),
+  // 售前适当性查询
+  preSaleQuery: preSaleQuery(api),
 };
 
