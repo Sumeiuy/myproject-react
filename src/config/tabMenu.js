@@ -84,6 +84,18 @@ const menus = [
     pid: 'FSP_CUST_M_CENTER_MANAGE',
   },
   {
+    name: '投顾签约',
+    id: 'FSP_CUST_M_CONTRACT',
+    path: '/fsp/investContract',
+    pid: 'ROOT',
+  },
+  {
+    name: '投顾签约向导',
+    id: 'FSP_CUST_M_CONTRACTWIZARD',
+    path: '/fsp/contractWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '佣金查询',
     id: 'FSP_CUST_M_TOCOMMISSION',
     path: '/fsp/customerCenter/toCommission',
