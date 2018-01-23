@@ -33,6 +33,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorTaskSubType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
     missionType: PropTypes.string,
+    baseInfo: PropTypes.object,
     isShowErrorIntervalValue: PropTypes.bool.isRequired,
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
@@ -47,6 +48,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: false,
     custCount: 0,
     missionType: '',
+    baseInfo: {},
   }
 
   constructor(props) {
@@ -106,6 +108,17 @@ export default class CreateTaskForm extends PureComponent {
     return '';
   }
 
+  // 处理任务基本信息返回的任务执行方式格式
+  // 后台返回的执行方式 => '必做任务'，字典是[{key: '', value: '必做'}]
+  @autobind
+  handleTaskType(key = '') {
+    const { dict: { executeTypes } } = this.props;
+    const keyWord = key.slice(0, 2) || '';
+    const selectData = _.find(executeTypes, keyWord) || {};
+    console.log('selectData-->', selectData);
+    return selectData.key;
+  }
+
   @autobind
   handleInit(query = {}) {
     let source = '';
@@ -114,12 +127,13 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    const { dict: { custIndexPlaceHolders }, missionType } = this.props;
+    const { dict: { custIndexPlaceHolders }, missionType, baseInfo } = this.props;
+    const { motDetailModel = {} } = baseInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultTaskSubType = '';
     let defaultExecutionType = '';
-    const defaultServiceStrategySuggestion = '';
+    let defaultServiceStrategySuggestion = '';
     let defaultInitialValue = null;
     let defaultMissionDesc = '';
     let custIdList = null;
@@ -197,6 +211,17 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
+        break;
+      case 'returnTask':
+        defaultMissionName = motDetailModel.eventName; // 任务名称
+        defaultMissionType = motDetailModel.eventType; // 任务类型
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = this.handleTaskType(motDetailModel.exeType); // 执行方式
+        defaultKey = 'UNRIGHTS';
+        defaultServiceStrategySuggestion = motDetailModel.infoContent;
+        // 任务提示
+        defaultMissionDesc = motDetailModel.strategyDesc;
+        defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
         break;
       default:
         defaultMissionType = '请选择';

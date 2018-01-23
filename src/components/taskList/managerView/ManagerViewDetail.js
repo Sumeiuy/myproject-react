@@ -67,6 +67,8 @@ export default class ManagerViewDetail extends PureComponent {
     countFlowFeedBack: PropTypes.func.isRequired,
     // 任务类型字典
     missionTypeDict: PropTypes.array,
+    exportCustListExcel: PropTypes.func.isRequired,
+    exportExcel: PropTypes.func.isRequired,
     missionProgressStatusDic: PropTypes.object.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
@@ -88,6 +90,8 @@ export default class ManagerViewDetail extends PureComponent {
     this.state = {
       isShowCustDetailModal: false,
       title: '已反馈客户',
+      missionProgressStatus: '',
+      progressFlag: '',
     };
   }
 
@@ -103,7 +107,10 @@ export default class ManagerViewDetail extends PureComponent {
       missionProgressStatus,
       progressFlag,
     };
-
+    this.setState({
+      missionProgressStatus,
+      progressFlag,
+    });
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
@@ -141,7 +148,22 @@ export default class ManagerViewDetail extends PureComponent {
 
   @autobind
   handleExport() {
-    console.log('导出');
+    const {
+      location: { query: { currentId } },
+      mngrMissionDetailInfo,
+      exportCustListExcel,
+    } = this.props;
+    const { missionProgressStatus = null, progressFlag = null } = this.state;
+    const params = {
+      missionProgressStatus,
+      progressFlag,
+      missionName: mngrMissionDetailInfo.missionName,
+      orgId: emp.getOrgId(),
+      missionId: currentId,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      servicePolicy: mngrMissionDetailInfo.servicePolicy,
+    };
+    exportCustListExcel(params);
   }
 
   /**
@@ -205,6 +227,7 @@ export default class ManagerViewDetail extends PureComponent {
       replace,
       countFlowStatus,
       countFlowFeedBack,
+      exportExcel,
       missionProgressStatusDic,
       missionFeedbackData,
       missionFeedbackCount,
@@ -237,7 +260,6 @@ export default class ManagerViewDetail extends PureComponent {
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
-
     return (
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
@@ -293,7 +315,7 @@ export default class ManagerViewDetail extends PureComponent {
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export} disabled>导出</Button>
+                  <Button className={styles.export}>导出</Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleLaunchTask}
@@ -345,6 +367,7 @@ export default class ManagerViewDetail extends PureComponent {
             replace={replace}
             countFlowStatus={countFlowStatus}
             countFlowFeedBack={countFlowFeedBack}
+            exportExcel={exportExcel}
             missionProgressStatusDic={missionProgressStatusDic}
           />
         </div>

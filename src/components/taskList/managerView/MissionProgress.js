@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-16 11:09:54
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-19 11:08:34
  * 任务进度
  */
 
@@ -44,6 +44,8 @@ export default class MissionProgress extends PureComponent {
     super(props);
     this.state = {
       visible: false,
+      progressFlag: '',
+      missionProgressStatus: '',
     };
   }
 
