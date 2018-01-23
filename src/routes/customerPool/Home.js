@@ -70,7 +70,7 @@ const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
-  boradcastList: state.morningBoradcast.boradcastList,
+  initBoradcastList: state.morningBoradcast.initBoradcastList,
 });
 
 const mapDispatchToProps = {
@@ -121,7 +121,7 @@ export default class Home extends PureComponent {
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
     getCustCount: PropTypes.func.isRequired,
-    boradcastList: PropTypes.array.isRequired,
+    initBoradcastList: PropTypes.array.isRequired,
     getBoradcastList: PropTypes.func.isRequired,
   }
 
@@ -159,7 +159,7 @@ export default class Home extends PureComponent {
       getToBeDone,
       getHotWds,
       getBoradcastList,
-      boradcastList,
+      initBoradcastList,
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum = '', occDivnNum = '' } = empInfo;
@@ -188,9 +188,14 @@ export default class Home extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-    // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList.length) {
-      getBoradcastList();
+    // 初始化晨报列表数据，用于首页提供晨报展示
+    if (!initBoradcastList.length) {
+      const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
+      getBoradcastList({
+        createdFrom: FROM_DATE,
+        createdTo: TO_DATE,
+        pageNum: PAGE_NUM,
+        pageSize: PAGE_LEN });
     }
   }
 
@@ -468,7 +473,7 @@ export default class Home extends PureComponent {
       performanceIndicators,
       empInfo = {},
       custCount, // 经营指标新增客户指标数据
-      boradcastList,
+      initBoradcastList,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -529,7 +534,10 @@ export default class Home extends PureComponent {
             </Tabs>
           </div>
           <div className={styles.viewpoint}>
-            <MorningBroadcast dataList={boradcastList} />
+            <MorningBroadcast
+              dataList={initBoradcastList}
+              push={push}
+            />
             <Viewpoint
               information={information}
               push={push}

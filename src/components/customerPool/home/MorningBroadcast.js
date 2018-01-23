@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
 import { openFspTab } from '../../../utils';
-import more from './img/more.svg';
+import more from './img/more.png';
 
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
