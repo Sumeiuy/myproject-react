@@ -1,9 +1,16 @@
-.iframe {
-  width: 100%;
-  border: 0;
-  height: e("calc(100vh - 138px)");
-}
-.fspContent {
-  width: 100%;
-  height: e("calc(100vh - 138px)");
+.fspContainer {
+  &::after {
+    display: table;
+    content: '';
+    clear: both;
+  }
+    .iframe {
+    width: 100%;
+    border: 0;
+    height: e("calc(100vh - 138px)");
+  }
+  .fspContent {
+    width: 100%;
+    height: e("calc(100vh - 138px)");
+  }
 }
