@@ -84,6 +84,8 @@ app.model(require('../src/models/filialeCustTransfer'));
 app.model(require('../src/models/relation'));
 // 任务反馈
 app.model(require('../src/models/taskFeedback'));
+// 售前适当性查询
+app.model(require('../src/models/preSaleQuery'));
 
 // 4. Router
 app.router(routerConfig);
