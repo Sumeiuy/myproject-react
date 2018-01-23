@@ -137,5 +137,11 @@ export default function customerPool(api) {
 
     // 删除文件
     // ceFileDelete: query => api.post('/file/ceFileDelete', query),
+
+    // 审批流程获取按钮
+    queryApprovalBtn: query => api.post('/groovynoauth/fsp/flow/queryApprovalBtn', query),
+
+    // 提交审批流程
+    submitApproval: query => api.post('/groovynoauth/fsp/flow/submitApproval', query),
   };
 }

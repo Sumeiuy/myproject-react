@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
+const NOOP = _.noop;
+
 export default class CreateTaskFormFlow extends PureComponent {
 
   static propTypes = {
@@ -33,6 +35,10 @@ export default class CreateTaskFormFlow extends PureComponent {
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    submitApproval: PropTypes.func,
+    submitSuccess: PropTypes.bool,
+    getApprovalBtn: PropTypes.func,
+    approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
@@ -40,9 +46,13 @@ export default class CreateTaskFormFlow extends PureComponent {
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => { },
+    createTask: NOOP,
     orgId: null,
     enterType: null,
+    submitSuccess: false,
+    submitApproval: NOOP,
+    approvalBtn: {},
+    getApprovalBtn: NOOP,
   }
 
   constructor(props) {
@@ -146,10 +156,13 @@ export default class CreateTaskFormFlow extends PureComponent {
       generateTemplateId,
       templateId,
       creator,
+      approvalBtn,
+      getApprovalBtn,
+      submitSuccess,
+      submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
     } = this.props;
-
     return (
       <div className={styles.taskInner}>
         <TaskFormFlowStep
@@ -170,6 +183,10 @@ export default class CreateTaskFormFlow extends PureComponent {
           generateTemplateId={generateTemplateId}
           templateId={templateId}
           creator={creator}
+          approvalBtn={approvalBtn}
+          getApprovalBtn={getApprovalBtn}
+          submitSuccess={submitSuccess}
+          submitApproval={submitApproval}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
         />

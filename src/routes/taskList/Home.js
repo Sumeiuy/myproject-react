@@ -61,6 +61,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   loading: globalLoading,
 });
 
+
 const effects = {
   getTaskList: 'performerView/getTaskList',
   addServiceRecord: 'performerView/addMotServeRecord',
@@ -87,6 +88,7 @@ const effects = {
   countFlowStatus: 'managerView/countFlowStatus',
   getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
   saveAnswersByType: 'performerView/saveAnswersByType',
+  exportCustListExcel: 'managerView/exportCustListExcel',
   // 任务反馈统计
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
@@ -194,6 +196,7 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
+  exportCustListExcel: fetchDataFunction(false, effects.exportCustListExcel),
   countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
   // 查询是否包含本人名下客户
@@ -258,6 +261,7 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
+    exportCustListExcel: PropTypes.func.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     countAnswersByType: PropTypes.func.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
@@ -523,6 +527,7 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
+      exportCustListExcel,
       isCustServedByPostn,
       custServedByPostnResult,
     } = this.props;
@@ -602,6 +607,8 @@ export default class PerformerView extends PureComponent {
             push={push}
             missionType={typeCode}
             missionTypeDict={missionType}
+            exportExcel={this.handleExportExecl}
+            exportCustListExcel={exportCustListExcel}
             missionProgressStatusDic={missionProgressStatus}
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
@@ -615,6 +622,24 @@ export default class PerformerView extends PureComponent {
         break;
     }
     return detailComponent;
+  }
+
+  // 导出客户
+  @autobind
+  handleExportExecl(orgId) {
+    const {
+      location: { query: { currentId } },
+      mngrMissionDetailInfo,
+      exportCustListExcel,
+    } = this.props;
+    const params = {
+      missionName: mngrMissionDetailInfo.missionName,
+      orgId,
+      missionId: currentId,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      servicePolicy: mngrMissionDetailInfo.servicePolicy,
+    };
+    exportCustListExcel(params);
   }
 
   // 头部筛选请求
@@ -781,6 +806,7 @@ export default class PerformerView extends PureComponent {
     });
   }
 
+  // 查看附件客户列表
   @autobind
   handlePreview({ filename, pageNum, pageSize }) {
     const { previewCustFile } = this.props;

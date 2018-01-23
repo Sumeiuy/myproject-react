@@ -62,6 +62,8 @@ export default class MissionProgress extends PureComponent {
     super(props);
     this.state = {
       visible: false,
+      progressFlag: '',
+      missionProgressStatus: '',
     };
   }
 
