@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-18 15:50:36
+ * @Last Modified time: 2018-01-23 10:06:52
  */
 
 import React, { PureComponent } from 'react';
@@ -184,9 +184,9 @@ export default class TaskPreview extends PureComponent {
   renderIndicatorTarget(indicatorData) {
     const {
       indicatorLevel2Value,
-      isHasSearchedProduct,
+      hasSearchedProduct,
       currentSelectedProduct,
-      // isHasState,
+      // hasState,
       operationValue,
       operationKey,
       inputIndicator,
@@ -202,7 +202,8 @@ export default class TaskPreview extends PureComponent {
     } else if (operationKey === 'TRUE') {
       indicatorText = `${indicatorLevel2Value}，状态：是`;
     } else {
-      indicatorText = `${indicatorLevel2Value || ''}${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
+      // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
+      indicatorText = `${indicatorLevel2Value || ''}${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}${operationValue || ''}${inputIndicator || ''}${unit || ''}`;
     }
 
     return indicatorText;
@@ -281,9 +282,9 @@ export default class TaskPreview extends PureComponent {
       // 单位
       unit,
       // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-      // isHasState,
+      // hasState,
       // 是否有产品搜索
-      isHasSearchedProduct,
+      hasSearchedProduct,
       // 是否选中
       isResultTrackChecked,
       // 是否来自瞄准镜标签
@@ -456,7 +457,7 @@ export default class TaskPreview extends PureComponent {
                     {
                       this.renderIndicatorTarget({
                         indicatorLevel2Value,
-                        isHasSearchedProduct,
+                        hasSearchedProduct,
                         currentSelectedProduct,
                         operationValue,
                         operationKey,
@@ -466,8 +467,8 @@ export default class TaskPreview extends PureComponent {
                     }
                     {/* {
                       `${indicatorLevel2Value || ''}
-                      ${isHasSearchedProduct ? currentSelectedProduct.aliasName : ''}
-                      ${!isHasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
+                      ${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}
+                      ${!hasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
                         : stateText}` || '--'
                     } */}
                   </div>

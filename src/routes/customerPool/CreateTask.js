@@ -25,6 +25,8 @@ const effects = {
   createTask: 'customerPool/createTask',
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
+  getApprovalBtn: 'customerPool/getApprovalBtn',
+  submitApproval: 'customerPool/submitApproval',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
 
@@ -41,6 +43,8 @@ const mapStateToProps = state => ({
   approvalList: state.customerPool.approvalList,
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
+  approvalBtn: state.customerPool.approvalBtn,
+  submitSuccess: state.customerPool.submitSuccess,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
@@ -55,6 +59,8 @@ const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   getApprovalList: fetchDataFunction(true, effects.getApprovalList),
   generateTemplateId: fetchDataFunction(true, effects.generateTemplateId),
+  getApprovalBtn: fetchDataFunction(true, effects.getApprovalBtn),
+  submitApproval: fetchDataFunction(true, effects.submitApproval),
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
 };
 
@@ -79,6 +85,10 @@ export default class CreateTask extends PureComponent {
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string,
+    submitApproval: PropTypes.func,
+    approvalBtn: PropTypes.object,
+    submitSuccess: PropTypes.bool,
+    getApprovalBtn: PropTypes.func,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
   };
@@ -89,6 +99,10 @@ export default class CreateTask extends PureComponent {
     createTaskResult: {},
     getApprovalListLoading: false,
     creator: '',
+    approvalBtn: {},
+    submitSuccess: false,
+    submitApproval: () => { },
+    getApprovalBtn: () => { },
   };
 
   constructor(props) {
@@ -153,6 +167,8 @@ export default class CreateTask extends PureComponent {
     } else if (source === 'managerView') {
       // 从管理者视图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW' });
+    } else if (source === 'returnTask') {
+      closeRctTab({ id: 'FSP_TODOLIST' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
@@ -179,6 +195,10 @@ export default class CreateTask extends PureComponent {
       templateId,
       generateTemplateId,
       creator,
+      approvalBtn,
+      getApprovalBtn,
+      submitSuccess,
+      submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
     } = this.props;
@@ -204,6 +224,10 @@ export default class CreateTask extends PureComponent {
             generateTemplateId={generateTemplateId}
             onCloseTab={this.handleCancleTab}
             creator={creator}
+            approvalBtn={approvalBtn}
+            getApprovalBtn={getApprovalBtn}
+            submitSuccess={submitSuccess}
+            submitApproval={submitApproval}
             sendCustsServedByPostnResult={sendCustsServedByPostnResult}
             isSendCustsServedByPostn={isSendCustsServedByPostn}
           /> :

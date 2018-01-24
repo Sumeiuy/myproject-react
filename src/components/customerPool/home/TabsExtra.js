@@ -17,6 +17,8 @@ import CustRange from '../common/CustRange';
 import styles from './tabsExtra.less';
 
 const Option = Select.Option;
+const NOOP = _.noop;
+
 export default class TabsExtra extends PureComponent {
   static propTypes = {
     custRange: PropTypes.array,
@@ -30,6 +32,7 @@ export default class TabsExtra extends PureComponent {
     orgId: PropTypes.string,
     isDown: PropTypes.bool,
     iconType: PropTypes.string,
+    exportWorld: PropTypes.func,
   }
 
   static defaultProps = {
@@ -40,7 +43,8 @@ export default class TabsExtra extends PureComponent {
     orgId: '',
     isDown: false,
     iconType: 'kehu',
-    updateQueryState: () => { },
+    updateQueryState: NOOP,
+    exportWorld: NOOP,
   }
 
   constructor(props) {
@@ -49,6 +53,7 @@ export default class TabsExtra extends PureComponent {
       begin: '',
       end: '',
       isDown: false,
+      cycleSelect: props.selectValue,
     };
   }
 
@@ -91,9 +96,17 @@ export default class TabsExtra extends PureComponent {
     });
     // 记录下当前选中的timeSelect
     this.setState({
+      cycleSelect: value,
       begin,
       end,
     });
+  }
+
+  @autobind
+  handleExportExel() {
+    const { exportWorld } = this.props;
+    const { cycleSelect } = this.state;
+    exportWorld(cycleSelect);
   }
 
   render() {
@@ -156,7 +169,7 @@ export default class TabsExtra extends PureComponent {
               </Select>
             </div>
           </div> :
-          <div className={styles.downFiles}>
+          <div className={styles.downFiles} onClick={this.handleExportExel}>
             <div className={styles.iconDown}>
               <Icon type="xiazai" />
             </div>

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:30:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-07 17:03:53
+ * @Last Modified by: zhushengnan
+ * @Last Modified time: 2018-01-18 15:49:48
  * 管理者视图model层
  */
 
@@ -24,6 +24,8 @@ export default {
     custFeedback: EMPTY_LIST,
     // 任务实施进度数据
     missionImplementationDetail: EMPTY_OBJ,
+    // 导出成功
+    exportExcelSuccess: false,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -59,6 +61,13 @@ export default {
       return {
         ...state,
         missionImplementationDetail: payload,
+      };
+    },
+    exportExcelSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        exportExcelSuccess: payload,
       };
     },
   },
@@ -99,6 +108,13 @@ export default {
       const { resultData } = yield call(api.countFlowStatus, payload);
       yield put({
         type: 'countFlowStatusSuccess',
+        payload: resultData,
+      });
+    },
+    * exportCustListExcel({ payload }, { call, put }) {
+      const { resultData } = yield call(api.exportCustListExcel, payload);
+      yield put({
+        type: 'exportExcelSuccess',
         payload: resultData,
       });
     },

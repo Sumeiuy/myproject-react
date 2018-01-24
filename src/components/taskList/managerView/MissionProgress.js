@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-16 11:09:54
+ * @Last Modified time: 2018-01-22 17:31:31
  * 任务进度
  */
 
@@ -11,7 +11,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import _ from 'lodash';
 import styles from './missionProgress.less';
 
 // const EMPTY_LIST = [];
@@ -22,6 +22,24 @@ const COMPLETED_CUST = '已完成客户';
 const NOT_COMPLETED_CUST = '未完成客户';
 const STASIFY_CUST = '结果达标客户';
 const NOT_STASIFY_CUST = '结果未达标客户';
+
+// 固定顺序
+// 已服务，未服务
+// IS_SERVED
+// 已完成，未完成
+// IS_DONE
+// 已达标，未达标
+// IS_UP_TO_STANDARD
+const MISSION_PROGRESS_MAP = [{
+  key: 'IS_SERVED',
+  name: '已服务，未服务',
+}, {
+  key: 'IS_DONE',
+  name: '已完成，未完成',
+}, {
+  key: 'IS_UP_TO_STANDARD',
+  name: '已达标，未达标',
+}];
 
 export default class MissionProgress extends PureComponent {
 
@@ -44,6 +62,8 @@ export default class MissionProgress extends PureComponent {
     super(props);
     this.state = {
       visible: false,
+      progressFlag: '',
+      missionProgressStatus: '',
     };
   }
 
@@ -72,38 +92,44 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
-  renderTooltipContent(type, currentCount) {
+  findCurrentProgressType(index) {
     const { missionProgressStatusDic: dic = {} } = this.props;
-    const propertyNames = Object.getOwnPropertyNames(dic) || [];
+    const currentProgressType = _.find(dic, item =>
+      item.key === MISSION_PROGRESS_MAP[index].key) || {};
+    return currentProgressType.key;
+  }
+
+  @autobind
+  renderTooltipContent(type, currentCount) {
     let missionProgressStatus = '';
     let progressFlag = '';
+
     // 需要传给后台3*2类型
     // missionProgressStatus是字典的属性名
     // progressFlag是标记位,Y或者N
-    // 但是这个需要后台将字典顺序固定
     switch (type) {
       case SERVED_CUST:
-        missionProgressStatus = propertyNames[1];
+        missionProgressStatus = this.findCurrentProgressType(0);
         progressFlag = 'Y';
         break;
       case NOT_SERVED_CUST:
-        missionProgressStatus = propertyNames[1];
-        progressFlag = 'N';
-        break;
-      case STASIFY_CUST:
-        missionProgressStatus = propertyNames[2];
-        progressFlag = 'Y';
-        break;
-      case NOT_STASIFY_CUST:
-        missionProgressStatus = propertyNames[2];
+        missionProgressStatus = this.findCurrentProgressType(0);
         progressFlag = 'N';
         break;
       case COMPLETED_CUST:
-        missionProgressStatus = propertyNames[0];
+        missionProgressStatus = this.findCurrentProgressType(1);
         progressFlag = 'Y';
         break;
       case NOT_COMPLETED_CUST:
-        missionProgressStatus = propertyNames[0];
+        missionProgressStatus = this.findCurrentProgressType(1);
+        progressFlag = 'N';
+        break;
+      case STASIFY_CUST:
+        missionProgressStatus = this.findCurrentProgressType(2);
+        progressFlag = 'Y';
+        break;
+      case NOT_STASIFY_CUST:
+        missionProgressStatus = this.findCurrentProgressType(2);
         progressFlag = 'N';
         break;
       default:

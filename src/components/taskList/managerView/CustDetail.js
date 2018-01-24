@@ -14,6 +14,7 @@ import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
+import { emp } from '../../../helper';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -228,7 +229,7 @@ export default class CustDetail extends PureComponent {
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const { push, hideCustDetailModal, isCustServedByPostn } = this.props;
-    const postnId = window.forReactPosition && window.forReactPosition.pstnId;
+    const postnId = emp.getPstnId();
     // 跳转之前查看一下是否都是本人名下的客户
     isCustServedByPostn({
       postnId,

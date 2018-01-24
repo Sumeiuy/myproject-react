@@ -118,6 +118,10 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 审批流程按钮
+    approvalBtn: {},
+    // 审批按钮提交成功
+    submitSuccess: false,
     // 查询客户的数量限制或者是否都是本人名下的客户
     sendCustsServedByPostnResult: {
       custNumsIsExceedUpperLimit: false,
@@ -731,6 +735,24 @@ export default {
         payload: resultData,
       });
     },
+    // 审批流程获取按钮
+    * getApprovalBtn({ payload }, { call, put }) {
+      const response = yield call(api.queryApprovalBtn, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getApprovalBtnSuccess',
+        payload: { resultData },
+      });
+    },
+    // 审批按钮提交
+    * submitApproval({ payload }, { call, put }) {
+      const response = yield call(api.submitApproval, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'submitApprovalSuccess',
+        payload: { resultData },
+      });
+    },
     // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
     * isSendCustsServedByPostn({ payload }, { call, put }) {
       const { resultData } = yield call(api.isSendCustsServedByPostn, payload);
@@ -1275,6 +1297,22 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    // 审批流程获取按钮成功
+    getApprovalBtnSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        approvalBtn: resultData,
+      };
+    },
+    // 审批按钮提交成功
+    submitApprovalSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        submitSuccess: resultData,
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户

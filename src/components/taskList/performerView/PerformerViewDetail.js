@@ -183,6 +183,7 @@ export default class PerformerViewDetail extends PureComponent {
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,
+          keyIndex: this.state.keyIndex + 1,
         });
       } else {
         const params = {
@@ -196,9 +197,6 @@ export default class PerformerViewDetail extends PureComponent {
         saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
-    this.setState({
-      keyIndex: this.state.keyIndex + 1,
-    });
   }
 
   // 处理问卷提交成功
@@ -206,9 +204,11 @@ export default class PerformerViewDetail extends PureComponent {
   handleSaveSuccess() {
     const { saveAnswersSucce } = this.props;
     let isShow = false;
-    if (saveAnswersSucce !== 'success') {
+    if (!saveAnswersSucce) {
       isShow = true;
       message.error('提交失败！');
+    } else {
+      message.error('提交成功！');
     }
     this.setState({
       visible: isShow,
@@ -255,7 +255,7 @@ export default class PerformerViewDetail extends PureComponent {
       answerId: key.target.value,
       answerText: key.target.dataVale,
     }];
-    this.handleRepeatData(initRadio, checkedData, radioData);
+    this.handleRepeatData(initRadio, checkedData, 'radioData');
   }
 
   // 处理问卷选中重复答案
@@ -275,7 +275,7 @@ export default class PerformerViewDetail extends PureComponent {
         newRadio = initData;
       }
       this.setState({
-        radioData: newRadio,
+        [stv]: newRadio,
       });
     }
   }
@@ -288,7 +288,7 @@ export default class PerformerViewDetail extends PureComponent {
       quesId: e.target.getAttribute('data'),
       answerText: e.target.value,
     }];
-    this.handleRepeatData(initAreaText, params, areaTextData);
+    this.handleRepeatData(initAreaText, params, 'areaTextData');
   }
 
   render() {
@@ -333,7 +333,7 @@ export default class PerformerViewDetail extends PureComponent {
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}
