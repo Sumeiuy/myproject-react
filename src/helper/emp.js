@@ -45,7 +45,7 @@ const emp = {
   setEmpInfo(loginInfo) {
     // TODO 此处需要做下容错处理
     // 因为此处是针对新的外部React框架所使用的
-    if (!env.isInReact()) return;
+    if (env.isInFsp()) return;
     const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
     window.curOrgCode = orgId || occDivnNum;
