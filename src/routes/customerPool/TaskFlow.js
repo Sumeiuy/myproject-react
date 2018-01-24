@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 14:48:51
+ * @Last Modified time: 2018-01-24 11:07:50
  */
 
 import React, { PureComponent } from 'react';
@@ -158,6 +158,7 @@ export default class TaskFlow extends PureComponent {
       current: current || 0,
       currentSelectRecord: currentSelectRecord || {},
       currentSelectRowKeys: currentSelectRowKeys || [],
+      currentEntry: 0,
       isSuccess: false,
       isLoadingEnd: true,
       isShowErrorInfo: false,
@@ -170,12 +171,9 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
-      // 测试用
-      isNeedApproval: permission.hasTkMampPermission(),
-      // 测试用
-      isCanGoNextStep: true,
-      // 测试用
-      isNeedMissionInvestigation: permission.hasTkMampPermission(),
+      isNeedApproval: false,
+      isCanGoNextStep: false,
+      isNeedMissionInvestigation: false,
     };
   }
 
@@ -226,9 +224,41 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleCheckCust() {
-    this.props.isSendCustsServedByPostn().then(() => {
-      const { sendCustsServedByPostnResult } = this.props;
+  handleCheckCust({
+    uploadedFileKey: fileId,
+    labelMapping,
+    custNum: labelCustNums,
+    labelDesc,
+    labelName,
+    currentEntry,
+  }) {
+    let postBody = {
+      postnId: emp.getPstnId(),
+      orgId: emp.getOrgId(),
+    };
+
+    // 当前tab是第一个，则代表导入客户
+    if (currentEntry === 0) {
+      postBody = {
+        ...postBody,
+        fileId,
+      };
+    } else {
+      postBody = {
+        ...postBody,
+        labelId: labelMapping,
+        queryLabelDTO: {
+          labelDesc,
+          labelName,
+        },
+        labelCustNums,
+      };
+    }
+
+    this.props.isSendCustsServedByPostn({
+      ...postBody,
+    }).then(() => {
+      const { sendCustsServedByPostnResult = {} } = this.props;
       const {
         isNeedApproval,
         isCanGoNextStep,

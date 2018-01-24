@@ -128,8 +128,17 @@ export default class SelectLabelCust extends PureComponent {
       labelId: value,
       currentSelectLabel: value,
     });
+    const { circlePeopleData } = this.props;
+    const matchedData = _.find(circlePeopleData, item => item.id === value);
+    const { labelDesc = '', customNum = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
     // 查看标签选中的客户是否合法，是否需要审批
-    this.props.isSendCustsServedByPostn();
+    this.props.isSendCustsServedByPostn({
+      labelMapping,
+      labelDesc,
+      custNum: customNum,
+      labelName,
+      currentEntry: 1,
+    });
   }
 
   render() {

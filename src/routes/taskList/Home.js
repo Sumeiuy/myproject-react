@@ -93,6 +93,8 @@ const effects = {
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
+  // 查看是否是自己名下的客户
+  isCustServedByPostn: 'customerPool/isCustServedByPostn',
 };
 
 const mapStateToProps = state => ({

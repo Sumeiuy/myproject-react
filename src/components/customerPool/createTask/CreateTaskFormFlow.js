@@ -8,10 +8,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+// import { url } from '../../../helper';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
 const NOOP = _.noop;
+// returnTask是审批驳回之后，编辑自建任务信息界面
+// custGroupList是客户分组
+// managerView是管理者视图
+const SOURCE_ARRAY = [
+  'custGroupList',
+  'managerView',
+  'returnTask',
+];
 
 export default class CreateTaskFormFlow extends PureComponent {
 
@@ -107,12 +116,79 @@ export default class CreateTaskFormFlow extends PureComponent {
    */
   @autobind
   judgeSource(source) {
-    return source === 'custGroupList' || source === 'managerView';
+    return _.includes(SOURCE_ARRAY, source);
   }
 
   @autobind
   getStoredCreateTaskData() {
-    const { location: { query: { source } }, storedCreateTaskData } = this.props;
+    const { location: { query: { source, flowData = {} } }, storedCreateTaskData } = this.props;
+    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    if (!_.isEmpty(currentFlowData)) {
+      // 生成需要的自建任务数据
+      const {
+        // 指标分类id
+        indexCateId,
+        // 是否和产品绑定
+        isProdBound,
+        // 跟踪操作符
+        traceOpVO: {
+          name,
+          key,
+        },
+        // 输入值
+        threshold,
+        // 下限
+        thresholdMin,
+        // 上限
+        thresholdMax,
+        // 指标单位
+        indexUnit,
+        // 二级指标描述
+        indexRemark,
+        // 一级指标id
+        indexId,
+        // 跟踪窗口期
+        trackDay,
+        // 金融产品
+        finProductVO,
+        // 问卷调查
+        quesInfoList = [],
+        isMissionInvestigationChecked,
+      } = currentFlowData;
+
+      currentFlowData = {
+        resultTrackData: {
+          // 跟踪窗口期
+          trackWindowDate: trackDay,
+          // 一级指标
+          indicatorLevel1Key: indexId,
+          // 二级指标
+          indicatorLevel2Key: indexCateId,
+          // 操作符key,传给后台,譬如>=/<=
+          operationKey: key,
+          // 当前输入的指标值
+          inputIndicator: threshold,
+          // 单位
+          unit: indexUnit,
+          // 是否有产品搜索
+          hasSearchedProduct: isProdBound,
+          // 是否选中
+          isResultTrackChecked: true,
+          operationValue: name,
+          currentMin: thresholdMin,
+          currentMax: thresholdMax,
+          currentIndicatorDescription: indexRemark,
+          currentSelectedProduct: finProductVO,
+        },
+        missionInvestigationData: {
+          isMissionInvestigationChecked,
+          questionList: quesInfoList,
+        },
+      };
+
+      return currentFlowData;
+    }
+
     let storedData = {};
     if (this.judgeSource(source)) {
       storedData = storedCreateTaskData[`${source}`] || {};
@@ -125,8 +201,11 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   @autobind
   storeCreateTaskData(data) {
-    const { saveCreateTaskData, location: { query: { source } },
-      storedCreateTaskData } = this.props;
+    const {
+      saveCreateTaskData,
+      location: { query: { source } },
+      storedCreateTaskData,
+     } = this.props;
     if (this.judgeSource(source)) {
       saveCreateTaskData({
         ...storedCreateTaskData,

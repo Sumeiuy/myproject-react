@@ -182,7 +182,7 @@ export default class CustomerRow extends PureComponent {
           },
         });
       } else {
-        message.error('客户包含非本人名下客户，不能查看客户360视图');
+        message.error('客户非本人名下客户，不能查看客户360视图');
       }
     });
   }
