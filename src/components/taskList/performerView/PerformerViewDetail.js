@@ -21,7 +21,7 @@ import QuestionnaireSurvey from './QuestionnaireSurvey';
 import styles from './performerViewDetail.less';
 
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 const create = Form.create;
 @create()
@@ -351,7 +351,6 @@ export default class PerformerViewDetail extends PureComponent {
                 onChange={this.handleStateChange}
               />
             </div>
-            <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
             <div className={styles.pagination}>
               <Pagination
                 size="small"
@@ -362,6 +361,7 @@ export default class PerformerViewDetail extends PureComponent {
                 defaultPageSize={PAGE_SIZE}
               />
             </div>
+            <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
           </div>
           {
             _.isEmpty(list) ?

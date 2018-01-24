@@ -1,10 +1,12 @@
 .rowItem {
   position: relative;
-  padding: 5px 0;
+  height: 40px;
+  line-height: 40px;
   cursor: pointer;
-  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
   &:first-child {
-    border-top: 0;
+    margin-top: -1px;
   }
   &.active {
     background: #4a90e2;
@@ -50,18 +52,40 @@
       }
     }
   }
-
-  .textCenter {
-    text-align: center;
-  }
   .status {
+    float: left;
+    width: 76px;
     font-size: 14px;
     color: #4a4a4a;
+    text-indent: 10px;
+  }
+  // .textCenter {
+  //   text-align: center;
+  // }
+  // .status {
+  //   font-size: 14px;
+  //   color: #4a4a4a;
+  // }
+  .customerInfo {
+    float: left;
+    width: 95px;
+    height: 40px;
+    line-height: 40px;
+    .ellipsis
+    &.long {
+      width: 152px;
+    }
   }
   .name {
     padding-left: 3px;
     color: #333;
     font-size: 14px;
+  }
+  .iconList {
+    float: right;
+    padding-right: 24px;
+    height: 40px;
+    line-height: 40px;
   }
   .vipLevel {
     display: inline-block;
@@ -146,6 +170,16 @@
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
   }
+  // &:after {
+  //   display: block;
+  //   position: absolute;
+  //   bottom: -1px;
+  //   height: 1px;
+  //   width: 100%;
+  //   font-size: 0;
+  //   content: ' ';
+  //   background-color: #ddd;
+  // }
 }
 
 .ln24 {
@@ -180,4 +214,7 @@
 }
 .textRight {
   text-align: right;
+}
+.invisible {
+  visibility: hidden;
 }

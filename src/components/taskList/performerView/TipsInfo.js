@@ -47,6 +47,7 @@ export default class TipsInfo extends PureComponent {
           [wrapperClass]: true,
         })}
         mouseEnterDelay={0.2}
+        arrowPointAtCenter
         autoAdjustOverflow
         placement={position}
         overlayStyle={overlayStyle}

@@ -9,7 +9,7 @@ import { performerView as api, customerPool as custApi } from '../../api';
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 
 export default {
