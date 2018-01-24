@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-23 10:24:00
+ * @Last Modified time: 2018-01-24 14:59:16
  */
 
 import React, { PureComponent } from 'react';
@@ -149,20 +149,11 @@ export default class Uploader extends PureComponent {
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
-    if (status === 'uploading') {
-      this.setState({
-        isLoading: true,
-      });
-    }
-
     if (status === 'removed') {
       if (!_.isEmpty(newFileList)) {
         // 过滤掉错误的fileList
         newFileList = newFileList.filter(file => file.status !== 'error');
       }
-      this.setState({
-        isLoading: false,
-      });
     }
 
     if (status === 'done') {
@@ -182,7 +173,6 @@ export default class Uploader extends PureComponent {
         isShowUpload: isSupportUploadMultiple,
         // 上传成功共之后返回的attach列表
         attaches,
-        isLoading: false,
       });
       onOperateFile({
         currentFile,
@@ -204,12 +194,12 @@ export default class Uploader extends PureComponent {
       this.setState({
         isShowError: !isSupportUploadMultiple,
         showUploadList: false,
-        isLoading: false,
       });
     }
 
     this.setState({
       fileList: newFileList,
+      isLoading: status === 'uploading',
     });
   }
 

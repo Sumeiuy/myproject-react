@@ -8,11 +8,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { url } from '../../../helper';
+// import { url } from '../../../helper';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
 const NOOP = _.noop;
+// returnTask是审批驳回之后，编辑自建任务信息界面
+// custGroupList是客户分组
+// managerView是管理者视图
+const SOURCE_ARRAY = [
+  'custGroupList',
+  'managerView',
+  'returnTask',
+];
 
 export default class CreateTaskFormFlow extends PureComponent {
 
@@ -108,14 +116,13 @@ export default class CreateTaskFormFlow extends PureComponent {
    */
   @autobind
   judgeSource(source) {
-    // returnTask是审批驳回之后，编辑自建任务信息界面
-    return source === 'custGroupList' || source === 'managerView' || source === 'returnTask';
+    return _.includes(SOURCE_ARRAY, source);
   }
 
   @autobind
   getStoredCreateTaskData() {
     const { location: { query: { source, flowData = {} } }, storedCreateTaskData } = this.props;
-    let currentFlowData = url.parse(flowData);
+    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
     if (!_.isEmpty(currentFlowData)) {
       // 生成需要的自建任务数据
       const {
@@ -146,6 +153,7 @@ export default class CreateTaskFormFlow extends PureComponent {
         finProductVO,
         // 问卷调查
         quesInfoList = [],
+        isMissionInvestigationChecked,
       } = currentFlowData;
 
       currentFlowData = {
@@ -173,7 +181,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           currentSelectedProduct: finProductVO,
         },
         missionInvestigationData: {
-          isMissionInvestigationChecked: true,
+          isMissionInvestigationChecked,
           questionList: quesInfoList,
         },
       };
