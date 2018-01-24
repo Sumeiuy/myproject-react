@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-23 16:41:16
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-24 13:22:52
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -61,7 +61,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -86,7 +86,7 @@ const emp = {
    * @returns {String|null} 职位信息
    */
   getPstnId() {
-    let pstnId = null;
+    let pstnId = '1-3NQ97YG';
     if (!_.isEmpty(window.forReactPosition)) {
       pstnId = window.forReactPosition.pstnId;
     }

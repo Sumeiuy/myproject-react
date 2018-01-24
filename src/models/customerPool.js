@@ -1320,7 +1320,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        sendCustsServedByPostnResult: payload,
+        sendCustsServedByPostnResult: payload || state.sendCustsServedByPostnResult,
       };
     },
     // 查询客户是否都是本人名下的客户

@@ -13,7 +13,7 @@ const HTSC_RESPID = '1-46IDNZI'; // HTSC 首页指标查询
 const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
-// const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
+const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
@@ -45,12 +45,12 @@ const permission = {
 
   // HTSC 任务管理岗
   hasTkMampPermission() {
-    // return judgeAuthority(permissionList, HTSC_TK_MAMPID);
+    return judgeAuthority(permissionList, HTSC_TK_MAMPID);
     // 以下是之前的职责控制
-    return permission.hasIndexViewPermission()
-      || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+    // return permission.hasIndexViewPermission()
+    //   || permission.hasHqMampPermission()
+    //   || permission.hasBoMampPermission()
+    //   || permission.hasBdMampPermission();
   },
 
   // 目标客户池首页和列表页权限
@@ -64,14 +64,13 @@ const permission = {
   },
 
   // 判断自建任务的时候是否需要审批，是否可以进入下一步
-  judgeCreateTaskApproval({ isSendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
+  judgeCreateTaskApproval({ sendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
     let isNeedApproval = false;
     let isIncludeNotMineCust = false;
-    // 测试用，允许进入下一步
-    let isCanGoNextStep = true;
+    let isCanGoNextStep = false;
     let isNeedMissionInvestigation = false;
 
-    if (!isSendCustsServedByPostn || custNumsIsExceedUpperLimit) {
+    if (!sendCustsServedByPostn || custNumsIsExceedUpperLimit) {
       // 包含非本人名下的客户
       isIncludeNotMineCust = true;
     }
