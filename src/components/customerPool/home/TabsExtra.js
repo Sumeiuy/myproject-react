@@ -11,13 +11,13 @@ import _ from 'lodash';
 import classnames from 'classnames';
 
 import { time } from '../../../helper';
-import { optionsMap } from '../../../config';
+import { optionsMap, request } from '../../../config';
 import Icon from '../../common/Icon';
 import CustRange from '../common/CustRange';
 import styles from './tabsExtra.less';
 
 const Option = Select.Option;
-const NOOP = _.noop;
+const noop = _.noop;
 
 export default class TabsExtra extends PureComponent {
   static propTypes = {
@@ -32,7 +32,8 @@ export default class TabsExtra extends PureComponent {
     orgId: PropTypes.string,
     isDown: PropTypes.bool,
     iconType: PropTypes.string,
-    exportWorld: PropTypes.func,
+    exportExcel: PropTypes.func,
+    exportOrgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -43,8 +44,9 @@ export default class TabsExtra extends PureComponent {
     orgId: '',
     isDown: false,
     iconType: 'kehu',
-    updateQueryState: NOOP,
-    exportWorld: NOOP,
+    updateQueryState: noop,
+    exportExcel: noop,
+    exportOrgId: '',
   }
 
   constructor(props) {
@@ -53,7 +55,6 @@ export default class TabsExtra extends PureComponent {
       begin: '',
       end: '',
       isDown: false,
-      cycleSelect: props.selectValue,
     };
   }
 
@@ -90,24 +91,22 @@ export default class TabsExtra extends PureComponent {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
     updateQueryState({
-      cycleSelect: value,
       begin,
       end,
     });
     // 记录下当前选中的timeSelect
     this.setState({
-      cycleSelect: value,
       begin,
       end,
     });
   }
 
-  @autobind
-  handleExportExel() {
-    const { exportWorld } = this.props;
-    const { cycleSelect } = this.state;
-    exportWorld(cycleSelect);
-  }
+  // @autobind
+  // handleExportExel() {
+  //   this.props.exportExcel();
+  //   const urlParams = exportExcel() || {};
+  //   console.warn(urlParams);
+  // }
 
   render() {
     const {
@@ -122,8 +121,11 @@ export default class TabsExtra extends PureComponent {
       orgId,
       isDown = false,
       iconType,
+      exportExcel,
     } = this.props;
     const { begin, end } = this.state;
+    const urlParams = exportExcel();
+    console.log('urlParams-->', urlParams);
     return (
       <div className={styles.timeBox}>
         <div className={classnames(styles.icon, styles.kehuIcon)}>
@@ -169,12 +171,15 @@ export default class TabsExtra extends PureComponent {
               </Select>
             </div>
           </div> :
-          <div className={styles.downFiles} onClick={this.handleExportExel}>
+          <div className={styles.downFiles}>
             <div className={styles.iconDown}>
               <Icon type="xiazai" />
             </div>
             <div className={styles.downLoad}>
-              导出
+              {/* 导出 */}
+              <a
+                href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+              >导出</a>
             </div>
           </div>
         }

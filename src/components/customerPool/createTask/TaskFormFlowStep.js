@@ -12,14 +12,13 @@ import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission } from '../../../utils';
-import { url } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import styles from './taskFormFlowStep.less';
 
-const NOOP = _.noop;
+const noop = _.noop;
 const Step = Steps.Step;
 
 export default class TaskFormFlowStep extends PureComponent {
@@ -55,9 +54,9 @@ export default class TaskFormFlowStep extends PureComponent {
     storedCreateTaskData: {},
     orgId: null,
     submitSuccess: false,
-    submitApproval: NOOP,
+    submitApproval: noop,
     approvalBtn: {},
-    getApprovalBtn: NOOP,
+    getApprovalBtn: noop,
   };
 
   constructor(props) {
@@ -550,6 +549,7 @@ export default class TaskFormFlowStep extends PureComponent {
     // }
   }
 
+
   render() {
     const {
       current,
@@ -582,7 +582,7 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { missionType, source, flowData } },
       creator,
     } = this.props;
-    const baseInfo = url.parse(flowData);
+    const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
 

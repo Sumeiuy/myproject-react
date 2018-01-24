@@ -11,7 +11,6 @@ import { Table, message } from 'antd';
 import _ from 'lodash';
 
 import { openRctTab } from '../../../utils';
-import { url } from '../../../helper';
 import styles from './toDoList.less';
 
 import emptyImg from './img/empty.png';
@@ -96,7 +95,7 @@ export default class ToDoList extends PureComponent {
         pathname,
         query: {
           ...query,
-          flowData: url.stringify(taskBasicInfo),
+          flowData: encodeURIComponent(JSON.stringify(taskBasicInfo)),
           source: 'returnTask',
           flowId,
         },
@@ -155,8 +154,9 @@ export default class ToDoList extends PureComponent {
       });
       // 请求任务基本信息，跳转到编辑页面
       getTaskBasicInfo({
-        flowId: flowData.flowId,
+        flowId: '48AC5D3B43E3C7418FA44A1F21227AA9',
         systemCode,
+        empId: '001921',
       }).then(this.handleSuccess);
     } else {
       // 跳转到审批页面

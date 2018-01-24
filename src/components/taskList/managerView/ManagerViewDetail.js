@@ -21,6 +21,7 @@ import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { closeRctTab, openRctTab } from '../../../utils';
+import { request } from '../../../config';
 import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
@@ -67,7 +68,6 @@ export default class ManagerViewDetail extends PureComponent {
     countFlowFeedBack: PropTypes.func.isRequired,
     // 任务类型字典
     missionTypeDict: PropTypes.array,
-    exportCustListExcel: PropTypes.func.isRequired,
     exportExcel: PropTypes.func.isRequired,
     missionProgressStatusDic: PropTypes.object.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
@@ -151,7 +151,6 @@ export default class ManagerViewDetail extends PureComponent {
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
-      exportCustListExcel,
     } = this.props;
     const { missionProgressStatus = null, progressFlag = null } = this.state;
     const params = {
@@ -160,10 +159,10 @@ export default class ManagerViewDetail extends PureComponent {
       missionName: mngrMissionDetailInfo.missionName,
       orgId: emp.getOrgId(),
       missionId: currentId,
-      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
-    exportCustListExcel(params);
+    return params;
   }
 
   /**
@@ -260,6 +259,7 @@ export default class ManagerViewDetail extends PureComponent {
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
+    const urlParams = this.handleExport();
     return (
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
@@ -315,7 +315,11 @@ export default class ManagerViewDetail extends PureComponent {
                   onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export}>导出</Button>
+                  <Button className={styles.export}>
+                    <a
+                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                    >导出</a>
+                  </Button>
                 </Clickable>
                 <Clickable
                   onClick={this.handleLaunchTask}

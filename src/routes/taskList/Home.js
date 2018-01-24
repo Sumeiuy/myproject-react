@@ -88,7 +88,6 @@ const effects = {
   countFlowStatus: 'managerView/countFlowStatus',
   getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
   saveAnswersByType: 'performerView/saveAnswersByType',
-  exportCustListExcel: 'managerView/exportCustListExcel',
   // 任务反馈统计
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
@@ -196,7 +195,6 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
-  exportCustListExcel: fetchDataFunction(false, effects.exportCustListExcel),
   countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
   // 查询是否包含本人名下客户
@@ -261,7 +259,6 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
-    exportCustListExcel: PropTypes.func.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     countAnswersByType: PropTypes.func.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
@@ -527,7 +524,6 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
-      exportCustListExcel,
       isCustServedByPostn,
       custServedByPostnResult,
     } = this.props;
@@ -608,7 +604,6 @@ export default class PerformerView extends PureComponent {
             missionType={typeCode}
             missionTypeDict={missionType}
             exportExcel={this.handleExportExecl}
-            exportCustListExcel={exportCustListExcel}
             missionProgressStatusDic={missionProgressStatus}
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
@@ -630,16 +625,17 @@ export default class PerformerView extends PureComponent {
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
-      exportCustListExcel,
     } = this.props;
     const params = {
       missionName: mngrMissionDetailInfo.missionName,
       orgId,
       missionId: currentId,
-      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
+      // _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
-    exportCustListExcel(params);
+    // orgId=ZZ0010410518&missionName=a&missionId=101111171108181&serviceTips=c&servicePolicy=b
+    return params;
   }
 
   // 头部筛选请求

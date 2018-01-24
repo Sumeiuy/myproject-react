@@ -24,8 +24,6 @@ export default {
     custFeedback: EMPTY_LIST,
     // 任务实施进度数据
     missionImplementationDetail: EMPTY_OBJ,
-    // 导出成功
-    exportExcelSuccess: false,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -61,13 +59,6 @@ export default {
       return {
         ...state,
         missionImplementationDetail: payload,
-      };
-    },
-    exportExcelSuccess(state, action) {
-      const { payload } = action;
-      return {
-        ...state,
-        exportExcelSuccess: payload,
       };
     },
   },
@@ -108,13 +99,6 @@ export default {
       const { resultData } = yield call(api.countFlowStatus, payload);
       yield put({
         type: 'countFlowStatusSuccess',
-        payload: resultData,
-      });
-    },
-    * exportCustListExcel({ payload }, { call, put }) {
-      const { resultData } = yield call(api.exportCustListExcel, payload);
-      yield put({
-        type: 'exportExcelSuccess',
         payload: resultData,
       });
     },
