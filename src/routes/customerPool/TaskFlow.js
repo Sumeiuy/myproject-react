@@ -227,7 +227,54 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleCheckCust() {
-    this.props.isSendCustsServedByPostn().then(() => {
+    const { storedTaskFlowData } = this.props;
+    const { currentEntry } = this.state;
+    const {
+      labelCust = EMPTY_OBJECT,
+      custSegment = EMPTY_OBJECT,
+    } = storedTaskFlowData;
+
+    let finalData = {};
+    finalData = {
+      ...labelCust,
+      ...custSegment,
+    };
+
+    const {
+      labelMapping,
+      custNum: labelCustNums,
+      uploadedFileKey: fileId,
+      labelDesc,
+      labelName,
+    } = finalData;
+
+    let postBody = {
+      postnId: emp.getPstnId(),
+      orgId: emp.getOrgId(),
+    };
+
+    // 当前tab是第一个，则代表导入客户
+    if (currentEntry === 0) {
+      postBody = {
+        ...postBody,
+        fileId,
+      };
+    } else {
+      // 有审批权限，则需要传入orgId
+      postBody = {
+        ...postBody,
+        labelId: labelMapping,
+        queryLabelDTO: {
+          labelDesc,
+          labelName,
+        },
+        labelCustNums,
+      };
+    }
+
+    this.props.isSendCustsServedByPostn({
+      ...postBody,
+    }).then(() => {
       const { sendCustsServedByPostnResult } = this.props;
       const {
         isNeedApproval,
