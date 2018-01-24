@@ -23,6 +23,7 @@ const EMPTY_ARRAY = [];
 
 const effects = {
   createTask: 'customerPool/createTask',
+  updateTask: 'customerPool/updateTask',
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
   getApprovalBtn: 'customerPool/getApprovalBtn',
@@ -39,6 +40,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
+  updateTaskResult: state.customerPool.updateTaskResult,
   storedCreateTaskData: state.customerPool.storedCreateTaskData,
   approvalList: state.customerPool.approvalList,
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
@@ -51,6 +53,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createTask: fetchDataFunction(true, effects.createTask),
+  updateTask: fetchDataFunction(true, effects.createTask),
   saveCreateTaskData: query => ({
     type: 'customerPool/saveCreateTaskData',
     payload: query,
@@ -74,7 +77,9 @@ export default class CreateTask extends PureComponent {
     dict: PropTypes.object,
     goBack: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
+    updateTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
+    updateTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
     storedCreateTaskData: PropTypes.object.isRequired,
     saveCreateTaskData: PropTypes.func.isRequired,
@@ -97,6 +102,7 @@ export default class CreateTask extends PureComponent {
     data: [],
     dict: {},
     createTaskResult: {},
+    updateTaskResult: {},
     getApprovalListLoading: false,
     creator: '',
     approvalBtn: {},
@@ -117,12 +123,18 @@ export default class CreateTask extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { createTaskResult: preCreateTaskResult,
       getApprovalListLoading,
+      updateTaskResult: preUpdateTaskResult,
       approvalList = EMPTY_ARRAY } = this.props;
     const { createTaskResult: nextcreateTaskResult,
+      updateTaskResult: nextUpdateTaskResult,
       approvalList: nextList = EMPTY_ARRAY,
       getApprovalListLoading: nextApprovalListLoading } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
+    }
+
+    if (preUpdateTaskResult !== nextUpdateTaskResult) {
+      this.handleUpdateTaskSuccess(nextUpdateTaskResult);
     }
 
     if (getApprovalListLoading && !nextApprovalListLoading) {
@@ -149,12 +161,28 @@ export default class CreateTask extends PureComponent {
   }
 
   @autobind
+  handleUpdateTaskSuccess(result) {
+    const { updateTaskResult } = result;
+    if (!_.isEmpty(updateTaskResult.code) && updateTaskResult.code === '0') {
+      this.setState({
+        isSuccess: true,
+      });
+    }
+  }
+
+  @autobind
   handleCreateTask(value) {
     const {
       createTask,
     } = this.props;
     // console.log(value);
     createTask(value);
+  }
+
+  @autobind
+  handleUpdateTask(value) {
+    const { updateTask } = this.props;
+    updateTask(value);
   }
 
   /* 关闭当前页 */
@@ -211,6 +239,7 @@ export default class CreateTask extends PureComponent {
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
+            updateTask={this.handleUpdateTask}
             storedCreateTaskData={storedCreateTaskData}
             saveCreateTaskData={saveCreateTaskData}
             approvalList={approvalList}

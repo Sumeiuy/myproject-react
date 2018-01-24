@@ -29,6 +29,7 @@ export default class TaskFormFlowStep extends PureComponent {
     saveCreateTaskData: PropTypes.func.isRequired,
     storedCreateTaskData: PropTypes.object,
     createTask: PropTypes.func.isRequired,
+    updateTask: PropTypes.func,
     parseQuery: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
@@ -57,6 +58,7 @@ export default class TaskFormFlowStep extends PureComponent {
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
+    updateTask: noop,
   };
 
   constructor(props) {
@@ -354,6 +356,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       storedCreateTaskData,
       createTask,
+      updateTask,
       parseQuery,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
@@ -490,9 +493,15 @@ export default class TaskFormFlowStep extends PureComponent {
     }
 
     // 调用接口，创建任务
-    createTask({
-      ...postBody,
-    });
+    if (entrance === 'returnTask') {
+      updateTask({
+        ...postBody,
+      });
+    } else {
+      createTask({
+        ...postBody,
+      });
+    }
   }
 
   @autobind

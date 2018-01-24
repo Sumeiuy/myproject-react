@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
-const NOOP = _.noop;
+const noop = _.noop;
 
 export default class CreateTaskFormFlow extends PureComponent {
 
@@ -19,6 +19,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object,
     createTask: PropTypes.func,
+    updateTask: PropTypes.func,
     createTaskResult: PropTypes.object,
     storedCreateTaskData: PropTypes.object.isRequired,
     saveCreateTaskData: PropTypes.func.isRequired,
@@ -46,13 +47,14 @@ export default class CreateTaskFormFlow extends PureComponent {
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: NOOP,
+    createTask: noop,
+    updateTask: noop,
     orgId: null,
     enterType: null,
     submitSuccess: false,
-    submitApproval: NOOP,
+    submitApproval: noop,
     approvalBtn: {},
-    getApprovalBtn: NOOP,
+    getApprovalBtn: noop,
   }
 
   constructor(props) {
@@ -145,6 +147,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       dict,
       location,
       createTask,
+      updateTask,
       getApprovalList,
       approvalList,
       orgId,
@@ -171,6 +174,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           saveCreateTaskData={this.storeCreateTaskData}
           storedCreateTaskData={this.getStoredCreateTaskData()}
           createTask={createTask}
+          updateTask={updateTask}
           approvalList={approvalList}
           getApprovalList={getApprovalList}
           parseQuery={this.parseQuery}
