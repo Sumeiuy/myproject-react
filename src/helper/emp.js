@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 16:03:18
+ * @Last Modified time: 2018-01-24 17:58:05
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -45,7 +45,8 @@ const emp = {
   setEmpInfo(loginInfo) {
     // TODO 此处需要做下容错处理
     // 因为此处是针对新的外部React框架所使用的
-    if (!env.isInReact()) return;
+    // TODO 新增在独立开发页面下也需要设置初始值
+    if (env.isInFsp()) return;
     const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
     window.curOrgCode = orgId || occDivnNum;
