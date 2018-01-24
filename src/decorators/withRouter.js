@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import hoistStatics from 'hoist-non-react-statics';
 import { Route } from 'dva/router';
 import { parse, stringify } from 'query-string';
-
+import warn from 'warning';
 /**
  * A public higher-order component to access the imperative API
  */
@@ -67,9 +67,9 @@ const withRouter = (Component) => {
     push: PropTypes.func,
   };
   C.defaultProps = {
-    wrappedComponentRef: () => {},
-    replace: () => {},
-    push: () => {},
+    wrappedComponentRef: () => { },
+    replace: () => warn(false, '请在mapDispatchToProps里面传递routerRedux.replace方法'),
+    push: () => warn(false, '请在mapDispatchToProps里面传递routerRedux.push方法'),
   };
 
   return hoistStatics(C, Component);
