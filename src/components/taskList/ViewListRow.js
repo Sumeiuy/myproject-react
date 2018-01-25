@@ -24,6 +24,9 @@ const RESULT = '60';  // 执行中视图状态结果跟踪
 // 执行者视图和创建者视图左侧列表项需要显示进度条
 const needProgress = ['executor', 'initiator'];
 
+const EXECUTOR = 'executor'; // 执行者视图
+const CONTROLLER = 'controller'; // 管理者视图
+
 
 export default function AppItem(props) {
   const {
@@ -75,6 +78,17 @@ export default function AppItem(props) {
   function handleClick() {
     onClick(data, index);
   }
+  // 判断当前视图类型是不是执行者视图或者管理者视图
+  function judgeMissionViewType(type) {
+    return type === EXECUTOR || type === CONTROLLER;
+  }
+  // 根据当前视图类型判断展示创建时间还是结束时间
+  function showCreateTimeOrProcessTime({ missionViewType: type, createTime, processTime }) {
+    if (judgeMissionViewType(type)) {
+      return processTime && processTime.slice(0, 10);
+    }
+    return createTime && createTime.slice(0, 10);
+  }
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}
@@ -106,7 +120,7 @@ export default function AppItem(props) {
       {/* 第三行 */}
       <div className={thirdLineCls}>
         <div className={styles.drafter}>创建者：<span>{data.creator}</span>{!_.isEmpty(data.orgName) ? `-${data.orgName}` : ''}</div>
-        <div className={styles.date}>创建于：{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
+        <div className={styles.date}>{judgeMissionViewType(data.missionViewType) ? '结束时间' : '创建于'}：{showCreateTimeOrProcessTime(data) || '无'}</div>
       </div>
     </div>
   );

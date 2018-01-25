@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 15:07:33
+ * @Last Modified time: 2018-01-25 16:18:42
  */
 
 import React, { PureComponent } from 'react';
@@ -691,23 +691,15 @@ export default class TaskFormFlowStep extends PureComponent {
           {
             current > 0
             &&
-            <div>
-              <Clickable
-                onClick={this.handlePreviousStep}
-                eventName="/click/taskFormFlowStep/lastStep"
-              >
-                {stopBtn}
-              </Clickable>
-              <Clickable
-                onClick={this.handlePreviousStep}
-                eventName="/click/taskFormFlowStep/lastStep"
-              >
-                {stopBtn}
-                <Button className={styles.prevStepBtn} type="default">
-                  上一步
+            <Clickable
+              onClick={this.handlePreviousStep}
+              eventName="/click/taskFormFlowStep/lastStep"
+            >
+              {stopBtn}
+              <Button className={styles.prevStepBtn} type="default">
+                上一步
               </Button>
-              </Clickable>
-            </div>
+            </Clickable>
           }
           {
             current < stepsCount - 1
