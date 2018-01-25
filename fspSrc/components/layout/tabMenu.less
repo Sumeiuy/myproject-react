@@ -32,6 +32,9 @@
         font-size: 12px;
         display: inline-block;
         margin-left: 7px;
+        padding: 5px 0;
+        transition: transform .3s linear;
+        transform-origin: center 45%;
       }
 
       :global i.anticon.anticon-change::before {
@@ -40,8 +43,9 @@
 
       &:focus {
         outline: none;
-        :global i.anticon.anticon-change::before {
-          content: "\E61E";
+        i {
+          transform: rotateZ(180deg);
+          transform-origin: center 45%;
         }
       }
     }
@@ -73,12 +77,21 @@
     border-radius: 3px;
     .text {
       transform: translateY(0);
-    }
-    i {
-      font-size: 12px;
-      margin-left: 2px;
-      color: #2e669a;
-      transform: translateY(-4px);
+      i {
+        font-size: 12px;
+        margin-left: 2px;
+        color: #2e669a;
+        transform: translateY(-4px);
+        transition: transform .3s linear;
+        transform-origin: center 37%;
+      }
+      &:focus {
+        outline: none;
+        i {
+          transform: rotateZ(-180deg);
+          transform-origin: center 37%;
+        }
+      }
     }
     .link {
       font-size: 12px;
