@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 13:29:02
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-19 14:07:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -157,7 +157,7 @@ export default class MissionBind extends PureComponent {
     }
     confirm({
       title: '提示',
-      content: '确认要删除吗?',
+      content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk() {
         delCustomerFeedback({
           missionId,

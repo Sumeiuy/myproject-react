@@ -2,8 +2,8 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-08 17:16:48
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-19 14:07:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -133,7 +133,7 @@ export default class OptionsMaintain extends PureComponent {
       e.stopPropagation();
     }
     Confirm({
-      content: '确认删除这条数据吗？',
+      content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk: () => {
         delFeedback({
           id: childId || parentId,

@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 16:12:14
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-01-24 14:05:00
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -260,7 +260,6 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    console.log('editBaseInfoComponentGetData', baseInfoData);
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
     const { productList, attachmentTypeList, cust, isEdit } = this.state;
     let formData = {};
@@ -283,7 +282,7 @@ export default class EditForm extends PureComponent {
         attachment: attachmentTypeList,
         cust,
         flowid: isEdit ? protocolDetail.flowid : '',
-        id: '',
+        id: isEdit ? protocolDetail.id : '',
       };
     } else {
       // 其他操作类型的数据
