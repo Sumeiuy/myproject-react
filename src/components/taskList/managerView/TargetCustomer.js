@@ -2,29 +2,19 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-13 10:41:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-12 16:29:31
+ * @Last Modified time: 2018-01-25 10:45:03
  * 管理者视图右侧目标客户
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import _ from 'lodash';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
 import TipsInfo from '../performerView/TipsInfo';
 import styles from './targetCustomer.less';
-
-// 暂时的来源类型，具体需要和后端定一下
-// const sourceType = [{
-//   key: 'import',
-//   value: '客户细分导入',
-// },
-// {
-//   key: 'sightLabel',
-//   value: '瞄准镜标签',
-// }];
 
 export default class TargetCustomer extends PureComponent {
 
@@ -142,14 +132,17 @@ export default class TargetCustomer extends PureComponent {
                 </span>
               </Col>
             </Row>
-            <Row className={styles.rowItem}>
-              <Col className={styles.colItem}>
-                <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
-                <p className={`${styles.content} ${styles.servicePolicy}`}>
-                  {custSourceDescription || '--'}
-                </p>
-              </Col>
-            </Row>
+            {
+              !_.isEmpty(custSourceDescription) ?
+                <Row className={styles.rowItem}>
+                  <Col className={styles.colItem}>
+                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
+                    <p className={`${styles.content} ${styles.servicePolicy}`}>
+                      {custSourceDescription || '--'}
+                    </p>
+                  </Col>
+                </Row> : null
+            }
           </div>
         </div>
       </div>
