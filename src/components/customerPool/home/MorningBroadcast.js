@@ -6,11 +6,11 @@
 
 import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
-import Marquee from 'react-marquee';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
-import { openFspTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import more from './img/more.png';
 
 export default class MorningBroadcast extends PureComponent {
@@ -39,6 +39,19 @@ export default class MorningBroadcast extends PureComponent {
     });
   }
 
+  @autobind
+  openNewTab(url, query) {
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '晨报' };
+    const { push } = this.props;
+    openRctTab({
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
   render() {
     const { dataList } = this.props;
     const { activeMusic } = this.state;
@@ -46,7 +59,8 @@ export default class MorningBroadcast extends PureComponent {
       <div className={styles.morning_broadcast}>
         <div className={styles.title}>
           <span>晨间播报</span>
-          <span className={styles.more} onClick={() => openFspTab({ url: '/broadcastList' })}> 更多
+          <span className={styles.more} onClick={() => this.openNewTab('/broadcastList', {})} >
+            <span>更多</span>
             <img src={more} alt="" />
           </span>
         </div>
@@ -59,7 +73,7 @@ export default class MorningBroadcast extends PureComponent {
                   return (
                     <div key={item.newsId} className={styles.item}>
                       <div className={styles.simpleName}>
-                        <Marquee loop hoverToStop text={`${item.newsTypValue}`} />
+                        <div>{item.newsTypValue}</div>
                       </div>
                       <div className={styles.music}>
                         <audio src={'http://www.w3school.com.cn/i/horse.ogg'} controls="controls">

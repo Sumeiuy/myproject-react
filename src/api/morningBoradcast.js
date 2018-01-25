@@ -14,5 +14,11 @@ export default function morningBoradcast(api) {
     saveBoradcast: query => api.post('/groovynoauth/fsp/info/multimedia/saveNews', query),
     // 删除晨报接口
     delBoradcastItem: query => api.post('/groovynoauth/fsp/info/multimedia/deleteNews', query),
+    // 获取uuid
+    getNewItemUuid: query => api.post('/groovynoauth/fsp/common/queryUuids', query),
+    // 文件删除
+    delCeFile: query => api.post('/file/ceFileDelete', query),
+    // 文件列表
+    ceFileList: query => api.post('/file/ceFileList', query),
   };
 }

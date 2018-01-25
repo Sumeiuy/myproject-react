@@ -4,10 +4,9 @@
  * @author xzqiang(crazy_zhiqiang@sina.com)
  */
 import { message } from 'antd';
+import { emp } from '../helper';
 import { morningBoradcast as api } from '../api';
 
-const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
 export default {
   namespace: 'morningBoradcast',
   state: {
@@ -17,12 +16,14 @@ export default {
       TITLE: '',  // 查询参数：标题
       CREATE_BY: '',  // 查询参数：作者
     },
-    boradcastList: EMPTY_LIST, // 晨报列表
-    initBoradcastList: EMPTY_LIST,  // 初始化列表数据，为首页服务
-    pagination: EMPTY_OBJECT,  // 分页信息
-    boradcastDetail: EMPTY_OBJECT,  // 晨报详情
-    saveboradcastInfo: EMPTY_OBJECT,  // 添加晨报结果信息
-    delBoradcastInfo: EMPTY_OBJECT,  // 删除晨报结果信息
+    boradcastList: [], // 晨报列表
+    initBoradcastList: [],  // 初始化列表数据，为首页服务
+    pagination: {},  // 分页信息
+    boradcastDetail: {},  // 晨报详情
+    saveboradcastInfo: {},  // 添加晨报结果信息
+    delBoradcastInfo: {},  // 删除晨报结果信息
+    newUuid: [],
+    delSourceFile: {},
   },
   reducers: {
     // 搜索晨报列表成功
@@ -54,27 +55,63 @@ export default {
     // 保存晨报结果
     saveBoradcastResult(state, action) {
       const { payload } = action;
+      if (payload.type === 'newCreate') {
+        const resultData = payload.resultData;
+        const uuid = payload.uuid;
+        return {
+          ...state,
+          saveboradcastInfo: { resultData },
+          newUuid: uuid,
+        };
+      }
       return {
         ...state,
         saveboradcastInfo: payload,
+        boradcastDetail: Object.assign(state.boradcastDetail, {
+          [payload.newsId]: null,
+        }),
       };
     },
     getBoradcastDetailSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
-        boradcastDetail: Object.assign(state.boradcastDetail, {
+        boradcastDetail: Object.assign({}, state.boradcastDetail, {
           [payload.newsId]: payload,
         }),
       };
     },
     // 保存删除列表结果
-    // 保存晨报结果
     delBoradcastResult(state, action) {
       const { response } = action;
       return {
         ...state,
         delBoradcastInfo: response,
+      };
+    },
+    // 初始化uuid
+    resetUuid(state, action) {
+      const { response } = action;
+      return {
+        ...state,
+        newUuid: response.resultData,
+      };
+    },
+    // 删除文件
+    delFileResult(state, action) {
+      const { response } = action;
+      if (response.code !== '0') {
+        message.error('删除文件失败', 1);
+      }
+      const { attachment, attaches } = response.resultData;
+      if (response.resultData) {
+        return {
+          ...state,
+          delSourceFile: { [attachment]: attaches },
+        };
+      }
+      return {
+        ...state,
       };
     },
   },
@@ -93,8 +130,20 @@ export default {
       const response = yield call(api.saveBoradcast, payload);
       const query = {
         resultData: response.resultData,
-        type: 'create',
       };
+      if (payload.createdBy) {
+        const uuidCount = 2;
+        const responeUuid = yield call(api.getNewItemUuid, { uuidCount });
+        Object.assign(query, {
+          uuid: responeUuid.resultData,
+          type: 'newCreate',
+        });
+      } else {
+        Object.assign(query, {
+          newsId: payload.newsId,
+        });
+      }
+
       if (response.code !== '0') {
         message.info('对不起，保存信息失败', 1);
       } else {
@@ -110,9 +159,18 @@ export default {
       if (!response.resultData) {
         message.info('对不起，未查询到该条信息', 1);
       } else {
+        const { audioFileId, otherFileId } = response.resultData;
+        const [audioFileListRes, otherFileListRes] = yield [
+          call(api.ceFileList, { empId: emp.getId(), attachment: audioFileId }),
+          call(api.ceFileList, { empId: emp.getId(), attachment: otherFileId }),
+        ];
+        const [audioFileList,
+          otherFileList] = [audioFileListRes.resultData, otherFileListRes.resultData];
         yield put({
           type: 'getBoradcastDetailSuccess',
-          payload: response.resultData,
+          payload: Object.assign({},
+            response.resultData,
+            { audioFileList, otherFileList }),
         });
       }
     },
@@ -121,6 +179,22 @@ export default {
       const response = yield call(api.delBoradcastItem, payload);
       yield put({
         type: 'delBoradcastResult',
+        response,
+      });
+    },
+    // 初始化uuid
+    * getUuid({ payload }, { call, put }) {
+      const uuidCount = 2;
+      const response = yield call(api.getNewItemUuid, { uuidCount });
+      yield put({
+        type: 'resetUuid',
+        response,
+      });
+    },
+    * delCeFile({ payload }, { call, put }) {
+      const response = yield call(api.delCeFile, payload);
+      yield put({
+        type: 'delFileResult',
         response,
       });
     },

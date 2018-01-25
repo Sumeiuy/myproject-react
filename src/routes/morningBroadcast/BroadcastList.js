@@ -6,44 +6,20 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Select, DatePicker, Input, Button, Table, Icon, Popconfirm, message } from 'antd';
+import { DatePicker, Input, Button, Table, Icon, Popconfirm, Affix, message } from 'antd';
 import moment from 'moment';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
+import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
-import { linkTo } from '../../utils';
+import { openRctTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
 
-const Option = Select.Option;
 const Search = Input.Search;
-// 跳转至晨报详情
-const goFspNewDetail = (newId) => {
-  linkTo({
-    url: '/broadcastList',
-    query: { newId },
-  });
-};
 
 const columns = [{
-  title: '标题',
-  dataIndex: 'title',
-  key: 'title',
-  className: 'tableTitle',
-  width: '35%',
-  render: (text, record) => {
-    const newId = record.newsId;
-    console.log(record);
-    return (
-      <span
-        onClick={() => { goFspNewDetail(newId); }}
-        className={styles.textOverflow}
-        style={{ cursor: 'pointer' }}
-      >
-        {text}
-      </span>
-    );
-  },
-}, {
   title: '类型',
   dataIndex: 'newsTypValue',
   width: '15%',
@@ -67,6 +43,8 @@ const effects = {
   saveBoradcast: 'morningBoradcast/saveBoradcast',
   getBoradcastDetail: 'morningBoradcast/getBoradcastDetail',
   delBoradcastItem: 'morningBoradcast/delBoradcastItem',
+  getUuid: 'morningBoradcast/getUuid',
+  delCeFile: 'morningBoradcast/delCeFile',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -85,10 +63,13 @@ const mapDispatchToProps = {
   saveBoradcast: fetchDataFunction(true, effects.saveBoradcast),
   getBoradcastDetail: fetchDataFunction(true, effects.getBoradcastDetail),
   delBoradcastItem: fetchDataFunction(true, effects.delBoradcastItem),
+  getUuid: fetchDataFunction(true, effects.getUuid),
+  delCeFile: fetchDataFunction(true, effects.delCeFile),
   push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class BroadcastList extends PureComponent {
   static propTypes = {
     morningBoradcast: PropTypes.object.isRequired,
@@ -97,7 +78,9 @@ export default class BroadcastList extends PureComponent {
     saveBoradcast: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
     delBoradcastItem: PropTypes.func.isRequired,
+    getUuid: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    delCeFile: PropTypes.func.isRequired,
   };
 
   /**
@@ -125,35 +108,58 @@ export default class BroadcastList extends PureComponent {
     const { FROM_DATE } = BroadcastList.initNewsListQuery();
     TIME_RANGE_FROM = newsListQuery.FROM_DATE || FROM_DATE;
 
-    // 表格添加操作列
-    columns.push({
-      title: '操作',
-      key: 'action',
-      dataIndex: 'newsId',
-      width: '15%',
-      className: 'tableAction',
-      render: newsId => (
-        <span>
-          <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-          <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
-            <i className="icon iconfont icon-shanchu remove" />
-          </Popconfirm>
-        </span>
-      ),
-    });
+    // 实例化时增加标题列、操作列（首次）
+    if (columns.length < 5) {
+      columns.unshift({
+        title: '标题',
+        dataIndex: 'title',
+        key: 'title',
+        className: 'tableTitle',
+        width: '35%',
+        render: (text, record) => {
+          const newId = record.newsId;
+          return (
+            <span
+              onClick={() => { this.onHandleToDetail(newId); }}
+              className={styles.textOverflow}
+              style={{ cursor: 'pointer' }}
+            >
+              {text}
+            </span>
+          );
+        },
+      });
+      columns.push({
+        title: '操作',
+        key: 'action',
+        dataIndex: 'newsId',
+        width: '15%',
+        className: 'tableAction',
+        render: newsId => (
+          <span>
+            <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
+            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
+              <i className="icon iconfont icon-shanchu remove" />
+            </Popconfirm>
+          </span>
+        ),
+      });
+    }
 
     this.state = {
       visible: false,
       open: false,
-      uuid: -1,
+      newsId: -1,
     };
   }
 
   componentDidMount() {
-    const { morningBoradcast: { boradcastList } } = this.props;
+    const { morningBoradcast: { boradcastList, newUuid }, getUuid } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
     if (!boradcastList.length) onHandleGetList();
+    // 初始化Uuid
+    if (!newUuid.length) getUuid();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -187,12 +193,28 @@ export default class BroadcastList extends PureComponent {
     getBoradcastList(query);
   }
 
+  // 跳转至晨报详情
+  @autobind
+  onHandleToDetail(newsId) {
+    const { push } = this.props;
+    const param = { id: 'RTC_TAB_NEWS_DETAIL', title: '晨报' };
+    const url = '/broadcastDetail';
+    const query = { newsId };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
   // Model(晨报新增、修改) --> start
   @autobind()
-  showModal(uuid = -1) {
+  showModal(newsId = -1) {
     this.setState({
       visible: true,
-      uuid,
+      newsId,
     });
   }
 
@@ -242,6 +264,14 @@ export default class BroadcastList extends PureComponent {
     const { onHandleGetList } = this;
     onHandleGetList({
       title: value,
+      pageNum: 1,
+    });
+  }
+  @autobind()
+  onHandleAuthorSearch(value) {
+    const { onHandleGetList } = this;
+    onHandleGetList({
+      createdBy: value,
       pageNum: 1,
     });
   }
@@ -311,75 +341,91 @@ export default class BroadcastList extends PureComponent {
         newsListQuery,
         saveboradcastInfo,
         boradcastDetail,
+        newUuid,
+        delSourceFile,
       },
       newsListLoading,
       saveBoradcast,
+      delCeFile,
       getBoradcastDetail,
     } = this.props;
     const initQuery = BroadcastList.initNewsListQuery();
-    const { FROM_DATE, TO_DATE, TITLE } = newsListQuery;
-    const { visible, endOpen, uuid } = this.state;
+    const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
+    const { visible, endOpen, newsId } = this.state;
+    const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
+
     return (
       <div className={styles.broadcastListWrap} >
-        <div className={styles.header}>
-          <div>
-            <Select style={{ width: 60 }} placeholder="作者">
-              <Option value="lucy">lucy</Option>
-            </Select>
-            <div className={styles.timeRange}>
-              <span>创建时间：</span>
-              <DatePicker
-                size="default"
-                format="YYYY-MM-DD"
-                placeholder="Start"
-                allowClear={false}
-                defaultValue={moment(FROM_DATE || initQuery.FROM_DATE)}
-                disabledDate={this.disabledStartDate}
-                onChange={this.onStartChange}
-                onOpenChange={this.handleStartOpenChange}
+        <Affix>
+          <div className={styles.header}>
+            <div>
+              <div className={styles.author}>
+                <span>作者：</span>
+                <Search
+                  placeholder="作者"
+                  defaultValue={CREATE_BY}
+                  style={{ width: 200 }}
+                  onSearch={this.onHandleAuthorSearch}
+                />
+              </div>
+              <div className={styles.timeRange}>
+                <span>创建时间：</span>
+                <DatePicker
+                  size="default"
+                  format="YYYY-MM-DD"
+                  placeholder="Start"
+                  allowClear={false}
+                  defaultValue={moment(FROM_DATE || initQuery.FROM_DATE)}
+                  disabledDate={this.disabledStartDate}
+                  onChange={this.onStartChange}
+                  onOpenChange={this.handleStartOpenChange}
+                />
+                ~
+                <DatePicker
+                  size="default"
+                  format="YYYY-MM-DD"
+                  placeholder="End"
+                  allowClear={false}
+                  defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
+                  disabledDate={this.disabledEndDate}
+                  onChange={this.onEndChange}
+                  open={endOpen}
+                  onOpenChange={this.handleEndOpenChange}
+                />
+              </div>
+            </div>
+            <div>
+              <Search
+                placeholder="标题关键词"
+                defaultValue={TITLE}
+                style={{ width: 200 }}
+                onSearch={this.onHandleSearch}
               />
-              ~
-              <DatePicker
-                size="default"
-                format="YYYY-MM-DD"
-                placeholder="End"
-                allowClear={false}
-                defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
-                disabledDate={this.disabledEndDate}
-                onChange={this.onEndChange}
-                open={endOpen}
-                onOpenChange={this.handleEndOpenChange}
+              <span className={styles.division}>|</span>
+              <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
+              <AddMorningBoradcast
+                visible={visible}
+                newsId={newsId}
+                newUuid={newUuid}
+                delCeFile={delCeFile}
+                delSourceFile={delSourceFile}
+                saveboradcastInfo={saveboradcastInfo}
+                boradcastDetail={boradcastDetail}
+                saveBoradcast={saveBoradcast}
+                getBoradcastDetail={getBoradcastDetail}
+                handleOk={this.handleOk}
+                handleCancel={this.handleCancel}
+                onHandleGetList={this.onHandleGetList}
               />
             </div>
           </div>
-          <div>
-            <Search
-              placeholder="标题关键词"
-              defaultValue={TITLE}
-              style={{ width: 200 }}
-              onSearch={this.onHandleSearch}
-            />
-            <span className={styles.division}>|</span>
-            <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
-            <AddMorningBoradcast
-              visible={visible}
-              uuid={uuid}
-              saveboradcastInfo={saveboradcastInfo}
-              boradcastDetail={boradcastDetail}
-              saveBoradcast={saveBoradcast}
-              getBoradcastDetail={getBoradcastDetail}
-              handleOk={this.handleOk}
-              handleCancel={this.handleCancel}
-              onHandleGetList={this.onHandleGetList}
-            />
-          </div>
-        </div>
+        </Affix>
         <div className={styles.body}>
           <div className={styles.broadcastList}>
             <Table
               loading={newsListLoading}
               columns={columns}
-              dataSource={boradcastList}
+              dataSource={newBoradcastList}
               pagination={
                 Object.assign({},
                   pagination,
