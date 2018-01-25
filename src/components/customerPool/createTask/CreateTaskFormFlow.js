@@ -156,7 +156,7 @@ export default class CreateTaskFormFlow extends PureComponent {
         finProductVO,
       } = resultTraceVO;
 
-      const quesInfoList = _.map(quesVO, (item) => ({
+      const quesInfoList = _.map(quesVO, item => ({
         quesId: item.rowId,
         quesValue: item.value,
         quesTypeCode: item.quesTypeCode,
