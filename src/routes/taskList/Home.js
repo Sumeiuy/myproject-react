@@ -92,6 +92,9 @@ const effects = {
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
+  // 查看是否是自己名下的客户
+  isCustServedByPostn: 'customerPool/isCustServedByPostn',
+  exportCustListExcel: 'managerView/exportCustListExcel',
 };
 
 const mapStateToProps = state => ({
@@ -199,6 +202,7 @@ const mapDispatchToProps = {
   countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
+  exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -266,6 +270,7 @@ export default class PerformerView extends PureComponent {
     attachmentList: PropTypes.array.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    exportCustListExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -631,10 +636,8 @@ export default class PerformerView extends PureComponent {
       orgId,
       missionId: currentId,
       serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
-      // _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
-    // orgId=ZZ0010410518&missionName=a&missionId=101111171108181&serviceTips=c&servicePolicy=b
     return params;
   }
 

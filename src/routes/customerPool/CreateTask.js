@@ -53,7 +53,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createTask: fetchDataFunction(true, effects.createTask),
-  updateTask: fetchDataFunction(true, effects.createTask),
+  updateTask: fetchDataFunction(true, effects.updateTask),
   saveCreateTaskData: query => ({
     type: 'customerPool/saveCreateTaskData',
     payload: query,
@@ -174,16 +174,18 @@ export default class CreateTask extends PureComponent {
   handleCreateTask(value) {
     const {
       createTask,
+      updateTask,
+      location: { query: { source } },
     } = this.props;
     // console.log(value);
-    createTask(value);
+    // 调用接口，创建任务
+    if (source === 'returnTask') {
+      updateTask(value);
+    } else {
+      createTask(value);
+    }
   }
 
-  @autobind
-  handleUpdateTask(value) {
-    const { updateTask } = this.props;
-    updateTask(value);
-  }
 
   /* 关闭当前页 */
   @autobind

@@ -1329,7 +1329,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        submitSuccess: resultData,
+        submitSuccess: resultData === 'success',
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户
@@ -1337,7 +1337,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        sendCustsServedByPostnResult: payload,
+        sendCustsServedByPostnResult: payload || state.sendCustsServedByPostnResult,
       };
     },
     // 查询客户是否都是本人名下的客户

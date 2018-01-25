@@ -147,16 +147,15 @@ export default class ToDoList extends PureComponent {
     const flowId = tardetLab.getAttribute('data');
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
-    // TODO: 判断条件修改
-    if (true) {
+    // 后台无法返回状态码，只能判断文字
+    if (flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
       });
       // 请求任务基本信息，跳转到编辑页面
       getTaskBasicInfo({
-        flowId: '48AC5D3B43E3C7418FA44A1F21227AA9',
+        flowId: flowData.flowId,
         systemCode,
-        empId: '001921',
       }).then(this.handleSuccess);
     } else {
       // 跳转到审批页面

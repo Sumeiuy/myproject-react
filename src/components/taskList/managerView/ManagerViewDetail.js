@@ -312,7 +312,6 @@ export default class ManagerViewDetail extends PureComponent {
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
                 <Clickable
-                  onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
                   <Button className={styles.export}>
