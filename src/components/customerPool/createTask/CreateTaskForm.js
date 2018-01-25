@@ -115,11 +115,8 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   handleTaskType(key = '') {
     const { dict: { executeTypes } } = this.props;
-    console.log('executeTypes-->', executeTypes);
     const keyWord = key.slice(0, 2) || '';
-    console.log('keyWord--.', keyWord);
     const selectData = _.find(executeTypes, ['value', keyWord]) || {};
-    console.log('selectData-->', selectData);
     return selectData.key;
   }
 

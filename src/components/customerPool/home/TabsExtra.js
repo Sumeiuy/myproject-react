@@ -101,12 +101,6 @@ export default class TabsExtra extends PureComponent {
     });
   }
 
-  // @autobind
-  // handleExportExel() {
-  //   this.props.exportExcel();
-  //   const urlParams = exportExcel() || {};
-  //   console.warn(urlParams);
-  // }
 
   render() {
     const {
@@ -125,7 +119,6 @@ export default class TabsExtra extends PureComponent {
     } = this.props;
     const { begin, end } = this.state;
     const urlParams = exportExcel();
-    console.log('urlParams-->', urlParams);
     return (
       <div className={styles.timeBox}>
         <div className={classnames(styles.icon, styles.kehuIcon)}>

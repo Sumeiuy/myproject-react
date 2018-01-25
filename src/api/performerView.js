@@ -38,8 +38,7 @@ export default function performerView(api) {
     countAnswersByType: query => api.post('/groovynoauth/fsp/assess/common/countAnswersByType', query),
     // 任务反馈已反馈总数统计
     countExamineeByType: query => api.post('/groovynoauth/fsp/assess/common/countExamineeByType', query),
-
-    // fsp/campaign/mot/exportCustListExcel
+    // 导出
     exportCustListExcel: query => api.post('/groovynoauth/fsp/assess/common/exportCustListExcel', query),
   };
 }
