@@ -14,13 +14,16 @@ import classnames from 'classnames';
 
 import styles from './checkLayout.less';
 
-function renderItem(data, itemStyle = null) {
+function renderItem(data = {}, itemStyle = null) {
   return (
     <div className={classnames(styles.check, itemStyle)}>
       <div className={styles.count}>
-        <span title={`${data.item}${data.unit}`}>{data.item}<span>{data.unit}</span></span>
+        <span title={`${data.item || ''}${data.unit || ''}`}>
+          {data.item || ''}
+          <span>{data.unit || ''}</span>
+        </span>
       </div>
-      <div className={styles.title}>{data.title}</div>
+      <div className={styles.title}>{data.title || ''}</div>
     </div>
   );
 }
