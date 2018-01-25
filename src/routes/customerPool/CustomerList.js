@@ -302,10 +302,11 @@ export default class CustomerList extends PureComponent {
         { key: 'fullTestSearch', value: keyword },
       ];
     } else if (query.source === 'tag') { // 热词
-      param.searchTypeReq = 'FromWdsListErea';
-      param.paramsReqList = [
-        { key: query.labelMapping, value: query.tagNumId },
-      ];
+      // param.searchTypeReq = 'FromWdsListErea';
+      // param.paramsReqList = [
+      //   { key: query.labelMapping, value: query.tagNumId },
+      // ];
+      param.labels = [query.labelMapping];
     } else if (query.source === 'association') {
       param.searchTypeReq = 'FromAssociatedErea';
       param.paramsReqList = [

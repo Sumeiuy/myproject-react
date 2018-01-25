@@ -38,7 +38,7 @@ export default {
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
-    hotwds: {},
+    hotWdsList: [],
     hotPossibleWdsList: [],
     // 目标客户列表数据
     custList: [],
@@ -863,10 +863,10 @@ export default {
     // 默认推荐词及热词推荐列表
     getHotWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotWds = response.resultData;
+      const hotWdsList = response.resultData;
       return {
         ...state,
-        hotWds,
+        hotWdsList,
       };
     },
     // 联想的推荐热词列表

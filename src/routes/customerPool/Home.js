@@ -64,7 +64,7 @@ const mapStateToProps = state => ({
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
   empInfo: state.app.empInfo, // 职位信息
   hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
-  hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
+  hotWdsList: state.customerPool.hotWdsList, // 默认推荐词及热词推荐列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
@@ -109,7 +109,7 @@ export default class Home extends PureComponent {
     motTaskCount: PropTypes.number,
     empInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
-    hotWds: PropTypes.object,
+    hotWdsList: PropTypes.array,
     searchHistoryVal: PropTypes.string,
     getInformation: PropTypes.func.isRequired,
     information: PropTypes.object,
@@ -134,7 +134,7 @@ export default class Home extends PureComponent {
     motTaskCount: 0,
     empInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
-    hotWds: EMPTY_OBJECT,
+    hotWdsList: EMPTY_LIST,
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_OBJECT,
@@ -460,7 +460,7 @@ export default class Home extends PureComponent {
       process,
       cycle,
       motTaskCount,
-      hotWds,
+      hotWdsList,
       hotPossibleWdsList,
       push,
       searchHistoryVal,
@@ -478,7 +478,7 @@ export default class Home extends PureComponent {
         <div className={styles.poolContainer}>
           <div className={styles.content}>
             <Search
-              data={hotWds}
+              hotWdsList={hotWdsList}
               queryHotPossibleWds={this.queryHotPossibleWds}
               queryHotWdsData={hotPossibleWdsList}
               push={push}

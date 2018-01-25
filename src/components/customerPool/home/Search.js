@@ -24,7 +24,7 @@ const NONE_INFO = '按回车键发起搜索';
 export default class Search extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.object,
+    hotWdsList: PropTypes.array,
     queryHotPossibleWds: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
@@ -35,7 +35,7 @@ export default class Search extends PureComponent {
   }
 
   static defaultProps = {
-    data: EMPTY_OBJECT,
+    hotWdsList: EMPTY_LIST,
     queryHotPossibleWds: () => { },
     saveSearchVal: () => { },
     queryHotWdsData: EMPTY_LIST,
@@ -208,19 +208,18 @@ export default class Search extends PureComponent {
         <Clickable
           onClick={() => this.handleOpenTab({
             source: 'tag',
-            labelMapping: item.labelMapping || '',
-            tagNumId: item.tagNumId || '',
-            q: encodeURIComponent(item.labelNameVal),
+            labelMapping: item.id || '',
+            q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/recommend"
           key={item.id}
         >
           <a
             className="item"
-            title={item.labelDesc}
+            title={item.description}
             rel="noopener noreferrer"
           >
-            {item.labelNameVal}
+            {item.name}
           </a>
         </Clickable>);
     });
@@ -313,7 +312,7 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { data: { hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
+    const { hotWdsList = EMPTY_LIST, searchHistoryVal } = this.props;
 
     return (
       <div className={styles.searchBox}>
