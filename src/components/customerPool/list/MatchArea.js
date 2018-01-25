@@ -156,16 +156,12 @@ export default class MatchArea extends PureComponent {
       listItem,
       location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association', 'tag'], source) && listItem.relatedLabels) {
-      const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
-        if (v.indexOf(q) > -1) {
-          return v;
-        }
-      });
+    if (_.includes(['search', 'association', 'tag'], source) && !_.isEmpty(listItem.relatedLabels)) {
+      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.name, q));
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
+        const markedEle = relatedLabels.map(v => (replaceWord(v.name, q)));
         return (
           <li>
             <span>

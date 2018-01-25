@@ -330,7 +330,7 @@ export default class Home extends PureComponent {
   queryHotPossibleWds(state) {
     const { getHotPossibleWds } = this.props;
     const setData = {
-      orgId: this.permissionType === PERMITS1 ? this.orgId : '', // 组织ID
+      orgId: this.permissionType === NOPERMIT ? '' : this.orgId, // 组织ID
       empNo: emp.getId(), // 用户ID
     };
     getHotPossibleWds({
