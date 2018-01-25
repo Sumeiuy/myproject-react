@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-23 15:23:39
+ * @Last Modified time: 2018-01-25 15:20:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -344,9 +344,7 @@ export default class FilialeCustTransfer extends PureComponent {
                 <div className={styles.selectRight}>
                   <div className={styles.buttonBox}>
                     <Upload {...uploadProps} {...this.props}>
-                      <Button
-                        type="primary"
-                      >
+                      <Button type="primary">
                         导入
                       </Button>
                     </Upload>
