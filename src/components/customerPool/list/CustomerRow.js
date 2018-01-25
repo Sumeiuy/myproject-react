@@ -162,7 +162,7 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
-      pathname: '/customerCenter/fspcustomerDetail',
+      pathname: '/fsp/customerCenter/customer360',
       param,
       state: {
         url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,

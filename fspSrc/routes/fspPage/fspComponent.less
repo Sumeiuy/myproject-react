@@ -7,10 +7,17 @@
     .iframe {
     width: 100%;
     border: 0;
-    height: e("calc(100vh - 138px)");
   }
   .fspContent {
     width: 100%;
-    height: e("calc(100vh - 138px)");
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    &::after {
+    display: table;
+    content: '';
+    clear: both;
+    }
   }
 }

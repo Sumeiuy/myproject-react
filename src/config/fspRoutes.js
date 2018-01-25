@@ -34,6 +34,12 @@ const fspRoutes = [
     action: 'loadInTab',
     url: '/tgcontract/list/listContent',
   },
+  // 投顾签约向导
+  {
+    path: '/fsp/contractWizard',
+    action: 'loadInTab',
+    url: '/client/investcontract/wizard/',
+  },
   // 客户管理
   {
     path: '/fsp/customerCenter/customerManage',

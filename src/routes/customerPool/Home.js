@@ -459,7 +459,7 @@ export default class Home extends PureComponent {
     const { tgQyFlag = false } = empInfo.empInfo || {};
 
     return (
-      <div className={styles.customerPoolWrap}>
+      <div id="customerPoolWrap" className={styles.customerPoolWrap}>
         <Search
           data={hotWds}
           queryHotPossibleWds={this.queryHotPossibleWds}
