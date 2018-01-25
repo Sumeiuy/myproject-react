@@ -21,16 +21,18 @@ export default class Tag extends PureComponent {
     type: PropTypes.string,
     color: PropTypes.string,
     text: PropTypes.string,
+    clsName: PropTypes.string,
   };
 
   static defaultProps = {
     color: '',
     text: '',
     type: 'blue',
+    clsName: '',
   }
 
   render() {
-    const { type, color, text } = this.props;
+    const { type, color, text, clsName } = this.props;
     const lowType = type.toLowerCase();
     let newStyle = {};
     if (color !== '') {
@@ -42,6 +44,7 @@ export default class Tag extends PureComponent {
     const tagCls = classnames({
       [styles[`tag-${lowType}`]]: true,
       [styles.htscTag]: true,
+      [clsName]: !!clsName,
     });
 
     return (

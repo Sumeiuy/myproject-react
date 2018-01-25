@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-19 15:35:13
+ * @Last Modified time: 2018-01-25 14:14:11
  * 管理者视图详情
  */
 
@@ -92,6 +92,7 @@ export default class ManagerViewDetail extends PureComponent {
       title: '已反馈客户',
       missionProgressStatus: '',
       progressFlag: '',
+      canLaunchTask: true,
     };
   }
 
@@ -100,7 +101,7 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handlePreview(params = {}) {
-    const { title, pageNum, pageSize, missionProgressStatus, progressFlag } = params;
+    const { title, pageNum, pageSize, missionProgressStatus, progressFlag, canLaunchTask } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
     const progressParam = {
@@ -122,6 +123,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
+        canLaunchTask,
         title: title || `当前${orgName}有效客户总数`,
       });
     });
@@ -236,7 +238,7 @@ export default class ManagerViewDetail extends PureComponent {
       custServedByPostnResult,
     } = this.props;
 
-    const { isShowCustDetailModal, title } = this.state;
+    const { isShowCustDetailModal, title, canLaunchTask } = this.state;
 
     const {
       missionId,
@@ -320,18 +322,22 @@ export default class ManagerViewDetail extends PureComponent {
                     >导出</a>
                   </Button>
                 </Clickable>
-                <Clickable
-                  onClick={this.handleLaunchTask}
-                  eventName="/click/managerViewCustDetail/launchTask"
-                >
-                  <Button
-                    className={styles.launchTask}
-                    type="primary"
-                    disabled={isDisabled}
-                  >
-                    发起新任务
-                  </Button>
-                </Clickable>
+                {
+                  canLaunchTask ?
+                    <Clickable
+                      onClick={this.handleLaunchTask}
+                      eventName="/click/managerViewCustDetail/launchTask"
+                    >
+                      <Button
+                        className={styles.launchTask}
+                        type="default"
+                        disabled={isDisabled}
+                      >
+                        发起新任务
+                      </Button>
+                    </Clickable> : null
+                }
+
               </div>
             }
             modalContent={

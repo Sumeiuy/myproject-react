@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { emp } from '../../../helper';
 
 import styles from './toBeDone.less';
 import { dispatchTabPane, openRctTab, openFspTab } from '../../../utils';
@@ -91,7 +92,7 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const authOrgId = authority ? window.forReactPosition.orgId : '';
+    const authOrgId = authority ? emp.getOrgId() : '';
     const data = {
       source: 'business',
       orgId: authOrgId,

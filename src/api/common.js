@@ -13,5 +13,7 @@ export default function common(api) {
     getMenus: query => api.post('/groovynoauth/fsp/emp/menu/queryMenus4Emp', query),
     // 用户切换岗位
     changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
+    // 添加服务记录中 服务类型
+    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
   };
 }

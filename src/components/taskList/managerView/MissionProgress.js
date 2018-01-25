@@ -88,6 +88,7 @@ export default class MissionProgress extends PureComponent {
       title,
       missionProgressStatus,
       progressFlag,
+      canLaunchTask: true,
     });
   }
 
