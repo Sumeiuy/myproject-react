@@ -55,7 +55,6 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
-  getServiceType: 'performerView/getServiceType',
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
 };
 
@@ -131,8 +130,6 @@ const mapDispatchToProps = {
   }),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  // 获取添加服务记录中的任务反馈
-  getServiceType: fetchDataFunction(true, effects.getServiceType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
 };
@@ -186,7 +183,6 @@ export default class CustomerList extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    getServiceType: PropTypes.func.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
   }
@@ -237,8 +233,6 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
-    // 获取自建任务平台的服务类型、任务反馈字典
-    this.props.getServiceType({ pageNum: 1, pageSize: 10000, type: 2 });
   }
 
   componentWillReceiveProps(nextProps) {

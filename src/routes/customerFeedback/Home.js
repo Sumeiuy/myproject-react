@@ -52,6 +52,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
   // 获取任务列表
   getMissionList: fetchDataFunction(true, 'customerFeedback/getMissionList'),
@@ -78,6 +79,7 @@ export default class CustomerFeedback extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     // 获取任务列表
     getMissionList: PropTypes.func.isRequired,
     emptyMissionData: PropTypes.func.isRequired,

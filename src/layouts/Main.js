@@ -22,6 +22,7 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
+  getMotCustfeedBackDict: 'app/getMotCustfeedBackDict',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -48,8 +49,8 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
-  // 任务反馈的字典
-  taskFeedbackList: state.performerView.taskFeedbackList,
+  // 自建任务平台的服务类型、任务反馈字典
+  motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
 });
 
 const mapDispatchToProps = {
@@ -61,6 +62,7 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
+  getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
 };
 
 @withRouter
@@ -84,7 +86,8 @@ export default class Main extends Component {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
-    taskFeedbackList: PropTypes.array.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    getMotCustfeedBackDict: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -95,8 +98,10 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
-    const { getCustomerScope } = this.props;
+    const { getCustomerScope, getMotCustfeedBackDict } = this.props;
     getCustomerScope(); // 加载客户池客户范围
+    // 获取自建任务平台的服务类型、任务反馈字典
+    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
   }
 
   render() {
@@ -116,8 +121,9 @@ export default class Main extends Component {
       handleCloseClick,
       custUuid,
       ceFileDelete,
-      taskFeedbackList,
+      motSelfBuiltFeedbackList,
     } = this.props;
+    console.log('motSelfBuiltFeedbackList>>>', motSelfBuiltFeedbackList);
     return (
       <div>
         <div className={styles.layout}>
@@ -146,7 +152,7 @@ export default class Main extends Component {
                           onToggleServiceRecordModal={toggleServiceRecordModal}
                           custUuid={custUuid}
                           ceFileDelete={ceFileDelete}
-                          taskFeedbackList={taskFeedbackList}
+                          taskFeedbackList={motSelfBuiltFeedbackList}
                         />
                       </div>
                       :
