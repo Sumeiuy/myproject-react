@@ -120,6 +120,24 @@ const menus = [
     pid: 'ROOT',
   },
   {
+    name: '工单投诉信息',
+    id: 'FSP_COMPLAINT_INFO',
+    path: '/fsp/serviceCenter/complaintInfo',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
+    name: '资产配置明细',
+    id: 'FSP_IMPLEMENTATION_INITSEE',
+    path: '/fsp/implementation/initsee',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
+    name: '资产配置向导',
+    id: 'FSP_IMPLEMENTATION_WIZARD',
+    path: '/fsp/implementation/wizard',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
     name: '策略中心',
     id: 'FSP_STRATEGY_CENTER',
     path: '/strategyCenter',

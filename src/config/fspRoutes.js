@@ -86,6 +86,24 @@ const fspRoutes = [
     action: 'loadInTab',
     url: '/custcomplaint/manage/listContent',
   },
+  // 资产配置明细
+  {
+    path: '/fsp/implementation/initsee',
+    action: 'loadInTab',
+    url: '/asset/implementation/initsee',
+  },
+  // 资产配置向导
+  {
+    path: '/fsp/implementation/wizard',
+    action: 'loadInTab',
+    url: '/asset/implementation/wizard/main',
+  },
+  // 工单投诉信息
+  {
+    path: '/fsp/serviceCenter/complaintInfo',
+    action: 'loadInTab',
+    url: '/custcomplaint/manage/viewCustComplaintInfo',
+  },
   {
     path: '/fsp/serviceCenter/asset/implementation',
     action: 'loadInTab',
