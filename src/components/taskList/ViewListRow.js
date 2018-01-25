@@ -85,7 +85,7 @@ export default function AppItem(props) {
           <span className={typeCls}>{data.typeName || '无'}</span>
         </div>
         <div className={styles.tagArea}>
-          <Tag type={tagStatusType} text={data.statusName} />
+          <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
         </div>
       </div>
       {/* 第二行 */}
@@ -94,8 +94,8 @@ export default function AppItem(props) {
           _.includes(needProgress, data.missionViewType) ?
             <div className={progressCls}>
               <ProgressBar
-                servicedCustomer={data.servicedCustomer || 160}
-                totalCustomer={data.totalCustomer || 320}
+                servicedCustomer={data.doneFlowNum}
+                totalCustomer={data.flowNum}
                 showInfo={false}
                 size="small"
               />

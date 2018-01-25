@@ -164,8 +164,6 @@ export default class TargetCustomerRight extends PureComponent {
       filesList,
     } = this.props;
     const { visible } = this.state;
-
-    const firSpan = isFold ? 12 : 24;
     const sendSpan = isFold ? 16 : 24;
     const thrSpan = isFold ? 8 : 24;
     const suspendedLayer = (
@@ -235,11 +233,11 @@ export default class TargetCustomerRight extends PureComponent {
     if (Number(itemData.assets)) {
       const openAssetsRate = itemData.openAssets / itemData.assets;
       openAssetsPercentNode = itemData.openAssets ?
-        <span><em className={styles.emStyle}>/</em>{openAssetsRate * 100}%</span>
+        <span>({openAssetsRate * 100}%)</span>
         :
         null;
       availablBalancePercentNode = itemData.availablBalance ?
-        <span><em className={styles.emStyle}>/</em>{(1 - openAssetsRate) * 100}%</span>
+        <span>({(1 - openAssetsRate) * 100}%)</span>
         :
         null;
     }
@@ -266,13 +264,10 @@ export default class TargetCustomerRight extends PureComponent {
               }
             </Col>
           </Row>
-          <Row>
-            <Col span={firSpan}>
+          <Row className={styles.mt3}>
+            <Col span={12}>
               <h5
-                className={classnames({
-                  [styles.phoneLeft]: isFold === true,
-                  [styles.phone]: isFold === false,
-                })}
+                className={styles.phoneLeft}
               >
                 <span>介绍人：</span><span>{this.handleEmpty(itemData.empName)}</span>
                 {
@@ -286,12 +281,9 @@ export default class TargetCustomerRight extends PureComponent {
             </Col>
             {
               itemData.contactPhone ?
-                <Col span={firSpan}>
+                <Col span={12}>
                   <h5
-                    className={classnames({
-                      [styles.phoneRight]: isFold === true,
-                      [styles.phone]: isFold === false,
-                    })}
+                    className={styles.phoneRight}
                   >
                     <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
                     { this.renderPhoneNumTips(itemData) }

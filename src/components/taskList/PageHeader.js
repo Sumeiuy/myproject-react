@@ -13,7 +13,7 @@ import { DatePicker, Input } from 'antd';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
-import Icon from '../common/Icon';
+// import Icon from '../common/Icon';
 import { dom } from '../../helper';
 import { fspContainer } from '../../config';
 import styles from './pageHeader.less';
@@ -390,7 +390,7 @@ export default class Pageheader extends PureComponent {
       </div>);
     const value = item ?
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        创建时间&nbsp;:
+        创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
           <RangePicker
             ref={ref => this.timers = ref}
@@ -403,7 +403,7 @@ export default class Pageheader extends PureComponent {
         </div>
       </div>) :
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间&nbsp;:
+        结束时间&nbsp;:&nbsp;
         {controller}
       </div>);
 
@@ -454,10 +454,10 @@ export default class Pageheader extends PureComponent {
 
     const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
     return (
-      <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
+      <div className={`${styles.pageCommonHeader}`} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
 
-          <div className={`${styles.filterFl} ${styles.mr30}`}>
+          <div className={`${styles.filterFl} ${styles.mr30} ${styles.view}`}>
             <Select
               name="missionViewType"
               value={missionViewTypeValue}
@@ -520,7 +520,6 @@ export default class Pageheader extends PureComponent {
                 ref={this.filterMoreRef}
               >
                 <span>更多</span>
-                <Icon type="xiangxia" />
               </div>
               :
               <div
@@ -529,7 +528,6 @@ export default class Pageheader extends PureComponent {
                 ref={this.filterMoreRef}
               >
                 <span>收起</span>
-                <Icon type="xiangshang" />
               </div>
           }
         </div>
