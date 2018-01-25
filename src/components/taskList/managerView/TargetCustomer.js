@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-13 10:41:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 10:45:03
+ * @Last Modified time: 2018-01-25 14:14:29
  * 管理者视图右侧目标客户
  */
 
@@ -63,7 +63,9 @@ export default class TargetCustomer extends PureComponent {
   @autobind
   handlePreview() {
     const { onPreview } = this.props;
-    onPreview();
+    onPreview({
+      canLaunchTask: false,
+    });
   }
 
   @autobind
@@ -94,10 +96,6 @@ export default class TargetCustomer extends PureComponent {
           <div>
             <Row className={styles.rowItem}>
               <Col span={colSpanValue} className={styles.colItem}>
-                <span className={styles.label}>客户来源:&nbsp;</span>
-                <span className={styles.content}>{custSource || '--'}</span>
-              </Col>
-              <Col span={colSpanValue} className={styles.colItem}>
                 <span
                   className={classnames({
                     [styles.label]: true,
@@ -110,9 +108,6 @@ export default class TargetCustomer extends PureComponent {
                   })}
                   onClick={this.handlePreview}
                 >{Number(custTotal) || 0}</span>
-                {/**
-                     * 机构名变量，需要替换
-                     */}
                 <span
                   className={styles.custTotalTooltip}
                   onMouseOver={this.handleMouseOver}
@@ -130,6 +125,10 @@ export default class TargetCustomer extends PureComponent {
                     getPopupContainer={this.getPopupContainer}
                   />
                 </span>
+              </Col>
+              <Col span={colSpanValue} className={styles.colItem}>
+                <span className={styles.label}>客户来源:&nbsp;</span>
+                <span className={styles.content}>{custSource || '--'}</span>
               </Col>
             </Row>
             {
