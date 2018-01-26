@@ -21,41 +21,54 @@ const fspRoutes = [
   {
     path: '/fsp/motTask',
     action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_TASK_MANAGE',
     url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
   },
   {
     path: '/fsp/motTaskHandle',
     action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_TASK_HANDLE',
     url: '/mot/manage/showHandle',
   },
   // 服务记录管理
   {
     path: '/fsp/taskCenter/serviceManage',
     action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_SERVICELIST',
     url: '/mot/service/showList',
   },
   // 投顾签约
   {
     path: '/fsp/investContract',
     action: 'loadInTab',
+    containerId: 'FSP_TGINVEST_LIST_TAB',
     url: '/tgcontract/list/listContent',
   },
   // 投顾签约向导
   {
     path: '/fsp/contractWizard',
     action: 'loadInTab',
+    containerId: 'utb-stockcontract-wizard',
     url: '/client/investcontract/wizard/',
+  },
+  // 佣金调整向导
+  {
+    path: '/fsp/serviceOrderingWizard',
+    action: 'loadInTab',
+    url: '/client/serviceOrdering/wizard/',
   },
   // 客户管理
   {
     path: '/fsp/customerCenter/customerManage',
     action: 'loadInTab',
+    containerId: 'FSP_CUST_TAB_CENTER_MANAGE', // 外层容器id
     url: '/customer/manage/showCustManageTabWin',
   },
   // 客户360
   {
     path: '/fsp/customerCenter/customer360',
     action: 'loadInTab',
+    containerId: 'FSP_360VIEW_M_TAB',
     url: '/customerCenter/360/',
   },
   // 合约详情
@@ -98,10 +111,11 @@ const fspRoutes = [
     action: 'loadInIframe',
     url: '/htsc-product-base/product_search_currency.do?clientType=crm&special_enter=1',
   },
-  // 服务中心
+  // 投诉工单管理
   {
     path: '/fsp/serviceCenter/custcomplaint',
     action: 'loadInTab',
+    containerId: 'FSP_CUST_COMPLAINT_MANGER',
     url: '/custcomplaint/manage/listContent',
   },
   // 资产配置明细
@@ -122,11 +136,14 @@ const fspRoutes = [
     action: 'loadInTab',
     url: '/custcomplaint/manage/viewCustComplaintInfo',
   },
+  // 资产配置实施
   {
     path: '/fsp/serviceCenter/asset/implementation',
     action: 'loadInTab',
+    containerId: 'FSP_ASSET_ALLOCATION',
     url: '/asset/implementation/main',
   },
+  // 资产配置模板
   {
     path: '/fsp/serviceCenter/asset/basis',
     action: 'loadInTab',

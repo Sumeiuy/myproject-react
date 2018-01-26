@@ -93,6 +93,12 @@ const primaryMenu = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '佣金调整向导',
+    id: 'FSP_CUST_M_SERVICEORDERINGWIZARD',
+    path: '/fsp/serviceOrderingWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '合约详情',
     id: 'FSP_CUST_M_ORDERDETAIL',
     path: '/fsp/customerCenter/360OrderDetail',
