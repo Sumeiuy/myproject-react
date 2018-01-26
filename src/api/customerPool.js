@@ -57,6 +57,9 @@ export default function customerPool(api) {
     // 自建任务提交
     createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
+    // 自建任务编辑后，重新提交
+    updateTask: query => api.post('/groovynoauth/fsp/cust/task/updateTask', query),
+
     // 客户列表页添加服务记录
     addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord', query),
 

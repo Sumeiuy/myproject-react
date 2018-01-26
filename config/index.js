@@ -47,12 +47,13 @@ module.exports = {
       {
         target: 'http://168.61.8.81:5089', // SIT
         //  target: 'http://168.61.8.81:5090', // DOClever
+        // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址                
       },
       prefix,
       {
         target: 'http://168.61.8.81:5086', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
-        // target: 'http://160.9.228.195:8082', // 王涵本地地址
+        // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址        
       },
       '/fspa/log',
       {
@@ -63,6 +64,7 @@ module.exports = {
       {
         target: 'http://168.61.8.81:5086', // SIT
         // target: 'http://168.61.8.82:5086', // UAT
+        // target: 'http://160.9.230.9:8082/', // 张宝成 接口访问地址        
       }
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"

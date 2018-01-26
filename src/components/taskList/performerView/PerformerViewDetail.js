@@ -333,7 +333,7 @@ export default class PerformerViewDetail extends PureComponent {
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}

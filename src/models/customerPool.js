@@ -57,6 +57,7 @@ export default {
     searchHistoryVal: '',
     cusGroupSaveResult: '',
     createTaskResult: {},
+    updateTaskResult: {},
     cusGroupSaveMessage: '',
     resultgroupId: '',
     incomeData: [], // 净收入
@@ -344,6 +345,14 @@ export default {
       yield put({
         type: 'createTaskSuccess',
         payload: { createTaskResult },
+      });
+    },
+    // 自建任务编辑后，重新提交
+    * updateTask({ payload }, { call, put }) {
+      const updateTaskResult = yield call(api.updateTask, payload);
+      yield put({
+        type: 'updateTaskSuccess',
+        payload: { updateTaskResult },
       });
     },
     // 获取净创收数据
@@ -964,6 +973,14 @@ export default {
         createTaskResult: payload,
       };
     },
+    // 自建任务编辑后，重新提交
+    updateTaskSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        updateTaskResult: payload,
+      };
+    },
     // 获取净创收数据成功
     getIncomeDataSuccess(state, action) {
       const { payload } = action;
@@ -1312,7 +1329,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        submitSuccess: resultData,
+        submitSuccess: resultData === 'success',
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户

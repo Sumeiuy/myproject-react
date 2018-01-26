@@ -11,7 +11,6 @@ import { Table, message } from 'antd';
 import _ from 'lodash';
 
 import { openRctTab } from '../../../utils';
-import { url } from '../../../helper';
 import styles from './toDoList.less';
 
 import emptyImg from './img/empty.png';
@@ -96,7 +95,7 @@ export default class ToDoList extends PureComponent {
         pathname,
         query: {
           ...query,
-          flowData: url.stringify(taskBasicInfo),
+          flowData: encodeURIComponent(JSON.stringify(taskBasicInfo)),
           source: 'returnTask',
           flowId,
         },
@@ -148,8 +147,8 @@ export default class ToDoList extends PureComponent {
     const flowId = tardetLab.getAttribute('data');
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
-    // TODO: 判断条件修改
-    if (true) {
+    // 后台无法返回状态码，只能判断文字
+    if (flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
       });
