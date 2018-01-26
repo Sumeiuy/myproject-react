@@ -15,7 +15,7 @@ const fspRoutes = [
   {
     path: '/fsp/motTask',
     action: 'loadInTab',
-    url: '/mot/manage/showMotTaskSubTabWin',
+    url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
   },
   {
     path: '/fsp/motTaskHandle',
