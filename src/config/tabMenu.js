@@ -4,7 +4,9 @@
  * @author zhufeiyang
  */
 
-// 主导航以及其跳转页面对应的tab配置项
+// 主导航菜单页面以及其跳转页面对应的tab配置项
+// 主导航菜单项不会新打开tab，所以主导航相关的页面全部在这里配置
+// 前端可以完全控制主导航的菜单行为
 const primaryMenu = [
   {
     name: '首页',
@@ -151,7 +153,11 @@ const primaryMenu = [
     pid: 'ROOT',
   },
 ];
-// 次级导航以及其跳转对应的tab配置项
+
+// 次级导航页面内部跳转新建的tab配置项
+// 由于次级导航菜单涉及到的打开tab太多，而且不会随着项目变化而改变
+// 所以不在这里进行配置，而是直接复用后端的数据，在调用方法时，直接传入数据
+// 前端无法控制次级导航菜单的tab配置，这点需要留意。
 const secondaryMenu = [
 ];
 
@@ -162,8 +168,10 @@ const menus = [
 
 export default menus;
 
+// 默认当前激活的主导航菜单项
 export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
+// 主导航默认的几个菜单项
 export const defaultMenu = [
   'FSP_NEW_HOMEPAGE',
   'FSP_SERVICE_CENTER',

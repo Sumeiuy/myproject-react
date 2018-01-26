@@ -4,12 +4,18 @@
  * @author zhufeiyang
  */
 
+/**
+ * 由于要嵌入fsp页面，原fsp页面代码的调用参数只与url相关，
+ * 但是在react中，需要与path进行关联，从而跳转新的页面
+ * 所以设置这个映射表，根据fsp的url，映射相应的react框架的path
+ * 次级导航菜单涉及到的fsp页面非常多，所以不在这里配置，而是直接复用后端的数据
+ */
 const fspRoutes = [
   // 跳回首页
   {
     path: '/customerPool',
     action: '',
-    url: '/homepage',
+    url: '/homepage', // url属性可以为string类型，或者为RegExp类型，从而方便匹配
   },
   // MOT任务相关
   {
@@ -126,7 +132,7 @@ const fspRoutes = [
     action: 'loadInTab',
     url: '/asset/basis/mainTab',
   },
-  // 策略中心
+  // 资讯中心
   {
     path: '/fsp/strategyCenter/informationCenter',
     action: 'loadInIframe',
