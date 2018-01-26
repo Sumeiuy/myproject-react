@@ -125,7 +125,7 @@ export default class ManagerViewDetail extends PureComponent {
       this.setState({
         isShowCustDetailModal: true,
         canLaunchTask,
-        title: title || `当前${orgName}有效客户总数`,
+        title: title || `当前${orgName || ''}有效客户总数`,
       });
     });
   }

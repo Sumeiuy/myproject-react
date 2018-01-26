@@ -82,10 +82,10 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   getStoredCreateTaskData() {
     const {
-      location: { query: { source, flowData = '{}' } },
+      location: { query: { source, flowData = encodeURIComponent('{}') } },
       storedCreateTaskData,
     } = this.props;
-    let currentFlowData = JSON.parse(flowData);
+    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
     if (!_.isEmpty(currentFlowData)) {
       // 生成需要的自建任务数据
       const {

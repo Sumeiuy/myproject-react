@@ -40,32 +40,34 @@ export default class MissionFeedback extends PureComponent {
   constructor(props) {
     super(props);
 
-    // const { finalData, originProblemData } = this.handleData(
-    //   props.missionFeedbackData,
-    //   props.missionFeedbackCount,
-    //   props.serveManagerCount,
-    // );
+    const { finalData, originProblemData } = this.handleData(
+      props.missionFeedbackData,
+      props.missionFeedbackCount,
+      props.serveManagerCount,
+    );
 
     this.state = {
       expandAll: false,
       cycleSelect: '',
       createCustRange: [],
-      finalData: {
-        allFeedback: {},
-        radioFeedback: [],
-        checkboxFeedback: [],
-      },
-      problems: {
-        resultData: {
-          pageInfo: {
-            curPageNum: 1,
-            curPageSize: 10,
-            totalPage: 10,
-          },
-          dataInfo: [],
-        },
-      },
-      originProblemData: {},
+      // finalData: {
+      //   allFeedback: {},
+      //   radioFeedback: [],
+      //   checkboxFeedback: [],
+      // },
+      finalData,
+      // problems: {
+      //   resultData: {
+      //     pageInfo: {
+      //       curPageNum: 1,
+      //       curPageSize: 10,
+      //       totalPage: 10,
+      //     },
+      //     dataInfo: [],
+      //   },
+      // },
+      problems: originProblemData,
+      originProblemData: originProblemData,
     };
   }
 
@@ -132,7 +134,115 @@ export default class MissionFeedback extends PureComponent {
     let checkboxFeedback = [];
     let answerTotalCount = 0;
     let dataInfo = [];
-    _.each(missionFeedbackData, (item) => {
+    _.each([
+      [
+        {
+          "quesId": 3,
+          "quesTypeCode": "1",
+          "quesType": "RADIO",
+          "quesValue": "题目1题干XXX",
+          "optionValue": "合理",
+          "answerText": null,
+          "cnt": 2
+        },
+        {
+          "quesId": 3,
+          "quesTypeCode": "1",
+          "quesType": "RADIO",
+          "quesValue": "题目1题干XXX",
+          "optionValue": "不合理",
+          "answerText": null,
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "68",
+          "answerText": null,
+          "cnt": 3
+        },
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "67",
+          "answerText": null,
+          "cnt": 2
+        },
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "222222222222222222222222222222",
+          "answerText": null,
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板1206建议666",
+          "cnt": 1
+        },
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板2332建议666",
+          "cnt": 1
+        },
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板1414建议666\n",
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板1206建议777",
+          "cnt": 1
+        },
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板2332建议777",
+          "cnt": 1
+        },
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板1414建议777",
+          "cnt": 1
+        },
+      ],
+    ], (item) => {
       if (_.isArray(item)) {
         let radioData = [];
         let checkboxData = [];
@@ -192,7 +302,7 @@ export default class MissionFeedback extends PureComponent {
       allFeedback: {
         serviceAllNum: serveManagerCount || 0,
         aFeedback: missionFeedbackCount || 0,
-        aFeedbackPer: `${countPercent}%`,
+        aFeedbackPer: countPercent,
         allTaskFeedbackDes: '所有问题反馈结果',
       },
       radioFeedback,
@@ -330,7 +440,7 @@ export default class MissionFeedback extends PureComponent {
             />
           </div>
           <div className={styles.tips}>
-            <div>
+            <div className={styles.content}>
               {item}
             </div>
           </div>
@@ -406,8 +516,13 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
+        (<div key={itemChild.value} className={styles.radioItem}>
+          <span className={styles.icon} />
+          <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
+          <span className={styles.value} title={itemChild.value}>
+            ：{itemChild.value}({itemChild.optionPer})
+          </span>
+        </div>));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
         item.checkboxData, checkBox);
     });
@@ -420,8 +535,13 @@ export default class MissionFeedback extends PureComponent {
     const isRadio = true;
     const oDiv = _.map(data, (item) => {
       const radios = _.map(item.radioData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
+        (<div key={itemChild.value} className={styles.radioItem}>
+          <span className={styles.icon} />
+          <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
+          <span className={styles.value} title={itemChild.value}>
+            ：{itemChild.value}({itemChild.optionPer})
+          </span>
+        </div>));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
         item.radioData, radios, isRadio);
     });
@@ -431,6 +551,7 @@ export default class MissionFeedback extends PureComponent {
   renderAllFeedback(allCount, count, countPer, residue) {
     const type = '服务经理总数';
     const per = '已反馈人数';
+
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
@@ -467,10 +588,9 @@ export default class MissionFeedback extends PureComponent {
   renderTooltipContent(type, currentCount, per = null) {
     return (
       <div className={styles.content}>
-
         {_.isEmpty(per) ?
           <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per})</div>
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per}%)</div>
         }
       </div>
     );
@@ -503,13 +623,16 @@ export default class MissionFeedback extends PureComponent {
             <div className={styles.problems}>
               <div>
                 {info}
-                <Paganation
-                  curPageNum={curPageNum}
-                  curPageSize={curPageSize}
-                  totalRecordNum={totalRecordNum}
-                  onPageChange={this.handlePageChange}
-                  onSizeChange={this.handleSizeChange}
-                />
+                {
+                  totalRecordNum > 10 ?
+                    <Paganation
+                      curPageNum={curPageNum}
+                      curPageSize={curPageSize}
+                      totalRecordNum={totalRecordNum}
+                      onPageChange={this.handlePageChange}
+                      onSizeChange={this.handleSizeChange}
+                    /> : null
+                }
               </div>
             </div>
           </div>
@@ -575,7 +698,7 @@ export default class MissionFeedback extends PureComponent {
                     <div className={styles.allService}>
                       <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
                       <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer})` : ''}</b></span>
+                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b></span>
                     </div>
                   </div>
                 </div>

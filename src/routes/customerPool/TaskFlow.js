@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 11:07:50
+ * @Last Modified time: 2018-01-26 15:21:44
  */
 
 import React, { PureComponent } from 'react';
@@ -158,7 +158,6 @@ export default class TaskFlow extends PureComponent {
       current: current || 0,
       currentSelectRecord: currentSelectRecord || {},
       currentSelectRowKeys: currentSelectRowKeys || [],
-      currentEntry: 0,
       isSuccess: false,
       isLoadingEnd: true,
       isShowErrorInfo: false,

@@ -179,13 +179,10 @@ export default class ToDoList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: '/customerPool/createTask',
+        url: `/customerPool/createTask?flowData=${encodeURIComponent(JSON.stringify(taskBasicInfo))}`,
         param,
         pathname: '/customerPool/createTask',
         query,
-        state: {
-          flowData: taskBasicInfo,
-        },
       });
     }
   }

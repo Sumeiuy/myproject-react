@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
+import moment from 'moment';
 
 import Tag from '../common/tag';
 import ProgressBar from './ProgressBar';
@@ -85,9 +86,9 @@ export default function AppItem(props) {
   // 根据当前视图类型判断展示创建时间还是结束时间
   function showCreateTimeOrProcessTime({ missionViewType: type, createTime, processTime }) {
     if (judgeMissionViewType(type)) {
-      return processTime && processTime.slice(0, 10);
+      return processTime && moment(processTime).format('YYYY-MM-DD');
     }
-    return createTime && createTime.slice(0, 10);
+    return createTime && moment(createTime).format('YYYY-MM-DD');
   }
   return (
     <div className={appItemCls} onClick={handleClick}>
