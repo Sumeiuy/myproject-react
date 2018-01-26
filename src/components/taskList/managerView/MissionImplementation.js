@@ -15,7 +15,7 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
-import { env } from '../../../helper';
+import { env, emp } from '../../../helper';
 import { permission } from '../../../utils';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
@@ -60,7 +60,7 @@ export default class MissionImplementation extends PureComponent {
     super(props);
     this.state = {
       expandAll: false,
-      cycleSelect: '',
+      currentOrgId: '',
       createCustRange: [],
       isDown: true,
     };
@@ -176,12 +176,26 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
+  handleExportExcel() {
+    return this.props.exportExcel(this.state.currentOrgId || emp.getOrgId());
+  }
+
+  @autobind
+  getOrgId({ orgId }) {
+    // debugger;
+    this.setState({
+      currentOrgId: orgId,
+    });
+  }
+
+  @autobind
   renderTabsExtra() {
-    const { replace, location, exportExcel } = this.props;
+    const { replace, location } = this.props;
     const {
       expandAll,
       isDown,
       createCustRange,
+      cycleSelect,
     } = this.state;
 
     // curOrgId   客户范围回填
@@ -202,9 +216,11 @@ export default class MissionImplementation extends PureComponent {
       expandAll,
       location,
       orgId: curOrgId,
+      exportOrgId: cycleSelect,
       isDown,
       iconType: 'juxing23',
-      exportWorld: exportExcel,
+      exportExcel: this.handleExportExcel,
+      updateQueryState: this.getOrgId,
     };
     return (<TabsExtra {...extraProps} />);
   }
