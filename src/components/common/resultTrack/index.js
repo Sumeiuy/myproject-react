@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-19 18:10:23
+ * @Last Modified time: 2018-01-25 16:12:14
  * 结果跟踪
  */
 
@@ -716,7 +716,7 @@ export default class ResultTrack extends PureComponent {
                           placeholder="产品编码/产品名称"
                           name="产品"
                           disable={!checked}
-                          searchList={searchedProductList}
+                          searchList={searchedProductList || EMPTY_LIST}
                           emitSelectItem={this.handleSelectProductItem}
                           emitToSearch={this.handleQueryProduct}
                           defaultSearchValue={currentSelectedProduct.searchValue || ''}

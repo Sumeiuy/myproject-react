@@ -1,13 +1,14 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-19 16:47:01
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-26 15:43:54
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
 import duty from './config/duty';
+import env from './env';
 
 /**
 * 根据传入的部门id和组织机构数数组返回部门id对应的对象
@@ -42,11 +43,15 @@ const emp = {
    * @param {Object} empInfo 用户信息
    */
   setEmpInfo(loginInfo) {
+    // TODO 此处需要做下容错处理
+    // 因为此处是针对新的外部React框架所使用的
+    // TODO 新增在独立开发页面下也需要设置初始值
+    if (env.isInFsp()) return;
     const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
     window.curOrgCode = orgId || occDivnNum;
     window.forReactPosition = {
-      postnId: postId || postnId,
+      pstnId: postId || postnId,
       orgId: orgId || occDivnNum,
     };
   },
@@ -57,7 +62,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -82,7 +87,8 @@ const emp = {
    * @returns {String|null} 职位信息
    */
   getPstnId() {
-    let pstnId = null;
+    // 岗位Id，1-3NQ97YG，供本地使用，工号001750对应的，部门是经纪及财富管理部，岗位是HTSC001750
+    let pstnId = '1-3NQ97YG';
     if (!_.isEmpty(window.forReactPosition)) {
       pstnId = window.forReactPosition.pstnId;
     }

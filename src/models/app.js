@@ -40,6 +40,8 @@ export default {
     approvePersonList: EMPTY_LIST,
     // 创建者,姓名（工号）
     creator: '',
+    // mot自建任务的服务类型和反馈类型
+    motSelfBuiltFeedbackList: [],
   },
   reducers: {
     // 获取员工职责与职位
@@ -149,6 +151,13 @@ export default {
         approvePersonList: servicePeopleList,
       };
     },
+    getMotCustfeedBackDictSuccess(state, action) {
+      const { payload: { missionList = [] } } = action;
+      return {
+        ...state,
+        motSelfBuiltFeedbackList: missionList,
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -240,6 +249,16 @@ export default {
         type: 'getApprovePersonListSuccess',
         payload: response,
       });
+    },
+    // mot自建任务的服务类型和反馈类型
+    * getMotCustfeedBackDict({ payload }, { call, put }) {
+      const response = yield call(api.getServiceType, payload);
+      if (response.code === '0') {
+        yield put({
+          type: 'getMotCustfeedBackDictSuccess',
+          payload: response.resultData,
+        });
+      }
     },
   },
   subscriptions: {

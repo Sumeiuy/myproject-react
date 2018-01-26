@@ -21,7 +21,7 @@ import QuestionnaireSurvey from './QuestionnaireSurvey';
 import styles from './performerViewDetail.less';
 
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 const create = Form.create;
 @create()
@@ -333,7 +333,7 @@ export default class PerformerViewDetail extends PureComponent {
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}
@@ -351,7 +351,6 @@ export default class PerformerViewDetail extends PureComponent {
                 onChange={this.handleStateChange}
               />
             </div>
-            <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
             <div className={styles.pagination}>
               <Pagination
                 size="small"
@@ -362,6 +361,7 @@ export default class PerformerViewDetail extends PureComponent {
                 defaultPageSize={PAGE_SIZE}
               />
             </div>
+            <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
           </div>
           {
             _.isEmpty(list) ?

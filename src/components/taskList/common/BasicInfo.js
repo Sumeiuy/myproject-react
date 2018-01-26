@@ -23,6 +23,10 @@ export default class BasicInfo extends PureComponent {
     servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
+    // 当前视图类型是不是管理者视图
+    isCurrentViewOfController: PropTypes.bool,
+    // 任务提示
+    missionDescription: PropTypes.string,
   }
 
   static defaultProps = {
@@ -31,6 +35,8 @@ export default class BasicInfo extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
+    isCurrentViewOfController: false,
+    missionDescription: '',
   }
 
   constructor(props) {
@@ -46,32 +52,46 @@ export default class BasicInfo extends PureComponent {
       endTime,
       missionTarget,
       servicePolicy,
-      isFold,
+      // isFold,
+      isCurrentViewOfController,
+      missionDescription,
     } = this.props;
 
-    const colSpanValue = isFold ? 12 : 24;
+    // const colSpanValue = isFold ? 12 : 24;
     return (
       <div className={styles.basicInfo}>
         <LabelInfo value="基本信息" />
         <div className={styles.basicInfoContent}>
           <Row className={styles.rowItem}>
-            <Col span={colSpanValue} className={styles.colItem}>
-              <span className={styles.label}>任务有效期:&nbsp;</span>
-              <span className={styles.content}>{triggerTime || '--'}&nbsp;~&nbsp;{endTime || '--'}</span>
+            <Col className={`${styles.colItem} ${styles.fl} ${styles.width380}`}>
+              <span className={`${styles.label} ${styles.fl}`}>任务有效期:&nbsp;</span>
+              <p className={styles.content}>{triggerTime || '--'}&nbsp;~&nbsp;{endTime || '--'}</p>
             </Col>
-            <Col span={colSpanValue} className={styles.colItem}>
-              <span className={styles.label}>任务目标:&nbsp;</span>
-              <span className={styles.content}>{missionTarget || '--'}</span>
+            <Col className={`${styles.colItem} ${styles.fl} ${styles.width380}`}>
+              <span className={`${styles.label} ${styles.fl}`}>任务目标:&nbsp;</span>
+              <p className={styles.content}>{missionTarget || '--'}</p>
             </Col>
           </Row>
           <Row className={styles.rowItem}>
             <Col className={styles.colItem}>
               <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
-              <p className={`${styles.content} ${styles.servicePolicy}`}>
+              <p className={`${styles.content}`}>
                 {servicePolicy || '--'}
               </p>
             </Col>
           </Row>
+          {
+            isCurrentViewOfController ?
+              <Row className={styles.rowItem}>
+                <Col className={styles.colItem}>
+                  <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
+                  <p className={`${styles.content}`}>
+                    {missionDescription || '--'}
+                  </p>
+                </Col>
+              </Row> :
+              null
+          }
         </div>
       </div>
     );

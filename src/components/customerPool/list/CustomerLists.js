@@ -115,7 +115,6 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    taskFeedbackList: PropTypes.array.isRequired,
     permissionType: PropTypes.number.isRequired,
     view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,

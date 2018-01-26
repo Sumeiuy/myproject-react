@@ -78,7 +78,7 @@ export default class Filter extends PureComponent {
               value={unrightType || ''}
               filterLabel="可开通业务"
               filter="unright_type"
-              filterField={dict.custBusinessType}
+              filterField={dict.custUnrightBusinessType}
               onChange={onFilterChange}
             /> : null
         }
