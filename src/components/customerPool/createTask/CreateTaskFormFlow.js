@@ -127,8 +127,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       location: { query: { source, flowData = '{}' } },
       storedCreateTaskData,
     } = this.props;
-    let currentFlowData = JSON.parse(decodeURIComponent(flowData)) || {};
-    console.log('currentFlowData-->', currentFlowData);
+    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
     const { motDetailModel = {} } = currentFlowData;
     const { quesVO = [], resultTraceVO = {} } = motDetailModel;
     const isMissionInvestigationChecked = !_.isEmpty(quesVO);
