@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 16:47:35
+ * @Last Modified time: 2018-01-26 16:50:27
  */
 
 import React, { PureComponent } from 'react';
@@ -70,7 +70,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const currentFlowData = JSON.parse(decodeURIComponent(flowData));
     const { motDetailModel } = currentFlowData || {};
     const { quesVO = [] } = motDetailModel || {};
-    const isEntryReturnTask = source === 'returnTask';
+    const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
       current: current || 0,
@@ -83,8 +83,8 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: isEntryReturnTask,
-      isCanGoNextStep: isEntryReturnTask,
+      isNeedApproval: isEntryFromReturnTask,
+      isCanGoNextStep: isEntryFromReturnTask,
       isNeedMissionInvestigation: !_.isEmpty(quesVO),
     };
   }
