@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 14:14:11
+ * @Last Modified time: 2018-01-25 15:55:02
  * 管理者视图详情
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
-import MissionDescription from './MissionDescription';
+// import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
@@ -28,6 +28,7 @@ import styles from './managerViewDetail.less';
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
+// const CONTROLLER = 'controller';
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -124,7 +125,7 @@ export default class ManagerViewDetail extends PureComponent {
       this.setState({
         isShowCustDetailModal: true,
         canLaunchTask,
-        title: title || `当前${orgName}有效客户总数`,
+        title: title || `当前${orgName || ''}有效客户总数`,
       });
     });
   }
@@ -281,6 +282,10 @@ export default class ManagerViewDetail extends PureComponent {
             servicePolicy={servicePolicy}
             // 父容器宽度变化,默认宽度窄
             isFold={isFold}
+            // 当前视图类型是管理者视图
+            isCurrentViewOfController
+            // 任务提示or任务描述
+            missionDescription={missionDesc}
           />
           <TargetCustomer
             // 父容器宽度变化,默认宽度窄
@@ -361,9 +366,9 @@ export default class ManagerViewDetail extends PureComponent {
             modalWidth={1080}
           />
         </div>
-        <div className={styles.descriptionSection}>
+        {/* <div className={styles.descriptionSection}>
           <MissionDescription missionDescription={missionDesc} />
-        </div>
+        </div> */}
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}

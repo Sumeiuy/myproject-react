@@ -46,11 +46,6 @@ const permission = {
   // HTSC 任务管理岗
   hasTkMampPermission() {
     return judgeAuthority(permissionList, HTSC_TK_MAMPID);
-    // 以下是之前的职责控制
-    // return permission.hasIndexViewPermission()
-    //   || permission.hasHqMampPermission()
-    //   || permission.hasBoMampPermission()
-    //   || permission.hasBdMampPermission();
   },
 
   // 目标客户池首页和列表页权限
@@ -198,9 +193,7 @@ const permission = {
 
   // 是否有权限查看管理者视图
   hasPermissionOfManagerView() {
-    return permission.hasHqMampPermission()
-      || permission.hasBoMampPermission()
-      || permission.hasBdMampPermission();
+    return permission.hasTkMampPermission();
   },
 };
 

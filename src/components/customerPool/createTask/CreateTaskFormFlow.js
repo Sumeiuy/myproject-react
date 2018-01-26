@@ -21,6 +21,11 @@ const SOURCE_ARRAY = [
   'returnTask',
 ];
 
+// 从业务目标池客户：businessCustPool
+// 标签、搜索目标客户：searchCustPool
+// 绩效目标客户 - 净新增客户： performanceCustPool
+// 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
+
 export default class CreateTaskFormFlow extends PureComponent {
 
   static propTypes = {
@@ -75,60 +80,15 @@ export default class CreateTaskFormFlow extends PureComponent {
     };
   }
 
-  // 从业务目标池客户：businessCustPool
-  // 标签、搜索目标客户：searchCustPool
-  // 绩效目标客户 - 净新增客户： performanceCustPool
-  // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
-
-  @autobind
-  parseQuery() {
-    const { location: { query: { ids = '', condition = {} } } } = this.props;
-    let custCondition = {};
-    let custIdList = null;
-    if (!_.isEmpty(condition)) {
-      if (!_.isEmpty(ids)) {
-        custIdList = decodeURIComponent(ids).split(',');
-        custCondition = JSON.parse(decodeURIComponent(condition));
-      } else {
-        custCondition = JSON.parse(decodeURIComponent(condition));
-      }
-    }
-    return {
-      custIdList,
-      custCondition,
-    };
-  }
-
-  // @autobind
-  // handleCancleTab() {
-  //   const { onCloseTab } = this.props;
-  //   if (env.isInFsp()) {
-  //     onCloseTab();
-  //     const param = {
-  //       id: 'tab-home',
-  //       title: '首页',
-  //     };
-  //     fspGlobal.openRctTab({ url: '/customerPool', param });
-  //   }
-  // }
-
-  /**
-   * 判断入口来源
-   */
-  @autobind
-  judgeSource(source) {
-    return _.includes(SOURCE_ARRAY, source);
-  }
-
   @autobind
   getStoredCreateTaskData() {
-    const defaultFlowData = decodeURIComponent(JSON.stringify({}));
     const {
-      location: { query: { source, flowData = defaultFlowData } },
+      location: { query: { source, flowData = '{}' } },
       storedCreateTaskData,
     } = this.props;
     let currentFlowData = JSON.parse(decodeURIComponent(flowData));
-    const { motDetailModel: { quesVO, resultTraceVO } } = currentFlowData;
+    const { motDetailModel } = currentFlowData || {};
+    const { quesVO = [], resultTraceVO = {} } = motDetailModel || {};
     const isMissionInvestigationChecked = !_.isEmpty(quesVO);
     if (!_.isEmpty(currentFlowData)) {
       // 生成需要的自建任务数据
@@ -211,6 +171,33 @@ export default class CreateTaskFormFlow extends PureComponent {
     }
 
     return storedData;
+  }
+
+  /**
+   * 判断入口来源
+   */
+  @autobind
+  judgeSource(source) {
+    return _.includes(SOURCE_ARRAY, source);
+  }
+
+  @autobind
+  parseQuery() {
+    const { location: { query: { ids = '', condition = {} } } } = this.props;
+    let custCondition = {};
+    let custIdList = null;
+    if (!_.isEmpty(condition)) {
+      if (!_.isEmpty(ids)) {
+        custIdList = decodeURIComponent(ids).split(',');
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      } else {
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      }
+    }
+    return {
+      custIdList,
+      custCondition,
+    };
   }
 
   @autobind

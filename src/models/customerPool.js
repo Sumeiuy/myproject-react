@@ -126,7 +126,7 @@ export default {
     // 查询客户的数量限制或者是否都是本人名下的客户
     sendCustsServedByPostnResult: {
       custNumsIsExceedUpperLimit: false,
-      isSendCustsServedByPostn: true,
+      sendCustsServedByPostn: false,
     },
     // 查询是否都是本人名下的客户
     custServedByPostnResult: true,
