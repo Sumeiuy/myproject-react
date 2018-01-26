@@ -56,6 +56,7 @@ const effects = {
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
+  getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -96,6 +97,7 @@ const mapStateToProps = state => ({
   filesList: state.customerPool.filesList,
   // 是否包含非本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
+  sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
 });
 
 const mapDispatchToProps = {
@@ -132,6 +134,7 @@ const mapDispatchToProps = {
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
+  getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -185,6 +188,8 @@ export default class CustomerList extends PureComponent {
     filesList: PropTypes.array,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -231,8 +236,19 @@ export default class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
+    const {
+      getFiltersOfSightingTelescope,
+      location: {
+        query,
+      },
+    } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
+    if (query.source === 'sightingTelescope') {
+      getFiltersOfSightingTelescope({
+        prodId: query.labelMapping,
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -243,6 +259,7 @@ export default class CustomerList extends PureComponent {
       },
       isContactLoading = false,
       isRecordLoading = false,
+      // getFiltersOfSightingTelescope,
     } = this.props;
     const {
       // custRange,
@@ -297,21 +314,29 @@ export default class CustomerList extends PureComponent {
     };
     // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
     if (query.source === 'search') {
-      param.searchTypeReq = 'FromFullTextType';
-      param.paramsReqList = [
-        { key: 'fullTestSearch', value: keyword },
-      ];
+      // param.searchTypeReq = 'FromFullTextType';
+      // param.paramsReqList = [
+      //   { key: 'fullTestSearch', value: keyword },
+      // ];
+      param.searchTypeReq = 'Any';
+      param.searchText = keyword;
     } else if (query.source === 'tag') { // 热词
       // param.searchTypeReq = 'FromWdsListErea';
       // param.paramsReqList = [
       //   { key: query.labelMapping, value: query.tagNumId },
       // ];
-      param.labels = [query.labelMapping];
+      // param.labels = [query.labelMapping];
+      param.searchTypeReq = 'label';
+      param.searchText = keyword;
     } else if (query.source === 'association') {
-      param.searchTypeReq = 'FromAssociatedErea';
-      param.paramsReqList = [
-        { key: query.labelMapping, value: query.tagNumId },
-      ];
+      param.searchTypeReq = 'label';
+      param.searchText = keyword;
+      // param.searchTypeReq = 'FromAssociatedErea';
+      // param.paramsReqList = [
+      //   { key: query.labelMapping, value: query.tagNumId },
+      // ];
+    } else if (query.source === 'sightingTelescope') {
+      param.labels = [query.labelMapping];
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
@@ -360,36 +385,75 @@ export default class CustomerList extends PureComponent {
     const filtersReq = [];
     // 排序条件
     const sortsReqList = [];
-    if (query.unright_type) {
-      filtersReq.push({
-        filterType: 'Unrights',
-        filterContentList: query.unright_type.split(','),
+    if (query.filters) {
+      const filtersArray = query.filters ? query.filters.split('|') : [];
+      _.forEach(filtersArray, (item) => {
+        const [name, value] = item.split('.');
+        if (name === 'Unrights' && value) {
+          filtersReq.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'Rights' && value) {
+          filtersReq.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'RiskLvl' && value) {
+          filtersReq.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'CustClass' && value) {
+          filtersReq.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'CustomType' && value) {
+          filtersReq.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
+          param.labels.push(String(value));
+        }
       });
     }
-    if (query.Rights) {
-      filtersReq.push({
-        filterType: 'Rights',
-        filterContentList: query.Rights.split(','),
-      });
-    }
-    if (query.RiskLvl) {
-      filtersReq.push({
-        filterType: 'RiskLvl',
-        filterContentList: [query.RiskLvl],
-      });
-    }
-    if (query.CustClass) {
-      filtersReq.push({
-        filterType: 'CustClass',
-        filterContentList: [query.CustClass],
-      });
-    }
-    if (query.CustomType) {
-      filtersReq.push({
-        filterType: 'CustomType',
-        filterContentList: [query.CustomType],
-      });
-    }
+    // if (query.unright_type) {
+    //   filtersReq.push({
+    //     filterType: 'Unrights',
+    //     filterContentList: query.unright_type.split(','),
+    //   });
+    // }
+    // if (query.Rights) {
+    //   filtersReq.push({
+    //     filterType: 'Rights',
+    //     filterContentList: query.Rights.split(','),
+    //   });
+    // }
+    // if (query.RiskLvl) {
+    //   filtersReq.push({
+    //     filterType: 'RiskLvl',
+    //     filterContentList: [query.RiskLvl],
+    //   });
+    // }
+    // if (query.CustClass) {
+    //   filtersReq.push({
+    //     filterType: 'CustClass',
+    //     filterContentList: [query.CustClass],
+    //   });
+    // }
+    // if (query.CustomType) {
+    //   filtersReq.push({
+    //     filterType: 'CustomType',
+    //     filterContentList: [query.CustomType],
+    //   });
+    // }
     if (query.sortType || query.sortDirection) {
       sortsReqList.push({
         sortType: query.sortType,
@@ -451,14 +515,27 @@ export default class CustomerList extends PureComponent {
       location: { query, pathname },
       handleFilter,
     } = this.props;
+    const filterSeperator = '|';
+    // 将筛选项组装成
+    // type.a|category.b,c,d  形式放到url中
+    const { filters = '' } = query;
+    const filtersArray = filters ? filters.split(filterSeperator) : [];
+    const newFilterArray = [...filtersArray];
     // 手动上传日志
     handleFilter({ name: obj.name, value: obj.value });
-
+    const index = _.findIndex(filtersArray, o => o.split('.')[0] === obj.name);
+    const filterItem = `${obj.name}.${obj.value}`;
+    if (index > -1) {
+      newFilterArray[index] = filterItem;
+    } else {
+      newFilterArray.push(filterItem);
+    }
     replace({
       pathname,
       query: {
         ...query,
-        [obj.name]: obj.value,
+        // [obj.name]: obj.value,
+        filters: newFilterArray.join(filterSeperator),
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -551,6 +628,7 @@ export default class CustomerList extends PureComponent {
       filesList,
       isCustServedByPostn,
       custServedByPostnResult,
+      sightingTelescopeFilters,
     } = this.props;
     const {
       sortDirection,
@@ -598,6 +676,7 @@ export default class CustomerList extends PureComponent {
           </Col>
         </Row>
         <Filter
+          sightingTelescopeFilters={sightingTelescopeFilters}
           dict={dict}
           location={location}
           onFilterChange={this.filterChange}

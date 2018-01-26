@@ -18,7 +18,7 @@ import styles from './search.less';
 
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
+// const EMPTY_OBJECT = {};
 let searchInput;
 const NONE_INFO = '按回车键发起搜索';
 export default class Search extends PureComponent {
@@ -108,8 +108,6 @@ export default class Search extends PureComponent {
       }
       this.handleOpenTab({
         source: 'search',
-        labelMapping: '',
-        tagNumId: '',
         q: encodeURIComponent(searchVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
@@ -156,10 +154,8 @@ export default class Search extends PureComponent {
       return [{
         query,
         category: NONE_INFO,
-        content: NONE_INFO,
-        desc: NONE_INFO,
-        labelMapping: NONE_INFO,
-        tagNumId: NONE_INFO,
+        name: NONE_INFO,
+        description: NONE_INFO,
         id: NONE_INFO,
       }];
     }
@@ -167,16 +163,25 @@ export default class Search extends PureComponent {
     this.setState({
       isHasSearchResult: true,
     });
-
-    return _.map(hotList, (item, index) => ({
-      query,
-      category: `${item.labelNameVal}${index}`,
-      content: item.labelNameVal,
-      desc: item.labelDesc,
-      labelMapping: item.labelMapping,
-      tagNumId: item.tagNumId,
-      id: item.labelNameVal,
-    }));
+    return _.map(hotList, (item, index) => {
+      if (item.type === 'label') {
+        return {
+          query,
+          category: `${item.name}${index}`,
+          name: item.name,
+          description: item.description,
+          id: item.id,
+          type: item.source,
+        };
+      }
+      return {
+        query,
+        category: `${item.value}${index}`,
+        name: item.value,
+        description: item.description,
+        type: item.type,
+      };
+    });
   }
 
   @autobind
@@ -207,7 +212,7 @@ export default class Search extends PureComponent {
       recommendList.push(
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: 'tag',
+            source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
@@ -254,8 +259,6 @@ export default class Search extends PureComponent {
       });
       this.handleOpenTab({
         source: 'search',
-        labelMapping: '',
-        tagNumId: '',
         q: encodeURIComponent(inputVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
@@ -277,18 +280,18 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { inputVal } = this.state;
-    const newContent = item.content.replace(inputVal, `<em>${inputVal}</em>`);
+    const newContent = item.name.replace(inputVal, `<em>${inputVal}</em>`);
     // 联想 association
     // 搜索 search
     // 标签 tag
+    // console.log('association: ', item);
     return (
-      <Option key={item.id} text={item.content}>
+      <Option key={`${item.id}${item.name}`} text={item.name}>
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: 'association',
-            labelMapping: item.labelMapping || '',
-            tagNumId: item.tagNumId || item.content,
-            q: encodeURIComponent(item.content),
+            source: item.type === 'jzyx' ? 'sightingTelescope' : 'association',
+            labelMapping: item.id || '',
+            q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"
         >
@@ -297,7 +300,7 @@ export default class Search extends PureComponent {
             rel="noopener noreferrer"
           />
         </Clickable>
-        <span className="desc">{item.desc}</span>
+        <span className="desc">{item.type === 'jzyx' ? '瞄准镜' : item.description}</span>
       </Option>
     );
   }
@@ -305,8 +308,8 @@ export default class Search extends PureComponent {
   @autobind
   renderNoneSearchResult(item) {
     return (
-      <Option key={item.id} text={item.labelNameVal} disabled>
-        {item.desc}
+      <Option key={item.id} text={item.name} disabled>
+        {item.description}
       </Option>
     );
   }

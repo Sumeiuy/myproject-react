@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import { customerPool as api } from '../api';
+import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
@@ -129,6 +129,8 @@ export default {
     },
     // 查询是否都是本人名下的客户
     custServedByPostnResult: true,
+    // 瞄准镜的筛选项
+    sightingTelescopeFilters: {},
   },
 
   subscriptions: {
@@ -769,6 +771,14 @@ export default {
         payload: resultData,
       });
     },
+    // 获取瞄准镜的筛选条件
+    * getFiltersOfSightingTelescope({ payload }, { call, put }) {
+      const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, payload);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -872,10 +882,18 @@ export default {
     // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      const { labelInfoList, matchedWdsList } = response.resultData;
+      // 给接口返回来的labels加上type字段
+      const newLabelInfoList = _.map(labelInfoList, item => ({
+        ...item,
+        type: 'label',
+      }));
       return {
         ...state,
-        hotPossibleWdsList,
+        hotPossibleWdsList: [
+          ...newLabelInfoList,
+          ...matchedWdsList,
+        ],
       };
     },
     getCustomerListSuccess(state, action) {
@@ -1329,6 +1347,13 @@ export default {
       return {
         ...state,
         custServedByPostnResult: payload,
+      };
+    },
+    getFiltersOfSightingTelescopeSuccess(state, action) {
+      const { payload: { object } } = action;
+      return {
+        ...state,
+        sightingTelescopeFilters: object || {},
       };
     },
   },
