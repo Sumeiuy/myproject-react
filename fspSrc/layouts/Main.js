@@ -21,6 +21,7 @@ import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/ConnectedCreateServiceRecord';
 
 import styles from './main.less';
+import '../css/fspFix.less';
 import '../../src/css/skin.less';
 
 const effects = {
