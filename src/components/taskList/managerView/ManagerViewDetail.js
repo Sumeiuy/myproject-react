@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 14:14:11
+ * @Last Modified time: 2018-01-25 15:55:02
  * 管理者视图详情
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import BasicInfo from '../common/BasicInfo';
-import MissionDescription from './MissionDescription';
+// import MissionDescription from './MissionDescription';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
@@ -21,12 +21,14 @@ import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { closeRctTab, openRctTab } from '../../../utils';
+import { request } from '../../../config';
 import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
+// const CONTROLLER = 'controller';
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -67,7 +69,6 @@ export default class ManagerViewDetail extends PureComponent {
     countFlowFeedBack: PropTypes.func.isRequired,
     // 任务类型字典
     missionTypeDict: PropTypes.array,
-    exportCustListExcel: PropTypes.func.isRequired,
     exportExcel: PropTypes.func.isRequired,
     missionProgressStatusDic: PropTypes.object.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
@@ -124,7 +125,7 @@ export default class ManagerViewDetail extends PureComponent {
       this.setState({
         isShowCustDetailModal: true,
         canLaunchTask,
-        title: title || `当前${orgName}有效客户总数`,
+        title: title || `当前${orgName || ''}有效客户总数`,
       });
     });
   }
@@ -153,7 +154,6 @@ export default class ManagerViewDetail extends PureComponent {
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
-      exportCustListExcel,
     } = this.props;
     const { missionProgressStatus = null, progressFlag = null } = this.state;
     const params = {
@@ -162,10 +162,10 @@ export default class ManagerViewDetail extends PureComponent {
       missionName: mngrMissionDetailInfo.missionName,
       orgId: emp.getOrgId(),
       missionId: currentId,
-      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
-    exportCustListExcel(params);
+    return params;
   }
 
   /**
@@ -262,6 +262,7 @@ export default class ManagerViewDetail extends PureComponent {
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
+    const urlParams = this.handleExport();
     return (
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
@@ -281,6 +282,10 @@ export default class ManagerViewDetail extends PureComponent {
             servicePolicy={servicePolicy}
             // 父容器宽度变化,默认宽度窄
             isFold={isFold}
+            // 当前视图类型是管理者视图
+            isCurrentViewOfController
+            // 任务提示or任务描述
+            missionDescription={missionDesc}
           />
           <TargetCustomer
             // 父容器宽度变化,默认宽度窄
@@ -314,10 +319,13 @@ export default class ManagerViewDetail extends PureComponent {
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
                 <Clickable
-                  onClick={this.handleExport}
                   eventName="/click/managerViewCustDetail/export"
                 >
-                  <Button className={styles.export}>导出</Button>
+                  <Button className={styles.export}>
+                    <a
+                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                    >导出</a>
+                  </Button>
                 </Clickable>
                 {
                   canLaunchTask ?
@@ -358,9 +366,9 @@ export default class ManagerViewDetail extends PureComponent {
             modalWidth={1080}
           />
         </div>
-        <div className={styles.descriptionSection}>
+        {/* <div className={styles.descriptionSection}>
           <MissionDescription missionDescription={missionDesc} />
-        </div>
+        </div> */}
         <div className={styles.missionImplementationSection}>
           <MissionImplementation
             isFold={isFold}

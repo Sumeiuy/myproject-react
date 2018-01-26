@@ -8,11 +8,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-// import { url } from '../../../helper';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 
-const NOOP = _.noop;
+const noop = _.noop;
 // returnTask是审批驳回之后，编辑自建任务信息界面
 // custGroupList是客户分组
 // managerView是管理者视图
@@ -22,12 +21,18 @@ const SOURCE_ARRAY = [
   'returnTask',
 ];
 
+// 从业务目标池客户：businessCustPool
+// 标签、搜索目标客户：searchCustPool
+// 绩效目标客户 - 净新增客户： performanceCustPool
+// 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
+
 export default class CreateTaskFormFlow extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object,
     createTask: PropTypes.func,
+    updateTask: PropTypes.func,
     createTaskResult: PropTypes.object,
     storedCreateTaskData: PropTypes.object.isRequired,
     saveCreateTaskData: PropTypes.func.isRequired,
@@ -55,13 +60,14 @@ export default class CreateTaskFormFlow extends PureComponent {
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: NOOP,
+    createTask: noop,
+    updateTask: noop,
     orgId: null,
     enterType: null,
     submitSuccess: false,
-    submitApproval: NOOP,
+    submitApproval: noop,
     approvalBtn: {},
-    getApprovalBtn: NOOP,
+    getApprovalBtn: noop,
   }
 
   constructor(props) {
@@ -74,59 +80,16 @@ export default class CreateTaskFormFlow extends PureComponent {
     };
   }
 
-  // 从业务目标池客户：businessCustPool
-  // 标签、搜索目标客户：searchCustPool
-  // 绩效目标客户 - 净新增客户： performanceCustPool
-  // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
-
-  @autobind
-  parseQuery() {
-    const { location: { query: { ids = '', condition = {} } } } = this.props;
-    let custCondition = {};
-    let custIdList = null;
-    if (!_.isEmpty(condition)) {
-      if (!_.isEmpty(ids)) {
-        custIdList = decodeURIComponent(ids).split(',');
-        custCondition = JSON.parse(decodeURIComponent(condition));
-      } else {
-        custCondition = JSON.parse(decodeURIComponent(condition));
-      }
-    }
-    return {
-      custIdList,
-      custCondition,
-    };
-  }
-
-  // @autobind
-  // handleCancleTab() {
-  //   const { onCloseTab } = this.props;
-  //   if (env.isInFsp()) {
-  //     onCloseTab();
-  //     const param = {
-  //       id: 'tab-home',
-  //       title: '首页',
-  //     };
-  //     fspGlobal.openRctTab({ url: '/customerPool', param });
-  //   }
-  // }
-
-  /**
-   * 判断入口来源
-   */
-  @autobind
-  judgeSource(source) {
-    return _.includes(SOURCE_ARRAY, source);
-  }
-
   @autobind
   getStoredCreateTaskData() {
-    const defaultFlowData = decodeURIComponent(JSON.stringify({}));
     const {
-      location: { query: { source, flowData = defaultFlowData } },
+      location: { query: { source, flowData = '{}' } },
       storedCreateTaskData,
     } = this.props;
     let currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    const { motDetailModel } = currentFlowData || {};
+    const { quesVO = [], resultTraceVO = {} } = motDetailModel || {};
+    const isMissionInvestigationChecked = !_.isEmpty(quesVO);
     if (!_.isEmpty(currentFlowData)) {
       // 生成需要的自建任务数据
       const {
@@ -155,10 +118,19 @@ export default class CreateTaskFormFlow extends PureComponent {
         trackDay,
         // 金融产品
         finProductVO,
-        // 问卷调查
-        quesInfoList = [],
-        isMissionInvestigationChecked,
-      } = currentFlowData;
+      } = resultTraceVO;
+
+      const quesInfoList = _.map(quesVO, item => ({
+        quesId: item.rowId,
+        quesValue: item.value,
+        quesTypeCode: item.quesTypeCode,
+        quesTypeValue: item.quesType,
+        optionInfoList: _.map(item.optionRespDtoList, itemData => ({
+          optionId: itemData.rowId,
+          optionValue: itemData.optionValue,
+        })),
+        quesDesp: item.remark,
+      }));
 
       currentFlowData = {
         resultTrackData: {
@@ -189,18 +161,43 @@ export default class CreateTaskFormFlow extends PureComponent {
           questionList: quesInfoList,
         },
       };
-
-      return currentFlowData;
     }
 
     let storedData = {};
     if (this.judgeSource(source)) {
-      storedData = storedCreateTaskData[`${source}`] || {};
+      storedData = _.merge(currentFlowData, storedCreateTaskData[`${source}`]) || {};
     } else {
-      storedData = storedCreateTaskData.custList || {};
+      storedData = _.merge(currentFlowData, storedCreateTaskData.custList) || {};
     }
 
     return storedData;
+  }
+
+  /**
+   * 判断入口来源
+   */
+  @autobind
+  judgeSource(source) {
+    return _.includes(SOURCE_ARRAY, source);
+  }
+
+  @autobind
+  parseQuery() {
+    const { location: { query: { ids = '', condition = {} } } } = this.props;
+    let custCondition = {};
+    let custIdList = null;
+    if (!_.isEmpty(condition)) {
+      if (!_.isEmpty(ids)) {
+        custIdList = decodeURIComponent(ids).split(',');
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      } else {
+        custCondition = JSON.parse(decodeURIComponent(condition));
+      }
+    }
+    return {
+      custIdList,
+      custCondition,
+    };
   }
 
   @autobind
@@ -228,6 +225,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       dict,
       location,
       createTask,
+      updateTask,
       getApprovalList,
       approvalList,
       orgId,
@@ -254,6 +252,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           saveCreateTaskData={this.storeCreateTaskData}
           storedCreateTaskData={this.getStoredCreateTaskData()}
           createTask={createTask}
+          updateTask={updateTask}
           approvalList={approvalList}
           getApprovalList={getApprovalList}
           parseQuery={this.parseQuery}
