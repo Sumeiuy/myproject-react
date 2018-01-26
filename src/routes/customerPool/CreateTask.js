@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import withRouter from '../../decorators/withRouter';
@@ -153,7 +152,7 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCreateTaskSuccess(result) {
     const { createTaskResult } = result;
-    if (!_.isEmpty(createTaskResult.code) && createTaskResult.code === '0') {
+    if (createTaskResult.code === '0') {
       this.setState({
         isSuccess: true,
       });
@@ -163,7 +162,7 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleUpdateTaskSuccess(result) {
     const { updateTaskResult } = result;
-    if (!_.isEmpty(updateTaskResult.code) && updateTaskResult.code === '0') {
+    if (updateTaskResult.code === '0') {
       this.setState({
         isSuccess: true,
       });
