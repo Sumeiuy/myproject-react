@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-19 17:20:09
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-25 17:38:32
  * 任务实施简报
  */
 
@@ -121,8 +121,7 @@ export default class MissionImplementation extends PureComponent {
     //   id: MAIN_MAGEGER_ID,
     //   name: '我的客户',
     // };
-    // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
-    // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
+    // 职责的普通用户，取值 '我的客户'
     if (!this.isAuthorize) {
       //   this.setState({
       //     createCustRange: [myCustomer],

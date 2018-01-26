@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 15:07:33
+ * @Last Modified time: 2018-01-26 16:50:27
  */
 
 import React, { PureComponent } from 'react';
@@ -64,8 +64,13 @@ export default class TaskFormFlowStep extends PureComponent {
   constructor(props) {
     super(props);
     const {
+      location: { query: { source, flowData = '{}' } },
       storedCreateTaskData: { taskFormData, current, custSource },
     } = props;
+    const currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    const { motDetailModel } = currentFlowData || {};
+    const { quesVO = [] } = motDetailModel || {};
+    const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
       current: current || 0,
@@ -78,39 +83,42 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: false,
-      isCanGoNextStep: false,
-      isNeedMissionInvestigation: true,
+      isNeedApproval: isEntryFromReturnTask,
+      isCanGoNextStep: isEntryFromReturnTask,
+      isNeedMissionInvestigation: !_.isEmpty(quesVO),
     };
   }
 
   componentDidMount() {
+    const { location: { query: { source } } } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
     };
 
-    this.props.isSendCustsServedByPostn({
-      ...postBody,
-    }).then(() => {
-      const { sendCustsServedByPostnResult } = this.props;
-      const {
+    if (source !== 'returnTask') {
+      this.props.isSendCustsServedByPostn({
+        ...postBody,
+      }).then(() => {
+        const { sendCustsServedByPostnResult } = this.props;
+        const {
         isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+          isIncludeNotMineCust,
       } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-      if (isIncludeNotMineCust && !isCanGoNextStep) {
-        message.error('客户包含非本人名下客户，请重新选择');
-        return;
-      }
+        if (isIncludeNotMineCust && !isCanGoNextStep) {
+          message.error('客户包含非本人名下客户，请重新选择');
+          return;
+        }
 
-      this.setState({
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
+        this.setState({
+          isNeedApproval,
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+        });
       });
-    });
+    }
   }
 
   @autobind
@@ -216,8 +224,8 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.props;
 
     const baseInfo = JSON.parse(decodeURIComponent(flowData));
-    const { tagetCustModel = {} } = baseInfo;
-    const { custNum, custSource: taskSource } = tagetCustModel;
+    const { tagetCustModel } = baseInfo || {};
+    const { custNum, custSource: taskSource } = tagetCustModel || {};
 
     const {
       isNeedMissionInvestigation,
@@ -404,7 +412,7 @@ export default class TaskFormFlowStep extends PureComponent {
     // 获取重新提交任务参数( flowId, eventId );
     const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { motDetailModel = {} } = baseInfo;
-    const { eventId = null } = motDetailModel;
+    const { eventId } = motDetailModel || {};
     const flowParam = { flowId, eventId };
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
@@ -729,7 +737,6 @@ export default class TaskFormFlowStep extends PureComponent {
             <div>
               {cancleBtn}
             </div>
-
           }
           {
             current > 0

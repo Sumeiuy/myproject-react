@@ -185,9 +185,6 @@ export default class ToDoList extends PureComponent {
         param,
         pathname: '/customerPool/createTask',
         query,
-        state: {
-          flowData: taskBasicInfo,
-        },
       });
     }
   }
