@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 16:11:18
+ * @Last Modified time: 2018-01-26 16:47:35
  */
 
 import React, { PureComponent } from 'react';
@@ -64,8 +64,13 @@ export default class TaskFormFlowStep extends PureComponent {
   constructor(props) {
     super(props);
     const {
+      location: { query: { source, flowData = '{}' } },
       storedCreateTaskData: { taskFormData, current, custSource },
     } = props;
+    const currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    const { motDetailModel } = currentFlowData || {};
+    const { quesVO = [] } = motDetailModel || {};
+    const isEntryReturnTask = source === 'returnTask';
 
     this.state = {
       current: current || 0,
@@ -78,39 +83,42 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: false,
-      isCanGoNextStep: false,
-      isNeedMissionInvestigation: true,
+      isNeedApproval: isEntryReturnTask,
+      isCanGoNextStep: isEntryReturnTask,
+      isNeedMissionInvestigation: !_.isEmpty(quesVO),
     };
   }
 
   componentDidMount() {
+    const { location: { query: { source } } } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
     };
 
-    this.props.isSendCustsServedByPostn({
-      ...postBody,
-    }).then(() => {
-      const { sendCustsServedByPostnResult } = this.props;
-      const {
+    if (source !== 'returnTask') {
+      this.props.isSendCustsServedByPostn({
+        ...postBody,
+      }).then(() => {
+        const { sendCustsServedByPostnResult } = this.props;
+        const {
         isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+          isIncludeNotMineCust,
       } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-      if (isIncludeNotMineCust && !isCanGoNextStep) {
-        message.error('客户包含非本人名下客户，请重新选择');
-        return;
-      }
+        if (isIncludeNotMineCust && !isCanGoNextStep) {
+          message.error('客户包含非本人名下客户，请重新选择');
+          return;
+        }
 
-      this.setState({
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
+        this.setState({
+          isNeedApproval,
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+        });
       });
-    });
+    }
   }
 
   @autobind
