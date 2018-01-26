@@ -4,7 +4,8 @@
  * @author zhufeiyang
  */
 
-const menus = [
+// 主导航以及其跳转页面对应的tab配置项
+const primaryMenu = [
   {
     name: '首页',
     id: 'FSP_NEW_HOMEPAGE',
@@ -84,15 +85,21 @@ const menus = [
     pid: 'FSP_CUST_M_CENTER_MANAGE',
   },
   {
-    name: '投顾签约',
-    id: 'FSP_CUST_M_CONTRACT',
-    path: '/fsp/investContract',
-    pid: 'ROOT',
-  },
-  {
     name: '投顾签约向导',
     id: 'FSP_CUST_M_CONTRACTWIZARD',
     path: '/fsp/contractWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '合约详情',
+    id: 'FSP_CUST_M_ORDERDETAIL',
+    path: '/fsp/customerCenter/360OrderDetail',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '合约历史记录',
+    id: 'FSP_CUST_M_ORDERHISDETAIL',
+    path: '/fsp/customerCenter/360orderHisDetail',
     pid: 'FSP_CUST_M_360',
   },
   {
@@ -143,6 +150,14 @@ const menus = [
     path: '/strategyCenter',
     pid: 'ROOT',
   },
+];
+// 次级导航以及其跳转对应的tab配置项
+const secondaryMenu = [
+];
+
+const menus = [
+  ...primaryMenu,
+  ...secondaryMenu,
 ];
 
 export default menus;

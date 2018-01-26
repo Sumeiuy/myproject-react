@@ -15,7 +15,7 @@ const fspRoutes = [
   {
     path: '/fsp/motTask',
     action: 'loadInTab',
-    url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
+    url: '/mot/manage/showMotTaskSubTabWin',
   },
   {
     path: '/fsp/motTaskHandle',
@@ -51,6 +51,18 @@ const fspRoutes = [
     path: '/fsp/customerCenter/customer360',
     action: 'loadInTab',
     url: '/customerCenter/360/',
+  },
+  // 合约详情
+  {
+    path: '/fsp/customerCenter/360OrderDetail',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=orderDetail)/,
+  },
+  // 合约历史记录
+  {
+    path: '/fsp/customerCenter/360orderHisDetail',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=orderHisDetail)/,
   },
   // 佣金查询
   {
