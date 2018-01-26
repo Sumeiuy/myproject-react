@@ -30,6 +30,7 @@ export default class AddMorningBoradcast extends PureComponent {
     saveBoradcast: PropTypes.func.isRequired,
     delCeFile: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
+    dict: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -56,6 +57,7 @@ export default class AddMorningBoradcast extends PureComponent {
     const { resetFields } = this.props.form;
     // 打开模态框
     if (!visible && nextProps.visible) {
+      this.resetState();
       if (newsId !== -1) {
         const itemDetail = boradcastDetail[newsId];
         if (!itemDetail) {
@@ -66,7 +68,6 @@ export default class AddMorningBoradcast extends PureComponent {
       } else {
         // 新建时初始化表单和参数
         resetFields();
-        this.resetState();
         this.setState({ finalNewUuid: newUuid });
       }
     }
@@ -146,19 +147,6 @@ export default class AddMorningBoradcast extends PureComponent {
         saveBoradcast(values);
       }
     });
-  }
-
-  @autobind
-  handleClose() {
-    const { handleCancel, newsId } = this.props;
-    const { audioFileList } = this.state;
-    if (newsId !== -1 && audioFileList.length !== 1) {
-      this.setState({
-        audioError: false,
-      });
-    } else {
-      handleCancel();
-    }
   }
 
   @autobind()
@@ -251,21 +239,26 @@ export default class AddMorningBoradcast extends PureComponent {
   }
   @autobind
   onBeforeUpload(file) {
-    const { audioFileList } = this.state;
     const isMPC = file.type === 'audio/mp3';
+    const audioType = this.getInitDate('newsTypeCode');
     if (!isMPC) {
       message.info('音频文件格式为audio/mp3');
       return false;
     }
-    if (audioFileList.length === 1) {
-      message.info('音频文件数量为1');
-      return false;
+    if (audioType === 'V2_MORNING_NEWS') {
+      const isOver = file.size / 1024 / 1024 < 16;
+      if (!isOver) {
+        message.info('资讯晨报文件小于16兆');
+        return false;
+      }
+    } else if (audioType === 'PROD_SALES_MORNING_NEWS') {
+      const isOver = file.size / 1024 / 1024 < 30;
+      if (!isOver) {
+        message.info('资讯晨报文件小于20兆');
+        return false;
+      }
     }
-    const isLt2M = file.size / 1024 / 1024 < 10;
-    if (!isLt2M) {
-      message.info('音频文件小于10兆');
-      return false;
-    }
+
     return true;
   }
   @autobind
@@ -275,7 +268,6 @@ export default class AddMorningBoradcast extends PureComponent {
         const audioItem = {
           status: 'done',
           uid: item.attachId,
-          url: item.downloadURL,
           name: item.name,
           response: { code: '0' },
           attachment,
@@ -296,37 +288,40 @@ export default class AddMorningBoradcast extends PureComponent {
     } = this.state;
     const { getFieldDecorator } = this.props.form;
     const { getInitDate } = this;
-    const { newsId } = this.props;
+    const { newsId, dict, handleCancel } = this.props;
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 16, offset: 1 },
     };
-    const acceptType = ['audio/*', '*/*'];
     const sourceProps = {
       action: `${request.prefix}/file/ceFileUpload`,
       onRemove: this.onRemove,
     };
     const audioProps = Object.assign({}, sourceProps, {
-      accept: acceptType[0],
+      action: `${request.prefix}/file/ceFileReplaceUpload `,
+      accept: 'audio/*',
       data: {
         attachment: finalNewUuid[0],
         empId: emp.getId(),
+      },
+      showUploadList: {
+        showRemoveIcon: false,
       },
       beforeUpload: this.onBeforeUpload,
       onChange: this.onAudioChange,
     });
     const otherProps = Object.assign({}, sourceProps, {
-      accept: acceptType[1],
+      accept: '*/*',
       data: {
         attachment: finalNewUuid[1],
         empId: emp.getId(),
       },
       onChange: this.onOtherChange,
     });
-
+    const morningBoradcastType = dict.newsTypeDictList || [];
     return (
       <Modal
-        title={`${newsId === -1 ? '修改' : '新建'}晨间播报`}
+        title={`${newsId !== -1 ? '修改' : '新建'}晨间播报`}
         width="650px"
         wrapClassName="addMorningBoradcast"
         bodyStyle={{
@@ -335,7 +330,7 @@ export default class AddMorningBoradcast extends PureComponent {
         }}
         visible={this.props.visible}
         onOk={this.handleSubmit}
-        onCancel={this.handleClose}
+        onCancel={handleCancel}
       >
         <Form>
           <FormItem
@@ -351,8 +346,9 @@ export default class AddMorningBoradcast extends PureComponent {
               ],
             })(
               <Select placeholder="晨报类型">
-                <Option value="V2_MORNING_NEWS">财经V2晨报</Option>
-                <Option value="PROD_SALES_MORNING_NEWS">产品销售晨报</Option>
+                {
+                  morningBoradcastType.map(item => <Option value={item.key}>{item.value}</Option>)
+                }
               </Select>,
             )}
           </FormItem>
@@ -417,9 +413,9 @@ export default class AddMorningBoradcast extends PureComponent {
                 />
                 <span
                   className="audioDesc"
-                  style={{ color: '#2782d7' }}
+                  style={{ color: '#2782d7', cursor: 'pointer' }}
                 >
-                  音频文件
+                  {`${audioFileList.length ? '上传音频文件' : '更新音频文件'}`}
                 </span>
               </div>
             </Upload>

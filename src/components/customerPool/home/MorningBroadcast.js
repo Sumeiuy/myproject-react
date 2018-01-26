@@ -9,13 +9,16 @@ import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
+import Marquee from '../../morningBroadcast/Marquee';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper } from '../../../helper';
+import { emp, url as urlHelper } from '../../../helper';
 import more from './img/more.png';
+import { request } from '../../../config';
 
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
+    sourceList: PropTypes.array.isRequired,
     push: PropTypes.func.isRequired,
   };
 
@@ -52,8 +55,13 @@ export default class MorningBroadcast extends PureComponent {
     });
   }
 
+  @autobind
+  getAudioSrc(source) {
+    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${source.name}`;
+  }
+
   render() {
-    const { dataList } = this.props;
+    const { dataList, sourceList = [] } = this.props;
     const { activeMusic } = this.state;
     return (
       <div className={styles.morning_broadcast}>
@@ -67,16 +75,17 @@ export default class MorningBroadcast extends PureComponent {
         <div className={styles.listWrap}>
           {
             dataList
-              .filter((item, index) => index <= 1)
-              .map((item) => {
+              .map((item, index) => {
                 if (activeMusic === item.newsId) {
+                  const sourceFile = sourceList[index];
+                  const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
                     <div key={item.newsId} className={styles.item}>
                       <div className={styles.simpleName}>
-                        <div>{item.newsTypValue}</div>
+                        <Marquee content={item.newsTypValue} speed={40} />
                       </div>
                       <div className={styles.music}>
-                        <audio src={'http://www.w3school.com.cn/i/horse.ogg'} controls="controls">
+                        <audio src={audioSrc} controls="controls">
                           Your browser does not support the audio element.
                         </audio>
                         <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
@@ -86,7 +95,7 @@ export default class MorningBroadcast extends PureComponent {
                 }
                 return (
                   <div key={item.newsId} className={styles.item}>
-                    <span className={styles.desc}>{`${item.newsTypValue}:${item.title}`}</span>
+                    <span className={styles.desc}>{`${item.newsTypValue}：${item.title}`}</span>
                     <span
                       onClick={() => { this.onHandleListen(item.newsId); }}
                       className={styles.listen}

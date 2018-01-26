@@ -19,23 +19,6 @@ import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
 
 const Search = Input.Search;
 
-const columns = [{
-  title: '类型',
-  dataIndex: 'newsTypValue',
-  width: '15%',
-  key: 'type',
-}, {
-  title: '创建日期',
-  dataIndex: 'created',
-  width: '15%',
-  key: 'date',
-}, {
-  title: '作者',
-  dataIndex: 'createdBy',
-  width: '15%',
-  className: 'tableAuthor',
-  key: 'author',
-}];
 let TIME_RANGE_FROM; // 查询创建时间-->开始时间
 
 const effects = {
@@ -55,6 +38,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const mapStateToProps = state => ({
   morningBoradcast: state.morningBoradcast,
+  dict: state.app.dict,
   newsListLoading: state.loading.effects['morningBoradcast/getBoradcastList'] || false,
 });
 
@@ -73,6 +57,7 @@ const mapDispatchToProps = {
 export default class BroadcastList extends PureComponent {
   static propTypes = {
     morningBoradcast: PropTypes.object.isRequired,
+    dict: PropTypes.object.isRequired,
     newsListLoading: PropTypes.bool.isRequired,
     getBoradcastList: PropTypes.func.isRequired,
     saveBoradcast: PropTypes.func.isRequired,
@@ -107,44 +92,6 @@ export default class BroadcastList extends PureComponent {
     const { morningBoradcast: { newsListQuery } } = this.props;
     const { FROM_DATE } = BroadcastList.initNewsListQuery();
     TIME_RANGE_FROM = newsListQuery.FROM_DATE || FROM_DATE;
-
-    // 实例化时增加标题列、操作列（首次）
-    if (columns.length < 5) {
-      columns.unshift({
-        title: '标题',
-        dataIndex: 'title',
-        key: 'title',
-        className: 'tableTitle',
-        width: '35%',
-        render: (text, record) => {
-          const newId = record.newsId;
-          return (
-            <span
-              onClick={() => { this.onHandleToDetail(newId); }}
-              className={styles.textOverflow}
-              style={{ cursor: 'pointer' }}
-            >
-              {text}
-            </span>
-          );
-        },
-      });
-      columns.push({
-        title: '操作',
-        key: 'action',
-        dataIndex: 'newsId',
-        width: '15%',
-        className: 'tableAction',
-        render: newsId => (
-          <span>
-            <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
-              <i className="icon iconfont icon-shanchu remove" />
-            </Popconfirm>
-          </span>
-        ),
-      });
-    }
 
     this.state = {
       visible: false,
@@ -234,6 +181,58 @@ export default class BroadcastList extends PureComponent {
   // Model(晨报新增、修改) --> end
 
   // table -->start
+  @autobind
+  onHandleTablecolumns() {
+    return [{
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title',
+      className: 'tableTitle',
+      width: '35%',
+      render: (text, record) => {
+        const newId = record.newsId;
+        return (
+          <span
+            onClick={() => { this.onHandleToDetail(newId); }}
+            className={styles.textOverflow}
+            style={{ cursor: 'pointer' }}
+          >
+            {text}
+          </span>
+        );
+      },
+    }, {
+      title: '类型',
+      dataIndex: 'newsTypValue',
+      width: '15%',
+      key: 'type',
+    }, {
+      title: '创建日期',
+      dataIndex: 'created',
+      width: '15%',
+      key: 'date',
+    }, {
+      title: '作者',
+      dataIndex: 'createdBy',
+      width: '15%',
+      className: 'tableAuthor',
+      key: 'author',
+    }, {
+      title: '操作',
+      key: 'action',
+      dataIndex: 'newsId',
+      width: '15%',
+      className: 'tableAction',
+      render: newsId => (
+        <span>
+          <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
+          <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
+            <i className="icon iconfont icon-shanchu remove" />
+          </Popconfirm>
+        </span>
+      ),
+    }];
+  }
   // 页码切换
   @autobind()
   onPageNumChange(page) {
@@ -348,6 +347,7 @@ export default class BroadcastList extends PureComponent {
       saveBoradcast,
       delCeFile,
       getBoradcastDetail,
+      dict,
     } = this.props;
     const initQuery = BroadcastList.initNewsListQuery();
     const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
@@ -404,6 +404,7 @@ export default class BroadcastList extends PureComponent {
               <span className={styles.division}>|</span>
               <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
               <AddMorningBoradcast
+                dict={dict}
                 visible={visible}
                 newsId={newsId}
                 newUuid={newUuid}
@@ -424,7 +425,7 @@ export default class BroadcastList extends PureComponent {
           <div className={styles.broadcastList}>
             <Table
               loading={newsListLoading}
-              columns={columns}
+              columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
               pagination={
                 Object.assign({},

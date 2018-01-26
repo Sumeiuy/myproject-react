@@ -48,7 +48,7 @@ const effects = {
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
-  getBoradcastList: 'morningBoradcast/getBoradcastList',
+  homaPageNews: 'morningBoradcast/homaPageNews', // 晨报列表
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -71,6 +71,7 @@ const mapStateToProps = state => ({
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
   initBoradcastList: state.morningBoradcast.initBoradcastList,
+  initBoradcastFile: state.morningBoradcast.initBoradcastFile,
 });
 
 const mapDispatchToProps = {
@@ -85,7 +86,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
-  getBoradcastList: fetchDataFunction(false, effects.getBoradcastList),
+  homaPageNews: fetchDataFunction(false, effects.homaPageNews),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -122,7 +123,8 @@ export default class Home extends PureComponent {
     ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
     getCustCount: PropTypes.func.isRequired,
     initBoradcastList: PropTypes.array.isRequired,
-    getBoradcastList: PropTypes.func.isRequired,
+    initBoradcastFile: PropTypes.array.isRequired,
+    homaPageNews: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -158,8 +160,7 @@ export default class Home extends PureComponent {
       getInformation,
       getToBeDone,
       getHotWds,
-      getBoradcastList,
-      initBoradcastList,
+      homaPageNews,
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum = '', occDivnNum = '' } = empInfo;
@@ -189,14 +190,12 @@ export default class Home extends PureComponent {
       empPostnList,
     });
     // 初始化晨报列表数据，用于首页提供晨报展示
-    if (!initBoradcastList.length) {
-      const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
-      getBoradcastList({
-        createdFrom: FROM_DATE,
-        createdTo: TO_DATE,
-        pageNum: PAGE_NUM,
-        pageSize: PAGE_LEN });
-    }
+    const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
+    homaPageNews({
+      createdFrom: FROM_DATE,
+      createdTo: TO_DATE,
+      pageNum: PAGE_NUM,
+      pageSize: PAGE_LEN });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -474,6 +473,7 @@ export default class Home extends PureComponent {
       empInfo = {},
       custCount, // 经营指标新增客户指标数据
       initBoradcastList,
+      initBoradcastFile,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -536,6 +536,7 @@ export default class Home extends PureComponent {
           <div className={styles.viewpoint}>
             <MorningBroadcast
               dataList={initBoradcastList}
+              sourceList={initBoradcastFile}
               push={push}
             />
             <Viewpoint

@@ -36,7 +36,9 @@
     align-items: center;
     height: 24px;
     .simpleName {
-      width: 20%;
+      position: relative;
+      width: 75px;
+      height: 24px;
       color: #d67c1e;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -44,7 +46,7 @@
       white-space: nowrap;
     }
     .music {
-      width: 80%;
+      width: calc(~"100% - 75px");
       overflow: hidden;
       height: 20px;
       position: relative;
@@ -81,3 +83,4 @@
     }
   }
 }
+

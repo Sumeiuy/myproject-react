@@ -18,6 +18,7 @@ export default {
     },
     boradcastList: [], // 晨报列表
     initBoradcastList: [],  // 初始化列表数据，为首页服务
+    initBoradcastFile: [],  // 首页数据文件
     pagination: {},  // 分页信息
     boradcastDetail: {},  // 晨报详情
     saveboradcastInfo: {},  // 添加晨报结果信息
@@ -41,16 +42,12 @@ export default {
         TITLE: query.title || '',
         CREATE_BY: query.createdBy || '',
       };
-      const nextState = {
+      return {
         ...state,
         boradcastList: newsList,
         pagination,
         newsListQuery,
       };
-      if (!state.initBoradcastList.length) {
-        Object.assign(nextState, { initBoradcastList: newsList });
-      }
-      return nextState;
     },
     // 保存晨报结果
     saveBoradcastResult(state, action) {
@@ -112,6 +109,22 @@ export default {
       }
       return {
         ...state,
+      };
+    },
+    // 首页列表数据
+    homePageList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        initBoradcastList: payload,
+      };
+    },
+    // 首页晨报资源
+    homePageSource(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        initBoradcastFile: payload,
       };
     },
   },
@@ -197,6 +210,31 @@ export default {
         type: 'delFileResult',
         response,
       });
+    },
+    // 获取首页数据
+    * homaPageNews({ payload }, { call, put }) {
+      const response = yield call(api.searchBoradcastList, payload);
+      const listResult = response.resultData.newsList;
+      if (!listResult) {
+        message.info('对不起，未查询到该条信息', 1);
+      } else {
+        const homePageList = listResult.filter((item, index) => index < 2);
+        yield put({
+          type: 'homePageList',
+          payload: homePageList,
+        });
+        const audioId = homePageList.map(item => item.audioFileId);
+        const audioSourceList = yield audioId.map(item => (
+          call(api.ceFileList, { empId: emp.getId(), attachment: item })
+        ));
+        const resSourceList = audioSourceList.map(item => (
+          item.resultData.length && item.resultData[0]
+        ));
+        yield put({
+          type: 'homePageSource',
+          payload: resSourceList,
+        });
+      }
     },
     // // 获取资源文件
     // * getSourceFile({ payload }, { call, put }) {

@@ -10,9 +10,11 @@ import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import styles from './boradcastDetail.less';
-import { url as urlHelper } from '../../helper';
+import CommonUpload from '../../components/common/biz/CommonUpload';
+import { url as urlHelper, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
+import { request } from '../../config';
 
 
 const effects = {
@@ -79,7 +81,9 @@ export default class BroadcastDetail extends PureComponent {
 
   render() {
     const { newItemDetail } = this.getItemDetail();
-
+    const { audioFileList = [], otherFileList = [] } = newItemDetail;
+    const audioSource = audioFileList[0];
+    const { attachId, name } = audioSource || [];
     return (
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
@@ -87,9 +91,9 @@ export default class BroadcastDetail extends PureComponent {
             <div className={styles.header}>
               <div className={styles.title}>{ newItemDetail.title }</div>
               <div className={styles.info}>
-                <div>类型：{ newItemDetail.type }</div>
-                <div>作者：{ newItemDetail.author }</div>
-                <div>发布日期：{ newItemDetail.date }</div>
+                <div>类型：{ newItemDetail.newsTypValue }</div>
+                <div>作者：{ newItemDetail.createdBy }</div>
+                <div>发布日期：{ newItemDetail.created }</div>
               </div>
               <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
                 <i className="icon iconfont icon-fanhui" />
@@ -104,15 +108,14 @@ export default class BroadcastDetail extends PureComponent {
               <div className={styles.downMusic}>
                 <i className="icon iconfont icon-shipinwenjian" style={{ color: '#2d86d8' }} />
                 <span>音频文件</span>
-                <audio src={`${newItemDetail.source}`} controls="controls">
+                <audio src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`} controls="controls">
                   Your browser does not support the audio element.
                 </audio>
               </div>
-              <div className={styles.downOther}>
-                <i className="icon iconfont icon-qitawenjian" style={{ color: '#cdcdcd' }} />
-                <span>其他文件</span>
-                <i className="icon iconfont icon-xiazai" />
-              </div>
+              <CommonUpload
+                attachmentList={otherFileList}
+                edit={false}
+              />
               <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.footerBack}`}>
                 <i className="icon iconfont icon-fanhui" />
                 晨间播报列表
