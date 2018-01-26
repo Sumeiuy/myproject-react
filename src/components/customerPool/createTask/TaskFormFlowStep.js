@@ -212,11 +212,12 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, flowData } },
+      location: { query: { source, count, flowData = '{}' } },
     } = this.props;
 
-    const baseInfo = JSON.parse(decodeURIComponent(flowData));
-    const { tagetCustModel: { custNum, custSource: taskSource } } = baseInfo;
+    const baseInfo = JSON.parse(decodeURIComponent(flowData)) || {};
+    const { tagetCustModel = {} } = baseInfo;
+    const { custNum, custSource: taskSource } = tagetCustModel;
 
     const {
       isNeedMissionInvestigation,
@@ -393,7 +394,7 @@ export default class TaskFormFlowStep extends PureComponent {
       createTask,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
-      location: { query: { flowId, flowData } },
+      location: { query: { flowId, flowData = '' } },
     } = this.props;
     const {
       isNeedApproval,
@@ -401,7 +402,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.state;
 
     // 获取重新提交任务参数( flowId, eventId );
-    const baseInfo = JSON.parse(decodeURIComponent(flowData));
+    const baseInfo = JSON.parse(decodeURIComponent(flowData)) || {};
     const { motDetailModel: { eventId } } = baseInfo;
     const flowParam = { flowId, eventId };
 
@@ -617,14 +618,15 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
-      location: { query: { missionType, source, flowData } },
+      location: { query: { missionType, source, flowData = '{}' } },
       creator,
       submitSuccess,
     } = this.props;
     const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
-    const { tagetCustModel: { custNum } } = baseInfo;
+    const { tagetCustModel = {} } = baseInfo;
+    const { custNum } = tagetCustModel;
 
     const steps = [{
       title: '基本信息',
