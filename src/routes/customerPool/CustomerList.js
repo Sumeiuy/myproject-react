@@ -312,32 +312,15 @@ export default class CustomerList extends PureComponent {
       // 不同的入口进入列表页面
       enterType: ENTER_TYPE[query.source],
     };
-    // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
-    if (query.source === 'search') {
-      // param.searchTypeReq = 'FromFullTextType';
-      // param.paramsReqList = [
-      //   { key: 'fullTestSearch', value: keyword },
-      // ];
+    if (query.source === 'search') { // 搜索框
       param.searchTypeReq = 'Any';
       param.searchText = keyword;
-    } else if (query.source === 'tag') { // 热词
-      // param.searchTypeReq = 'FromWdsListErea';
-      // param.paramsReqList = [
-      //   { key: query.labelMapping, value: query.tagNumId },
-      // ];
-      // param.labels = [query.labelMapping];
-      param.searchTypeReq = 'label';
-      param.searchText = keyword;
-    } else if (query.source === 'association') {
-      param.searchTypeReq = 'label';
-      param.searchText = keyword;
-      // param.searchTypeReq = 'FromAssociatedErea';
-      // param.paramsReqList = [
-      //   { key: query.labelMapping, value: query.tagNumId },
-      // ];
-    } else if (query.source === 'sightingTelescope') {
+    } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
       param.labels = [query.labelMapping];
-    } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
+    } else if (query.source === 'association') { // 联想词
+      param.searchTypeReq = query.labelMapping;
+      param.searchText = keyword;
+    } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
@@ -420,40 +403,14 @@ export default class CustomerList extends PureComponent {
           });
         }
         if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
-          param.labels.push(String(value));
+          const itemList = value.split(',');
+          param.labels = [
+            ...param.labels,
+            ...itemList,
+          ];
         }
       });
     }
-    // if (query.unright_type) {
-    //   filtersReq.push({
-    //     filterType: 'Unrights',
-    //     filterContentList: query.unright_type.split(','),
-    //   });
-    // }
-    // if (query.Rights) {
-    //   filtersReq.push({
-    //     filterType: 'Rights',
-    //     filterContentList: query.Rights.split(','),
-    //   });
-    // }
-    // if (query.RiskLvl) {
-    //   filtersReq.push({
-    //     filterType: 'RiskLvl',
-    //     filterContentList: [query.RiskLvl],
-    //   });
-    // }
-    // if (query.CustClass) {
-    //   filtersReq.push({
-    //     filterType: 'CustClass',
-    //     filterContentList: [query.CustClass],
-    //   });
-    // }
-    // if (query.CustomType) {
-    //   filtersReq.push({
-    //     filterType: 'CustomType',
-    //     filterContentList: [query.CustomType],
-    //   });
-    // }
     if (query.sortType || query.sortDirection) {
       sortsReqList.push({
         sortType: query.sortType,

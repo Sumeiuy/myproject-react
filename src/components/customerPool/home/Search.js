@@ -160,7 +160,7 @@ export default class Search extends PureComponent {
       }];
     }
 
-    this.setState({
+    this.setState({ // eslint-disable-line
       isHasSearchResult: true,
     });
     return _.map(hotList, (item, index) => {
@@ -290,7 +290,7 @@ export default class Search extends PureComponent {
         <Clickable
           onClick={() => this.handleOpenTab({
             source: item.type === 'jzyx' ? 'sightingTelescope' : 'association',
-            labelMapping: item.id || '',
+            labelMapping: item.type === 'jzyx' ? item.id : item.type,
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"

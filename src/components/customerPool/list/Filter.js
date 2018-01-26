@@ -55,7 +55,7 @@ export default class Filter extends PureComponent {
           backfillValue = value;
         }
       });
-      return (<SingleFilter
+      return (<MultiFilter
         key={obj.filterCode}
         value={backfillValue}
         filterLabel={obj.filterDesc}
