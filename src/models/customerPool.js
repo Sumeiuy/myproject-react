@@ -655,12 +655,14 @@ export default {
     },
     // 标签圈人-id查询客户列表
     * getLabelPeople({ payload }, { call, put }) {
-      const response = yield call(api.queryLabelPeople, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getLabelPeopleSuccess',
-        payload: { resultData },
-      });
+      const response = yield call(api.getCustomerList, payload);
+      const { resultData: { custListVO } } = response;
+      if (response.code === '0') {
+        yield put({
+          type: 'getLabelPeopleSuccess',
+          payload: custListVO,
+        });
+      }
     },
     // 提交任务流程
     * submitTaskFlow({ payload }, { call, put }) {
@@ -1250,10 +1252,18 @@ export default {
     },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
+      const emptyData = {
+        totalCount: 0,
+        pageSize: 10,
+        beginIndex: 1,
+        curPageNum: 1,
+        totalPage: 1,
+        custList: [],
+      };
       return {
         ...state,
-        peopleOfLabelData: resultData || {},
+        peopleOfLabelData: payload || emptyData,
       };
     },
     // 保存当前选中tab

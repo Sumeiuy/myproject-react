@@ -24,6 +24,8 @@ export default class SelectLabelCust extends PureComponent {
     isAuthorize: PropTypes.bool,
     visible: PropTypes.bool.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -152,6 +154,8 @@ export default class SelectLabelCust extends PureComponent {
       visible,
       isAuthorize,
       dict,
+      getFiltersOfSightingTelescope,
+      sightingTelescopeFilters,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -185,6 +189,8 @@ export default class SelectLabelCust extends PureComponent {
           currentSelectLabel={currentSelectLabel}
           orgId={orgId}
           isAuthorize={isAuthorize}
+          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
+          sightingTelescopeFilters={sightingTelescopeFilters}
         />
       </div>
     );

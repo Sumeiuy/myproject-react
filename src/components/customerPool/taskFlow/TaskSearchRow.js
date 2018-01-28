@@ -61,6 +61,8 @@ export default class TaskSearchRow extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     isAuthorize: PropTypes.bool.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -79,16 +81,20 @@ export default class TaskSearchRow extends PureComponent {
       isLoadingEnd: true,
       title: '',
       custTableData: [],
-      filter: {},
+      filter: [],
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData, visible } = nextProps;
-    const { userObjectFormList = [] } = peopleOfLabelData || {};
-    const list = _.map(userObjectFormList, item => ({
+    const { custList = [] } = peopleOfLabelData || {};
+    const list = _.map(custList, item => ({
       ...item,
-      cust_type: item.cust_type === 'N' ? '高净值' : '零售',
+      brok_id: item.brokId,
+      brok_org_id: item.brokOrgId,
+      contact_flag: item.contactFlag,
+      lever_code: item.levelName,
+      cust_type: item.custType === 'N' ? '高净值' : '零售',
     }));
     this.setState({
       totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
@@ -109,41 +115,85 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} curPageNum 当前页
    * @param {*} pageSize 当前页条目
    */
-  queryPeopleOfLabel(labelId, curPageNum, pageSize, filter = {}) {
+  queryPeopleOfLabel(labelId, curPageNum = 1, pageSize = 10, filter = []) {
     const { isAuthorize, orgId, getLabelPeople } = this.props;
-    console.log('filter', filter, orgId);
-    let postBody = {
-      labelId,
+    const payload = {
       curPageNum,
       pageSize,
-      // filter,
+      enterType: 'labelSearchCustPool',
+      labels: [labelId],
     };
     if (isAuthorize) {
-      postBody = {
-        ...postBody,
-        orgId,
-      };
+      payload.orgId = orgId;
     } else {
-      postBody = {
-        ...postBody,
-        ptyMngId: emp.getId(),
-      };
+      payload.ptyMngId = emp.getId();
     }
-
-    getLabelPeople({
-      ...postBody,
-    });
+    const filtersList = [];
+    if (!_.isEmpty(filter)) {
+      _.forEach(filter, (item) => {
+        const [name, value] = item.split('.');
+        if (name === 'Unrights' && value) {
+          filtersList.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'Rights' && value) {
+          filtersList.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'RiskLvl' && value) {
+          filtersList.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'CustClass' && value) {
+          filtersList.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (name === 'CustomType' && value) {
+          filtersList.push({
+            filterType: name,
+            filterContentList: value.split(','),
+          });
+        }
+        if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
+          const itemList = value.split(',');
+          payload.labels = [
+            ...payload.labels,
+            ...itemList,
+          ];
+        }
+      });
+    }
+    if (!_.isEmpty(filtersList)) {
+      payload.filtersReq = filtersList;
+    }
+    getLabelPeople(payload);
   }
 
   @autobind
   handleSeeCust(value = {}) {
     const { filter } = this.state;
+    const { getFiltersOfSightingTelescope } = this.props;
+    // 瞄准镜的label 时取获取对应的筛选条件
+    if (value.source === 'jzyx') {
+      getFiltersOfSightingTelescope({
+        prodId: value.labelMapping || '',
+      });
+    }
+    console.log('value>>>>>>>>', value);
     this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE, filter);
-
     this.setState({
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,
+      currentSource: value.source,
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
     });
@@ -194,11 +244,17 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handleFilterChange(obj) {
     const { labelId, filter } = this.state;
+    const newFilterArray = [...filter];
+    const index = _.findIndex(filter, o => o.split('.')[0] === obj.name);
+    const filterItem = `${obj.name}.${obj.value}`;
+    if (index > -1) {
+      newFilterArray[index] = filterItem;
+    } else {
+      newFilterArray.push(filterItem);
+    }
+    // debugger
     this.setState({
-      filter: {
-        ...filter,
-        [obj.name]: obj.value,
-      },
+      filter: newFilterArray,
     }, () => {
       this.queryPeopleOfLabel(
         labelId,
@@ -213,7 +269,7 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
-    const { totalCustNums } = this.state;
+    const { totalRecordNum, labelId } = this.state;
     return _.map(circlePeopleData,
       (item) => {
         let newDesc = item.labelDesc;
@@ -230,6 +286,8 @@ export default class TaskSearchRow extends PureComponent {
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
         });
+        const filteredCustomerNums = labelId === item.id
+          ? totalRecordNum : item.customNum;
         return (
           <div className={cls} key={item.id || item.labelMapping}>
             <Radio
@@ -241,7 +299,7 @@ export default class TaskSearchRow extends PureComponent {
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <span className={styles.filterCount}>
-                已筛选客户数：<i>{totalCustNums || item.customNum}</i>
+                已筛选客户数：<i>{filteredCustomerNums}</i>
               </span>
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
@@ -272,6 +330,7 @@ export default class TaskSearchRow extends PureComponent {
       // title,
       custTableData,
       filter,
+      currentSource,
     } = this.state;
 
     const {
@@ -279,12 +338,12 @@ export default class TaskSearchRow extends PureComponent {
       isLoadingEnd,
       condition,
       dict,
+      sightingTelescopeFilters,
     } = this.props;
 
     if (_.isEmpty(condition)) {
       return null;
     }
-
     return (
       <div className={styles.divContent}>
         <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
@@ -319,6 +378,8 @@ export default class TaskSearchRow extends PureComponent {
                       dict={dict}
                       currentItems={filter}
                       onFilterChange={this.handleFilterChange}
+                      source={currentSource}
+                      sightingTelescopeFilters={sightingTelescopeFilters}
                     />
                   </div>
                 }
