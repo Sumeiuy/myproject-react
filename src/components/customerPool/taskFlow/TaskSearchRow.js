@@ -63,6 +63,7 @@ export default class TaskSearchRow extends PureComponent {
     isAuthorize: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    getSightingTelescopeArgs: PropTypes.func.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -116,7 +117,7 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} pageSize 当前页条目
    */
   queryPeopleOfLabel(labelId, curPageNum = 1, pageSize = 10, filter = []) {
-    const { isAuthorize, orgId, getLabelPeople } = this.props;
+    const { isAuthorize, orgId, getLabelPeople, getSightingTelescopeArgs } = this.props;
     const payload = {
       curPageNum,
       pageSize,
@@ -175,6 +176,7 @@ export default class TaskSearchRow extends PureComponent {
       payload.filtersReq = filtersList;
     }
     getLabelPeople(payload);
+    getSightingTelescopeArgs(payload);
   }
 
   @autobind
@@ -187,7 +189,6 @@ export default class TaskSearchRow extends PureComponent {
         prodId: value.labelMapping || '',
       });
     }
-    console.log('value>>>>>>>>', value);
     this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE, filter);
     this.setState({
       title: value.labelName,

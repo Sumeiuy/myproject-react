@@ -258,6 +258,13 @@ export default class TaskFlow extends PureComponent {
         labelCustNums,
       };
     }
+    // postBody = {
+    //   searchReq: {
+    //     enterType: 'lableCustPool',
+    //     lables: ['J0001'],
+    //     filtersReq: [{ filterType: "Rights", filterContentList: ["817030"] }],
+    //   },
+    // };
 
     this.props.isSendCustsServedByPostn({
       ...postBody,

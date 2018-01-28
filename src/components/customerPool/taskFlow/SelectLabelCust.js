@@ -89,6 +89,17 @@ export default class SelectLabelCust extends PureComponent {
     };
   }
 
+  // 获取瞄准镜参数
+  @autobind
+  getSightingTelescopeArgs(value) {
+    console.log('value: ', value);
+    this.setState({
+      sightingTelescopeArgs: value,
+    }, () => {
+      console.log('getSightingTelescopeArgs: ', this.state.sightingTelescopeArgs);
+    });
+  }
+
   @autobind
   handleSearchClick(value) {
     const { getLabelInfo, isAuthorize, orgId } = this.props;
@@ -191,6 +202,7 @@ export default class SelectLabelCust extends PureComponent {
           isAuthorize={isAuthorize}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
+          getSightingTelescopeArgs={this.getSightingTelescopeArgs}
         />
       </div>
     );
