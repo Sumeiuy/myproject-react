@@ -8,12 +8,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, Pagination, Popover } from 'antd';
+import { Table, Popover } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
 import { data as helperData } from '../../helper';
+import Pagination from '../common/Pagination';
 import { fspContainer, optionsMap, constants } from '../../config';
 import styles from './ChartTable.less';
 
@@ -48,8 +49,8 @@ export default class ChartTable extends PureComponent {
     chartTableInfo: {},
     sourceData: [],
     data: {},
-    getTableInfo: () => {},
-    repalce: () => {},
+    getTableInfo: () => { },
+    repalce: () => { },
   }
   constructor(props) {
     super(props);
@@ -89,7 +90,7 @@ export default class ChartTable extends PureComponent {
     // 根据 nextProps 的值是否变化来判断是否调用此方法
     const props = this.props;
     if (!_.isEqual(props.chartTableInfo, nextProps.chartTableInfo)
-    || !_.isEqual(props.scope, nextProps.scope)) {
+      || !_.isEqual(props.scope, nextProps.scope)) {
       this.changeTableData(nextProps);
     }
   }
@@ -163,9 +164,9 @@ export default class ChartTable extends PureComponent {
       onClick={() => { this.handleTitleClick(item); }}
     >
       {unitFlag && item.unit ?
-      `${item.name}(${encodeURIComponent(item.unit).indexOf(encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
-      :
-      item.name
+        `${item.name}(${encodeURIComponent(item.unit).indexOf(encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
+        :
+        item.name
       }
       {
         !item.children ?
@@ -189,8 +190,8 @@ export default class ChartTable extends PureComponent {
               <i className={'anticon anticon-caret-down'} />
             </span>
           </span>
-        :
-        null
+          :
+          null
       }
 
     </span>);
@@ -337,8 +338,8 @@ export default class ChartTable extends PureComponent {
         {record.city}
       </div>
     </Popover>
-    :
-    <div className={styles.tdWrapperDiv}>{record.city}</div>;
+      :
+      <div className={styles.tdWrapperDiv}>{record.city}</div>;
     // return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
     //   <div className={styles.tdWrapperDiv}>
     //     {record.city}
@@ -485,6 +486,13 @@ export default class ChartTable extends PureComponent {
   render() {
     const { chartTableInfo, style } = this.props;
     const { allWidth, scrollDisplay } = this.state;
+    const paginationOption = {
+      curPageNum: chartTableInfo.curPageNum || 1,
+      totalRecordNum: chartTableInfo.totalCnt || 1,
+      curPageSize: chartTableInfo.pageSize,
+      onPageChange: this.handlePaginationChange,
+      isShowSizeChanger: false,
+    };
     return (
       <div className={styles.tableDiv} style={style} ref={this.saveTableWrapper}>
         <Table
@@ -496,11 +504,7 @@ export default class ChartTable extends PureComponent {
           scroll={{ x: this.state.allWidth }}
         />
         <Pagination
-          defaultCurrent={1}
-          current={chartTableInfo.curPageNum || 1}
-          total={chartTableInfo.totalCnt || 1}
-          pageSize={chartTableInfo.pageSize}
-          onChange={this.handlePaginationChange}
+          {...paginationOption}
         />
         {
           scrollDisplay ?
@@ -509,7 +513,7 @@ export default class ChartTable extends PureComponent {
               setScrollLeft={this.setScrollLeft}
               tableScrollLeft={this.state.scrollLeft}
             />
-          :
+            :
             <div />
         }
       </div>

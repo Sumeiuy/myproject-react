@@ -13,7 +13,7 @@ import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 import Icon from '../../common/Icon';
-import Paganation from '../../common/Paganation';
+import Pagination from '../../common/Pagination';
 
 import styles from './missionFeedback.less';
 
@@ -59,8 +59,8 @@ export default class MissionFeedback extends PureComponent {
         resultData: {
           pageInfo: {
             curPageNum: 1,
-            curPageSize: 10,
-            totalPage: 10,
+            curPageSize: 5,
+            totalRecordNum: 5,
           },
           dataInfo: [],
         },
@@ -102,8 +102,8 @@ export default class MissionFeedback extends PureComponent {
         dataInfo,
         pageInfo: {
           curPageNum: 1,
-          curPageSize: 10,
-          totalPage: _.size(dataInfo),
+          curPageSize: 5,
+          totalRecordNum: _.size(dataInfo),
         },
       },
     });
@@ -132,7 +132,115 @@ export default class MissionFeedback extends PureComponent {
     let checkboxFeedback = [];
     let answerTotalCount = 0;
     let dataInfo = [];
-    _.each(missionFeedbackData, (item) => {
+    _.each([
+      [
+        {
+          "quesId": 3,
+          "quesTypeCode": "1",
+          "quesType": "RADIO",
+          "quesValue": "题目1题干XXX",
+          "optionValue": "合理",
+          "answerText": null,
+          "cnt": 2
+        },
+        {
+          "quesId": 3,
+          "quesTypeCode": "1",
+          "quesType": "RADIO",
+          "quesValue": "题目1题干XXX",
+          "optionValue": "不合理",
+          "answerText": null,
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "68",
+          "answerText": null,
+          "cnt": 3
+        },
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "67",
+          "answerText": null,
+          "cnt": 2
+        },
+        {
+          "quesId": 5,
+          "quesTypeCode": "2",
+          "quesType": "CHECKBOX",
+          "quesValue": "题目2题干XXX",
+          "optionValue": "222222222222222222222222222222",
+          "answerText": null,
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板1206建议666",
+          "cnt": 1
+        },
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板2332建议666",
+          "cnt": 1
+        },
+        {
+          "quesId": 6,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目3主观题",
+          "optionValue": null,
+          "answerText": "二模板1414建议666\n",
+          "cnt": 1
+        }
+      ],
+      [
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板1206建议777",
+          "cnt": 1
+        },
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板2332建议777",
+          "cnt": 1
+        },
+        {
+          "quesId": 7,
+          "quesTypeCode": "3",
+          "quesType": "SUBJECTIVE",
+          "quesValue": "题目4主观题",
+          "optionValue": null,
+          "answerText": "二模板1414建议777",
+          "cnt": 1
+        },
+      ],
+    ], (item) => {
       if (_.isArray(item)) {
         let radioData = [];
         let checkboxData = [];
@@ -491,9 +599,20 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
+    const paginationOption = {
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+      onPageChange: this.handlePageChange,
+      onSizeChange: this.handleSizeChange,
+    };
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
-        <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+        <h5 title={itemChild.data} key={itemChild.data}>
+          {index + 1}.{itemChild.data}
+        </h5>,
+      );
+
       return (
         <div className={styles.subjective}>
           <div
@@ -514,13 +633,9 @@ export default class MissionFeedback extends PureComponent {
               <div>
                 {info}
                 {
-                  totalRecordNum > 10 ?
-                    <Paganation
-                      curPageNum={curPageNum}
-                      curPageSize={curPageSize}
-                      totalRecordNum={totalRecordNum}
-                      onPageChange={this.handlePageChange}
-                      onSizeChange={this.handleSizeChange}
+                  totalRecordNum > 5 ?
+                    <Pagination
+                      {...paginationOption}
                     /> : null
                 }
               </div>
