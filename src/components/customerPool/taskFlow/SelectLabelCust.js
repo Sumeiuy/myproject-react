@@ -92,11 +92,8 @@ export default class SelectLabelCust extends PureComponent {
   // 获取瞄准镜参数
   @autobind
   getSightingTelescopeArgs(value) {
-    console.log('value: ', value);
     this.setState({
       sightingTelescopeArgs: value,
-    }, () => {
-      console.log('getSightingTelescopeArgs: ', this.state.sightingTelescopeArgs);
     });
   }
 

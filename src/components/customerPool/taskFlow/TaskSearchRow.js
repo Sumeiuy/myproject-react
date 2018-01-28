@@ -175,6 +175,7 @@ export default class TaskSearchRow extends PureComponent {
     if (!_.isEmpty(filtersList)) {
       payload.filtersReq = filtersList;
     }
+    // 获取客户列表
     getLabelPeople(payload);
     getSightingTelescopeArgs(payload);
   }
