@@ -339,7 +339,7 @@ export default class ChartTable extends PureComponent {
       </div>
     </Popover>
       :
-      <div className={styles.tdWrapperDiv}>{record.city}</div>;
+    <div className={styles.tdWrapperDiv}>{record.city}</div>;
     // return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
     //   <div className={styles.tdWrapperDiv}>
     //     {record.city}
