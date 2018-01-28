@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-28 11:50:03
+ * @Last Modified time: 2018-01-28 12:31:17
  * 定制化分页组件，供项目所有需要用到分页的组件调用
  * 调用方式
  * const paginationOption = {
@@ -84,8 +84,6 @@ export default class PaginationComponent extends PureComponent {
 
   @autobind
   renderTotal(total, range) {
-    console.log(total);
-    console.log(range);
     return `${range[0]}-${range[1]} of ${total} items`;
   }
 
