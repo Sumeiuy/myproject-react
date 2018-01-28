@@ -91,7 +91,7 @@ export default class CreateTask extends PureComponent {
     creator: PropTypes.string,
     submitApproval: PropTypes.func,
     approvalBtn: PropTypes.object,
-    submitSuccess: PropTypes.bool,
+    submitSuccess: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -105,7 +105,7 @@ export default class CreateTask extends PureComponent {
     getApprovalListLoading: false,
     creator: '',
     approvalBtn: {},
-    submitSuccess: false,
+    submitSuccess: {},
     submitApproval: () => { },
     getApprovalBtn: () => { },
   };
@@ -176,7 +176,6 @@ export default class CreateTask extends PureComponent {
       updateTask,
       location: { query: { source } },
     } = this.props;
-    // console.log(value);
     // 调用接口，创建任务
     if (source === 'returnTask') {
       updateTask(value);

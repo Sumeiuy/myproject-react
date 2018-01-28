@@ -50,7 +50,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     submitApproval: PropTypes.func,
-    submitSuccess: PropTypes.bool,
+    submitSuccess: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -64,7 +64,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     updateTask: noop,
     orgId: null,
     enterType: null,
-    submitSuccess: false,
+    submitSuccess: {},
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
@@ -169,7 +169,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     } else {
       storedData = _.merge(currentFlowData, storedCreateTaskData.custList) || {};
     }
-
     return storedData;
   }
 

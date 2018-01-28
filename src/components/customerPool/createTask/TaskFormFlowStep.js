@@ -44,7 +44,7 @@ export default class TaskFormFlowStep extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     submitApproval: PropTypes.func,
-    submitSuccess: PropTypes.bool,
+    submitSuccess: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -55,7 +55,7 @@ export default class TaskFormFlowStep extends PureComponent {
     dict: {},
     storedCreateTaskData: {},
     orgId: null,
-    submitSuccess: false,
+    submitSuccess: {},
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
@@ -64,12 +64,12 @@ export default class TaskFormFlowStep extends PureComponent {
   constructor(props) {
     super(props);
     const {
-      location: { query: { source, flowData = '{}' } },
+      location: { query: { source } },
       storedCreateTaskData: { taskFormData, current, custSource },
     } = props;
-    const currentFlowData = JSON.parse(decodeURIComponent(flowData));
-    const { motDetailModel } = currentFlowData || {};
-    const { quesVO = [] } = motDetailModel || {};
+    // const currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    // const { motDetailModel } = currentFlowData || {};
+    // const { quesVO = [] } = motDetailModel || {};
     const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
@@ -85,7 +85,8 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskName: false,
       isNeedApproval: isEntryFromReturnTask,
       isCanGoNextStep: isEntryFromReturnTask,
-      isNeedMissionInvestigation: !_.isEmpty(quesVO),
+      isNeedMissionInvestigation: true,
+      isDisabled: false,
     };
   }
 
@@ -187,6 +188,9 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case 'search':
         custSources = '搜索目标客户';
+        break;
+      case 'association':
+        custSources = '热词搜索目标客户';
         break;
       case 'tag':
         custSources = '标签目标客户池';
@@ -590,10 +594,11 @@ export default class TaskFormFlowStep extends PureComponent {
   @autobind
   handleSubmitSuccess() {
     const { submitSuccess } = this.props;
-    if (submitSuccess) {
+    if (submitSuccess.code === '0') {
       message.success('提交成功');
       this.setState({
-        isCanGoNextStep: !submitSuccess,
+        isDisabled: true,
+        isCanGoNextStep: false,
       });
     }
   }
@@ -612,6 +617,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
+      isDisabled,
     } = this.state;
 
     const {
@@ -629,7 +635,6 @@ export default class TaskFormFlowStep extends PureComponent {
       onCancel,
       location: { query: { missionType, source, flowData = '{}' } },
       creator,
-      submitSuccess,
     } = this.props;
     const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { executeTypes, motCustfeedBackDict } = dict;
@@ -697,7 +702,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onClick={this.handleStopFlow}
         eventName="/click/taskFormFlowStep/cancel"
       >
-        <Button className={styles.cancelBtn} type="default" disabled={submitSuccess}>
+        <Button className={styles.cancelBtn} type="default" disabled={isDisabled}>
           终止
         </Button>
       </Clickable>) :
@@ -716,7 +721,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onClick={this.handleStopFlow}
         eventName="/click/taskFormFlowStep/cancel"
       >
-        <Button className={styles.stopBtn} type="default" disabled={submitSuccess}>
+        <Button className={styles.stopBtn} type="default" disabled={isDisabled}>
           终止
         </Button>
       </Clickable>) : null;
@@ -747,7 +752,7 @@ export default class TaskFormFlowStep extends PureComponent {
                 onClick={this.handlePreviousStep}
                 eventName="/click/taskFormFlowStep/lastStep"
               >
-                <Button className={styles.prevStepBtn} type="default" disabled={submitSuccess}>
+                <Button className={styles.prevStepBtn} type="default" disabled={isDisabled}>
                   上一步
               </Button>
               </Clickable>
@@ -772,7 +777,7 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleSubmit}
               eventName="/click/taskFormFlowStep/submit"
             >
-              <Button className={styles.confirmBtn} type="primary" disabled={submitSuccess}>
+              <Button className={styles.confirmBtn} type="primary" disabled={isDisabled}>
                 确认无误，提交
               </Button>
             </Clickable>
