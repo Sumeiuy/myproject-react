@@ -133,9 +133,10 @@ export default class AddMorningBoradcast extends PureComponent {
         return;
       }
       this.setState({ audioError: true });
-      let query;
+      let query = values;
       if (!err) {
         query = {
+          ...query,
           audioFileId: finalNewUuid[0],
           otherFileId: finalNewUuid[1],
         };

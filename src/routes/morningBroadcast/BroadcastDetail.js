@@ -50,7 +50,7 @@ export default class BroadcastDetail extends PureComponent {
     const { newItemDetail, newsId } = this.getItemDetail();
     const { getBoradcastDetail } = this.props;
     if (_.isEmpty(newItemDetail) && newsId) {
-      getBoradcastDetail({ newId: newsId });
+      getBoradcastDetail({ newsId });
     }
   }
 
@@ -92,7 +92,7 @@ export default class BroadcastDetail extends PureComponent {
               <div className={styles.title}>{ newItemDetail.title }</div>
               <div className={styles.info}>
                 <div>类型：{ newItemDetail.newsTypValue }</div>
-                <div>作者：{ newItemDetail.createdBy }</div>
+                <div>作者：{ newItemDetail.createdBy && newItemDetail.createdBy }</div>
                 <div>发布日期：{ newItemDetail.created }</div>
               </div>
               <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
