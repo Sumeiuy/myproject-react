@@ -200,13 +200,24 @@ export default class AddMorningBoradcast extends PureComponent {
       this.onAudioUploading(fileList);
     }
     if (file.status === 'done') {
-      const resFileList = file.response.resultData.attaches;
-      const attachment = file.response.resultData.attachment;
-      const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
-      this.setState({
-        audioFileList: finalFileAudioList,
-        audioError: finalFileAudioList.length,
-      });
+      const res = file.response;
+      if (res.code !== '0') {
+        const fileErrorList = {
+          ...file,
+          status: 'error',
+        };
+        this.setState({
+          audioFileList: [fileErrorList],
+        });
+      } else {
+        const resFileList = file.response.resultData.attaches;
+        const attachment = file.response.resultData.attachment;
+        const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
+        this.setState({
+          audioFileList: finalFileAudioList,
+          audioError: finalFileAudioList.length,
+        });
+      }
     }
     if (file.status === 'error') {
       this.setState({ fileAudioList: fileList });
