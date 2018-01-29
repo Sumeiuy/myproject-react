@@ -122,7 +122,7 @@ export default {
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
-    submitSuccess: false,
+    submitApporvalResult: {},
     // 查询客户的数量限制或者是否都是本人名下的客户
     sendCustsServedByPostnResult: {
       custNumsIsExceedUpperLimit: false,
@@ -759,11 +759,10 @@ export default {
     },
     // 审批按钮提交
     * submitApproval({ payload }, { call, put }) {
-      const response = yield call(api.submitApproval, payload);
-      const { resultData } = response;
+      const submitApporvalResult = yield call(api.submitApproval, payload);
       yield put({
         type: 'submitApprovalSuccess',
-        payload: { resultData },
+        payload: submitApporvalResult,
       });
     },
     // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
@@ -1354,10 +1353,10 @@ export default {
     },
     // 审批按钮提交成功
     submitApprovalSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        submitSuccess: resultData === 'success',
+        submitApporvalResult: payload,
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户
