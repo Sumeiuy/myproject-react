@@ -45,7 +45,7 @@ const mapStateToProps = state => ({
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
   approvalBtn: state.customerPool.approvalBtn,
-  submitSuccess: state.customerPool.submitSuccess,
+  submitApporvalResult: state.customerPool.submitApporvalResult,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
@@ -91,7 +91,7 @@ export default class CreateTask extends PureComponent {
     creator: PropTypes.string,
     submitApproval: PropTypes.func,
     approvalBtn: PropTypes.object,
-    submitSuccess: PropTypes.bool,
+    submitApporvalResult: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -105,7 +105,7 @@ export default class CreateTask extends PureComponent {
     getApprovalListLoading: false,
     creator: '',
     approvalBtn: {},
-    submitSuccess: false,
+    submitApporvalResult: {},
     submitApproval: () => { },
     getApprovalBtn: () => { },
   };
@@ -176,7 +176,6 @@ export default class CreateTask extends PureComponent {
       updateTask,
       location: { query: { source } },
     } = this.props;
-    // console.log(value);
     // 调用接口，创建任务
     if (source === 'returnTask') {
       updateTask(value);
@@ -226,7 +225,7 @@ export default class CreateTask extends PureComponent {
       creator,
       approvalBtn,
       getApprovalBtn,
-      submitSuccess,
+      submitApporvalResult,
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
@@ -256,7 +255,7 @@ export default class CreateTask extends PureComponent {
             creator={creator}
             approvalBtn={approvalBtn}
             getApprovalBtn={getApprovalBtn}
-            submitSuccess={submitSuccess}
+            submitApporvalResult={submitApporvalResult}
             submitApproval={submitApproval}
             sendCustsServedByPostnResult={sendCustsServedByPostnResult}
             isSendCustsServedByPostn={isSendCustsServedByPostn}
