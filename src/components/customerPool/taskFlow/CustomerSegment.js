@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 11:11:18
+ * @Last Modified time: 2018-01-29 17:59:13
  * 客户细分组件
  */
 
@@ -177,14 +177,6 @@ export default class CustomerSegment extends PureComponent {
       originFileName,
       custTotal,
     });
-    // // 导入完成之后，请求看看客户是否合法，是否需要审批
-    // this.props.isSendCustsServedByPostn({
-    //   currentFile,
-    //   uploadedFileKey,
-    //   originFileName,
-    //   custTotal,
-    //   currentEntry: 0,
-    // });
   }
 
   @autobind
