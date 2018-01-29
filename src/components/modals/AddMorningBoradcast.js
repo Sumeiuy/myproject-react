@@ -61,7 +61,7 @@ export default class AddMorningBoradcast extends PureComponent {
       if (newsId !== -1) {
         const itemDetail = boradcastDetail[newsId];
         if (!itemDetail) {
-          getBoradcastDetail({ newId: newsId });
+          getBoradcastDetail({ newsId });
         } else {
           this.setSourceValue(itemDetail);
         }
