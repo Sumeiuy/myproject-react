@@ -14,7 +14,7 @@ const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
 const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
-const HTSC_ZX_MAMPID = '1-3SID83'; // HTSC 资讯管理岗
+const HTSC_ZX_MAMPID = '1-4VP1BIC'; // HTSC 资讯管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
