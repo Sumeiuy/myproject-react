@@ -124,7 +124,7 @@ export default class TaskSearchRow extends PureComponent {
    * @param {*} curPageNum 当前页
    * @param {*} pageSize 当前页条目
    */
-  queryPeopleOfLabel(labelId, curPageNum = 1, pageSize = 10, filter = []) {
+  queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
     const { isAuthorize, orgId, getLabelPeople, getArgsOfQueryCustomer } = this.props;
     // 查询客户列表时必传的参数
     const payload = {
@@ -167,12 +167,12 @@ export default class TaskSearchRow extends PureComponent {
         prodId: value.labelMapping || '',
       });
     }
-    this.queryPeopleOfLabel(
-      value.labelMapping,
-      INITIAL_PAGE_NUM,
-      INITIAL_PAGE_SIZE,
-      currentFilterList[value.labelMapping] || [],
-    );
+    this.queryPeopleOfLabel({
+      labelId: value.labelMapping,
+      curPageNum: INITIAL_PAGE_NUM,
+      pageSize: INITIAL_PAGE_SIZE,
+      filter: currentFilterList[value.labelMapping] || [],
+    });
     this.setState({
       title: value.labelName,
       totalCustNums: value.customNum,
@@ -196,12 +196,12 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { labelId, currentFilterList } = this.state;
-    this.queryPeopleOfLabel(
+    this.queryPeopleOfLabel({
       labelId,
-      INITIAL_PAGE_NUM,
-      changedPageSize,
-      currentFilterList[labelId] || [],
-    );
+      curPageNum: INITIAL_PAGE_NUM,
+      pageSize: changedPageSize,
+      filter: currentFilterList[labelId] || [],
+    });
 
     this.setState({
       curPageNum: INITIAL_PAGE_NUM,
@@ -212,12 +212,12 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     const { labelId, currentFilterList } = this.state;
-    this.queryPeopleOfLabel(
+    this.queryPeopleOfLabel({
       labelId,
-      nextPage,
-      currentPageSize,
-      currentFilterList[labelId] || [],
-    );
+      curPageNum: nextPage,
+      pageSize: currentPageSize,
+      filter: currentFilterList[labelId] || [],
+    });
 
     this.setState({
       curPageNum: nextPage,
@@ -238,18 +238,17 @@ export default class TaskSearchRow extends PureComponent {
     } else {
       newFilterArray.push(filterItem);
     }
-    // debugger
     this.setState({
       currentFilterList: {
         [labelId]: newFilterArray,
       },
     }, () => {
-      this.queryPeopleOfLabel(
+      this.queryPeopleOfLabel({
         labelId,
-        INITIAL_PAGE_NUM,
-        INITIAL_PAGE_SIZE,
-        newFilterArray,
-      );
+        curPageNum: INITIAL_PAGE_NUM,
+        pageSize: INITIAL_PAGE_SIZE,
+        filter: newFilterArray,
+      });
     });
   }
 
