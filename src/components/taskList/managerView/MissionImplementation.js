@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-09 16:46:41
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-23 09:59:12
  * 任务实施简报
  */
 
@@ -15,8 +15,7 @@ import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
-import { env } from '../../../helper';
-import { permission } from '../../../utils';
+import { env, permission } from '../../../helper';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 

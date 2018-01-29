@@ -4,7 +4,10 @@
  * @author zhufeiyang
  */
 
-const menus = [
+// 主导航菜单页面以及其跳转页面对应的tab配置项
+// 主导航菜单项不会新打开tab，所以主导航相关的页面全部在这里配置
+// 前端可以完全控制主导航的菜单行为
+const primaryMenu = [
   {
     name: '首页',
     id: 'FSP_NEW_HOMEPAGE',
@@ -84,6 +87,30 @@ const menus = [
     pid: 'FSP_CUST_M_CENTER_MANAGE',
   },
   {
+    name: '投顾签约向导',
+    id: 'FSP_CUST_M_CONTRACTWIZARD',
+    path: '/fsp/contractWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '佣金调整向导',
+    id: 'FSP_CUST_M_SERVICEORDERINGWIZARD',
+    path: '/fsp/serviceOrderingWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '合约详情',
+    id: 'FSP_CUST_M_ORDERDETAIL',
+    path: '/fsp/customerCenter/360OrderDetail',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '合约历史记录',
+    id: 'FSP_CUST_M_ORDERHISDETAIL',
+    path: '/fsp/customerCenter/360orderHisDetail',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '佣金查询',
     id: 'FSP_CUST_M_TOCOMMISSION',
     path: '/fsp/customerCenter/toCommission',
@@ -108,6 +135,24 @@ const menus = [
     pid: 'ROOT',
   },
   {
+    name: '工单投诉信息',
+    id: 'FSP_COMPLAINT_INFO',
+    path: '/fsp/serviceCenter/complaintInfo',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
+    name: '资产配置明细',
+    id: 'FSP_IMPLEMENTATION_INITSEE',
+    path: '/fsp/implementation/initsee',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
+    name: '资产配置向导',
+    id: 'FSP_IMPLEMENTATION_WIZARD',
+    path: '/fsp/implementation/wizard',
+    pid: 'FSP_SERVICE_CENTER',
+  },
+  {
     name: '策略中心',
     id: 'FSP_STRATEGY_CENTER',
     path: '/strategyCenter',
@@ -115,10 +160,24 @@ const menus = [
   },
 ];
 
+// 次级导航页面内部跳转新建的tab配置项
+// 由于次级导航菜单涉及到的打开tab太多，而且不会随着项目变化而改变
+// 所以不在这里进行配置，而是直接复用后端的数据，在调用方法时，直接传入数据
+// 前端无法控制次级导航菜单的tab配置，这点需要留意。
+const secondaryMenu = [
+];
+
+const menus = [
+  ...primaryMenu,
+  ...secondaryMenu,
+];
+
 export default menus;
 
+// 默认当前激活的主导航菜单项
 export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
+// 主导航默认的几个菜单项
 export const defaultMenu = [
   'FSP_NEW_HOMEPAGE',
   'FSP_SERVICE_CENTER',

@@ -2,10 +2,10 @@
  * @Description: 通道类协议页面配置项
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 15:29:33
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-22 16:16:19
  */
-import duty from '../../helper/config/duty';
+import { config as channelTypeConfig } from '../../helper/page/channelType';
 
 const config = {
   // 终止按钮
@@ -36,9 +36,10 @@ const config = {
     canAdd: ['退订完成', '开通失败'],
   },
   doApproveOperate: {
-    [duty.zjkcd_id]: '1', // 子类型为紫金快车道时对应的operate
-    [duty.gstd_id]: '11', // 子类型为高速通道时对应的operate
+    [channelTypeConfig.ZJKCD_ID]: '1', // 子类型为紫金快车道时对应的operate
+    [channelTypeConfig.GSTD_ID]: '11', // 子类型为高速通道时对应的operate
   },
+
 };
 
 export default config;

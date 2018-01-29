@@ -2,13 +2,12 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 13:37:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-25 14:31:44
+ * @Last Modified time: 2018-01-29 17:54:08
  * @description 合格投资者-产品要求点击问号的弹出框
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
-import _ from 'lodash';
 
 import styles from './qualifiedCustModal.less';
 

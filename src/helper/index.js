@@ -8,7 +8,7 @@ import event from './event';
 import number from './number';
 import os from './os';
 import org from './org';
-import power from './power';
+import permission from './permission';
 import regxp from './regexp';
 import time from './time';
 import url from './url';
@@ -25,7 +25,7 @@ export default {
   number,
   os,
   org,
-  power,
+  permission,
   regxp,
   time,
   url,

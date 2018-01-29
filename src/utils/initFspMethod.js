@@ -3,7 +3,8 @@
    * @param  {object} store app.store
    */
 
-import { env, os } from '../helper';
+import env from '../helper/env';
+import os from '../helper/os';
 import { fspRoutes } from '../config';
 
 function findRoute(url) {
@@ -29,7 +30,7 @@ function initFspMethod({ store, push }) {
   };
 
   // 如果当前环境不是fsp框架，就执行下面的重写操作
-  if (!env.isInFsp()) {
+  if (env.isInReact()) {
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
     $.fn.EBSmartTab = function (param1, param2) {
@@ -43,12 +44,13 @@ function initFspMethod({ store, push }) {
     window.eb.app = {
       // 加载fsp页面
       loadPageInTab: {
-        run(url) {
+        run(url, { reactShouldRemove }) {
           const { path } = findRoute(url);
           push({
             pathname: path,
             state: {
               url,
+              shoudlRemove: reactShouldRemove,
             },
           });
         },
@@ -79,4 +81,5 @@ function initFspMethod({ store, push }) {
     };
   }
 }
+
 export default initFspMethod;
