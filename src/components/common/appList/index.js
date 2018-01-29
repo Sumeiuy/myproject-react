@@ -7,8 +7,8 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Pagination } from 'antd';
 import _ from 'lodash';
+import Pagination from '../../common/Pagination';
 
 import styles from './index.less';
 

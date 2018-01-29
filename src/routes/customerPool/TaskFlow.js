@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 15:21:44
+ * @Last Modified time: 2018-01-26 17:13:47
  */
 
 import React, { PureComponent } from 'react';
@@ -258,6 +258,9 @@ export default class TaskFlow extends PureComponent {
       ...postBody,
     }).then(() => {
       const { sendCustsServedByPostnResult = {} } = this.props;
+      if (_.isEmpty(sendCustsServedByPostnResult)) {
+        return;
+      }
       const {
         isNeedApproval,
         isCanGoNextStep,

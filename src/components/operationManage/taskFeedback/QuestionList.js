@@ -8,10 +8,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Pagination, Modal, message } from 'antd';
+import { Modal, message } from 'antd';
 
 import ListItem from './ListItem';
 import EmptyData from '../EmptyData';
+import Pagination from '../../common/Pagination';
 
 import styles from './questionList.less';
 
@@ -78,29 +79,29 @@ export default class QuestionList extends PureComponent {
       location: { pathname },
     } = this.props;
     deleteQuestion({ quesId })
-    .then(() => {
-      const {
+      .then(() => {
+        const {
         deleteSuccess,
-        location: {
+          location: {
           query: {
             pageSize = 10,
           },
         },
       } = this.props;
-      if (deleteSuccess) {
-        message.success('删除成功');
-        queryQuestions({
-          pageNum: 1,
-          pageSize,
-        });
-        replace({
-          pathname,
-          query: {
+        if (deleteSuccess) {
+          message.success('删除成功');
+          queryQuestions({
             pageNum: 1,
-          },
-        });
-      }
-    });
+            pageSize,
+          });
+          replace({
+            pathname,
+            query: {
+              pageNum: 1,
+            },
+          });
+        }
+      });
   }
 
   /**
@@ -143,25 +144,27 @@ export default class QuestionList extends PureComponent {
       location: {
         query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
     } = this.props;
     const curPageNum = pageNum || page.pageNum;
     const curPageSize = pageSize || page.pageSize;
-    console.log('curPageNum curPageSize ', +curPageNum, +curPageSize);
+
+    const paginationOption = {
+      curPageNum,
+      totalRecordNum: page.totalCount,
+      curPageSize,
+      onPageChange: this.handlePageChange,
+      onSizeChange: this.handleSizeChange,
+    };
+
     return (
       <div className={styles.listWrapper}>
         {this.renderList()}
         <div className={styles.pagination}>
           <Pagination
-            total={+page.totalCount}
-            current={+curPageNum}
-            pageSize={+curPageSize}
-            showSizeChanger
-            showTotal={total => `共${total}条`}
-            onChange={this.handlePageChange}
-            onShowSizeChange={this.handleSizeChange}
+            {...paginationOption}
           />
         </div>
       </div>

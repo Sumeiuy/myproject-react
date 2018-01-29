@@ -2,18 +2,19 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-08 17:16:48
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-28 11:48:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Collapse, Pagination, Icon, message } from 'antd';
+import { Collapse, Icon, message } from 'antd';
 
 import Confirm from '../../../components/common/Confirm';
 import Button from '../../../components/common/Button';
 import EditInput from '../../../components/common/editInput';
+import Pagination from '../../common/Pagination';
 import styles from './optionsMaintain.less';
 
 const Panel = Collapse.Panel;
@@ -71,7 +72,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 查询客户反馈列表
   @autobind
-  queryFeedbackList(pageNum = 1, pageSize = 20) {
+  queryFeedbackList(pageNum = 1, pageSize = 10) {
     const {
       queryFeedbackList,
     } = this.props;
@@ -230,10 +231,11 @@ export default class OptionsMaintain extends PureComponent {
       accordion: true,
     };
     const pagination = {
-      onChange: this.handlePageChange,
-      pageSize: Number(feedbackDataPage.pageSize),
-      current: Number(feedbackDataPage.pageNum),
-      total: Number(feedbackDataPage.totalCount),
+      curPageNum: Number(feedbackDataPage.pageNum),
+      totalRecordNum: Number(feedbackDataPage.totalCount),
+      curPageSize: Number(feedbackDataPage.pageSize),
+      onPageChange: this.handlePageChange,
+      isShowSizeChanger: false,
     };
     return (
       <div className={styles.optionsMaintain}>
