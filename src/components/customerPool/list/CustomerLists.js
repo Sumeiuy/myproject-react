@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination, Checkbox, message } from 'antd';
+import { Checkbox, message } from 'antd';
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
@@ -19,6 +19,7 @@ import BottomFixedBox from './BottomFixedBox';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
 import NoData from '../common/NoData';
+import Pagination from '../../common/Pagination';
 
 import styles from './customerLists.less';
 
@@ -346,7 +347,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
@@ -488,10 +489,10 @@ export default class CustomerLists extends PureComponent {
       ptyMng,
     } = location.query;
     // current: 默认第一页
-    // pageSize: 默认每页大小10
+    // pageSize: 默认每页大小20
     // curTotal: 当前列表数据总数
     let current = 1;
-    let pagesize = 10;
+    let pagesize = 20;
     let curTotal = 0;
     if (curPageNum) {
       current = Number(curPageNum);
@@ -537,6 +538,14 @@ export default class CustomerLists extends PureComponent {
         curOrgId = empInfo.occDivnNum;
       }
     }
+    const paginationOption = {
+      curPageNum: current,
+      totalRecordNum: curTotal,
+      curPageSize: pagesize,
+      onPageChange,
+      onSizeChange,
+    };
+
     return (
       <div className="list-box">
         <div className={styles.listHeader}>
@@ -621,14 +630,7 @@ export default class CustomerLists extends PureComponent {
           className="list-pagination"
         >
           <Pagination
-            current={current}
-            total={curTotal}
-            pageSize={pagesize}
-            onChange={onPageChange}
-            size="small"
-            showSizeChanger
-            showTotal={total => `共${total}项`}
-            onShowSizeChange={onSizeChange}
+            {...paginationOption}
           />
           <Checkbox
             checked={isAllSelectBool}

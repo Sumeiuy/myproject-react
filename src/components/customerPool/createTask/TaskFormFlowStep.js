@@ -102,12 +102,15 @@ export default class TaskFormFlowStep extends PureComponent {
         ...postBody,
       }).then(() => {
         const { sendCustsServedByPostnResult } = this.props;
+        if (_.isEmpty(sendCustsServedByPostnResult)) {
+          return;
+        }
         const {
         isNeedApproval,
           isCanGoNextStep,
           isNeedMissionInvestigation,
           isIncludeNotMineCust,
-      } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
+        } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
         if (isIncludeNotMineCust && !isCanGoNextStep) {
           message.error('客户包含非本人名下客户，请重新选择');
           return;

@@ -10,15 +10,21 @@
   justify-content: flex-end;
   align-items: center;
   margin-right: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
   margin-top: 10px;
   :global {
     .hideLastPage {
       display: none;
     }
+    .ant-pagination-item {
+      margin-bottom: 0;
+    }
     li a {
       // 关掉动画效果
       transition: none;
+    }
+    .ant-select-selection.ant-select-selection--single {
+      width: 85px;
     }
   }
 }
