@@ -164,8 +164,8 @@ export default class TaskSearchRow extends PureComponent {
             filterContentList: value.split(','),
           });
         }
-        // 除了可开通、已开通、风险等级、客户类型、客户性质之外的其他筛选
-        if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
+        // 除了已开通、风险等级、客户类型、客户性质之外的其他筛选
+        if (!_.includes(['Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
           const itemList = value.split(',');
           payload.labels = [
             ...payload.labels,
