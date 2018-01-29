@@ -14,6 +14,7 @@ import _ from 'lodash';
 import Clickable from '../../../components/common/Clickable';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
+import { isSightingScope } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -212,7 +213,7 @@ export default class Search extends PureComponent {
       recommendList.push(
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
+            source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
@@ -281,6 +282,7 @@ export default class Search extends PureComponent {
   renderOption(item) {
     const { inputVal } = this.state;
     const newContent = item.name.replace(inputVal, `<em>${inputVal}</em>`);
+    const sightingScopeBool = isSightingScope(item.type);
     // 联想 association
     // 搜索 search
     // 标签 tag
@@ -289,8 +291,8 @@ export default class Search extends PureComponent {
       <Option key={`${item.id}${item.name}`} text={item.name}>
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: item.type === 'jzyx' ? 'sightingTelescope' : 'association',
-            labelMapping: item.type === 'jzyx' ? item.id : item.type,
+            source: sightingScopeBool ? 'sightingTelescope' : 'association',
+            labelMapping: sightingScopeBool ? item.id : item.type,
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"
@@ -300,7 +302,7 @@ export default class Search extends PureComponent {
             rel="noopener noreferrer"
           />
         </Clickable>
-        <span className="desc">{item.type === 'jzyx' ? '瞄准镜' : item.description}</span>
+        <span className="desc">{sightingScopeBool ? '瞄准镜' : item.description}</span>
       </Option>
     );
   }

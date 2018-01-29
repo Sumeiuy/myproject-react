@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
-
+import { isSightingScope } from '../helper';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -165,7 +165,7 @@ export default class MatchArea extends PureComponent {
       // ));
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((v) => {
-          if (v.source !== 'jzyx') {
+          if (!isSightingScope(v.source)) {
             return replaceWord({ value: v.name, q });
           }
           return `${replaceWord({ value: v.name, q })} 瞄准镜`;
@@ -288,6 +288,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (source === 'sightingTelescope'
       && !_.isEmpty(listItem.relatedLabels)) {
+      // 筛选出source='jzyx'的数据
       const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.source, 'jzyx'));
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));

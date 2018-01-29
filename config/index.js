@@ -51,19 +51,19 @@ module.exports = {
       },
       prefix,
       {
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.146:8082', // 张宝成本地地址
       },
       '/fspa/log',
       {
         // target: 'http://160.9.230.146:8082', // 张宝成本地地址
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5087', // SIT
       },
       '/fsp',
       {
         // target: 'http://160.9.230.146:8082', // 张宝成本地地址
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.82:5086', // UAT     
       }
     ]),

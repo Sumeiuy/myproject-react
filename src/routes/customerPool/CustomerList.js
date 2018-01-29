@@ -19,6 +19,7 @@ import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { fspContainer } from '../../config';
 import withRouter from '../../decorators/withRouter';
 import permissionType from './permissionType';
+import { getCustomerListFilters } from '../../helper/page/customerPool';
 import {
   NOPERMIT,
   CUST_MANAGER,
@@ -370,46 +371,9 @@ export default class CustomerList extends PureComponent {
     const sortsReqList = [];
     if (query.filters) {
       const filtersArray = query.filters ? query.filters.split('|') : [];
-      _.forEach(filtersArray, (item) => {
-        const [name, value] = item.split('.');
-        if (name === 'Unrights' && value) {
-          filtersReq.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        if (name === 'Rights' && value) {
-          filtersReq.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        if (name === 'RiskLvl' && value) {
-          filtersReq.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        if (name === 'CustClass' && value) {
-          filtersReq.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        if (name === 'CustomType' && value) {
-          filtersReq.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
-          const itemList = value.split(',');
-          param.labels = [
-            ...param.labels,
-            ...itemList,
-          ];
-        }
-      });
+      const { filters, labels } = getCustomerListFilters(filtersArray, param.labels, filtersReq);
+      param.filtersReq = filters;
+      param.labels = labels;
     }
     if (query.sortType || query.sortDirection) {
       sortsReqList.push({

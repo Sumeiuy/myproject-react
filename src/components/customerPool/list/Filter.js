@@ -19,12 +19,15 @@ const SEARCH_TAG_FILTER = [
 
 // 数据转化
 // [{itemCode: '1', itemDesc: 'fg'}] => [{key: '1', value: 'fg'}]
-const transformData = list => _.map(list, o => (
-  {
-    key: o.itemCode,
-    value: o.itemDesc,
+const transformData = list => _.map(list, item => _.mapKeys(item, (value, key) => {
+  if (key === 'itemCode') {
+    return 'key';
   }
-  ));
+  if (key === 'itemDesc') {
+    return 'value';
+  }
+  return key;
+}));
 
 export default class Filter extends PureComponent {
   static propTypes = {
@@ -48,13 +51,11 @@ export default class Filter extends PureComponent {
     }
     const filtersArray = filters ? filters.split('|') : [];
     return _.map(sightingTelescopeFilters.filterList, (obj) => {
-      let backfillValue = '';
-      _.forEach(filtersArray, (item) => {
-        const [name, value] = item.split('.');
-        if (name === obj.filterCode) {
-          backfillValue = value;
-        }
+      const target = _.find(filtersArray, (item) => {
+        const [name] = item.split('.');
+        return name === obj.filterCode;
       });
+      const backfillValue = (target || '').split('.')[1];
       return (<MultiFilter
         key={obj.filterCode}
         value={backfillValue}
@@ -73,36 +74,18 @@ export default class Filter extends PureComponent {
       filters = '',
     } = location.query;
     const filtersArray = filters ? filters.split('|') : [];
-    let CustomType = '';
-    let CustClass = '';
-    let RiskLvl = '';
-    let Rights = '';
-    let Unrights = '';
-    _.forEach(filtersArray, (item) => {
-      const [name, value] = item.split('.');
-      if (name === 'CustomType') {
-        CustomType = value;
-      }
-      if (name === 'CustClass') {
-        CustClass = value;
-      }
-      if (name === 'RiskLvl') {
-        RiskLvl = value;
-      }
-      if (name === 'Rights') {
-        Rights = value;
-      }
-      if (name === 'Unrights') {
-        Unrights = value;
-      }
-    });
+    const currentValue = _.reduce(filtersArray, (result, value) => {
+      const [k, v] = value.split('.');
+      result[k] = v; // eslint-disable-line
+      return result;
+    }, {});
     return (
       <div className="filter">
         {this.renderSightingTelescopeFilter()}
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
-              value={CustomType || ''}
+              value={currentValue.CustomType || ''}
               filterLabel="客户性质"
               filter="CustomType"
               filterField={dict.custNature}
@@ -112,7 +95,7 @@ export default class Filter extends PureComponent {
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
-              value={CustClass || ''}
+              value={currentValue.CustClass || ''}
               filterLabel="客户类型"
               filter="CustClass"
               filterField={dict.custType}
@@ -122,7 +105,7 @@ export default class Filter extends PureComponent {
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
-              value={RiskLvl || ''}
+              value={currentValue.RiskLvl || ''}
               filterLabel="风险等级"
               filter="RiskLvl"
               filterField={dict.custRiskBearing}
@@ -132,7 +115,7 @@ export default class Filter extends PureComponent {
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
             <MultiFilter
-              value={Rights || ''}
+              value={currentValue.Rights || ''}
               filterLabel="已开通业务"
               filter="Rights"
               filterField={dict.custBusinessType}
@@ -142,7 +125,7 @@ export default class Filter extends PureComponent {
         {
           _.includes(['numOfCustOpened', 'business', 'sightingTelescope'], source) ?
             <MultiFilter
-              value={Unrights || ''}
+              value={currentValue.Unrights || ''}
               filterLabel="可开通业务"
               filter="Unrights"
               filterField={dict.custUnrightBusinessType}

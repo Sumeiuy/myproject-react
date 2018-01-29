@@ -17,6 +17,8 @@ import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
 import Clickable from '../../../components/common/Clickable';
 import FilterCustomers from './step1/FilterCustomers';
+import { isSightingScope } from '../helper';
+import { getCustomerListFilters } from '../../../helper/page/customerPool';
 
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
@@ -134,45 +136,9 @@ export default class TaskSearchRow extends PureComponent {
     // 存放可开通、已开通、风险等级、客户类型、客户性质的数组
     const filtersList = [];
     if (!_.isEmpty(filter)) {
-      _.forEach(filter, (item) => {
-        const [name, value] = item.split('.');
-        // 已开通
-        if (name === 'Rights' && value) {
-          filtersList.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        // 风险等级
-        if (name === 'RiskLvl' && value) {
-          filtersList.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        // 客户类型
-        if (name === 'CustClass' && value) {
-          filtersList.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        // 客户性质
-        if (name === 'CustomType' && value) {
-          filtersList.push({
-            filterType: name,
-            filterContentList: value.split(','),
-          });
-        }
-        // 除了已开通、风险等级、客户类型、客户性质之外的其他筛选
-        if (!_.includes(['Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
-          const itemList = value.split(',');
-          payload.labels = [
-            ...payload.labels,
-            ...itemList,
-          ];
-        }
-      });
+      const { filters, labels } = getCustomerListFilters(filter, payload.labels, filtersList);
+      payload.filtersReq = filters;
+      payload.labels = labels;
     }
     if (!_.isEmpty(filtersList)) {
       payload.filtersReq = filtersList;
@@ -188,7 +154,7 @@ export default class TaskSearchRow extends PureComponent {
     const { filter } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
     // 瞄准镜的label 时取获取对应的筛选条件
-    if (value.source === 'jzyx') {
+    if (isSightingScope(value.source)) {
       getFiltersOfSightingTelescope({
         prodId: value.labelMapping || '',
       });
