@@ -23,7 +23,7 @@ const EXECUTING = '50'; // 执行者视图状态执行中
 const RESULT = '60';  // 执行中视图状态结果跟踪
 
 // 执行者视图和创建者视图左侧列表项需要显示进度条
-const needProgress = ['executor', 'initiator'];
+const needProgress = ['executor', 'controller'];
 
 const EXECUTOR = 'executor'; // 执行者视图
 const CONTROLLER = 'controller'; // 管理者视图

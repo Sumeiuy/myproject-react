@@ -50,7 +50,7 @@ const permission = {
 
   // 目标客户池首页和列表页权限
   hasCustomerPoolPermission() {
-    return permission.hasTkMampPermission();
+    return permission.hasTkMampPermission() || permission.hasIndexViewPermission();
   },
 
   // 目标客户池创建任务权限

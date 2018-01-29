@@ -7,13 +7,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
-
+import { isSightingScope } from '../helper';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
-const replaceWord = (value, q, title = '') => {
+const replaceWord = ({ value, q, title = '' }) => {
   const titleDom = haveTitle(title);
+  // 瞄准镜标签的后面标注‘瞄准镜’
   return value.replace(new RegExp(q, 'g'), `<em class="marked">${q}${titleDom || ''}</em>`);
 };
 
@@ -59,7 +60,7 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.name
       && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.name, q);
+      const markedEle = replaceWord({ value: listItem.name, q });
       return (
         <li>
           <span>
@@ -84,7 +85,7 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.idNum
       && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.idNum, q);
+      const markedEle = replaceWord({ value: listItem.idNum, q });
       return (
         <li>
           <span>
@@ -109,7 +110,7 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.telephone
       && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.telephone, q);
+      const markedEle = replaceWord({ value: listItem.telephone, q });
       return (
         <li>
           <span>
@@ -134,7 +135,7 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.custId
       && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.custId, q);
+      const markedEle = replaceWord({ value: listItem.custId, q });
       return (
         <li>
           <span>
@@ -156,16 +157,19 @@ export default class MatchArea extends PureComponent {
       listItem,
       location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association', 'tag'], source) && listItem.relatedLabels) {
-      const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
-        if (v.indexOf(q) > -1) {
-          return v;
-        }
-      });
+    if (_.includes(['search', 'association', 'tag'], source) && !_.isEmpty(listItem.relatedLabels)) {
+      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.name, q));
       // 有描述
-      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
+      // const markedEle = relatedLabels.map(v => (
+      //   replaceWord({ value: v, q, title: listItem.reasonDesc });
+      // ));
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
+        const markedEle = relatedLabels.map((v) => {
+          if (!isSightingScope(v.source)) {
+            return replaceWord({ value: v.name, q });
+          }
+          return `${replaceWord({ value: v.name, q })} 瞄准镜`;
+        });
         return (
           <li>
             <span>
@@ -261,7 +265,7 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
       && listItem.serviceRecord.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.serviceRecord, q);
+      const markedEle = replaceWord({ value: listItem.serviceRecord, q });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
@@ -272,6 +276,35 @@ export default class MatchArea extends PureComponent {
           </span>
         </li>
       );
+    }
+    return null;
+  }
+
+  renderSightingTelescope() {
+    const {
+      q = '',
+      listItem,
+      location: { query: { source } },
+    } = this.props;
+    if (source === 'sightingTelescope'
+      && !_.isEmpty(listItem.relatedLabels)) {
+      // 筛选出source='jzyx'的数据
+      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.source, 'jzyx'));
+      // 有描述
+      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
+      if (!_.isEmpty(relatedLabels)) {
+        const markedEle = relatedLabels.map(v => (replaceWord({ value: v.name, q })));
+        return (
+          <li>
+            <span>
+              <i className="label">瞄准镜：</i>
+              <i
+                dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+              />
+            </span>
+          </li>
+        );
+      }
     }
     return null;
   }
@@ -293,6 +326,7 @@ export default class MatchArea extends PureComponent {
           {this.renderUserRights()}
           {this.renderStatus()}
           {this.renderServiceRecord()}
+          {this.renderSightingTelescope()}
         </ul>
       </div>
     );
