@@ -44,12 +44,13 @@ function initFspMethod({ store, push }) {
     window.eb.app = {
       // 加载fsp页面
       loadPageInTab: {
-        run(url) {
+        run(url, { reactShouldRemove }) {
           const { path } = findRoute(url);
           push({
             pathname: path,
             state: {
               url,
+              shoudlRemove: reactShouldRemove,
             },
           });
         },

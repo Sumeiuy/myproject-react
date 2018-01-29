@@ -55,6 +55,8 @@ export default class FSPComponent extends PureComponent {
     const localUrl = store.get(pathname);
     this.url = !localUrl ? routeConfig.url : localUrl;
     this.action = routeConfig.action;
+    // 设置fsp页面容器的id，这个属性因为fsp原因，暂时需要
+    this.containerId = routeConfig.containerId;
     // 修正后端接口，因为有些接口为动态接口
     if (state && state.url) {
       this.url = state.url;
@@ -78,6 +80,7 @@ export default class FSPComponent extends PureComponent {
           // 所以这里同样借助juery的方法
           const jqelem = $(this.elem);
           jqelem.empty();
+          jqelem.attr('id', this.containerId);
           jqelem.append(node);
           this.setState({
             loading: false,

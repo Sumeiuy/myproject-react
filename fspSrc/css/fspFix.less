@@ -72,10 +72,16 @@
   }
 
   // 镂空按钮
+  .eb-panel > .eb-panel-title .eb-richbtn.richbtn-color-spec,
   .eb-richbtn.richbtn-color-spec {
     background-color: white !important;
-    border: 1px solid @btn-bg-color;
+    border: 1px solid @btn-bg-color !important;
     color: @btn-bg-color !important;
+    &:hover {
+      color: #fff !important;
+      background-color: @btn-bg-color !important;
+      border-color: @btn-bg-color !important;
+    }
   }
 
   // 客户360 顶部按钮

@@ -77,7 +77,11 @@ const os = {
   findBestMatch(value, collection, property, returnRef = false) {
     // 获取pathname的匹配数组
     const matchArray = collection.map((obj) => {
-      const match = RegExp(obj[property]).exec(value);
+      let matchProp = obj[property];
+      if (_.isString(matchProp) && (matchProp.indexOf('?') !== -1)) {
+        matchProp = matchProp.slice(0, matchProp.indexOf('?'));
+      }
+      const match = RegExp(matchProp).exec(value);
       return !match ? 0 : match[0].length;
     });
     // 获取匹配数组里面最大的匹配字符数
