@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-12 13:25:48
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-28 11:20:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -22,7 +22,6 @@ import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
 import AppItem from '../../components/common/appList/AppItem';
-import appListTool from '../../components/common/appList/tool';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
@@ -206,9 +205,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
     } = this.props;
@@ -262,7 +261,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   }
 
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getSeibleList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
@@ -570,7 +569,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       clearPropsData, // 清除props数据
       flowStepInfo, // 审批人列表
       getCustValidate,  // 验证客户接口
-      location: { query: { pageNum = 1, pageSize = 10 } },
+      location: { query: { pageNum = 1, pageSize = 20 } },
       seibleList: { page = {} },
       queryProtocolList,  // 查询协议 ID 列表
       protocolList,  // 协议 ID 列表
@@ -601,17 +600,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       />
     );
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
     const leftPanel = (
       <ChannelsTypeProtocolList

@@ -13,7 +13,7 @@ import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 import Icon from '../../common/Icon';
-import Paganation from '../../common/Paganation';
+import Pagination from '../../common/Pagination';
 
 import styles from './missionFeedback.less';
 
@@ -59,8 +59,8 @@ export default class MissionFeedback extends PureComponent {
         resultData: {
           pageInfo: {
             curPageNum: 1,
-            curPageSize: 10,
-            totalPage: 10,
+            curPageSize: 5,
+            totalRecordNum: 5,
           },
           dataInfo: [],
         },
@@ -102,8 +102,8 @@ export default class MissionFeedback extends PureComponent {
         dataInfo,
         pageInfo: {
           curPageNum: 1,
-          curPageSize: 10,
-          totalPage: _.size(dataInfo),
+          curPageSize: 5,
+          totalRecordNum: _.size(dataInfo),
         },
       },
     });
@@ -491,9 +491,20 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
+    const paginationOption = {
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+      onPageChange: this.handlePageChange,
+      onSizeChange: this.handleSizeChange,
+    };
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
-        <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+        <h5 title={itemChild.data} key={itemChild.data}>
+          {index + 1}.{itemChild.data}
+        </h5>,
+      );
+
       return (
         <div className={styles.subjective}>
           <div
@@ -514,13 +525,9 @@ export default class MissionFeedback extends PureComponent {
               <div>
                 {info}
                 {
-                  totalRecordNum > 10 ?
-                    <Paganation
-                      curPageNum={curPageNum}
-                      curPageSize={curPageSize}
-                      totalRecordNum={totalRecordNum}
-                      onPageChange={this.handlePageChange}
-                      onSizeChange={this.handleSizeChange}
+                  totalRecordNum > 5 ?
+                    <Pagination
+                      {...paginationOption}
                     /> : null
                 }
               </div>

@@ -20,7 +20,6 @@ import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/appList';
-import appListTool from '../../components/common/appList/tool';
 import AppItem from '../../components/common/appList/AppItem';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/contract/EditForm';
@@ -381,7 +380,7 @@ export default class Contract extends PureComponent {
   }
 
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getSeibleList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
@@ -918,20 +917,15 @@ export default class Contract extends PureComponent {
     );
     // 生成页码器，此页码器配置项与Antd的一致
     const { resultData = [], page = {} } = seibleList;
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
+
     const leftPanel = (
       <ContractList
         list={resultData}
