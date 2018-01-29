@@ -44,7 +44,7 @@ export default class TaskFormFlowStep extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     submitApproval: PropTypes.func,
-    submitSuccess: PropTypes.object,
+    submitApporvalResult: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -55,7 +55,7 @@ export default class TaskFormFlowStep extends PureComponent {
     dict: {},
     storedCreateTaskData: {},
     orgId: null,
-    submitSuccess: {},
+    submitApporvalResult: {},
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
@@ -593,8 +593,8 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handleSubmitSuccess() {
-    const { submitSuccess } = this.props;
-    if (submitSuccess.code === '0') {
+    const { submitApporvalResult } = this.props;
+    if (submitApporvalResult.code === '0') {
       message.success('提交成功');
       this.setState({
         isDisabled: true,

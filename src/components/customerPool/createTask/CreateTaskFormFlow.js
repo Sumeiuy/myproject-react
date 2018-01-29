@@ -50,7 +50,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     generateTemplateId: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     submitApproval: PropTypes.func,
-    submitSuccess: PropTypes.object,
+    submitApporvalResult: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -64,7 +64,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     updateTask: noop,
     orgId: null,
     enterType: null,
-    submitSuccess: {},
+    submitApporvalResult: {},
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
@@ -238,7 +238,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       creator,
       approvalBtn,
       getApprovalBtn,
-      submitSuccess,
+      submitApporvalResult,
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
@@ -266,7 +266,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           creator={creator}
           approvalBtn={approvalBtn}
           getApprovalBtn={getApprovalBtn}
-          submitSuccess={submitSuccess}
+          submitApporvalResult={submitApporvalResult}
           submitApproval={submitApproval}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
