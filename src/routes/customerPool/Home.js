@@ -25,14 +25,14 @@ import {
 } from './config';
 
 import styles from './home.less';
-import {
-  MorningBroadcast,
+import { BroadcastList } from '../morningBroadcast';
+import
+{ MorningBroadcast,
   ToBeDone,
   Viewpoint,
   PerformanceIndicators,
   TabsExtra,
-  Search,
-} from '../../components/customerPool/home';
+  Search } from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
 const EMPTY_LIST = [];
@@ -48,7 +48,7 @@ const effects = {
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
-  getBoradcastList: 'morningBoradcast/getBoradcastList',
+  homaPageNews: 'morningBoradcast/homaPageNews', // 晨报列表
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -70,7 +70,8 @@ const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
-  boradcastList: state.morningBoradcast.boradcastList,
+  initBoradcastList: state.morningBoradcast.initBoradcastList,
+  initBoradcastFile: state.morningBoradcast.initBoradcastFile,
 });
 
 const mapDispatchToProps = {
@@ -85,7 +86,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
-  getBoradcastList: fetchDataFunction(false, effects.getBoradcastList),
+  homaPageNews: fetchDataFunction(false, effects.homaPageNews),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -121,8 +122,9 @@ export default class Home extends PureComponent {
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
     getCustCount: PropTypes.func.isRequired,
-    boradcastList: PropTypes.array.isRequired,
-    getBoradcastList: PropTypes.func.isRequired,
+    initBoradcastList: PropTypes.array.isRequired,
+    initBoradcastFile: PropTypes.array.isRequired,
+    homaPageNews: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -158,8 +160,7 @@ export default class Home extends PureComponent {
       getInformation,
       getToBeDone,
       getHotWds,
-      getBoradcastList,
-      boradcastList,
+      homaPageNews,
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum = '', occDivnNum = '' } = empInfo;
@@ -188,10 +189,13 @@ export default class Home extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-    // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList.length) {
-      getBoradcastList();
-    }
+    // 初始化晨报列表数据，用于首页提供晨报展示
+    const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
+    homaPageNews({
+      createdFrom: FROM_DATE,
+      createdTo: TO_DATE,
+      pageNum: PAGE_NUM,
+      pageSize: PAGE_LEN });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -444,7 +448,7 @@ export default class Home extends PureComponent {
       replace,
       updateQueryState: this.updateQueryState,
       collectCustRange,
-      cycle: cycle || [],
+      cycle,
       expandAll,
       selectValue: curCycleSelect,
       location,
@@ -468,7 +472,8 @@ export default class Home extends PureComponent {
       performanceIndicators,
       empInfo = {},
       custCount, // 经营指标新增客户指标数据
-      boradcastList,
+      initBoradcastList,
+      initBoradcastFile,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -529,7 +534,11 @@ export default class Home extends PureComponent {
             </Tabs>
           </div>
           <div className={styles.viewpoint}>
-            <MorningBroadcast dataList={boradcastList} />
+            <MorningBroadcast
+              dataList={initBoradcastList}
+              sourceList={initBoradcastFile}
+              push={push}
+            />
             <Viewpoint
               information={information}
               push={push}
