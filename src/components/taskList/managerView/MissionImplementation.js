@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col } from 'antd';
+// import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
@@ -213,12 +213,12 @@ export default class MissionImplementation extends PureComponent {
   render() {
     const {
       missionImplementationProgress = EMPTY_OBJECT,
-      isFold,
+      // isFold,
       custFeedback = EMPTY_LIST,
       missionProgressStatusDic = EMPTY_OBJECT,
     } = this.props;
 
-    const colSpanValue = isFold ? 12 : 24;
+    // const colSpanValue = isFold ? 12 : 24;
 
     return (
       <div className={styles.missionImplementationSection}>
@@ -239,20 +239,18 @@ export default class MissionImplementation extends PureComponent {
               <div className={styles.tip}>{EMPTY_CONTENT}</div>
             </div> :
             <div className={styles.content}>
-              <Row>
-                <Col span={colSpanValue}>
-                  <MissionProgress
-                    missionImplementationProgress={missionImplementationProgress}
-                    onPreviewCustDetail={this.handlePreview}
-                    missionProgressStatusDic={missionProgressStatusDic}
-                  />
-                </Col>
-                <Col span={colSpanValue}>
-                  <CustFeedback
-                    custFeedback={custFeedback}
-                  />
-                </Col>
-              </Row>
+              <div className={styles.leftContent}>
+                <MissionProgress
+                  missionImplementationProgress={missionImplementationProgress}
+                  onPreviewCustDetail={this.handlePreview}
+                  missionProgressStatusDic={missionProgressStatusDic}
+                />
+              </div>
+              <div className={styles.rightContent}>
+                <CustFeedback
+                  custFeedback={custFeedback}
+                />
+              </div>
             </div>
         }
       </div>
