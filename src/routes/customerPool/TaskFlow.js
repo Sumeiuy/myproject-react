@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-29 13:25:20
+ * @Last Modified time: 2018-01-29 15:48:04
  */
 
 import React, { PureComponent } from 'react';
@@ -40,6 +40,7 @@ const effects = {
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -65,6 +66,7 @@ const mapStateToProps = state => ({
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
+  sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
 });
 
 const mapDispatchToProps = {
@@ -107,6 +109,7 @@ const mapDispatchToProps = {
   getApprovalList: fetchData(effects.getApprovalList, true),
   generateTemplateId: fetchData(effects.generateTemplateId, true),
   isSendCustsServedByPostn: fetchData(effects.isSendCustsServedByPostn, true),
+  getFiltersOfSightingTelescope: fetchData(effects.getFiltersOfSightingTelescope, true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -140,6 +143,8 @@ export default class TaskFlow extends PureComponent {
     creator: PropTypes.string,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -763,6 +768,8 @@ export default class TaskFlow extends PureComponent {
       push,
       clearSubmitTaskFlowResult,
       creator,
+      getFiltersOfSightingTelescope,
+      sightingTelescopeFilters,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -795,6 +802,8 @@ export default class TaskFlow extends PureComponent {
           isAuthorize={isNeedApproval}
           filterModalvisible={visible}
           orgId={orgId}
+          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
+          sightingTelescopeFilters={sightingTelescopeFilters}
         />
       </div>,
     }, {

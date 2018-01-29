@@ -14,6 +14,7 @@ const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
 const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
 const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
 const HTSC_TK_MAMPID = '1-4UU25GY'; // HTSC 任务管理岗
+const HTSC_ZX_MAMPID = '1-3SID83'; // HTSC 资讯管理岗
 
 const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
@@ -48,9 +49,14 @@ const permission = {
     return judgeAuthority(permissionList, HTSC_TK_MAMPID);
   },
 
+  // HTSC 任务管理岗
+  hasZXMampPermission() {
+    return judgeAuthority(permissionList, HTSC_ZX_MAMPID);
+  },
+
   // 目标客户池首页和列表页权限
   hasCustomerPoolPermission() {
-    return permission.hasTkMampPermission();
+    return permission.hasTkMampPermission() || permission.hasIndexViewPermission();
   },
 
   // 目标客户池创建任务权限

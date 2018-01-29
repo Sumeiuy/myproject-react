@@ -15,5 +15,7 @@ export default function common(api) {
     changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
     // 添加服务记录中 服务类型
     getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
+    // 查询瞄准镜筛选条件
+    getFiltersOfSightingTelescope: query => api.post('/groovynoauth/fsp/cust/custlist/queryFilters', query),
   };
 }

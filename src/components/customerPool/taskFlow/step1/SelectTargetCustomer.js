@@ -34,6 +34,8 @@ export default class SelectTargetCustomer extends PureComponent {
     orgId: PropTypes.string.isRequired,
     isAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -103,6 +105,8 @@ export default class SelectTargetCustomer extends PureComponent {
       orgId,
       isAuthorize,
       filterModalvisible,
+      getFiltersOfSightingTelescope,
+      sightingTelescopeFilters,
     } = this.props;
     const {
       showEntry,
@@ -140,6 +144,8 @@ export default class SelectTargetCustomer extends PureComponent {
           orgId={orgId}
           isAuthorize={isAuthorize}
           filterModalvisible={filterModalvisible}
+          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
+          sightingTelescopeFilters={sightingTelescopeFilters}
         />
       </div>
     );
