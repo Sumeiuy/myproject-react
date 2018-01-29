@@ -14,17 +14,18 @@ import _ from 'lodash';
 import Clickable from '../../../components/common/Clickable';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
+import { isSightingScope } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
+// const EMPTY_OBJECT = {};
 let searchInput;
 const NONE_INFO = '按回车键发起搜索';
 export default class Search extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.object,
+    hotWdsList: PropTypes.array,
     queryHotPossibleWds: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
@@ -35,7 +36,7 @@ export default class Search extends PureComponent {
   }
 
   static defaultProps = {
-    data: EMPTY_OBJECT,
+    hotWdsList: EMPTY_LIST,
     queryHotPossibleWds: () => { },
     saveSearchVal: () => { },
     queryHotWdsData: EMPTY_LIST,
@@ -108,8 +109,6 @@ export default class Search extends PureComponent {
       }
       this.handleOpenTab({
         source: 'search',
-        labelMapping: '',
-        tagNumId: '',
         q: encodeURIComponent(searchVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
@@ -156,27 +155,34 @@ export default class Search extends PureComponent {
       return [{
         query,
         category: NONE_INFO,
-        content: NONE_INFO,
-        desc: NONE_INFO,
-        labelMapping: NONE_INFO,
-        tagNumId: NONE_INFO,
+        name: NONE_INFO,
+        description: NONE_INFO,
         id: NONE_INFO,
       }];
     }
 
-    this.setState({
+    this.setState({ // eslint-disable-line
       isHasSearchResult: true,
     });
-
-    return _.map(hotList, (item, index) => ({
-      query,
-      category: `${item.labelNameVal}${index}`,
-      content: item.labelNameVal,
-      desc: item.labelDesc,
-      labelMapping: item.labelMapping,
-      tagNumId: item.tagNumId,
-      id: item.labelNameVal,
-    }));
+    return _.map(hotList, (item, index) => {
+      if (item.type === 'label') {
+        return {
+          query,
+          category: `${item.name}${index}`,
+          name: item.name,
+          description: item.description,
+          id: item.id,
+          type: item.source,
+        };
+      }
+      return {
+        query,
+        category: `${item.value}${index}`,
+        name: item.value,
+        description: item.description,
+        type: item.type,
+      };
+    });
   }
 
   @autobind
@@ -207,20 +213,19 @@ export default class Search extends PureComponent {
       recommendList.push(
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: 'tag',
-            labelMapping: item.labelMapping || '',
-            tagNumId: item.tagNumId || '',
-            q: encodeURIComponent(item.labelNameVal),
+            source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
+            labelMapping: item.id || '',
+            q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/recommend"
           key={item.id}
         >
           <a
             className="item"
-            title={item.labelDesc}
+            title={item.description}
             rel="noopener noreferrer"
           >
-            {item.labelNameVal}
+            {item.name}
           </a>
         </Clickable>);
     });
@@ -255,8 +260,6 @@ export default class Search extends PureComponent {
       });
       this.handleOpenTab({
         source: 'search',
-        labelMapping: '',
-        tagNumId: '',
         q: encodeURIComponent(inputVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
@@ -278,18 +281,19 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { inputVal } = this.state;
-    const newContent = item.content.replace(inputVal, `<em>${inputVal}</em>`);
+    const newContent = item.name.replace(inputVal, `<em>${inputVal}</em>`);
+    const sightingScopeBool = isSightingScope(item.type);
     // 联想 association
     // 搜索 search
     // 标签 tag
+    // console.log('association: ', item);
     return (
-      <Option key={item.id} text={item.content}>
+      <Option key={`${item.id}${item.name}`} text={item.name}>
         <Clickable
           onClick={() => this.handleOpenTab({
-            source: 'association',
-            labelMapping: item.labelMapping || '',
-            tagNumId: item.tagNumId || item.content,
-            q: encodeURIComponent(item.content),
+            source: sightingScopeBool ? 'sightingTelescope' : 'association',
+            labelMapping: sightingScopeBool ? item.id : item.type,
+            q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"
         >
@@ -298,7 +302,7 @@ export default class Search extends PureComponent {
             rel="noopener noreferrer"
           />
         </Clickable>
-        <span className="desc">{item.desc}</span>
+        <span className="desc">{sightingScopeBool ? '瞄准镜' : item.description}</span>
       </Option>
     );
   }
@@ -306,14 +310,14 @@ export default class Search extends PureComponent {
   @autobind
   renderNoneSearchResult(item) {
     return (
-      <Option key={item.id} text={item.labelNameVal} disabled>
-        {item.desc}
+      <Option key={item.id} text={item.name} disabled>
+        {item.description}
       </Option>
     );
   }
 
   render() {
-    const { data: { hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
+    const { hotWdsList = EMPTY_LIST, searchHistoryVal } = this.props;
 
     return (
       <div className={styles.searchBox}>

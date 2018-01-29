@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import { customerPool as api } from '../api';
+import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
@@ -38,7 +38,7 @@ export default {
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
-    hotwds: {},
+    hotWdsList: [],
     hotPossibleWdsList: [],
     // 目标客户列表数据
     custList: [],
@@ -130,6 +130,8 @@ export default {
     },
     // 查询是否都是本人名下的客户
     custServedByPostnResult: true,
+    // 瞄准镜的筛选项
+    sightingTelescopeFilters: {},
   },
 
   subscriptions: {
@@ -653,12 +655,14 @@ export default {
     },
     // 标签圈人-id查询客户列表
     * getLabelPeople({ payload }, { call, put }) {
-      const response = yield call(api.queryLabelPeople, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getLabelPeopleSuccess',
-        payload: { resultData },
-      });
+      const response = yield call(api.getCustomerList, payload);
+      const { resultData: { custListVO } } = response;
+      if (response.code === '0') {
+        yield put({
+          type: 'getLabelPeopleSuccess',
+          payload: custListVO,
+        });
+      }
     },
     // 提交任务流程
     * submitTaskFlow({ payload }, { call, put }) {
@@ -778,6 +782,14 @@ export default {
         payload: resultData,
       });
     },
+    // 获取瞄准镜的筛选条件
+    * getFiltersOfSightingTelescope({ payload }, { call, put }) {
+      const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, payload);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -872,19 +884,27 @@ export default {
     // 默认推荐词及热词推荐列表
     getHotWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotWds = response.resultData;
+      const hotWdsList = response.resultData;
       return {
         ...state,
-        hotWds,
+        hotWdsList,
       };
     },
     // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      const { labelInfoList, matchedWdsList } = response.resultData;
+      // 给接口返回来的labels加上type字段
+      const newLabelInfoList = _.map(labelInfoList, item => ({
+        ...item,
+        type: 'label',
+      }));
       return {
         ...state,
-        hotPossibleWdsList,
+        hotPossibleWdsList: [
+          ...newLabelInfoList,
+          ...matchedWdsList,
+        ],
       };
     },
     getCustomerListSuccess(state, action) {
@@ -1232,10 +1252,18 @@ export default {
     },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
+      const emptyData = {
+        totalCount: 0,
+        pageSize: 10,
+        beginIndex: 1,
+        curPageNum: 1,
+        totalPage: 1,
+        custList: [],
+      };
       return {
         ...state,
-        peopleOfLabelData: resultData || {},
+        peopleOfLabelData: payload || emptyData,
       };
     },
     // 保存当前选中tab
@@ -1346,6 +1374,13 @@ export default {
       return {
         ...state,
         custServedByPostnResult: payload,
+      };
+    },
+    getFiltersOfSightingTelescopeSuccess(state, action) {
+      const { payload: { object } } = action;
+      return {
+        ...state,
+        sightingTelescopeFilters: object || {},
       };
     },
   },

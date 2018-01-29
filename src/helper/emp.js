@@ -62,7 +62,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;

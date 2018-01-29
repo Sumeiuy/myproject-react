@@ -40,6 +40,7 @@ const effects = {
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -65,6 +66,7 @@ const mapStateToProps = state => ({
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
+  sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
 });
 
 const mapDispatchToProps = {
@@ -107,6 +109,7 @@ const mapDispatchToProps = {
   getApprovalList: fetchData(effects.getApprovalList, true),
   generateTemplateId: fetchData(effects.generateTemplateId, true),
   isSendCustsServedByPostn: fetchData(effects.isSendCustsServedByPostn, true),
+  getFiltersOfSightingTelescope: fetchData(effects.getFiltersOfSightingTelescope, true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -140,6 +143,8 @@ export default class TaskFlow extends PureComponent {
     creator: PropTypes.string,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -253,6 +258,13 @@ export default class TaskFlow extends PureComponent {
         labelCustNums,
       };
     }
+    // postBody = {
+    //   searchReq: {
+    //     enterType: 'lableCustPool',
+    //     lables: ['J0001'],
+    //     filtersReq: [{ filterType: "Rights", filterContentList: ["817030"] }],
+    //   },
+    // };
 
     this.props.isSendCustsServedByPostn({
       ...postBody,
@@ -768,6 +780,8 @@ export default class TaskFlow extends PureComponent {
       push,
       clearSubmitTaskFlowResult,
       creator,
+      getFiltersOfSightingTelescope,
+      sightingTelescopeFilters,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -801,6 +815,8 @@ export default class TaskFlow extends PureComponent {
           filterModalvisible={visible}
           orgId={orgId}
           isSendCustsServedByPostn={this.handleCheckCust}
+          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
+          sightingTelescopeFilters={sightingTelescopeFilters}
         />
       </div>,
     }, {
