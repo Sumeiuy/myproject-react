@@ -17,7 +17,6 @@ import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/appList';
 import { seibelConfig } from '../../config';
 import AppItem from '../../components/common/appList/AppItem';
-import appListTool from '../../components/common/appList/tool';
 import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient_';
 import Barable from '../../decorators/selfBar';
@@ -160,7 +159,7 @@ export default class Permission extends PureComponent {
       getSearchServerPersonList: (data) => {
         this.props.getSearchServerPersonList({
           keyword: data,
-          pageSize: 10,
+          pageSize: 20,
           pageNum: 1,
         });
       },
@@ -174,9 +173,9 @@ export default class Permission extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
     } = this.props;
@@ -224,7 +223,7 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getPermissionList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
@@ -448,21 +447,16 @@ export default class Permission extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
+
 
     const leftPanel = (
       <PermissionList
@@ -498,7 +492,7 @@ export default class Permission extends PureComponent {
               subTypeList={subTypeList}
               empInfo={empInfo}
             />
-          :
+            :
             null
         }
         {
@@ -516,7 +510,7 @@ export default class Permission extends PureComponent {
               addListenModify={addListenModify}
               subTypeList={subTypeList}
             />
-          : null
+            : null
         }
       </div>
     );

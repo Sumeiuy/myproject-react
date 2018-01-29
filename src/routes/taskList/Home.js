@@ -20,7 +20,6 @@ import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel'
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
-import appListTool from '../../components/common/appList/tool';
 import { openRctTab, permission } from '../../utils';
 import { emp } from '../../helper';
 
@@ -643,7 +642,7 @@ export default class PerformerView extends PureComponent {
 
   // 头部筛选请求
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getTaskList, dict: { missionStatus }, replace,
       location: { pathname } } = this.props;
     let newQuery = query;
@@ -687,7 +686,7 @@ export default class PerformerView extends PureComponent {
 
   // 第一次加载请求
   @autobind
-  queryAppListInit({ newQuery, pageNum = 1, pageSize = 10,
+  queryAppListInit({ newQuery, pageNum = 1, pageSize = 20,
     beforeToday: before, today: todays, afterToday: after }) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
@@ -975,21 +974,16 @@ export default class PerformerView extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
+
 
     const leftPanel = (
       <ViewList

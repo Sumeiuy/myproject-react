@@ -15,7 +15,7 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Clickable from '../../components/common/Clickable';
-import Paganation from '../../components/common/Paganation';
+import Pagination from '../../components/common/Pagination';
 import styles from './viewpointList.less';
 
 function formatString(str) {
@@ -205,7 +205,6 @@ export default class ViewpointList extends PureComponent {
       totalRecordNum: totalCount,
       onPageChange: this.handlePageClick,
       onSizeChange: this.handlePageSizeClick,
-      originPageSizeUnit: 20,
     };
     const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (
@@ -220,7 +219,7 @@ export default class ViewpointList extends PureComponent {
             pagination={false}
             scroll={{ x: 1100 }}
           />
-          <Paganation {...paganationOption} />
+          <Pagination {...paganationOption} />
         </div>
       </div>
     );

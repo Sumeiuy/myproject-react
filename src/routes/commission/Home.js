@@ -20,7 +20,6 @@ import CreateNewApprovalBoard from '../../components/commissionAdjustment/Create
 import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import CommissionList from '../../components/common/appList';
 import AppItem from '../../components/common/appList/AppItem';
-import appListTool from '../../components/common/appList/tool';
 import seibelHelper from '../../helper/page/seibel';
 import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
@@ -284,9 +283,9 @@ export default class CommissionHome extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
+        pageSize,
         },
       },
     } = this.props;
@@ -424,7 +423,7 @@ export default class CommissionHome extends PureComponent {
   }
 
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getCommissionList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
@@ -641,20 +640,15 @@ export default class CommissionHome extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
+
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
 
     const leftPanel = (
@@ -684,38 +678,38 @@ export default class CommissionHome extends PureComponent {
         />
         {
           !createApprovalBoard ? null
-          : (
-            <CreateNewApprovalBoard
-              empInfo={empInfo}
-              empPostnList={empPostnList}
-              modalKey="createApprovalBoard"
-              visible={createApprovalBoard}
-              onClose={this.closeNewApprovalBoard}
-              otherRatios={otherRatio}
-              onBatchSubmit={submitBatch}
-              getSingleOtherRates={getSingleOtherRates}
-              singleOtherRatio={singleOtherRatio}
-              threeMatchInfo={threeMatchInfo}
-              queryThreeMatchInfo={queryThreeMatchInfo}
-              querySingleCustList={getSingleCustList}
-              querySubscribelCustList={getSubscribelCustList}
-              singleCustList={singleCustomerList}
-              subscribeCustList={subscribeCustomerList}
-              getSubscribelProList={getSubscribelProList}
-              subscribelProList={subscribelProList}
-              getUnSubscribelProList={getUnSubscribelProList}
-              unSubscribelProList={unSubscribelProList}
-              onSubmitSingle={submitSingle}
-              singleSubmit={singleSubmit}
-              submitSub={submitSub}
-              submitUnSub={submitUnSub}
-              clearReduxState={clearReduxState}
-              onValidateSingleCust={singleCustValidate}
-              singleCustVResult={singleCVR}
-              onCheckSubsciCust={onCheckSubsciCust}
-              sciCheckCustomer={sciCheckCustomer}
-            />
-          )
+            : (
+              <CreateNewApprovalBoard
+                empInfo={empInfo}
+                empPostnList={empPostnList}
+                modalKey="createApprovalBoard"
+                visible={createApprovalBoard}
+                onClose={this.closeNewApprovalBoard}
+                otherRatios={otherRatio}
+                onBatchSubmit={submitBatch}
+                getSingleOtherRates={getSingleOtherRates}
+                singleOtherRatio={singleOtherRatio}
+                threeMatchInfo={threeMatchInfo}
+                queryThreeMatchInfo={queryThreeMatchInfo}
+                querySingleCustList={getSingleCustList}
+                querySubscribelCustList={getSubscribelCustList}
+                singleCustList={singleCustomerList}
+                subscribeCustList={subscribeCustomerList}
+                getSubscribelProList={getSubscribelProList}
+                subscribelProList={subscribelProList}
+                getUnSubscribelProList={getUnSubscribelProList}
+                unSubscribelProList={unSubscribelProList}
+                onSubmitSingle={submitSingle}
+                singleSubmit={singleSubmit}
+                submitSub={submitSub}
+                submitUnSub={submitUnSub}
+                clearReduxState={clearReduxState}
+                onValidateSingleCust={singleCustValidate}
+                singleCustVResult={singleCVR}
+                onCheckSubsciCust={onCheckSubsciCust}
+                sciCheckCustomer={sciCheckCustomer}
+              />
+            )
         }
       </div>
     );

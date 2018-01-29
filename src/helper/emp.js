@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 15:43:54
+ * @Last Modified time: 2018-01-28 12:32:52
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';

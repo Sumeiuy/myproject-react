@@ -2,7 +2,17 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 17:44:03
+ * @Last Modified time: 2018-01-28 12:31:17
+ * 定制化分页组件，供项目所有需要用到分页的组件调用
+ * 调用方式
+ * const paginationOption = {
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+      onPageChange,
+      onSizeChange,
+    };
+    <Pagination {...paginationOption}>
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +22,7 @@ import _ from 'lodash';
 import { Pagination } from 'antd';
 import styles from './index.less';
 
-export default class Paganation extends PureComponent {
+export default class PaginationComponent extends PureComponent {
   static propTypes = {
     curPageNum: PropTypes.oneOfType([
       PropTypes.string,
@@ -28,22 +38,24 @@ export default class Paganation extends PureComponent {
     ]),
     onPageChange: PropTypes.func,
     onSizeChange: PropTypes.func,
-    originPageSizeUnit: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    showSizeChanger: PropTypes.bool,
+    isShowSizeChanger: PropTypes.bool,
   };
 
   static defaultProps = {
     curPageNum: 1,
-    totalRecordNum: 10,
-    curPageSize: 10,
+    totalRecordNum: 20,
+    curPageSize: 20,
     onPageChange: () => { },
     onSizeChange: () => { },
-    originPageSizeUnit: 10,
-    showSizeChanger: true,
+    isShowSizeChanger: true,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      originPageSizeUnit: props.curPageSize || 20,
+    };
+  }
 
   componentDidMount() {
     const { totalRecordNum, curPageSize } = this.props;
@@ -53,8 +65,6 @@ export default class Paganation extends PureComponent {
       const lastPage = _.head(_.filter(paganationNode.childNodes,
         item => item.title === String(totalPage)));
 
-      // TODO
-      // 后面改一下，不要用style
       lastPage.style.display = 'none';
     }
   }
@@ -70,6 +80,11 @@ export default class Paganation extends PureComponent {
   @autobind
   setWrappedInstance(ref) {
     this.wrappedInstance = ref;
+  }
+
+  @autobind
+  renderTotal(total, range) {
+    return `${range[0]}-${range[1]} of ${total} items`;
   }
 
   /**
@@ -107,23 +122,17 @@ export default class Paganation extends PureComponent {
     onPageChange,
     onSizeChange,
     originPageSizeUnit,
-    showSizeChanger,
+    isShowSizeChanger,
   }) {
     const paginationOptions = {
       current: parseInt(curPageNum, 10),
       defaultCurrent: 1,
-      size: 'small', // 迷你版
       total: Number(totalRecordNum),
       pageSize: parseInt(curPageSize, 10),
       defaultPageSize: Number(curPageSize),
       onChange: onPageChange,
-      showTotal: total =>
-        <span className={styles.totalPageSection}>
-          共 <span className={styles.totalPage}>
-            {total}
-          </span> 项
-        </span>,
-      showSizeChanger,
+      showTotal: this.renderTotal,
+      showSizeChanger: isShowSizeChanger,
       onShowSizeChange: onSizeChange,
       pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, originPageSizeUnit),
     };
@@ -132,7 +141,7 @@ export default class Paganation extends PureComponent {
   }
 
   render() {
-    const paginationOptionsProps = this.renderPaganation({ ...this.props });
+    const paginationOptionsProps = this.renderPaganation({ ...this.props, ...this.state });
 
     return (
       <div ref={this.setWrappedInstance}>

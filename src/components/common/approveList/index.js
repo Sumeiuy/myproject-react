@@ -8,8 +8,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Pagination } from 'antd';
 import _ from 'lodash';
+import Pagination from '../../common/Pagination';
 
 import styles from './index.less';
 
@@ -42,14 +42,19 @@ export default class ApproveList extends PureComponent {
       page: current,
     });
   }
+
   render() {
     const { data, nowStep, needPagination } = this.props;
     const { page, pageSize } = this.state;
-    const chunkData = data.length ?
-      _.chunk(data, pageSize)[page - 1]
-    :
-      [];
+    const chunkData = data.length ? _.chunk(data, pageSize)[page - 1] : [];
     const displayData = needPagination ? chunkData : data;
+    const paginationOption = {
+      curPageNum: page,
+      totalRecordNum: chunkData.length,
+      curPageSize: pageSize,
+      onPageChange: this.changePagination,
+      isShowSizeChanger: false,
+    };
     return (
       <div className={styles.approveWrapper}>
         {
@@ -60,7 +65,7 @@ export default class ApproveList extends PureComponent {
               <span>当前审批人：</span>
               <span>{nowStep.handleName}</span>
             </div>
-          :
+            :
             null
         }
         {
@@ -83,17 +88,13 @@ export default class ApproveList extends PureComponent {
               {
                 needPagination ?
                   <Pagination
-                    size="small"
-                    defaultPageSize={pageSize}
-                    defaultCurrent={1}
-                    total={data && data.length}
-                    onChange={this.changePagination}
+                    {...paginationOption}
                   />
-                :
+                  :
                   null
               }
             </div>
-          :
+            :
             null
         }
       </div>
