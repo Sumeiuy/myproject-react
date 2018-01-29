@@ -49,7 +49,7 @@ const permission = {
     return judgeAuthority(permissionList, HTSC_TK_MAMPID);
   },
 
-  // HTSC 任务管理岗
+  // HTSC 资讯管理岗
   hasZXMampPermission() {
     return judgeAuthority(permissionList, HTSC_ZX_MAMPID);
   },
