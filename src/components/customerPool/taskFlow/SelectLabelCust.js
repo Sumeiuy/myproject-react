@@ -92,9 +92,20 @@ export default class SelectLabelCust extends PureComponent {
   // 获取瞄准镜参数
   @autobind
   getArgsOfQueryCustomer(value) {
+    const { argsOfQueryCustomer } = this.state;
     this.setState({
-      argsOfQueryCustomer: value,
+      argsOfQueryCustomer: {
+        ...argsOfQueryCustomer,
+        ...value,
+      },
     });
+    // 没有筛查
+    /**
+     * searchReq: {
+     *   enterType: 'labelSearchCustPool',
+     *   labels: [],
+     * }
+     */
   }
 
   @autobind

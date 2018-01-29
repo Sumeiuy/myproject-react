@@ -66,8 +66,8 @@ export default class Filter extends PureComponent {
   render() {
     const { dict, onFilterChange, currentItems } = this.props;
     const currentValue = _.reduce(currentItems, (result, value) => {
-      const [k, v] = value.split('.');
-      result[k] = v; // eslint-disable-line
+      const [name, code] = value.split('.');
+      result[name] = code; // eslint-disable-line
       return result;
     }, {});
     return (
