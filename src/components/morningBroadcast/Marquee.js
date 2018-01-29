@@ -7,7 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import styles from './marquee.less';
 
-let modify;
+let intervalId;
 export default class Marquee extends PureComponent {
   static propTypes = {
     content: PropTypes.node.isRequired,
@@ -20,10 +20,10 @@ export default class Marquee extends PureComponent {
 
   componentDidMount() {
     const { speed } = this.props;
-    const wrap = this.wrap;
-    const wrapStyle = wrap.style;
-    const scrollDiv1 = this.content1;
-    const itemWidth = scrollDiv1.offsetWidth;
+    const wrapRef = this.wrapRef;
+    const wrapStyle = wrapRef.style;
+    const contentRef = this.contentRef;
+    const itemWidth = contentRef.offsetWidth;
     let wrapLeftNum = 0;
     function marqueeMachine() {
       if (itemWidth === wrapLeftNum) {
@@ -32,26 +32,26 @@ export default class Marquee extends PureComponent {
       wrapStyle.left = `-${wrapLeftNum++}px`;
     }
 
-    modify = setInterval(marqueeMachine, speed);
-    wrap.onmouseover = function StartScroll() {
-      clearInterval(modify);
+    intervalId = setInterval(marqueeMachine, speed);
+    wrapRef.onmouseover = function StartScroll() {
+      clearInterval(intervalId);
     };
 
-    wrap.onmouseout = function StopScroll() {
-      modify = setInterval(marqueeMachine, speed);
+    wrapRef.onmouseout = function StopScroll() {
+      intervalId = setInterval(marqueeMachine, speed);
     };
   }
 
   componentWillUnmount() {
-    clearInterval(modify);
+    clearInterval(intervalId);
   }
 
   render() {
     const { content } = this.props;
     return (
       <div className={styles.container}>
-        <div ref={(c) => { this.wrap = c; }} className={styles.wrap}>
-          <div ref={(c) => { this.content1 = c; }} className={styles.item}>
+        <div ref={(c) => { this.wrapRef = c; }} className={styles.wrap}>
+          <div ref={(c) => { this.contentRef = c; }} className={styles.item}>
             {content}
           </div>
           <div>

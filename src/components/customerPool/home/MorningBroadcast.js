@@ -43,7 +43,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  openNewTab(url, query) {
+  openNewTab(url, query = {}) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '晨报' };
     const { push } = this.props;
     openRctTab({
@@ -67,7 +67,7 @@ export default class MorningBroadcast extends PureComponent {
       <div className={styles.morning_broadcast}>
         <div className={styles.title}>
           <span>晨间播报</span>
-          <span className={styles.more} onClick={() => this.openNewTab('/broadcastList', {})} >
+          <span className={styles.more} onClick={() => this.openNewTab('/broadcastList')} >
             <span>更多</span>
             <img src={more} alt="" />
           </span>
