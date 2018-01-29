@@ -81,7 +81,7 @@ export default class BroadcastList extends PureComponent {
     const TO_DATE = moment().format('YYYY-MM-DD');
     const FROM_DATE = moment().subtract(beforeM, 'months').format('YYYY-MM-DD');
     const PAGE_NUM = 1;
-    const PAGE_LEN = 10;
+    const PAGE_LEN = 20;
     return { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN };
   }
 
@@ -218,6 +218,7 @@ export default class BroadcastList extends PureComponent {
       className: 'tableAuthor',
       key: 'author',
     }];
+    console.log(permission.hasZXMampPermission());
     if (permission.hasZXMampPermission()) {
       columns.push({
         title: '操作',
@@ -379,6 +380,7 @@ export default class BroadcastList extends PureComponent {
                   format="YYYY-MM-DD"
                   placeholder="Start"
                   allowClear={false}
+                  showToday={false}
                   defaultValue={moment(FROM_DATE || initQuery.FROM_DATE)}
                   disabledDate={this.disabledStartDate}
                   onChange={this.onStartChange}
@@ -390,6 +392,7 @@ export default class BroadcastList extends PureComponent {
                   format="YYYY-MM-DD"
                   placeholder="End"
                   allowClear={false}
+                  showToday={false}
                   defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
                   disabledDate={this.disabledEndDate}
                   onChange={this.onEndChange}
@@ -441,6 +444,7 @@ export default class BroadcastList extends PureComponent {
               dataSource={newBoradcastList}
               pagination={{
                 ...pagination,
+                defaultPageSize: 20,
                 showSizeChanger: true,
                 showTotal() { return `共${pagination.total}项`; },
                 onChange: this.onPageNumChange,
