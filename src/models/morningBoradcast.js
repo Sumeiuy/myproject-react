@@ -4,7 +4,6 @@
  * @author xzqiang(crazy_zhiqiang@sina.com)
  */
 import { message } from 'antd';
-import { emp } from '../helper';
 import { morningBoradcast as api } from '../api';
 
 export default {
@@ -174,8 +173,8 @@ export default {
       } else {
         const { audioFileId, otherFileId } = response.resultData;
         const [audioFileListRes, otherFileListRes] = yield [
-          call(api.ceFileList, { empId: emp.getId(), attachment: audioFileId }),
-          call(api.ceFileList, { empId: emp.getId(), attachment: otherFileId }),
+          call(api.ceFileList, { attachment: audioFileId }),
+          call(api.ceFileList, { attachment: otherFileId }),
         ];
         const [audioFileList,
           otherFileList] = [audioFileListRes.resultData, otherFileListRes.resultData];
@@ -225,7 +224,7 @@ export default {
         });
         const audioId = homePageList.map(item => item.audioFileId);
         const audioSourceList = yield audioId.map(item => (
-          call(api.ceFileList, { empId: emp.getId(), attachment: item })
+          call(api.ceFileList, { attachment: item })
         ));
         const resSourceList = audioSourceList.map(item => (
           item.resultData.length && item.resultData[0]
