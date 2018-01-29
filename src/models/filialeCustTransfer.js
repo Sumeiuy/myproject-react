@@ -26,11 +26,19 @@ const PLACEHOLDER_OBJECT = {
 export default {
   namespace: 'filialeCustTransfer',
   state: {
+    detailInfo: EMPTY_OBJECT, // 详情
     custList: EMPTY_LIST, // 客户列表列表
     managerData: EMPTY_LIST, // 服务经理数据
     newManagerList: EMPTY_LIST, // 新服务经理列表
   },
   reducers: {
+    getDetailInfoSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        detailInfo: resultData,
+      };
+    },
     getCustListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
@@ -80,6 +88,14 @@ export default {
     },
   },
   effects: {
+    // 右侧详情
+    * getDetailInfo({ payload }, { call, put }) {
+      const response = yield call(api.getDetailInfo, payload);
+      yield put({
+        type: 'getDetailInfoSuccess',
+        payload: response,
+      });
+    },
     // 查询客户列表
     * getCustList({ payload }, { call, put }) {
       const newPayload = {
