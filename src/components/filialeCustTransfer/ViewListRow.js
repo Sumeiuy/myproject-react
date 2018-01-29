@@ -3,7 +3,7 @@
  * @Description: 分公司人工划转ViewListRow
  * @Date: 2018-01-29 14:25:26
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 14:25:58
+ * @Last Modified time: 2018-01-29 16:05:32
  */
 
 import React from 'react';
@@ -15,6 +15,7 @@ import Tag from '../common/tag';
 import Icon from '../common/Icon';
 import styles from './viewListRow.less';
 
+const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 // 后台返回的类型字段转化为对应的中文显示
 const changeTypeDisplay = (st, options) => {
   if (st && !_.isEmpty(st) && st === options.pageType) {
@@ -96,9 +97,13 @@ export default function ViewListRow(props) {
         <div className={styles.drafter}>
           拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}
         </div>
-        <div className={styles.customer}>
-          客户：<span>{data.custName || '无'}({data.custNumber || '无'})</span>
-        </div>
+        {
+          data.subType !== SINGLECUSTTRANSFER ?
+          null :
+          <div className={styles.customer}>
+            客户：<span>{data.custName || '无'}({data.custNumber || '无'})</span>
+          </div>
+        }
       </div>
     </div>
   );
