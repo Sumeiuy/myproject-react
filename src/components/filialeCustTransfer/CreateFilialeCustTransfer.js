@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 15:00:14
+ * @Last Modified time: 2018-01-29 15:56:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -57,6 +57,7 @@ export default class FilialeCustTransfer extends PureComponent {
     emptyQueryData: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
+    onEmitClearModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
