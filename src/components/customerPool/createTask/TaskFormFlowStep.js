@@ -190,7 +190,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custSources = '搜索目标客户';
         break;
       case 'association':
-        custSources = '热词搜索目标客户';
+        custSources = '搜索目标客户';
         break;
       case 'tag':
         custSources = '标签目标客户池';
