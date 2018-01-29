@@ -133,18 +133,21 @@ export default class AddMorningBoradcast extends PureComponent {
         return;
       }
       this.setState({ audioError: true });
+      let query;
       if (!err) {
-        Object.assign(values, {
+        query = {
           audioFileId: finalNewUuid[0],
           otherFileId: finalNewUuid[1],
-        });
+        };
         if (newsId !== -1) {
-          Object.assign(values, { newsId,
+          query = {
+            ...query,
+            newsId,
             updatedBy: values.createdBy,
             createdBy: null,
-          });
+          };
         }
-        saveBoradcast(values);
+        saveBoradcast(query);
       }
     });
   }
@@ -297,7 +300,8 @@ export default class AddMorningBoradcast extends PureComponent {
       action: `${request.prefix}/file/ceFileUpload`,
       onRemove: this.onRemove,
     };
-    const audioProps = Object.assign({}, sourceProps, {
+    const audioProps = {
+      ...sourceProps,
       action: `${request.prefix}/file/ceFileReplaceUpload `,
       accept: 'audio/*',
       data: {
@@ -309,15 +313,16 @@ export default class AddMorningBoradcast extends PureComponent {
       },
       beforeUpload: this.onBeforeUpload,
       onChange: this.onAudioChange,
-    });
-    const otherProps = Object.assign({}, sourceProps, {
+    };
+    const otherProps = {
+      ...sourceProps,
       accept: '*/*',
       data: {
         attachment: finalNewUuid[1],
         empId: emp.getId(),
       },
       onChange: this.onOtherChange,
-    });
+    };
     const morningBoradcastType = dict.newsTypeDictList || [];
     return (
       <Modal

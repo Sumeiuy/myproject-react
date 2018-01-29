@@ -128,15 +128,15 @@ export default class BroadcastList extends PureComponent {
     const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
     const { pagination, newsListQuery } = this.props.morningBoradcast;
     const { defaultCurrent, defaultPageSize } = pagination;
-    const query = Object.assign({},
-      {
-        createdFrom: newsListQuery.FROM_DATE || FROM_DATE,
-        createdTo: newsListQuery.TO_DATE || TO_DATE,
-        pageNum: defaultCurrent || PAGE_NUM,
-        pageSize: defaultPageSize || PAGE_LEN,
-        createdBy: newsListQuery.CREATE_BY || '',
-        title: newsListQuery.TITLE || '',
-      }, option);
+    const query = {
+      createdFrom: newsListQuery.FROM_DATE || FROM_DATE,
+      createdTo: newsListQuery.TO_DATE || TO_DATE,
+      pageNum: defaultCurrent || PAGE_NUM,
+      pageSize: defaultPageSize || PAGE_LEN,
+      createdBy: newsListQuery.CREATE_BY || '',
+      title: newsListQuery.TITLE || '',
+      ...option,
+    };
     getBoradcastList(query);
   }
 
@@ -427,16 +427,13 @@ export default class BroadcastList extends PureComponent {
               loading={newsListLoading}
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
-              pagination={
-                Object.assign({},
-                  pagination,
-                  {
-                    showSizeChanger: true,
-                    showTotal() { return `共${pagination.total}项`; },
-                    onChange: this.onPageNumChange,
-                    onShowSizeChange: this.onPageSizeChange,
-                  },
-                )}
+              pagination={{
+                ...pagination,
+                showSizeChanger: true,
+                showTotal() { return `共${pagination.total}项`; },
+                onChange: this.onPageNumChange,
+                onShowSizeChange: this.onPageSizeChange,
+              }}
             />
           </div>
         </div>
