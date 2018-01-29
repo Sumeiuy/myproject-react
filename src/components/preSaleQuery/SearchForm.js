@@ -2,12 +2,13 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 17:19:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-22 14:52:21
+ * @Last Modified time: 2018-01-25 13:37:35
  * @description 售前适当性查询查询组件
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
+import _ from 'lodash';
 
 import DropDownSelect from '../../components/common/dropdownSelect/index';
 
@@ -65,18 +66,5 @@ SearchForm.propTypes = {
   onSelectProductItem: PropTypes.func.isRequired,
   onQueryProductList: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
-};
-
-SearchForm.defaultProps = {
-  custList: [],
-  productList: [],
-  selectedCustItem: {},
-  selectedProductItem: {},
-  onSearch: () => {},
-  onSelectCustItem: () => {},
-  onQueryCustList: () => {},
-  onSelectProductItem: () => {},
-  onQueryProductList: () => {},
-  onReset: () => {},
 };
 
