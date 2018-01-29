@@ -75,8 +75,8 @@ export default class Filter extends PureComponent {
     } = location.query;
     const filtersArray = filters ? filters.split('|') : [];
     const currentValue = _.reduce(filtersArray, (result, value) => {
-      const [k, v] = value.split('.');
-      result[k] = v; // eslint-disable-line
+      const [name, code] = value.split('.');
+      result[name] = code; // eslint-disable-line
       return result;
     }, {});
     return (
