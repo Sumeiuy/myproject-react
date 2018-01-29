@@ -146,7 +146,9 @@ export default class TaskSearchRow extends PureComponent {
     // 获取客户列表
     getLabelPeople(payload);
     // 将查询列表的参数以回调的方式传给父组件
-    getArgsOfQueryCustomer(payload);
+    getArgsOfQueryCustomer({
+      [labelId]: payload,
+    });
   }
 
   @autobind
