@@ -45,6 +45,7 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: labelId,
       labelId,
       tipsSize,
+      argsOfQueryCustomer: {},
     };
     this.bigBtn = true;
   }
@@ -61,7 +62,7 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   getData() {
-    const { labelId = '', condition, tipsSize } = this.state;
+    const { labelId = '', condition, tipsSize, argsOfQueryCustomer } = this.state;
     if (_.isEmpty(condition)) {
       return {
         labelCust: {},
@@ -81,6 +82,7 @@ export default class SelectLabelCust extends PureComponent {
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
+      argsOfQueryCustomer,
     };
 
     return {

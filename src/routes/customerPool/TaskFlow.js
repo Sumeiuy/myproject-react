@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-29 15:48:04
+ * @Last Modified time: 2018-01-29 17:48:43
  */
 
 import React, { PureComponent } from 'react';
@@ -179,6 +179,8 @@ export default class TaskFlow extends PureComponent {
       isCanGoNextStep: false,
       isNeedMissionInvestigation: false,
     };
+
+    this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -262,7 +264,11 @@ export default class TaskFlow extends PureComponent {
       const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
       const {
         labelCust,
-        labelCust: { labelId, labelMapping, labelDesc, labelName, custNum },
+        labelCust: {
+          labelId,
+          argsOfQueryCustomer = {},
+          custNum,
+        },
       } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
       // 为1 时 表示当前是瞄准镜
@@ -282,7 +288,6 @@ export default class TaskFlow extends PureComponent {
 
       let postBody = {
         postnId: emp.getPstnId(),
-        orgId: emp.getOrgId(),
       };
 
       // 当前tab是第一个，则代表导入客户
@@ -292,15 +297,43 @@ export default class TaskFlow extends PureComponent {
           fileId: uploadedFileKey,
         };
       } else {
-        postBody = {
-          ...postBody,
-          labelId: labelMapping,
-          queryLabelDTO: {
-            labelDesc,
-            labelName,
-          },
-          labelCustNums: custNum,
-        };
+        if (custNum === 0) {
+          message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          return;
+        }
+        if (this.hasTkMampPermission) {
+          // 有权限传orgId
+          postBody = {
+            ...postBody,
+            searchReq: {
+              orgId: emp.getOrgId(),
+            },
+          };
+        } else {
+          postBody = {
+            ...postBody,
+            searchReq: {
+              ptyMngId: emp.getId(),
+            },
+          };
+        }
+
+        const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+        if (_.isEmpty(currentLabelQueryCustomerParam)
+          || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+          // 代表当前选中的标签没有进行筛查客户
+          postBody = _.merge(postBody, {
+            searchReq: {
+              enterType: 'labelSearchCustPool',
+              labels: [labelId],
+            },
+          });
+        } else {
+          // 筛选了客户，会自带orgId或者ptyMngId
+          postBody = _.merge(postBody, {
+            searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
+          });
+        }
       }
 
       isSendCustsServedByPostn({
