@@ -139,7 +139,6 @@ export default class TaskSearchRow extends PureComponent {
   handleSeeCust(value = {}) {
     const { filter } = this.state;
     this.queryPeopleOfLabel(value.labelMapping, INITIAL_PAGE_NUM, INITIAL_PAGE_SIZE, filter);
-
     this.setState({
       title: value.labelName,
       totalCustNums: value.customNum,
@@ -147,6 +146,8 @@ export default class TaskSearchRow extends PureComponent {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
     });
+    // 点击筛查客户，将当前标签选中
+    this.props.onChange(value.id || '');
   }
 
   @autobind
@@ -223,7 +224,7 @@ export default class TaskSearchRow extends PureComponent {
             ? '--'
             : newDesc.replace(condition, `<span class=${styles.keyword}>${condition}</span>`);
           newTitle = _.isEmpty(newTitle)
-          ? '--'
+            ? '--'
             : newTitle.replace(condition, `<span class=${styles.keyword}>${condition}</span>`);
         }
         const cls = classnames({
@@ -287,7 +288,11 @@ export default class TaskSearchRow extends PureComponent {
 
     return (
       <div className={styles.divContent}>
-        <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
+        <RadioGroup
+          name="radiogroup"
+          onChange={this.change}
+          value={currentSelectLabel}
+        >
           {
             this.renderRadioSection()
           }

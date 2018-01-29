@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 17:13:47
+ * @Last Modified time: 2018-01-29 13:25:20
  */
 
 import React, { PureComponent } from 'react';
@@ -222,64 +222,6 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
-  @autobind
-  handleCheckCust({
-    uploadedFileKey: fileId,
-    labelMapping,
-    custNum: labelCustNums,
-    labelDesc,
-    labelName,
-    currentEntry,
-  }) {
-    let postBody = {
-      postnId: emp.getPstnId(),
-      orgId: emp.getOrgId(),
-    };
-
-    // 当前tab是第一个，则代表导入客户
-    if (currentEntry === 0) {
-      postBody = {
-        ...postBody,
-        fileId,
-      };
-    } else {
-      postBody = {
-        ...postBody,
-        labelId: labelMapping,
-        queryLabelDTO: {
-          labelDesc,
-          labelName,
-        },
-        labelCustNums,
-      };
-    }
-
-    this.props.isSendCustsServedByPostn({
-      ...postBody,
-    }).then(() => {
-      const { sendCustsServedByPostnResult = {} } = this.props;
-      if (_.isEmpty(sendCustsServedByPostnResult)) {
-        return;
-      }
-      const {
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
-      } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-      if (isIncludeNotMineCust && !isCanGoNextStep) {
-        message.error('客户包含非本人名下客户，请重新选择');
-        return;
-      }
-
-      this.setState({
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-      });
-    });
-  }
-
   /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
@@ -290,8 +232,9 @@ export default class TaskFlow extends PureComponent {
       saveTaskFlowData,
       storedTaskFlowData = EMPTY_OBJECT,
       generateTemplateId,
+      isSendCustsServedByPostn,
     } = this.props;
-    const { current, isCanGoNextStep, isNeedMissionInvestigation } = this.state;
+    const { current } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData || {};
     let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
@@ -312,23 +255,77 @@ export default class TaskFlow extends PureComponent {
       } = this.SelectTargetCustomerRef.getData();
       currentEntry = entry;
       const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
-      const { labelCust, labelCust: { labelId } } = sightingTelescope;
+      const {
+        labelCust,
+        labelCust: { labelId, labelMapping, labelDesc, labelName, custNum },
+      } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
       // 为1 时 表示当前是瞄准镜
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
           message.error('请导入Excel或CSV文件');
+          return;
         }
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
           message.error('请利用标签圈出目标客户');
+          return;
         }
       }
-      this.setState({
-        currentEntry,
+
+      let postBody = {
+        postnId: emp.getPstnId(),
+        orgId: emp.getOrgId(),
+      };
+
+      // 当前tab是第一个，则代表导入客户
+      if (currentEntry === 0) {
+        postBody = {
+          ...postBody,
+          fileId: uploadedFileKey,
+        };
+      } else {
+        postBody = {
+          ...postBody,
+          labelId: labelMapping,
+          queryLabelDTO: {
+            labelDesc,
+            labelName,
+          },
+          labelCustNums: custNum,
+        };
+      }
+
+      isSendCustsServedByPostn({
+        ...postBody,
+      }).then(() => {
+        const { sendCustsServedByPostnResult = {} } = this.props;
+        if (_.isEmpty(sendCustsServedByPostnResult)) {
+          isSelectCust = false;
+        } else {
+          const {
+            isNeedApproval,
+            isCanGoNextStep,
+            isNeedMissionInvestigation,
+            isIncludeNotMineCust,
+          } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
+          if (isIncludeNotMineCust && !isCanGoNextStep) {
+            isSelectCust = false;
+            message.error('客户包含非本人名下客户，请重新选择');
+          } else {
+            this.setState({
+              isNeedApproval,
+              isCanGoNextStep,
+              isNeedMissionInvestigation,
+              currentEntry,
+              current: current + 1,
+            });
+          }
+        }
       });
+
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
     } else if (current === 1) {
       // 拿到form表单component
@@ -428,7 +425,7 @@ export default class TaskFlow extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (isNeedMissionInvestigation) {
+      if (this.state.isNeedMissionInvestigation) {
         const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
@@ -458,7 +455,6 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    // isFormValidate && isSelectCust
     if (isFormValidate && isSelectCust && isMissionInvestigationValidate && isResultTrackValidate) {
       saveTaskFlowData({
         ...storedTaskFlowData,
@@ -470,7 +466,7 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      if (isCanGoNextStep) {
+      if (this.state.isCanGoNextStep) {
         this.setState({
           current: current + 1,
         });
@@ -748,7 +744,6 @@ export default class TaskFlow extends PureComponent {
       currentEntry,
       isNeedApproval,
       isNeedMissionInvestigation,
-      isCanGoNextStep,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -800,7 +795,6 @@ export default class TaskFlow extends PureComponent {
           isAuthorize={isNeedApproval}
           filterModalvisible={visible}
           orgId={orgId}
-          isSendCustsServedByPostn={this.handleCheckCust}
         />
       </div>,
     }, {
@@ -905,7 +899,7 @@ export default class TaskFlow extends PureComponent {
                 onClick={_.debounce(this.handleNextStep, 250)}
                 eventName="/click/taskFlow/nextStep"
               >
-                <Button className={styles.nextStepBtn} type="primary" disabled={!isCanGoNextStep}>下一步</Button>
+                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
               </Clickable>
             }
             {
