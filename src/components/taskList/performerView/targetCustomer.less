@@ -9,7 +9,18 @@
   border: 1px solid #ddd;
   .list {
     border-right: 1px solid #ddd;
-    // border-right: 0;
+  }
+  & > .height100Percent {
+    min-width: 578px;
+    display: flex;
+    & > .height100Percent:first-child {
+      min-width: 293px;
+    }
+    & > .height100Percent:last-child {
+      min-width: 285px;
+      max-width: 761px;
+      width: 100%;
+    }
   }
 }
 .height100Percent {

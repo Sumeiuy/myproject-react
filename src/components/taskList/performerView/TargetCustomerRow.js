@@ -152,12 +152,12 @@ export default class TargetCustomerRow extends PureComponent {
         <div className={styles.status}>{missionStatusValue}</div>
         <div className={customerInfoCls}>
           {this.renderAvator(genderCode, custNature)}
-          <span className={styles.name}>{custName}</span>
+          <span className={styles.name} title={custName}>{custName}</span>
         </div>
         <div className={styles.iconList}>
           {this.renderRankIcon(levelCode)}
           {this.renderRiskLevelIcon(riskLevelCode)}
-          <span className={signCls} >签约</span>
+          <span className={signCls}>签约</span>
         </div>
         <span className={styles.triangle} />
       </div>
