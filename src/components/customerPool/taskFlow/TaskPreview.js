@@ -57,7 +57,7 @@ export default class TaskPreview extends PureComponent {
     currentSelectRecord: PropTypes.object.isRequired,
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
-    isNeedApproval: PropTypes.bool,
+    needApproval: PropTypes.bool,
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -66,7 +66,7 @@ export default class TaskPreview extends PureComponent {
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
-    isNeedApproval: false,
+    needApproval: false,
     currentEntry: 0,
   };
 
@@ -212,7 +212,7 @@ export default class TaskPreview extends PureComponent {
   render() {
     const {
       storedData,
-      isNeedApproval,
+      needApproval,
       currentEntry = 0,
       executeTypes,
       taskTypes,
@@ -492,7 +492,7 @@ export default class TaskPreview extends PureComponent {
             : null
         }
         {
-          isNeedApproval ? (
+          needApproval ? (
             <div>
               <Clickable
                 onClick={this.handleClick}

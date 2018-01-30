@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-28 12:31:17
+ * @Last Modified time: 2018-01-30 10:55:14
  * 定制化分页组件，供项目所有需要用到分页的组件调用
  * 调用方式
  * const paginationOption = {
@@ -47,7 +47,7 @@ export default class PaginationComponent extends PureComponent {
     curPageSize: 20,
     onPageChange: () => { },
     onSizeChange: () => { },
-    isShowSizeChanger: true,
+    isShowSizeChanger: false,
   };
 
   constructor(props) {
@@ -141,7 +141,12 @@ export default class PaginationComponent extends PureComponent {
   }
 
   render() {
-    const paginationOptionsProps = this.renderPaganation({ ...this.props, ...this.state });
+    const paginationOptionsProps = this.renderPaganation({
+      ...this.props,
+      ...this.state,
+      // 不展示分页改变条目
+      isShowSizeChanger: false,
+    });
 
     return (
       <div ref={this.setWrappedInstance}>
