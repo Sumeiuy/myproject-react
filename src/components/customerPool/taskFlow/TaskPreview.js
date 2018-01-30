@@ -503,7 +503,7 @@ export default class TaskPreview extends PureComponent {
                   <Search className={styles.searchSection} readOnly value={empName} />
                 </div>
               </Clickable>
-              <p className={styles.tishi}><Icon type="exclamation-circle" />新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
+              <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
             </div>
 
           ) : null

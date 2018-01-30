@@ -492,7 +492,7 @@ export default class Pageheader extends PureComponent {
               onChange={this.handleSelectChange}
             />
           </div>
-
+          {missionViewTypeValue === 'initiator' ? null :
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
@@ -507,6 +507,7 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+          }
 
           {missionViewTypeValue === 'initiator' ?
             this.renderTime(beforeToday, today, true) :
