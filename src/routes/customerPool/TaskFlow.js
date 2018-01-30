@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 17:13:47
+ * @Last Modified time: 2018-01-29 17:48:43
  */
 
 import React, { PureComponent } from 'react';
@@ -179,6 +179,8 @@ export default class TaskFlow extends PureComponent {
       isCanGoNextStep: false,
       isNeedMissionInvestigation: false,
     };
+
+    this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -227,71 +229,6 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
-  @autobind
-  handleCheckCust({
-    uploadedFileKey: fileId,
-    labelMapping,
-    custNum: labelCustNums,
-    labelDesc,
-    labelName,
-    currentEntry,
-  }) {
-    let postBody = {
-      postnId: emp.getPstnId(),
-      orgId: emp.getOrgId(),
-    };
-
-    // 当前tab是第一个，则代表导入客户
-    if (currentEntry === 0) {
-      postBody = {
-        ...postBody,
-        fileId,
-      };
-    } else {
-      postBody = {
-        ...postBody,
-        labelId: labelMapping,
-        queryLabelDTO: {
-          labelDesc,
-          labelName,
-        },
-        labelCustNums,
-      };
-    }
-    // postBody = {
-    //   searchReq: {
-    //     enterType: 'lableCustPool',
-    //     lables: ['J0001'],
-    //     filtersReq: [{ filterType: "Rights", filterContentList: ["817030"] }],
-    //   },
-    // };
-
-    this.props.isSendCustsServedByPostn({
-      ...postBody,
-    }).then(() => {
-      const { sendCustsServedByPostnResult = {} } = this.props;
-      if (_.isEmpty(sendCustsServedByPostnResult)) {
-        return;
-      }
-      const {
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
-      } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-      if (isIncludeNotMineCust && !isCanGoNextStep) {
-        message.error('客户包含非本人名下客户，请重新选择');
-        return;
-      }
-
-      this.setState({
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-      });
-    });
-  }
-
   /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
@@ -302,8 +239,9 @@ export default class TaskFlow extends PureComponent {
       saveTaskFlowData,
       storedTaskFlowData = EMPTY_OBJECT,
       generateTemplateId,
+      isSendCustsServedByPostn,
     } = this.props;
-    const { current, isCanGoNextStep, isNeedMissionInvestigation } = this.state;
+    const { current } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData || {};
     let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
@@ -324,23 +262,108 @@ export default class TaskFlow extends PureComponent {
       } = this.SelectTargetCustomerRef.getData();
       currentEntry = entry;
       const { custSegment, custSegment: { uploadedFileKey } } = importCustomers;
-      const { labelCust, labelCust: { labelId } } = sightingTelescope;
+      const {
+        labelCust,
+        labelCust: {
+          labelId,
+          argsOfQueryCustomer = {},
+          custNum,
+        },
+      } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
       // 为1 时 表示当前是瞄准镜
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
           message.error('请导入Excel或CSV文件');
+          return;
         }
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
           message.error('请利用标签圈出目标客户');
+          return;
         }
       }
-      this.setState({
-        currentEntry,
+
+      let postBody = {
+        postnId: emp.getPstnId(),
+      };
+
+      // 当前tab是第一个，则代表导入客户
+      if (currentEntry === 0) {
+        postBody = {
+          ...postBody,
+          fileId: uploadedFileKey,
+        };
+      } else {
+        if (custNum === 0) {
+          message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          return;
+        }
+        if (this.hasTkMampPermission) {
+          // 有权限传orgId
+          postBody = {
+            ...postBody,
+            searchReq: {
+              orgId: emp.getOrgId(),
+            },
+          };
+        } else {
+          postBody = {
+            ...postBody,
+            searchReq: {
+              ptyMngId: emp.getId(),
+            },
+          };
+        }
+
+        const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+        if (_.isEmpty(currentLabelQueryCustomerParam)
+          || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+          // 代表当前选中的标签没有进行筛查客户
+          postBody = _.merge(postBody, {
+            searchReq: {
+              enterType: 'labelSearchCustPool',
+              labels: [labelId],
+            },
+          });
+        } else {
+          // 筛选了客户，会自带orgId或者ptyMngId
+          postBody = _.merge(postBody, {
+            searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
+          });
+        }
+      }
+
+      isSendCustsServedByPostn({
+        ...postBody,
+      }).then(() => {
+        const { sendCustsServedByPostnResult = {} } = this.props;
+        if (_.isEmpty(sendCustsServedByPostnResult)) {
+          isSelectCust = false;
+        } else {
+          const {
+            isNeedApproval,
+            isCanGoNextStep,
+            isNeedMissionInvestigation,
+            isIncludeNotMineCust,
+          } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
+          if (isIncludeNotMineCust && !isCanGoNextStep) {
+            isSelectCust = false;
+            message.error('客户包含非本人名下客户，请重新选择');
+          } else {
+            this.setState({
+              isNeedApproval,
+              isCanGoNextStep,
+              isNeedMissionInvestigation,
+              currentEntry,
+              current: current + 1,
+            });
+          }
+        }
       });
+
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
     } else if (current === 1) {
       // 拿到form表单component
@@ -440,7 +463,7 @@ export default class TaskFlow extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (isNeedMissionInvestigation) {
+      if (this.state.isNeedMissionInvestigation) {
         const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
@@ -470,7 +493,6 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    // isFormValidate && isSelectCust
     if (isFormValidate && isSelectCust && isMissionInvestigationValidate && isResultTrackValidate) {
       saveTaskFlowData({
         ...storedTaskFlowData,
@@ -482,7 +504,7 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      if (isCanGoNextStep) {
+      if (this.state.isCanGoNextStep) {
         this.setState({
           current: current + 1,
         });
@@ -760,7 +782,6 @@ export default class TaskFlow extends PureComponent {
       currentEntry,
       isNeedApproval,
       isNeedMissionInvestigation,
-      isCanGoNextStep,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -814,7 +835,6 @@ export default class TaskFlow extends PureComponent {
           isAuthorize={isNeedApproval}
           filterModalvisible={visible}
           orgId={orgId}
-          isSendCustsServedByPostn={this.handleCheckCust}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
         />
@@ -921,7 +941,7 @@ export default class TaskFlow extends PureComponent {
                 onClick={_.debounce(this.handleNextStep, 250)}
                 eventName="/click/taskFlow/nextStep"
               >
-                <Button className={styles.nextStepBtn} type="primary" disabled={!isCanGoNextStep}>下一步</Button>
+                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
               </Clickable>
             }
             {
