@@ -1,8 +1,9 @@
 /**
- *@file
-
- *@author zhuyanwen
-*/
+ * @Author: zhuyanwen
+ * @Date: 2018-01-30 14:11:19
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-30 14:13:17
+ */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

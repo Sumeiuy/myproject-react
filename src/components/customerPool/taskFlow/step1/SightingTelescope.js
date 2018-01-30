@@ -29,7 +29,8 @@ export default class SightingTelescope extends PureComponent {
     orgId: PropTypes.string.isRequired,
     isAuthorize: PropTypes.bool,
     filterModalvisible: PropTypes.bool,
-    isSendCustsServedByPostn: PropTypes.func.isRequired,
+    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
+    sightingTelescopeFilters: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -58,7 +59,8 @@ export default class SightingTelescope extends PureComponent {
       orgId,
       isAuthorize,
       filterModalvisible,
-      isSendCustsServedByPostn,
+      getFiltersOfSightingTelescope,
+      sightingTelescopeFilters,
     } = this.props;
     const cls = classnames({
       [styles.hide]: !visible,
@@ -86,7 +88,8 @@ export default class SightingTelescope extends PureComponent {
             ref={ref => (this.selectLabelCustRef = ref)}
             orgId={orgId}
             isAuthorize={isAuthorize}
-            isSendCustsServedByPostn={isSendCustsServedByPostn}
+            getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
+            sightingTelescopeFilters={sightingTelescopeFilters}
           />
         </div>
       </div>

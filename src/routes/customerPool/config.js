@@ -26,6 +26,7 @@ const ENTER_TYPE = {
   business: 'businessCustPool',
   custIndicator: 'performanceCustPool',
   numOfCustOpened: 'performanceCustPool',
+  sightingTelescope: 'labelSearchCustPool',
 };
 
 export default {

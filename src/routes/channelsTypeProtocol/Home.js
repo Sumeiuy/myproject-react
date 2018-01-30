@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-28 11:20:10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-30 13:43:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -428,6 +428,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
     if (!formData.templateId) {
       message.error('请选择协议模板');
+      return false;
+    }
+    if (formData.content && formData.content.length > 120) {
+      message.error('备注字段长度不能超过120');
       return false;
     }
     if (!formData.item.length) {

@@ -5,10 +5,19 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import { customerPool as api } from '../api';
+import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
+function matchRouteAndexec(pathname, params, routeCallbackObj) {
+  _.forOwn(routeCallbackObj, (value, key) => {
+    if (url.matchRoute(key, pathname)) {
+      routeCallbackObj[key](params);
+      return false;
+    }
+    return true;
+  });
+}
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -38,7 +47,7 @@ export default {
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
-    hotwds: {},
+    hotWdsList: [],
     hotPossibleWdsList: [],
     // 目标客户列表数据
     custList: [],
@@ -122,7 +131,7 @@ export default {
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
-    submitSuccess: false,
+    submitApporvalResult: {},
     // 查询客户的数量限制或者是否都是本人名下的客户
     sendCustsServedByPostnResult: {
       custNumsIsExceedUpperLimit: false,
@@ -130,76 +139,75 @@ export default {
     },
     // 查询是否都是本人名下的客户
     custServedByPostnResult: true,
+    // 瞄准镜的筛选项
+    sightingTelescopeFilters: {},
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
-        const params = queryString.parse(search);
-        const serviceLogUrl = url.matchRoute('serviceLog', pathname);
-        if (serviceLogUrl) {
-          const { pageSize, serveDateToPaged } = params;
-          if (_.isEmpty(pageSize)) params.pageSize = null;
-          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
-          params.pageNum = 1; // 默认显示第一页
-          dispatch({
-            type: 'getServiceLog',
-            payload: params,
-            loading: true,
-          });
-          return;
-        }
-
-        const custGroupUrl = url.matchRoute('customerGroup', pathname);
-        if (custGroupUrl) {
-          const { curPageNum, curPageSize, keyWord = null } = params;
-          dispatch({
-            type: 'customerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: emp.getId(),
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const customerGroupManageUrl = url.matchRoute('customerGroupManage', pathname);
-        const { curPageNum, curPageSize, keyWord = null } = params;
-        if (customerGroupManageUrl) {
-          dispatch({
-            type: 'getCustomerGroupList',
-            payload: {
-              pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              keyWord,
-            },
-            loading: true,
-          });
-
-          return;
-        }
-
-        const todoListUrl = url.matchRoute('todo', pathname);
-        if (todoListUrl) {
-          const { keyword } = params;
-          if (keyword) {
+        const query = queryString.parse(search);
+        // 监听location的配置对象
+        // 函数名称为路径匹配字符
+        // 如匹配则执行相应的函数，只会执行第一个匹配的函数
+        // 所以是有序的
+        const routeCallbackObj = {
+          serviceLog(param) {
+            const params = param;
+            const { pageSize, serveDateToPaged } = params;
+            if (_.isEmpty(pageSize)) params.pageSize = null;
+            if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+            params.pageNum = 1; // 默认显示第一页
             dispatch({
-              type: 'search',
-              payload: keyword,
+              type: 'getServiceLog',
+              payload: params,
               loading: true,
             });
-            return;
-          }
-          dispatch({
-            type: 'getToDoList',
-            loading: true,
-          });
-        }
+          },
+          customerGroupManage(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'getCustomerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          customerGroup(params) {
+            const { curPageNum, curPageSize, keyWord = null } = params;
+            dispatch({
+              type: 'customerGroupList',
+              payload: {
+                pageNum: curPageNum || INITIAL_PAGE_NUM,
+                pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+                empId: emp.getId(),
+                keyWord,
+              },
+              loading: true,
+            });
+          },
+          todo(params) {
+            const { keyword } = params;
+            if (keyword) {
+              dispatch({
+                type: 'search',
+                payload: keyword,
+                loading: true,
+              });
+              return;
+            }
+            dispatch({
+              type: 'getToDoList',
+              loading: true,
+            });
+          },
+        };
+        const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
+        matchRouteAndCallback(routeCallbackObj);
       });
     },
   },
@@ -653,12 +661,14 @@ export default {
     },
     // 标签圈人-id查询客户列表
     * getLabelPeople({ payload }, { call, put }) {
-      const response = yield call(api.queryLabelPeople, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getLabelPeopleSuccess',
-        payload: { resultData },
-      });
+      const response = yield call(api.getCustomerList, payload);
+      const { resultData: { custListVO } } = response;
+      if (response.code === '0') {
+        yield put({
+          type: 'getLabelPeopleSuccess',
+          payload: custListVO,
+        });
+      }
     },
     // 提交任务流程
     * submitTaskFlow({ payload }, { call, put }) {
@@ -755,11 +765,10 @@ export default {
     },
     // 审批按钮提交
     * submitApproval({ payload }, { call, put }) {
-      const response = yield call(api.submitApproval, payload);
-      const { resultData } = response;
+      const submitApporvalResult = yield call(api.submitApproval, payload);
       yield put({
         type: 'submitApprovalSuccess',
-        payload: { resultData },
+        payload: submitApporvalResult,
       });
     },
     // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
@@ -775,6 +784,14 @@ export default {
       const { resultData } = yield call(api.isCustServedByPostn, payload);
       yield put({
         type: 'isCustServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取瞄准镜的筛选条件
+    * getFiltersOfSightingTelescope({ payload }, { call, put }) {
+      const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, payload);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSuccess',
         payload: resultData,
       });
     },
@@ -872,19 +889,27 @@ export default {
     // 默认推荐词及热词推荐列表
     getHotWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotWds = response.resultData;
+      const hotWdsList = response.resultData;
       return {
         ...state,
-        hotWds,
+        hotWdsList,
       };
     },
     // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      const { labelInfoList, matchedWdsList } = response.resultData;
+      // 给接口返回来的labels加上type字段
+      const newLabelInfoList = _.map(labelInfoList, item => ({
+        ...item,
+        type: 'label',
+      }));
       return {
         ...state,
-        hotPossibleWdsList,
+        hotPossibleWdsList: [
+          ...newLabelInfoList,
+          ...matchedWdsList,
+        ],
       };
     },
     getCustomerListSuccess(state, action) {
@@ -1232,10 +1257,18 @@ export default {
     },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
+      const emptyData = {
+        totalCount: 0,
+        pageSize: 10,
+        beginIndex: 1,
+        curPageNum: 1,
+        totalPage: 1,
+        custList: [],
+      };
       return {
         ...state,
-        peopleOfLabelData: resultData || {},
+        peopleOfLabelData: payload || emptyData,
       };
     },
     // 保存当前选中tab
@@ -1326,10 +1359,10 @@ export default {
     },
     // 审批按钮提交成功
     submitApprovalSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        submitSuccess: resultData === 'success',
+        submitApporvalResult: payload,
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户
@@ -1346,6 +1379,13 @@ export default {
       return {
         ...state,
         custServedByPostnResult: payload,
+      };
+    },
+    getFiltersOfSightingTelescopeSuccess(state, action) {
+      const { payload: { object } } = action;
+      return {
+        ...state,
+        sightingTelescopeFilters: object || {},
       };
     },
   },

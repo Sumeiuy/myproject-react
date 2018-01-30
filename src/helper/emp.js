@@ -1,13 +1,14 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-28 12:32:52
+ * @Last Modified by: Wang Junjun
+ * @Last Modified time: 2018-01-30 17:15:14
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
 import _ from 'lodash';
-import duty from './config/duty';
+
+import org from './org';
 import env from './env';
 
 /**
@@ -45,7 +46,7 @@ const emp = {
   setEmpInfo(loginInfo) {
     // TODO 此处需要做下容错处理
     // 因为此处是针对新的外部React框架所使用的
-    // TODO 新增在独立开发页面下也需要设置初始值
+    // 因为在独立开发环境下也需要进行初始设置
     if (env.isInFsp()) return;
     const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
@@ -62,7 +63,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001414'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -102,7 +103,7 @@ const emp = {
    */
   isFiliale(arr, id) {
     const orgData = findOrgDataByOrgId(arr, id);
-    return (!_.isEmpty(orgData) && orgData.level === duty.bm_fgs);
+    return (!_.isEmpty(orgData) && org.isFiliale(orgData.level));
   },
 };
 

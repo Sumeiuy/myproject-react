@@ -57,7 +57,7 @@ export default class TaskPreview extends PureComponent {
     currentSelectRecord: PropTypes.object.isRequired,
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
-    isNeedApproval: PropTypes.bool,
+    needApproval: PropTypes.bool,
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -66,7 +66,7 @@ export default class TaskPreview extends PureComponent {
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
-    isNeedApproval: false,
+    needApproval: false,
     currentEntry: 0,
   };
 
@@ -212,7 +212,7 @@ export default class TaskPreview extends PureComponent {
   render() {
     const {
       storedData,
-      isNeedApproval,
+      needApproval,
       currentEntry = 0,
       executeTypes,
       taskTypes,
@@ -492,16 +492,20 @@ export default class TaskPreview extends PureComponent {
             : null
         }
         {
-          isNeedApproval ? (
-            <Clickable
-              onClick={this.handleClick}
-              eventName="/click/taskPreview/selectApprover"
-            >
-              <div className={styles.selectApprover}>
-                <span>选择审批人：</span>
-                <Search className={styles.searchSection} readOnly value={empName} />
-              </div>
-            </Clickable>
+          needApproval ? (
+            <div>
+              <Clickable
+                onClick={this.handleClick}
+                eventName="/click/taskPreview/selectApprover"
+              >
+                <div className={styles.selectApprover}>
+                  <span>选择审批人：</span>
+                  <Search className={styles.searchSection} readOnly value={empName} />
+                </div>
+              </Clickable>
+              <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
+            </div>
+
           ) : null
         }
         {

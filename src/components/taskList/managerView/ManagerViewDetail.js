@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 15:55:02
+ * @Last Modified time: 2018-01-30 17:18:58
  * 管理者视图详情
  */
 
@@ -182,7 +182,9 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push, mngrMissionDetailInfo, missionType } = this.props;
+    const { currentId, push, missionType, custDetailResult } = this.props;
+    const { page = {} } = custDetailResult || EMPTY_OBJECT;
+    const totalCustNumber = page.totalCount || 0;
     const urlParam = {
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
@@ -190,7 +192,7 @@ export default class ManagerViewDetail extends PureComponent {
       // missionId: '101111171108181',
       entrance: 'managerView',
       source: 'managerView',
-      count: mngrMissionDetailInfo.custNumbers,
+      count: totalCustNumber,
       // 任务类型
       missionType,
     };
@@ -211,7 +213,7 @@ export default class ManagerViewDetail extends PureComponent {
       routerAction: push,
       url: finalUrl,
       param,
-      pathname: url,
+      pathname: '/taskCenter/selfbuildTask/createTask',
       query,
     });
   }
@@ -318,15 +320,20 @@ export default class ManagerViewDetail extends PureComponent {
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
-                <Clickable
-                  eventName="/click/managerViewCustDetail/export"
-                >
-                  <Button className={styles.export}>
-                    <a
-                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                    >导出</a>
-                  </Button>
-                </Clickable>
+                {/**
+                  * 暂时隐藏导出按钮,等后台性能恢复，再放开
+                  */}
+                {
+                  false ? <Clickable
+                    eventName="/click/managerViewCustDetail/export"
+                  >
+                    <Button className={styles.export}>
+                      <a
+                        href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                      >导出</a>
+                    </Button>
+                  </Clickable> : null
+                }
                 {
                   canLaunchTask ?
                     <Clickable

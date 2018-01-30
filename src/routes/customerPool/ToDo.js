@@ -36,6 +36,11 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+  // 清除自建任务数据
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -50,6 +55,7 @@ export default class ToDo extends PureComponent {
     todolist: PropTypes.array.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -97,7 +103,15 @@ export default class ToDo extends PureComponent {
   }
 
   render() {
-    const { data, todolist, location, push, replace, taskBasicInfo, getTaskBasicInfo } = this.props;
+    const {
+      data,
+      todolist,
+      location,
+      push,
+      replace,
+      taskBasicInfo,
+      getTaskBasicInfo,
+      clearCreateTaskData } = this.props;
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
@@ -127,6 +141,7 @@ export default class ToDo extends PureComponent {
           replace={replace}
           taskBasicInfo={taskBasicInfo}
           getTaskBasicInfo={getTaskBasicInfo}
+          clearCreateTaskData={clearCreateTaskData}
         />
       </div>
     );

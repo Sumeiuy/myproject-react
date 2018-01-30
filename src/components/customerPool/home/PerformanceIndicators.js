@@ -247,7 +247,7 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <Funney dataSource={data} />
+            <Funney dataSource={data} push={this.props.push} />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -291,6 +291,7 @@ export default class PerformanceIndicators extends PureComponent {
               resizable
               style={{
                 height: '180px',
+                cursor: 'auto',
               }}
             />
           </IfEmpty>
@@ -304,11 +305,17 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
+    const { permissionType } = this.props;
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <ProgressList dataSource={finalData} key={param.key} type={'productSale'} />
+            <ProgressList
+              dataSource={finalData}
+              key={param.key}
+              type={'productSale'}
+              permissionType={permissionType}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -350,7 +357,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { cycle, push, location, empInfo, custCount } = this.props;
+    const { cycle, push, location, empInfo, custCount, permissionType } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
@@ -367,6 +374,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
+              permissionType={permissionType}
             />
           </IfEmpty>
         </RectFrame>
@@ -399,7 +407,6 @@ export default class PerformanceIndicators extends PureComponent {
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
     }
-    console.log('#######formatIndicator########', formatIndicator);
     const firstRowData = _.slice(formatIndicator, 0, 3);
     const secondRowData = _.slice(formatIndicator, 3);
     return (

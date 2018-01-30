@@ -244,7 +244,7 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleIntervalValueChange(value) {
-    const isShowErrorIntervalValue = !regxp.positive_integer.test(value)
+    const isShowErrorIntervalValue = !regxp.positiveInteger.test(value)
       || Number(value) <= 0
       || Number(value) > 365;
     this.setState({
