@@ -38,7 +38,7 @@ export default class InfoArea extends PureComponent {
             _.map(
               data,
               item => (
-                <div className={styles.coloumn}>
+                <div className={styles.coloumn} key={item.id}>
                   <div
                     className={classnames(
                       styles.infoKey,

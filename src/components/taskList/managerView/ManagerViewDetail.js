@@ -288,34 +288,36 @@ export default class ManagerViewDetail extends PureComponent {
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
     const basicInfoData = [{
+      id: 'date',
       key: '任务有效期 :',
       value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
     },
     {
+      id: 'target',
       key: '任务目标 :',
       value: missionTarget || '--',
     },
     {
+      id: 'policy',
       key: '服务策略 :',
       value: servicePolicy || '--',
     }];
 
     let targetCustInfoData = [{
+      id: 'total',
       key: '客户总数 :',
       value: this.renderTotalCust(),
     },
     {
+      id: 'source',
       key: '客户来源 :',
       value: custSource || '--',
-    },
-    {
-      key: '客户来源说明 :',
-      value: '--',
     }];
     if (!_.isEmpty(custSourceDesc)) {
       targetCustInfoData = [
         ...targetCustInfoData,
         {
+          id: 'custDesc',
           key: '客户来源说明 :',
           value: custSourceDesc,
         },
@@ -323,6 +325,7 @@ export default class ManagerViewDetail extends PureComponent {
     }
 
     const descriptInfoData = [{
+      id: 'missionDesc',
       key: '',
       value: missionDesc || '--',
     }];

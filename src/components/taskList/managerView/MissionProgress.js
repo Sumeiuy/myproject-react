@@ -156,7 +156,7 @@ export default class MissionProgress extends PureComponent {
     activeType,
     remainingType,
     activePercent,
-    remainingPercent,
+    showActivePercent,
     activeCount,
     remainingCount,
   ) {
@@ -173,7 +173,7 @@ export default class MissionProgress extends PureComponent {
             >
               <div
                 className="ant-progress-bg"
-                style={{ width: `${activePercent}%` }}
+                style={{ width: `${showActivePercent}%` }}
                 ref={ref => (this.activeElem = ref)}
               />
             </Tooltip>
@@ -187,7 +187,7 @@ export default class MissionProgress extends PureComponent {
               <div
                 className="ant-progress-inner"
                 ref={ref => (this.remainingElem = ref)}
-                style={{ width: `${remainingPercent}%` }}
+                style={{ width: `${100 - showActivePercent}%` }}
               />
             </Tooltip>
           </div>
@@ -216,27 +216,62 @@ export default class MissionProgress extends PureComponent {
       // 已达标比例
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
-
+    // 真实百分比
     const servePercent = Number.parseInt(Number(servedNumsRatio) * 100, 10);
     const completedPercent = Number.parseInt(Number(completedNumsRatio) * 100, 10);
     const standardPercent = Number.parseInt(Number(standardNumsRatio) * 100, 10);
+    // 自适应百分比
+    const maxValue = Math.max(servePercent, completedPercent, completedPercent);
+    let max = 0;
+    if (max !== 100 && maxValue % 100 < 85) {
+      max = maxValue + 10.0;
+    } else {
+      max = Number.parseFloat(maxValue).toFixed(1);
+    }
+    const showServePercent = Number((servePercent / max) * 100).toFixed(0);
+    const showCompletedPercent = Number((completedPercent / max) * 100).toFixed(0);
+    const showStandardPercent = Number((standardPercent / max) * 100).toFixed(0);
 
     return (
       <div className={styles.area}>
         <div className={styles.serviceCust}>
           <span className={styles.title}>{SERVED_CUST}</span>
-          {this.renderProgressContent(SERVED_CUST, NOT_SERVED_CUST,
-            servePercent, 100 - servePercent, servedNums, custCount - servedNums)}
+          {
+            this.renderProgressContent(
+              SERVED_CUST,
+              NOT_SERVED_CUST,
+              servePercent,
+              showServePercent,
+              servedNums,
+              custCount - servedNums,
+            )
+          }
         </div>
         <div className={styles.statusCust}>
           <span className={styles.title}>{COMPLETED_CUST}</span>
-          {this.renderProgressContent(COMPLETED_CUST, NOT_COMPLETED_CUST,
-            completedPercent, 100 - completedPercent, completedNums, custCount - completedNums)}
+          {
+            this.renderProgressContent(
+              COMPLETED_CUST,
+              NOT_COMPLETED_CUST,
+              completedPercent,
+              showCompletedPercent,
+              completedNums,
+              custCount - completedNums,
+            )
+          }
         </div>
         <div className={styles.standardCust}>
           <span className={styles.title}>{STASIFY_CUST}</span>
-          {this.renderProgressContent(STASIFY_CUST, NOT_STASIFY_CUST,
-            standardPercent, 100 - standardPercent, standardNums, custCount - standardNums)}
+          {
+            this.renderProgressContent(
+              STASIFY_CUST,
+              NOT_STASIFY_CUST,
+              standardPercent,
+              showStandardPercent,
+              standardNums,
+              custCount - standardNums,
+            )
+          }
         </div>
       </div>
     );

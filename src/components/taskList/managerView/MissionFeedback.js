@@ -40,32 +40,19 @@ export default class MissionFeedback extends PureComponent {
   constructor(props) {
     super(props);
 
-    // const { finalData, originProblemData } = this.handleData(
-    //   props.missionFeedbackData,
-    //   props.missionFeedbackCount,
-    //   props.serveManagerCount,
-    // );
+    const { finalData, originProblemData } = this.handleData(
+      props.missionFeedbackData,
+      props.missionFeedbackCount,
+      props.serveManagerCount,
+    );
 
     this.state = {
       expandAll: false,
       cycleSelect: '',
       createCustRange: [],
-      finalData: {
-        allFeedback: {},
-        radioFeedback: [],
-        checkboxFeedback: [],
-      },
-      problems: {
-        resultData: {
-          pageInfo: {
-            curPageNum: 1,
-            curPageSize: 10,
-            totalPage: 10,
-          },
-          dataInfo: [],
-        },
-      },
-      originProblemData: {},
+      finalData,
+      problems: originProblemData,
+      originProblemData,
     };
   }
 
@@ -204,6 +191,7 @@ export default class MissionFeedback extends PureComponent {
   }
 
   handleOptionCake(value, names) {
+    console.log('#####handleOptionCake########', value, names);
     const option = {
       title: {
         text: '',
@@ -223,7 +211,6 @@ export default class MissionFeedback extends PureComponent {
           type: 'pie',
           radius: [0, 55],
           center: ['50%', '52%'],
-          roseType: 'radius',
           label: {
             normal: {
               show: false,
@@ -252,8 +239,8 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   handleOptionBar(value, names) {
     const { isFold } = this.props;
-    const grids = isFold ? { left: '20%', right: '20%', bottom: '5%', containLabel: true } :
-      { left: '15%', right: '15%', bottom: '5%', containLabel: true };
+    const grids = isFold ? { left: '20%', right: '20%', top: 20, bottom: 10, containLabel: true } :
+      { left: '3%', right: '10%', top: 30, bottom: 10, containLabel: true };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -285,7 +272,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'bar',
-          barWidth: '20%',
+          barWidth: '8',
           data: value,
           itemStyle: {
             normal: {
@@ -325,12 +312,12 @@ export default class MissionFeedback extends PureComponent {
                 this.handleOptionBar(data, nameDes)}
               resizable
               style={{
-                height: '180px',
+                height: '140px',
               }}
             />
           </div>
           <div className={styles.tips}>
-            <div>
+            <div className={styles.tipRow}>
               {item}
             </div>
           </div>
@@ -502,7 +489,9 @@ export default class MissionFeedback extends PureComponent {
           >
             <div className={styles.problems}>
               <div>
-                {info}
+                <div className={styles.problemList}>
+                  {info}
+                </div>
                 <Paganation
                   curPageNum={curPageNum}
                   curPageSize={curPageSize}
