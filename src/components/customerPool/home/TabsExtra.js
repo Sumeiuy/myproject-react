@@ -91,11 +91,13 @@ export default class TabsExtra extends PureComponent {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
     updateQueryState({
+      cycleSelect: value,
       begin,
       end,
     });
     // 记录下当前选中的timeSelect
     this.setState({
+      cycleSelect: value,
       begin,
       end,
     });

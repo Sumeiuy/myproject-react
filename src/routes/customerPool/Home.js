@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:39:30
+ * @Last Modified by: Wang Junjun
+ * @Last Modified time: 2018-01-30 16:58:12
  */
 
 import React, { PureComponent } from 'react';
