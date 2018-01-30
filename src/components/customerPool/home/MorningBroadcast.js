@@ -11,10 +11,12 @@ import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
 import Marquee from '../../morningBroadcast/Marquee';
 import { openRctTab } from '../../../utils';
+import withRouter from '../../../decorators/withRouter';
 import { emp, url as urlHelper } from '../../../helper';
 import more from './img/more.png';
 import { request } from '../../../config';
 
+@withRouter
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
@@ -43,9 +45,10 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  openNewTab(url, query = {}) {
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '晨报' };
+  openNewTab(url) {
     const { push } = this.props;
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '晨报' };
+    const query = { isInit: true };
     openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(query)}`,
@@ -119,6 +122,7 @@ export default class MorningBroadcast extends PureComponent {
                     <span
                       className={styles.desc}
                       onClick={() => { this.handleToDetail(item.newsId); }}
+                      title={item.title}
                     >
                       {`${item.newsTypValue}：${item.title}`}
                     </span>

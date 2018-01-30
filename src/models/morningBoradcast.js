@@ -128,6 +128,17 @@ export default {
         initBoradcastFile: payload,
       };
     },
+    // 更新文件
+    uploaderFile(state, { payload }) {
+      console.log(payload.newsId);
+      return {
+        ...state,
+        boradcastDetail: {
+          ...state.boradcastDetail,
+          [payload.newsId]: null,
+        },
+      };
+    },
   },
   effects: {
     // 获取晨报列表
