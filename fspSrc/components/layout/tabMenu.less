@@ -35,6 +35,9 @@
         padding: 5px 0;
         transition: transform .3s linear;
         transform-origin: center 45%;
+        &:hover {
+          font-weight: bolder;
+        }
       }
 
       :global i.anticon.anticon-change::before {
@@ -46,6 +49,7 @@
         i {
           transform: rotateZ(180deg);
           transform-origin: center 45%;
+          font-weight: bolder;
         }
       }
     }
@@ -84,12 +88,16 @@
         transform: translateY(-4px);
         transition: transform .3s linear;
         transform-origin: center 37%;
+        &:hover {
+          font-weight: bolder;
+        }
       }
       &:focus {
         outline: none;
         i {
           transform: rotateZ(-180deg);
           transform-origin: center 37%;
+          font-weight: bolder;
         }
       }
     }
@@ -128,6 +136,9 @@
     .close {
       display: inline-block;
       vertical-align: middle;
+      &:hover {
+        font-weight: bolder;
+      }
     }
   }
   &.activeItem {
@@ -147,6 +158,7 @@
         color: #2e669a;
         display: inline-block;
         vertical-align: middle;
+        font-weight: bolder;
       }
     }
   }
