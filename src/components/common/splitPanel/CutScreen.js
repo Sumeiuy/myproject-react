@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-15 15:51:27
+ * @Last Modified time: 2018-01-22 17:25:46
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -266,6 +266,11 @@ export default class CutScreen extends PureComponent {
       isCSListFold: isFold,
     });
 
+    const stretchCls = classnames({
+      [styles.stretch]: true,
+      [styles.stretchGrow]: isFold,
+    });
+
     return (
       <div className={styles.splitWrap} ref={this.splitRef}>
         <div className={styles.header} ref={this.splitTopRef}>
@@ -279,7 +284,7 @@ export default class CutScreen extends PureComponent {
         </div>
         <div className={hasDataClass} ref={this.splitMainRef}>
           <div className={styles.listWrap} ref={this.listWrapRef}>{leftPanel}</div>
-          <div className={styles.stretch}>
+          <div className={stretchCls}>
             <Icon type={stretchIcon} onClick={this.handleStretchIconClick} />
           </div>
           <div className={hasFoldCls}>

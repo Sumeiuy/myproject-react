@@ -49,10 +49,10 @@ export default function customerPool(api) {
     customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
 
     // 添加客户到现有分组
-    saveCustGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/saveCustGroupList', query),
+    saveCustGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/saveCustGroupList2', query),
 
     // 添加客户到新建分组
-    createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup', query),
+    createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup2', query),
 
     // 自建任务提交
     createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
@@ -85,7 +85,7 @@ export default function customerPool(api) {
     queryPossibleCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
 
     // 操作分组（编辑、新增客户分组）
-    operateGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateGroup', query),
+    operateGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateGroup2', query),
 
     // 删除分组
     deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
