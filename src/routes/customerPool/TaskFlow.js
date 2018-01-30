@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-30 10:54:03
+ * @Last Modified time: 2018-01-30 14:11:18
  */
 
 import React, { PureComponent } from 'react';
@@ -837,7 +837,7 @@ export default class TaskFlow extends PureComponent {
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}
           getLabelPeople={getLabelPeople}
-          isAuthorize={needApproval}
+          isAuthorize={this.hasTkMampPermission}
           filterModalvisible={visible}
           orgId={orgId}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
