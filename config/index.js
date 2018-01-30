@@ -45,8 +45,8 @@ module.exports = {
     proxyTable: generateProxy([
       prefix,
       {
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.81:5090', // DOClever
+        target: 'http://168.61.8.81:5087', // SIT
+        // target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.228.195:8082', // 王涵本地地址
       },
       '/fspa/log',
