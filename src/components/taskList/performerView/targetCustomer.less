@@ -9,7 +9,23 @@
   border: 1px solid #ddd;
   .list {
     border-right: 1px solid #ddd;
-    // border-right: 0;
+  }
+  & > .height100Percent {
+    min-width: 578px;
+    & > .height100Percent:first-child {
+      min-width: 293px;
+      .rowItem {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+    & > .height100Percent:first-child {
+      min-width: 285px;
+      max-width: 761px;
+      width: 100%;
+    }
   }
 }
 .height100Percent {

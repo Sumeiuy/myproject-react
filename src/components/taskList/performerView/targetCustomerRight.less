@@ -98,9 +98,12 @@
     h3.custNames {
       font-size: 20px;
       color: #2782d7;
-      float: left;
+      // float: left;
       line-height: 24px;
-      word-break: break-word;
+      // word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     h5.custNamesCont {
       color: #4a4a4a;
@@ -122,6 +125,12 @@
       font-size: 12px;
       color: #108ee9;
       margin-left: 5px;
+    }
+    .people {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
   }
   .service {

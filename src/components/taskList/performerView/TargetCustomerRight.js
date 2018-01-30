@@ -248,8 +248,12 @@ export default class TargetCustomerRight extends PureComponent {
       <div className={styles.box}>
         <div className={styles.titles}>
           <Row>
-            <Col span={12}><h3 className={styles.custNames}>{itemData.custName}</h3></Col>
-            <Col span={12}>
+            <Col span={7}>
+              <h3 className={styles.custNames} title={itemData.custName}>
+                {itemData.custName}
+              </h3>
+            </Col>
+            <Col span={17}>
               {
                 itemData.custNature === 'per' ?
                   <h5 className={styles.custNamesCont}>
@@ -286,7 +290,7 @@ export default class TargetCustomerRight extends PureComponent {
                     className={styles.phoneRight}
                   >
                     <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                    { this.renderPhoneNumTips(itemData) }
+                    {this.renderPhoneNumTips(itemData)}
                   </h5>
                 </Col> : null
             }
@@ -336,7 +340,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>持仓资产：</span>
                 <span>{this.handleAssets(itemData.openAssets)}</span>
-                { openAssetsPercentNode }
+                {openAssetsPercentNode}
               </h5>
             </Col>
             <Col span={thrSpan}>
@@ -358,7 +362,7 @@ export default class TargetCustomerRight extends PureComponent {
               >
                 <span>可用余额：</span>
                 <span>{this.handleAssets(itemData.availablBalance)}</span>
-                { availablBalancePercentNode }
+                {availablBalancePercentNode}
               </h5>
             </Col>
             <Col span={thrSpan}>
