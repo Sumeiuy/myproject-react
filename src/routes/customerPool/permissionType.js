@@ -1,7 +1,7 @@
 /**
  * 目标客户池首页和列表页权限类型
  */
-import { permission } from '../../utils';
+import { permission } from '../../helper';
 
 import {
   NOPERMIT,

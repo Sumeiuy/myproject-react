@@ -247,7 +247,7 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <Funney dataSource={data} />
+            <Funney dataSource={data} push={this.props.push} />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -291,6 +291,7 @@ export default class PerformanceIndicators extends PureComponent {
               resizable
               style={{
                 height: '180px',
+                cursor: 'auto',
               }}
             />
           </IfEmpty>
@@ -406,7 +407,6 @@ export default class PerformanceIndicators extends PureComponent {
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
     }
-    console.log('#######formatIndicator########', formatIndicator);
     const firstRowData = _.slice(formatIndicator, 0, 3);
     const secondRowData = _.slice(formatIndicator, 3);
     return (
