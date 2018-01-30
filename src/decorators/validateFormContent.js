@@ -46,7 +46,7 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskType = true;
       }
-      if (!regxp.positive_integer.test(timelyIntervalValue)
+      if (!regxp.positiveInteger.test(timelyIntervalValue)
         || Number(timelyIntervalValue) <= 0
         || Number(timelyIntervalValue) > 365) {
         this.setState({

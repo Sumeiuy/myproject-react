@@ -315,7 +315,9 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     let newQuery = query;
     // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
-    if (this.hasPermissionOfManagerView) {
+    if (!_.isEmpty(missionViewType)) {
+      newQuery = { ...newQuery, missionViewType };
+    } else if (this.hasPermissionOfManagerView) {
       newQuery = { ...newQuery, missionViewType: CONTROLLER };
     }
 
