@@ -84,7 +84,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
       isNeedApproval: isEntryFromReturnTask,
-      isCanGoNextStep: isEntryFromReturnTask,
+      canGoNextStep: isEntryFromReturnTask,
       isNeedMissionInvestigation: true,
       isDisabled: false,
     };
@@ -106,19 +106,19 @@ export default class TaskFormFlowStep extends PureComponent {
           return;
         }
         const {
-        isNeedApproval,
-          isCanGoNextStep,
+          isNeedApproval,
+          canGoNextStep,
           isNeedMissionInvestigation,
           isIncludeNotMineCust,
         } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-        if (isIncludeNotMineCust && !isCanGoNextStep) {
+        if (isIncludeNotMineCust && !canGoNextStep) {
           message.error('客户包含非本人名下客户，请重新选择');
           return;
         }
 
         this.setState({
           isNeedApproval,
-          isCanGoNextStep,
+          canGoNextStep,
           isNeedMissionInvestigation,
         });
       });
@@ -236,7 +236,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const {
       isNeedMissionInvestigation,
-      isCanGoNextStep,
+      canGoNextStep,
     } = this.state;
 
     let isResultTrackValidate = true;
@@ -386,7 +386,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
       });
       // 只有能够下一步，再update
-      if (isCanGoNextStep) {
+      if (canGoNextStep) {
         this.setState({
           current: current + 1,
           custSource,
@@ -601,7 +601,7 @@ export default class TaskFormFlowStep extends PureComponent {
       message.success('提交成功');
       this.setState({
         isDisabled: true,
-        isCanGoNextStep: false,
+        canGoNextStep: false,
       });
     }
   }
@@ -616,7 +616,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskSubType,
       isNeedApproval,
       isNeedMissionInvestigation,
-      isCanGoNextStep,
+      canGoNextStep,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -768,7 +768,7 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleNextStep}
               eventName="/click/taskFormFlowStep/nextStep"
             >
-              <Button className={styles.handlePreviousStep} type="primary" disabled={!isCanGoNextStep}>
+              <Button className={styles.handlePreviousStep} type="primary" disabled={!canGoNextStep}>
                 下一步
               </Button>
             </Clickable>

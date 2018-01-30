@@ -176,7 +176,7 @@ export default class TaskFlow extends PureComponent {
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
       isNeedApproval: false,
-      isCanGoNextStep: false,
+      canGoNextStep: false,
       isNeedMissionInvestigation: false,
     };
 
@@ -345,17 +345,17 @@ export default class TaskFlow extends PureComponent {
         } else {
           const {
             isNeedApproval,
-            isCanGoNextStep,
+            canGoNextStep,
             isNeedMissionInvestigation,
             isIncludeNotMineCust,
           } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-          if (isIncludeNotMineCust && !isCanGoNextStep) {
+          if (isIncludeNotMineCust && !canGoNextStep) {
             isSelectCust = false;
             message.error('客户包含非本人名下客户，请重新选择');
           } else {
             this.setState({
               isNeedApproval,
-              isCanGoNextStep,
+              canGoNextStep,
               isNeedMissionInvestigation,
               currentEntry,
               current: current + 1,
@@ -504,7 +504,7 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      if (this.state.isCanGoNextStep) {
+      if (this.state.canGoNextStep) {
         this.setState({
           current: current + 1,
         });

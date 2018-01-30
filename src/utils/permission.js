@@ -68,7 +68,7 @@ const permission = {
   judgeCreateTaskApproval({ sendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
     let isNeedApproval = false;
     let isIncludeNotMineCust = false;
-    let isCanGoNextStep = false;
+    let canGoNextStep = false;
     let isNeedMissionInvestigation = false;
 
     if (!sendCustsServedByPostn || custNumsIsExceedUpperLimit) {
@@ -87,19 +87,19 @@ const permission = {
       } else {
         isNeedApproval = false;
       }
-      isCanGoNextStep = true;
+      canGoNextStep = true;
     } else if (isIncludeNotMineCust) {
       // 如果没有职责，但是有非本人名下的客户，则禁止进入下一步
-      isCanGoNextStep = false;
+      canGoNextStep = false;
     } else {
       // 没有职责，没有非本人名下的客户，则不需要审批，可以进入下一步
       isNeedApproval = false;
-      isCanGoNextStep = true;
+      canGoNextStep = true;
     }
 
     return {
       isNeedApproval,
-      isCanGoNextStep,
+      canGoNextStep,
       isNeedMissionInvestigation,
       isIncludeNotMineCust,
     };
