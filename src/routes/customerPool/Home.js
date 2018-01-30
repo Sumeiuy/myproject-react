@@ -1,7 +1,8 @@
 /**
- * @file customerPool/Home.js
- *  目标客户池首页
- * @author wangjunjun
+ * @Author: wangjunjun
+ * @Date: 2018-01-30 13:37:45
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-30 13:39:30
  */
 
 import React, { PureComponent } from 'react';

@@ -21,9 +21,8 @@ import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader'
 import CommissionList from '../../components/common/appList';
 import AppItem from '../../components/common/appList/AppItem';
 import seibelHelper from '../../helper/page/seibel';
-import { emp } from '../../helper';
+import { emp, permission } from '../../helper';
 import { seibelConfig } from '../../config';
-import { permission } from '../../utils';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import './home.less';

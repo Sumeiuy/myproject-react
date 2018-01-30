@@ -6,6 +6,8 @@
  * @description 此处存放不能放到其他分类中去的一些系统性的方法
  */
 
+import _ from 'lodash';
+
 // 是否可以使用浏览器Console打印日志
 const canUseConsoleFlag = true;
 
@@ -63,6 +65,31 @@ const os = {
     if (canUseConsoleFlag) {
       console.warn(rest);
     }
+  },
+
+  /**
+   * 在对象集合中根据某属性值获取最佳匹配的对象
+   * @param {*} value， 值
+   * @param {[]} collection ,对象集合
+   * @param {string} property，对象上的属性名称
+   * @param {boolean}，默认返回新的colletion对象，可以直接返回对象引用
+   */
+  findBestMatch(value, collection, property, returnRef = false) {
+    // 获取pathname的匹配数组
+    const matchArray = collection.map((obj) => {
+      let matchProp = obj[property];
+      if (_.isString(matchProp) && (matchProp.indexOf('?') !== -1)) {
+        matchProp = matchProp.slice(0, matchProp.indexOf('?'));
+      }
+      const match = RegExp(matchProp).exec(value);
+      return !match ? 0 : match[0].length;
+    });
+    // 获取匹配数组里面最大的匹配字符数
+    const maxMatchStringCount = _.max(matchArray);
+    // 最佳匹配下标
+    const index = _.indexOf(matchArray, maxMatchStringCount);
+    // 如果没找到匹配的tab菜单，会默认首页菜单展示
+    return returnRef ? collection[index] : { ...collection[index] };
   },
 };
 

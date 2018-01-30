@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 15:00:56
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-29 16:33:56
  */
 
 import React, { PureComponent } from 'react';
@@ -218,6 +218,10 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       message.error('请选择协议模板');
       return false;
     }
+    if (formData.content && formData.content.length > 120) {
+      message.error('备注字段长度不能超过120');
+      return false;
+    }
     if (!formData.item.length) {
       message.error('请选择协议产品');
       return false;
@@ -265,6 +269,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
               },
               params,
             }).then(() => {
+              message.success('提交成功');
               cleartBtnGroup();
               this.closeModal('editFormModal');
             });
@@ -309,6 +314,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
         },
         params,
       }).then(() => {
+        message.success('提交成功');
         cleartBtnGroup();
         this.closeModal('editFormModal');
         this.closeModal('approverModal');
