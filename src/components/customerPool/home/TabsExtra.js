@@ -91,11 +91,13 @@ export default class TabsExtra extends PureComponent {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
     updateQueryState({
+      cycleSelect: value,
       begin,
       end,
     });
     // 记录下当前选中的timeSelect
     this.setState({
+      cycleSelect: value,
       begin,
       end,
     });
@@ -147,7 +149,12 @@ export default class TabsExtra extends PureComponent {
               </Select>
           }
         </div>
-        <div className={styles.separateLine} />
+        {/**
+         * 后台性能问题，暂时隐藏导出按钮
+         */}
+        {
+          false ? <div className={styles.separateLine} /> : null
+        }
         {!isDown ?
           <div>
             <div className={styles.icon}>
@@ -164,19 +171,22 @@ export default class TabsExtra extends PureComponent {
               </Select>
             </div>
           </div> :
-          <div className={styles.downFiles}>
-            <div className={styles.iconDown}>
-              <Icon type="xiazai" />
-            </div>
-            <div className={styles.downLoad}>
-              {/* 导出 */}
-              <a
-                href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-              >导出</a>
-            </div>
+          <div>
+            {
+              false ?
+                <div className={styles.downFiles}>
+                  <div className={styles.iconDown}>
+                    <Icon type="xiazai" />
+                  </div>
+                  <div className={styles.downLoad}>
+                    <a
+                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                    >导出</a>
+                  </div>
+                </div> : null
+            }
           </div>
         }
-
       </div>
     );
   }

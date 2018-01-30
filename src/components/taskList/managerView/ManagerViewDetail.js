@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-29 18:29:04
+ * @Last Modified time: 2018-01-30 17:18:58
  * 管理者视图详情
  */
 
@@ -320,15 +320,20 @@ export default class ManagerViewDetail extends PureComponent {
                 >
                   <Button className={styles.cancel}>取消</Button>
                 </Clickable>
-                <Clickable
-                  eventName="/click/managerViewCustDetail/export"
-                >
-                  <Button className={styles.export}>
-                    <a
-                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                    >导出</a>
-                  </Button>
-                </Clickable>
+                {/**
+                  * 暂时隐藏导出按钮,等后台性能恢复，再放开
+                  */}
+                {
+                  false ? <Clickable
+                    eventName="/click/managerViewCustDetail/export"
+                  >
+                    <Button className={styles.export}>
+                      <a
+                        href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                      >导出</a>
+                    </Button>
+                  </Clickable> : null
+                }
                 {
                   canLaunchTask ?
                     <Clickable
