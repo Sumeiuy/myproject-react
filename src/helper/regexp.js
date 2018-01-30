@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:44:29
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-30 16:09:08
  * @description 此处存放通用的正则表达式
  */
 const regexp = {
@@ -32,6 +32,10 @@ const regexp = {
    * 例子： 12345604 => 123,456,04
    */
   thousandDecimal: /(\d{3})(?=(\d{1,3})+)/g,
+  /**
+   * 正整数
+   */
+  positiveInteger: /^\+?[1-9][0-9]*$/,
 };
 
 export default regexp;
