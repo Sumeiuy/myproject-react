@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 17:19:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-22 14:52:21
+ * @Last Modified time: 2018-01-29 17:54:17
  * @description 售前适当性查询查询组件
  */
 import React from 'react';
@@ -65,18 +65,5 @@ SearchForm.propTypes = {
   onSelectProductItem: PropTypes.func.isRequired,
   onQueryProductList: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
-};
-
-SearchForm.defaultProps = {
-  custList: [],
-  productList: [],
-  selectedCustItem: {},
-  selectedProductItem: {},
-  onSearch: () => {},
-  onSelectCustItem: () => {},
-  onQueryCustList: () => {},
-  onSelectProductItem: () => {},
-  onQueryProductList: () => {},
-  onReset: () => {},
 };
 

@@ -764,6 +764,35 @@ const pageConfig = {
   },
   // 分公司客户划转
   filialeCustTransfer: {
+    pageName: '分公司客户划转',
+    pageType: '07', // 查询列表接口中的type值
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
     titleList: [
       {
         dataIndex: 'brokerNumber',

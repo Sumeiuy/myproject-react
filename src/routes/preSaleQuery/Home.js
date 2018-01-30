@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-22 15:41:21
+ * @Last Modified time: 2018-01-29 17:35:14
  * @description 售前适当性查询
  */
 
@@ -75,17 +75,6 @@ export default class PreSaleQuery extends PureComponent {
     resetQueryList: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
-    custList: [],
-    productList: [],
-    matchResult: {},
-    getCustList: () => {},
-    getProductList: () => {},
-    getMatchResult: () => {},
-    resetMatchResult: () => {},
-    resetQueryList: () => {},
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -106,12 +95,12 @@ export default class PreSaleQuery extends PureComponent {
 
   @autobind
   handleQueryCustList(value) {
-    this.props.getCustList({ cust: value });
+    this.props.getCustList({ keywords: value });
   }
 
   @autobind
   handleQueryProductList(value) {
-    this.props.getProductList({ product: value });
+    this.props.getProductList({ keywords: value });
   }
 
   @autobind
@@ -171,7 +160,9 @@ export default class PreSaleQuery extends PureComponent {
   render() {
     const { matchResult } = this.props;
     const {
-      custType,
+      custType = {
+        fact: { yxq: ' ' },
+      },
       matchTable = {
         fact: { result: [] },
       },
@@ -225,31 +216,28 @@ export default class PreSaleQuery extends PureComponent {
                   <Col span={6}>
                     <span className={styles.itemName}>类型：</span>
                     {
-                      custType ?
-                        <span className={styles.itemValue}>
+                      custType.fact.type &&
+                        (<span className={styles.itemValue}>
                           {custType.fact.type}
-                        </span> :
-                        null
+                        </span>)
                     }
                   </Col>
-                  <Col span={6} offset={2}>
-                    <span className={styles.itemName}>有效期：</span>
-                    {
-                      custType ?
+                  {
+                    custType.fact.yxq &&
+                      (<Col span={6} offset={2}>
+                        <span className={styles.itemName}>有效期：</span>
                         <span className={styles.itemValue}>
                           {custType.fact.yxq}
-                        </span> :
-                        null
-                    }
-                  </Col>
+                        </span>
+                      </Col>)
+                  }
                 </Row>
                 {
-                  custType && custType.msg ?
-                    <div className={styles.msg}>
+                  custType.msg &&
+                    (<div className={styles.msg}>
                       <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
                       <span>{custType.msg}</span>
-                    </div> :
-                    null
+                    </div>)
                 }
               </div>
             </div>
@@ -265,39 +253,36 @@ export default class PreSaleQuery extends PureComponent {
                   <Col span={6}>
                     <span className={styles.itemName}>风险测评有效期：</span>
                     {
-                      matchTable ?
-                        <span className={styles.itemValue}>
+                      matchTable.fact.yxq &&
+                        (<span className={styles.itemValue}>
                           {matchTable.fact.yxq}
-                        </span> :
-                        null
+                        </span>)
                     }
                   </Col>
                 </Row>
                 {
-                  matchTable ?
-                    <Table
+                  matchTable.fact.result &&
+                    (<Table
                       className={styles.table}
                       columns={columns}
                       dataSource={matchTable.fact.result}
                       pagination={false}
-                    /> :
-                    null
+                    />)
                 }
                 {
-                  matchTable && matchTable.msg ?
-                    <div className={styles.msg}>
+                  matchTable.msg &&
+                    (<div className={styles.msg}>
                       <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
                       <span>{matchTable.msg}</span>
-                    </div> :
-                    null
+                    </div>)
                 }
               </div>
             </div>
             <div className={styles.divider} />
             {/* 合同签署 */}
             {
-              contractSign ?
-                <div>
+              contractSign &&
+                (<div>
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -319,23 +304,21 @@ export default class PreSaleQuery extends PureComponent {
                         </Col>
                       </Row>
                       {
-                        contractSign.msg ?
-                          <div className={styles.msg}>
+                        contractSign.msg &&
+                          (<div className={styles.msg}>
                             <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
                             <span>{contractSign.msg}</span>
-                          </div> :
-                          null
+                          </div>)
                       }
                     </div>
                   </div>
                   <div className={styles.divider} />
-                </div> :
-                null
+                </div>)
             }
             {/* 合格投资 */}
             {
-              qualifiedCust ?
-                <div>
+              qualifiedCust &&
+                (<div>
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -348,13 +331,12 @@ export default class PreSaleQuery extends PureComponent {
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.productRequireMent}
                             {
-                              qualifiedCust.fact.productRequireMent ?
-                                <i
+                              qualifiedCust.fact.productRequireMent &&
+                                (<i
                                   className="iconfont icon-wenhao"
                                   onClick={this.handleQualifiedCustModalShow}
                                   style={{ color: '#f0b048', fontSize: '22px', marginLeft: '9px' }}
-                                /> :
-                                null
+                                />)
                             }
                           </span>
                         </Col>
@@ -386,23 +368,21 @@ export default class PreSaleQuery extends PureComponent {
                         </Col>
                       </Row>
                       {
-                        qualifiedCust.msg ?
-                          <div className={styles.msg}>
+                        qualifiedCust.msg &&
+                          (<div className={styles.msg}>
                             <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
                             <span>{qualifiedCust.msg}</span>
-                          </div> :
-                          null
+                          </div>)
                       }
                     </div>
                   </div>
                   <div className={styles.divider} />
-                </div> :
-                null
+                </div>)
             }
             {/* 双录要求 */}
             {
-              doubleRecord ?
-                <div>
+              doubleRecord &&
+                (<div>
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -418,23 +398,21 @@ export default class PreSaleQuery extends PureComponent {
                         </Col>
                       </Row>
                       {
-                        doubleRecord.msg ?
-                          <div className={styles.msg}>
+                        doubleRecord.msg &&
+                          (<div className={styles.msg}>
                             <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
                             <span>{doubleRecord.msg}</span>
-                          </div> :
-                          null
+                          </div>)
                       }
                     </div>
                   </div>
-                </div> :
-                null
+                </div>)
             }
           </div>
         </div>
         <QualifiedCustModal
           visible={this.state.isQualifiedCustModalVisible}
-          type={qualifiedCust ? qualifiedCust.fact.productRequireMent : ''}
+          type={qualifiedCust.fact.productRequireMent}
           onQualifiedCustModalHide={this.handleQualifiedCustModalHide}
         />
       </div>
