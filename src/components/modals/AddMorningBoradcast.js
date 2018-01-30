@@ -378,7 +378,7 @@ export default class AddMorningBoradcast extends PureComponent {
                 <Select placeholder="晨报类型">
                   {
                     morningBoradcastType.map(item =>
-                      <Option key={item.key} value={item.key}>{item.value}</Option>
+                      <Option key={item.key} value={item.key}>{item.value}</Option>,
                     )
                   }
                 </Select>,
