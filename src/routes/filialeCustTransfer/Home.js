@@ -1,45 +1,45 @@
-/*
- * @Description: 分公司客户划转 home 页面
- * @Author: XuWenKang
- * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:43:06
+/**
+ * @Author: hongguangqing
+ * @Description: 分公司客户人工划转Home页面
+ * @Date: 2018-01-29 13:25:30
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-01-29 15:10:48
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { message, Button, Modal } from 'antd';
 import _ from 'lodash';
-
-import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
-import CommonTable from '../../components/common/biz/CommonTable';
-import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { closeRctTab } from '../../utils';
-import { emp } from '../../helper';
-import styles from './home.less';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
+import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import CreateFilialeCustTransfer from '../../components/filialeCustTransfer/CreateFilialeCustTransfer';
+import FilialeCustTransferList from '../../components/common/appList';
+import ViewListRow from '../../components/filialeCustTransfer/ViewListRow';
+import Detail from '../../components/filialeCustTransfer/Detail';
+import appListTool from '../../components/common/appList/tool';
+import { seibelConfig } from '../../config';
+import seibelHelper from '../../helper/page/seibel';
 
-const confirm = Modal.confirm;
-const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
+const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
 
-const { filialeCustTransfer: { titleList } } = seibelConfig;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
+  // 左侧列表数据
+  list: state.app.seibleList,
+  // 右侧详情数据
+  detailInfo: state.filialeCustTransfer.detailInfo,
+  // 员工基本信息
+  empInfo: state.app.empInfo,
   // 客户列表
   custList: state.filialeCustTransfer.custList,
   // 服务经理数据
@@ -51,6 +51,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  replace: routerRedux.replace,
+  // 获取左侧列表
+  getList: fetchDataFunction(true, 'app/getSeibleList', true),
+  // 获取右侧详情信息
+  getDetailInfo: fetchDataFunction(true, 'filialeCustTransfer/getDetailInfo', true),
   // 获取客户列表
   getCustList: fetchDataFunction(false, 'filialeCustTransfer/getCustList'),
   // 获取原服务经理
@@ -68,8 +73,18 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class FilialeCustTransfer extends PureComponent {
+export default class Permission extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    // 列表
+    list: PropTypes.object.isRequired,
+    getList: PropTypes.func.isRequired,
+    // 详情
+    detailInfo: PropTypes.object.isRequired,
+    getDetailInfo: PropTypes.func.isRequired,
+    // 员工信息
+    empInfo: PropTypes.object.isRequired,
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
     custList: PropTypes.array,
@@ -91,229 +106,279 @@ export default class FilialeCustTransfer extends PureComponent {
   }
 
   static defaultProps = {
-    custList: EMPTY_LIST,
-    managerData: EMPTY_LIST,
-    newManagerList: EMPTY_LIST,
+    custList: [],
+    managerData: [],
+    newManagerList: [],
   }
 
   constructor(props) {
     super(props);
-    this.checkUserIsFiliale();
     this.state = {
-      // 所选客户
-      client: EMPTY_OBJECT,
-      // 所选新服务经理
-      newManager: EMPTY_OBJECT,
+      // 高亮项的下标索引
+      activeRowIndex: 0,
+      // 默认状态下新建弹窗不可见 false 不可见  true 可见
+      isShowCreateModal: false,
     };
   }
 
-  componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props.custRangeList;
-    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
-      this.checkUserIsFiliale();
-    }
+  componentWillMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    this.queryAppList(query, pageNum, pageSize);
   }
 
-  // 判断当前登录用户部门是否是分公司
   @autobind
-  checkUserIsFiliale() {
-    const { custRangeList } = this.props;
-    if (!_.isEmpty(custRangeList)) {
-      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        Modal.warning({
-          title: '提示',
-          content: '您不是分公司人员，无权操作！',
-          onOk: () => {
-            this.handleCancel();
+  getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
           },
         });
+        itemIndex = 0;
       }
-    }
-  }
-
-  // 选择客户
-  @autobind
-  handleSelectClient(v) {
-    this.setState({
-      client: v,
-    }, () => {
-      // 选择客户之后触发查询该客户的原服务经理
-      const { getOldManager } = this.props;
-      getOldManager({
-        brokerNumber: v.brokerNumber,
+      this.setState({
+        activeRowIndex: itemIndex,
       });
-    });
-  }
-
-  // 查询客户
-  @autobind
-  handleSearchClient(v) {
-    if (!v) {
-      return;
+      this.props.getDetailInfo({ flowId: item.flowId });
     }
-    const { getCustList } = this.props;
-    getCustList({
-      keyword: v,
-    });
   }
 
-  // 选择新服务经理
+
   @autobind
-  handleSelectNewManager(v) {
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
+  @autobind
+  clearModal(name) {
+    // 清除模态框组件
+    this.setState({ [name]: false });
+  }
+
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateModalBoard() {
     this.setState({
-      newManager: v,
-    }, () => {
-      // 将选择的新服务经理和原服务经理数据合并用作展示
-      const { selectNewManager } = this.props;
-      selectNewManager(v);
+      isShowCreateModal: true,
     });
   }
 
-  // 查询新服务经理
+  // 切换页码
   @autobind
-  handleSearchNewManager(v) {
-    if (!v) {
-      return;
-    }
-    const { getNewManagerList } = this.props;
-    getNewManagerList({
-      login: v,
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
-  // 提交
+  // 切换每一页显示条数
   @autobind
-  handleSubmit() {
-    const { client, newManager } = this.state;
-    const { managerData } = this.props;
-    const managerDataItem = managerData[0];
-    if (_.isEmpty(client)) {
-      message.error('请选择客户');
-      return;
-    }
-    if (_.isEmpty(newManager)) {
-      message.error('请选择新客户经理');
-      return;
-    }
-    if (managerDataItem.hasContract) {
-      confirm({
-        title: '确认要划转吗?',
-        content: '该客户名下有生效中的合作合约，请确认是否划转?',
-        onOk: () => {
-          this.sendRequest();
-        },
-      });
-      return;
-    }
-    this.sendRequest();
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+    this.queryAppList(query, 1, changedPageSize);
   }
 
-  // 发送请求
+  // 点击列表每条的时候对应请求详情
   @autobind
-  sendRequest() {
-    const { client, newManager } = this.state;
-    const { saveChange } = this.props;
-    saveChange({
-      custId: client.custId,
-      custType: client.custType,
-      integrationId: newManager.newIntegrationId,
-      orgName: newManager.newOrgName,
-      postnName: newManager.newPostnName,
-      postnId: newManager.newPostnId,
-    }).then(() => {
-      message.success('划转成功');
-      this.emptyData();
+  handleListRowClick(record, index) {
+    const { id, flowId } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === String(id)) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
     });
+    this.setState({ activeRowIndex: index });
+    this.props.getDetailInfo({ flowId });
   }
 
-  // 取消
+  // 渲染列表项里面的每一项
   @autobind
-  handleCancel() {
-    closeRctTab({
-      id: 'FSP_CROSS_DEPARTMENT',
-    });
-  }
-
-  // 提交成功后清空数据
-  @autobind
-  emptyData() {
-    const { emptyQueryData } = this.props;
-    this.setState({
-      client: EMPTY_OBJECT,
-      newManager: EMPTY_OBJECT,
-    }, () => {
-      if (this.queryCustComponent) {
-        this.queryCustComponent.clearValue();
-        this.queryCustComponent.clearSearchValue();
-      }
-      if (this.queryManagerComponent) {
-        this.queryManagerComponent.clearValue();
-        this.queryManagerComponent.clearSearchValue();
-      }
-      emptyQueryData();
-    });
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <ViewListRow
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="filialeCustTransfer"
+        type="kehu1"
+        pageData={filialeCustTransfer}
+      />
+    );
   }
 
   render() {
-    console.log('props', this.props);
     const {
+      replace,
+      location,
+      list,
+      detailInfo,
+      empInfo,
+      getCustList,
       custList,
+      // 获取原服务经理
+      getOldManager,
+      // 获取新服务经理
+      getNewManagerList,
       newManagerList,
+      // 选择新的服务经理
+      selectNewManager,
+      // 服务经理数据
       managerData,
+      // 提交保存
+      saveChange,
+      // 提交成功后清除上一次查询的数据
+      emptyQueryData,
+      // 组织机构树
+      custRangeList,
     } = this.props;
+    const { isShowCreateModal } = this.state;
+    const isEmpty = _.isEmpty(list.resultData);
+    const topPanel = (
+      <ConnectedSeibelHeader
+        location={location}
+        replace={replace}
+        page="filialeCustTransferPage"
+        pageType={pageType}
+        needSubType={false}
+        stateOptions={status}
+        creatSeibelModal={this.openCreateModalBoard}
+        filterCallback={this.handleHeaderFilter}
+      />
+    );
+
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { resultData = [], page = {} } = list;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      defaultCurrent: 1,
+      size: 'small', // 迷你版
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      defaultPageSize: 10,
+      onChange: this.handlePageNumberChange,
+      showTotal: appListTool.showTotal,
+      showSizeChanger: true,
+      onShowSizeChange: this.handlePageSizeChange,
+      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+    };
+
+    const leftPanel = (
+      <FilialeCustTransferList
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
+      />
+    );
+
+    const rightPanel = (
+      <Detail data={detailInfo} />
+    );
+
     return (
-      <div className={styles.filialeCustTransferWrapper} >
-        <div className={styles.filialeCustTransferBox} >
-          <h3 className={styles.title}>分公司客户划转</h3>
-          <div className={styles.selectBox}>
-            <div className={styles.selectLeft}>
-              <InfoForm style={{ width: 'auto' }} label="选择客户" required>
-                <DropDownSelect
-                  placeholder="选择客户"
-                  showObjKey="custName"
-                  objId="brokerNumber"
-                  value=""
-                  searchList={custList}
-                  emitSelectItem={this.handleSelectClient}
-                  emitToSearch={this.handleSearchClient}
-                  boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.queryCustComponent = ref}
-                />
-              </InfoForm>
-            </div>
-            <div className={styles.selectRight}>
-              <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
-                <DropDownSelect
-                  placeholder="选择新服务经理"
-                  showObjKey="showSelectName"
-                  value=""
-                  searchList={newManagerList}
-                  emitSelectItem={this.handleSelectNewManager}
-                  emitToSearch={this.handleSearchNewManager}
-                  boxStyle={dropDownSelectBoxStyle}
-                  ref={ref => this.queryManagerComponent = ref}
-                />
-              </InfoForm>
-            </div>
-          </div>
-          <CommonTable
-            data={managerData}
-            titleList={titleList}
-          />
-        </div>
-        <div className={styles.buttonBox}>
-          <Button
-            type="primary"
-            size="large"
-            onClick={this.handleSubmit}
-          >确认
-          </Button>
-          <Button
-            size="large"
-            onClick={this.handleCancel}
-          >取消
-          </Button>
-        </div>
+      <div>
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="FilialeCustTransferList"
+        />
+        {
+          !isShowCreateModal ? null
+          : (
+            <CreateFilialeCustTransfer
+              location={location}
+              empInfo={empInfo}
+              onEmitClearModal={this.clearModal}
+              getCustList={getCustList}
+              custList={custList}
+              getOldManager={getOldManager}
+              getNewManagerList={getNewManagerList}
+              newManagerList={newManagerList}
+              selectNewManager={selectNewManager}
+              managerData={managerData}
+              saveChange={saveChange}
+              emptyQueryData={emptyQueryData}
+              custRangeList={custRangeList}
+            />
+          )
+        }
       </div>
     );
   }

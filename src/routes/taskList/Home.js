@@ -20,8 +20,8 @@ import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel'
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
-import { openRctTab, permission } from '../../utils';
-import { emp } from '../../helper';
+import { openRctTab } from '../../utils';
+import { emp, permission } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];

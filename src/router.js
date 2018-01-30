@@ -46,9 +46,9 @@ import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
-
 // 晨间播报
 import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
+import PreSaleQuery from './routes/preSaleQuery/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -63,6 +63,7 @@ const routes = [
   { path: '/feedback', component: FeedBack },
   { path: '/commission', component: CommissionHome },
   { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/preSaleQuery', component: PreSaleQuery },
   { path: '/modal', component: TemplModal },
   { path: '/relation', component: RelationHome },
   { path: '/taskList', component: TaskListHome },

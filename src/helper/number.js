@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-29 10:24:13
+ * @Last Modified time: 2018-01-22 13:41:35
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
@@ -48,8 +48,8 @@ const number = {
     const replacement = `$1${thousandSeq}`;
     // 将数字差分成整数部分和小数部分
     const nArr = String(no).split('.');
-    const itegerF = nArr[0].replace(reg.thousand_integer, replacement);
-    let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(reg.thousand_decimal, replacement);
+    const itegerF = nArr[0].replace(reg.thousandInteger, replacement);
+    let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(reg.thousandDecimal, replacement);
     if (!decimalNeedFormat) {
       decimalF = !_.isEmpty(nArr[1]) && nArr[1];
     }

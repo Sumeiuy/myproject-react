@@ -8,17 +8,15 @@ import 'babel-polyfill';
 import dva from 'dva';
 import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
-// import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
-// import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from '../src/middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from '../src/config/persist';
-import { initFspMethod } from '../src/utils';
-
-import permission from '../src/permissions';
+// import { initFspMethod } from '../src/utils';
+// import permission from '../src/permissions';
+import { dva as dvaHelper } from '../src/helper';
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -86,6 +84,8 @@ app.model(require('../src/models/filialeCustTransfer'));
 app.model(require('../src/models/relation'));
 // 任务反馈
 app.model(require('../src/models/taskFeedback'));
+// 售前适当性查询
+app.model(require('../src/models/preSaleQuery'));
 
 // 4. Router
 app.router(routerConfig);
@@ -101,9 +101,11 @@ if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
 
+dvaHelper.initApp(app, history);
+
 // 7. 初始化权限配置
-permission.init(store);
+// permission.init(store);
 
 // 8. 初始化fsp方法
 // 所有需要暴露给fsp的数据方法都通过这个方法
-initFspMethod({ store, push: history.push });
+// initFspMethod({ store, push: history.push });

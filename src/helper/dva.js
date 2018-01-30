@@ -2,10 +2,10 @@
  * @Author: sunweibin
  * @Date: 2017-12-18 17:32:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-19 11:00:18
+ * @Last Modified time: 2018-01-23 10:31:05
  * @description 统一整理的将dva以及redux需要暴露使用的方法
  */
-import { initFspMethod } from '../utils/fspGlobal';
+import initFspMethod from '../utils/initFspMethod';
 import permission from '../permissions';
 
 let app = null;
@@ -16,12 +16,11 @@ const dva = {
    * 初始化dva引用
    * @param {Object} app_ dva生成的实例
    */
-  initApp(app_) {
+  initApp(app_, history) {
     app = app_;
     const store = dva.getStore();
     // 将store暴露给FSP
-    initFspMethod(store);
-    // 初始化权限配置
+    initFspMethod({ store, push: history.push });
     permission.init(store);
   },
 
