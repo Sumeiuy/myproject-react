@@ -149,6 +149,7 @@ export default class PerformanceIndicators extends PureComponent {
     openFspTab({
       routerAction: push,
       url: notificationUrl,
+      pathname: '/fsp/messageCenter',
       param: notificationParam,
     });
   }

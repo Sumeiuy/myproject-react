@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 16:50:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-30 14:20:10
  */
 
 import React, { PureComponent } from 'react';
@@ -11,8 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { permission } from '../../../utils';
-import { emp } from '../../../helper';
+import { permission, emp } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
@@ -83,9 +82,9 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: isEntryFromReturnTask,
-      isCanGoNextStep: isEntryFromReturnTask,
-      isNeedMissionInvestigation: true,
+      needApproval: isEntryFromReturnTask,
+      canGoNextStep: isEntryFromReturnTask,
+      needMissionInvestigation: true,
       isDisabled: false,
     };
   }
@@ -106,20 +105,20 @@ export default class TaskFormFlowStep extends PureComponent {
           return;
         }
         const {
-        isNeedApproval,
-          isCanGoNextStep,
-          isNeedMissionInvestigation,
+          needApproval,
+          canGoNextStep,
+          needMissionInvestigation,
           isIncludeNotMineCust,
         } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-        if (isIncludeNotMineCust && !isCanGoNextStep) {
+        if (isIncludeNotMineCust && !canGoNextStep) {
           message.error('客户包含非本人名下客户，请重新选择');
           return;
         }
 
         this.setState({
-          isNeedApproval,
-          isCanGoNextStep,
-          isNeedMissionInvestigation,
+          needApproval,
+          canGoNextStep,
+          needMissionInvestigation,
         });
       });
     }
@@ -235,8 +234,8 @@ export default class TaskFormFlowStep extends PureComponent {
     const { custNum, custSource: taskSource } = tagetCustModel || {};
 
     const {
-      isNeedMissionInvestigation,
-      isCanGoNextStep,
+      needMissionInvestigation,
+      canGoNextStep,
     } = this.state;
 
     let isResultTrackValidate = true;
@@ -345,7 +344,7 @@ export default class TaskFormFlowStep extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (isNeedMissionInvestigation) {
+      if (needMissionInvestigation) {
         const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
@@ -386,7 +385,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
       });
       // 只有能够下一步，再update
-      if (isCanGoNextStep) {
+      if (canGoNextStep) {
         this.setState({
           current: current + 1,
           custSource,
@@ -412,8 +411,8 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { flowId, flowData = '{}' } },
     } = this.props;
     const {
-      isNeedApproval,
-      isNeedMissionInvestigation,
+      needApproval,
+      needMissionInvestigation,
     } = this.state;
 
     // 获取重新提交任务参数( flowId, eventId );
@@ -423,6 +422,11 @@ export default class TaskFormFlowStep extends PureComponent {
     const flowParam = { flowId, eventId };
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
+
+    if (_.isEmpty(flowAuditorId)) {
+      message.error('任务需要审批，请选择审批人');
+      return;
+    }
 
     const req = this.parseParam();
 
@@ -487,7 +491,7 @@ export default class TaskFormFlowStep extends PureComponent {
       ...req,
     };
 
-    if (isNeedApproval) {
+    if (needApproval) {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -521,7 +525,7 @@ export default class TaskFormFlowStep extends PureComponent {
       }
     }
 
-    if (isNeedMissionInvestigation && isMissionInvestigationChecked) {
+    if (needMissionInvestigation && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -601,7 +605,7 @@ export default class TaskFormFlowStep extends PureComponent {
       message.success('提交成功');
       this.setState({
         isDisabled: true,
-        isCanGoNextStep: false,
+        canGoNextStep: false,
       });
     }
   }
@@ -614,9 +618,9 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
       isShowErrorTaskSubType,
-      isNeedApproval,
-      isNeedMissionInvestigation,
-      isCanGoNextStep,
+      needApproval,
+      needMissionInvestigation,
+      canGoNextStep,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -671,7 +675,7 @@ export default class TaskFormFlowStep extends PureComponent {
           storedData={storedCreateTaskData}
         />
         {
-          isNeedMissionInvestigation ?
+          needMissionInvestigation ?
             <MissionInvestigation
               wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedCreateTaskData}
@@ -692,7 +696,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={isNeedApproval}
+        needApproval={needApproval}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
@@ -768,7 +772,7 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleNextStep}
               eventName="/click/taskFormFlowStep/nextStep"
             >
-              <Button className={styles.handlePreviousStep} type="primary" disabled={!isCanGoNextStep}>
+              <Button className={styles.handlePreviousStep} type="primary" disabled={!canGoNextStep}>
                 下一步
               </Button>
             </Clickable>

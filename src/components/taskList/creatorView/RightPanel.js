@@ -28,9 +28,7 @@ const COLUMN_HEIGHT = 36;
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 // 答案自定义的index
-const getAlphaIndex = (index) => {
-  return String.fromCharCode(97 + index);
-};
+const getAlphaIndex = index => String.fromCharCode(97 + index);
 // 后台返回题目类型
 const TYPE = {
   radioType: '1',
@@ -233,7 +231,7 @@ export default class RightPanel extends PureComponent {
     }
     return targetData;
   }
-  
+
 
   // 问卷调查数据处理
   renderTaskSurvey() {
@@ -247,9 +245,9 @@ export default class RightPanel extends PureComponent {
         optionRespDtoList.forEach((childItem, index) => {
           optionCont += `${getAlphaIndex(index)}.${childItem.optionValue}；`;
         });
-         quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
+        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
       } else if (quesType.key === TYPE.textAreaType) {
-         quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
+        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
       }
       return (<p>{quesText}</p>);
     });

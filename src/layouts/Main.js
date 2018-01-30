@@ -123,7 +123,6 @@ export default class Main extends Component {
       ceFileDelete,
       motSelfBuiltFeedbackList,
     } = this.props;
-    console.log('motSelfBuiltFeedbackList>>>', motSelfBuiltFeedbackList);
     return (
       <div>
         <div className={styles.layout}>

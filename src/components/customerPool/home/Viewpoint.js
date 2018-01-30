@@ -25,7 +25,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  openNewTab(url, query) {
+  openNewTab(url, query, editPane) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const { push } = this.props;
     openRctTab({
@@ -34,19 +34,28 @@ export default class Viewpoint extends PureComponent {
       param,
       pathname: url,
       query,
+      editPane,
     });
   }
 
   @autobind
   handleMoreClick() {
     // 跳转到资讯列表界面
-    this.openNewTab('/customerPool/viewpointList');
+    this.openNewTab('/customerPool/viewpointList', null,
+      {
+        name: '资讯列表',
+        path: '/customerPool/viewpointList',
+      });
   }
 
   @autobind
   handleDetailClick(index) {
     // 跳转到资讯详情界面
-    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index },
+      {
+        name: '资讯详情',
+        path: '/customerPool/viewpointDetail',
+      });
   }
 
   @autobind
@@ -136,13 +145,11 @@ export default class Viewpoint extends PureComponent {
         <div className={styles.down}>
           <div className={classnames(styles.title, styles.downTitle)}>资讯列表</div>
           {
-            _.isEmpty(newInfoVOList) ? (
-              <div className={styles.descri}>暂无数据</div>
-            ) : (
+            _.isEmpty(newInfoVOList) ?
+              <div className={styles.descri}>暂无数据</div> :
               <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
                 {this.renderContent(newInfoVOList)}
               </div>
-              )
           }
           {
             isShowMore ? (

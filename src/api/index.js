@@ -16,6 +16,7 @@ import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
+import preSaleQuery from './preSaleQuery';
 
 const api = apiCreator();
 
@@ -50,11 +51,13 @@ export default {
   demote: demote(api),
   // ========== 分公司客户划转接口api
   filialeCustTransfer: filialeCustTransfer(api),
-  // 客户反馈
+  // ========== 客户反馈
   customerFeedback: customerFeedback(api),
-  // 任务反馈
+  // ========== 任务反馈
   taskFeedback: taskFeedback(api),
-  // ============ 晨报
+  // ========== 晨报
   morningBoradcast: morningBoradcast(api),
+  // ========== 售前适当性查询
+  preSaleQuery: preSaleQuery(api),
 };
 

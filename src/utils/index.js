@@ -14,7 +14,6 @@ import { dispatchTabPane,
 
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
-import permission from './permission';
 
 export default {
   apiCreator,
@@ -22,7 +21,6 @@ export default {
   sagaEffects,
   initFspMethod,
   fspGlobal,
-  permission,
   dispatchTabPane,
   openRctTab,
   openFspTab,

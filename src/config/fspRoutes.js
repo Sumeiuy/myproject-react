@@ -4,160 +4,156 @@
  * @author zhufeiyang
  */
 
+/**
+ * 由于要嵌入fsp页面，原fsp页面代码的调用参数只与url相关，
+ * 但是在react中，需要与path进行关联，从而跳转新的页面
+ * 所以设置这个映射表，根据fsp的url，映射相应的react框架的path
+ * 次级导航菜单涉及到的fsp页面非常多，所以不在这里配置，而是直接复用后端的数据
+ */
 const fspRoutes = [
-  // 任务中心
+  // 跳回首页
   {
-    path: 'motTask',
+    path: '/customerPool',
+    action: '',
+    url: '/homepage', // url属性可以为string类型，或者为RegExp类型，从而方便匹配
+  },
+  // MOT任务相关
+  {
+    path: '/fsp/motTask',
+    action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_TASK_MANAGE',
     url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
   },
   {
-    path: 'selfbuildTask',
-    url: '/mot/selfbuildTask/selfBuildTaskMain',
+    path: '/fsp/motTaskHandle',
+    action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_TASK_HANDLE',
+    url: '/mot/manage/showHandle',
   },
+  // 服务记录管理
   {
-    path: 'motService',
-    url: '/mot/statistics/showList',
-  },
-  {
-    path: 'customerHistory',
+    path: '/fsp/taskCenter/serviceManage',
+    action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_SERVICELIST',
     url: '/mot/service/showList',
   },
+  // 投顾签约
   {
-    path: 'ibreport',
-    url: '/ibReport/main',
-  },
-  // 客户中心
-  {
-    path: 'test',
-    url: '/custgroup/manage/showTestOtkTabWin',
-  },
-  // 知识库
-  {
-    path: 'fspinitmain',
-    url: '/knowledge/initmain',
-  },
-  {
-    path: 'investContract',
+    path: '/fsp/investContract',
+    action: 'loadInTab',
+    containerId: 'FSP_TGINVEST_LIST_TAB',
     url: '/tgcontract/list/listContent',
   },
+  // 投顾签约向导
   {
-    path: 'customerManage',
+    path: '/fsp/contractWizard',
+    action: 'loadInTab',
+    containerId: 'utb-stockcontract-wizard',
+    url: '/client/investcontract/wizard/',
+  },
+  // 佣金调整向导
+  {
+    path: '/fsp/serviceOrderingWizard',
+    action: 'loadInTab',
+    url: '/client/serviceOrdering/wizard/',
+  },
+  // 客户管理
+  {
+    path: '/fsp/customerCenter/customerManage',
+    action: 'loadInTab',
+    containerId: 'FSP_CUST_TAB_CENTER_MANAGE', // 外层容器id
     url: '/customer/manage/showCustManageTabWin',
   },
+  // 客户360
   {
-    path: 'customerDetail',
-    url: '/customerCenter/360/org/main',
+    path: '/fsp/customerCenter/customer360',
+    action: 'loadInTab',
+    containerId: 'FSP_360VIEW_M_TAB',
+    url: '/customerCenter/360/',
   },
-  // 客户投诉
+  // 合约详情
   {
-    path: 'listContent',
-    url: '/custcomplaint/manage/listContent',
+    path: '/fsp/customerCenter/360OrderDetail',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=orderDetail)/,
   },
+  // 合约历史记录
   {
-    path: 'pending',
-    url: '/complaint/pending',
+    path: '/fsp/customerCenter/360orderHisDetail',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=orderHisDetail)/,
   },
+  // 佣金查询
   {
-    path: 'fspall',
-    url: '/complaint/all',
-  },
-  {
-    path: 'fspnew',
-    url: '/complaint/new',
-  },
-  {
-    path: 'fspreport',
-    url: '/complaint/report',
-  },
-  // 资产配置
-  {
-    path: 'mainTab',
-    url: '/asset/basis/mainTab',
-  },
-  {
-    path: 'implementation',
-    url: '/asset/implementation/main',
-  },
-  // 资金业务
-  {
-    path: 'excessCache',
-    url: '/bizapply/excesscache/list',
-  },
-  {
-    path: 'appointDrawTab',
-    url: '/bizapply/appoint/appointDrawTab',
-  },
-  {
-    path: 'appointBook',
-    url: '/bizapply/appointBook/init',
-  },
-  // 适当性申请
-  {
-    path: 'priProd',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'appropriate',
-    url: '/appropriate/vfsh/listContent',
-  },
-
-  // 通道类业务
-  {
-    path: 'pbbiz',
-    url: '/bizapply/pbbiz/list',
-  },
-
-  // 信用业务
-/*   {
-    path: 'postApplyManage',
-    url: '/cbs/login?defaultTargetUrl=/cbspages/postnApplyManage/postnApp',
-  },
-  {
-    path: 'creditRequest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'changeRequest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'thought',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'projectInvest',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'projectScore',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'riskFollow',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'initialTrade',
-    url: '/priProd/initmain',
-  },
-  {
-    path: 'followingSearch',
-    url: '/priProd/initmain',
-  }, */
-
-  // 期权业务
-  {
-    path: 'optionResearch',
-    url: '/bizapply/stockinvest/listContent',
-  },
-  {
-    path: 'optionfund',
-    url: '/bizapply/optionfund/mainPage',
+    path: '/fsp/customerCenter/toCommission',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=toCommission)/,
   },
   // 消息中心
   {
-    path: 'messageCenter',
+    path: '/fsp/messageCenter',
+    action: 'loadInTab',
     url: '/messgeCenter',
+  },
+  // 产品中心
+  {
+    path: '/fsp/productCenter/productPool',
+    action: 'loadInTab',
+    url: '/product/pool/selectProduct',
+  },
+  {
+    path: '/fsp/productCenter/salesCalendar',
+    action: 'loadInIframe',
+    url: '/htsc-product-base/product_sales_calendar.do?clientType=crm',
+  },
+  {
+    path: '/fsp/productCenter/financeProducts',
+    action: 'loadInIframe',
+    url: '/htsc-product-base/product_search_currency.do?clientType=crm&special_enter=1',
+  },
+  // 投诉工单管理
+  {
+    path: '/fsp/serviceCenter/custcomplaint',
+    action: 'loadInTab',
+    containerId: 'FSP_CUST_COMPLAINT_MANGER',
+    url: '/custcomplaint/manage/listContent',
+  },
+  // 资产配置明细
+  {
+    path: '/fsp/implementation/initsee',
+    action: 'loadInTab',
+    url: '/asset/implementation/initsee',
+  },
+  // 资产配置向导
+  {
+    path: '/fsp/implementation/wizard',
+    action: 'loadInTab',
+    url: '/asset/implementation/wizard/main',
+  },
+  // 工单投诉信息
+  {
+    path: '/fsp/serviceCenter/complaintInfo',
+    action: 'loadInTab',
+    url: '/custcomplaint/manage/viewCustComplaintInfo',
+  },
+  // 资产配置实施
+  {
+    path: '/fsp/serviceCenter/asset/implementation',
+    action: 'loadInTab',
+    containerId: 'FSP_ASSET_ALLOCATION',
+    url: '/asset/implementation/main',
+  },
+  // 资产配置模板
+  {
+    path: '/fsp/serviceCenter/asset/basis',
+    action: 'loadInTab',
+    url: '/asset/basis/mainTab',
+  },
+  // 资讯中心
+  {
+    path: '/fsp/strategyCenter/informationCenter',
+    action: 'loadInIframe',
+    url: '/jeip/psso/htscsso.jsp?biz_sys_key=zxzx',
   },
 ];
 

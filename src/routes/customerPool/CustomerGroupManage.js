@@ -268,7 +268,7 @@ export default class CustomerGroupManage extends PureComponent {
       routerAction: push,
       url,
       param,
-      pathname: firstUrl,
+      pathname: '/customerCenter/customerGroupManage/createTask',
       query: obj,
     });
   }
