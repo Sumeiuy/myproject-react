@@ -23,6 +23,10 @@ export default class BasicInfo extends PureComponent {
     servicePolicy: PropTypes.string,
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
+    // 当前视图类型是不是管理者视图
+    isCurrentViewOfController: PropTypes.bool,
+    // 任务提示
+    missionDescription: PropTypes.string,
   }
 
   static defaultProps = {
@@ -31,6 +35,8 @@ export default class BasicInfo extends PureComponent {
     missionTarget: '',
     servicePolicy: '',
     isFold: false,
+    isCurrentViewOfController: false,
+    missionDescription: '',
   }
 
   constructor(props) {
@@ -47,6 +53,8 @@ export default class BasicInfo extends PureComponent {
       missionTarget,
       servicePolicy,
       // isFold,
+      isCurrentViewOfController,
+      missionDescription,
     } = this.props;
 
     // const colSpanValue = isFold ? 12 : 24;
@@ -72,6 +80,18 @@ export default class BasicInfo extends PureComponent {
               </p>
             </Col>
           </Row>
+          {
+            isCurrentViewOfController ?
+              <Row className={styles.rowItem}>
+                <Col className={styles.colItem}>
+                  <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
+                  <p className={`${styles.content}`}>
+                    {missionDescription || '--'}
+                  </p>
+                </Col>
+              </Row> :
+              null
+          }
         </div>
       </div>
     );

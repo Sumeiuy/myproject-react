@@ -116,8 +116,7 @@ export default class CreateTaskForm extends PureComponent {
   handleTaskType(key = '') {
     const { dict: { executeTypes } } = this.props;
     const keyWord = key.slice(0, 2) || '';
-    const selectData = _.find(executeTypes, keyWord) || {};
-    console.log('selectData-->', selectData);
+    const selectData = _.find(executeTypes, ['value', keyWord]) || {};
     return selectData.key;
   }
 
@@ -177,6 +176,13 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = '';
         defaultInitialValue = 4;
         break;
+      case 'association':
+        defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = 'Chance';
+        defaultMissionDesc = '';
+        defaultInitialValue = 4;
+        break;
       case 'tag':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
@@ -220,9 +226,9 @@ export default class CreateTaskForm extends PureComponent {
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = this.handleTaskType(motDetailModel.exeType); // 执行方式
         defaultKey = 'UNRIGHTS';
-        defaultServiceStrategySuggestion = motDetailModel.infoContent;
+        defaultServiceStrategySuggestion = motDetailModel.strategyDesc;
         // 任务提示
-        defaultMissionDesc = motDetailModel.strategyDesc;
+        defaultMissionDesc = motDetailModel.infoContent;
         defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
         break;
       default:

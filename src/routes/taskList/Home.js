@@ -20,7 +20,6 @@ import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel'
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
-import appListTool from '../../components/common/appList/tool';
 import { openRctTab, permission } from '../../utils';
 import { emp } from '../../helper';
 
@@ -88,13 +87,13 @@ const effects = {
   countFlowStatus: 'managerView/countFlowStatus',
   getTempQuesAndAnswer: 'performerView/getTempQuesAndAnswer',
   saveAnswersByType: 'performerView/saveAnswersByType',
-  exportCustListExcel: 'managerView/exportCustListExcel',
   // 任务反馈统计
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
   // 查看是否是自己名下的客户
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
+  exportCustListExcel: 'managerView/exportCustListExcel',
 };
 
 const mapStateToProps = state => ({
@@ -198,11 +197,11 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
-  exportCustListExcel: fetchDataFunction(false, effects.exportCustListExcel),
   countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
+  exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -263,7 +262,6 @@ export default class PerformerView extends PureComponent {
     answersList: PropTypes.object,
     saveAnswersByType: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
-    exportCustListExcel: PropTypes.func.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     countAnswersByType: PropTypes.func.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
@@ -271,6 +269,7 @@ export default class PerformerView extends PureComponent {
     attachmentList: PropTypes.array.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    exportCustListExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -529,7 +528,6 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
-      exportCustListExcel,
       isCustServedByPostn,
       custServedByPostnResult,
     } = this.props;
@@ -610,7 +608,6 @@ export default class PerformerView extends PureComponent {
             missionType={typeCode}
             missionTypeDict={missionType}
             exportExcel={this.handleExportExecl}
-            exportCustListExcel={exportCustListExcel}
             missionProgressStatusDic={missionProgressStatus}
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
@@ -632,21 +629,20 @@ export default class PerformerView extends PureComponent {
     const {
       location: { query: { currentId } },
       mngrMissionDetailInfo,
-      exportCustListExcel,
     } = this.props;
     const params = {
       missionName: mngrMissionDetailInfo.missionName,
       orgId,
       missionId: currentId,
-      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? '' : mngrMissionDetailInfo.missionDesc,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
-    exportCustListExcel(params);
+    return params;
   }
 
   // 头部筛选请求
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
+  queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getTaskList, dict: { missionStatus }, replace,
       location: { pathname } } = this.props;
     let newQuery = query;
@@ -690,7 +686,7 @@ export default class PerformerView extends PureComponent {
 
   // 第一次加载请求
   @autobind
-  queryAppListInit({ newQuery, pageNum = 1, pageSize = 10,
+  queryAppListInit({ newQuery, pageNum = 1, pageSize = 20,
     beforeToday: before, today: todays, afterToday: after }) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
@@ -983,21 +979,16 @@ export default class PerformerView extends PureComponent {
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
-      pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
-      onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
-      onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
+      curPageNum: parseInt(pageNum, 10),
+      totalRecordNum: page.totalCount || 0,
+      curPageSize: parseInt(pageSize, 10),
+      onPageChange: this.handlePageNumberChange,
+      onSizeChange: this.handlePageSizeChange,
     };
+
 
     const leftPanel = (
       <ViewList

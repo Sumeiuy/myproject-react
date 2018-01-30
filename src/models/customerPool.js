@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import { customerPool as api } from '../api';
+import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
@@ -38,7 +38,7 @@ export default {
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
-    hotwds: {},
+    hotWdsList: [],
     hotPossibleWdsList: [],
     // 目标客户列表数据
     custList: [],
@@ -57,6 +57,7 @@ export default {
     searchHistoryVal: '',
     cusGroupSaveResult: '',
     createTaskResult: {},
+    updateTaskResult: {},
     cusGroupSaveMessage: '',
     resultgroupId: '',
     incomeData: [], // 净收入
@@ -121,14 +122,16 @@ export default {
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
-    submitSuccess: false,
+    submitApporvalResult: {},
     // 查询客户的数量限制或者是否都是本人名下的客户
     sendCustsServedByPostnResult: {
       custNumsIsExceedUpperLimit: false,
-      isSendCustsServedByPostn: true,
+      sendCustsServedByPostn: false,
     },
     // 查询是否都是本人名下的客户
     custServedByPostnResult: true,
+    // 瞄准镜的筛选项
+    sightingTelescopeFilters: {},
   },
 
   subscriptions: {
@@ -344,6 +347,14 @@ export default {
       yield put({
         type: 'createTaskSuccess',
         payload: { createTaskResult },
+      });
+    },
+    // 自建任务编辑后，重新提交
+    * updateTask({ payload }, { call, put }) {
+      const updateTaskResult = yield call(api.updateTask, payload);
+      yield put({
+        type: 'updateTaskSuccess',
+        payload: { updateTaskResult },
       });
     },
     // 获取净创收数据
@@ -644,12 +655,14 @@ export default {
     },
     // 标签圈人-id查询客户列表
     * getLabelPeople({ payload }, { call, put }) {
-      const response = yield call(api.queryLabelPeople, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'getLabelPeopleSuccess',
-        payload: { resultData },
-      });
+      const response = yield call(api.getCustomerList, payload);
+      const { resultData: { custListVO } } = response;
+      if (response.code === '0') {
+        yield put({
+          type: 'getLabelPeopleSuccess',
+          payload: custListVO,
+        });
+      }
     },
     // 提交任务流程
     * submitTaskFlow({ payload }, { call, put }) {
@@ -746,11 +759,10 @@ export default {
     },
     // 审批按钮提交
     * submitApproval({ payload }, { call, put }) {
-      const response = yield call(api.submitApproval, payload);
-      const { resultData } = response;
+      const submitApporvalResult = yield call(api.submitApproval, payload);
       yield put({
         type: 'submitApprovalSuccess',
-        payload: { resultData },
+        payload: submitApporvalResult,
       });
     },
     // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
@@ -766,6 +778,14 @@ export default {
       const { resultData } = yield call(api.isCustServedByPostn, payload);
       yield put({
         type: 'isCustServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取瞄准镜的筛选条件
+    * getFiltersOfSightingTelescope({ payload }, { call, put }) {
+      const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, payload);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSuccess',
         payload: resultData,
       });
     },
@@ -863,19 +883,27 @@ export default {
     // 默认推荐词及热词推荐列表
     getHotWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotWds = response.resultData;
+      const hotWdsList = response.resultData;
       return {
         ...state,
-        hotWds,
+        hotWdsList,
       };
     },
     // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      const { labelInfoList, matchedWdsList } = response.resultData;
+      // 给接口返回来的labels加上type字段
+      const newLabelInfoList = _.map(labelInfoList, item => ({
+        ...item,
+        type: 'label',
+      }));
       return {
         ...state,
-        hotPossibleWdsList,
+        hotPossibleWdsList: [
+          ...newLabelInfoList,
+          ...matchedWdsList,
+        ],
       };
     },
     getCustomerListSuccess(state, action) {
@@ -962,6 +990,14 @@ export default {
       return {
         ...state,
         createTaskResult: payload,
+      };
+    },
+    // 自建任务编辑后，重新提交
+    updateTaskSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        updateTaskResult: payload,
       };
     },
     // 获取净创收数据成功
@@ -1215,10 +1251,18 @@ export default {
     },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
+      const emptyData = {
+        totalCount: 0,
+        pageSize: 10,
+        beginIndex: 1,
+        curPageNum: 1,
+        totalPage: 1,
+        custList: [],
+      };
       return {
         ...state,
-        peopleOfLabelData: resultData || {},
+        peopleOfLabelData: payload || emptyData,
       };
     },
     // 保存当前选中tab
@@ -1309,10 +1353,10 @@ export default {
     },
     // 审批按钮提交成功
     submitApprovalSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        submitSuccess: resultData,
+        submitApporvalResult: payload,
       };
     },
     // 查询客户的数量限制或者是否都是本人名下的客户
@@ -1320,7 +1364,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        sendCustsServedByPostnResult: payload || state.sendCustsServedByPostnResult,
+        sendCustsServedByPostnResult: payload || {},
       };
     },
     // 查询客户是否都是本人名下的客户
@@ -1329,6 +1373,13 @@ export default {
       return {
         ...state,
         custServedByPostnResult: payload,
+      };
+    },
+    getFiltersOfSightingTelescopeSuccess(state, action) {
+      const { payload: { object } } = action;
+      return {
+        ...state,
+        sightingTelescopeFilters: object || {},
       };
     },
   },

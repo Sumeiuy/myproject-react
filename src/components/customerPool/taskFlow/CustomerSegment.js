@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 11:11:18
+ * @Last Modified time: 2018-01-29 17:59:13
  * 客户细分组件
  */
 
@@ -34,7 +34,6 @@ export default class CustomerSegment extends PureComponent {
     priviewCustFileData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    isSendCustsServedByPostn: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -177,14 +176,6 @@ export default class CustomerSegment extends PureComponent {
       uploadedFileKey,
       originFileName,
       custTotal,
-    });
-    // 导入完成之后，请求看看客户是否合法，是否需要审批
-    this.props.isSendCustsServedByPostn({
-      currentFile,
-      uploadedFileKey,
-      originFileName,
-      custTotal,
-      currentEntry: 0,
     });
   }
 

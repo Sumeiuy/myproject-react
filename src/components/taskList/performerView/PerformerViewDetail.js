@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination, Form, message } from 'antd';
+import { Form, message } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -17,6 +17,7 @@ import { emp } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
+import Pagination from '../../common/Pagination';
 
 import styles from './performerViewDetail.less';
 
@@ -328,12 +329,19 @@ export default class PerformerViewDetail extends PureComponent {
     });
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
+    const paginationOption = {
+      curPageNum: curPageNo,
+      totalRecordNum: page.totalCount,
+      curPageSize,
+      onPageChange: this.handlePageChange,
+      isShowSizeChanger: false,
+    };
     // hasSurvey
     return (
       <div className={styles.performerViewDetail}>
         <p className={styles.taskTitle}>
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
-          {true ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
+          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <BasicInfo
           isFold={isFold}
@@ -353,15 +361,10 @@ export default class PerformerViewDetail extends PureComponent {
             </div>
             <div className={styles.pagination}>
               <Pagination
-                size="small"
-                current={+curPageNo}
-                total={+page.totalCount}
-                pageSize={+curPageSize}
-                onChange={this.handlePageChange}
-                defaultPageSize={PAGE_SIZE}
+                {...paginationOption}
               />
             </div>
-            <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div>
+            {/* <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div> */}
           </div>
           {
             _.isEmpty(list) ?

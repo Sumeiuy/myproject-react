@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 // import { Link } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Paganation from '../../common/Paganation';
+import Pagination from '../../common/Pagination';
 import Clickable from '../../../components/common/Clickable';
 import styles from './groupTable.less';
 
@@ -103,11 +103,8 @@ export default class GroupTable extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { curPageSize } = props.pageData;
     this.state = {
       curSelectedRow: -1,
-      // 记住原始分页数，用于换算pageSizeOptions
-      originPageSizeUnit: curPageSize,
     };
   }
 
@@ -134,36 +131,6 @@ export default class GroupTable extends PureComponent {
     }
 
     return pageSizeOption;
-  }
-
-  /**
-   * 构造分页器
-   * @param {*} curPageNum 当前页
-   * @param {*} totalRecordNum 总条目
-   * @param {*} curPageSize 当前分页条目
-   */
-  renderPaganation(curPageNum, totalRecordNum, curPageSize) {
-    const { onSizeChange, onPageChange } = this.props;
-    const paginationOptions = {
-      current: parseInt(curPageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: totalRecordNum,
-      pageSize: parseInt(curPageSize, 10),
-      defaultPageSize: Number(curPageSize),
-      onChange: onPageChange,
-      showTotal: total =>
-        <span className={styles.totalPageSection}>
-          共 <span className={styles.totalPage}>
-            {total}
-          </span> 项
-       </span>,
-      showSizeChanger: true,
-      onShowSizeChange: onSizeChange,
-      pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, Number(curPageSize)),
-    };
-
-    return paginationOptions;
   }
 
   @autobind
@@ -303,14 +270,13 @@ export default class GroupTable extends PureComponent {
       isNeedPaganation,
       tableStyle,
      } = this.props;
-    const { curSelectedRow, originPageSizeUnit } = this.state;
+    const { curSelectedRow } = this.state;
     const paganationOption = {
       curPageNum,
       totalRecordNum,
       curPageSize,
       onPageChange,
       onSizeChange,
-      originPageSizeUnit,
     };
     const columns = this.renderColumns();
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
@@ -338,7 +304,7 @@ export default class GroupTable extends PureComponent {
         />
         {
           (isNeedPaganation && totalRecordNum > 0) ?
-            <Paganation {...paganationOption} /> : null
+            <Pagination {...paganationOption} /> : null
         }
       </div>
     );

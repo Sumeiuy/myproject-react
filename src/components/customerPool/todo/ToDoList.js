@@ -11,7 +11,6 @@ import { Table, message } from 'antd';
 import _ from 'lodash';
 
 import { openRctTab } from '../../../utils';
-import { url } from '../../../helper';
 import styles from './toDoList.less';
 
 import emptyImg from './img/empty.png';
@@ -31,6 +30,7 @@ export default class ToDoList extends PureComponent {
     replace: PropTypes.func.isRequired,
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -96,7 +96,7 @@ export default class ToDoList extends PureComponent {
         pathname,
         query: {
           ...query,
-          flowData: url.stringify(taskBasicInfo),
+          flowData: encodeURIComponent(JSON.stringify(taskBasicInfo)),
           source: 'returnTask',
           flowId,
         },
@@ -143,13 +143,14 @@ export default class ToDoList extends PureComponent {
 
   @autobind
   handleOpenNewPage(e) {
-    const { data, getTaskBasicInfo } = this.props;
+    const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
     const tardetLab = e.target;
     const flowId = tardetLab.getAttribute('data');
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
-    // TODO: 判断条件修改
-    if (true) {
+    // 后台无法返回状态码，只能判断文字
+    clearCreateTaskData('returnTask');
+    if (flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
       });
@@ -168,6 +169,7 @@ export default class ToDoList extends PureComponent {
   @autobind
   handleSuccess() {
     const { push, location: { query }, taskBasicInfo } = this.props;
+    const { flowId } = this.state;
     // 判断返回信息中msg是否报错
     if (!_.isEmpty(taskBasicInfo.msg)) {
       message.error(taskBasicInfo.msg);
@@ -179,13 +181,10 @@ export default class ToDoList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: '/customerPool/createTask',
+        url: `/customerPool/createTask?flowData=${encodeURIComponent(JSON.stringify(taskBasicInfo))}&source=returnTask&flowId=${flowId},`,
         param,
         pathname: '/customerPool/createTask',
         query,
-        state: {
-          flowData: taskBasicInfo,
-        },
       });
     }
   }

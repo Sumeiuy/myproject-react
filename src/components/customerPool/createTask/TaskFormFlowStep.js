@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-24 15:07:33
+ * @Last Modified time: 2018-01-26 16:50:27
  */
 
 import React, { PureComponent } from 'react';
@@ -12,15 +12,16 @@ import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission } from '../../../utils';
-import { url, emp } from '../../../helper';
+import { emp } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import styles from './taskFormFlowStep.less';
 
-const NOOP = _.noop;
+const noop = _.noop;
 const Step = Steps.Step;
+const systemCode = '102330';  // 系统代码（理财服务平台为102330）
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -43,7 +44,7 @@ export default class TaskFormFlowStep extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     submitApproval: PropTypes.func,
-    submitSuccess: PropTypes.bool,
+    submitApporvalResult: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -54,17 +55,22 @@ export default class TaskFormFlowStep extends PureComponent {
     dict: {},
     storedCreateTaskData: {},
     orgId: null,
-    submitSuccess: false,
-    submitApproval: NOOP,
+    submitApporvalResult: {},
+    submitApproval: noop,
     approvalBtn: {},
-    getApprovalBtn: NOOP,
+    getApprovalBtn: noop,
   };
 
   constructor(props) {
     super(props);
     const {
+      location: { query: { source } },
       storedCreateTaskData: { taskFormData, current, custSource },
     } = props;
+    // const currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    // const { motDetailModel } = currentFlowData || {};
+    // const { quesVO = [] } = motDetailModel || {};
+    const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
       current: current || 0,
@@ -77,39 +83,46 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: false,
-      isCanGoNextStep: false,
-      isNeedMissionInvestigation: false,
+      isNeedApproval: isEntryFromReturnTask,
+      isCanGoNextStep: isEntryFromReturnTask,
+      isNeedMissionInvestigation: true,
+      isDisabled: false,
     };
   }
 
   componentDidMount() {
+    const { location: { query: { source } } } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
     };
 
-    this.props.isSendCustsServedByPostn({
-      ...postBody,
-    }).then(() => {
-      const { sendCustsServedByPostnResult } = this.props;
-      const {
+    if (source !== 'returnTask') {
+      this.props.isSendCustsServedByPostn({
+        ...postBody,
+      }).then(() => {
+        const { sendCustsServedByPostnResult } = this.props;
+        if (_.isEmpty(sendCustsServedByPostnResult)) {
+          return;
+        }
+        const {
         isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
-        isIncludeNotMineCust,
-      } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-      if (isIncludeNotMineCust && !isCanGoNextStep) {
-        message.error('客户包含非本人名下客户，请重新选择');
-        return;
-      }
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+          isIncludeNotMineCust,
+        } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
+        if (isIncludeNotMineCust && !isCanGoNextStep) {
+          message.error('客户包含非本人名下客户，请重新选择');
+          return;
+        }
 
-      this.setState({
-        isNeedApproval,
-        isCanGoNextStep,
-        isNeedMissionInvestigation,
+        this.setState({
+          isNeedApproval,
+          isCanGoNextStep,
+          isNeedMissionInvestigation,
+        });
       });
-    });
+    }
   }
 
   @autobind
@@ -179,6 +192,9 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'search':
         custSources = '搜索目标客户';
         break;
+      case 'association':
+        custSources = '搜索目标客户';
+        break;
       case 'tag':
         custSources = '标签目标客户池';
         break;
@@ -211,8 +227,12 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count } },
+      location: { query: { source, count, flowData = '{}' } },
     } = this.props;
+
+    const baseInfo = JSON.parse(decodeURIComponent(flowData));
+    const { tagetCustModel } = baseInfo || {};
+    const { custNum, custSource: taskSource } = tagetCustModel || {};
 
     const {
       isNeedMissionInvestigation,
@@ -226,7 +246,7 @@ export default class TaskFormFlowStep extends PureComponent {
     let missionInvestigationData = storedCreateTaskData.missionInvestigationData || {};
     let taskFormData = storedCreateTaskData.taskFormData || {};
     // 客户来源
-    const custSource = this.handleCustSource(source);
+    const custSource = this.handleCustSource(source) || taskSource;
 
     if (current === 0) {
       // 拿到form表单component
@@ -363,7 +383,7 @@ export default class TaskFormFlowStep extends PureComponent {
         missionInvestigationData,
         current: current + 1,
         custSource,
-        custTotal: count,
+        custTotal: count || custNum,
       });
       // 只有能够下一步，再update
       if (isCanGoNextStep) {
@@ -389,12 +409,18 @@ export default class TaskFormFlowStep extends PureComponent {
       createTask,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
+      location: { query: { flowId, flowData = '{}' } },
     } = this.props;
-
     const {
       isNeedApproval,
       isNeedMissionInvestigation,
     } = this.state;
+
+    // 获取重新提交任务参数( flowId, eventId );
+    const baseInfo = JSON.parse(decodeURIComponent(flowData));
+    const { motDetailModel = {} } = baseInfo;
+    const { eventId } = motDetailModel || {};
+    const flowParam = { flowId, eventId };
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
 
@@ -508,6 +534,7 @@ export default class TaskFormFlowStep extends PureComponent {
     // 调用接口，创建任务
     createTask({
       ...postBody,
+      ...flowParam,
     });
   }
 
@@ -549,20 +576,34 @@ export default class TaskFormFlowStep extends PureComponent {
   // 根据审批流程按钮返回的信息提交新的审批动作
   @autobind
   handleApporval() {
-    // const { submitApproval, approvalBtn } = this.props;
-    // const param = {
-    //   SystemCode: systemCode,
-    //   empId: empId,
-    //   flowId: flowId,
-    //   routeId: routeId,
-    //   recGenUserId: empId, //当前登录人
-    //   approvalIds: loginId,
-    //   suggestion: approverIdea,
-    //   nextGroupId: nextGroupId,
-    //   btnName: btnName,
-    //   btnId: flowBtnId.toString(),
-    //   flowClass: flowClass,
-    // }
+    const { submitApproval, approvalBtn, location: { query: { flowId } } } = this.props;
+    const dataParam = _.find(approvalBtn.flowButtons, ['btnName', '终止']);
+    const param = {
+      SystemCode: systemCode,
+      empId: emp.getId(),
+      flowId,
+      routeId: dataParam.operate,
+      recGenUserId: emp.getId(),
+      approvalIds: [dataParam.flowAuditors[0].login],
+      suggestion: '',
+      nextGroupId: dataParam.nextGroupName,
+      btnName: dataParam.btnName,
+      btnId: dataParam.flowBtnId.toString(),
+      flowClass: dataParam.flowClass,
+    };
+    submitApproval(param).then(this.handleSubmitSuccess);
+  }
+
+  @autobind
+  handleSubmitSuccess() {
+    const { submitApporvalResult } = this.props;
+    if (submitApporvalResult.code === '0') {
+      message.success('提交成功');
+      this.setState({
+        isDisabled: true,
+        isCanGoNextStep: false,
+      });
+    }
   }
 
   render() {
@@ -579,6 +620,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
+      isDisabled,
     } = this.state;
 
     const {
@@ -594,12 +636,14 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
-      location: { query: { missionType, source, flowData } },
+      location: { query: { missionType, source, flowData = '{}' } },
       creator,
     } = this.props;
-    const baseInfo = url.parse(flowData);
+    const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
+    const { tagetCustModel = {} } = baseInfo;
+    const { custNum } = tagetCustModel;
 
     const steps = [{
       title: '基本信息',
@@ -615,7 +659,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorIntervalValue={isShowErrorIntervalValue}
         isShowErrorStrategySuggestion={isShowErrorStrategySuggestion}
         isShowErrorTaskName={isShowErrorTaskName}
-        custCount={Number(count)}
+        custCount={Number(count) || custNum}
         missionType={missionType}
         baseInfo={baseInfo}
       />,
@@ -657,18 +701,35 @@ export default class TaskFormFlowStep extends PureComponent {
     }];
 
     const cancleBtn = source === 'returnTask' ?
-      (<Button className={styles.cancelBtn} type="default">
-        终止
-      </Button>) :
-      (<Button className={styles.cancelBtn} type="default">
-        取消
-      </Button>);
+      (<Clickable
+        onClick={this.handleStopFlow}
+        eventName="/click/taskFormFlowStep/cancel"
+      >
+        <Button className={styles.cancelBtn} type="default" disabled={isDisabled}>
+          终止
+        </Button>
+      </Clickable>) :
+      (<Clickable
+        onClick={this.handleCancel}
+        eventName="/click/taskFormFlowStep/cancel"
+      >
+        <Button className={styles.cancelBtn} type="default">
+          取消
+        </Button>
+      </Clickable>);
+
     // 根据来源判断按钮类型
     const stopBtn = source === 'returnTask' ?
-      (<Button className={styles.cancelBtn} type="default" onClick={this.handleStopFlow}>
-        终止
-      </Button>) : null;
+      (<Clickable
+        onClick={this.handleStopFlow}
+        eventName="/click/taskFormFlowStep/cancel"
+      >
+        <Button className={styles.stopBtn} type="default" disabled={isDisabled}>
+          终止
+        </Button>
+      </Clickable>) : null;
     const stepsCount = _.size(steps);
+
     return (
       <div className={styles.taskFlowContainer}>
         <Steps current={current} className={styles.stepsSection}>
@@ -681,29 +742,20 @@ export default class TaskFormFlowStep extends PureComponent {
           {
             current === 0
             &&
-            <Clickable
-              onClick={this.handleCancel}
-              eventName="/click/taskFormFlowStep/cancel"
-            >
+            <div>
               {cancleBtn}
-            </Clickable>
+            </div>
           }
           {
             current > 0
             &&
             <div>
+              {stopBtn}
               <Clickable
                 onClick={this.handlePreviousStep}
                 eventName="/click/taskFormFlowStep/lastStep"
               >
-                {stopBtn}
-              </Clickable>
-              <Clickable
-                onClick={this.handlePreviousStep}
-                eventName="/click/taskFormFlowStep/lastStep"
-              >
-                {stopBtn}
-                <Button className={styles.prevStepBtn} type="default">
+                <Button className={styles.prevStepBtn} type="default" disabled={isDisabled}>
                   上一步
               </Button>
               </Clickable>
@@ -728,7 +780,7 @@ export default class TaskFormFlowStep extends PureComponent {
               onClick={this.handleSubmit}
               eventName="/click/taskFormFlowStep/submit"
             >
-              <Button className={styles.confirmBtn} type="primary">
+              <Button className={styles.confirmBtn} type="primary" disabled={isDisabled}>
                 确认无误，提交
               </Button>
             </Clickable>

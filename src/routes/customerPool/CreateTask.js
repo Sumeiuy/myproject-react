@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import withRouter from '../../decorators/withRouter';
@@ -23,6 +22,7 @@ const EMPTY_ARRAY = [];
 
 const effects = {
   createTask: 'customerPool/createTask',
+  updateTask: 'customerPool/updateTask',
   getApprovalList: 'customerPool/getApprovalList',
   generateTemplateId: 'customerPool/generateTemplateId',
   getApprovalBtn: 'customerPool/getApprovalBtn',
@@ -39,18 +39,20 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
+  updateTaskResult: state.customerPool.updateTaskResult,
   storedCreateTaskData: state.customerPool.storedCreateTaskData,
   approvalList: state.customerPool.approvalList,
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
   templateId: state.customerPool.templateId,
   approvalBtn: state.customerPool.approvalBtn,
-  submitSuccess: state.customerPool.submitSuccess,
+  submitApporvalResult: state.customerPool.submitApporvalResult,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
 
 const mapDispatchToProps = {
   createTask: fetchDataFunction(true, effects.createTask),
+  updateTask: fetchDataFunction(true, effects.updateTask),
   saveCreateTaskData: query => ({
     type: 'customerPool/saveCreateTaskData',
     payload: query,
@@ -74,7 +76,9 @@ export default class CreateTask extends PureComponent {
     dict: PropTypes.object,
     goBack: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
+    updateTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
+    updateTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
     storedCreateTaskData: PropTypes.object.isRequired,
     saveCreateTaskData: PropTypes.func.isRequired,
@@ -87,7 +91,7 @@ export default class CreateTask extends PureComponent {
     creator: PropTypes.string,
     submitApproval: PropTypes.func,
     approvalBtn: PropTypes.object,
-    submitSuccess: PropTypes.bool,
+    submitApporvalResult: PropTypes.object,
     getApprovalBtn: PropTypes.func,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
@@ -97,10 +101,11 @@ export default class CreateTask extends PureComponent {
     data: [],
     dict: {},
     createTaskResult: {},
+    updateTaskResult: {},
     getApprovalListLoading: false,
     creator: '',
     approvalBtn: {},
-    submitSuccess: false,
+    submitApporvalResult: {},
     submitApproval: () => { },
     getApprovalBtn: () => { },
   };
@@ -117,12 +122,18 @@ export default class CreateTask extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { createTaskResult: preCreateTaskResult,
       getApprovalListLoading,
+      updateTaskResult: preUpdateTaskResult,
       approvalList = EMPTY_ARRAY } = this.props;
     const { createTaskResult: nextcreateTaskResult,
+      updateTaskResult: nextUpdateTaskResult,
       approvalList: nextList = EMPTY_ARRAY,
       getApprovalListLoading: nextApprovalListLoading } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
+    }
+
+    if (preUpdateTaskResult !== nextUpdateTaskResult) {
+      this.handleUpdateTaskSuccess(nextUpdateTaskResult);
     }
 
     if (getApprovalListLoading && !nextApprovalListLoading) {
@@ -141,7 +152,17 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCreateTaskSuccess(result) {
     const { createTaskResult } = result;
-    if (!_.isEmpty(createTaskResult.code) && createTaskResult.code === '0') {
+    if (createTaskResult.code === '0') {
+      this.setState({
+        isSuccess: true,
+      });
+    }
+  }
+
+  @autobind
+  handleUpdateTaskSuccess(result) {
+    const { updateTaskResult } = result;
+    if (updateTaskResult.code === '0') {
       this.setState({
         isSuccess: true,
       });
@@ -152,10 +173,17 @@ export default class CreateTask extends PureComponent {
   handleCreateTask(value) {
     const {
       createTask,
+      updateTask,
+      location: { query: { source } },
     } = this.props;
-    // console.log(value);
-    createTask(value);
+    // 调用接口，创建任务
+    if (source === 'returnTask') {
+      updateTask(value);
+    } else {
+      createTask(value);
+    }
   }
+
 
   /* 关闭当前页 */
   @autobind
@@ -197,7 +225,7 @@ export default class CreateTask extends PureComponent {
       creator,
       approvalBtn,
       getApprovalBtn,
-      submitSuccess,
+      submitApporvalResult,
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
@@ -211,6 +239,7 @@ export default class CreateTask extends PureComponent {
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
+            updateTask={this.handleUpdateTask}
             storedCreateTaskData={storedCreateTaskData}
             saveCreateTaskData={saveCreateTaskData}
             approvalList={approvalList}
@@ -226,7 +255,7 @@ export default class CreateTask extends PureComponent {
             creator={creator}
             approvalBtn={approvalBtn}
             getApprovalBtn={getApprovalBtn}
-            submitSuccess={submitSuccess}
+            submitApporvalResult={submitApporvalResult}
             submitApproval={submitApproval}
             sendCustsServedByPostnResult={sendCustsServedByPostnResult}
             isSendCustsServedByPostn={isSendCustsServedByPostn}

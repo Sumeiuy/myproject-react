@@ -13,7 +13,7 @@ import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 import Icon from '../../common/Icon';
-import Paganation from '../../common/Paganation';
+import Pagination from '../../common/Pagination';
 
 import styles from './missionFeedback.less';
 
@@ -50,6 +50,22 @@ export default class MissionFeedback extends PureComponent {
       expandAll: false,
       cycleSelect: '',
       createCustRange: [],
+      // finalData: {
+      //   allFeedback: {},
+      //   radioFeedback: [],
+      //   checkboxFeedback: [],
+      // },
+      // problems: {
+      //   resultData: {
+      //     pageInfo: {
+      //       curPageNum: 1,
+      //       curPageSize: 5,
+      //       totalRecordNum: 5,
+      //     },
+      //     dataInfo: [],
+      //   },
+      // },
+      // originProblemData: {},
       finalData,
       problems: originProblemData,
       originProblemData,
@@ -89,8 +105,8 @@ export default class MissionFeedback extends PureComponent {
         dataInfo,
         pageInfo: {
           curPageNum: 1,
-          curPageSize: 10,
-          totalPage: _.size(dataInfo),
+          curPageSize: 5,
+          totalRecordNum: _.size(dataInfo),
         },
       },
     });
@@ -179,7 +195,7 @@ export default class MissionFeedback extends PureComponent {
       allFeedback: {
         serviceAllNum: serveManagerCount || 0,
         aFeedback: missionFeedbackCount || 0,
-        aFeedbackPer: `${countPercent}%`,
+        aFeedbackPer: countPercent,
         allTaskFeedbackDes: '所有问题反馈结果',
       },
       radioFeedback,
@@ -191,7 +207,6 @@ export default class MissionFeedback extends PureComponent {
   }
 
   handleOptionCake(value, names) {
-    console.log('#####handleOptionCake########', value, names);
     const option = {
       title: {
         text: '',
@@ -317,7 +332,7 @@ export default class MissionFeedback extends PureComponent {
             />
           </div>
           <div className={styles.tips}>
-            <div className={styles.tipRow}>
+            <div className={styles.content}>
               {item}
             </div>
           </div>
@@ -393,8 +408,13 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
+        (<div key={itemChild.value} className={styles.radioItem}>
+          <span className={styles.icon} />
+          <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
+          <span className={styles.value} title={itemChild.value}>
+            ：{itemChild.value}({itemChild.optionPer})
+          </span>
+        </div>));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
         item.checkboxData, checkBox);
     });
@@ -406,9 +426,15 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const isRadio = true;
     const oDiv = _.map(data, (item) => {
-      const radios = _.map(item.radioData, itemChild =>
-        (<h5 key={itemChild.value}><span>{itemChild.name}&nbsp;:&nbsp;<b>{itemChild.value}</b>
-          <b>({itemChild.optionPer})</b></span></h5>));
+      const radios = _.map(item.radioData, itemChild => (
+        <div key={itemChild.value} className={styles.radioItem}>
+          <span className={styles.icon} />
+          <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
+          <span className={styles.value} title={itemChild.value}>
+            ：{itemChild.value}({itemChild.optionPer})
+          </span>
+        </div>
+      ));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
         item.radioData, radios, isRadio);
     });
@@ -457,7 +483,7 @@ export default class MissionFeedback extends PureComponent {
 
         {_.isEmpty(per) ?
           <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per})</div>
+          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per}%)</div>
         }
       </div>
     );
@@ -468,9 +494,19 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
+    const paginationOption = {
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+      onPageChange: this.handlePageChange,
+      onSizeChange: this.handleSizeChange,
+    };
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
-        <h5 title={itemChild.data} key={itemChild.data}>{index + 1}.{itemChild.data}</h5>);
+        <h5 title={itemChild.data} key={itemChild.data}>
+          {index + 1}.{itemChild.data}
+        </h5>,
+      );
       return (
         <div className={styles.subjective}>
           <div
@@ -492,13 +528,20 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
-                <Paganation
+                <Pagination
                   curPageNum={curPageNum}
                   curPageSize={curPageSize}
                   totalRecordNum={totalRecordNum}
                   onPageChange={this.handlePageChange}
                   onSizeChange={this.handleSizeChange}
                 />
+                {info}
+                {
+                  totalRecordNum > 5 ?
+                    <Pagination
+                      {...paginationOption}
+                    /> : null
+                }
               </div>
             </div>
           </div>
@@ -562,9 +605,11 @@ export default class MissionFeedback extends PureComponent {
                         allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
                     </div>
                     <div className={styles.allService}>
-                      <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
-                      <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer})` : ''}</b></span>
+                      <div className={styles.content}>
+                        <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
+                        <span>已反馈：<b>{allFeedback.aFeedback}</b>
+                          <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b></span>
+                      </div>
                     </div>
                   </div>
                 </div>

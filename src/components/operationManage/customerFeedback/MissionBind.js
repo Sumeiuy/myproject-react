@@ -2,16 +2,17 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-11 13:29:02
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-28 11:43:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs, Modal, Collapse, Icon, Popover, Button, Pagination, message } from 'antd';
+import { Tabs, Modal, Collapse, Icon, Popover, Button, message } from 'antd';
 import _ from 'lodash';
 
 import FeedbackAdd from './FeedbackAdd';
+import Pagination from '../../common/Pagination';
 
 import styles from './missionBind.less';
 
@@ -227,15 +228,16 @@ export default class MissionBind extends PureComponent {
       location: {
         query: {
           childActiveKey = TAB_LIST[0].key, // 默认显示第一个tab
-        },
+      },
       },
     } = this.props;
     const missionPage = missionData.page || EMPTY_OBJECT;
-    const page = {
-      current: Number(missionPage.pageNum),
-      pageSize: Number(missionPage.pageSize),
-      total: Number(missionPage.totalCount),
-      onChange: this.handlePageChange,
+    const paginationOption = {
+      curPageNum: Number(missionPage.pageNum),
+      totalRecordNum: Number(missionPage.totalCount),
+      curPageSize: Number(missionPage.pageSize),
+      onPageChange: this.handlePageChange,
+      isShowSizeChanger: false,
     };
     const modalProps = {
       title: '请选择恰当的客户反馈',
@@ -254,9 +256,9 @@ export default class MissionBind extends PureComponent {
       <div className={styles.missionBindWapper}>
         <div className={styles.tipsBox}>
           <p>
-          请基于任务子类型（或MOT事件）定义服务经理可以选择的客户反馈，每个类型可以定义多条可选反馈。
+            请基于任务子类型（或MOT事件）定义服务经理可以选择的客户反馈，每个类型可以定义多条可选反馈。
           <br />
-          注意反馈修改会实时生效，并会影响到所有已关联的任务。
+            注意反馈修改会实时生效，并会影响到所有已关联的任务。
           </p>
         </div>
         <div className={styles.tabBox}>
@@ -280,7 +282,7 @@ export default class MissionBind extends PureComponent {
             }
           </Collapse>
           <div className={styles.pageBox}>
-            <Pagination {...page} />
+            <Pagination {...paginationOption} />
           </div>
           <div className={styles.clear} />
         </div>

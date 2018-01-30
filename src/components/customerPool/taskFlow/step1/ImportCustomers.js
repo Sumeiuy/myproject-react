@@ -24,7 +24,6 @@ export default class ImportCustomers extends PureComponent {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -46,7 +45,6 @@ export default class ImportCustomers extends PureComponent {
       onPreview,
       priviewCustFileData,
       storedTaskFlowData,
-      isSendCustsServedByPostn,
     } = this.props;
     const cls = classnames({
       [styles.hide]: !visible,
@@ -66,7 +64,6 @@ export default class ImportCustomers extends PureComponent {
             onPreview={onPreview}
             priviewCustFileData={priviewCustFileData}
             storedData={storedTaskFlowData}
-            isSendCustsServedByPostn={isSendCustsServedByPostn}
           />
           {/*
             <CustomerSourceInput
