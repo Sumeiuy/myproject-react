@@ -40,35 +40,32 @@ export default class MissionFeedback extends PureComponent {
   constructor(props) {
     super(props);
 
-    const { finalData, originProblemData } = this.handleData(
-      props.missionFeedbackData,
-      props.missionFeedbackCount,
-      props.serveManagerCount,
-    );
+    // const { finalData, originProblemData } = this.handleData(
+    //   props.missionFeedbackData,
+    //   props.missionFeedbackCount,
+    //   props.serveManagerCount,
+    // );
 
     this.state = {
       expandAll: false,
       cycleSelect: '',
       createCustRange: [],
-      // finalData: {
-      //   allFeedback: {},
-      //   radioFeedback: [],
-      //   checkboxFeedback: [],
-      // },
-      // problems: {
-      //   resultData: {
-      //     pageInfo: {
-      //       curPageNum: 1,
-      //       curPageSize: 5,
-      //       totalRecordNum: 5,
-      //     },
-      //     dataInfo: [],
-      //   },
-      // },
-      // originProblemData: {},
-      finalData,
-      problems: originProblemData,
-      originProblemData,
+      finalData: {
+        allFeedback: {},
+        radioFeedback: [],
+        checkboxFeedback: [],
+      },
+      problems: {
+        resultData: {
+          pageInfo: {
+            curPageNum: 1,
+            curPageSize: 5,
+            totalRecordNum: 5,
+          },
+          dataInfo: [],
+        },
+      },
+      originProblemData: {},
     };
   }
 
