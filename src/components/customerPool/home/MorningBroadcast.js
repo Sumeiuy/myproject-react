@@ -85,7 +85,7 @@ export default class MorningBroadcast extends PureComponent {
                         <Marquee content={item.newsTypValue} speed={40} />
                       </div>
                       <div className={styles.music}>
-                        <audio src={audioSrc} controls="controls">
+                        <audio src={audioSrc} controls="controls" autoPlay >
                           Your browser does not support the audio element.
                         </audio>
                         <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
