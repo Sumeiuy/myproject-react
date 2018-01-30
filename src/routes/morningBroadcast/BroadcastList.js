@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
-import { openRctTab } from '../../utils';
+import { openRctTab, permission } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
 
@@ -81,7 +81,7 @@ export default class BroadcastList extends PureComponent {
     const TO_DATE = moment().format('YYYY-MM-DD');
     const FROM_DATE = moment().subtract(beforeM, 'months').format('YYYY-MM-DD');
     const PAGE_NUM = 1;
-    const PAGE_LEN = 10;
+    const PAGE_LEN = 20;
     return { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN };
   }
 
@@ -183,7 +183,7 @@ export default class BroadcastList extends PureComponent {
   // table -->start
   @autobind
   onHandleTablecolumns() {
-    return [{
+    const columns = [{
       title: '标题',
       dataIndex: 'title',
       key: 'title',
@@ -217,21 +217,26 @@ export default class BroadcastList extends PureComponent {
       width: '15%',
       className: 'tableAuthor',
       key: 'author',
-    }, {
-      title: '操作',
-      key: 'action',
-      dataIndex: 'newsId',
-      width: '15%',
-      className: 'tableAction',
-      render: newsId => (
-        <span>
-          <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-          <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
-            <i className="icon iconfont icon-shanchu remove" />
-          </Popconfirm>
-        </span>
-      ),
     }];
+    console.log(permission.hasZXMampPermission());
+    if (permission.hasZXMampPermission()) {
+      columns.push({
+        title: '操作',
+        key: 'action',
+        dataIndex: 'newsId',
+        width: '15%',
+        className: 'tableAction',
+        render: newsId => (
+          <span>
+            <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
+            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
+              <i className="icon iconfont icon-shanchu remove" />
+            </Popconfirm>
+          </span>
+        ),
+      });
+    }
+    return columns;
   }
   // 页码切换
   @autobind()
@@ -375,6 +380,7 @@ export default class BroadcastList extends PureComponent {
                   format="YYYY-MM-DD"
                   placeholder="Start"
                   allowClear={false}
+                  showToday={false}
                   defaultValue={moment(FROM_DATE || initQuery.FROM_DATE)}
                   disabledDate={this.disabledStartDate}
                   onChange={this.onStartChange}
@@ -386,6 +392,7 @@ export default class BroadcastList extends PureComponent {
                   format="YYYY-MM-DD"
                   placeholder="End"
                   allowClear={false}
+                  showToday={false}
                   defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
                   disabledDate={this.disabledEndDate}
                   onChange={this.onEndChange}
@@ -401,8 +408,16 @@ export default class BroadcastList extends PureComponent {
                 style={{ width: 200 }}
                 onSearch={this.onHandleSearch}
               />
-              <span className={styles.division}>|</span>
-              <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
+              {
+                permission.hasZXMampPermission() ?
+                  (
+                    <span>
+                      <span className={styles.division}>|</span>
+                      <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
+                    </span>
+                  ) :
+                  null
+              }
               <AddMorningBoradcast
                 dict={dict}
                 visible={visible}
@@ -429,6 +444,7 @@ export default class BroadcastList extends PureComponent {
               dataSource={newBoradcastList}
               pagination={{
                 ...pagination,
+                defaultPageSize: 20,
                 showSizeChanger: true,
                 showTotal() { return `共${pagination.total}项`; },
                 onChange: this.onPageNumChange,

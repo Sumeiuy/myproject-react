@@ -72,7 +72,7 @@ export default class AddMorningBoradcast extends PureComponent {
       }
     }
     // 获取晨报详情
-    if (boradcastDetail !== this.props.boradcastDetail) {
+    if (boradcastDetail[newsId] && boradcastDetail !== this.props.boradcastDetail) {
       const itemDetail = boradcastDetail[newsId];
       this.setSourceValue(itemDetail);
     }
@@ -80,6 +80,9 @@ export default class AddMorningBoradcast extends PureComponent {
     if (saveboradcastInfo !== nextInfo) {
       if (nextInfo.resultData === 'success') {
         this.resetState();
+        if (this.formWrapRef) {
+          this.formWrapRef.scrollTop = 0;
+        }
         handleOk(resetFields);
         message.success('操作成功', 1);
         onHandleGetList();
@@ -152,6 +155,14 @@ export default class AddMorningBoradcast extends PureComponent {
       }
     });
   }
+  @autobind()
+  onHandleCancel() {
+    const { handleCancel } = this.props;
+    if (this.formWrapRef) {
+      this.formWrapRef.scrollTop = 0;
+    }
+    handleCancel();
+  }
 
   @autobind()
   getInitDate(type) {
@@ -200,13 +211,24 @@ export default class AddMorningBoradcast extends PureComponent {
       this.onAudioUploading(fileList);
     }
     if (file.status === 'done') {
-      const resFileList = file.response.resultData.attaches;
-      const attachment = file.response.resultData.attachment;
-      const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
-      this.setState({
-        audioFileList: finalFileAudioList,
-        audioError: finalFileAudioList.length,
-      });
+      const res = file.response;
+      if (res.code !== '0') {
+        const fileErrorList = {
+          ...file,
+          status: 'error',
+        };
+        this.setState({
+          audioFileList: [fileErrorList],
+        });
+      } else {
+        const resFileList = file.response.resultData.attaches;
+        const attachment = file.response.resultData.attachment;
+        const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
+        this.setState({
+          audioFileList: finalFileAudioList,
+          audioError: finalFileAudioList.length,
+        });
+      }
     }
     if (file.status === 'error') {
       this.setState({ fileAudioList: fileList });
@@ -243,12 +265,7 @@ export default class AddMorningBoradcast extends PureComponent {
   }
   @autobind
   onBeforeUpload(file) {
-    const isMPC = file.type === 'audio/mp3';
     const audioType = this.getInitDate('newsTypeCode');
-    if (!isMPC) {
-      message.info('音频文件格式为audio/mp3');
-      return false;
-    }
     if (audioType === 'V2_MORNING_NEWS') {
       const isOver = file.size / 1024 / 1024 < 16;
       if (!isOver) {
@@ -292,7 +309,7 @@ export default class AddMorningBoradcast extends PureComponent {
     } = this.state;
     const { getFieldDecorator } = this.props.form;
     const { getInitDate } = this;
-    const { newsId, dict, handleCancel } = this.props;
+    const { newsId, dict } = this.props;
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 16, offset: 1 },
@@ -331,114 +348,124 @@ export default class AddMorningBoradcast extends PureComponent {
         width="650px"
         wrapClassName="addMorningBoradcast"
         bodyStyle={{
-          height: '400px',
-          overflowY: 'scroll',
+          padding: 0,
         }}
         visible={this.props.visible}
         onOk={this.handleSubmit}
-        onCancel={handleCancel}
+        onCancel={this.onHandleCancel}
       >
-        <Form>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="类型"
-            wrapperCol={{ span: 8, offset: 1 }}
-          >
-            {getFieldDecorator('typeCode', {
-              initialValue: getInitDate('newsTypeCode'),
-              rules: [
-                { required: true, message: '请选择晨报类型' },
-              ],
-            })(
-              <Select placeholder="晨报类型">
-                {
-                  morningBoradcastType.map(item => <Option value={item.key}>{item.value}</Option>)
-                }
-              </Select>,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="作者"
-            wrapperCol={{ span: 8, offset: 1 }}
-          >
-            {getFieldDecorator('createdBy', {
-              initialValue: getInitDate('createdBy'),
-              rules: [{ required: true, message: '请输入晨报作者!' }],
-            })(
-              <Input />,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="标题"
-          >
-            {getFieldDecorator('title', {
-              initialValue: getInitDate('title'),
-              rules: [{ required: true, message: '请输入标题!' }],
-            })(
-              <Input />,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="摘要"
-          >
-            {getFieldDecorator('summary', {
-              initialValue: getInitDate('summary'),
-              rules: [{ required: true, message: '请输入摘要!' }],
-            })(
-              <TextArea placeholder="请输入摘要内容..." autosize={{ minRows: 2, maxRows: 6 }} />,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="正文"
-          >
-            {getFieldDecorator('content', {
-              initialValue: getInitDate('content'),
-              rules: [{ required: true, message: '请输入正文!' }],
-            })(
-              <TextArea placeholder="请输入正文内容..." autosize={{ minRows: 6, maxRows: 10 }} />,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="添加音频"
-          >
-            <Upload {...audioProps} fileList={audioFileList} >
-              <div>
-                <i
-                  className="icon iconfont icon-yinpinwenjian"
-                  style={{ color: '#ac8ce0' }}
-                />
-                <span
-                  className="audioDesc"
-                  style={{ color: '#2782d7', cursor: 'pointer' }}
-                >
-                  {`${audioFileList.length ? '上传音频文件' : '更新音频文件'}`}
-                </span>
-              </div>
-            </Upload>
-            { audioError ? null : (<div style={{ color: 'red' }}>请上传一首音频文件</div>) }
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            hasFeedback
-            label="其他文件"
-          >
-            <Upload {...otherProps} fileList={otherFileList}>
-              <Button type="primary" icon="plus" >
-                添加文件
-              </Button>
-            </Upload>,
-          </FormItem>
-        </Form>
+        <div
+          ref={(c) => { this.formWrapRef = c; }}
+          style={{
+            height: '400px',
+            overflowY: 'scroll',
+            padding: '16px',
+          }}
+        >
+          <Form>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="类型"
+              wrapperCol={{ span: 8, offset: 1 }}
+            >
+              {getFieldDecorator('typeCode', {
+                initialValue: getInitDate('newsTypeCode'),
+                rules: [
+                  { required: true, message: '请选择晨报类型' },
+                ],
+              })(
+                <Select placeholder="晨报类型">
+                  {
+                    morningBoradcastType.map(item =>
+                      <Option key={item.key} value={item.key}>{item.value}</Option>
+                    )
+                  }
+                </Select>,
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="作者"
+              wrapperCol={{ span: 8, offset: 1 }}
+            >
+              {getFieldDecorator('createdBy', {
+                initialValue: getInitDate('createdBy'),
+                rules: [{ required: true, message: '请输入晨报作者!' }],
+              })(
+                <Input />,
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="标题"
+            >
+              {getFieldDecorator('title', {
+                initialValue: getInitDate('title'),
+                rules: [{ required: true, message: '请输入标题!' }],
+              })(
+                <Input />,
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="摘要"
+            >
+              {getFieldDecorator('summary', {
+                initialValue: getInitDate('summary'),
+                rules: [{ required: true, message: '请输入摘要!' }],
+              })(
+                <TextArea placeholder="请输入摘要内容..." autosize={{ minRows: 2, maxRows: 6 }} />,
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="正文"
+            >
+              {getFieldDecorator('content', {
+                initialValue: getInitDate('content'),
+                rules: [{ required: true, message: '请输入正文!' }],
+              })(
+                <TextArea placeholder="请输入正文内容..." autosize={{ minRows: 6, maxRows: 10 }} />,
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="添加音频"
+            >
+              <Upload {...audioProps} fileList={audioFileList} >
+                <div>
+                  <i
+                    className="icon iconfont icon-yinpinwenjian"
+                    style={{ color: '#ac8ce0' }}
+                  />
+                  <span
+                    className="audioDesc"
+                    style={{ color: '#2782d7', cursor: 'pointer' }}
+                  >
+                    {`${audioFileList.length ? '更新音频文件' : '上传音频文件'}`}
+                  </span>
+                </div>
+              </Upload>
+              { audioError ? null : (<div style={{ color: 'red' }}>请上传一首音频文件</div>) }
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              hasFeedback
+              label="其他文件"
+            >
+              <Upload {...otherProps} fileList={otherFileList}>
+                <Button type="primary" icon="plus" >
+                  添加文件
+                </Button>
+              </Upload>,
+            </FormItem>
+          </Form>
+        </div>
       </Modal>
     );
   }

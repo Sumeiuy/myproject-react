@@ -23,7 +23,6 @@ export default class SelectLabelCust extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     isAuthorize: PropTypes.bool,
     visible: PropTypes.bool.isRequired,
-    isSendCustsServedByPostn: PropTypes.func.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
   };
@@ -46,6 +45,7 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: labelId,
       labelId,
       tipsSize,
+      argsOfQueryCustomer: {},
     };
     this.bigBtn = true;
   }
@@ -62,7 +62,7 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   getData() {
-    const { labelId = '', condition, tipsSize } = this.state;
+    const { labelId = '', condition, tipsSize, argsOfQueryCustomer } = this.state;
     if (_.isEmpty(condition)) {
       return {
         labelCust: {},
@@ -82,6 +82,7 @@ export default class SelectLabelCust extends PureComponent {
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
+      argsOfQueryCustomer,
     };
 
     return {
@@ -92,9 +93,20 @@ export default class SelectLabelCust extends PureComponent {
   // 获取瞄准镜参数
   @autobind
   getArgsOfQueryCustomer(value) {
+    const { argsOfQueryCustomer } = this.state;
     this.setState({
-      argsOfQueryCustomer: value,
+      argsOfQueryCustomer: {
+        ...argsOfQueryCustomer,
+        ...value,
+      },
     });
+    // 没有筛查
+    /**
+     * searchReq: {
+     *   enterType: 'labelSearchCustPool',
+     *   labels: [],
+     * }
+     */
   }
 
   @autobind
@@ -137,17 +149,6 @@ export default class SelectLabelCust extends PureComponent {
     this.setState({
       labelId: value,
       currentSelectLabel: value,
-    });
-    const { circlePeopleData } = this.props;
-    const matchedData = _.find(circlePeopleData, item => item.id === value);
-    const { labelDesc = '', customNum = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
-    // 查看标签选中的客户是否合法，是否需要审批
-    this.props.isSendCustsServedByPostn({
-      labelMapping,
-      labelDesc,
-      custNum: customNum,
-      labelName,
-      currentEntry: 1,
     });
   }
 

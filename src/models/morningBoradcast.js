@@ -63,18 +63,20 @@ export default {
       return {
         ...state,
         saveboradcastInfo: payload,
-        boradcastDetail: Object.assign(state.boradcastDetail, {
+        boradcastDetail: {
+          ...state.boradcastDetail,
           [payload.newsId]: null,
-        }),
+        },
       };
     },
     getBoradcastDetailSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
-        boradcastDetail: Object.assign({}, state.boradcastDetail, {
+        boradcastDetail: {
+          ...state.boradcastDetail,
           [payload.newsId]: payload,
-        }),
+        },
       };
     },
     // 保存删除列表结果
@@ -140,20 +142,22 @@ export default {
     // 保存晨报
     * saveBoradcast({ payload }, { call, put }) {
       const response = yield call(api.saveBoradcast, payload);
-      const query = {
+      let query = {
         resultData: response.resultData,
       };
       if (payload.createdBy) {
         const uuidCount = 2;
         const responeUuid = yield call(api.getNewItemUuid, { uuidCount });
-        Object.assign(query, {
+        query = {
+          ...query,
           uuid: responeUuid.resultData,
           type: 'newCreate',
-        });
+        };
       } else {
-        Object.assign(query, {
+        query = {
+          ...query,
           newsId: payload.newsId,
-        });
+        };
       }
 
       if (response.code !== '0') {
@@ -180,9 +184,11 @@ export default {
           otherFileList] = [audioFileListRes.resultData, otherFileListRes.resultData];
         yield put({
           type: 'getBoradcastDetailSuccess',
-          payload: Object.assign({},
-            response.resultData,
-            { audioFileList, otherFileList }),
+          payload: {
+            ...response.resultData,
+            audioFileList,
+            otherFileList,
+          },
         });
       }
     },
@@ -235,12 +241,5 @@ export default {
         });
       }
     },
-    // // 获取资源文件
-    // * getSourceFile({ payload }, { call, put }) {
-    //   const response = yield call(api.searchBoradcastDetail, payload);
-    //   yield put({
-    //     uuid: 111,
-    //   });
-    // },
   },
 };
