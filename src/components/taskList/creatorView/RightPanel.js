@@ -216,20 +216,24 @@ export default class RightPanel extends PureComponent {
   renderResultData() {
     const { taskBasicInfo: { motDetailModel = EMPTY_OBJECT } } = this.props;
     const { resultTraceVO = {} } = motDetailModel;
-    const { indexName = '', indexCateName, finProductVO, traceOpVO = {}, threshold, indexUnit } = resultTraceVO;
-    let targetData = '';
-    if (!_.isEmpty(finProductVO)) {
-      targetData = `${indexName}${indexCateName}${EMPTY_DATA(finProductVO.aliasName)}
-        ${EMPTY_DATA(traceOpVO.name)}${EMPTY_DATA(threshold)}
-        ${EMPTY_DATA(indexUnit)}`;
-    } else if (traceOpVO.key !== 'COMPLETE' && traceOpVO.key !== 'INC_TO') {
-      const isOpen = traceOpVO.key === 'OPEN' ? '开通' : '是';
-      targetData = `${indexName}${indexCateName}${isOpen}`;
+    const {
+      indexCateName,
+      finProductVO = {},
+      traceOpVO = {},
+      threshold,
+      indexUnit } = resultTraceVO;
+    let indicatorText = '';
+    if (traceOpVO.key === 'COMPLETE') {
+      indicatorText = `完善${indexCateName}`;
+    } else if (traceOpVO.key === 'OPEN') {
+      indicatorText = `开通${indexCateName}`;
+    } else if (traceOpVO.key === 'TRUE') {
+      indicatorText = `${indexCateName}，状态：是`;
     } else {
-      targetData = `${indexName}${indexCateName}${EMPTY_DATA(traceOpVO.name)}
-       ${EMPTY_DATA(threshold)}${EMPTY_DATA(indexUnit)}`;
+      // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
+      indicatorText = `${indexCateName || ''}${!_.isEmpty(finProductVO) ? EMPTY_DATA(finProductVO.aliasName) : ''}${EMPTY_DATA(traceOpVO.name)}${EMPTY_DATA(threshold)}${EMPTY_DATA(indexUnit)}`;
     }
-    return targetData;
+    return indicatorText;
   }
 
 
@@ -261,7 +265,7 @@ export default class RightPanel extends PureComponent {
       workflowHistoryBeanList = EMPTY_LIST,
       tagetCustModel = EMPTY_OBJECT,
     } = taskBasicInfo;
-    const { resultTraceVO, quesVO } = motDetailModel;
+    const { resultTraceVO = {}, quesVO } = motDetailModel;
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
@@ -314,7 +318,7 @@ export default class RightPanel extends PureComponent {
               <InfoTitle head="结果跟踪" />
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="指标目标" value={this.renderResultData()} />
+                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
                 </li>
               </ul>
             </div>
