@@ -66,10 +66,10 @@ const permission = {
 
   // 判断自建任务的时候是否需要审批，是否可以进入下一步
   judgeCreateTaskApproval({ sendCustsServedByPostn, custNumsIsExceedUpperLimit }) {
-    let isNeedApproval = false;
+    let needApproval = false;
     let isIncludeNotMineCust = false;
     let canGoNextStep = false;
-    let isNeedMissionInvestigation = false;
+    let needMissionInvestigation = false;
 
     if (!sendCustsServedByPostn || custNumsIsExceedUpperLimit) {
       // 包含非本人名下的客户
@@ -82,10 +82,10 @@ const permission = {
         // 如果数量超过1000
         // 则代表客户里面包含非本人名下的客户，则需要审批
         // 如果包含非本人名下的客户，则需要审批
-        isNeedApproval = true;
-        isNeedMissionInvestigation = true;
+        needApproval = true;
+        needMissionInvestigation = true;
       } else {
-        isNeedApproval = false;
+        needApproval = false;
       }
       canGoNextStep = true;
     } else if (isIncludeNotMineCust) {
@@ -93,14 +93,14 @@ const permission = {
       canGoNextStep = false;
     } else {
       // 没有职责，没有非本人名下的客户，则不需要审批，可以进入下一步
-      isNeedApproval = false;
+      needApproval = false;
       canGoNextStep = true;
     }
 
     return {
-      isNeedApproval,
+      needApproval,
       canGoNextStep,
-      isNeedMissionInvestigation,
+      needMissionInvestigation,
       isIncludeNotMineCust,
     };
   },

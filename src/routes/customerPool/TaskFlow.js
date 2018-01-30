@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-29 17:48:43
+ * @Last Modified time: 2018-01-30 10:54:03
  */
 
 import React, { PureComponent } from 'react';
@@ -175,9 +175,9 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
-      isNeedApproval: false,
+      needApproval: false,
       canGoNextStep: false,
-      isNeedMissionInvestigation: false,
+      needMissionInvestigation: false,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -344,9 +344,9 @@ export default class TaskFlow extends PureComponent {
           isSelectCust = false;
         } else {
           const {
-            isNeedApproval,
+            needApproval,
             canGoNextStep,
-            isNeedMissionInvestigation,
+            needMissionInvestigation,
             isIncludeNotMineCust,
           } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
           if (isIncludeNotMineCust && !canGoNextStep) {
@@ -354,9 +354,9 @@ export default class TaskFlow extends PureComponent {
             message.error('客户包含非本人名下客户，请重新选择');
           } else {
             this.setState({
-              isNeedApproval,
+              needApproval,
               canGoNextStep,
-              isNeedMissionInvestigation,
+              needMissionInvestigation,
               currentEntry,
               current: current + 1,
             });
@@ -463,7 +463,7 @@ export default class TaskFlow extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (this.state.isNeedMissionInvestigation) {
+      if (this.state.needMissionInvestigation) {
         const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
@@ -556,9 +556,14 @@ export default class TaskFlow extends PureComponent {
     const {
       currentSelectRecord: { login: flowAuditorId = null },
       currentEntry,
-      isNeedApproval,
-      isNeedMissionInvestigation,
+      needApproval,
+      needMissionInvestigation,
     } = this.state;
+
+    if (_.isEmpty(flowAuditorId)) {
+      message.error('任务需要审批，请选择审批人');
+      return;
+    }
 
     const {
       taskFormData = EMPTY_OBJECT,
@@ -629,7 +634,7 @@ export default class TaskFlow extends PureComponent {
       // taskSubType,
     };
 
-    if (isNeedApproval) {
+    if (needApproval) {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -663,7 +668,7 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    if (isNeedMissionInvestigation && isMissionInvestigationChecked) {
+    if (needMissionInvestigation && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -689,7 +694,7 @@ export default class TaskFlow extends PureComponent {
         fileId,
         ...postBody,
       });
-    } else if (isNeedApproval) {
+    } else if (needApproval) {
       // 有审批权限，则需要传入orgId
       submitTaskFlow(_.merge(labelCustPostBody, {
         queryLabelDTO: {
@@ -780,8 +785,8 @@ export default class TaskFlow extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       currentEntry,
-      isNeedApproval,
-      isNeedMissionInvestigation,
+      needApproval,
+      needMissionInvestigation,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -832,7 +837,7 @@ export default class TaskFlow extends PureComponent {
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}
           getLabelPeople={getLabelPeople}
-          isAuthorize={isNeedApproval}
+          isAuthorize={needApproval}
           filterModalvisible={visible}
           orgId={orgId}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
@@ -865,7 +870,7 @@ export default class TaskFlow extends PureComponent {
           storedData={storedTaskFlowData}
         />
         {
-          isNeedMissionInvestigation ?
+          needMissionInvestigation ?
             <MissionInvestigation
               wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedTaskFlowData}
@@ -887,7 +892,7 @@ export default class TaskFlow extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={isNeedApproval}
+        needApproval={needApproval}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}

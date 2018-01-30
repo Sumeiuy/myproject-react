@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-26 16:50:27
+ * @Last Modified time: 2018-01-30 10:56:47
  */
 
 import React, { PureComponent } from 'react';
@@ -83,9 +83,9 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      isNeedApproval: isEntryFromReturnTask,
+      needApproval: isEntryFromReturnTask,
       canGoNextStep: isEntryFromReturnTask,
-      isNeedMissionInvestigation: true,
+      needMissionInvestigation: true,
       isDisabled: false,
     };
   }
@@ -106,9 +106,9 @@ export default class TaskFormFlowStep extends PureComponent {
           return;
         }
         const {
-          isNeedApproval,
+          needApproval,
           canGoNextStep,
-          isNeedMissionInvestigation,
+          needMissionInvestigation,
           isIncludeNotMineCust,
         } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
         if (isIncludeNotMineCust && !canGoNextStep) {
@@ -117,9 +117,9 @@ export default class TaskFormFlowStep extends PureComponent {
         }
 
         this.setState({
-          isNeedApproval,
+          needApproval,
           canGoNextStep,
-          isNeedMissionInvestigation,
+          needMissionInvestigation,
         });
       });
     }
@@ -235,7 +235,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const { custNum, custSource: taskSource } = tagetCustModel || {};
 
     const {
-      isNeedMissionInvestigation,
+      needMissionInvestigation,
       canGoNextStep,
     } = this.state;
 
@@ -345,7 +345,7 @@ export default class TaskFormFlowStep extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (isNeedMissionInvestigation) {
+      if (needMissionInvestigation) {
         const missionInvestigationComponent = this.missionInvestigationRef;
         missionInvestigationData = {
           ...missionInvestigationData,
@@ -412,8 +412,8 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { flowId, flowData = '{}' } },
     } = this.props;
     const {
-      isNeedApproval,
-      isNeedMissionInvestigation,
+      needApproval,
+      needMissionInvestigation,
     } = this.state;
 
     // 获取重新提交任务参数( flowId, eventId );
@@ -423,6 +423,11 @@ export default class TaskFormFlowStep extends PureComponent {
     const flowParam = { flowId, eventId };
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
+
+    if (_.isEmpty(flowAuditorId)) {
+      message.error('任务需要审批，请选择审批人');
+      return;
+    }
 
     const req = this.parseParam();
 
@@ -487,7 +492,7 @@ export default class TaskFormFlowStep extends PureComponent {
       ...req,
     };
 
-    if (isNeedApproval) {
+    if (needApproval) {
       postBody = {
         ...postBody,
         flowAuditorId,
@@ -521,7 +526,7 @@ export default class TaskFormFlowStep extends PureComponent {
       }
     }
 
-    if (isNeedMissionInvestigation && isMissionInvestigationChecked) {
+    if (needMissionInvestigation && isMissionInvestigationChecked) {
       postBody = {
         ...postBody,
         // 模板Id
@@ -614,8 +619,8 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
       isShowErrorTaskSubType,
-      isNeedApproval,
-      isNeedMissionInvestigation,
+      needApproval,
+      needMissionInvestigation,
       canGoNextStep,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
@@ -671,7 +676,7 @@ export default class TaskFormFlowStep extends PureComponent {
           storedData={storedCreateTaskData}
         />
         {
-          isNeedMissionInvestigation ?
+          needMissionInvestigation ?
             <MissionInvestigation
               wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedCreateTaskData}
@@ -692,7 +697,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval={isNeedApproval}
+        needApproval={needApproval}
         isShowApprovalModal={isShowApprovalModal}
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
