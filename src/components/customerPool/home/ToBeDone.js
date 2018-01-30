@@ -112,12 +112,6 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   handleMotClick() {
     // 点击事件
-    // const { push } = this.props;
-    // dispatchTabPane({
-    //   fspAction: 'myMotTask',
-    //   routerAction: push,
-    //   url: '/task/fspmotTask',  // FSP_MOT_SELFBUILT_TASK
-    // });
     const { location: { query }, push } = this.props;
     const url = '/taskList';
     const param = {

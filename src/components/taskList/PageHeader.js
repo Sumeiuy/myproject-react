@@ -20,8 +20,9 @@ import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
-const CONTROLLER_VIEW = 'controller';
-const EXECUTE_VIEW = 'executor';
+const CONTROLLER_VIEW = 'controller'; // 管理者视图
+const EXECUTE_VIEW = 'executor'; // 执行者视图
+const INITIATOR_VIEW = 'initiator'; // 创建者视图
 // 50代表执行中
 // 60代表结果跟踪
 // 70代表结束
@@ -210,7 +211,7 @@ export default class Pageheader extends PureComponent {
   handleViewTypeTime(key, v, before, todays, after) {
     const { filterTimer } = this.props;
     let timerValue;
-    if (v === 'initiator') {
+    if (v === INITIATOR_VIEW) {
       timerValue = filterTimer({ before, todays });
     } else {
       timerValue = filterTimer({ todays, after });
@@ -268,7 +269,7 @@ export default class Pageheader extends PureComponent {
     let endTimeEnd = null;
     let createTimeStart = createTimeStarts;
     let createTimeEnd = createTimeEnds;
-    if (missionViewType !== 'initiator') {
+    if (missionViewType !== INITIATOR_VIEW) {
       endTimeStart = createTimeStarts;
       endTimeEnd = createTimeEnds;
       createTimeStart = null;
@@ -367,7 +368,7 @@ export default class Pageheader extends PureComponent {
   // 选择不同视图创建时间不同
   renderTime(startTime, endTime, isInitiator, isController) {
     const item = isInitiator;
-    const controller = isController === 'controller' ?
+    const controller = isController === CONTROLLER_VIEW ?
       (<div className={styles.dropDownSelectBox}>
         <RangePicker
           defaultValue={[startTime, endTime]}
@@ -492,7 +493,7 @@ export default class Pageheader extends PureComponent {
               onChange={this.handleSelectChange}
             />
           </div>
-          {missionViewTypeValue === 'initiator' ? null :
+          {missionViewTypeValue === INITIATOR_VIEW ? null :
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
@@ -509,7 +510,7 @@ export default class Pageheader extends PureComponent {
           </div>
           }
 
-          {missionViewTypeValue === 'initiator' ?
+          {missionViewTypeValue === INITIATOR_VIEW ?
             this.renderTime(beforeToday, today, true) :
             this.renderTime(today, afterToday, false, missionViewType)
           }

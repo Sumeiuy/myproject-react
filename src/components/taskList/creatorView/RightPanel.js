@@ -28,12 +28,20 @@ const COLUMN_HEIGHT = 36;
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 // 答案自定义的index
-const optionIndex = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+const getAlphaIndex = (index) => {
+  return String.fromCharCode(97 + index);
+};
 // 后台返回题目类型
 const TYPE = {
   radioType: '1',
   checkboxType: '2',
   textAreaType: '3',
+};
+const EMPTY_DATA = (value) => {
+  if (!_.isEmpty(value)) {
+    return value;
+  }
+  return '';
 };
 export default class RightPanel extends PureComponent {
 
@@ -213,42 +221,35 @@ export default class RightPanel extends PureComponent {
     const { indexName = '', indexCateName, finProductVO, traceOpVO = {}, threshold, indexUnit } = resultTraceVO;
     let targetData = '';
     if (!_.isEmpty(finProductVO)) {
-      targetData = indexName + indexCateName + this.handleEmpty(finProductVO.aliasName) +
-        this.handleEmpty(traceOpVO.name) + this.handleEmpty(threshold)
-          + this.handleEmpty(indexUnit);
+      targetData = `${indexName}${indexCateName}${EMPTY_DATA(finProductVO.aliasName)}
+        ${EMPTY_DATA(traceOpVO.name)}${EMPTY_DATA(threshold)}
+        ${EMPTY_DATA(indexUnit)}`;
     } else if (traceOpVO.key !== 'COMPLETE' && traceOpVO.key !== 'INC_TO') {
       const isOpen = traceOpVO.key === 'OPEN' ? '开通' : '是';
-      targetData = indexName + indexCateName + isOpen;
+      targetData = `${indexName}${indexCateName}${isOpen}`;
     } else {
-      targetData = indexName + indexCateName + this.handleEmpty(traceOpVO.name) +
-        this.handleEmpty(threshold) + this.handleEmpty(indexUnit);
+      targetData = `${indexName}${indexCateName}${EMPTY_DATA(traceOpVO.name)}
+       ${EMPTY_DATA(threshold)}${EMPTY_DATA(indexUnit)}`;
     }
     return targetData;
   }
-
-  handleEmpty(value) {
-    let data = '';
-    if (!_.isEmpty(value)) {
-      data = value;
-    }
-    return data;
-  }
+  
 
   // 问卷调查数据处理
   renderTaskSurvey() {
     const { taskBasicInfo: { motDetailModel = EMPTY_OBJECT } } = this.props;
     const { quesVO = [] } = motDetailModel;
-    let quesText = '';
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
+      let quesText = '';
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
         let optionCont = '';
         optionRespDtoList.forEach((childItem, index) => {
-          optionCont += `${optionIndex[index]}.${childItem.optionValue}；`;
+          optionCont += `${getAlphaIndex(index)}.${childItem.optionValue}；`;
         });
-        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
+         quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
       } else if (quesType.key === TYPE.textAreaType) {
-        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
+         quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
       }
       return (<p>{quesText}</p>);
     });
