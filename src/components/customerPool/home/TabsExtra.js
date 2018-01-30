@@ -164,19 +164,22 @@ export default class TabsExtra extends PureComponent {
               </Select>
             </div>
           </div> :
-          <div className={styles.downFiles}>
-            <div className={styles.iconDown}>
-              <Icon type="xiazai" />
-            </div>
-            <div className={styles.downLoad}>
-              {/* 导出 */}
-              <a
-                href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-              >导出</a>
-            </div>
+          <div>
+            {
+              false ?
+                <div className={styles.downFiles}>
+                  <div className={styles.iconDown}>
+                    <Icon type="xiazai" />
+                  </div>
+                  <div className={styles.downLoad}>
+                    <a
+                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                    >导出</a>
+                  </div>
+                </div> : null
+            }
           </div>
         }
-
       </div>
     );
   }
