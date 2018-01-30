@@ -147,7 +147,12 @@ export default class TabsExtra extends PureComponent {
               </Select>
           }
         </div>
-        <div className={styles.separateLine} />
+        {/**
+         * 后台性能问题，暂时隐藏导出按钮
+         */}
+        {
+          false ? <div className={styles.separateLine} /> : null
+        }
         {!isDown ?
           <div>
             <div className={styles.icon}>
