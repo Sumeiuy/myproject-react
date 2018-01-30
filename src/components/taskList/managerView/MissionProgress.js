@@ -152,14 +152,14 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
-  renderProgressContent(
+  renderProgressContent({
     activeType,
     remainingType,
     activePercent,
     showActivePercent,
     activeCount,
     remainingCount,
-  ) {
+  }) {
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
@@ -197,6 +197,39 @@ export default class MissionProgress extends PureComponent {
     );
   }
 
+  getPercent(num) {
+    return Number(num * 100).toFixed(0);
+  }
+
+  getMaxRidio(strNum1, strNum2, strNum3) {
+    // 自适应百分比
+    const maxValue = Math.max(
+      Number(strNum1),
+      Number(strNum2),
+      Number(strNum3),
+    );
+    if (maxValue < 0.85) {
+      return maxValue + 0.1;
+    }
+    return maxValue;
+  }
+
+  getParam(param) {
+    const { total, activeCount, ratio, maxRadio, activeType, remainingType } = param;
+    // 真实百分比
+    const activePercent = this.getPercent(Number(ratio));
+    // 展示百分比
+    const showActivePercent = this.getPercent(activeCount / (maxRadio * 100));
+    return {
+      activeType,
+      remainingType,
+      activeCount,
+      activePercent,
+      showActivePercent,
+      remainingCount: total - activeCount,
+    };
+  }
+
   @autobind
   renderProgressSection() {
     const { missionImplementationProgress } = this.props;
@@ -216,61 +249,52 @@ export default class MissionProgress extends PureComponent {
       // 已达标比例
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
-    // 真实百分比
-    const servePercent = Number.parseInt(Number(servedNumsRatio) * 100, 10);
-    const completedPercent = Number.parseInt(Number(completedNumsRatio) * 100, 10);
-    const standardPercent = Number.parseInt(Number(standardNumsRatio) * 100, 10);
-    // 自适应百分比
-    const maxValue = Math.max(servePercent, completedPercent, completedPercent);
-    let max = 0;
-    if (max !== 100 && maxValue % 100 < 85) {
-      max = maxValue + 10.0;
-    } else {
-      max = Number.parseFloat(maxValue).toFixed(1);
-    }
-    const showServePercent = Number((servePercent / max) * 100).toFixed(0);
-    const showCompletedPercent = Number((completedPercent / max) * 100).toFixed(0);
-    const showStandardPercent = Number((standardPercent / max) * 100).toFixed(0);
+    const maxRadio = this.getMaxRidio(
+      servedNumsRatio,
+      completedNumsRatio,
+      standardNumsRatio,
+    );
+    const commonParam = { total: custCount, maxRadio };
+    const serveParam = this.getParam({
+      ...commonParam,
+      ratio: servedNumsRatio,
+      activeCount: servedNums,
+      activeType: SERVED_CUST,
+      remainingType: NOT_SERVED_CUST,
+    });
+    const completedParam = this.getParam({
+      ...commonParam,
+      ratio: completedNumsRatio,
+      activeCount: completedNums,
+      activeType: COMPLETED_CUST,
+      remainingType: NOT_COMPLETED_CUST,
+    });
+    const standardParam = this.getParam({
+      ...commonParam,
+      ratio: standardNumsRatio,
+      activeCount: standardNums,
+      activeType: STASIFY_CUST,
+      remainingType: NOT_STASIFY_CUST,
+    });
 
     return (
       <div className={styles.area}>
         <div className={styles.serviceCust}>
           <span className={styles.title}>{SERVED_CUST}</span>
           {
-            this.renderProgressContent(
-              SERVED_CUST,
-              NOT_SERVED_CUST,
-              servePercent,
-              showServePercent,
-              servedNums,
-              custCount - servedNums,
-            )
+            this.renderProgressContent(serveParam)
           }
         </div>
         <div className={styles.statusCust}>
           <span className={styles.title}>{COMPLETED_CUST}</span>
           {
-            this.renderProgressContent(
-              COMPLETED_CUST,
-              NOT_COMPLETED_CUST,
-              completedPercent,
-              showCompletedPercent,
-              completedNums,
-              custCount - completedNums,
-            )
+            this.renderProgressContent(completedParam)
           }
         </div>
         <div className={styles.standardCust}>
           <span className={styles.title}>{STASIFY_CUST}</span>
           {
-            this.renderProgressContent(
-              STASIFY_CUST,
-              NOT_STASIFY_CUST,
-              standardPercent,
-              showStandardPercent,
-              standardNums,
-              custCount - standardNums,
-            )
+            this.renderProgressContent(standardParam)
           }
         </div>
       </div>
