@@ -5,7 +5,7 @@
 export default function customerPool(api) {
   return {
     // 经营指标新增客户指标区域接口
-    getCustCount: query => api.post('/groovynoauth/fsp/emp/kpi/queryNewCustCount', query),
+    getCustCount: query => api.post('/groovynoauth/fsp/emp/kpi/queryNewCustCount2', query),
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
