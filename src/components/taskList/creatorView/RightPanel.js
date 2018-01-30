@@ -27,6 +27,20 @@ const INITIAL_PAGE_SIZE = 10;
 const COLUMN_HEIGHT = 36;
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
+// 答案自定义的index
+const getAlphaIndex = index => String.fromCharCode(97 + index);
+// 后台返回题目类型
+const TYPE = {
+  radioType: '1',
+  checkboxType: '2',
+  textAreaType: '3',
+};
+const EMPTY_DATA = (value) => {
+  if (!_.isEmpty(value)) {
+    return value;
+  }
+  return '';
+};
 export default class RightPanel extends PureComponent {
 
   static propTypes = {
@@ -197,6 +211,53 @@ export default class RightPanel extends PureComponent {
     return null;
   }
 
+  // 拼接结果跟踪数据
+  @autobind
+  renderResultData() {
+    const { taskBasicInfo: { motDetailModel = EMPTY_OBJECT } } = this.props;
+    const { resultTraceVO = {} } = motDetailModel;
+    const {
+      indexCateName,
+      finProductVO = {},
+      traceOpVO = {},
+      threshold,
+      indexUnit } = resultTraceVO;
+    let indicatorText = '';
+    if (traceOpVO.key === 'COMPLETE') {
+      indicatorText = `完善${indexCateName}`;
+    } else if (traceOpVO.key === 'OPEN') {
+      indicatorText = `开通${indexCateName}`;
+    } else if (traceOpVO.key === 'TRUE') {
+      indicatorText = `${indexCateName}，状态：是`;
+    } else {
+      // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
+      indicatorText = `${indexCateName || ''}${!_.isEmpty(finProductVO) ? EMPTY_DATA(finProductVO.aliasName) : ''}${EMPTY_DATA(traceOpVO.name)}${EMPTY_DATA(threshold)}${EMPTY_DATA(indexUnit)}`;
+    }
+    return indicatorText;
+  }
+
+
+  // 问卷调查数据处理
+  renderTaskSurvey() {
+    const { taskBasicInfo: { motDetailModel = EMPTY_OBJECT } } = this.props;
+    const { quesVO = [] } = motDetailModel;
+    const quesData = _.map(quesVO, (item, key) => {
+      const { quesType = {}, optionRespDtoList = [] } = item;
+      let quesText = '';
+      if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
+        let optionCont = '';
+        optionRespDtoList.forEach((childItem, index) => {
+          optionCont += `${getAlphaIndex(index)}.${childItem.optionValue}；`;
+        });
+        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
+      } else if (quesType.key === TYPE.textAreaType) {
+        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
+      }
+      return (<p>{quesText}</p>);
+    });
+    return quesData;
+  }
+
   render() {
     const { taskBasicInfo, priviewCustFileData } = this.props;
     const {
@@ -204,6 +265,7 @@ export default class RightPanel extends PureComponent {
       workflowHistoryBeanList = EMPTY_LIST,
       tagetCustModel = EMPTY_OBJECT,
     } = taskBasicInfo;
+    const { resultTraceVO = {}, quesVO } = motDetailModel;
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
@@ -251,6 +313,27 @@ export default class RightPanel extends PureComponent {
                 </ul>
               </div>
             </div>
+            {_.isEmpty(resultTraceVO) ? null :
+            <div className={styles.resultTrack}>
+              <InfoTitle head="结果跟踪" />
+              <ul className={styles.propertyList}>
+                <li className={styles.item}>
+                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
+                </li>
+              </ul>
+            </div>
+            }
+            {
+              _.isEmpty(quesVO) ? null :
+              <div className={styles.taskSurvey}>
+                <InfoTitle head="任务调查" />
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                  </li>
+                </ul>
+              </div>
+            }
             <div id="approvalRecord" className={styles.module}>
               <InfoTitle head="审批意见" />
               <ApproveList
