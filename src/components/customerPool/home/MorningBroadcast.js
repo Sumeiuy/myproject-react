@@ -60,6 +60,22 @@ export default class MorningBroadcast extends PureComponent {
     return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${source.name}`;
   }
 
+  // 跳转至晨报详情
+  @autobind
+  handleToDetail(newsId) {
+    const { push } = this.props;
+    const param = { id: 'RTC_TAB_NEWS_DETAIL', title: '晨报' };
+    const url = '/broadcastDetail';
+    const query = { newsId };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
   render() {
     const { dataList, sourceList = [] } = this.props;
     const { activeMusic } = this.state;
@@ -81,7 +97,9 @@ export default class MorningBroadcast extends PureComponent {
                   const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
                     <div key={item.newsId} className={styles.item}>
-                      <div className={styles.simpleName}>
+                      <div
+                        className={styles.simpleName}
+                      >
                         <Marquee content={item.newsTypValue} speed={40} />
                       </div>
                       <div className={styles.music}>
@@ -94,8 +112,16 @@ export default class MorningBroadcast extends PureComponent {
                   );
                 }
                 return (
-                  <div key={item.newsId} className={styles.item}>
-                    <span className={styles.desc}>{`${item.newsTypValue}：${item.title}`}</span>
+                  <div
+                    key={item.newsId}
+                    className={styles.item}
+                  >
+                    <span
+                      className={styles.desc}
+                      onClick={() => { this.handleToDetail(item.newsId); }}
+                    >
+                      {`${item.newsTypValue}：${item.title}`}
+                    </span>
                     <span
                       onClick={() => { this.onHandleListen(item.newsId); }}
                       className={styles.listen}

@@ -31,9 +31,9 @@ export default {
       const { payload: { resultData: { newsList = [], pageVO } }, query } = action;
       const { pageNum = 1, totalCount = 0, pageSize = 10 } = pageVO;
       const pagination = {
-        total: totalCount,
-        defaultCurrent: pageNum,
-        defaultPageSize: pageSize,
+        totalRecordNum: totalCount,
+        curPageNum: pageNum,
+        curPageSize: pageSize,
       };
       const newsListQuery = {
         FROM_DATE: query.createdFrom,

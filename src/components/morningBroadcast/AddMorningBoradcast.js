@@ -7,8 +7,8 @@ import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { request } from '../../config';
-import { emp } from '../../helper';
+import { request } from '../../config/index';
+import { emp } from '../../helper/index';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -378,7 +378,7 @@ export default class AddMorningBoradcast extends PureComponent {
                 <Select placeholder="晨报类型">
                   {
                     morningBoradcastType.map(item =>
-                      <Option key={item.key} value={item.key}>{item.value}</Option>
+                      <Option key={item.key} value={item.key}>{item.value}</Option>,
                     )
                   }
                 </Select>,
@@ -404,7 +404,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('title', {
                 initialValue: getInitDate('title'),
-                rules: [{ required: true, message: '请输入标题!' }],
+                rules: [{ required: true, message: '请输入标题!' }, { max: 200, message: '字数最多为200' }],
               })(
                 <Input />,
               )}
@@ -416,7 +416,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('summary', {
                 initialValue: getInitDate('summary'),
-                rules: [{ required: true, message: '请输入摘要!' }],
+                rules: [{ required: true, message: '请输入摘要!' }, { max: 200, message: '字数最多为200' }],
               })(
                 <TextArea placeholder="请输入摘要内容..." autosize={{ minRows: 2, maxRows: 6 }} />,
               )}
@@ -428,7 +428,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('content', {
                 initialValue: getInitDate('content'),
-                rules: [{ required: true, message: '请输入正文!' }],
+                rules: [{ required: true, message: '请输入正文!' }, { max: 1000, message: '字数最多为1000' }],
               })(
                 <TextArea placeholder="请输入正文内容..." autosize={{ minRows: 6, maxRows: 10 }} />,
               )}

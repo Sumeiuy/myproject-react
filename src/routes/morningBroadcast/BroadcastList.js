@@ -15,7 +15,8 @@ import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
 import { openRctTab, permission } from '../../utils';
 import { url as urlHelper } from '../../helper';
-import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
+import Pagination from '../../components/common/Pagination';
+import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
 
 const Search = Input.Search;
 
@@ -217,6 +218,7 @@ export default class BroadcastList extends PureComponent {
       width: '15%',
       className: 'tableAuthor',
       key: 'author',
+      render: (text, record) => record.updatedBy || record.createdBy,
     }];
     console.log(permission.hasZXMampPermission());
     if (permission.hasZXMampPermission()) {
@@ -356,9 +358,13 @@ export default class BroadcastList extends PureComponent {
     } = this.props;
     const initQuery = BroadcastList.initNewsListQuery();
     const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
-    const { visible, endOpen, newsId } = this.state;
+    const { visible, newsId } = this.state;
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
-
+    const paginationOption = {
+      ...pagination,
+      onPageChange: this.onPageNumChange,
+      onSizeChange: this.onPageSizeChange,
+    };
     return (
       <div className={styles.broadcastListWrap} >
         <Affix>
@@ -394,9 +400,9 @@ export default class BroadcastList extends PureComponent {
                   allowClear={false}
                   showToday={false}
                   defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
-                  disabledDate={this.disabledEndDate}
+                  // disabledDate={this.disabledEndDate}
                   onChange={this.onEndChange}
-                  open={endOpen}
+                  // open={endOpen}
                   onOpenChange={this.handleEndOpenChange}
                 />
               </div>
@@ -442,15 +448,9 @@ export default class BroadcastList extends PureComponent {
               loading={newsListLoading}
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
-              pagination={{
-                ...pagination,
-                defaultPageSize: 20,
-                showSizeChanger: true,
-                showTotal() { return `共${pagination.total}项`; },
-                onChange: this.onPageNumChange,
-                onShowSizeChange: this.onPageSizeChange,
-              }}
+              pagination={false}
             />
+            <Pagination {...paginationOption} />
           </div>
         </div>
       </div>
