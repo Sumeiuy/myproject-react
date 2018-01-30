@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-27 17:03:57
+ * @Last Modified time: 2018-01-30 13:44:29
  * @description 此处存放通用的正则表达式
  */
 const regexp = {
@@ -26,16 +26,12 @@ const regexp = {
    * 整数部分千分位格式化的正则表达式
    * 例子：12345604 => 12,345,604
    */
-  thousand_integer: /(\d{1,3})(?=(\d{3})+(?:$|\D))/g,
+  thousandInteger: /(\d{1,3})(?=(\d{3})+(?:$|\D))/g,
   /**
    * 小数部分千分位格式化的正则表达式
    * 例子： 12345604 => 123,456,04
    */
-  thousand_decimal: /(\d{3})(?=(\d{1,3})+)/g,
-  /**
-   * 正整数
-   */
-  positive_integer: /^\+?[1-9][0-9]*$/,
+  thousandDecimal: /(\d{3})(?=(\d{1,3})+)/g,
 };
 
 export default regexp;

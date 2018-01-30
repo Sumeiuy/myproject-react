@@ -1,24 +1,20 @@
 /**
- * @fileOverview layouts/Loading.js
- * @author sunweibin
+ * @file layouts/loading.js
+ * 新框架下的loading
+ * @author zhufeiyang
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Spin } from 'antd';
-import { dom, env } from '../../src/helper';
-import { fspContainer } from '../../src/config';
-import styles from './Loading.less';
-
-// 首先判断wrap存在与否
-const isInFsp = env.isInFsp();
+import styles from './loading_.less';
 
 function Loading({ loading, forceFull }) {
   if (!loading) {
     return null;
   }
-  let top = isInFsp ? '55px' : '98px';
-  let left = isInFsp ? dom.getCssStyle(document.querySelector(fspContainer.workspaceContent), 'left') : '0';
+  let top = '98px';
+  let left = '0';
   // 新增判断如果forceFull有值，则需要判断是Y或者N，
   // 无值则按默认的方式处理
   if (forceFull) {

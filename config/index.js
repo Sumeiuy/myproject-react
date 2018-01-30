@@ -47,13 +47,13 @@ module.exports = {
       {
         target: 'http://168.61.8.81:5086', // SITf
         //  target: 'http://168.61.8.81:5090', // DOClever
-        // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址                
+        // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址
       },
       prefix,
       {
-        target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
-        // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址        
+        // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址
       },
       '/fspa/log',
       {
@@ -62,10 +62,19 @@ module.exports = {
       },
       '/fsp',
       {
-        target: 'http://168.61.8.81:5086', // SIT
-        // target: 'http://168.61.8.82:5086', // UAT
-        // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址
-      }
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.81:5086', // UAT
+      },
+      '/htsc-product-base',
+      {
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.81:5086', // UAT
+      },
+      '/jeip',
+      {
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.81:5086', // UAT
+      },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
