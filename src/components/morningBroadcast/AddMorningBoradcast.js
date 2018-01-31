@@ -103,6 +103,7 @@ export default class AddMorningBoradcast extends PureComponent {
         message.info('删除文件成功');
         this.setState({
           otherFileList: this.resourceToUpload(otherSource, finalNewUuid[1]),
+          isUpdateFile: true,
         });
       }
     }
@@ -255,7 +256,6 @@ export default class AddMorningBoradcast extends PureComponent {
           ...file,
           status: 'error',
         };
-        message.info('上传文件成功');
         this.setState({
           otherFileList: [fileErrorList],
         });
@@ -263,6 +263,7 @@ export default class AddMorningBoradcast extends PureComponent {
         const attachment = file.response.resultData.attachment;
         const resFileList = file.response.resultData.attaches;
         const finalFileOtherList = this.resourceToUpload(resFileList, attachment);
+        message.info('上传文件成功');
         this.setState({
           otherFileList: finalFileOtherList,
           isUpdateFile: true,
