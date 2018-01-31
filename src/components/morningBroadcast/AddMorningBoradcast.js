@@ -31,7 +31,7 @@ export default class AddMorningBoradcast extends PureComponent {
     saveBoradcast: PropTypes.func.isRequired,
     delCeFile: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
-    dict: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
     uploaderFile: PropTypes.func.isRequired,
   };
 
