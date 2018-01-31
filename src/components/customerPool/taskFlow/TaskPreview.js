@@ -166,7 +166,7 @@ export default class TaskPreview extends PureComponent {
     return _.map(questionList, (item, index) => {
       // 1代表单选
       if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
-        const quesType = item.quesTypeCode === '1' ? '单选' : '多选'
+        const quesType = item.quesTypeCode === '1' ? '单选' : '多选';
         return (
           <div className={styles.singleOrMultipleChoice} key={item.quesId}>
             <p>{`${Number(index) + 1}.${item.quesValue}(${quesType})`}</p>
