@@ -7,8 +7,8 @@ import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { request } from '../../config';
-import { emp } from '../../helper';
+import { request } from '../../config/index';
+import { emp } from '../../helper/index';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -17,6 +17,7 @@ const Option = Select.Option;
 @Form.create()
 export default class AddMorningBoradcast extends PureComponent {
   static propTypes = {
+    creator: PropTypes.string.isRequired,
     visible: PropTypes.bool.isRequired,
     newsId: PropTypes.number.isRequired,
     form: PropTypes.object.isRequired,
@@ -31,6 +32,7 @@ export default class AddMorningBoradcast extends PureComponent {
     delCeFile: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
     dict: PropTypes.func.isRequired,
+    uploaderFile: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -40,6 +42,7 @@ export default class AddMorningBoradcast extends PureComponent {
       audioError: true, // audioFile 校验
       otherFileList: [],
       finalNewUuid: [],
+      isUpdateFile: false,
     };
   }
 
@@ -97,6 +100,7 @@ export default class AddMorningBoradcast extends PureComponent {
           audioFileList: this.resourceToUpload(audioSource, finalNewUuid[0]),
         });
       } else if (otherSource) {
+        message.info('删除文件成功');
         this.setState({
           otherFileList: this.resourceToUpload(otherSource, finalNewUuid[1]),
         });
@@ -157,9 +161,13 @@ export default class AddMorningBoradcast extends PureComponent {
   }
   @autobind()
   onHandleCancel() {
-    const { handleCancel } = this.props;
+    const { handleCancel, newsId, uploaderFile } = this.props;
+    const { isUpdateFile } = this.state;
     if (this.formWrapRef) {
       this.formWrapRef.scrollTop = 0;
+    }
+    if (isUpdateFile) {
+      uploaderFile({ newsId });
     }
     handleCancel();
   }
@@ -227,6 +235,7 @@ export default class AddMorningBoradcast extends PureComponent {
         this.setState({
           audioFileList: finalFileAudioList,
           audioError: finalFileAudioList.length,
+          isUpdateFile: true,
         });
       }
     }
@@ -240,10 +249,25 @@ export default class AddMorningBoradcast extends PureComponent {
       this.onOtherUploading(fileList);
     }
     if (file.status === 'done') {
-      const attachment = file.response.resultData.attachment;
-      const resFileList = file.response.resultData.attaches;
-      const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
-      this.setState({ otherFileList: finalFileAudioList });
+      const res = file.response;
+      if (res.code !== '0') {
+        const fileErrorList = {
+          ...file,
+          status: 'error',
+        };
+        message.info('上传文件成功');
+        this.setState({
+          otherFileList: [fileErrorList],
+        });
+      } else {
+        const attachment = file.response.resultData.attachment;
+        const resFileList = file.response.resultData.attaches;
+        const finalFileOtherList = this.resourceToUpload(resFileList, attachment);
+        this.setState({
+          otherFileList: finalFileOtherList,
+          isUpdateFile: true,
+        });
+      }
     }
     if (file.status === 'error') {
       this.setState({ otherFileList: fileList });
@@ -309,7 +333,7 @@ export default class AddMorningBoradcast extends PureComponent {
     } = this.state;
     const { getFieldDecorator } = this.props.form;
     const { getInitDate } = this;
-    const { newsId, dict } = this.props;
+    const { newsId, dict, creator } = this.props;
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 16, offset: 1 },
@@ -365,7 +389,6 @@ export default class AddMorningBoradcast extends PureComponent {
           <Form>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="类型"
               wrapperCol={{ span: 8, offset: 1 }}
             >
@@ -386,12 +409,11 @@ export default class AddMorningBoradcast extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="作者"
               wrapperCol={{ span: 8, offset: 1 }}
             >
               {getFieldDecorator('createdBy', {
-                initialValue: getInitDate('createdBy'),
+                initialValue: newsId === -1 ? creator : getInitDate('createdBy'),
                 rules: [{ required: true, message: '请输入晨报作者!' }],
               })(
                 <Input />,
@@ -399,36 +421,33 @@ export default class AddMorningBoradcast extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="标题"
             >
               {getFieldDecorator('title', {
                 initialValue: getInitDate('title'),
-                rules: [{ required: true, message: '请输入标题!' }],
+                rules: [{ required: true, message: '请输入标题!' }, { max: 200, message: '字数最多为200' }],
               })(
                 <Input />,
               )}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="摘要"
             >
               {getFieldDecorator('summary', {
                 initialValue: getInitDate('summary'),
-                rules: [{ required: true, message: '请输入摘要!' }],
+                rules: [{ required: true, message: '请输入摘要!' }, { max: 200, message: '字数最多为200' }],
               })(
                 <TextArea placeholder="请输入摘要内容..." autosize={{ minRows: 2, maxRows: 6 }} />,
               )}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="正文"
             >
               {getFieldDecorator('content', {
                 initialValue: getInitDate('content'),
-                rules: [{ required: true, message: '请输入正文!' }],
+                rules: [{ required: true, message: '请输入正文!' }, { max: 1000, message: '字数最多为1000' }],
               })(
                 <TextArea placeholder="请输入正文内容..." autosize={{ minRows: 6, maxRows: 10 }} />,
               )}
@@ -455,7 +474,6 @@ export default class AddMorningBoradcast extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              hasFeedback
               label="其他文件"
             >
               <Upload {...otherProps} fileList={otherFileList}>

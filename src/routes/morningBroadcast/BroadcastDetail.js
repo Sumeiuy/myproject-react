@@ -65,10 +65,23 @@ export default class BroadcastDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastList';
+    const query = { };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?${urlHelper.stringify(query)}`,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+  @autobind
+  handleBackHome() {
+    const { push } = this.props;
+    const param = { id: 'RTC_TAB_PRODUCT_CNETOR', title: '首页' };
+    const url = '/customerPool';
     const query = { };
     openRctTab({
       routerAction: push,
@@ -88,16 +101,17 @@ export default class BroadcastDetail extends PureComponent {
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
           <div className={styles.content}>
+            <div className={`${styles.backList} ${styles.headerBack}`}>
+              <span onClick={this.handleBackHome}>产品中心/</span>
+              <span onClick={this.handleBackClick}>每日晨报/</span>
+              <span>晨报名称</span>
+            </div>
             <div className={styles.header}>
               <div className={styles.title}>{ newItemDetail.title }</div>
               <div className={styles.info}>
                 <div>类型：{ newItemDetail.newsTypValue }</div>
-                <div>作者：{ newItemDetail.createdBy && newItemDetail.createdBy }</div>
+                <div>作者：{ newItemDetail.updatedBy || newItemDetail.createdBy }</div>
                 <div>发布日期：{ newItemDetail.created }</div>
-              </div>
-              <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
-                <i className="icon iconfont icon-fanhui" />
-                晨间播报列表
               </div>
             </div>
             <div className={styles.body}>
@@ -107,7 +121,11 @@ export default class BroadcastDetail extends PureComponent {
             <div className={styles.footer}>
               <div className={styles.downMusic}>
                 <i className="icon iconfont icon-shipinwenjian" style={{ color: '#2d86d8' }} />
-                <span>音频文件</span>
+                <span title="点击下载">
+                  <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
+                    音频文件
+                  </a>
+                </span>
                 <audio src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`} controls="controls">
                   Your browser does not support the audio element.
                 </audio>
@@ -116,10 +134,6 @@ export default class BroadcastDetail extends PureComponent {
                 attachmentList={otherFileList}
                 edit={false}
               />
-              <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.footerBack}`}>
-                <i className="icon iconfont icon-fanhui" />
-                晨间播报列表
-              </div>
             </div>
           </div>
         </div>
