@@ -223,7 +223,7 @@ export default class MissionProgress extends PureComponent {
     // 真实百分比
     const activePercent = getPercent(Number(ratio));
     // 展示百分比
-    const showActivePercent = getPercent(activeCount / (maxRadio * 100));
+    const showActivePercent = getPercent(Number(ratio) / maxRadio);
     return {
       activeType,
       remainingType,
