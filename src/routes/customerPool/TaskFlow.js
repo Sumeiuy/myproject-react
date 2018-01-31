@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-31 16:57:33
+ * @Last Modified time: 2018-01-31 18:19:14
  */
 
 import React, { PureComponent } from 'react';
@@ -230,6 +230,49 @@ export default class TaskFlow extends PureComponent {
   }
 
   /**
+   * 根据职责来判断，是加入orgId还是ptyMngId
+   * @param {*object} postBody post参数
+   */
+  @autobind
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId) {
+    let newPostBody = postBody;
+    if (this.hasTkMampPermission) {
+      // 有权限传orgId
+      newPostBody = {
+        ...newPostBody,
+        searchReq: {
+          orgId: emp.getOrgId(),
+        },
+      };
+    } else {
+      newPostBody = {
+        ...newPostBody,
+        searchReq: {
+          ptyMngId: emp.getId(),
+        },
+      };
+    }
+
+    const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+    if (_.isEmpty(currentLabelQueryCustomerParam)
+      || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+      // 代表当前选中的标签没有进行筛查客户
+      newPostBody = _.merge(newPostBody, {
+        searchReq: {
+          enterType: 'labelSearchCustPool',
+          labels: [labelId],
+        },
+      });
+    } else {
+      newPostBody = _.merge(newPostBody, {
+        searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
+      });
+    }
+
+    return newPostBody;
+  }
+
+  /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
@@ -301,39 +344,8 @@ export default class TaskFlow extends PureComponent {
           message.error('此标签下无客户，不可发起任务，请选择其他标签');
           return;
         }
-        if (this.hasTkMampPermission) {
-          // 有权限传orgId
-          postBody = {
-            ...postBody,
-            searchReq: {
-              orgId: emp.getOrgId(),
-            },
-          };
-        } else {
-          postBody = {
-            ...postBody,
-            searchReq: {
-              ptyMngId: emp.getId(),
-            },
-          };
-        }
 
-        const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
-        if (_.isEmpty(currentLabelQueryCustomerParam)
-          || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
-          // 代表当前选中的标签没有进行筛查客户
-          postBody = _.merge(postBody, {
-            searchReq: {
-              enterType: 'labelSearchCustPool',
-              labels: [labelId],
-            },
-          });
-        } else {
-          // 筛选了客户，会自带orgId或者ptyMngId
-          postBody = _.merge(postBody, {
-            searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
-          });
-        }
+        postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
       }
 
       isSendCustsServedByPostn({
@@ -583,18 +595,19 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelMapping,
-      custNum: labelCustNums,
+      // labelMapping,
+      // custNum: labelCustNums,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
+      labelId,
       // taskSubType,
       templetDesc,
       timelyIntervalValue,
-      labelDesc,
-      labelName,
+      // labelDesc,
+      // labelName,
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
@@ -621,6 +634,7 @@ export default class TaskFlow extends PureComponent {
       isMissionInvestigationChecked,
       // 选择的问题List
       // questionList,
+      argsOfQueryCustomer,
     } = finalData;
 
     let postBody = {
@@ -678,15 +692,15 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
-    const labelCustPostBody = {
-      ...postBody,
-      labelId: labelMapping,
-      queryLabelDTO: {
-        labelDesc,
-        labelName,
-      },
-      labelCustNums,
-    };
+    // const labelCustPostBody = {
+    //   ...postBody,
+    //   labelId: labelMapping,
+    //   queryLabelDTO: {
+    //     labelDesc,
+    //     labelName,
+    //   },
+    //   labelCustNums,
+    // };
 
     // 当前tab是第一个，则代表导入客户
     if (currentEntry === 0) {
@@ -694,21 +708,26 @@ export default class TaskFlow extends PureComponent {
         fileId,
         ...postBody,
       });
-    } else if (needApproval) {
-      // 有审批权限，则需要传入orgId
-      submitTaskFlow(_.merge(labelCustPostBody, {
-        queryLabelDTO: {
-          orgId,
-        },
-      }));
     } else {
-      // 没有审批权限，则需要传入ptyMngId
-      submitTaskFlow(_.merge(labelCustPostBody, {
-        queryLabelDTO: {
-          ptyMngId: emp.getId(),
-        },
-      }));
+      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+      // if (needApproval) {
+      //   // 有审批权限，则需要传入orgId
+      //   submitTaskFlow(_.merge(labelCustPostBody, {
+      //     queryLabelDTO: {
+      //       orgId,
+      //     },
+      //   }));
+      // } else {
+      //   // 没有审批权限，则需要传入ptyMngId
+      //   submitTaskFlow(_.merge(labelCustPostBody, {
+      //     queryLabelDTO: {
+      //       ptyMngId: emp.getId(),
+      //     },
+      //   }));
+      // }
     }
+
+    submitTaskFlow({ ...postBody });
   }
 
   @autobind
