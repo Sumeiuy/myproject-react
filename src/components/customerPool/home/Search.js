@@ -47,6 +47,7 @@ export default class Search extends PureComponent {
   constructor(props) {
     super(props);
     const { queryHotWdsData = EMPTY_LIST, searchHistoryVal = '' } = props;
+
     this.state = {
       // 页面初始化的时候，选择上一次的数据，生成option
       dataSource: this.searchResult(searchHistoryVal, queryHotWdsData),
@@ -68,6 +69,7 @@ export default class Search extends PureComponent {
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
+      isHasSearchResult: !_.isEmpty(nextQueryHotWdsData),
     });
   }
 
@@ -149,9 +151,6 @@ export default class Search extends PureComponent {
 
   searchResult(query, hotList) {
     if (_.isEmpty(hotList)) {
-      // this.setState({
-      //   isHasSearchResult: false,
-      // });
       // 提示无相关目标客户
       return [{
         query,
@@ -161,10 +160,6 @@ export default class Search extends PureComponent {
         id: NONE_INFO,
       }];
     }
-
-    this.setState({ // eslint-disable-line
-      isHasSearchResult: true,
-    });
     return _.map(hotList, (item, index) => {
       if (item.type === 'label') {
         return {

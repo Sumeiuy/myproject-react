@@ -168,7 +168,7 @@ export default class MatchArea extends PureComponent {
           if (!isSightingScope(v.source)) {
             return replaceWord({ value: v.name, q });
           }
-          return `${replaceWord({ value: v.name, q })} 瞄准镜`;
+          return `${replaceWord({ value: v.name, q })}-${q}`;
         });
         return (
           <li>
