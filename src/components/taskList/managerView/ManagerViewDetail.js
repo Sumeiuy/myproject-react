@@ -11,12 +11,12 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import BasicInfo from '../common/BasicInfo';
-// import MissionDescription from './MissionDescription';
+import { Tooltip } from 'antd';
+
+import Icon from '../../common/Icon';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
-import TargetCustomer from './TargetCustomer';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
@@ -24,6 +24,7 @@ import { closeRctTab, openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
+import InfoArea from './InfoArea';
 
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
@@ -70,7 +71,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务类型字典
     missionTypeDict: PropTypes.array,
     exportExcel: PropTypes.func.isRequired,
-    missionProgressStatusDic: PropTypes.object.isRequired,
+    missionProgressStatusDic: PropTypes.array.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,
@@ -218,6 +219,27 @@ export default class ManagerViewDetail extends PureComponent {
     });
   }
 
+  @autobind
+  renderTotalCust() {
+    const { mngrMissionDetailInfo = {} } = this.props;
+    const { custNumbers = 0, orgName } = mngrMissionDetailInfo;
+    return (
+      <div className={styles.custValue}>
+        <div
+          className={styles.totalNum}
+          onClick={() => { this.handlePreview({ canLaunchTask: false }); }}
+        >
+          {custNumbers}
+        </div>
+        <div className={styles.numDetail}>
+          <Tooltip placement="right" title={`当前${orgName}有效客户总数`}>
+            <Icon className={styles.tip} type="tishi" />
+          </Tooltip>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const {
       isFold,
@@ -253,17 +275,58 @@ export default class ManagerViewDetail extends PureComponent {
       servicePolicy,
       custSource,
       // 客户总数
-      custNumbers = 0,
+      // custNumbers = 0,
       // 客户来源说明
       custSourceDesc,
       // 任务描述
       missionDesc,
       // 当前机构名
-      orgName,
+      // orgName,
     } = mngrMissionDetailInfo;
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
+    const basicInfoData = [{
+      id: 'date',
+      key: '任务有效期 :',
+      value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
+    },
+    {
+      id: 'target',
+      key: '任务目标 :',
+      value: missionTarget || '--',
+    },
+    {
+      id: 'policy',
+      key: '服务策略 :',
+      value: servicePolicy || '--',
+    }, {
+      id: 'tip',
+      key: '任务提示 :',
+      value: missionDesc || '--',
+    }];
+
+    let targetCustInfoData = [{
+      id: 'total',
+      key: '客户总数 :',
+      value: this.renderTotalCust(),
+    },
+    {
+      id: 'source',
+      key: '客户来源 :',
+      value: custSource || '--',
+    }];
+    if (!_.isEmpty(custSourceDesc)) {
+      targetCustInfoData = [
+        ...targetCustInfoData,
+        {
+          id: 'custDesc',
+          key: '客户来源说明 :',
+          value: custSourceDesc,
+        },
+      ];
+    }
+
     const urlParams = this.handleExport();
     return (
       <div className={styles.managerViewDetail}>
@@ -272,133 +335,110 @@ export default class ManagerViewDetail extends PureComponent {
             {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
           </div>
         </div>
-        <div className={styles.basicInfoSection}>
-          <BasicInfo
-            // 有效期开始时间
-            triggerTime={triggerTime}
-            // 有效期结束时间
-            endTime={endTime}
-            // 任务目标
-            missionTarget={missionTarget}
-            // 服务策略
-            servicePolicy={servicePolicy}
-            // 父容器宽度变化,默认宽度窄
-            isFold={isFold}
-            // 当前视图类型是管理者视图
-            isCurrentViewOfController
-            // 任务提示or任务描述
-            missionDescription={missionDesc}
-          />
-          <TargetCustomer
-            // 父容器宽度变化,默认宽度窄
-            isFold={isFold}
-            // 客户来源
-            custSource={custSource}
-            // 客户总数
-            custTotal={custNumbers}
-            // 客户来源说明
-            custSourceDescription={custSourceDesc}
-            // 预览明细客户
-            onPreview={this.handlePreview}
-            // 当前机构名
-            orgName={orgName}
-          />
-          <GroupModal
-            wrapperClass={
-              classnames({
-                [styles.custDetailContainer]: true,
-              })
-            }
-            visible={isShowCustDetailModal}
-            title={'客户明细'}
-            onCancelHandler={this.handleCloseModal}
-            footer={
-              <div className={styles.operationBtnSection}>
-                <Clickable
-                  onClick={this.handleCloseModal}
-                  eventName="/click/managerViewCustDetail/cancel"
-                >
-                  <Button className={styles.cancel}>取消</Button>
-                </Clickable>
-                {/**
+        <div className={styles.detailContent}>
+          <div className={styles.basicInfoSection}>
+            <InfoArea
+              data={basicInfoData}
+              headLine={'基本信息'}
+            />
+            <InfoArea
+              data={targetCustInfoData}
+              headLine={'目标客户'}
+            />
+            <GroupModal
+              wrapperClass={
+                classnames({
+                  [styles.custDetailContainer]: true,
+                })
+              }
+              visible={isShowCustDetailModal}
+              title={'客户明细'}
+              onCancelHandler={this.handleCloseModal}
+              footer={
+                <div className={styles.operationBtnSection}>
+                  <Clickable
+                    onClick={this.handleCloseModal}
+                    eventName="/click/managerViewCustDetail/cancel"
+                  >
+                    <Button className={styles.cancel}>取消</Button>
+                  </Clickable>
+                  {/**
                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
                   */}
-                {
-                  false ? <Clickable
-                    eventName="/click/managerViewCustDetail/export"
-                  >
-                    <Button className={styles.export}>
-                      <a
-                        href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                      >导出</a>
-                    </Button>
-                  </Clickable> : null
-                }
-                {
-                  canLaunchTask ?
-                    <Clickable
-                      onClick={this.handleLaunchTask}
-                      eventName="/click/managerViewCustDetail/launchTask"
+                  {
+                    false ? <Clickable
+                      eventName="/click/managerViewCustDetail/export"
                     >
-                      <Button
-                        className={styles.launchTask}
-                        type="default"
-                        disabled={isDisabled}
-                      >
-                        发起新任务
+                      <Button className={styles.export}>
+                        <a
+                          href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                        >导出</a>
                       </Button>
                     </Clickable> : null
-                }
-
-              </div>
-            }
-            modalContent={
-              <CustDetail
-                ref={ref => (this.custDetailRef = ref)}
-                getCustDetailData={this.handlePreview}
-                data={custDetailResult}
-                title={title}
-                onClose={this.handleCloseModal}
-                hideCustDetailModal={this.hideCustDetailModal}
-                push={push}
-                isCustServedByPostn={isCustServedByPostn}
-                custServedByPostnResult={custServedByPostnResult}
-              />
-            }
-            modalStyle={{
-              maxWidth: 1080,
-              minWidth: 700,
-              width: 1080,
-            }}
-            modalWidth={1080}
-          />
-        </div>
-        {/* <div className={styles.descriptionSection}>
-          <MissionDescription missionDescription={missionDesc} />
-        </div> */}
-        <div className={styles.missionImplementationSection}>
-          <MissionImplementation
-            isFold={isFold}
-            custFeedback={custFeedback}
-            onPreviewCustDetail={this.handlePreview}
-            missionImplementationProgress={missionImplementationDetail}
-            custRange={custRange}
-            empInfo={empInfo}
-            location={location}
-            replace={replace}
-            countFlowStatus={countFlowStatus}
-            countFlowFeedBack={countFlowFeedBack}
-            exportExcel={exportExcel}
-            missionProgressStatusDic={missionProgressStatusDic}
-          />
-        </div>
-        <div className={styles.missionFeedbackSection}>
-          <MissionFeedback
-            missionFeedbackData={missionFeedbackData}
-            isFold={isFold}
-            missionFeedbackCount={missionFeedbackCount}
-            serveManagerCount={serveManagerCount}
-          />
+                  }
+                  {
+                    canLaunchTask ?
+                      <Clickable
+                        onClick={this.handleLaunchTask}
+                        eventName="/click/managerViewCustDetail/launchTask"
+                      >
+                        <Button
+                          className={styles.launchTask}
+                          type="default"
+                          disabled={isDisabled}
+                        >
+                          发起新任务
+                        </Button>
+                      </Clickable>
+                    : null
+                  }
+                </div>
+              }
+              modalContent={
+                <CustDetail
+                  ref={ref => (this.custDetailRef = ref)}
+                  getCustDetailData={this.handlePreview}
+                  data={custDetailResult}
+                  title={title}
+                  onClose={this.handleCloseModal}
+                  hideCustDetailModal={this.hideCustDetailModal}
+                  push={push}
+                  isCustServedByPostn={isCustServedByPostn}
+                  custServedByPostnResult={custServedByPostnResult}
+                />
+              }
+              modalStyle={{
+                maxWidth: 1080,
+                minWidth: 700,
+                width: 1080,
+              }}
+              modalWidth={1080}
+            />
+          </div>
+          <div className={styles.missionImplementationSection}>
+            <MissionImplementation
+              isFold={isFold}
+              custFeedback={custFeedback}
+              onPreviewCustDetail={this.handlePreview}
+              missionImplementationProgress={missionImplementationDetail}
+              custRange={custRange}
+              empInfo={empInfo}
+              location={location}
+              replace={replace}
+              countFlowStatus={countFlowStatus}
+              countFlowFeedBack={countFlowFeedBack}
+              exportExcel={exportExcel}
+              missionProgressStatusDic={missionProgressStatusDic}
+            />
+          </div>
+          <div className={styles.missionFeedbackSection}>
+            <MissionFeedback
+              missionFeedbackData={missionFeedbackData}
+              isFold={isFold}
+              missionFeedbackCount={missionFeedbackCount}
+              serveManagerCount={serveManagerCount}
+            />
+          </div>
         </div>
       </div>
     );

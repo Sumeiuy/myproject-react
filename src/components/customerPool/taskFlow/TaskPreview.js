@@ -158,7 +158,7 @@ export default class TaskPreview extends PureComponent {
   @autobind
   renderOption(optionInfoList = []) {
     return _.map(optionInfoList, (item, index) =>
-      <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}；`}</span>);
+      <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}`}</span>);
   }
 
   @autobind
@@ -166,16 +166,18 @@ export default class TaskPreview extends PureComponent {
     return _.map(questionList, (item, index) => {
       // 1代表单选
       if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
+        const quesType = item.quesTypeCode === '1' ? '单选' : '多选';
         return (
           <div className={styles.singleOrMultipleChoice} key={item.quesId}>
-            {Number(index) + 1}.{item.quesValue}  此问题为{item.quesTypeCode === '1' ? '单选' : '多选'}，
-            选项内容为：{this.renderOption(item.optionInfoList)}
+            <p>{`${Number(index) + 1}.${item.quesValue}(${quesType})`}</p>
+            <p>{this.renderOption(item.optionInfoList)}</p>
           </div>
         );
       }
       return (
         <div className={styles.subjectiveQuestion} key={item.quesId}>
-          {Number(index) + 1}.{item.quesValue}  此问题为主观问答题，问题描述为：{item.quesDesp}
+          <p>{Number(index) + 1}.{item.quesValue}(主观)</p>
+          <p>{item.quesDesp}</p>
         </div>
       );
     });
@@ -404,7 +406,7 @@ export default class TaskPreview extends PureComponent {
                   <div>{labelDesc || '--'}</div>
                 </div>
               </div> */}
-          {/* } */}
+          {/* {} */}
         </div>
 
         <div className={styles.basicInfoSection}>
@@ -503,7 +505,7 @@ export default class TaskPreview extends PureComponent {
                   <Search className={styles.searchSection} readOnly value={empName} />
                 </div>
               </Clickable>
-              <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
+              <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />注：新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
             </div>
 
           ) : null

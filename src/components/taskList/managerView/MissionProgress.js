@@ -41,6 +41,27 @@ const MISSION_PROGRESS_MAP = [{
   name: '已达标，未达标',
 }];
 
+function getPercent(num) {
+  return Number(num * 100).toFixed(0);
+}
+
+function getMaxRidio(strNum1, strNum2, strNum3) {
+  // 自适应百分比
+  const maxValue = Math.max(
+    Number(strNum1),
+    Number(strNum2),
+    Number(strNum3),
+  );
+  // 0.85 是分界线，自己取得
+  // 当最大值小于0.85时，比例做成 自适应 的
+  // 自适应：扩大原有比例的显示
+  if (maxValue < 0.85) {
+    return maxValue + 0.1;
+  }
+  // 当最大值大于0.85时，按真实比例显示
+  return 1.0;
+}
+
 export default class MissionProgress extends PureComponent {
 
   static propTypes = {
@@ -49,13 +70,13 @@ export default class MissionProgress extends PureComponent {
     // 查看客户明细
     onPreviewCustDetail: PropTypes.func,
     // 任务进度字典
-    missionProgressStatusDic: PropTypes.object,
+    missionProgressStatusDic: PropTypes.array,
   }
 
   static defaultProps = {
     missionImplementationProgress: EMPTY_OBJECT,
     onPreviewCustDetail: () => { },
-    missionProgressStatusDic: {},
+    missionProgressStatusDic: [],
   }
 
   constructor(props) {
@@ -94,7 +115,7 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   findCurrentProgressType(index) {
-    const { missionProgressStatusDic: dic = {} } = this.props;
+    const { missionProgressStatusDic: dic = [] } = this.props;
     const currentProgressType = _.find(dic, item =>
       item.key === MISSION_PROGRESS_MAP[index].key) || {};
     return currentProgressType.key;
@@ -152,14 +173,14 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
-  renderProgressContent(
+  renderProgressContent({
     activeType,
     remainingType,
     activePercent,
-    remainingPercent,
+    showActivePercent,
     activeCount,
     remainingCount,
-  ) {
+  }) {
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
@@ -173,7 +194,7 @@ export default class MissionProgress extends PureComponent {
             >
               <div
                 className="ant-progress-bg"
-                style={{ width: `${activePercent}%` }}
+                style={{ width: `${showActivePercent}%` }}
                 ref={ref => (this.activeElem = ref)}
               />
             </Tooltip>
@@ -187,7 +208,7 @@ export default class MissionProgress extends PureComponent {
               <div
                 className="ant-progress-inner"
                 ref={ref => (this.remainingElem = ref)}
-                style={{ width: `${remainingPercent}%` }}
+                style={{ width: `${100 - showActivePercent}%` }}
               />
             </Tooltip>
           </div>
@@ -195,6 +216,22 @@ export default class MissionProgress extends PureComponent {
         <span className="ant-progress-text">{activeCount} / {activePercent}%</span>
       </div>
     );
+  }
+
+  getParam(param) {
+    const { total, activeCount, ratio, maxRadio, activeType, remainingType } = param;
+    // 真实百分比
+    const activePercent = getPercent(Number(ratio));
+    // 展示百分比
+    const showActivePercent = getPercent(Number(ratio) / maxRadio);
+    return {
+      activeType,
+      remainingType,
+      activeCount,
+      activePercent,
+      showActivePercent,
+      remainingCount: total - activeCount,
+    };
   }
 
   @autobind
@@ -216,27 +253,53 @@ export default class MissionProgress extends PureComponent {
       // 已达标比例
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
-
-    const servePercent = Number.parseInt(Number(servedNumsRatio) * 100, 10);
-    const completedPercent = Number.parseInt(Number(completedNumsRatio) * 100, 10);
-    const standardPercent = Number.parseInt(Number(standardNumsRatio) * 100, 10);
+    const maxRadio = getMaxRidio(
+      servedNumsRatio,
+      completedNumsRatio,
+      standardNumsRatio,
+    );
+    const commonParam = { total: custCount, maxRadio };
+    const serveParam = this.getParam({
+      ...commonParam,
+      ratio: servedNumsRatio,
+      activeCount: servedNums,
+      activeType: SERVED_CUST,
+      remainingType: NOT_SERVED_CUST,
+    });
+    const completedParam = this.getParam({
+      ...commonParam,
+      ratio: completedNumsRatio,
+      activeCount: completedNums,
+      activeType: COMPLETED_CUST,
+      remainingType: NOT_COMPLETED_CUST,
+    });
+    const standardParam = this.getParam({
+      ...commonParam,
+      ratio: standardNumsRatio,
+      activeCount: standardNums,
+      activeType: STASIFY_CUST,
+      remainingType: NOT_STASIFY_CUST,
+    });
 
     return (
       <div className={styles.area}>
         <div className={styles.serviceCust}>
           <span className={styles.title}>{SERVED_CUST}</span>
-          {this.renderProgressContent(SERVED_CUST, NOT_SERVED_CUST,
-            servePercent, 100 - servePercent, servedNums, custCount - servedNums)}
+          {
+            this.renderProgressContent(serveParam)
+          }
         </div>
         <div className={styles.statusCust}>
           <span className={styles.title}>{COMPLETED_CUST}</span>
-          {this.renderProgressContent(COMPLETED_CUST, NOT_COMPLETED_CUST,
-            completedPercent, 100 - completedPercent, completedNums, custCount - completedNums)}
+          {
+            this.renderProgressContent(completedParam)
+          }
         </div>
         <div className={styles.standardCust}>
           <span className={styles.title}>{STASIFY_CUST}</span>
-          {this.renderProgressContent(STASIFY_CUST, NOT_STASIFY_CUST,
-            standardPercent, 100 - standardPercent, standardNums, custCount - standardNums)}
+          {
+            this.renderProgressContent(standardParam)
+          }
         </div>
       </div>
     );
