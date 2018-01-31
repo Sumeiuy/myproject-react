@@ -23,6 +23,7 @@ export default function createApi() {
     return url;
   };
 
+  // 补充fsp页面请求的前缀
   const fillPrefix = (url) => {
     if (url.indexOf(fspPrefix) === -1) {
       return fspPrefix + url;
@@ -41,10 +42,10 @@ export default function createApi() {
     /**
      * @param {string} url API url
      * @param {Object} query 请求参数
-     *
+     * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    get(url, query = {}) {
+    get(url, query = {}, options) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
       const queryString = urlHelper.stringify(resetQuery);
@@ -53,6 +54,7 @@ export default function createApi() {
         {
           method: 'GET',
           ignoreCatch,
+          ...options,
         },
       );
     },
@@ -60,10 +62,10 @@ export default function createApi() {
     /**
      * @param {string} url API url
      * @param {Object} query 请求参数
-     *
+     * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    post(url, query = {}) {
+    post(url, query = {}, options) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
       return request(
@@ -76,37 +78,40 @@ export default function createApi() {
           },
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
+          ...options,
         },
       );
     },
 
     /**
-     * @param {string} url 神策日志接收服务器url
-     * @param {Object} query 日志参数
-     *
+     * @param {string} url API url
+     * @param {Object} query 请求参数
+     * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    sendLog(url, query) {
+    sendLog(url, query = {}, options) {
       return logRequest(
         url,
         {
           method: 'POST',
           body: `data_list=${encodeURIComponent(encode.base64(JSON.stringify(query)))}`,
+          ...options,
         },
       );
     },
-     /**
-     * @param {string} url fsp 数据请求url
-     * @param {Object} query 可能的一些参数
-     *
+    /**
+     * @param {string} url API url
+     * @param {Object} query 请求参数
+     * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    getFspData(url) {
+    getFspData(url, query, options) {
       const finalUrl = fillPrefix(url);
       return fspRequest(
         `${finalUrl}`,
         {
           method: 'GET',
+          ...options,
         },
       );
     },
