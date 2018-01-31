@@ -404,7 +404,7 @@ export default class TaskPreview extends PureComponent {
                   <div>{labelDesc || '--'}</div>
                 </div>
               </div> */}
-          {/* } */}
+          {/* {} */}
         </div>
 
         <div className={styles.basicInfoSection}>
