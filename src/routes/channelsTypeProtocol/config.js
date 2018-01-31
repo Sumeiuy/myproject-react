@@ -2,8 +2,8 @@
  * @Description: 通道类协议页面配置项
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 16:16:19
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-31 13:57:21
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -14,6 +14,8 @@ const config = {
   textEnd: 'falseOver',
   // 订购的值
   subscribeArray: ['Subscribe', '协议订购'],
+  // 续订的值
+  renewalArray: ['Renewal', '协议续订'],
   // 退订的值
   unSubscribeArray: ['Unsubscribe', '协议退订'],
   // 新增或删除下挂客户的值
