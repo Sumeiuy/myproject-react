@@ -71,7 +71,7 @@ const request = (url, options) => (
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(
           () => reject('请求超时'),
-          config.timeout,
+          options.timeout || config.timeout,
         );
       },
     ),
@@ -90,7 +90,7 @@ const fspRequest = (url, options) => (
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(
           () => reject('请求超时'),
-          config.timeout,
+          options.timeout || config.timeout,
         );
       },
     ),
@@ -108,7 +108,7 @@ const logRequest = (url, options) => (
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(
           () => reject('日志发送超时'),
-          config.timeout,
+          options.timeout || config.timeout,
         );
       },
     ),
