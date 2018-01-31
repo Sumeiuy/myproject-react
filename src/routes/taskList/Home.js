@@ -539,7 +539,7 @@ export default class PerformerView extends PureComponent {
     const { empNum = 0 } = missionImplementationDetail || {};
     const { typeCode, typeName, taskFeedbackList } = this.state;
     let detailComponent = null;
-    const { missionType = [], missionProgressStatus = {} } = dict || {};
+    const { missionType = [], missionProgressStatus = [] } = dict || {};
     switch (st) {
       case INITIATOR:
         detailComponent = (
