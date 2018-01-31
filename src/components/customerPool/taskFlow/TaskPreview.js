@@ -166,16 +166,18 @@ export default class TaskPreview extends PureComponent {
     return _.map(questionList, (item, index) => {
       // 1代表单选
       if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
+        const quesType = item.quesTypeCode === '1' ? '单选' : '多选'
         return (
           <div className={styles.singleOrMultipleChoice} key={item.quesId}>
-            {Number(index) + 1}.{item.quesValue}  此问题为{item.quesTypeCode === '1' ? '单选' : '多选'}，
-            选项内容为：{this.renderOption(item.optionInfoList)}
+            <p>{`${Number(index) + 1}.${item.quesValue}(${quesType})`}</p>
+            <p>{this.renderOption(item.optionInfoList)}</p>
           </div>
         );
       }
       return (
         <div className={styles.subjectiveQuestion} key={item.quesId}>
-          {Number(index) + 1}.{item.quesValue}  此问题为主观问答题，问题描述为：{item.quesDesp}
+          <p>{Number(index) + 1}.{item.quesValue}(主观)</p>
+          <p>{item.quesDesp}</p>
         </div>
       );
     });

@@ -35,7 +35,7 @@ const TYPE = {
   checkboxType: '2',
   textAreaType: '3',
 };
-const EMPTY_DATA = (value) => {
+const emptyData = (value) => {
   if (!_.isEmpty(value)) {
     return value;
   }
@@ -231,7 +231,7 @@ export default class RightPanel extends PureComponent {
       indicatorText = `${indexCateName}，状态：是`;
     } else {
       // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
-      indicatorText = `${indexCateName || ''}${!_.isEmpty(finProductVO) ? EMPTY_DATA(finProductVO.aliasName) : ''}${EMPTY_DATA(traceOpVO.name)}${EMPTY_DATA(threshold)}${EMPTY_DATA(indexUnit)}`;
+      indicatorText = `${indexCateName || ''}${!_.isEmpty(finProductVO) ? emptyData(finProductVO.aliasName) : ''}${emptyData(traceOpVO.name)}${emptyData(threshold)}${emptyData(indexUnit)}`;
     }
     return indicatorText;
   }
@@ -243,17 +243,21 @@ export default class RightPanel extends PureComponent {
     const { quesVO = [] } = motDetailModel;
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
+      // 拼接问题答案
       let quesText = '';
+      // 拼接问题题目
+      let quesTitle = '';
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        let optionCont = '';
-        optionRespDtoList.forEach((childItem, index) => {
-          optionCont += `${getAlphaIndex(index)}.${childItem.optionValue}；`;
-        });
-        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}，选项内容为：${optionCont}`;
+        quesText = _.map(optionRespDtoList, (childItem, index) => <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${childItem.optionValue}`}</span>);
+        quesTitle = `${key + 1}.${item.value}？(${quesType.value})`;
       } else if (quesType.key === TYPE.textAreaType) {
-        quesText = `${key + 1}.${item.value}？此问题为${quesType.value}问答题，问题描述为：${item.remark}；`;
+        quesTitle = `${key + 1}.${item.value}？(${quesType.value})`;
+        quesText = item.remark;
       }
-      return (<p>{quesText}</p>);
+      return (<div>
+        <p>{quesTitle}</p>
+        <p>{quesText}</p>
+      </div>);
     });
     return quesData;
   }
