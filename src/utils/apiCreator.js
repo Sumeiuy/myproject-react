@@ -45,7 +45,7 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    get(url, query = {}, timeout) {
+    get(url, query = {}, options) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
       const queryString = urlHelper.stringify(resetQuery);
@@ -54,7 +54,7 @@ export default function createApi() {
         {
           method: 'GET',
           ignoreCatch,
-          timeout,
+          ...options,
         },
       );
     },
@@ -65,7 +65,7 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    post(url, query = {}, timeout) {
+    post(url, query = {}, options) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
       return request(
@@ -78,7 +78,7 @@ export default function createApi() {
           },
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
-          timeout,
+          ...options,
         },
       );
     },
@@ -89,13 +89,13 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    sendLog(url, query = {}, timeout) {
+    sendLog(url, query = {}, options) {
       return logRequest(
         url,
         {
           method: 'POST',
           body: `data_list=${encodeURIComponent(encode.base64(JSON.stringify(query)))}`,
-          timeout,
+          ...options,
         },
       );
     },
@@ -105,13 +105,13 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    getFspData(url, query, timeout) {
+    getFspData(url, query, options) {
       const finalUrl = fillPrefix(url);
       return fspRequest(
         `${finalUrl}`,
         {
           method: 'GET',
-          timeout,
+          ...options,
         },
       );
     },
