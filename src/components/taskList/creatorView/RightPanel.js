@@ -236,6 +236,11 @@ export default class RightPanel extends PureComponent {
     return indicatorText;
   }
 
+  @autobind
+  renderOption(optionRespDtoList = []) {
+    return _.map(optionRespDtoList, (item, index) =>
+      <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
+  }
 
   // 问卷调查数据处理
   renderTaskSurvey() {
@@ -243,20 +248,15 @@ export default class RightPanel extends PureComponent {
     const { quesVO = [] } = motDetailModel;
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
-      // 拼接问题答案
-      let quesText = '';
-      // 拼接问题题目
-      let quesTitle = '';
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        quesText = _.map(optionRespDtoList, (childItem, index) => <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${childItem.optionValue}`}</span>);
-        quesTitle = `${key + 1}.${item.value}？(${quesType.value})`;
-      } else if (quesType.key === TYPE.textAreaType) {
-        quesTitle = `${key + 1}.${item.value}？(${quesType.value})`;
-        quesText = item.remark;
+        return (<div>
+          <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
+          <p>{this.renderOption(optionRespDtoList)}</p>
+        </div>)
       }
       return (<div>
-        <p>{quesTitle}</p>
-        <p>{quesText}</p>
+        <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
+        <p>{item.remark}</p>
       </div>);
     });
     return quesData;
@@ -318,25 +318,25 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-            <div className={styles.resultTrack}>
-              <InfoTitle head="结果跟踪" />
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
-                </li>
-              </ul>
-            </div>
-            }
-            {
-              _.isEmpty(quesVO) ? null :
-              <div className={styles.taskSurvey}>
-                <InfoTitle head="任务调查" />
+              <div className={styles.resultTrack}>
+                <InfoTitle head="结果跟踪" />
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                    <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
                   </li>
                 </ul>
               </div>
+            }
+            {
+              _.isEmpty(quesVO) ? null :
+                <div className={styles.taskSurvey}>
+                  <InfoTitle head="任务调查" />
+                  <ul className={styles.propertyList}>
+                    <li className={styles.item}>
+                      <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                    </li>
+                  </ul>
+                </div>
             }
             <div id="approvalRecord" className={styles.module}>
               <InfoTitle head="审批意见" />
