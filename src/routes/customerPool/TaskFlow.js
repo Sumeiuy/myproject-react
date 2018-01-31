@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:47:13
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-01-31 16:57:33
  */
 
 import React, { PureComponent } from 'react';
@@ -275,7 +275,7 @@ export default class TaskFlow extends PureComponent {
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
-          message.error('请导入Excel或CSV文件');
+          message.error('请导入Excel文件');
           return;
         }
       } else if (currentEntry === 1) {
