@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
 import { openRctTab } from '../../utils';
-import { url as urlHelper, permission } from '../../helper';
+import { url as urlHelper, permission, fsp } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
 
@@ -116,9 +116,13 @@ export default class BroadcastList extends PureComponent {
     if (!boradcastList.length || isInit) onHandleGetList();
     // 初始化Uuid
     if (!newUuid.length) getUuid();
+    // 切换数据后返回顶部
   }
 
   componentWillReceiveProps(nextProps) {
+    const {
+      morningBoradcast: { boradcastList },
+    } = this.props;
     const preDelInfo = this.props.morningBoradcast.delBoradcastInfo;
     const nextDelInfo = nextProps.morningBoradcast.delBoradcastInfo;
     if (preDelInfo !== nextDelInfo) {
@@ -127,6 +131,11 @@ export default class BroadcastList extends PureComponent {
       } else {
         message.success('删除失败', 1);
       }
+    }
+
+    // 列表数据刷新后返回fsp顶部
+    if (boradcastList !== nextProps.morningBoradcast.boradcastList) {
+      fsp.fspScrollToTop();
     }
   }
 
@@ -242,7 +251,6 @@ export default class BroadcastList extends PureComponent {
       key: 'author',
       render: (text, record) => record.updatedBy || record.createdBy,
     }];
-    console.log(permission.hasZXMampPermission());
     if (permission.hasZXMampPermission()) {
       columns.push({
         title: '操作',
