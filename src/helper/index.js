@@ -13,6 +13,7 @@ import regxp from './regexp';
 import time from './time';
 import url from './url';
 import encode from './encode';
+import fsp from './fsp';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -67,4 +68,5 @@ export default {
   url,
   encode,
   getIconType,
+  fsp,
 };

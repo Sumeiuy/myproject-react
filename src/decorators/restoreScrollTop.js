@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import hoistStatics from 'hoist-non-react-statics';
-import { fspContainer } from '../config';
+import { fsp } from '../helper';
 
 const HOCComponent = (ComposedComponent) => {
   class C extends PureComponent {
@@ -24,12 +24,7 @@ const HOCComponent = (ComposedComponent) => {
 
     componentDidMount() {
       // 恢复scrollTop
-      const fsp = document.querySelector(fspContainer.container);
-      if (fsp) {
-        fsp.scrollTop = 0;
-      } else {
-        window.scrollTo(0, 0);
-      }
+      fsp.fspScrollToTop();
     }
 
     /**
