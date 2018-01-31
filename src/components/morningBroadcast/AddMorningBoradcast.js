@@ -291,6 +291,11 @@ export default class AddMorningBoradcast extends PureComponent {
   @autobind
   onBeforeUpload(file) {
     const audioType = this.getInitDate('newsTypeCode');
+    const audioTypeReg = /^audio\/(mpeg|mp3|x-ms-wma)$/;
+    if (!audioTypeReg.test(file.type)) {
+      message.info('资讯晨报文件仅支持mp3及wma格式');
+      return false;
+    }
     if (audioType === 'V2_MORNING_NEWS') {
       const isOver = file.size / 1024 / 1024 < 16;
       if (!isOver) {
