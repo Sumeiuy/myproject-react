@@ -21,8 +21,6 @@ import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBor
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
 
-let TIME_RANGE_FROM; // 查询创建时间-->开始时间
-
 const effects = {
   getBoradcastList: 'morningBoradcast/getBoradcastList',
   saveBoradcast: 'morningBoradcast/saveBoradcast',
@@ -99,11 +97,6 @@ export default class BroadcastList extends PureComponent {
 
   constructor(props) {
     super(props);
-
-    // 初始化开始时间
-    const { morningBoradcast: { newsListQuery } } = this.props;
-    const { FROM_DATE } = BroadcastList.initNewsListQuery();
-    TIME_RANGE_FROM = newsListQuery.FROM_DATE || FROM_DATE;
 
     this.state = {
       visible: false,
@@ -313,59 +306,19 @@ export default class BroadcastList extends PureComponent {
   // Search -->end
 
   // 日期选择组件-->start
-  @autobind()
-  startValue(value) {
-    if (!value) return TIME_RANGE_FROM;
-    TIME_RANGE_FROM = value.format('YYYY-MM-DD');
-    return TIME_RANGE_FROM;
-  }
-
-  @autobind()
-  disabledDate(startValue) {
-    const { TO_DATE } = BroadcastList.initNewsListQuery();
-    return startValue &&
-      startValue.valueOf() > moment(TO_DATE).valueOf();
-  }
-
-  @autobind()
-  disabledEndDate(endValue) {
-    const startValue = this.startValue();
-    const MIN_DATE = moment.min(moment(), moment(startValue).add(6, 'month'));
-    return endValue &&
-      endValue.valueOf() >= MIN_DATE.valueOf();
-  }
-
-  @autobind()
-  onStartChange(value) {
-    this.startValue(value);
-  }
-
-  @autobind()
-  onEndChange(value) {
+  @autobind
+  onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
-    const startValue = this.startValue();
-    this.setState({ endOpen: false });
+    const maxDate = moment(dateStrings[0]).add(6, 'month');
+    if (maxDate.valueOf() < dates[1].valueOf()) {
+      message.error('查询时间段不能超过6个月');
+      return;
+    }
     onHandleGetList({
-      createdFrom: startValue,
-      createdTo: value.format('YYYY-MM-DD'),
+      createdFrom: dateStrings[0],
+      createdTo: dateStrings[1],
       pageNum: 1,
     });
-  }
-
-  @autobind()
-  handleStartOpenChange(open) {
-    if (!open) {
-      this.setState({ endOpen: true });
-    } else {
-      this.setState({ endValue: null });
-    }
-  }
-
-  @autobind()
-  handleEndOpenChange(open) {
-    if (open) {
-      this.setState({ endOpen: open });
-    }
   }
   // 日期选择组件-->end
   render() {
@@ -426,6 +379,7 @@ export default class BroadcastList extends PureComponent {
                     showToday={false}
                     format="YYYY-MM-DD"
                     placeholder={['Start', 'End']}
+                    onChange={this.onChange}
                   />,
                 )}
               </div>
