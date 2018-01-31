@@ -779,17 +779,22 @@ export default class PerformerView extends PureComponent {
       // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId: record.eventId,
-    }, () => {
-      const { mngrMissionDetailInfo: { templateId } } = this.props;
-      // 管理者视图任务反馈统计
-      countAnswersByType({
-        templateId,
-      });
-      // 任务反馈已反馈总数
-      countExamineeByType({
-        templateId,
-      });
-    });
+    }).then(
+      () => {
+        const { mngrMissionDetailInfo: { templateId } } = this.props;
+        if (templateId !== null) {
+          // 管理者视图任务反馈统计
+          countAnswersByType({
+            templateId,
+          });
+          // 任务反馈已反馈总数
+          countExamineeByType({
+            templateId,
+          });
+        }
+      },
+    );
+
     // 管理者视图获取客户反馈
     countFlowFeedBack({
       missionId: record.id,
