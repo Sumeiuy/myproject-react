@@ -93,18 +93,14 @@ export default class Header extends PureComponent {
           {
             !_.isEmpty(navs) ?
               (
-                navs.map((nav) => {
-                  return (
-                    <NavItem
-                      id={nav.id}
-                      name={nav.name}
-                      action={nav.action}
-                      url={nav.url}
-                      path={nav.paht}
-                      subMenu={nav.children}
-                    />
-                  );
-                })
+                navs.map(nav => (<NavItem
+                  id={nav.id}
+                  name={nav.name}
+                  action={nav.action}
+                  url={nav.url}
+                  path={nav.paht}
+                  subMenu={nav.children}
+                />))
               ) :
               null
           }

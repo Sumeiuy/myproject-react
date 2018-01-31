@@ -13,8 +13,8 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
-import { openRctTab, permission } from '../../utils';
-import { url as urlHelper } from '../../helper';
+import { openRctTab } from '../../utils';
+import { url as urlHelper, permission } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
 
