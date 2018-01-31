@@ -71,7 +71,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务类型字典
     missionTypeDict: PropTypes.array,
     exportExcel: PropTypes.func.isRequired,
-    missionProgressStatusDic: PropTypes.object.isRequired,
+    missionProgressStatusDic: PropTypes.array.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,
@@ -300,6 +300,10 @@ export default class ManagerViewDetail extends PureComponent {
       id: 'policy',
       key: '服务策略 :',
       value: servicePolicy || '--',
+    }, {
+      id: 'tip',
+      key: '任务提示 :',
+      value: missionDesc || '--',
     }];
 
     let targetCustInfoData = [{
@@ -323,12 +327,6 @@ export default class ManagerViewDetail extends PureComponent {
       ];
     }
 
-    const descriptInfoData = [{
-      id: 'missionDesc',
-      key: '',
-      value: missionDesc || '--',
-    }];
-
     const urlParams = this.handleExport();
     return (
       <div className={styles.managerViewDetail}>
@@ -346,10 +344,6 @@ export default class ManagerViewDetail extends PureComponent {
             <InfoArea
               data={targetCustInfoData}
               headLine={'目标客户'}
-            />
-            <InfoArea
-              data={descriptInfoData}
-              headLine={'描述'}
             />
             <GroupModal
               wrapperClass={
