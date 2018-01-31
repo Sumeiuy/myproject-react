@@ -70,7 +70,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 任务类型字典
     missionTypeDict: PropTypes.array,
     exportExcel: PropTypes.func.isRequired,
-    missionProgressStatusDic: PropTypes.object.isRequired,
+    missionProgressStatusDic: PropTypes.array.isRequired,
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,

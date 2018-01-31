@@ -14,7 +14,6 @@ import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
-import Loading from '../../../layouts/Loading';
 import BottomFixedBox from './BottomFixedBox';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
@@ -678,9 +677,6 @@ export default class CustomerLists extends PureComponent {
               getCeFileList={getCeFileList}
               filesList={filesList}
             /> : null
-        }
-        {
-          <Loading loading={!isLoadingEnd} forceFull />
         }
       </div>
     );

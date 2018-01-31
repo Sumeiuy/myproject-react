@@ -49,13 +49,13 @@ export default class MissionProgress extends PureComponent {
     // 查看客户明细
     onPreviewCustDetail: PropTypes.func,
     // 任务进度字典
-    missionProgressStatusDic: PropTypes.object,
+    missionProgressStatusDic: PropTypes.array,
   }
 
   static defaultProps = {
     missionImplementationProgress: EMPTY_OBJECT,
     onPreviewCustDetail: () => { },
-    missionProgressStatusDic: {},
+    missionProgressStatusDic: [],
   }
 
   constructor(props) {
@@ -94,7 +94,7 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   findCurrentProgressType(index) {
-    const { missionProgressStatusDic: dic = {} } = this.props;
+    const { missionProgressStatusDic: dic = [] } = this.props;
     const currentProgressType = _.find(dic, item =>
       item.key === MISSION_PROGRESS_MAP[index].key) || {};
     return currentProgressType.key;
