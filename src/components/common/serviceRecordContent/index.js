@@ -64,12 +64,12 @@ function range(start, end) {
 }
 
 // {key:1, children: [{key: 11}]} 转成 {1: [{key: 11}]}
-function generateObjOfKey(arr) {
+function generateObjOfKey(list) {
   const subObj = {};
-  if (_.isEmpty(arr)) {
+  if (_.isEmpty(list)) {
     return subObj;
   }
-  arr.forEach((obj) => {
+  list.forEach((obj) => {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.key] = obj.children;
     } else {
@@ -187,13 +187,13 @@ export default class ServiceRecordContent extends PureComponent {
     if (isEntranceFromPerformerView) {
       const {
         feedbackType = '',
-        feedbackTypeArr = [],
+        feedbackTypeList = [],
         feedbackTypeChild = '',
-        feedbackTypeChildArr = [],
+        feedbackTypeChildList = [],
       } = this.handleServiceType(serviceTypeCode);
 
       // 反馈类型value对应反馈类型数组
-      this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
+      this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
 
       // 执行者视图
       if (isReadOnly) {
@@ -224,10 +224,10 @@ export default class ServiceRecordContent extends PureComponent {
           serviceTypeName,
           // 客户反馈一级
           feedbackType: '',
-          feedbackTypeArr: [],
+          feedbackTypeList: [],
           // 客户反馈二级
           feedbackTypeChild: '',
-          feedbackTypeChildArr: [],
+          feedbackTypeChildList: [],
           // 服务时间（日期）
           serviceDate,
           // 服务时间（时分秒）
@@ -253,9 +253,9 @@ export default class ServiceRecordContent extends PureComponent {
             },
           } = customerFeedback;
           formObject.feedbackType = String(code);
-          formObject.feedbackTypeArr = [{ key: String(code), value: name }];
+          formObject.feedbackTypeList = [{ key: String(code), value: name }];
           formObject.feedbackTypeChild = String(subCode);
-          formObject.feedbackTypeChildArr = [{ key: String(subCode), value: subName }];
+          formObject.feedbackTypeChildList = [{ key: String(subCode), value: subName }];
         }
       } else {
         // 当前日期的时间戳
@@ -266,10 +266,10 @@ export default class ServiceRecordContent extends PureComponent {
           serviceType: serviceTypeCode,
           // 客户反馈一级
           feedbackType,
-          feedbackTypeArr,
+          feedbackTypeList,
           // 客户反馈二级
           feedbackTypeChild,
-          feedbackTypeChildArr,
+          feedbackTypeChildList,
           // 服务时间（日期）
           serviceDate: moment(currentDate).format(dateFormat),
           // 服务时间（时分秒）
@@ -290,23 +290,23 @@ export default class ServiceRecordContent extends PureComponent {
     } else {
       // 客户列表添加服务记录
       // 反馈类型数组
-      const feedbackTypeArr = (motCustfeedBackDict[0] || {}).children || EMPTY_LIST;
+      const feedbackTypeList = (motCustfeedBackDict[0] || {}).children || EMPTY_LIST;
       // 反馈类型value对应反馈类型数组
-      this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
+      this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
       // 反馈子类型数组
-      const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
+      const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || EMPTY_LIST;
       // 当前日期的时间戳
       const currentDate = new Date().getTime();
       const serveType = (motCustfeedBackDict[0] || {}).key || '';
-      const feedbackType = (feedbackTypeArr[0] || {}).key || '';
-      const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).key || '';
+      const feedbackType = (feedbackTypeList[0] || {}).key || '';
+      const feedbackTypeChild = (feedbackTypeChildList[0] || {}).key || '';
 
       formObject = {
         serviceContent: '',
         feedbackType,
         feedbackTypeChild,
-        feedbackTypeArr,
-        feedbackTypeChildArr,
+        feedbackTypeList,
+        feedbackTypeChildList,
         serviceType: serveType,
         serviceWay: (serveWay[0] || {}).key,
         serviceDate: moment(currentDate).format(dateFormat),
@@ -348,22 +348,22 @@ export default class ServiceRecordContent extends PureComponent {
     if (_.isEmpty(value)) {
       return {};
     }
-    const feedbackTypeArr = this.serviceTypeObj[value] || EMPTY_LIST;
-    const feedbackType = (feedbackTypeArr[0] || {}).key || '';
-    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
-    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).key || '';
+    const feedbackTypeList = this.serviceTypeObj[value] || EMPTY_LIST;
+    const feedbackType = (feedbackTypeList[0] || {}).key || '';
+    const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || EMPTY_LIST;
+    const feedbackTypeChild = (feedbackTypeChildList[0] || {}).key || '';
     this.setState({
       serviceType: value,
       feedbackType,
-      feedbackTypeArr,
+      feedbackTypeList,
       feedbackTypeChild,
-      feedbackTypeChildArr,
+      feedbackTypeChildList,
     });
     return {
       feedbackType,
-      feedbackTypeArr,
+      feedbackTypeList,
       feedbackTypeChild,
-      feedbackTypeChildArr,
+      feedbackTypeChildList,
     };
   }
 
@@ -399,13 +399,13 @@ export default class ServiceRecordContent extends PureComponent {
   // 保存反馈类型的值
   @autobind
   handleFeedbackType(value) {
-    const { feedbackTypeArr } = this.state;
-    this.feedbackTypeObj = generateObjOfKey(feedbackTypeArr);
-    const curFeedbackTypeArr = this.feedbackTypeObj[value];
+    const { feedbackTypeList } = this.state;
+    this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
+    const curFeedbackTypeList = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].key,
-      feedbackTypeChildArr: curFeedbackTypeArr,
+      feedbackTypeChild: _.isEmpty(curFeedbackTypeList) ? '' : curFeedbackTypeList[0].key,
+      feedbackTypeChildList: curFeedbackTypeList,
     });
   }
 
@@ -552,8 +552,8 @@ export default class ServiceRecordContent extends PureComponent {
       feedbackDate,
       feedbackType,
       feedbackTypeChild,
-      feedbackTypeArr,
-      feedbackTypeChildArr,
+      feedbackTypeList,
+      feedbackTypeChildList,
       currentFile,
       uploadedFileKey,
       originFileName,
@@ -594,11 +594,11 @@ export default class ServiceRecordContent extends PureComponent {
       [styles.serveType]: true,
       [styles.hidden]: isEntranceFromPerformerView,
     });
-    // feedbackTypeChildArr为空或者客户反馈一级和二级的选项文字相同时不显示二级反馈选项
+    // feedbackTypeChildList为空或者客户反馈一级和二级的选项文字相同时不显示二级反馈选项
     let isShowSubCustomerFeedback = false;
-    if (!_.isEmpty(feedbackTypeChildArr)) {
-      const currentCustomerFeedback = _.find(feedbackTypeArr, { key: feedbackType });
-      const currentSubCustomerFeedback = _.find(feedbackTypeChildArr, { key: feedbackTypeChild });
+    if (!_.isEmpty(feedbackTypeChildList)) {
+      const currentCustomerFeedback = _.find(feedbackTypeList, { key: feedbackType });
+      const currentSubCustomerFeedback = _.find(feedbackTypeChildList, { key: feedbackTypeChild });
       isShowSubCustomerFeedback =
         currentCustomerFeedback.value === currentSubCustomerFeedback.value;
     }
@@ -717,7 +717,7 @@ export default class ServiceRecordContent extends PureComponent {
                 getPopupContainer={() => this.customerFeedbackRef}
               >
                 {
-                  (feedbackTypeArr).map(obj => (
+                  (feedbackTypeList).map(obj => (
                     <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                   ))
                 }
@@ -732,7 +732,7 @@ export default class ServiceRecordContent extends PureComponent {
                   getPopupContainer={() => this.customerFeedbackRef}
                 >
                   {
-                    (feedbackTypeChildArr).map(obj => (
+                    (feedbackTypeChildList).map(obj => (
                       <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                     ))
                   }
