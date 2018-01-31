@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:39:30
+ * @Last Modified by: Wang Junjun
+ * @Last Modified time: 2018-01-30 16:58:12
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 import _ from 'lodash';
+import moment from 'moment/moment';
 
 import { optionsMap, fspContainer } from '../../config';
 import { emp, time } from '../../helper';
@@ -26,7 +27,6 @@ import {
 } from './config';
 
 import styles from './home.less';
-import { BroadcastList } from '../morningBroadcast';
 import
 { MorningBroadcast,
   ToBeDone,
@@ -191,12 +191,11 @@ export default class Home extends PureComponent {
       empPostnList,
     });
     // 初始化晨报列表数据，用于首页提供晨报展示
-    const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
     homaPageNews({
-      createdFrom: FROM_DATE,
-      createdTo: TO_DATE,
-      pageNum: PAGE_NUM,
-      pageSize: PAGE_LEN });
+      createdFrom: moment().subtract(1, 'months').format('YYYY-MM-DD'),
+      createdTo: moment().format('YYYY-MM-DD'),
+      pageNum: 1,
+      pageSize: 10 });
   }
 
   componentWillReceiveProps(nextProps) {

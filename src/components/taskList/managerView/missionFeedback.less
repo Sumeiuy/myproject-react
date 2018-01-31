@@ -48,7 +48,9 @@
       .firAllBorder {
         border-right: 1px solid #e9e9e9;
         width: 30%;
-        padding: 26px 0 26px 16px;
+        height: 100%;
+        padding-top: 31px;
+        padding-left: 20px;
         text-align: left;
         vertical-align: middle;
         font-size: 12px;
@@ -56,27 +58,19 @@
       }
       .allSedBoder {
         width: 70%;
-        padding-top: 28px;
+        padding-top: 26px;
         font-size: 12px;
         color: #333;
         display: flex;
         align-items: center;
         justify-content: center;
         & > div {
-          width: 90%;
+          width: 75%;
         }
         .charts {
-          margin-bottom: 5px;
+          margin-bottom: 16px;
           & >  div {
             width: 100%; //#e3e2f1
-          }
-          :global {
-            .ant-progress-inner {
-              background: #e3e2f1;
-              .ant-progress-bg {
-                background-color: #756fb8;
-              }
-            }
           }
         }
        .allService {
@@ -109,7 +103,8 @@
       .firAllBorderTwo {
         border-right: 1px solid #e9e9e9;
         width: 20%;
-        padding: 26px 0 26px 16px;
+        height: 100%;
+        padding: 26px 0 26px 31px;
         text-align: left;
         vertical-align: middle;
         font-size: 12px;
@@ -117,6 +112,7 @@
       }
       .allSedBoderTwo {
         width: 80%;
+        height: 100%;
         font-size: 12px;
         color: #333;
         .layBox {
@@ -130,19 +126,28 @@
           }
           & > div:last-child {
             width: 60%;
+            height: 80px;
           }
         }
         .charts {
-          padding: 36px 50px 24px;
+          padding: 36px 50px 35px;
+          height: 100%;
           & > div {
             width: 100%; //#e3e2f1
           }
         }
         .allService {
-          padding: 32px 10% 15px;
+          display: flex;
+          align-items: center;
+          .content {
+            width: 100%;
+            display: flex;
+            padding: 0 15%;
+          }
           span {
-            width: 50%;
+            width: 45%;
             display: inline-block;
+            margin-left: 5%;
             b {
               font-weight: normal;
             }
@@ -181,86 +186,90 @@
       }
       .sedBoder {
         width: 70%;
-       & > div {
-          width: 50%;
+        & > div {
+          font-size: 12px;
+          color: #333;
+          // margin: 10px 0;
+          width: 40%;
           float: left;
           height: 100%;
         }
         .tips {
-          padding: 6% 0;
+          width: 60%;
+        }
+        .content {
+          width: 100%;
+          height: 100%;
           display: flex;
-          align-items: center;
           justify-content: center;
-          & > div {
-            font-size: 12px;
-            color: #333;
-            margin: 10px 0;
-          }
-          .content {
+          align-items: flex-start;
+          color: #333;
+          font-size: 12px;
+          flex-direction: column;
+          padding: 0 10%;
+          & > .radioItem {
             width: 100%;
-            height: 100%;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            color: #333;
-            font-size: 14px;
-            flex-direction: column;
-            & > .radioItem {
-              width: 90%;
-              display: flex;
-              justify-content: flex-start;
-              align-items: center;
+            justify-content: flex-start;
+            align-items: center;
+            white-space: nowrap;
+            & > .icon {
+              width: 8px;
+              height: 8px;
+              display: inline-table;
+              border-radius: 100%;
+              margin-right: 10px;
+              background: #6dacf4;
+            }
+            & > .name {
+              display: inline-block;
+              text-overflow: ellipsis;
               white-space: nowrap;
-              & > .icon:first-child {
-                width: 10px;
-                height: 10px;
-                display: inline-block;
-                border-radius: 100%;
-                margin-right: 10px;
-                background: #6dacf4;
-              }
-              & > .icon:nth-of-type(1) {
-                background: #6dacf4;
-              }
-              & > .icon:nth-of-type(2) {
-                background: #4fe0f5;
-              }
-              & > .icon:nth-of-type(3) {
-                background: #ffa800;
-              }
-              & > .icon:nth-of-type(4) {
-                background: #756fb8;
-              }
-              & > .icon:nth-of-type(5) {
-                background: #4adad5;
-              }
-              & > .name {
-                display: inline-block;
-                max-width: 75%;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
-              }
-              & > .value {
-                max-width: 25%;
-              }
+              overflow: hidden;
+            }
+          }
+          & > .radioItem:nth-of-type(1) {
+            .icon {
+              background: #6dacf4;
+            }
+          }
+          & > .radioItem:nth-of-type(2) {
+            .icon {
+              background: #4fe0f5;
+            }
+          }
+          & > .radioItem:nth-of-type(3) {
+            .icon {
+              background: #ffa800;
+            }
+          }
+          & > .radioItem:nth-of-type(4) {
+            .icon {
+              background: #756fb8;
+            }
+          }
+          & > .radioItem:nth-of-type(5) {
+            .icon {
+              background: #4adad5;
             }
           }
         }
       }
       .thrBoder {
         width: 70%;
-        padding: 15px 0 10px;
+        padding: 4px 16px 0 33px;
         border-left: 1px solid #e9e9e9;
         .problems {
           width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
           & > div {
-            width: 90%;
+            .problemList {
+              height: 140px;
+              margin-bottom: 17px;
+              overflow-y: auto;
+            }
             h5 {
-              width: 100%;
+              // width: 100%;
+              margin-top: 5px;
               font-size: 12px;
               color: #333;
               white-space: nowrap;
@@ -272,12 +281,11 @@
       }
       .problemsInfo {
         width: 30%;
-        padding: 40px 0 0;
+        padding: 76px 0 0 20px;
         text-align: left;
         h5 {
           font-size: 12px;
           color: #333;
-          padding: 0 16px;
         }
       }
       .firBorderTwo {
@@ -289,7 +297,7 @@
         h5 {
           font-size: 12px;
           color: #333;
-          padding: 0 16px;
+          padding: 0 32px;
         }
       }
       .sedBoderTwo {
@@ -306,48 +314,67 @@
           height: 100%;
         }
         .tips {
-          padding: 5% 10% 0;
-          h5 {
-            font-size: 12px;
+          display: flex;
+          align-items: center;
+          .content {
+            width: 100%;
+            display: flex;
+            flex-flow: row wrap;
             color: #333;
-            width: 50%;
-            float: left;
-            margin: 10px 0;
-            b {
-              font-weight: normal;
+            font-size: 12px;
+            padding: 0 15%;
+            & > .radioItem {
+              min-width: 45%;
+              display: flex;
+              align-items: center;
+              white-space: nowrap;
+              margin-left: 5%;
+              & > .icon {
+                width: 8px;
+                height: 8px;
+                display: inline-table;
+                border-radius: 100%;
+                margin-right: 10px;
+                background: #6dacf4;
+              }
+              & > .name {
+                display: inline-block;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+              }
             }
-            &:before {
-              content: "";
-              width: 10px;
-              height: 10px;
-              display: inline-block;
-              z-index: -1;
-              left: -15px;
-              top: -15px;
-              border-radius: 50%;
-              margin-right: 10px;
+            & > .radioItem:nth-of-type(1) {
+              .icon {
+                background: #6dacf4;
+              }
             }
-            &:nth-of-type(1):before {
-              background: #6dacf4;
+            & > .radioItem:nth-of-type(2) {
+              .icon {
+                background: #4fe0f5;
+              }
             }
-            &:nth-of-type(2):before {
-              background: #4fe0f5;
+            & > .radioItem:nth-of-type(3) {
+              .icon {
+                background: #ffa800;
+              }
             }
-            &:nth-of-type(3):before {
-              background: #ffa800;
+            & > .radioItem:nth-of-type(4) {
+              .icon {
+                background: #756fb8;
+              }
             }
-            &:nth-of-type(4):before {
-              background: #756fb8;
-            }
-            &:nth-of-type(5):before {
-              background: #4adad5;
+            & > .radioItem:nth-of-type(5) {
+              .icon {
+                background: #4adad5;
+              }
             }
           }
         }
       }
       .thrBoderTwo {
         width: 80%;
-        padding: 15px 0 10px;
+        padding: 4px 0 0;
         border-left: 1px solid #e9e9e9;
         .problems {
           width: 100%;
@@ -356,7 +383,13 @@
           align-items: center;
           & > div {
             width: 780px;
+            .problemList {
+              height: 140px;
+              margin-bottom: 17px;
+              overflow-y: auto;
+            }
             h5 {
+              margin-top: 5px;
               font-size: 12px;
               color: #333;
               white-space: nowrap;
@@ -373,7 +406,7 @@
         h5 {
           font-size: 12px;
           color: #333;
-          padding: 0 16px;
+          padding: 0 32px;
         }
       }
       .FeedAll {
@@ -381,6 +414,7 @@
         clear: both;
         overflow: hidden;
         width: 100%;
+        height: 80px;
         & > div {
           float: left;
         }
@@ -404,6 +438,9 @@
             .ant-progress-text {
               width: 70px;
             }
+            .ant-progress-outer {
+              background-color: #e3e2f1;
+            }
             .ant-progress-bg {
               height: 8px;
               background-color: #756fb8;
@@ -423,7 +460,7 @@
       .radioFeedAll {
         border-top: 1px solid #e9e9e9;
         width: 100%;
-        height: 180px;
+        height: 140px;
         & > div {
           float: left;
           height: 100%;
@@ -432,6 +469,7 @@
       .subjective {
         border-top: 1px solid #e9e9e9;
         width: 100%;
+        height: 195px;
         clear: both;
         overflow: hidden;
         // min-height: 200px;
