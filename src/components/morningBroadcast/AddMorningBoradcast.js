@@ -371,6 +371,7 @@ export default class AddMorningBoradcast extends PureComponent {
       <Modal
         title={`${newsId !== -1 ? '修改' : '新建'}晨间播报`}
         width="650px"
+        maskClosable={false}
         wrapClassName="addMorningBoradcast"
         bodyStyle={{
           padding: 0,

@@ -306,6 +306,12 @@ export default class BroadcastList extends PureComponent {
   // Search -->end
 
   // 日期选择组件-->start
+  @autobind()
+  disabledDate(startValue) {
+    const { TO_DATE } = BroadcastList.initNewsListQuery();
+    return startValue &&
+      startValue.valueOf() > moment(TO_DATE).valueOf();
+  }
   @autobind
   onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
