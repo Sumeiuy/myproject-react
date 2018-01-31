@@ -594,6 +594,15 @@ export default class ServiceRecordContent extends PureComponent {
       [styles.serveType]: true,
       [styles.hidden]: isEntranceFromPerformerView,
     });
+    console.log('look here: ', feedbackTypeArr, feedbackType, feedbackTypeChildArr, feedbackTypeChild);
+    // feedbackTypeChildArr为空或者客户反馈一级和二级的选项文字相同时不显示二级反馈选项
+    let isShowSubCustomerFeedback = false;
+    if (!_.isEmpty(feedbackTypeChildArr)) {
+      const currentCustomerFeedback = _.find(feedbackTypeArr, { key: feedbackType });
+      const currentSubCustomerFeedback = _.find(feedbackTypeChildArr, { key: feedbackTypeChild });
+      isShowSubCustomerFeedback =
+        currentCustomerFeedback.value === currentSubCustomerFeedback.value;
+    }
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
@@ -715,7 +724,7 @@ export default class ServiceRecordContent extends PureComponent {
                 }
               </Select>
               {
-                _.isEmpty(feedbackTypeChildArr) ? null :
+                isShowSubCustomerFeedback ? null :
                 <Select
                   value={feedbackTypeChild}
                   style={width}
