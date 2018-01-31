@@ -2,8 +2,11 @@
   padding: 14px 20px 24px 18px;
   background-color: #fff;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  .detailContent {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
   .missionImplementationSection {
     width: 100%;
     min-height: 180px;
@@ -31,6 +34,23 @@
   .basicInfoSection {
     display: block;
     margin-bottom: 10px;
+    .custValue {
+      display: flex;
+      .totalNum {
+        font-size: 14px;
+        color: #108ee9;
+        text-align: right;
+        min-width: 80;
+        cursor: pointer;
+      }
+      .tip {
+        color: #2782d7;
+        width: 12px;
+        height: 12px;
+        font-size: 14px;
+        margin-left: 5px;
+      }
+    }
   }
 }
 .custDetailContainer {

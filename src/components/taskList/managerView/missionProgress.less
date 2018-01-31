@@ -1,6 +1,7 @@
 .missionProgressSection {
   display: block;
   border: 1px solid #c2c2c2;
+  box-shadow: -1px 1px 5px 1px #c2c2c2;
   width: 95%;
   margin: 0 auto;
   margin-bottom: 10px;
@@ -40,7 +41,6 @@
   & > .content {
     margin: 0 auto;
     width: 95%;
-    padding: 10px;
     padding-bottom: 40px;
     padding-top: 40px;
     & > .area {
@@ -59,7 +59,7 @@
         & > .title {
           margin-right: 8px;
           display: inline-block;
-          width: 120px;
+          min-width: 85px;
           text-align: right;
           font-size: 14px;
           color: #a7a7a7;
@@ -83,8 +83,7 @@
               position: relative;
             }
             .ant-progress-text {
-              width: 80px;
-              max-width: 80px;
+              min-width: 70px;
             }
             .ant-progress-bg {
               // width: 50%;
