@@ -41,6 +41,27 @@ const MISSION_PROGRESS_MAP = [{
   name: '已达标，未达标',
 }];
 
+function getPercent(num) {
+  return Number(num * 100).toFixed(0);
+}
+
+function getMaxRidio(strNum1, strNum2, strNum3) {
+  // 自适应百分比
+  const maxValue = Math.max(
+    Number(strNum1),
+    Number(strNum2),
+    Number(strNum3),
+  );
+  // 0.85 是分界线，自己取得
+  // 当最大值小于0.85时，比例做成 自适应 的
+  // 自适应：扩大原有比例的显示
+  if (maxValue < 0.85) {
+    return maxValue + 0.1;
+  }
+  // 当最大值大于0.85时，按真实比例显示
+  return 1.0;
+}
+
 export default class MissionProgress extends PureComponent {
 
   static propTypes = {
@@ -197,29 +218,12 @@ export default class MissionProgress extends PureComponent {
     );
   }
 
-  getPercent(num) {
-    return Number(num * 100).toFixed(0);
-  }
-
-  getMaxRidio(strNum1, strNum2, strNum3) {
-    // 自适应百分比
-    const maxValue = Math.max(
-      Number(strNum1),
-      Number(strNum2),
-      Number(strNum3),
-    );
-    if (maxValue < 0.85) {
-      return maxValue + 0.1;
-    }
-    return maxValue;
-  }
-
   getParam(param) {
     const { total, activeCount, ratio, maxRadio, activeType, remainingType } = param;
     // 真实百分比
-    const activePercent = this.getPercent(Number(ratio));
+    const activePercent = getPercent(Number(ratio));
     // 展示百分比
-    const showActivePercent = this.getPercent(activeCount / (maxRadio * 100));
+    const showActivePercent = getPercent(activeCount / (maxRadio * 100));
     return {
       activeType,
       remainingType,
@@ -249,7 +253,7 @@ export default class MissionProgress extends PureComponent {
       // 已达标比例
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
-    const maxRadio = this.getMaxRidio(
+    const maxRadio = getMaxRidio(
       servedNumsRatio,
       completedNumsRatio,
       standardNumsRatio,
