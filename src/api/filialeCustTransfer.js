@@ -3,7 +3,7 @@
  * @Description 分公司客户划转相关接口
  * @Date: 2017-12-13 10:16:45
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 13:53:53
+ * @Last Modified time: 2018-01-31 19:07:02
  */
 
 export default function cust(api) {
@@ -16,7 +16,11 @@ export default function cust(api) {
     getCustList: query => api.post('/groovynoauth/fsp/cust/manager/queryCustListByPostn', query),
     // 获取新服务经理列表
     getNewManagerList: query => api.post('/groovynoauth/fsp/cust/manager/queryEmpPostns', query),
-    // 保存接口
+    // 保存，修改接口
     saveChange: query => api.post('/groovynoauth/fsp/cust/manager/changeCustmentAssignment', query),
+    // 下一步按钮和下一步审批人
+    getButtonList: query => api.post('/groovynoauth/fsp/cust/manager/queryNextStepInfo', query),
+    // 走流程接口
+    doApprove: query => api.post('/groovynoauth/fsp/cust/manager/doApprove', query),
   };
 }
