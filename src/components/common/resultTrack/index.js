@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 16:12:14
+ * @Last Modified time: 2018-02-01 14:52:10
  * 结果跟踪
  */
 
@@ -87,15 +87,6 @@ export default class ResultTrack extends PureComponent {
       currentIndicatorDescription: '',
       currentSelectedOperationName: '',
       currentSelectedOperationValue: '',
-      originSelectedIndicator: {
-        currentSelectedLevel1Indicator: defaultIndicatorValue,
-        currentSelectedLevel2Indicator: '',
-        currentUnit: '',
-        currentSelectedOperationName: '',
-        currentSelectedTrackDate: '',
-        inputValue: '',
-      },
-      isDataChanged: false,
       currentSelectedTrackDate: '30',
       currentSelectedOperationId: '',
       isProdBound: false,
@@ -152,15 +143,6 @@ export default class ResultTrack extends PureComponent {
       currentMax,
       currentIndicatorDescription,
       currentSelectedOperationName,
-      originSelectedIndicator: {
-        currentSelectedLevel1Indicator,
-        currentSelectedLevel2Indicator,
-        currentUnit,
-        currentSelectedOperationName,
-        currentSelectedTrackDate,
-        inputValue: inputIndicator || '',
-      },
-      isDataChanged: false,
       currentSelectedTrackDate,
       currentSelectedOperationId,
       isProdBound,
@@ -492,42 +474,15 @@ export default class ResultTrack extends PureComponent {
    */
   @autobind
   handleCheckChange() {
-    const {
-      checked,
-      originSelectedIndicator,
-      currentSelectedLevel1Indicator,
-      currentSelectedLevel2Indicator,
-      currentUnit,
-      currentSelectedOperationName,
-      currentSelectedTrackDate,
-      inputValue,
-      } = this.state;
-    const newSelectedIndicatorData = {
-      currentSelectedLevel1Indicator,
-      currentSelectedLevel2Indicator,
-      currentUnit,
-      currentSelectedOperationName,
-      currentSelectedTrackDate,
-      inputValue,
-    };
-
-    if (checked) {
-      // 当前即将取消选择
-      if (!_.isEqual(originSelectedIndicator, newSelectedIndicatorData)) {
-        this.setState({
-          isDataChanged: true,
-          originSelectedIndicator: newSelectedIndicatorData,
-        });
-      } else {
-        this.setState({
-          isDataChanged: false,
-        });
-      }
-    }
+    const { checked } = this.state;
 
     this.setState({
       checked: !checked,
     });
+
+    if (checked) {
+      message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
+    }
   }
 
   /**
@@ -592,14 +547,6 @@ export default class ResultTrack extends PureComponent {
     });
   }
 
-  /**
-   * 取消结果跟踪时的提示信息
-   */
-  @autobind
-  renderCheckWarning() {
-    message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
-  }
-
   @autobind
   renderStateText() {
     let stateText = '';
@@ -635,7 +582,6 @@ export default class ResultTrack extends PureComponent {
       currentSelectedOperationValue,
       level1Indicator,
       level2Indicator,
-      isDataChanged,
       currentSelectedTrackDate,
       isProdBound,
       currentSelectedProduct,
@@ -792,11 +738,6 @@ export default class ResultTrack extends PureComponent {
               <span>{currentSelectedLevel2Indicator || ''}：</span>
               <span>{currentIndicatorDescription}</span>
             </div> : null
-        }
-        {
-          (!checked && isDataChanged) ?
-            this.renderCheckWarning()
-            : null
         }
       </div>
     );

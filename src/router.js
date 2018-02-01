@@ -46,8 +46,7 @@ import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
-// 晨间播报
-import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
+import FilialeCustTransferEdit from './routes/filialeCustTransfer/Edit';
 import PreSaleQuery from './routes/preSaleQuery/Home';
 
 const { ConnectedRouter } = routerRedux;
@@ -107,6 +106,9 @@ const routes = [
   {
     path: '/filialeCustTransfer',
     component: FilialeCustTransfer,
+    children: [
+      { path: '/edit', component: FilialeCustTransferEdit },
+    ],
   },
   {
     path: '/customerFeedback',
@@ -120,11 +122,6 @@ const routes = [
     path: '/mainPosition',
     component: MainPosition,
   },
-  // 晨间播报
-  { path: '/broadcastList',
-    component: BroadcastList,
-  },
-  { path: '/broadcastDetail', component: BroadcastDetail },
 ];
 
 // 递归创建路由

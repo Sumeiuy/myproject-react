@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 09:28:36
+ * @Last Modified time: 2018-02-01 12:09:07
  */
 
 import React, { PureComponent } from 'react';
@@ -585,6 +585,8 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
+      labelName,
+      labelDesc,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
@@ -679,6 +681,13 @@ export default class TaskFlow extends PureComponent {
       });
     } else {
       postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+      postBody = {
+        ...postBody,
+        queryLabelReq: {
+          labelDesc,
+          labelName,
+        },
+      };
     }
 
     submitTaskFlow({ ...postBody });
