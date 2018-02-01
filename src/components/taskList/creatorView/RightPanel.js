@@ -252,7 +252,7 @@ export default class RightPanel extends PureComponent {
         return (<div>
           <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
           <p>{this.renderOption(optionRespDtoList)}</p>
-        </div>)
+        </div>);
       }
       return (<div>
         <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
@@ -318,25 +318,25 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-              <div className={styles.resultTrack}>
-                <InfoTitle head="结果跟踪" />
-                <ul className={styles.propertyList}>
-                  <li className={styles.item}>
-                    <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
-                  </li>
-                </ul>
-              </div>
+            <div className={styles.resultTrack}>
+              <InfoTitle head="结果跟踪" />
+              <ul className={styles.propertyList}>
+                <li className={styles.item}>
+                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
+                </li>
+              </ul>
+            </div>
             }
             {
               _.isEmpty(quesVO) ? null :
-                <div className={styles.taskSurvey}>
-                  <InfoTitle head="任务调查" />
-                  <ul className={styles.propertyList}>
-                    <li className={styles.item}>
-                      <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
-                    </li>
-                  </ul>
-                </div>
+              <div className={styles.taskSurvey}>
+                <InfoTitle head="任务调查" />
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                  </li>
+                </ul>
+              </div>
             }
             <div id="approvalRecord" className={styles.module}>
               <InfoTitle head="审批意见" />
