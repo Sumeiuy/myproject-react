@@ -18,5 +18,7 @@ export default function cust(api) {
     getNewManagerList: query => api.post('/groovynoauth/fsp/cust/manager/queryEmpPostns', query),
     // 保存接口
     saveChange: query => api.post('/groovynoauth/fsp/cust/manager/changeCustmentAssignment', query),
+    // 获取批量划转的数据
+    queryCustomerAssignImport: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignImport', query),
   };
 }

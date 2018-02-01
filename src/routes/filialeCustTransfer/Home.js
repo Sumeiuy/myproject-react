@@ -48,6 +48,8 @@ const mapStateToProps = state => ({
   newManagerList: state.filialeCustTransfer.newManagerList,
   // 组织机构树
   custRangeList: state.customerPool.custRange,
+  // 批量划转的数据
+  customerAssignImport: state.filialeCustTransfer.customerAssignImport,
 });
 
 const mapDispatchToProps = {
@@ -68,6 +70,8 @@ const mapDispatchToProps = {
   saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
   // 提交成功后清除上一次查询的数据
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
+  // 获取批量划转的客户数据
+  queryCustomerAssignImport: fetchDataFunction(true, 'filialeCustTransfer/queryCustomerAssignImport', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -103,12 +107,18 @@ export default class Permission extends PureComponent {
     emptyQueryData: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
+    // 批量划转的接口
+    queryCustomerAssignImport: PropTypes.func,
+    // 批量划转的数据
+    customerAssignImport: PropTypes.object,
   }
 
   static defaultProps = {
     custList: [],
     managerData: [],
     newManagerList: [],
+    queryCustomerAssignImport: _.noop,
+    customerAssignImport: {},
   }
 
   constructor(props) {
@@ -117,7 +127,7 @@ export default class Permission extends PureComponent {
       // 高亮项的下标索引
       activeRowIndex: 0,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      isShowCreateModal: false,
+      isShowCreateModal: true,
     };
   }
 
@@ -305,6 +315,9 @@ export default class Permission extends PureComponent {
       emptyQueryData,
       // 组织机构树
       custRangeList,
+      // 批量划转
+      queryCustomerAssignImport,
+      customerAssignImport,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -376,6 +389,8 @@ export default class Permission extends PureComponent {
               saveChange={saveChange}
               emptyQueryData={emptyQueryData}
               custRangeList={custRangeList}
+              queryCustomerAssignImport={queryCustomerAssignImport}
+              customerAssignImport={customerAssignImport}
             />
           )
         }

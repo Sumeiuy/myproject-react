@@ -30,6 +30,7 @@ export default {
     custList: EMPTY_LIST, // 客户列表列表
     managerData: EMPTY_LIST, // 服务经理数据
     newManagerList: EMPTY_LIST, // 新服务经理列表
+    customerAssignImport: EMPTY_OBJECT,  // 批量划转的客户
   },
   reducers: {
     getDetailInfoSuccess(state, action) {
@@ -84,6 +85,16 @@ export default {
         custList: EMPTY_LIST,
         managerData: EMPTY_LIST,
         newManagerList: EMPTY_LIST,
+      };
+    },
+    queryCustomerAssignImportSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        customerAssignImport: {
+          list: resultData.list,
+          page: resultData.page,
+        },
       };
     },
   },
@@ -146,6 +157,14 @@ export default {
     * emptyQueryData({ payload }, { put }) {
       yield put({
         type: 'emptyQueryDataSuccess',
+      });
+    },
+    // 获取导入的批量划转的数据
+    * queryCustomerAssignImport({ payload }, { call, put }) {
+      const response = yield call(api.queryCustomerAssignImport, payload);
+      yield put({
+        type: 'queryCustomerAssignImportSuccess',
+        payload: response,
       });
     },
   },

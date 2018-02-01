@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Button, Modal, Upload } from 'antd';
+import { message, Modal, Upload, Popconfirm } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
@@ -58,17 +58,23 @@ export default class FilialeCustTransfer extends PureComponent {
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
+    // 批量划转
+    queryCustomerAssignImport: PropTypes.func,
+    customerAssignImport: PropTypes.object,
   }
 
   static defaultProps = {
     custList: EMPTY_LIST,
     managerData: EMPTY_LIST,
     newManagerList: EMPTY_LIST,
+    queryCustomerAssignImport: _.noop,
+    customerAssignImport: {},
   }
 
   constructor(props) {
     super(props);
-    this.checkUserIsFiliale();
+    // 取消权限控制
+    // this.checkUserIsFiliale();
     this.state = {
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
@@ -78,32 +84,61 @@ export default class FilialeCustTransfer extends PureComponent {
       newManager: EMPTY_OBJECT,
       // 划转方式默认值--单客户划转
       transferType: defaultType,
+      // 上传后的返回值
+      attachment: '',
     };
   }
 
-  componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props.custRangeList;
-    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
-      this.checkUserIsFiliale();
-    }
-  }
+  // 取消权限控制
+  // componentWillReceiveProps({ custRangeList }) {
+  //   const oldCustRangeList = this.props.custRangeList;
+  //   if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+  //     this.checkUserIsFiliale();
+  //   }
+  // }
 
-  // 判断当前登录用户部门是否是分公司
+  // 上传事件
   @autobind
-  checkUserIsFiliale() {
-    const { custRangeList } = this.props;
-    if (!_.isEmpty(custRangeList)) {
-      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        Modal.warning({
-          title: '提示',
-          content: '您不是分公司人员，无权操作！',
-          onOk: () => {
-            this.handleCancel();
-          },
-        });
+  onChange(info) {
+    const uploadFile = info.file;
+    if (uploadFile.response && uploadFile.response.code) {
+      if (uploadFile.response.code === '0') {
+        // 上传成功
+        const data = uploadFile.response.resultData;
+        const { queryCustomerAssignImport } = this.props;
+        const payload = {
+          appId: data,
+          pageNum: 1,
+          pageSize: 10,
+        };
+        this.setState({
+          attachment: data,
+        }, () => queryCustomerAssignImport(payload));
+        // 发送请求
+      } else {
+        // 上传失败
+        message.error(uploadFile.response.msg);
       }
     }
   }
+
+  // 去掉权限控制
+  // 判断当前登录用户部门是否是分公司
+  // @autobind
+  // checkUserIsFiliale() {
+  //   const { custRangeList } = this.props;
+  //   if (!_.isEmpty(custRangeList)) {
+  //     if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+  //       Modal.warning({
+  //         title: '提示',
+  //         content: '您不是分公司人员，无权操作！',
+  //         onOk: () => {
+  //           this.handleCancel();
+  //         },
+  //       });
+  //     }
+  //   }
+  // }
 
   // 选择客户
   @autobind
@@ -257,57 +292,44 @@ export default class FilialeCustTransfer extends PureComponent {
     that.setState({ isShowModal: false });
   }
 
-
-  // 上传事件
-  @autobind
-  onChange(info) {
-    const uploadFile = info.file;
-    this.setState({
-      file: uploadFile,
-    });
-    if (uploadFile.response && uploadFile.response.code) {
-      if (uploadFile.response.code === '0') {
-        // 上传成功的返回值 0
-        const data = uploadFile.response.resultData;
-        this.setState({
-          status: 'success',
-          statusText: '上传完成',
-          fileList: data.attaches,
-          oldFileList: data.attaches,
-          attachment: data.attachment,
-        });
-      } else {
-        // 上传失败的返回值 MAG0005
-        this.setState({
-          status: 'active',
-          fileList: this.state.oldFileList,
-          file: {},
-          percent: 0,
-        });
-        message.error(uploadFile.response.msg);
-      }
-    }
-  }
-
   render() {
     const {
       custList,
       newManagerList,
       managerData,
+      customerAssignImport,
     } = this.props;
-    const { transferType } = this.state;
+    console.warn('customerAssignImport', customerAssignImport);
+    const { transferType, attachment } = this.state;
     const uploadProps = {
       data: {
         empId: emp.getId(),
         attachment: '',
       },
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/uploadTemp`,
       headers: {
         accept: '*/*',
       },
       onChange: this.onChange,
       showUploadList: false,
     };
+    // 上传组件
+    const uploadElement = _.isEmpty(attachment) ?
+      (<Upload {...uploadProps} {...this.props}>
+        <a>导入</a>
+      </Upload>)
+    :
+      (<Popconfirm
+        placement="top"
+        onConfirm={() => this.onRemove()}
+        okText="是"
+        cancelText="否"
+        title={'再次导入会覆盖之前导入的数据，是否继续导入？'}
+      >
+        <Upload {...uploadProps} {...this.props}>
+          <a>导入</a>
+        </Upload>
+      </Popconfirm>);
     return (
       <CommonModal
         title="分公司客户划转申请"
@@ -320,76 +342,61 @@ export default class FilialeCustTransfer extends PureComponent {
         afterClose={this.afterClose}
       >
         <div className={styles.filialeCustTransferWrapper} >
-          <div className={styles.filialeCustTransferBox} >
-            <div className={styles.selectBox}>
-              <div className={styles.selectLeft}>
-                <InfoForm style={{ width: 'auto' }} label="划转方式" required>
-                  <Select
-                    name="transferType"
-                    data={config.transferType}
-                    value={transferType}
-                    onChange={this.handleSelectChange}
+          <InfoForm style={{ width: '120px' }} label="划转方式" required>
+            <Select
+              name="transferType"
+              data={config.transferType}
+              value={transferType}
+              onChange={this.handleSelectChange}
+            />
+          </InfoForm>
+          {
+            transferType !== defaultType ?
+              <div className={styles.filialeBtn}>
+                { uploadElement }
+                |
+                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+              </div>
+            :
+              null
+          }
+          {/* 划转方式是否等于默认值 */}
+          {
+            transferType === defaultType ?
+              <div>
+                <InfoForm style={{ width: '120px' }} label="选择客户" required>
+                  <DropDownSelect
+                    placeholder="选择客户"
+                    showObjKey="custName"
+                    objId="brokerNumber"
+                    value=""
+                    searchList={custList}
+                    emitSelectItem={this.handleSelectClient}
+                    emitToSearch={this.handleSearchClient}
+                    boxStyle={dropDownSelectBoxStyle}
+                    ref={ref => this.queryCustComponent = ref}
+                  />
+                </InfoForm>
+                <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
+                  <DropDownSelect
+                    placeholder="选择新服务经理"
+                    showObjKey="showSelectName"
+                    value=""
+                    searchList={newManagerList}
+                    emitSelectItem={this.handleSelectNewManager}
+                    emitToSearch={this.handleSearchNewManager}
+                    boxStyle={dropDownSelectBoxStyle}
+                    ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>
               </div>
-              {
-                transferType !== defaultType ?
-                  <div className={styles.selectRight}>
-                    <div className={styles.buttonBox}>
-                      <Upload {...uploadProps} {...this.props}>
-                        <Button type="primary">
-                          导入
-                        </Button>
-                      </Upload>
-                      <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-                    </div>
-                  </div>
-                :
-                  null
-              }
-            </div>
-            {/* 划转方式是否等于默认值 */}
-            {
-              transferType === defaultType ?
-                <div className={styles.selectBox}>
-                  <div className={styles.selectLeft}>
-                    <InfoForm style={{ width: 'auto' }} label="选择客户" required>
-                      <DropDownSelect
-                        placeholder="选择客户"
-                        showObjKey="custName"
-                        objId="brokerNumber"
-                        value=""
-                        searchList={custList}
-                        emitSelectItem={this.handleSelectClient}
-                        emitToSearch={this.handleSearchClient}
-                        boxStyle={dropDownSelectBoxStyle}
-                        ref={ref => this.queryCustComponent = ref}
-                      />
-                    </InfoForm>
-                  </div>
-                  <div className={styles.selectRight}>
-                    <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
-                      <DropDownSelect
-                        placeholder="选择新服务经理"
-                        showObjKey="showSelectName"
-                        value=""
-                        searchList={newManagerList}
-                        emitSelectItem={this.handleSelectNewManager}
-                        emitToSearch={this.handleSearchNewManager}
-                        boxStyle={dropDownSelectBoxStyle}
-                        ref={ref => this.queryManagerComponent = ref}
-                      />
-                    </InfoForm>
-                  </div>
-                </div>
-              :
-                null
-            }
-            <CommonTable
-              data={managerData}
-              titleList={titleList}
-            />
-          </div>
+            :
+              null
+          }
+          <CommonTable
+            data={transferType === defaultType ? managerData : customerAssignImport.list}
+            titleList={titleList}
+          />
         </div>
       </CommonModal>
     );
