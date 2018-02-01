@@ -83,13 +83,13 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   handlePreview({
-    title,
+    type,
     missionProgressStatus,
     progressFlag,
   }) {
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
-      title,
+      title: type,
       missionProgressStatus,
       progressFlag,
       canLaunchTask: true,

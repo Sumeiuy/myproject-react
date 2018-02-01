@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-30 17:18:58
+ * @Last Modified time: 2018-02-01 12:32:40
  * 管理者视图详情
  */
 
@@ -103,24 +103,34 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handlePreview(params = {}) {
-    const { title, pageNum, pageSize, missionProgressStatus, progressFlag, canLaunchTask } = params;
+    const {
+      title: nextTitle,
+      pageNum,
+      pageSize,
+      missionProgressStatus: nextStatus,
+      progressFlag: nextFlag,
+      canLaunchTask,
+    } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
+    const { title, missionProgressStatus, progressFlag } = this.state;
     const progressParam = {
-      missionProgressStatus,
-      progressFlag,
+      missionProgressStatus: nextStatus || missionProgressStatus,
+      progressFlag: nextFlag || progressFlag,
     };
-    this.setState({
-      missionProgressStatus,
-      progressFlag,
-    });
+    if (!_.isEmpty(nextStatus) && !_.isEmpty(nextFlag) && !_.isEmpty(nextTitle)) {
+      this.setState({
+        missionProgressStatus: nextStatus,
+        progressFlag: nextFlag,
+        title: nextTitle,
+      });
+    }
+
     previewCustDetail({
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
       orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
       missionId: currentId,
-      // missionId: '101111171108181',
       ...progressParam,
     }).then(() => {
       this.setState({
@@ -390,7 +400,7 @@ export default class ManagerViewDetail extends PureComponent {
                           发起新任务
                         </Button>
                       </Clickable>
-                    : null
+                      : null
                   }
                 </div>
               }
