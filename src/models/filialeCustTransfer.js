@@ -33,6 +33,7 @@ export default {
     origiManagerList: EMPTY_OBJECT, // 原服务经理列表
     buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     saveChangeValue: '', // 修改或新建接口返回的值
+    pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
   },
   reducers: {
     getDetailInfoSuccess(state, action) {
@@ -57,7 +58,6 @@ export default {
         ...prevManagerData,
         ...payload,
       };
-      console.warn('managerData', managerData);
       return {
         ...state,
         managerData: [managerData],
@@ -104,9 +104,15 @@ export default {
         buttonList: resultData,
       };
     },
+    getPageAssignmentSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        pageAssignment: resultData,
+      };
+    },
     saveChangeSuccess(state, action) {
       const { payload: { resultData } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         saveChangeValue: resultData,
@@ -196,6 +202,14 @@ export default {
       const response = yield call(api.getButtonList, payload);
       yield put({
         type: 'getButtonListSuccess',
+        payload: response,
+      });
+    },
+    // 客户表格分页信息
+    * getPageAssignment({ payload }, { call, put }) {
+      const response = yield call(api.getPageAssignment, payload);
+      yield put({
+        type: 'getPageAssignmentSuccess',
         payload: response,
       });
     },
