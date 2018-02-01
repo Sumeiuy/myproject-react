@@ -67,6 +67,7 @@ export default class CustDetail extends PureComponent {
     hideCustDetailModal: PropTypes.func.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    isEntryFromProgressDetail: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -74,6 +75,7 @@ export default class CustDetail extends PureComponent {
     getCustDetailData: () => { },
     title: '',
     onClose: () => { },
+    isEntryFromProgressDetail: false,
   }
 
   constructor(props) {
@@ -129,7 +131,7 @@ export default class CustDetail extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log(nextPage, currentPageSize);
-    const { getCustDetailData } = this.props;
+    const { getCustDetailData, isEntryFromProgressDetail } = this.props;
     this.setState({
       curPageNum: nextPage,
       curPageSize: currentPageSize,
@@ -137,6 +139,7 @@ export default class CustDetail extends PureComponent {
     getCustDetailData({
       pageNum: nextPage,
       pageSize: currentPageSize,
+      isEntryFromProgressDetail,
     });
   }
 
@@ -148,7 +151,7 @@ export default class CustDetail extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log(currentPageNum, changedPageSize);
-    const { getCustDetailData } = this.props;
+    const { getCustDetailData, isEntryFromProgressDetail } = this.props;
     this.setState({
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
@@ -156,6 +159,7 @@ export default class CustDetail extends PureComponent {
     getCustDetailData({
       pageNum: currentPageNum,
       pageSize: changedPageSize,
+      isEntryFromProgressDetail,
     });
   }
 

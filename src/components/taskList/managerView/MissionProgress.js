@@ -83,16 +83,18 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   handlePreview({
-    title,
+    type,
     missionProgressStatus,
     progressFlag,
   }) {
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
-      title,
+      title: type,
       missionProgressStatus,
       progressFlag,
       canLaunchTask: true,
+      // 代表是从进度条点击的
+      isEntryFromProgressDetail: true,
     });
   }
 
