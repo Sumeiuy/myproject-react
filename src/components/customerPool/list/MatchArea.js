@@ -45,8 +45,8 @@ export default class MatchArea extends PureComponent {
       showAll: false,
     };
     this.businessConfig = new Map();
-    custBusinessType.forEach((v) => {
-      this.businessConfig.set(v.key, v.value);
+    custBusinessType.forEach((item) => {
+      this.businessConfig.set(item.key, item.value);
     });
   }
 
@@ -158,17 +158,20 @@ export default class MatchArea extends PureComponent {
       location: { query: { source } },
     } = this.props;
     if (_.includes(['search', 'association', 'tag'], source) && !_.isEmpty(listItem.relatedLabels)) {
-      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.name, q));
+      const relatedLabels = _.filter(
+        listItem.relatedLabels,
+        item => item && _.includes(item.name, q),
+      );
       // 有描述
-      // const markedEle = relatedLabels.map(v => (
-      //   replaceWord({ value: v, q, title: listItem.reasonDesc });
+      // const markedEle = relatedLabels.map(item => (
+      //   replaceWord({ itemalue: item, q, title: listItem.reasonDesc });
       // ));
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map((v) => {
-          if (!isSightingScope(v.source)) {
-            return replaceWord({ value: v.name, q });
+        const markedEle = relatedLabels.map((item) => {
+          if (!isSightingScope(item.source)) {
+            return replaceWord({ value: item.name, q });
           }
-          return `${replaceWord({ value: v.name, q })}-${q}`;
+          return `${replaceWord({ value: item.name, q })}-${q}`;
         });
         return (
           <li>
@@ -194,7 +197,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (_.includes(['numOfCustOpened', 'business'], source) && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
+      const tmpArr = _.filter(_.map(unrightTypeArr, item => this.businessConfig.get(item)));
       if (!_.isEmpty(tmpArr)) {
         const data = tmpArr.join('、');
         return (
@@ -218,14 +221,14 @@ export default class MatchArea extends PureComponent {
       location: { query: { source } },
     } = this.props;
     if (_.includes(['numOfCustOpened', 'business'], source) && listItem.userRights) {
-      const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
-      if (!_.isEmpty(tmpArr)) {
-        const data = tmpArr.join('、');
+      const userRightsList = listItem.userRights.split(' ');
+      const tmpList = _.filter(_.map(userRightsList, item => this.businessConfig.get(item)));
+      if (!_.isEmpty(tmpList)) {
+        const data = tmpList.join('、');
         return (
           <li title={data}>
             <span>
-              <i className="label">{`已开通业务(${tmpArr.length})`}：</i>
+              <i className="label">{`已开通业务(${tmpList.length})`}：</i>
               {data}
             </span>
           </li>
@@ -289,11 +292,14 @@ export default class MatchArea extends PureComponent {
     if (source === 'sightingTelescope'
       && !_.isEmpty(listItem.relatedLabels)) {
       // 筛选出source='jzyx'的数据
-      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.source, 'jzyx') && _.includes(v.id, labelMapping));
+      const relatedLabels = _.filter(
+        listItem.relatedLabels,
+        item => item && _.includes(item.source, 'jzyx') && _.includes(item.id, labelMapping),
+      );
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(v => (replaceWord({ value: v.name, q })));
+        const markedEle = relatedLabels.map(item => (replaceWord({ value: item.name, q })));
         return (
           <li>
             <span>
