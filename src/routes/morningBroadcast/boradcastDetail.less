@@ -80,10 +80,16 @@
     }
     .downMusic {
       margin-bottom: 8px;
-      audio {
-        height: 32px;
-        vertical-align: middle;
-        width: 260px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      .audioTitle {
+        margin: 15px;
+      }
+      .audioControl {
+        width: 175px;
+        background: #eee;
+        border-radius: 4px;
       }
     }
     .downOther {
