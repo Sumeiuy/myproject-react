@@ -69,13 +69,13 @@ module.exports = {
       },
       '/htsc-product-base',
       {
-        // target: 'http://168.61.8.81:5085', // SIT
-        target: 'http://168.61.8.81:5086', // UAT
+        target: 'http://168.61.8.81:5085', // SIT
+        // target: 'http://168.61.8.81:5086', // UAT
       },
       '/jeip',
       {
-        // target: 'http://168.61.8.81:5085', // SIT
-        target: 'http://168.61.8.81:5086', // UAT
+        target: 'http://168.61.8.81:5085', // SIT
+        // target: 'http://168.61.8.81:5086', // UAT
       },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"

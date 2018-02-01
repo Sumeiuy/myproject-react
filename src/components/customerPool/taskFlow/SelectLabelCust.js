@@ -69,6 +69,8 @@ export default class SelectLabelCust extends PureComponent {
       };
     }
 
+    const filterNumList = this.taskSearchRowRef.getFilterNumList();
+
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', customNum = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
@@ -78,7 +80,7 @@ export default class SelectLabelCust extends PureComponent {
       labelMapping,
       labelDesc,
       condition,
-      custNum: customNum,
+      custNum: filterNumList[labelId] || customNum,
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
@@ -100,13 +102,6 @@ export default class SelectLabelCust extends PureComponent {
         ...value,
       },
     });
-    // 没有筛查
-    /**
-     * searchReq: {
-     *   enterType: 'labelSearchCustPool',
-     *   labels: [],
-     * }
-     */
   }
 
   @autobind
@@ -165,6 +160,7 @@ export default class SelectLabelCust extends PureComponent {
       dict,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      storedData,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -186,6 +182,7 @@ export default class SelectLabelCust extends PureComponent {
           null
         }
         <TaskSearchRow
+          ref={ref => this.taskSearchRowRef = ref}
           dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
@@ -201,6 +198,8 @@ export default class SelectLabelCust extends PureComponent {
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
           getArgsOfQueryCustomer={this.getArgsOfQueryCustomer}
+          getFilterNumberList={this.getFilterNumberList}
+          storedData={storedData}
         />
       </div>
     );
