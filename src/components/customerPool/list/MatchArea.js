@@ -168,7 +168,7 @@ export default class MatchArea extends PureComponent {
           if (!isSightingScope(v.source)) {
             return replaceWord({ value: v.name, q });
           }
-          return `${replaceWord({ value: v.name, q })} 瞄准镜`;
+          return `${replaceWord({ value: v.name, q })}-${q}`;
         });
         return (
           <li>
@@ -284,12 +284,12 @@ export default class MatchArea extends PureComponent {
     const {
       q = '',
       listItem,
-      location: { query: { source } },
+      location: { query: { source, labelMapping } },
     } = this.props;
     if (source === 'sightingTelescope'
       && !_.isEmpty(listItem.relatedLabels)) {
       // 筛选出source='jzyx'的数据
-      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.source, 'jzyx'));
+      const relatedLabels = _.filter(listItem.relatedLabels, v => v && _.includes(v.source, 'jzyx') && _.includes(v.id, labelMapping));
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
       if (!_.isEmpty(relatedLabels)) {

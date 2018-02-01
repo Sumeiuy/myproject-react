@@ -899,16 +899,14 @@ export default {
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
       const { labelInfoList, matchedWdsList } = response.resultData;
-      // 给接口返回来的labels加上type字段
-      const newLabelInfoList = _.map(labelInfoList, item => ({
-        ...item,
-        type: 'label',
-      }));
+      const newLabelInfoList = labelInfoList === null ? []
+        : _.map(labelInfoList, item => ({ ...item, type: 'label' }));
+      const newMatchedWdsList = matchedWdsList === null ? [] : matchedWdsList;
       return {
         ...state,
         hotPossibleWdsList: [
           ...newLabelInfoList,
-          ...matchedWdsList,
+          ...newMatchedWdsList,
         ],
       };
     },

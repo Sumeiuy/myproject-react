@@ -835,6 +835,21 @@ const pageConfig = {
         title: '新职位',
       },
     ],
+    approvalColumns: [
+      {
+        title: '工号',
+        dataIndex: 'login',
+        key: 'login',
+      }, {
+        title: '姓名',
+        dataIndex: 'empName',
+        key: 'empName',
+      }, {
+        title: '所属营业部',
+        dataIndex: 'occupation',
+        key: 'occupation',
+      },
+    ],
   },
   // 自建任务列表
   tasklist: {
