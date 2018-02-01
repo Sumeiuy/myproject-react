@@ -275,6 +275,9 @@ export default class TaskSearchRow extends PureComponent {
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
         });
+        console.log('filterNumList[item.id]>>>', filterNumList[item.id]);
+        const filterNum = typeof (filterNumList[item.id]) === 'undefined'
+          ? item.customNum : filterNumList[item.id];
         return (
           <div className={cls} key={item.id || item.labelMapping}>
             <Radio
@@ -286,7 +289,7 @@ export default class TaskSearchRow extends PureComponent {
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <span className={styles.filterCount}>
-                已筛选客户数：<i>{filterNumList[item.id] || 0}</i>
+                已筛选客户数：<i>{filterNum}</i>
               </span>
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
@@ -361,7 +364,7 @@ export default class TaskSearchRow extends PureComponent {
                     onClick={this.handleCancel}
                     eventName="/click/taskSearchRow/close"
                   >
-                    <Button key="back" size="large">关闭</Button>
+                    <Button key="back" size="large">确定</Button>
                   </Clickable>,
                 ]}
                 width={700}

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { emp } from '../../../helper';
 
 import styles from './toBeDone.less';
-import { dispatchTabPane, openRctTab, openFspTab } from '../../../utils';
+import { openRctTab, openFspTab } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -112,11 +112,27 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   handleMotClick() {
     // 点击事件
-    const { push } = this.props;
-    dispatchTabPane({
-      fspAction: 'myMotTask',
+    const { location: { query }, push } = this.props;
+    const url = '/taskList';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_MOT_SELFBUILT_TASK',
+      title: '自建任务管理',
+    };
+    const data = {
+      missionViewType: 'executor',
+    };
+    openRctTab({
       routerAction: push,
-      url: '/fsp/motTask',
+      url: `${url}?missionViewType=executor`,
+      pathname: url,
+      query: data,
+      param,
+      state: {
+        ...query,
+      },
     });
   }
 

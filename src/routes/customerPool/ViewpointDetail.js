@@ -138,7 +138,7 @@ export default class ViewpointDetail extends PureComponent {
               </div>
               <div className={styles.infoRow}>
                 <div className={styles.column}>
-                  {_.isEmpty(secuabbr) ? '机构：--' : `机构：${secuabbr}`}
+                  {_.isEmpty(secuabbr) ? '相关股票：--' : `相关股票：${secuabbr}`}
                 </div>
                 <div className={classnames(styles.column, styles.middle)}>
                   {_.isEmpty(authors) ? '作者：--' : `作者：${authors}`}

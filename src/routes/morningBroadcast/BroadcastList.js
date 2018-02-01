@@ -6,7 +6,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { DatePicker, Input, Button, Table, Icon, Popconfirm, Affix, message } from 'antd';
+import { DatePicker, Input, Button, Table, Icon, Popconfirm, Affix, message, Form } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -14,12 +14,12 @@ import PropTypes from 'prop-types';
 import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
 import { openRctTab } from '../../utils';
-import { url as urlHelper, permission } from '../../helper';
-import AddMorningBoradcast from '../../components/modals/AddMorningBoradcast';
+import { url as urlHelper, permission, fsp } from '../../helper';
+import Pagination from '../../components/common/Pagination';
+import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
 
 const Search = Input.Search;
-
-let TIME_RANGE_FROM; // 查询创建时间-->开始时间
+const { RangePicker } = DatePicker;
 
 const effects = {
   getBoradcastList: 'morningBoradcast/getBoradcastList',
@@ -28,6 +28,7 @@ const effects = {
   delBoradcastItem: 'morningBoradcast/delBoradcastItem',
   getUuid: 'morningBoradcast/getUuid',
   delCeFile: 'morningBoradcast/delCeFile',
+  uploaderFile: 'morningBoradcast/uploaderFile',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -37,6 +38,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
+  creator: state.app.creator,
   morningBoradcast: state.morningBoradcast,
   dict: state.app.dict,
   newsListLoading: state.loading.effects['morningBoradcast/getBoradcastList'] || false,
@@ -49,15 +51,21 @@ const mapDispatchToProps = {
   delBoradcastItem: fetchDataFunction(true, effects.delBoradcastItem),
   getUuid: fetchDataFunction(true, effects.getUuid),
   delCeFile: fetchDataFunction(true, effects.delCeFile),
+  uploaderFile: fetchDataFunction(true, effects.uploaderFile),
   push: routerRedux.push,
+  replace: routerRedux.replace,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@Form.create()
 @withRouter
 export default class BroadcastList extends PureComponent {
   static propTypes = {
+    creator: PropTypes.string.isRequired,
     morningBoradcast: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
+    form: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     newsListLoading: PropTypes.bool.isRequired,
     getBoradcastList: PropTypes.func.isRequired,
     saveBoradcast: PropTypes.func.isRequired,
@@ -66,6 +74,8 @@ export default class BroadcastList extends PureComponent {
     getUuid: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     delCeFile: PropTypes.func.isRequired,
+    uploaderFile: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   /**
@@ -88,11 +98,6 @@ export default class BroadcastList extends PureComponent {
   constructor(props) {
     super(props);
 
-    // 初始化开始时间
-    const { morningBoradcast: { newsListQuery } } = this.props;
-    const { FROM_DATE } = BroadcastList.initNewsListQuery();
-    TIME_RANGE_FROM = newsListQuery.FROM_DATE || FROM_DATE;
-
     this.state = {
       visible: false,
       open: false,
@@ -101,12 +106,17 @@ export default class BroadcastList extends PureComponent {
   }
 
   componentDidMount() {
-    const { morningBoradcast: { boradcastList, newUuid }, getUuid } = this.props;
+    const {
+      morningBoradcast: { boradcastList, newUuid },
+      getUuid,
+      location: { query: isInit },
+    } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList.length) onHandleGetList();
+    if (!boradcastList.length || isInit) onHandleGetList();
     // 初始化Uuid
     if (!newUuid.length) getUuid();
+    // 切换数据后返回顶部
   }
 
   componentWillReceiveProps(nextProps) {
@@ -121,23 +131,46 @@ export default class BroadcastList extends PureComponent {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    const {
+      morningBoradcast: { boradcastList },
+    } = prevProps;
+    // 列表数据刷新后返回fsp顶部
+    if (boradcastList !== this.props.morningBoradcast.boradcastList) {
+      fsp.scrollToTop();
+    }
+  }
+
   // 刷新列表数据
   @autobind
   onHandleGetList(option) {
-    const { getBoradcastList } = this.props;
+    const { getBoradcastList, replace, location: { pathname, query: { isInit } } } = this.props;
     const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
     const { pagination, newsListQuery } = this.props.morningBoradcast;
     const { defaultCurrent, defaultPageSize } = pagination;
-    const query = {
-      createdFrom: newsListQuery.FROM_DATE || FROM_DATE,
-      createdTo: newsListQuery.TO_DATE || TO_DATE,
-      pageNum: defaultCurrent || PAGE_NUM,
-      pageSize: defaultPageSize || PAGE_LEN,
-      createdBy: newsListQuery.CREATE_BY || '',
-      title: newsListQuery.TITLE || '',
-      ...option,
+    let definedQuery = {
+      createdFrom: FROM_DATE,
+      createdTo: TO_DATE,
+      pageNum: PAGE_NUM,
+      pageSize: PAGE_LEN,
+      createdBy: '',
+      title: '',
     };
-    getBoradcastList(query);
+    if (isInit) {
+      getBoradcastList(definedQuery);
+      replace({ pathname });
+    } else {
+      definedQuery = {
+        createdFrom: newsListQuery.FROM_DATE || FROM_DATE,
+        createdTo: newsListQuery.TO_DATE || TO_DATE,
+        pageNum: defaultCurrent || PAGE_NUM,
+        pageSize: defaultPageSize || PAGE_LEN,
+        createdBy: newsListQuery.CREATE_BY || '',
+        title: newsListQuery.TITLE || '',
+        ...option,
+      };
+      getBoradcastList(definedQuery);
+    }
   }
 
   // 跳转至晨报详情
@@ -196,6 +229,7 @@ export default class BroadcastList extends PureComponent {
             onClick={() => { this.onHandleToDetail(newId); }}
             className={styles.textOverflow}
             style={{ cursor: 'pointer' }}
+            title={text}
           >
             {text}
           </span>
@@ -217,8 +251,8 @@ export default class BroadcastList extends PureComponent {
       width: '15%',
       className: 'tableAuthor',
       key: 'author',
+      render: (text, record) => record.updatedBy || record.createdBy,
     }];
-    console.log(permission.hasZXMampPermission());
     if (permission.hasZXMampPermission()) {
       columns.push({
         title: '操作',
@@ -283,58 +317,24 @@ export default class BroadcastList extends PureComponent {
 
   // 日期选择组件-->start
   @autobind()
-  startValue(value) {
-    if (!value) return TIME_RANGE_FROM;
-    TIME_RANGE_FROM = value.format('YYYY-MM-DD');
-    return TIME_RANGE_FROM;
-  }
-
-  @autobind()
-  disabledStartDate(startValue) {
+  disabledDate(startValue) {
     const { TO_DATE } = BroadcastList.initNewsListQuery();
     return startValue &&
       startValue.valueOf() > moment(TO_DATE).valueOf();
   }
-
-  @autobind()
-  disabledEndDate(endValue) {
-    const startValue = this.startValue();
-    const MIN_DATE = moment.min(moment(), moment(startValue).add(6, 'month'));
-    return endValue &&
-      endValue.valueOf() >= MIN_DATE.valueOf();
-  }
-
-  @autobind()
-  onStartChange(value) {
-    this.startValue(value);
-  }
-
-  @autobind()
-  onEndChange(value) {
+  @autobind
+  onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
-    const startValue = this.startValue();
-    this.setState({ endOpen: false });
+    const maxDate = moment(dateStrings[0]).add(6, 'month');
+    if (maxDate.valueOf() < dates[1].valueOf()) {
+      message.error('查询时间段不能超过6个月');
+      return;
+    }
     onHandleGetList({
-      createdFrom: startValue,
-      createdTo: value.format('YYYY-MM-DD'),
+      createdFrom: dateStrings[0],
+      createdTo: dateStrings[1],
       pageNum: 1,
     });
-  }
-
-  @autobind()
-  handleStartOpenChange(open) {
-    if (!open) {
-      this.setState({ endOpen: true });
-    } else {
-      this.setState({ endValue: null });
-    }
-  }
-
-  @autobind()
-  handleEndOpenChange(open) {
-    if (open) {
-      this.setState({ endOpen: open });
-    }
   }
   // 日期选择组件-->end
   render() {
@@ -353,12 +353,19 @@ export default class BroadcastList extends PureComponent {
       delCeFile,
       getBoradcastDetail,
       dict,
+      uploaderFile,
+      creator,
     } = this.props;
+    const { getFieldDecorator } = this.props.form;
     const initQuery = BroadcastList.initNewsListQuery();
     const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
-    const { visible, endOpen, newsId } = this.state;
+    const { visible, newsId } = this.state;
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
-
+    const paginationOption = {
+      ...pagination,
+      onPageChange: this.onPageNumChange,
+      onSizeChange: this.onPageSizeChange,
+    };
     return (
       <div className={styles.broadcastListWrap} >
         <Affix>
@@ -366,48 +373,43 @@ export default class BroadcastList extends PureComponent {
             <div>
               <div className={styles.author}>
                 <span>作者：</span>
-                <Search
-                  placeholder="作者"
-                  defaultValue={CREATE_BY}
-                  style={{ width: 200 }}
-                  onSearch={this.onHandleAuthorSearch}
-                />
+                {getFieldDecorator('createdBy', {
+                  initialValue: CREATE_BY,
+                })(
+                  <Search
+                    placeholder="作者"
+                    style={{ width: 200 }}
+                    onSearch={this.onHandleAuthorSearch}
+                  />,
+                )}
               </div>
               <div className={styles.timeRange}>
                 <span>创建时间：</span>
-                <DatePicker
-                  size="default"
-                  format="YYYY-MM-DD"
-                  placeholder="Start"
-                  allowClear={false}
-                  showToday={false}
-                  defaultValue={moment(FROM_DATE || initQuery.FROM_DATE)}
-                  disabledDate={this.disabledStartDate}
-                  onChange={this.onStartChange}
-                  onOpenChange={this.handleStartOpenChange}
-                />
-                ~
-                <DatePicker
-                  size="default"
-                  format="YYYY-MM-DD"
-                  placeholder="End"
-                  allowClear={false}
-                  showToday={false}
-                  defaultValue={moment(TO_DATE || initQuery.TO_DATE)}
-                  disabledDate={this.disabledEndDate}
-                  onChange={this.onEndChange}
-                  open={endOpen}
-                  onOpenChange={this.handleEndOpenChange}
-                />
+                {getFieldDecorator('createdTime', {
+                  initialValue: [moment(FROM_DATE || initQuery.FROM_DATE),
+                    moment(TO_DATE || initQuery.TO_DATE)],
+                })(
+                  <RangePicker
+                    disabledDate={this.disabledDate}
+                    allowClear={false}
+                    showToday={false}
+                    format="YYYY-MM-DD"
+                    placeholder={['Start', 'End']}
+                    onChange={this.onChange}
+                  />,
+                )}
               </div>
             </div>
             <div>
-              <Search
-                placeholder="标题关键词"
-                defaultValue={TITLE}
-                style={{ width: 200 }}
-                onSearch={this.onHandleSearch}
-              />
+              {getFieldDecorator('title', {
+                initialValue: TITLE,
+              })(
+                <Search
+                  placeholder="标题关键词"
+                  style={{ width: 200 }}
+                  onSearch={this.onHandleSearch}
+                />,
+              )}
               {
                 permission.hasZXMampPermission() ?
                   (
@@ -420,6 +422,8 @@ export default class BroadcastList extends PureComponent {
               }
               <AddMorningBoradcast
                 dict={dict}
+                creator={creator}
+                uploaderFile={uploaderFile}
                 visible={visible}
                 newsId={newsId}
                 newUuid={newUuid}
@@ -442,15 +446,9 @@ export default class BroadcastList extends PureComponent {
               loading={newsListLoading}
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
-              pagination={{
-                ...pagination,
-                defaultPageSize: 20,
-                showSizeChanger: true,
-                showTotal() { return `共${pagination.total}项`; },
-                onChange: this.onPageNumChange,
-                onShowSizeChange: this.onPageSizeChange,
-              }}
+              pagination={false}
             />
+            <Pagination {...paginationOption} />
           </div>
         </div>
       </div>

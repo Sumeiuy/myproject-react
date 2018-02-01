@@ -102,7 +102,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState,
+        targetCustomerState,
       },
       changeParameter,
     } = this.props;
