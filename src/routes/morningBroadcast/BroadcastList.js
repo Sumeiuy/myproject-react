@@ -120,9 +120,6 @@ export default class BroadcastList extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      morningBoradcast: { boradcastList },
-    } = this.props;
     const preDelInfo = this.props.morningBoradcast.delBoradcastInfo;
     const nextDelInfo = nextProps.morningBoradcast.delBoradcastInfo;
     if (preDelInfo !== nextDelInfo) {
@@ -132,10 +129,15 @@ export default class BroadcastList extends PureComponent {
         message.success('删除失败', 1);
       }
     }
+  }
 
+  componentDidUpdate(prevProps) {
+    const {
+      morningBoradcast: { boradcastList },
+    } = prevProps;
     // 列表数据刷新后返回fsp顶部
-    if (boradcastList !== nextProps.morningBoradcast.boradcastList) {
-      fsp.fspScrollToTop();
+    if (boradcastList !== this.props.morningBoradcast.boradcastList) {
+      fsp.scrollToTop();
     }
   }
 

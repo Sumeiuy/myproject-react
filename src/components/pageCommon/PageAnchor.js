@@ -41,7 +41,7 @@ export default class PageAnchor extends PureComponent {
   */
   @autobind
   handleGotoTop() {
-    fsp.fspScrollToTop();
+    fsp.scrollToTop();
   }
 
   render() {

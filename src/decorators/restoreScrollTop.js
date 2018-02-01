@@ -24,7 +24,7 @@ const HOCComponent = (ComposedComponent) => {
 
     componentDidMount() {
       // 恢复scrollTop
-      fsp.fspScrollToTop();
+      fsp.scrollToTop();
     }
 
     /**

@@ -13,7 +13,7 @@ const fsp = {
    * @author XiaZhiQiang
    * @returns {void}
    */
-  fspScrollToTop() {
+  scrollToTop() {
     const fspBody = document.querySelector(fspContainer.container);
     if (fspBody) {
       fspBody.scrollTop = 0;
