@@ -93,6 +93,8 @@ export default class MissionProgress extends PureComponent {
       missionProgressStatus,
       progressFlag,
       canLaunchTask: true,
+      // 代表是从进度条点击的
+      isEntryFromProgressDetail: true,
     });
   }
 

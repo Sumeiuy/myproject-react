@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 12:32:40
+ * @Last Modified time: 2018-02-01 14:22:58
  * 管理者视图详情
  */
 
@@ -95,6 +95,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionProgressStatus: '',
       progressFlag: '',
       canLaunchTask: true,
+      isEntryFromProgressDetail: false,
     };
   }
 
@@ -104,39 +105,52 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handlePreview(params = {}) {
     const {
-      title: nextTitle,
+      title,
       pageNum,
       pageSize,
-      missionProgressStatus: nextStatus,
-      progressFlag: nextFlag,
+      missionProgressStatus,
+      progressFlag,
       canLaunchTask,
+      isEntryFromProgressDetail,
     } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
-    const { title, missionProgressStatus, progressFlag } = this.state;
-    const progressParam = {
-      missionProgressStatus: nextStatus || missionProgressStatus,
-      progressFlag: nextFlag || progressFlag,
-    };
-    if (!_.isEmpty(nextStatus) && !_.isEmpty(nextFlag) && !_.isEmpty(nextTitle)) {
-      this.setState({
-        missionProgressStatus: nextStatus,
-        progressFlag: nextFlag,
-        title: nextTitle,
-      });
-    }
-
-    previewCustDetail({
+    const {
+      title: nextTitle,
+      missionProgressStatus: nextStatus,
+      progressFlag: nextFlag,
+    } = this.state;
+    let postBody = {
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
       orgId: emp.getOrgId(),
       missionId: currentId,
+    };
+
+    const progressParam = {
+      missionProgressStatus: missionProgressStatus || nextStatus,
+      progressFlag: progressFlag || nextFlag,
+      title: isEntryFromProgressDetail ? (title || nextTitle) : `当前${orgName || ''}有效客户总数`,
+    };
+
+    if (isEntryFromProgressDetail) {
+      postBody = {
+        ...postBody,
+        ..._.omit(progressParam, 'title'),
+      };
+    }
+
+    this.setState({
       ...progressParam,
+      isEntryFromProgressDetail,
+    });
+
+    previewCustDetail({
+      ...postBody,
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
         canLaunchTask,
-        title: title || `当前${orgName || ''}有效客户总数`,
       });
     });
   }
@@ -273,7 +287,7 @@ export default class ManagerViewDetail extends PureComponent {
       custServedByPostnResult,
     } = this.props;
 
-    const { isShowCustDetailModal, title, canLaunchTask } = this.state;
+    const { isShowCustDetailModal, title, canLaunchTask, isEntryFromProgressDetail } = this.state;
 
     const {
       missionId,
@@ -415,6 +429,8 @@ export default class ManagerViewDetail extends PureComponent {
                   push={push}
                   isCustServedByPostn={isCustServedByPostn}
                   custServedByPostnResult={custServedByPostnResult}
+                  // 代表是否是从进度条点击的
+                  isEntryFromProgressDetail={isEntryFromProgressDetail}
                 />
               }
               modalStyle={{
