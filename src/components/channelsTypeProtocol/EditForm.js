@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-24 14:05:00
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-01-31 14:25:11
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -546,9 +546,14 @@ export default class EditForm extends PureComponent {
   // EditBaseInfo切换子类型和操作类型时改变对应的上传文件必填项
   @autobind
   handleChangeRequiredFile(subType, operateType) {
-    // 子类型是高速通道协议并且操作类型是订购
-    if (channelType.isGSChannel(subType) && operateType === config.subscribeArray[0]) {
-      this.setUploadConfig(custAttachment[3]);
+    // 子类型是高速通道协议
+    if (channelType.isGSChannel(subType)) {
+      // 操作类型是订购或续订
+      if (operateType === config.subscribeArray[0] || operateType === config.renewalArray[0]) {
+        this.setUploadConfig(custAttachment[3]);
+      } else {
+        this.setUploadConfig(custAttachment[0]);
+      }
     }
   }
 
