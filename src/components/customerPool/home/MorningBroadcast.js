@@ -47,7 +47,7 @@ export default class MorningBroadcast extends PureComponent {
   @autobind
   openNewTab(url) {
     const { push } = this.props;
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '晨报' };
+    const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const query = { isInit: true };
     openRctTab({
       routerAction: push,
