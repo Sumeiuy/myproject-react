@@ -164,7 +164,7 @@ export default class MatchArea extends PureComponent {
       );
       // 有描述
       // const markedEle = relatedLabels.map(item => (
-      //   replaceWord({ itemalue: item, q, title: listItem.reasonDesc });
+      //   replaceWord({ value: item, q, title: listItem.reasonDesc });
       // ));
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((item) => {
@@ -196,14 +196,14 @@ export default class MatchArea extends PureComponent {
       location: { query: { source } },
     } = this.props;
     if (_.includes(['numOfCustOpened', 'business'], source) && listItem.unrightType) {
-      const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, item => this.businessConfig.get(item)));
-      if (!_.isEmpty(tmpArr)) {
-        const data = tmpArr.join('、');
+      const unrightTypeList = listItem.unrightType.split(' ');
+      const tmpList = _.filter(_.map(unrightTypeList, item => this.businessConfig.get(item)));
+      if (!_.isEmpty(tmpList)) {
+        const data = tmpList.join('、');
         return (
           <li title={data}>
             <span>
-              <i className="label">{`可开通业务(${tmpArr.length})`}：</i>
+              <i className="label">{`可开通业务(${tmpList.length})`}：</i>
               {data}
             </span>
           </li>
