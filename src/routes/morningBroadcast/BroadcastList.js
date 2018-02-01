@@ -116,7 +116,6 @@ export default class BroadcastList extends PureComponent {
     if (!boradcastList.length || isInit) onHandleGetList();
     // 初始化Uuid
     if (!newUuid.length) getUuid();
-    // 切换数据后返回顶部
   }
 
   componentWillReceiveProps(nextProps) {
