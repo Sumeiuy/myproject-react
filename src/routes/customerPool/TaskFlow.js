@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-31 18:19:14
+ * @Last Modified time: 2018-02-01 09:28:36
  */
 
 import React, { PureComponent } from 'react';
@@ -426,22 +426,14 @@ export default class TaskFlow extends PureComponent {
         ...resultTrackComponent.getData(),
       };
       const {
-        // 跟踪窗口期
-        // trackWindowDate,
         // 一级指标
         indicatorLevel1Key,
         // 二级指标
         indicatorLevel2Key,
         // 产品
         currentSelectedProduct,
-        // 操作符key,传给后台,譬如>=/<=
-        // operationKey,
-        // 操作符name,展示用到，譬如达到/降到
-        // operationValue,
         // 当前输入的指标值
         inputIndicator,
-        // 单位
-        // unit,
         // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
         hasState,
         // 是否有产品搜索
@@ -449,9 +441,7 @@ export default class TaskFlow extends PureComponent {
         // 是否选中
         isResultTrackChecked,
       } = resultTrackData;
-      // if (!isResultTrackChecked) {
-      //   message.error('请勾选结果跟踪');
-      // } else
+
       if (isResultTrackChecked) {
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
@@ -595,19 +585,14 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      // labelMapping,
-      // custNum: labelCustNums,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
       labelId,
-      // taskSubType,
       templetDesc,
       timelyIntervalValue,
-      // labelDesc,
-      // labelName,
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
@@ -618,8 +603,6 @@ export default class TaskFlow extends PureComponent {
       currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
-      // 操作符name,展示用到，譬如达到/降到
-      // operationValue,
       // 当前输入的指标值
       inputIndicator,
       // 单位
@@ -632,8 +615,6 @@ export default class TaskFlow extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      // 选择的问题List
-      // questionList,
       argsOfQueryCustomer,
     } = finalData;
 
@@ -644,8 +625,6 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc,
       timelyIntervalValue,
-      // // 任务子类型
-      // taskSubType,
     };
 
     if (needApproval) {
@@ -692,16 +671,6 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
-    // const labelCustPostBody = {
-    //   ...postBody,
-    //   labelId: labelMapping,
-    //   queryLabelDTO: {
-    //     labelDesc,
-    //     labelName,
-    //   },
-    //   labelCustNums,
-    // };
-
     // 当前tab是第一个，则代表导入客户
     if (currentEntry === 0) {
       submitTaskFlow({
@@ -710,21 +679,6 @@ export default class TaskFlow extends PureComponent {
       });
     } else {
       postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
-      // if (needApproval) {
-      //   // 有审批权限，则需要传入orgId
-      //   submitTaskFlow(_.merge(labelCustPostBody, {
-      //     queryLabelDTO: {
-      //       orgId,
-      //     },
-      //   }));
-      // } else {
-      //   // 没有审批权限，则需要传入ptyMngId
-      //   submitTaskFlow(_.merge(labelCustPostBody, {
-      //     queryLabelDTO: {
-      //       ptyMngId: emp.getId(),
-      //     },
-      //   }));
-      // }
     }
 
     submitTaskFlow({ ...postBody });
