@@ -77,20 +77,6 @@ export default class BroadcastDetail extends PureComponent {
       query,
     });
   }
-  @autobind
-  handleBackHome() {
-    const { push } = this.props;
-    const param = { id: 'RTC_TAB_PRODUCT_CNETOR', title: '首页' };
-    const url = '/customerPool';
-    const query = { };
-    openRctTab({
-      routerAction: push,
-      url: `${url}?${urlHelper.stringify(query)}`,
-      param,
-      pathname: url,
-      query,
-    });
-  }
 
   render() {
     const { newItemDetail } = this.getItemDetail();
@@ -101,10 +87,9 @@ export default class BroadcastDetail extends PureComponent {
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
           <div className={styles.content}>
-            <div className={`${styles.backList} ${styles.headerBack}`}>
-              <span onClick={this.handleBackHome}>产品中心/</span>
-              <span onClick={this.handleBackClick}>每日晨报/</span>
-              <span>晨报名称</span>
+            <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
+              <i className="icon iconfont icon-fanhui" />
+              晨间播报列表
             </div>
             <div className={styles.header}>
               <div className={styles.title}>{ newItemDetail.title }</div>
@@ -130,10 +115,20 @@ export default class BroadcastDetail extends PureComponent {
                   Your browser does not support the audio element.
                 </audio>
               </div>
-              <CommonUpload
-                attachmentList={otherFileList}
-                edit={false}
-              />
+              {
+                otherFileList.length ? (
+                  <span>
+                    <div className={styles.downOther}>
+                      <i className="icon iconfont icon-qitawenjian" style={{ color: '#cdcdcd' }} />
+                      <span>其他文件</span>
+                    </div>
+                    <CommonUpload
+                      attachmentList={otherFileList}
+                      edit={false}
+                    />
+                  </span>
+                ) : null
+              }
             </div>
           </div>
         </div>

@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../common/Icon';
+import { fsp } from '../../helper';
 
 import Anchor from '../../components/common/anchor';
-import { fspContainer, reportAnchorOptions } from '../../config';
+import { reportAnchorOptions } from '../../config';
 import styles from './pageAnchor.less';
 
 const { Link } = Anchor;
@@ -40,12 +41,7 @@ export default class PageAnchor extends PureComponent {
   */
   @autobind
   handleGotoTop() {
-    const fsp = document.querySelector(fspContainer.container);
-    if (fsp) {
-      fsp.scrollTop = 0;
-    } else {
-      window.scrollTo(0, 0);
-    }
+    fsp.scrollToTop();
   }
 
   render() {
