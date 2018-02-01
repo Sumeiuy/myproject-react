@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 15:56:02
+ * @Last Modified time: 2018-01-30 10:22:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -37,7 +37,7 @@ const dropDownSelectBoxStyle = {
   border: '1px solid #d9d9d9',
 };
 
-export default class FilialeCustTransfer extends PureComponent {
+export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
