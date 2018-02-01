@@ -231,7 +231,7 @@ export default class RightPanel extends PureComponent {
       indicatorText = `${indexCateName}，状态：是`;
     } else {
       // ${二级指标名称}${产品名称}${操作符}${输入值}${单位}
-      indicatorText = `${indexCateName || ''}${!_.isEmpty(finProductVO) ? emptyData(finProductVO.aliasName) : ''}${emptyData(traceOpVO.name)}${emptyData(threshold)}${emptyData(indexUnit)}`;
+      indicatorText = `${!_.isEmpty(finProductVO) ? emptyData(finProductVO.aliasName) : ''}${indexCateName || ''}${emptyData(traceOpVO.name)}${emptyData(threshold)}${emptyData(indexUnit)}`;
     }
     return indicatorText;
   }

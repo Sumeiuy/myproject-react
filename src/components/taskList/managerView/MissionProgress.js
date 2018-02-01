@@ -45,23 +45,6 @@ function getPercent(num) {
   return Number(num * 100).toFixed(0);
 }
 
-function getMaxRidio(strNum1, strNum2, strNum3) {
-  // 自适应百分比
-  const maxValue = Math.max(
-    Number(strNum1),
-    Number(strNum2),
-    Number(strNum3),
-  );
-  // 0.85 是分界线，自己取得
-  // 当最大值小于0.85时，比例做成 自适应 的
-  // 自适应：扩大原有比例的显示
-  if (maxValue < 0.85) {
-    return maxValue + 0.1;
-  }
-  // 当最大值大于0.85时，按真实比例显示
-  return 1.0;
-}
-
 export default class MissionProgress extends PureComponent {
 
   static propTypes = {
@@ -100,16 +83,18 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   handlePreview({
-    title,
+    type,
     missionProgressStatus,
     progressFlag,
   }) {
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
-      title,
+      title: type,
       missionProgressStatus,
       progressFlag,
       canLaunchTask: true,
+      // 代表是从进度条点击的
+      isEntryFromProgressDetail: true,
     });
   }
 
@@ -177,7 +162,6 @@ export default class MissionProgress extends PureComponent {
     activeType,
     remainingType,
     activePercent,
-    showActivePercent,
     activeCount,
     remainingCount,
   }) {
@@ -194,7 +178,7 @@ export default class MissionProgress extends PureComponent {
             >
               <div
                 className="ant-progress-bg"
-                style={{ width: `${showActivePercent}%` }}
+                style={{ width: `${activePercent}%` }}
                 ref={ref => (this.activeElem = ref)}
               />
             </Tooltip>
@@ -208,7 +192,7 @@ export default class MissionProgress extends PureComponent {
               <div
                 className="ant-progress-inner"
                 ref={ref => (this.remainingElem = ref)}
-                style={{ width: `${100 - showActivePercent}%` }}
+                style={{ width: `${100 - activePercent}%` }}
               />
             </Tooltip>
           </div>
@@ -219,17 +203,14 @@ export default class MissionProgress extends PureComponent {
   }
 
   getParam(param) {
-    const { total, activeCount, ratio, maxRadio, activeType, remainingType } = param;
+    const { total, activeCount, ratio, activeType, remainingType } = param;
     // 真实百分比
     const activePercent = getPercent(Number(ratio));
-    // 展示百分比
-    const showActivePercent = getPercent(Number(ratio) / maxRadio);
     return {
       activeType,
       remainingType,
       activeCount,
       activePercent,
-      showActivePercent,
       remainingCount: total - activeCount,
     };
   }
@@ -253,28 +234,22 @@ export default class MissionProgress extends PureComponent {
       // 已达标比例
       standardNumsRatio = 0,
     } = missionImplementationProgress || EMPTY_OBJECT;
-    const maxRadio = getMaxRidio(
-      servedNumsRatio,
-      completedNumsRatio,
-      standardNumsRatio,
-    );
-    const commonParam = { total: custCount, maxRadio };
     const serveParam = this.getParam({
-      ...commonParam,
+      total: custCount,
       ratio: servedNumsRatio,
       activeCount: servedNums,
       activeType: SERVED_CUST,
       remainingType: NOT_SERVED_CUST,
     });
     const completedParam = this.getParam({
-      ...commonParam,
+      total: custCount,
       ratio: completedNumsRatio,
       activeCount: completedNums,
       activeType: COMPLETED_CUST,
       remainingType: NOT_COMPLETED_CUST,
     });
     const standardParam = this.getParam({
-      ...commonParam,
+      total: custCount,
       ratio: standardNumsRatio,
       activeCount: standardNums,
       activeType: STASIFY_CUST,

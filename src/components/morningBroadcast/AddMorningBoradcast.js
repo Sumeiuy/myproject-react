@@ -103,6 +103,7 @@ export default class AddMorningBoradcast extends PureComponent {
         message.info('删除文件成功');
         this.setState({
           otherFileList: this.resourceToUpload(otherSource, finalNewUuid[1]),
+          isUpdateFile: true,
         });
       }
     }
@@ -255,7 +256,6 @@ export default class AddMorningBoradcast extends PureComponent {
           ...file,
           status: 'error',
         };
-        message.info('上传文件成功');
         this.setState({
           otherFileList: [fileErrorList],
         });
@@ -263,6 +263,7 @@ export default class AddMorningBoradcast extends PureComponent {
         const attachment = file.response.resultData.attachment;
         const resFileList = file.response.resultData.attaches;
         const finalFileOtherList = this.resourceToUpload(resFileList, attachment);
+        message.info('上传文件成功');
         this.setState({
           otherFileList: finalFileOtherList,
           isUpdateFile: true,
@@ -290,16 +291,24 @@ export default class AddMorningBoradcast extends PureComponent {
   @autobind
   onBeforeUpload(file) {
     const audioType = this.getInitDate('newsTypeCode');
+    // 音频文件格式限制正则
+    const audioTypeReg = /^audio\/(mpeg|mp3|x-ms-wma)$/;
+    if (!audioTypeReg.test(file.type)) {
+      message.info('资讯晨报文件仅支持mp3及wma格式');
+      return false;
+    }
+    // 财经V2晨报定制大小
     if (audioType === 'V2_MORNING_NEWS') {
       const isOver = file.size / 1024 / 1024 < 16;
       if (!isOver) {
-        message.info('资讯晨报文件小于16兆');
+        message.info('财经V2晨报音频文件小于16兆');
         return false;
       }
+      // 产品销售晨报定制大小
     } else if (audioType === 'PROD_SALES_MORNING_NEWS') {
       const isOver = file.size / 1024 / 1024 < 30;
       if (!isOver) {
-        message.info('资讯晨报文件小于20兆');
+        message.info('产品销售晨报音频文件小于20兆');
         return false;
       }
     }
@@ -370,6 +379,7 @@ export default class AddMorningBoradcast extends PureComponent {
       <Modal
         title={`${newsId !== -1 ? '修改' : '新建'}晨间播报`}
         width="650px"
+        maskClosable={false}
         wrapClassName="addMorningBoradcast"
         bodyStyle={{
           padding: 0,

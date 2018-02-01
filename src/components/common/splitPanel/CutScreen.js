@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 16:35:18
+ * @Last Modified time: 2018-02-01 15:54:07
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -16,9 +16,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import { Icon } from 'antd';
 import Resize from 'element-resize-detector';
 
+import Icon from '../Icon';
 import config from './config';
 import { env, dom } from '../../../helper';
 
@@ -274,7 +274,7 @@ export default class CutScreen extends PureComponent {
         <div className={hasDataClass} ref={this.splitMainRef}>
           <div className={stretchCls}>
             <div className={styles.growIcon}>
-              <Icon type="double-right" onClick={this.growList} />
+              <Icon type="zhankai1" onClick={this.growList} />
             </div>
           </div>
           <div className={styles.listWrap} ref={this.listWrapRef}>
