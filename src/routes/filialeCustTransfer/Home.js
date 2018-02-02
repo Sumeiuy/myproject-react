@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 15:10:48
+ * @Last Modified time: 2018-01-31 10:14:19
  */
 
 import React, { PureComponent } from 'react';
@@ -77,7 +77,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class Permission extends PureComponent {
+export default class FilialeCustTransfer extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,

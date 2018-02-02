@@ -69,6 +69,7 @@ export default class Search extends PureComponent {
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
+      isHasSearchResult: !_.isEmpty(nextQueryHotWdsData),
     });
   }
 
@@ -82,7 +83,9 @@ export default class Search extends PureComponent {
   onSelect(value) {
     this.setState({
       inputVal: value,
-    });
+    }, () => this.props.queryHotPossibleWds({
+      wd: value,
+    }));
   }
 
   @autobind
@@ -148,9 +151,6 @@ export default class Search extends PureComponent {
 
   searchResult(query, hotList) {
     if (_.isEmpty(hotList)) {
-      // this.setState({
-      //   isHasSearchResult: false,
-      // });
       // 提示无相关目标客户
       return [{
         query,
@@ -160,10 +160,6 @@ export default class Search extends PureComponent {
         id: NONE_INFO,
       }];
     }
-
-    this.setState({ // eslint-disable-line
-      isHasSearchResult: true,
-    });
     return _.map(hotList, (item, index) => {
       if (item.type === 'label') {
         return {
@@ -286,9 +282,8 @@ export default class Search extends PureComponent {
     // 联想 association
     // 搜索 search
     // 标签 tag
-    // console.log('association: ', item);
     return (
-      <Option key={`${item.id}${item.name}`} text={item.name}>
+      <Option key={item.name} text={item.name}>
         <Clickable
           onClick={() => this.handleOpenTab({
             source: sightingScopeBool ? 'sightingTelescope' : 'association',
@@ -310,7 +305,7 @@ export default class Search extends PureComponent {
   @autobind
   renderNoneSearchResult(item) {
     return (
-      <Option key={item.id} text={item.name} disabled>
+      <Option key={item.name} text={item.name} disabled>
         {item.description}
       </Option>
     );

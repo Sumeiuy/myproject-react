@@ -3,17 +3,18 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-29 15:56:02
+ * @Last Modified time: 2018-01-30 10:22:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload, Popconfirm } from 'antd';
+import { message, Modal, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
 import Select from '../../components/common/Select';
+import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig, request } from '../../config';
 import { closeRctTab } from '../../utils';
@@ -37,7 +38,7 @@ const dropDownSelectBoxStyle = {
   border: '1px solid #d9d9d9',
 };
 
-export default class FilialeCustTransfer extends PureComponent {
+export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
@@ -86,6 +87,8 @@ export default class FilialeCustTransfer extends PureComponent {
       transferType: defaultType,
       // 上传后的返回值
       attachment: '',
+      // 导入的弹窗
+      importVisible: false,
     };
   }
 
@@ -100,26 +103,30 @@ export default class FilialeCustTransfer extends PureComponent {
   // 上传事件
   @autobind
   onChange(info) {
-    const uploadFile = info.file;
-    if (uploadFile.response && uploadFile.response.code) {
-      if (uploadFile.response.code === '0') {
-        // 上传成功
-        const data = uploadFile.response.resultData;
-        const { queryCustomerAssignImport } = this.props;
-        const payload = {
-          appId: data,
-          pageNum: 1,
-          pageSize: 10,
-        };
-        this.setState({
-          attachment: data,
-        }, () => queryCustomerAssignImport(payload));
-        // 发送请求
-      } else {
-        // 上传失败
-        message.error(uploadFile.response.msg);
+    this.setState({
+      importVisible: false,
+    }, () => {
+      const uploadFile = info.file;
+      if (uploadFile.response && uploadFile.response.code) {
+        if (uploadFile.response.code === '0') {
+          // 上传成功
+          const data = uploadFile.response.resultData;
+          const { queryCustomerAssignImport } = this.props;
+          const payload = {
+            appId: data,
+            pageNum: 1,
+            pageSize: 10,
+          };
+          this.setState({
+            attachment: data,
+          }, () => queryCustomerAssignImport(payload));
+          // 发送请求
+        } else {
+          // 上传失败
+          message.error(uploadFile.response.msg);
+        }
       }
-    }
+    });
   }
 
   // 去掉权限控制
@@ -291,6 +298,18 @@ export default class FilialeCustTransfer extends PureComponent {
     const that = this;
     that.setState({ isShowModal: false });
   }
+  @autobind
+  onImportHandle() {
+    this.setState({
+      importVisible: true,
+    });
+  }
+  @autobind
+  importHandleCancel() {
+    this.setState({
+      importVisible: false,
+    });
+  }
 
   render() {
     const {
@@ -299,8 +318,7 @@ export default class FilialeCustTransfer extends PureComponent {
       managerData,
       customerAssignImport,
     } = this.props;
-    console.warn('customerAssignImport', customerAssignImport);
-    const { transferType, attachment } = this.state;
+    const { transferType, importVisible, attachment } = this.state;
     const uploadProps = {
       data: {
         empId: emp.getId(),
@@ -313,23 +331,12 @@ export default class FilialeCustTransfer extends PureComponent {
       onChange: this.onChange,
       showUploadList: false,
     };
-    // 上传组件
     const uploadElement = _.isEmpty(attachment) ?
       (<Upload {...uploadProps} {...this.props}>
         <a>导入</a>
       </Upload>)
     :
-      (<Popconfirm
-        placement="top"
-        onConfirm={() => this.onRemove()}
-        okText="是"
-        cancelText="否"
-        title={'再次导入会覆盖之前导入的数据，是否继续导入？'}
-      >
-        <Upload {...uploadProps} {...this.props}>
-          <a>导入</a>
-        </Upload>
-      </Popconfirm>);
+      (<span><a onClick={this.onImportHandle}>导入</a></span>);
     return (
       <CommonModal
         title="分公司客户划转申请"
@@ -353,7 +360,7 @@ export default class FilialeCustTransfer extends PureComponent {
           {
             transferType !== defaultType ?
               <div className={styles.filialeBtn}>
-                { uploadElement }
+                {uploadElement}
                 |
                 <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
               </div>
@@ -398,6 +405,23 @@ export default class FilialeCustTransfer extends PureComponent {
             titleList={titleList}
           />
         </div>
+        <Modal
+          visible={importVisible}
+          title="提示"
+          onCancel={this.importHandleCancel}
+          footer={[
+            <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+              否
+            </Button>,
+            <Upload {...uploadProps} {...this.props}>
+              <Button key="submit" type="primary">
+                是
+              </Button>
+            </Upload>,
+          ]}
+        >
+          <p>已有导入的数据，继续导入将会覆盖之前导入的数据，是否继续？</p>
+        </Modal>
       </CommonModal>
     );
   }

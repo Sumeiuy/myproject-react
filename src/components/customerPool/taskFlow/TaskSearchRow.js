@@ -66,6 +66,8 @@ export default class TaskSearchRow extends PureComponent {
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
     getArgsOfQueryCustomer: PropTypes.func.isRequired,
+    getFilterNumberList: PropTypes.func.isRequired,
+    storedData: PropTypes.object.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -74,6 +76,7 @@ export default class TaskSearchRow extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { storedData: { labelCust = {} }, currentSelectLabel } = props;
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
@@ -85,7 +88,9 @@ export default class TaskSearchRow extends PureComponent {
       title: '',
       custTableData: [],
       currentFilterList: {},
-      filterNumList: {},
+      filterNumList: {
+        [currentSelectLabel]: labelCust.custNum,
+      },
     };
   }
 
@@ -155,6 +160,11 @@ export default class TaskSearchRow extends PureComponent {
     getArgsOfQueryCustomer({
       [labelId]: payload,
     });
+  }
+
+  @autobind
+  getFilterNumList() {
+    return this.state.filterNumList;
   }
 
   @autobind
@@ -275,6 +285,8 @@ export default class TaskSearchRow extends PureComponent {
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
         });
+        const filterNum = typeof (filterNumList[item.id]) === 'undefined'
+          ? item.customNum : filterNumList[item.id];
         return (
           <div className={cls} key={item.id || item.labelMapping}>
             <Radio
@@ -286,7 +298,7 @@ export default class TaskSearchRow extends PureComponent {
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <span className={styles.filterCount}>
-                已筛选客户数：<i>{filterNumList[item.id] || 0}</i>
+                已筛选客户数：<i>{filterNum}</i>
               </span>
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
@@ -361,7 +373,7 @@ export default class TaskSearchRow extends PureComponent {
                     onClick={this.handleCancel}
                     eventName="/click/taskSearchRow/close"
                   >
-                    <Button key="back" size="large">关闭</Button>
+                    <Button key="back" size="large">确定</Button>
                   </Clickable>,
                 ]}
                 width={700}

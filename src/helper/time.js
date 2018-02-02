@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:13:53
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2017-12-22 16:04:36
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-01-30 17:05:18
  * @description 此处存放与时间相关的公用方法
  */
 import moment from 'moment';
@@ -23,6 +23,7 @@ const time = {
     }
     return date;
   },
+
   /**
    * 获取今天是周几
    * @author sunweibin

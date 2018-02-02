@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-29 17:59:13
+ * @Last Modified time: 2018-01-31 16:28:20
  * 客户细分组件
  */
 
@@ -271,10 +271,12 @@ export default class CustomerSegment extends PureComponent {
             isNeedDelete
             uploadTitle={'上传客户列表'}
             uploadTarget={`${request.prefix}/file/khxfFileUpload`}
+            // 只支持EXCEL文件
+            accept={/\.(xlsx|xls)(\?.*)?$/}
           />
         </div>
         <div className={styles.tipSection}>
-          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段，excel导入格式参见：
+          注：支持从客户细分导出的excel格式文件。文件中必须包含”经纪客户号“字段，excel导入格式参见：
           <a href={selfBuiltTemplate}>导入模板</a>。
         </div>
         {

@@ -223,7 +223,6 @@ export default class MissionFeedback extends PureComponent {
           type: 'pie',
           radius: [0, 55],
           center: ['50%', '52%'],
-          roseType: 'radius',
           label: {
             normal: {
               show: false,
@@ -252,8 +251,8 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   handleOptionBar(value, names) {
     const { isFold } = this.props;
-    const grids = isFold ? { left: '20%', right: '20%', bottom: '5%', containLabel: true } :
-      { left: '15%', right: '15%', bottom: '5%', containLabel: true };
+    const grids = isFold ? { left: '20%', right: '20%', top: 20, bottom: 10, containLabel: true } :
+      { left: '3%', right: '10%', top: 30, bottom: 10, containLabel: true };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -285,7 +284,7 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'bar',
-          barWidth: '20%',
+          barWidth: '8',
           data: value,
           itemStyle: {
             normal: {
@@ -325,7 +324,7 @@ export default class MissionFeedback extends PureComponent {
                 this.handleOptionBar(data, nameDes)}
               resizable
               style={{
-                height: '180px',
+                height: '140px',
               }}
             />
           </div>
@@ -424,14 +423,15 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const isRadio = true;
     const oDiv = _.map(data, (item) => {
-      const radios = _.map(item.radioData, itemChild =>
-        (<div key={itemChild.value} className={styles.radioItem}>
+      const radios = _.map(item.radioData, itemChild => (
+        <div key={itemChild.value} className={styles.radioItem}>
           <span className={styles.icon} />
           <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
           <span className={styles.value} title={itemChild.value}>
             ：{itemChild.value}({itemChild.optionPer})
           </span>
-        </div>));
+        </div>
+      ));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
         item.radioData, radios, isRadio);
     });
@@ -441,7 +441,6 @@ export default class MissionFeedback extends PureComponent {
   renderAllFeedback(allCount, count, countPer, residue) {
     const type = '服务经理总数';
     const per = '已反馈人数';
-
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
@@ -478,6 +477,7 @@ export default class MissionFeedback extends PureComponent {
   renderTooltipContent(type, currentCount, per = null) {
     return (
       <div className={styles.content}>
+
         {_.isEmpty(per) ?
           <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
           <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per}%)</div>
@@ -504,7 +504,6 @@ export default class MissionFeedback extends PureComponent {
           {index + 1}.{itemChild.data}
         </h5>,
       );
-
       return (
         <div className={styles.subjective}>
           <div
@@ -523,6 +522,16 @@ export default class MissionFeedback extends PureComponent {
           >
             <div className={styles.problems}>
               <div>
+                <div className={styles.problemList}>
+                  {info}
+                </div>
+                <Pagination
+                  curPageNum={curPageNum}
+                  curPageSize={curPageSize}
+                  totalRecordNum={totalRecordNum}
+                  onPageChange={this.handlePageChange}
+                  onSizeChange={this.handleSizeChange}
+                />
                 {info}
                 {
                   totalRecordNum > 5 ?
@@ -593,9 +602,11 @@ export default class MissionFeedback extends PureComponent {
                         allFeedback.aFeedback, allFeedback.aFeedbackPer, residue)}
                     </div>
                     <div className={styles.allService}>
-                      <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
-                      <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                        <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b></span>
+                      <div className={styles.content}>
+                        <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
+                        <span>已反馈：<b>{allFeedback.aFeedback}</b>
+                          <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b></span>
+                      </div>
                     </div>
                   </div>
                 </div>

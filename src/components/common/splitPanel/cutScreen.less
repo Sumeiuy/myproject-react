@@ -14,7 +14,7 @@
   .main {
     flex: 1 1 auto;
     display: flex;
-    padding: 20px;
+    padding-left: 1px;
     width: 100%;
     background-color: #eef1f6;
     box-sizing: border-box;
@@ -35,19 +35,35 @@
     }
 
     .stretch {
-      width: 20px;
+      width: 10px;
       flex: 0 0 auto;
       color: #999;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .stretchGrow {
+      width: 20px;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
       background-color: #fff;
       margin-right: 10px;
       box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.18);
+      .growIcon {
+        flex: 0 0 auto;
+        width: 20px;
+        height: 54px;
+        line-height: 54px;
+        text-align: center;
+        color: #4a4a4a;
+        cursor: pointer;
+        &:hover {
+          color: #108ee9;
+        }
+      }
+    }
+    .hideStretch {
+      display: none;
     }
   }
 
