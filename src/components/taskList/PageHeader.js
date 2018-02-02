@@ -37,9 +37,9 @@ const MANAGER_VIEW_STATUS = [
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
 // 时间设置
-let today = moment(new Date());
-let beforeToday = moment(today).subtract(60, 'days');
-let afterToday = moment(today).add(60, 'days');
+const today = moment(new Date());
+const beforeToday = moment(today).subtract(60, 'days');
+const afterToday = moment(today).add(60, 'days');
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
@@ -422,11 +422,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-        type,
-        creator,
-        // createTimeStart,
-        // createTimeEnd,
-        missionName,
+          type,
+          creator,
+          // createTimeStart,
+          // createTimeEnd,
+          missionName,
         },
       },
     } = this.props;
