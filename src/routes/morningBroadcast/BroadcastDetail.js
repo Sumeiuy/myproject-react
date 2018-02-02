@@ -113,7 +113,13 @@ export default class BroadcastDetail extends PureComponent {
                   </a>
                 </div>
                 <div className={styles.audioControl}>
-                  <Audio src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`} />
+                  {
+                    attachId &&
+                    <Audio
+                      isShowTip
+                      src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
+                    />
+                  }
                 </div>
               </div>
               {
