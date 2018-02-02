@@ -9,13 +9,14 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-import { url as urlHelper, emp } from '../../helper';
+import { url as urlHelper, emp, fsp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
 import { request } from '../../config';
 import styles from './boradcastDetail.less';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import Audio from '../../components/common/audio/Audio';
+import Icon from '../../components/common/Icon';
 
 
 const effects = {
@@ -50,6 +51,7 @@ export default class BroadcastDetail extends PureComponent {
   componentDidMount() {
     const { newItemDetail, newsId } = this.getItemDetail();
     const { getBoradcastDetail } = this.props;
+    fsp.scrollToTop();
     if (_.isEmpty(newItemDetail) && newsId) {
       getBoradcastDetail({ newsId });
     }
@@ -89,7 +91,7 @@ export default class BroadcastDetail extends PureComponent {
         <div className={styles.broadcastDetail}>
           <div className={styles.content}>
             <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
-              <i className="icon iconfont icon-fanhui" />
+              <Icon className="icon" type="fanhui" />
               晨间播报列表
             </div>
             <div className={styles.header}>
@@ -113,13 +115,9 @@ export default class BroadcastDetail extends PureComponent {
                   </a>
                 </div>
                 <div className={styles.audioControl}>
-                  {
-                    attachId &&
-                    <Audio
-                      isShowTip
-                      src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
-                    />
-                  }
+                  <Audio
+                    src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
+                  />
                 </div>
               </div>
               {
@@ -137,7 +135,7 @@ export default class BroadcastDetail extends PureComponent {
                 ) : null
               }
               <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.footerBack}`}>
-                <i className="icon iconfont icon-fanhui" />
+                <Icon className="icon" type="fanhui" />
                 晨间播报列表
               </div>
             </div>

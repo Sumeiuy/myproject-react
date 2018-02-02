@@ -292,10 +292,10 @@ export default class AddMorningBoradcast extends PureComponent {
   @autobind
   onBeforeUpload(file) {
     const audioType = this.getInitDate('newsTypeCode');
-    // 音频文件格式限制正则
-    const audioTypeReg = /^audio\/(mpeg|mp3|x-ms-wma)$/;
-    if (!audioTypeReg.test(file.type)) {
-      message.info('资讯晨报文件仅支持mp3及wma格式');
+    // 音频文件格式限制为MP3
+    const audioTypeReg = /.mp3$/;
+    if (!audioTypeReg.test(file.name)) {
+      message.info('资讯晨报音频文件仅支持mp3格式');
       return false;
     }
     // 财经V2晨报定制大小
@@ -307,13 +307,12 @@ export default class AddMorningBoradcast extends PureComponent {
       }
       // 产品销售晨报定制大小
     } else if (audioType === 'PROD_SALES_MORNING_NEWS') {
-      const isOver = file.size / 1024 / 1024 < 30;
+      const isOver = file.size / 1024 / 1024 < 20;
       if (!isOver) {
         message.info('产品销售晨报音频文件小于20兆');
         return false;
       }
     }
-
     return true;
   }
   @autobind
@@ -355,7 +354,7 @@ export default class AddMorningBoradcast extends PureComponent {
     const audioProps = {
       ...sourceProps,
       action: `${request.prefix}/file/ceFileReplaceUpload `,
-      accept: 'audio/*',
+      accept: 'audio/mp3',
       data: {
         attachment: finalNewUuid[0],
         empId: emp.getId(),

@@ -8,47 +8,105 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Slider } from 'antd';
+import moment from 'moment';
 import { autobind } from 'core-decorators';
 import ControlButton from './component/ControlButton';
 import styles from './audio.less';
 
+// currentTime 是否交给滚动条控制
+let IS_PROGRESS = false;
+
 export default class Audio extends PureComponent {
   static propTypes = {
-    autoplay: PropTypes.bool,
-    preload: PropTypes.bool,
+    autoPlay: PropTypes.bool,
     src: PropTypes.string.isRequired,
     volume: PropTypes.number,
-    tipFormatter: PropTypes.func,
   };
 
   static defaultProps = {
-    autoplay: false,
-    preload: true,
+    autoPlay: false,
     volume: 0.8,
-    tipFormatter: null,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       isCanPlay: false,  // 是否加载至可开始播放
+      playing: false,
       currentTime: 0, // 当前播放时间
-      totalTime: 0, // 音频总播放时间
     };
   }
 
-  componentDidMount() {
+  componentWillUnmount() {
+    this.setState({
+      isCanPlay: false,
+    });
   }
-  // 滑块 --- start
-  // 滑块tip格式化
-  @autobind
-  handleTipFormatter(value) {
-    const duration = this.nativeAudio.duration;
-    console.log(duration);
-    return (value / 100) * duration;
-  }
-  // 滑块 --- end
 
+  // 播放/暂停
+  @autobind
+  handlePlay() {
+    const { isCanPlay } = this.state;
+    if (isCanPlay) {
+      const { paused } = this.audio;
+      if (paused) {
+        this.audio.play();
+        this.setState({
+          playing: true,
+        });
+      } else {
+        this.audio.pause();
+        this.setState({
+          playing: false,
+        });
+      }
+    }
+  }
+  // 拖动进度条 -- 兼容问题，暂不支持
+  @autobind
+  progressChange(value) {
+    const { isCanPlay } = this.state;
+    if (!IS_PROGRESS) IS_PROGRESS = true;
+    if (isCanPlay) {
+      const { duration } = this.audio;
+      const currentTime = (value / 100) * duration;
+      this.setState({ currentTime });
+    }
+  }
+
+  // 拖动滚动条结束后重新设置音频currentTime -- 兼容问题，暂不支持
+  @autobind
+  onAfterChange(value) {
+    const { isCanPlay } = this.state;
+    IS_PROGRESS = false;
+    if (isCanPlay) {
+      const { duration } = this.audio;
+      this.audio.currentTime = (value / 100) * duration;
+    }
+  }
+
+  get audio() {
+    if (!this.nativeAudio) {
+      return {
+        duration: 0,
+        paused: true, // 默认播放状态为暂停
+      };
+    }
+    return this.nativeAudio;
+  }
+
+  // 时间格式化
+  handleTimeFormat(audioSeconds) {
+    if (!audioSeconds) {
+      return '00:00';
+    }
+    const milliseconds = audioSeconds * 1000;
+    const minutes = moment.duration(milliseconds).minutes();
+    const seconds = moment.duration(milliseconds).seconds();
+    const fanilMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const fanilSeconds = seconds < 10 ? `0${seconds}` : seconds;
+    return `${fanilMinutes}:${fanilSeconds}`;
+  }
   // 当音频可以播放时
   @autobind
   handleAudioCanplay() {
@@ -58,30 +116,68 @@ export default class Audio extends PureComponent {
   }
   // 当播放位置改变时
   handleTimeUpdate() {
-  }
-  render() {
-    const { src, tipFormatter } = this.props;
     const { isCanPlay } = this.state;
+    if (isCanPlay && !IS_PROGRESS) {
+      const { paused, currentTime } = this.audio;
+      this.setState({
+        currentTime,
+        playing: !paused,
+      });
+    }
+  }
+  // 播放进度
+  percent() {
+    const { currentTime } = this.state;
+    const { duration } = this.audio;
+    if (duration === 0) return 0;
+    if (duration === Infinity) {
+      return 100;
+    }
+    return (currentTime / duration) * 100;
+  }
+
+  render() {
+    const { src, volume, autoPlay } = this.props;
+    const { currentTime, playing } = this.state;
+    const { duration } = this.audio;
     return (
       <div className={styles.audioContainer}>
         <audio
           preload="auto"
+          volume={volume}
+          autoPlay={autoPlay}
           src={src}
           ref={(audio) => { this.nativeAudio = audio; }}
           onCanPlay={() => this.handleAudioCanplay()}
           onTimeUpdate={() => this.handleTimeUpdate()}
         />
         <div className={styles.audioControl}>
-          <ControlButton isPlay={isCanPlay} />
-        </div>
-        <div className={styles.currentTime}>00:00</div>
-        <div className={styles.audioProgress}>
-          <Slider
-            defaultValue={30}
-            tipFormatter={tipFormatter}
+          <ControlButton
+            isPlay={playing}
+            onChange={this.handlePlay}
           />
         </div>
-        <div className={styles.currentTime}>00:00</div>
+        <div className={styles.currentTime}>
+          {
+            this.handleTimeFormat(currentTime)
+          }
+        </div>
+        <div className={styles.audioProgress}>
+          <Slider
+            // onChange={this.progressChange}
+            // onAfterChange={this.onAfterChange}
+            value={this.percent()}
+            tipFormatter={null}
+          />
+        </div>
+        {
+          (duration < Infinity) ?
+            <div className={styles.currentTime}>
+              {
+                this.handleTimeFormat(duration)
+              }
+            </div> : null
+        }
       </div>
     );
   }
