@@ -125,7 +125,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       const quesInfoList = _.map(quesVO, item => ({
         quesId: item.rowId,
         quesValue: item.value,
-        quesTypeCode: item.quesTypeCode,
+        quesTypeCode: item.quesType.key,
         quesTypeValue: item.quesType,
         optionInfoList: _.map(item.optionRespDtoList, itemData => ({
           optionId: itemData.rowId,
