@@ -60,6 +60,7 @@ export default class TaskSearchRow extends PureComponent {
     currentSelectLabel: PropTypes.string.isRequired,
     orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
+    isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     isAuthorize: PropTypes.bool.isRequired,
@@ -84,7 +85,6 @@ export default class TaskSearchRow extends PureComponent {
       totalCustNums: 0,
       labelId: '',
       visible: false,
-      isLoadingEnd: true,
       title: '',
       custTableData: [],
       currentFilterList: {},
@@ -337,6 +337,7 @@ export default class TaskSearchRow extends PureComponent {
     const {
       currentSelectLabel,
       isLoadingEnd,
+      isSightTelescopeLoadingEnd,
       condition,
       dict,
       sightingTelescopeFilters,
@@ -360,7 +361,7 @@ export default class TaskSearchRow extends PureComponent {
         </RadioGroup>
         <div className={styles.seeCust}>
           {
-            (isLoadingEnd && visible) ?
+            (isLoadingEnd && visible && isSightTelescopeLoadingEnd) ?
               <Modal
                 visible
                 title="筛查客户"
@@ -410,8 +411,7 @@ export default class TaskSearchRow extends PureComponent {
                           [tableStyles.groupTable]: true,
                         })
                       }
-                      isFixedTitle
-                      scrollY={200}
+                      isFixedTitle={false}
                       onSizeChange={this.handleShowSizeChange}
                       onPageChange={this.handlePageChange}
                       listData={custTableData}
@@ -424,7 +424,7 @@ export default class TaskSearchRow extends PureComponent {
           }
         </div>
         {
-          <Loading loading={!isLoadingEnd} />
+          <Loading loading={!isLoadingEnd && !isSightTelescopeLoadingEnd} />
         }
       </div>
     );

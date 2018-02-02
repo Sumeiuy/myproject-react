@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 17:13:13
+ * @Last Modified time: 2018-02-02 17:02:35
  */
 
 import React, { PureComponent } from 'react';
@@ -63,6 +63,9 @@ const mapStateToProps = state => ({
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
   getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
+  // 获取瞄准镜标签的loading
+  getFiltersOfSightingTelescopeLoading: state.loading
+    .effects[effects.getFiltersOfSightingTelescope],
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
@@ -145,12 +148,14 @@ export default class TaskFlow extends PureComponent {
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    getFiltersOfSightingTelescopeLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
     getApprovalListLoading: false,
+    getFiltersOfSightingTelescopeLoading: false,
     templateId: 0,
     creator: '',
   };
@@ -178,22 +183,27 @@ export default class TaskFlow extends PureComponent {
       needApproval: false,
       canGoNextStep: false,
       needMissionInvestigation: false,
+      isSightTelescopeLoadingEnd: true,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { getLabelPeopleLoading,
+    const {
+      getLabelPeopleLoading,
       peopleOfLabelData = EMPTY_ARRAY,
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
+      getFiltersOfSightingTelescopeLoading,
      } = this.props;
-    const { submitTaskFlowResult: nextResult,
+    const {
+      submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
       getApprovalListLoading: nextApprovalListLoading,
       peopleOfLabelData: nextData = EMPTY_ARRAY,
       approvalList: nextList = EMPTY_ARRAY,
+      getFiltersOfSightingTelescopeLoading: nextSightingTelescopeLoading,
     } = nextProps;
 
     if (nextResult === 'success') {
@@ -204,9 +214,25 @@ export default class TaskFlow extends PureComponent {
 
     // loading状态
     // 只有全部loading完毕才触发isLoadingEnd
-    if (getLabelPeopleLoading && !nextLoading) {
+    if (getLabelPeopleLoading) {
+      let getLabelPeopleLoadingStatus = true;
+      if (!nextLoading) {
+        getLabelPeopleLoadingStatus = false;
+      }
       this.setState({
-        isLoadingEnd: true,
+        isLoadingEnd: !getLabelPeopleLoadingStatus,
+      });
+    }
+
+    // loading状态
+    // 只有全部loading完毕才触发isSightTelescopeLoadingEnd
+    if (getFiltersOfSightingTelescopeLoading) {
+      let getFiltersOfSightingTelescopeLoadingStatus = true;
+      if (!nextSightingTelescopeLoading) {
+        getFiltersOfSightingTelescopeLoadingStatus = false;
+      }
+      this.setState({
+        isSightTelescopeLoadingEnd: !getFiltersOfSightingTelescopeLoadingStatus,
       });
     }
 
@@ -770,6 +796,7 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isShowApprovalModal: false,
       isApprovalListLoadingEnd: true,
+      isSightTelescopeLoadingEnd: true,
     });
   }
 
@@ -780,6 +807,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys,
       isSuccess,
       isLoadingEnd,
+      isSightTelescopeLoadingEnd,
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
@@ -835,6 +863,7 @@ export default class TaskFlow extends PureComponent {
 
           onCancel={this.resetLoading}
           isLoadingEnd={isLoadingEnd}
+          isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           circlePeopleData={circlePeopleData}
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}

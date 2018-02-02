@@ -35,6 +35,7 @@ export default function AppItem(props) {
     active,
     onClick,
     index,
+    missionTypeDict,
   } = props;
   if (_.isEmpty(data)) return null;
   const appItemCls = cx({
@@ -90,6 +91,22 @@ export default function AppItem(props) {
     }
     return createTime && moment(createTime).format('YYYY-MM-DD');
   }
+  // 如果是自建任务，需要加自建：
+  function renderMissionTypeName(missionTypeDic, currentMissionTypeCode) {
+    let typeName = '无';
+    const currentMissionTypeObject = _.find(missionTypeDic, item =>
+      item.key === currentMissionTypeCode) || {};
+    if (!_.isEmpty(currentMissionTypeObject)) {
+      // descText为1代表自建任务
+      if (currentMissionTypeObject.descText === '1') {
+        typeName = `自建：${currentMissionTypeObject.value}`;
+      } else if (currentMissionTypeObject.descText === '0') {
+        typeName = currentMissionTypeObject.value;
+      }
+    }
+
+    return typeName;
+  }
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}
@@ -97,7 +114,7 @@ export default function AppItem(props) {
         <div className={styles.title}>
           <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
           <span className={serialCls}>编号{data.id || '无'}</span>
-          <span className={typeCls}>{data.typeName || '无'}</span>
+          <span className={typeCls}>{renderMissionTypeName(missionTypeDict, data.typeCode)}</span>
         </div>
         <div className={styles.tagArea}>
           <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
@@ -132,4 +149,9 @@ AppItem.propTypes = {
   active: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
+  missionTypeDict: PropTypes.array,
+};
+
+AppItem.defaultProps = {
+  missionTypeDict: [],
 };

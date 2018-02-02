@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 14:22:58
+ * @Last Modified time: 2018-02-02 14:21:04
  * 管理者视图详情
  */
 
@@ -207,9 +207,23 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push, missionType, custDetailResult } = this.props;
+    const {
+      currentId,
+      push,
+      missionType,
+      custDetailResult,
+      missionTypeDict,
+    } = this.props;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
+    const currentMissionType = _.find(missionTypeDict, item => item.key === missionType) || {};
+    let missionTypeObject = {};
+    // 只有自建任务才需要传给自建任务流程
+    if (currentMissionType.descText === '1') {
+      missionTypeObject = {
+        missionType,
+      };
+    }
     const urlParam = {
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
@@ -219,7 +233,7 @@ export default class ManagerViewDetail extends PureComponent {
       source: 'managerView',
       count: totalCustNumber,
       // 任务类型
-      missionType,
+      ...missionTypeObject,
     };
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
