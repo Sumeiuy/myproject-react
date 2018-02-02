@@ -60,7 +60,9 @@ export default class AddMorningBoradcast extends PureComponent {
     const { resetFields } = this.props.form;
     // 打开模态框
     if (!visible && nextProps.visible) {
+      // 打开模态框即初始化表单
       this.resetState();
+      resetFields();
       if (newsId !== -1) {
         const itemDetail = boradcastDetail[newsId];
         if (!itemDetail) {
@@ -69,8 +71,7 @@ export default class AddMorningBoradcast extends PureComponent {
           this.setSourceValue(itemDetail);
         }
       } else {
-        // 新建时初始化表单和参数
-        resetFields();
+        // 新建时参数
         this.setState({ finalNewUuid: newUuid });
       }
     }

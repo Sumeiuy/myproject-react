@@ -354,7 +354,7 @@ export default class PerformerView extends PureComponent {
             currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
           }
           this.setState({
-            taskFeedbackList: currentType.feedbackList,
+            taskFeedbackList: (currentType || {}).feedbackList,
           });
         });
     }
@@ -1011,7 +1011,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={this.state.currentView === 'controller' ? 480 : 380}
+          leftWidth={380}
         />
       </div>
     );
