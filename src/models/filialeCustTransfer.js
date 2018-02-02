@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-02 10:31:07
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-01-31 19:10:27
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -30,6 +30,10 @@ export default {
     custList: EMPTY_LIST, // 客户列表列表
     managerData: EMPTY_LIST, // 服务经理数据
     newManagerList: EMPTY_LIST, // 新服务经理列表
+    origiManagerList: EMPTY_OBJECT, // 原服务经理列表
+    buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
+    saveChangeValue: '', // 修改或新建接口返回的值
+    pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
   },
   reducers: {
     getDetailInfoSuccess(state, action) {
@@ -78,12 +82,40 @@ export default {
         newManagerList: newResultData,
       };
     },
+    getOrigiManagerListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        origiManagerList: resultData,
+      };
+    },
     emptyQueryDataSuccess(state) {
       return {
         ...state,
         custList: EMPTY_LIST,
         managerData: EMPTY_LIST,
         newManagerList: EMPTY_LIST,
+      };
+    },
+    getButtonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        buttonList: resultData,
+      };
+    },
+    getPageAssignmentSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        pageAssignment: resultData,
+      };
+    },
+    saveChangeSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        saveChangeValue: resultData,
       };
     },
   },
@@ -138,9 +170,26 @@ export default {
         payload: response,
       });
     },
+    // 获取原客户经理
+    * getOrigiManagerList({ payload }, { call, put }) {
+      const response = yield call(api.getOldManager, payload);
+      // 获取到原客户经理之后调用compareData，将原客户经理数据和新服务经理数据合并传入commonTable
+      yield put({
+        type: 'getOrigiManagerListSuccess',
+        payload: response,
+      });
+    },
     // 提交保存
-    * saveChange({ payload }, { call }) {
-      yield call(api.saveChange, payload);
+    * saveChange({ payload }, { put, call }) {
+      const response = yield call(api.saveChange, payload);
+      yield put({
+        type: 'saveChangeSuccess',
+        payload: response,
+      });
+    },
+    // 提交保存
+    * doApprove({ payload }, { call }) {
+      yield call(api.doApprove, payload);
     },
     // 提交成功后清除上一次的数据
     * emptyQueryData({ payload }, { put }) {
@@ -148,18 +197,22 @@ export default {
         type: 'emptyQueryDataSuccess',
       });
     },
+    // 获取按钮列表和下一步审批人
+    * getButtonList({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getButtonListSuccess',
+        payload: response,
+      });
+    },
+    // 客户表格分页信息
+    * getPageAssignment({ payload }, { call, put }) {
+      const response = yield call(api.getPageAssignment, payload);
+      yield put({
+        type: 'getPageAssignmentSuccess',
+        payload: response,
+      });
+    },
   },
-  subscriptions: {
-    // setup({ dispatch, history }) {
-    //   return history.listen(({ pathname }) => {
-    //     // 第一次进入页面查询客户列表
-    //     if (pathname === '/filialeCustTransfer') {
-    //       // 进入页面查询子类型列表
-    //       dispatch({ type: 'getCustList', payload: {keyword: ''} });
-    //       // 进入页面查询新服务经理列表
-    //       dispatch({ type: 'getNewManagerList', payload: {login: ''} });
-    //     }
-    //   });
-    // },
-  },
+  subscriptions: {},
 };

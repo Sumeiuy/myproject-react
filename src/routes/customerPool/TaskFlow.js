@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:47:13
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-01 17:13:13
  */
 
 import React, { PureComponent } from 'react';
@@ -230,31 +230,80 @@ export default class TaskFlow extends PureComponent {
   }
 
   /**
+   * 根据职责来判断，是加入orgId还是ptyMngId
+   * @param {*object} postBody post参数
+   */
+  @autobind
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId) {
+    let newPostBody = postBody;
+    if (this.hasTkMampPermission) {
+      // 有权限传orgId
+      newPostBody = {
+        ...newPostBody,
+        searchReq: {
+          orgId: emp.getOrgId(),
+        },
+      };
+    } else {
+      newPostBody = {
+        ...newPostBody,
+        searchReq: {
+          ptyMngId: emp.getId(),
+        },
+      };
+    }
+
+    const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+    if (_.isEmpty(currentLabelQueryCustomerParam)
+      || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+      // 代表当前选中的标签没有进行筛查客户
+      newPostBody = _.merge(newPostBody, {
+        searchReq: {
+          enterType: 'labelSearchCustPool',
+          labels: [labelId],
+        },
+      });
+    } else {
+      newPostBody = _.merge(newPostBody, {
+        searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
+      });
+    }
+
+    return newPostBody;
+  }
+
+  @autobind
+  saveTaskFlowFinalData(data) {
+    this.props.saveTaskFlowData({ ...data });
+  }
+
+  /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
   handleNextStep() {
     // 下一步
     const {
-      saveTaskFlowData,
       storedTaskFlowData = EMPTY_OBJECT,
       generateTemplateId,
       isSendCustsServedByPostn,
     } = this.props;
     const { current } = this.state;
 
-    let taskFormData = storedTaskFlowData.taskFormData || {};
-    let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
-    let resultTrackData = storedTaskFlowData.resultTrackData || {};
-    let missionInvestigationData = storedTaskFlowData.missionInvestigationData || {};
+    let {
+      taskFormData = {},
+      pickTargetCustomerData = {},
+      resultTrackData = {},
+      missionInvestigationData = {},
+      currentEntry = 0,
+    } = storedTaskFlowData;
     let isFormValidate = true;
     let isSelectCust = true;
     let isResultTrackValidate = true;
     let isMissionInvestigationValidate = true;
-    let currentEntry = 0;
+    let isAllowGoNextStep = false;
     // 第一步是选择客户界面
     if (current === 0) {
-      const obj = {};
       const {
         currentEntry: entry,
         importCustomers,
@@ -275,7 +324,7 @@ export default class TaskFlow extends PureComponent {
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
-          message.error('请导入Excel或CSV文件');
+          message.error('请导入Excel文件');
           return;
         }
       } else if (currentEntry === 1) {
@@ -301,40 +350,11 @@ export default class TaskFlow extends PureComponent {
           message.error('此标签下无客户，不可发起任务，请选择其他标签');
           return;
         }
-        if (this.hasTkMampPermission) {
-          // 有权限传orgId
-          postBody = {
-            ...postBody,
-            searchReq: {
-              orgId: emp.getOrgId(),
-            },
-          };
-        } else {
-          postBody = {
-            ...postBody,
-            searchReq: {
-              ptyMngId: emp.getId(),
-            },
-          };
-        }
 
-        const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
-        if (_.isEmpty(currentLabelQueryCustomerParam)
-          || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
-          // 代表当前选中的标签没有进行筛查客户
-          postBody = _.merge(postBody, {
-            searchReq: {
-              enterType: 'labelSearchCustPool',
-              labels: [labelId],
-            },
-          });
-        } else {
-          // 筛选了客户，会自带orgId或者ptyMngId
-          postBody = _.merge(postBody, {
-            searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
-          });
-        }
+        postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
       }
+
+      pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
 
       isSendCustsServedByPostn({
         ...postBody,
@@ -353,6 +373,16 @@ export default class TaskFlow extends PureComponent {
             isSelectCust = false;
             message.error('客户包含非本人名下客户，请重新选择');
           } else {
+            this.saveTaskFlowFinalData({
+              ...storedTaskFlowData,
+              taskFormData,
+              ...pickTargetCustomerData,
+              resultTrackData,
+              missionInvestigationData,
+              current: current + 1,
+              // 选择客户当前入口
+              currentEntry,
+            });
             this.setState({
               needApproval,
               canGoNextStep,
@@ -363,9 +393,8 @@ export default class TaskFlow extends PureComponent {
           }
         }
       });
-
-      pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
     } else if (current === 1) {
+      isAllowGoNextStep = true;
       // 拿到form表单component
       const formComponent = this.formRef;
       // 拿到被HOC包裹的组件
@@ -407,6 +436,7 @@ export default class TaskFlow extends PureComponent {
         });
       }
     } else if (current === 2) {
+      isAllowGoNextStep = true;
       const resultTrackComponent = this.resultTrackRef;
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
@@ -414,22 +444,14 @@ export default class TaskFlow extends PureComponent {
         ...resultTrackComponent.getData(),
       };
       const {
-        // 跟踪窗口期
-        // trackWindowDate,
         // 一级指标
         indicatorLevel1Key,
         // 二级指标
         indicatorLevel2Key,
         // 产品
         currentSelectedProduct,
-        // 操作符key,传给后台,譬如>=/<=
-        // operationKey,
-        // 操作符name,展示用到，譬如达到/降到
-        // operationValue,
         // 当前输入的指标值
         inputIndicator,
-        // 单位
-        // unit,
         // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
         hasState,
         // 是否有产品搜索
@@ -437,9 +459,7 @@ export default class TaskFlow extends PureComponent {
         // 是否选中
         isResultTrackChecked,
       } = resultTrackData;
-      // if (!isResultTrackChecked) {
-      //   message.error('请勾选结果跟踪');
-      // } else
+
       if (isResultTrackChecked) {
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
@@ -493,8 +513,13 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    if (isFormValidate && isSelectCust && isMissionInvestigationValidate && isResultTrackValidate) {
-      saveTaskFlowData({
+    if (isFormValidate
+      && isSelectCust
+      && isMissionInvestigationValidate
+      && isResultTrackValidate
+      && isAllowGoNextStep
+    ) {
+      this.saveTaskFlowFinalData({
         ...storedTaskFlowData,
         taskFormData,
         ...pickTargetCustomerData,
@@ -504,11 +529,9 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      if (this.state.canGoNextStep) {
-        this.setState({
-          current: current + 1,
-        });
-      }
+      this.setState({
+        current: current + 1,
+      });
     }
   }
 
@@ -560,7 +583,7 @@ export default class TaskFlow extends PureComponent {
       needMissionInvestigation,
     } = this.state;
 
-    if (_.isEmpty(flowAuditorId)) {
+    if (_.isEmpty(flowAuditorId) && needApproval) {
       message.error('任务需要审批，请选择审批人');
       return;
     }
@@ -583,18 +606,16 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelMapping,
-      custNum: labelCustNums,
+      labelName,
+      labelDesc,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
-      // taskSubType,
+      labelId,
       templetDesc,
       timelyIntervalValue,
-      labelDesc,
-      labelName,
       // 跟踪窗口期
       trackWindowDate,
       // 一级指标
@@ -605,8 +626,6 @@ export default class TaskFlow extends PureComponent {
       currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
-      // 操作符name,展示用到，譬如达到/降到
-      // operationValue,
       // 当前输入的指标值
       inputIndicator,
       // 单位
@@ -619,8 +638,7 @@ export default class TaskFlow extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      // 选择的问题List
-      // questionList,
+      argsOfQueryCustomer,
     } = finalData;
 
     let postBody = {
@@ -630,8 +648,6 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc,
       timelyIntervalValue,
-      // // 任务子类型
-      // taskSubType,
     };
 
     if (needApproval) {
@@ -678,37 +694,24 @@ export default class TaskFlow extends PureComponent {
       };
     }
 
-    const labelCustPostBody = {
-      ...postBody,
-      labelId: labelMapping,
-      queryLabelDTO: {
-        labelDesc,
-        labelName,
-      },
-      labelCustNums,
-    };
-
     // 当前tab是第一个，则代表导入客户
     if (currentEntry === 0) {
       submitTaskFlow({
         fileId,
         ...postBody,
       });
-    } else if (needApproval) {
-      // 有审批权限，则需要传入orgId
-      submitTaskFlow(_.merge(labelCustPostBody, {
-        queryLabelDTO: {
-          orgId,
-        },
-      }));
     } else {
-      // 没有审批权限，则需要传入ptyMngId
-      submitTaskFlow(_.merge(labelCustPostBody, {
-        queryLabelDTO: {
-          ptyMngId: emp.getId(),
+      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+      postBody = {
+        ...postBody,
+        queryLabelReq: {
+          labelDesc,
+          labelName,
         },
-      }));
+      };
     }
+
+    submitTaskFlow({ ...postBody });
   }
 
   @autobind
@@ -784,7 +787,6 @@ export default class TaskFlow extends PureComponent {
       visible,
       isApprovalListLoadingEnd,
       isShowApprovalModal,
-      currentEntry,
       needApproval,
       needMissionInvestigation,
       isShowErrorIntervalValue,
@@ -814,7 +816,7 @@ export default class TaskFlow extends PureComponent {
     // descText为1
     const motMissionType = _.filter(missionType, item => item.descText === '1') || [];
 
-    const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
+    const { taskFormData = EMPTY_OBJECT, currentEntry } = storedTaskFlowData;
     const isShowTitle = true;
     const steps = [{
       title: '选择目标客户',

@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import withRouter from '../../decorators/withRouter';
 import styles from './boradcastList.less';
 import { openRctTab } from '../../utils';
-import { url as urlHelper, permission } from '../../helper';
+import { url as urlHelper, permission, fsp } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
 
@@ -130,6 +130,16 @@ export default class BroadcastList extends PureComponent {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    const {
+      morningBoradcast: { boradcastList },
+    } = prevProps;
+    // 列表数据刷新后返回fsp顶部
+    if (boradcastList !== this.props.morningBoradcast.boradcastList) {
+      fsp.scrollToTop();
+    }
+  }
+
   // 刷新列表数据
   @autobind
   onHandleGetList(option) {
@@ -242,7 +252,6 @@ export default class BroadcastList extends PureComponent {
       key: 'author',
       render: (text, record) => record.updatedBy || record.createdBy,
     }];
-    console.log(permission.hasZXMampPermission());
     if (permission.hasZXMampPermission()) {
       columns.push({
         title: '操作',
@@ -306,6 +315,12 @@ export default class BroadcastList extends PureComponent {
   // Search -->end
 
   // 日期选择组件-->start
+  @autobind()
+  disabledDate(startValue) {
+    const { TO_DATE } = BroadcastList.initNewsListQuery();
+    return startValue &&
+      startValue.valueOf() > moment(TO_DATE).valueOf();
+  }
   @autobind
   onChange(dates, dateStrings) {
     const { onHandleGetList } = this;

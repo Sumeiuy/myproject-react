@@ -51,8 +51,8 @@ export default class Filter extends PureComponent {
         const [name] = item.split('.');
         return name === obj.filterCode;
       });
-      const backfillValue = (target || '').split('.')[1];
-      return (<MultiFilter
+      const backfillValue = (target || '').split('.')[1] || '';
+      return (<SingleFilter
         key={obj.filterCode}
         value={backfillValue}
         filterLabel={obj.filterDesc}

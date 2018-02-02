@@ -9,12 +9,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-import styles from './boradcastDetail.less';
-import CommonUpload from '../../components/common/biz/CommonUpload';
 import { url as urlHelper, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
 import { request } from '../../config';
+import styles from './boradcastDetail.less';
+import CommonUpload from '../../components/common/biz/CommonUpload';
+import Audio from '../../components/common/audio/Audio';
 
 
 const effects = {
@@ -77,20 +78,6 @@ export default class BroadcastDetail extends PureComponent {
       query,
     });
   }
-  @autobind
-  handleBackHome() {
-    const { push } = this.props;
-    const param = { id: 'RTC_TAB_PRODUCT_CNETOR', title: '首页' };
-    const url = '/customerPool';
-    const query = { };
-    openRctTab({
-      routerAction: push,
-      url: `${url}?${urlHelper.stringify(query)}`,
-      param,
-      pathname: url,
-      query,
-    });
-  }
 
   render() {
     const { newItemDetail } = this.getItemDetail();
@@ -101,10 +88,9 @@ export default class BroadcastDetail extends PureComponent {
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
           <div className={styles.content}>
-            <div className={`${styles.backList} ${styles.headerBack}`}>
-              <span onClick={this.handleBackHome}>产品中心/</span>
-              <span onClick={this.handleBackClick}>每日晨报/</span>
-              <span>晨报名称</span>
+            <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
+              <i className="icon iconfont icon-fanhui" />
+              晨间播报列表
             </div>
             <div className={styles.header}>
               <div className={styles.title}>{ newItemDetail.title }</div>
@@ -121,19 +107,39 @@ export default class BroadcastDetail extends PureComponent {
             <div className={styles.footer}>
               <div className={styles.downMusic}>
                 <i className="icon iconfont icon-shipinwenjian" style={{ color: '#2d86d8' }} />
-                <span title="点击下载">
+                <div className={styles.audioTitle} title="点击下载">
                   <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
                     音频文件
                   </a>
-                </span>
-                <audio src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`} controls="controls">
-                  Your browser does not support the audio element.
-                </audio>
+                </div>
+                <div className={styles.audioControl}>
+                  {
+                    attachId &&
+                    <Audio
+                      isShowTip
+                      src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
+                    />
+                  }
+                </div>
               </div>
-              <CommonUpload
-                attachmentList={otherFileList}
-                edit={false}
-              />
+              {
+                otherFileList.length ? (
+                  <span>
+                    <div className={styles.downOther}>
+                      <i className="icon iconfont icon-qitawenjian" style={{ color: '#cdcdcd' }} />
+                      <span>其他文件</span>
+                    </div>
+                    <CommonUpload
+                      attachmentList={otherFileList}
+                      edit={false}
+                    />
+                  </span>
+                ) : null
+              }
+              <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.footerBack}`}>
+                <i className="icon iconfont icon-fanhui" />
+                晨间播报列表
+              </div>
             </div>
           </div>
         </div>
