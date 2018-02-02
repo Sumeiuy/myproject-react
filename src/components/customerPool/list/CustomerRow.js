@@ -449,19 +449,14 @@ export default class CustomerRow extends PureComponent {
                 </span>
               </div>
             </div>
-            <div className={styles.serviceInfo}>
-              <div className={styles.info}>
-                <MatchArea
-                  q={q}
-                  dict={dict}
-                  location={location}
-                  listItem={listItem}
-                  mainServiceManager={mainServiceManager}
-                />
-              </div>
-              {
-                listItem.empId === rowId ? <div className={styles.flexbox} /> : null
-              }
+            <div className={listItem.empId === rowId ? styles.marginInfo : ''}>
+              <MatchArea
+                q={q}
+                dict={dict}
+                location={location}
+                listItem={listItem}
+                mainServiceManager={mainServiceManager}
+              />
             </div>
           </div>
         </div>
