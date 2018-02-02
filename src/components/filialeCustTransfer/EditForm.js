@@ -18,6 +18,7 @@ import ApprovalRecord from '../permission/ApprovalRecord';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../common/biz/CommonTable';
+import Pagination from '../common/Pagination';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
@@ -25,7 +26,6 @@ const confirm = Modal.confirm;
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
-const overFlowBtnId = 118006; // 终止按钮的flowBtnId
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -40,8 +40,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
     custList: PropTypes.array,
-    // 获取原服务经理
-    getOldManager: PropTypes.func.isRequired,
     // 获取新服务经理
     getNewManagerList: PropTypes.func.isRequired,
     newManagerList: PropTypes.array,
@@ -56,12 +54,16 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     // 获取按钮列表和下一步审批人
     buttonList: PropTypes.object.isRequired,
     getButtonList: PropTypes.func.isRequired,
+    // 客户表格的分页信息
+    getPageAssignment: PropTypes.func.isRequired,
+    pageAssignment: PropTypes.object,
   }
 
   static defaultProps = {
     custList: [],
     newManagerList: [],
     origiManagerList: {},
+    pageAssignment: {},
   }
 
   constructor(props) {
@@ -98,6 +100,30 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     } = this.props.data;
     // 获取下一步骤按钮列表
     this.props.getButtonList({ flowId });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data } = nextProps;
+    if (data !== this.props.data) {
+      this.setState({ assignmentListData: data.assignmentList });
+    }
+  }
+
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { appId } = this.props.data;
+    this.props.getPageAssignment({
+      appId,
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+    }).then(() => {
+      const { pageAssignment } = this.props;
+      this.setState({
+        assignmentListData: pageAssignment.assignmentList,
+      });
+    });
   }
 
   // 选择客户
@@ -180,13 +206,9 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       auditors: item.flowAuditors.login,
       nextApproverList: item.flowAuditors,
     }, () => {
-      if (item.flowBtnId !== overFlowBtnId) {
-        this.setState({
-          nextApproverModal: true,
-        });
-      } else {
-        this.sendRequest();
-      }
+      this.setState({
+        nextApproverModal: true,
+      });
     });
   }
 
@@ -222,7 +244,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   sendRequest() {
     const { flowId } = this.props.data;
     const { client, newManager } = this.state;
-    const { saveChange, saveChangeValue, doApprove } = this.props;
+    const { saveChange } = this.props;
     saveChange({
       custId: client.custId,
       custType: client.custType,
@@ -231,6 +253,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
     }).then(() => {
+      const { doApprove, saveChangeValue } = this.props;
       doApprove({
         itemId: saveChangeValue,
         wobNum: flowId,
@@ -260,6 +283,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       orgName,
       empName,
       empId,
+      page,
     } = this.props.data;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
@@ -277,6 +301,16 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       rowKey: 'login',
       searchShow: false,
     };
+    if (_.isEmpty(this.props.data)) {
+      return null;
+    }
+    // 分页
+    const paginationOption = {
+      curPageNum: page.curPageNum,
+      totalRecordNum: page.totalRecordNum,
+      curPageSize: page.pageSize,
+      onPageChange: this.handlePageNumberChange,
+    };
     return (
       <div className={styles.editFormBox}>
         <div className={styles.inner}>
@@ -289,44 +323,56 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                   <div className={styles.item}>
                     <InfoItem label="划转方式" value={subTypeDesc} width="160px" />
                   </div>
-                  <div className={styles.selectBox}>
-                    <div className={styles.selectLeft}>
-                      <InfoForm label="选择客户" required>
-                        <DropDownSelect
-                          placeholder="选择客户"
-                          showObjKey="custName"
-                          objId="brokerNumber"
-                          value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
-                          searchList={custList}
-                          emitSelectItem={this.handleSelectClient}
-                          emitToSearch={this.handleSearchClient}
-                          boxStyle={dropDownSelectBoxStyle}
-                          ref={ref => this.queryCustComponent = ref}
-                        />
-                      </InfoForm>
+                  {
+                    subType !== SINGLECUSTTRANSFER ?
+                    null
+                    :
+                    <div className={styles.selectBox}>
+                      <div className={styles.selectLeft}>
+                        <InfoForm label="选择客户" required>
+                          <DropDownSelect
+                            placeholder="选择客户"
+                            showObjKey="custName"
+                            objId="brokerNumber"
+                            value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                            searchList={custList}
+                            emitSelectItem={this.handleSelectClient}
+                            emitToSearch={this.handleSearchClient}
+                            boxStyle={dropDownSelectBoxStyle}
+                            ref={ref => this.queryCustComponent = ref}
+                          />
+                        </InfoForm>
+                      </div>
+                      <div className={styles.selectRight}>
+                        <InfoForm label="选择新服务经理" required>
+                          <DropDownSelect
+                            placeholder="选择新服务经理"
+                            showObjKey="newEmpName"
+                            objId="newLogin"
+                            value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
+                            searchList={newManagerList}
+                            emitSelectItem={this.handleSelectNewManager}
+                            emitToSearch={this.handleSearchNewManager}
+                            boxStyle={dropDownSelectBoxStyle}
+                            ref={ref => this.queryManagerComponent = ref}
+                          />
+                        </InfoForm>
+                      </div>
                     </div>
-                    <div className={styles.selectRight}>
-                      <InfoForm label="选择新服务经理" required>
-                        <DropDownSelect
-                          placeholder="选择新服务经理"
-                          showObjKey="newEmpName"
-                          objId="newLogin"
-                          value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
-                          searchList={newManagerList}
-                          emitSelectItem={this.handleSelectNewManager}
-                          emitToSearch={this.handleSearchNewManager}
-                          boxStyle={dropDownSelectBoxStyle}
-                          ref={ref => this.queryManagerComponent = ref}
-                        />
-                      </InfoForm>
-                    </div>
-                  </div>
+                  }
                 </div>
                 <CommonTable
                   data={assignmentListData}
                   titleList={titleList}
-                  pagination={subType !== SINGLECUSTTRANSFER ? { pageSize: 5 } : {}}
                 />
+                {
+                  subType !== SINGLECUSTTRANSFER ?
+                    <Pagination
+                      {...paginationOption}
+                    />
+                  :
+                  null
+                }
               </div>
             </div>
             <div id="nginformation_module" className={styles.module}>
