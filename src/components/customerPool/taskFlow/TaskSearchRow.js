@@ -66,6 +66,8 @@ export default class TaskSearchRow extends PureComponent {
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
     getArgsOfQueryCustomer: PropTypes.func.isRequired,
+    getFilterNumberList: PropTypes.func.isRequired,
+    storedData: PropTypes.object.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -74,6 +76,7 @@ export default class TaskSearchRow extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { storedData: { labelCust = {} }, currentSelectLabel } = props;
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
@@ -85,7 +88,9 @@ export default class TaskSearchRow extends PureComponent {
       title: '',
       custTableData: [],
       currentFilterList: {},
-      filterNumList: {},
+      filterNumList: {
+        [currentSelectLabel]: labelCust.custNum,
+      },
     };
   }
 
@@ -155,6 +160,11 @@ export default class TaskSearchRow extends PureComponent {
     getArgsOfQueryCustomer({
       [labelId]: payload,
     });
+  }
+
+  @autobind
+  getFilterNumList() {
+    return this.state.filterNumList;
   }
 
   @autobind
@@ -275,7 +285,6 @@ export default class TaskSearchRow extends PureComponent {
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
         });
-        console.log('filterNumList[item.id]>>>', filterNumList[item.id]);
         const filterNum = typeof (filterNumList[item.id]) === 'undefined'
           ? item.customNum : filterNumList[item.id];
         return (

@@ -9,10 +9,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
+import Pagination from '../common/Pagination';
 import { seibelConfig } from '../../config';
 import styles from './detail.less';
 
@@ -22,6 +24,45 @@ const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 export default class Detail extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    // 客户表格的分页信息
+    getPageAssignment: PropTypes.func.isRequired,
+    pageAssignment: PropTypes.object,
+  }
+
+  static defaultProps = {
+    pageAssignment: {},
+  }
+
+  constructor(props) {
+    super(props);
+    const { assignmentList } = props.data;
+    this.state = {
+      assignmentListData: assignmentList,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data } = nextProps;
+    if (data !== this.props.data) {
+      this.setState({ assignmentListData: data.assignmentList });
+    }
+  }
+
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { appId } = this.props.data;
+    this.props.getPageAssignment({
+      appId,
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+    }).then(() => {
+      const { pageAssignment } = this.props;
+      this.setState({
+        assignmentListData: pageAssignment.assignmentList,
+      });
+    });
   }
 
   render() {
@@ -37,6 +78,7 @@ export default class Detail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       assignmentList,
+      page,
     } = this.props.data;
     if (_.isEmpty(this.props.data)) {
       return null;
@@ -48,6 +90,13 @@ export default class Detail extends PureComponent {
     const empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
+    // 分页
+    const paginationOption = {
+      curPageNum: page.curPageNum,
+      totalRecordNum: page.totalRecordNum,
+      curPageSize: page.pageSize,
+      onPageChange: this.handlePageNumberChange,
+    };
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -73,10 +122,17 @@ export default class Detail extends PureComponent {
                   }
                 </div>
                 <CommonTable
-                  data={assignmentList}
+                  data={this.state.assignmentListData}
                   titleList={titleList}
-                  pagination={subType !== SINGLECUSTTRANSFER ? { pageSize: 5 } : {}}
                 />
+                {
+                  subType !== SINGLECUSTTRANSFER ?
+                    <Pagination
+                      {...paginationOption}
+                    />
+                  :
+                  null
+                }
               </div>
             </div>
             <div id="nginformation_module" className={styles.module}>

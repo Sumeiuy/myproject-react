@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:20:10
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-01 15:48:51
  */
 
 import React, { PureComponent } from 'react';
@@ -423,7 +423,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const { login: flowAuditorId = null } = currentSelectRecord || {};
 
-    if (_.isEmpty(flowAuditorId)) {
+    if (_.isEmpty(flowAuditorId) && needApproval) {
       message.error('任务需要审批，请选择审批人');
       return;
     }

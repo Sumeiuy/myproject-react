@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-23 09:58:22
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-02-01 15:57:58
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -390,6 +390,24 @@ export default class EditBaseInfo extends PureComponent {
       this.handleSearchClient();
       this.selectCustComponent.clearSearchValue();
     });
+    if (operationType === config.unSubscribeArray[0]) {
+      this.setState({
+        client: value,
+      }, () => {
+        if (isSubscribe) {
+          // 清空协议模版
+          this.selectTemplateComponent.clearValue();
+        } else {
+          // 查询协议 ID 列表
+          queryProtocolList({
+            custId: cusId,
+            subType,
+            operationType,
+          });
+        }
+      });
+      return;
+    }
     getCustValidate(validatePayload).then(
       () => {
         this.setState({
@@ -528,14 +546,14 @@ export default class EditBaseInfo extends PureComponent {
         },
       }).then(() => {
         const { formData: nextFD } = this.props;
-        const { operationType } = this.state;
+        const { operationType, subType } = this.state;
         // TODO 高速通道退订、续订等操作时，需要对 operate 进行判断
         getFlowStepInfo({
           flowId,
           operate: 1,
         });
         this.compareFormData(nextFD);
-        onChangeProtocolNumber(operationType);
+        onChangeProtocolNumber(operationType, subType);
       });
     });
   }

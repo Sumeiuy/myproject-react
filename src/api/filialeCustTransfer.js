@@ -22,5 +22,7 @@ export default function cust(api) {
     getButtonList: query => api.post('/groovynoauth/fsp/cust/manager/queryNextStepInfo', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/cust/manager/doApprove', query),
+    // 客户表格分页信息
+    getPageAssignment: query => api.post('/groovynoauth/fsp/cust/manager/queryPageAssignment', query),
   };
 }
