@@ -241,7 +241,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     this.handleButtonInfo(item);
   }
 
-  // 发送单客户终止或者批量客户终止的请求
+  // 发送单客户终止或者批量客户终止的请求,只需要走走流程接口
   @autobind
   sendDoApproveRequest() {
     const { flowId, appId } = this.props.data;
@@ -261,7 +261,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     });
   }
 
-  // 发送单客户请求
+  // 发送单客户修改请求,先走修改接口，再走走流程接口
   @autobind
   sendModifyRequest() {
     const { client, newManager } = this.state;
@@ -297,6 +297,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const drafter = `${orgName} - ${empName} (${empId})`;
     const { custList, newManagerList, buttonList } = this.props;
     const { client, newManager, assignmentListData, selectBtnInfo } = this.state;
+    // 批量人工划转只能终止不能修改，单客户可以终止也可以修改
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: selectBtnInfo.flowBtnId !== OVERFLOWBTNID ?
