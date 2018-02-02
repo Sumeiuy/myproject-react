@@ -44,9 +44,10 @@
         content: "\E61D";
       }
 
-      &:focus {
+      &:focus,
+      &:hover {
         outline: none;
-        i {
+        :global i.anticon.anticon-change {
           transform: rotateZ(180deg);
           transform-origin: center 45%;
           font-weight: bolder;
@@ -92,9 +93,10 @@
           font-weight: bolder;
         }
       }
-      &:focus {
+      &:focus,
+      &:hover {
         outline: none;
-        i {
+        :global i.anticon.anticon-change {
           transform: rotateZ(-180deg);
           transform-origin: center 37%;
           font-weight: bolder;
