@@ -316,12 +316,8 @@ export default class MatchArea extends PureComponent {
   }
 
   render() {
-    const { mainServiceManager } = this.props;
-    const cls = classnames(styles.relatedInfo, {
-      [styles.ellipsis]: mainServiceManager,
-    });
     return (
-      <div className={cls}>
+      <div className={styles.relatedInfo}>
         <ul>
           {this.renderName()}
           {this.renderIdNum()}

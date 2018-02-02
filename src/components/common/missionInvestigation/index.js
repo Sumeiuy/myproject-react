@@ -253,7 +253,7 @@ export default class MissionInvestigation extends PureComponent {
 
   @autobind
   renderOption(currentQuestionDetail = {}) {
-    const quesTypeCode = currentQuestionDetail.quesTypeValue.key;
+    const quesTypeCode = currentQuestionDetail.quesTypeCode;
     // 1代表单选，2代表多选
     if (quesTypeCode === '1' || quesTypeCode === '2') {
       return (
@@ -285,7 +285,7 @@ export default class MissionInvestigation extends PureComponent {
     const currentQuestion = _.find(currentSelectedQuestionIdList, item => item.key === `question_${questionId}`) || {};
     const currentQuestionDetail = _.find(questionList,
       item => item.quesId === currentQuestion.value) || {};
-    const { quesTypeValue: { key } } = currentQuestionDetail;
+    const { quesTypeCode } = currentQuestionDetail;
     if (_.isEmpty(currentQuestionDetail)) {
       return null;
     }
@@ -299,7 +299,7 @@ export default class MissionInvestigation extends PureComponent {
           <div className={styles.title}>
             {
               // 1代表单选，2代表多选
-              key === '1' || key === '2' ?
+              quesTypeCode === '1' || quesTypeCode === '2' ?
                 '答案：' : '描述：'
             }
           </div>
@@ -367,7 +367,6 @@ export default class MissionInvestigation extends PureComponent {
 
   render() {
     const { checked, newQuestionAndAnswerGroup } = this.state;
-
     return (
       <div className={styles.missionInvestigationContainer}>
         <div className={styles.title}>
