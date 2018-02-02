@@ -48,16 +48,16 @@ export default class ToDoList extends PureComponent {
         dataIndex: 'task',
         key: 'task',
         render: (item, recode) =>
-           (<a
-             className={styles.title}
-             target="_blank"
-             rel="noopener noreferrer"
-             title={item.id}
-             data={recode.id}
-             onClick={this.handleOpenNewPage}
-           >
-             {item.text}
-           </a>),
+          (<a
+            className={styles.title}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.id}
+            data={recode.id}
+            onClick={this.handleOpenNewPage}
+          >
+            {item.text}
+          </a>),
       },
       {
         title: '当前步骤',
