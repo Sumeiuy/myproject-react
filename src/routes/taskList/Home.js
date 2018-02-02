@@ -354,7 +354,7 @@ export default class PerformerView extends PureComponent {
             currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
           }
           this.setState({
-            taskFeedbackList: currentType.feedbackList,
+            taskFeedbackList: (currentType || {}).feedbackList,
           });
         });
     }
