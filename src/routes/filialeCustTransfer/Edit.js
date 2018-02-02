@@ -38,8 +38,6 @@ const mapStateToProps = state => ({
   newManagerList: state.filialeCustTransfer.newManagerList,
   // 获取按钮列表和下一步审批人
   buttonList: state.filialeCustTransfer.buttonList,
-  // 修改接口返回的值（业务主键）
-  saveChangeValue: state.filialeCustTransfer.saveChangeValue,
   // 客户表格分页信息
   pageAssignment: state.filialeCustTransfer.pageAssignment,
 });
@@ -88,7 +86,6 @@ export default class FilialeCustTransferEdit extends PureComponent {
     selectNewManager: PropTypes.func.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
-    saveChangeValue: PropTypes.string.isRequired,
     // 走流程
     doApprove: PropTypes.func.isRequired,
     // 审批按钮列表
@@ -142,7 +139,6 @@ export default class FilialeCustTransferEdit extends PureComponent {
       origiManagerList,
       // 提交保存
       saveChange,
-      saveChangeValue,
       // 走流程
       doApprove,
       getButtonList,
@@ -163,7 +159,6 @@ export default class FilialeCustTransferEdit extends PureComponent {
         getOrigiManagerList={getOrigiManagerList}
         origiManagerList={origiManagerList}
         saveChange={saveChange}
-        saveChangeValue={saveChangeValue}
         doApprove={doApprove}
         getButtonList={getButtonList}
         buttonList={buttonList}

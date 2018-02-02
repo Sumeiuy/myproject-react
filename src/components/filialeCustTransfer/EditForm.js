@@ -26,6 +26,7 @@ const confirm = Modal.confirm;
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
+const OVERFLOWBTNID = 118006; // 终止按钮的flowBtnId
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -48,7 +49,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     origiManagerList: PropTypes.object,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
-    saveChangeValue: PropTypes.string.isRequired,
     // 走流程
     doApprove: PropTypes.func.isRequired,
     // 获取按钮列表和下一步审批人
@@ -70,6 +70,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     super(props);
     const { assignmentList } = props.data;
     this.state = {
+      // 选择的按钮的信息
+      selectBtnInfo: {},
       // 审批人弹框
       nextApproverModal: false,
       // 下一审批人列表
@@ -208,6 +210,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     }, () => {
       this.setState({
         nextApproverModal: true,
+        selectBtnInfo: item,
       });
     });
   }
@@ -236,13 +239,31 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       return;
     }
     this.handleButtonInfo(item);
-    this.setState({ nextApproverModal: false });
   }
 
-  // 发送请求
+  // 发送单客户终止或者批量客户终止的请求
   @autobind
-  sendRequest() {
-    const { flowId } = this.props.data;
+  sendDoApproveRequest() {
+    const { flowId, appId } = this.props.data;
+    const { doApprove } = this.props;
+    doApprove({
+      itemId: appId,
+      wobNum: flowId,
+      flowId,
+      // 下一组ID
+      groupName: this.state.groupName,
+      approverIdea: this.state.approverIdea,
+      auditors: this.state.auditors,
+      operate: this.state.operate,
+    }).then(() => {
+      message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
+      this.setState({ nextApproverModal: false });
+    });
+  }
+
+  // 发送单客户请求
+  @autobind
+  sendModifyRequest() {
     const { client, newManager } = this.state;
     const { saveChange } = this.props;
     saveChange({
@@ -253,20 +274,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
     }).then(() => {
-      const { doApprove, saveChangeValue } = this.props;
-      doApprove({
-        itemId: saveChangeValue,
-        wobNum: flowId,
-        flowId,
-        // 下一组ID
-        groupName: this.state.groupName,
-        approverIdea: this.state.approverIdea,
-        auditors: this.state.auditors,
-        operate: this.state.operate,
-      }).then(() => {
-        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
-        this.setState({ nextApproverModal: false });
-      });
+      this.sendDoApproveRequest();
     });
   }
 
@@ -288,10 +296,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const { custList, newManagerList, buttonList } = this.props;
-    const { client, newManager, assignmentListData } = this.state;
+    const { client, newManager, assignmentListData, selectBtnInfo } = this.state;
     const searchProps = {
       visible: this.state.nextApproverModal,
-      onOk: this.sendRequest,
+      onOk: selectBtnInfo.flowBtnId !== OVERFLOWBTNID ?
+        this.sendModifyRequest : this.sendDoApproveRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: this.state.nextApproverList,
       columns: approvalColumns,

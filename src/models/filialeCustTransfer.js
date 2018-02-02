@@ -32,7 +32,6 @@ export default {
     newManagerList: EMPTY_LIST, // 新服务经理列表
     origiManagerList: EMPTY_OBJECT, // 原服务经理列表
     buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
-    saveChangeValue: '', // 修改或新建接口返回的值
     pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
   },
   reducers: {
@@ -111,13 +110,6 @@ export default {
         pageAssignment: resultData,
       };
     },
-    saveChangeSuccess(state, action) {
-      const { payload: { resultData } } = action;
-      return {
-        ...state,
-        saveChangeValue: resultData,
-      };
-    },
   },
   effects: {
     // 右侧详情
@@ -180,12 +172,8 @@ export default {
       });
     },
     // 提交保存
-    * saveChange({ payload }, { put, call }) {
-      const response = yield call(api.saveChange, payload);
-      yield put({
-        type: 'saveChangeSuccess',
-        payload: response,
-      });
+    * saveChange({ payload }, { call }) {
+      yield call(api.saveChange, payload);
     },
     // 提交保存
     * doApprove({ payload }, { call }) {
