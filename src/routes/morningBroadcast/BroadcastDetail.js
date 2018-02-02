@@ -113,7 +113,6 @@ export default class BroadcastDetail extends PureComponent {
                   </a>
                 </div>
                 <div className={styles.audioControl}>
-                  {console.log(attachId)}
                   {
                     attachId &&
                     <Audio
