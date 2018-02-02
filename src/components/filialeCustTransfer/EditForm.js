@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-01 10:28:21
+ * @Last Modified time: 2018-02-02 15:36:33
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -70,8 +70,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     super(props);
     const { assignmentList } = props.data;
     this.state = {
-      // 选择的按钮的信息
-      selectBtnInfo: {},
       // 审批人弹框
       nextApproverModal: false,
       // 下一审批人列表
@@ -208,10 +206,13 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       auditors: item.flowAuditors.login,
       nextApproverList: item.flowAuditors,
     }, () => {
-      this.setState({
-        nextApproverModal: true,
-        selectBtnInfo: item,
-      });
+      if (item.flowBtnId !== OVERFLOWBTNID) {
+        this.setState({
+          nextApproverModal: true,
+        });
+      } else {
+        this.sendDoApproveRequest();
+      }
     });
   }
 
@@ -296,12 +297,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const { custList, newManagerList, buttonList } = this.props;
-    const { client, newManager, assignmentListData, selectBtnInfo } = this.state;
+    const { client, newManager, assignmentListData } = this.state;
     // 批量人工划转只能终止不能修改，单客户可以终止也可以修改
     const searchProps = {
       visible: this.state.nextApproverModal,
-      onOk: selectBtnInfo.flowBtnId !== OVERFLOWBTNID ?
-        this.sendModifyRequest : this.sendDoApproveRequest,
+      onOk: this.sendModifyRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: this.state.nextApproverList,
       columns: approvalColumns,
