@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Button, Modal, Upload } from 'antd';
+import { message, Button, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
@@ -16,14 +16,12 @@ import DropDownSelect from '../../components/common/dropdownSelect';
 import Select from '../../components/common/Select';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig, request } from '../../config';
-import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
 import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 
-const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -55,8 +53,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     saveChange: PropTypes.func.isRequired,
     // 提交成功后清除上一次查询的数据
     emptyQueryData: PropTypes.func.isRequired,
-    // 组织机构树
-    custRangeList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
   }
 
@@ -68,7 +64,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.checkUserIsFiliale();
     this.state = {
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
@@ -79,30 +74,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       // 划转方式默认值--单客户划转
       transferType: defaultType,
     };
-  }
-
-  componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props.custRangeList;
-    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
-      this.checkUserIsFiliale();
-    }
-  }
-
-  // 判断当前登录用户部门是否是分公司
-  @autobind
-  checkUserIsFiliale() {
-    const { custRangeList } = this.props;
-    if (!_.isEmpty(custRangeList)) {
-      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        Modal.warning({
-          title: '提示',
-          content: '您不是分公司人员，无权操作！',
-          onOk: () => {
-            this.handleCancel();
-          },
-        });
-      }
-    }
   }
 
   // 选择客户
@@ -197,14 +168,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }).then(() => {
       message.success('划转成功');
       this.emptyData();
-    });
-  }
-
-  // 取消
-  @autobind
-  handleCancel() {
-    closeRctTab({
-      id: 'FSP_CROSS_DEPARTMENT',
     });
   }
 
