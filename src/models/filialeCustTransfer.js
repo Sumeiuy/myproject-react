@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-31 19:10:27
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-02 15:55:07
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -34,6 +34,8 @@ export default {
     origiManagerList: EMPTY_OBJECT, // 原服务经理列表
     buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     saveChangeValue: '', // 修改或新建接口返回的值
+    pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
+    errorMsg: EMPTY_OBJECT, // 错误信息
   },
   reducers: {
     getDetailInfoSuccess(state, action) {
@@ -58,7 +60,6 @@ export default {
         ...prevManagerData,
         ...payload,
       };
-      console.warn('managerData', managerData);
       return {
         ...state,
         managerData: [managerData],
@@ -105,9 +106,15 @@ export default {
         buttonList: resultData,
       };
     },
+    getPageAssignmentSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        pageAssignment: resultData,
+      };
+    },
     saveChangeSuccess(state, action) {
       const { payload: { resultData } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         saveChangeValue: resultData,
@@ -121,6 +128,22 @@ export default {
           list: resultData.list,
           page: resultData.page,
         },
+      };
+    },
+    clearMultiDataSuccess(state) {
+      return {
+        ...state,
+        customerAssignImport: {
+          list: [],
+          page: {},
+        },
+      };
+    },
+    getErrorMsgSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        errorMsg: resultData,
       };
     },
   },
@@ -210,11 +233,38 @@ export default {
         payload: response,
       });
     },
-    // 获取导入的批量划转的数据
+    // 客户表格分页信息
+    * getPageAssignment({ payload }, { call, put }) {
+      const response = yield call(api.getPageAssignment, payload);
+      yield put({
+        type: 'getPageAssignmentSuccess',
+        payload: response,
+      });
+    },
+    // 查询导入的批量信息
     * queryCustomerAssignImport({ payload }, { call, put }) {
       const response = yield call(api.queryCustomerAssignImport, payload);
       yield put({
         type: 'queryCustomerAssignImportSuccess',
+        payload: response,
+      });
+    },
+    // 提交批量划转请求
+    * validateData({ payload }, { call }) {
+      yield call(api.validateData, payload);
+    },
+    // 清空批量划转的数据
+    * clearMultiData({ payload }, { put }) {
+      yield put({
+        type: 'clearMultiDataSuccess',
+        payload,
+      });
+    },
+    // 批量划转错误信息处理
+    * getErrorMsg({ payload }, { call, put }) {
+      const response = yield call(api.getErrorMsg, payload);
+      yield put({
+        type: 'getErrorMsgSuccess',
         payload: response,
       });
     },

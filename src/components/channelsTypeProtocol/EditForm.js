@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-31 14:25:11
+ * @Last Modified time: 2018-02-01 16:57:13
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -227,7 +227,7 @@ export default class EditForm extends PureComponent {
 
   // 切换协议编号
   @autobind
-  onChangeProtocolNumber(operationType) {
+  onChangeProtocolNumber(operationType, subType) {
     const { protocolDetail, protocolDetail: { cust, item: productList, term } } = this.props;
     let hasCust = protocolDetail.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
     // 协议产品不可编辑，下挂客户不可编辑
@@ -240,17 +240,28 @@ export default class EditForm extends PureComponent {
     if (_.includes(unSubscribeArray, operationType)) {
       hasCust = custAttachment[0];
     }
-    this.setState({
-      productOperate,
-      custOperate,
-      isEdit: true,
-      // 下挂客户表格数据
-      cust,
-      // 所选协议产品列表
-      productList,
-      protocolClause: term,
-      multiUsedFlag: protocolDetail.multiUsedFlag === 'Y',
-    }, () => this.setUploadConfig(hasCust));
+    if (channelType.isZJKCDChannel(subType)) {
+      this.setState({
+        productOperate,
+        custOperate,
+        isEdit: true,
+        // 下挂客户表格数据
+        cust,
+        // 所选协议产品列表
+        productList,
+        protocolClause: term,
+        multiUsedFlag: protocolDetail.multiUsedFlag === 'Y',
+      }, () => this.setUploadConfig(hasCust));
+    }
+    if (channelType.isGSChannel(subType)) {
+      this.setState({
+        productOperate,
+        isEdit: true,
+        // 所选协议产品列表
+        productList,
+        protocolClause: term,
+      });
+    }
   }
 
   // 切换多账户
