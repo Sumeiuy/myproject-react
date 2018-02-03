@@ -6,7 +6,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { isSightingScope } from '../helper';
 import styles from './matchArea.less';
 
@@ -316,12 +316,8 @@ export default class MatchArea extends PureComponent {
   }
 
   render() {
-    const { mainServiceManager } = this.props;
-    const cls = classnames(styles.relatedInfo, {
-      [styles.ellipsis]: mainServiceManager,
-    });
     return (
-      <div className={cls}>
+      <div className={styles.relatedInfo}>
         <ul>
           {this.renderName()}
           {this.renderIdNum()}

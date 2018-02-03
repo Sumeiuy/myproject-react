@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-30 10:22:02
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-03 17:10:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,8 @@ import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
+import BottonGroup from '../permission/BottonGroup';
+import TableDialog from '../common/biz/TableDialog';
 import Select from '../../components/common/Select';
 import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
@@ -24,11 +26,11 @@ import commonConfirm from '../common/Confirm';
 import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 
-const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const { filialeCustTransfer: { titleList } } = seibelConfig;
+// 表头
+const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 // 划转方式默认值
 const defaultType = config.transferType[0].value;
 // 下拉搜索组件样式
@@ -56,8 +58,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     saveChange: PropTypes.func.isRequired,
     // 提交成功后清除上一次查询的数据
     emptyQueryData: PropTypes.func.isRequired,
-    // 组织机构树
-    custRangeList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
     // 批量划转
     queryCustomerAssignImport: PropTypes.func,
@@ -66,6 +66,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     validateData: PropTypes.func,
     // 清空批量划转的数据
     clearMultiData: PropTypes.func,
+    // 获取按钮列表和下一步审批人
+    buttonList: PropTypes.object.isRequired,
+    getButtonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -95,7 +98,15 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       attachment: '',
       // 导入的弹窗
       importVisible: false,
+      nextApproverList: [],
+      nextApproverModal: false,
     };
+  }
+
+
+  componentWillMount() {
+    // 获取下一步骤按钮列表
+    this.props.getButtonList({});
   }
 
   // 上传事件
@@ -187,15 +198,24 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
-  handleSubmit() {
-    const { client, newManager, isDefaultType, attachment } = this.state;
-    const { managerData, validateData } = this.props;
+  handleSubmit(item) {
+    console.warn('handleSubmit item', item);
+    const { client, newManager, isDefaultType } = this.state;
+    const { managerData } = this.props;
+    const itemData = {
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      approverIdea: item.btnName,
+      nextApproverList: item.flowAuditors,
+    };
     if (!isDefaultType) {
-      validateData({ attachment }).then(() => {
-        this.emptyData();
+      this.setState({
+        ...itemData,
+        nextApproverModal: true,
       });
     } else {
       const managerDataItem = managerData[0];
+      let nextApproverModal = false;
       if (_.isEmpty(client)) {
         message.error('请选择客户');
         return;
@@ -205,32 +225,47 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         return;
       }
       if (managerDataItem.hasContract) {
-        confirm({
+        Modal.confirm({
           title: '确认要划转吗?',
           content: '该客户名下有生效中的合作合约，请确认是否划转?',
           onOk: () => {
-            this.sendRequest();
+            this.setState({
+              ...itemData,
+              nextApproverModal: true,
+            });
           },
         });
         return;
       }
-      this.sendRequest();
+      nextApproverModal = true;
+      this.setState({
+        ...itemData,
+        nextApproverModal,
+      });
     }
   }
 
   // 发送请求
   @autobind
-  sendRequest() {
+  sendRequest(obj) {
     const { client, newManager } = this.state;
     const { saveChange } = this.props;
-    saveChange({
+    const payload = {
       custId: client.custId,
       custType: client.custType,
-      integrationId: newManager.newIntegrationId,
+      // integrationId: newManager.newIntegrationId,
+      integrationId: emp.getOrgId(),
       orgName: newManager.newOrgName,
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
-    }).then(() => {
+      brokerNumber: client.brokerNumber,
+      auditors: obj.auditors,
+      login: newManager.newLogin,
+    };
+    console.warn('发送请求 newManager', newManager);
+    console.warn('发送请求 obj', obj);
+    console.warn('发送请求 payload', payload);
+    saveChange(payload).then(() => {
       message.success('划转成功');
       this.emptyData();
     });
@@ -243,6 +278,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       client: EMPTY_OBJECT,
       newManager: EMPTY_OBJECT,
+      nextApproverModal: false,
       attachment: '',
     }, () => {
       if (this.queryCustComponent) {
@@ -312,6 +348,28 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     queryCustomerAssignImport(payload);
   }
 
+  // 发送单客户修改请求,先走修改接口，再走走流程接口
+  @autobind
+  sendModifyRequest(value) {
+    const { isDefaultType, attachment } = this.state;
+    const { validateData } = this.props;
+    if (isDefaultType) {
+      const payload = {
+        auditors: value.login,
+      };
+      this.sendRequest(payload);
+    } else {
+      const payload = {
+        integrationId: emp.getOrgId(),
+        attachment,
+        auditors: value.login,
+      };
+      validateData(payload).then(() => {
+        this.emptyData();
+      });
+    }
+  }
+
   render() {
     const {
       custList,
@@ -319,12 +377,15 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       managerData,
       customerAssignImport,
       customerAssignImport: { page },
+      buttonList,
     } = this.props;
     const {
       transferType,
       importVisible,
       attachment,
       isDefaultType,
+      nextApproverList,
+      nextApproverModal,
     } = this.state;
     const uploadProps = {
       data: {
@@ -340,8 +401,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     };
     // 分页
     const paginationOption = {
-      curPageNum: !_.isEmpty(page) ? page.pageNum : 0,
-      totalRecordNum: !_.isEmpty(page) ? page.totalCount : 0,
+      curPageNum: !_.isEmpty(page) ? page.curPageNum : 0,
+      totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
       curPageSize: !_.isEmpty(page) ? page.pageSize : 0,
       onPageChange: this.pageChangeHandle,
     };
@@ -351,17 +412,31 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       </Upload>)
     :
       (<span><a onClick={this.onImportHandle}>导入</a></span>);
+    const selfBtnGroup = (<BottonGroup
+      list={buttonList}
+      onEmitEvent={this.handleSubmit}
+    />);
+    const searchProps = {
+      visible: nextApproverModal,
+      onOk: this.sendModifyRequest,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      dataSource: nextApproverList,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      placeholder: '员工号/员工姓名',
+      modalKey: 'nextApproverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
     return (
       <CommonModal
         title="分公司客户划转申请"
         visible={this.state.isShowModal}
-        onOk={this.handleSubmit}
-        onCancel={this.closeModal}
-        okText="提交"
         closeModal={this.closeModal}
         size="large"
         modalKey="myModal"
         afterClose={this.afterClose}
+        selfBtnGroup={selfBtnGroup}
       >
         <div className={styles.filialeCustTransferWrapper} >
           <InfoForm style={{ width: '120px' }} label="划转方式" required>
@@ -443,6 +518,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         >
           <p>已有导入的数据，继续导入将会覆盖之前导入的数据，是否继续？</p>
         </Modal>
+        <TableDialog {...searchProps} />
       </CommonModal>
     );
   }

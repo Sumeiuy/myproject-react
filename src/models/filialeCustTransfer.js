@@ -3,7 +3,7 @@
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-02 15:55:07
+ * @Last Modified time: 2018-02-03 15:35:08
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -33,7 +33,6 @@ export default {
     customerAssignImport: EMPTY_OBJECT,  // 批量划转的客户
     origiManagerList: EMPTY_OBJECT, // 原服务经理列表
     buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
-    saveChangeValue: '', // 修改或新建接口返回的值
     pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
     errorMsg: EMPTY_OBJECT, // 错误信息
   },
@@ -113,20 +112,19 @@ export default {
         pageAssignment: resultData,
       };
     },
-    saveChangeSuccess(state, action) {
-      const { payload: { resultData } } = action;
-      return {
-        ...state,
-        saveChangeValue: resultData,
-      };
-    },
     queryCustomerAssignImportSuccess(state, action) {
       const { payload: { resultData = {} } } = action;
+      const { list = [], page = {} } = resultData;
+      const newList = list.map(item => ({
+        ...item,
+        newOrgName: item.empInfo.orgName,
+        newEmpName: item.empId,
+      }));
       return {
         ...state,
         customerAssignImport: {
-          list: resultData.list,
-          page: resultData.page,
+          list: newList,
+          page,
         },
       };
     },
@@ -208,12 +206,8 @@ export default {
       });
     },
     // 提交保存
-    * saveChange({ payload }, { put, call }) {
-      const response = yield call(api.saveChange, payload);
-      yield put({
-        type: 'saveChangeSuccess',
-        payload: response,
-      });
+    * saveChange({ payload }, { call }) {
+      yield call(api.saveChange, payload);
     },
     // 提交保存
     * doApprove({ payload }, { call }) {

@@ -367,7 +367,6 @@ export default class MissionInvestigation extends PureComponent {
 
   render() {
     const { checked, newQuestionAndAnswerGroup } = this.state;
-
     return (
       <div className={styles.missionInvestigationContainer}>
         <div className={styles.title}>

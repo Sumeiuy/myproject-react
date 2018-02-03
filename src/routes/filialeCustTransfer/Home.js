@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-01 13:43:08
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-03 15:47:59
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -20,11 +21,12 @@ import CreateFilialeCustTransfer from '../../components/filialeCustTransfer/Crea
 import FilialeCustTransferList from '../../components/common/appList';
 import ViewListRow from '../../components/filialeCustTransfer/ViewListRow';
 import Detail from '../../components/filialeCustTransfer/Detail';
+import { closeRctTab } from '../../utils';
 import { seibelConfig } from '../../config';
+import { emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
-
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -51,6 +53,8 @@ const mapStateToProps = state => ({
   custRangeList: state.customerPool.custRange,
   // 批量划转的数据
   customerAssignImport: state.filialeCustTransfer.customerAssignImport,
+  // 获取按钮列表和下一步审批人
+  buttonList: state.filialeCustTransfer.buttonList,
 });
 
 const mapDispatchToProps = {
@@ -79,6 +83,8 @@ const mapDispatchToProps = {
   validateData: fetchDataFunction(true, 'filialeCustTransfer/validateData', true),
   // 清空批量划转的数据
   clearMultiData: fetchDataFunction(true, 'filialeCustTransfer/clearMultiData', true),
+  // 获取按钮列表和下一步审批人
+  getButtonList: fetchDataFunction(false, 'filialeCustTransfer/getButtonList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -125,6 +131,10 @@ export default class FilialeCustTransfer extends PureComponent {
     validateData: PropTypes.func,
     // 清空批量划转的数据
     clearMultiData: PropTypes.func,
+    // 审批按钮列表
+    buttonList: PropTypes.object.isRequired,
+    // 请求审批按钮方法
+    getButtonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -140,6 +150,7 @@ export default class FilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.checkUserIsFiliale();
     this.state = {
       // 高亮项的下标索引
       activeRowIndex: 0,
@@ -159,6 +170,13 @@ export default class FilialeCustTransfer extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
+  }
+
+  componentWillReceiveProps({ custRangeList }) {
+    const oldCustRangeList = this.props.custRangeList;
+    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+      this.checkUserIsFiliale();
+    }
   }
 
   @autobind
@@ -222,6 +240,31 @@ export default class FilialeCustTransfer extends PureComponent {
     });
     // 2.调用queryApplicationList接口
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
+  // 判断当前登录用户部门是否是分公司
+  @autobind
+  checkUserIsFiliale() {
+    const { custRangeList } = this.props;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+        Modal.warning({
+          title: '提示',
+          content: '您不是分公司人员，无权操作！',
+          onOk: () => {
+            this.handleCloseTabPage();
+          },
+        });
+      }
+    }
+  }
+
+  // 取消
+  @autobind
+  handleCloseTabPage() {
+    closeRctTab({
+      id: 'FSP_CROSS_DEPARTMENT',
+    });
   }
 
   @autobind
@@ -330,8 +373,6 @@ export default class FilialeCustTransfer extends PureComponent {
       saveChange,
       // 提交成功后清除上一次查询的数据
       emptyQueryData,
-      // 组织机构树
-      custRangeList,
       // 批量划转
       queryCustomerAssignImport,
       customerAssignImport,
@@ -341,6 +382,8 @@ export default class FilialeCustTransfer extends PureComponent {
       validateData,
       // 清空批量划转的数据
       clearMultiData,
+      getButtonList,
+      buttonList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -409,11 +452,12 @@ export default class FilialeCustTransfer extends PureComponent {
               managerData={managerData}
               saveChange={saveChange}
               emptyQueryData={emptyQueryData}
-              custRangeList={custRangeList}
               queryCustomerAssignImport={queryCustomerAssignImport}
               customerAssignImport={customerAssignImport}
               validateData={validateData}
               clearMultiData={clearMultiData}
+              getButtonList={getButtonList}
+              buttonList={buttonList}
             />
           )
         }
