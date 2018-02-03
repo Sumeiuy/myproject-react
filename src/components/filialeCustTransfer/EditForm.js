@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-02 15:36:33
+ * @Last Modified time: 2018-02-02 16:43:33
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -203,7 +203,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       operate: item.operate,
       groupName: item.nextGroupName,
       approverIdea: item.btnName,
-      auditors: item.flowAuditors.login,
+      auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
     }, () => {
       if (item.flowBtnId !== OVERFLOWBTNID) {
@@ -244,7 +244,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 发送单客户终止或者批量客户终止的请求,只需要走走流程接口
   @autobind
-  sendDoApproveRequest() {
+  sendDoApproveRequest(value) {
     const { flowId, appId } = this.props.data;
     const { doApprove } = this.props;
     doApprove({
@@ -254,7 +254,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       // 下一组ID
       groupName: this.state.groupName,
       approverIdea: this.state.approverIdea,
-      auditors: this.state.auditors,
+      auditors: !_.isEmpty(value) ? value.login : this.state.auditors,
       operate: this.state.operate,
     }).then(() => {
       message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
@@ -264,7 +264,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 发送单客户修改请求,先走修改接口，再走走流程接口
   @autobind
-  sendModifyRequest() {
+  sendModifyRequest(value) {
     const { client, newManager } = this.state;
     const { saveChange } = this.props;
     saveChange({
@@ -275,7 +275,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
     }).then(() => {
-      this.sendDoApproveRequest();
+      this.sendDoApproveRequest(value);
     });
   }
 
