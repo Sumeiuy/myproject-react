@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-01 13:43:08
+ * @Last Modified time: 2018-02-03 15:55:18
  */
 
 import React, { PureComponent } from 'react';
@@ -151,6 +151,7 @@ export default class FilialeCustTransfer extends PureComponent {
     }
   }
 
+  // 获取右侧详情
   @autobind
   getRightDetail() {
     const {
@@ -187,7 +188,7 @@ export default class FilialeCustTransfer extends PureComponent {
     }
   }
 
-
+  // 获取左侧列表
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
