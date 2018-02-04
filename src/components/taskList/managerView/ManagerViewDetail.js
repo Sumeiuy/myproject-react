@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-02 14:21:04
+ * @Last Modified time: 2018-02-03 13:26:03
  * 管理者视图详情
  */
 
@@ -30,6 +30,9 @@ const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
 // const CONTROLLER = 'controller';
+
+// 1代表是自建任务类型
+const TASK_TYPE_SELF = '1';
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -216,10 +219,10 @@ export default class ManagerViewDetail extends PureComponent {
     } = this.props;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
-    const currentMissionType = _.find(missionTypeDict, item => item.key === missionType) || {};
+    const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
     let missionTypeObject = {};
     // 只有自建任务才需要传给自建任务流程
-    if (currentMissionType.descText === '1') {
+    if (descText === TASK_TYPE_SELF) {
       missionTypeObject = {
         missionType,
       };

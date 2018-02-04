@@ -138,6 +138,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                 onChange={onAreaText}
                 data={quesId}
                 defaultValue={defaultData}
+                placeholder={item.quesDesp}
               />
             </div>,
           )}

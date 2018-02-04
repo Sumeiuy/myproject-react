@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Modal } from 'antd';
+import { Row, Col, Modal, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -246,56 +246,58 @@ export default class TargetCustomerRight extends PureComponent {
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
       <div className={styles.box}>
-        <div className={styles.titles}>
-          <Row>
-            <Col span={7}>
-              <h3 className={styles.custNames} title={itemData.custName}>
-                {itemData.custName}
-              </h3>
-            </Col>
-            <Col span={17}>
-              {
-                itemData.custNature === 'per' ?
-                  <h5 className={styles.custNamesCont}>
-                    <span>{this.handleEmpty(itemData.custId)}</span>|
-                    <span>{this.handleEmpty(itemData.genderValue)}</span>|
-                    <span>{this.handleEmpty(String(itemData.age))}岁</span>
-                  </h5>
-                  :
-                  <h5 className={styles.custNamesCont}>
-                    <span>{this.handleEmpty(itemData.custId)}</span>
-                  </h5>
-              }
-            </Col>
-          </Row>
-          <Row className={styles.mt3}>
-            <Col span={12}>
-              <h5
-                className={styles.phoneLeft}
-              >
-                <span>介绍人：</span><span>{this.handleEmpty(itemData.empName)}</span>
+        <Affix>
+          <div className={styles.titles}>
+            <Row>
+              <Col span={7}>
+                <h3 className={styles.custNames} title={itemData.custName}>
+                  {itemData.custName}
+                </h3>
+              </Col>
+              <Col span={17}>
                 {
-                  _.isEmpty(itemData.empName) ?
-                    null :
-                    <TipsInfo
-                      title={suspendedLayer}
-                    />
+                  itemData.custNature === 'per' ?
+                    <h5 className={styles.custNamesCont}>
+                      <span>{this.handleEmpty(itemData.custId)}</span>|
+                      <span>{this.handleEmpty(itemData.genderValue)}</span>|
+                      <span>{this.handleEmpty(String(itemData.age))}岁</span>
+                    </h5>
+                    :
+                    <h5 className={styles.custNamesCont}>
+                      <span>{this.handleEmpty(itemData.custId)}</span>
+                    </h5>
                 }
-              </h5>
-            </Col>
-            {
-              itemData.contactPhone ?
-                <Col span={12}>
-                  <h5
-                    className={styles.phoneRight}
-                  >
-                    <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                    {this.renderPhoneNumTips(itemData)}
-                  </h5>
-                </Col> : null
-            }
-          </Row>
-        </div>
+              </Col>
+            </Row>
+            <Row className={styles.mt3}>
+              <Col span={12}>
+                <h5
+                  className={styles.phoneLeft}
+                >
+                  <span>介绍人：</span><span>{this.handleEmpty(itemData.empName)}</span>
+                  {
+                    _.isEmpty(itemData.empName) ?
+                      null :
+                      <TipsInfo
+                        title={suspendedLayer}
+                      />
+                  }
+                </h5>
+              </Col>
+              {
+                itemData.contactPhone ?
+                  <Col span={12}>
+                    <h5
+                      className={styles.phoneRight}
+                    >
+                      <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
+                      {this.renderPhoneNumTips(itemData)}
+                    </h5>
+                  </Col> : null
+              }
+            </Row>
+          </div>
+        </Affix>
         <div className={styles.asset}>
           <Row>
             <Col span={sendSpan}>
