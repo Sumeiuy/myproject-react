@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 16:31:07
+ * @Last Modified time: 2018-02-05 13:09:43
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -18,7 +18,7 @@ import { seibelConfig } from '../../config';
 
 const { filialeCustTransfer: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
-const TESTFLOWID = 'A397B29902752946970748CEF80F5381';
+const TESTFLOWID = '99C68968CD17E34EA8FF38FAF7B5DCB7';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},

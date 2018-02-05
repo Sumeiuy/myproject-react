@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 16:40:54
+ * @Last Modified time: 2018-02-05 12:05:00
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -84,11 +84,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       },
       // 所选新服务经理
       newManager: {
-        newEmpName: assignmentList[0].newEmpName,
-        newLogin: assignmentList[0].newEmpId,
-        newPostnId: assignmentList[0].newPostnId,
-        newPostnName: assignmentList[0].newPostnName,
-        newOrgName: assignmentList[0].newOrgName,
+        empName: assignmentList[0].newEmpName,
+        login: assignmentList[0].newEmpId,
+        postnId: assignmentList[0].newPostnId,
+        postnName: assignmentList[0].newPostnName,
+        orgName: assignmentList[0].newOrgName,
       },
       assignmentListData: assignmentList,
     };
@@ -134,9 +134,9 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       newManager: {},
       assignmentListData: [{
         ...this.state.assignmentListData[0],
-        newEmpName: '',
-        newOrgName: '',
-        newPostnName: '',
+        empName: '',
+        orgName: '',
+        postnName: '',
       }],
     }, () => {
       // 选择客户之后触发查询该客户的原服务经理
@@ -275,9 +275,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       custType: client.custType,
       brokerNumber: client.brokerNumber,
       integrationId: orgId,
-      orgName: newManager.newOrgName,
-      postnName: newManager.newPostnName,
-      postnId: newManager.newPostnId,
+      orgName: newManager.orgName,
+      postnName: newManager.postnName,
+      postnId: newManager.postnId,
+      login: newManager.login,
       appId,
     }).then(() => {
       this.sendDoApproveRequest(value);
@@ -370,9 +371,9 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <DropDownSelect
                             placeholder="选择新服务经理"
-                            showObjKey="newEmpName"
-                            objId="newLogin"
-                            value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
+                            showObjKey={`${newManager.empName} ${newManager.postnName} ${newManager.login}`}
+                            objId="login"
+                            value={`${newManager.empName || ''} ${newManager.login || ''}` || ''}
                             searchList={newManagerList}
                             emitSelectItem={this.handleSelectNewManager}
                             emitToSearch={this.handleSearchNewManager}
