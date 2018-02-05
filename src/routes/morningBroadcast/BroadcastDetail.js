@@ -81,11 +81,15 @@ export default class BroadcastDetail extends PureComponent {
     });
   }
 
+  @autobind
+  getSourceSrc(source) {
+    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
+  }
+
   render() {
     const { newItemDetail } = this.getItemDetail();
     const { audioFileList = [], otherFileList = [] } = newItemDetail;
-    const audioSource = audioFileList[0];
-    const { attachId, name } = audioSource || [];
+    const audioSource = audioFileList[0] || {};
     return (
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
@@ -114,10 +118,10 @@ export default class BroadcastDetail extends PureComponent {
                 </div>
                 <div className={styles.audioControl}>
                   <Audio
-                    src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
+                    src={this.getSourceSrc(audioSource)}
                   />
                 </div>
-                <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
+                <a href={this.getSourceSrc(audioSource)}>
                   <Icon className="icon" type="xiazai" />
                 </a>
               </div>
