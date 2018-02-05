@@ -2,18 +2,22 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-30 10:22:02
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-05 17:23:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Button, Upload } from 'antd';
+import { message, Modal, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
 import DropDownSelect from '../../components/common/dropdownSelect';
+import BottonGroup from '../permission/BottonGroup';
+import TableDialog from '../common/biz/TableDialog';
 import Select from '../../components/common/Select';
+import Button from '../../components/common/Button';
+import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
@@ -25,7 +29,8 @@ import styles from './createFilialeCustTransfer.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const { filialeCustTransfer: { titleList } } = seibelConfig;
+// 表头
+const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 // 划转方式默认值
 const defaultType = config.transferType[0].value;
 // 下拉搜索组件样式
@@ -37,6 +42,7 @@ const dropDownSelectBoxStyle = {
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
     custList: PropTypes.array,
@@ -54,12 +60,27 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     // 提交成功后清除上一次查询的数据
     emptyQueryData: PropTypes.func.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
+    // 批量划转
+    queryCustomerAssignImport: PropTypes.func,
+    customerAssignImport: PropTypes.object,
+    // 提交批量划转请求
+    validateData: PropTypes.func,
+    // 清空批量划转的数据
+    clearMultiData: PropTypes.func,
+    // 获取按钮列表和下一步审批人
+    buttonList: PropTypes.object.isRequired,
+    getButtonList: PropTypes.func.isRequired,
+    queryAppList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     custList: EMPTY_LIST,
     managerData: EMPTY_LIST,
     newManagerList: EMPTY_LIST,
+    queryCustomerAssignImport: _.noop,
+    customerAssignImport: {},
+    validateData: _.noop,
+    clearMultiData: _.noop,
   }
 
   constructor(props) {
@@ -73,7 +94,60 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       newManager: EMPTY_OBJECT,
       // 划转方式默认值--单客户划转
       transferType: defaultType,
+      // 是否是初始划转方式
+      isDefaultType: true,
+      // 上传后的返回值
+      attachment: '',
+      // 导入的弹窗
+      importVisible: false,
+      // 下一步审批人列表
+      nextApproverList: [],
+      // 审批人弹窗
+      nextApproverModal: false,
     };
+  }
+
+
+  componentWillMount() {
+    // 获取下一步骤按钮列表
+    this.props.getButtonList({});
+  }
+
+  // 上传事件
+  @autobind
+  onChange(info) {
+    this.setState({
+      importVisible: false,
+    }, () => {
+      const uploadFile = info.file;
+      if (uploadFile.response && uploadFile.response.code) {
+        if (uploadFile.response.code === '0') {
+          // 上传成功
+          const data = uploadFile.response.resultData;
+          const { queryCustomerAssignImport } = this.props;
+          const payload = {
+            attachment: data,
+            pageNum: 1,
+            pageSize: 10,
+          };
+          this.setState({
+            attachment: data,
+          }, () => queryCustomerAssignImport(payload));
+          // 发送请求
+        } else {
+          // 上传失败
+          message.error(uploadFile.response.msg);
+        }
+      }
+    });
+  }
+
+  // 导入数据
+  @autobind
+  onImportHandle() {
+    this.setState({
+      importVisible: true,
+    });
   }
 
   // 选择客户
@@ -128,56 +202,99 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
-  handleSubmit() {
-    const { client, newManager } = this.state;
+  handleSubmit(item) {
+    const { client, newManager, isDefaultType } = this.state;
     const { managerData } = this.props;
-    const managerDataItem = managerData[0];
-    if (_.isEmpty(client)) {
-      message.error('请选择客户');
-      return;
-    }
-    if (_.isEmpty(newManager)) {
-      message.error('请选择新客户经理');
-      return;
-    }
-    if (managerDataItem.hasContract) {
-      confirm({
-        title: '确认要划转吗?',
-        content: '该客户名下有生效中的合作合约，请确认是否划转?',
-        onOk: () => {
-          this.sendRequest();
-        },
+    const itemData = {
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      approverIdea: item.btnName,
+      nextApproverList: item.flowAuditors,
+    };
+    if (!isDefaultType) {
+      this.setState({
+        ...itemData,
+        nextApproverModal: true,
       });
-      return;
+    } else {
+      const managerDataItem = managerData[0];
+      let nextApproverModal = false;
+      if (_.isEmpty(client)) {
+        message.error('请选择客户');
+        return;
+      }
+      if (_.isEmpty(newManager)) {
+        message.error('请选择新客户经理');
+        return;
+      }
+      if (managerDataItem.hasContract) {
+        Modal.confirm({
+          title: '确认要划转吗?',
+          content: '该客户名下有生效中的合作合约，请确认是否划转?',
+          onOk: () => {
+            this.setState({
+              ...itemData,
+              nextApproverModal: true,
+            });
+          },
+        });
+        return;
+      }
+      nextApproverModal = true;
+      this.setState({
+        ...itemData,
+        nextApproverModal,
+      });
     }
-    this.sendRequest();
   }
 
   // 发送请求
   @autobind
-  sendRequest() {
+  sendRequest(obj) {
     const { client, newManager } = this.state;
-    const { saveChange } = this.props;
-    saveChange({
+    const {
+      saveChange,
+      queryAppList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    const payload = {
       custId: client.custId,
       custType: client.custType,
-      integrationId: newManager.newIntegrationId,
+      // integrationId: newManager.newIntegrationId,
+      integrationId: emp.getOrgId(),
       orgName: newManager.newOrgName,
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
-    }).then(() => {
+      brokerNumber: client.brokerNumber,
+      auditors: obj.auditors,
+      login: newManager.newLogin,
+    };
+    saveChange(payload).then(() => {
       message.success('划转成功');
       this.emptyData();
+      this.setState({
+        isShowModal: false,
+      }, () => {
+        queryAppList(query, pageNum, pageSize);
+      });
     });
   }
 
   // 提交成功后清空数据
   @autobind
   emptyData() {
-    const { emptyQueryData } = this.props;
+    const { emptyQueryData, clearMultiData } = this.props;
     this.setState({
       client: EMPTY_OBJECT,
       newManager: EMPTY_OBJECT,
+      nextApproverModal: false,
+      attachment: '',
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
@@ -188,14 +305,22 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
+      clearMultiData();
     });
   }
 
   // 划转方式的 select 事件
   @autobind
   handleSelectChange(key, value) {
+    let isDefaultType = true;
+    if (value !== defaultType) {
+      isDefaultType = false;
+    }
     this.setState({
       [key]: value,
+      isDefaultType,
+    }, () => {
+      this.emptyData();
     });
   }
 
@@ -216,39 +341,65 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 清空弹出层数据
   @autobind
   clearBoardAllData() {
-    const that = this;
-    that.setState({ isShowModal: false });
+    this.setState({ isShowModal: false }, () => {
+      this.emptyData();
+    });
   }
 
-
-  // 上传事件
   @autobind
-  onChange(info) {
-    const uploadFile = info.file;
+  importHandleCancel() {
     this.setState({
-      file: uploadFile,
+      importVisible: false,
     });
-    if (uploadFile.response && uploadFile.response.code) {
-      if (uploadFile.response.code === '0') {
-        // 上传成功的返回值 0
-        const data = uploadFile.response.resultData;
+  }
+  // 分页
+  @autobind
+  pageChangeHandle(page, pageSize) {
+    const { queryCustomerAssignImport } = this.props;
+    const { attachment } = this.state;
+    const payload = {
+      attachment,
+      pageNum: page,
+      pageSize,
+    };
+    queryCustomerAssignImport(payload);
+  }
+
+  // 发送单客户修改请求,先走修改接口，再走走流程接口
+  @autobind
+  sendModifyRequest(value) {
+    const { isDefaultType, attachment } = this.state;
+    const {
+      validateData,
+      queryAppList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    if (isDefaultType) {
+      const payload = {
+        auditors: value.login,
+      };
+      this.sendRequest(payload);
+    } else {
+      const payload = {
+        integrationId: emp.getOrgId(),
+        attachment,
+        auditors: value.login,
+      };
+      validateData(payload).then(() => {
+        this.emptyData();
+        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
         this.setState({
-          status: 'success',
-          statusText: '上传完成',
-          fileList: data.attaches,
-          oldFileList: data.attaches,
-          attachment: data.attachment,
+          isShowModal: false,
+        }, () => {
+          queryAppList(query, pageNum, pageSize);
         });
-      } else {
-        // 上传失败的返回值 MAG0005
-        this.setState({
-          status: 'active',
-          fileList: this.state.oldFileList,
-          file: {},
-          percent: 0,
-        });
-        message.error(uploadFile.response.msg);
-      }
+      });
     }
   }
 
@@ -257,103 +408,151 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       custList,
       newManagerList,
       managerData,
+      customerAssignImport,
+      customerAssignImport: { page },
+      buttonList,
     } = this.props;
-    const { transferType } = this.state;
+    const {
+      isShowModal,
+      transferType,
+      importVisible,
+      attachment,
+      isDefaultType,
+      nextApproverList,
+      nextApproverModal,
+    } = this.state;
     const uploadProps = {
       data: {
         empId: emp.getId(),
         attachment: '',
       },
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/uploadTemp`,
       headers: {
         accept: '*/*',
       },
       onChange: this.onChange,
       showUploadList: false,
     };
+    // 分页
+    const paginationOption = {
+      curPageNum: !_.isEmpty(page) ? page.curPageNum : 0,
+      totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
+      curPageSize: !_.isEmpty(page) ? page.pageSize : 0,
+      onPageChange: this.pageChangeHandle,
+    };
+    const uploadElement = _.isEmpty(attachment) ?
+      (<Upload {...uploadProps} {...this.props}>
+        <a>导入</a>
+      </Upload>)
+    :
+      (<span><a onClick={this.onImportHandle}>导入</a></span>);
+    const selfBtnGroup = (<BottonGroup
+      list={buttonList}
+      onEmitEvent={this.handleSubmit}
+    />);
+    const searchProps = {
+      visible: nextApproverModal,
+      onOk: this.sendModifyRequest,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      dataSource: nextApproverList,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      placeholder: '员工号/员工姓名',
+      modalKey: 'nextApproverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
     return (
       <CommonModal
         title="分公司客户划转申请"
-        visible={this.state.isShowModal}
-        onOk={this.handleSubmit}
-        okText="提交"
+        visible={isShowModal}
         closeModal={this.closeModal}
         size="large"
         modalKey="myModal"
         afterClose={this.afterClose}
+        selfBtnGroup={selfBtnGroup}
       >
         <div className={styles.filialeCustTransferWrapper} >
-          <div className={styles.filialeCustTransferBox} >
-            <div className={styles.selectBox}>
-              <div className={styles.selectLeft}>
-                <InfoForm style={{ width: 'auto' }} label="划转方式" required>
-                  <Select
-                    name="transferType"
-                    data={config.transferType}
-                    value={transferType}
-                    onChange={this.handleSelectChange}
+          <InfoForm style={{ width: '120px' }} label="划转方式" required>
+            <Select
+              name="transferType"
+              data={config.transferType}
+              value={transferType}
+              onChange={this.handleSelectChange}
+            />
+          </InfoForm>
+          {
+            isDefaultType ?
+              null
+            :
+              <div className={styles.filialeBtn}>
+                {uploadElement}
+                |
+                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+              </div>
+          }
+          {
+            isDefaultType ?
+              <div>
+                <InfoForm style={{ width: '120px' }} label="选择客户" required>
+                  <DropDownSelect
+                    placeholder="选择客户"
+                    showObjKey="custName"
+                    objId="brokerNumber"
+                    value=""
+                    searchList={custList}
+                    emitSelectItem={this.handleSelectClient}
+                    emitToSearch={this.handleSearchClient}
+                    boxStyle={dropDownSelectBoxStyle}
+                    ref={ref => this.queryCustComponent = ref}
+                  />
+                </InfoForm>
+                <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
+                  <DropDownSelect
+                    placeholder="选择新服务经理"
+                    showObjKey="showSelectName"
+                    value=""
+                    searchList={newManagerList}
+                    emitSelectItem={this.handleSelectNewManager}
+                    emitToSearch={this.handleSearchNewManager}
+                    boxStyle={dropDownSelectBoxStyle}
+                    ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>
               </div>
-              {
-                transferType !== defaultType ?
-                  <div className={styles.selectRight}>
-                    <div className={styles.buttonBox}>
-                      <Upload {...uploadProps} {...this.props}>
-                        <Button type="primary">
-                          导入
-                        </Button>
-                      </Upload>
-                      <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-                    </div>
-                  </div>
-                :
-                  null
-              }
-            </div>
-            {/* 划转方式是否等于默认值 */}
-            {
-              transferType === defaultType ?
-                <div className={styles.selectBox}>
-                  <div className={styles.selectLeft}>
-                    <InfoForm style={{ width: 'auto' }} label="选择客户" required>
-                      <DropDownSelect
-                        placeholder="选择客户"
-                        showObjKey="custName"
-                        objId="brokerNumber"
-                        value=""
-                        searchList={custList}
-                        emitSelectItem={this.handleSelectClient}
-                        emitToSearch={this.handleSearchClient}
-                        boxStyle={dropDownSelectBoxStyle}
-                        ref={ref => this.queryCustComponent = ref}
-                      />
-                    </InfoForm>
-                  </div>
-                  <div className={styles.selectRight}>
-                    <InfoForm style={{ width: 'auto' }} label="选择新服务经理" required>
-                      <DropDownSelect
-                        placeholder="选择新服务经理"
-                        showObjKey="showSelectName"
-                        value=""
-                        searchList={newManagerList}
-                        emitSelectItem={this.handleSelectNewManager}
-                        emitToSearch={this.handleSearchNewManager}
-                        boxStyle={dropDownSelectBoxStyle}
-                        ref={ref => this.queryManagerComponent = ref}
-                      />
-                    </InfoForm>
-                  </div>
-                </div>
-              :
-                null
-            }
-            <CommonTable
-              data={managerData}
-              titleList={titleList}
-            />
-          </div>
+            :
+              null
+          }
+          <CommonTable
+            data={transferType === defaultType ? managerData : customerAssignImport.list}
+            titleList={titleList}
+          />
+          {/* 批量划转时显示分页器 */}
+          {
+            isDefaultType ?
+              null
+            :
+              <Pagination {...paginationOption} />
+          }
         </div>
+        <Modal
+          visible={importVisible}
+          title="提示"
+          onCancel={this.importHandleCancel}
+          footer={[
+            <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+              否
+            </Button>,
+            <Upload {...uploadProps} {...this.props}>
+              <Button key="submit" type="primary">
+                是
+              </Button>
+            </Upload>,
+          ]}
+        >
+          <p>已有导入的数据，继续导入将会覆盖之前导入的数据，是否继续？</p>
+        </Modal>
+        <TableDialog {...searchProps} />
       </CommonModal>
     );
   }
