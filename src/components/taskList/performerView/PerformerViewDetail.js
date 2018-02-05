@@ -61,6 +61,7 @@ export default class PerformerViewDetail extends PureComponent {
       radioData: [],
       areaTextData: [],
       keyIndex: Number(emp.getId()),
+      isDisabled: false,
     };
   }
 
@@ -207,12 +208,13 @@ export default class PerformerViewDetail extends PureComponent {
     let isShow = false;
     if (!saveAnswersSucce) {
       isShow = true;
-      message.error('提交失败！');
+      message.error('提交失败');
     } else {
-      message.error('提交成功！');
+      message.success('提交成功');
     }
     this.setState({
       visible: isShow,
+      isDisabled: true,
     });
   }
 
@@ -305,7 +307,7 @@ export default class PerformerViewDetail extends PureComponent {
       form,
       answersList,
     } = this.props;
-    const { visible, keyIndex } = this.state;
+    const { visible, keyIndex, isDisabled } = this.state;
     const { list, page } = targetCustList;
     const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
@@ -406,6 +408,7 @@ export default class PerformerViewDetail extends PureComponent {
           onAreaText={this.handleAreaText}
           answersList={answersList}
           key={keyIndex}
+          isDisabled={isDisabled}
         />
       </div>
     );

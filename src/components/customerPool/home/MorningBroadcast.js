@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './morningBroadcast.less';
 import Marquee from '../../morningBroadcast/Marquee';
+import Audio from '../../common/audio/Audio';
 import { openRctTab } from '../../../utils';
 import withRouter from '../../../decorators/withRouter';
 import { emp, url as urlHelper } from '../../../helper';
@@ -60,7 +61,7 @@ export default class MorningBroadcast extends PureComponent {
 
   @autobind
   getAudioSrc(source) {
-    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${source.name}`;
+    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
   }
 
   // 跳转至晨报详情
@@ -106,9 +107,7 @@ export default class MorningBroadcast extends PureComponent {
                         <Marquee content={item.newsTypValue} speed={40} />
                       </div>
                       <div className={styles.music}>
-                        <audio src={audioSrc} controls="controls" autoPlay >
-                          Your browser does not support the audio element.
-                        </audio>
+                        <Audio src={audioSrc} autoPlay />
                         <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
                       </div>
                     </div>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 16:55:17
+ * @Last Modified time: 2018-02-05 15:35:57
  * 任务调查
  */
 
@@ -124,10 +124,18 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   getData() {
-    const { currentSelectedQuestionIdList, checked, questionList } = this.state;
+    const { currentSelectedQuestionIdList, checked, questionList = [] } = this.state;
     const idList = _.map(currentSelectedQuestionIdList, item => item.value);
-    const selectedQuestionDetailList = _.filter(questionList,
-      item => _.includes(idList, item.quesId));
+    const selectedQuestionDetailList = [];
+    _.each(idList, (item, index) => {
+      const questionIndex = _.findIndex(questionList, questionItem => questionItem.quesId === item);
+      if (questionIndex !== -1) {
+        selectedQuestionDetailList.push({
+          ...questionList[questionIndex],
+          questionKey: currentSelectedQuestionIdList[index].key,
+        });
+      }
+    });
 
     return {
       // 是否选中
@@ -206,35 +214,6 @@ export default class MissionInvestigation extends PureComponent {
     });
   }
 
-  /**
-   * select的一个bug，在有输入框的select聚焦时，select会聚焦两次
-   * 只有当前激活的elem不是selectElem，才focus select
-   */
-  @autobind
-  handleFocus() {
-    const { activeElement } = document;
-    let selectElem;
-    if (this.questionLineElem) {
-      selectElem = this.questionLineElem.childNodes[0].childNodes[0];
-    }
-
-    if (selectElem && activeElement !== selectElem) {
-      selectElem.focus();
-    }
-  }
-
-  @autobind
-  handleBlur() {
-    let selectElem;
-    if (this.questionLineElem) {
-      selectElem = this.questionLineElem.childNodes[0].childNodes[0];
-    }
-
-    if (selectElem) {
-      selectElem.blur();
-    }
-  }
-
   @autobind
   filterOption(input, option) {
     return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -253,7 +232,7 @@ export default class MissionInvestigation extends PureComponent {
 
   @autobind
   renderOption(currentQuestionDetail = {}) {
-    const quesTypeCode = currentQuestionDetail.quesTypeValue.key;
+    const quesTypeCode = currentQuestionDetail.quesTypeCode;
     // 1代表单选，2代表多选
     if (quesTypeCode === '1' || quesTypeCode === '2') {
       return (
@@ -285,7 +264,7 @@ export default class MissionInvestigation extends PureComponent {
     const currentQuestion = _.find(currentSelectedQuestionIdList, item => item.key === `question_${questionId}`) || {};
     const currentQuestionDetail = _.find(questionList,
       item => item.quesId === currentQuestion.value) || {};
-    const { quesTypeValue: { key } } = currentQuestionDetail;
+    const { quesTypeCode } = currentQuestionDetail;
     if (_.isEmpty(currentQuestionDetail)) {
       return null;
     }
@@ -299,7 +278,7 @@ export default class MissionInvestigation extends PureComponent {
           <div className={styles.title}>
             {
               // 1代表单选，2代表多选
-              key === '1' || key === '2' ?
+              quesTypeCode === '1' || quesTypeCode === '2' ?
                 '答案：' : '描述：'
             }
           </div>
@@ -329,8 +308,6 @@ export default class MissionInvestigation extends PureComponent {
           defaultValue={defaultQues || defaultQuestion}
           showSearch
           optionFilterProp="children"
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
           filterOption={(input, option) =>
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
@@ -367,7 +344,6 @@ export default class MissionInvestigation extends PureComponent {
 
   render() {
     const { checked, newQuestionAndAnswerGroup } = this.state;
-
     return (
       <div className={styles.missionInvestigationContainer}>
         <div className={styles.title}>

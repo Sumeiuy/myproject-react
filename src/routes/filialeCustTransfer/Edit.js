@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-31 23:09:32
+ * @Last Modified time: 2018-02-03 16:31:07
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -18,7 +18,7 @@ import { seibelConfig } from '../../config';
 
 const { filialeCustTransfer: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
-const TESTFLOWID = '6576AF013232CA46A76A10FA0859B0F2';
+const TESTFLOWID = 'A397B29902752946970748CEF80F5381';
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -38,8 +38,8 @@ const mapStateToProps = state => ({
   newManagerList: state.filialeCustTransfer.newManagerList,
   // 获取按钮列表和下一步审批人
   buttonList: state.filialeCustTransfer.buttonList,
-  // 修改接口返回的值（业务主键）
-  saveChangeValue: state.filialeCustTransfer.saveChangeValue,
+  // 客户表格分页信息
+  pageAssignment: state.filialeCustTransfer.pageAssignment,
 });
 
 const mapDispatchToProps = {
@@ -59,6 +59,8 @@ const mapDispatchToProps = {
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
   // 获取按钮列表和下一步审批人
   getButtonList: fetchDataFunction(false, 'filialeCustTransfer/getButtonList'),
+  // 客户表格分页信息
+  getPageAssignment: fetchDataFunction(true, 'filialeCustTransfer/getPageAssignment'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -84,19 +86,22 @@ export default class FilialeCustTransferEdit extends PureComponent {
     selectNewManager: PropTypes.func.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
-    saveChangeValue: PropTypes.string.isRequired,
     // 走流程
     doApprove: PropTypes.func.isRequired,
     // 审批按钮列表
     buttonList: PropTypes.object.isRequired,
     // 请求审批按钮方法
     getButtonList: PropTypes.func.isRequired,
+    // 客户表格的分页信息
+    getPageAssignment: PropTypes.func.isRequired,
+    pageAssignment: PropTypes.object,
   }
 
   static defaultProps = {
     custList: [],
     newManagerList: [],
     origiManagerList: {},
+    pageAssignment: {},
   }
 
   componentDidMount() {
@@ -134,11 +139,12 @@ export default class FilialeCustTransferEdit extends PureComponent {
       origiManagerList,
       // 提交保存
       saveChange,
-      saveChangeValue,
       // 走流程
       doApprove,
       getButtonList,
       buttonList,
+      getPageAssignment,
+      pageAssignment,
     } = this.props;
     if (_.isEmpty(detailInfo)) {
       return null;
@@ -153,10 +159,11 @@ export default class FilialeCustTransferEdit extends PureComponent {
         getOrigiManagerList={getOrigiManagerList}
         origiManagerList={origiManagerList}
         saveChange={saveChange}
-        saveChangeValue={saveChangeValue}
         doApprove={doApprove}
         getButtonList={getButtonList}
         buttonList={buttonList}
+        getPageAssignment={getPageAssignment}
+        pageAssignment={pageAssignment}
       />
     );
   }
