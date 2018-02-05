@@ -540,11 +540,12 @@ export default class CustomerLists extends PureComponent {
       }
     }
     const paginationOption = {
-      curPageNum: current,
-      totalRecordNum: curTotal,
-      curPageSize: pagesize,
+      current,
+      total: curTotal,
+      pageSize: pagesize,
       onPageChange,
       onSizeChange,
+      isHideLastButton: true,
     };
 
     return (
