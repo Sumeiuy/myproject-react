@@ -383,9 +383,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <DropDownSelect
                             placeholder="选择新服务经理"
-                            showObjKey="newEmpName"
-                            objId="newLogin"
-                            value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
+                            showObjKey="showSelectName"
+                            value={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
                             emitSelectItem={this.handleSelectNewManager}
                             emitToSearch={this.handleSearchNewManager}
