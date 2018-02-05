@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-02 17:02:35
+ * @Last Modified time: 2018-02-05 14:58:25
  */
 
 import React, { PureComponent } from 'react';
@@ -722,10 +722,10 @@ export default class TaskFlow extends PureComponent {
 
     // 当前tab是第一个，则代表导入客户
     if (currentEntry === 0) {
-      submitTaskFlow({
+      postBody = {
         fileId,
         ...postBody,
-      });
+      };
     } else {
       postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
       postBody = {
