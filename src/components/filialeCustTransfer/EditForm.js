@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-05 12:05:00
+ * @Last Modified time: 2018-02-05 17:21:18
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -24,10 +24,10 @@ import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
 const confirm = Modal.confirm;
+const { filialeCustTransfer: { pageType } } = seibelConfig;
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
-const OVERFLOWBTNID = 118006; // 终止按钮的flowBtnId
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -37,6 +37,7 @@ const dropDownSelectBoxStyle = {
 
 export default class FilialeCustTransferEditForm extends PureComponent {
   static propTypes = {
+    getDetailInfo: PropTypes.func.isRequired,
     // 详情列表
     data: PropTypes.object.isRequired,
     // 获取客户列表
@@ -84,11 +85,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       },
       // 所选新服务经理
       newManager: {
-        empName: assignmentList[0].newEmpName,
-        login: assignmentList[0].newEmpId,
-        postnId: assignmentList[0].newPostnId,
-        postnName: assignmentList[0].newPostnName,
-        orgName: assignmentList[0].newOrgName,
+        newEmpName: assignmentList[0].newEmpName,
+        newLogin: assignmentList[0].newEmpId,
+        newPostnId: assignmentList[0].newPostnId,
+        newPostnName: assignmentList[0].newPostnName,
+        newOrgName: assignmentList[0].newOrgName,
       },
       assignmentListData: assignmentList,
     };
@@ -134,9 +135,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       newManager: {},
       assignmentListData: [{
         ...this.state.assignmentListData[0],
-        empName: '',
-        orgName: '',
-        postnName: '',
+        newEmpName: '',
+        newOrgName: '',
+        newPostnName: '',
+        newLogin: '',
       }],
     }, () => {
       // 选择客户之后触发查询该客户的原服务经理
@@ -206,7 +208,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
     }, () => {
-      if (item.flowBtnId !== OVERFLOWBTNID) {
+      if (item.approverNum !== 'none') {
         this.setState({
           nextApproverModal: true,
         });
@@ -245,8 +247,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   // 发送单客户终止或者批量客户终止的请求,只需要走走流程接口
   @autobind
   sendDoApproveRequest(value) {
-    const { flowId, appId } = this.props.data;
-    const { doApprove } = this.props;
+    const { flowId, appId, subType } = this.props.data;
+    const { doApprove, getDetailInfo, getButtonList } = this.props;
     const { groupName, approverIdea, auditors, operate } = this.state;
     doApprove({
       itemId: appId,
@@ -258,8 +260,16 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
     }).then(() => {
-      message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
+      if (subType !== SINGLECUSTTRANSFER) {
+        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
+      }
       this.setState({ nextApproverModal: false });
+      // 获取下一步骤按钮列表
+      getButtonList({ flowId });
+      getDetailInfo({
+        flowId,
+        type: pageType,
+      });
     });
   }
 
@@ -275,10 +285,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       custType: client.custType,
       brokerNumber: client.brokerNumber,
       integrationId: orgId,
-      orgName: newManager.orgName,
-      postnName: newManager.postnName,
-      postnId: newManager.postnId,
-      login: newManager.login,
+      orgName: newManager.newOrgName,
+      postnName: newManager.newPostnName,
+      postnId: newManager.newPostnId,
+      login: newManager.newLogin,
       appId,
     }).then(() => {
       this.sendDoApproveRequest(value);
@@ -371,9 +381,9 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <DropDownSelect
                             placeholder="选择新服务经理"
-                            showObjKey={`${newManager.empName} ${newManager.postnName} ${newManager.login}`}
-                            objId="login"
-                            value={`${newManager.empName || ''} ${newManager.login || ''}` || ''}
+                            showObjKey="newEmpName"
+                            objId="newLogin"
+                            value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
                             emitSelectItem={this.handleSelectNewManager}
                             emitToSearch={this.handleSearchNewManager}
