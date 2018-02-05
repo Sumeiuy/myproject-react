@@ -57,7 +57,7 @@
     }
   }
   .status {
-    width: 76px;
+    width: 20%;
     font-size: 14px;
     color: #4a4a4a;
     text-indent: 10px;
@@ -70,9 +70,12 @@
   //   color: #4a4a4a;
   // }
   .customerInfo {
-    width: 95px;
+    width: 35%;
     height: 40px;
     line-height: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     .ellipsis;
     &.long {
       width: 152px;
@@ -86,7 +89,9 @@
   .iconList {
     height: 40px;
     line-height: 40px;
-    padding-left: 10px;
+    text-align: right;
+    width: 45%;
+    margin-right: 20px;
   }
   .vipLevel {
     display: inline-block;

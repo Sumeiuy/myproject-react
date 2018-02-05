@@ -28,6 +28,10 @@ const needProgress = ['executor', 'controller'];
 const EXECUTOR = 'executor'; // 执行者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+// 1代表是自建任务类型,0代表非自建任务
+const TASK_TYPE_SELF = '1';
+const TASK_TYPE_NOT_SELF = '0';
+
 
 export default function AppItem(props) {
   const {
@@ -35,6 +39,7 @@ export default function AppItem(props) {
     active,
     onClick,
     index,
+    missionTypeDict,
   } = props;
   if (_.isEmpty(data)) return null;
   const appItemCls = cx({
@@ -90,6 +95,21 @@ export default function AppItem(props) {
     }
     return createTime && moment(createTime).format('YYYY-MM-DD');
   }
+  // 如果是自建任务，需要加自建：
+  function renderMissionTypeName(missionTypeDic, currentMissionTypeCode) {
+    let typeName = '无';
+    const currentMissionTypeObject = _.find(missionTypeDic, item =>
+      item.key === currentMissionTypeCode) || {};
+    const { descText } = currentMissionTypeObject;
+    // descText为1代表自建任务
+    if (descText === TASK_TYPE_SELF) {
+      typeName = `自建：${currentMissionTypeObject.value}`;
+    } else if (descText === TASK_TYPE_NOT_SELF) {
+      typeName = currentMissionTypeObject.value;
+    }
+
+    return typeName;
+  }
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}
@@ -97,7 +117,7 @@ export default function AppItem(props) {
         <div className={styles.title}>
           <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
           <span className={serialCls}>编号{data.id || '无'}</span>
-          <span className={typeCls}>{data.typeName || '无'}</span>
+          <span className={typeCls}>{renderMissionTypeName(missionTypeDict, data.typeCode)}</span>
         </div>
         <div className={styles.tagArea}>
           <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
@@ -132,4 +152,9 @@ AppItem.propTypes = {
   active: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
+  missionTypeDict: PropTypes.array,
+};
+
+AppItem.defaultProps = {
+  missionTypeDict: [],
 };
