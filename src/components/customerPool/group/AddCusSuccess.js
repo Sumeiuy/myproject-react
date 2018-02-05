@@ -11,7 +11,9 @@ import Button from '../../common/Button';
 import styles from './addCusSuccess.less';
 import { openRctTab, navTo } from '../../../utils';
 import Clickable from '../../../components/common/Clickable';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
+@RestoreScrollTop
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
     closeTab: PropTypes.func.isRequired,
@@ -26,7 +28,7 @@ export default class AddCusSuccess extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      changeTime: 2,
+      changeTime: 5,
     };
   }
 
