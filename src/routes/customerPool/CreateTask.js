@@ -135,7 +135,7 @@ export default class CreateTask extends PureComponent {
       getTaskBasicInfo({
         systemCode,
         flowId,
-      })
+      });
     }
   }
 

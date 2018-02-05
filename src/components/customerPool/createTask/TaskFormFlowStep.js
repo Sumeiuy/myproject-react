@@ -68,7 +68,7 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source, flowId } },
       storedCreateTaskData: { taskFormData, current, custSource, isDisabled },
     } = props;
-    console.warn('isDisabled-->', isDisabled)
+    console.warn('isDisabled-->', isDisabled);
     // const currentFlowData = JSON.parse(decodeURIComponent(flowData));
     // const { motDetailModel } = currentFlowData || {};
     // const { quesVO = [] } = motDetailModel || {};
@@ -88,7 +88,7 @@ export default class TaskFormFlowStep extends PureComponent {
       needApproval: isEntryFromReturnTask,
       canGoNextStep: _.isEmpty(flowId) ? isEntryFromReturnTask : !isDisabled,
       needMissionInvestigation: true,
-      isDisabled: isDisabled,
+      isDisabled,
     };
   }
 
@@ -411,7 +411,7 @@ export default class TaskFormFlowStep extends PureComponent {
       createTask,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
-      location: { query: { flowId, } },
+      location: { query: { flowId } },
       taskBasicInfo,
     } = this.props;
     const {
@@ -612,7 +612,7 @@ export default class TaskFormFlowStep extends PureComponent {
       });
       saveCreateTaskData({
         isDisabled: true,
-      })
+      });
     }
   }
 

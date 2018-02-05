@@ -115,7 +115,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                     value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
                     className={styles.radioOption}
                     key={childItem.optionId}
-                    disabled={defaultData[0] === `${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}` ? false : isDisabled}                    
+                    disabled={defaultData[0] === `${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}` ? false : isDisabled}
                   >
                     {childItem.optionValue}
                   </Checkbox>)
