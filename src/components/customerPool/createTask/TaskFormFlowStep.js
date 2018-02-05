@@ -68,10 +68,6 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source, flowId } },
       storedCreateTaskData: { taskFormData, current, custSource, isDisabled },
     } = props;
-    console.warn('isDisabled-->', isDisabled);
-    // const currentFlowData = JSON.parse(decodeURIComponent(flowData));
-    // const { motDetailModel } = currentFlowData || {};
-    // const { quesVO = [] } = motDetailModel || {};
     const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
