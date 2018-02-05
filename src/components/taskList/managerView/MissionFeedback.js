@@ -40,12 +40,6 @@ export default class MissionFeedback extends PureComponent {
   constructor(props) {
     super(props);
 
-    // const { finalData, originProblemData } = this.handleData(
-    //   props.missionFeedbackData,
-    //   props.missionFeedbackCount,
-    //   props.serveManagerCount,
-    // );
-
     this.state = {
       expandAll: false,
       cycleSelect: '',
@@ -71,9 +65,9 @@ export default class MissionFeedback extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
-    const { missionFeedbackCount: count, missionFeedbackData: data = EMPTY_LIST } = this.props;
+    const { missionFeedbackData: data = EMPTY_LIST } = this.props;
     const { problems } = this.state;
-    if (data !== missionFeedbackData && count !== missionFeedbackCount) {
+    if (data !== missionFeedbackData) {
       const { finalData, originProblemData } = this.handleData(
         missionFeedbackData,
         missionFeedbackCount,
@@ -405,7 +399,7 @@ export default class MissionFeedback extends PureComponent {
     const { isFold } = this.props;
     const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
-        (<div key={itemChild.value} className={styles.radioItem}>
+        (<div key={itemChild.name} className={styles.radioItem}>
           <span className={styles.icon} />
           <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
           <span className={styles.value} title={itemChild.value}>
@@ -424,7 +418,7 @@ export default class MissionFeedback extends PureComponent {
     const isRadio = true;
     const oDiv = _.map(data, (item) => {
       const radios = _.map(item.radioData, itemChild => (
-        <div key={itemChild.value} className={styles.radioItem}>
+        <div key={itemChild.name} className={styles.radioItem}>
           <span className={styles.icon} />
           <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
           <span className={styles.value} title={itemChild.value}>

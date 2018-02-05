@@ -48,6 +48,7 @@ export default class TaskFormFlowStep extends PureComponent {
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
   };
 
   static defaultProps = {
@@ -58,17 +59,15 @@ export default class TaskFormFlowStep extends PureComponent {
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
+    taskBasicInfo: {},
   };
 
   constructor(props) {
     super(props);
     const {
-      location: { query: { source } },
-      storedCreateTaskData: { taskFormData, current, custSource },
+      location: { query: { source, flowId } },
+      storedCreateTaskData: { taskFormData, current, custSource, isDisabled },
     } = props;
-    // const currentFlowData = JSON.parse(decodeURIComponent(flowData));
-    // const { motDetailModel } = currentFlowData || {};
-    // const { quesVO = [] } = motDetailModel || {};
     const isEntryFromReturnTask = source === 'returnTask';
 
     this.state = {
@@ -83,9 +82,9 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
       needApproval: isEntryFromReturnTask,
-      canGoNextStep: isEntryFromReturnTask,
+      canGoNextStep: _.isEmpty(flowId) ? isEntryFromReturnTask : !isDisabled,
       needMissionInvestigation: true,
-      isDisabled: false,
+      isDisabled,
     };
   }
 
@@ -226,11 +225,11 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, flowData = '{}' } },
+      location: { query: { source, count } },
+      taskBasicInfo,
     } = this.props;
 
-    const baseInfo = JSON.parse(decodeURIComponent(flowData));
-    const { tagetCustModel } = baseInfo || {};
+    const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource } = tagetCustModel || {};
 
     const {
@@ -408,7 +407,8 @@ export default class TaskFormFlowStep extends PureComponent {
       createTask,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
-      location: { query: { flowId, flowData = '{}' } },
+      location: { query: { flowId } },
+      taskBasicInfo,
     } = this.props;
     const {
       needApproval,
@@ -416,8 +416,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.state;
 
     // 获取重新提交任务参数( flowId, eventId );
-    const baseInfo = JSON.parse(decodeURIComponent(flowData));
-    const { motDetailModel = {} } = baseInfo;
+    const { motDetailModel = {} } = taskBasicInfo;
     const { eventId } = motDetailModel || {};
     const flowParam = { flowId, eventId };
 
@@ -600,12 +599,15 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handleSubmitSuccess() {
-    const { submitApporvalResult } = this.props;
+    const { submitApporvalResult, saveCreateTaskData } = this.props;
     if (submitApporvalResult.code === '0') {
       message.success('提交成功');
       this.setState({
         isDisabled: true,
         canGoNextStep: false,
+      });
+      saveCreateTaskData({
+        isDisabled: true,
       });
     }
   }
@@ -640,13 +642,13 @@ export default class TaskFormFlowStep extends PureComponent {
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
-      location: { query: { missionType, source, flowData = '{}' } },
+      location: { query: { missionType, source } },
       creator,
+      taskBasicInfo,
     } = this.props;
-    const baseInfo = JSON.parse(decodeURIComponent(flowData));
     const { executeTypes, motCustfeedBackDict } = dict;
     const { query: { count } } = location;
-    const { tagetCustModel = {} } = baseInfo;
+    const { tagetCustModel = {} } = taskBasicInfo;
     const { custNum } = tagetCustModel;
 
     const steps = [{
@@ -665,7 +667,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorTaskName={isShowErrorTaskName}
         custCount={Number(count) || custNum}
         missionType={missionType}
-        baseInfo={baseInfo}
+        taskBasicInfo={taskBasicInfo}
       />,
     }, {
       title: '结果跟踪&任务调查',

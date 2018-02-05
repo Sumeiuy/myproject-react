@@ -6,7 +6,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import classnames from 'classnames';
 import { isSightingScope } from '../helper';
 import styles from './matchArea.less';
 

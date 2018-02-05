@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-02 16:43:33
+ * @Last Modified time: 2018-02-03 16:40:54
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -19,6 +19,7 @@ import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../common/biz/CommonTable';
 import Pagination from '../common/Pagination';
+import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
@@ -85,7 +86,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       newManager: {
         newEmpName: assignmentList[0].newEmpName,
         newLogin: assignmentList[0].newEmpId,
-        newIntegrationId: assignmentList[0].newIntegrationId,
         newPostnId: assignmentList[0].newPostnId,
         newPostnName: assignmentList[0].newPostnName,
         newOrgName: assignmentList[0].newOrgName,
@@ -247,15 +247,16 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   sendDoApproveRequest(value) {
     const { flowId, appId } = this.props.data;
     const { doApprove } = this.props;
+    const { groupName, approverIdea, auditors, operate } = this.state;
     doApprove({
       itemId: appId,
       wobNum: flowId,
       flowId,
       // 下一组ID
-      groupName: this.state.groupName,
-      approverIdea: this.state.approverIdea,
-      auditors: !_.isEmpty(value) ? value.login : this.state.auditors,
-      operate: this.state.operate,
+      groupName,
+      approverIdea,
+      auditors: !_.isEmpty(value) ? value.login : auditors,
+      operate,
     }).then(() => {
       message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
       this.setState({ nextApproverModal: false });
@@ -267,13 +268,17 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   sendModifyRequest(value) {
     const { client, newManager } = this.state;
     const { saveChange } = this.props;
+    const { appId } = this.props.data;
+    const orgId = emp.getOrgId();
     saveChange({
       custId: client.custId,
       custType: client.custType,
-      integrationId: newManager.newIntegrationId,
+      brokerNumber: client.brokerNumber,
+      integrationId: orgId,
       orgName: newManager.newOrgName,
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
+      appId,
     }).then(() => {
       this.sendDoApproveRequest(value);
     });
@@ -294,16 +299,23 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       empId,
       page,
     } = this.props.data;
+    const { pageAssignment } = this.props;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const { custList, newManagerList, buttonList } = this.props;
-    const { client, newManager, assignmentListData } = this.state;
+    const {
+      client,
+      newManager,
+      assignmentListData,
+      nextApproverModal,
+      nextApproverList,
+    } = this.state;
     // 批量人工划转只能终止不能修改，单客户可以终止也可以修改
     const searchProps = {
-      visible: this.state.nextApproverModal,
+      visible: nextApproverModal,
       onOk: this.sendModifyRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
-      dataSource: this.state.nextApproverList,
+      dataSource: nextApproverList,
       columns: approvalColumns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
@@ -314,10 +326,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     if (_.isEmpty(this.props.data)) {
       return null;
     }
+    const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: page.curPageNum,
-      totalRecordNum: page.totalRecordNum,
+      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
       curPageSize: page.pageSize,
       onPageChange: this.handlePageNumberChange,
     };

@@ -40,7 +40,7 @@ export default class TaskListDetailInfo extends PureComponent {
     const { infoData } = this.props;
     const timelyIntervalValue = infoData.timelyIntervalValue || '--';
     return (
-      <div id="detailModule" className={styles.module}>
+      <div id="detailModule">
         {infoData.status !== COMPLETE_CODE ?
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
