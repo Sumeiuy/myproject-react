@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-31 11:09:13
+ * @Last Modified time: 2018-02-03 15:33:36
  */
 
 import React, { PureComponent } from 'react';
@@ -80,6 +80,7 @@ export default class Detail extends PureComponent {
       assignmentList,
       page,
     } = this.props.data;
+    const { pageAssignment } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
@@ -90,13 +91,15 @@ export default class Detail extends PureComponent {
     const empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
+    const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: page.curPageNum,
-      totalRecordNum: page.totalRecordNum,
+      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
       curPageSize: page.pageSize,
       onPageChange: this.handlePageNumberChange,
     };
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
