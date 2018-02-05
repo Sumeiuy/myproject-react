@@ -31,7 +31,7 @@ export default class Audio extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isCanPlay: false,  // 是否加载至可开始播放
+      canPlay: false,  // 是否加载至可开始播放
       playing: false,
       currentTime: 0, // 当前播放时间
     };
@@ -39,15 +39,15 @@ export default class Audio extends PureComponent {
 
   componentWillUnmount() {
     this.setState({
-      isCanPlay: false,
+      canPlay: false,
     });
   }
 
   // 播放/暂停
   @autobind
   handlePlay() {
-    const { isCanPlay } = this.state;
-    if (isCanPlay) {
+    const { canPlay } = this.state;
+    if (canPlay) {
       const { paused } = this.audio;
       if (paused) {
         this.audio.play();
@@ -65,9 +65,9 @@ export default class Audio extends PureComponent {
   // 拖动进度条 -- 兼容问题，暂不支持
   @autobind
   progressChange(value) {
-    const { isCanPlay } = this.state;
+    const { canPlay } = this.state;
     if (!IS_PROGRESS) IS_PROGRESS = true;
-    if (isCanPlay) {
+    if (canPlay) {
       const { duration } = this.audio;
       const currentTime = (value / 100) * duration;
       this.setState({ currentTime });
@@ -77,9 +77,9 @@ export default class Audio extends PureComponent {
   // 拖动滚动条结束后重新设置音频currentTime -- 兼容问题，暂不支持
   @autobind
   onAfterChange(value) {
-    const { isCanPlay } = this.state;
+    const { canPlay } = this.state;
     IS_PROGRESS = false;
-    if (isCanPlay) {
+    if (canPlay) {
       const { duration } = this.audio;
       this.audio.currentTime = (value / 100) * duration;
     }
@@ -100,24 +100,23 @@ export default class Audio extends PureComponent {
     if (!audioSeconds) {
       return '00:00';
     }
-    const milliseconds = audioSeconds * 1000;
-    const minutes = moment.duration(milliseconds).minutes();
-    const seconds = moment.duration(milliseconds).seconds();
-    const fanilMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const fanilSeconds = seconds < 10 ? `0${seconds}` : seconds;
-    return `${fanilMinutes}:${fanilSeconds}`;
+    const momentAudioTime = moment('000000', 'hhmmss').add(audioSeconds, 'second');
+    if (audioSeconds <= 3600) {
+      return momentAudioTime.format('mm:ss');
+    }
+    return momentAudioTime.format('HH:mm:ss');
   }
   // 当音频可以播放时
   @autobind
   handleAudioCanplay() {
     this.setState({
-      isCanPlay: true,
+      canPlay: true,
     });
   }
   // 当播放位置改变时
   handleTimeUpdate() {
-    const { isCanPlay } = this.state;
-    if (isCanPlay && !IS_PROGRESS) {
+    const { canPlay } = this.state;
+    if (canPlay && !IS_PROGRESS) {
       const { paused, currentTime } = this.audio;
       this.setState({
         currentTime,
@@ -129,10 +128,8 @@ export default class Audio extends PureComponent {
   percent() {
     const { currentTime } = this.state;
     const { duration } = this.audio;
-    if (duration === 0) return 0;
-    if (duration === Infinity) {
-      return 100;
-    }
+    if (duration === 0 || isNaN(duration)) return 0;
+    if (duration === Infinity) return 100;
     return (currentTime / duration) * 100;
   }
 

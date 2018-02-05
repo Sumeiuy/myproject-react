@@ -108,23 +108,24 @@ export default class BroadcastDetail extends PureComponent {
             </div>
             <div className={styles.footer}>
               <div className={styles.downMusic}>
-                <i className="icon iconfont icon-shipinwenjian" style={{ color: '#2d86d8' }} />
+                <Icon className="icon" type="shipinwenjian" style={{ color: '#2d86d8' }} />
                 <div className={styles.audioTitle} title="点击下载">
-                  <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
-                    音频文件
-                  </a>
+                  音频文件
                 </div>
                 <div className={styles.audioControl}>
                   <Audio
                     src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
                   />
                 </div>
+                <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
+                  <Icon className="icon" type="xiazai" />
+                </a>
               </div>
               {
                 otherFileList.length ? (
                   <span>
                     <div className={styles.downOther}>
-                      <i className="icon iconfont icon-qitawenjian" style={{ color: '#cdcdcd' }} />
+                      <Icon className="icon" type="qitawenjian" style={{ color: '#cdcdcd' }} />
                       <span>其他文件</span>
                     </div>
                     <CommonUpload
