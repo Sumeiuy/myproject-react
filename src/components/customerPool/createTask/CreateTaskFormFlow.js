@@ -172,7 +172,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     if (this.judgeSource(source)) {
       storedData = _.merge(currentFlowData, storedCreateTaskData[`${source}`]) || {};
     } else {
-      storedData = _.merge(currentFlowData, storedCreateTaskData.custList) || {};
+      storedData = storedCreateTaskData.custList || {};
     }
     return storedData;
   }
