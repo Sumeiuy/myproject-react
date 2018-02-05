@@ -34,7 +34,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorTaskSubType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
     missionType: PropTypes.string,
-    baseInfo: PropTypes.object,
+    taskBasicInfo: PropTypes.object,
     isShowErrorIntervalValue: PropTypes.bool.isRequired,
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
@@ -49,7 +49,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: false,
     custCount: 0,
     missionType: '',
-    baseInfo: {},
+    taskBasicInfo: {},
   }
 
   constructor(props) {
@@ -128,8 +128,8 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    const { dict: { custIndexPlaceHolders }, missionType, baseInfo } = this.props;
-    const { motDetailModel = {} } = baseInfo;
+    const { dict: { custIndexPlaceHolders }, missionType, taskBasicInfo } = this.props;
+    const { motDetailModel = {} } = taskBasicInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultTaskSubType = '';

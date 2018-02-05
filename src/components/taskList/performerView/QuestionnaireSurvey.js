@@ -49,6 +49,7 @@ export default class QuestionnaireSurvey extends PureComponent {
   renderOption() {
     const { form, onCheckChange, answersList, onRadioChange, onAreaText } = this.props;
     const { quesInfoList = EMPTY_ARRAY, answerVOList = EMPTY_ARRAY } = answersList;
+    const isDisabled = !_.isEmpty(answersList);
     const { getFieldDecorator } = form;
     let content = null;
     const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
@@ -80,6 +81,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                       className={styles.radioOption}
                       dataQuesId={quesId}
                       key={childItem.optionId}
+                      disabled={defaultData[0] === childItem.optionId ? false : isDisabled}
                     >
                       {childItem.optionValue}
                     </Radio>)
@@ -113,6 +115,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                     value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
                     className={styles.radioOption}
                     key={childItem.optionId}
+                    disabled={defaultData[0] === `${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}` ? false : isDisabled}                    
                   >
                     {childItem.optionValue}
                   </Checkbox>)
@@ -138,6 +141,8 @@ export default class QuestionnaireSurvey extends PureComponent {
                 onChange={onAreaText}
                 data={quesId}
                 defaultValue={defaultData}
+                placeHolder={item.quesDesp}
+                disabled={isDisabled}
               />
             </div>,
           )}
