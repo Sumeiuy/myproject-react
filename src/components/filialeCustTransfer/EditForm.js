@@ -262,6 +262,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     }).then(() => {
       if (subType !== SINGLECUSTTRANSFER) {
         message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
+      } else {
+        message.success('划转请求提交成功');
       }
       this.setState({ nextApproverModal: false });
       // 获取下一步骤按钮列表
