@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-05 14:20:18
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-05 17:31:07
  */
 
 import React, { PureComponent } from 'react';
@@ -459,6 +459,7 @@ export default class FilialeCustTransfer extends PureComponent {
               clearMultiData={clearMultiData}
               getButtonList={getButtonList}
               buttonList={buttonList}
+              queryAppList={this.queryAppList}
             />
           )
         }

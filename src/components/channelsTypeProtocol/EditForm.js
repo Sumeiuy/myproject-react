@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-02-01 16:57:13
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-05 14:18:47
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -120,7 +120,6 @@ export default class EditForm extends PureComponent {
     // 更新附件组件必传项
     let hasCust = custAttachment[1];
     if (isEdit) {
-      console.warn('是编辑页面 protocolDetail', protocolDetail);
       const { subType, operationType } = protocolDetail;
       // 如果操作类型是退订，则不对附件做校验
       if (_.includes(unSubscribeArray, operationType)) {
@@ -134,7 +133,6 @@ export default class EditForm extends PureComponent {
       } else {
         custOperate = false;
       }
-      console.warn('是编辑页面 hasCust', hasCust);
     }
     // 找出需要必传的数组
     const requiredArr = attachmentRequired[hasCust];
@@ -153,8 +151,6 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
-    console.warn('requiredArr', requiredArr);
-    console.warn('attachmentMapRequired', attachmentMapRequired);
 
     this.state = {
       isEdit,

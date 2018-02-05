@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-05 13:57:35
+ * @Last Modified time: 2018-02-05 17:23:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -42,6 +42,7 @@ const dropDownSelectBoxStyle = {
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 获取客户列表
     getCustList: PropTypes.func.isRequired,
     custList: PropTypes.array,
@@ -69,6 +70,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     // 获取按钮列表和下一步审批人
     buttonList: PropTypes.object.isRequired,
     getButtonList: PropTypes.func.isRequired,
+    queryAppList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -250,7 +252,17 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   @autobind
   sendRequest(obj) {
     const { client, newManager } = this.state;
-    const { saveChange } = this.props;
+    const {
+      saveChange,
+      queryAppList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
     const payload = {
       custId: client.custId,
       custType: client.custType,
@@ -266,6 +278,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     saveChange(payload).then(() => {
       message.success('划转成功');
       this.emptyData();
+      this.setState({
+        isShowModal: false,
+      }, () => {
+        queryAppList(query, pageNum, pageSize);
+      });
     });
   }
 
@@ -352,7 +369,17 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   @autobind
   sendModifyRequest(value) {
     const { isDefaultType, attachment } = this.state;
-    const { validateData } = this.props;
+    const {
+      validateData,
+      queryAppList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
     if (isDefaultType) {
       const payload = {
         auditors: value.login,
@@ -366,6 +393,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       };
       validateData(payload).then(() => {
         this.emptyData();
+        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
+        this.setState({
+          isShowModal: false,
+        }, () => {
+          queryAppList(query, pageNum, pageSize);
+        });
       });
     }
   }
@@ -380,6 +413,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       buttonList,
     } = this.props;
     const {
+      isShowModal,
       transferType,
       importVisible,
       attachment,
@@ -431,7 +465,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     return (
       <CommonModal
         title="分公司客户划转申请"
-        visible={this.state.isShowModal}
+        visible={isShowModal}
         closeModal={this.closeModal}
         size="large"
         modalKey="myModal"
