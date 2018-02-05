@@ -12,12 +12,12 @@ import { Form, message } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
-import BasicInfo from '../common/BasicInfo';
 import { emp } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
 import Pagination from '../../common/Pagination';
+import InfoArea from '../managerView/InfoArea';
 
 import styles from './performerViewDetail.less';
 
@@ -295,7 +295,6 @@ export default class PerformerViewDetail extends PureComponent {
   render() {
     const {
       basicInfo,
-      isFold,
       dict,
       targetCustList,
       parameter: {
@@ -307,13 +306,6 @@ export default class PerformerViewDetail extends PureComponent {
       answersList,
     } = this.props;
     const { visible, keyIndex } = this.state;
-    const {
-      missionId,
-      missionName,
-      missionStatusName,
-      hasSurvey,
-      ...otherProps
-    } = basicInfo;
     const { list, page } = targetCustList;
     const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
@@ -336,6 +328,33 @@ export default class PerformerViewDetail extends PureComponent {
       onPageChange: this.handlePageChange,
       isShowSizeChanger: false,
     };
+
+    const {
+      missionId,
+      missionName,
+      missionStatusName,
+      hasSurvey,
+      triggerTime,
+      endTime,
+      missionTarget,
+      servicePolicy,
+    } = basicInfo;
+
+    const basicInfoData = [{
+      id: 'date',
+      key: '任务有效期 :',
+      value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
+    },
+    {
+      id: 'target',
+      key: '任务目标 :',
+      value: missionTarget || '--',
+    },
+    {
+      id: 'policy',
+      key: '服务策略 :',
+      value: servicePolicy || '--',
+    }];
     // hasSurvey
     return (
       <div className={styles.performerViewDetail}>
@@ -343,9 +362,9 @@ export default class PerformerViewDetail extends PureComponent {
           {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
-        <BasicInfo
-          isFold={isFold}
-          {...otherProps}
+        <InfoArea
+          data={basicInfoData}
+          headLine={'基本信息'}
         />
         <div className={styles.serviceImplementation}>
           <LabelInfo value="服务实施" />
