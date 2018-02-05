@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-03 15:47:59
+ * @Last Modified time: 2018-02-05 13:41:37
  */
 
 import React, { PureComponent } from 'react';
@@ -155,7 +155,7 @@ export default class FilialeCustTransfer extends PureComponent {
       // 高亮项的下标索引
       activeRowIndex: 0,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      isShowCreateModal: true,
+      isShowCreateModal: false,
     };
   }
 

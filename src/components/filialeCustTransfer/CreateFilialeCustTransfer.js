@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-03 17:10:30
+ * @Last Modified time: 2018-02-05 13:57:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -98,7 +98,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       attachment: '',
       // 导入的弹窗
       importVisible: false,
+      // 下一步审批人列表
       nextApproverList: [],
+      // 审批人弹窗
       nextApproverModal: false,
     };
   }
@@ -199,7 +201,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 提交
   @autobind
   handleSubmit(item) {
-    console.warn('handleSubmit item', item);
     const { client, newManager, isDefaultType } = this.state;
     const { managerData } = this.props;
     const itemData = {
@@ -262,9 +263,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       auditors: obj.auditors,
       login: newManager.newLogin,
     };
-    console.warn('发送请求 newManager', newManager);
-    console.warn('发送请求 obj', obj);
-    console.warn('发送请求 payload', payload);
     saveChange(payload).then(() => {
       message.success('划转成功');
       this.emptyData();
@@ -304,6 +302,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       [key]: value,
       isDefaultType,
+    }, () => {
+      this.emptyData();
     });
   }
 
