@@ -128,7 +128,7 @@ export default class ResultTrack extends PureComponent {
     }) {
     const initialData = {
       inputValue: inputIndicator || '',
-      checked: _.isEmpty(isResultTrackChecked) ? true : isResultTrackChecked,
+      checked: isResultTrackChecked,
       level2Indicator,
       level1Indicator,
       currentSelectedLevel1Indicator,

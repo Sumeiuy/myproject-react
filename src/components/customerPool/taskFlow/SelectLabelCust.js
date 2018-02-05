@@ -20,6 +20,7 @@ export default class SelectLabelCust extends PureComponent {
     storedData: PropTypes.object,
     orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
+    isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isAuthorize: PropTypes.bool,
     visible: PropTypes.bool.isRequired,
@@ -154,6 +155,7 @@ export default class SelectLabelCust extends PureComponent {
       peopleOfLabelData,
       orgId,
       isLoadingEnd,
+      isSightTelescopeLoadingEnd,
       onCancel,
       visible,
       isAuthorize,
@@ -186,6 +188,7 @@ export default class SelectLabelCust extends PureComponent {
           dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
+          isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}

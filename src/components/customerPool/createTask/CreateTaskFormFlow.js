@@ -55,6 +55,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -68,6 +69,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
+    taskBasicInfo: {},
   }
 
   constructor(props) {
@@ -83,10 +85,11 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   getStoredCreateTaskData() {
     const {
-      location: { query: { source, flowData = '{}' } },
+      location: { query: { source } },
       storedCreateTaskData,
+      taskBasicInfo,
     } = this.props;
-    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    let currentFlowData = taskBasicInfo;
     const { motDetailModel } = currentFlowData || {};
     const { quesVO: quesList = [], resultTraceVO: resultTraceList = {} } = motDetailModel || {};
     const quesVO = _.isEmpty(quesList) ? [] : quesList;
@@ -244,6 +247,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
+      taskBasicInfo,
     } = this.props;
     return (
       <div className={styles.taskInner}>
@@ -272,6 +276,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           submitApproval={submitApproval}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
+          taskBasicInfo={taskBasicInfo}
         />
       </div>
     );
