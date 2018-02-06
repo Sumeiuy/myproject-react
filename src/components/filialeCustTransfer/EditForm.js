@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-05 17:21:18
+ * @Last Modified time: 2018-02-06 09:31:06
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -208,6 +208,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
     }, () => {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
       if (item.approverNum !== 'none') {
         this.setState({
           nextApproverModal: true,
