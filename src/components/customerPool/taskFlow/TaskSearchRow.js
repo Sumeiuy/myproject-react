@@ -123,7 +123,10 @@ export default class TaskSearchRow extends PureComponent {
       // totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
       custTableData: list,
       visible,
-      filterNumList: finalFilterNumList,
+      filterNumList: {
+        ...filterNumList,
+        ...finalFilterNumList,
+      },
     });
   }
 
@@ -184,21 +187,25 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   change(e) {
     const { onChange, circlePeopleData } = this.props;
-    let { filterNumList } = this.state;
+    const { filterNumList } = this.state;
     const currentLabelId = e.target.value;
     const currentLabelInfo = _.find(circlePeopleData, item => item.id === currentLabelId
       || item.labelMapping === currentLabelId) || {};
-    if (!([`${currentLabelId}`] in filterNumList) ||
-      (filterNumList[`${currentLabelId}`] !== 0
-        && _.isEmpty(filterNumList[`${currentLabelId}`])
+    let finalFilterNumList = filterNumList;
+    if (!([`${currentLabelId}`] in finalFilterNumList) ||
+      (finalFilterNumList[`${currentLabelId}`] !== 0
+        && _.isEmpty(finalFilterNumList[`${currentLabelId}`])
       )) {
-      filterNumList = {
+      finalFilterNumList = {
         [currentLabelId]: currentLabelInfo.customNum,
       };
     }
     this.setState({
       labelId: currentLabelId,
-      filterNumList,
+      filterNumList: {
+        ...filterNumList,
+        ...finalFilterNumList,
+      },
     });
     onChange(currentLabelId);
   }
@@ -305,9 +312,11 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
-    const { filterNumList, labelId } = this.state;
+    const { filterNumList } = this.state;
     return _.map(circlePeopleData,
       (item) => {
+        const currentFilterNum = ([item.id] in filterNumList ?
+          filterNumList[item.id] : item.customNum) || 0;
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
@@ -323,9 +332,6 @@ export default class TaskSearchRow extends PureComponent {
           [styles.active]: currentSelectLabel === item.id,
         });
 
-        const filterNum = labelId === item.id ?
-          (filterNumList[item.id] || item.customNum || 0) : (item.customNum || 0);
-
         return (
           <div className={cls} key={item.id || item.labelMapping}>
             <Radio
@@ -337,14 +343,16 @@ export default class TaskSearchRow extends PureComponent {
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <span className={styles.filterCount}>
-                已筛选客户数：<i>{filterNum}</i>
+                已筛选客户数：<i>{currentFilterNum}</i>
               </span>
-              <Clickable
-                onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow/checkCust"
-              >
-                <Button className={styles.seeCust}>筛查客户</Button>
-              </Clickable>
+              {item.customNum === 0 ? null :
+                <Clickable
+                  onClick={() => this.handleSeeCust(item)}
+                  eventName="/click/taskSearchRow/checkCust"
+                >
+                  <Button className={styles.seeCust}>筛查客户</Button>
+                </Clickable>
+              }
             </Radio>
             <h4 className={styles.titExp}>
               <span>创建人：<i>{item.createrName || '--'}</i></span>
