@@ -233,11 +233,10 @@ export default class MissionBind extends PureComponent {
     } = this.props;
     const missionPage = missionData.page || EMPTY_OBJECT;
     const paginationOption = {
-      curPageNum: Number(missionPage.pageNum),
-      totalRecordNum: Number(missionPage.totalCount),
-      curPageSize: Number(missionPage.pageSize),
-      onPageChange: this.handlePageChange,
-      isShowSizeChanger: false,
+      current: Number(missionPage.pageNum),
+      total: Number(missionPage.totalCount),
+      pageSize: Number(missionPage.pageSize),
+      onChange: this.handlePageChange,
     };
     const modalProps = {
       title: '请选择恰当的客户反馈',
