@@ -443,7 +443,7 @@ export default class Pageheader extends PureComponent {
         </div>
       </div>) :
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        完成时间&nbsp;:&nbsp;
+        结束时间&nbsp;:&nbsp;
         {controller}
       </div>);
 
