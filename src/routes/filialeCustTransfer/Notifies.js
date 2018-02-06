@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-06 17:39:56
+ * @Last Modified time: 2018-02-06 17:52:27
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -123,10 +123,10 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     const isSuccess = _.isEmpty(list);
     // 分页
     const paginationOption = {
-      curPageNum: !_.isEmpty(page) ? page.curPageNum : 0,
-      totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      curPageSize: !_.isEmpty(page) ? page.pageSize : 0,
-      onPageChange: this.pageChangeHandle,
+      current: !_.isEmpty(page) ? page.curPageNum : 0,
+      total: !_.isEmpty(page) ? page.totalRecordNum : 0,
+      pageSize: !_.isEmpty(page) ? page.pageSize : 0,
+      onChange: this.pageChangeHandle,
     };
     return (
       <div className={styles.notifiesInfoWrapper}>
