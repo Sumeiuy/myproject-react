@@ -29,16 +29,24 @@ const PER_CODE = 'per';
 // const PROD_CODE = 'prod';
 
 // 从当前节点向上查找，一直找到悬停参照容器
-const getStickyTarget = (currentNode) => {
-  let node = currentNode;
-  while (node && node.tagName !== 'body') {
-    if (node.className.indexOf('sticky-container') > -1) {
-      return node;
+const getTargetFunction = (currentNode) => {
+  let target = null;
+  return () => {
+    if (target) {
+      return target;
     }
-    node = node.parentNode;
-  }
-  return null;
+    let node = currentNode;
+    while (node && node.tagName !== 'body') {
+      if (node.className.indexOf('sticky-container') > -1) {
+        target = node;
+        return node;
+      }
+      node = node.parentNode;
+    }
+    return null;
+  };
 };
+
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -258,7 +266,7 @@ export default class TargetCustomerRight extends PureComponent {
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
-        <Affix target={() => getStickyTarget(this.container)}>
+        <Affix target={getTargetFunction(this.container)}>
           <div className={styles.titles}>
             <Row>
               <Col span={7}>
