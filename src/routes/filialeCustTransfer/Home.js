@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-31 10:14:19
+ * @Last Modified time: 2018-02-06 12:10:43
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -20,12 +21,12 @@ import CreateFilialeCustTransfer from '../../components/filialeCustTransfer/Crea
 import FilialeCustTransferList from '../../components/common/appList';
 import ViewListRow from '../../components/filialeCustTransfer/ViewListRow';
 import Detail from '../../components/filialeCustTransfer/Detail';
-import appListTool from '../../components/common/appList/tool';
+import { closeRctTab } from '../../utils';
 import { seibelConfig } from '../../config';
+import { emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
-
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -46,8 +47,14 @@ const mapStateToProps = state => ({
   managerData: state.filialeCustTransfer.managerData,
   // 新服务经理列表
   newManagerList: state.filialeCustTransfer.newManagerList,
+  // 客户表格分页信息
+  pageAssignment: state.filialeCustTransfer.pageAssignment,
   // 组织机构树
   custRangeList: state.customerPool.custRange,
+  // 批量划转的数据
+  customerAssignImport: state.filialeCustTransfer.customerAssignImport,
+  // 获取按钮列表和下一步审批人
+  buttonList: state.filialeCustTransfer.buttonList,
 });
 
 const mapDispatchToProps = {
@@ -65,9 +72,19 @@ const mapDispatchToProps = {
   // 选择新服务经理
   selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
-  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
+  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange', true),
+  // 客户表格分页信息
+  getPageAssignment: fetchDataFunction(false, 'filialeCustTransfer/getPageAssignment'),
   // 提交成功后清除上一次查询的数据
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
+  // 获取批量划转的客户数据
+  queryCustomerAssignImport: fetchDataFunction(true, 'filialeCustTransfer/queryCustomerAssignImport', true),
+  // 提交批量划转请求
+  validateData: fetchDataFunction(true, 'filialeCustTransfer/validateData', true),
+  // 清空批量划转的数据
+  clearMultiData: fetchDataFunction(true, 'filialeCustTransfer/clearMultiData', true),
+  // 获取按钮列表和下一步审批人
+  getButtonList: fetchDataFunction(true, 'filialeCustTransfer/getButtonList', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -93,6 +110,9 @@ export default class FilialeCustTransfer extends PureComponent {
     // 获取新服务经理
     getNewManagerList: PropTypes.func.isRequired,
     newManagerList: PropTypes.array,
+    // 客户表格的分页信息
+    getPageAssignment: PropTypes.func.isRequired,
+    pageAssignment: PropTypes.object,
     // 选择新的服务经理
     selectNewManager: PropTypes.func.isRequired,
     // 服务经理数据
@@ -103,16 +123,34 @@ export default class FilialeCustTransfer extends PureComponent {
     emptyQueryData: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
+    // 批量划转的接口
+    queryCustomerAssignImport: PropTypes.func,
+    // 批量划转的数据
+    customerAssignImport: PropTypes.object,
+    // 提交批量划转请求
+    validateData: PropTypes.func,
+    // 清空批量划转的数据
+    clearMultiData: PropTypes.func,
+    // 审批按钮列表
+    buttonList: PropTypes.object.isRequired,
+    // 请求审批按钮方法
+    getButtonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     custList: [],
     managerData: [],
     newManagerList: [],
+    queryCustomerAssignImport: _.noop,
+    customerAssignImport: {},
+    pageAssignment: {},
+    validateData: _.noop,
+    clearMultiData: _.noop,
   }
 
   constructor(props) {
     super(props);
+    this.checkUserIsFiliale();
     this.state = {
       // 高亮项的下标索引
       activeRowIndex: 0,
@@ -134,6 +172,14 @@ export default class FilialeCustTransfer extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentWillReceiveProps({ custRangeList }) {
+    const oldCustRangeList = this.props.custRangeList;
+    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
+      this.checkUserIsFiliale();
+    }
+  }
+
+  // 获取右侧详情
   @autobind
   getRightDetail() {
     const {
@@ -170,7 +216,7 @@ export default class FilialeCustTransfer extends PureComponent {
     }
   }
 
-
+  // 获取左侧列表
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
@@ -195,6 +241,31 @@ export default class FilialeCustTransfer extends PureComponent {
     });
     // 2.调用queryApplicationList接口
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+  }
+
+  // 判断当前登录用户部门是否是分公司
+  @autobind
+  checkUserIsFiliale() {
+    const { custRangeList } = this.props;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
+        Modal.warning({
+          title: '提示',
+          content: '您不是分公司人员，无权操作！',
+          onOk: () => {
+            this.handleCloseTabPage();
+          },
+        });
+      }
+    }
+  }
+
+  // 取消
+  @autobind
+  handleCloseTabPage() {
+    closeRctTab({
+      id: 'FSP_CROSS_DEPARTMENT',
+    });
   }
 
   @autobind
@@ -303,8 +374,17 @@ export default class FilialeCustTransfer extends PureComponent {
       saveChange,
       // 提交成功后清除上一次查询的数据
       emptyQueryData,
-      // 组织机构树
-      custRangeList,
+      // 批量划转
+      queryCustomerAssignImport,
+      customerAssignImport,
+      getPageAssignment,
+      pageAssignment,
+      // 提交批量划转请求
+      validateData,
+      // 清空批量划转的数据
+      clearMultiData,
+      getButtonList,
+      buttonList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -326,16 +406,10 @@ export default class FilialeCustTransfer extends PureComponent {
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
       current: parseInt(pageNum, 10),
-      defaultCurrent: 1,
-      size: 'small', // 迷你版
-      total: page.totalCount || 0,
+      total: page.totalCount,
       pageSize: parseInt(pageSize, 10),
-      defaultPageSize: 10,
       onChange: this.handlePageNumberChange,
-      showTotal: appListTool.showTotal,
-      showSizeChanger: true,
       onShowSizeChange: this.handlePageSizeChange,
-      pageSizeOptions: appListTool.constructPageSizeOptions(page.totalCount || 0),
     };
 
     const leftPanel = (
@@ -347,7 +421,11 @@ export default class FilialeCustTransfer extends PureComponent {
     );
 
     const rightPanel = (
-      <Detail data={detailInfo} />
+      <Detail
+        data={detailInfo}
+        getPageAssignment={getPageAssignment}
+        pageAssignment={pageAssignment}
+      />
     );
 
     return (
@@ -375,7 +453,13 @@ export default class FilialeCustTransfer extends PureComponent {
               managerData={managerData}
               saveChange={saveChange}
               emptyQueryData={emptyQueryData}
-              custRangeList={custRangeList}
+              queryCustomerAssignImport={queryCustomerAssignImport}
+              customerAssignImport={customerAssignImport}
+              validateData={validateData}
+              clearMultiData={clearMultiData}
+              getButtonList={getButtonList}
+              buttonList={buttonList}
+              queryAppList={this.queryAppList}
             />
           )
         }

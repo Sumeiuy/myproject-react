@@ -151,9 +151,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-        custId,
-        rowId,
-        ptyId,
+      custId,
+      rowId,
+      ptyId,
       },
       isCustServedByPostn,
     } = this.props;
@@ -338,6 +338,7 @@ export default class CustomerRow extends PureComponent {
       dict,
       formatAsset,
       mainServiceManager,
+      empInfo: { rowId },
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -448,13 +449,15 @@ export default class CustomerRow extends PureComponent {
                 </span>
               </div>
             </div>
-            <MatchArea
-              q={q}
-              dict={dict}
-              location={location}
-              listItem={listItem}
-              mainServiceManager={mainServiceManager}
-            />
+            <div className={listItem.empId === rowId ? styles.marginInfo : ''}>
+              <MatchArea
+                q={q}
+                dict={dict}
+                location={location}
+                listItem={listItem}
+                mainServiceManager={mainServiceManager}
+              />
+            </div>
           </div>
         </div>
       </div>

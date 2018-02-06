@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-31 16:51:25
+ * @Last Modified time: 2018-02-05 15:45:11
  */
 
 import React, { PureComponent } from 'react';
@@ -168,14 +168,14 @@ export default class TaskPreview extends PureComponent {
       if (item.quesTypeCode === '1' || item.quesTypeCode === '2') {
         const quesType = item.quesTypeCode === '1' ? '单选' : '多选';
         return (
-          <div className={styles.singleOrMultipleChoice} key={item.quesId}>
+          <div className={styles.singleOrMultipleChoice} key={item.questionKey}>
             <p>{`${Number(index) + 1}.${item.quesValue}(${quesType})`}</p>
             <p>{this.renderOption(item.optionInfoList)}</p>
           </div>
         );
       }
       return (
-        <div className={styles.subjectiveQuestion} key={item.quesId}>
+        <div className={styles.subjectiveQuestion} key={item.questionKey}>
           <p>{Number(index) + 1}.{item.quesValue}(主观)</p>
           <p>{item.quesDesp}</p>
         </div>

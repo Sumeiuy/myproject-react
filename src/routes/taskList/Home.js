@@ -197,8 +197,8 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
-  countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
-  countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
+  countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
+  countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
@@ -306,10 +306,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
-          missionViewType,
+        pageSize,
+        missionViewType,
         },
       },
     } = this.props;
@@ -354,7 +354,7 @@ export default class PerformerView extends PureComponent {
             currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
           }
           this.setState({
-            taskFeedbackList: currentType.feedbackList,
+            taskFeedbackList: (currentType || {}).feedbackList,
           });
         });
     }
@@ -941,6 +941,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex, currentView } = this.state;
+    const { dict = {} } = this.props;
+    const { missionType = [] } = dict || {};
     return (
       <ViewListRow
         key={record.id}
@@ -950,6 +952,7 @@ export default class PerformerView extends PureComponent {
         index={index}
         pageName={currentView === CONTROLLER ? 'managerView' : 'performerView'}
         pageData={taskList}
+        missionTypeDict={missionType}
       />
     );
   }
@@ -984,11 +987,11 @@ export default class PerformerView extends PureComponent {
     const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
 
 
@@ -1011,7 +1014,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={this.state.currentView === 'controller' ? 480 : 380}
+          leftWidth={380}
         />
       </div>
     );

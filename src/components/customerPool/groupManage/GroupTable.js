@@ -273,11 +273,11 @@ export default class GroupTable extends PureComponent {
      } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
-      curPageNum,
-      totalRecordNum,
-      curPageSize,
-      onPageChange,
-      onSizeChange,
+      current: curPageNum,
+      total: totalRecordNum,
+      pageSize: curPageSize,
+      onChange: onPageChange,
+      onShowSizeChange: onSizeChange,
     };
     const columns = this.renderColumns();
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
@@ -305,7 +305,7 @@ export default class GroupTable extends PureComponent {
         />
         {
           (isNeedPaganation && totalRecordNum > 0) ?
-            <Pagination {...paganationOption} /> : null
+            <div className={styles.pagination}><Pagination {...paganationOption} /></div> : null
         }
       </div>
     );

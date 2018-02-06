@@ -3,16 +3,18 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-01-31 11:09:13
+ * @Last Modified time: 2018-02-05 11:13:41
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
+import Pagination from '../common/Pagination';
 import { seibelConfig } from '../../config';
 import styles from './detail.less';
 
@@ -22,6 +24,45 @@ const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 export default class Detail extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    // 客户表格的分页信息
+    getPageAssignment: PropTypes.func.isRequired,
+    pageAssignment: PropTypes.object,
+  }
+
+  static defaultProps = {
+    pageAssignment: {},
+  }
+
+  constructor(props) {
+    super(props);
+    const { assignmentList } = props.data;
+    this.state = {
+      assignmentListData: assignmentList,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data } = nextProps;
+    if (data !== this.props.data) {
+      this.setState({ assignmentListData: data.assignmentList });
+    }
+  }
+
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { appId } = this.props.data;
+    this.props.getPageAssignment({
+      appId,
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+    }).then(() => {
+      const { pageAssignment } = this.props;
+      this.setState({
+        assignmentListData: pageAssignment.assignmentList,
+      });
+    });
   }
 
   render() {
@@ -37,17 +78,32 @@ export default class Detail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       assignmentList,
+      page,
     } = this.props.data;
+    const { pageAssignment } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
     const assignmentListValue = assignmentList[0];
-    // 客户信息
-    const custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
-    // 服务经理信息
-    const empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    let custInfoValue;
+    let empInfoValue;
+    if (!_.isEmpty(assignmentListValue)) {
+      // 客户信息
+      custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
+      // 服务经理信息
+      empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
+    const multiCustPage = pageAssignment.page;
+    // 分页
+    const paginationOption = {
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
+    };
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -73,10 +129,17 @@ export default class Detail extends PureComponent {
                   }
                 </div>
                 <CommonTable
-                  data={assignmentList}
+                  data={this.state.assignmentListData}
                   titleList={titleList}
-                  pagination={subType !== SINGLECUSTTRANSFER ? { pageSize: 5 } : {}}
                 />
+                {
+                  subType !== SINGLECUSTTRANSFER ?
+                    <Pagination
+                      {...paginationOption}
+                    />
+                  :
+                  null
+                }
               </div>
             </div>
             <div id="nginformation_module" className={styles.module}>

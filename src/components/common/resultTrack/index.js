@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 14:52:10
+ * @Last Modified time: 2018-02-05 14:50:14
  * 结果跟踪
  */
 
@@ -128,7 +128,7 @@ export default class ResultTrack extends PureComponent {
     }) {
     const initialData = {
       inputValue: inputIndicator || '',
-      checked: _.isEmpty(isResultTrackChecked) ? true : isResultTrackChecked,
+      checked: _.isBoolean(isResultTrackChecked) ? isResultTrackChecked : true,
       level2Indicator,
       level1Indicator,
       currentSelectedLevel1Indicator,

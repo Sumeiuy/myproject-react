@@ -28,6 +28,7 @@ const effects = {
   getApprovalBtn: 'customerPool/getApprovalBtn',
   submitApproval: 'customerPool/submitApproval',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -48,6 +49,7 @@ const mapStateToProps = state => ({
   submitApporvalResult: state.customerPool.submitApporvalResult,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
+  taskBasicInfo: state.tasklist.taskBasicInfo,
 });
 
 const mapDispatchToProps = {
@@ -64,7 +66,11 @@ const mapDispatchToProps = {
   getApprovalBtn: fetchDataFunction(true, effects.getApprovalBtn),
   submitApproval: fetchDataFunction(true, effects.submitApproval),
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
+  getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
 };
+
+const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -95,6 +101,8 @@ export default class CreateTask extends PureComponent {
     getApprovalBtn: PropTypes.func,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    getTaskBasicInfo: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
   };
 
   static defaultProps = {
@@ -108,6 +116,7 @@ export default class CreateTask extends PureComponent {
     submitApporvalResult: {},
     submitApproval: () => { },
     getApprovalBtn: () => { },
+    taskBasicInfo: {},
   };
 
   constructor(props) {
@@ -117,6 +126,17 @@ export default class CreateTask extends PureComponent {
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
     };
+  }
+
+  componentWillMount() {
+    const { location: { query }, getTaskBasicInfo } = this.props;
+    const { source, flowId } = query;
+    if (source === 'returnTask') {
+      getTaskBasicInfo({
+        systemCode,
+        flowId,
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -196,7 +216,8 @@ export default class CreateTask extends PureComponent {
       // 从管理者视图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW' });
     } else if (source === 'returnTask') {
-      closeRctTab({ id: 'FSP_TODOLIST' });
+      // 驳回后编辑任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
@@ -229,6 +250,7 @@ export default class CreateTask extends PureComponent {
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
+      taskBasicInfo,
     } = this.props;
 
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
@@ -259,6 +281,7 @@ export default class CreateTask extends PureComponent {
             submitApproval={submitApproval}
             sendCustsServedByPostnResult={sendCustsServedByPostnResult}
             isSendCustsServedByPostn={isSendCustsServedByPostn}
+            taskBasicInfo={taskBasicInfo}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

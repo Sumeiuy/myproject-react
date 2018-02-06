@@ -764,7 +764,7 @@ const pageConfig = {
   },
   // 分公司客户划转
   filialeCustTransfer: {
-    pageName: '分公司客户划转',
+    pageName: '服务经理主职位管理',
     pageType: '07', // 查询列表接口中的type值
     status: [
       {

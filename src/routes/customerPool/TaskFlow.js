@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 12:09:07
+ * @Last Modified time: 2018-02-05 14:58:25
  */
 
 import React, { PureComponent } from 'react';
@@ -63,6 +63,9 @@ const mapStateToProps = state => ({
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
   getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
   getApprovalListLoading: state.loading.effects[effects.getApprovalList],
+  // 获取瞄准镜标签的loading
+  getFiltersOfSightingTelescopeLoading: state.loading
+    .effects[effects.getFiltersOfSightingTelescope],
   templateId: state.customerPool.templateId,
   creator: state.app.creator,
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
@@ -145,12 +148,14 @@ export default class TaskFlow extends PureComponent {
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    getFiltersOfSightingTelescopeLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
     getApprovalListLoading: false,
+    getFiltersOfSightingTelescopeLoading: false,
     templateId: 0,
     creator: '',
   };
@@ -178,22 +183,27 @@ export default class TaskFlow extends PureComponent {
       needApproval: false,
       canGoNextStep: false,
       needMissionInvestigation: false,
+      isSightTelescopeLoadingEnd: true,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { getLabelPeopleLoading,
+    const {
+      getLabelPeopleLoading,
       peopleOfLabelData = EMPTY_ARRAY,
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
+      getFiltersOfSightingTelescopeLoading,
      } = this.props;
-    const { submitTaskFlowResult: nextResult,
+    const {
+      submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
       getApprovalListLoading: nextApprovalListLoading,
       peopleOfLabelData: nextData = EMPTY_ARRAY,
       approvalList: nextList = EMPTY_ARRAY,
+      getFiltersOfSightingTelescopeLoading: nextSightingTelescopeLoading,
     } = nextProps;
 
     if (nextResult === 'success') {
@@ -204,9 +214,25 @@ export default class TaskFlow extends PureComponent {
 
     // loading状态
     // 只有全部loading完毕才触发isLoadingEnd
-    if (getLabelPeopleLoading && !nextLoading) {
+    if (getLabelPeopleLoading) {
+      let getLabelPeopleLoadingStatus = true;
+      if (!nextLoading) {
+        getLabelPeopleLoadingStatus = false;
+      }
       this.setState({
-        isLoadingEnd: true,
+        isLoadingEnd: !getLabelPeopleLoadingStatus,
+      });
+    }
+
+    // loading状态
+    // 只有全部loading完毕才触发isSightTelescopeLoadingEnd
+    if (getFiltersOfSightingTelescopeLoading) {
+      let getFiltersOfSightingTelescopeLoadingStatus = true;
+      if (!nextSightingTelescopeLoading) {
+        getFiltersOfSightingTelescopeLoadingStatus = false;
+      }
+      this.setState({
+        isSightTelescopeLoadingEnd: !getFiltersOfSightingTelescopeLoadingStatus,
       });
     }
 
@@ -272,6 +298,11 @@ export default class TaskFlow extends PureComponent {
     return newPostBody;
   }
 
+  @autobind
+  saveTaskFlowFinalData(data) {
+    this.props.saveTaskFlowData({ ...data });
+  }
+
   /**
    * 点击下一步，校验所有信息，然后下一步界面
    */
@@ -279,25 +310,26 @@ export default class TaskFlow extends PureComponent {
   handleNextStep() {
     // 下一步
     const {
-      saveTaskFlowData,
       storedTaskFlowData = EMPTY_OBJECT,
       generateTemplateId,
       isSendCustsServedByPostn,
     } = this.props;
     const { current } = this.state;
 
-    let taskFormData = storedTaskFlowData.taskFormData || {};
-    let pickTargetCustomerData = storedTaskFlowData.pickTargetCustomerData || {};
-    let resultTrackData = storedTaskFlowData.resultTrackData || {};
-    let missionInvestigationData = storedTaskFlowData.missionInvestigationData || {};
+    let {
+      taskFormData = {},
+      pickTargetCustomerData = {},
+      resultTrackData = {},
+      missionInvestigationData = {},
+      currentEntry = 0,
+    } = storedTaskFlowData;
     let isFormValidate = true;
     let isSelectCust = true;
     let isResultTrackValidate = true;
     let isMissionInvestigationValidate = true;
-    let currentEntry = 0;
+    let isAllowGoNextStep = false;
     // 第一步是选择客户界面
     if (current === 0) {
-      const obj = {};
       const {
         currentEntry: entry,
         importCustomers,
@@ -348,6 +380,8 @@ export default class TaskFlow extends PureComponent {
         postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
       }
 
+      pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
+
       isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -365,6 +399,16 @@ export default class TaskFlow extends PureComponent {
             isSelectCust = false;
             message.error('客户包含非本人名下客户，请重新选择');
           } else {
+            this.saveTaskFlowFinalData({
+              ...storedTaskFlowData,
+              taskFormData,
+              ...pickTargetCustomerData,
+              resultTrackData,
+              missionInvestigationData,
+              current: current + 1,
+              // 选择客户当前入口
+              currentEntry,
+            });
             this.setState({
               needApproval,
               canGoNextStep,
@@ -375,9 +419,8 @@ export default class TaskFlow extends PureComponent {
           }
         }
       });
-
-      pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment, ...obj };
     } else if (current === 1) {
+      isAllowGoNextStep = true;
       // 拿到form表单component
       const formComponent = this.formRef;
       // 拿到被HOC包裹的组件
@@ -419,6 +462,7 @@ export default class TaskFlow extends PureComponent {
         });
       }
     } else if (current === 2) {
+      isAllowGoNextStep = true;
       const resultTrackComponent = this.resultTrackRef;
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
@@ -495,8 +539,13 @@ export default class TaskFlow extends PureComponent {
       }
     }
 
-    if (isFormValidate && isSelectCust && isMissionInvestigationValidate && isResultTrackValidate) {
-      saveTaskFlowData({
+    if (isFormValidate
+      && isSelectCust
+      && isMissionInvestigationValidate
+      && isResultTrackValidate
+      && isAllowGoNextStep
+    ) {
+      this.saveTaskFlowFinalData({
         ...storedTaskFlowData,
         taskFormData,
         ...pickTargetCustomerData,
@@ -506,11 +555,9 @@ export default class TaskFlow extends PureComponent {
         // 选择客户当前入口
         currentEntry,
       });
-      if (this.state.canGoNextStep) {
-        this.setState({
-          current: current + 1,
-        });
-      }
+      this.setState({
+        current: current + 1,
+      });
     }
   }
 
@@ -562,7 +609,7 @@ export default class TaskFlow extends PureComponent {
       needMissionInvestigation,
     } = this.state;
 
-    if (_.isEmpty(flowAuditorId)) {
+    if (_.isEmpty(flowAuditorId) && needApproval) {
       message.error('任务需要审批，请选择审批人');
       return;
     }
@@ -675,10 +722,10 @@ export default class TaskFlow extends PureComponent {
 
     // 当前tab是第一个，则代表导入客户
     if (currentEntry === 0) {
-      submitTaskFlow({
+      postBody = {
         fileId,
         ...postBody,
-      });
+      };
     } else {
       postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
       postBody = {
@@ -749,6 +796,7 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isShowApprovalModal: false,
       isApprovalListLoadingEnd: true,
+      isSightTelescopeLoadingEnd: true,
     });
   }
 
@@ -759,6 +807,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys,
       isSuccess,
       isLoadingEnd,
+      isSightTelescopeLoadingEnd,
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
@@ -766,7 +815,6 @@ export default class TaskFlow extends PureComponent {
       visible,
       isApprovalListLoadingEnd,
       isShowApprovalModal,
-      currentEntry,
       needApproval,
       needMissionInvestigation,
       isShowErrorIntervalValue,
@@ -796,7 +844,7 @@ export default class TaskFlow extends PureComponent {
     // descText为1
     const motMissionType = _.filter(missionType, item => item.descText === '1') || [];
 
-    const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
+    const { taskFormData = EMPTY_OBJECT, currentEntry } = storedTaskFlowData;
     const isShowTitle = true;
     const steps = [{
       title: '选择目标客户',
@@ -815,6 +863,7 @@ export default class TaskFlow extends PureComponent {
 
           onCancel={this.resetLoading}
           isLoadingEnd={isLoadingEnd}
+          isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           circlePeopleData={circlePeopleData}
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}

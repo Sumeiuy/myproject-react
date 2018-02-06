@@ -604,11 +604,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       />
     );
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
     const leftPanel = (
       <ChannelsTypeProtocolList
