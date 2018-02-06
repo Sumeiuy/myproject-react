@@ -2,7 +2,7 @@
    * 初始化暴露给fsp的方法
    * @param  {object} store app.store
    */
-
+import _ from 'lodash';
 import env from '../helper/env';
 import os from '../helper/os';
 import { fspRoutes } from '../config';
@@ -33,12 +33,12 @@ function initFspMethod({ store, push }) {
   if (env.isInReact()) {
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
-    $.fn.EBSmartTab = function (param1, param2) {
+    $.fn.EBSmartTab = function tabCall(param1, param2) {
       return call($(this), param1, param2);
     };
 
     // 直接将原来控制tab的call方法置为空
-    window.eb.component.SmartTab.call = function () { };
+    window.eb.component.SmartTab.call = _.noop;
 
     // 重写所有的页面tab跳转组件
     window.eb.app = {

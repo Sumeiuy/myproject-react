@@ -190,7 +190,7 @@ export default class ServiceRecordContent extends PureComponent {
         feedbackTypeList = [],
         feedbackTypeChild = '',
         feedbackTypeChildList = [],
-      } = this.handleServiceType(serviceTypeCode);
+      } = this.handleServiceType(serviceTypeCode, false);
 
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
@@ -344,7 +344,7 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存服务类型的值
   @autobind
-  handleServiceType(value) {
+  handleServiceType(value, shouldSetState = true) {
     if (_.isEmpty(value)) {
       return {};
     }
@@ -352,14 +352,19 @@ export default class ServiceRecordContent extends PureComponent {
     const feedbackType = (feedbackTypeList[0] || {}).key || '';
     const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || EMPTY_LIST;
     const feedbackTypeChild = (feedbackTypeChildList[0] || {}).key || '';
-    this.setState({
-      serviceType: value,
-      feedbackType,
-      feedbackTypeList,
-      feedbackTypeChild,
-      feedbackTypeChildList,
-    });
+
+    if (shouldSetState) {
+      this.setState({
+        serviceType: value,
+        feedbackType,
+        feedbackTypeList,
+        feedbackTypeChild,
+        feedbackTypeChildList,
+      });
+    }
+
     return {
+      serviceType: value,
       feedbackType,
       feedbackTypeList,
       feedbackTypeChild,
@@ -652,7 +657,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleServiceType}
+                onChange={this.handleChange}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {
