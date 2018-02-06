@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 17:19:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-29 17:54:17
+ * @Last Modified time: 2018-02-06 09:33:13
  * @description 售前适当性查询查询组件
  */
 import React from 'react';
@@ -20,11 +20,11 @@ export default function SearchForm(props) {
     <Form onSubmit={props.onSearch} layout="inline" className={styles.searchForm}>
       <FormItem label="选择客户" required className={styles.formItem}>
         <DropDownSelect
-          value={props.selectedCustItem.custName ? `${props.selectedCustItem.custName}（${props.selectedCustItem.custCode}）` : ''}
+          value={props.selectedCustItem.custName ? `${props.selectedCustItem.custName}（${props.selectedCustItem.custNumber}）` : ''}
           placeholder="经纪客户号/客户名称"
           searchList={props.custList}
           showObjKey="custName"
-          objId="custCode"
+          objId="custNumber"
           emitSelectItem={props.onSelectCustItem}
           emitToSearch={props.onQueryCustList}
           name="custList"

@@ -201,11 +201,11 @@ export default class ViewpointList extends PureComponent {
       }),
     );
     const paganationOption = {
-      curPageNum,
-      curPageSize,
-      totalRecordNum: totalCount,
-      onPageChange: this.handlePageClick,
-      onSizeChange: this.handlePageSizeClick,
+      current: curPageNum,
+      pageSize: curPageSize,
+      total: totalCount,
+      onChange: this.handlePageClick,
+      onShowSizeChange: this.handlePageSizeClick,
     };
     const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (

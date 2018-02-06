@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-05 17:31:07
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-02-06 12:10:43
  */
 
 import React, { PureComponent } from 'react';
@@ -72,9 +72,9 @@ const mapDispatchToProps = {
   // 选择新服务经理
   selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
-  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
+  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange', true),
   // 客户表格分页信息
-  getPageAssignment: fetchDataFunction(true, 'filialeCustTransfer/getPageAssignment'),
+  getPageAssignment: fetchDataFunction(false, 'filialeCustTransfer/getPageAssignment'),
   // 提交成功后清除上一次查询的数据
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
   // 获取批量划转的客户数据
@@ -84,7 +84,7 @@ const mapDispatchToProps = {
   // 清空批量划转的数据
   clearMultiData: fetchDataFunction(true, 'filialeCustTransfer/clearMultiData', true),
   // 获取按钮列表和下一步审批人
-  getButtonList: fetchDataFunction(false, 'filialeCustTransfer/getButtonList'),
+  getButtonList: fetchDataFunction(true, 'filialeCustTransfer/getButtonList', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -405,11 +405,11 @@ export default class FilialeCustTransfer extends PureComponent {
     const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
 
     const leftPanel = (

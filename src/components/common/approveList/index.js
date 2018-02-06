@@ -49,11 +49,10 @@ export default class ApproveList extends PureComponent {
     const chunkData = data.length ? _.chunk(data, pageSize)[page - 1] : [];
     const displayData = needPagination ? chunkData : data;
     const paginationOption = {
-      curPageNum: page,
-      totalRecordNum: chunkData.length,
-      curPageSize: pageSize,
-      onPageChange: this.changePagination,
-      isShowSizeChanger: false,
+      current: page,
+      total: chunkData.length,
+      pageSize,
+      onChange: this.changePagination,
     };
     return (
       <div className={styles.approveWrapper}>
