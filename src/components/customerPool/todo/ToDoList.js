@@ -174,8 +174,7 @@ export default class ToDoList extends PureComponent {
   }
 
   render() {
-    const { className, data, todolist, location } = this.props;
-    const { query: { curPageNum = 1, pageSize = 10 } } = location;
+    const { className, data, todolist } = this.props;
 
     // 没有待办流程
     if (todolist.length === 0) {

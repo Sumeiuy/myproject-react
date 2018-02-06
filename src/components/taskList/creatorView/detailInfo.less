@@ -5,44 +5,43 @@
     font-weight: normal;
     line-height: 1.5;
   }
-  .modContent {
-    position: relative;
-    padding: 0;
-    width: 100%;
-    .propertyList {
-      li.item {
-        padding: 1px 0;
-        position: relative;
-        clear: left;
-        width: 100%;
-        box-sizing: border-box;
+   .modContent {
+    & > div {
+      padding-left: 15px;
+      margin: 5px 0;
+      & > span:first-child, & > h4:first-child {
+        font-size: 14px;
+        color: #9b9b9b;
+        text-align: left;
+        display: inline-block;
+        width: 75px;
       }
-      li.fir, li.sed {
-        padding: 1px 0;
-        position: relative;
-        // clear: left;
-        width: 50%;
-        box-sizing: border-box;
+      & > span:last-child, & > h4:last-child {
+        font-size: 14px;
+        // color: #9b9b9b;
+        text-align: left;
+        display: inline-block;
+        // float: left;
+        max-width: 90%;
+        line-height: 25px;
+        vertical-align: top;
+        word-break: break-all;
       }
-      li.fir {
-        float: left;
+      .seeCust {
+        margin-left: 8px;
       }
-      li.sed {
-      float: right;
+      .excel {
+        color: #01723e;
       }
     }
-    .leftCommission {
-      width: 48%;
+    & > div.leftRow,  & > div.rightRow {
+      width: 50%;
       float: left;
     }
-    .rightCommission {
-      width: 52%;
-      float: left;
-    }
-    &:after {
-      content: " ";
-      display: table;
-      clear: both;
+    & > div.rightRow {
+      & > span:first-child {
+        width: 100px;
+      }
     }
   }
 }
