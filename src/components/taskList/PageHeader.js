@@ -345,7 +345,8 @@ export default class Pageheader extends PureComponent {
 
     if (currentMonth === localMonth) {
       // endValue
-      return currentDate.valueOf() > localDate.valueOf();
+      // return currentDate.valueOf() > localDate.valueOf();
+      return currentDate > localDate;
     }
     // startValue
     return value.valueOf() <= nowDay.valueOf();
@@ -442,7 +443,7 @@ export default class Pageheader extends PureComponent {
         </div>
       </div>) :
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间&nbsp;:&nbsp;
+        完成时间&nbsp;:&nbsp;
         {controller}
       </div>);
 
@@ -470,7 +471,6 @@ export default class Pageheader extends PureComponent {
     } = this.props;
 
     const { stateAllOptions, statusValue, startTime, endTime } = this.state;
-    console.log(moment(startTime).format('YYYY-MM-DD'), '---', moment(endTime).format('YYYY-MM-DD'));
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
