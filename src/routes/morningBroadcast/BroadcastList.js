@@ -113,7 +113,7 @@ export default class BroadcastList extends PureComponent {
     } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList || !boradcastList.length || isInit) onHandleGetList();
+    if (!boradcastList || !boradcastList.length || isInit === true) onHandleGetList();
     // 初始化Uuid
     if (!newUuid.length) getUuid();
   }
@@ -336,6 +336,8 @@ export default class BroadcastList extends PureComponent {
     onHandleGetList({
       ...this.formQuery(),
       pageNum: 1,
+      createdFrom: dateStrings[0],
+      createdTo: dateStrings[1],
     });
   }
   // 日期选择组件-->end
