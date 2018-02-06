@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-15 10:15:36
+ * @Last Modified by: zhufeiyang
+ * @Last Modified time: 2018-02-06 20:43:33
  */
 
 import React, { PureComponent } from 'react';
@@ -258,7 +258,14 @@ export default class GroupTable extends PureComponent {
   render() {
     const {
       listData = EMPTY_LIST,
-      pageData: { curPageNum, curPageSize, totalRecordNum },
+      pageData: {
+        curPageNum,
+        curPageSize,
+        totalRecordNum,
+        isHideLastButton,
+        isShortPageList,
+        showSizeChanger,
+        },
       tableClass,
       bordered,
       isFixedColumn,
@@ -273,9 +280,12 @@ export default class GroupTable extends PureComponent {
      } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
-      current: curPageNum,
-      total: totalRecordNum,
-      pageSize: curPageSize,
+      current: Number(curPageNum),
+      total: Number(totalRecordNum),
+      pageSize: Number(curPageSize),
+      isHideLastButton,
+      isShortPageList,
+      showSizeChanger,
       onChange: onPageChange,
       onShowSizeChange: onSizeChange,
     };
