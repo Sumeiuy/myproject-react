@@ -48,16 +48,16 @@ export default class ToDoList extends PureComponent {
         dataIndex: 'task',
         key: 'task',
         render: (item, recode) =>
-           (<a
-             className={styles.title}
-             target="_blank"
-             rel="noopener noreferrer"
-             title={item.id}
-             data={recode.id}
-             onClick={this.handleOpenNewPage}
-           >
-             {item.text}
-           </a>),
+          (<a
+            className={styles.title}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.id}
+            data={recode.id}
+            onClick={this.handleOpenNewPage}
+          >
+            {item.text}
+          </a>),
       },
       {
         title: '当前步骤',
@@ -87,22 +87,6 @@ export default class ToDoList extends PureComponent {
     window.addEventListener('resize', () => this.updateEmptyHeight());
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { taskBasicInfo } = nextProps;
-    const { taskBasicInfo: perInfo, location: { query, pathname }, replace } = this.props;
-    const { flowId } = this.state;
-    if (taskBasicInfo !== perInfo) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          flowData: encodeURIComponent(JSON.stringify(taskBasicInfo)),
-          source: 'returnTask',
-          flowId,
-        },
-      });
-    }
-  }
 
   componentDidUpdate() {
     this.updateEmptyHeight();
@@ -181,7 +165,7 @@ export default class ToDoList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTask?flowData=${encodeURIComponent(JSON.stringify(taskBasicInfo))}&source=returnTask&flowId=${flowId}`,
+        url: `/customerPool/createTask?source=returnTask&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTask',
         query,

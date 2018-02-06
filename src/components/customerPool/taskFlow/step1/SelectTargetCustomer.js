@@ -36,6 +36,7 @@ export default class SelectTargetCustomer extends PureComponent {
     filterModalvisible: PropTypes.bool,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -98,6 +99,7 @@ export default class SelectTargetCustomer extends PureComponent {
 
       onCancel,
       isLoadingEnd,
+      isSightTelescopeLoadingEnd,
       circlePeopleData,
       getLabelInfo,
       peopleOfLabelData,
@@ -136,6 +138,7 @@ export default class SelectTargetCustomer extends PureComponent {
           switchTo={this.importCustomers}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
+          isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           circlePeopleData={circlePeopleData}
           getLabelInfo={getLabelInfo}
           peopleOfLabelData={peopleOfLabelData}

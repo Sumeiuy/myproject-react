@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 14:22:58
+ * @Last Modified time: 2018-02-03 13:26:03
  * 管理者视图详情
  */
 
@@ -30,6 +30,9 @@ const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 5;
 // const CONTROLLER = 'controller';
+
+// 1代表是自建任务类型
+const TASK_TYPE_SELF = '1';
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -207,9 +210,23 @@ export default class ManagerViewDetail extends PureComponent {
   // 发起任务
   @autobind
   openByAllSelect(url, id, title) {
-    const { currentId, push, missionType, custDetailResult } = this.props;
+    const {
+      currentId,
+      push,
+      missionType,
+      custDetailResult,
+      missionTypeDict,
+    } = this.props;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
+    const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
+    let missionTypeObject = {};
+    // 只有自建任务才需要传给自建任务流程
+    if (descText === TASK_TYPE_SELF) {
+      missionTypeObject = {
+        missionType,
+      };
+    }
     const urlParam = {
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
@@ -219,7 +236,7 @@ export default class ManagerViewDetail extends PureComponent {
       source: 'managerView',
       count: totalCustNumber,
       // 任务类型
-      missionType,
+      ...missionTypeObject,
     };
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {

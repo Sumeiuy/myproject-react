@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:34:18
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-02-05 13:51:27
  */
 /**
  * 常用说明
@@ -255,7 +255,9 @@ export default class CommonUpload extends PureComponent {
                             null
                         }
                         <em>
-                          <a href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}>
+                          <a
+                            href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                          >
                             <Icon type="xiazai1" />
                           </a>
                         </em>

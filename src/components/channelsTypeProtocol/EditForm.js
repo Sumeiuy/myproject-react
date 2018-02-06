@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-02-01 16:57:13
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-05 18:52:40
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -120,13 +120,18 @@ export default class EditForm extends PureComponent {
     // 更新附件组件必传项
     let hasCust = custAttachment[1];
     if (isEdit) {
+      const { subType, operationType } = protocolDetail;
+      // 如果操作类型是退订，则不对附件做校验
+      if (_.includes(unSubscribeArray, operationType)) {
+        hasCust = custAttachment[0];
+      } else if (channelType.isGSChannel(subType)) {
+        // 如果子类型是高速通道，对高速通道类型的附件做检验
+        hasCust = custAttachment[3];
+      }
       if (_.includes(custOperateArray, protocolDetail.operationType)) {
         custOperate = true;
       } else {
         custOperate = false;
-      }
-      if (_.includes(unSubscribeArray, protocolDetail.operationType)) {
-        hasCust = custAttachment[0];
       }
     }
     // 找出需要必传的数组
@@ -173,7 +178,7 @@ export default class EditForm extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { attachmentList: preAl } = this.props;
     const { protocolDetail: nextPD, attachmentList: nextAL } = nextProps;
-    if (!_.isEmpty(nextAL) && !_.isEqual(preAl, nextAL)) {
+    if (!_.isEmpty(nextAL) && preAl !== nextAL) {
       let assignAttachment = [];
       // 对数据进行必传等配置
       if (nextAL.length) {
@@ -192,7 +197,14 @@ export default class EditForm extends PureComponent {
           return newItem;
         });
       }
-      let hasCust = nextPD.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
+      let hasCust;
+      if (channelType.isZJKCDChannel(nextPD.subType)) {
+        // 如果子类型是紫金快车道
+        hasCust = nextPD.multiUsedFlag === 'Y' ? custAttachment[2] : custAttachment[1];
+      } else {
+        // 否则对高速通道的附件进行校验
+        hasCust = custAttachment[3];
+      }
       if (_.includes(unSubscribeArray, nextPD.operationType)) {
         hasCust = custAttachment[0];
       }

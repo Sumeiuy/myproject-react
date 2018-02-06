@@ -55,6 +55,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     approvalBtn: PropTypes.object,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    taskBasicInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -68,6 +69,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     submitApproval: noop,
     approvalBtn: {},
     getApprovalBtn: noop,
+    taskBasicInfo: {},
   }
 
   constructor(props) {
@@ -83,13 +85,17 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   getStoredCreateTaskData() {
     const {
-      location: { query: { source, flowData = '{}' } },
+      location: { query: { source } },
       storedCreateTaskData,
+      taskBasicInfo,
     } = this.props;
-    let currentFlowData = JSON.parse(decodeURIComponent(flowData));
+    let currentFlowData = taskBasicInfo;
     const { motDetailModel } = currentFlowData || {};
-    const { quesVO = [], resultTraceVO = {} } = motDetailModel || {};
-    const isMissionInvestigationChecked = !_.isEmpty(quesVO);
+    const { quesVO: quesList = [], resultTraceVO: resultTraceList = {} } = motDetailModel || {};
+    const quesVO = _.isEmpty(quesList) ? [] : quesList;
+    const resultTraceVO = _.isEmpty(resultTraceList) ? {} : resultTraceList;
+    const isMissionInvestigationChecked = !_.isEmpty(quesList);
+    const isResultTrackChecked = !_.isEmpty(resultTraceList);
     if (!_.isEmpty(currentFlowData)) {
       // 生成需要的自建任务数据
       const {
@@ -98,10 +104,7 @@ export default class CreateTaskFormFlow extends PureComponent {
         // 是否和产品绑定
         isProdBound,
         // 跟踪操作符
-        traceOpVO: {
-          name,
-          key,
-        },
+        traceOpVO: traceOpVOList = {},
         // 输入值
         threshold,
         // 下限
@@ -117,13 +120,15 @@ export default class CreateTaskFormFlow extends PureComponent {
         // 跟踪窗口期
         trackDay,
         // 金融产品
-        finProductVO,
+        finProductVO: finProductVoList,
       } = resultTraceVO;
-
+      const finProductVO = _.isEmpty(finProductVoList) ? {} : finProductVoList;
+      const traceOpVO = _.isEmpty(traceOpVOList) ? {} : traceOpVOList;
+      const { name, key } = traceOpVO;
       const quesInfoList = _.map(quesVO, item => ({
         quesId: item.rowId,
         quesValue: item.value,
-        quesTypeCode: item.quesTypeCode,
+        quesTypeCode: item.quesType.key,
         quesTypeValue: item.quesType,
         optionInfoList: _.map(item.optionRespDtoList, itemData => ({
           optionId: itemData.rowId,
@@ -149,7 +154,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           // 是否有产品搜索
           hasSearchedProduct: isProdBound,
           // 是否选中
-          isResultTrackChecked: true,
+          isResultTrackChecked,
           operationValue: name,
           currentMin: thresholdMin,
           currentMax: thresholdMax,
@@ -167,7 +172,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     if (this.judgeSource(source)) {
       storedData = _.merge(currentFlowData, storedCreateTaskData[`${source}`]) || {};
     } else {
-      storedData = _.merge(currentFlowData, storedCreateTaskData.custList) || {};
+      storedData = storedCreateTaskData.custList || {};
     }
     return storedData;
   }
@@ -242,6 +247,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       submitApproval,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
+      taskBasicInfo,
     } = this.props;
     return (
       <div className={styles.taskInner}>
@@ -270,6 +276,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           submitApproval={submitApproval}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
+          taskBasicInfo={taskBasicInfo}
         />
       </div>
     );

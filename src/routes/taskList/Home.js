@@ -306,10 +306,10 @@ export default class PerformerView extends PureComponent {
     const {
       location: {
         query,
-        query: {
+      query: {
           pageNum,
-          pageSize,
-          missionViewType,
+        pageSize,
+        missionViewType,
         },
       },
     } = this.props;
@@ -941,6 +941,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex, currentView } = this.state;
+    const { dict = {} } = this.props;
+    const { missionType = [] } = dict || {};
     return (
       <ViewListRow
         key={record.id}
@@ -950,6 +952,7 @@ export default class PerformerView extends PureComponent {
         index={index}
         pageName={currentView === CONTROLLER ? 'managerView' : 'performerView'}
         pageData={taskList}
+        missionTypeDict={missionType}
       />
     );
   }

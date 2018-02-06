@@ -21,7 +21,7 @@ const channelType = {
    * @param {String} type 类型ID
    */
   isGSChannel(type) {
-    return type === config.GSTD_ID;
+    return type === config.GSTD_ID || type === config.GSTD_NAME;
   },
   /**
    * 判断是否通道类型协议下的紫金快车道协议

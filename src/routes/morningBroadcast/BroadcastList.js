@@ -176,7 +176,7 @@ export default class BroadcastList extends PureComponent {
   @autobind
   onHandleToDetail(newsId) {
     const { push } = this.props;
-    const param = { id: 'RTC_TAB_NEWS_DETAIL', title: '晨报' };
+    const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastDetail';
     const query = { newsId };
     openRctTab({

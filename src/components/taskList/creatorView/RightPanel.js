@@ -270,6 +270,7 @@ export default class RightPanel extends PureComponent {
       tagetCustModel = EMPTY_OBJECT,
     } = taskBasicInfo;
     const { resultTraceVO = {}, quesVO } = motDetailModel;
+    const { trackDay } = resultTraceVO;
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
@@ -318,9 +319,12 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-            <div className={styles.resultTrack}>
+            <div className={styles.module}>
               <InfoTitle head="结果跟踪" />
               <ul className={styles.propertyList}>
+                <li className={styles.item}>
+                  <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
+                </li>
                 <li className={styles.item}>
                   <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
                 </li>
@@ -329,7 +333,7 @@ export default class RightPanel extends PureComponent {
             }
             {
               _.isEmpty(quesVO) ? null :
-              <div className={styles.taskSurvey}>
+              <div className={styles.module}>
                 <InfoTitle head="任务调查" />
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
@@ -338,7 +342,7 @@ export default class RightPanel extends PureComponent {
                 </ul>
               </div>
             }
-            <div id="approvalRecord" className={styles.module}>
+            <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />
               <ApproveList
                 data={workflowHistoryBeanList}
