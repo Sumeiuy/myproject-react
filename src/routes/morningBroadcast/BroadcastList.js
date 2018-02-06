@@ -336,6 +336,8 @@ export default class BroadcastList extends PureComponent {
     onHandleGetList({
       ...this.formQuery(),
       pageNum: 1,
+      createdFrom: dateStrings[0],
+      createdTo: dateStrings[1],
     });
   }
   // 日期选择组件-->end
