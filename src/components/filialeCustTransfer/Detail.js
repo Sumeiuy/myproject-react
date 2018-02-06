@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 15:33:36
+ * @Last Modified time: 2018-02-05 11:13:41
  */
 
 import React, { PureComponent } from 'react';
@@ -85,10 +85,14 @@ export default class Detail extends PureComponent {
       return null;
     }
     const assignmentListValue = assignmentList[0];
-    // 客户信息
-    const custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
-    // 服务经理信息
-    const empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    let custInfoValue;
+    let empInfoValue;
+    if (!_.isEmpty(assignmentListValue)) {
+      // 客户信息
+      custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
+      // 服务经理信息
+      empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const multiCustPage = pageAssignment.page;

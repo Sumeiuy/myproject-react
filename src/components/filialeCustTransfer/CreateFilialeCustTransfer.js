@@ -276,7 +276,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       login: newManager.newLogin,
     };
     saveChange(payload).then(() => {
-      message.success('划转成功');
+      message.success('划转请求提交成功');
       this.emptyData();
       this.setState({
         isShowModal: false,
