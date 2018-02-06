@@ -197,8 +197,8 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
-  countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
-  countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
+  countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
+  countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
@@ -987,11 +987,11 @@ export default class PerformerView extends PureComponent {
     const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
 
 

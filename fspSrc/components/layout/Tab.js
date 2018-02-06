@@ -139,11 +139,10 @@ export default class Tab extends PureComponent {
       shouldStay,
       editPane,
     } = state || {};
-
-    if (!shouldStay) {
-      const isUrlChange =
-        (pathname !== this.props.location.pathname) || (query !== this.props.location.query);
-      if (isUrlChange) {
+    const isUrlChange =
+      (pathname !== this.props.location.pathname) || (!_.isEqual(query, this.props.location.query));
+    if (isUrlChange) {
+      if (!shouldStay) {
         const paneObj = this.getPanesWithPathname(pathname, query, shouldRemove, editPane);
         let panes = paneObj.panes;
         if (addPanes.length || removePanes.length) {
@@ -163,23 +162,23 @@ export default class Tab extends PureComponent {
           panes,
           activeKey: finalActiveKey,
         });
-      }
-    } else if (!_.includes(defaultMenu, this.state.activeKey)) {
-      // 如果shouldStay为true,并且是新开的tab内部跳转，则需要修正panes数组,以支持tab切换
-      // 对于默认的下拉菜单，则不支持修正pane，也就是不支持切换tab，这虽然是可以做的，但是为了性能考虑，放弃
-      const shouldStayPanes = this.getStayPanes(editPane, pathname, query, this.state.activeKey);
+      } else if (!_.includes(defaultMenu, this.state.activeKey)) {
+        // 如果shouldStay为true,并且是新开的tab内部跳转，则需要修正panes数组,以支持tab切换
+        // 对于默认的下拉菜单，则不支持修正pane，也就是不支持切换tab，这虽然是可以做的，但是为了性能考虑，放弃
+        const shouldStayPanes = this.getStayPanes(editPane, pathname, query, this.state.activeKey);
 
-      if (enableLocalStorage) {
-        // 保存tab菜单信息
-        storeTabInfo({
+        if (enableLocalStorage) {
+          // 保存tab菜单信息
+          storeTabInfo({
+            panes: shouldStayPanes,
+            pathname,
+          });
+        }
+
+        this.setState({
           panes: shouldStayPanes,
-          pathname,
         });
       }
-
-      this.setState({
-        panes: shouldStayPanes,
-      });
     }
   }
 

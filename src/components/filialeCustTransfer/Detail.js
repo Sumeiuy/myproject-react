@@ -98,10 +98,10 @@ export default class Detail extends PureComponent {
     const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
 
     return (

@@ -223,7 +223,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: 'strategyCenter/lastestViewpoint',
+        path: '/strategyCenter/lastestViewpoint',
       },
       {
         id: 'FSP_STOCK_INFORMATION',
@@ -233,7 +233,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: 'strategyCenter/stockInformation',
+        path: '/strategyCenter/stockInformation',
       },
     ],
   },

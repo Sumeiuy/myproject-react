@@ -216,7 +216,8 @@ export default class CreateTask extends PureComponent {
       // 从管理者视图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW' });
     } else if (source === 'returnTask') {
-      closeRctTab({ id: 'FSP_TODOLIST' });
+      // 驳回后编辑任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });

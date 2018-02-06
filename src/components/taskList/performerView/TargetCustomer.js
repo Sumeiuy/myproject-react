@@ -119,13 +119,13 @@ export default class TargetCustomer extends PureComponent {
     return (
       <div className={styles.targetCustomer}>
         <div className={styles.listBox}>
-          <Row className={styles.height100Percent}>
-            <Col className={styles.height100Percent}>
+          <Row>
+            <Col span={12}>
               <div className={styles.list}>
                 {this.renderList()}
               </div>
             </Col>
-            <Col className={styles.height100Percent}>
+            <Col span={12}>
               {
                 !_.isEmpty(targetCustDetail) ?
                   <TargetCustomerRight
