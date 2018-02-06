@@ -19,6 +19,7 @@ import Button from '../../common/Button';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
+import pageConfig from '../pageConfig';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -41,6 +42,8 @@ const emptyData = (value) => {
   }
   return '';
 };
+const { taskList: { status } } = pageConfig;
+
 export default class RightPanel extends PureComponent {
 
   static propTypes = {
@@ -239,7 +242,7 @@ export default class RightPanel extends PureComponent {
   @autobind
   renderOption(optionRespDtoList = []) {
     return _.map(optionRespDtoList, (item, index) =>
-      <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
+      <span className={styles.quesRight} key={item.optionValue}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
   }
 
   // 问卷调查数据处理
@@ -249,17 +252,26 @@ export default class RightPanel extends PureComponent {
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        return (<div>
+        return (<div key={item.value}>
           <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
           <p>{this.renderOption(optionRespDtoList)}</p>
         </div>);
       }
-      return (<div>
+      return (<div key={item.value}>
         <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
         <p>{item.remark}</p>
       </div>);
     });
     return quesData;
+  }
+
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  changeDisplay(st, options) {
+    if (st && !_.isEmpty(st)) {
+      const nowStatus = _.find(options, o => o.value === st) || {};
+      return nowStatus.label || '--';
+    }
+    return '--';
   }
 
   render() {
@@ -289,12 +301,14 @@ export default class RightPanel extends PureComponent {
       this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
     const custNum = tagetCustModel.custNum || '--';
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.bugTitle}>任务名称：
-              {_.isEmpty(motDetailModel.eventName) ? null : motDetailModel.eventName}</h1>
+            <h1 className={styles.bugTitle}>
+              {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status) || '--'}`}
+            </h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <TaskListDetailInfo
@@ -319,28 +333,28 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-            <div className={styles.module}>
-              <InfoTitle head="结果跟踪" />
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
-                </li>
-              </ul>
-            </div>
-            }
-            {
-              _.isEmpty(quesVO) ? null :
               <div className={styles.module}>
-                <InfoTitle head="任务调查" />
+                <InfoTitle head="结果跟踪" />
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                    <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
                   </li>
                 </ul>
               </div>
+            }
+            {
+              _.isEmpty(quesVO) ? null :
+                <div className={styles.module}>
+                  <InfoTitle head="任务调查" />
+                  <ul className={styles.propertyList}>
+                    <li className={styles.item}>
+                      <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                    </li>
+                  </ul>
+                </div>
             }
             <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />

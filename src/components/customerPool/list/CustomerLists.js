@@ -19,6 +19,7 @@ import { openInTab } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
 import styles from './customerLists.less';
 
@@ -69,6 +70,7 @@ const formatAsset = (num) => {
   return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
 };
 
+@RestoreScrollTop
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     page: PropTypes.object.isRequired,

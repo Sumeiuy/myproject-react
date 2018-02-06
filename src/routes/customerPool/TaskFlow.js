@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-05 14:58:25
+ * @Last Modified time: 2018-02-06 19:01:57
  */
 
 import React, { PureComponent } from 'react';
@@ -281,7 +281,8 @@ export default class TaskFlow extends PureComponent {
 
     const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
     if (_.isEmpty(currentLabelQueryCustomerParam)
-      || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+      || (_.isEmpty(currentLabelQueryCustomerParam.filtersReq)
+        && _.size(currentLabelQueryCustomerParam.labels) === 1)) {
       // 代表当前选中的标签没有进行筛查客户
       newPostBody = _.merge(newPostBody, {
         searchReq: {
