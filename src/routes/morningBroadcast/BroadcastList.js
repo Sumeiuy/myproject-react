@@ -315,14 +315,6 @@ export default class BroadcastList extends PureComponent {
       pageNum: 1,
     });
   }
-  @autobind()
-  onHandleAuthorSearch() {
-    const { onHandleGetList } = this;
-    onHandleGetList({
-      ...this.formQuery(),
-      pageNum: 1,
-    });
-  }
   // Search -->end
 
   // 日期选择组件-->start
@@ -389,7 +381,7 @@ export default class BroadcastList extends PureComponent {
                   <Search
                     placeholder="作者"
                     style={{ width: 200 }}
-                    onSearch={this.onHandleAuthorSearch}
+                    onSearch={this.onHandleSearch}
                   />,
                 )}
               </div>
