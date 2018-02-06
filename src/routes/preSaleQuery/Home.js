@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-06 13:41:54
+ * @Last Modified time: 2018-02-06 17:38:27
  * @description 售前适当性查询
  */
 
@@ -190,6 +190,11 @@ export default class PreSaleQuery extends PureComponent {
         title: '客户信息',
         dataIndex: 'custInfo',
         width: '500px',
+        render: (text) => {
+          text.split('\r\n').map((item) => {
+            return <p>{item}</p>;
+          });
+        },
       },
       {
         title: '产品信息',
@@ -347,7 +352,7 @@ export default class PreSaleQuery extends PureComponent {
                                 (<i
                                   className="iconfont icon-wenhao"
                                   onClick={this.handleQualifiedCustModalShow}
-                                  style={{ color: '#f0b048', fontSize: '22px', marginLeft: '9px' }}
+                                  style={{ cursor: 'pointer', color: '#f0b048', fontSize: '22px', marginLeft: '9px' }}
                                 />)
                             }
                           </span>
@@ -439,7 +444,7 @@ export default class PreSaleQuery extends PureComponent {
         </div>
         <QualifiedCustModal
           visible={this.state.isQualifiedCustModalVisible}
-          type={qualifiedCust.fact.productRequireMent}
+          type={qualifiedCust ? qualifiedCust.fact.productRequireMent : null}
           onQualifiedCustModalHide={this.handleQualifiedCustModalHide}
         />
       </div>
