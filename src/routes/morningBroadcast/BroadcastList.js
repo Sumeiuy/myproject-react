@@ -113,7 +113,7 @@ export default class BroadcastList extends PureComponent {
     } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList.length || isInit) onHandleGetList();
+    if (!boradcastList || !boradcastList.length || isInit === true) onHandleGetList();
     // 初始化Uuid
     if (!newUuid.length) getUuid();
   }
@@ -211,6 +211,17 @@ export default class BroadcastList extends PureComponent {
     });
   }
   // Model(晨报新增、修改) --> end
+  @autobind
+  formQuery() {
+    const { getFieldsValue } = this.props.form;
+    const values = getFieldsValue();
+    return {
+      createdBy: values.createdBy,
+      title: values.title,
+      createdFrom: values.createdTime[0].format('YYYY-MM-DD'),
+      createdTo: values.createdTime[1].format('YYYY-MM-DD'),
+    };
+  }
 
   // table -->start
   @autobind
@@ -297,18 +308,10 @@ export default class BroadcastList extends PureComponent {
 
   // Search -->start
   @autobind()
-  onHandleSearch(value) {
+  onHandleSearch() {
     const { onHandleGetList } = this;
     onHandleGetList({
-      title: value,
-      pageNum: 1,
-    });
-  }
-  @autobind()
-  onHandleAuthorSearch(value) {
-    const { onHandleGetList } = this;
-    onHandleGetList({
-      createdBy: value,
+      ...this.formQuery(),
       pageNum: 1,
     });
   }
@@ -325,14 +328,16 @@ export default class BroadcastList extends PureComponent {
   onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
     const maxDate = moment(dateStrings[0]).add(6, 'month');
+
     if (maxDate.valueOf() < dates[1].valueOf()) {
       message.error('查询时间段不能超过6个月');
       return;
     }
     onHandleGetList({
+      ...this.formQuery(),
+      pageNum: 1,
       createdFrom: dateStrings[0],
       createdTo: dateStrings[1],
-      pageNum: 1,
     });
   }
   // 日期选择组件-->end
@@ -378,7 +383,7 @@ export default class BroadcastList extends PureComponent {
                   <Search
                     placeholder="作者"
                     style={{ width: 200 }}
-                    onSearch={this.onHandleAuthorSearch}
+                    onSearch={this.onHandleSearch}
                   />,
                 )}
               </div>

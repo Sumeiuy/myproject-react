@@ -131,7 +131,7 @@ export default class TabMenu extends PureComponent {
               <div classnames={styles.text}>{menu.name}</div>
           </Dropdown.Button>
         */}
-        <Dropdown placement={placement} overlay={menus} trigger={['click']}>
+        <Dropdown placement={placement} overlay={menus} trigger={['hover']}>
           <div
             tabIndex="0"
             className={styles.text}

@@ -50,6 +50,8 @@ export default class PaginationComponent extends PureComponent {
     showSizeChanger: PropTypes.bool,
     isHideLastButton: PropTypes.bool,
     isShortPageList: PropTypes.bool,
+    // 如果为true， 就不要加commonPage了，历史遗留问题，默认false
+    useClearStyle: PropTypes.bool,
   };
   static defaultProps = {
     current: 1,
@@ -59,6 +61,7 @@ export default class PaginationComponent extends PureComponent {
     isShortPageList: false, // 默认情况下使用标准长度的分页列表
     onChange: _.noop,
     onShowSizeChange: _.noop,
+    useClearStyle: false,
   };
 
   constructor(props) {
@@ -133,12 +136,12 @@ export default class PaginationComponent extends PureComponent {
   }
 
   render() {
-    const { pageSize, isShortPageList, total } = this.props;
+    const { pageSize, isShortPageList, total, useClearStyle } = this.props;
     const { current } = this.state;
     return (
       <div
         className={classnames({
-          [styles.commonPage]: true,
+          [styles.commonPage]: useClearStyle === false,
           [styles.hidden]: total === 0,
           [styles.shortPageList]: isShortPageList,
           [styles.hideLastButton]: this.state.shouldHideLastButton,

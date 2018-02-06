@@ -49,7 +49,7 @@ export default class QuestionnaireSurvey extends PureComponent {
   renderOption() {
     const { form, onCheckChange, answersList, onRadioChange, onAreaText } = this.props;
     const { quesInfoList = EMPTY_ARRAY, answerVOList = EMPTY_ARRAY } = answersList;
-    const isDisabled = !_.isEmpty(answersList);
+    const isDisabled = !_.isEmpty(answerVOList);
     const { getFieldDecorator } = form;
     let content = null;
     const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
@@ -130,7 +130,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
             rules: [{
-              required: true, maxLength: '250', minLength: '10', message: '问题答案不能小于10个字符，最多250个字符!',
+              required: true, max: 250, min: 10, message: '问题答案不能小于10个字符，最多250个字符!',
             }],
           })(
             <div className={styles.radioContent}>
@@ -141,8 +141,10 @@ export default class QuestionnaireSurvey extends PureComponent {
                 onChange={onAreaText}
                 data={quesId}
                 defaultValue={defaultData}
-                placeHolder={item.quesDesp}
+                placeholder={item.quesDesp}
                 disabled={isDisabled}
+                maxLength={250}
+                minLength={10}
               />
             </div>,
           )}

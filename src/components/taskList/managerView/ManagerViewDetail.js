@@ -319,6 +319,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionDesc,
       // 当前机构名
       // orgName,
+      templateId,
     } = mngrMissionDetailInfo;
 
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
@@ -470,14 +471,17 @@ export default class ManagerViewDetail extends PureComponent {
               missionProgressStatusDic={missionProgressStatusDic}
             />
           </div>
-          <div className={styles.missionFeedbackSection}>
-            <MissionFeedback
-              missionFeedbackData={missionFeedbackData}
-              isFold={isFold}
-              missionFeedbackCount={missionFeedbackCount}
-              serveManagerCount={serveManagerCount}
-            />
-          </div>
+          {
+            _.isEmpty(templateId) ? null :
+            <div className={styles.missionFeedbackSection}>
+              <MissionFeedback
+                missionFeedbackData={missionFeedbackData}
+                isFold={isFold}
+                missionFeedbackCount={missionFeedbackCount}
+                serveManagerCount={serveManagerCount}
+              />
+            </div>
+          }
         </div>
       </div>
     );
