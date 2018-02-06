@@ -231,11 +231,10 @@ export default class OptionsMaintain extends PureComponent {
       accordion: true,
     };
     const pagination = {
-      curPageNum: Number(feedbackDataPage.pageNum),
-      totalRecordNum: Number(feedbackDataPage.totalCount),
-      curPageSize: Number(feedbackDataPage.pageSize),
-      onPageChange: this.handlePageChange,
-      isShowSizeChanger: false,
+      current: Number(feedbackDataPage.pageNum),
+      total: Number(feedbackDataPage.totalCount),
+      pageSize: Number(feedbackDataPage.pageSize),
+      onChange: this.handlePageChange,
     };
     return (
       <div className={styles.optionsMaintain}>

@@ -365,8 +365,8 @@ export default class BroadcastList extends PureComponent {
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
     const paginationOption = {
       ...pagination,
-      onPageChange: this.onPageNumChange,
-      onSizeChange: this.onPageSizeChange,
+      onChange: this.onPageNumChange,
+      onShowSizeChange: this.onPageSizeChange,
     };
     return (
       <div className={styles.broadcastListWrap} >

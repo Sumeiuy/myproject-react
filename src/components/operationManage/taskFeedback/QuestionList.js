@@ -152,11 +152,11 @@ export default class QuestionList extends PureComponent {
     const curPageSize = pageSize || page.pageSize;
 
     const paginationOption = {
-      curPageNum,
-      totalRecordNum: page.totalCount,
-      curPageSize,
-      onPageChange: this.handlePageChange,
-      onSizeChange: this.handleSizeChange,
+      current: curPageNum,
+      total: page.totalCount,
+      pageSize: curPageSize,
+      onChange: this.handlePageChange,
+      onShowSizeChange: this.handleSizeChange,
     };
 
     return (
