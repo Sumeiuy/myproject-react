@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 20:40:49
+ * @Last Modified time: 2018-02-06 20:46:01
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -28,6 +28,8 @@ const { filialeCustTransfer: { pageType } } = seibelConfig;
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
+const STOP_STATUS_CODE = '02'; // 终止状态code
+const COMPLETE_STATUS_CODE = '03'; // 完成状态code
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -102,7 +104,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       flowId,
       statusCode,
     } = this.props.data;
-    if (statusCode !== '02' && statusCode !== '03') {
+    if (statusCode !== STOP_STATUS_CODE && statusCode !== COMPLETE_STATUS_CODE) {
       // 获取下一步骤按钮列表
       this.props.getButtonList({ flowId });
     }
