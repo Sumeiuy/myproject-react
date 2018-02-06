@@ -47,6 +47,7 @@ import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import FilialeCustTransferEdit from './routes/filialeCustTransfer/Edit';
+import FilialeCustTransferError from './routes/filialeCustTransfer/Error';
 // 晨间播报
 import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
 import PreSaleQuery from './routes/preSaleQuery/Home';
@@ -110,6 +111,7 @@ const routes = [
     component: FilialeCustTransfer,
     children: [
       { path: '/edit', component: FilialeCustTransferEdit },
+      { path: '/error', component: FilialeCustTransferError },
     ],
   },
   {

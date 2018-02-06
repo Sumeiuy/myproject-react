@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:34:32
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-05 18:57:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -93,13 +93,13 @@ export default class MultiUpload extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { attachment: preAT } = this.props;
-    const { attachment: nextAT } = nextProps;
-    if (!_.isEqual(preAT, nextAT)) {
-      const { attachmentList, attachment } = nextProps;
+    const { attachment: nextAT, attachmentList } = nextProps;
+    const { attachment } = this.state;
+    if (preAT !== nextAT && nextAT !== attachment) {
       this.setState({
         fileList: attachmentList, // 文件列表
         oldFileList: attachmentList, // 旧的文件列表
-        attachment, // 上传后的唯一 ID
+        attachment: nextAT, // 上传后的唯一 ID
       });
     }
   }

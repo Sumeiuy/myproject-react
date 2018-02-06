@@ -33,7 +33,7 @@ export default class CreateTaskSuccess extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      changeTime: 2,
+      changeTime: 5,
     };
   }
 

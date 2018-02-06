@@ -9,13 +9,14 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-import { url as urlHelper, emp } from '../../helper';
+import { url as urlHelper, emp, fsp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
 import { request } from '../../config';
 import styles from './boradcastDetail.less';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import Audio from '../../components/common/audio/Audio';
+import Icon from '../../components/common/Icon';
 
 
 const effects = {
@@ -50,6 +51,7 @@ export default class BroadcastDetail extends PureComponent {
   componentDidMount() {
     const { newItemDetail, newsId } = this.getItemDetail();
     const { getBoradcastDetail } = this.props;
+    fsp.scrollToTop();
     if (_.isEmpty(newItemDetail) && newsId) {
       getBoradcastDetail({ newsId });
     }
@@ -79,17 +81,21 @@ export default class BroadcastDetail extends PureComponent {
     });
   }
 
+  @autobind
+  getSourceSrc(source) {
+    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
+  }
+
   render() {
     const { newItemDetail } = this.getItemDetail();
     const { audioFileList = [], otherFileList = [] } = newItemDetail;
-    const audioSource = audioFileList[0];
-    const { attachId, name } = audioSource || [];
+    const audioSource = audioFileList[0] || {};
     return (
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
           <div className={styles.content}>
             <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.headerBack}`}>
-              <i className="icon iconfont icon-fanhui" />
+              <Icon className="icon" type="fanhui" />
               晨间播报列表
             </div>
             <div className={styles.header}>
@@ -106,27 +112,24 @@ export default class BroadcastDetail extends PureComponent {
             </div>
             <div className={styles.footer}>
               <div className={styles.downMusic}>
-                <i className="icon iconfont icon-shipinwenjian" style={{ color: '#2d86d8' }} />
+                <Icon className="icon" type="shipinwenjian" style={{ color: '#2d86d8' }} />
                 <div className={styles.audioTitle} title="点击下载">
-                  <a href={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}>
-                    音频文件
-                  </a>
+                  音频文件
                 </div>
                 <div className={styles.audioControl}>
-                  {
-                    attachId &&
-                    <Audio
-                      isShowTip
-                      src={`${request.prefix}/file/ceFileDownload?attachId=${attachId}&empId=${emp.getId()}&filename=${name}`}
-                    />
-                  }
+                  <Audio
+                    src={this.getSourceSrc(audioSource)}
+                  />
                 </div>
+                <a href={this.getSourceSrc(audioSource)}>
+                  <Icon className="icon" type="xiazai" />
+                </a>
               </div>
               {
                 otherFileList.length ? (
                   <span>
                     <div className={styles.downOther}>
-                      <i className="icon iconfont icon-qitawenjian" style={{ color: '#cdcdcd' }} />
+                      <Icon className="icon" type="qitawenjian" style={{ color: '#cdcdcd' }} />
                       <span>其他文件</span>
                     </div>
                     <CommonUpload
@@ -137,7 +140,7 @@ export default class BroadcastDetail extends PureComponent {
                 ) : null
               }
               <div onClick={this.handleBackClick} className={`${styles.backList} ${styles.footerBack}`}>
-                <i className="icon iconfont icon-fanhui" />
+                <Icon className="icon" type="fanhui" />
                 晨间播报列表
               </div>
             </div>
