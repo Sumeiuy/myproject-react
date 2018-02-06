@@ -235,7 +235,7 @@ export default class RightPanel extends PureComponent {
   @autobind
   renderOption(optionRespDtoList = []) {
     return _.map(optionRespDtoList, (item, index) =>
-      <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
+      <span key={index} className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
   }
 
   // 问卷调查数据处理
@@ -245,12 +245,12 @@ export default class RightPanel extends PureComponent {
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        return (<div>
+        return (<div key={key}>
           <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
           <p>{this.renderOption(optionRespDtoList)}</p>
         </div>);
       }
-      return (<div>
+      return (<div key={key}>
         <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
         <p>{item.remark}</p>
       </div>);
