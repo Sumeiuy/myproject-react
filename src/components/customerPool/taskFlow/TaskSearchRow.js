@@ -346,12 +346,12 @@ export default class TaskSearchRow extends PureComponent {
                 已筛选客户数：<i>{currentFilterNum}</i>
               </span>
               {item.customNum === 0 ? null :
-                <Clickable
-                  onClick={() => this.handleSeeCust(item)}
-                  eventName="/click/taskSearchRow/checkCust"
-                >
-                  <Button className={styles.seeCust}>筛查客户</Button>
-                </Clickable>
+              <Clickable
+                onClick={() => this.handleSeeCust(item)}
+                eventName="/click/taskSearchRow/checkCust"
+              >
+                <Button className={styles.seeCust}>筛查客户</Button>
+              </Clickable>
               }
             </Radio>
             <h4 className={styles.titExp}>
