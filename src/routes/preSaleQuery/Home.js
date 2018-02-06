@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-29 17:35:14
+ * @Last Modified time: 2018-02-06 10:22:23
  * @description 售前适当性查询
  */
 
@@ -16,6 +16,7 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import QualifiedCustModal from '../../components/preSaleQuery/QualifiedCustModal';
 import SearchForm from '../../components/preSaleQuery/SearchForm';
+import emp from '../../helper/emp';
 
 import styles from './home.less';
 
@@ -95,12 +96,20 @@ export default class PreSaleQuery extends PureComponent {
 
   @autobind
   handleQueryCustList(value) {
-    this.props.getCustList({ keywords: value });
+    if (!value) {
+      message.warning('请输入经纪客户号/客户名称');
+    } else {
+      this.props.getCustList({ keywords: value, pstnId: emp.getPstnId() });
+    }
   }
 
   @autobind
   handleQueryProductList(value) {
-    this.props.getProductList({ keywords: value });
+    if (!value) {
+      message.warning('请输入产品代码/产品名称');
+    } else {
+      this.props.getProductList({ keywords: value, pstnId: emp.getPstnId() });
+    }
   }
 
   @autobind
@@ -167,7 +176,9 @@ export default class PreSaleQuery extends PureComponent {
         fact: { result: [] },
       },
       contractSign = { fact: {} },
-      qualifiedCust = { fact: {} },
+      qualifiedCust = {
+        fact: { yxq: ' ', matchResult: ' ', totalAssets: ' ' },
+      },
       doubleRecord = { fact: {} },
     } = matchResult;
     const columns = [
@@ -346,26 +357,41 @@ export default class PreSaleQuery extends PureComponent {
                             {qualifiedCust.fact.custInfo}
                           </span>
                         </Col>
-                        <Col span={6} offset={2}>
-                          <span className={styles.itemName}>有效期：</span>
-                          <span className={styles.itemValue}>
-                            {qualifiedCust.fact.yxq}
-                          </span>
-                        </Col>
+                        {
+                          qualifiedCust.fact.yxq &&
+                            (
+                              <Col span={6} offset={2}>
+                                <span className={styles.itemName}>有效期：</span>
+                                <span className={styles.itemValue}>
+                                  {qualifiedCust.fact.yxq}
+                                </span>
+                              </Col>
+                            )
+                        }
                       </Row>
                       <Row type="flex" className={styles.row}>
-                        <Col span={6}>
-                          <span className={styles.itemName}>匹配结果：</span>
-                          <span className={styles.itemValue}>
-                            {qualifiedCust.fact.matchResult}
-                          </span>
-                        </Col>
-                        <Col span={6} offset={2}>
-                          <span className={styles.itemName}>总资产（万元）：</span>
-                          <span className={styles.itemValue}>
-                            {qualifiedCust.fact.totalAssets}
-                          </span>
-                        </Col>
+                        {
+                          qualifiedCust.fact.matchResult &&
+                            (
+                              <Col span={6}>
+                                <span className={styles.itemName}>匹配结果：</span>
+                                <span className={styles.itemValue}>
+                                  {qualifiedCust.fact.matchResult}
+                                </span>
+                              </Col>
+                            )
+                        }
+                        {
+                          qualifiedCust.fact.totalAssets &&
+                            (
+                              <Col span={6} offset={2}>
+                                <span className={styles.itemName}>总资产（万元）：</span>
+                                <span className={styles.itemValue}>
+                                  {qualifiedCust.fact.totalAssets}
+                                </span>
+                              </Col>
+                            )
+                        }
                       </Row>
                       {
                         qualifiedCust.msg &&
