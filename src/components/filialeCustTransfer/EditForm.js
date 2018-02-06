@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 13:34:25
+ * @Last Modified time: 2018-02-06 20:40:49
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -100,15 +100,21 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   componentWillMount() {
     const {
       flowId,
+      statusCode,
     } = this.props.data;
-    // 获取下一步骤按钮列表
-    this.props.getButtonList({ flowId });
+    if (statusCode !== '02' && statusCode !== '03') {
+      // 获取下一步骤按钮列表
+      this.props.getButtonList({ flowId });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
+    const { data, buttonList } = nextProps;
     if (data !== this.props.data) {
       this.setState({ assignmentListData: data.assignmentList });
+    }
+    if (buttonList !== this.props.buttonList) {
+      this.setState({ buttonListData: buttonList });
     }
   }
 
