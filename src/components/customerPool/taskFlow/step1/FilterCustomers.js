@@ -106,7 +106,7 @@ export default class Filter extends PureComponent {
         <div
           className={classnames({
             // 超过五个，并且可以展开就隐藏
-            [styles.none]: moreBtnVisible && fold && Number(index) > 4,
+            [styles.none]: moreBtnVisible && fold && Number(index) + 1 > COMMON_SIZE,
           })}
         >
           <SingleFilter

@@ -333,28 +333,28 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-              <div className={styles.module}>
-                <InfoTitle head="结果跟踪" />
-                <ul className={styles.propertyList}>
-                  <li className={styles.item}>
-                    <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
-                  </li>
-                  <li className={styles.item}>
-                    <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
-                  </li>
-                </ul>
-              </div>
+            <div className={styles.module}>
+              <InfoTitle head="结果跟踪" />
+              <ul className={styles.propertyList}>
+                <li className={styles.item}>
+                  <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
+                </li>
+                <li className={styles.item}>
+                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
+                </li>
+              </ul>
+            </div>
             }
             {
               _.isEmpty(quesVO) ? null :
-                <div className={styles.module}>
-                  <InfoTitle head="任务调查" />
-                  <ul className={styles.propertyList}>
-                    <li className={styles.item}>
-                      <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
-                    </li>
-                  </ul>
-                </div>
+              <div className={styles.module}>
+                <InfoTitle head="任务调查" />
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
+                  </li>
+                </ul>
+              </div>
             }
             <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />
