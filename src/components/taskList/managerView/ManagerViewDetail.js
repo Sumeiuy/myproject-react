@@ -33,6 +33,7 @@ const INITIAL_PAGE_SIZE = 5;
 
 // 1代表是自建任务类型
 const TASK_TYPE_SELF = '1';
+const falseValue = false;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -404,7 +405,7 @@ export default class ManagerViewDetail extends PureComponent {
                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
                   */}
                   {
-                    false ? <Clickable
+                    falseValue ? <Clickable
                       eventName="/click/managerViewCustDetail/export"
                     >
                       <Button className={styles.export}>

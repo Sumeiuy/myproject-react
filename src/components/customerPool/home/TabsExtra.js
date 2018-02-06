@@ -18,6 +18,7 @@ import styles from './tabsExtra.less';
 
 const Option = Select.Option;
 const noop = _.noop;
+const falseValue = false;
 
 export default class TabsExtra extends PureComponent {
   static propTypes = {
@@ -153,7 +154,7 @@ export default class TabsExtra extends PureComponent {
          * 后台性能问题，暂时隐藏导出按钮
          */}
         {
-          false ? <div className={styles.separateLine} /> : null
+          falseValue ? <div className={styles.separateLine} /> : null
         }
         {!isDown ?
           <div>
@@ -173,7 +174,7 @@ export default class TabsExtra extends PureComponent {
           </div> :
           <div>
             {
-              false ?
+              falseValue ?
                 <div className={styles.downFiles}>
                   <div className={styles.iconDown}>
                     <Icon type="xiazai" />
