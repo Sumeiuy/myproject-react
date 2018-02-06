@@ -2,6 +2,7 @@
 .customerPoolWrap {
   background: #fff;
   padding: 0 30px 42px 35px;
+  border: 1px solid transparent; /* 修正边距折叠 */
   .poolContainer {
     display: -webkit-flex; /* Safari */
     display: flex;
@@ -44,8 +45,10 @@
 }
 
 :global {
-  #customerPoolWrap {
-    padding: 0 30px 31px 35px;
-    margin: 15px;
+  .react-body {
+    #customerPoolWrap {
+      padding: 0 30px 31px 35px;
+      margin: 15px;
+    }
   }
 }
