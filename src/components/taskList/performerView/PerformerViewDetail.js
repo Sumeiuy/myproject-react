@@ -328,6 +328,7 @@ export default class PerformerViewDetail extends PureComponent {
       total: page.totalCount,
       pageSize: curPageSize,
       onChange: this.handlePageChange,
+      isHideLastButton: true,
     };
 
     const {

@@ -1,6 +1,6 @@
 /**
  * @file customerPool/tasklist/RightPanel.js
- *  目标客户池 任务列表左侧
+ *  目标客户池 任务列表右侧
  * @author wangjunjun
  */
 

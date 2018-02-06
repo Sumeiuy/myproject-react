@@ -75,13 +75,17 @@ export default class PaginationComponent extends PureComponent {
   // 之所以这里写这个生命周期，是为了应对当props请求的数据在组件初始化以后才到来时，
   // 可以控制最后一页的按钮显示，以及当前页
   componentWillReceiveProps(nextProps) {
-    const { isHideLastButton, total: prevTotal } = this.props;
+    const { isHideLastButton, total: prevTotal, current: prevCurrent } = this.props;
     const { current, pageSize, total } = nextProps;
     // 只在初始化时没有数据，而取到这次数据到达时，才进行setState
-    if (isHideLastButton && prevTotal === 0 && total !== 0) {
+    if ((isHideLastButton && prevTotal === 0 && total !== 0)) {
       this.setState({
         current,
         shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
+      });
+    } else if (current === 1 && prevCurrent > 1) {
+      this.setState({
+        current,
       });
     }
   }
@@ -98,7 +102,6 @@ export default class PaginationComponent extends PureComponent {
   @autobind
   handlePageChange(page, pageSize) {
     const { total, onChange, isHideLastButton } = this.props;
-    onChange(page, pageSize);
     if (isHideLastButton) {
       this.setState({
         current: page,
@@ -109,13 +112,13 @@ export default class PaginationComponent extends PureComponent {
         current: page,
       });
     }
+    onChange(page, pageSize);
   }
 
 
   @autobind
   handlePageSizeChange(current, size) {
     const { total, onShowSizeChange, isHideLastButton } = this.props;
-    onShowSizeChange(current, size);
     if (isHideLastButton) {
       this.setState({
         current,
@@ -126,6 +129,7 @@ export default class PaginationComponent extends PureComponent {
         current,
       });
     }
+    onShowSizeChange(current, size);
   }
 
   render() {
