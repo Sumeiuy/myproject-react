@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 09:31:06
+ * @Last Modified time: 2018-02-06 13:34:25
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -70,7 +70,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { assignmentList } = props.data;
+    const { assignmentList, buttonList } = props.data;
     this.state = {
       // 审批人弹框
       nextApproverModal: false,
@@ -92,6 +92,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
         newOrgName: assignmentList[0].newOrgName,
       },
       assignmentListData: assignmentList,
+      // 按钮组信息
+      buttonListData: buttonList,
     };
   }
 
@@ -250,7 +252,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   @autobind
   sendDoApproveRequest(value) {
     const { flowId, appId, subType } = this.props.data;
-    const { doApprove, getDetailInfo, getButtonList } = this.props;
+    const { doApprove, getDetailInfo } = this.props;
     const { groupName, approverIdea, auditors, operate } = this.state;
     doApprove({
       itemId: appId,
@@ -267,9 +269,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       } else {
         message.success('划转请求提交成功');
       }
-      this.setState({ nextApproverModal: false });
-      // 获取下一步骤按钮列表
-      getButtonList({ flowId });
+      this.setState({
+        nextApproverModal: false,
+        buttonListData: [],
+      });
       getDetailInfo({
         flowId,
         type: pageType,
@@ -317,7 +320,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const { pageAssignment } = this.props;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
-    const { custList, newManagerList, buttonList } = this.props;
+    const { custList, newManagerList } = this.props;
+    const { buttonListData } = this.state;
     const {
       client,
       newManager,
@@ -438,7 +442,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
             </div>
             <div id="button_module" className={styles.buttonModule}>
               <BottonGroup
-                list={buttonList}
+                list={buttonListData}
                 onEmitEvent={this.submitCreateInfo}
               />
             </div>
