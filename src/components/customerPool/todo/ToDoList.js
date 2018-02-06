@@ -235,15 +235,6 @@ export default class ToDoList extends PureComponent {
         rowKey={record => record.id}
         columns={this.columns}
         dataSource={data}
-        pagination={{
-          size: 'small',
-          current: +curPageNum,
-          onChange: this.handleChange,
-          showTotal: total => (`共${total}项`),
-          showSizeChanger: true,
-          onShowSizeChange: this.handleSizeChange,
-          pageSize: +pageSize,
-        }}
       />
     );
   }

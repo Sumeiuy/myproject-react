@@ -543,8 +543,8 @@ export default class CustomerLists extends PureComponent {
       current,
       total: curTotal,
       pageSize: pagesize,
-      onPageChange,
-      onSizeChange,
+      onChange: onPageChange,
+      onShowSizeChange: onSizeChange,
       isHideLastButton: true,
     };
 
@@ -634,14 +634,16 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             {...paginationOption}
           />
-          <Checkbox
-            checked={isAllSelectBool}
-            onChange={this.selectAll}
-            className={styles.selectAllTwo}
-            disabled={_.isEmpty(custList)}
-          >
-            全选
-          </Checkbox>
+          {
+           /*  <Checkbox
+              checked={isAllSelectBool}
+              onChange={this.selectAll}
+              className={styles.selectAllTwo}
+              disabled={_.isEmpty(custList)}
+            >
+              全选
+          </Checkbox> */
+          }
         </div>
         {
           BottomFixedBoxVisible ?

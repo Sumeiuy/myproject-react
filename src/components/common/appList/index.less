@@ -12,14 +12,17 @@
   flex: 1 1 auto;
 }
 .listFoot {
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 54px;
   flex: 0 0 auto;
   box-sizing: border-box;
   margin-bottom: 10px;
-  display: flex;
 }
 .pagination {
+  display: flex;
+  justify-content: flex-start;
   flex: 1 1 auto;
   height: 54px;
 }
@@ -33,5 +36,8 @@
   cursor: pointer;
   &:hover {
     color: #108ee9;
+  }
+  :global .iconfont.icon-shouqi1 {
+    font-size: 14px;
   }
 }

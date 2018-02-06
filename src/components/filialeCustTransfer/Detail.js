@@ -92,10 +92,10 @@ export default class Detail extends PureComponent {
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 分页
     const paginationOption = {
-      curPageNum: page.curPageNum,
-      totalRecordNum: page.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: page.curPageNum,
+      total: page.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
     return (
       <div className={styles.detailBox}>

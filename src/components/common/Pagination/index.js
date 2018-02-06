@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import _ from 'lodash';
 import { Pagination } from 'antd';
 import styles from './index.less';
 
@@ -44,10 +45,9 @@ export default class PaginationComponent extends PureComponent {
     current: PropTypes.number,
     total: PropTypes.number.isRequired,
     pageSize: PropTypes.number,
-    onPageChange: PropTypes.func.isRequired,
-    onSizeChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
+    onShowSizeChange: PropTypes.func,
     showSizeChanger: PropTypes.bool,
-    shouldSitOnLeft: PropTypes.bool,
     isHideLastButton: PropTypes.bool,
     isShortPageList: PropTypes.bool,
   };
@@ -55,9 +55,10 @@ export default class PaginationComponent extends PureComponent {
     current: 1,
     pageSize: 20,
     showSizeChanger: false,
-    shouldSitOnLeft: false, // 默认情况下放置在右侧，可传递该参数放置左侧
     isHideLastButton: false, // 默认情况下不隐藏最后一页
     isShortPageList: false, // 默认情况下使用标准长度的分页列表
+    onChange: _.noop,
+    onShowSizeChange: _.noop,
   };
 
   constructor(props) {
@@ -96,8 +97,8 @@ export default class PaginationComponent extends PureComponent {
 
   @autobind
   handlePageChange(page, pageSize) {
-    const { total, onPageChange, isHideLastButton } = this.props;
-    onPageChange(page, pageSize);
+    const { total, onChange, isHideLastButton } = this.props;
+    onChange(page, pageSize);
     if (isHideLastButton) {
       this.setState({
         current: page,
@@ -113,8 +114,8 @@ export default class PaginationComponent extends PureComponent {
 
   @autobind
   handlePageSizeChange(current, size) {
-    const { total, onSizeChange, isHideLastButton } = this.props;
-    onSizeChange(current, size);
+    const { total, onShowSizeChange, isHideLastButton } = this.props;
+    onShowSizeChange(current, size);
     if (isHideLastButton) {
       this.setState({
         current,
@@ -128,24 +129,23 @@ export default class PaginationComponent extends PureComponent {
   }
 
   render() {
-    const { pageSize, shouldSitOnLeft, isShortPageList, total } = this.props;
+    const { pageSize, isShortPageList, total } = this.props;
     const { current } = this.state;
     return (
       <div
         className={classnames({
           [styles.commonPage]: true,
           [styles.hidden]: total === 0,
-          [styles.flexLeft]: shouldSitOnLeft,
           [styles.shortPageList]: isShortPageList,
           [styles.hideLastButton]: this.state.shouldHideLastButton,
         })}
       >
         <Pagination
+          {...this.props}
           showTotal={renderTotal}
           pageSizeOptions={renderPageSizeOptions(pageSize)}
           onChange={this.handlePageChange}
           onShowSizeChange={this.handlePageSizeChange}
-          {...this.props}
           current={current}
         />
       </div>

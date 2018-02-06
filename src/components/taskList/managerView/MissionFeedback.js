@@ -492,11 +492,11 @@ export default class MissionFeedback extends PureComponent {
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
     const paginationOption = {
-      curPageNum,
-      totalRecordNum,
-      curPageSize,
-      onPageChange: this.handlePageChange,
-      onSizeChange: this.handleSizeChange,
+      current: curPageNum,
+      total: totalRecordNum,
+      pageSize: curPageSize,
+      onChange: this.handlePageChange,
+      onShowSizeChange: this.handleSizeChange,
     };
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
@@ -526,11 +526,11 @@ export default class MissionFeedback extends PureComponent {
                   {info}
                 </div>
                 <Pagination
-                  curPageNum={curPageNum}
-                  curPageSize={curPageSize}
-                  totalRecordNum={totalRecordNum}
-                  onPageChange={this.handlePageChange}
-                  onSizeChange={this.handleSizeChange}
+                  current={curPageNum}
+                  pageSize={curPageSize}
+                  total={totalRecordNum}
+                  onChange={this.handlePageChange}
+                  onShowSizeChange={this.handleSizeChange}
                 />
                 {info}
                 {
