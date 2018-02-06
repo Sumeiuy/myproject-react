@@ -91,7 +91,27 @@ export default class Pageheader extends PureComponent {
       stateAllOptions,
       statusValue,
       showMore: true,
+      startTime: '',
+      endTime: '',
+      disabledEndTime: '',
     };
+  }
+
+  componentWillMount() {
+    const { location: { query: { missionViewType } } } = this.props;
+    if (missionViewType === INITIATOR_VIEW) {
+      this.setState({
+        startTime: beforeToday,
+        endTime: today,
+        disabledEndTime: today,
+      });
+    } else {
+      this.setState({
+        startTime: today,
+        endTime: afterToday,
+        disabledEndTime: afterToday,
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -213,8 +233,18 @@ export default class Pageheader extends PureComponent {
     let timerValue;
     if (v === INITIATOR_VIEW) {
       timerValue = filterTimer({ before, todays });
+      this.setState({
+        startTime: before,
+        endTime: todays,
+        disabledEndTime: todays,
+      });
     } else {
       timerValue = filterTimer({ todays, after });
+      this.setState({
+        startTime: todays,
+        endTime: after,
+        disabledEndTime: after,
+      });
     }
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
     this.props.filterCallback({
@@ -246,9 +276,15 @@ export default class Pageheader extends PureComponent {
     const { location: { query: { missionViewType } } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
+    const timeParTo = moment(createTimePartFrom).add(60, 'days');
     const createTimeStarts = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
     const createTimeEnds = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
     const param = this.handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds });
+    this.setState({
+      startTime: createTimeStarts,
+      endTime: createTimeEnds,
+      disabledEndTime: timeParTo,
+    });
     if (createTimeEnds && createTimeStarts) {
       if (createTimeEnds >= createTimeStarts) {
         this.props.filterCallback(param);
@@ -292,8 +328,8 @@ export default class Pageheader extends PureComponent {
     return null;
   }
 
-  @autobind
   // 设置不可选日期
+  @autobind
   disabledDateStart(value, type) {
     if (!value) {
       return false;
@@ -308,31 +344,35 @@ export default class Pageheader extends PureComponent {
 
     if (currentMonth === localMonth) {
       // endValue
-      return currentDate > localDate;
+      return currentDate.valueOf() > localDate.valueOf();
     }
     // startValue
     return value.valueOf() <= nowDay.valueOf();
   }
 
+  // 我部门的任务和执行者视图 开始时间不限，结束时间根据开始时间后推60天
   @autobind
   disabledDateEnd(value, type) {
+    const { disabledEndTime } = this.state;
     if (!value) {
       return false;
     }
 
     // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
     const currentMonth = moment(type).month() + 1;
-    const localMonth = moment(afterToday).month() + 1;
-    const currentDate = moment(value).format('YYYY-MM-DD');
-    const localDate = moment(moment(new Date()).subtract(1, 'days')).format('YYYY-MM-DD');
+    const localMonth = moment(type).month() + 1;
+    // const currentDate = moment(value).format('YYYY-MM-DD');
+    // const localDate = moment(moment(disabledEndTime).add(1, 'days')).format('YYYY-MM-DD');
 
     if (currentMonth === localMonth) {
       // endValue
-      return value.valueOf() > afterToday.valueOf();
+      return value.valueOf() >= disabledEndTime.valueOf();
     }
     // startValue
-    return currentDate <= localDate;
+    // return currentDate <= localDate;
+    return true;
   }
+
 
   /**
    * 构造任务状态
@@ -431,8 +471,8 @@ export default class Pageheader extends PureComponent {
       },
     } = this.props;
 
-    const { stateAllOptions, statusValue } = this.state;
-
+    const { stateAllOptions, statusValue, startTime, endTime } = this.state;
+    console.log(moment(startTime).format('YYYY-MM-DD'), '---', moment(endTime).format('YYYY-MM-DD'));
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
@@ -511,8 +551,8 @@ export default class Pageheader extends PureComponent {
           }
 
           {missionViewTypeValue === INITIATOR_VIEW ?
-            this.renderTime(beforeToday, today, true) :
-            this.renderTime(today, afterToday, false, missionViewType)
+            this.renderTime(startTime, endTime, true) :
+            this.renderTime(startTime, endTime, false, missionViewType)
           }
           {
             this.state.showMore ?
