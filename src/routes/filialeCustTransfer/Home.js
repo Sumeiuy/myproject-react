@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 15:55:18
+ * @Last Modified time: 2018-02-06 12:10:43
  */
 
 import React, { PureComponent } from 'react';
@@ -51,6 +51,10 @@ const mapStateToProps = state => ({
   pageAssignment: state.filialeCustTransfer.pageAssignment,
   // 组织机构树
   custRangeList: state.customerPool.custRange,
+  // 批量划转的数据
+  customerAssignImport: state.filialeCustTransfer.customerAssignImport,
+  // 获取按钮列表和下一步审批人
+  buttonList: state.filialeCustTransfer.buttonList,
 });
 
 const mapDispatchToProps = {
@@ -68,11 +72,19 @@ const mapDispatchToProps = {
   // 选择新服务经理
   selectNewManager: fetchDataFunction(false, 'filialeCustTransfer/selectNewManager'),
   // 提交保存
-  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
+  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange', true),
   // 客户表格分页信息
-  getPageAssignment: fetchDataFunction(true, 'filialeCustTransfer/getPageAssignment'),
+  getPageAssignment: fetchDataFunction(false, 'filialeCustTransfer/getPageAssignment'),
   // 提交成功后清除上一次查询的数据
   emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
+  // 获取批量划转的客户数据
+  queryCustomerAssignImport: fetchDataFunction(true, 'filialeCustTransfer/queryCustomerAssignImport', true),
+  // 提交批量划转请求
+  validateData: fetchDataFunction(true, 'filialeCustTransfer/validateData', true),
+  // 清空批量划转的数据
+  clearMultiData: fetchDataFunction(true, 'filialeCustTransfer/clearMultiData', true),
+  // 获取按钮列表和下一步审批人
+  getButtonList: fetchDataFunction(true, 'filialeCustTransfer/getButtonList', true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -111,13 +123,29 @@ export default class FilialeCustTransfer extends PureComponent {
     emptyQueryData: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
+    // 批量划转的接口
+    queryCustomerAssignImport: PropTypes.func,
+    // 批量划转的数据
+    customerAssignImport: PropTypes.object,
+    // 提交批量划转请求
+    validateData: PropTypes.func,
+    // 清空批量划转的数据
+    clearMultiData: PropTypes.func,
+    // 审批按钮列表
+    buttonList: PropTypes.object.isRequired,
+    // 请求审批按钮方法
+    getButtonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     custList: [],
     managerData: [],
     newManagerList: [],
+    queryCustomerAssignImport: _.noop,
+    customerAssignImport: {},
     pageAssignment: {},
+    validateData: _.noop,
+    clearMultiData: _.noop,
   }
 
   constructor(props) {
@@ -346,8 +374,17 @@ export default class FilialeCustTransfer extends PureComponent {
       saveChange,
       // 提交成功后清除上一次查询的数据
       emptyQueryData,
+      // 批量划转
+      queryCustomerAssignImport,
+      customerAssignImport,
       getPageAssignment,
       pageAssignment,
+      // 提交批量划转请求
+      validateData,
+      // 清空批量划转的数据
+      clearMultiData,
+      getButtonList,
+      buttonList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -368,11 +405,11 @@ export default class FilialeCustTransfer extends PureComponent {
     const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
 
     const leftPanel = (
@@ -416,6 +453,13 @@ export default class FilialeCustTransfer extends PureComponent {
               managerData={managerData}
               saveChange={saveChange}
               emptyQueryData={emptyQueryData}
+              queryCustomerAssignImport={queryCustomerAssignImport}
+              customerAssignImport={customerAssignImport}
+              validateData={validateData}
+              clearMultiData={clearMultiData}
+              getButtonList={getButtonList}
+              buttonList={buttonList}
+              queryAppList={this.queryAppList}
             />
           )
         }

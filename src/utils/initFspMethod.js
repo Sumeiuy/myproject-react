@@ -50,7 +50,7 @@ function initFspMethod({ store, push }) {
             pathname: path,
             state: {
               url,
-              shoudlRemove: reactShouldRemove,
+              shouldRemove: reactShouldRemove,
             },
           });
         },

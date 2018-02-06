@@ -246,7 +246,7 @@ export default class MissionFeedback extends PureComponent {
   handleOptionBar(value, names) {
     const { isFold } = this.props;
     const grids = isFold ? { left: '20%', right: '20%', top: 20, bottom: 10, containLabel: true } :
-      { left: '3%', right: '10%', top: 30, bottom: 10, containLabel: true };
+      { left: '20%', right: '20%', top: 30, bottom: 10, containLabel: true };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -278,11 +278,11 @@ export default class MissionFeedback extends PureComponent {
         {
           name: names,
           type: 'bar',
-          barWidth: '8',
+          barWidth: '14',
           data: value,
           itemStyle: {
             normal: {
-              barBorderRadius: [6, 6, 0, 0],
+              barBorderRadius: [0, 0, 0, 0],
               color: (params) => {
                 const colorList = ['#6dacf4', '#4fe0f5', '#ffa800', '#756fb8', '#4adad5'];
                 return colorList[params.dataIndex];
@@ -486,11 +486,11 @@ export default class MissionFeedback extends PureComponent {
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
     const paginationOption = {
-      curPageNum,
-      totalRecordNum,
-      curPageSize,
-      onPageChange: this.handlePageChange,
-      onSizeChange: this.handleSizeChange,
+      current: curPageNum,
+      total: totalRecordNum,
+      pageSize: curPageSize,
+      onChange: this.handlePageChange,
+      onShowSizeChange: this.handleSizeChange,
     };
     const value = _.map(key, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
@@ -519,18 +519,11 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
-                <Pagination
-                  curPageNum={curPageNum}
-                  curPageSize={curPageSize}
-                  totalRecordNum={totalRecordNum}
-                  onPageChange={this.handlePageChange}
-                  onSizeChange={this.handleSizeChange}
-                />
-                {info}
                 {
                   totalRecordNum > 5 ?
                     <Pagination
                       {...paginationOption}
+                      className={styles.rowTop}
                     /> : null
                 }
               </div>

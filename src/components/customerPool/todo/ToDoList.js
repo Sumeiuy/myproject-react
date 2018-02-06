@@ -174,8 +174,7 @@ export default class ToDoList extends PureComponent {
   }
 
   render() {
-    const { className, data, todolist, location } = this.props;
-    const { query: { curPageNum = 1, pageSize = 10 } } = location;
+    const { className, data, todolist } = this.props;
 
     // 没有待办流程
     if (todolist.length === 0) {
@@ -219,15 +218,6 @@ export default class ToDoList extends PureComponent {
         rowKey={record => record.id}
         columns={this.columns}
         dataSource={data}
-        pagination={{
-          size: 'small',
-          current: +curPageNum,
-          onChange: this.handleChange,
-          showTotal: total => (`共${total}项`),
-          showSizeChanger: true,
-          onShowSizeChange: this.handleSizeChange,
-          pageSize: +pageSize,
-        }}
       />
     );
   }
