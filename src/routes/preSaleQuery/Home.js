@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-06 10:22:23
+ * @Last Modified time: 2018-02-06 13:41:54
  * @description 售前适当性查询
  */
 
@@ -129,13 +129,13 @@ export default class PreSaleQuery extends PureComponent {
   @autobind
   handleSearch(e) {
     e.preventDefault();
-    if (!this.state.selectedCustItem.custCode) {
+    if (!this.state.selectedCustItem.custNumber) {
       message.warning('请选择经纪客户号/客户名称');
     } else if (!this.state.selectedProductItem.productCode) {
       message.warning('请选择产品代码/产品名称');
     } else {
       this.props.getMatchResult({
-        custCode: this.state.selectedCustItem.custCode,
+        custCode: this.state.selectedCustItem.custNumber,
         productCode: this.state.selectedProductItem.productCode,
       });
     }
@@ -173,7 +173,7 @@ export default class PreSaleQuery extends PureComponent {
         fact: { yxq: ' ' },
       },
       matchTable = {
-        fact: { result: [] },
+        appropriateTypeFact: { result: [] },
       },
       contractSign = { fact: {} },
       qualifiedCust = {
@@ -189,6 +189,7 @@ export default class PreSaleQuery extends PureComponent {
       {
         title: '客户信息',
         dataIndex: 'custInfo',
+        width: '500px',
       },
       {
         title: '产品信息',
@@ -264,19 +265,19 @@ export default class PreSaleQuery extends PureComponent {
                   <Col span={6}>
                     <span className={styles.itemName}>风险测评有效期：</span>
                     {
-                      matchTable.fact.yxq &&
+                      matchTable.appropriateTypeFact.yxq &&
                         (<span className={styles.itemValue}>
-                          {matchTable.fact.yxq}
+                          {matchTable.appropriateTypeFact.yxq}
                         </span>)
                     }
                   </Col>
                 </Row>
                 {
-                  matchTable.fact.result &&
+                  matchTable.appropriateTypeFact.result &&
                     (<Table
                       className={styles.table}
                       columns={columns}
-                      dataSource={matchTable.fact.result}
+                      dataSource={matchTable.appropriateTypeFact.result}
                       pagination={false}
                     />)
                 }

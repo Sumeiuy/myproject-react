@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:33:41
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-02 17:20:16
+ * @Last Modified time: 2018-02-06 13:20:29
  * @description 售前适当性查询接口
  */
 
@@ -13,6 +13,6 @@
      // 查询产品列表
      getProductList: query => api.post('/groovynoauth/fsp/product/finprod/queryFinProdList', query),
      // 查询适当性匹配结果
-     getMatchResult: query => api.post('/groovynoauth/fsp/product/preSale/queryMatchResult', query),
+     getMatchResult: query => api.post('/groovynoauth/fsp/product/finprod/queryMatchResult', query),
    };
  }
