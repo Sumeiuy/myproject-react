@@ -3,7 +3,7 @@
  * @Description 分公司客户划转相关接口
  * @Date: 2017-12-13 10:16:45
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-03 17:34:58
+ * @Last Modified time: 2018-02-06 16:58:30
  */
 
 export default function cust(api) {
@@ -29,6 +29,6 @@ export default function cust(api) {
     // 客户表格分页信息
     getPageAssignment: query => api.post('/groovynoauth/fsp/cust/manager/queryPageAssignment', query),
     // 批量划转的错误信息提醒
-    getErrorMsg: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignValidateResult', query),
+    getNotifiesInfo: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignValidateResult', query),
   };
 }
