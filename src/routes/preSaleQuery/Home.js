@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-02 11:02:28
+ * @Last Modified time: 2018-02-06 10:22:23
  * @description 售前适当性查询
  */
 
@@ -108,7 +108,7 @@ export default class PreSaleQuery extends PureComponent {
     if (!value) {
       message.warning('请输入产品代码/产品名称');
     } else {
-      this.props.getProductList({ keyWord: value, pstnId: emp.getPstnId() });
+      this.props.getProductList({ keywords: value, pstnId: emp.getPstnId() });
     }
   }
 
