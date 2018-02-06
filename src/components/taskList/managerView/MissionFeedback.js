@@ -519,14 +519,14 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
-                {/*<Pagination
+                {/* <Pagination
                   curPageNum={curPageNum}
                   curPageSize={curPageSize}
                   totalRecordNum={totalRecordNum}
                   onPageChange={this.handlePageChange}
                   onSizeChange={this.handleSizeChange}
                 />
-                {info}*/}
+                {info} */}
                 {
                   totalRecordNum > 5 ?
                     <Pagination
