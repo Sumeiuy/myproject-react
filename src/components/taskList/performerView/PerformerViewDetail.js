@@ -182,7 +182,6 @@ export default class PerformerViewDetail extends PureComponent {
     const { checkboxData, radioData, areaTextData } = this.state;
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
     form.validateFields((err) => {
-      console.log('err-->', err);
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,

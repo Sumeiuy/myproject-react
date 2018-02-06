@@ -276,14 +276,15 @@ export default class Pageheader extends PureComponent {
     const { location: { query: { missionViewType } } } = this.props;
     const createTimePartFrom = dateStrings[0];
     const createTimePartTo = dateStrings[1];
-    const timeParTo = moment(createTimePartFrom).add(60, 'days');
+    // 改变开始时间，限定结束时间范围
+    const disabledTime = moment(createTimePartFrom).add(60, 'days');
     const createTimeStarts = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
     const createTimeEnds = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
     const param = this.handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds });
     this.setState({
       startTime: createTimeStarts,
       endTime: createTimeEnds,
-      disabledEndTime: timeParTo,
+      disabledEndTime: disabledTime,
     });
     if (createTimeEnds && createTimeStarts) {
       if (createTimeEnds >= createTimeStarts) {
@@ -361,15 +362,12 @@ export default class Pageheader extends PureComponent {
     // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
     const currentMonth = moment(type).month() + 1;
     const localMonth = moment(type).month() + 1;
-    // const currentDate = moment(value).format('YYYY-MM-DD');
-    // const localDate = moment(moment(disabledEndTime).add(1, 'days')).format('YYYY-MM-DD');
 
     if (currentMonth === localMonth) {
       // endValue
       return value.valueOf() >= disabledEndTime.valueOf();
     }
     // startValue
-    // return currentDate <= localDate;
     return true;
   }
 
