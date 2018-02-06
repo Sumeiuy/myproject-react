@@ -185,7 +185,6 @@ export default class PerformerViewDetail extends PureComponent {
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,
-          keyIndex: this.state.keyIndex + 1,
         });
       } else {
         const params = {

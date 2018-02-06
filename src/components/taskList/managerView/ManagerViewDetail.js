@@ -485,7 +485,7 @@ export default class ManagerViewDetail extends PureComponent {
                 serveManagerCount={serveManagerCount}
               />
             </div>
-          }          
+          }
         </div>
       </div>
     );
