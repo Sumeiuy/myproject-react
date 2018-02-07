@@ -332,7 +332,6 @@ export default class PerformerViewDetail extends PureComponent {
     };
 
     const {
-      missionId,
       missionName,
       missionStatusName,
       hasSurvey,
@@ -361,7 +360,7 @@ export default class PerformerViewDetail extends PureComponent {
     return (
       <div className={`sticky-container ${styles.performerViewDetail}`}>
         <p className={styles.taskTitle}>
-          {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
+          {`${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <InfoArea

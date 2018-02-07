@@ -2,8 +2,8 @@
  * @Description: 通道类协议页面配置项
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-31 13:57:21
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-06 18:49:40
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
