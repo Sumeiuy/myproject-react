@@ -1,8 +1,9 @@
+@main-color: #2e669a;
 .morning_broadcast {
   height: 83px;
   box-sizing: border-box;
   margin: 20px 0 10px;
-  border-top: 3px solid #d67c1e;
+  border-top: 3px solid @main-color;
   border-bottom: 2px solid #ccc;
   .title {
     height: 30px;
@@ -10,7 +11,7 @@
     border-bottom: 1px dashed #ddd;
     display: flex;
     justify-content: space-between;
-    color: #d67c1e;
+    color: @main-color;
     .more {
       color: #2d86d8;
       font-size: 14px;
@@ -39,7 +40,7 @@
       position: relative;
       width: 75px;
       height: 24px;
-      color: #d67c1e;
+      color: @main-color;
       overflow: hidden;
       text-overflow: ellipsis;
       word-break: inherit;
