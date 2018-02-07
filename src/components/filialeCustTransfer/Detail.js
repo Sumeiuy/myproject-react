@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-05 11:13:41
+ * @Last Modified time: 2018-02-07 16:30:15
  */
 
 import React, { PureComponent } from 'react';
@@ -79,6 +79,7 @@ export default class Detail extends PureComponent {
       workflowHistoryBeans,
       assignmentList,
       page,
+      currentNodeName,
     } = this.props.data;
     const { pageAssignment } = this.props;
     if (_.isEmpty(this.props.data)) {
@@ -163,6 +164,7 @@ export default class Detail extends PureComponent {
                 head="审批记录"
                 info={workflowHistoryBeans}
                 currentApproval={currentApproval}
+                currentNodeName={currentNodeName}
                 statusType="ready"
               />
             </div>
