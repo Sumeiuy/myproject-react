@@ -280,6 +280,7 @@ export default class TaskFlow extends PureComponent {
     }
 
     const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+    // 当前瞄准镜筛选条件为空，或者labels只有一个并且没有过滤条件
     if (_.isEmpty(currentLabelQueryCustomerParam)
       || (_.isEmpty(currentLabelQueryCustomerParam.filtersReq)
         && _.size(currentLabelQueryCustomerParam.labels) === 1)) {

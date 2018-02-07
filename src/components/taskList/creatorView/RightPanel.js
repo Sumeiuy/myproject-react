@@ -303,7 +303,7 @@ export default class RightPanel extends PureComponent {
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
             <h1 className={styles.bugTitle}>
-              {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status) || '--'}`}
+              {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status)}`}
             </h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />

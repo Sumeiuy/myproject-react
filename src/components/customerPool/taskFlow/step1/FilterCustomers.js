@@ -58,15 +58,9 @@ export default class Filter extends PureComponent {
   @autobind
   toggleMoreBtn(sightingTelescopeFilters = {}) {
     const { filterList = [] } = sightingTelescopeFilters || {};
-    let moreBtnVisible = false;
     const filterSize = _.size(filterList);
     // 默认四条规则，加上瞄准镜规则
-    if (filterSize > 1) {
-      // 大于五条，展示查看全部按钮
-      moreBtnVisible = true;
-    } else {
-      moreBtnVisible = false;
-    }
+    const moreBtnVisible = filterSize > 1;
 
     return { filterSize, moreBtnVisible };
   }

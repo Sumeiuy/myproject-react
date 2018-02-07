@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: zhufeiyang
- * @Last Modified time: 2018-02-06 18:51:09
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-07 11:00:07
  * 管理者视图详情
  */
 
@@ -154,7 +154,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
-        canLaunchTask,
+        canLaunchTask: isEntryFromProgressDetail ? true : canLaunchTask,
       });
     });
   }
@@ -474,14 +474,14 @@ export default class ManagerViewDetail extends PureComponent {
           </div>
           {
             _.isEmpty(templateId) ? null :
-            <div className={styles.missionFeedbackSection}>
-              <MissionFeedback
-                missionFeedbackData={missionFeedbackData}
-                isFold={isFold}
-                missionFeedbackCount={missionFeedbackCount}
-                serveManagerCount={serveManagerCount}
-              />
-            </div>
+              <div className={styles.missionFeedbackSection}>
+                <MissionFeedback
+                  missionFeedbackData={missionFeedbackData}
+                  isFold={isFold}
+                  missionFeedbackCount={missionFeedbackCount}
+                  serveManagerCount={serveManagerCount}
+                />
+              </div>
           }
         </div>
       </div>

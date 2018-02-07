@@ -70,9 +70,9 @@ export default class SelectLabelCust extends PureComponent {
     }
 
     const {
-      filterNumList,
+      filterNumObject,
       argsOfQueryCustomer,
-      currentFilterList,
+      currentFilterObject,
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
@@ -83,12 +83,12 @@ export default class SelectLabelCust extends PureComponent {
       labelMapping,
       labelDesc,
       condition,
-      custNum: filterNumList[labelId],
+      custNum: filterNumObject[labelId],
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
       argsOfQueryCustomer,
-      currentFilterList,
+      currentFilterObject,
     };
 
     return {
