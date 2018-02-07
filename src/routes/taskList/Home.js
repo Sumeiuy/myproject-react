@@ -26,7 +26,7 @@ import { emp, permission } from '../../helper';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-
+const LEFT_PANEL_WIDTH = 400;
 const {
   taskList,
   taskList: { pageType, chooseMissionView },
@@ -1014,7 +1014,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={380}
+          leftWidth={LEFT_PANEL_WIDTH}
         />
       </div>
     );

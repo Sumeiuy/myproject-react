@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-05 17:23:47
+ * @Last Modified time: 2018-02-07 15:06:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -312,10 +312,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 划转方式的 select 事件
   @autobind
   handleSelectChange(key, value) {
-    let isDefaultType = true;
-    if (value !== defaultType) {
-      isDefaultType = false;
-    }
+    const isDefaultType = value === defaultType;
     this.setState({
       [key]: value,
       isDefaultType,
@@ -434,11 +431,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       showUploadList: false,
     };
     // 分页
+    const hasPage = !_.isEmpty(page);
     const paginationOption = {
-      curPageNum: !_.isEmpty(page) ? page.curPageNum : 0,
-      totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      curPageSize: !_.isEmpty(page) ? page.pageSize : 0,
-      onPageChange: this.pageChangeHandle,
+      current: hasPage ? page.curPageNum : 1,
+      total: hasPage ? page.totalRecordNum : 0,
+      pageSize: hasPage ? page.pageSize : 10,
+      onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?
       (<Upload {...uploadProps} {...this.props}>
@@ -483,16 +481,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
           </InfoForm>
           {
             isDefaultType ?
-              null
-            :
-              <div className={styles.filialeBtn}>
-                {uploadElement}
-                |
-                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-              </div>
-          }
-          {
-            isDefaultType ?
               <div>
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
                   <DropDownSelect
@@ -521,7 +509,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 </InfoForm>
               </div>
             :
-              null
+              <div className={styles.filialeBtn}>
+                {uploadElement}
+                |
+                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+              </div>
           }
           <CommonTable
             data={transferType === defaultType ? managerData : customerAssignImport.list}

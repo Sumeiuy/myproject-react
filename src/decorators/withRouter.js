@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import hoistStatics from 'hoist-non-react-statics';
 import { Route } from 'dva/router';
 import { parse, stringify } from 'query-string';
@@ -7,6 +8,11 @@ import warn from 'warning';
 /**
  * A public higher-order component to access the imperative API
  */
+
+// 设置两个备忘变量，性能优化
+let rememberQuery = {};
+let rememberSearch = '';
+
 const withRouter = (Component) => {
   const C = (props) => {
     const { wrappedComponentRef, replace, push, ...remainingProps } = props;
@@ -34,6 +40,22 @@ const withRouter = (Component) => {
       return push(params);
     }
 
+    function parseSearch(search) {
+      if (search !== rememberSearch) {
+        // 支持boolean类型解析
+        rememberQuery = _.mapValues(parse(search), (value) => {
+          if (value === 'true') {
+            return true;
+          } else if (value === 'false') {
+            return false;
+          }
+          return value;
+        });
+        rememberSearch = search;
+      }
+      return rememberQuery;
+    }
+
     return (
       <Route
         render={({ history, location, match }) => {
@@ -42,7 +64,7 @@ const withRouter = (Component) => {
             match,
             location: {
               ...location,
-              query: parse(location.search),
+              query: parseSearch(location.search),
             },
           };
           return (

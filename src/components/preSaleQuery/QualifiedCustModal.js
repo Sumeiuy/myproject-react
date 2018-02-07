@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 13:37:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-29 17:54:08
+ * @Last Modified time: 2018-02-07 20:32:20
  * @description 合格投资者-产品要求点击问号的弹出框
  */
 import React from 'react';
@@ -65,32 +65,23 @@ export default function QualifiedCustModal(props) {
     </div>
   );
 
-  let content = null;
-  switch (props.type) {
-    case '合格投资者-私募类':
-      content = privateEquity;
-      break;
-    case '合格投资者-信托类':
-      content = trust;
-      break;
-    case '合格投资者-小集合类':
-      content = smallSet;
-      break;
-    default:
-      content = null;
-      break;
-  }
+  const content = {
+    1: smallSet,
+    2: privateEquity,
+    3: trust,
+  };
+
   return (
     <Modal
       className={styles.qualifiedCustModal}
-      title={props.type}
+      title={props.title}
       visible={props.visible}
       destroyOnClose
       width="1100px"
       footer=" "
       onCancel={props.onQualifiedCustModalHide}
     >
-      { content }
+      { content[props.type] }
     </Modal>
   );
 }
@@ -98,9 +89,11 @@ export default function QualifiedCustModal(props) {
 QualifiedCustModal.propTypes = {
   visible: PropTypes.bool.isRequired,
   type: PropTypes.string,
+  title: PropTypes.string,
   onQualifiedCustModalHide: PropTypes.func.isRequired,
 };
 
 QualifiedCustModal.defaultProps = {
   type: '',
+  title: '',
 };
