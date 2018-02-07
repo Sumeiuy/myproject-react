@@ -15,7 +15,7 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(q, 'g');
   // 瞄准镜标签后面添加字符，用以分割
-  const holder = isSightingScope(type) ? '-' : '';
+  const holder = type === 'sightingTelescope' ? '-' : '';
   return value.replace(regxp,
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
@@ -171,7 +171,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((item) => {
           // 防止热点标签展示重复，这里从query上取source
-          if (!isSightingScope(source)) {
+          if (!isSightingScope(item.source)) {
             return replaceWord({ value: item.name, q });
           }
           return `${replaceWord({ value: item.name, q })}-${q}`;
