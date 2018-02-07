@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-06 17:51:59
+ * @Last Modified time: 2018-02-07 14:40:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -312,15 +312,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 划转方式的 select 事件
   @autobind
   handleSelectChange(key, value) {
-    let isDefaultType = true;
-    if (value !== defaultType) {
-      isDefaultType = false;
-    }
+    console.warn('点击了');
+    const isDefaultType = value === defaultType;
     this.setState({
       [key]: value,
       isDefaultType,
-    }, () => {
-      this.emptyData();
     });
   }
 
@@ -435,9 +431,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     };
     // 分页
     const paginationOption = {
-      current: !_.isEmpty(page) ? page.curPageNum : 0,
+      current: !_.isEmpty(page) ? page.curPageNum : 1,
       total: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      pageSize: !_.isEmpty(page) ? page.pageSize : 0,
+      pageSize: !_.isEmpty(page) ? page.pageSize : 10,
       onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?
@@ -483,16 +479,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
           </InfoForm>
           {
             isDefaultType ?
-              null
-            :
-              <div className={styles.filialeBtn}>
-                {uploadElement}
-                |
-                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-              </div>
-          }
-          {
-            isDefaultType ?
               <div>
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
                   <DropDownSelect
@@ -521,7 +507,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 </InfoForm>
               </div>
             :
-              null
+              <div className={styles.filialeBtn}>
+                {uploadElement}
+                |
+                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+              </div>
           }
           <CommonTable
             data={transferType === defaultType ? managerData : customerAssignImport.list}
