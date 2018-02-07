@@ -109,7 +109,7 @@ export default class BroadcastList extends PureComponent {
     const {
       morningBoradcast: { boradcastList, newUuid },
       getUuid,
-      location: { query: isInit },
+      location: { query: { isInit } },
     } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
