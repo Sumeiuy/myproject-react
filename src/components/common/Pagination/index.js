@@ -43,7 +43,7 @@ function shouldHideLastButton(current, pageSize, total) {
 export default class PaginationComponent extends PureComponent {
   static propTypes = {
     current: PropTypes.number,
-    total: PropTypes.number.isRequired,
+    total: PropTypes.number,
     pageSize: PropTypes.number,
     onChange: PropTypes.func,
     onShowSizeChange: PropTypes.func,
@@ -56,6 +56,7 @@ export default class PaginationComponent extends PureComponent {
   static defaultProps = {
     current: 1,
     pageSize: 20,
+    total: 0,
     showSizeChanger: false,
     isHideLastButton: false, // 默认情况下不隐藏最后一页
     isShortPageList: false, // 默认情况下使用标准长度的分页列表
@@ -86,7 +87,7 @@ export default class PaginationComponent extends PureComponent {
         current,
         shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
       });
-    } else if (current === 1 && prevCurrent > 1) {
+    } else if (current === 1 && prevCurrent > 1) { // 这里是为了处理模态框关闭重新进入时，将页码置为1
       this.setState({
         current,
       });
