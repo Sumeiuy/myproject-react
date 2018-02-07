@@ -988,7 +988,7 @@ export default class PerformerView extends PureComponent {
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
       current: parseInt(pageNum, 10),
-      total: page.totalCount,
+      total: page.totalCount || 0,
       pageSize: parseInt(pageSize, 10),
       onChange: this.handlePageNumberChange,
       onShowSizeChange: this.handlePageSizeChange,

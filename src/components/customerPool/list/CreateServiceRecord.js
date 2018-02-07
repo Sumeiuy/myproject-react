@@ -15,7 +15,7 @@ import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
-const MAX_LENGTH = 100;
+const MAX_LENGTH = 1000;
 
 
 /**

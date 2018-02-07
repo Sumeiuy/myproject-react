@@ -24,12 +24,13 @@
   overflow: hidden;
 }
 .listControl {
+  display: flex;
   margin-top: 15px;
   margin-left: 16px;
   height: 32px;
   line-height: 32px;
   .stateWidget {
-    float: left;
+    justify-self: flex-start;
     .label {
       font-size: 14px;
       color: #9b9b9b;
@@ -45,7 +46,6 @@
     }
   }
   .total {
-    float: right;
     font-size: 14px;
     color: #9b9b9b;
     span {
@@ -53,14 +53,9 @@
     }
   }
   .pagination {
-    float: right;
-    :global {
-      .ant-pagination {
-        .ant-pagination-jump-next + .ant-pagination-item {
-          display: none;
-        }
-      }
-    }
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-end;
   }
 }
 

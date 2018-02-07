@@ -65,22 +65,19 @@ export default class MissionFeedback extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
-    const { missionFeedbackData: data = EMPTY_LIST } = this.props;
     const { problems } = this.state;
-    if (data !== missionFeedbackData) {
-      const { finalData, originProblemData } = this.handleData(
-        missionFeedbackData,
-        missionFeedbackCount,
-        serveManagerCount,
-        problems,
-      );
+    const { finalData, originProblemData } = this.handleData(
+      missionFeedbackData,
+      missionFeedbackCount,
+      serveManagerCount,
+      problems,
+    );
 
-      this.setState({
-        finalData,
-        problems: originProblemData,
-        originProblemData,
-      });
-    }
+    this.setState({
+      finalData,
+      problems: originProblemData,
+      originProblemData,
+    });
   }
 
   @autobind
