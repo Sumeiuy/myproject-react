@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 13:21:38
+ * @Last Modified time: 2018-02-07 19:40:01
  * @description 售前适当性查询
  */
 
@@ -21,6 +21,11 @@ import Icon from '../../components/common/Icon';
 
 import styles from './home.less';
 
+const productRequirementMap = {
+  1: '合格投资者-小集合类',
+  2: '合格投资者-私募类',
+  3: '合格投资者-信托类',
+};
 const effects = {
   // 查询客户列表
   custList: 'preSaleQuery/getCustList',
@@ -176,7 +181,7 @@ export default class PreSaleQuery extends PureComponent {
     const { matchResult } = this.props;
     const {
       custType = {
-        fact: { yxq: ' ' },
+        fact: { },
       },
       matchTable = {
         fact: { result: [] },
@@ -242,7 +247,7 @@ export default class PreSaleQuery extends PureComponent {
                     }
                   </Col>
                   {
-                    custType.fact.yxq &&
+                    custType.fact.type !== '普通投资者' &&
                       (<Col span={7} offset={1}>
                         <span className={styles.itemName}>有效期：</span>
                         <span className={styles.itemValue}>
@@ -348,7 +353,7 @@ export default class PreSaleQuery extends PureComponent {
                         <Col span={8}>
                           <span className={styles.itemName}>产品要求：</span>
                           <span className={styles.itemValue}>
-                            {qualifiedCust.fact.productRequireMent}
+                            {productRequirementMap[qualifiedCust.fact.productRequireMent]}
                             {
                               qualifiedCust.fact.productRequireMent &&
                                 (<Icon
@@ -359,7 +364,7 @@ export default class PreSaleQuery extends PureComponent {
                             }
                           </span>
                         </Col>
-                        <Col span={7}>
+                        <Col span={8}>
                           <span className={styles.itemName}>客户情况：</span>
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.custInfo}
@@ -368,7 +373,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.yxq &&
                             (
-                              <Col span={7} offset={1}>
+                              <Col span={7}>
                                 <span className={styles.itemName}>有效期：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.yxq}
@@ -392,7 +397,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.totalAssets &&
                             (
-                              <Col span={7} offset={1}>
+                              <Col span={7} offset={qualifiedCust.fact.matchResult ? 1 : 0}>
                                 <span className={styles.itemName}>总资产（万元）：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.totalAssets}
@@ -447,6 +452,9 @@ export default class PreSaleQuery extends PureComponent {
         <QualifiedCustModal
           visible={this.state.isQualifiedCustModalVisible}
           type={qualifiedCust ? qualifiedCust.fact.productRequireMent : null}
+          title={
+            qualifiedCust ? productRequirementMap[qualifiedCust.fact.productRequireMent] : null
+          }
           onQualifiedCustModalHide={this.handleQualifiedCustModalHide}
         />
       </div>
