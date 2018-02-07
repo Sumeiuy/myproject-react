@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-30 13:52:04
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-02-07 11:38:45
  * 服务记录表单
  */
 
@@ -64,8 +64,8 @@ export default class ServiceRecordForm extends PureComponent {
       return;
     }
 
-    if (serviceContent.length > 100) {
-      message.error('服务的内容字数不能超过100');
+    if (serviceContent.length > 1000) {
+      message.error('服务的内容字数不能超过1000');
       return;
     }
     const postBody = {
