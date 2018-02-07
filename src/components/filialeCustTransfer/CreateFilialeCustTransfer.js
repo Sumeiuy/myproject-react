@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 14:40:53
+ * @Last Modified time: 2018-02-07 15:06:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -312,11 +312,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 划转方式的 select 事件
   @autobind
   handleSelectChange(key, value) {
-    console.warn('点击了');
     const isDefaultType = value === defaultType;
     this.setState({
       [key]: value,
       isDefaultType,
+    }, () => {
+      this.emptyData();
     });
   }
 
@@ -430,10 +431,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       showUploadList: false,
     };
     // 分页
+    const hasPage = !_.isEmpty(page);
     const paginationOption = {
-      current: !_.isEmpty(page) ? page.curPageNum : 1,
-      total: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      pageSize: !_.isEmpty(page) ? page.pageSize : 10,
+      current: hasPage ? page.curPageNum : 1,
+      total: hasPage ? page.totalRecordNum : 0,
+      pageSize: hasPage ? page.pageSize : 10,
       onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?
