@@ -81,12 +81,17 @@ export default class PaginationComponent extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { isHideLastButton, total: prevTotal, current: prevCurrent } = this.props;
     const { current, pageSize, total } = nextProps;
-    // 只在初始化时没有数据，而取到这次数据到达时，才进行setState
-    if ((isHideLastButton && prevTotal === 0 && total !== 0)) {
-      this.setState({
-        current,
-        shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
-      });
+
+    // props.total发生变化就更新组件
+    if (total !== prevTotal) {
+      if (isHideLastButton) {
+        this.setState({
+          current,
+          shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
+        });
+      } else {
+        this.setState({ current });
+      }
     } else if (current === 1 && prevCurrent > 1) { // 这里是为了处理模态框关闭重新进入时，将页码置为1
       this.setState({
         current,
