@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-05 14:50:14
+ * @Last Modified time: 2018-02-07 11:04:13
  * 结果跟踪
  */
 
@@ -474,13 +474,13 @@ export default class ResultTrack extends PureComponent {
    */
   @autobind
   handleCheckChange() {
-    const { checked } = this.state;
+    const { checked, currentSelectedLevel1Indicator } = this.state;
 
     this.setState({
       checked: !checked,
     });
 
-    if (checked) {
+    if (checked && currentSelectedLevel1Indicator !== defaultIndicatorValue) {
       message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
     }
   }
