@@ -50,6 +50,8 @@ export default class PaginationComponent extends PureComponent {
     showSizeChanger: PropTypes.bool,
     isHideLastButton: PropTypes.bool,
     isShortPageList: PropTypes.bool,
+    // 如果为true， 就不要加commonPage了，历史遗留问题，默认false
+    useClearStyle: PropTypes.bool,
   };
   static defaultProps = {
     current: 1,
@@ -59,6 +61,7 @@ export default class PaginationComponent extends PureComponent {
     isShortPageList: false, // 默认情况下使用标准长度的分页列表
     onChange: _.noop,
     onShowSizeChange: _.noop,
+    useClearStyle: false,
   };
 
   constructor(props) {
@@ -75,13 +78,17 @@ export default class PaginationComponent extends PureComponent {
   // 之所以这里写这个生命周期，是为了应对当props请求的数据在组件初始化以后才到来时，
   // 可以控制最后一页的按钮显示，以及当前页
   componentWillReceiveProps(nextProps) {
-    const { isHideLastButton, total: prevTotal } = this.props;
+    const { isHideLastButton, total: prevTotal, current: prevCurrent } = this.props;
     const { current, pageSize, total } = nextProps;
     // 只在初始化时没有数据，而取到这次数据到达时，才进行setState
-    if (isHideLastButton && prevTotal === 0 && total !== 0) {
+    if ((isHideLastButton && prevTotal === 0 && total !== 0)) {
       this.setState({
         current,
         shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
+      });
+    } else if (current === 1 && prevCurrent > 1) {
+      this.setState({
+        current,
       });
     }
   }
@@ -98,7 +105,6 @@ export default class PaginationComponent extends PureComponent {
   @autobind
   handlePageChange(page, pageSize) {
     const { total, onChange, isHideLastButton } = this.props;
-    onChange(page, pageSize);
     if (isHideLastButton) {
       this.setState({
         current: page,
@@ -109,13 +115,13 @@ export default class PaginationComponent extends PureComponent {
         current: page,
       });
     }
+    onChange(page, pageSize);
   }
 
 
   @autobind
   handlePageSizeChange(current, size) {
     const { total, onShowSizeChange, isHideLastButton } = this.props;
-    onShowSizeChange(current, size);
     if (isHideLastButton) {
       this.setState({
         current,
@@ -126,15 +132,16 @@ export default class PaginationComponent extends PureComponent {
         current,
       });
     }
+    onShowSizeChange(current, size);
   }
 
   render() {
-    const { pageSize, isShortPageList, total } = this.props;
+    const { pageSize, isShortPageList, total, useClearStyle } = this.props;
     const { current } = this.state;
     return (
       <div
         className={classnames({
-          [styles.commonPage]: true,
+          [styles.commonPage]: useClearStyle === false,
           [styles.hidden]: total === 0,
           [styles.shortPageList]: isShortPageList,
           [styles.hideLastButton]: this.state.shouldHideLastButton,

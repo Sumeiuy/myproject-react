@@ -1,6 +1,6 @@
 /**
  * @file customerPool/tasklist/RightPanel.js
- *  目标客户池 任务列表左侧
+ *  目标客户池 任务列表右侧
  * @author wangjunjun
  */
 
@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import InfoTitle from '../../common/InfoTitle';
-import InfoItem from '../../common/infoItem';
 import ApproveList from '../../common/approveList';
 import TaskListDetailInfo from './TaskListDetailInfo';
 import styles from './rightPanel.less';
@@ -178,34 +177,31 @@ export default class RightPanel extends PureComponent {
     const { tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
     if (tagetCustModel.custSource === '导入客户') {
       return (
-        <li className={styles.item}>
-          <div className={styles.wrap}>
-            <div className={styles.label}>
-              客户连接<span className={styles.colon}>:</span>
-            </div>
-            {
-              tagetCustModel.dataName ?
-                <div className={styles.value}>
-                  <Icon type="excel" className={styles.excel} />
-                  客户列表
+        <div className={styles.wrap}>
+          <span>客户连接&nbsp;:</span>
+          {
+            tagetCustModel.dataName ?
+              <span className={styles.value}>
+                <Icon type="excel" className={styles.excel} />
+                客户列表
                   <Clickable
                     onClick={this.handleSeeCust}
                     eventName="/click/taskListRightPanel/lookOverview"
                   >
                     <a className={styles.seeCust}>查看预览</a>
                   </Clickable>
-                </div>
-                :
-                <div className={styles.value}>--</div>
-            }
-          </div>
-        </li>
+              </span>
+              :
+              <span className={styles.value}>--</span>
+          }
+        </div>
       );
     } else if (tagetCustModel.custSource === '标签圈人') {
       return (
-        <li className={styles.item}>
-          <InfoItem label="标签描述" value={tagetCustModel.custLabelDesc || '--'} />
-        </li>
+        <div>
+          <h4>标签描述&nbsp;:</h4>
+          <h4>{tagetCustModel.custLabelDesc || '--'}</h4>
+        </div>
       );
     }
     return null;
@@ -239,7 +235,7 @@ export default class RightPanel extends PureComponent {
   @autobind
   renderOption(optionRespDtoList = []) {
     return _.map(optionRespDtoList, (item, index) =>
-      <span className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
+      <span key={index} className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
   }
 
   // 问卷调查数据处理
@@ -249,12 +245,12 @@ export default class RightPanel extends PureComponent {
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        return (<div>
+        return (<div key={key}>
           <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
           <p>{this.renderOption(optionRespDtoList)}</p>
         </div>);
       }
-      return (<div>
+      return (<div key={key}>
         <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
         <p>{item.remark}</p>
       </div>);
@@ -293,7 +289,7 @@ export default class RightPanel extends PureComponent {
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.bugTitle}>任务名称：
+            <h1 className={styles.bugTitle}>任务名称&nbsp;：
               {_.isEmpty(motDetailModel.eventName) ? null : motDetailModel.eventName}</h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
@@ -304,42 +300,42 @@ export default class RightPanel extends PureComponent {
             <div id="nginformation_module" className={styles.module}>
               <InfoTitle head="目标客户" />
               <div className={styles.modContent}>
-                <ul className={styles.propertyList}>
-                  <li className={styles.item}>
-                    <InfoItem label="客户来源" value={tagetCustModel.custSource || '--'} />
-                  </li>
-                  <li className={styles.item}>
-                    <InfoItem
-                      label="客户总数"
-                      value={String(custNum)}
-                    />
-                  </li>
-                  {this.renderMention()}
-                </ul>
+                <div>
+                  <span>客户来源&nbsp;:</span>
+                  <span>{tagetCustModel.custSource || '--'}</span>
+                </div>
+                <div>
+                  <span>客户总数&nbsp;:</span>
+                  <span>{String(custNum)}</span>
+                </div>
+                {this.renderMention()}
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
             <div className={styles.module}>
               <InfoTitle head="结果跟踪" />
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label="跟踪窗口期" value={`${trackDay}天`} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label={resultTraceVO.indexName} value={this.renderResultData()} />
-                </li>
-              </ul>
+              <div className={styles.modContent}>
+                <div className={styles.rowWidth}>
+                  <span>跟踪窗口期&nbsp;:</span>
+                  <span>{trackDay || '--'}天</span>
+                </div>
+                <div>
+                  <span>{resultTraceVO.indexName}&nbsp;:</span>
+                  <span>{this.renderResultData() || '--'}</span>
+                </div>
+              </div>
             </div>
             }
             {
               _.isEmpty(quesVO) ? null :
               <div className={styles.module}>
                 <InfoTitle head="任务调查" />
-                <ul className={styles.propertyList}>
-                  <li className={styles.item}>
-                    <InfoItem label="调查内容" value={this.renderTaskSurvey()} />
-                  </li>
-                </ul>
+                <div className={styles.modContent}>
+                  <div>
+                    <span>调查内容&nbsp;:</span>
+                    <span>{this.renderTaskSurvey() || '--'}</span>
+                  </div>
+                </div>
               </div>
             }
             <div id="approvalRecord" className={styles.lastModule}>

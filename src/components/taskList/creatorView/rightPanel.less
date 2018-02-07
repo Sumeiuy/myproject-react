@@ -25,49 +25,38 @@
     .innerWrap {
       min-width: 650px;
     }
-    .propertyList {
-      li.item {
-        padding: 1px 0;
-        position: relative;
-        clear: left;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .wrap {
-        width: 100%;
-        margin: 10px 0;
-        .excel {
-          width: 14px;
-          height: 14px;
-          color: #01723e;
-          margin-right: 10px;
-        }
-        .seeCust {
-          margin-left: 10px;
-        }
-        &:after {
-          content: " ";
-          display: table;
-          clear: both;
-        }
-
-        .label {
-          float: left;
-          width: 160px;
+    .modContent {
+      & > div {
+        padding-left: 15px;
+        margin: 5px 0;
+        & > span:first-child, & > h4:first-child {
           font-size: 14px;
           color: #9b9b9b;
-          text-align: right;
-          margin-right: -160px;
-          .colon {
-            padding: 0 4px;
-          }
+          text-align: left;
+          display: inline-block;
+          width: 75px;
         }
-        .value {
-          margin-left: 160px;
-          padding-left: 20px;
-          float: left;
+        & > span:last-child, & > h4:last-child {
           font-size: 14px;
-          color: #333;
+          // color: #9b9b9b;
+          text-align: left;
+          display: inline-block;
+          // float: left;
+          max-width: 90%;
+          line-height: 25px;
+          vertical-align: top;
+          word-break: break-all;
+        }
+        .seeCust {
+          margin-left: 8px;
+        }
+        .excel {
+          color: #01723e;
+        }
+      }
+      & > div.rowWidth {
+        & > span:first-child {
+          width: 90px;
         }
       }
     }
