@@ -26,8 +26,6 @@ import iconEmpty from './img/icon-empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const INITIAL_PAGE_NUM = 1;
-const INITIAL_PAGE_SIZE = 5;
 
 // 客户等级的图片源
 const rankImgSrcConfig = {
@@ -81,13 +79,10 @@ export default class CustDetail extends PureComponent {
   constructor(props) {
     super(props);
     const {
-      data: { page = EMPTY_OBJECT, list = EMPTY_LIST },
+      data: { list = EMPTY_LIST },
     } = props;
-    const { totalCount, pageNum, pageSize } = page;
+
     this.state = {
-      curPageNum: pageNum || INITIAL_PAGE_NUM,
-      curPageSize: pageSize || INITIAL_PAGE_SIZE,
-      totalRecordNum: totalCount || 0,
       dataSource: this.addIdToDataSource(list) || EMPTY_LIST,
       currentSelectRecord: {},
       currentSelectRowKeys: [],
@@ -98,18 +93,9 @@ export default class CustDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: { page: nextPage = EMPTY_OBJECT,
-      list: nextData = EMPTY_LIST } } = nextProps;
-    const { data: { page = EMPTY_OBJECT, list = EMPTY_LIST } } = this.props;
+    const { data: { list: nextData = EMPTY_LIST } } = nextProps;
+    const { data: { list = EMPTY_LIST } } = this.props;
     const { currentSelectRowKeys, isSelectAll } = this.state;
-    if (page !== nextPage) {
-      const { pageNum, pageSize, totalCount } = nextPage || EMPTY_OBJECT;
-      this.setState({
-        curPageNum: pageNum,
-        curPageSize: pageSize,
-        totalRecordNum: totalCount,
-      });
-    }
 
     if (list !== nextData) {
       let newSelectRowKeys = currentSelectRowKeys;
@@ -130,12 +116,7 @@ export default class CustDetail extends PureComponent {
     */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
     const { getCustDetailData, isEntryFromProgressDetail } = this.props;
-    this.setState({
-      curPageNum: nextPage,
-      curPageSize: currentPageSize,
-    });
     getCustDetailData({
       pageNum: nextPage,
       pageSize: currentPageSize,
@@ -150,12 +131,7 @@ export default class CustDetail extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
     const { getCustDetailData, isEntryFromProgressDetail } = this.props;
-    this.setState({
-      curPageNum: currentPageNum,
-      curPageSize: changedPageSize,
-    });
     getCustDetailData({
       pageNum: currentPageNum,
       pageSize: changedPageSize,
@@ -329,28 +305,25 @@ export default class CustDetail extends PureComponent {
 
   render() {
     const {
-      curPageNum,
-      curPageSize,
-      totalRecordNum,
       currentSelectRowKeys,
       dataSource,
     } = this.state;
 
-    const { title } = this.props;
-
+    const { title, data: { page = EMPTY_OBJECT } } = this.props;
+    const { totalCount, pageNum, pageSize } = page;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
     return (
       <div className={styles.custDetailWrapper}>
-        <div className={styles.title}>{title}共{totalRecordNum || 0}人</div>
+        <div className={styles.title}>{title}共{totalCount || 0}人</div>
         <div className={styles.custDetailTableSection}>
           {!_.isEmpty(dataSource) ?
             <GroupTable
               pageData={{
-                curPageNum,
-                curPageSize,
-                totalRecordNum,
+                curPageNum: pageNum,
+                curPageSize: pageSize,
+                totalRecordNum: totalCount,
               }}
               listData={dataSource}
               onSizeChange={this.handleShowSizeChange}

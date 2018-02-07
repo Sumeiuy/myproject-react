@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-03 13:26:03
+ * @Last Modified by: zhufeiyang
+ * @Last Modified time: 2018-02-06 18:51:09
  * 管理者视图详情
  */
 
@@ -20,7 +20,7 @@ import CustDetail from './CustDetail';
 import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { closeRctTab, openRctTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
@@ -33,6 +33,7 @@ const INITIAL_PAGE_SIZE = 5;
 
 // 1代表是自建任务类型
 const TASK_TYPE_SELF = '1';
+const falseValue = false;
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -163,10 +164,6 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleCloseModal() {
-    closeRctTab({
-      id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW',
-    });
-
     this.hideCustDetailModal();
   }
 
@@ -408,7 +405,7 @@ export default class ManagerViewDetail extends PureComponent {
                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
                   */}
                   {
-                    false ? <Clickable
+                    falseValue ? <Clickable
                       eventName="/click/managerViewCustDetail/export"
                     >
                       <Button className={styles.export}>

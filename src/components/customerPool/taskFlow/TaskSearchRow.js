@@ -1,7 +1,7 @@
 /**
- * @file components/customerPool/list/QuickMenu.js
+ * @file components/customerPool/TaskSearchRow.js
  *  客户列表项中的快捷菜单
- * @author wangjunjun
+ * @author zhushengnan
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
