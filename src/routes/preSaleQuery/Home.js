@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 19:40:01
+ * @Last Modified time: 2018-02-07 20:27:01
  * @description 售前适当性查询
  */
 
@@ -247,7 +247,7 @@ export default class PreSaleQuery extends PureComponent {
                     }
                   </Col>
                   {
-                    custType.fact.type !== '普通投资者' &&
+                    custType.fact.typeCode !== 'general' &&
                       (<Col span={7} offset={1}>
                         <span className={styles.itemName}>有效期：</span>
                         <span className={styles.itemValue}>

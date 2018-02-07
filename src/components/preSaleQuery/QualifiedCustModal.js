@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 13:37:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 19:21:44
+ * @Last Modified time: 2018-02-07 20:32:20
  * @description 合格投资者-产品要求点击问号的弹出框
  */
 import React from 'react';
@@ -65,21 +65,12 @@ export default function QualifiedCustModal(props) {
     </div>
   );
 
-  let content = null;
-  switch (props.type) {
-    case '2':
-      content = privateEquity;
-      break;
-    case '3':
-      content = trust;
-      break;
-    case '1':
-      content = smallSet;
-      break;
-    default:
-      content = null;
-      break;
-  }
+  const content = {
+    1: smallSet,
+    2: privateEquity,
+    3: trust,
+  };
+
   return (
     <Modal
       className={styles.qualifiedCustModal}
@@ -90,7 +81,7 @@ export default function QualifiedCustModal(props) {
       footer=" "
       onCancel={props.onQualifiedCustModalHide}
     >
-      { content }
+      { content[props.type] }
     </Modal>
   );
 }
