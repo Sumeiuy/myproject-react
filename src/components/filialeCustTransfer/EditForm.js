@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-07 11:55:12
+ * @Last Modified time: 2018-02-07 12:04:16
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -356,10 +356,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
     return (
       <div className={styles.editFormBox}>

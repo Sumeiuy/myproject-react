@@ -3,7 +3,7 @@
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-03 15:35:08
+ * @Last Modified time: 2018-02-06 16:58:26
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -34,7 +34,7 @@ export default {
     origiManagerList: EMPTY_OBJECT, // 原服务经理列表
     buttonList: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     pageAssignment: EMPTY_OBJECT, // 客户表格分页信息
-    errorMsg: EMPTY_OBJECT, // 错误信息
+    notifiesInfo: EMPTY_OBJECT, // 错误信息
   },
   reducers: {
     getDetailInfoSuccess(state, action) {
@@ -137,11 +137,11 @@ export default {
         },
       };
     },
-    getErrorMsgSuccess(state, action) {
+    getNotifiesInfoSuccess(state, action) {
       const { payload: { resultData = {} } } = action;
       return {
         ...state,
-        errorMsg: resultData,
+        notifiesInfo: resultData,
       };
     },
   },
@@ -255,10 +255,10 @@ export default {
       });
     },
     // 批量划转错误信息处理
-    * getErrorMsg({ payload }, { call, put }) {
-      const response = yield call(api.getErrorMsg, payload);
+    * getNotifiesInfo({ payload }, { call, put }) {
+      const response = yield call(api.getNotifiesInfo, payload);
       yield put({
-        type: 'getErrorMsgSuccess',
+        type: 'getNotifiesInfoSuccess',
         payload: response,
       });
     },
