@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-06 18:47:45
+ * @Last Modified time: 2018-02-07 13:21:38
  * @description 售前适当性查询
  */
 
@@ -17,6 +17,7 @@ import withRouter from '../../decorators/withRouter';
 import QualifiedCustModal from '../../components/preSaleQuery/QualifiedCustModal';
 import SearchForm from '../../components/preSaleQuery/SearchForm';
 import emp from '../../helper/emp';
+import Icon from '../../components/common/Icon';
 
 import styles from './home.less';
 
@@ -166,6 +167,11 @@ export default class PreSaleQuery extends PureComponent {
     });
   }
 
+  @autobind
+  formatText(text) {
+    return text && text.split('\r\n').map(item => <p>{item}</p>);
+  }
+
   render() {
     const { matchResult } = this.props;
     const {
@@ -173,7 +179,7 @@ export default class PreSaleQuery extends PureComponent {
         fact: { yxq: ' ' },
       },
       matchTable = {
-        appropriateTypeFact: { result: [] },
+        fact: { result: [] },
       },
       contractSign = { fact: {} },
       qualifiedCust = {
@@ -189,7 +195,8 @@ export default class PreSaleQuery extends PureComponent {
       {
         title: '客户信息',
         dataIndex: 'custInfo',
-        width: '500px',
+        render: this.formatText,
+        width: '40%',
       },
       {
         title: '产品信息',
@@ -225,7 +232,7 @@ export default class PreSaleQuery extends PureComponent {
               </h2>
               <div className={styles.listContent}>
                 <Row type="flex" className={styles.row}>
-                  <Col span={6}>
+                  <Col span={7}>
                     <span className={styles.itemName}>类型：</span>
                     {
                       custType.fact.type &&
@@ -236,7 +243,7 @@ export default class PreSaleQuery extends PureComponent {
                   </Col>
                   {
                     custType.fact.yxq &&
-                      (<Col span={6} offset={2}>
+                      (<Col span={7} offset={1}>
                         <span className={styles.itemName}>有效期：</span>
                         <span className={styles.itemValue}>
                           {custType.fact.yxq}
@@ -247,7 +254,7 @@ export default class PreSaleQuery extends PureComponent {
                 {
                   custType.msg &&
                     (<div className={styles.msg}>
-                      <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
+                      <Icon type="tixing" className={styles.tixing} />
                       <span>{custType.msg}</span>
                     </div>)
                 }
@@ -262,39 +269,39 @@ export default class PreSaleQuery extends PureComponent {
               </h2>
               <div className={styles.listContent}>
                 <Row type="flex" className={styles.row}>
-                  <Col span={6}>
+                  <Col span={7}>
                     <span className={styles.itemName}>风险测评有效期：</span>
                     {
-                      matchTable.appropriateTypeFact.yxq &&
+                      matchTable.fact.yxq &&
                         (<span className={styles.itemValue}>
-                          {matchTable.appropriateTypeFact.yxq}
+                          {matchTable.fact.yxq}
                         </span>)
                     }
                   </Col>
                 </Row>
                 {
-                  matchTable.appropriateTypeFact.result &&
+                  matchTable.fact.result &&
                     (<Table
                       className={styles.table}
                       columns={columns}
-                      dataSource={matchTable.appropriateTypeFact.result}
+                      dataSource={matchTable.fact.result}
                       pagination={false}
                     />)
                 }
                 {
                   matchTable.msg &&
                     (<div className={styles.msg}>
-                      <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
+                      <Icon type="tixing" className={styles.tixing} />
                       <span>{matchTable.msg}</span>
                     </div>)
                 }
               </div>
             </div>
-            <div className={styles.divider} />
             {/* 合同签署 */}
             {
               contractSign &&
                 (<div>
+                  <div className={styles.divider} />
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -302,13 +309,13 @@ export default class PreSaleQuery extends PureComponent {
                     </h2>
                     <div className={styles.listContent}>
                       <Row type="flex" className={styles.row}>
-                        <Col span={6}>
+                        <Col span={7}>
                           <span className={styles.itemName}>产品要求：</span>
                           <span className={styles.itemValue}>
                             {contractSign.fact.requirement}
                           </span>
                         </Col>
-                        <Col span={6} offset={2}>
+                        <Col span={7} offset={1}>
                           <span className={styles.itemName}>客户签署情况：</span>
                           <span className={styles.itemValue}>
                             {contractSign.fact.signature}
@@ -318,19 +325,19 @@ export default class PreSaleQuery extends PureComponent {
                       {
                         contractSign.msg &&
                           (<div className={styles.msg}>
-                            <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
+                            <Icon type="tixing" className={styles.tixing} />
                             <span>{contractSign.msg}</span>
                           </div>)
                       }
                     </div>
                   </div>
-                  <div className={styles.divider} />
                 </div>)
             }
             {/* 合格投资 */}
             {
               qualifiedCust &&
                 (<div>
+                  <div className={styles.divider} />
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -338,21 +345,21 @@ export default class PreSaleQuery extends PureComponent {
                     </h2>
                     <div className={styles.listContent}>
                       <Row type="flex" className={styles.row}>
-                        <Col span={6}>
+                        <Col span={8}>
                           <span className={styles.itemName}>产品要求：</span>
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.productRequireMent}
                             {
                               qualifiedCust.fact.productRequireMent &&
-                                (<i
-                                  className="iconfont icon-wenhao"
+                                (<Icon
+                                  type="wenhao"
+                                  className={styles.wenhao}
                                   onClick={this.handleQualifiedCustModalShow}
-                                  style={{ cursor: 'pointer', color: '#f0b048', fontSize: '22px', marginLeft: '9px' }}
                                 />)
                             }
                           </span>
                         </Col>
-                        <Col span={6} offset={2}>
+                        <Col span={7}>
                           <span className={styles.itemName}>客户情况：</span>
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.custInfo}
@@ -361,7 +368,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.yxq &&
                             (
-                              <Col span={6} offset={2}>
+                              <Col span={7} offset={1}>
                                 <span className={styles.itemName}>有效期：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.yxq}
@@ -374,7 +381,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.matchResult &&
                             (
-                              <Col span={6}>
+                              <Col span={7}>
                                 <span className={styles.itemName}>匹配结果：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.matchResult}
@@ -385,7 +392,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.totalAssets &&
                             (
-                              <Col span={6} offset={2}>
+                              <Col span={7} offset={1}>
                                 <span className={styles.itemName}>总资产（万元）：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.totalAssets}
@@ -397,19 +404,19 @@ export default class PreSaleQuery extends PureComponent {
                       {
                         qualifiedCust.msg &&
                           (<div className={styles.msg}>
-                            <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
+                            <Icon type="tixing" className={styles.tixing} />
                             <span>{qualifiedCust.msg}</span>
                           </div>)
                       }
                     </div>
                   </div>
-                  <div className={styles.divider} />
                 </div>)
             }
             {/* 双录要求 */}
             {
               doubleRecord &&
                 (<div>
+                  <div className={styles.divider} />
                   <div className={styles.list}>
                     <h2 className={styles.listTitle}>
                       <i className={styles.prefix} />
@@ -417,7 +424,7 @@ export default class PreSaleQuery extends PureComponent {
                     </h2>
                     <div className={styles.listContent}>
                       <Row type="flex" className={styles.row}>
-                        <Col span={6}>
+                        <Col span={7}>
                           <span className={styles.itemName}>客户双录情况：</span>
                           <span className={styles.itemValue}>
                             { doubleRecord.fact.isNeedDoubleRecord }
@@ -427,7 +434,7 @@ export default class PreSaleQuery extends PureComponent {
                       {
                         doubleRecord.msg &&
                           (<div className={styles.msg}>
-                            <i className="iconfont icon-tixing" style={{ fontSize: '22px' }} />
+                            <Icon type="tixing" className={styles.tixing} />
                             <span>{doubleRecord.msg}</span>
                           </div>)
                       }
