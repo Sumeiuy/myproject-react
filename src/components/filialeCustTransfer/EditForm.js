@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 20:46:01
+ * @Last Modified time: 2018-02-07 12:04:16
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -80,18 +80,18 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       nextApproverList: [],
       // 客户信息
       client: {
-        custName: assignmentList[0].custName,
-        brokerNumber: assignmentList[0].brokerNumber,
-        custId: assignmentList[0].custId,
-        custType: assignmentList[0].custType,
+        custName: !_.isEmpty(assignmentList) ? assignmentList[0].custName : '',
+        brokerNumber: !_.isEmpty(assignmentList) ? assignmentList[0].brokerNumber : '',
+        custId: !_.isEmpty(assignmentList) ? assignmentList[0].custId : '',
+        custType: !_.isEmpty(assignmentList) ? assignmentList[0].custType : '',
       },
       // 所选新服务经理
       newManager: {
-        newEmpName: assignmentList[0].newEmpName,
-        newLogin: assignmentList[0].newEmpId,
-        newPostnId: assignmentList[0].newPostnId,
-        newPostnName: assignmentList[0].newPostnName,
-        newOrgName: assignmentList[0].newOrgName,
+        newEmpName: !_.isEmpty(assignmentList) ? assignmentList[0].newEmpName : '',
+        newLogin: !_.isEmpty(assignmentList) ? assignmentList[0].newEmpId : '',
+        newPostnId: !_.isEmpty(assignmentList) ? assignmentList[0].newPostnId : '',
+        newPostnName: !_.isEmpty(assignmentList) ? assignmentList[0].newPostnName : '',
+        newOrgName: !_.isEmpty(assignmentList) ? assignmentList[0].newOrgName : '',
       },
       assignmentListData: assignmentList,
       // 按钮组信息
@@ -356,10 +356,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
     return (
       <div className={styles.editFormBox}>

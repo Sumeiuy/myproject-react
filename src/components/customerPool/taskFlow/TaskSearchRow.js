@@ -66,7 +66,6 @@ export default class TaskSearchRow extends PureComponent {
     isAuthorize: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
-    getArgsOfQueryCustomer: PropTypes.func.isRequired,
     getFilterNumberList: PropTypes.func.isRequired,
     storedData: PropTypes.object.isRequired,
   }
@@ -77,7 +76,12 @@ export default class TaskSearchRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { storedData: { labelCust = {} }, currentSelectLabel } = props;
+    const {
+      storedData: { labelCust = {} },
+      currentSelectLabel = '',
+    } = props;
+
+    const { custNum, argsOfQueryCustomer, currentFilterObject } = labelCust || {};
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
@@ -87,15 +91,17 @@ export default class TaskSearchRow extends PureComponent {
       visible: false,
       title: '',
       custTableData: [],
-      currentFilterList: {},
-      filterNumList: {
-        [currentSelectLabel]: labelCust.custNum,
+      currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
+      filterNumObject: {
+        [currentSelectLabel]: custNum || 0,
       },
+      // 当前筛选条件
+      argsOfQueryCustomer,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { labelId, filterNumList = {} } = this.state;
+    const { labelId, filterNumObject } = this.state;
     const { peopleOfLabelData, visible } = nextProps;
     const { custList = [] } = peopleOfLabelData || {};
     const list = _.map(custList, item => ({
@@ -106,38 +112,52 @@ export default class TaskSearchRow extends PureComponent {
       lever_code: item.levelName,
       cust_type: item.custType === 'N' ? '高净值' : '零售',
     }));
+    let finalFilterNumObject = filterNumObject;
+    if (!_.isEmpty(labelId)) {
+      finalFilterNumObject = {
+        [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+      };
+    }
+
     this.setState({
       // totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
       custTableData: list,
       visible,
-      filterNumList: {
-        ...filterNumList,
-        [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
       },
     });
   }
 
+  // 获取已筛选客户数
+  // 获取当前过滤条件
+  // 获取当前筛选客户查询条件
   @autobind
-  change(e) {
-    const { onChange } = this.props;
-    onChange(e.target.value);
+  getSelectFilters() {
+    return _.pick(this.state, ['filterNumObject', 'argsOfQueryCustomer', 'currentFilterObject']);
   }
 
   /**
-   * 查询标签下客户
-   * @param {*} labelId 标签Id
-   * @param {*} curPageNum 当前页
-   * @param {*} pageSize 当前页条目
-   */
+ * 查询标签下客户
+ * @param {*} labelId 标签Id
+ * @param {*} curPageNum 当前页
+ * @param {*} pageSize 当前页条目
+ */
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople, getArgsOfQueryCustomer } = this.props;
-    // 查询客户列表时必传的参数
-    const payload = {
+    const { isAuthorize, orgId, getLabelPeople } = this.props;
+    const { argsOfQueryCustomer } = this.state;
+    let payload = {
       curPageNum,
       pageSize,
       enterType: 'labelSearchCustPool',
       labels: [labelId],
     };
+    if (!_.isEmpty(argsOfQueryCustomer)) {
+      // 如果data里面存在payload，就恢复数据，不然就取默认数据
+      // 查询客户列表时必传的参数
+      payload = { ...payload, ...argsOfQueryCustomer[`${labelId}`] };
+    }
     // 有权限传orgId，没有权限传ptyMngId
     if (isAuthorize) {
       payload.orgId = orgId;
@@ -156,20 +176,44 @@ export default class TaskSearchRow extends PureComponent {
     }
     // 获取客户列表
     getLabelPeople(payload);
-    // 将查询列表的参数以回调的方式传给父组件
-    getArgsOfQueryCustomer({
-      [labelId]: payload,
+
+    this.setState({
+      argsOfQueryCustomer: {
+        [labelId]: payload,
+      },
     });
   }
 
   @autobind
-  getFilterNumList() {
-    return this.state.filterNumList;
+  change(e) {
+    const { onChange, circlePeopleData } = this.props;
+    const { filterNumObject } = this.state;
+    const currentLabelId = e.target.value;
+    const currentLabelInfo = _.find(circlePeopleData, item => item.id === currentLabelId
+      || item.labelMapping === currentLabelId) || {};
+    let finalFilterNumObject = filterNumObject;
+    if (!(`${currentLabelId}` in finalFilterNumObject) ||
+      (finalFilterNumObject[`${currentLabelId}`] !== 0
+        && _.isEmpty(finalFilterNumObject[`${currentLabelId}`])
+      )) {
+      finalFilterNumObject = {
+        [currentLabelId]: currentLabelInfo.customNum,
+      };
+    }
+    this.setState({
+      labelId: currentLabelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+    });
+    onChange(currentLabelId);
   }
+
 
   @autobind
   handleSeeCust(value = {}) {
-    const { currentFilterList } = this.state;
+    const { currentFilterObject } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
     // 瞄准镜的label 时取获取对应的筛选条件
     if (isSightingScope(value.source)) {
@@ -181,7 +225,7 @@ export default class TaskSearchRow extends PureComponent {
       labelId: value.labelMapping,
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
-      filter: currentFilterList[value.labelMapping] || [],
+      filter: currentFilterObject[value.labelMapping] || [],
     });
     this.setState({
       title: value.labelName,
@@ -207,12 +251,12 @@ export default class TaskSearchRow extends PureComponent {
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { labelId, currentFilterList } = this.state;
+    const { labelId, currentFilterObject } = this.state;
     this.queryPeopleOfLabel({
       labelId,
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: changedPageSize,
-      filter: currentFilterList[labelId] || [],
+      filter: currentFilterObject[labelId] || [],
     });
 
     this.setState({
@@ -223,12 +267,12 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { labelId, currentFilterList } = this.state;
+    const { labelId, currentFilterObject } = this.state;
     this.queryPeopleOfLabel({
       labelId,
       curPageNum: nextPage,
       pageSize: currentPageSize,
-      filter: currentFilterList[labelId] || [],
+      filter: currentFilterObject[labelId] || [],
     });
 
     this.setState({
@@ -241,8 +285,8 @@ export default class TaskSearchRow extends PureComponent {
    */
   @autobind
   handleFilterChange(obj) {
-    const { labelId, currentFilterList } = this.state;
-    const newFilterArray = currentFilterList[labelId] ? [...currentFilterList[labelId]] : [];
+    const { labelId, currentFilterObject } = this.state;
+    const newFilterArray = currentFilterObject[labelId] ? [...currentFilterObject[labelId]] : [];
     const index = _.findIndex(newFilterArray, o => o.split('.')[0] === obj.name);
     const filterItem = `${obj.name}.${obj.value}`;
     if (index > -1) {
@@ -251,7 +295,7 @@ export default class TaskSearchRow extends PureComponent {
       newFilterArray.push(filterItem);
     }
     this.setState({
-      currentFilterList: {
+      currentFilterObject: {
         [labelId]: newFilterArray,
       },
     }, () => {
@@ -268,9 +312,11 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
-    const { filterNumList } = this.state;
+    const { filterNumObject } = this.state;
     return _.map(circlePeopleData,
       (item) => {
+        const currentFilterNum = (`${item.id}` in filterNumObject ?
+          filterNumObject[item.id] : item.customNum) || 0;
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
@@ -285,8 +331,7 @@ export default class TaskSearchRow extends PureComponent {
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
         });
-        const filterNum = typeof (filterNumList[item.id]) === 'undefined'
-          ? item.customNum : filterNumList[item.id];
+
         return (
           <div className={cls} key={item.id || item.labelMapping}>
             <Radio
@@ -298,14 +343,16 @@ export default class TaskSearchRow extends PureComponent {
                 dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
               />
               <span className={styles.filterCount}>
-                已筛选客户数：<i>{filterNum}</i>
+                已筛选客户数：<i>{currentFilterNum}</i>
               </span>
+              {item.customNum === 0 ? null :
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
                 eventName="/click/taskSearchRow/checkCust"
               >
                 <Button className={styles.seeCust}>筛查客户</Button>
               </Clickable>
+              }
             </Radio>
             <h4 className={styles.titExp}>
               <span>创建人：<i>{item.createrName || '--'}</i></span>
@@ -324,14 +371,12 @@ export default class TaskSearchRow extends PureComponent {
     const {
       curPageNum = INITIAL_PAGE_NUM,
       pageSize = INITIAL_PAGE_SIZE,
-      // totalRecordNum = 0,
       visible,
-      // title,
       custTableData,
-      currentFilterList,
+      currentFilterObject,
       currentSource,
       labelId,
-      filterNumList,
+      filterNumObject,
     } = this.state;
 
     const {
@@ -346,8 +391,9 @@ export default class TaskSearchRow extends PureComponent {
     if (_.isEmpty(condition)) {
       return null;
     }
-    const currentItems = currentFilterList[labelId] || [];
-    const totalRecordNum = filterNumList[labelId] || 0;
+
+    const currentItems = currentFilterObject[labelId] || [];
+    const totalRecordNum = filterNumObject[labelId] || 0;
     return (
       <div className={styles.divContent}>
         <RadioGroup
@@ -424,7 +470,7 @@ export default class TaskSearchRow extends PureComponent {
           }
         </div>
         {
-          <Loading loading={!isLoadingEnd && !isSightTelescopeLoadingEnd} />
+          <Loading loading={!isLoadingEnd || !isSightTelescopeLoadingEnd} />
         }
       </div>
     );

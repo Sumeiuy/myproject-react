@@ -18,6 +18,7 @@ import Button from '../../common/Button';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
+import pageConfig from '../pageConfig';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -40,6 +41,8 @@ const emptyData = (value) => {
   }
   return '';
 };
+const { taskList: { status } } = pageConfig;
+
 export default class RightPanel extends PureComponent {
 
   static propTypes = {
@@ -258,6 +261,15 @@ export default class RightPanel extends PureComponent {
     return quesData;
   }
 
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  changeDisplay(st, options) {
+    if (st && !_.isEmpty(st)) {
+      const nowStatus = _.find(options, o => o.value === st) || {};
+      return nowStatus.label || '--';
+    }
+    return '--';
+  }
+
   render() {
     const { taskBasicInfo, priviewCustFileData } = this.props;
     const {
@@ -285,12 +297,14 @@ export default class RightPanel extends PureComponent {
       this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
     const custNum = tagetCustModel.custNum || '--';
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.bugTitle}>任务名称&nbsp;：
-              {_.isEmpty(motDetailModel.eventName) ? null : motDetailModel.eventName}</h1>
+            <h1 className={styles.bugTitle}>
+              {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status)}`}
+            </h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <TaskListDetailInfo

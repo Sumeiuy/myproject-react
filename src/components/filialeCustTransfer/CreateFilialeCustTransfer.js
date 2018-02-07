@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-05 17:23:47
+ * @Last Modified time: 2018-02-06 17:51:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -435,10 +435,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     };
     // 分页
     const paginationOption = {
-      curPageNum: !_.isEmpty(page) ? page.curPageNum : 0,
-      totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      curPageSize: !_.isEmpty(page) ? page.pageSize : 0,
-      onPageChange: this.pageChangeHandle,
+      current: !_.isEmpty(page) ? page.curPageNum : 0,
+      total: !_.isEmpty(page) ? page.totalRecordNum : 0,
+      pageSize: !_.isEmpty(page) ? page.pageSize : 0,
+      onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?
       (<Upload {...uploadProps} {...this.props}>

@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 12:11:16
+ * @Last Modified time: 2018-02-07 09:05:01
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -82,7 +82,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
     getNewManagerList: PropTypes.func.isRequired,
     newManagerList: PropTypes.array,
     // 选择新的服务经理
-    selectNewManager: PropTypes.func.isRequired,
+    selectNewManager: PropTypes.func,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
     // 走流程
@@ -97,6 +97,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
   }
 
   static defaultProps = {
+    selectNewManager: _.noop,
     custList: [],
     newManagerList: [],
     origiManagerList: {},
