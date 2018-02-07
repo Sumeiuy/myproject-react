@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 09:46:35
+ * @Last Modified time: 2018-02-07 10:03:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -39,7 +39,7 @@ const titleList = [
   },
 ];
 // 通知提醒默认 ID
-const defaultAppId = '20557';
+const DEFAULT_APPID = '20557';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -81,7 +81,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     const {
       location: {
         query: {
-          appId = defaultAppId,
+          appId = DEFAULT_APPID,
         },
       },
       getNotifiesInfo,
@@ -95,7 +95,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     const {
       location: {
         query: {
-          appId = defaultAppId,
+          appId = DEFAULT_APPID,
         },
       },
       getNotifiesInfo,
@@ -115,7 +115,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       notifiesInfo: { operateTime, successCount, totalCount, list, page },
       location: {
         query: {
-          appId = defaultAppId,
+          appId = DEFAULT_APPID,
         },
       },
     } = this.props;
