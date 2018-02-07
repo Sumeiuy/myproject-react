@@ -367,7 +367,7 @@ export default class TaskPreview extends PureComponent {
             <div className={styles.taskSection}>
               {
                 currentEntry === 1 ?
-                  <div>
+                  <div className={styles.labelDesc}>
                     <div>标签描述：</div>
                     <div>{labelDesc || '--'}</div>
                   </div> : null
