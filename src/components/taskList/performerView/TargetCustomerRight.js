@@ -10,6 +10,8 @@ import { Row, Col, Modal, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+import contains from 'rc-util/lib/Dom/contains';
+
 import styles from './targetCustomerRight.less';
 import { fspContainer } from '../../../config';
 import TipsInfo from './TipsInfo';
@@ -28,23 +30,14 @@ const PER_CODE = 'per';
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
 
-// 从当前节点向上查找，一直找到悬停参照容器
-const getTargetFunction = (currentNode) => {
-  let target = null;
-  return () => {
-    if (target) {
-      return target;
-    }
-    let node = currentNode;
-    while (node && node.tagName !== 'body') {
-      if (node.className.indexOf('sticky-container') > -1) {
-        target = node;
-        return node;
-      }
-      node = node.parentNode;
-    }
-    return null;
-  };
+// 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
+// 如果找不到无脑取第一个就行
+const getStickyTarget = (currentNode) => {
+  const containers = document.querySelectorAll('.sticky-container');
+  return (currentNode && _.find(
+    containers,
+    element => contains(element, currentNode),
+  )) || containers[0];
 };
 
 
@@ -266,7 +259,7 @@ export default class TargetCustomerRight extends PureComponent {
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
-        <Affix target={getTargetFunction(this.container)}>
+        <Affix target={() => getStickyTarget(this.container)}>
           <div className={styles.titles}>
             <Row>
               <Col span={7}>
