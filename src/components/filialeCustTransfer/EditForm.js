@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-07 12:04:16
+ * @Last Modified time: 2018-02-07 17:48:40
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -214,7 +214,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
-      approverIdea: item.btnName,
       auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
     }, () => {
@@ -261,20 +260,18 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   sendDoApproveRequest(value) {
     const { flowId, appId, subType } = this.props.data;
     const { doApprove, getDetailInfo } = this.props;
-    const { groupName, approverIdea, auditors, operate } = this.state;
+    const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId: appId,
       wobNum: flowId,
       flowId,
       // 下一组ID
       groupName,
-      approverIdea,
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
     }).then(() => {
-      if (subType !== SINGLECUSTTRANSFER) {
-        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
-      } else {
+      // commit为用户点击按钮为提交按钮，提交按钮代表用户进行修改需要增加提示语，终止按钮不需要提示语
+      if (subType === SINGLECUSTTRANSFER && operate === 'commit') {
         message.success('划转请求提交成功');
       }
       this.setState({
