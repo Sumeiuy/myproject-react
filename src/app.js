@@ -25,6 +25,7 @@ if (persistConfig.active) {
 
 // 错误处理
 const onError = (e) => {
+  e.preventDefault();
   const { message: msg, stack } = e;
   const { ERROR_SEPARATOR } = requestConfig;
   // 如果存在分隔符，认为是业务错误
