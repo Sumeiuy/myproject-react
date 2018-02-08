@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-29 16:33:56
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-07 16:51:00
  */
 
 import React, { PureComponent } from 'react';
@@ -421,11 +421,12 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       cleartBtnGroup,
       getFlowStepInfo,
     };
+    const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : '';
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || '',
       // 当前审批人
-      handleName: protocolDetail.approver || '',
+      handleName: approverName,
     };
     return (
       <div className={styles.channelEditWrapper} >
