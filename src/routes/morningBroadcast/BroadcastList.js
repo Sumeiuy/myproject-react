@@ -270,12 +270,12 @@ export default class BroadcastList extends PureComponent {
         title: '操作',
         key: 'action',
         dataIndex: 'newsId',
-        width: '15%',
+        width: '6%',
         className: 'tableAction',
         render: newsId => (
           <span>
             <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
+            <Popconfirm title="确定删除?" onConfirm={() => this.onDelItem(newsId)}>
               <i className="icon iconfont icon-shanchu remove" />
             </Popconfirm>
           </span>
@@ -403,6 +403,7 @@ export default class BroadcastList extends PureComponent {
                     format="YYYY-MM-DD"
                     placeholder={['Start', 'End']}
                     onChange={this.onChange}
+                    className={styles.timeWrap}
                   />,
                 )}
               </div>
