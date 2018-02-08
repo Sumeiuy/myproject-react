@@ -311,6 +311,10 @@ export default class MatchArea extends PureComponent {
           (replaceWord({ value: item.name, q, type: source })));
         // 去除空字符串
         markedEle = _.filter(markedEle, item => !_.isEmpty(item));
+        // 只有一个标签，去除-符号
+        if (_.size(markedEle) === 1) {
+          markedEle[0].replace('-', '');
+        }
         const first = _.head(markedEle);
         let remain = _.slice(markedEle, 1);
         remain = remain.join('；');

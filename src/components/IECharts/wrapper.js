@@ -174,6 +174,9 @@ function wrapECharts(ECharts) {
       //   instance.resize();
       // }
     }
+    /**
+     * 提供当前echarts实例给外部
+     */
     @autobind
     getChartsInstance() {
       return this.state.instance;

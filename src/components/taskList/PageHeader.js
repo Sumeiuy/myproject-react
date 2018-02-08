@@ -532,20 +532,20 @@ export default class Pageheader extends PureComponent {
             />
           </div>
           {missionViewTypeValue === INITIATOR_VIEW ? null :
-            <div className={styles.filterFl}>
-              <div className={styles.dropDownSelectBox}>
-                <DropDownSelect
-                  value={curDrafter}
-                  placeholder="工号/名称"
-                  searchList={drafterAllList}
-                  showObjKey="ptyMngName"
-                  objId="ptyMngId"
-                  emitSelectItem={item => this.selectItem('creator', item)}
-                  emitToSearch={value => this.toSearch(getDrafterList, value)}
-                  name={`${page}-ptyMngName`}
-                />
-              </div>
+          <div className={styles.filterFl}>
+            <div className={styles.dropDownSelectBox}>
+              <DropDownSelect
+                value={curDrafter}
+                placeholder="工号/名称"
+                searchList={drafterAllList}
+                showObjKey="ptyMngName"
+                objId="ptyMngId"
+                emitSelectItem={item => this.selectItem('creator', item)}
+                emitToSearch={value => this.toSearch(getDrafterList, value)}
+                name={`${page}-ptyMngName`}
+              />
             </div>
+          </div>
           }
 
           {missionViewTypeValue === INITIATOR_VIEW ?

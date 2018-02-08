@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 15:23:22
+ * @Last Modified time: 2018-02-08 15:32:25
  * 客户反馈
  */
 
@@ -78,7 +78,9 @@ export default class CustFeedback extends PureComponent {
     const { custFeedback } = this.props;
     if (custFeedback !== nextFeedback) {
       // 需要重新绘制饼图时，清除echarts的当前实例
-      this.chartInstance.getChartsInstance().clear();
+      if (this.chartInstance) {
+        this.chartInstance.getChartsInstance().clear();
+      }
       const { level1Data, level2Data } = this.renderCustFeedbackChart(nextFeedback);
       this.setState({
         level1Data,
