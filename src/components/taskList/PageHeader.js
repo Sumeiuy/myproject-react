@@ -115,13 +115,16 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { status } } } = this.props;
-    const { location: nextLocation, filterControl } = nextProps;
+    const { location: { query: { status } }, filterControl } = this.props;
+    const { location: nextLocation, filterControl: nextFilterControl } = nextProps;
     const { query: nextQuery } = nextLocation;
     const { status: nextStatus } = nextQuery;
 
-    if (status !== nextStatus) {
-      const { stateAllOptions, statusValue } = this.renderStatusOptions(filterControl, nextStatus);
+    if (status !== nextStatus || filterControl !== nextFilterControl) {
+      const {
+        stateAllOptions,
+        statusValue,
+      } = this.renderStatusOptions(nextFilterControl, nextStatus);
       this.setState({
         stateAllOptions,
         statusValue,
