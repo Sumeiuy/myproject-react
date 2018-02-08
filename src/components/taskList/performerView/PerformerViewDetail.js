@@ -45,12 +45,15 @@ export default class PerformerViewDetail extends PureComponent {
     getTempQuesAndAnswer: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
     saveAnswersByType: PropTypes.func.isRequired,
+    // 左侧列表当前任务的状态码
+    statusCode: PropTypes.string,
   }
 
   static defaultProps = {
     isFold: true,
     answersList: {},
     saveAnswersSucce: false,
+    statusCode: '',
   }
 
   constructor(props) {
@@ -103,7 +106,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
