@@ -53,10 +53,6 @@ module.exports = {
       prefix,
       {
         // target: 'http://168.61.8.81:5087', // SIT
-<<<<<<< HEAD
-        target: 'http://168.61.8.82:5086', // uat
-=======
->>>>>>> d78bfc85195f9b392735e4d6b585386c0656ac35
         // target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址
         target: 'http://168.61.8.82:5086', // uat
