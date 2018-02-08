@@ -284,47 +284,55 @@ export default class PerformerView extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query: { missionViewType } } } = props;
-    this.state = {
-      currentView: missionViewType || '',
-      isEmpty: true,
-      activeRowIndex: 0,
-      typeCode: '',
-      typeName: '',
-      eventId: '',
-    };
+    const { location: { query: { missionViewType = '' } } } = props;
     this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
+    // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
+    let currentView = '';
+    if (!_.isEmpty(missionViewType)) {
+      currentView = missionViewType;
+    } else if (this.hasPermissionOfManagerView) {
+      currentView = CONTROLLER;
+    } else {
+      currentView = EXECUTOR;
+    }
+
     let newMissionView = chooseMissionView;
     if (!this.hasPermissionOfManagerView) {
       // 没有管理者视图查看权限
       newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
     }
     this.missionView = newMissionView;
+    this.state = {
+      currentView,
+      isEmpty: true,
+      activeRowIndex: 0,
+      typeCode: '',
+      typeName: '',
+      eventId: '',
+    };
   }
 
   componentDidMount() {
-    const {
-      location: {
-        query,
-      query: {
-          pageNum,
-        pageSize,
-        missionViewType,
-        },
-      },
-    } = this.props;
-    let newQuery = query;
-    // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
-    if (!_.isEmpty(missionViewType)) {
-      newQuery = { ...newQuery, missionViewType };
-    } else if (this.hasPermissionOfManagerView) {
-      newQuery = { ...newQuery, missionViewType: CONTROLLER };
-    }
+    const { location: { query, query: { pageNum, pageSize } } } = this.props;
+    const { currentView } = this.state;
+    const commonPostBody = {
+      ...query,
+      pageNum,
+      pageSize,
+      today,
+      missionViewType: currentView,
+    };
 
-    if (missionViewType === INITIATOR) {
-      this.queryAppListInit({ newQuery, pageNum, pageSize, beforeToday, today });
+    if (currentView === INITIATOR) {
+      this.queryAppListInit({
+        ...commonPostBody,
+        beforeToday,
+      });
     } else {
-      this.queryAppListInit({ newQuery, pageNum, pageSize, today, afterToday });
+      this.queryAppListInit({
+        ...commonPostBody,
+        afterToday,
+      });
     }
   }
 
@@ -688,18 +696,25 @@ export default class PerformerView extends PureComponent {
 
   // 第一次加载请求
   @autobind
-  queryAppListInit({ newQuery, pageNum = 1, pageSize = 20,
-    beforeToday: before, today: todays, afterToday: after }) {
+  queryAppListInit({
+    pageNum = 1,
+    pageSize = 20,
+    beforeToday: before,
+    today: todays,
+    afterToday: after,
+    ...remainingParams
+   }) {
     const { getTaskList, location, replace } = this.props;
     const { pathname } = location;
-    const item = this.constructViewPostBody(newQuery, pageNum, pageSize);
+    const item = this.constructViewPostBody(remainingParams, pageNum, pageSize);
     const timersValue = this.handleDefaultTime({ before, todays, after });
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
     const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
+
     replace({
       pathname,
       query: {
-        ...newQuery,
+        ...remainingParams,
         pageNum: 1,
         createTimeStart,
         createTimeEnd,
@@ -964,7 +979,6 @@ export default class PerformerView extends PureComponent {
       list,
       dict,
       queryCustUuid,
-      location: { query: { missionViewType } },
     } = this.props;
     const { currentView } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -977,7 +991,7 @@ export default class PerformerView extends PureComponent {
         pageType={pageType}
         chooseMissionViewOptions={this.missionView}
         creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={missionViewType}
+        filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
         filterTimer={this.handleDefaultTime}
       />
