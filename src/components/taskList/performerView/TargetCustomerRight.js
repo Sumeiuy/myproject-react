@@ -263,7 +263,7 @@ export default class TargetCustomerRight extends PureComponent {
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
-          <div id="contactTooltip" className={styles.titles}>
+          <div className={styles.titles}>
             <Row>
               <Col span={7}>
                 <h3 className={styles.custNames} title={itemData.custName}>
