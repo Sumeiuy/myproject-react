@@ -5,13 +5,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Dropdown, Input } from 'antd';
+import { Dropdown } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { constants } from '../../../config';
 import style from './style.less';
-
-const Search = Input.Search;
+import HackSearch from '../hackSearch';
 
 export default class DropdownSelect extends PureComponent {
   static propTypes = {
@@ -59,8 +58,6 @@ export default class DropdownSelect extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      // 查询信息
-      searchValue: props.defaultSearchValue,
       // 下拉选框是否展示
       isSHowModal: false,
       // 选中的值
@@ -86,7 +83,10 @@ export default class DropdownSelect extends PureComponent {
 
   get getSearchListDom() {
     const { searchList = [], emitSelectItem, showObjKey, objId, name } = this.props;
-    const { searchValue } = this.state;
+    let searchValue = '';
+    if (this.hackSearchComonent) {
+      searchValue = this.hackSearchComonent.getValue();
+    }
     const result = searchList.map((item, index) => {
       const callBack = () => {
         // 多传一个默认输入值，有些场景下需要用到
@@ -147,21 +147,14 @@ export default class DropdownSelect extends PureComponent {
   }
 
   @autobind
-  handleChangeSearchValue(e) {
-    this.setState({
-      searchValue: _.trim(e.target.value),
-    });
-  }
-
-  @autobind
   clearSearchValue() {
-    this.setState({
-      searchValue: '',
-    });
+    if (this.hackSearchComonent) {
+      this.hackSearchComonent.clearValue();
+    }
   }
 
   render() {
-    const { theme, disable, getPopupContainer } = this.props;
+    const { theme, disable, getPopupContainer, defaultSearchValue } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
     { [style.hide]: !this.state.isSHowModal },
     ]);
@@ -187,12 +180,12 @@ export default class DropdownSelect extends PureComponent {
             className={style.ddsDrapMenuSearch}
             onClick={(e) => { e.nativeEvent.stopImmediatePropagation(); }}
           >
-            <Search
+            <HackSearch
               className={style.searhInput}
               placeholder={this.props.placeholder}
               onSearch={this.toSearch}
-              value={this.state.searchValue}
-              onChange={this.handleChangeSearchValue}
+              defaultValue={defaultSearchValue}
+              ref={ref => this.hackSearchComonent = ref}
             />
           </div>
           {
