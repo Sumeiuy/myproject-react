@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 20:46:02
+ * @Last Modified time: 2018-02-08 21:51:20
  * 客户细分组件
  */
 
@@ -180,15 +180,12 @@ export default class CustomerSegment extends PureComponent {
     const { fileKey } = this.state;
     this.setState({
       uploadedFileKey: uploadedFileKey || fileKey,
+      isShowTable: true,
     });
     onPreview({
       uploadKey: uploadedFileKey,
       pageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
-    }).then(() => {
-      this.setState({
-        isShowTable: true,
-      });
     });
   }
 
@@ -279,7 +276,6 @@ export default class CustomerSegment extends PureComponent {
         {
           isShowTable ?
             <GroupModal
-              // 为了每次都能打开一个新的modal
               wrapperClass={styles.modalTable}
               visible={isShowTable}
               closable
@@ -287,6 +283,7 @@ export default class CustomerSegment extends PureComponent {
               okText={'提交'}
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
+              onCancelHandler={this.handleCloseModal}
               footer={
                 <Clickable
                   onClick={this.handleCloseModal}
