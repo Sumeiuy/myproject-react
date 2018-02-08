@@ -92,7 +92,7 @@ export default class AddMorningBoradcast extends PureComponent {
         }
         handleOk(resetFields);
         message.success('操作成功', 1);
-        onHandleGetList();
+        onHandleGetList(null, true);
       }
     }
     // 删除文件

@@ -114,7 +114,7 @@ export default class BroadcastList extends PureComponent {
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
     if (!boradcastList || !boradcastList.length || isInit === true) {
-      onHandleGetList();
+      onHandleGetList(null, true);
     }
     // 初始化Uuid
     if (!newUuid.length) getUuid();
@@ -144,8 +144,8 @@ export default class BroadcastList extends PureComponent {
 
   // 刷新列表数据
   @autobind
-  onHandleGetList(option) {
-    const { getBoradcastList, replace, location: { pathname, query: { isInit } } } = this.props;
+  onHandleGetList(option, initList) {
+    const { getBoradcastList, replace, location: { pathname } } = this.props;
     const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
     const { pagination, newsListQuery } = this.props.morningBoradcast;
     const { defaultCurrent, defaultPageSize } = pagination;
@@ -157,7 +157,7 @@ export default class BroadcastList extends PureComponent {
       createdBy: '',
       title: '',
     };
-    if (isInit) {
+    if (initList) {
       getBoradcastList(definedQuery);
       replace({ pathname });
     } else {
