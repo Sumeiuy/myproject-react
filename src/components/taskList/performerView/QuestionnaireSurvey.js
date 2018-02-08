@@ -38,28 +38,45 @@ export default class QuestionnaireSurvey extends PureComponent {
     onRadioChange: PropTypes.func.isRequired,
     onAreaText: PropTypes.func.isRequired,
     answersList: PropTypes.object,
+    isShowErrorCheckbox: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     answersList: {},
+    isShowErrorCheckbox: {},
   };
+
 
   // 根据返回的问题列表，判断不同类型显示
   @autobind
   renderOption() {
-    const { form, onCheckChange, answersList, onRadioChange, onAreaText } = this.props;
+    const {
+      form,
+      onCheckChange,
+      answersList,
+      onRadioChange,
+      onAreaText,
+      isShowErrorCheckbox } = this.props;
     const { quesInfoList = EMPTY_ARRAY, answerVOList = EMPTY_ARRAY } = answersList;
     const isDisabled = !_.isEmpty(answerVOList);
     const { getFieldDecorator } = form;
     let content = null;
     const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
       const { quesId } = item;
+      // 自定义多选题校验
+      const CheckboxErrorProps = isShowErrorCheckbox[quesId] ? {
+        validateStatus: 'error',
+        help: '此答案不能为空，请选择你的选项',
+      } : null;
+
       // 判断是否已回答问卷
       const answerData = _.find(answerVOList, o => o.quesId === quesId) || EMPTY_OBJECT;
+
       // 已回答则查询该问题答案
       if (item.quesTypeCode === TYPE.radioType) {
         // 设置该问题默认值
         const defaultData = answerData.answerdIds || EMPTY_ARRAY;
+
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData[0] || '',
@@ -81,7 +98,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                       className={styles.radioOption}
                       dataQuesId={quesId}
                       key={childItem.optionId}
-                      disabled={defaultData[0] === childItem.optionId ? false : isDisabled}
+                      disabled={isDisabled}
                     >
                       {childItem.optionValue}
                     </Radio>)
@@ -97,17 +114,16 @@ export default class QuestionnaireSurvey extends PureComponent {
           const values = `${checkedData.optionValue}+-+${childVal}+-+${quesId}`;
           return values;
         }) || [];
-        content = (<FormItem key={quesId}>
+        content = (<FormItem key={quesId} {...CheckboxErrorProps}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
-            rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
           })(
             <div className={styles.radioContent}>
               <p>{key + 1}.{item.quesValue}</p>
               <CheckboxGroup
                 style={{ width: '100%' }}
                 className={styles.radioGroup}
-                onChange={onCheckChange}
+                onChange={keyIndex => onCheckChange(keyIndex, quesId)}
                 defaultValue={defaultData}
               >
                 {
@@ -115,7 +131,7 @@ export default class QuestionnaireSurvey extends PureComponent {
                     value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
                     className={styles.radioOption}
                     key={childItem.optionId}
-                    disabled={defaultData[0] === `${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}` ? false : isDisabled}
+                    disabled={isDisabled}
                   >
                     {childItem.optionValue}
                   </Checkbox>)
@@ -126,6 +142,7 @@ export default class QuestionnaireSurvey extends PureComponent {
         </FormItem>);
       } else if (item.quesTypeCode === TYPE.textAreaType) {
         const defaultData = answerData.answertext || '';
+
         content = (<FormItem key={quesId}>
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,

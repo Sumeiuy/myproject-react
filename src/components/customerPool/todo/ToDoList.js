@@ -63,21 +63,25 @@ export default class ToDoList extends PureComponent {
         title: '当前步骤',
         dataIndex: 'stepName',
         key: 'stepName',
+        render: (item, recode) => (<span className={styles.stepName}>{recode.stepName}</span>),
       },
       {
         title: '提交人工号',
         dataIndex: 'originator',
         key: 'originator',
+        render: (item, recode) => (<span className={styles.orgId}>{recode.originator}</span>),
       },
       {
         title: '提交人姓名',
         dataIndex: 'originatorName',
         key: 'originatorName',
+        render: (item, recode) => (<span className={styles.orgName}>{recode.originatorName}</span>),
       },
       {
         title: '提交日期',
         dataIndex: 'applyDate',
         key: 'applyDate',
+        render: (item, recode) => (<span className={styles.submitDate}>{recode.applyDate}</span>),
       },
     ];
   }
