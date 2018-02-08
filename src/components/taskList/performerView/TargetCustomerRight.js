@@ -157,9 +157,12 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
       );
     }
-    return (<TipsInfo
-      title={content}
-    />);
+    return (
+      <TipsInfo
+        position={'bottomRight'}
+        title={content}
+      />
+    );
   }
 
   render() {
