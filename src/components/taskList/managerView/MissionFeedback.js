@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
-import Icon from '../../common/Icon';
+// import Icon from '../../common/Icon';
 import Pagination from '../../common/Pagination';
 
 import styles from './missionFeedback.less';
@@ -65,12 +65,10 @@ export default class MissionFeedback extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
-    const { problems } = this.state;
     const { finalData, originProblemData } = this.handleData(
       missionFeedbackData,
       missionFeedbackCount,
       serveManagerCount,
-      problems,
     );
 
     this.setState({
@@ -81,14 +79,14 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  handleData(missionFeedbackData, missionFeedbackCount, serveManagerCount, problems = []) {
+  handleData(missionFeedbackData, missionFeedbackCount, serveManagerCount) {
     const finalData = this.formatData(
       missionFeedbackData,
       missionFeedbackCount,
       serveManagerCount,
     );
     const { dataInfo } = finalData;
-    const originProblemData = _.merge(problems, {
+    const originProblemData = {
       resultData: {
         dataInfo,
         pageInfo: {
@@ -97,7 +95,7 @@ export default class MissionFeedback extends PureComponent {
           totalRecordNum: _.size(dataInfo),
         },
       },
-    });
+    };
 
     return {
       finalData,
@@ -478,7 +476,7 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  renderProblemsInfo(key) {
+  renderProblemsInfo(dataInfo) {
     const { isFold } = this.props;
     const { problems: { resultData: { pageInfo } } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
@@ -489,7 +487,7 @@ export default class MissionFeedback extends PureComponent {
       onChange: this.handlePageChange,
       onShowSizeChange: this.handleSizeChange,
     };
-    const value = _.map(key, (item) => {
+    const value = _.map(dataInfo, (item) => {
       const info = _.map(item.infoData, (itemChild, index) =>
         <h5 title={itemChild.data} key={itemChild.data}>
           {index + 1}.{itemChild.data}
@@ -551,7 +549,7 @@ export default class MissionFeedback extends PureComponent {
           <div>
             <LabelInfo value="任务反馈" />
           </div>
-          <div>
+          {/* <div>
             <div className={styles.down}>
               <div className={styles.iconDown}>
                 <Icon type="xiazai" />
@@ -560,7 +558,7 @@ export default class MissionFeedback extends PureComponent {
                 导出
             </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className={styles.feedback}>
           <Row className={styles.feedbackContent}>

@@ -31,7 +31,7 @@ function renderPageSizeOptions(pageSize) {
 // 是否应该隐藏最后一页的按钮
 function shouldHideLastButton(current, pageSize, total) {
   // 当最后一页与当前页相差5页时显示最后一页
-  const SHOW_NUMBER = 5;
+  const SHOW_NUMBER = 2;
   const totalPageNumber = pageSize && (total / pageSize);
   if ((totalPageNumber - current) > SHOW_NUMBER) {
     return true;

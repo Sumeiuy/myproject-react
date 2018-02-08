@@ -15,7 +15,11 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(q, 'g');
   // 瞄准镜标签后面添加字符，用以分割
-  const holder = isSightingScope(type) ? '-' : '';
+  const holder = type === 'sightingTelescope' ? '-' : '';
+  // 容错处理
+  if (_.isEmpty(value)) {
+    return '';
+  }
   return value.replace(regxp,
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
@@ -171,7 +175,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((item) => {
           // 防止热点标签展示重复，这里从query上取source
-          if (!isSightingScope(source)) {
+          if (!isSightingScope(item.source)) {
             return replaceWord({ value: item.name, q });
           }
           return `${replaceWord({ value: item.name, q })}-${q}`;
@@ -305,6 +309,12 @@ export default class MatchArea extends PureComponent {
         // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
         let markedEle = relatedLabels.map(item =>
           (replaceWord({ value: item.name, q, type: source })));
+        // 去除空字符串
+        markedEle = _.filter(markedEle, item => !_.isEmpty(item));
+        // 只有一个标签，去除-符号
+        if (_.size(markedEle) === 1) {
+          markedEle[0].replace('-', '');
+        }
         const first = _.head(markedEle);
         let remain = _.slice(markedEle, 1);
         remain = remain.join('；');

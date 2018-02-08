@@ -104,7 +104,7 @@ export default class MorningBroadcast extends PureComponent {
                       <div
                         className={styles.simpleName}
                       >
-                        <Marquee content={item.newsTypValue} speed={40} />
+                        <Marquee content={`${item.newsTypValue}：${item.title}`} speed={40} />
                       </div>
                       <div className={styles.music}>
                         <Audio src={audioSrc} autoPlay />

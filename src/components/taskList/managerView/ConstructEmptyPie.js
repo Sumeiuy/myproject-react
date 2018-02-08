@@ -1,6 +1,9 @@
 export default {};
 
 export const constructEmptyPie = () => ({
+  tooltip: {
+    show: false,
+  },
   series: [
     {
       name: '暂无数据',
@@ -28,7 +31,7 @@ export const constructEmptyPie = () => ({
         },
       },
       data: [
-        { value: 335, name: '暂无数据' },
+        { value: 0, name: '暂无数据' },
       ],
       itemStyle: {
         normal: {
