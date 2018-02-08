@@ -29,6 +29,7 @@ export default class AddMorningBoradcast extends PureComponent {
     onHandleGetList: PropTypes.func.isRequired,
     handleCancel: PropTypes.func.isRequired,
     saveBoradcast: PropTypes.func.isRequired,
+    getUuid: PropTypes.func.isRequired,
     delCeFile: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
@@ -163,13 +164,16 @@ export default class AddMorningBoradcast extends PureComponent {
   }
   @autobind()
   onHandleCancel() {
-    const { handleCancel, newsId, uploaderFile } = this.props;
+    const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
     const { isUpdateFile } = this.state;
     if (this.formWrapRef) {
       this.formWrapRef.scrollTop = 0;
     }
     if (isUpdateFile) {
       uploaderFile({ newsId });
+    }
+    if (newsId === -1) {
+      getUuid();
     }
     handleCancel();
   }

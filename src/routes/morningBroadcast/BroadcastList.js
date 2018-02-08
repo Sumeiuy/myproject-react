@@ -49,7 +49,7 @@ const mapDispatchToProps = {
   saveBoradcast: fetchDataFunction(true, effects.saveBoradcast),
   getBoradcastDetail: fetchDataFunction(true, effects.getBoradcastDetail),
   delBoradcastItem: fetchDataFunction(true, effects.delBoradcastItem),
-  getUuid: fetchDataFunction(true, effects.getUuid),
+  getUuid: fetchDataFunction(false, effects.getUuid),
   delCeFile: fetchDataFunction(true, effects.delCeFile),
   uploaderFile: fetchDataFunction(true, effects.uploaderFile),
   push: routerRedux.push,
@@ -356,6 +356,7 @@ export default class BroadcastList extends PureComponent {
       },
       newsListLoading,
       saveBoradcast,
+      getUuid,
       delCeFile,
       getBoradcastDetail,
       dict,
@@ -439,6 +440,7 @@ export default class BroadcastList extends PureComponent {
                 boradcastDetail={boradcastDetail}
                 saveBoradcast={saveBoradcast}
                 getBoradcastDetail={getBoradcastDetail}
+                getUuid={getUuid}
                 handleOk={this.handleOk}
                 handleCancel={this.handleCancel}
                 onHandleGetList={this.onHandleGetList}
