@@ -4,13 +4,14 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import constants from './constants';
+
 const config = {
   url: '/fspa/log/sa',
   interval: 1 * 60 * 1000,
   // 开启日志监控
   enable: true,
-  projectName: location.hostname.indexOf('htsc.com.cn') > -1
-      ? 'FSP_1' : 'DEV_TEST',
+  projectName: constants.inHTSCDomain ? 'FSP_1' : 'DEV_TEST',
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',
