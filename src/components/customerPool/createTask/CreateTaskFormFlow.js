@@ -21,6 +21,8 @@ const SOURCE_ARRAY = [
   'returnTask',
 ];
 
+const RETURN_TASK_ENTRY = 'returnTask';
+
 // 从业务目标池客户：businessCustPool
 // 标签、搜索目标客户：searchCustPool
 // 绩效目标客户 - 净新增客户： performanceCustPool
@@ -169,8 +171,12 @@ export default class CreateTaskFormFlow extends PureComponent {
     }
 
     let storedData = {};
-    if (this.judgeSource(source)) {
-      storedData = _.merge(currentFlowData, storedCreateTaskData[`${source}`]) || {};
+    if (source === RETURN_TASK_ENTRY) {
+      // 驳回修改
+      storedData = _.merge({}, currentFlowData, storedCreateTaskData[`${source}`]) || {};
+    } else if (this.judgeSource(source)) {
+      // 除了客户列表的其他入口
+      storedData = storedCreateTaskData[`${source}`] || {};
     } else {
       storedData = storedCreateTaskData.custList || {};
     }

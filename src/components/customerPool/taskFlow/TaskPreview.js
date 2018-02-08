@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-06 18:48:51
+ * @Last Modified time: 2018-02-07 15:30:29
  */
 
 import React, { PureComponent } from 'react';
@@ -339,13 +339,10 @@ export default class TaskPreview extends PureComponent {
                 <div>客户来源：</div>
                 <div>{custSource || custSourceEntry}</div>
               </div>
-              {
-                currentEntry === 1 ?
-                  <div>
-                    <div>标签描述：</div>
-                    <div>{labelDesc || '--'}</div>
-                  </div> : null
-              }
+              <div>
+                <div>客户数量：</div>
+                <div>{custTotal || custNum || totalCount || 0}户</div>
+              </div>
             </div>
             {
               isSelectCustFromSightLabel ?
@@ -363,50 +360,20 @@ export default class TaskPreview extends PureComponent {
             }
             <div className={styles.taskSection}>
               <div>
-                <div>客户数量：</div>
-                {
-                  <div>{custTotal || custNum || totalCount || 0}户</div>
-                  // : <div>{custNum || 0}户</div>
-                }
-              </div>
-              <div>
                 <div>创建人：</div>
                 <div>{creator || '--'}</div>
               </div>
             </div>
-
-            {/* <div className={styles.descriptionOrNameSection}>
-                  <div>客户来源：</div>
-                  <div>{_.isEmpty(custSource) ? '导入客户' : custSource}</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>客户数量：</div>
-                  <div>{_.isEmpty(custSource) ? custTotalCount || 0 : custTotal}户</div>
-                </div>
-                {_.isEmpty(custSource) ?
-                  <div className={styles.descriptionOrNameSection}>
-                    <div>数据来源：</div>
-                    <div>{originFileName || '--'}</div>
-                  </div>
-                  :
-                  null
-                } */}
+            <div className={styles.taskSection}>
+              {
+                currentEntry === 1 ?
+                  <div className={styles.labelDesc}>
+                    <div>标签描述：</div>
+                    <div>{labelDesc || '--'}</div>
+                  </div> : null
+              }
+            </div>
           </div>
-          {/* : <div className={styles.infoDescription}>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>客户来源：</div>
-                  <div>标签圈人</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>客户数量：</div>
-                  <div>{custNum || 0}户</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>标签描述：</div>
-                  <div>{labelDesc || '--'}</div>
-                </div>
-              </div> */}
-          {/* {} */}
         </div>
 
         <div className={styles.basicInfoSection}>
@@ -467,12 +434,6 @@ export default class TaskPreview extends PureComponent {
                         unit,
                       })
                     }
-                    {/* {
-                      `${indicatorLevel2Value || ''}
-                      ${hasSearchedProduct ? currentSelectedProduct.aliasName : ''}
-                      ${!hasState ? `${operationValue || ''}${inputIndicator || ''}${unit || ''}`
-                        : stateText}` || '--'
-                    } */}
                   </div>
                 </div>
               </div>

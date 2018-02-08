@@ -70,25 +70,26 @@ export default class SelectLabelCust extends PureComponent {
     }
 
     const {
-      filterNumObject,
-      argsOfQueryCustomer,
-      currentFilterObject,
+      filterNumObject = {},
+      argsOfQueryCustomer = {},
+      currentFilterObject = {},
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', labelMapping, labelName = '', customNum = 0 } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
       labelMapping,
       labelDesc,
       condition,
-      custNum: filterNumObject[labelId],
+      custNum: `${labelId}` in filterNumObject ? filterNumObject[labelId] : customNum,
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
       argsOfQueryCustomer,
       currentFilterObject,
+      filterNumObject,
     };
 
     return {

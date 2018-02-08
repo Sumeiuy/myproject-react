@@ -491,9 +491,9 @@ export default class TaskFlow extends PureComponent {
       if (isResultTrackChecked) {
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
-          errMsg = '请选择一级指标';
+          errMsg = '请设置结果跟踪任务指标';
         } else if (_.isEmpty(indicatorLevel2Key)) {
-          errMsg = '请选择二级指标';
+          errMsg = '请设置结果跟踪任务二级指标';
         } else if (hasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
         } else if (!hasState && !inputIndicator) {

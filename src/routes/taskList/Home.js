@@ -344,7 +344,7 @@ export default class PerformerView extends PureComponent {
        * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        */
-      const currentItem = _.find(missionType, obj => +obj.key === +typeCode);
+      const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
       getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
         .then(() => {
           let currentType = {};
