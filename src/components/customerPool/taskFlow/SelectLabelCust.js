@@ -181,7 +181,6 @@ export default class SelectLabelCust extends PureComponent {
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
           isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
-          visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
