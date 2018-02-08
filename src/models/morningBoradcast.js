@@ -193,6 +193,8 @@ export default {
         ];
         const [audioFileList,
           otherFileList] = [audioFileListRes.resultData, otherFileListRes.resultData];
+        // 排查数据log
+        console.log(audioFileList, otherFileList);
         yield put({
           type: 'getBoradcastDetailSuccess',
           payload: {

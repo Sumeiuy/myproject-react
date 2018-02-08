@@ -62,7 +62,6 @@ export default class TaskSearchRow extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
-    visible: PropTypes.bool.isRequired,
     isAuthorize: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
@@ -78,56 +77,58 @@ export default class TaskSearchRow extends PureComponent {
     super(props);
     const {
       storedData: { labelCust = {} },
-      currentSelectLabel = '',
+      // currentSelectLabel = '',
     } = props;
 
-    const { custNum, argsOfQueryCustomer, currentFilterObject } = labelCust || {};
+    const { argsOfQueryCustomer, currentFilterObject, filterNumObject } = labelCust || {};
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
       // totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
-      visible: false,
+      modalVisible: false,
       title: '',
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
-      filterNumObject: {
-        [currentSelectLabel]: custNum || 0,
-      },
+      filterNumObject: _.isEmpty(filterNumObject) ? {} : filterNumObject,
       // 当前筛选条件
       argsOfQueryCustomer,
+      currentSelectLabelName: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { labelId, filterNumObject } = this.state;
-    const { peopleOfLabelData, visible } = nextProps;
-    const { custList = [] } = peopleOfLabelData || {};
-    const list = _.map(custList, item => ({
-      ...item,
-      brok_id: item.brokId,
-      brok_org_id: item.brokOrgId,
-      contact_flag: item.contactFlag,
-      lever_code: item.levelName,
-      cust_type: item.custType === 'N' ? '高净值' : '零售',
-    }));
-    let finalFilterNumObject = filterNumObject;
-    if (!_.isEmpty(labelId)) {
-      finalFilterNumObject = {
-        [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-      };
-    }
+    const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = nextProps;
+    const showStatus = isLoadingEnd && isSightTelescopeLoadingEnd;
+    // 是否展示筛查客户的modal
+    if (showStatus) {
+      const { custList = [] } = peopleOfLabelData || {};
+      const list = _.map(custList, item => ({
+        ...item,
+        brok_id: item.brokId,
+        brok_org_id: item.brokOrgId,
+        contact_flag: item.contactFlag,
+        lever_code: item.levelName,
+        cust_type: item.custType === 'N' ? '高净值' : '零售',
+      }));
+      let finalFilterNumObject = filterNumObject;
+      // 只有点击了筛查客户，才需要替换filterNumObject
+      if (!_.isEmpty(labelId) && showStatus) {
+        finalFilterNumObject = {
+          [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+        };
+      }
 
-    this.setState({
-      // totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-      custTableData: list,
-      visible,
-      filterNumObject: {
-        ...filterNumObject,
-        ...finalFilterNumObject,
-      },
-    });
+      this.setState({
+        custTableData: list,
+        filterNumObject: {
+          ...filterNumObject,
+          ...finalFilterNumObject,
+        },
+      });
+    }
   }
 
   // 获取已筛选客户数
@@ -206,6 +207,7 @@ export default class TaskSearchRow extends PureComponent {
         ...filterNumObject,
         ...finalFilterNumObject,
       },
+      currentSelectLabelName: currentLabelInfo.labelName,
     });
     onChange(currentLabelId);
   }
@@ -228,12 +230,14 @@ export default class TaskSearchRow extends PureComponent {
       filter: currentFilterObject[value.labelMapping] || [],
     });
     this.setState({
+      modalVisible: true,
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,
       currentSource: value.source,
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
+      currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
     this.props.onChange(value.id || '');
@@ -243,7 +247,7 @@ export default class TaskSearchRow extends PureComponent {
   handleCancel() {
     const { onCancel } = this.props;
     this.setState({
-      visible: false,
+      modalVisible: false,
     });
     onCancel();
   }
@@ -371,12 +375,13 @@ export default class TaskSearchRow extends PureComponent {
     const {
       curPageNum = INITIAL_PAGE_NUM,
       pageSize = INITIAL_PAGE_SIZE,
-      visible,
       custTableData,
       currentFilterObject,
       currentSource,
       labelId,
       filterNumObject,
+      currentSelectLabelName,
+      modalVisible,
     } = this.state;
 
     const {
@@ -407,66 +412,63 @@ export default class TaskSearchRow extends PureComponent {
         </RadioGroup>
         <div className={styles.seeCust}>
           {
-            (isLoadingEnd && visible && isSightTelescopeLoadingEnd) ?
-              <Modal
-                visible
-                title="筛查客户"
-                onOk={this.handleOk}
-                maskClosable={false}
-                onCancel={this.handleCancel}
-                closable={false}
-                footer={[
-                  <Clickable
-                    onClick={this.handleCancel}
-                    eventName="/click/taskSearchRow/close"
-                  >
-                    <Button key="back" size="large">确定</Button>
-                  </Clickable>,
-                ]}
-                width={700}
-                wrapClassName={styles.labelCustModalContainer}
-              >
-                {
-                  <div className={styles.filter}>
-                    <FilterCustomers
-                      dict={dict}
-                      currentItems={currentItems}
-                      onFilterChange={this.handleFilterChange}
-                      source={currentSource}
-                      sightingTelescopeFilters={sightingTelescopeFilters}
-                    />
-                  </div>
-                }
-                {
-                  _.isEmpty(custTableData) ?
-                    <div className={styles.emptyContent}>
-                      <span>
-                        <Icon className={styles.emptyIcon} type="frown-o" />
-                        暂无数据
-                      </span>
-                    </div> :
-                    <GroupTable
-                      pageData={{
-                        curPageNum,
-                        curPageSize: pageSize,
-                        totalRecordNum,
-                      }}
-                      tableClass={
-                        classnames({
-                          [styles.labelCustTable]: true,
-                          [tableStyles.groupTable]: true,
-                        })
-                      }
-                      isFixedTitle={false}
-                      onSizeChange={this.handleShowSizeChange}
-                      onPageChange={this.handlePageChange}
-                      listData={custTableData}
-                      titleColumn={renderColumnTitle}
-                      isFirstColumnLink={false}
-                      columnWidth={100}
-                    />
-                }
-              </Modal> : null
+            <Modal
+              visible={modalVisible}
+              title={currentSelectLabelName || ''}
+              maskClosable={false}
+              closable={false}
+              footer={[
+                <Clickable
+                  onClick={this.handleCancel}
+                  eventName="/click/taskSearchRow/close"
+                >
+                  <Button key="back" size="large">确定</Button>
+                </Clickable>,
+              ]}
+              width={700}
+              wrapClassName={styles.labelCustModalContainer}
+            >
+              {
+                <div className={styles.filter}>
+                  <FilterCustomers
+                    dict={dict}
+                    currentItems={currentItems}
+                    onFilterChange={this.handleFilterChange}
+                    source={currentSource}
+                    sightingTelescopeFilters={sightingTelescopeFilters}
+                  />
+                </div>
+              }
+              {
+                _.isEmpty(custTableData) ?
+                  <div className={styles.emptyContent}>
+                    <span>
+                      <Icon className={styles.emptyIcon} type="frown-o" />
+                      暂无数据
+                    </span>
+                  </div> :
+                  <GroupTable
+                    pageData={{
+                      curPageNum,
+                      curPageSize: pageSize,
+                      totalRecordNum,
+                    }}
+                    tableClass={
+                      classnames({
+                        [styles.labelCustTable]: true,
+                        [tableStyles.groupTable]: true,
+                      })
+                    }
+                    isFixedTitle={false}
+                    onSizeChange={this.handleShowSizeChange}
+                    onPageChange={this.handlePageChange}
+                    listData={custTableData}
+                    titleColumn={renderColumnTitle}
+                    isFirstColumnLink={false}
+                    columnWidth={100}
+                  />
+              }
+            </Modal>
           }
         </div>
         {

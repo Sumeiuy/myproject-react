@@ -209,8 +209,7 @@ export default class Search extends PureComponent {
       recommendList.push(
         <Clickable
           onClick={() => this.handleOpenTab({
-            // 热点标签不需要在客户列表展示瞄准镜标签
-            source: 'tag',
+            source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}

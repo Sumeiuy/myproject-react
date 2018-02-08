@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 10:03:29
+ * @Last Modified time: 2018-02-08 17:08:27
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,13 +33,14 @@ const titleList = [
     title: '客户名称',
   },
   {
-    dataIndex: 'orgName',
-    key: 'orgName',
+    dataIndex: 'newOrgName',
+    key: 'newOrgName',
     title: '服务营业部',
   },
 ];
 // 通知提醒默认 ID
 const DEFAULT_APPID = '20557';
+const TYPE_FAILED = 'faild';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -82,11 +83,16 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       location: {
         query: {
           appId = DEFAULT_APPID,
+          type,
         },
       },
       getNotifiesInfo,
     } = this.props;
-    getNotifiesInfo({ appId });
+    const payload = {
+      appId,
+      type,
+    };
+    getNotifiesInfo(payload);
   }
 
   // 分页
@@ -96,6 +102,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       location: {
         query: {
           appId = DEFAULT_APPID,
+          type,
         },
       },
       getNotifiesInfo,
@@ -104,6 +111,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       appId,
       pageNum: page,
       pageSize,
+      type,
     };
     getNotifiesInfo(payload);
   }
@@ -116,18 +124,19 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       location: {
         query: {
           appId = DEFAULT_APPID,
+          type,
         },
       },
     } = this.props;
     if (_.isEmpty(notifiesInfo)) {
       return null;
     }
-    const isSuccess = _.isEmpty(list);
+    const isSuccess = type === TYPE_FAILED;
     // 分页
     const paginationOption = {
-      current: !_.isEmpty(page) ? page.curPageNum : 0,
-      total: !_.isEmpty(page) ? page.totalRecordNum : 0,
-      pageSize: !_.isEmpty(page) ? page.pageSize : 0,
+      current: page && page.curPageNum,
+      total: page && page.totalRecordNum,
+      pageSize: (page && page.pageSize) || 10,
       onChange: this.pageChangeHandle,
     };
     return (
@@ -148,6 +157,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
             </div>
           :
             <div className={styles.success}>
+              有以下客户划入您名下！
               <CommonTable
                 data={list}
                 titleList={titleList}

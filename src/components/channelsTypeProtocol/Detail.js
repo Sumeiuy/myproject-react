@@ -2,8 +2,8 @@
  * @Description: 通道类型协议详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-12 15:25:24
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-07 16:27:35
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -80,11 +80,12 @@ export default class Detail extends PureComponent {
       currentView,
     } = this.props;
     const custName = `${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`;
+    const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : EMPTY_PARAM;
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
       // 当前审批人
-      handleName: protocolDetail.approver || EMPTY_PARAM,
+      handleName: approverName,
     };
     const scroll = {
       x: true,

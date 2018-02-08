@@ -115,13 +115,16 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { status } } } = this.props;
-    const { location: nextLocation, filterControl } = nextProps;
+    const { location: { query: { status } }, filterControl } = this.props;
+    const { location: nextLocation, filterControl: nextFilterControl } = nextProps;
     const { query: nextQuery } = nextLocation;
     const { status: nextStatus } = nextQuery;
 
-    if (status !== nextStatus) {
-      const { stateAllOptions, statusValue } = this.renderStatusOptions(filterControl, nextStatus);
+    if (status !== nextStatus || filterControl !== nextFilterControl) {
+      const {
+        stateAllOptions,
+        statusValue,
+      } = this.renderStatusOptions(nextFilterControl, nextStatus);
       this.setState({
         stateAllOptions,
         statusValue,
@@ -383,8 +386,8 @@ export default class Pageheader extends PureComponent {
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
 
-    if (filterControl === CONTROLLER_VIEW) {
-      // 管理者视图只有保留三种状态和所有状态
+    if (filterControl === CONTROLLER_VIEW || filterControl === EXECUTE_VIEW) {
+      // 管理者视图或者执行者视图只有保留三种状态和所有状态
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(MANAGER_VIEW_STATUS, item.value));
     }
@@ -461,11 +464,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          type,
-          creator,
-          // createTimeStart,
-          // createTimeEnd,
-          missionName,
+        type,
+        creator,
+        // createTimeStart,
+        // createTimeEnd,
+        missionName,
         },
       },
     } = this.props;

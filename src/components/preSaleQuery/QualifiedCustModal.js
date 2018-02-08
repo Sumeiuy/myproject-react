@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-19 13:37:08
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 20:32:20
+ * @Last Modified time: 2018-02-08 10:53:02
  * @description 合格投资者-产品要求点击问号的弹出框
  */
 import React from 'react';
@@ -58,10 +58,8 @@ export default function QualifiedCustModal(props) {
         具备相应风险识别能力和承担所投资集合资产管理计划风险能力且符合下列条件之一的单位和个人：
       </p>
       <p className={styles.item}>（一）个人或者家庭金融资产合计不低于100万元人民币；</p>
-      <p className={styles.item}>
-        （二）公司、企业等机构净资产不低于1000万元人民币；
-        依法设立并受监管的各类集合投资产品视为单一合格投资者。
-      </p>
+      <p className={styles.item}>（二）公司、企业等机构净资产不低于1000万元人民币；</p>
+      <p className={styles.item}>依法设立并受监管的各类集合投资产品视为单一合格投资者。</p>
     </div>
   );
 

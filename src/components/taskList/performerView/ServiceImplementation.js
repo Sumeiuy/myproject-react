@@ -256,7 +256,7 @@ ServiceImplementation.propTypes = {
   custUuid: PropTypes.string.isRequired,
   getCustDetail: PropTypes.func.isRequired,
   serviceTypeCode: PropTypes.string.isRequired,
-  serviceTypeName: PropTypes.string.isRequired,
+  serviceTypeName: PropTypes.string,
   ceFileDelete: PropTypes.func.isRequired,
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
@@ -275,4 +275,5 @@ ServiceImplementation.defaultProps = {
   filesList: [],
   deleteFileResult: [],
   taskFeedbackList: [],
+  serviceTypeName: '',
 };

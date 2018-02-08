@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 15:06:08
+ * @Last Modified time: 2018-02-08 17:00:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -23,7 +23,7 @@ import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
-import customerTemplet from './customerTemplet.xls';
+import customerTemplet from './customerTemplet.xlsx';
 import styles from './createFilialeCustTransfer.less';
 
 const EMPTY_LIST = [];
@@ -130,10 +130,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             pageNum: 1,
             pageSize: 10,
           };
-          this.setState({
-            attachment: data,
-          }, () => queryCustomerAssignImport(payload));
           // 发送请求
+          queryCustomerAssignImport(payload).then(() => {
+            this.setState({
+              attachment: data,
+            });
+          });
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
@@ -203,7 +205,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 提交
   @autobind
   handleSubmit(item) {
-    const { client, newManager, isDefaultType } = this.state;
+    const { client, newManager, isDefaultType, attachment } = this.state;
     const { managerData } = this.props;
     const itemData = {
       operate: item.operate,
@@ -212,6 +214,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       nextApproverList: item.flowAuditors,
     };
     if (!isDefaultType) {
+      if (_.isEmpty(attachment)) {
+        message.error('暂未导入客户或者导入失败，请重试');
+        return;
+      }
       this.setState({
         ...itemData,
         nextApproverModal: true,
@@ -431,11 +437,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       showUploadList: false,
     };
     // 分页
-    const hasPage = !_.isEmpty(page);
+    // const hasPage = !_.isEmpty(page);
     const paginationOption = {
-      current: hasPage ? page.curPageNum : 1,
-      total: hasPage ? page.totalRecordNum : 0,
-      pageSize: hasPage ? page.pageSize : 10,
+      current: page && page.curPageNum,
+      total: page && page.totalRecordNum,
+      pageSize: (page && page.pageSize) || 10,
       onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?

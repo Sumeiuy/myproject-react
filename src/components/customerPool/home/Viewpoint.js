@@ -137,33 +137,35 @@ export default class Viewpoint extends PureComponent {
                 onClick={() => { this.handleDetailClick(0); }}
                 eventName="/click/Home/viewpointDetail"
               >
-                <a>详情</a>
+                <a>[详情]</a>
               </Clickable>
             </div>
           </div>
         </div>
         <div className={styles.down}>
-          <div className={classnames(styles.title, styles.downTitle)}>资讯列表</div>
+          <div className={styles.headContainer}>
+            <div className={classnames(styles.head, styles.listHead)}>资讯列表</div>
+            {
+              isShowMore ? (
+                <div className={styles.fold} >
+                  <Clickable
+                    onClick={this.handleMoreClick}
+                    eventName="/click/Home/viewpointMore"
+                  >
+                    <a>{'更多 >'}</a>
+                  </Clickable>
+                </div>
+              ) : (
+                  null
+                )
+            }
+          </div>
           {
             _.isEmpty(newInfoVOList) ?
               <div className={styles.descri}>暂无数据</div> :
               <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
                 {this.renderContent(newInfoVOList)}
               </div>
-          }
-          {
-            isShowMore ? (
-              <div className={styles.fold} >
-                <Clickable
-                  onClick={this.handleMoreClick}
-                  eventName="/click/Home/viewpointMore"
-                >
-                  <a>{'更多'}</a>
-                </Clickable>
-              </div>
-            ) : (
-                null
-              )
           }
         </div>
       </div>

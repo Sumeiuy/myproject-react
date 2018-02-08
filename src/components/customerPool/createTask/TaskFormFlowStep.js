@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-01 15:48:51
+ * @Last Modified time: 2018-02-07 13:22:13
  */
 
 import React, { PureComponent } from 'react';
@@ -323,9 +323,9 @@ export default class TaskFormFlowStep extends PureComponent {
       if (isResultTrackChecked) {
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
-          errMsg = '请选择一级指标';
+          errMsg = '请设置结果跟踪任务指标';
         } else if (_.isEmpty(indicatorLevel2Key)) {
-          errMsg = '请选择二级指标';
+          errMsg = '请设置结果跟踪任务二级指标';
         } else if (hasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
         } else if (!hasState && !inputIndicator) {
