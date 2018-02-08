@@ -79,10 +79,9 @@ export default class TaskSearchRow extends PureComponent {
       // currentSelectLabel = '',
     } = props;
 
-    const { argsOfQueryCustomer, currentFilterObject, filterNumObject } = labelCust || {};
+    const { argsOfQueryCustomer = {}, currentFilterObject, filterNumObject } = labelCust || {};
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
-      pageSize: INITIAL_PAGE_SIZE,
       // totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
@@ -153,10 +152,11 @@ export default class TaskSearchRow extends PureComponent {
       enterType: 'labelSearchCustPool',
       labels: [labelId],
     };
-    if (!_.isEmpty(argsOfQueryCustomer)) {
+    if (!_.isEmpty(argsOfQueryCustomer[`${labelId}`])) {
       // 如果data里面存在payload，就恢复数据，不然就取默认数据
       // 查询客户列表时必传的参数
-      payload = { ...payload, ...argsOfQueryCustomer[`${labelId}`] };
+      const { labels: remberLabels } = argsOfQueryCustomer[`${labelId}`];
+      payload = { ...payload, labels: remberLabels };
     }
     // 有权限传orgId，没有权限传ptyMngId
     if (isAuthorize) {
@@ -235,7 +235,6 @@ export default class TaskSearchRow extends PureComponent {
       labelId: value.labelMapping,
       currentSource: value.source,
       curPageNum: INITIAL_PAGE_NUM,
-      pageSize: INITIAL_PAGE_SIZE,
       currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
@@ -257,14 +256,13 @@ export default class TaskSearchRow extends PureComponent {
     const { labelId, currentFilterObject } = this.state;
     this.queryPeopleOfLabel({
       labelId,
-      curPageNum: INITIAL_PAGE_NUM,
+      curPageNum: currentPageNum,
       pageSize: changedPageSize,
       filter: currentFilterObject[labelId] || [],
     });
 
     this.setState({
-      curPageNum: INITIAL_PAGE_NUM,
-      pageSize: changedPageSize,
+      curPageNum: currentPageNum,
     });
   }
 
@@ -373,7 +371,6 @@ export default class TaskSearchRow extends PureComponent {
   render() {
     const {
       curPageNum = INITIAL_PAGE_NUM,
-      pageSize = INITIAL_PAGE_SIZE,
       custTableData,
       currentFilterObject,
       currentSource,
@@ -416,14 +413,14 @@ export default class TaskSearchRow extends PureComponent {
               title={currentSelectLabelName || ''}
               maskClosable={false}
               closable={false}
-              footer={[
+              footer={
                 <Clickable
                   onClick={this.handleCancel}
                   eventName="/click/taskSearchRow/close"
                 >
                   <Button key="back" size="large">确定</Button>
-                </Clickable>,
-              ]}
+                </Clickable>
+              }
               width={700}
               wrapClassName={styles.labelCustModalContainer}
             >
@@ -449,7 +446,7 @@ export default class TaskSearchRow extends PureComponent {
                   <GroupTable
                     pageData={{
                       curPageNum,
-                      curPageSize: pageSize,
+                      curPageSize: INITIAL_PAGE_SIZE,
                       totalRecordNum,
                     }}
                     tableClass={

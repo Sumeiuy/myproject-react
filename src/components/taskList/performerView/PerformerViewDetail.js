@@ -60,11 +60,13 @@ export default class PerformerViewDetail extends PureComponent {
     super(props);
     this.state = {
       visible: false,
-      checkboxData: [],
+      checkboxData: {},
       radioData: [],
       areaTextData: [],
       keyIndex: Number(emp.getId()),
       isDisabled: false,
+      isShowErrorCheckbox: {},
+      checkBoxQuesId: [],
     };
   }
 
@@ -171,7 +173,13 @@ export default class PerformerViewDetail extends PureComponent {
   // 处理请求问卷题目是否成功
   @autobind
   handleGetQuesSuccess() {
-    const { answersList } = this.props;
+    const { answersList = {} } = this.props;
+    const { quesInfoList } = answersList;
+    const checkBoxQuesId = _.filter(quesInfoList, ['quesTypeCode', '2']);
+    this.setState({
+      // 存储多选题Id
+      checkBoxQuesId: _.map(checkBoxQuesId, item => item.quesId),
+    });
     if (!_.isEmpty(answersList)) {
       this.setState({
         visible: true,
@@ -182,14 +190,38 @@ export default class PerformerViewDetail extends PureComponent {
   @autobind
   handleOk() {
     const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
-    const { checkboxData, radioData, areaTextData } = this.state;
+    const {
+      checkboxData: stv,
+      radioData,
+      areaTextData,
+      isShowErrorCheckbox,
+      checkBoxQuesId } = this.state;
+    const checkboxData = _.flatten(_.map(stv, item => item));
+    let allCheckbox = null;
+    checkBoxQuesId.forEach((item) => {
+      // 根据存储的多选题ID 判断单个多选题是否勾选
+      if (isShowErrorCheckbox[item]) {
+        allCheckbox = isShowErrorCheckbox[item];
+      }
+      return false;
+    });
     const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
-    form.validateFields((err) => {
+    form.validateFields((err, value) => {
+      // 判断多选题是否全部勾选
+      if (_.isEmpty(isShowErrorCheckbox)) {
+        const initError = _.mapValues(value, () => true);
+        this.setState({
+          // 改变多选题状态
+          isShowErrorCheckbox: initError,
+        });
+      }
+
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,
         });
-      } else {
+        // 判断单个单选题是否勾选
+      } else if (!allCheckbox) {
         const params = {
           // 提交问卷传参测试
           answerReqs: checkedData,
@@ -226,17 +258,19 @@ export default class PerformerViewDetail extends PureComponent {
     this.setState({
       visible: false,
       keyIndex: this.state.keyIndex + 1,
+      // 清除状态
+      isShowErrorCheckbox: {},
     });
   }
 
   // 处理选中答案数据
   @autobind
-  handleCheckboxChange(key) {
-    const { checkboxData } = this.state;
-    let initCheck = checkboxData;
+  handleCheckboxChange(key, quesId) {
+    const { checkboxData, isShowErrorCheckbox } = this.state;
+    const initCheck = checkboxData;
     // +-+ 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
     const arr = _.map(key, item => _.split(item, '+-+'));
-    const params = _.flatten(_.map(arr, (item) => {
+    let params = _.flatten(_.map(arr, (item) => {
       const childs = {
         answerId: item[1],
         answerText: item[0],
@@ -244,10 +278,17 @@ export default class PerformerViewDetail extends PureComponent {
       };
       return childs;
     }));
-    initCheck = _.concat(checkboxData, params);
-    initCheck = _.uniqBy(initCheck, 'answerId', 'quesId');
+    if (_.isEmpty(key)) {
+      params = key;
+    }
+    initCheck[String(quesId)] = params;
     this.setState({
       checkboxData: initCheck,
+      // 存储多选框是否选中状态
+      isShowErrorCheckbox: {
+        ...isShowErrorCheckbox,
+        [quesId]: _.isEmpty(params),
+      },
     });
   }
 
@@ -309,7 +350,7 @@ export default class PerformerViewDetail extends PureComponent {
       form,
       answersList,
     } = this.props;
-    const { visible, keyIndex, isDisabled } = this.state;
+    const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
     const { serveStatus = [] } = dict || {};
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
@@ -411,6 +452,7 @@ export default class PerformerViewDetail extends PureComponent {
           answersList={answersList}
           key={keyIndex}
           isDisabled={isDisabled}
+          isShowErrorCheckbox={isShowErrorCheckbox}
         />
       </div>
     );
