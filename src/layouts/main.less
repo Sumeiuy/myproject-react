@@ -16,6 +16,7 @@
     transition: @transition-ease-out;
     background-color: @invest-bkc-base;
     .content {
+      overflow: hidden; //为了对抗外边距折叠引起的fsp滚动问题，切勿删
       min-height: e("calc(100vh - 184px)");
       position: relative;
     }
