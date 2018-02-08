@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-15 15:41:21
+ * @Last Modified time: 2018-02-08 15:32:25
  * 客户反馈
  */
 
@@ -17,16 +17,6 @@ import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
-
-//   'rgba(57,131,255,1)',
-//   'rgba(74,218,213,1)',
-//   'rgba(117,111,184,1)',
-//   'rgba(255,78,123,1)',
-//   'rgba(255,178,78,1)',
-//   'rgba(112,195,129,1)',
-//   'rgba(241,222,90,1)',
-//   'rgba(120,146,98,1)',
-//   'rgba(255,120,78,1)',
 
 // 一级反馈颜色表
 const getLevelColor = (index, alpha = 1) => {
@@ -87,6 +77,10 @@ export default class CustFeedback extends PureComponent {
     const { custFeedback: nextFeedback } = nextProps;
     const { custFeedback } = this.props;
     if (custFeedback !== nextFeedback) {
+      // 需要重新绘制饼图时，清除echarts的当前实例
+      if (this.chartInstance) {
+        this.chartInstance.getChartsInstance().clear();
+      }
       const { level1Data, level2Data } = this.renderCustFeedbackChart(nextFeedback);
       this.setState({
         level1Data,
@@ -112,7 +106,14 @@ export default class CustFeedback extends PureComponent {
   @autobind
   renderCustFeedbackChart(custFeedback) {
     // 前后台定义返回的格式可以直接给一级饼图作数据源
-    let level1Data = custFeedback;
+    if (_.isEmpty(custFeedback)) {
+      return {
+        level1Data: [],
+        level2Data: [],
+      };
+    }
+
+    let level1Data = custFeedback || [];
     // 然后添加颜色
     level1Data = _.map(level1Data, (item, index) => {
       const currentLevel1ItemColor = getLevelColor(index, 1);
@@ -257,10 +258,9 @@ export default class CustFeedback extends PureComponent {
   }
 
   render() {
-    const { onPieHover, onPieLeave } = this.props;
     const { level1Data, level2Data } = this.state;
 
-    const options = _.isEmpty(level1Data && level2Data) ? constructEmptyPie() :
+    const options = _.isEmpty(level1Data) && _.isEmpty(level2Data) ? constructEmptyPie() :
       constructPieOptions({
         renderTooltip: this.renderTooltip,
         level1Data,
@@ -280,10 +280,7 @@ export default class CustFeedback extends PureComponent {
               height: '162px',
               width: '50%',
             }}
-            onEvents={{
-              mouseover: onPieHover,
-              mouseout: onPieLeave,
-            }}
+            ref={ref => this.chartInstance = ref}
           />
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?

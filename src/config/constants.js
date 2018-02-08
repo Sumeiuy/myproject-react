@@ -14,6 +14,7 @@ export default {
   historyBoardType: 'TYPE_LSDB_TGJX',
   apiPrefix: '/fspa/mcrm/api',
   fspPrefix: '/fsp',
+  inHTSCDomain: location.hostname.indexOf('htsc.com.cn') > -1,
   jingZongLevel: '1', // 经总的level值
   filialeLevel: '2', // 分公司的level值
   hbgxSummaryType: 'hbgx', // 汇总方式（汇报关系）

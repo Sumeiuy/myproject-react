@@ -13,6 +13,8 @@ import { emp } from '../../helper/index';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
+// 新建晨报时标记晨报id为-1
+const createNewsId = -1;
 
 @Form.create()
 export default class AddMorningBoradcast extends PureComponent {
@@ -29,6 +31,7 @@ export default class AddMorningBoradcast extends PureComponent {
     onHandleGetList: PropTypes.func.isRequired,
     handleCancel: PropTypes.func.isRequired,
     saveBoradcast: PropTypes.func.isRequired,
+    getUuid: PropTypes.func.isRequired,
     delCeFile: PropTypes.func.isRequired,
     getBoradcastDetail: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
@@ -63,7 +66,7 @@ export default class AddMorningBoradcast extends PureComponent {
       // 打开模态框即初始化表单
       this.resetState();
       resetFields();
-      if (newsId !== -1) {
+      if (newsId !== createNewsId) {
         const itemDetail = boradcastDetail[newsId];
         if (!itemDetail) {
           getBoradcastDetail({ newsId });
@@ -149,7 +152,7 @@ export default class AddMorningBoradcast extends PureComponent {
           audioFileId: finalNewUuid[0],
           otherFileId: finalNewUuid[1],
         };
-        if (newsId !== -1) {
+        if (newsId !== createNewsId) {
           query = {
             ...query,
             newsId,
@@ -163,13 +166,16 @@ export default class AddMorningBoradcast extends PureComponent {
   }
   @autobind()
   onHandleCancel() {
-    const { handleCancel, newsId, uploaderFile } = this.props;
+    const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
     const { isUpdateFile } = this.state;
     if (this.formWrapRef) {
       this.formWrapRef.scrollTop = 0;
     }
     if (isUpdateFile) {
       uploaderFile({ newsId });
+    }
+    if (newsId === createNewsId) {
+      getUuid();
     }
     handleCancel();
   }
@@ -377,7 +383,7 @@ export default class AddMorningBoradcast extends PureComponent {
     const morningBoradcastType = dict.newsTypeDictList || [];
     return (
       <Modal
-        title={`${newsId !== -1 ? '修改' : '新建'}晨间播报`}
+        title={`${newsId !== createNewsId ? '修改' : '新建'}晨间播报`}
         width="650px"
         maskClosable={false}
         wrapClassName="addMorningBoradcast"
@@ -423,7 +429,7 @@ export default class AddMorningBoradcast extends PureComponent {
               wrapperCol={{ span: 8, offset: 1 }}
             >
               {getFieldDecorator('createdBy', {
-                initialValue: newsId === -1 ? creator : getInitDate('createdBy'),
+                initialValue: newsId === createNewsId ? creator : getInitDate('createdBy'),
                 rules: [{ required: true, message: '请输入晨报作者!' }],
               })(
                 <Input />,
@@ -490,7 +496,7 @@ export default class AddMorningBoradcast extends PureComponent {
                 <Button type="primary" icon="plus" >
                   添加文件
                 </Button>
-              </Upload>,
+              </Upload>
             </FormItem>
           </Form>
         </div>

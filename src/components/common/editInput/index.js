@@ -3,13 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-01-09 10:58:24
+ * @Last Modified time: 2018-02-08 10:48:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import Icon from '../Icon';
 // import Button from '../Button';
@@ -23,6 +23,8 @@ export default class EditInput extends PureComponent {
     edit: PropTypes.bool,
     onCancel: PropTypes.func,
     maxLen: PropTypes.number,
+    data: PropTypes.array,
+    idx: PropTypes.number,
     btnGroup: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -37,6 +39,8 @@ export default class EditInput extends PureComponent {
     edit: false,
     btnGroup: '',
     maxLen: 30,
+    data: [],
+    idx: 0,
     onCancel: () => {},
   }
 
@@ -96,10 +100,16 @@ export default class EditInput extends PureComponent {
   onSubmit(e) {
     e.stopPropagation();
     const { value, oldValue } = this.state;
-    const { editCallback, id, onCancel } = this.props;
-    if (value === oldValue) {
+    const { editCallback, id, onCancel, data, idx } = this.props;
+    // 传入的 data 是否为空
+    const isDataEmpty = _.isEmpty(data);
+    // propsValue 值
+    const propsValue = !isDataEmpty ? data[idx].name : '';
+    // 判断 value 值与 propsValue 是否相等
+    const valueIsEqual = isDataEmpty ? false : value === propsValue;
+    if (value === oldValue || valueIsEqual) {
       this.setState({
-        value: oldValue,
+        value: isDataEmpty ? oldValue : propsValue,
         edit: false,
       }, onCancel);
     } else {

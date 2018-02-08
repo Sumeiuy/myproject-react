@@ -20,12 +20,14 @@ export default class TipsInfo extends PureComponent {
     wrapperClass: PropTypes.string,
     overlayStyle: PropTypes.object,
     getPopupContainer: PropTypes.func,
+    trigger: PropTypes.string,
   }
 
   static defaultProps = {
     position: 'bottomLeft',
     wrapperClass: '',
     overlayStyle: null,
+    trigger: 'hover',
     getPopupContainer: () => document.body,
   };
 
@@ -37,7 +39,14 @@ export default class TipsInfo extends PureComponent {
   }
 
   render() {
-    const { title, position, wrapperClass, overlayStyle, getPopupContainer } = this.props;
+    const {
+      title,
+      position,
+      wrapperClass,
+      overlayStyle,
+      getPopupContainer,
+      trigger,
+    } = this.props;
 
     return (
       <Tooltip
@@ -52,6 +61,7 @@ export default class TipsInfo extends PureComponent {
         placement={position}
         overlayStyle={overlayStyle}
         getPopupContainer={getPopupContainer}
+        trigger={trigger}
       >
         <Icon className={styles.icon} type="tishi" />
       </Tooltip>

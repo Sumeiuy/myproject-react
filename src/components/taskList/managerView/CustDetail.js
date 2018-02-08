@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 13:55:46
+ * @Last Modified time: 2018-02-07 20:31:55
  * 客户明细数据
  */
 
@@ -277,7 +277,7 @@ export default class CustDetail extends PureComponent {
     },
     {
       key: 'levelCode',
-      value: '客户类型',
+      value: '客户等级',
       render: this.renderCustTypeIcon,
     },
     {

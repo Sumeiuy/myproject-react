@@ -6,7 +6,7 @@
 import 'whatwg-fetch';
 import _ from 'lodash';
 
-import { request as config, excludeCode } from '../config';
+import { request as config, excludeCode, constants } from '../config';
 
 /**
  * Parses the JSON returned by a network request
@@ -62,21 +62,22 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-const request = (url, options) => (
-  Promise.race([
+const request = (url, options) => {
+  const timeoutMessage = constants.inHTSCDomain ? '' : ` - ${url}`;
+  return Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus)
       .then(response => parseJSON(response, options)),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(
-          () => reject('请求超时'),
+          () => reject(`请求超时${timeoutMessage}`),
           options.timeout || config.timeout,
         );
       },
     ),
-  ])
-);
+  ]);
+};
 
 const myHeaders = new Headers({
   'Content-Type': 'text/html',
@@ -98,21 +99,11 @@ const fspRequest = (url, options) => (
 );
 
 /**
- * 发送日志专用
+ * 发送日志专用, 不考虑超时报错
  */
 const logRequest = (url, options) => (
-  Promise.race([
-    fetch(url, { credentials: 'include', ...options })
-      .then(checkStatus),
-    new Promise(
-      (rosolve, reject) => {// eslint-disable-line
-        setTimeout(
-          () => reject('日志发送超时'),
-          options.timeout || config.timeout,
-        );
-      },
-    ),
-  ])
+  fetch(url, { credentials: 'include', ...options })
+    .then(checkStatus)
 );
 
 export default {
