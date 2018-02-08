@@ -31,8 +31,8 @@ function renderPageSizeOptions(pageSize) {
 // 是否应该隐藏最后一页的按钮
 function shouldHideLastButton(current, pageSize, total) {
   // 当最后一页与当前页相差5页时显示最后一页
-  const SHOW_NUMBER = 5;
-  const totalPageNumber = total / pageSize;
+  const SHOW_NUMBER = 2;
+  const totalPageNumber = pageSize && (total / pageSize);
   if ((totalPageNumber - current) > SHOW_NUMBER) {
     return true;
   }
@@ -81,12 +81,17 @@ export default class PaginationComponent extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { isHideLastButton, total: prevTotal, current: prevCurrent } = this.props;
     const { current, pageSize, total } = nextProps;
-    // 只在初始化时没有数据，而取到这次数据到达时，才进行setState
-    if ((isHideLastButton && prevTotal === 0 && total !== 0)) {
-      this.setState({
-        current,
-        shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
-      });
+
+    // props.total发生变化就更新组件
+    if (total !== prevTotal) {
+      if (isHideLastButton) {
+        this.setState({
+          current,
+          shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
+        });
+      } else {
+        this.setState({ current });
+      }
     } else if (current === 1 && prevCurrent > 1) { // 这里是为了处理模态框关闭重新进入时，将页码置为1
       this.setState({
         current,

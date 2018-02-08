@@ -54,7 +54,11 @@ export default class ApplicationList extends PureComponent {
             _.isEmpty(pagination) ? null
             : (
               <div className={styles.pagination}>
-                <Pagination {...pagination} />
+                <Pagination
+                  {...pagination}
+                  isShortPageList
+                  isHideLastButton
+                />
               </div>
             )
           }
