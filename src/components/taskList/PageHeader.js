@@ -383,8 +383,8 @@ export default class Pageheader extends PureComponent {
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
 
-    if (filterControl === CONTROLLER_VIEW) {
-      // 管理者视图只有保留三种状态和所有状态
+    if (filterControl === CONTROLLER_VIEW || filterControl === EXECUTE_VIEW) {
+      // 管理者视图或者执行者视图只有保留三种状态和所有状态
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(MANAGER_VIEW_STATUS, item.value));
     }
@@ -461,11 +461,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          type,
-          creator,
-          // createTimeStart,
-          // createTimeEnd,
-          missionName,
+        type,
+        creator,
+        // createTimeStart,
+        // createTimeEnd,
+        missionName,
         },
       },
     } = this.props;
@@ -532,20 +532,20 @@ export default class Pageheader extends PureComponent {
             />
           </div>
           {missionViewTypeValue === INITIATOR_VIEW ? null :
-          <div className={styles.filterFl}>
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curDrafter}
-                placeholder="工号/名称"
-                searchList={drafterAllList}
-                showObjKey="ptyMngName"
-                objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('creator', item)}
-                emitToSearch={value => this.toSearch(getDrafterList, value)}
-                name={`${page}-ptyMngName`}
-              />
+            <div className={styles.filterFl}>
+              <div className={styles.dropDownSelectBox}>
+                <DropDownSelect
+                  value={curDrafter}
+                  placeholder="工号/名称"
+                  searchList={drafterAllList}
+                  showObjKey="ptyMngName"
+                  objId="ptyMngId"
+                  emitSelectItem={item => this.selectItem('creator', item)}
+                  emitToSearch={value => this.toSearch(getDrafterList, value)}
+                  name={`${page}-ptyMngName`}
+                />
+              </div>
             </div>
-          </div>
           }
 
           {missionViewTypeValue === INITIATOR_VIEW ?

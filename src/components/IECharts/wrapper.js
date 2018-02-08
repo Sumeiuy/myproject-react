@@ -175,6 +175,10 @@ function wrapECharts(ECharts) {
       // }
     }
     @autobind
+    getChartsInstance() {
+      return this.state.instance;
+    }
+    @autobind
     mygetInstance() {
       // console.log('_getInstance');
       // console.log('IECharts', this.chartBox);
