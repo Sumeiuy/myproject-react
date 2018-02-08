@@ -3,32 +3,27 @@
   .head {
     font-family: @font-family;
     font-size: 16px;
+    font-weight: 600;
     color: #4a4a4a;
     letter-spacing: 0.23px;
     border-bottom: 1px solid #ddd;
-    padding-bottom: 4px;
-    height: 30px;
-    line-height: 30px;
+    padding-bottom: 6px;
   }
   .title {
     font-family: @font-family;
     font-size: 14px;
     color: #4a4a4a;
     text-align: left;
-    border-bottom: 1px solid #ccc;
     padding-bottom: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .up {
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    padding: 6px 16px 15px 12px;
+    padding: 6px 0 27px;
     margin-top: 12px;
-    height: 192px;
+    border-bottom: 2px solid #ccc;
     .article {
-      margin-top: 6px;
       position: relative;
       .text {
         height: 138px;
@@ -64,17 +59,19 @@
     }
   }
   .down {
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    margin-top: 10px;
-    padding-left: 12px;
-    padding-right: 16px;
-    padding-top: 6px;
-    .downTitle {
-      padding-bottom: 6px;
+    margin-top: 19px;
+    padding-bottom: 22px;
+    border-bottom: 2px solid #ccc;
+    .headContainer {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      .listHead {
+        border-bottom: none;
+      }
     }
     .descriContainer {
-      padding: 9px 0;
+      padding: 7px 0;
       overflow: hidden;
       .row {
         text-overflow: ellipsis;
@@ -109,9 +106,6 @@
       text-align: justify;
     }
     .fold {
-      border-top: 1px solid #ccc;
-      height: 30px;
-      line-height: 30px;
       text-align: right;
       font-family: @font-family;
       font-size: 12px;

@@ -157,9 +157,12 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
       );
     }
-    return (<TipsInfo
-      title={content}
-    />);
+    return (
+      <TipsInfo
+        position={'bottomRight'}
+        title={content}
+      />
+    );
   }
 
   render() {
@@ -283,7 +286,7 @@ export default class TargetCustomerRight extends PureComponent {
               </Col>
             </Row>
             <Row className={styles.mt3}>
-              <Col span={12}>
+              <Col span={8}>
                 <h5
                   className={styles.phoneLeft}
                 >
@@ -299,7 +302,7 @@ export default class TargetCustomerRight extends PureComponent {
               </Col>
               {
                 itemData.contactPhone ?
-                  <Col span={12}>
+                  <Col span={16}>
                     <h5
                       className={styles.phoneRight}
                     >

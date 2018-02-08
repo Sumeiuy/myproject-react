@@ -140,7 +140,7 @@ export default function AppItem(props) {
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
-        <div className={styles.drafter}>创建者：<span>{data.creator}</span>{!_.isEmpty(data.orgName) ? `-${data.orgName}` : ''}</div>
+        <div className={styles.drafter}>创建者：<span>{!_.isEmpty(data.creator) ? `${data.creator}-` : ''}</span>{!_.isEmpty(data.orgName) ? `${data.orgName}` : ''}</div>
         <div className={styles.date}>{judgeMissionViewType(data.missionViewType) ? '结束时间' : '创建于'}：{showCreateTimeOrProcessTime(data) || '无'}</div>
       </div>
     </div>

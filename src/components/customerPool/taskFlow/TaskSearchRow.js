@@ -78,10 +78,10 @@ export default class TaskSearchRow extends PureComponent {
     super(props);
     const {
       storedData: { labelCust = {} },
-      currentSelectLabel = '',
+      // currentSelectLabel = '',
     } = props;
 
-    const { custNum, argsOfQueryCustomer, currentFilterObject } = labelCust || {};
+    const { argsOfQueryCustomer, currentFilterObject, filterNumObject } = labelCust || {};
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
@@ -92,42 +92,45 @@ export default class TaskSearchRow extends PureComponent {
       title: '',
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
-      filterNumObject: {
-        [currentSelectLabel]: custNum || 0,
-      },
+      filterNumObject: _.isEmpty(filterNumObject) ? {} : filterNumObject,
       // 当前筛选条件
       argsOfQueryCustomer,
+      currentSelectLabelName: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { labelId, filterNumObject } = this.state;
-    const { peopleOfLabelData, visible } = nextProps;
-    const { custList = [] } = peopleOfLabelData || {};
-    const list = _.map(custList, item => ({
-      ...item,
-      brok_id: item.brokId,
-      brok_org_id: item.brokOrgId,
-      contact_flag: item.contactFlag,
-      lever_code: item.levelName,
-      cust_type: item.custType === 'N' ? '高净值' : '零售',
-    }));
-    let finalFilterNumObject = filterNumObject;
-    if (!_.isEmpty(labelId)) {
-      finalFilterNumObject = {
-        [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-      };
-    }
+    const { peopleOfLabelData, visible, isLoadingEnd, isSightTelescopeLoadingEnd } = nextProps;
+    const showStatus = visible && isLoadingEnd && isSightTelescopeLoadingEnd;
+    // 是否展示筛查客户的modal
+    if (showStatus) {
+      const { custList = [] } = peopleOfLabelData || {};
+      const list = _.map(custList, item => ({
+        ...item,
+        brok_id: item.brokId,
+        brok_org_id: item.brokOrgId,
+        contact_flag: item.contactFlag,
+        lever_code: item.levelName,
+        cust_type: item.custType === 'N' ? '高净值' : '零售',
+      }));
+      let finalFilterNumObject = filterNumObject;
+      // 只有点击了筛查客户，才需要替换filterNumObject
+      if (!_.isEmpty(labelId) && showStatus) {
+        finalFilterNumObject = {
+          [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+        };
+      }
 
-    this.setState({
-      // totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-      custTableData: list,
-      visible,
-      filterNumObject: {
-        ...filterNumObject,
-        ...finalFilterNumObject,
-      },
-    });
+      this.setState({
+        custTableData: list,
+        visible,
+        filterNumObject: {
+          ...filterNumObject,
+          ...finalFilterNumObject,
+        },
+      });
+    }
   }
 
   // 获取已筛选客户数
@@ -206,6 +209,7 @@ export default class TaskSearchRow extends PureComponent {
         ...filterNumObject,
         ...finalFilterNumObject,
       },
+      currentSelectLabelName: currentLabelInfo.labelName,
     });
     onChange(currentLabelId);
   }
@@ -234,6 +238,7 @@ export default class TaskSearchRow extends PureComponent {
       currentSource: value.source,
       curPageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
+      currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
     this.props.onChange(value.id || '');
@@ -377,6 +382,7 @@ export default class TaskSearchRow extends PureComponent {
       currentSource,
       labelId,
       filterNumObject,
+      currentSelectLabelName,
     } = this.state;
 
     const {
@@ -410,7 +416,7 @@ export default class TaskSearchRow extends PureComponent {
             (isLoadingEnd && visible && isSightTelescopeLoadingEnd) ?
               <Modal
                 visible
-                title="筛查客户"
+                title={currentSelectLabelName || ''}
                 onOk={this.handleOk}
                 maskClosable={false}
                 onCancel={this.handleCancel}

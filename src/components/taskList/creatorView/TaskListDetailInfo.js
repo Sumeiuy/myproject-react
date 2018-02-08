@@ -55,8 +55,8 @@ export default class TaskListDetailInfo extends PureComponent {
               <span>{infoData.strategyDesc || '--'}</span>
             </div>
             <div>
-              <span>服务策略&nbsp;:</span>
-              <span>{infoData.strategyDesc || '--'}</span>
+              <span>任务提示&nbsp;:</span>
+              <span>{infoData.infoContent || '--'}</span>
             </div>
           </div> :
           <div className={styles.modContent}>
