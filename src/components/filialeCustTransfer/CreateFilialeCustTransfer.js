@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 15:06:08
+ * @Last Modified time: 2018-02-08 10:57:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -130,10 +130,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             pageNum: 1,
             pageSize: 10,
           };
-          this.setState({
-            attachment: data,
-          }, () => queryCustomerAssignImport(payload));
           // 发送请求
+          queryCustomerAssignImport(payload).then(() => {
+            this.setState({
+              attachment: data,
+            });
+          });
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
@@ -203,7 +205,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 提交
   @autobind
   handleSubmit(item) {
-    const { client, newManager, isDefaultType } = this.state;
+    const { client, newManager, isDefaultType, attachment } = this.state;
     const { managerData } = this.props;
     const itemData = {
       operate: item.operate,
@@ -212,6 +214,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       nextApproverList: item.flowAuditors,
     };
     if (!isDefaultType) {
+      if (_.isEmpty(attachment)) {
+        message.error('暂未导入客户或者导入失败，请重试');
+        return;
+      }
       this.setState({
         ...itemData,
         nextApproverModal: true,
