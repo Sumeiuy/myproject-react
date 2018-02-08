@@ -403,6 +403,7 @@ export default class BroadcastList extends PureComponent {
                     format="YYYY-MM-DD"
                     placeholder={['Start', 'End']}
                     onChange={this.onChange}
+                    className={styles.timeWrap}
                   />,
                 )}
               </div>
