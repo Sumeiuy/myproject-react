@@ -383,8 +383,8 @@ export default class Pageheader extends PureComponent {
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
 
-    if (filterControl === CONTROLLER_VIEW) {
-      // 管理者视图只有保留三种状态和所有状态
+    if (filterControl === CONTROLLER_VIEW || filterControl === EXECUTE_VIEW) {
+      // 管理者视图或者执行者视图只有保留三种状态和所有状态
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(MANAGER_VIEW_STATUS, item.value));
     }
@@ -461,11 +461,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          type,
-          creator,
-          // createTimeStart,
-          // createTimeEnd,
-          missionName,
+        type,
+        creator,
+        // createTimeStart,
+        // createTimeEnd,
+        missionName,
         },
       },
     } = this.props;

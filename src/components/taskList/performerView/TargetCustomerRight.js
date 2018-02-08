@@ -324,7 +324,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <div>总资产：</div><div>{this.handleAssets(itemData.assets)}</div>
+                  <span>总资产：</span><span>{this.handleAssets(itemData.assets)}</span>
                   {_.isEmpty(itemData.assets) ?
                     null :
                     <span className={styles.wordTips}>
@@ -346,7 +346,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><div>股基佣金率额：</div><div>{miniFee}</div></h5>
+                ><span>股基佣金率额：</span><span>{miniFee}</span></h5>
               </Col>
             </Row>
             <Row>
@@ -357,8 +357,8 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <div>持仓资产：</div>
-                  <div>{this.handleAssets(itemData.openAssets)}</div>
+                  <span>持仓资产：</span>
+                  <span>{this.handleAssets(itemData.openAssets)}</span>
                   {openAssetsPercentNode}
                 </h5>
               </Col>
@@ -368,7 +368,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><div>沪深归集率：</div><div>{hsRate}</div></h5>
+                ><span>沪深归集率：</span><span>{hsRate}</span></h5>
               </Col>
             </Row>
             <Row className={styles.lastCol}>
@@ -379,8 +379,8 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <div>可用余额：</div>
-                  <div>{this.handleAssets(itemData.availablBalance)}</div>
+                  <span>可用余额：</span>
+                  <span>{this.handleAssets(itemData.availablBalance)}</span>
                   {availablBalancePercentNode}
                 </h5>
               </Col>
@@ -391,7 +391,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <div>信息完备率：</div><div>{infoCompletionRate}</div>
+                  <span>信息完备率：</span><span>{infoCompletionRate}</span>
                   <TipsInfo
                     title={inFoPerfectRate}
                   />
@@ -407,7 +407,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleFour]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><div>已开通业务：</div><div>{this.handleEmpty(itemData.openedBusiness)}</div></h5>
+                ><span>已开通业务：</span><span>{this.handleEmpty(itemData.openedBusiness)}</span></h5>
               </Col>
             </Row>
             <Row className={styles.lastCol}>
@@ -417,7 +417,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleFour]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><div>可开通业务：</div><div>{this.handleEmpty(itemData.openBusiness)}</div></h5>
+                ><span>可开通业务：</span><span>{this.handleEmpty(itemData.openBusiness)}</span></h5>
               </Col>
             </Row>
           </div>
@@ -425,10 +425,10 @@ export default class TargetCustomerRight extends PureComponent {
             <Row>
               <Col span={isFold ? 14 : 24}>
                 <h5 className={styles.people}>
-                  <div className={styles.fl}>最近服务时间：</div>
-                  <div className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
+                  <span className={styles.fl}>最近服务时间：</span>
+                  <span className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
                     {this.handleEmpty(itemData.missionType)} -
-                    {this.handleEmpty(itemData.missionTitle)}</div>
+                    {this.handleEmpty(itemData.missionTitle)}</span>
                 </h5>
               </Col>
               <Col span={isFold ? 10 : 24}>
