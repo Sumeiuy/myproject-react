@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 10:57:58
+ * @Last Modified time: 2018-02-08 17:00:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -23,7 +23,7 @@ import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
-import customerTemplet from './customerTemplet.xls';
+import customerTemplet from './customerTemplet.xlsx';
 import styles from './createFilialeCustTransfer.less';
 
 const EMPTY_LIST = [];
@@ -437,11 +437,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       showUploadList: false,
     };
     // 分页
-    const hasPage = !_.isEmpty(page);
+    // const hasPage = !_.isEmpty(page);
     const paginationOption = {
-      current: hasPage ? page.curPageNum : 1,
-      total: hasPage ? page.totalRecordNum : 0,
-      pageSize: hasPage ? page.pageSize : 10,
+      current: page && page.curPageNum,
+      total: page && page.totalRecordNum,
+      pageSize: (page && page.pageSize) || 10,
       onChange: this.pageChangeHandle,
     };
     const uploadElement = _.isEmpty(attachment) ?
