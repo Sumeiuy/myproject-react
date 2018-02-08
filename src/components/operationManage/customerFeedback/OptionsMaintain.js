@@ -2,8 +2,8 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:09:39
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-08 10:22:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -231,11 +231,10 @@ export default class OptionsMaintain extends PureComponent {
       accordion: true,
     };
     const pagination = {
-      curPageNum: Number(feedbackDataPage.pageNum),
-      totalRecordNum: Number(feedbackDataPage.totalCount),
-      curPageSize: Number(feedbackDataPage.pageSize),
-      onPageChange: this.handlePageChange,
-      isShowSizeChanger: false,
+      current: Number(feedbackDataPage.pageNum),
+      total: Number(feedbackDataPage.totalCount),
+      pageSize: Number(feedbackDataPage.pageSize),
+      onChange: this.handlePageChange,
     };
     return (
       <div className={styles.optionsMaintain}>
@@ -263,6 +262,8 @@ export default class OptionsMaintain extends PureComponent {
               const header = (<div className={styles.header}>
                 <EditInput
                   value={item.name}
+                  data={feedbackList}
+                  idx={index}
                   id={String(item.id)}
                   edit={item.edit}
                   editCallback={this.editCallback}

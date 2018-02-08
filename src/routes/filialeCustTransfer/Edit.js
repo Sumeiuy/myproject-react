@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 16:31:07
+ * @Last Modified time: 2018-02-07 09:05:01
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -18,11 +18,12 @@ import { seibelConfig } from '../../config';
 
 const { filialeCustTransfer: { pageType } } = seibelConfig;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
-const TESTFLOWID = 'A397B29902752946970748CEF80F5381';
-const fetchDataFunction = (globalLoading, type) => query => ({
+const TESTFLOWID = '277F04385B7BFE45ABFD49D0EF615A63';
+const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -52,15 +53,13 @@ const mapDispatchToProps = {
   // 获取新服务经理
   getNewManagerList: fetchDataFunction(false, 'filialeCustTransfer/getNewManagerList'),
   // 提交保存
-  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange'),
+  saveChange: fetchDataFunction(true, 'filialeCustTransfer/saveChange', true),
   // 提交保存
-  doApprove: fetchDataFunction(true, 'filialeCustTransfer/doApprove'),
-  // 提交成功后清除上一次查询的数据
-  emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
+  doApprove: fetchDataFunction(true, 'filialeCustTransfer/doApprove', true),
   // 获取按钮列表和下一步审批人
-  getButtonList: fetchDataFunction(false, 'filialeCustTransfer/getButtonList'),
+  getButtonList: fetchDataFunction(true, 'filialeCustTransfer/getButtonList', true),
   // 客户表格分页信息
-  getPageAssignment: fetchDataFunction(true, 'filialeCustTransfer/getPageAssignment'),
+  getPageAssignment: fetchDataFunction(false, 'filialeCustTransfer/getPageAssignment'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -83,7 +82,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
     getNewManagerList: PropTypes.func.isRequired,
     newManagerList: PropTypes.array,
     // 选择新的服务经理
-    selectNewManager: PropTypes.func.isRequired,
+    selectNewManager: PropTypes.func,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
     // 走流程
@@ -98,6 +97,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
   }
 
   static defaultProps = {
+    selectNewManager: _.noop,
     custList: [],
     newManagerList: [],
     origiManagerList: {},
@@ -128,6 +128,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
 
   render() {
     const {
+      getDetailInfo,
       detailInfo,
       getCustList,
       custList,
@@ -151,6 +152,7 @@ export default class FilialeCustTransferEdit extends PureComponent {
     }
     return (
       <EditForm
+        getDetailInfo={getDetailInfo}
         data={detailInfo}
         getCustList={getCustList}
         custList={custList}

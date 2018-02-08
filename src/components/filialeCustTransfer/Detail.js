@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 15:33:36
+ * @Last Modified time: 2018-02-07 16:30:15
  */
 
 import React, { PureComponent } from 'react';
@@ -79,25 +79,30 @@ export default class Detail extends PureComponent {
       workflowHistoryBeans,
       assignmentList,
       page,
+      currentNodeName,
     } = this.props.data;
     const { pageAssignment } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
     const assignmentListValue = assignmentList[0];
-    // 客户信息
-    const custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
-    // 服务经理信息
-    const empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    let custInfoValue;
+    let empInfoValue;
+    if (!_.isEmpty(assignmentListValue)) {
+      // 客户信息
+      custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
+      // 服务经理信息
+      empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+    }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
 
     return (
@@ -159,6 +164,7 @@ export default class Detail extends PureComponent {
                 head="审批记录"
                 info={workflowHistoryBeans}
                 currentApproval={currentApproval}
+                currentNodeName={currentNodeName}
                 statusType="ready"
               />
             </div>

@@ -46,7 +46,6 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: labelId,
       labelId,
       tipsSize,
-      argsOfQueryCustomer: {},
     };
     this.bigBtn = true;
   }
@@ -63,46 +62,39 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   getData() {
-    const { labelId = '', condition, tipsSize, argsOfQueryCustomer } = this.state;
+    const { labelId = '', condition, tipsSize } = this.state;
     if (_.isEmpty(condition)) {
       return {
         labelCust: {},
       };
     }
 
-    const filterNumList = this.taskSearchRowRef.getFilterNumList();
-
+    const {
+      filterNumObject = {},
+      argsOfQueryCustomer = {},
+      currentFilterObject = {},
+    } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', customNum = '', labelMapping, labelName = '' } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', labelMapping, labelName = '', customNum = 0 } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
       labelMapping,
       labelDesc,
       condition,
-      custNum: filterNumList[labelId] || customNum,
+      custNum: `${labelId}` in filterNumObject ? filterNumObject[labelId] : customNum,
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
       argsOfQueryCustomer,
+      currentFilterObject,
+      filterNumObject,
     };
 
     return {
       labelCust,
     };
-  }
-
-  // 获取瞄准镜参数
-  @autobind
-  getArgsOfQueryCustomer(value) {
-    const { argsOfQueryCustomer } = this.state;
-    this.setState({
-      argsOfQueryCustomer: {
-        ...argsOfQueryCustomer,
-        ...value,
-      },
-    });
   }
 
   @autobind
@@ -200,7 +192,6 @@ export default class SelectLabelCust extends PureComponent {
           isAuthorize={isAuthorize}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
-          getArgsOfQueryCustomer={this.getArgsOfQueryCustomer}
           getFilterNumberList={this.getFilterNumberList}
           storedData={storedData}
         />

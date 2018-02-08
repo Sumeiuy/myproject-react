@@ -49,7 +49,7 @@ const mapDispatchToProps = {
   saveBoradcast: fetchDataFunction(true, effects.saveBoradcast),
   getBoradcastDetail: fetchDataFunction(true, effects.getBoradcastDetail),
   delBoradcastItem: fetchDataFunction(true, effects.delBoradcastItem),
-  getUuid: fetchDataFunction(true, effects.getUuid),
+  getUuid: fetchDataFunction(false, effects.getUuid),
   delCeFile: fetchDataFunction(true, effects.delCeFile),
   uploaderFile: fetchDataFunction(true, effects.uploaderFile),
   push: routerRedux.push,
@@ -109,11 +109,13 @@ export default class BroadcastList extends PureComponent {
     const {
       morningBoradcast: { boradcastList, newUuid },
       getUuid,
-      location: { query: isInit },
+      location: { query: { isInit } },
     } = this.props;
     const { onHandleGetList } = this;
     // 如果当前每日播报列表中没有数据则去获取
-    if (!boradcastList.length || isInit) onHandleGetList();
+    if (!boradcastList || !boradcastList.length || isInit === true) {
+      onHandleGetList();
+    }
     // 初始化Uuid
     if (!newUuid.length) getUuid();
   }
@@ -211,6 +213,17 @@ export default class BroadcastList extends PureComponent {
     });
   }
   // Model(晨报新增、修改) --> end
+  @autobind
+  formQuery() {
+    const { getFieldsValue } = this.props.form;
+    const values = getFieldsValue();
+    return {
+      createdBy: values.createdBy,
+      title: values.title,
+      createdFrom: values.createdTime[0].format('YYYY-MM-DD'),
+      createdTo: values.createdTime[1].format('YYYY-MM-DD'),
+    };
+  }
 
   // table -->start
   @autobind
@@ -257,12 +270,12 @@ export default class BroadcastList extends PureComponent {
         title: '操作',
         key: 'action',
         dataIndex: 'newsId',
-        width: '15%',
+        width: '6%',
         className: 'tableAction',
         render: newsId => (
           <span>
             <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelItem(newsId)}>
+            <Popconfirm title="确定删除?" onConfirm={() => this.onDelItem(newsId)}>
               <i className="icon iconfont icon-shanchu remove" />
             </Popconfirm>
           </span>
@@ -297,18 +310,10 @@ export default class BroadcastList extends PureComponent {
 
   // Search -->start
   @autobind()
-  onHandleSearch(value) {
+  onHandleSearch() {
     const { onHandleGetList } = this;
     onHandleGetList({
-      title: value,
-      pageNum: 1,
-    });
-  }
-  @autobind()
-  onHandleAuthorSearch(value) {
-    const { onHandleGetList } = this;
-    onHandleGetList({
-      createdBy: value,
+      ...this.formQuery(),
       pageNum: 1,
     });
   }
@@ -325,14 +330,16 @@ export default class BroadcastList extends PureComponent {
   onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
     const maxDate = moment(dateStrings[0]).add(6, 'month');
+
     if (maxDate.valueOf() < dates[1].valueOf()) {
       message.error('查询时间段不能超过6个月');
       return;
     }
     onHandleGetList({
+      ...this.formQuery(),
+      pageNum: 1,
       createdFrom: dateStrings[0],
       createdTo: dateStrings[1],
-      pageNum: 1,
     });
   }
   // 日期选择组件-->end
@@ -349,6 +356,7 @@ export default class BroadcastList extends PureComponent {
       },
       newsListLoading,
       saveBoradcast,
+      getUuid,
       delCeFile,
       getBoradcastDetail,
       dict,
@@ -362,8 +370,8 @@ export default class BroadcastList extends PureComponent {
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
     const paginationOption = {
       ...pagination,
-      onPageChange: this.onPageNumChange,
-      onSizeChange: this.onPageSizeChange,
+      onChange: this.onPageNumChange,
+      onShowSizeChange: this.onPageSizeChange,
     };
     return (
       <div className={styles.broadcastListWrap} >
@@ -378,7 +386,7 @@ export default class BroadcastList extends PureComponent {
                   <Search
                     placeholder="作者"
                     style={{ width: 200 }}
-                    onSearch={this.onHandleAuthorSearch}
+                    onSearch={this.onHandleSearch}
                   />,
                 )}
               </div>
@@ -395,6 +403,7 @@ export default class BroadcastList extends PureComponent {
                     format="YYYY-MM-DD"
                     placeholder={['Start', 'End']}
                     onChange={this.onChange}
+                    className={styles.timeWrap}
                   />,
                 )}
               </div>
@@ -432,6 +441,7 @@ export default class BroadcastList extends PureComponent {
                 boradcastDetail={boradcastDetail}
                 saveBoradcast={saveBoradcast}
                 getBoradcastDetail={getBoradcastDetail}
+                getUuid={getUuid}
                 handleOk={this.handleOk}
                 handleCancel={this.handleCancel}
                 onHandleGetList={this.onHandleGetList}

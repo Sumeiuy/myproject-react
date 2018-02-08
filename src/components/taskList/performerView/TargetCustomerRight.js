@@ -10,6 +10,8 @@ import { Row, Col, Modal, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+import contains from 'rc-util/lib/Dom/contains';
+
 import styles from './targetCustomerRight.less';
 import { fspContainer } from '../../../config';
 import TipsInfo from './TipsInfo';
@@ -27,6 +29,17 @@ const PER_CODE = 'per';
 // const ORG_CODE = 'org';
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
+
+// 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
+// 如果找不到无脑取第一个就行
+const getStickyTarget = (currentNode) => {
+  const containers = document.querySelectorAll('.sticky-container');
+  return (currentNode && _.find(
+    containers,
+    element => contains(element, currentNode),
+  )) || containers[0];
+};
+
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -144,9 +157,12 @@ export default class TargetCustomerRight extends PureComponent {
         </div>
       );
     }
-    return (<TipsInfo
-      title={content}
-    />);
+    return (
+      <TipsInfo
+        position={'bottomRight'}
+        title={content}
+      />
+    );
   }
 
   render() {
@@ -245,8 +261,8 @@ export default class TargetCustomerRight extends PureComponent {
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     return (
-      <div className={styles.box}>
-        <Affix>
+      <div className={styles.box} ref={ref => this.container = ref}>
+        <Affix target={() => getStickyTarget(this.container)}>
           <div className={styles.titles}>
             <Row>
               <Col span={7}>
@@ -270,7 +286,7 @@ export default class TargetCustomerRight extends PureComponent {
               </Col>
             </Row>
             <Row className={styles.mt3}>
-              <Col span={12}>
+              <Col span={8}>
                 <h5
                   className={styles.phoneLeft}
                 >
@@ -286,7 +302,7 @@ export default class TargetCustomerRight extends PureComponent {
               </Col>
               {
                 itemData.contactPhone ?
-                  <Col span={12}>
+                  <Col span={16}>
                     <h5
                       className={styles.phoneRight}
                     >
@@ -298,126 +314,128 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </Affix>
-        <div className={styles.asset}>
-          <Row>
-            <Col span={sendSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleTwo]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              >
-                <span>总资产：</span><span>{this.handleAssets(itemData.assets)}</span>
-                {_.isEmpty(itemData.assets) ?
-                  null :
-                  <span className={styles.wordTips}>
-                    <SixMonthEarnings
-                      listItem={itemData}
-                      monthlyProfits={monthlyProfits}
-                      custIncomeReqState={custIncomeReqState}
-                      getCustIncome={getCustIncome}
-                      formatAsset={formatAsset}
-                      displayText="峰值和最近收益"
-                    />
-                  </span>
-                }
-              </h5>
-            </Col>
-            <Col span={thrSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleThr]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              ><span>股基佣金率额：</span><span>{miniFee}</span></h5>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={sendSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleTwo]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              >
-                <span>持仓资产：</span>
-                <span>{this.handleAssets(itemData.openAssets)}</span>
-                {openAssetsPercentNode}
-              </h5>
-            </Col>
-            <Col span={thrSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleThr]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              ><span>沪深归集率：</span><span>{hsRate}</span></h5>
-            </Col>
-          </Row>
-          <Row className={styles.lastCol}>
-            <Col span={sendSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleTwo]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              >
-                <span>可用余额：</span>
-                <span>{this.handleAssets(itemData.availablBalance)}</span>
-                {availablBalancePercentNode}
-              </h5>
-            </Col>
-            <Col span={thrSpan}>
-              <h5
-                className={classnames({
-                  [styles.peopleThr]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              >
-                <span>信息完备率：</span><span>{infoCompletionRate}</span>
-                <TipsInfo
-                  title={inFoPerfectRate}
-                />
-              </h5>
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.asset}>
-          <Row>
-            <Col span={24}>
-              <h5
-                className={classnames({
-                  [styles.peopleFour]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              ><span>已开通业务：</span><span>{this.handleEmpty(itemData.openedBusiness)}</span></h5>
-            </Col>
-          </Row>
-          <Row className={styles.lastCol}>
-            <Col span={24}>
-              <h5
-                className={classnames({
-                  [styles.peopleFour]: isFold === true,
-                  [styles.people]: isFold === false,
-                })}
-              ><span>可开通业务：</span><span>{this.handleEmpty(itemData.openBusiness)}</span></h5>
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.service}>
-          <Row>
-            <Col span={isFold ? 14 : 24}>
-              <h5 className={styles.people}>
-                <span className={styles.fl}>最近服务时间：</span>
-                <span className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
-                  {this.handleEmpty(itemData.missionType)} -
-                  {this.handleEmpty(itemData.missionTitle)}</span>
-              </h5>
-            </Col>
-            <Col span={isFold ? 10 : 24}>
-              <h5 className={styles.seeMore}><a onClick={this.showModal}>查看更多</a></h5>
-            </Col>
-          </Row>
+        <div className={styles.description}>
+          <div className={styles.asset}>
+            <Row>
+              <Col span={sendSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleTwo]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                >
+                  <div>总资产：</div><div>{this.handleAssets(itemData.assets)}</div>
+                  {_.isEmpty(itemData.assets) ?
+                    null :
+                    <span className={styles.wordTips}>
+                      <SixMonthEarnings
+                        listItem={itemData}
+                        monthlyProfits={monthlyProfits}
+                        custIncomeReqState={custIncomeReqState}
+                        getCustIncome={getCustIncome}
+                        formatAsset={formatAsset}
+                        displayText="峰值和最近收益"
+                      />
+                    </span>
+                  }
+                </h5>
+              </Col>
+              <Col span={thrSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleThr]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                ><div>股基佣金率额：</div><div>{miniFee}</div></h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={sendSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleTwo]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                >
+                  <div>持仓资产：</div>
+                  <div>{this.handleAssets(itemData.openAssets)}</div>
+                  {openAssetsPercentNode}
+                </h5>
+              </Col>
+              <Col span={thrSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleThr]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                ><div>沪深归集率：</div><div>{hsRate}</div></h5>
+              </Col>
+            </Row>
+            <Row className={styles.lastCol}>
+              <Col span={sendSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleTwo]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                >
+                  <div>可用余额：</div>
+                  <div>{this.handleAssets(itemData.availablBalance)}</div>
+                  {availablBalancePercentNode}
+                </h5>
+              </Col>
+              <Col span={thrSpan}>
+                <h5
+                  className={classnames({
+                    [styles.peopleThr]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                >
+                  <div>信息完备率：</div><div>{infoCompletionRate}</div>
+                  <TipsInfo
+                    title={inFoPerfectRate}
+                  />
+                </h5>
+              </Col>
+            </Row>
+          </div>
+          <div className={styles.asset}>
+            <Row>
+              <Col span={24}>
+                <h5
+                  className={classnames({
+                    [styles.peopleFour]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                ><div>已开通业务：</div><div>{this.handleEmpty(itemData.openedBusiness)}</div></h5>
+              </Col>
+            </Row>
+            <Row className={styles.lastCol}>
+              <Col span={24}>
+                <h5
+                  className={classnames({
+                    [styles.peopleFour]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                ><div>可开通业务：</div><div>{this.handleEmpty(itemData.openBusiness)}</div></h5>
+              </Col>
+            </Row>
+          </div>
+          <div className={styles.service}>
+            <Row>
+              <Col span={isFold ? 14 : 24}>
+                <h5 className={styles.people}>
+                  <div className={styles.fl}>最近服务时间：</div>
+                  <div className={`${styles.ml105} ${styles.block}`}>（{this.handleEmpty(itemData.recentServiceTime)}）
+                    {this.handleEmpty(itemData.missionType)} -
+                    {this.handleEmpty(itemData.missionTitle)}</div>
+                </h5>
+              </Col>
+              <Col span={isFold ? 10 : 24}>
+                <h5 className={styles.seeMore}><a onClick={this.showModal}>查看更多</a></h5>
+              </Col>
+            </Row>
+          </div>
         </div>
         <Modal
           title="最近服务记录"

@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:34:32
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-02-07 09:52:43
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -60,6 +60,8 @@ export default class MultiUpload extends PureComponent {
     // 删除成功后回调方法
     deleteCallback: PropTypes.func,
     showDelete: PropTypes.bool,
+    // 上传文件大小限制，默认20Mb
+    maxSize: PropTypes.number,
   }
 
   static defaultProps = {
@@ -74,6 +76,7 @@ export default class MultiUpload extends PureComponent {
     deleteCallback: () => {},
     deleteAttachmentLoading: false,
     showDelete: true,
+    maxSize: 20,
   }
 
   constructor(props) {
@@ -93,13 +96,13 @@ export default class MultiUpload extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { attachment: preAT } = this.props;
-    const { attachment: nextAT } = nextProps;
-    if (!_.isEqual(preAT, nextAT)) {
-      const { attachmentList, attachment } = nextProps;
+    const { attachment: nextAT, attachmentList } = nextProps;
+    const { attachment } = this.state;
+    if (preAT !== nextAT && nextAT !== attachment) {
       this.setState({
         fileList: attachmentList, // 文件列表
         oldFileList: attachmentList, // 旧的文件列表
-        attachment, // 上传后的唯一 ID
+        attachment: nextAT, // 上传后的唯一 ID
       });
     }
   }
@@ -181,6 +184,17 @@ export default class MultiUpload extends PureComponent {
     });
   }
 
+  @autobind
+  beforeUpload(file) {
+    const { maxSize } = this.props;
+    const { size } = file;
+    if (size > (maxSize * 1024 * 1024)) {
+      message.error(`文件大小不能超过 ${maxSize} Mb`);
+      return false;
+    }
+    return true;
+  }
+
   render() {
     const {
       empId,
@@ -205,6 +219,7 @@ export default class MultiUpload extends PureComponent {
       onChange: this.onChange,
       showUploadList: false,
       fileList,
+      beforeUpload: this.beforeUpload,
     };
 
     const uploadElement = edit ?

@@ -48,7 +48,7 @@
     span {
       color: #333;
     }
-    span:first-child {
+    span:first-child, {
       color: #9b9b9b;
       text-align: right;
       display: inline-block;
@@ -56,7 +56,9 @@
     }
   }
   .peopleTwo {
-      span {
+    display: flex;
+    justify-content: flex-start;
+    span, div {
       color: #333;
     }
     span:first-child {
@@ -65,9 +67,19 @@
       display: inline-block;
       width: 75px;
     }
+    & > div:first-child {
+      width: 105px;
+      color: #9b9b9b;
+      text-align: right;
+    }
+    & > div:last-child {
+      color: #333;
+    }
   }
   .peopleThr {
-      span {
+    display: flex;
+    justify-content: flex-start;
+    span {
       color: #333;
     }
     span:first-child {
@@ -76,8 +88,18 @@
       display: inline-block;
       width: 105px;
     }
+    & > div:first-child {
+      width: 105px;
+      color: #9b9b9b;
+      text-align: right;
+    }
+    & > div:last-child {
+      color: #333;
+    }
   }
   .peopleFour {
+    display: flex;
+    justify-content: flex-start;
     span {
       color: #333;
     }
@@ -86,6 +108,14 @@
       text-align: right;
       display: inline-block;
       width: 90px;
+    }
+    & > div:first-child {
+      width: 105px;
+      color: #9b9b9b;
+      text-align: right;
+    }
+    & > div:last-child {
+      color: #333;
     }
   }
   .seeMore {
@@ -113,6 +143,10 @@
       }
     }
   }
+  .description {
+    // overflow: hidden;
+    // height: 330px;
+  }
   .asset {
     padding: 5px 15px 0;
     h5 {
@@ -129,8 +163,15 @@
     .people {
       display: flex;
       justify-content: flex-start;
-      flex-wrap: nowrap;
-      white-space: nowrap;
+      & > div:first-child {
+        width: 20%;
+        color: #9b9b9b;
+        text-align: right;
+      }
+      & > div:last-child {
+        width: 80%;
+        color: #333;
+      }
     }
   }
   .service {

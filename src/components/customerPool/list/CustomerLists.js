@@ -19,6 +19,7 @@ import { openInTab } from '../../../utils';
 import { url as urlHelper, env } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
+import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
 import styles from './customerLists.less';
 
@@ -69,6 +70,7 @@ const formatAsset = (num) => {
   return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
 };
 
+@RestoreScrollTop
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     page: PropTypes.object.isRequired,
@@ -540,11 +542,12 @@ export default class CustomerLists extends PureComponent {
       }
     }
     const paginationOption = {
-      curPageNum: current,
-      totalRecordNum: curTotal,
-      curPageSize: pagesize,
-      onPageChange,
-      onSizeChange,
+      current,
+      total: curTotal,
+      pageSize: pagesize,
+      onChange: onPageChange,
+      onShowSizeChange: onSizeChange,
+      isHideLastButton: true,
     };
 
     return (
@@ -633,14 +636,16 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             {...paginationOption}
           />
-          <Checkbox
-            checked={isAllSelectBool}
-            onChange={this.selectAll}
-            className={styles.selectAllTwo}
-            disabled={_.isEmpty(custList)}
-          >
-            全选
-          </Checkbox>
+          {
+           /*  <Checkbox
+              checked={isAllSelectBool}
+              onChange={this.selectAll}
+              className={styles.selectAllTwo}
+              disabled={_.isEmpty(custList)}
+            >
+              全选
+          </Checkbox> */
+          }
         </div>
         {
           BottomFixedBoxVisible ?

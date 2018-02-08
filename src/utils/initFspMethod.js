@@ -2,7 +2,7 @@
    * 初始化暴露给fsp的方法
    * @param  {object} store app.store
    */
-
+import _ from 'lodash';
 import env from '../helper/env';
 import os from '../helper/os';
 import { fspRoutes } from '../config';
@@ -11,7 +11,8 @@ function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
 }
 
-function initFspMethod({ store, push }) {
+function initFspMethod({ store, history }) {
+  const { push } = history;
   window.dispatch = (action) => {
     store.dispatch(action);
   };
@@ -29,16 +30,32 @@ function initFspMethod({ store, push }) {
     push(url);
   };
 
-  // 如果当前环境不是fsp框架，就执行下面的重写操作
+  // fsp框架使用的时自定的滚动条，在切换页码时，这个自定的滚动条无法正常定位
+  // 下面的是兼容处理代码，新框架可以删除
+  let fspScrollElem;
+  const unlisten = history.listen((location) => {
+    if (location.pathname === '/customerPool/list') {
+      if (!fspScrollElem) {
+        // 获取fsp container自定的滚动条
+        fspScrollElem = document.querySelector('.wrapper.ps-container .ps-scrollbar-y-rail');
+      }
+      // 激活fsp框架的滚动条
+      fspScrollElem.style.top = '0px';
+    }
+  });
+
+  // 如果当前环境是react框架，就执行下面的重写操作
   if (env.isInReact()) {
+    // react框架不需要监听滚动条处理
+    unlisten();
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
-    $.fn.EBSmartTab = function (param1, param2) {
+    $.fn.EBSmartTab = function tabCall(param1, param2) {
       return call($(this), param1, param2);
     };
 
     // 直接将原来控制tab的call方法置为空
-    window.eb.component.SmartTab.call = function () { };
+    window.eb.component.SmartTab.call = _.noop;
 
     // 重写所有的页面tab跳转组件
     window.eb.app = {
@@ -50,7 +67,7 @@ function initFspMethod({ store, push }) {
             pathname: path,
             state: {
               url,
-              shoudlRemove: reactShouldRemove,
+              shouldRemove: reactShouldRemove,
             },
           });
         },

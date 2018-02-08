@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import InfoItem from '../../common/infoItem';
 import pageConfig from '../pageConfig';
 
 import styles from './detailInfo.less';
@@ -40,48 +39,47 @@ export default class TaskListDetailInfo extends PureComponent {
     const { infoData } = this.props;
     const timelyIntervalValue = infoData.timelyIntervalValue || '--';
     return (
-      <div id="detailModule">
+      <div className={styles.module}>
         {infoData.status !== COMPLETE_CODE ?
           <div className={styles.modContent}>
-            <ul className={styles.propertyList}>
-              <li className={styles.item}>
-                <InfoItem label="任务状态" value={this.changeDisplay(infoData.status, status) || '--'} />
-              </li>
-              <li className={styles.item}>
-                <InfoItem
-                  label="有效期（天）"
-                  value={String(timelyIntervalValue)}
-                />
-              </li>
-              <li className={styles.item}>
-                <InfoItem label="服务策略" value={infoData.strategyDesc || '--'} />
-              </li>
-              <li className={styles.item}>
-                <InfoItem label="任务提示" value={infoData.infoContent || '--'} />
-              </li>
-            </ul>
+            <div className={styles.leftRow}>
+              <span>任务状态&nbsp;:</span>
+              <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
+            </div>
+            <div className={styles.rightRow}>
+              <span>有效期（天）&nbsp;:</span>
+              <span>{String(timelyIntervalValue) || '--'}</span>
+            </div>
+            <div>
+              <span>服务策略&nbsp;:</span>
+              <span>{infoData.strategyDesc || '--'}</span>
+            </div>
+            <div>
+              <span>任务提示&nbsp;:</span>
+              <span>{infoData.infoContent || '--'}</span>
+            </div>
           </div> :
           <div className={styles.modContent}>
-            <ul className={styles.propertyList}>
-              <li className={styles.item}>
-                <InfoItem
-                  label="任务状态"
-                  value={this.changeDisplay(infoData.status, status) || '--'}
-                />
-              </li>
-              <li className={styles.fir}>
-                <InfoItem label="触发时间" value={infoData.triggerTime || '--'} />
-              </li>
-              <li className={styles.sed}>
-                <InfoItem label="截止时间" value={infoData.deadTime || '--'} />
-              </li>
-              <li className={styles.item}>
-                <InfoItem label="服务策略" value={infoData.strategyDesc || '--'} />
-              </li>
-              <li className={styles.item}>
-                <InfoItem label="任务提示" value={infoData.infoContent || '--'} />
-              </li>
-            </ul>
+            <div>
+              <span>任务状态&nbsp;:</span>
+              <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
+            </div>
+            <div className={styles.leftRow}>
+              <span>触发时间&nbsp;:</span>
+              <span>{infoData.triggerTime || '--'}</span>
+            </div>
+            <div className={styles.rightRow}>
+              <span>截止时间&nbsp;:</span>
+              <span>{infoData.deadTime || '--'}</span>
+            </div>
+            <div>
+              <span>服务策略&nbsp;:</span>
+              <span>{infoData.strategyDesc || '--'}</span>
+            </div>
+            <div>
+              <span>任务提示&nbsp;:</span>
+              <span>{infoData.infoContent || '--'}</span>
+            </div>
           </div>
         }
       </div>

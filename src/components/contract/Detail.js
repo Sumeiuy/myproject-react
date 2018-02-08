@@ -2,8 +2,8 @@
  * @Description: 合作合约详情页面
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 16:41:33
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2018-02-07 16:49:04
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -110,11 +110,12 @@ export default class Detail extends PureComponent {
       uploadAttachment,
       attachment: uuid || EMPTY_PARAM,
     };
+    const approverName = baseInfo.approver ? `${baseInfo.approverName} (${baseInfo.approver})` : EMPTY_PARAM;
     const nowStep = {
       // 当前步骤
       stepName: baseInfo.workflowNode || EMPTY_PARAM,
       // 当前审批人
-      handleName: baseInfo.approver || EMPTY_PARAM,
+      handleName: approverName,
     };
     let statusLabel = '';
     if (baseInfo.status) {

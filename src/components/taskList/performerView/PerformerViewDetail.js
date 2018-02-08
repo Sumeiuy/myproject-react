@@ -185,7 +185,6 @@ export default class PerformerViewDetail extends PureComponent {
       if (!_.isEmpty(err)) {
         this.setState({
           visible: true,
-          keyIndex: this.state.keyIndex + 1,
         });
       } else {
         const params = {
@@ -324,15 +323,15 @@ export default class PerformerViewDetail extends PureComponent {
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
     const paginationOption = {
-      curPageNum: curPageNo,
-      totalRecordNum: page.totalCount,
-      curPageSize,
-      onPageChange: this.handlePageChange,
-      isShowSizeChanger: false,
+      current: curPageNo,
+      total: page.totalCount,
+      pageSize: curPageSize,
+      onChange: this.handlePageChange,
+      isHideLastButton: true,
+      useClearStyle: true,
     };
 
     const {
-      missionId,
       missionName,
       missionStatusName,
       hasSurvey,
@@ -357,11 +356,11 @@ export default class PerformerViewDetail extends PureComponent {
       key: '服务策略 :',
       value: servicePolicy || '--',
     }];
-    // hasSurvey
+    // sticky-container 作为子元素悬停参照物
     return (
-      <div className={styles.performerViewDetail}>
+      <div className={`sticky-container ${styles.performerViewDetail}`}>
         <p className={styles.taskTitle}>
-          {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
+          {`${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
         <InfoArea

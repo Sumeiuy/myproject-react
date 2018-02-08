@@ -11,10 +11,13 @@ import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
-const replaceWord = ({ value, q, title = '' }) => {
+const replaceWord = ({ value, q, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
-  // 瞄准镜标签的后面标注‘瞄准镜’
-  return value.replace(new RegExp(q, 'g'), `<em class="marked">${q}${titleDom || ''}</em>`);
+  const regxp = new RegExp(q, 'g');
+  // 瞄准镜标签后面添加字符，用以分割
+  const holder = type === 'sightingTelescope' ? '-' : '';
+  return value.replace(regxp,
+    `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
 
 // const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
@@ -167,6 +170,7 @@ export default class MatchArea extends PureComponent {
       // ));
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((item) => {
+          // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
             return replaceWord({ value: item.name, q });
           }
@@ -298,7 +302,14 @@ export default class MatchArea extends PureComponent {
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(item => (replaceWord({ value: item.name, q })));
+        // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
+        let markedEle = relatedLabels.map(item =>
+          (replaceWord({ value: item.name, q, type: source })));
+        const first = _.head(markedEle);
+        let remain = _.slice(markedEle, 1);
+        remain = remain.join('；');
+        markedEle = _.concat(first, remain).join('');
+
         return (
           <li>
             <span>

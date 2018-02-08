@@ -20,7 +20,7 @@ const dva = {
     app = app_;
     const store = dva.getStore();
     // 将store暴露给FSP
-    initFspMethod({ store, push: history.push });
+    initFspMethod({ store, history });
     permission.init(store);
   },
 

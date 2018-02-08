@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-03 16:40:54
+ * @Last Modified time: 2018-02-07 17:48:40
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -24,10 +24,12 @@ import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
 const confirm = Modal.confirm;
+const { filialeCustTransfer: { pageType } } = seibelConfig;
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
-const OVERFLOWBTNID = 118006; // 终止按钮的flowBtnId
+const STOP_STATUS_CODE = '02'; // 终止状态code
+const COMPLETE_STATUS_CODE = '03'; // 完成状态code
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -37,6 +39,7 @@ const dropDownSelectBoxStyle = {
 
 export default class FilialeCustTransferEditForm extends PureComponent {
   static propTypes = {
+    getDetailInfo: PropTypes.func.isRequired,
     // 详情列表
     data: PropTypes.object.isRequired,
     // 获取客户列表
@@ -69,7 +72,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { assignmentList } = props.data;
+    const { assignmentList, buttonList } = props.data;
     this.state = {
       // 审批人弹框
       nextApproverModal: false,
@@ -77,35 +80,43 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       nextApproverList: [],
       // 客户信息
       client: {
-        custName: assignmentList[0].custName,
-        brokerNumber: assignmentList[0].brokerNumber,
-        custId: assignmentList[0].custId,
-        custType: assignmentList[0].custType,
+        custName: !_.isEmpty(assignmentList) ? assignmentList[0].custName : '',
+        brokerNumber: !_.isEmpty(assignmentList) ? assignmentList[0].brokerNumber : '',
+        custId: !_.isEmpty(assignmentList) ? assignmentList[0].custId : '',
+        custType: !_.isEmpty(assignmentList) ? assignmentList[0].custType : '',
       },
       // 所选新服务经理
       newManager: {
-        newEmpName: assignmentList[0].newEmpName,
-        newLogin: assignmentList[0].newEmpId,
-        newPostnId: assignmentList[0].newPostnId,
-        newPostnName: assignmentList[0].newPostnName,
-        newOrgName: assignmentList[0].newOrgName,
+        newEmpName: !_.isEmpty(assignmentList) ? assignmentList[0].newEmpName : '',
+        newLogin: !_.isEmpty(assignmentList) ? assignmentList[0].newEmpId : '',
+        newPostnId: !_.isEmpty(assignmentList) ? assignmentList[0].newPostnId : '',
+        newPostnName: !_.isEmpty(assignmentList) ? assignmentList[0].newPostnName : '',
+        newOrgName: !_.isEmpty(assignmentList) ? assignmentList[0].newOrgName : '',
       },
       assignmentListData: assignmentList,
+      // 按钮组信息
+      buttonListData: buttonList,
     };
   }
 
   componentWillMount() {
     const {
       flowId,
+      statusCode,
     } = this.props.data;
-    // 获取下一步骤按钮列表
-    this.props.getButtonList({ flowId });
+    if (statusCode !== STOP_STATUS_CODE && statusCode !== COMPLETE_STATUS_CODE) {
+      // 获取下一步骤按钮列表
+      this.props.getButtonList({ flowId });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
+    const { data, buttonList } = nextProps;
     if (data !== this.props.data) {
       this.setState({ assignmentListData: data.assignmentList });
+    }
+    if (buttonList !== this.props.buttonList) {
+      this.setState({ buttonListData: buttonList });
     }
   }
 
@@ -137,6 +148,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
         newEmpName: '',
         newOrgName: '',
         newPostnName: '',
+        newLogin: '',
       }],
     }, () => {
       // 选择客户之后触发查询该客户的原服务经理
@@ -202,11 +214,12 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
-      approverIdea: item.btnName,
       auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
     }, () => {
-      if (item.flowBtnId !== OVERFLOWBTNID) {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
+      if (item.approverNum !== 'none') {
         this.setState({
           nextApproverModal: true,
         });
@@ -245,21 +258,30 @@ export default class FilialeCustTransferEditForm extends PureComponent {
   // 发送单客户终止或者批量客户终止的请求,只需要走走流程接口
   @autobind
   sendDoApproveRequest(value) {
-    const { flowId, appId } = this.props.data;
-    const { doApprove } = this.props;
-    const { groupName, approverIdea, auditors, operate } = this.state;
+    const { flowId, appId, subType } = this.props.data;
+    const { doApprove, getDetailInfo } = this.props;
+    const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId: appId,
       wobNum: flowId,
       flowId,
       // 下一组ID
       groupName,
-      approverIdea,
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
     }).then(() => {
-      message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
-      this.setState({ nextApproverModal: false });
+      // commit为用户点击按钮为提交按钮，提交按钮代表用户进行修改需要增加提示语，终止按钮不需要提示语
+      if (subType === SINGLECUSTTRANSFER && operate === 'commit') {
+        message.success('划转请求提交成功');
+      }
+      this.setState({
+        nextApproverModal: false,
+        buttonListData: [],
+      });
+      getDetailInfo({
+        flowId,
+        type: pageType,
+      });
     });
   }
 
@@ -278,6 +300,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       orgName: newManager.newOrgName,
       postnName: newManager.newPostnName,
       postnId: newManager.newPostnId,
+      login: newManager.newLogin,
       appId,
     }).then(() => {
       this.sendDoApproveRequest(value);
@@ -302,7 +325,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const { pageAssignment } = this.props;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
-    const { custList, newManagerList, buttonList } = this.props;
+    const { custList, newManagerList } = this.props;
+    const { buttonListData } = this.state;
     const {
       client,
       newManager,
@@ -329,10 +353,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      curPageNum: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      totalRecordNum: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      curPageSize: page.pageSize,
-      onPageChange: this.handlePageNumberChange,
+      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
+      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
     };
     return (
       <div className={styles.editFormBox}>
@@ -370,9 +394,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <DropDownSelect
                             placeholder="选择新服务经理"
-                            showObjKey="newEmpName"
-                            objId="newLogin"
-                            value={`${newManager.newEmpName || ''} ${newManager.newLogin || ''}` || ''}
+                            showObjKey="showSelectName"
+                            value={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
                             emitSelectItem={this.handleSelectNewManager}
                             emitToSearch={this.handleSearchNewManager}
@@ -424,7 +447,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
             </div>
             <div id="button_module" className={styles.buttonModule}>
               <BottonGroup
-                list={buttonList}
+                list={buttonListData}
                 onEmitEvent={this.submitCreateInfo}
               />
             </div>

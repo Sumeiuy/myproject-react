@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-05 14:58:25
+ * @Last Modified time: 2018-02-06 19:01:57
  */
 
 import React, { PureComponent } from 'react';
@@ -280,8 +280,10 @@ export default class TaskFlow extends PureComponent {
     }
 
     const currentLabelQueryCustomerParam = argsOfQueryCustomer[`${labelId}`] || {};
+    // 当前瞄准镜筛选条件为空，或者labels只有一个并且没有过滤条件
     if (_.isEmpty(currentLabelQueryCustomerParam)
-      || _.isEmpty(currentLabelQueryCustomerParam.filtersReq)) {
+      || (_.isEmpty(currentLabelQueryCustomerParam.filtersReq)
+        && _.size(currentLabelQueryCustomerParam.labels) === 1)) {
       // 代表当前选中的标签没有进行筛查客户
       newPostBody = _.merge(newPostBody, {
         searchReq: {
@@ -489,9 +491,9 @@ export default class TaskFlow extends PureComponent {
       if (isResultTrackChecked) {
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
-          errMsg = '请选择一级指标';
+          errMsg = '请设置结果跟踪任务指标';
         } else if (_.isEmpty(indicatorLevel2Key)) {
-          errMsg = '请选择二级指标';
+          errMsg = '请设置结果跟踪任务二级指标';
         } else if (hasSearchedProduct && _.isEmpty(currentSelectedProduct)) {
           errMsg = '请选择一个产品';
         } else if (!hasState && !inputIndicator) {

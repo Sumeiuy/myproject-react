@@ -490,11 +490,11 @@ export default class CustomerList extends PureComponent {
   @autobind
   handlePageChange(page, pageSize) {
     const { replace, location: { query, pathname } } = this.props;
-    console.log('page, pageSize:', page, pageSize);
     replace({
       pathname,
       query: {
         ...query,
+        pageSize,
         curPageNum: page,
       },
     });

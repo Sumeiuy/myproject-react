@@ -26,7 +26,7 @@ import { emp, permission } from '../../helper';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-
+const LEFT_PANEL_WIDTH = 400;
 const {
   taskList,
   taskList: { pageType, chooseMissionView },
@@ -197,8 +197,8 @@ const mapDispatchToProps = {
   getServiceType: fetchDataFunction(true, effects.getServiceType),
   getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
-  countAnswersByType: fetchDataFunction(true, effects.countAnswersByType),
-  countExamineeByType: fetchDataFunction(true, effects.countExamineeByType),
+  countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
+  countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
@@ -344,7 +344,7 @@ export default class PerformerView extends PureComponent {
        * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        */
-      const currentItem = _.find(missionType, obj => +obj.key === +typeCode);
+      const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
       getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
         .then(() => {
           let currentType = {};
@@ -987,11 +987,11 @@ export default class PerformerView extends PureComponent {
     const { location: { query: { pageNum = 1, pageSize = 20 } } } = this.props;
     const { resultData = [], page = {} } = list;
     const paginationOptions = {
-      curPageNum: parseInt(pageNum, 10),
-      totalRecordNum: page.totalCount || 0,
-      curPageSize: parseInt(pageSize, 10),
-      onPageChange: this.handlePageNumberChange,
-      onSizeChange: this.handlePageSizeChange,
+      current: parseInt(pageNum, 10),
+      total: page.totalCount || 0,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
 
 
@@ -1014,7 +1014,7 @@ export default class PerformerView extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
-          leftWidth={380}
+          leftWidth={LEFT_PANEL_WIDTH}
         />
       </div>
     );

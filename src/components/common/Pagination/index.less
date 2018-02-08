@@ -7,9 +7,8 @@
 }
 .commonPage {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
-  // margin-right: 40px;
   margin-left: 10px;
   padding-bottom: 5px;
   margin-top: 10px;
@@ -20,12 +19,42 @@
     .ant-pagination-item {
       margin-bottom: 0;
     }
+    .ant-pagination-item.ant-pagination-item-active,
+    .ant-pagination-item.ant-pagination-item-active:focus {
+      color: #fff;
+      background-color: #108ee9;
+      border-color: #108ee9;
+    }
+
     li a {
       // 关掉动画效果
       transition: none;
     }
+
     .ant-select-selection.ant-select-selection--single {
       width: 85px;
     }
   }
+}
+
+.hideLastButton {
+  :global {
+    .ant-pagination-item:nth-last-child(2) {
+      display: none;
+    }
+  }
+}
+
+.shortPageList {
+  :global {
+    .ant-pagination-item-after-jump-prev,
+    .ant-pagination-item-after-jump-prev + .ant-pagination-item,
+    .ant-pagination-item-before-jump-next {
+      display: none;
+    }
+  }
+}
+
+.hidden {
+  display: none;
 }
