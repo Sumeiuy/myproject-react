@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 17:31:31
+ * @Last Modified time: 2018-02-08 20:47:52
  * 任务进度
  */
 
@@ -108,51 +108,54 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   renderTooltipContent(type, currentCount) {
-    let missionProgressStatus = '';
-    let progressFlag = '';
+    // let missionProgressStatus = '';
+    // let progressFlag = '';
 
-    // 需要传给后台3*2类型
-    // missionProgressStatus是字典的属性名
-    // progressFlag是标记位,Y或者N
-    switch (type) {
-      case SERVED_CUST:
-        missionProgressStatus = this.findCurrentProgressType(0);
-        progressFlag = 'Y';
-        break;
-      case NOT_SERVED_CUST:
-        missionProgressStatus = this.findCurrentProgressType(0);
-        progressFlag = 'N';
-        break;
-      case COMPLETED_CUST:
-        missionProgressStatus = this.findCurrentProgressType(1);
-        progressFlag = 'Y';
-        break;
-      case NOT_COMPLETED_CUST:
-        missionProgressStatus = this.findCurrentProgressType(1);
-        progressFlag = 'N';
-        break;
-      case STASIFY_CUST:
-        missionProgressStatus = this.findCurrentProgressType(2);
-        progressFlag = 'Y';
-        break;
-      case NOT_STASIFY_CUST:
-        missionProgressStatus = this.findCurrentProgressType(2);
-        progressFlag = 'N';
-        break;
-      default:
-        break;
-    }
+    // // 需要传给后台3*2类型
+    // // missionProgressStatus是字典的属性名
+    // // progressFlag是标记位,Y或者N
+    // switch (type) {
+    //   case SERVED_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(0);
+    //     progressFlag = 'Y';
+    //     break;
+    //   case NOT_SERVED_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(0);
+    //     progressFlag = 'N';
+    //     break;
+    //   case COMPLETED_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(1);
+    //     progressFlag = 'Y';
+    //     break;
+    //   case NOT_COMPLETED_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(1);
+    //     progressFlag = 'N';
+    //     break;
+    //   case STASIFY_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(2);
+    //     progressFlag = 'Y';
+    //     break;
+    //   case NOT_STASIFY_CUST:
+    //     missionProgressStatus = this.findCurrentProgressType(2);
+    //     progressFlag = 'N';
+    //     break;
+    //   default:
+    //     break;
+    // }
     return (
       <div className={styles.content}>
         <div className={styles.currentType}>{type}{currentCount || 0}位</div>
-        <div
+        {/**
+         * 暂时去掉，后端性能问题
+         */}
+        {/* <div
           className={styles.linkCustDetail}
           onClick={() => this.handlePreview({
             type,
             missionProgressStatus,
             progressFlag,
           })}
-        >点击查看明细&gt;&gt;</div>
+        >点击查看明细&gt;&gt;</div> */}
       </div>
     );
   }

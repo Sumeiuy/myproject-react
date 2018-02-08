@@ -484,6 +484,7 @@ export default class TaskPreview extends PureComponent {
               okText={'确定'}
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
+              onCancelHandler={this.handleCloseModal}
               footer={
                 <div className={styles.btnSection}>
                   <Clickable

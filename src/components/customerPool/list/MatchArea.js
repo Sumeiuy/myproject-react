@@ -325,6 +325,7 @@ export default class MatchArea extends PureComponent {
             <span>
               <i className="label">瞄准镜：</i>
               <i
+                title={markedEle}
                 dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
               />
             </span>
