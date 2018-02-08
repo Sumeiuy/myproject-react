@@ -41,7 +41,7 @@ export default class Uploader extends PureComponent {
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
     deleteFileResult: PropTypes.array,
-    accept: PropTypes.string,
+    accept: PropTypes.regexp,
   }
 
   static defaultProps = {

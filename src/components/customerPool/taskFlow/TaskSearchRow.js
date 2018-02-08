@@ -66,7 +66,6 @@ export default class TaskSearchRow extends PureComponent {
     isAuthorize: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
-    getFilterNumberList: PropTypes.func.isRequired,
     storedData: PropTypes.object.isRequired,
   }
   static defaultProps = {
