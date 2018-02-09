@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-07 11:00:07
+ * @Last Modified time: 2018-02-09 10:55:56
  * 管理者视图详情
  */
 
@@ -265,7 +265,6 @@ export default class ManagerViewDetail extends PureComponent {
       <div className={styles.custValue}>
         <div
           className={styles.totalNum}
-          onClick={() => { this.handlePreview({ canLaunchTask: false }); }}
         >
           {custNumbers}
         </div>
@@ -304,7 +303,6 @@ export default class ManagerViewDetail extends PureComponent {
     const { isShowCustDetailModal, title, canLaunchTask, isEntryFromProgressDetail } = this.state;
 
     const {
-      missionId,
       missionName,
       missionStatusName,
       triggerTime,
@@ -371,7 +369,7 @@ export default class ManagerViewDetail extends PureComponent {
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
           <div className={styles.taskTitle}>
-            {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
+            {`${missionName || '--'}: ${missionStatusName || '--'}`}
           </div>
         </div>
         <div className={styles.detailContent}>

@@ -33,9 +33,13 @@ export default class Filter extends PureComponent {
     dict: PropTypes.object.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
-    source: PropTypes.string.isRequired,
+    source: PropTypes.string,
     currentItems: PropTypes.array.isRequired,
   }
+
+  static defaultProps = {
+    source: '',
+  };
 
   constructor(props) {
     super(props);

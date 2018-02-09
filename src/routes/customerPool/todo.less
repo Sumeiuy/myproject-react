@@ -40,12 +40,12 @@
 			}
 		}
     .todoList {
-	  background-color: #fff;
+	  	background-color: #fff;
       margin-top: 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
       .ant-table-thead > tr > th {
-      	padding: 11px 35px;
+      	padding: 11px 20px;
       	background-color: #fff;
       	text-align: left;
       	span {
@@ -56,7 +56,7 @@
       }
       .ant-table-tbody {
       	tr > td {
-      		padding: 11px 35px;
+      		padding: 11px 20px;
       		border-bottom: 0;
       		font-size: 14px;
       		color: #666;
@@ -64,43 +64,22 @@
       		a {
       			color: #108ee9;
       		}
-      	}
-		tr:nth-child(2n+1) > td {
+				}
+				td:not(:first-child) {
+					width: 190px;
+				}
+				tr:nth-child(2n+1) > td {
 	      	background-color: #f9f9f9;
-	    }
-	    tr:last-child > td {
+	    	}
+	    	tr:last-child > td {
 	      	border-bottom: 1px solid #f2f3f4;
-		}
+				}
       }
       .ant-table-pagination {
       	float: right !important;
       	margin-top: 45px !important;
 				margin-bottom: 30px !important;
 				margin-right: 10px !important;
-      	// .ant-pagination-item, .ant-pagination-prev, .ant-pagination-next {
-      	// 	height: 20px;
-      	// 	min-width: 20px;
-      	// 	line-height: 20px;
-      	// 	border: 0;
-      	// }
-      	// .ant-pagination-item {
-      	// 	margin-bottom: 0;
-      	// }
-      	// .ant-pagination-prev a:after, .ant-pagination-next a:after {
-      	// 	height: 20px;
-      	// 	line-height: 20px;
-      	// }
-      	// .ant-pagination-options {
-      	// 	.ant-select-selection--single {
-      	// 		height: 22px;
-      	// 		.ant-select-selection__rendered {
-      	// 			line-height: 20px;
-      	// 			.ant-select-selection-selected-value {
-      	// 				height: 20px;
-      	// 			}
-      	// 		}
-      	// 	}
-      	// }
       }
     }
 	}

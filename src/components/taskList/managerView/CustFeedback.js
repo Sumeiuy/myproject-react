@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 15:32:25
+ * @Last Modified time: 2018-02-09 13:03:37
  * 客户反馈
  */
 
@@ -130,6 +130,8 @@ export default class CustFeedback extends PureComponent {
           return {
             ...itemData,
             color: currentColor,
+            // 将子级数据的占比乘以父级占比
+            value: item.value * itemData.value,
           };
         }),
       };
