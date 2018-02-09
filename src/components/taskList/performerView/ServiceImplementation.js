@@ -29,8 +29,8 @@ const missionStatusList = [
 
 // 特殊处理的任务状态，和展不展示添加服务记录有关
 const missionStatusForServiceRecord = [
-  { id: 60, name: '结果跟踪' },
-  { id: 70, name: '结束' },
+  { id: '60', name: '结果跟踪' },
+  { id: '70', name: '结束' },
 ];
 
 
