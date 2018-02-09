@@ -124,11 +124,14 @@ export default class Search extends PureComponent {
       source,
       labelMapping,
       tagNumId,
-      q } = obj;
+      labelName,
+      labelDesc,
+      q,
+    } = obj;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}&labelName=${labelName}&labelDesc=${labelDesc}`;
     const param = {
       closable: true,
       forceRefresh: true,
