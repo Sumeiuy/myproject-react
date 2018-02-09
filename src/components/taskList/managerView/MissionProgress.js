@@ -148,14 +148,14 @@ export default class MissionProgress extends PureComponent {
         {/**
          * 暂时去掉，后端性能问题
          */}
-         <div
+        <div
           className={styles.linkCustDetail}
           onClick={() => this.handlePreview({
             type,
             missionProgressStatus,
             progressFlag,
           })}
-        >点击查看明细&gt;&gt;</div> 
+        >点击查看明细&gt;&gt;</div>
       </div>
     );
   }
