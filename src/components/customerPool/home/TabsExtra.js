@@ -127,7 +127,7 @@ export default class TabsExtra extends PureComponent {
         <div className={classnames(styles.icon, styles.kehuIcon)}>
           <Icon type={iconType || 'kehu'} />
         </div>
-        <div>
+        <div className="custRangeForCust">
           {
             !_.isEmpty(custRange) ?
               <CustRange
