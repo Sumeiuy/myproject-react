@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-07 16:30:15
+ * @Last Modified time: 2018-02-09 14:03:48
  */
 
 import React, { PureComponent } from 'react';
@@ -92,7 +92,7 @@ export default class Detail extends PureComponent {
       // 客户信息
       custInfoValue = `${assignmentListValue.custName} (${assignmentListValue.brokerNumber})`;
       // 服务经理信息
-      empInfoValue = `${assignmentListValue.empName} (${assignmentListValue.empId})`;
+      empInfoValue = `${assignmentListValue.newEmpName} (${assignmentListValue.newEmpId})`;
     }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
