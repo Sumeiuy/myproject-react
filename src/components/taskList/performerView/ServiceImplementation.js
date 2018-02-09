@@ -29,8 +29,8 @@ const missionStatusList = [
 
 // 特殊处理的任务状态，和展不展示添加服务记录有关
 const missionStatusForServiceRecord = [
-  { id: 60, name: '结果跟踪' },
-  { id: 70, name: '结束' },
+  { id: '60', name: '结果跟踪' },
+  { id: '70', name: '结束' },
 ];
 
 
@@ -74,7 +74,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   @autobind
-  addServiceRecord(postBody) {
+  addServiceRecord(postBody, callback) {
     const {
       addServeRecord,
       reloadTargetCustInfo,
@@ -84,7 +84,7 @@ export default class ServiceImplementation extends PureComponent {
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
           // 服务记录添加成功后重新获取目标客户列表的信息
-          reloadTargetCustInfo(() => this.updateList(postBody));
+          reloadTargetCustInfo(() => this.updateList(postBody, callback));
           // this.updateList(postBody);
           message.success('添加服务记录成功');
         }
@@ -93,7 +93,7 @@ export default class ServiceImplementation extends PureComponent {
 
   // 更新组件state的list信息
   @autobind
-  updateList({ custId, flowStatus }) {
+  updateList({ custId, flowStatus }, callback = _.noop) {
     const { list } = this.state;
     const newList = _.map(list, (item) => {
       if (item.custId === custId) {
@@ -106,6 +106,10 @@ export default class ServiceImplementation extends PureComponent {
       }
       return item;
     });
+    if (+flowStatus === missionStatusList[0].id) {
+      // 如果是处理中，需要将upload list清除
+      callback();
+    }
     this.setState({
       list: newList,
     });

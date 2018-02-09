@@ -124,11 +124,14 @@ export default class Search extends PureComponent {
       source,
       labelMapping,
       tagNumId,
-      q } = obj;
+      labelName,
+      labelDesc,
+      q,
+    } = obj;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}&labelName=${labelName}&labelDesc=${labelDesc}`;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -211,6 +214,8 @@ export default class Search extends PureComponent {
           onClick={() => this.handleOpenTab({
             source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
+            labelName: item.name,
+            labelDesc: item.description,
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/recommend"
@@ -288,6 +293,8 @@ export default class Search extends PureComponent {
           onClick={() => this.handleOpenTab({
             source: sightingScopeBool ? 'sightingTelescope' : 'association',
             labelMapping: sightingScopeBool ? item.id : item.type,
+            labelName: item.name,
+            labelDesc: item.description,
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"

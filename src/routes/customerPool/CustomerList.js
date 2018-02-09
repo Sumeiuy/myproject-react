@@ -318,6 +318,13 @@ export default class CustomerList extends PureComponent {
       param.searchText = keyword;
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
       param.labels = [query.labelMapping];
+      if (query.source === 'sightingTelescope') {
+        // 如果是瞄准镜，需要加入queryLabelReq
+        param.queryLabelReq = {
+          labelName: query.labelName,
+          labelDesc: query.labelDesc,
+        };
+      }
     } else if (query.source === 'association') { // 联想词
       param.searchTypeReq = query.labelMapping;
       param.searchText = keyword;
