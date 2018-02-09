@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-31 16:28:20
+ * @Last Modified time: 2018-02-08 21:55:17
  * 客户细分组件
  */
 
@@ -61,28 +61,21 @@ export default class CustomerSegment extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      priviewCustFileData = EMPTY_LIST,
-     } = this.props;
-    const {
       priviewCustFileData: nextData = EMPTY_LIST,
      } = nextProps;
-    const { custInfos = EMPTY_LIST } = priviewCustFileData;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
     const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
 
-    if (custInfos !== nextInfos) {
-      // 展示预览数据
-      const columns = _.head(nextInfos);
-      this.setState({
-        totalRecordNum: nextTotalCount,
-        curPageNum: pageNum,
-        curPageSize: pageSize,
-        titleColumn: this.renderColumnTitle(columns),
-        dataSource: this.renderDataSource(columns, _.drop(nextInfos)),
-        isShowTable: true,
-        columnSize: _.size(columns),
-      });
-    }
+    // 展示预览数据
+    const columns = _.head(nextInfos);
+    this.setState({
+      totalRecordNum: nextTotalCount,
+      curPageNum: pageNum,
+      curPageSize: pageSize,
+      titleColumn: this.renderColumnTitle(columns),
+      dataSource: this.renderDataSource(columns, _.drop(nextInfos)),
+      columnSize: _.size(columns),
+    });
   }
 
 
@@ -187,6 +180,7 @@ export default class CustomerSegment extends PureComponent {
     const { fileKey } = this.state;
     this.setState({
       uploadedFileKey: uploadedFileKey || fileKey,
+      isShowTable: true,
     });
     onPreview({
       uploadKey: uploadedFileKey,
@@ -282,7 +276,6 @@ export default class CustomerSegment extends PureComponent {
         {
           isShowTable ?
             <GroupModal
-              // 为了每次都能打开一个新的modal
               wrapperClass={styles.modalTable}
               visible={isShowTable}
               closable
@@ -290,6 +283,7 @@ export default class CustomerSegment extends PureComponent {
               okText={'提交'}
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
+              onCancelHandler={this.handleCloseModal}
               footer={
                 <Clickable
                   onClick={this.handleCloseModal}

@@ -27,6 +27,12 @@ const missionStatusList = [
   { id: 30, name: '完成' },
 ];
 
+// 特殊处理的任务状态，和展不展示添加服务记录有关
+const missionStatusForServiceRecord = [
+  { id: 60, name: '结果跟踪' },
+  { id: 70, name: '结束' },
+];
+
 
 /**
  * 将数组对象中的id和name转成对应的key和value
@@ -105,6 +111,11 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
+  @autobind
+  judgeMissionStatus(typeCode) {
+    return !_.isEmpty(_.find(missionStatusForServiceRecord, item => item.id === typeCode));
+  }
+
   render() {
     const {
       list,
@@ -139,6 +150,7 @@ export default class ServiceImplementation extends PureComponent {
       addMotServeRecordSuccess,
       reloadTargetCustInfo,
       attachmentList,
+      statusCode,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -155,8 +167,11 @@ export default class ServiceImplementation extends PureComponent {
       missionFlowId = currentCustomer.missionFlowId;
     }
 
+    // 先判断如果当前任务状态是结果跟踪或者结束状态，那么不要从客户的流水里面取任务状态，直接
+    // 将当前添加服务记录变成只读状态，不然再判断任务流水客户状态
     // 处理中 和 未开始 时表单可编辑
-    const isReadOnly = !_.includes(EDITABLE, serviceStatusCode);
+    const isReadOnly = this.judgeMissionStatus(statusCode)
+      || !_.includes(EDITABLE, serviceStatusCode);
     const {
       serviceTips,
       serviceWayName,
@@ -265,6 +280,7 @@ ServiceImplementation.propTypes = {
   addMotServeRecordSuccess: PropTypes.bool.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
+  statusCode: PropTypes.string,
 };
 
 ServiceImplementation.defaultProps = {
@@ -276,4 +292,5 @@ ServiceImplementation.defaultProps = {
   deleteFileResult: [],
   taskFeedbackList: [],
   serviceTypeName: '',
+  statusCode: '',
 };

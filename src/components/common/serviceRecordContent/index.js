@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-08 13:39:47
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-08 20:39:47
  */
 
 
@@ -479,8 +479,12 @@ export default class ServiceRecordContent extends PureComponent {
    */
   @autobind
   handleServiceRecordInputChange(e) {
+    const value = e.target.value;
+    if (!_.isEmpty(value) && value.length > 1000) {
+      return;
+    }
     this.setState({
-      serviceContent: e.target.value,
+      serviceContent: value,
     });
   }
 
@@ -524,8 +528,8 @@ export default class ServiceRecordContent extends PureComponent {
                 <a
                   href={
                     _.isEmpty(item.attachId) && _.isEmpty(item.name)
-                    ? NO_HREF :
-                    `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+                      ? NO_HREF :
+                      `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
                 >
                   {item.name}
                 </a>
@@ -737,10 +741,10 @@ export default class ServiceRecordContent extends PureComponent {
                   getPopupContainer={() => this.customerFeedbackRef}
                 >
                   {
-                    (feedbackTypeChildList).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
+                      (feedbackTypeChildList).map(obj => (
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                      ))
+                    }
                 </Select>
               }
             </div>

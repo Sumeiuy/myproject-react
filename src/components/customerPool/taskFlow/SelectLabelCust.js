@@ -23,7 +23,6 @@ export default class SelectLabelCust extends PureComponent {
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isAuthorize: PropTypes.bool,
-    visible: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
   };
@@ -149,7 +148,6 @@ export default class SelectLabelCust extends PureComponent {
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
       onCancel,
-      visible,
       isAuthorize,
       dict,
       getFiltersOfSightingTelescope,
@@ -181,7 +179,6 @@ export default class SelectLabelCust extends PureComponent {
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
           isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
-          visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
