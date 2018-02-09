@@ -16,6 +16,10 @@
         // width: 270px;
         float: right;
       }
+      :global .custRangeForCust {
+        padding-left: 11px;
+        transform: translateX(-11px);
+      }
     }
   }
   .emptyContent {
@@ -32,16 +36,16 @@
   .content {
     padding-top: 10px;
     display: flex;
+    margin-right: 16px;
     flex-wrap: wrap;
     .leftContent {
-      flex-grow: 1;
+      flex: 1 1 auto;
       min-width: 328px;
-      width: 50%;
+      margin-right: 16px;
     }
     .rightContent {
-      flex-grow: 1;
+      flex: 1 1 auto;
       min-width: 328px;
-      width: 50%;
     }
   }
 }

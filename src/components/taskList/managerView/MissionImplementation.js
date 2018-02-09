@@ -1,13 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
-<<<<<<< HEAD
  * @Last Modified by: xuxiaoqin
  * @Last Modified time: 2018-01-25 17:38:32
-=======
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:09:16
->>>>>>> develop
  * 任务实施简报
  */
 
