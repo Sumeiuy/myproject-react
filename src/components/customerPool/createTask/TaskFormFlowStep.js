@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 11:21:45
+ * @Last Modified time: 2018-02-09 13:34:29
  */
 
 import React, { PureComponent } from 'react';
@@ -133,7 +133,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       custIdList,
       custCondition,
-      custCondition: { entrance, labelName, labelDesc },
+      custCondition: { entrance, queryLabelReq },
     } = parseQuery();
 
     let req = {};
@@ -146,7 +146,7 @@ export default class TaskFormFlowStep extends PureComponent {
       };
     } else if (source === 'sightingTelescope') {
       // 从瞄准镜过来的，需要加入queryLabelReq参数
-      req = { searchReq: custCondition, custIdList, queryLabelReq: { labelName, labelDesc } };
+      req = { searchReq: custCondition, custIdList, queryLabelReq };
     } else {
       req = { searchReq: custCondition, custIdList };
     }

@@ -214,8 +214,8 @@ export default class Search extends PureComponent {
           onClick={() => this.handleOpenTab({
             source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
-            labelName: item.name,
-            labelDesc: item.description,
+            labelName: encodeURIComponent(item.name),
+            labelDesc: encodeURIComponent(item.description),
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/recommend"
@@ -293,8 +293,8 @@ export default class Search extends PureComponent {
           onClick={() => this.handleOpenTab({
             source: sightingScopeBool ? 'sightingTelescope' : 'association',
             labelMapping: sightingScopeBool ? item.id : item.type,
-            labelName: item.name,
-            labelDesc: item.description,
+            labelName: encodeURIComponent(item.name),
+            labelDesc: encodeURIComponent(item.description),
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           eventName="/click/search/option"
