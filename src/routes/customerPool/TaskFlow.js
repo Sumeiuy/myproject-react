@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-06 19:01:57
+ * @Last Modified time: 2018-02-09 09:51:59
  */
 
 import React, { PureComponent } from 'react';
@@ -260,7 +260,7 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId) {
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -666,7 +666,7 @@ export default class TaskFlow extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      argsOfQueryCustomer,
+      argsOfQueryCustomer = {},
     } = finalData;
 
     let postBody = {
