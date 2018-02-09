@@ -173,7 +173,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     let storedData = {};
     if (source === RETURN_TASK_ENTRY) {
       // 驳回修改
-      storedData = _.merge({}, currentFlowData, storedCreateTaskData[`${source}`]) || {};
+      storedData = { ...currentFlowData, ...storedCreateTaskData[`${source}`] } || {};
     } else if (this.judgeSource(source)) {
       // 除了客户列表的其他入口
       storedData = storedCreateTaskData[`${source}`] || {};
