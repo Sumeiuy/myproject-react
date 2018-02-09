@@ -36,10 +36,13 @@ export default class MissionFeedback extends PureComponent {
     missionFeedbackCount: PropTypes.number.isRequired,
     // 服务经理总数
     serveManagerCount: PropTypes.number.isRequired,
+    // 模板Id
+    templateId: PropTypes.string,
   }
 
   static defaultProps = {
     isFold: false,
+    templateId: '',
   }
 
   constructor(props) {
@@ -66,6 +69,7 @@ export default class MissionFeedback extends PureComponent {
       },
       originProblemData: {},
     };
+    this.chartInstance = {};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,20 +77,29 @@ export default class MissionFeedback extends PureComponent {
       missionFeedbackCount,
       missionFeedbackData = EMPTY_LIST,
       serveManagerCount,
+      // templateId = '',
     } = this.props;
     const {
       missionFeedbackCount: nextFeedbackCount,
       missionFeedbackData: nextFeedbackData = EMPTY_LIST,
       serveManagerCount: nextManagerCount,
+      // templateId: nextTemplateId = '',
     } = nextProps;
+
+    // if (templateId !== nextTemplateId) {
+    //   // 需要重新绘制饼图时，清除echarts的当前实例
+    //   const chartInstance = this.chartInstance;
+    //   if (!_.isEmpty(chartInstance)) {
+    //     _.forEach(chartInstance, (value, key) => {
+    //       chartInstance[`${key}`].getChartsInstance().clear();
+    //     });
+    //   }
+    // }
+
 
     if (missionFeedbackCount !== nextFeedbackCount
       || missionFeedbackData !== nextFeedbackData
       || serveManagerCount !== nextManagerCount) {
-      // 需要重新绘制饼图时，清除echarts的当前实例
-      if (this.chartInstance) {
-        this.chartInstance.getChartsInstance().clear();
-      }
       const { finalData, originProblemData } = this.handleData(
         nextFeedbackData,
         nextFeedbackCount,
@@ -313,18 +326,21 @@ export default class MissionFeedback extends PureComponent {
     return option;
   }
 
-  handleShowData(onOff, nameDes, data, item, isRadio = false, options = {}) {
+  handleShowData(onOff, nameDes, data, item, isRadio = false, options = {}, key) {
     let finalOptions = {};
     if (!_.isEmpty(options)) {
       // 空图
+      if (!isRadio) {
+        // 多选，空图，不展示
+        return (<div />);
+      }
       finalOptions = options;
     } else if (isRadio) {
       // 单选
       finalOptions = this.handleOptionCake(data, nameDes);
     } else {
-      return (
-        <div />
-      );
+      // 多选
+      finalOptions = this.handleOptionBar(data, nameDes);
     }
 
     return (
@@ -350,7 +366,7 @@ export default class MissionFeedback extends PureComponent {
               style={{
                 height: '140px',
               }}
-              ref={ref => this.chartInstance = ref}
+              ref={ref => this.chartInstance[key] = ref}
             />
           </div>
           <div className={styles.tips}>
@@ -434,7 +450,7 @@ export default class MissionFeedback extends PureComponent {
 
     const options = isShowEmptyCheckboxPie ? constructEmptyPie() : {};
 
-    const oDiv = _.map(data, (item) => {
+    const oDiv = _.map(data, (item, index) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
         (<div key={itemChild.name} className={styles.radioItem}>
           <span className={styles.icon} />
@@ -444,7 +460,7 @@ export default class MissionFeedback extends PureComponent {
           </span>
         </div>));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
-        item.checkboxData, checkBox, options);
+        item.checkboxData, checkBox, false, options, `checkbox-${index}`);
     });
     return oDiv;
   }
@@ -459,7 +475,7 @@ export default class MissionFeedback extends PureComponent {
 
     const options = isShowEmptyRadioPie ? constructEmptyPie() : {};
 
-    const oDiv = _.map(data, (item) => {
+    const oDiv = _.map(data, (item, index) => {
       const radios = _.map(item.radioData, itemChild => (
         <div key={itemChild.name} className={styles.radioItem}>
           <span className={styles.icon} />
@@ -470,7 +486,7 @@ export default class MissionFeedback extends PureComponent {
         </div>
       ));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
-        item.radioData, radios, isRadio, options);
+        item.radioData, radios, isRadio, options, `radio-${index}`);
     });
     return oDiv;
   }

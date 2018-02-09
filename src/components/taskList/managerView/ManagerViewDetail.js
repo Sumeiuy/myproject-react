@@ -478,6 +478,7 @@ export default class ManagerViewDetail extends PureComponent {
                 isFold={isFold}
                 missionFeedbackCount={missionFeedbackCount}
                 serveManagerCount={serveManagerCount}
+                templateId={templateId}
               />
             </div>
           }
