@@ -14,11 +14,16 @@ import LabelInfo from '../common/LabelInfo';
 import IECharts from '../../IECharts';
 // import Icon from '../../common/Icon';
 import Pagination from '../../common/Pagination';
+import { constructEmptyPie } from './ConstructEmptyPie';
 
 import styles from './missionFeedback.less';
 
 // const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+// 是否数据为空，包含一维数组空数据，二维数组空数据，
+const isEmptyData = (data, type, value) => _.isEmpty(_.filter((_.map(data,
+  item => _.filter(item[type], itemData =>
+    !_.isEmpty(itemData[value])))), item => !_.isEmpty(item)));
 
 export default class MissionFeedback extends PureComponent {
 
@@ -64,18 +69,36 @@ export default class MissionFeedback extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { missionFeedbackCount, missionFeedbackData = EMPTY_LIST, serveManagerCount } = nextProps;
-    const { finalData, originProblemData } = this.handleData(
-      missionFeedbackData,
+    const {
       missionFeedbackCount,
+      missionFeedbackData = EMPTY_LIST,
       serveManagerCount,
-    );
+    } = this.props;
+    const {
+      missionFeedbackCount: nextFeedbackCount,
+      missionFeedbackData: nextFeedbackData = EMPTY_LIST,
+      serveManagerCount: nextManagerCount,
+    } = nextProps;
 
-    this.setState({
-      finalData,
-      problems: originProblemData,
-      originProblemData,
-    });
+    if (missionFeedbackCount !== nextFeedbackCount
+      || missionFeedbackData !== nextFeedbackData
+      || serveManagerCount !== nextManagerCount) {
+      // 需要重新绘制饼图时，清除echarts的当前实例
+      if (this.chartInstance) {
+        this.chartInstance.getChartsInstance().clear();
+      }
+      const { finalData, originProblemData } = this.handleData(
+        nextFeedbackData,
+        nextFeedbackCount,
+        nextManagerCount,
+      );
+
+      this.setState({
+        finalData,
+        problems: originProblemData,
+        originProblemData,
+      });
+    }
   }
 
   @autobind
@@ -290,7 +313,20 @@ export default class MissionFeedback extends PureComponent {
     return option;
   }
 
-  handleShowData(onOff, nameDes, data, item, isRadio = false) {
+  handleShowData(onOff, nameDes, data, item, isRadio = false, options = {}) {
+    let finalOptions = {};
+    if (!_.isEmpty(options)) {
+      // 空图
+      finalOptions = options;
+    } else if (isRadio) {
+      // 单选
+      finalOptions = this.handleOptionCake(data, nameDes);
+    } else {
+      return (
+        <div />
+      );
+    }
+
     return (
       <div className={styles.radioFeedAll}>
         <div
@@ -309,12 +345,12 @@ export default class MissionFeedback extends PureComponent {
         >
           <div className={styles.charts}>
             <IECharts
-              option={isRadio ? this.handleOptionCake(data, nameDes) :
-                this.handleOptionBar(data, nameDes)}
+              option={finalOptions}
               resizable
               style={{
                 height: '140px',
               }}
+              ref={ref => this.chartInstance = ref}
             />
           </div>
           <div className={styles.tips}>
@@ -392,6 +428,12 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   renderCheckBox(data) {
     const { isFold } = this.props;
+
+    // 是否显示空的多选图
+    const isShowEmptyCheckboxPie = isEmptyData(data, 'checkboxData', 'value');
+
+    const options = isShowEmptyCheckboxPie ? constructEmptyPie() : {};
+
     const oDiv = _.map(data, (item) => {
       const checkBox = _.map(item.checkboxData, itemChild =>
         (<div key={itemChild.name} className={styles.radioItem}>
@@ -402,7 +444,7 @@ export default class MissionFeedback extends PureComponent {
           </span>
         </div>));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
-        item.checkboxData, checkBox);
+        item.checkboxData, checkBox, options);
     });
     return oDiv;
   }
@@ -411,6 +453,12 @@ export default class MissionFeedback extends PureComponent {
   renderRadios(data) {
     const { isFold } = this.props;
     const isRadio = true;
+
+    // 是否显示空的单选图
+    const isShowEmptyRadioPie = isEmptyData(data, 'radioData', 'value');
+
+    const options = isShowEmptyRadioPie ? constructEmptyPie() : {};
+
     const oDiv = _.map(data, (item) => {
       const radios = _.map(item.radioData, itemChild => (
         <div key={itemChild.name} className={styles.radioItem}>
@@ -422,7 +470,7 @@ export default class MissionFeedback extends PureComponent {
         </div>
       ));
       return this.handleShowData(isFold, item.radioTaskFeedbackDes,
-        item.radioData, radios, isRadio);
+        item.radioData, radios, isRadio, options);
     });
     return oDiv;
   }
@@ -488,9 +536,7 @@ export default class MissionFeedback extends PureComponent {
       onShowSizeChange: this.handleSizeChange,
     };
     // 是否显示主观题统计栏目
-    const isHideSubjective = _.isEmpty(_.filter((_.map(dataInfo,
-      item => _.filter(item.infoData, itemData =>
-        !_.isEmpty(itemData.data)))), item => !_.isEmpty(item)));
+    const isHideSubjective = isEmptyData(dataInfo, 'infoData', 'data');
 
     if (_.isEmpty(dataInfo) || isHideSubjective) {
       return null;
