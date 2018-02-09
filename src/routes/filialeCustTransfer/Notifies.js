@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 10:53:34
+ * @Last Modified time: 2018-02-08 17:08:27
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -133,12 +133,10 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     }
     const isSuccess = type === TYPE_FAILED;
     // 分页
-    // 分页数据是否为空
-    const isPageEmpty = _.isEmpty(page);
     const paginationOption = {
-      current: isPageEmpty ? 1 : page.curPageNum,
-      total: isPageEmpty ? 0 : page.totalRecordNum,
-      pageSize: isPageEmpty ? 10 : page.pageSize,
+      current: page && page.curPageNum,
+      total: page && page.totalRecordNum,
+      pageSize: (page && page.pageSize) || 10,
       onChange: this.pageChangeHandle,
     };
     return (

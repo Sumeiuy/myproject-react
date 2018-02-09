@@ -305,6 +305,9 @@ export default class CustomerList extends PureComponent {
     } = props;
     const { occDivnNum = '', empNum } = empInfo;
     const keyword = decodeURIComponent(query.q);
+    // 标签名字与标签描述
+    const labelName = decodeURIComponent(query.labelName);
+    const labelDesc = decodeURIComponent(query.labelDesc);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -318,6 +321,13 @@ export default class CustomerList extends PureComponent {
       param.searchText = keyword;
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
       param.labels = [query.labelMapping];
+      if (query.source === 'sightingTelescope') {
+        // 如果是瞄准镜，需要加入queryLabelReq
+        param.queryLabelReq = {
+          labelName,
+          labelDesc,
+        };
+      }
     } else if (query.source === 'association') { // 联想词
       param.searchTypeReq = query.labelMapping;
       param.searchText = keyword;

@@ -248,12 +248,12 @@ export default class RightPanel extends PureComponent {
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        return (<div key={key}>
+        return (<div key={key} className={styles.rowBottom}>
           <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
           <p>{this.renderOption(optionRespDtoList)}</p>
         </div>);
       }
-      return (<div key={key}>
+      return (<div key={key} className={styles.rowBottom}>
         <p>{`${key + 1}.${item.value}？(${quesType.value})`}</p>
         <p>{item.remark}</p>
       </div>);
@@ -362,12 +362,12 @@ export default class RightPanel extends PureComponent {
         </div>
         {isShowTable ?
           <GroupModal
-            // 为了每次都能打开一个新的modal
             visible={isShowTable}
             title={'客户预览'}
             okText={'提交'}
             okType={'primary'}
             onOkHandler={this.handleCloseModal}
+            onCancelHandler={this.handleCloseModal}
             footer={
               <Clickable
                 onClick={this.handleCloseModal}

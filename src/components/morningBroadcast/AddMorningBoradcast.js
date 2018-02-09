@@ -92,7 +92,7 @@ export default class AddMorningBoradcast extends PureComponent {
         }
         handleOk(resetFields);
         message.success('操作成功', 1);
-        onHandleGetList();
+        onHandleGetList(null, true);
       }
     }
     // 删除文件
@@ -299,9 +299,9 @@ export default class AddMorningBoradcast extends PureComponent {
   onBeforeUpload(file) {
     const audioType = this.getInitDate('newsTypeCode');
     // 音频文件格式限制为MP3
-    const audioTypeReg = /.mp3$/;
+    const audioTypeReg = /(\.mp3|\.m4a)$/;
     if (!audioTypeReg.test(file.name)) {
-      message.info('资讯晨报音频文件仅支持mp3格式');
+      message.info('资讯晨报音频文件仅支持mp3及m4a格式');
       return false;
     }
     // 财经V2晨报定制大小
@@ -360,7 +360,7 @@ export default class AddMorningBoradcast extends PureComponent {
     const audioProps = {
       ...sourceProps,
       action: `${request.prefix}/file/ceFileReplaceUpload `,
-      accept: 'audio/mp3',
+      accept: 'audio/*',
       data: {
         attachment: finalNewUuid[0],
         empId: emp.getId(),

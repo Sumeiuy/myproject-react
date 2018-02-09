@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-02-07 11:38:45
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-09 12:37:50
  * 服务记录表单
  */
 
@@ -85,7 +85,7 @@ export default class ServiceRecordForm extends PureComponent {
     };
 
     // 添加服务记录
-    addServeRecord(postBody);
+    addServeRecord(postBody, this.handleCancel);
   }
 
   @autobind

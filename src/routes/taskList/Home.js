@@ -309,6 +309,7 @@ export default class PerformerView extends PureComponent {
       typeCode: '',
       typeName: '',
       eventId: '',
+      statusCode: '',
     };
   }
 
@@ -398,13 +399,14 @@ export default class PerformerView extends PureComponent {
         });
         itemIndex = 0;
       }
-      const { missionViewType: st, typeCode, typeName } = item;
+      const { missionViewType: st, typeCode, statusCode, typeName } = item;
       this.setState({
         // 当前视图（三种）
         currentView: st,
         activeRowIndex: itemIndex,
         typeCode,
         typeName,
+        statusCode,
       });
       this.getDetailByView(item);
     }
@@ -545,7 +547,7 @@ export default class PerformerView extends PureComponent {
       query: { currentId },
     } = location;
     const { empNum = 0 } = missionImplementationDetail || {};
-    const { typeCode, typeName, taskFeedbackList } = this.state;
+    const { typeCode, typeName, taskFeedbackList, statusCode } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
     switch (st) {
@@ -581,6 +583,7 @@ export default class PerformerView extends PureComponent {
             getCustDetail={this.getCustDetail}
             serviceTypeCode={typeCode}
             serviceTypeName={typeName}
+            statusCode={statusCode}
             ceFileDelete={ceFileDelete}
             getCeFileList={getCeFileList}
             filesList={filesList}
@@ -905,7 +908,7 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id, missionViewType: st, typeCode, typeName, eventId } = record;
+    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId } = record;
     const {
       queryCustUuid,
       replace,
@@ -925,6 +928,7 @@ export default class PerformerView extends PureComponent {
       typeCode,
       typeName,
       eventId,
+      statusCode,
     });
     this.getDetailByView(record);
     // 如果当前视图是执行者视图，则预先请求custUuid

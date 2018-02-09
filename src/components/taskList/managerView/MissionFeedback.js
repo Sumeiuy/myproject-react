@@ -137,7 +137,7 @@ export default class MissionFeedback extends PureComponent {
             const tempData = [{
               name: childItem.optionValue,
               value: childItem.cnt,
-              optionPer: `${((childItem.cnt / answerTotalCount) * 100).toFixed(0) || 0}%`,
+              optionPer: answerTotalCount === 0 ? '0%' : `${((childItem.cnt / answerTotalCount) * 100).toFixed(0) || 0}%`,
             }];
             if (quesTypeCode === '1') {
               // 单选题
@@ -487,12 +487,28 @@ export default class MissionFeedback extends PureComponent {
       onChange: this.handlePageChange,
       onShowSizeChange: this.handleSizeChange,
     };
+    // 是否显示主观题统计栏目
+    const isHideSubjective = _.isEmpty(_.filter((_.map(dataInfo,
+      item => _.filter(item.infoData, itemData =>
+        !_.isEmpty(itemData.data)))), item => !_.isEmpty(item)));
+
+    if (_.isEmpty(dataInfo) || isHideSubjective) {
+      return null;
+    }
     const value = _.map(dataInfo, (item) => {
-      const info = _.map(item.infoData, (itemChild, index) =>
-        <h5 title={itemChild.data} key={itemChild.data}>
-          {index + 1}.{itemChild.data}
-        </h5>,
-      );
+      if (_.isEmpty(item.infoData)) {
+        return null;
+      }
+      const info = _.map(item.infoData, (itemChild, index) => {
+        if (_.isEmpty(itemChild.data)) {
+          return null;
+        }
+        return (
+          <h5 title={itemChild.data} key={itemChild.data}>
+            {index + 1}.{itemChild.data}
+          </h5>
+        );
+      });
       return (
         <div className={styles.subjective}>
           <div

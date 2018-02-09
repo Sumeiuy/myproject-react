@@ -109,6 +109,8 @@ export default class Audio extends PureComponent {
   // 当音频可以播放时
   @autobind
   handleAudioCanplay() {
+    const { volume } = this.props;
+    this.audio.volume = volume;
     this.setState({
       canPlay: true,
     });
@@ -134,14 +136,13 @@ export default class Audio extends PureComponent {
   }
 
   render() {
-    const { src, volume, autoPlay } = this.props;
+    const { src, autoPlay } = this.props;
     const { currentTime, playing } = this.state;
     const { duration } = this.audio;
     return (
       <div className={styles.audioContainer}>
         <audio
           preload="auto"
-          volume={volume}
           autoPlay={autoPlay}
           src={src}
           ref={(audio) => { this.nativeAudio = audio; }}
