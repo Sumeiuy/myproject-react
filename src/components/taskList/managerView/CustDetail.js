@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 13:52:53
+ * @Last Modified time: 2018-02-12 14:07:14
  * 客户明细数据
  */
 
@@ -292,15 +292,16 @@ export default class CustDetail extends PureComponent {
       key: 'missionStatusValue',
       value: '服务状态',
     },
-      // {
-      //   key: 'custFeedBack1',
-      //   value: '客户反馈',
-      // },
-      // {
-      //   key: 'custFeedBack2',
-      //   value: '反馈详情',
-      //   render: this.renderFeedbackDetail,
-      // },
+    // 后端性能问题，暂时不要这两个字段
+    // {
+    //   key: 'custFeedBack1',
+    //   value: '客户反馈',
+    // },
+    // {
+    //   key: 'custFeedBack2',
+    //   value: '反馈详情',
+    //   render: this.renderFeedbackDetail,
+    // },
     ];
   }
 
