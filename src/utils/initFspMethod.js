@@ -46,8 +46,7 @@ function initFspMethod({ store, history }) {
         fspContainerElem = document.querySelector('.wrapper.ps-container');
       }
       // 不是很完美，只能无脑滚底部
-      // 等朱飞阳修复，现在加上这段话，页面报错了，暂时先禁用
-      // fspContainerElem.scrollTop = 0;
+      fspContainerElem.scrollTop = 0;
     }
   });
 
