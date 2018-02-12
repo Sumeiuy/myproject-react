@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-11 10:00:57
+ * @Last Modified time: 2018-02-12 10:21:57
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -104,6 +104,15 @@ const data = {
       n = ~~(n / 26); // eslint-disable-line
     }
     return result.reverse().join('');
+  },
+
+  /**
+   * 将数字转成成百分比
+   * @param {*number} num 当前需要转换的数字
+   * @param {*} toFixedNum 当前需要保留的位数
+   */
+  toPercent(num, toFixedNum = 0) {
+    return `${(Math.round(num * 10000) / 100).toFixed(toFixedNum)}%`;
   },
 };
 
