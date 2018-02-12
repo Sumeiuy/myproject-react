@@ -265,6 +265,7 @@ export default class ManagerViewDetail extends PureComponent {
       <div className={styles.custValue}>
         <div
           className={styles.totalNum}
+          onClick={() => { this.handlePreview({ canLaunchTask: false }); }}
         >
           {custNumbers}
         </div>

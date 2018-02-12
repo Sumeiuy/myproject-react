@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 13:03:37
+ * @Last Modified time: 2018-02-12 13:59:02
  * 客户反馈
  */
 
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { constructPieOptions } from './ConstructPieOptions';
 import { constructEmptyPie } from './ConstructEmptyPie';
 import IECharts from '../../IECharts';
+import { data as dataHelper } from '../../../helper';
 import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
@@ -293,7 +294,7 @@ export default class CustFeedback extends PureComponent {
                   key={item.key}
                 >
                   <i className={styles.parentIcon} style={{ background: item.color }} />
-                  <span>{item.name}</span>：<span>{Number(item.value) * 100}%</span>
+                  <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
                 </div>,
               )}
           </div>

@@ -18,12 +18,25 @@ import { constructEmptyPie } from './ConstructEmptyPie';
 
 import styles from './missionFeedback.less';
 
-// const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-// 是否数据为空，包含一维数组空数据，二维数组空数据，
-const isEmptyData = (data, type, value) => _.isEmpty(_.filter((_.map(data,
-  item => _.filter(item[type], itemData =>
-    !_.isEmpty(itemData[value])))), item => !_.isEmpty(item)));
+// 检查二维数组是否都是空数据
+// 形式如：
+// [
+//  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]},
+//  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]}
+// ]
+const isEmptyData = (data, type, value) => {
+  if (_.isEmpty(data)) {
+    return true;
+  }
+  // 得到[type]组成的二维数组
+  let newData = _.map(data, item => item[type]);
+  // 将二维数组抹平
+  newData = _.flatten(newData);
+  // 选出每一个对象的[value]属性组成的数组
+  const itemDataArray = _.filter(newData, i => i[value] !== 0);
+  return _.isEmpty(itemDataArray);
+};
 
 export default class MissionFeedback extends PureComponent {
 
@@ -56,18 +69,9 @@ export default class MissionFeedback extends PureComponent {
         allFeedback: {},
         radioFeedback: [],
         checkboxFeedback: [],
+        dataInfo: [],
+        pageInfo: {},
       },
-      problems: {
-        resultData: {
-          pageInfo: {
-            curPageNum: 1,
-            curPageSize: 5,
-            totalRecordNum: 5,
-          },
-          dataInfo: [],
-        },
-      },
-      originProblemData: {},
     };
     this.chartInstance = {};
   }
@@ -77,30 +81,17 @@ export default class MissionFeedback extends PureComponent {
       missionFeedbackCount,
       missionFeedbackData = EMPTY_LIST,
       serveManagerCount,
-      // templateId = '',
     } = this.props;
     const {
       missionFeedbackCount: nextFeedbackCount,
       missionFeedbackData: nextFeedbackData = EMPTY_LIST,
       serveManagerCount: nextManagerCount,
-      // templateId: nextTemplateId = '',
     } = nextProps;
-
-    // if (templateId !== nextTemplateId) {
-    //   // 需要重新绘制饼图时，清除echarts的当前实例
-    //   const chartInstance = this.chartInstance;
-    //   if (!_.isEmpty(chartInstance)) {
-    //     _.forEach(chartInstance, (value, key) => {
-    //       chartInstance[`${key}`].getChartsInstance().clear();
-    //     });
-    //   }
-    // }
-
 
     if (missionFeedbackCount !== nextFeedbackCount
       || missionFeedbackData !== nextFeedbackData
       || serveManagerCount !== nextManagerCount) {
-      const { finalData, originProblemData } = this.handleData(
+      const { finalData } = this.formatData(
         nextFeedbackData,
         nextFeedbackCount,
         nextManagerCount,
@@ -108,35 +99,8 @@ export default class MissionFeedback extends PureComponent {
 
       this.setState({
         finalData,
-        problems: originProblemData,
-        originProblemData,
       });
     }
-  }
-
-  @autobind
-  handleData(missionFeedbackData, missionFeedbackCount, serveManagerCount) {
-    const finalData = this.formatData(
-      missionFeedbackData,
-      missionFeedbackCount,
-      serveManagerCount,
-    );
-    const { dataInfo } = finalData;
-    const originProblemData = {
-      resultData: {
-        dataInfo,
-        pageInfo: {
-          curPageNum: 1,
-          curPageSize: 5,
-          totalRecordNum: _.size(dataInfo),
-        },
-      },
-    };
-
-    return {
-      finalData,
-      originProblemData,
-    };
   }
 
   /**
@@ -185,7 +149,7 @@ export default class MissionFeedback extends PureComponent {
           } else if (quesTypeCode === '3' || quesTypeCode === 3) {
             // 主观题
             infoData = _.concat(infoData, [
-              { data: childItem.answerText },
+              { data: childItem.answerText || 0 },
             ]);
           }
         });
@@ -223,9 +187,16 @@ export default class MissionFeedback extends PureComponent {
       radioFeedback,
       checkboxFeedback,
       dataInfo,
+      pageInfo: {
+        curPageNum: 1,
+        curPageSize: 5,
+        totalRecordNum: _.size(dataInfo),
+      },
     };
 
-    return finalData;
+    return {
+      finalData,
+    };
   }
 
   handleOptionCake(value, names) {
@@ -386,18 +357,19 @@ export default class MissionFeedback extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { problems } = this.state;
-    const { curDataInfo } = this.renderProblemsData(nextPage, currentPageSize);
+    const { finalData } = this.state;
+    const {
+      curDataInfo,
+    } = this.renderProblemsData(nextPage, currentPageSize);
     this.setState({
-      problems: _.merge(problems, {
-        resultData: {
-          pageInfo: {
-            curPageNum: nextPage,
-            curPageSize: currentPageSize,
-          },
-          dataInfo: curDataInfo,
+      finalData: {
+        ...finalData,
+        pageInfo: {
+          curPageNum: nextPage,
+          curPageSize: currentPageSize,
         },
-      }),
+        dataInfo: curDataInfo,
+      },
     });
   }
 
@@ -408,24 +380,25 @@ export default class MissionFeedback extends PureComponent {
    */
   @autobind
   handleSizeChange(currentPageNum, changedPageSize) {
-    const { problems } = this.state;
-    const { curDataInfo } = this.renderProblemsData(currentPageNum, changedPageSize);
+    const { finalData } = this.state;
+    const {
+      curDataInfo,
+    } = this.renderProblemsData(currentPageNum, changedPageSize);
     this.setState({
-      problems: _.merge(problems, {
-        resultData: {
-          pageInfo: {
-            curPageNum: currentPageNum,
-            curPageSize: changedPageSize,
-          },
-          dataInfo: curDataInfo,
+      finalData: {
+        ...finalData,
+        pageInfo: {
+          curPageNum: currentPageNum,
+          curPageSize: changedPageSize,
         },
-      }),
+        dataInfo: curDataInfo,
+      },
     });
   }
 
   @autobind
   renderProblemsData(curPageNum, curPageSize) {
-    const { problems: { resultData: { dataInfo } } } = this.state;
+    const { finalData: { dataInfo, pageInfo: { totalRecordNum } } } = this.state;
     let curDataInfo = [];
     if (curPageNum <= 1) {
       // 第一页
@@ -438,6 +411,7 @@ export default class MissionFeedback extends PureComponent {
 
     return {
       curDataInfo,
+      totalRecordNum,
     };
   }
 
@@ -542,7 +516,7 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   renderProblemsInfo(dataInfo) {
     const { isFold } = this.props;
-    const { problems: { resultData: { pageInfo } } } = this.state;
+    const { finalData: { pageInfo } } = this.state;
     const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
     const paginationOption = {
       current: curPageNum,
@@ -567,7 +541,7 @@ export default class MissionFeedback extends PureComponent {
         }
         return (
           <h5 title={itemChild.data} key={itemChild.data}>
-            {index + 1}.{itemChild.data}
+            {index + 1}.{itemChild.data || ''}
           </h5>
         );
       });
@@ -610,8 +584,8 @@ export default class MissionFeedback extends PureComponent {
 
   render() {
     const { isFold } = this.props;
-    const { problems: { resultData: { dataInfo } }, finalData } = this.state;
-    const { allFeedback, radioFeedback, checkboxFeedback } = finalData;
+    const { finalData } = this.state;
+    const { allFeedback, radioFeedback, checkboxFeedback, dataInfo } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
 
     if (_.isEmpty(dataInfo) &&
