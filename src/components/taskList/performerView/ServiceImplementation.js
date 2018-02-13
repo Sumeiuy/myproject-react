@@ -155,6 +155,7 @@ export default class ServiceImplementation extends PureComponent {
       reloadTargetCustInfo,
       attachmentList,
       statusCode,
+      isTaskFeedbackListOfNone,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -193,6 +194,7 @@ export default class ServiceImplementation extends PureComponent {
       value: serviceTypeName,
       children: transformCustFeecbackData(taskFeedbackList),
     }];
+
     // 服务记录的props
     const serviceReocrd = {
       serviceTips,
@@ -210,6 +212,7 @@ export default class ServiceImplementation extends PureComponent {
       missionFlowId,
       motCustfeedBackDict,
       attachmentList,
+      isTaskFeedbackListOfNone,
     };
     return (
       <div>
@@ -285,6 +288,7 @@ ServiceImplementation.propTypes = {
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
   statusCode: PropTypes.string,
+  isTaskFeedbackListOfNone: PropTypes.bool,
 };
 
 ServiceImplementation.defaultProps = {
@@ -297,4 +301,5 @@ ServiceImplementation.defaultProps = {
   taskFeedbackList: [],
   serviceTypeName: '',
   statusCode: '',
+  isTaskFeedbackListOfNone: false,
 };

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 12:31:59
+ * @Last Modified time: 2018-02-13 14:37:22
  */
 
 
@@ -176,7 +176,8 @@ export default class ServiceRecordContent extends PureComponent {
       formData,
       isReadOnly,
       // 服务类型、客户反馈类型三级字典
-      formData: { motCustfeedBackDict },
+      // isTaskFeedbackListOfNone如果为true，代表没有找到客户反馈二级反馈字典，则直接写死一个其他类型的feedbackList
+      formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
     } = props;
     const [{ key: serviceTypeCode = '', value: serviceTypeName = '' }] = motCustfeedBackDict;
 
@@ -194,6 +195,8 @@ export default class ServiceRecordContent extends PureComponent {
 
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
+      // 当前日期的时间戳
+      const currentDate = new Date().getTime();
 
       // 执行者视图
       if (isReadOnly) {
@@ -229,11 +232,14 @@ export default class ServiceRecordContent extends PureComponent {
           feedbackTypeChild: '',
           feedbackTypeChildList: [],
           // 服务时间（日期）
-          serviceDate,
+          serviceDate: _.isEmpty(serviceDate) ?
+            moment(currentDate).format(dateFormat) : serviceDate,
           // 服务时间（时分秒）
-          serviceTime,
+          serviceTime: _.isEmpty(serviceTime) ?
+            moment(currentDate).format(timeFormat) : serviceTime,
           // 反馈时间
-          feedbackDate,
+          feedbackDate: _.isEmpty(feedbackDate) ?
+            moment(currentDate).format(dateFormat) : feedbackDate,
           // 服务状态
           serviceStatus: serviceStateMap[serviceStatusCode],
           // 服务方式
@@ -243,7 +249,13 @@ export default class ServiceRecordContent extends PureComponent {
           // customerFeedback,
           attachmentList,
         };
-        if (!_.isEmpty(customerFeedback)) {
+        // 如果找不到反馈一二级，则前端默认指定两个其他类型。
+        if (isTaskFeedbackListOfNone) {
+          formObject.feedbackType = '-1';
+          formObject.feedbackTypeList = [{ key: '-1', value: '其他' }];
+          formObject.feedbackTypeChild = '-1';
+          formObject.feedbackTypeChildList = [{ key: '-1', value: '其他' }];
+        } else if (!_.isEmpty(customerFeedback)) {
           const {
             code,
             name,
@@ -258,9 +270,6 @@ export default class ServiceRecordContent extends PureComponent {
           formObject.feedbackTypeChildList = [{ key: String(subCode), value: subName }];
         }
       } else {
-        // 当前日期的时间戳
-        const currentDate = new Date().getTime();
-
         formObject = {
           // 服务类型，页面上隐藏该字段
           serviceType: serviceTypeCode,
@@ -611,6 +620,7 @@ export default class ServiceRecordContent extends PureComponent {
       isShowSubCustomerFeedback =
         currentCustomerFeedback.value === currentSubCustomerFeedback.value;
     }
+
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
@@ -733,19 +743,19 @@ export default class ServiceRecordContent extends PureComponent {
               </Select>
               {
                 isShowSubCustomerFeedback ? null :
-                <Select
-                  value={feedbackTypeChild}
-                  style={width}
-                  onChange={this.handleFeedbackTypeChild}
-                  disabled={isReadOnly}
-                  getPopupContainer={() => this.customerFeedbackRef}
-                >
-                  {
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    onChange={this.handleFeedbackTypeChild}
+                    disabled={isReadOnly}
+                    getPopupContainer={() => this.customerFeedbackRef}
+                  >
+                    {
                       (feedbackTypeChildList).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
-                </Select>
+                  </Select>
               }
             </div>
           </div>

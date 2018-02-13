@@ -46,7 +46,7 @@ function initFspMethod({ store, history }) {
         fspContainerElem = document.querySelector('.wrapper.ps-container');
       }
       // 不是很完美，只能无脑滚底部
-      fspContainerElem.scrollTop = 0;
+      // fspContainerElem.scrollTop = 0;
     }
   });
 
