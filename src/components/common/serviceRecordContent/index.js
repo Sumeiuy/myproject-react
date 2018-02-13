@@ -743,19 +743,19 @@ export default class ServiceRecordContent extends PureComponent {
               </Select>
               {
                 isShowSubCustomerFeedback ? null :
-                  <Select
-                    value={feedbackTypeChild}
-                    style={width}
-                    onChange={this.handleFeedbackTypeChild}
-                    disabled={isReadOnly}
-                    getPopupContainer={() => this.customerFeedbackRef}
-                  >
-                    {
+                <Select
+                  value={feedbackTypeChild}
+                  style={width}
+                  onChange={this.handleFeedbackTypeChild}
+                  disabled={isReadOnly}
+                  getPopupContainer={() => this.customerFeedbackRef}
+                >
+                  {
                       (feedbackTypeChildList).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
-                  </Select>
+                </Select>
               }
             </div>
           </div>
