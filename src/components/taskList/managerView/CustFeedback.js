@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 13:59:02
+ * @Last Modified time: 2018-02-12 16:45:46
  * 客户反馈
  */
 
@@ -180,7 +180,7 @@ export default class CustFeedback extends PureComponent {
       childrenElem += `<div class="item">
           <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
-          <span class="percent">${Number(item.value) * 100}%</span>
+          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
         </div>`,
     );
     return childrenElem;
@@ -190,7 +190,7 @@ export default class CustFeedback extends PureComponent {
   renderParent(name, value) {
     let parentElem = '';
     parentElem = `<div class="title">
-        ${name}：${value * 100}%
+        ${name}：${dataHelper.toPercent(Number(value))}
       </div>`;
     return parentElem;
   }
