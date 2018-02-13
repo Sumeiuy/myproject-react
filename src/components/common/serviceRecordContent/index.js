@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-13 14:37:22
+ * @Last Modified time: 2018-02-13 16:26:26
  */
 
 
@@ -54,6 +54,10 @@ const serviceStateMap = {
   30: '30',
   40: '30',
 };
+
+// 其他类型的客户反馈，容错处理，在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
+// 需要前端容错一下
+const otherFeedbackList = [{ key: '-1', value: '其他' }];
 
 function range(start, end) {
   const result = [];
@@ -252,9 +256,9 @@ export default class ServiceRecordContent extends PureComponent {
         // 如果找不到反馈一二级，则前端默认指定两个其他类型。
         if (isTaskFeedbackListOfNone) {
           formObject.feedbackType = '-1';
-          formObject.feedbackTypeList = [{ key: '-1', value: '其他' }];
+          formObject.feedbackTypeList = otherFeedbackList;
           formObject.feedbackTypeChild = '-1';
-          formObject.feedbackTypeChildList = [{ key: '-1', value: '其他' }];
+          formObject.feedbackTypeChildList = otherFeedbackList;
         } else if (!_.isEmpty(customerFeedback)) {
           const {
             code,
@@ -751,10 +755,10 @@ export default class ServiceRecordContent extends PureComponent {
                   getPopupContainer={() => this.customerFeedbackRef}
                 >
                   {
-                      (feedbackTypeChildList).map(obj => (
-                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                      ))
-                    }
+                    (feedbackTypeChildList).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
                 </Select>
               }
             </div>
