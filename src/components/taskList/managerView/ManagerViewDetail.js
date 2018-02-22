@@ -478,15 +478,15 @@ export default class ManagerViewDetail extends PureComponent {
           </div>
           {
             _.isEmpty(templateId) ? null :
-              <div className={styles.missionFeedbackSection}>
-                <MissionFeedback
-                  missionFeedbackData={missionFeedbackData}
-                  isFold={isFold}
-                  missionFeedbackCount={missionFeedbackCount}
-                  serveManagerCount={serveManagerCount}
-                  templateId={templateId}
-                />
-              </div>
+            <div className={styles.missionFeedbackSection}>
+              <MissionFeedback
+                missionFeedbackData={missionFeedbackData}
+                isFold={isFold}
+                missionFeedbackCount={missionFeedbackCount}
+                serveManagerCount={serveManagerCount}
+                templateId={templateId}
+              />
+            </div>
           }
         </div>
       </div>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-13 15:59:14
+ * @Last Modified time: 2018-02-22 10:34:06
  */
 
 import React, { PureComponent } from 'react';
@@ -917,12 +917,12 @@ export default class TaskFlow extends PureComponent {
       />,
     }];
 
-    let stepsCount = _.size(steps);
     // 灰度发布展示结果跟踪和任务调查，默认不展示
     if (!envHelper.isGrayFlag()) {
       steps.splice(2, 1);
-      stepsCount -= 1;
     }
+
+    const stepsCount = _.size(steps);
 
     return (
       isSuccess ?
