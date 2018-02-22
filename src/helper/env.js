@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-13 16:20:32
+ * @Last Modified time: 2018-02-22 09:08:20
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -109,10 +109,8 @@ const env = {
    * 检测当前版本是不是需要支持灰度发布，以便控制代码里面的逻辑显示、隐藏、特殊处理等
    */
   isGrayFlag() {
-    // 本地设置成true，不然那有些功能不展示，不好测试，或者在url上添加标记，fsp里面会覆盖本地的标记
-    const localGrayFlag = true;
     const nativeQuery = qs.parse(window.location.search);
-    const grayFlag = window.grayFlag || nativeQuery.grayFlag || localGrayFlag;
+    const grayFlag = window.grayFlag === true || nativeQuery.grayFlag === 'true';
     return grayFlag;
   },
 };
