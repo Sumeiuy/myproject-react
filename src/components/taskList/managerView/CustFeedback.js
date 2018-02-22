@@ -319,7 +319,7 @@ export default class CustFeedback extends PureComponent {
             }}
             ref={ref => this.chartInstance = ref}
             onEvents={{
-              click: this.handlePieClick,
+              click: _.noop,
             }}
           />
           <div className={styles.chartExp}>
