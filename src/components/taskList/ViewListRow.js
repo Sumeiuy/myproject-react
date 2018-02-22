@@ -51,10 +51,6 @@ export default function AppItem(props) {
     [styles.appChanceIcon]: data.executionTypeCode === 'Chance',
     [styles.active]: active,
   });
-  const serialCls = cx({
-    [styles.serialNumber]: true,
-    [styles.active]: active,
-  });
   const typeCls = cx({
     [styles.type]: true,
     [styles.active]: active,
@@ -116,7 +112,6 @@ export default function AppItem(props) {
       <div className={styles.itemHeader}>
         <div className={styles.title}>
           <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
-          <span className={serialCls}>编号{data.id || '无'}</span>
           <span className={typeCls}>{renderMissionTypeName(missionTypeDict, data.typeCode)}</span>
         </div>
         <div className={styles.tagArea}>

@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
-import { emp, permission } from '../../helper';
+import { emp, permission, env as envHelper } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -60,6 +60,18 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   loading: globalLoading,
 });
 
+// 找不到反馈类型的时候，前端写死一个其他类型，作容错处理
+const feedbackListOfNone = [{
+  id: -1,
+  name: '其他',
+  length: 1,
+  childList: [{
+    id: -1,
+    name: '其他',
+    length: null,
+    childList: null,
+  }],
+}];
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
@@ -290,17 +302,29 @@ export default class PerformerView extends PureComponent {
     let currentView = '';
     if (!_.isEmpty(missionViewType)) {
       currentView = missionViewType;
-    } else if (this.hasPermissionOfManagerView) {
-      currentView = CONTROLLER;
-    } else {
-      currentView = EXECUTOR;
     }
 
     let newMissionView = chooseMissionView;
-    if (!this.hasPermissionOfManagerView) {
-      // 没有管理者视图查看权限
-      newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+    // 默认不展示执行者视图与管理者视图的入口
+    if (envHelper.isGrayFlag()) {
+      // 支持灰度发布，则展示执行者视图与管理者视图的入口
+      // 然后根据权限来，到底需不需要展示管理者视图的入口
+      if (!this.hasPermissionOfManagerView) {
+        // 没有管理者视图查看权限
+        newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+        // 当前视图是执行者视图
+        currentView = EXECUTOR;
+      } else {
+        // 当前视图是管理者视图
+        currentView = CONTROLLER;
+      }
+    } else {
+      // 默认只展示
+      newMissionView = _.filter(chooseMissionView, item => item.value === INITIATOR);
+      // 当前视图是创建者视图
+      currentView = INITIATOR;
     }
+
     this.missionView = newMissionView;
     this.state = {
       currentView,
@@ -310,6 +334,7 @@ export default class PerformerView extends PureComponent {
       typeName: '',
       eventId: '',
       statusCode: '',
+      isTaskFeedbackListOfNone: false,
     };
   }
 
@@ -357,13 +382,21 @@ export default class PerformerView extends PureComponent {
       getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
         .then(() => {
           let currentType = {};
+          let taskFeedbackList = [];
           if (+currentItem.descText === 1) {
             currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
           } else {
             currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
           }
+          if (_.isEmpty(currentType)) {
+            // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
+            taskFeedbackList = feedbackListOfNone;
+          } else {
+            taskFeedbackList = currentType.feedbackList;
+          }
           this.setState({
-            taskFeedbackList: (currentType || {}).feedbackList,
+            taskFeedbackList,
+            isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
           });
         });
     }
@@ -547,7 +580,13 @@ export default class PerformerView extends PureComponent {
       query: { currentId },
     } = location;
     const { empNum = 0 } = missionImplementationDetail || {};
-    const { typeCode, typeName, taskFeedbackList, statusCode } = this.state;
+    const {
+      typeCode,
+      typeName,
+      taskFeedbackList,
+      statusCode,
+      isTaskFeedbackListOfNone,
+    } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
     switch (st) {
@@ -556,7 +595,7 @@ export default class PerformerView extends PureComponent {
           <CreatorViewDetail
             onPreview={this.handlePreview}
             priviewCustFileData={priviewCustFileData}
-            taskBasicInfo={taskBasicInfo}
+            taskBasicInfo={{ ...taskBasicInfo, currentId }}
           />
         );
         break;
@@ -595,6 +634,7 @@ export default class PerformerView extends PureComponent {
             saveAnswersByType={saveAnswersByType}
             saveAnswersSucce={saveAnswersSucce}
             attachmentList={attachmentList}
+            isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
           />
         );
         break;

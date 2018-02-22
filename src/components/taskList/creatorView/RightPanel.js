@@ -276,6 +276,7 @@ export default class RightPanel extends PureComponent {
       motDetailModel = EMPTY_OBJECT,
       workflowHistoryBeanList = EMPTY_LIST,
       tagetCustModel = EMPTY_OBJECT,
+      currentId,
     } = taskBasicInfo;
     const { resultTraceVO = {}, quesVO } = motDetailModel;
     const { trackDay } = resultTraceVO;
@@ -308,7 +309,7 @@ export default class RightPanel extends PureComponent {
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <TaskListDetailInfo
-                infoData={motDetailModel}
+                infoData={{ ...motDetailModel, currentId }}
               />
             </div>
             <div id="nginformation_module" className={styles.module}>
