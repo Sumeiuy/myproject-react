@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 20:47:52
+ * @Last Modified time: 2018-02-12 14:00:28
  * 任务进度
  */
 
@@ -98,6 +98,19 @@ export default class MissionProgress extends PureComponent {
     });
   }
 
+  getParam(param) {
+    const { total, activeCount, ratio, activeType, remainingType } = param;
+    // 真实百分比
+    const activePercent = getPercent(Number(ratio));
+    return {
+      activeType,
+      remainingType,
+      activeCount,
+      activePercent,
+      remainingCount: total - activeCount,
+    };
+  }
+
   @autobind
   findCurrentProgressType(index) {
     const { missionProgressStatusDic: dic = [] } = this.props;
@@ -145,9 +158,6 @@ export default class MissionProgress extends PureComponent {
     return (
       <div className={styles.content}>
         <div className={styles.currentType}>{type}{currentCount || 0}位</div>
-        {/**
-         * 暂时去掉，后端性能问题
-         */}
         <div
           className={styles.linkCustDetail}
           onClick={() => this.handlePreview({
@@ -203,19 +213,6 @@ export default class MissionProgress extends PureComponent {
         <span className="ant-progress-text">{activeCount} / {activePercent}%</span>
       </div>
     );
-  }
-
-  getParam(param) {
-    const { total, activeCount, ratio, activeType, remainingType } = param;
-    // 真实百分比
-    const activePercent = getPercent(Number(ratio));
-    return {
-      activeType,
-      remainingType,
-      activeCount,
-      activePercent,
-      remainingCount: total - activeCount,
-    };
   }
 
   @autobind
@@ -282,7 +279,6 @@ export default class MissionProgress extends PureComponent {
       </div>
     );
   }
-
 
   render() {
     return (

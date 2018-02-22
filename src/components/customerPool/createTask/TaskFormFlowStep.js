@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 13:34:29
+ * @Last Modified time: 2018-02-09 15:44:56
  */
 
 import React, { PureComponent } from 'react';
@@ -210,6 +210,9 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case 'custGroupList':
         custSources = '客户分组';
+        break;
+      case 'sightingTelescope':
+        custSources = '标签圈人';
         break;
       default:
         break;

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 21:55:17
+ * @Last Modified time: 2018-02-12 15:21:23
  * 客户细分组件
  */
 
@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { message } from 'antd';
 import GroupTable from '../groupManage/GroupTable';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
@@ -109,7 +110,7 @@ export default class CustomerSegment extends PureComponent {
     });
     // 预览数据
     onPreview({
-      uploadKey: uploadedFileKey,
+      filename: uploadedFileKey,
       pageNum: nextPage,
       pageSize: currentPageSize,
     });
@@ -131,7 +132,7 @@ export default class CustomerSegment extends PureComponent {
     });
     // 预览数据
     onPreview({
-      uploadKey: uploadedFileKey,
+      filename: uploadedFileKey,
       pageNum: currentPageNum,
       pageSize: changedPageSize,
     });
@@ -174,18 +175,27 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   handleShowMatchCustTable(uploadedFileKey) {
+    console.log(uploadedFileKey);
+    if (!uploadedFileKey) {
+      message.error('请先上传文件');
+      return;
+    }
     // 已经上传的file key
     // 用来预览客户列表时，用
     const { onPreview } = this.props;
     const { fileKey } = this.state;
     this.setState({
       uploadedFileKey: uploadedFileKey || fileKey,
-      isShowTable: true,
     });
     onPreview({
-      uploadKey: uploadedFileKey,
+      filename: uploadedFileKey,
       pageNum: INITIAL_PAGE_NUM,
       pageSize: INITIAL_PAGE_SIZE,
+    }).then(() => {
+      // 数据回来，显示modal
+      this.setState({
+        isShowTable: true,
+      });
     });
   }
 

@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 // import { Row, Col } from 'antd';
+import classNames from 'classnames';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
@@ -23,6 +24,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const EMPTY_CONTENT = '本机构无服务客户';
 const MAIN_MAGEGER_ID = 'msm';
+const COLLAPSE_WIDTH = 672;
+const MARGIN_LEFT = 16;
 
 export default class MissionImplementation extends PureComponent {
 
@@ -62,6 +65,7 @@ export default class MissionImplementation extends PureComponent {
       currentOrgId: '',
       createCustRange: [],
       isDown: true,
+      forceRender: true,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.isAuthorize = permission.hasCustomerPoolPermission();
@@ -88,6 +92,35 @@ export default class MissionImplementation extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
+
+    window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
+
+   /**
+     * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
+     * 不然会产生对齐bug
+     * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
+     */
+  @autobind
+  onResize() {
+    const contentWidth = this.contentElem && this.contentElem.clientWidth;
+    if (this.memeoryWidth) {
+      if (this.memeoryWidth < COLLAPSE_WIDTH < contentWidth ||
+          contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
+        this.setState({
+          forceRender: !this.state.forceRender,
+        });
+      }
+    } else {
+      this.setState({
+        forceRender: !this.state.forceRender,
+      });
+    }
+    this.memeoryWidth = contentWidth;
   }
 
   @autobind
@@ -232,7 +265,14 @@ export default class MissionImplementation extends PureComponent {
       missionProgressStatusDic = EMPTY_LIST,
     } = this.props;
 
-    // const colSpanValue = isFold ? 12 : 24;
+    /**
+     * 下面三个变量是为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
+     * 不然会产生对齐bug
+     * 这里一旦取消box之间的间距，需要考虑到flex的重新伸缩性问题
+     */
+    const contentWidth = this.contentElem && this.contentElem.clientWidth;
+    const shouldnoMargin = (contentWidth && contentWidth < COLLAPSE_WIDTH);
+    const shouldForceCollapse = shouldnoMargin && contentWidth > COLLAPSE_WIDTH - MARGIN_LEFT;
 
     return (
       <div className={styles.missionImplementationSection}>
@@ -252,8 +292,14 @@ export default class MissionImplementation extends PureComponent {
               <img src={emptyImg} alt={EMPTY_CONTENT} />
               <div className={styles.tip}>{EMPTY_CONTENT}</div>
             </div> :
-            <div className={styles.content}>
-              <div className={styles.leftContent}>
+            <div className={styles.content} ref={(ref) => { this.contentElem = ref; }}>
+              <div
+                className={classNames({
+                  [styles.leftContent]: true,
+                  [styles.noMargin]: shouldnoMargin,
+                  [styles.forceCollapse]: shouldForceCollapse,
+                })}
+              >
                 <MissionProgress
                   missionImplementationProgress={missionImplementationProgress}
                   onPreviewCustDetail={this.handlePreview}

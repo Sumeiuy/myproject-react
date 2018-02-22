@@ -97,9 +97,9 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { labelId, filterNumObject } = this.state;
+    const { labelId, filterNumObject, modalVisible } = this.state;
     const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = nextProps;
-    const showStatus = isLoadingEnd && isSightTelescopeLoadingEnd;
+    const showStatus = modalVisible && isLoadingEnd && isSightTelescopeLoadingEnd;
     // 是否展示筛查客户的modal
     if (showStatus) {
       const { custList = [] } = peopleOfLabelData || {};
@@ -175,7 +175,12 @@ export default class TaskSearchRow extends PureComponent {
       payload.filtersReq = filtersList;
     }
     // 获取客户列表
-    getLabelPeople(payload);
+    getLabelPeople(payload).then(() => {
+      // 数据回来后，显示弹框
+      this.setState({
+        modalVisible: true,
+      });
+    });
 
     this.setState({
       argsOfQueryCustomer: {
@@ -229,7 +234,6 @@ export default class TaskSearchRow extends PureComponent {
       filter: currentFilterObject[value.labelMapping] || [],
     });
     this.setState({
-      modalVisible: true,
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,

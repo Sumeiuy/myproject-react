@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 13:03:37
+ * @Last Modified time: 2018-02-12 16:45:46
  * 客户反馈
  */
 
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { constructPieOptions } from './ConstructPieOptions';
 import { constructEmptyPie } from './ConstructEmptyPie';
 import IECharts from '../../IECharts';
+import { data as dataHelper } from '../../../helper';
 import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
@@ -179,7 +180,7 @@ export default class CustFeedback extends PureComponent {
       childrenElem += `<div class="item">
           <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
-          <span class="percent">${Number(item.value) * 100}%</span>
+          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
         </div>`,
     );
     return childrenElem;
@@ -189,7 +190,7 @@ export default class CustFeedback extends PureComponent {
   renderParent(name, value) {
     let parentElem = '';
     parentElem = `<div class="title">
-        ${name}：${value * 100}%
+        ${name}：${dataHelper.toPercent(Number(value))}
       </div>`;
     return parentElem;
   }
@@ -293,7 +294,7 @@ export default class CustFeedback extends PureComponent {
                   key={item.key}
                 >
                   <i className={styles.parentIcon} style={{ background: item.color }} />
-                  <span>{item.name}</span>：<span>{Number(item.value) * 100}%</span>
+                  <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
                 </div>,
               )}
           </div>

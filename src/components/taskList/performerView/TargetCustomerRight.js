@@ -78,10 +78,11 @@ export default class TargetCustomerRight extends PureComponent {
   @autobind
   showModal() {
     const { itemData = {}, getServiceRecord } = this.props;
-    this.setState({
-      visible: true,
-    });
-    getServiceRecord({ custId: itemData.custId }); // 应传 custId
+    getServiceRecord({ custId: itemData.custId }).then(() => {
+      this.setState({
+        visible: true,
+      });
+    }); // 应传 custId
   }
 
   @autobind

@@ -12,6 +12,10 @@ import _ from 'lodash';
 import { Pagination } from 'antd';
 import styles from './index.less';
 
+const PAGE_SENVEN = 7;
+const PAGE_EIGHT = 8;
+const PAGE_NINE = 9;
+
 function renderTotal(total) {
   /*  return total !== 0 ? `第${range[0]}-${range[1]}条，共${total}条` : `共${total}条`; */
   return `共${total}条`;
@@ -29,14 +33,52 @@ function renderPageSizeOptions(pageSize) {
 }
 
 // 是否应该隐藏最后一页的按钮
+
 function shouldHideLastButton(current, pageSize, total) {
-  // 当最后一页与当前页相差5页时显示最后一页
+  // 当最后一页与当前页相差2页时显示最后一页
+  // 注意如果要改动这里的SHOW_NUMBER,
+  // 必须测试下面的shouldFixPagination, shouldHiddenPage是否工作正常
   const SHOW_NUMBER = 2;
   const totalPageNumber = pageSize && (total / pageSize);
-  if ((totalPageNumber - current) > SHOW_NUMBER) {
+  // 当总页码不超过6的时候是可以放下的，而且也不会有性能问题，不需要隐藏
+  if (totalPageNumber > 6 && (totalPageNumber - current) > SHOW_NUMBER) {
     return true;
   }
 
+  return false;
+}
+
+// 当使用短版的页码表示
+// 修正10页以内，也就是总页数为 7， 8， 9 时， antd会显示全部页码
+// 从而导致的页码折行问题
+function shouldFixPagination(current, totalPageNumber, needFixPageNum, isShortPageList) {
+  if (isShortPageList &&
+      (totalPageNumber >= needFixPageNum) &&
+      (totalPageNumber <= PAGE_NINE)) {
+    if (needFixPageNum === PAGE_SENVEN && current > 4) {
+      return true;
+    }
+    if (needFixPageNum === PAGE_EIGHT && current > 5) {
+      return true;
+    }
+    if (needFixPageNum === PAGE_NINE && current > 6) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function shouldHiddenPage(current, totalPageNumber, isShortPageList, needHiddenPageNum) {
+  if (isShortPageList && totalPageNumber <= PAGE_NINE) {
+    if (totalPageNumber >= PAGE_EIGHT && current < 5) {
+      return true;
+    }
+    if (totalPageNumber === PAGE_NINE
+        && current === 5 &&
+        needHiddenPageNum === PAGE_EIGHT) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -144,6 +186,9 @@ export default class PaginationComponent extends PureComponent {
   render() {
     const { pageSize, isShortPageList, total, useClearStyle } = this.props;
     const { current } = this.state;
+
+    const totalPageNumber = pageSize && Math.ceil((total / pageSize));
+
     return (
       <div
         className={classnames({
@@ -151,6 +196,16 @@ export default class PaginationComponent extends PureComponent {
           [styles.hidden]: total === 0,
           [styles.shortPageList]: isShortPageList,
           [styles.hideLastButton]: this.state.shouldHideLastButton,
+          [styles.fixTotalPage7]:
+            shouldFixPagination(current, totalPageNumber, PAGE_SENVEN, isShortPageList),
+          [styles.fixTotalPage8]:
+            shouldFixPagination(current, totalPageNumber, PAGE_EIGHT, isShortPageList),
+          [styles.hiddenPage7]:
+            shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_SENVEN),
+          [styles.fixTotalPage9]:
+            shouldFixPagination(current, totalPageNumber, PAGE_NINE, isShortPageList),
+          [styles.hiddenPage8]:
+            shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_EIGHT),
         })}
       >
         <Pagination
@@ -165,4 +220,3 @@ export default class PaginationComponent extends PureComponent {
     );
   }
 }
-

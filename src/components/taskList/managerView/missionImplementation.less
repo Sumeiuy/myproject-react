@@ -39,12 +39,20 @@
     margin-right: 16px;
     flex-wrap: wrap;
     .leftContent {
-      flex: 1 1 auto;
+      flex: 1 1 328px; // flex左右两边的基准值只需要调节一致即可
       min-width: 328px;
       margin-right: 16px;
     }
+    .leftContent.noMargin {
+       margin-right: 0;
+    }
+    .leftContent.forceCollapse {
+      // 计算值 原min-width + margin-right + 1，谨慎更改
+      // +1是为了避免边界问题
+      min-width: 345px;
+    }
     .rightContent {
-      flex: 1 1 auto;
+      flex: 1 1 328px;
       min-width: 328px;
     }
   }

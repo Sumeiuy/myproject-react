@@ -583,23 +583,6 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-
-  @autobind
-  handlePreview({ uploadKey, pageNum, pageSize }) {
-    console.log(uploadKey);
-    if (!uploadKey) {
-      message.error('请先上传文件');
-      return;
-    }
-    const { previewCustFile } = this.props;
-    // 预览数据
-    previewCustFile({
-      filename: uploadKey,
-      pageNum,
-      pageSize,
-    });
-  }
-
   @autobind
   handleSubmitTaskFlow() {
     const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
@@ -840,6 +823,7 @@ export default class TaskFlow extends PureComponent {
       creator,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      previewCustFile,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -859,7 +843,7 @@ export default class TaskFlow extends PureComponent {
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
 
-          onPreview={this.handlePreview}
+          onPreview={previewCustFile}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
 
