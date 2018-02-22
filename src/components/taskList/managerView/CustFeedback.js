@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 16:45:46
+ * @Last Modified time: 2018-02-22 14:47:33
  * 客户反馈
  */
 
@@ -52,6 +52,7 @@ export default class CustFeedback extends PureComponent {
     custFeedback: PropTypes.array,
     onPieHover: PropTypes.func,
     onPieLeave: PropTypes.func,
+    onPreviewCustDetail: PropTypes.func,
   }
 
   static defaultProps = {
@@ -60,6 +61,7 @@ export default class CustFeedback extends PureComponent {
       console.log(params);
     },
     onPieLeave: () => { },
+    onPreviewCustDetail: () => { },
   }
 
   constructor(props) {
@@ -158,6 +160,7 @@ export default class CustFeedback extends PureComponent {
               name: item.name,
               value: item.value,
               color: getLevelColor(index, 1),
+              key: item.key,
             },
           };
         }));
@@ -260,6 +263,37 @@ export default class CustFeedback extends PureComponent {
     </div>`;
   }
 
+  @autobind
+  handlePieClick(params) {
+    const { data: { children, parent, key, name } } = params;
+    let currentLevel = {};
+    // TODO
+    // 具体数据收集，需要后台接口写好联调
+    if (!_.isEmpty(parent)) {
+      // 代表点击的是外圈，也就是二级反馈
+      // 取出parent的key和name,
+      currentLevel = {
+        key: parent.key,
+        name: parent.name,
+      };
+    } else if (!_.isEmpty(children)) {
+      // 代表点击的是内圈，也就是一级反馈
+      // 取出当前的key和name
+      currentLevel = {
+        key,
+        name,
+      };
+    }
+
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail({
+      currentLevel,
+      canLaunchTask: true,
+      // 代表是从饼图点击的
+      isEntryFromPie: true,
+    });
+  }
+
   render() {
     const { level1Data, level2Data } = this.state;
 
@@ -284,6 +318,9 @@ export default class CustFeedback extends PureComponent {
               width: '50%',
             }}
             ref={ref => this.chartInstance = ref}
+            onEvents={{
+              click: this.handlePieClick,
+            }}
           />
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?

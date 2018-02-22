@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 09:56:22
+ * @Last Modified time: 2018-02-22 14:45:54
  * 管理者视图详情
  */
 
@@ -109,13 +109,17 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handlePreview(params = {}) {
     const {
+      // currentLevel,
       title,
       pageNum,
       pageSize,
       missionProgressStatus,
       progressFlag,
       canLaunchTask,
+      // 当前入口是否从进度条过来
       isEntryFromProgressDetail,
+      // 当前入口是否从饼图过来
+      isEntryFromPie,
     } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
@@ -144,9 +148,14 @@ export default class ManagerViewDetail extends PureComponent {
       };
     }
 
+    // TODO
+    // if (isEntryFromPie) {
+    // }
+
     this.setState({
       ...progressParam,
       isEntryFromProgressDetail,
+      isEntryFromPie,
     });
 
     previewCustDetail({
@@ -154,7 +163,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
-        canLaunchTask: isEntryFromProgressDetail ? true : canLaunchTask,
+        canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
       });
     });
   }
@@ -302,7 +311,13 @@ export default class ManagerViewDetail extends PureComponent {
       currentId,
     } = this.props;
 
-    const { isShowCustDetailModal, title, canLaunchTask, isEntryFromProgressDetail } = this.state;
+    const {
+      isShowCustDetailModal,
+      title,
+      canLaunchTask,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+    } = this.state;
 
     const {
       missionName,
@@ -450,6 +465,8 @@ export default class ManagerViewDetail extends PureComponent {
                   custServedByPostnResult={custServedByPostnResult}
                   // 代表是否是从进度条点击的
                   isEntryFromProgressDetail={isEntryFromProgressDetail}
+                  // 代表是否是从饼图过来的
+                  isEntryFromPie={isEntryFromPie}
                 />
               }
               modalStyle={{

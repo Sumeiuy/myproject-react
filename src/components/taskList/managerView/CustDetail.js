@@ -66,6 +66,7 @@ export default class CustDetail extends PureComponent {
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
+    isEntryFromPie: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -74,6 +75,7 @@ export default class CustDetail extends PureComponent {
     title: '',
     onClose: () => { },
     isEntryFromProgressDetail: false,
+    isEntryFromPie: false,
   }
 
   constructor(props) {
@@ -270,8 +272,10 @@ export default class CustDetail extends PureComponent {
     return feedbackDetail;
   }
 
+  @autobind
   renderColumnTitle() {
-    return [{
+    const { isEntryFromPie, isEntryFromProgressDetail } = this.props;
+    const columns = [{
       key: 'custName',
       value: '客户名称',
     },
@@ -292,17 +296,25 @@ export default class CustDetail extends PureComponent {
       key: 'missionStatusValue',
       value: '服务状态',
     },
-    // 后端性能问题，暂时不要这两个字段
-    // {
-    //   key: 'custFeedBack1',
-    //   value: '客户反馈',
-    // },
-    // {
-    //   key: 'custFeedBack2',
-    //   value: '反馈详情',
-    //   render: this.renderFeedbackDetail,
-    // },
-    ];
+    {
+      key: 'custFeedBack1',
+      value: '客户反馈',
+    },
+    {
+      key: 'custFeedBack2',
+      value: '反馈详情',
+      render: this.renderFeedbackDetail,
+    }];
+
+    if (isEntryFromPie) {
+      // 从饼图点击过来，不展示服务状态字段
+      columns.splice(4, 1);
+    } else if (isEntryFromProgressDetail) {
+      // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
+      columns.splice(5, 2);
+    }
+
+    return columns;
   }
 
   render() {
