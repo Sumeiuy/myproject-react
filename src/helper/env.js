@@ -1,11 +1,12 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-09 10:34:33
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-02-22 09:08:20
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
+import qs from 'query-string';
 import { constants, fspContainer } from '../config';
 
 const env = {
@@ -101,6 +102,16 @@ const env = {
    */
   isFirefox() {
     return bowser.name === 'Firefox';
+  },
+  /**
+   * 封装一下灰度发布的标记，fsp会提供一个grayFlag在window上，
+   * 本地开发的时候可以在url上通过?grayFlag=true的方式手动测试，
+   * 检测当前版本是不是需要支持灰度发布，以便控制代码里面的逻辑显示、隐藏、特殊处理等
+   */
+  isGrayFlag() {
+    const nativeQuery = qs.parse(window.location.search);
+    const grayFlag = window.grayFlag === true || nativeQuery.grayFlag === 'true';
+    return grayFlag;
   },
 };
 

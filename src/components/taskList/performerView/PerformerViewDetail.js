@@ -349,6 +349,7 @@ export default class PerformerViewDetail extends PureComponent {
       },
       form,
       answersList,
+      currentId,
     } = this.props;
     const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
@@ -386,6 +387,10 @@ export default class PerformerViewDetail extends PureComponent {
     } = basicInfo;
 
     const basicInfoData = [{
+      id: 'id',
+      key: '任务编号 :',
+      value: `${currentId || '--'}`,
+    }, {
       id: 'date',
       key: '任务有效期 :',
       value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
