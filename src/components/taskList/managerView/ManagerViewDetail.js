@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 10:55:56
+ * @Last Modified time: 2018-02-22 09:56:22
  * 管理者视图详情
  */
 
@@ -299,6 +299,7 @@ export default class ManagerViewDetail extends PureComponent {
       push,
       isCustServedByPostn,
       custServedByPostnResult,
+      currentId,
     } = this.props;
 
     const { isShowCustDetailModal, title, canLaunchTask, isEntryFromProgressDetail } = this.state;
@@ -325,6 +326,10 @@ export default class ManagerViewDetail extends PureComponent {
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
     const basicInfoData = [{
+      id: 'id',
+      key: '任务编号 :',
+      value: currentId || '--',
+    }, {
       id: 'date',
       key: '任务有效期 :',
       value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
@@ -473,15 +478,15 @@ export default class ManagerViewDetail extends PureComponent {
           </div>
           {
             _.isEmpty(templateId) ? null :
-            <div className={styles.missionFeedbackSection}>
-              <MissionFeedback
-                missionFeedbackData={missionFeedbackData}
-                isFold={isFold}
-                missionFeedbackCount={missionFeedbackCount}
-                serveManagerCount={serveManagerCount}
-                templateId={templateId}
-              />
-            </div>
+              <div className={styles.missionFeedbackSection}>
+                <MissionFeedback
+                  missionFeedbackData={missionFeedbackData}
+                  isFold={isFold}
+                  missionFeedbackCount={missionFeedbackCount}
+                  serveManagerCount={serveManagerCount}
+                  templateId={templateId}
+                />
+              </div>
           }
         </div>
       </div>

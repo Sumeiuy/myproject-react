@@ -302,10 +302,6 @@ export default class PerformerView extends PureComponent {
     let currentView = '';
     if (!_.isEmpty(missionViewType)) {
       currentView = missionViewType;
-    } else if (this.hasPermissionOfManagerView) {
-      currentView = CONTROLLER;
-    } else {
-      currentView = EXECUTOR;
     }
 
     let newMissionView = chooseMissionView;
@@ -316,11 +312,19 @@ export default class PerformerView extends PureComponent {
       if (!this.hasPermissionOfManagerView) {
         // 没有管理者视图查看权限
         newMissionView = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
+        // 当前视图是执行者视图
+        currentView = EXECUTOR;
+      } else {
+        // 当前视图是管理者视图
+        currentView = CONTROLLER;
       }
     } else {
       // 默认只展示
       newMissionView = _.filter(chooseMissionView, item => item.value === INITIATOR);
+      // 当前视图是创建者视图
+      currentView = INITIATOR;
     }
+
     this.missionView = newMissionView;
     this.state = {
       currentView,
@@ -591,7 +595,7 @@ export default class PerformerView extends PureComponent {
           <CreatorViewDetail
             onPreview={this.handlePreview}
             priviewCustFileData={priviewCustFileData}
-            taskBasicInfo={taskBasicInfo}
+            taskBasicInfo={{ ...taskBasicInfo, currentId }}
           />
         );
         break;
