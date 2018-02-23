@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 14:45:54
+ * @Last Modified time: 2018-02-23 13:27:46
  * 管理者视图详情
  */
 
@@ -117,9 +117,9 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag,
       canLaunchTask,
       // 当前入口是否从进度条过来
-      isEntryFromProgressDetail,
+      isEntryFromProgressDetail = false,
       // 当前入口是否从饼图过来
-      isEntryFromPie,
+      isEntryFromPie = false,
     } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
