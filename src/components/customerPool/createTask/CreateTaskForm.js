@@ -6,16 +6,12 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { Form } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
-
-// const create = Form.create;
-// const { toString } = Mention;
 const NOOP = _.noop;
 
 @RestoreScrollTop
@@ -256,7 +252,6 @@ export default class CreateTaskForm extends PureComponent {
   render() {
     const {
       dict,
-      // form,
       isShowTitle = false,
       isShowErrorInfo,
       isShowErrorTaskType,
@@ -304,7 +299,6 @@ export default class CreateTaskForm extends PureComponent {
             users={statusData}
             taskTypes={motMissionType}
             executeTypes={executeTypes}
-            /* form={form} */
             isShowErrorInfo={isShowErrorInfo}
             isShowErrorExcuteType={isShowErrorExcuteType}
             isShowErrorTaskType={isShowErrorTaskType}

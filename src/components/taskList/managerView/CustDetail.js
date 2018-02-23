@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 14:07:14
+ * @Last Modified time: 2018-02-23 13:35:42
  * 客户明细数据
  */
 
@@ -328,7 +328,16 @@ export default class CustDetail extends PureComponent {
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
-    // columnWidth = { [100, 60, 130, 100, 100, 110, this.isFeedbackDetailMore ? 300 : 120]}
+    const columnSize = _.size(titleColumn);
+
+    let columnWidth;
+    if (columnSize === 7) {
+      columnWidth = [100, 60, 150, 100, 100, 150, 150];
+    } else if (columnSize === 6) {
+      columnWidth = [100, 60, 150, 100, 150, 150];
+    } else if (columnSize === 5) {
+      columnWidth = [200, 80, 200, 200, 200];
+    }
 
     return (
       <div className={styles.custDetailWrapper}>
@@ -350,7 +359,7 @@ export default class CustDetail extends PureComponent {
                   [tableStyles.groupTable]: true,
                 })
               }
-              columnWidth={[200, 80, 200, 200, 200]}
+              columnWidth={columnWidth}
               titleColumn={titleColumn}
               // 固定标题，内容滚动
               scrollY={330}
