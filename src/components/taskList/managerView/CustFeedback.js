@@ -205,7 +205,6 @@ export default class CustFeedback extends PureComponent {
     return `<div class="tooltipContent">
       ${parentElem}
       <div class="content">
-        <div class="divider"></div>
         ${childrenElem}
       </div>
     </div>`;
