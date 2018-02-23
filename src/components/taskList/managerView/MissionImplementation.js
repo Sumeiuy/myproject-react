@@ -100,17 +100,17 @@ export default class MissionImplementation extends PureComponent {
     window.removeEventListener('resize', this.onResize);
   }
 
-   /**
-     * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
-     * 不然会产生对齐bug
-     * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
-     */
+  /**
+    * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
+    * 不然会产生对齐bug
+    * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
+    */
   @autobind
   onResize() {
     const contentWidth = this.contentElem && this.contentElem.clientWidth;
     if (this.memeoryWidth) {
       if (this.memeoryWidth < COLLAPSE_WIDTH < contentWidth ||
-          contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
+        contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
         this.setState({
           forceRender: !this.state.forceRender,
         });
@@ -308,6 +308,7 @@ export default class MissionImplementation extends PureComponent {
               </div>
               <div className={styles.rightContent}>
                 <CustFeedback
+                  onPreviewCustDetail={this.handlePreview}
                   custFeedback={custFeedback}
                 />
               </div>
