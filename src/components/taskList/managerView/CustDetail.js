@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 13:35:42
+ * @Last Modified time: 2018-02-23 17:14:14
  * 客户明细数据
  */
 
@@ -210,7 +210,7 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, hideCustDetailModal, isCustServedByPostn } = this.props;
+    const { push, isCustServedByPostn } = this.props;
     const postnId = emp.getPstnId();
     // 跳转之前查看一下是否都是本人名下的客户
     isCustServedByPostn({
@@ -219,7 +219,7 @@ export default class CustDetail extends PureComponent {
     }).then(() => {
       if (this.props.custServedByPostnResult) {
         // 跳转前关闭模态框
-        hideCustDetailModal();
+        // hideCustDetailModal();
         const param = {
           id: 'FSP_360VIEW_M_TAB',
           title: '客户360视图-客户信息',
@@ -332,10 +332,13 @@ export default class CustDetail extends PureComponent {
 
     let columnWidth;
     if (columnSize === 7) {
+      // 列全部保留
       columnWidth = [100, 60, 150, 100, 100, 150, 150];
     } else if (columnSize === 6) {
+      // 去除服务状态列
       columnWidth = [100, 60, 150, 100, 150, 150];
     } else if (columnSize === 5) {
+      // 去除客户反馈和反馈详情列
       columnWidth = [200, 80, 200, 200, 200];
     }
 
