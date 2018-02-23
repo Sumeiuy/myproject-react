@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 14:10:56
+ * @Last Modified time: 2018-02-23 14:16:14
  * 任务进度
  */
 
@@ -189,19 +189,19 @@ export default class MissionProgress extends PureComponent {
     // 进度条做特殊处理，全部给与固定的5%宽度显示
     const activeRatio = activeCount / totalCount;
     const remainRatio = remainingCount / totalCount;
-    if (totalCount !== 0
-      && newActivePercent === 0
-      && activeRatio * 100 < 5
-      && activeRatio !== 0) {
-      // 给与固定5%的进度条比例
-      newActivePercent = 5;
-    }
-    if (totalCount !== 0
-      && remainPercent === 0
-      && remainRatio * 100 < 5
-      && remainRatio !== 0) {
-      // 给与固定5%的进度条比例
-      remainPercent = 5;
+    if (totalCount !== 0) {
+      if (newActivePercent === 0
+        && activeRatio * 100 < 5
+        && activeRatio !== 0) {
+        // 给与固定5%的进度条比例
+        newActivePercent = 5;
+      }
+      if (remainPercent === 0
+        && remainRatio * 100 < 5
+        && remainRatio !== 0) {
+        // 给与固定5%的进度条比例
+        remainPercent = 5;
+      }
     }
 
     return (
