@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 16:45:46
+ * @Last Modified time: 2018-02-22 14:57:33
  * 客户反馈
  */
 
@@ -52,6 +52,7 @@ export default class CustFeedback extends PureComponent {
     custFeedback: PropTypes.array,
     onPieHover: PropTypes.func,
     onPieLeave: PropTypes.func,
+    onPreviewCustDetail: PropTypes.func,
   }
 
   static defaultProps = {
@@ -60,6 +61,7 @@ export default class CustFeedback extends PureComponent {
       console.log(params);
     },
     onPieLeave: () => { },
+    onPreviewCustDetail: () => { },
   }
 
   constructor(props) {
@@ -105,85 +107,34 @@ export default class CustFeedback extends PureComponent {
   }
 
   @autobind
-  renderCustFeedbackChart(custFeedback) {
-    // 前后台定义返回的格式可以直接给一级饼图作数据源
-    if (_.isEmpty(custFeedback)) {
-      return {
-        level1Data: [],
-        level2Data: [],
+  handlePieClick(params) {
+    const { data: { children, parent, key, name } } = params;
+    let currentLevel = {};
+    // TODO
+    // 具体数据收集，需要后台接口写好联调
+    if (!_.isEmpty(parent)) {
+      // 代表点击的是外圈，也就是二级反馈
+      // 取出parent的key和name,
+      currentLevel = {
+        key: parent.key,
+        name: parent.name,
+      };
+    } else if (!_.isEmpty(children)) {
+      // 代表点击的是内圈，也就是一级反馈
+      // 取出当前的key和name
+      currentLevel = {
+        key,
+        name,
       };
     }
 
-    let level1Data = custFeedback || [];
-    // 然后添加颜色
-    level1Data = _.map(level1Data, (item, index) => {
-      const currentLevel1ItemColor = getLevelColor(index, 1);
-      return {
-        ...item,
-        color: currentLevel1ItemColor,
-        itemStyle: {
-          normal: {
-            color: currentLevel1ItemColor,
-          },
-        },
-        children: _.map(item.children, (itemData, childIndex) => {
-          const currentColor = this.getCurrentColor(index, childIndex);
-          return {
-            ...itemData,
-            color: currentColor,
-            // 将子级数据的占比乘以父级占比
-            value: item.value * itemData.value,
-          };
-        }),
-      };
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail({
+      currentLevel,
+      canLaunchTask: true,
+      // 代表是从饼图点击的
+      isEntryFromPie: true,
     });
-
-    // 构造二级数据源
-    let level2Data = [];
-
-    _.each(level1Data, (item, index) => {
-      if (!_.isEmpty(item.children)) {
-        level2Data.push(_.map(item.children, (itemData, childIndex) => {
-          const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
-          return {
-            value: itemData.value,
-            name: itemData.name,
-            color: currentLevel2ItemColor,
-            itemStyle: {
-              normal: {
-                color: currentLevel2ItemColor,
-              },
-            },
-            parent: {
-              name: item.name,
-              value: item.value,
-              color: getLevelColor(index, 1),
-            },
-          };
-        }));
-      }
-    });
-
-    // 将二维数组抹平
-    level2Data = _.flatten(level2Data);
-
-    return {
-      level1Data,
-      level2Data,
-    };
-  }
-
-  @autobind
-  renderChildren(children) {
-    let childrenElem = '';
-    _.each(children, item =>
-      childrenElem += `<div class="item">
-          <i class="icon" style='background: ${item.color}'></i>
-          <span class="type">${item.name}：</span>
-          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
-        </div>`,
-    );
-    return childrenElem;
   }
 
   @autobind
@@ -254,10 +205,92 @@ export default class CustFeedback extends PureComponent {
     return `<div class="tooltipContent">
       ${parentElem}
       <div class="content">
-        <div class="divider"></div>
         ${childrenElem}
       </div>
     </div>`;
+  }
+
+  @autobind
+  renderChildren(children) {
+    let childrenElem = '';
+    _.each(children, item =>
+      childrenElem += `<div class="item">
+          <i class="icon" style='background: ${item.color}'></i>
+          <span class="type">${item.name}：</span>
+          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
+        </div>`,
+    );
+    return childrenElem;
+  }
+
+  @autobind
+  renderCustFeedbackChart(custFeedback) {
+    // 前后台定义返回的格式可以直接给一级饼图作数据源
+    if (_.isEmpty(custFeedback)) {
+      return {
+        level1Data: [],
+        level2Data: [],
+      };
+    }
+
+    let level1Data = custFeedback || [];
+    // 然后添加颜色
+    level1Data = _.map(level1Data, (item, index) => {
+      const currentLevel1ItemColor = getLevelColor(index, 1);
+      return {
+        ...item,
+        color: currentLevel1ItemColor,
+        itemStyle: {
+          normal: {
+            color: currentLevel1ItemColor,
+          },
+        },
+        children: _.map(item.children, (itemData, childIndex) => {
+          const currentColor = this.getCurrentColor(index, childIndex);
+          return {
+            ...itemData,
+            color: currentColor,
+            // 将子级数据的占比乘以父级占比
+            value: item.value * itemData.value,
+          };
+        }),
+      };
+    });
+
+    // 构造二级数据源
+    let level2Data = [];
+
+    _.each(level1Data, (item, index) => {
+      if (!_.isEmpty(item.children)) {
+        level2Data.push(_.map(item.children, (itemData, childIndex) => {
+          const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
+          return {
+            value: itemData.value,
+            name: itemData.name,
+            color: currentLevel2ItemColor,
+            itemStyle: {
+              normal: {
+                color: currentLevel2ItemColor,
+              },
+            },
+            parent: {
+              name: item.name,
+              value: item.value,
+              color: getLevelColor(index, 1),
+              key: item.key,
+            },
+          };
+        }));
+      }
+    });
+
+    // 将二维数组抹平
+    level2Data = _.flatten(level2Data);
+
+    return {
+      level1Data,
+      level2Data,
+    };
   }
 
   render() {
@@ -284,6 +317,10 @@ export default class CustFeedback extends PureComponent {
               width: '50%',
             }}
             ref={ref => this.chartInstance = ref}
+            // 暂时屏蔽下钻
+            onEvents={{
+              click: _.noop,
+            }}
           />
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?

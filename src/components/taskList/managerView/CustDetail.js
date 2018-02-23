@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 14:07:14
+ * @Last Modified time: 2018-02-23 17:14:14
  * 客户明细数据
  */
 
@@ -66,6 +66,7 @@ export default class CustDetail extends PureComponent {
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
+    isEntryFromPie: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -74,6 +75,7 @@ export default class CustDetail extends PureComponent {
     title: '',
     onClose: () => { },
     isEntryFromProgressDetail: false,
+    isEntryFromPie: false,
   }
 
   constructor(props) {
@@ -208,7 +210,7 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, hideCustDetailModal, isCustServedByPostn } = this.props;
+    const { push, isCustServedByPostn } = this.props;
     const postnId = emp.getPstnId();
     // 跳转之前查看一下是否都是本人名下的客户
     isCustServedByPostn({
@@ -217,7 +219,7 @@ export default class CustDetail extends PureComponent {
     }).then(() => {
       if (this.props.custServedByPostnResult) {
         // 跳转前关闭模态框
-        hideCustDetailModal();
+        // hideCustDetailModal();
         const param = {
           id: 'FSP_360VIEW_M_TAB',
           title: '客户360视图-客户信息',
@@ -270,8 +272,10 @@ export default class CustDetail extends PureComponent {
     return feedbackDetail;
   }
 
+  @autobind
   renderColumnTitle() {
-    return [{
+    const { isEntryFromPie, isEntryFromProgressDetail } = this.props;
+    const columns = [{
       key: 'custName',
       value: '客户名称',
     },
@@ -292,17 +296,25 @@ export default class CustDetail extends PureComponent {
       key: 'missionStatusValue',
       value: '服务状态',
     },
-    // 后端性能问题，暂时不要这两个字段
-    // {
-    //   key: 'custFeedBack1',
-    //   value: '客户反馈',
-    // },
-    // {
-    //   key: 'custFeedBack2',
-    //   value: '反馈详情',
-    //   render: this.renderFeedbackDetail,
-    // },
-    ];
+    {
+      key: 'custFeedBack1',
+      value: '客户反馈',
+    },
+    {
+      key: 'custFeedBack2',
+      value: '反馈详情',
+      render: this.renderFeedbackDetail,
+    }];
+
+    if (isEntryFromPie) {
+      // 从饼图点击过来，不展示服务状态字段
+      columns.splice(4, 1);
+    } else if (isEntryFromProgressDetail) {
+      // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
+      columns.splice(5, 2);
+    }
+
+    return columns;
   }
 
   render() {
@@ -316,7 +328,19 @@ export default class CustDetail extends PureComponent {
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
-    // columnWidth = { [100, 60, 130, 100, 100, 110, this.isFeedbackDetailMore ? 300 : 120]}
+    const columnSize = _.size(titleColumn);
+
+    let columnWidth;
+    if (columnSize === 7) {
+      // 列全部保留
+      columnWidth = [100, 60, 150, 100, 100, 150, 150];
+    } else if (columnSize === 6) {
+      // 去除服务状态列
+      columnWidth = [100, 60, 150, 100, 150, 150];
+    } else if (columnSize === 5) {
+      // 去除客户反馈和反馈详情列
+      columnWidth = [200, 80, 200, 200, 200];
+    }
 
     return (
       <div className={styles.custDetailWrapper}>
@@ -338,7 +362,7 @@ export default class CustDetail extends PureComponent {
                   [tableStyles.groupTable]: true,
                 })
               }
-              columnWidth={[200, 80, 200, 200, 200]}
+              columnWidth={columnWidth}
               titleColumn={titleColumn}
               // 固定标题，内容滚动
               scrollY={330}
