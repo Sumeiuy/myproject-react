@@ -121,7 +121,7 @@ export default class ServiceRecordForm extends PureComponent {
         </div>
         <div className={styles.serveTip}>
           <div className={styles.title}>
-            服务提示:
+            任务提示:
           </div>
           <div className={styles.content}>
             {serviceTips || '--'}
