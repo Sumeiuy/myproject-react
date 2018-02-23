@@ -278,7 +278,8 @@ export default class RightPanel extends PureComponent {
       tagetCustModel = EMPTY_OBJECT,
       currentId,
     } = taskBasicInfo;
-    const { resultTraceVO = {}, quesVO } = motDetailModel;
+    const { resultTraceVO: resultTraceVOList = {}, quesVO = [] } = motDetailModel;
+    const resultTraceVO = _.isEmpty(resultTraceVOList) ? {} : resultTraceVOList;
     const { trackDay } = resultTraceVO;
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
