@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:43:21
+ * @Last Modified time: 2018-02-26 14:16:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import seibelHelper from '../../helper/page/seibel';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
+import ArbitRageDetail from '../../components/channelsTypeProtocol/ArbitrageDetail';
 import ChannelsTypeProtocolList from '../../components/common/appList';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
@@ -41,7 +42,7 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-const { subscribeArray, unSubscribeArray, tenHQ, tipsMap } = config;
+const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -498,6 +499,33 @@ export default class ChannelsTypeProtocol extends PureComponent {
     );
   }
 
+  // 根据当前子类型相应不同的详情组件
+  @autobind
+  getProtocolDetailComponent(st) {
+    const {
+      protocolDetail,
+      attachmentList,
+      flowHistory,
+    } = this.props;
+    if (st === protocolSubs.arbitrage) {
+      return (
+        <ArbitRageDetail
+          protocolDetail={protocolDetail}
+          attachmentList={attachmentList}
+          flowHistory={flowHistory}
+        />
+      );
+    }
+    // 其他情况返回通用的详情组件，高速通道、紫金快车道
+    return (
+      <Detail
+        protocolDetail={protocolDetail}
+        attachmentList={attachmentList}
+        flowHistory={flowHistory}
+        currentView={styleMedia}
+      />
+    );
+  }
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
@@ -554,7 +582,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       replace,
       seibleList,
       attachmentList,
-      flowHistory,
+      // flowHistory,
       empInfo,
       getCanApplyCustList, // 查询可申请客户列表
       canApplyCustList, // 可申请客户列表
@@ -617,14 +645,15 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pagination={paginationOptions}
       />
     );
-    const rightPanel = (
-      <Detail
-        protocolDetail={protocolDetail}
-        attachmentList={attachmentList}
-        flowHistory={flowHistory}
-        currentView={currentView}
-      />
-    );
+    const rightPanel = this.getProtocolDetailComponent(currentView);
+    // const rightPanel = (
+    //   <Detail
+    //     protocolDetail={protocolDetail}
+    //     attachmentList={attachmentList}
+    //     flowHistory={flowHistory}
+    //     currentView={currentView}
+    //   />
+    // );
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
