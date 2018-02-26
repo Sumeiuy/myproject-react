@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-13 16:26:26
+ * @Last Modified time: 2018-02-26 10:43:25
  */
 
 
@@ -119,12 +119,15 @@ export default class ServiceRecordContent extends PureComponent {
       originFileName: '',
       originFormData: formData,
     };
+    // 代表是否是删除操作
+    this.isDeletingFile = false;
   }
 
   componentWillReceiveProps(nextProps) {
     const { formData } = this.props;
     const { formData: nextData } = nextProps;
-    if (formData !== nextData) {
+    // 在删除文件的时候，不设置originFormData，不然会恢复原始数据
+    if (formData !== nextData && !this.isDeletingFile) {
       const formObject = this.handleInitOrUpdate(nextProps);
       this.setState({
         ...this.state,
@@ -503,8 +506,12 @@ export default class ServiceRecordContent extends PureComponent {
 
   @autobind
   handleDeleteFile(params) {
+    // 正在删除文件
+    this.isDeletingFile = true;
     const { onDeleteFile } = this.props;
-    onDeleteFile(params);
+    onDeleteFile({ ...params }).then(() => {
+      this.isDeletingFile = false;
+    });
   }
 
   @autobind
