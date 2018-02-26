@@ -93,12 +93,6 @@ export default class ServiceRecordForm extends PureComponent {
     this.serviceRecordContentRef.resetField();
   }
 
-  @autobind
-  handleDeleteFile(params) {
-    const { ceFileDelete } = this.props;
-    ceFileDelete({ ...params });
-  }
-
   render() {
     const {
       dict,
@@ -109,6 +103,7 @@ export default class ServiceRecordForm extends PureComponent {
       custUuid,
       isReadOnly,
       deleteFileResult,
+      ceFileDelete,
     } = this.props;
 
     if (!dict) {
@@ -138,7 +133,7 @@ export default class ServiceRecordForm extends PureComponent {
           formData={formData}
           isFold={isFold}
           custUuid={custUuid}
-          onDeleteFile={this.handleDeleteFile}
+          onDeleteFile={ceFileDelete}
           deleteFileResult={deleteFileResult}
         />
 
