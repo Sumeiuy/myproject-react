@@ -231,19 +231,19 @@ export default class PerformerViewDetail extends PureComponent {
           examineeId: emp.getId(),
           templateId,
         };
+        let timer;
         // 控制节流
         if (this.timeOut) {
           saveAnswersByType(params).then(this.handleSaveSuccess);
-          this.timeOut = false;            
+          this.timeOut = false;
         } else {
-          clearTimeout();
-          setTimeout(() => {
-            this.timeOut = true; 
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            this.timeOut = true;
           }, 300);
         }
       }
     });
-
   }
 
   // 处理问卷提交成功
