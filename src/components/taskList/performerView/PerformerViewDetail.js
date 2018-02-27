@@ -68,6 +68,7 @@ export default class PerformerViewDetail extends PureComponent {
       isShowErrorCheckbox: {},
       checkBoxQuesId: [],
     };
+    this.timeOut = true;
   }
 
   // 查询目标客户的列表和
@@ -230,9 +231,19 @@ export default class PerformerViewDetail extends PureComponent {
           examineeId: emp.getId(),
           templateId,
         };
-        saveAnswersByType(params).then(this.handleSaveSuccess);
+        // 控制节流
+        if (this.timeOut) {
+          saveAnswersByType(params).then(this.handleSaveSuccess);
+          this.timeOut = false;            
+        } else {
+          clearTimeout();
+          setTimeout(() => {
+            this.timeOut = true; 
+          }, 300);
+        }
       }
     });
+
   }
 
   // 处理问卷提交成功

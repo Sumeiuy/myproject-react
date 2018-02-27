@@ -43,6 +43,7 @@ export default function ServiceRecordContent(props) {
             <ServiceRecordItem
               content={item.handlerTimeLimit}
               title={'处理期限'}
+              type={'left'}
             />
             {attacthment}
           </div>
