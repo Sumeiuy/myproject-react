@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-05 15:35:57
+ * @Last Modified time: 2018-02-23 17:54:07
  * 任务调查
  */
 
@@ -327,7 +327,12 @@ export default class MissionInvestigation extends PureComponent {
         >
           <span
             className={styles.detailLabel}
-            ref={ref => (this.questionDetailElem = ref)}
+            ref={(ref) => {
+              // ref多次重绘可能是null, 这里要判断一下
+              if (!this.questionDetailElem && ref) {
+                this.questionDetailElem = ref;
+              }
+            }}
           >
             问题详情
         </span>

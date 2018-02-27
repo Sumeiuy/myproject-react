@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 14:57:33
+ * @Last Modified time: 2018-02-24 18:32:46
  * 客户反馈
  */
 
@@ -217,7 +217,7 @@ export default class CustFeedback extends PureComponent {
       childrenElem += `<div class="item">
           <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
-          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
+          <span class="percent">${dataHelper.toPercent(Number(item.realValue))}</span>
         </div>`,
     );
     return childrenElem;
@@ -252,6 +252,8 @@ export default class CustFeedback extends PureComponent {
             color: currentColor,
             // 将子级数据的占比乘以父级占比
             value: item.value * itemData.value,
+            // 真实的占比
+            realValue: itemData.value,
           };
         }),
       };
@@ -265,6 +267,8 @@ export default class CustFeedback extends PureComponent {
         level2Data.push(_.map(item.children, (itemData, childIndex) => {
           const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
           return {
+            // 真实的占比
+            realValue: itemData.realValue,
             value: itemData.value,
             name: itemData.name,
             color: currentLevel2ItemColor,
