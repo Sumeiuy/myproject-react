@@ -85,12 +85,6 @@ export default class ToDoList extends PureComponent {
   componentDidMount() {
     this.updateEmptyHeight();
     window.addEventListener('resize', () => this.updateEmptyHeight());
-    window.updateTodoList = function (flowId) {
-      window.dispatch({
-        type: 'customerPool/updateTodoList',
-        flowId,
-      });
-    };
   }
 
 
