@@ -248,6 +248,7 @@ export default class SelectAssembly extends PureComponent {
                 className={styles.searchIcon}
               />
             }
+            onPressEnter={this.changeDataSource}
           />
         </AutoComplete>
       </div>
