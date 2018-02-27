@@ -221,7 +221,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   getCurrentOrgId() {
-    return this.state.currentOrgId;
+    return this.state.currentOrgId || emp.getOrgId();
   }
 
   @autobind
