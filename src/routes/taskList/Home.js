@@ -300,11 +300,8 @@ export default class PerformerView extends PureComponent {
     this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
     // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
     let currentView = '';
-    if (!_.isEmpty(missionViewType)) {
-      currentView = missionViewType;
-    }
-
     let newMissionView = chooseMissionView;
+
     // 默认不展示执行者视图与管理者视图的入口
     if (envHelper.isGrayFlag()) {
       // 支持灰度发布，则展示执行者视图与管理者视图的入口
@@ -317,6 +314,10 @@ export default class PerformerView extends PureComponent {
       } else {
         // 当前视图是管理者视图
         currentView = CONTROLLER;
+      }
+      // 在灰度发布的权限情况下，如果当前url上有当前视图类型，则用url上的视图类型
+      if (!_.isEmpty(missionViewType)) {
+        currentView = missionViewType;
       }
     } else {
       // 默认只展示
@@ -499,9 +500,7 @@ export default class PerformerView extends PureComponent {
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: currentId,
-      // missionId: '101111171108181',
       orgId: newOrgId || emp.getOrgId(),
-      // orgId: 'ZZ001041',
     });
   }
 
@@ -518,8 +517,6 @@ export default class PerformerView extends PureComponent {
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
       missionId: currentId,
-      // missionId: '101111171108181',
-      // orgId: 'ZZ001041',
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -948,6 +945,10 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
+    // 清空当前任务反馈饼图实例
+    if (this.splitPanelElem) {
+      this.splitPanelElem.rightDetailWrap.clearCurrentChartInstance();
+    }
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId } = record;
     const {
       queryCustUuid,
@@ -1073,6 +1074,7 @@ export default class PerformerView extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="premissionList"
           leftWidth={LEFT_PANEL_WIDTH}
+          ref={ref => (this.splitPanelElem = ref)}
         />
       </div>
     );

@@ -131,7 +131,7 @@ export default class ManagerViewDetail extends PureComponent {
     let postBody = {
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
-      orgId: emp.getOrgId(),
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
     };
 
@@ -194,12 +194,20 @@ export default class ManagerViewDetail extends PureComponent {
       missionProgressStatus,
       progressFlag,
       missionName: mngrMissionDetailInfo.missionName,
-      orgId: emp.getOrgId(),
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
       serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
     return params;
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    if (this.missionImplementationElem) {
+      return this.missionImplementationElem.getCurrentOrgId();
+    }
+    return emp.getOrgId();
   }
 
   /**
@@ -233,11 +241,10 @@ export default class ManagerViewDetail extends PureComponent {
         missionType,
       };
     }
+
     const urlParam = {
-      orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
-      // missionId: '101111171108181',
       entrance: 'managerView',
       source: 'managerView',
       count: totalCustNumber,
@@ -491,20 +498,19 @@ export default class ManagerViewDetail extends PureComponent {
               countFlowFeedBack={countFlowFeedBack}
               exportExcel={exportExcel}
               missionProgressStatusDic={missionProgressStatusDic}
+              ref={ref => (this.missionImplementationElem = ref)}
             />
           </div>
-          {
-            _.isEmpty(templateId) ? null :
-            <div className={styles.missionFeedbackSection}>
-              <MissionFeedback
-                missionFeedbackData={missionFeedbackData}
-                isFold={isFold}
-                missionFeedbackCount={missionFeedbackCount}
-                serveManagerCount={serveManagerCount}
-                templateId={templateId}
-              />
-            </div>
-          }
+          <div className={styles.missionFeedbackSection}>
+            <MissionFeedback
+              missionFeedbackData={missionFeedbackData}
+              isFold={isFold}
+              missionFeedbackCount={missionFeedbackCount}
+              serveManagerCount={serveManagerCount}
+              templateId={templateId}
+              ref={ref => (this.missionFeedbackElem = ref)}
+            />
+          </div>
         </div>
       </div>
     );

@@ -210,7 +210,7 @@ export default class CustDetail extends PureComponent {
   @autobind
   toDetail(custNature, custId, rowId, ptyId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, isCustServedByPostn } = this.props;
+    const { push, isCustServedByPostn, hideCustDetailModal } = this.props;
     const postnId = emp.getPstnId();
     // 跳转之前查看一下是否都是本人名下的客户
     isCustServedByPostn({
@@ -219,7 +219,7 @@ export default class CustDetail extends PureComponent {
     }).then(() => {
       if (this.props.custServedByPostnResult) {
         // 跳转前关闭模态框
-        // hideCustDetailModal();
+        hideCustDetailModal();
         const param = {
           id: 'FSP_360VIEW_M_TAB',
           title: '客户360视图-客户信息',
