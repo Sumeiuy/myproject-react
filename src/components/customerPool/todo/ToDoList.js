@@ -85,6 +85,12 @@ export default class ToDoList extends PureComponent {
   componentDidMount() {
     this.updateEmptyHeight();
     window.addEventListener('resize', () => this.updateEmptyHeight());
+    window.updateTodoList = function (flowId) {
+      window.dispatch({
+        type: 'customerPool/updateTodoList',
+        flowId,
+      });
+    };
   }
 
 
@@ -145,7 +151,7 @@ export default class ToDoList extends PureComponent {
       }).then(this.handleSuccess);
     } else {
       // 跳转到审批页面
-      tardetLab.setAttribute('href', `${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
+      window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
     }
   }
 
@@ -175,7 +181,6 @@ export default class ToDoList extends PureComponent {
 
   render() {
     const { className, data, todolist } = this.props;
-
     // 没有待办流程
     if (todolist.length === 0) {
       return (<div className={styles.empty}>
