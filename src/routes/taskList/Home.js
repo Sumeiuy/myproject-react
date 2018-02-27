@@ -945,10 +945,6 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    // 清空当前任务反馈饼图实例
-    if (this.splitPanelElem) {
-      this.splitPanelElem.rightDetailWrap.clearCurrentChartInstance();
-    }
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId } = record;
     const {
       queryCustUuid,
