@@ -5,6 +5,7 @@
 import _ from 'lodash';
 import env from '../helper/env';
 import os from '../helper/os';
+import { parse } from '../helper/url';
 import { fspRoutes } from '../config';
 
 function findRoute(url) {
@@ -39,21 +40,32 @@ function initFspMethod({ store, history }) {
   ];
 
   let fspContainerElem;
-  const unlisten = history.listen((location) => {
+  let prevPageNum;
+  history.listen((location) => {
     if (_.find(routers, router => router.path === location.pathname)) {
       // 激活fsp框架的滚动条
       if (!fspContainerElem) {
-        fspContainerElem = document.querySelector('.wrapper.ps-container');
+        fspContainerElem = env.isInReact() ? document.querySelector('#tabpanel') :
+          document.querySelector('.wrapper.ps-container');
       }
-      // 不是很完美，只能无脑滚底部
-      fspContainerElem.scrollTop = 0;
+
+      // 客户列表只有切换页码时需要修正滚动
+      if (location.pathname === '/customerPool/list') {
+        const currentPageNum = parse(location.search).curPageNum || 1;
+        if (prevPageNum && prevPageNum !== currentPageNum) {
+          // 不是很完美，只能无脑滚底部,
+          fspContainerElem.scrollTop = 0;
+        }
+        prevPageNum = currentPageNum;
+      } else {
+        // 不是很完美，只能无脑滚底部,
+        fspContainerElem.scrollTop = 0;
+      }
     }
   });
 
   // 如果当前环境是react框架，就执行下面的重写操作
   if (env.isInReact()) {
-    // react框架不需要监听滚动条处理
-    unlisten();
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
     $.fn.EBSmartTab = function tabCall(param1, param2) {
