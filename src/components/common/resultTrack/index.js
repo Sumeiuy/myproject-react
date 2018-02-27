@@ -8,9 +8,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Checkbox, InputNumber, message } from 'antd';
+import { Select, Checkbox, InputNumber, message, DatePicker } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
+import moment from 'moment';
 import { autobind } from 'core-decorators';
 import DropdownSelect from '../dropdownSelect';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -20,22 +21,9 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const Option = Select.Option;
 const defaultIndicatorValue = '请选择指标';
-// 跟踪窗口期时间列表
-// 10天
-// 20天
-// 30天
-const trackWindowDateList = [{
-  key: '10',
-  value: '10',
-}, {
-  key: '20',
-  value: '20',
-}, {
-  key: '30',
-  value: '30',
-}];
-// 跟踪窗口期默认30天
-const defaultTrackWindowDate = '30';
+
+// 跟踪窗口期默认0天
+const defaultTrackWindowDate = 0;
 
 @RestoreScrollTop
 export default class ResultTrack extends PureComponent {
@@ -57,11 +45,14 @@ export default class ResultTrack extends PureComponent {
     queryIndicatorData: PropTypes.func,
     // 存储的任务流程数据
     storedData: PropTypes.object,
+    // 该用户是否需要审批
+    needApproval: PropTypes.bool,
   }
 
   static defaultProps = {
     trackDate: EMPTY_LIST,
     isChecked: true,
+    needApproval: false,
     indicatorTargetData: [{}],
     searchedProductList: EMPTY_LIST,
     queryProduct: () => { },
@@ -87,7 +78,7 @@ export default class ResultTrack extends PureComponent {
       currentIndicatorDescription: '',
       currentSelectedOperationName: '',
       currentSelectedOperationValue: '',
-      currentSelectedTrackDate: '30',
+      currentSelectedTrackDate: this.getfirstAllowedDate(),
       currentSelectedOperationId: '',
       isProdBound: false,
       currentSelectedProduct: {},
@@ -274,7 +265,7 @@ export default class ResultTrack extends PureComponent {
 
     return {
       // 跟踪窗口期
-      trackWindowDate: currentSelectedTrackDate,
+      trackWindowDate: this.transformDateToDay(currentSelectedTrackDate),
       // 一级指标key
       indicatorLevel1Key: indicatorLevel1.key || '',
       // 一级指标value
@@ -329,6 +320,45 @@ export default class ResultTrack extends PureComponent {
       isProdBound: indicator.isProdBound,
       currentSelectedProduct: {},
     });
+  }
+
+  @autobind
+  getfirstAllowedDate() {
+    const { needApproval, storedData } = this.props;
+    const { timelyIntervalValue } = storedData.taskFormData;
+    const momentNow = moment();
+    // 修正可以选择的开始时间
+    const firstAllowedDate = timelyIntervalValue ? momentNow.add(Number(timelyIntervalValue), 'days') : momentNow;
+
+    // 如果需要审批，多加5天
+    if (needApproval) {
+      firstAllowedDate.add(5, 'days');
+    }
+
+    return _.clone(firstAllowedDate).startOf('day');
+  }
+
+  @autobind
+  disabledDate(current) {
+    const firstAllowedDate = this.getfirstAllowedDate();
+    const isLessThanFirstAllowedDate = current && current < firstAllowedDate.startOf('day');
+    const isBiggerThanLastAllowedDate = current && current > firstAllowedDate.add(180, 'days').startOf('day');
+    if (isLessThanFirstAllowedDate || isBiggerThanLastAllowedDate) {
+      return true;
+    }
+    return false;
+  }
+
+  @autobind
+  transformDateToDay(value) {
+    const firstAllowedDate = this.getfirstAllowedDate();
+    return value.diff(firstAllowedDate, 'days');
+  }
+
+  @autobind
+  transformDayToDate(value) {
+    const firstAllowedDate = this.getfirstAllowedDate();
+    return firstAllowedDate.add(value, 'days');
   }
 
   /**
@@ -397,8 +427,10 @@ export default class ResultTrack extends PureComponent {
       currentSelectedOperationId = traceOpList[0].key;
     }
     const currentUnit = unit || level2Indicator[0].unit || '';
-    const currentSelectedTrackDate = trackWindowDate || defaultTrackWindowDate;
-
+    // 跟踪截止天数
+    const trackDays = trackWindowDate != null ? trackWindowDate : defaultTrackWindowDate;
+    const currentSelectedTrackDate =
+      this.transformDayToDate(trackDays);
     return {
       level1Indicator,
       level2Indicator,
@@ -582,9 +614,9 @@ export default class ResultTrack extends PureComponent {
       currentSelectedOperationValue,
       level1Indicator,
       level2Indicator,
-      currentSelectedTrackDate,
       isProdBound,
       currentSelectedProduct,
+      currentSelectedTrackDate,
      } = this.state;
 
     const stateText = this.renderStateText();
@@ -603,17 +635,15 @@ export default class ResultTrack extends PureComponent {
         <div className={styles.container}>
           <div className={styles.resultTrackWindow}>
             <div className={styles.title}>
-              跟踪窗口期（自任务实施日开始）
+              跟踪截止日期（跟踪至任务实施日开始）
             </div>
             <div className={styles.content}>
-              <Select
-                disabled={!checked}
+              <DatePicker
+                allowClear={false}
                 value={currentSelectedTrackDate}
+                disabledDate={this.disabledDate}
                 onChange={this.handleTrackDateChange}
-              >
-                {_.map(trackWindowDateList, item =>
-                  <Option key={item.value} value={item.value}>{item.value}</Option>)}
-              </Select>
+              />
             </div>
           </div>
           <div className={styles.indicatorTargetData}>

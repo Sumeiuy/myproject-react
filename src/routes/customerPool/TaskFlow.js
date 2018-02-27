@@ -884,6 +884,7 @@ export default class TaskFlow extends PureComponent {
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
+          needApproval={needApproval}
           storedData={storedTaskFlowData}
         />
         {

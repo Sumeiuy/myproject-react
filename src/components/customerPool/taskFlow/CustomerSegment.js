@@ -38,8 +38,8 @@ export default class CustomerSegment extends PureComponent {
   };
 
   static defaultProps = {
-    onPreview: () => { },
-    storedData: {},
+    onPreview: _.noop,
+    storedData: EMPTY_OBJECT,
   };
 
   constructor(props) {
