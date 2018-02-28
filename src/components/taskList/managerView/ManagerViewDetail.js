@@ -366,7 +366,7 @@ export default class ManagerViewDetail extends PureComponent {
 
     let targetCustInfoData = [{
       id: 'total',
-      key: '客户总数 :',
+      key: '客户数 :',
       value: this.renderTotalCust(),
     },
     {

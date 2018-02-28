@@ -157,7 +157,7 @@ export default class MultiFilter extends PureComponent {
     const foldClass = classnames({ up: !fold });
     return (
       <div className={styles.filter}>
-        <span>{filterLabel}:</span>
+        <span title={filterLabel}>{filterLabel}:</span>
         <ul
           className={fold ? 'single' : 'multi'}
           ref={r => this.domNode = r}

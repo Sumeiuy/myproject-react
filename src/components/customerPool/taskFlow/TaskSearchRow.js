@@ -23,7 +23,6 @@ import { getCustomerListFilters } from '../../../helper/page/customerPool';
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 10;
-
 const renderColumnTitle = [{
   key: 'brok_id',
   value: '经纪客户号',
@@ -94,39 +93,7 @@ export default class TaskSearchRow extends PureComponent {
       argsOfQueryCustomer,
       currentSelectLabelName: '',
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { labelId, filterNumObject, modalVisible } = this.state;
-    const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = nextProps;
-    const showStatus = modalVisible && isLoadingEnd && isSightTelescopeLoadingEnd;
-    // 是否展示筛查客户的modal
-    if (showStatus) {
-      const { custList = [] } = peopleOfLabelData || {};
-      const list = _.map(custList, item => ({
-        ...item,
-        brok_id: item.brokId,
-        brok_org_id: item.brokOrgId,
-        contact_flag: item.contactFlag,
-        lever_code: item.levelName,
-        cust_type: item.custType === 'N' ? '高净值' : '零售',
-      }));
-      let finalFilterNumObject = filterNumObject;
-      // 只有点击了筛查客户，才需要替换filterNumObject
-      if (!_.isEmpty(labelId) && showStatus) {
-        finalFilterNumObject = {
-          [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-        };
-      }
-
-      this.setState({
-        custTableData: list,
-        filterNumObject: {
-          ...filterNumObject,
-          ...finalFilterNumObject,
-        },
-      });
-    }
+    this.visible = false;
   }
 
   // 获取已筛选客户数
@@ -180,6 +147,37 @@ export default class TaskSearchRow extends PureComponent {
       this.setState({
         modalVisible: true,
       });
+      this.visible = true;
+      const { filterNumObject } = this.state;
+      const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = this.props;
+      const showStatus = this.visible && isLoadingEnd && isSightTelescopeLoadingEnd;
+      // 是否展示筛查客户的modal
+      if (showStatus) {
+        const { custList = [] } = peopleOfLabelData || {};
+        const list = _.map(custList, item => ({
+          ...item,
+          brok_id: item.brokId,
+          brok_org_id: item.brokOrgId,
+          contact_flag: item.contactFlag,
+          lever_code: item.levelName,
+          cust_type: item.custType === 'N' ? '高净值' : '零售',
+        }));
+        let finalFilterNumObject = filterNumObject;
+        // 只有点击了筛查客户，才需要替换filterNumObject
+        if (!_.isEmpty(labelId) && showStatus) {
+          finalFilterNumObject = {
+            [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+          };
+        }
+
+        this.setState({
+          custTableData: list,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
+      }
     });
 
     this.setState({
@@ -392,7 +390,6 @@ export default class TaskSearchRow extends PureComponent {
       dict,
       sightingTelescopeFilters,
     } = this.props;
-
     if (_.isEmpty(condition)) {
       return null;
     }

@@ -310,10 +310,17 @@ export default class MissionInvestigation extends PureComponent {
           optionFilterProp="children"
           filterOption={(input, option) =>
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          dropdownMatchSelectWidth={false}
+          dropdownStyle={{
+            maxWidth: 216,
+          }}
+          dropdownClassName={styles.selectStyle}
         >
           {
             _.map(list, item =>
-              <Option key={item.quesId} value={item.quesValue}>{item.quesValue}</Option>)
+              <Option key={item.quesId} value={item.quesValue} title={item.quesValue}>
+                {item.quesValue}
+              </Option>)
           }
         </Select>
 
