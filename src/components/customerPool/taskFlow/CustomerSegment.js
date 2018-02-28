@@ -221,6 +221,11 @@ export default class CustomerSegment extends PureComponent {
     return _.map(columns, item => ({
       key: item,
       value: item,
+      render(data) {
+        return (
+          <div className={styles.textOverflowEllipsis}>{data}</div>
+        );
+      },
     }));
   }
 
