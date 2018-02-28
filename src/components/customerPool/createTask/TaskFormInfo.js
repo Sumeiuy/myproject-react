@@ -26,6 +26,7 @@ const mentionTextStyle = {
   backgroundColor: '#ebf3fb',
   borderColor: '#ebf3fb',
 };
+// 字数限制，最大长度和最小长度
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 1000;
 
