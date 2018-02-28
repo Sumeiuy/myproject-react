@@ -63,7 +63,7 @@ export default class TipsInfo extends PureComponent {
         getPopupContainer={getPopupContainer}
         trigger={trigger}
       >
-        <Icon className={styles.icon} type="tishi" />
+        <Icon className={styles.icon} type="tishi2" />
       </Tooltip>
     );
   }

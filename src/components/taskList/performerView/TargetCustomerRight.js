@@ -352,7 +352,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><span>股基佣金率额：</span><span>{miniFee}</span></h5>
+                ><span>股基佣金率：</span><span>{miniFee}</span></h5>
               </Col>
             </Row>
             <Row>
@@ -363,7 +363,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <span>持仓资产：</span>
+                  <span>持仓市值：</span>
                   <span>{this.handleAssets(itemData.openAssets)}</span>
                   {openAssetsPercentNode}
                 </h5>

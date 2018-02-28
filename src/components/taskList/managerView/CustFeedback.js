@@ -310,7 +310,7 @@ export default class CustFeedback extends PureComponent {
     return (
       <div className={styles.custFeedbackSection}>
         <div className={styles.title}>
-          客户反馈
+          已服务客户反馈
         </div>
         <div className={styles.content}>
           <IECharts
