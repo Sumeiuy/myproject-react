@@ -282,11 +282,6 @@ export default class ManagerViewDetail extends PureComponent {
         >
           {custNumbers}
         </div>
-        {/* <div className={styles.numDetail}> */}
-        {/* <Tooltip placement="right" title={`当前${orgName}有效客户总数`}>
-            <Icon className={styles.tip} type="tishi" />
-          </Tooltip> */}
-        {/* </div> */}
       </div>
     );
   }
