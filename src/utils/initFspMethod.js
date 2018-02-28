@@ -18,6 +18,25 @@ function initFspMethod({ store, history }) {
     store.dispatch(action);
   };
 
+  // 将fsp的侧边栏折叠按钮的点击事件暴露给react使用
+  window.onFspSidebarbtn = (cb) => {
+    const fspSidebarShowbtn = document.querySelector('#sidebar-show-btn');
+    const fspSidebarHidebtn = document.querySelector('#sidebar-hide-btn');
+    if (fspSidebarShowbtn && fspSidebarHidebtn) {
+      fspSidebarShowbtn.addEventListener('click', cb);
+      fspSidebarHidebtn.addEventListener('click', cb);
+    }
+  };
+  // 对应得卸载点击事件方法
+  window.offFspSidebarbtn = (cb) => {
+    const fspSidebarShowbtn = document.querySelector('#sidebar-show-btn');
+    const fspSidebarHidebtn = document.querySelector('#sidebar-hide-btn');
+    if (fspSidebarShowbtn && fspSidebarHidebtn) {
+      fspSidebarShowbtn.removeEventListener('click', cb);
+      fspSidebarHidebtn.removeEventListener('click', cb);
+    }
+  };
+
   // 这里传递的url必须是react能识别的路由
   window.navTo = (url) => {
     const state = store.getState();
@@ -37,7 +56,7 @@ function initFspMethod({ store, history }) {
   const routers = [
     { path: '/customerPool/list' },
     { path: '/customerPool/taskFlow' },
-  ];
+  ];  
 
   let fspContainerElem;
   let prevPageNum;
@@ -63,6 +82,8 @@ function initFspMethod({ store, history }) {
       }
     }
   });
+
+  
 
   // 如果当前环境是react框架，就执行下面的重写操作
   if (env.isInReact()) {

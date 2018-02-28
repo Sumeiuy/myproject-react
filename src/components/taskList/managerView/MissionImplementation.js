@@ -92,12 +92,14 @@ export default class MissionImplementation extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-
     window.addEventListener('resize', this.onResize);
+    // fsp侧边菜单折叠按钮click事件处理
+    window.onFspSidebarbtn(this.onResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
+    window.offFspSidebarbtn(this.onResize);
   }
 
   /**
