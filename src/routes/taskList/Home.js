@@ -726,12 +726,34 @@ export default class PerformerView extends PureComponent {
   }
 
   // 默认时间设置
+  @autobind
   handleDefaultTime({ before, todays, after }) {
-    const createTimeStart = _.isEmpty(before) ? null : moment(before).format('YYYY-MM-DD');
-    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    const { location: { query } } = this.props;
+    const { createTimeStart: urlCreateTimeStart,
+      createTimeEnd: urlCreateTimeEnd,
+      endTimeStart: urlEndTimeStart,
+      endTimeEnd: urlEndTimeEnd } = query;
+    
+    // 判断URL里是否存在日期（例如页面跳转，日期已设置）
+    const beforeTime =  this.handleURlTime(urlCreateTimeStart, before);
+
+    const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
+
+    const entBeforeTime = this.handleURlTime(urlEndTimeStart, todays);
+
+    const endAfterTime = this.handleURlTime(urlEndTimeEnd, after);
+
+    const createTimeStart = _.isEmpty(before) ? null : beforeTime;
+    const createTimeEnd = _.isEmpty(before) ? null : afterTime;
+    const endTimeStart = _.isEmpty(after) ? null : entBeforeTime;
+    const endTimeEnd = _.isEmpty(after) ? null : endAfterTime;
     return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
+
+  // 判断url里是否有时间设置
+  handleURlTime(urlTime, time) {
+    return _.isEmpty(urlTime) ? moment(time).format('YYYY-MM-DD') :
+      moment(urlTime).format('YYYY-MM-DD');
   }
 
   // 第一次加载请求
