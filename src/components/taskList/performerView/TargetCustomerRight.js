@@ -245,20 +245,19 @@ export default class TargetCustomerRight extends PureComponent {
     // 总资产不为0时进行计算
     // 持仓金额不为null或0时，持仓金额占余额的百分比openAssetsPercentNode，否则不展示百分比
     // 可用余额不为null或0时，可用余额占余额的百分比availablBalancePercentNode，否则不展示百分比
-    // 占时不展示
-    // let openAssetsPercentNode = '';
-    // let availablBalancePercentNode = '';
-    // if (Number(itemData.assets)) {
-    //   const openAssetsRate = itemData.openAssets / itemData.assets;
-    //   openAssetsPercentNode = itemData.openAssets ?
-    //     <span>({openAssetsRate * 100}%)</span>
-    //     :
-    //     null;
-    //   availablBalancePercentNode = itemData.availablBalance ?
-    //     <span>({(1 - openAssetsRate) * 100}%)</span>
-    //     :
-    //     null;
-    // }
+    let openAssetsPercentNode = '';
+    let availablBalancePercentNode = '';
+    if (Number(itemData.assets)) {
+      const openAssetsRate = itemData.openAssets / itemData.assets;
+      openAssetsPercentNode = itemData.openAssets ?
+        <span>({openAssetsRate * 100}%)</span>
+        :
+        null;
+      availablBalancePercentNode = itemData.availablBalance ?
+        <span>({(1 - openAssetsRate) * 100}%)</span>
+        :
+        null;
+    }
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
@@ -366,7 +365,7 @@ export default class TargetCustomerRight extends PureComponent {
                 >
                   <span>持仓市值：</span>
                   <span>{this.handleAssets(itemData.openAssets)}</span>
-                  {/* {openAssetsPercentNode} */}
+                   {openAssetsPercentNode} 
                 </h5>
               </Col>
               <Col span={thrSpan}>
@@ -388,7 +387,7 @@ export default class TargetCustomerRight extends PureComponent {
                 >
                   <span>可用余额：</span>
                   <span>{this.handleAssets(itemData.availablBalance)}</span>
-                  {/* {availablBalancePercentNode} */}
+                   {availablBalancePercentNode} 
                 </h5>
               </Col>
               <Col span={thrSpan}>
