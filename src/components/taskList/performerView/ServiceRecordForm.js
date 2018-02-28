@@ -91,7 +91,9 @@ export default class ServiceRecordForm extends PureComponent {
 
   @autobind
   handleCancel() {
-    this.serviceRecordContentRef.resetField();
+    if (this.serviceRecordContentRef) {
+      this.serviceRecordContentRef.resetField();
+    }
   }
 
   render() {

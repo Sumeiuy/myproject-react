@@ -511,41 +511,46 @@ export default class TaskFlow extends PureComponent {
       }
 
       // 拥有任务调查权限，才能展示任务调查
-      if (this.state.needMissionInvestigation) {
-        const missionInvestigationComponent = this.missionInvestigationRef;
-        missionInvestigationData = {
-          ...missionInvestigationData,
-          ...missionInvestigationComponent.getData(),
-        };
-        const {
-          // 是否选中
-          isMissionInvestigationChecked,
-          // 选择的问题idList
-          questionList = [],
-          currentSelectedQuestionIdList,
+      // if (this.state.needMissionInvestigation) {
+      const missionInvestigationComponent = this.missionInvestigationRef;
+      missionInvestigationData = {
+        ...missionInvestigationData,
+        ...missionInvestigationComponent.getData(),
+      };
+      const {
+        // 是否选中
+        isMissionInvestigationChecked,
+        // 选择的问题idList
+        questionList = [],
+        currentSelectedQuestionIdList,
+        addedQuestionSize,
         } = missionInvestigationData;
-        const originQuestionSize = _.size(currentSelectedQuestionIdList);
-        const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
-        if (isMissionInvestigationChecked) {
-          if (_.isEmpty(questionList)) {
-            message.error('请至少选择一个问题');
-            isMissionInvestigationValidate = false;
-          } else if (originQuestionSize !== uniqQuestionSize) {
-            // 查找是否有相同的question被选择
-            message.error('问题选择重复');
-            isMissionInvestigationValidate = false;
-          } else {
-            isMissionInvestigationValidate = true;
-            const quesIds = _.map(questionList, item => item.quesId);
-            // 生成问题模板Id
-            generateTemplateId({
-              quesIds,
-            });
-          }
+      const originQuestionSize = _.size(currentSelectedQuestionIdList);
+      const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
+      if (isMissionInvestigationChecked) {
+        if (_.isEmpty(questionList)) {
+          message.error('请至少选择一个问题');
+          isMissionInvestigationValidate = false;
+        } else if (originQuestionSize !== uniqQuestionSize) {
+          // 查找是否有相同的question被选择
+          message.error('问题选择重复');
+          isMissionInvestigationValidate = false;
+        } else if (addedQuestionSize !== originQuestionSize) {
+          // 新增了问题，但是没选择
+          message.error('请选择问题');
+          isMissionInvestigationValidate = false;
         } else {
           isMissionInvestigationValidate = true;
+          const quesIds = _.map(questionList, item => item.quesId);
+          // 生成问题模板Id
+          generateTemplateId({
+            quesIds,
+          });
         }
+      } else {
+        isMissionInvestigationValidate = true;
       }
+      // }
     }
 
     if (isFormValidate
@@ -895,10 +900,11 @@ export default class TaskFlow extends PureComponent {
           needApproval={needApproval}
         />
         {
-          needMissionInvestigation ? <MissionInvestigation
-            wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
-            storedData={storedTaskFlowData}
-          /> : null
+          needMissionInvestigation ?
+            <MissionInvestigation
+              wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
+              storedData={storedTaskFlowData}
+            /> : null
         }
       </div>,
     }, {
