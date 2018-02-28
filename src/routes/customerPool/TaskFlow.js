@@ -162,7 +162,14 @@ export default class TaskFlow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { current, currentSelectRowKeys, currentSelectRecord } = props.storedTaskFlowData || {};
+    const {
+      current,
+      currentSelectRowKeys,
+      currentSelectRecord,
+      needApproval = false,
+      canGoNextStep = false,
+      needMissionInvestigation = false,
+    } = props.storedTaskFlowData || {};
 
     this.state = {
       current: current || 0,
@@ -180,9 +187,9 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
-      needApproval: false,
-      canGoNextStep: false,
-      needMissionInvestigation: false,
+      needApproval,
+      canGoNextStep,
+      needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
     };
 
@@ -410,6 +417,11 @@ export default class TaskFlow extends PureComponent {
               current: current + 1,
               // 选择客户当前入口
               currentEntry,
+              // 将审批权限存到redux上，不然切换tab时，权限会丢失
+              needApproval,
+              canGoNextStep,
+              needMissionInvestigation,
+              isIncludeNotMineCust,
             });
             this.setState({
               needApproval,
@@ -898,7 +910,6 @@ export default class TaskFlow extends PureComponent {
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
           needApproval={needApproval}
           storedData={storedTaskFlowData}
-          needApproval={needApproval}
         />
         {
           needMissionInvestigation ?

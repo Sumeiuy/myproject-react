@@ -212,6 +212,15 @@ export default class MissionFeedback extends PureComponent {
           const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
+        position: 'right',
+        backgroundColor: '#fff',
+        textStyle: {
+          color: '#333',
+        },
+        borderWidth: 1,
+        borderColor: '#ddd',
+        // 额外附加到浮层的 css 样式
+        extraCssText: 'box-shadow: -1px 1px 5px 1px #c2c2c2;',
       },
       series: [
         {
@@ -255,6 +264,14 @@ export default class MissionFeedback extends PureComponent {
           const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
+        backgroundColor: '#fff',
+        textStyle: {
+          color: '#333',
+        },
+        borderWidth: 1,
+        borderColor: '#ddd',
+        // 额外附加到浮层的 css 样式
+        extraCssText: 'box-shadow: -1px 1px 5px 1px #c2c2c2;',
       },
       grid: grids,
       xAxis: {
@@ -479,7 +496,7 @@ export default class MissionFeedback extends PureComponent {
               placement="topLeft"
               title={() => this.renderTooltipContent(per, count, countPer)}
               arrowPointAtCenter
-              overlayClassName={styles.tooltipOverlay}
+              overlayClassName={styles.missionFeedbackTooltipOverlay}
             >
               <div
                 className="ant-progress-bg"
@@ -490,7 +507,7 @@ export default class MissionFeedback extends PureComponent {
               placement="topLeft"
               title={() => this.renderTooltipContent(type, allCount)}
               arrowPointAtCenter
-              overlayClassName={styles.tooltipOverlay}
+              overlayClassName={styles.missionFeedbackTooltipOverlay}
             >
               <div
                 className="ant-progress-inner"

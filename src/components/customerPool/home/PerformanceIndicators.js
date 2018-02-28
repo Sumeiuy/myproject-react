@@ -85,7 +85,7 @@ export default class PerformanceIndicators extends PureComponent {
       permissionType,
     } = this.props;
     let formatIndicator = [];
-    const tempArr = this.formatIndicators(indicators);
+    const tempArr = this.formatIndicators(indicators || {});
     if (!_.isEmpty(tempArr)) {
       formatIndicator = (tempArr[1] || {}).data;
     }
@@ -403,7 +403,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   render() {
     const { indicators, category } = this.props;
-    let formatIndicator = this.formatIndicators(indicators, category);
+    let formatIndicator = this.formatIndicators((indicators || {}), category);
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
     }

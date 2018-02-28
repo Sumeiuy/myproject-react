@@ -66,9 +66,23 @@ export default class TaskFormFlowStep extends PureComponent {
     super(props);
     const {
       location: { query: { source, flowId } },
-      storedCreateTaskData: { taskFormData, current, custSource, isDisabled },
+      storedCreateTaskData: {
+        taskFormData,
+        current,
+        custSource,
+        isDisabled,
+        needApproval = false,
+        canGoNextStep = false,
+        needMissionInvestigation = false,
+     },
     } = props;
+
+    // 代表是否是来自驳回修改
     const isEntryFromReturnTask = source === 'returnTask';
+    let canGoNextStepFlow = !!((canGoNextStep || !isDisabled));
+    if (_.isEmpty(flowId)) {
+      canGoNextStepFlow = isEntryFromReturnTask;
+    }
 
     this.state = {
       current: current || 0,
@@ -81,15 +95,19 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      needApproval: isEntryFromReturnTask,
-      canGoNextStep: _.isEmpty(flowId) ? isEntryFromReturnTask : !isDisabled,
-      needMissionInvestigation: true,
+      needApproval: !!((needApproval || isEntryFromReturnTask)),
+      canGoNextStep: canGoNextStepFlow,
+      needMissionInvestigation,
       isDisabled,
     };
   }
 
   componentDidMount() {
-    const { location: { query: { source } } } = this.props;
+    const {
+      location: { query: { source } },
+      saveCreateTaskData,
+      storedCreateTaskData,
+   } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
@@ -118,6 +136,14 @@ export default class TaskFormFlowStep extends PureComponent {
           needApproval,
           canGoNextStep,
           needMissionInvestigation,
+        });
+
+        saveCreateTaskData({
+          ...storedCreateTaskData,
+          needApproval,
+          canGoNextStep,
+          needMissionInvestigation,
+          isIncludeNotMineCust,
         });
       });
     }
@@ -206,7 +232,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custSources = '绩效目标客户';
         break;
       case 'managerView':
-        custSources = '任务实施细分客户';
+        custSources = '已有任务下钻客户';
         break;
       case 'custGroupList':
         custSources = '客户分组';
