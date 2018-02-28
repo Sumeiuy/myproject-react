@@ -89,7 +89,7 @@ export default class BroadcastDetail extends PureComponent {
   render() {
     const { newItemDetail } = this.getItemDetail();
     const { audioFileList = [], otherFileList = [] } = newItemDetail;
-    const audioSource = audioFileList[0] || {};
+    const audioSource = audioFileList[0];
     return (
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
@@ -118,7 +118,7 @@ export default class BroadcastDetail extends PureComponent {
                 </div>
                 <div className={styles.audioControl}>
                   <Audio
-                    src={this.getSourceSrc(audioSource)}
+                    src={audioSource && this.getSourceSrc(audioSource)}
                   />
                 </div>
                 <a href={this.getSourceSrc(audioSource)}>
