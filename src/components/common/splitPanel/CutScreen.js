@@ -82,6 +82,9 @@ export default class CutScreen extends PureComponent {
   getViewHeight() {
     let h = dom.getViewPortHeight();
     if (env.isIE()) { h -= 10; }
+    if (document.body.clientWidth === 1280) {
+      h -= 17; // 处理视口宽度为最小的1280px时，需要去掉滚动条的宽度
+    }
     return h;
   }
 
@@ -92,7 +95,6 @@ export default class CutScreen extends PureComponent {
     dom.setStyle(this.UTBContentElem, 'marginRight', right);
     dom.setStyle(this.UTBContentElem, 'marginBottom', bottom);
   }
-
   // 设置split下列表和详情区域的高度
   @autobind
   setSplitMainHeight() {

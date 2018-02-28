@@ -177,7 +177,7 @@ export default class TaskFormInfo extends PureComponent {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
       const content = toString(contentState);
-      if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
+      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
