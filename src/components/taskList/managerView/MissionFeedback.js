@@ -209,7 +209,7 @@ export default class MissionFeedback extends PureComponent {
       tooltip: {
         trigger: 'item',
         formatter: (params) => {
-          const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
+          const dataShow = `${params.data.name}<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
         ...this.getCommonTooltipStyle(),
@@ -559,9 +559,9 @@ export default class MissionFeedback extends PureComponent {
           return null;
         }
         return (
-          <h5 title={itemChild.data} key={itemChild.data}>
+          <div title={itemChild.data} key={itemChild.data}>
             {index + 1}.{itemChild.data || ''}
-          </h5>
+          </div>
         );
       });
       return (
