@@ -653,7 +653,7 @@ export default class ResultTrack extends PureComponent {
         <div className={styles.container}>
           <div className={styles.resultTrackWindow}>
             <div className={styles.title}>
-              跟踪截止日期（跟踪至任务实施日开始）
+              跟踪截止日期（跟踪自任务实施日开始）
             </div>
             <div className={styles.content}>
               <DatePicker
