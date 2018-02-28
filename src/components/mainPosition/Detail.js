@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置右侧
  * @Date: 2018-02-26 15:19:37
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-26 15:20:22
+ * @Last Modified time: 2018-02-28 14:32:31
  */
 
 import React, { PureComponent } from 'react';
@@ -13,11 +13,11 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
-import config from '../../routes/mainPosition/config';
+import { seibelConfig } from '../../config';
 import styles from './detail.less';
 
 // 表头
-const { titleList } = config;
+const { mainPosition: { titleList } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
