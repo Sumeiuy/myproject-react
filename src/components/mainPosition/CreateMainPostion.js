@@ -1,10 +1,11 @@
-/*
- * @Description: 分公司客户划转 home 页面
- * @Author: XuWenKang
- * @Date: 2017-09-22 14:49:16
+/**
+ * @Author: hongguangqing
+ * @Description: 服务经理主职位设置新建页面
+ * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:16:47
+ * @Last Modified time: 2018-02-28 16:25:01
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -67,10 +68,15 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       nextApproverModal: false,
       // 下一步审批人列表
       nextApproverList: [],
+      // 客户选中的职位
       checkedRadio: -1,
+      // 默认选中的职位
       defaultChecked: -1,
+      // 选中的职位的信息
       checkedEmployee: {},
+      // 选择的服务经理
       employeeId: '',
+      // 若disabled为true则说明用户没有选择新的主职位此时不给提交
       disabled: true,
     };
   }
@@ -168,7 +174,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       return;
     }
     if (disabled) {
-      message.error('请设置新的主服务经理');
+      message.error('请设置新的服务经理主职位');
       return;
     }
     this.setState({

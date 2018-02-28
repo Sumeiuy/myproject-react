@@ -1,9 +1,9 @@
 /**
  * @Author: hongguangqing
- * @Description: 服务经理主职位设置右侧
+ * @Description: 服务经理主职位设置右侧详情
  * @Date: 2018-02-26 15:19:37
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:32:31
+ * @Last Modified time: 2018-02-28 14:45:38
  */
 
 import React, { PureComponent } from 'react';

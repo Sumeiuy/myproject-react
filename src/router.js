@@ -45,6 +45,7 @@ import RelationHome from './routes/relation/Home';
 import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
+import MainPositionEdit from './routes/mainPosition/Edit';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import FilialeCustTransferEdit from './routes/filialeCustTransfer/Edit';
 import FilialeCustTransferNotifies from './routes/filialeCustTransfer/Notifies';
@@ -125,6 +126,9 @@ const routes = [
   {
     path: '/mainPosition',
     component: MainPosition,
+    children: [
+      { path: '/edit', component: MainPositionEdit },
+    ],
   },
   // 晨间播报
   { path: '/broadcastList',

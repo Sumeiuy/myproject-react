@@ -1,9 +1,9 @@
 /**
  * @Author: hongguangqing
- * @Description: 分公司客户人工划转Home页面
+ * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 13:57:00
+ * @Last Modified time: 2018-02-28 14:57:20
  */
 
 import React, { PureComponent } from 'react';
@@ -61,8 +61,6 @@ const mapDispatchToProps = {
   searchEmployee: fetchDataFunction(true, 'mainPosition/searchEmployee', true),
   // 搜索员工职位列表
   searchPosition: fetchDataFunction(true, 'mainPosition/searchPosition', true),
-  // 设置主职位
-  updatePosition: fetchDataFunction(true, 'mainPosition/updatePosition', true),
   // 清除 员工列表、员工职位列表
   clearProps: fetchDataFunction(true, 'mainPosition/clearProps', true),
   // 提交保存
@@ -92,8 +90,6 @@ export default class MainPosition extends PureComponent {
     // 搜索员工对应的职位
     searchPosition: PropTypes.func.isRequired,
     positionList: PropTypes.array.isRequired,
-    // 更新主职位
-    updatePosition: PropTypes.func.isRequired,
     // 清除 员工列表、员工职位列表
     clearProps: PropTypes.func.isRequired,
     // 组织机构树
@@ -325,7 +321,6 @@ export default class MainPosition extends PureComponent {
       detailInfo,
       searchEmployee,
       searchPosition,
-      updatePosition,
       clearProps,
       employeeList,
       positionList,
@@ -396,7 +391,6 @@ export default class MainPosition extends PureComponent {
               doApprove={doApprove}
               searchEmployee={searchEmployee}
               searchPosition={searchPosition}
-              updatePosition={updatePosition}
               clearProps={clearProps}
               employeeList={employeeList}
               positionList={positionList}

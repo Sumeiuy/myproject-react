@@ -1,9 +1,9 @@
 /**
  * @Author: hongguangqing
- * @Description: 分公司人工划转ViewListRow
+ * @Description: 服务经理主职位设置的ViewListRow
  * @Date: 2018-02-26 13:23:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 10:12:52
+ * @Last Modified time: 2018-02-28 14:45:31
  */
 
 
