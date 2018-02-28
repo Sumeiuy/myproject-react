@@ -365,7 +365,7 @@ export default class TargetCustomerRight extends PureComponent {
                 >
                   <span>持仓市值：</span>
                   <span>{this.handleAssets(itemData.openAssets)}</span>
-                  {openAssetsPercentNode}
+                   {openAssetsPercentNode} 
                 </h5>
               </Col>
               <Col span={thrSpan}>
@@ -387,7 +387,7 @@ export default class TargetCustomerRight extends PureComponent {
                 >
                   <span>可用余额：</span>
                   <span>{this.handleAssets(itemData.availablBalance)}</span>
-                  {availablBalancePercentNode}
+                   {availablBalancePercentNode} 
                 </h5>
               </Col>
               <Col span={thrSpan}>

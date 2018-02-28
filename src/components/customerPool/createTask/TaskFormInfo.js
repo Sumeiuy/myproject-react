@@ -26,6 +26,9 @@ const mentionTextStyle = {
   backgroundColor: '#ebf3fb',
   borderColor: '#ebf3fb',
 };
+// 字数限制，最大长度和最小长度
+const MIN_LENGTH = 10;
+const MAX_LENGTH = 1000;
 
 @createForm()
 export default class TaskFormInfo extends PureComponent {
@@ -264,7 +267,8 @@ export default class TaskFormInfo extends PureComponent {
   handleStrategySuggestionChange(e) {
     const value = e.target.value;
     this.setState({
-      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < 10 || value.length > 300,
+      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
+        || value.length > MAX_LENGTH,
     });
   }
 
@@ -294,7 +298,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           mentionStyle={mentionTextStyle}
           style={{ width: '100%', height: 100 }}
-          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
+          placeholder={`请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：${MIN_LENGTH}-${MAX_LENGTH}字）`}
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -345,7 +349,7 @@ export default class TaskFormInfo extends PureComponent {
     const errorProps = isShowErrorInfo ? {
       hasFeedback: true,
       validateStatus: 'error',
-      help: '任务提示不能小于10个字符，最多300个字符',
+      help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -381,7 +385,8 @@ export default class TaskFormInfo extends PureComponent {
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
       hasFeedback: true,
       validateStatus: 'error',
-      help: '服务策略不能小于10个字符，最多300个字符',
+      help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
+
     } : null;
 
     return (
