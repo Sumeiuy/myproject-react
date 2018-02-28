@@ -113,13 +113,13 @@ const mapDispatchToProps = {
   handleSelect: fetchDataFunction(false, effects.handleSelect),
   handleOrder: fetchDataFunction(false, effects.handleOrder),
   handleCheck: fetchDataFunction(false, effects.handleCheck),
-  handleSearch: fetchDataFunction(true, effects.handleSearch),
+  handleSearch: fetchDataFunction(false, effects.handleSearch),
   handleCloseClick: fetchDataFunction(false, effects.handleCloseClick),
   handleAddServiceRecord: fetchDataFunction(false, effects.handleAddServiceRecord),
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
-  getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
+  getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({

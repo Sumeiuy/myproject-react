@@ -122,7 +122,12 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   getData() {
-    const { currentSelectedQuestionIdList = [], checked, questionList = [] } = this.state;
+    const {
+      currentSelectedQuestionIdList = [],
+      checked,
+      questionList = [],
+      newQuestionAndAnswerGroup = [],
+    } = this.state;
     const idList = _.map(currentSelectedQuestionIdList, item => item.value);
     const selectedQuestionDetailList = [];
     _.each(idList, (item, index) => {
@@ -142,6 +147,8 @@ export default class MissionInvestigation extends PureComponent {
       questionList: selectedQuestionDetailList,
       // current select idList
       currentSelectedQuestionIdList,
+      // 当前新增的问题选择个数
+      addedQuestionSize: _.size(newQuestionAndAnswerGroup),
     };
   }
 
