@@ -7,12 +7,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Progress } from 'antd';
+import classnames from 'classnames';
 
 import styles from './progressBar.less';
 
 export default function ProgressBar({
   servicedCustomer,
   totalCustomer,
+  active,
   ...restProps
 }) {
   const servicedCustomerNum = Number(servicedCustomer);
@@ -21,12 +23,33 @@ export default function ProgressBar({
     return null;
   }
   const percent = 100 * (servicedCustomerNum / totalCustomerNum);
+  const overlayWidth = (percent / 100) * 120;
+
   return (
     <div className={styles.progress}>
       <div className={`${styles.progressText} progressText`}>
-        <span className={styles.title}>进度:</span>&nbsp;
-        <span className={`${styles.mark} activeMark`}>{servicedCustomer}</span>/{totalCustomer}
+        进度:&nbsp;<span className={`${styles.mark} ${active ? 'activeMark' : ''}`}>{servicedCustomer}</span>/{totalCustomer}
       </div>
+      <div
+        className={classnames({
+          [styles.overlayActive]: true,
+          [styles.block]: active,
+          [styles.hidden]: !active,
+        })}
+        style={{
+          width: overlayWidth,
+        }}
+      />
+      <div
+        className={classnames({
+          [styles.overlayDefault]: true,
+          [styles.block]: !active,
+          [styles.hidden]: active,
+        })}
+        style={{
+          width: overlayWidth,
+        }}
+      />
       <Progress
         percent={percent}
         strokeWidth={3}
@@ -39,4 +62,5 @@ export default function ProgressBar({
 ProgressBar.propTypes = {
   servicedCustomer: PropTypes.number.isRequired,
   totalCustomer: PropTypes.number.isRequired,
+  active: PropTypes.bool.isRequired,
 };

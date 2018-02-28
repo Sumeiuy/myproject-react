@@ -151,44 +151,28 @@
   .progress {
     width: 120px;
     float: right;
-    &.active {
-      :global {
-        .progressText {
-          color: #fff;
-          font-size: 12px;
-        }
-        .progressText {
-          color: #adcdf1;
-          .title {
-            color: #fff;
-          }
-          .activeMark {
-            color: #fff;
-          }
-        }
-        .ant-progress-line .ant-progress-inner {
-          background-color: #adcdf1;
-        }
-        .ant-progress-line .ant-progress-inner .ant-progress-bg {
-          background-color: #fff;
-        }
+    :global {
+      .ant-progress-bg {
+        background-color: #756fb8;
       }
     }
-    &.default {
+    &.active {
+      .progressText {
+        color: #adcbf1;
+      }
       :global {
+        .ant-progress-inner {
+          background-color: #adcbf1;
+        }
+        .ant-progress-bg {
+          background-color: #fff;
+        }
         .progressText {
-          color: #c2c2c2;
-          text-align: right;
+          color: #adcbf1;
           font-size: 12px;
-          .mark {
-            color: #756fb8;
-          }
         }
-        .ant-progress-line .ant-progress-inner {
-          background-color: #c2c2c2;
-        }
-        .ant-progress-line .ant-progress-inner .ant-progress-bg {
-          background-color: #756fb8;
+        .activeMark {
+          color: #fff;
         }
       }
     }
