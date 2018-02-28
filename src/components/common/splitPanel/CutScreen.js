@@ -279,7 +279,7 @@ export default class CutScreen extends PureComponent {
         <div className={hasDataClass} ref={this.splitMainRef}>
           <div className={stretchCls}>
             <div className={styles.growIcon}>
-              <Icon type="zhankai1" onClick={this.growList} />
+              <Icon type="zhankai-" onClick={this.growList} />
             </div>
           </div>
           <div className={styles.listWrap} ref={this.listWrapRef}>

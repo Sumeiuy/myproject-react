@@ -364,7 +364,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <span>持仓资产：</span>
+                  <span>持仓市值：</span>
                   <span>{this.handleAssets(itemData.openAssets)}</span>
                   {/* {openAssetsPercentNode} */}
                 </h5>

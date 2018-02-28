@@ -692,6 +692,7 @@ export default class TaskFormFlowStep extends PureComponent {
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
+          needApproval={needApproval}
           storedData={storedCreateTaskData}
         />
         {
