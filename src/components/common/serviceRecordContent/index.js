@@ -124,8 +124,8 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { formData } = this.props;
-    const { formData: nextData } = nextProps;
+    const { formData, custUuid = '' } = this.props;
+    const { formData: nextData, custUuid: nextCustUuid = '', isReadOnly } = nextProps;
     // 在删除文件的时候，不设置originFormData，不然会恢复原始数据
     if (formData !== nextData && !this.isDeletingFile) {
       const formObject = this.handleInitOrUpdate(nextProps);
@@ -134,6 +134,10 @@ export default class ServiceRecordContent extends PureComponent {
         ...formObject,
         originFormData: formObject,
       });
+    }
+    // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+    if (custUuid !== nextCustUuid && !isReadOnly) {
+      this.clearUploadedFileList();
     }
   }
 
@@ -167,8 +171,8 @@ export default class ServiceRecordContent extends PureComponent {
       'serviceStatus',
       // 服务记录
       'serviceContent',
-      // cust uuid
-      'custUuid',
+      // 当前上传的附件
+      'currentFile',
     );
   }
 
@@ -339,7 +343,7 @@ export default class ServiceRecordContent extends PureComponent {
   resetField() {
     const { originFormData } = this.state;
     // 清除上传文件列表
-    this.uploadElem.clearUploadFile();
+    this.clearUploadedFileList();
 
     this.setState({
       ...this.state,
@@ -348,6 +352,14 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey: '',
       originFileName: '',
     });
+  }
+
+  @autobind
+  clearUploadedFileList() {
+    if (this.uploadElem) {
+      // 清除上传文件列表
+      this.uploadElem.clearUploadFile();
+    }
   }
 
   // 保存选中的服务方式的值
@@ -480,12 +492,13 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   handleFileUpload(file) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid = '' } = file;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid = '', attachment } = file;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
       custUuid,
+      attachment,
     });
   }
 

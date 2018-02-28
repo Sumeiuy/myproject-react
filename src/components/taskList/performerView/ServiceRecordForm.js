@@ -9,7 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
@@ -31,7 +31,6 @@ export default class ServiceRecordForm extends PureComponent {
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     reloadTargetCustInfo: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
-    // attachmentRecord: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -52,12 +51,13 @@ export default class ServiceRecordForm extends PureComponent {
       feedbackTypeChild,
       serviceStatus,
       serviceContent,
-      custUuid,
+      currentFile,
     } = this.serviceRecordContentRef.getData();
 
     const {
       formData: { custId = '', missionFlowId = '' },
       addServeRecord,
+      custUuid,
     } = this.props;
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
@@ -81,7 +81,8 @@ export default class ServiceRecordForm extends PureComponent {
       serveCustFeedBack2: feedbackTypeChild || '',
       missionFlowId,
       flowStatus: serviceStatus,
-      uuid: custUuid,
+      // 只有上传了附件才需要将custUuid传给后台，不然传空字符串
+      uuid: (custUuid && !_.isEmpty(currentFile)) ? custUuid : '',
     };
 
     // 添加服务记录
@@ -90,7 +91,9 @@ export default class ServiceRecordForm extends PureComponent {
 
   @autobind
   handleCancel() {
-    this.serviceRecordContentRef.resetField();
+    if (this.serviceRecordContentRef) {
+      this.serviceRecordContentRef.resetField();
+    }
   }
 
   render() {

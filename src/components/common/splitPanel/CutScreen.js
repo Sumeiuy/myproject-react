@@ -231,6 +231,11 @@ export default class CutScreen extends PureComponent {
     this.listWrap = input;
   }
 
+  @autobind
+  rightDetailWrapRef(input) {
+    this.rightDetailWrap = input;
+  }
+
   render() {
     const {
       topPanel,
@@ -280,13 +285,17 @@ export default class CutScreen extends PureComponent {
           <div className={styles.listWrap} ref={this.listWrapRef}>
             <leftPanel.type {...leftPanel.props} onShrink={this.shrinkList} />
           </div>
-          <div className={stretchEmptyCls}> { /** 留着占位置 */ } </div>
+          <div className={stretchEmptyCls}> { /** 留着占位置 */} </div>
           <div className={hasFoldCls}>
             {
               _.isEmpty(rightPanel) ? null
-              : (
-                <rightPanel.type {...rightPanel.props} isFold={isFold} />
-              )
+                : (
+                  <rightPanel.type
+                    {...rightPanel.props}
+                    isFold={isFold}
+                    ref={this.rightDetailWrapRef}
+                  />
+                )
             }
           </div>
         </div>

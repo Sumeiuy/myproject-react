@@ -93,7 +93,6 @@ export default class MissionInvestigation extends PureComponent {
 
   componentDidMount() {
     const { getQuestionList, questionInfo: { list } } = this.props;
-    // const { newQuestionAndAnswerGroup, questionId } = this.state;
     if (_.isEmpty(list)) {
       // 为空则需要去请求一次问题列表
       getQuestionList({
@@ -106,7 +105,6 @@ export default class MissionInvestigation extends PureComponent {
           // 将题目相同的问题过滤掉
           questionList: _.uniqBy(nextList, 'quesValue') || EMPTY_LIST,
         });
-        // this.renderNextQuestion(questionId, newQuestionAndAnswerGroup);
       });
     }
   }
@@ -124,7 +122,12 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   getData() {
-    const { currentSelectedQuestionIdList, checked, questionList = [] } = this.state;
+    const {
+      currentSelectedQuestionIdList = [],
+      checked,
+      questionList = [],
+      newQuestionAndAnswerGroup = [],
+    } = this.state;
     const idList = _.map(currentSelectedQuestionIdList, item => item.value);
     const selectedQuestionDetailList = [];
     _.each(idList, (item, index) => {
@@ -142,6 +145,10 @@ export default class MissionInvestigation extends PureComponent {
       isMissionInvestigationChecked: checked,
       // 选择的问题idList
       questionList: selectedQuestionDetailList,
+      // current select idList
+      currentSelectedQuestionIdList,
+      // 当前新增的问题选择个数
+      addedQuestionSize: _.size(newQuestionAndAnswerGroup),
     };
   }
 
@@ -291,16 +298,13 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   renderQuestion(questionId, checked, defaultQues) {
     const { questionInfo: { list } } = this.props;
-    // const finalQuestionList = questionList || list;
 
     return (
       <div
         className={classnames({
           [styles.questionLine]: true,
-          // [styles.hideQuestion]: currentDeleteId === `question_${questionId}`,
         })}
         key={`question_${questionId}`}
-        ref={ref => (this.questionLineElem = ref)}
       >
         <Select
           onChange={value => this.handleSelectChange(questionId, value)}

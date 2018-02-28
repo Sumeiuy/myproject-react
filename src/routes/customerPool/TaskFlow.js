@@ -522,10 +522,22 @@ export default class TaskFlow extends PureComponent {
           isMissionInvestigationChecked,
           // 选择的问题idList
           questionList = [],
+          currentSelectedQuestionIdList,
+          addedQuestionSize,
         } = missionInvestigationData;
+        const originQuestionSize = _.size(currentSelectedQuestionIdList);
+        const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
           if (_.isEmpty(questionList)) {
             message.error('请至少选择一个问题');
+            isMissionInvestigationValidate = false;
+          } else if (originQuestionSize !== uniqQuestionSize) {
+            // 查找是否有相同的question被选择
+            message.error('问题选择重复');
+            isMissionInvestigationValidate = false;
+          } else if (addedQuestionSize !== originQuestionSize) {
+            // 新增了问题，但是没选择
+            message.error('请选择问题');
             isMissionInvestigationValidate = false;
           } else {
             isMissionInvestigationValidate = true;
@@ -885,14 +897,14 @@ export default class TaskFlow extends PureComponent {
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
           storedData={storedTaskFlowData}
+          needApproval={needApproval}
         />
         {
           needMissionInvestigation ?
             <MissionInvestigation
               wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedTaskFlowData}
-            /> :
-            null
+            /> : null
         }
       </div>,
     }, {
