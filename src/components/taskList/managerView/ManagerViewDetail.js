@@ -203,7 +203,7 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   getCurrentOrgId() {
     if (this.missionImplementationElem) {
-      return this.missionImplementationElem.getCurrentOrgId();
+      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
     }
     return emp.getOrgId();
   }
@@ -229,6 +229,7 @@ export default class ManagerViewDetail extends PureComponent {
       custDetailResult,
       missionTypeDict,
     } = this.props;
+    const { missionProgressStatus, progressFlag, isEntryFromProgressDetail } = this.state;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
     const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
@@ -240,6 +241,23 @@ export default class ManagerViewDetail extends PureComponent {
       };
     }
 
+    // 如果是来自进度条，则发起任务时，需要将类型传给后台
+    let progressParam = {};
+    let newProgressFlag = progressFlag;
+    if (isEntryFromProgressDetail) {
+      progressParam = {
+        missionProgressStatus,
+      };
+      // 针对进度条发起的任务需要将Y和N标记替换成DONE和NOT_DONE标记，后台需要这么干
+      if (newProgressFlag) {
+        newProgressFlag = progressFlag === 'Y' ? 'DONE' : 'NOT_DONE';
+      }
+      progressParam = {
+        ...progressParam,
+        progressFlag: newProgressFlag,
+      };
+    }
+
     const urlParam = {
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
@@ -248,6 +266,7 @@ export default class ManagerViewDetail extends PureComponent {
       count: totalCustNumber,
       // 任务类型
       ...missionTypeObject,
+      ...progressParam,
     };
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {

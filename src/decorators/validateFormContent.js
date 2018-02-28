@@ -63,7 +63,7 @@ export const validateFormContent = (target, name, descriptor) => {
       }
       if (_.isEmpty(serviceStrategySuggestion)
         || serviceStrategySuggestion.length < 10
-        || serviceStrategySuggestion.length > 300) {
+        || serviceStrategySuggestion.length > 1000) {
         this.setState({
           isShowErrorStrategySuggestion: true,
         });
