@@ -24,7 +24,8 @@ export default function ProgressBar({
   return (
     <div className={styles.progress}>
       <div className={`${styles.progressText} progressText`}>
-        进度:&nbsp;<span className={styles.mark}>{servicedCustomer}</span>/{totalCustomer}
+        <span className={styles.title}>进度:</span>&nbsp;
+        <span className={`${styles.mark} activeMark`}>{servicedCustomer}</span>/{totalCustomer}
       </div>
       <Progress
         percent={percent}

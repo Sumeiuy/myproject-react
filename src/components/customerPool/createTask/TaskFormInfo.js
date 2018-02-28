@@ -537,9 +537,9 @@ export default class TaskFormInfo extends PureComponent {
               })(<TextArea
                 id="desc"
                 rows={5}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-300字）"
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
                 style={{ width: '100%' }}
-                maxLength={300}
+                maxLength={MAX_LENGTH}
                 onChange={this.handleStrategySuggestionChange}
               />,
             )}

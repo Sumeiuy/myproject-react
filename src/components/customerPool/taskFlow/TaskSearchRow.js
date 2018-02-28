@@ -92,6 +92,7 @@ export default class TaskSearchRow extends PureComponent {
       // 当前筛选条件
       argsOfQueryCustomer,
       currentSelectLabelName: '',
+      currentModalKey: '',
     };
     this.visible = false;
   }
@@ -143,12 +144,14 @@ export default class TaskSearchRow extends PureComponent {
     }
     // 获取客户列表
     getLabelPeople(payload).then(() => {
+      const { filterNumObject } = this.state;
       // 数据回来后，显示弹框
       this.setState({
         modalVisible: true,
+        // 以当前labelId作为key，在第二次打开modal的时候，如果是同一个label，则保留filter数据，否则清空
+        currentModalKey: `${labelId}_modalKey`,
       });
       this.visible = true;
-      const { filterNumObject } = this.state;
       const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = this.props;
       const showStatus = this.visible && isLoadingEnd && isSightTelescopeLoadingEnd;
       // 是否展示筛查客户的modal
@@ -380,6 +383,7 @@ export default class TaskSearchRow extends PureComponent {
       filterNumObject,
       currentSelectLabelName,
       modalVisible,
+      currentModalKey,
     } = this.state;
 
     const {
@@ -396,6 +400,7 @@ export default class TaskSearchRow extends PureComponent {
 
     const currentItems = currentFilterObject[labelId] || [];
     const totalRecordNum = filterNumObject[labelId] || 0;
+
     return (
       <div className={styles.divContent}>
         <RadioGroup
@@ -408,65 +413,64 @@ export default class TaskSearchRow extends PureComponent {
           }
         </RadioGroup>
         <div className={styles.seeCust}>
-          {
-            <Modal
-              visible={modalVisible}
-              title={currentSelectLabelName || ''}
-              maskClosable={false}
-              closable={false}
-              footer={
-                <Clickable
-                  onClick={this.handleCancel}
-                  eventName="/click/taskSearchRow/close"
-                >
-                  <Button key="back" size="large">确定</Button>
-                </Clickable>
-              }
-              width={700}
-              wrapClassName={styles.labelCustModalContainer}
-            >
-              {
-                <div className={styles.filter}>
-                  <FilterCustomers
-                    dict={dict}
-                    currentItems={currentItems}
-                    onFilterChange={this.handleFilterChange}
-                    source={currentSource}
-                    sightingTelescopeFilters={sightingTelescopeFilters}
-                  />
-                </div>
-              }
-              {
-                _.isEmpty(custTableData) ?
-                  <div className={styles.emptyContent}>
-                    <span>
-                      <Icon className={styles.emptyIcon} type="frown-o" />
-                      暂无数据
+          <Modal
+            visible={modalVisible}
+            title={currentSelectLabelName || ''}
+            maskClosable={false}
+            closable={false}
+            // 关闭弹框时，销毁子元素，不然数据会复用,antd升级这个api才会有，所以先用key代替这个api
+            destroyOnClose
+            key={currentModalKey}
+            footer={
+              <Clickable
+                onClick={this.handleCancel}
+                eventName="/click/taskSearchRow/close"
+              >
+                <Button key="back" size="large">确定</Button>
+              </Clickable>
+            }
+            width={700}
+            wrapClassName={styles.labelCustModalContainer}
+          >
+            <div className={styles.filter}>
+              <FilterCustomers
+                dict={dict}
+                currentItems={currentItems}
+                onFilterChange={this.handleFilterChange}
+                source={currentSource}
+                sightingTelescopeFilters={sightingTelescopeFilters}
+              />
+            </div>
+            {
+              _.isEmpty(custTableData) ?
+                <div className={styles.emptyContent}>
+                  <span>
+                    <Icon className={styles.emptyIcon} type="frown-o" />
+                    暂无数据
                     </span>
-                  </div> :
-                  <GroupTable
-                    pageData={{
-                      curPageNum,
-                      curPageSize: INITIAL_PAGE_SIZE,
-                      totalRecordNum,
-                    }}
-                    tableClass={
-                      classnames({
-                        [styles.labelCustTable]: true,
-                        [tableStyles.groupTable]: true,
-                      })
-                    }
-                    isFixedTitle={false}
-                    onSizeChange={this.handleShowSizeChange}
-                    onPageChange={this.handlePageChange}
-                    listData={custTableData}
-                    titleColumn={renderColumnTitle}
-                    isFirstColumnLink={false}
-                    columnWidth={100}
-                  />
-              }
-            </Modal>
-          }
+                </div> :
+                <GroupTable
+                  pageData={{
+                    curPageNum,
+                    curPageSize: INITIAL_PAGE_SIZE,
+                    totalRecordNum,
+                  }}
+                  tableClass={
+                    classnames({
+                      [styles.labelCustTable]: true,
+                      [tableStyles.groupTable]: true,
+                    })
+                  }
+                  isFixedTitle={false}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  listData={custTableData}
+                  titleColumn={renderColumnTitle}
+                  isFirstColumnLink={false}
+                  columnWidth={100}
+                />
+            }
+          </Modal>
         </div>
         {
           <Loading loading={!isLoadingEnd || !isSightTelescopeLoadingEnd} />
