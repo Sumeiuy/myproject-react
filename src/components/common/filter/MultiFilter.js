@@ -61,17 +61,6 @@ export default class MultiFilter extends PureComponent {
     this.domNodeLineHeight = '0px';
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { value: nextValue, separator } = nextProps;
-    const { value } = this.props;
-    console.log(value, '---', nextValue);
-    if (value !== nextValue) {
-      this.setState({
-        keyArr: value ? value.split(separator) : [],
-      });
-    }
-  }
-
   componentDidMount() {
     this.addMoreBtn();
     const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
