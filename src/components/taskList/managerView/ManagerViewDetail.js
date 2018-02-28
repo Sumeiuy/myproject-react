@@ -11,9 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import { Tooltip } from 'antd';
 
-import Icon from '../../common/Icon';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
@@ -276,19 +274,13 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   renderTotalCust() {
     const { mngrMissionDetailInfo = {} } = this.props;
-    const { custNumbers = 0, orgName } = mngrMissionDetailInfo;
+    const { custNumbers = 0 } = mngrMissionDetailInfo;
     return (
       <div className={styles.custValue}>
         <div
           className={styles.totalNum}
-          onClick={() => { this.handlePreview({ canLaunchTask: false }); }}
         >
           {custNumbers}
-        </div>
-        <div className={styles.numDetail}>
-          <Tooltip placement="right" title={`当前${orgName}有效客户总数`}>
-            <Icon className={styles.tip} type="tishi" />
-          </Tooltip>
         </div>
       </div>
     );
@@ -373,7 +365,7 @@ export default class ManagerViewDetail extends PureComponent {
 
     let targetCustInfoData = [{
       id: 'total',
-      key: '客户总数 :',
+      key: '客户数 :',
       value: this.renderTotalCust(),
     },
     {
