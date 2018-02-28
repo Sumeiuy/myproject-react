@@ -76,6 +76,7 @@ export default function AppItem(props) {
   const progressCls = cx({
     [styles.progress]: true,
     [styles.active]: active,
+    [styles.default]: !active,
   });
   function handleClick() {
     onClick(data, index);

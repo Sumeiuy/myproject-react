@@ -153,9 +153,6 @@
     float: right;
     &.active {
       :global {
-        .ant-progress-line .ant-progress-inner {
-          background-color: #fff;
-        }
         .progressText {
           color: #fff;
           font-size: 12px;
@@ -170,10 +167,28 @@
           }
         }
         .ant-progress-line .ant-progress-inner {
-          background-color: #adcdf1 !important;
+          background-color: #adcdf1;
         }
         .ant-progress-line .ant-progress-inner .ant-progress-bg {
           background-color: #fff;
+        }
+      }
+    }
+    &.default {
+      :global {
+        .progressText {
+          color: #c2c2c2;
+          text-align: right;
+          font-size: 12px;
+          .mark {
+            color: #756fb8;
+          }
+        }
+        .ant-progress-line .ant-progress-inner {
+          background-color: #c2c2c2;
+        }
+        .ant-progress-line .ant-progress-inner .ant-progress-bg {
+          background-color: #756fb8;
         }
       }
     }
