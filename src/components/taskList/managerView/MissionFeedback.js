@@ -336,7 +336,10 @@ export default class MissionFeedback extends PureComponent {
               resizable
               style={{
                 height: '140px',
+                width: 'auto',
               }}
+              // 不要将前面的option与后面的option合并
+              notMerge
               ref={ref => this.chartInstance[key] = ref}
             />
           </div>
@@ -583,15 +586,16 @@ export default class MissionFeedback extends PureComponent {
   }
 
   render() {
-    const { isFold } = this.props;
+    const { isFold, templateId } = this.props;
     const { finalData } = this.state;
     const { allFeedback, radioFeedback, checkboxFeedback, dataInfo } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
 
-    if (_.isEmpty(dataInfo) &&
+    if ((_.isEmpty(dataInfo) &&
       _.isEmpty(allFeedback) &&
       _.isEmpty(radioFeedback) &&
-      _.isEmpty(checkboxFeedback)) {
+      _.isEmpty(checkboxFeedback)) ||
+      _.isEmpty(templateId)) {
       return null;
     }
 

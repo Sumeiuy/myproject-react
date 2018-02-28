@@ -213,11 +213,15 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  getOrgId({ orgId }) {
-    // debugger;
+  updateQueryState({ orgId }) {
     this.setState({
       currentOrgId: orgId,
     });
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    return this.state.currentOrgId || emp.getOrgId();
   }
 
   @autobind
@@ -252,7 +256,7 @@ export default class MissionImplementation extends PureComponent {
       isDown,
       iconType: 'juxing23',
       exportExcel: this.handleExportExcel,
-      updateQueryState: this.getOrgId,
+      updateQueryState: this.updateQueryState,
     };
     return (<TabsExtra {...extraProps} />);
   }

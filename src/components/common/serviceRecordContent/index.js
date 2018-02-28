@@ -167,8 +167,8 @@ export default class ServiceRecordContent extends PureComponent {
       'serviceStatus',
       // 服务记录
       'serviceContent',
-      // cust uuid
-      'custUuid',
+      // 当前上传的附件
+      'currentFile',
     );
   }
 
@@ -480,12 +480,13 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   handleFileUpload(file) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid = '' } = file;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid = '', attachment } = file;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
       custUuid,
+      attachment,
     });
   }
 
