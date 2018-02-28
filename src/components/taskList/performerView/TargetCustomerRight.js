@@ -261,6 +261,8 @@ export default class TargetCustomerRight extends PureComponent {
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
+    const introducerName = this.handleEmpty(itemData.empName);
+
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -291,7 +293,10 @@ export default class TargetCustomerRight extends PureComponent {
                 <h5
                   className={styles.phoneLeft}
                 >
-                  <span>介绍人：</span><span>{this.handleEmpty(itemData.empName)}</span>
+                  <span>介绍人：</span>
+                  <span title={introducerName}>
+                    {introducerName}
+                  </span>
                   {
                     _.isEmpty(itemData.empName) ?
                       null :
