@@ -1386,5 +1386,17 @@ export default {
         sightingTelescopeFilters: object || {},
       };
     },
+    // 审批成功更新代办数据
+    updateTodoList(state, action) {
+      const { flowId } = action;
+      // 保存了首次加载时从服务器获取的全部数据和筛选后的数据，都给更新了
+      const todolist = _.filter(state.todolist, val => val.flowId !== flowId);
+      const todolistRecord = _.filter(state.todolistRecord, val => val.flowId !== flowId);
+      return {
+        ...state,
+        todolist,
+        todolistRecord,
+      };
+    },
   },
 };

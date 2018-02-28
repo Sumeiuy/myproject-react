@@ -31,6 +31,14 @@ function initFspMethod({ store, history }) {
     push(url);
   };
 
+  // 更新流程任务列表
+  window.updateFlow = function (flowId) {
+    window.dispatch({
+      type: 'customerPool/updateTodoList',
+      flowId,
+    });
+  };
+
   // fsp框架使用的时自定的滚动条，在切换页码时，这个自定的滚动条无法正常定位
   // 下面的是兼容处理代码，新框架可以删除
   // 需要修正fsp滚动问题的页面
