@@ -350,15 +350,32 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
+  fixDays(value, reverse) {
+    let days;
+    const { needApproval, storedData } = this.props;
+    const { timelyIntervalValue } = storedData.taskFormData;
+    if (reverse) {
+      days = needApproval ? value - timelyIntervalValue - 5 :
+        value - timelyIntervalValue;
+    } else {
+      days = needApproval ? value + timelyIntervalValue + 5 :
+        value + timelyIntervalValue;
+    }
+
+    return days;
+  }
+
+  @autobind
   transformDateToDay(value) {
     const firstAllowedDate = this.getfirstAllowedDate();
-    return value.diff(firstAllowedDate, 'days');
+    return this.fixDays(value.diff(firstAllowedDate, 'days'));
   }
 
   @autobind
   transformDayToDate(value) {
+    const days = this.fixDays(value, true);
     const firstAllowedDate = this.getfirstAllowedDate();
-    return firstAllowedDate.add(value, 'days');
+    return firstAllowedDate.add(days, 'days');
   }
 
   /**
@@ -428,7 +445,8 @@ export default class ResultTrack extends PureComponent {
     }
     const currentUnit = unit || level2Indicator[0].unit || '';
     // 跟踪截止天数
-    const trackDays = trackWindowDate != null ? trackWindowDate : defaultTrackWindowDate;
+    const trackDays = trackWindowDate != null ? trackWindowDate :
+      this.fixDays(defaultTrackWindowDate);
     const currentSelectedTrackDate =
       this.transformDayToDate(trackDays);
     return {
