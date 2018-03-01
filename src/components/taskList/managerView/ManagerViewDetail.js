@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-07 11:00:07
+ * @Last Modified time: 2018-02-23 13:27:46
  * 管理者视图详情
  */
 
@@ -109,13 +109,17 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handlePreview(params = {}) {
     const {
+      // currentLevel,
       title,
       pageNum,
       pageSize,
       missionProgressStatus,
       progressFlag,
       canLaunchTask,
-      isEntryFromProgressDetail,
+      // 当前入口是否从进度条过来
+      isEntryFromProgressDetail = false,
+      // 当前入口是否从饼图过来
+      isEntryFromPie = false,
     } = params;
     const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
     const { orgName } = mngrMissionDetailInfo;
@@ -144,9 +148,14 @@ export default class ManagerViewDetail extends PureComponent {
       };
     }
 
+    // TODO
+    // if (isEntryFromPie) {
+    // }
+
     this.setState({
       ...progressParam,
       isEntryFromProgressDetail,
+      isEntryFromPie,
     });
 
     previewCustDetail({
@@ -154,7 +163,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
-        canLaunchTask: isEntryFromProgressDetail ? true : canLaunchTask,
+        canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
       });
     });
   }
@@ -299,12 +308,18 @@ export default class ManagerViewDetail extends PureComponent {
       push,
       isCustServedByPostn,
       custServedByPostnResult,
+      currentId,
     } = this.props;
 
-    const { isShowCustDetailModal, title, canLaunchTask, isEntryFromProgressDetail } = this.state;
+    const {
+      isShowCustDetailModal,
+      title,
+      canLaunchTask,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+    } = this.state;
 
     const {
-      missionId,
       missionName,
       missionStatusName,
       triggerTime,
@@ -326,6 +341,10 @@ export default class ManagerViewDetail extends PureComponent {
     const { list = [] } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
     const basicInfoData = [{
+      id: 'id',
+      key: '任务编号 :',
+      value: currentId || '--',
+    }, {
       id: 'date',
       key: '任务有效期 :',
       value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
@@ -371,7 +390,7 @@ export default class ManagerViewDetail extends PureComponent {
       <div className={styles.managerViewDetail}>
         <div className={styles.titleSection}>
           <div className={styles.taskTitle}>
-            {`编号${missionId || '--'} ${missionName || '--'}: ${missionStatusName || '--'}`}
+            {`${missionName || '--'}: ${missionStatusName || '--'}`}
           </div>
         </div>
         <div className={styles.detailContent}>
@@ -446,6 +465,8 @@ export default class ManagerViewDetail extends PureComponent {
                   custServedByPostnResult={custServedByPostnResult}
                   // 代表是否是从进度条点击的
                   isEntryFromProgressDetail={isEntryFromProgressDetail}
+                  // 代表是否是从饼图过来的
+                  isEntryFromPie={isEntryFromPie}
                 />
               }
               modalStyle={{
@@ -480,6 +501,7 @@ export default class ManagerViewDetail extends PureComponent {
                 isFold={isFold}
                 missionFeedbackCount={missionFeedbackCount}
                 serveManagerCount={serveManagerCount}
+                templateId={templateId}
               />
             </div>
           }

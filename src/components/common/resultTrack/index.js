@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-07 11:04:13
+ * @Last Modified time: 2018-02-22 17:28:32
  * 结果跟踪
  */
 
@@ -553,7 +553,7 @@ export default class ResultTrack extends PureComponent {
     const { operationType } = this.state;
     if (!_.isEmpty(operationType)) {
       if (operationType[0].key === 'TRUE') {
-        stateText = '是';
+        stateText = '状态：是';
       } else if (operationType[0].key === 'COMPLETE') {
         stateText = '状态：完善';
       } else if (operationType[0].key === 'OPEN') {

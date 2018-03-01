@@ -51,10 +51,6 @@ export default function AppItem(props) {
     [styles.appChanceIcon]: data.executionTypeCode === 'Chance',
     [styles.active]: active,
   });
-  const serialCls = cx({
-    [styles.serialNumber]: true,
-    [styles.active]: active,
-  });
   const typeCls = cx({
     [styles.type]: true,
     [styles.active]: active,
@@ -116,7 +112,6 @@ export default function AppItem(props) {
       <div className={styles.itemHeader}>
         <div className={styles.title}>
           <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
-          <span className={serialCls}>编号{data.id || '无'}</span>
           <span className={typeCls}>{renderMissionTypeName(missionTypeDict, data.typeCode)}</span>
         </div>
         <div className={styles.tagArea}>
@@ -140,7 +135,11 @@ export default function AppItem(props) {
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
-        <div className={styles.drafter}>创建者：<span>{!_.isEmpty(data.creator) ? `${data.creator}-` : ''}</span>{!_.isEmpty(data.orgName) ? `${data.orgName}` : ''}</div>
+        <div className={styles.drafter}>
+          <span>创建者：</span>
+          <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
+          <span>{!_.isEmpty(data.creatorId) ? `(${data.creatorId})` : ''}</span>
+        </div>
         <div className={styles.date}>{judgeMissionViewType(data.missionViewType) ? '结束时间' : '创建于'}：{showCreateTimeOrProcessTime(data) || '无'}</div>
       </div>
     </div>

@@ -35,16 +35,22 @@ export default function ServiceRecordContent(props) {
               content={item.feedbackTime}
               title={'反馈时间'}
             />
-            <ServiceRecordItem
+            {/* 展示不展示服务状态，且排版重新整理 */}
+            {/* <ServiceRecordItem
               content={item.serveStatus}
               title={'服务状态'}
+            /> */}
+            <ServiceRecordItem
+              content={item.handlerTimeLimit}
+              title={'处理期限'}
+              type={'right'}
             />
             {attacthment}
           </div>
           <div className={styles.rightSection}>
             <ServiceRecordItem
               content={item.taskDesc}
-              title={'任务描述'}
+              title={'任务提示'}
               type={'right'}
             />
             <ServiceRecordItem
@@ -56,11 +62,6 @@ export default function ServiceRecordContent(props) {
               content={item.handlerType}
               title={'执行类型'}
               executeTypes={executeTypes}
-              type={'right'}
-            />
-            <ServiceRecordItem
-              content={item.handlerTimeLimit}
-              title={'处理期限'}
               type={'right'}
             />
           </div>
@@ -85,10 +86,11 @@ export default function ServiceRecordContent(props) {
           content={item.feedbackTime}
           title={'反馈时间'}
         />
-        <ServiceRecordItem
+        {/* 占时不展示服务状态 */}
+        {/* <ServiceRecordItem
           content={item.serveStatus}
           title={'服务状态'}
-        />
+        /> */}
         {attacthment}
       </div>
       {

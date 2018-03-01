@@ -27,6 +27,12 @@ const missionStatusList = [
   { id: 30, name: '完成' },
 ];
 
+// 特殊处理的任务状态，和展不展示添加服务记录有关
+const missionStatusForServiceRecord = [
+  { id: '60', name: '结果跟踪' },
+  { id: '70', name: '结束' },
+];
+
 
 /**
  * 将数组对象中的id和name转成对应的key和value
@@ -68,7 +74,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   @autobind
-  addServiceRecord(postBody) {
+  addServiceRecord(postBody, callback) {
     const {
       addServeRecord,
       reloadTargetCustInfo,
@@ -78,7 +84,7 @@ export default class ServiceImplementation extends PureComponent {
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
           // 服务记录添加成功后重新获取目标客户列表的信息
-          reloadTargetCustInfo(() => this.updateList(postBody));
+          reloadTargetCustInfo(() => this.updateList(postBody, callback));
           // this.updateList(postBody);
           message.success('添加服务记录成功');
         }
@@ -87,7 +93,7 @@ export default class ServiceImplementation extends PureComponent {
 
   // 更新组件state的list信息
   @autobind
-  updateList({ custId, flowStatus }) {
+  updateList({ custId, flowStatus }, callback = _.noop) {
     const { list } = this.state;
     const newList = _.map(list, (item) => {
       if (item.custId === custId) {
@@ -100,9 +106,18 @@ export default class ServiceImplementation extends PureComponent {
       }
       return item;
     });
+    if (+flowStatus === missionStatusList[0].id) {
+      // 如果是处理中，需要将upload list清除
+      callback();
+    }
     this.setState({
       list: newList,
     });
+  }
+
+  @autobind
+  judgeMissionStatus(typeCode) {
+    return !_.isEmpty(_.find(missionStatusForServiceRecord, item => item.id === typeCode));
   }
 
   render() {
@@ -139,6 +154,8 @@ export default class ServiceImplementation extends PureComponent {
       addMotServeRecordSuccess,
       reloadTargetCustInfo,
       attachmentList,
+      statusCode,
+      isTaskFeedbackListOfNone,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentCustId = targetCustId || (list[0] || {}).custId;
@@ -155,8 +172,11 @@ export default class ServiceImplementation extends PureComponent {
       missionFlowId = currentCustomer.missionFlowId;
     }
 
+    // 先判断如果当前任务状态是结果跟踪或者结束状态，那么不要从客户的流水里面取任务状态，直接
+    // 将当前添加服务记录变成只读状态，不然再判断任务流水客户状态
     // 处理中 和 未开始 时表单可编辑
-    const isReadOnly = !_.includes(EDITABLE, serviceStatusCode);
+    const isReadOnly = this.judgeMissionStatus(statusCode)
+      || !_.includes(EDITABLE, serviceStatusCode);
     const {
       serviceTips,
       serviceWayName,
@@ -174,6 +194,7 @@ export default class ServiceImplementation extends PureComponent {
       value: serviceTypeName,
       children: transformCustFeecbackData(taskFeedbackList),
     }];
+
     // 服务记录的props
     const serviceReocrd = {
       serviceTips,
@@ -191,6 +212,7 @@ export default class ServiceImplementation extends PureComponent {
       missionFlowId,
       motCustfeedBackDict,
       attachmentList,
+      isTaskFeedbackListOfNone,
     };
     return (
       <div>
@@ -265,6 +287,8 @@ ServiceImplementation.propTypes = {
   addMotServeRecordSuccess: PropTypes.bool.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
+  statusCode: PropTypes.string,
+  isTaskFeedbackListOfNone: PropTypes.bool,
 };
 
 ServiceImplementation.defaultProps = {
@@ -276,4 +300,6 @@ ServiceImplementation.defaultProps = {
   deleteFileResult: [],
   taskFeedbackList: [],
   serviceTypeName: '',
+  statusCode: '',
+  isTaskFeedbackListOfNone: false,
 };

@@ -56,7 +56,6 @@
       .ant-steps-head {
         float: left;
         margin-top: 15px;
-        // margin-left: 50px;
       }
       .ant-steps-status-process .ant-steps-head-inner {
         border-color: #108ee9 !important;
@@ -176,7 +175,6 @@
             font-size: 12px;
             color: #a1a1a1;
             text-align: right;
-            width: 50px;
             display: inline-block;
           }
           & > span:last-child {
@@ -197,15 +195,15 @@
           & > .leftModule {
             display: flex;
             justify-content: flex-start;
-            align-items: center;
+            align-items: flex-start;
             width: 100%;
             padding-bottom: 5px;
             & > span:first-child {
               text-align: right;
-              width: 50px;
               display: inline-block;
               font-size: 12px;
               color: #888;
+              width: 60px;
             }
             & > span:last-child {
               text-align: left;
@@ -219,11 +217,8 @@
               color: #000;
             }
             & > .iconsWords {
-              max-width: 90%;
               margin-left: 10px;
-              overflow: hidden;
-              white-space: nowrap;
-              display: inline-block;
+              width: 250px;
               span {
                 text-align: left;
                 text-overflow: ellipsis;

@@ -32,15 +32,21 @@ function initFspMethod({ store, history }) {
 
   // fsp框架使用的时自定的滚动条，在切换页码时，这个自定的滚动条无法正常定位
   // 下面的是兼容处理代码，新框架可以删除
-  let fspScrollElem;
+  // 需要修正fsp滚动问题的页面
+  const routers = [
+    { path: '/customerPool/list' },
+    { path: '/customerPool/taskFlow' },
+  ];
+
+  let fspContainerElem;
   const unlisten = history.listen((location) => {
-    if (location.pathname === '/customerPool/list') {
-      if (!fspScrollElem) {
-        // 获取fsp container自定的滚动条
-        fspScrollElem = document.querySelector('.wrapper.ps-container .ps-scrollbar-y-rail');
-      }
+    if (_.find(routers, router => router.path === location.pathname)) {
       // 激活fsp框架的滚动条
-      fspScrollElem.style.top = '0px';
+      if (!fspContainerElem) {
+        fspContainerElem = document.querySelector('.wrapper.ps-container');
+      }
+      // 不是很完美，只能无脑滚底部
+      fspContainerElem.scrollTop = 0;
     }
   });
 

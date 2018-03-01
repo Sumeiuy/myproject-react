@@ -42,6 +42,10 @@ export default class TaskListDetailInfo extends PureComponent {
       <div className={styles.module}>
         {infoData.status !== COMPLETE_CODE ?
           <div className={styles.modContent}>
+            <div>
+              <span>任务编号&nbsp;:</span>
+              <span>{infoData.currentId || '--'}</span>
+            </div>
             <div className={styles.leftRow}>
               <span>任务状态&nbsp;:</span>
               <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
@@ -60,6 +64,10 @@ export default class TaskListDetailInfo extends PureComponent {
             </div>
           </div> :
           <div className={styles.modContent}>
+            <div>
+              <span>任务编号&nbsp;:</span>
+              <span>{infoData.currentId || '--'}</span>
+            </div>
             <div>
               <span>任务状态&nbsp;:</span>
               <span>{this.changeDisplay(infoData.status, status) || '--'}</span>

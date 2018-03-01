@@ -10,6 +10,14 @@ export const constructPieOptions = (options) => {
       trigger: 'item',
       formatter: params => renderTooltip(params),
       position: 'right',
+      backgroundColor: '#fff',
+      textStyle: {
+        color: '#333',
+      },
+      borderWidth: 1,
+      borderColor: '#ddd',
+      // 额外附加到浮层的 css 样式
+      extraCssText: 'box-shadow: -1px 1px 5px 1px #c2c2c2;',
     },
     series: [
       {

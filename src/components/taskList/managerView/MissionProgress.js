@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-22 17:31:31
+ * @Last Modified time: 2018-02-23 14:16:14
  * 任务进度
  */
 
@@ -69,16 +69,18 @@ export default class MissionProgress extends PureComponent {
       progressFlag: '',
       missionProgressStatus: '',
     };
+    this.activeElem = {};
+    this.remainingElem = {};
   }
 
   @autobind
-  getActiveElem() {
-    return this.activeElem;
+  getActiveElem(activeType) {
+    return this.activeElem && this.activeElem[activeType];
   }
 
   @autobind
-  getRemainingElem() {
-    return this.remainingElem;
+  getRemainingElem(remainingType) {
+    return this.remainingElem && this.remainingElem[remainingType];
   }
 
   @autobind
@@ -98,6 +100,20 @@ export default class MissionProgress extends PureComponent {
     });
   }
 
+  getParam(param) {
+    const { total, activeCount, ratio, activeType, remainingType } = param;
+    // 真实百分比
+    const activePercent = getPercent(Number(ratio));
+    return {
+      activeType,
+      remainingType,
+      activeCount,
+      activePercent,
+      remainingCount: total - activeCount,
+      totalCount: total,
+    };
+  }
+
   @autobind
   findCurrentProgressType(index) {
     const { missionProgressStatusDic: dic = [] } = this.props;
@@ -108,6 +124,15 @@ export default class MissionProgress extends PureComponent {
 
   @autobind
   renderTooltipContent(type, currentCount) {
+    return (
+      <div className={styles.content}>
+        <div className={styles.currentType}>{type}{currentCount || 0}位</div>
+      </div>
+    );
+  }
+
+  @autobind
+  getProgressDetailParam(type) {
     let missionProgressStatus = '';
     let progressFlag = '';
 
@@ -142,19 +167,11 @@ export default class MissionProgress extends PureComponent {
       default:
         break;
     }
-    return (
-      <div className={styles.content}>
-        <div className={styles.currentType}>{type}{currentCount || 0}位</div>
-        <div
-          className={styles.linkCustDetail}
-          onClick={() => this.handlePreview({
-            type,
-            missionProgressStatus,
-            progressFlag,
-          })}
-        >点击查看明细&gt;&gt;</div>
-      </div>
-    );
+
+    return {
+      progressFlag,
+      missionProgressStatus,
+    };
   }
 
   @autobind
@@ -164,7 +181,29 @@ export default class MissionProgress extends PureComponent {
     activePercent,
     activeCount,
     remainingCount,
+    totalCount,
   }) {
+    let newActivePercent = Number(activePercent);
+    let remainPercent = 100 - newActivePercent;
+    // 对一些有值，不是真正的0%，但是百分比经过四舍五入之小于5%的比例，
+    // 进度条做特殊处理，全部给与固定的5%宽度显示
+    const activeRatio = activeCount / totalCount;
+    const remainRatio = remainingCount / totalCount;
+    if (totalCount !== 0) {
+      if (newActivePercent === 0
+        && activeRatio * 100 < 5
+        && activeRatio !== 0) {
+        // 给与固定5%的进度条比例
+        newActivePercent = 5;
+      }
+      if (remainPercent === 0
+        && remainRatio * 100 < 5
+        && remainRatio !== 0) {
+        // 给与固定5%的进度条比例
+        remainPercent = 5;
+      }
+    }
+
     return (
       <div className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info">
         <div>
@@ -174,12 +213,16 @@ export default class MissionProgress extends PureComponent {
               title={() => this.renderTooltipContent(activeType, activeCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
-              getPopupContainer={this.getActiveElem}
+              getPopupContainer={() => this.getActiveElem(activeType)}
             >
               <div
                 className="ant-progress-bg"
-                style={{ width: `${activePercent}%` }}
-                ref={ref => (this.activeElem = ref)}
+                style={{ width: `${newActivePercent}%` }}
+                ref={ref => (this.activeElem[activeType] = ref)}
+                onClick={() => this.handlePreview({
+                  type: activeType,
+                  ...this.getProgressDetailParam(activeType),
+                })}
               />
             </Tooltip>
             <Tooltip
@@ -187,32 +230,26 @@ export default class MissionProgress extends PureComponent {
               title={() => this.renderTooltipContent(remainingType, remainingCount)}
               arrowPointAtCenter
               overlayClassName={styles.tooltipOverlay}
-              getPopupContainer={this.getRemainingElem}
+              getPopupContainer={() => this.getRemainingElem(remainingType)}
             >
               <div
                 className="ant-progress-inner"
-                ref={ref => (this.remainingElem = ref)}
-                style={{ width: `${100 - activePercent}%` }}
+                ref={ref => (this.remainingElem[remainingType] = ref)}
+                style={{ width: `${remainPercent}%` }}
+                onClick={() => this.handlePreview({
+                  type: remainingType,
+                  ...this.getProgressDetailParam(remainingType),
+                })}
               />
             </Tooltip>
           </div>
         </div>
+        {/**
+         * 进度条显示可以给与固定的5%，但是比例还是显示真实比例
+         */}
         <span className="ant-progress-text">{activeCount} / {activePercent}%</span>
       </div>
     );
-  }
-
-  getParam(param) {
-    const { total, activeCount, ratio, activeType, remainingType } = param;
-    // 真实百分比
-    const activePercent = getPercent(Number(ratio));
-    return {
-      activeType,
-      remainingType,
-      activeCount,
-      activePercent,
-      remainingCount: total - activeCount,
-    };
   }
 
   @autobind
@@ -279,7 +316,6 @@ export default class MissionProgress extends PureComponent {
       </div>
     );
   }
-
 
   render() {
     return (

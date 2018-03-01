@@ -1,7 +1,7 @@
 .performerViewDetail {
-  padding: 14px 20px 24px 18px;
+  padding: 14px 20px 0 18px;
   background-color: #fff;
-  height: 100%;
+  height: e("calc(100% - 14px)"); // 保留底部区域，对抗affix计算边界
   overflow-x: hidden;
   overflow-y: scroll;
 }

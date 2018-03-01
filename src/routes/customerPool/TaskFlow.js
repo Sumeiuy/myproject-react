@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-06 19:01:57
+ * @Last Modified time: 2018-02-22 10:34:06
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission } from '../../helper';
+import { emp, permission, env as envHelper } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
@@ -260,7 +260,7 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId) {
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -583,23 +583,6 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-
-  @autobind
-  handlePreview({ uploadKey, pageNum, pageSize }) {
-    console.log(uploadKey);
-    if (!uploadKey) {
-      message.error('请先上传文件');
-      return;
-    }
-    const { previewCustFile } = this.props;
-    // 预览数据
-    previewCustFile({
-      filename: uploadKey,
-      pageNum,
-      pageSize,
-    });
-  }
-
   @autobind
   handleSubmitTaskFlow() {
     const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
@@ -666,7 +649,7 @@ export default class TaskFlow extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      argsOfQueryCustomer,
+      argsOfQueryCustomer = {},
     } = finalData;
 
     let postBody = {
@@ -840,6 +823,7 @@ export default class TaskFlow extends PureComponent {
       creator,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      previewCustFile,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -859,7 +843,7 @@ export default class TaskFlow extends PureComponent {
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
 
-          onPreview={this.handlePreview}
+          onPreview={previewCustFile}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
 
@@ -932,6 +916,11 @@ export default class TaskFlow extends PureComponent {
         creator={creator}
       />,
     }];
+
+    // 灰度发布展示结果跟踪和任务调查，默认不展示
+    if (!envHelper.isGrayFlag()) {
+      steps.splice(2, 1);
+    }
 
     const stepsCount = _.size(steps);
 
