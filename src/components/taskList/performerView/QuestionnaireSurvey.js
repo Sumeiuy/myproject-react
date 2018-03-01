@@ -182,7 +182,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
     const showBtn = _.isEmpty(answerVOList) ?
-      (<Button key="submit" type="primary" onClick={_.debounce(onOk, 300)}>
+      (<Button key="submit" type="primary" onClick={_.debounce(onOk, 300, { leading: true })}>
         提交
       </Button>) :
       (<Button key="ok" type="primary" onClick={onCancel}>
