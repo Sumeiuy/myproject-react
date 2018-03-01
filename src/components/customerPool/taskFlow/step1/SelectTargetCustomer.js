@@ -12,6 +12,7 @@ import Entry from './Entry';
 import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
+import { fsp } from '../../../../helper';
 
 import styles from './selectTargetCustomer.less';
 
@@ -78,6 +79,8 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: true,
       showSightingTelescope: false,
     });
+    // 恢复Fsp滚动条
+    fsp.scrollToTop();
   }
 
   @autobind
@@ -87,6 +90,8 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: false,
       showSightingTelescope: true,
     });
+    // 恢复Fsp滚动条
+    fsp.scrollToTop();
   }
 
   render() {
