@@ -733,9 +733,9 @@ export default class PerformerView extends PureComponent {
       createTimeEnd: urlCreateTimeEnd,
       endTimeStart: urlEndTimeStart,
       endTimeEnd: urlEndTimeEnd } = query;
-    
+
     // 判断URL里是否存在日期（例如页面跳转，日期已设置）
-    const beforeTime =  this.handleURlTime(urlCreateTimeStart, before);
+    const beforeTime = this.handleURlTime(urlCreateTimeStart, before);
 
     const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
 
