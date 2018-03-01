@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Clickable from '../../../components/common/Clickable';
+import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
@@ -120,18 +121,11 @@ export default class Search extends PureComponent {
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const {
-      source,
-      labelMapping,
-      tagNumId,
-      labelName,
-      labelDesc,
-      q,
-    } = obj;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}&labelName=${labelName}&labelDesc=${labelDesc}`;
+    const condition = urlHelper.stringify(obj);
+    const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
       forceRefresh: true,
