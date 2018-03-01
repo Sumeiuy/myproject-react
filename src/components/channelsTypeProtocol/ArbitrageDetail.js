@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-02-26 13:49:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-26 13:56:16
+ * @Last Modified time: 2018-02-28 15:21:37
  * @description 套利软件展示页详情组件
  */
 
@@ -16,10 +16,12 @@ import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import styles from './detail.less';
 import MultiUploader from '../common/biz/MultiUploader';
-// import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
-// import config from '../../routes/channelsTypeProtocol/config';
+import {
+  isInvolvePermission,
+  isInvolveSoftware,
+} from './auth';
 
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
@@ -46,6 +48,23 @@ export default class Detail extends PureComponent {
     });
   }
 
+  // 拼接开通权限的显示文本
+  @autobind
+  joinPermissionText(textArray) {
+    if (!Array.isArray(textArray)) return '';
+    return textArray.map(item => item.value).join('，');
+  }
+
+  // 将拟稿人信息中的状态切换成中文
+  @autobind
+  convertDraftStatus(draftStatus) {
+    let statusLabel = '';
+    if (draftStatus) {
+      statusLabel = status[Number(draftStatus)].label;
+    }
+    return statusLabel;
+  }
+
   render() {
     const {
       protocolDetail,
@@ -61,12 +80,11 @@ export default class Detail extends PureComponent {
       handleName: approverName,
     };
     // 拟稿信息状态文字
-    let statusLabel = '';
-    if (protocolDetail.status) {
-      statusLabel = status[Number(protocolDetail.status)].label;
-    } else {
-      statusLabel = '';
-    }
+    const statusLabel = this.convertDraftStatus(protocolDetail.status);
+    // 开通权限文字显示
+    const permissionText = this.joinPermissionText(protocolDetail.softPermission);
+    const involvePermission = isInvolvePermission(protocolDetail.softBusinessType);
+    const involveSoftware = isInvolveSoftware(protocolDetail.softBusinessType);
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -82,6 +100,21 @@ export default class Detail extends PureComponent {
           <InfoItem label="协议模板" value={protocolDetail.templateId} />
           <InfoItem label="协议开始日期" value={time.format(protocolDetail.startDt) || EMPTY_PARAM} />
           <InfoItem label="协议有效期" value={time.format(protocolDetail.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="业务类型" value={protocolDetail.softBusinessTypeText || EMPTY_PARAM} />
+          {
+            !involvePermission ? null :
+            (<InfoItem label="开通权限" value={permissionText || EMPTY_PARAM} />)
+          }
+          {
+            !involveSoftware ? null :
+            (
+              <InfoItem label="软件账号" value={protocolDetail.softAccount || EMPTY_PARAM} />
+            )
+          }
+          {
+            !involveSoftware ? null :
+            (<InfoItem label="软件密码" value={protocolDetail.softPassword || EMPTY_PARAM} />)
+          }
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

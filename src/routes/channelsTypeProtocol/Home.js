@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-26 14:16:28
+ * @Last Modified time: 2018-03-01 20:02:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -71,6 +71,10 @@ const mapStateToProps = state => ({
   subTypeList: state.channelsTypeProtocol.subTypeList,
   // 模板列表
   templateList: state.channelsTypeProtocol.templateList,
+  // 业务类型列表
+  businessTypeList: state.channelsTypeProtocol.businessTypeList,
+  // 开通权限列表
+  openPermissionList: state.channelsTypeProtocol.openPermissionList,
   // 模板对应协议条款列表
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
   // 协议产品列表
@@ -144,6 +148,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     operationTypeList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     templateList: PropTypes.array.isRequired,
+    businessTypeList: PropTypes.array.isRequired,
+    openPermissionList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     protocolClauseList: PropTypes.array.isRequired,
@@ -507,6 +513,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       flowHistory,
     } = this.props;
+    const { currentView } = this.state;
     if (st === protocolSubs.arbitrage) {
       return (
         <ArbitRageDetail
@@ -522,7 +529,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         protocolDetail={protocolDetail}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
-        currentView={styleMedia}
+        currentView={currentView}
       />
     );
   }
@@ -590,6 +597,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       operationTypeList, // 操作类型列表
       subTypeList, // 子类型列表
       templateList, // 模板列表
+      businessTypeList, // 业务类型
+      openPermissionList, // 开通权限列表
       protocolDetail, // 协议详情
       queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
       protocolClauseList, // 所选模板对应协议条款列表
@@ -646,14 +655,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       />
     );
     const rightPanel = this.getProtocolDetailComponent(currentView);
-    // const rightPanel = (
-    //   <Detail
-    //     protocolDetail={protocolDetail}
-    //     attachmentList={attachmentList}
-    //     flowHistory={flowHistory}
-    //     currentView={currentView}
-    //   />
-    // );
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
@@ -673,6 +674,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
       subTypeList,
       // 协议模板列表
       templateList,
+      // 业务类型列表
+      businessTypeList,
+      // 开通权限列表
+      openPermissionList,
       // 根据所选模板id查询模板对应协议条款
       queryChannelProtocolItem,
       // 所选模板对应协议条款列表
