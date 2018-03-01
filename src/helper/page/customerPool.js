@@ -8,7 +8,7 @@ import _ from 'lodash';
 const customerPool = {
   getCustomerListFilters(filtersArray = [], labelId = '', filters = []) {
     const newFilters = [...filters];
-    let newLabels = [labelId];
+    let newLabels = labelId ? [labelId] : [];
     _.forEach(filtersArray, (item) => {
       const [name, value] = item.split('.');
       // 可开通
