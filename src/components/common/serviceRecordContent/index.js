@@ -695,7 +695,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleChange}
+                onChange={this.handleServiceType}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {
