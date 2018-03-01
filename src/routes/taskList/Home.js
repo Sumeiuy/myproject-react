@@ -369,7 +369,7 @@ export default class PerformerView extends PureComponent {
       dict: { missionType },
     } = this.props;
     const { typeCode, eventId } = this.state;
-    if (prevState.typeCode !== typeCode) {
+    if (prevState.typeCode !== typeCode || prevState.eventId !== eventId) {
       /**
        * 区分mot任务和自建任务
        * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
