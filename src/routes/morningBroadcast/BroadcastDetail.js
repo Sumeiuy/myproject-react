@@ -121,9 +121,13 @@ export default class BroadcastDetail extends PureComponent {
                     src={audioSource && this.getSourceSrc(audioSource)}
                   />
                 </div>
-                <a href={this.getSourceSrc(audioSource)}>
-                  <Icon className="icon" type="xiazai" />
-                </a>
+                {
+                  audioSource ?
+                    <a href={this.getSourceSrc(audioSource)}>
+                      <Icon className="icon" type="xiazai" />
+                    </a> :
+                    null
+                }
               </div>
               {
                 otherFileList.length ? (

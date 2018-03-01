@@ -302,6 +302,7 @@ export default class TaskSearchRow extends PureComponent {
     }
     this.setState({
       currentFilterObject: {
+        ...currentFilterObject,
         [labelId]: newFilterArray,
       },
     }, () => {
