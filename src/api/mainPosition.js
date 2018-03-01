@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-21 15:08:01
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 13:06:36
+ * @Last Modified time: 2018-03-01 16:03:50
  */
 
 export default function mainPosition(api) {
@@ -22,5 +22,7 @@ export default function mainPosition(api) {
     getButtonList: query => api.post('/groovynoauth/fsp/emp/org/queryNextStepInfo', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/emp/org/doApprove', query),
+    // 走流程接口
+    getNotifies: query => api.post('/groovynoauth/fsp/emp/org/queryNotifies', query),
   };
 }

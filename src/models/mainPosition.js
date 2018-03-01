@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-21 16:13:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:05:03
+ * @Last Modified time: 2018-03-01 15:58:23
  */
 
 import { mainPosition as api } from '../api';
@@ -20,6 +20,8 @@ export default {
     buttonList: {},
     // 新建（修改）返回的业务主键值
     itemId: '',
+    // 通知页面返回信息
+    notifiesInfo: {},
   },
   reducers: {
     // 右侧详情
@@ -64,6 +66,13 @@ export default {
       return {
         ...state,
         itemId: resultData,
+      };
+    },
+    getNotifiesSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        notifiesInfo: resultData,
       };
     },
   },
@@ -118,6 +127,14 @@ export default {
     // 提交保存
     * doApprove({ payload }, { call }) {
       yield call(api.doApprove, payload);
+    },
+    // 通知提醒页面接口
+    * getNotifies({ payload }, { call, put }) {
+      const response = yield call(api.getNotifies, payload);
+      yield put({
+        type: 'getNotifiesSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {},
