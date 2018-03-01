@@ -9,7 +9,7 @@ export const custFeedbackColorCollection = [
       '#5089F4',
       '#39B6FF',
       '#39D8FF',
-      '#8DF0F0',],
+      '#8DF0F0'],
   },
   {
     key: 1,
