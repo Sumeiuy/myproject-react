@@ -11,6 +11,7 @@ import classnames from 'classnames';
 
 import Header from './Header';
 import CustomerSegment from '../CustomerSegment';
+import { fsp } from '../../../../helper';
 // import CustomerSourceInput from './CustomerSourceInput';
 
 import styles from './importCustomers.less';
@@ -31,10 +32,14 @@ export default class ImportCustomers extends PureComponent {
     switchTo: () => { },
   }
 
+  componentDidMount() {
+    // 在初始化的时候，回滚fsp滚动条到顶部
+    fsp.scrollToTop();
+  }
+
   getFileData() {
     return {
       ...this.customerSegmentRef.getData(),
-      // customerSourceForm: this.customerSourceRef,
     };
   }
 
