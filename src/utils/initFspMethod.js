@@ -64,7 +64,7 @@ function initFspMethod({ store, history }) {
   const routers = [
     { path: '/customerPool/list' },
     { path: '/customerPool/taskFlow' },
-  ];  
+  ];
 
   let fspContainerElem;
   let prevPageNum;
@@ -81,17 +81,16 @@ function initFspMethod({ store, history }) {
         const currentPageNum = parse(location.search).curPageNum || 1;
         if (prevPageNum && prevPageNum !== currentPageNum) {
           // 不是很完美，只能无脑滚底部,
-          fspContainerElem.scrollTop = 0;
+          if (fspContainerElem) {
+            fspContainerElem.scrollTop = 0;
+          }
         }
         prevPageNum = currentPageNum;
-      } else {
-        // 不是很完美，只能无脑滚底部,
+      } else if (fspContainerElem) {
         fspContainerElem.scrollTop = 0;
       }
     }
   });
-
-  
 
   // 如果当前环境是react框架，就执行下面的重写操作
   if (env.isInReact()) {
