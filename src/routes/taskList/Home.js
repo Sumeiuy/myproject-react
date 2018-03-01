@@ -932,6 +932,8 @@ export default class PerformerView extends PureComponent {
       },
     });
     this.queryAppList(query, nextPage, currentPageSize);
+    // 分页时，将listScroll置顶
+    const listWrapElem = this.splitPanelElem
   }
 
   // 切换每一页显示条数
