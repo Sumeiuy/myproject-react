@@ -279,7 +279,7 @@ export default class MissionInvestigation extends PureComponent {
       <div className={styles.detailTip}>
         <div className={styles.questionSection}>
           <div>问题：</div>
-          <div>{currentQuestionDetail.quesValue}？</div>
+          <div>{currentQuestionDetail.quesValue}</div>
         </div>
         <div className={styles.answerSection}>
           <div className={styles.title}>
