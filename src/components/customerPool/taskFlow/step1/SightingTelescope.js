@@ -10,6 +10,7 @@ import classnames from 'classnames';
 
 import Header from './Header';
 import SelectLabelCust from '../SelectLabelCust';
+import { fsp } from '../../../../helper';
 
 import styles from './sightingTelescope.less';
 
@@ -39,6 +40,11 @@ export default class SightingTelescope extends PureComponent {
     switchTo: () => { },
     isAuthorize: false,
     filterModalvisible: false,
+  }
+
+  componentDidMount() {
+    // 在初始化的时候，回滚fsp滚动条到顶部
+    fsp.scrollToTop();
   }
 
   getData() {

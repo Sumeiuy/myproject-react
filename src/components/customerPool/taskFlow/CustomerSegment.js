@@ -19,6 +19,8 @@ import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import Clickable from '../../../components/common/Clickable';
 import styles from './customerSegment.less';
 
+import { fsp } from '../../../helper';
+
 import selfBuiltTemplate from './selfBuiltTemplate.xls';
 
 const EMPTY_LIST = [];
@@ -58,6 +60,11 @@ export default class CustomerSegment extends PureComponent {
       originFileName,
       custTotal,
     };
+  }
+
+  componentDidMount() {
+    // 在初始化的时候，回滚fsp滚动条到顶部
+    fsp.scrollToTop();
   }
 
   componentWillReceiveProps(nextProps) {
