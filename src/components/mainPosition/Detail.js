@@ -13,11 +13,11 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
-import { seibelConfig } from '../../config';
+import config from './config';
 import styles from './detail.less';
 
 // 表头
-const { mainPosition: { titleList } } = seibelConfig;
+const { mainPosition: { titleList } } = config;
 export default class Detail extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,

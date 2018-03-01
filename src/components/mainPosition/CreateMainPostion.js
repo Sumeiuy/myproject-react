@@ -18,12 +18,12 @@ import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { emp } from '../../helper';
-import { seibelConfig } from '../../config';
+import config from './config';
 import commonConfirm from '../common/Confirm';
 import styles from './createMainPostion.less';
 
 // 表头
-const { mainPosition: { titleList, approvalColumns } } = seibelConfig;
+const { mainPosition: { titleList, approvalColumns } } = config;
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,

@@ -17,11 +17,11 @@ import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
-import { seibelConfig } from '../../config';
+import config from './config';
 import styles from './editForm.less';
 
 // 表头
-const { mainPosition: { titleList, approvalColumns } } = seibelConfig;
+const { mainPosition: { titleList, approvalColumns } } = config;
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {

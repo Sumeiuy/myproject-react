@@ -23,10 +23,10 @@ import ViewListRow from '../../components/mainPosition/ViewListRow';
 import Detail from '../../components/mainPosition/Detail';
 import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
-import { seibelConfig } from '../../config';
+import config from '../../components/mainPosition/config';
 import seibelHelper from '../../helper/page/seibel';
 
-const { mainPosition, mainPosition: { pageType, status } } = seibelConfig;
+const { mainPosition, mainPosition: { pageType, status } } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
