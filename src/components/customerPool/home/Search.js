@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Clickable from '../../../components/common/Clickable';
-import { url as helperUrl } from '../../../helper';
+import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
@@ -124,7 +124,7 @@ export default class Search extends PureComponent {
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const condition = helperUrl.stringify(obj);
+    const condition = urlHelper.stringify(obj);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
