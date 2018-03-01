@@ -267,7 +267,7 @@ export default class MissionFeedback extends PureComponent {
     const option = {
       tooltip: {
         formatter: (params) => {
-          const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
+          const dataShow = `${params.data.name}<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
         ...this.getCommonTooltipStyle(),
