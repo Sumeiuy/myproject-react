@@ -79,9 +79,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
     // 代表是否是来自驳回修改
     const isEntryFromReturnTask = source === 'returnTask';
-    let canGoNextStepFlow = !!((canGoNextStep || !isDisabled));
-    if (_.isEmpty(flowId)) {
-      canGoNextStepFlow = isEntryFromReturnTask;
+    let canGoNextStepFlow = canGoNextStep;
+    let newNeedMissionInvestigation = needMissionInvestigation;
+    if (!_.isEmpty(flowId)) {
+      canGoNextStepFlow = !!((canGoNextStep || !isDisabled));
+      newNeedMissionInvestigation = true;
     }
 
     this.state = {
@@ -97,7 +99,7 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorTaskName: false,
       needApproval: !!((needApproval || isEntryFromReturnTask)),
       canGoNextStep: canGoNextStepFlow,
-      needMissionInvestigation,
+      needMissionInvestigation: newNeedMissionInvestigation,
       isDisabled,
     };
   }
@@ -127,11 +129,6 @@ export default class TaskFormFlowStep extends PureComponent {
           needMissionInvestigation,
           isIncludeNotMineCust,
         } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-        if (isIncludeNotMineCust && !canGoNextStep) {
-          message.error('客户包含非本人名下客户，请重新选择');
-          return;
-        }
-
         this.setState({
           needApproval,
           canGoNextStep,
@@ -145,6 +142,9 @@ export default class TaskFormFlowStep extends PureComponent {
           needMissionInvestigation,
           isIncludeNotMineCust,
         });
+        if (isIncludeNotMineCust && !canGoNextStep) {
+          message.error('客户包含非本人名下客户，请重新选择');
+        }
       });
     }
   }
@@ -643,7 +643,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handleSubmitSuccess() {
-    const { submitApporvalResult, saveCreateTaskData } = this.props;
+    const { submitApporvalResult, saveCreateTaskData, storedCreateTaskData } = this.props;
     if (submitApporvalResult.code === '0') {
       message.success('提交成功');
       this.setState({
@@ -651,6 +651,7 @@ export default class TaskFormFlowStep extends PureComponent {
         canGoNextStep: false,
       });
       saveCreateTaskData({
+        ...storedCreateTaskData,
         isDisabled: true,
       });
     }
