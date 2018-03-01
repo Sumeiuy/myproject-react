@@ -381,7 +381,10 @@ export default class CustomerList extends PureComponent {
     const sortsReqList = [];
     if (query.filters) {
       const filtersArray = query.filters ? query.filters.split('|') : [];
-      const { filters, labels } = getCustomerListFilters(filtersArray, param.labels, filtersReq);
+      const {
+        filters,
+        labels,
+      } = getCustomerListFilters(filtersArray, query.labelMapping, filtersReq);
       param.filtersReq = filters;
       param.labels = labels;
     }

@@ -135,7 +135,7 @@ export default class TaskSearchRow extends PureComponent {
     // 存放可开通、已开通、风险等级、客户类型、客户性质的数组
     const filtersList = [];
     if (!_.isEmpty(filter)) {
-      const { filters, labels } = getCustomerListFilters(filter, payload.labels, filtersList);
+      const { filters, labels } = getCustomerListFilters(filter, labelId, filtersList);
       payload.filtersReq = filters;
       payload.labels = labels;
     }
