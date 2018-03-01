@@ -733,9 +733,9 @@ export default class PerformerView extends PureComponent {
       createTimeEnd: urlCreateTimeEnd,
       endTimeStart: urlEndTimeStart,
       endTimeEnd: urlEndTimeEnd } = query;
-    
+
     // 判断URL里是否存在日期（例如页面跳转，日期已设置）
-    const beforeTime =  this.handleURlTime(urlCreateTimeStart, before);
+    const beforeTime = this.handleURlTime(urlCreateTimeStart, before);
 
     const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
 
@@ -932,8 +932,6 @@ export default class PerformerView extends PureComponent {
       },
     });
     this.queryAppList(query, nextPage, currentPageSize);
-    // 分页时，将listScroll置顶
-    const listWrapElem = this.splitPanelElem
   }
 
   // 切换每一页显示条数
