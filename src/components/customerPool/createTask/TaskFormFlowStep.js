@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-03-01 20:51:08
+ * @Last Modified time: 2018-03-01 21:03:25
  */
 
 import React, { PureComponent } from 'react';
@@ -784,7 +784,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     // 灰度发布展示结果跟踪和任务调查，默认不展示
     if (!envHelper.isGrayFlag()) {
-      steps.splice(2, 1);
+      steps.splice(1, 1);
     }
 
     const stepsCount = _.size(steps);
