@@ -2,7 +2,7 @@
  * @Author: hongguangqing
  * @Date: 2018-03-01 14:25:34
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-01 14:45:08
+ * @Last Modified time: 2018-03-02 10:11:14
  */
 /*
  * @Description: 服务经理主职位设置的配置文件
@@ -15,7 +15,7 @@ import React from 'react';
 const config = {
   // 服务经理主职位设置
   mainPosition: {
-    pageName: '分公司客户人工划转',
+    pageName: '服务经理主职位设置',
     pageType: '08', // 查询列表接口中的type值
     status: [
       {
