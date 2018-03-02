@@ -298,35 +298,35 @@ export default class Pageheader extends PureComponent {
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           {
             isUseOfCustomer ?
-            <div className={styles.filterFl}>
-              <div className={styles.dropDownSelectBox}>
-                <DropDownSelect
-                  value={curCust}
-                  placeholder="经纪客户号/客户名称"
-                  searchList={customerAllList}
-                  showObjKey="custName"
-                  objId="custNumber"
-                  emitSelectItem={this.selectCustItem}
-                  emitToSearch={value => this.toSearch(getCustomerList, value)}
-                  name={`${page}-custName`}
-                />
+              <div className={styles.filterFl}>
+                <div className={styles.dropDownSelectBox}>
+                  <DropDownSelect
+                    value={curCust}
+                    placeholder="经纪客户号/客户名称"
+                    searchList={customerAllList}
+                    showObjKey="custName"
+                    objId="custNumber"
+                    emitSelectItem={this.selectCustItem}
+                    emitToSearch={value => this.toSearch(getCustomerList, value)}
+                    name={`${page}-custName`}
+                  />
+                </div>
               </div>
-            </div>
             :
-            <div className={styles.filterFl}>
-              <div className={styles.dropDownSelectBox}>
-                <DropDownSelect
-                  value={curPtyMng}
-                  placeholder="服务经理工号/名称"
-                  searchList={ptyMngAllList}
-                  showObjKey="ptyMngName"
-                  objId="ptyMngId"
-                  emitSelectItem={item => this.selectItem('ptyMngId', item)}
-                  emitToSearch={value => this.toSearch(getPtyMngList, value)}
-                  name={`${page}-ptyMngName`}
-                />
+              <div className={styles.filterFl}>
+                <div className={styles.dropDownSelectBox}>
+                  <DropDownSelect
+                    value={curPtyMng}
+                    placeholder="服务经理工号/名称"
+                    searchList={ptyMngAllList}
+                    showObjKey="ptyMngName"
+                    objId="ptyMngId"
+                    emitSelectItem={item => this.selectItem('ptyMngId', item)}
+                    emitToSearch={value => this.toSearch(getPtyMngList, value)}
+                    name={`${page}-ptyMngName`}
+                  />
+                </div>
               </div>
-            </div>
           }
           {
             needOperate ?
