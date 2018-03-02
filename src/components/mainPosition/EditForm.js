@@ -23,6 +23,7 @@ import styles from './editForm.less';
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
 const REJECT_STATUS_CODE = '04'; // 驳回状态code
+const COMMITOPERATE = 'commit'; // 提交的operate值
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -99,7 +100,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   @autobind
   handleSubmit(item) {
     const { disabled } = this.state;
-    if (disabled) {
+    if (disabled && item.operate === COMMITOPERATE) {
       message.error('请设置新的服务经理主职位');
       return;
     }
@@ -117,9 +118,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   sendModifyRequest(value) {
     const { updateApplication, data } = this.props;
     const { checkedEmployee } = this.state;
+    const mainPtyMngInfo = _.find(data.empPostns, o => o.primary === true);
     updateApplication({
       targetEmpId: data.ptyMngId,
-      postnId: checkedEmployee.positionId,
+      postnId: !_.isEmpty(checkedEmployee) ? checkedEmployee.positionId : mainPtyMngInfo.positionId,
       appId: data.appId,
     }).then(() => {
       this.sendDoApproveRequest(value);
@@ -145,7 +147,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
     }).then(() => {
-      message.success('服务经理主职位修改成功');
+      if (operate === COMMITOPERATE) {
+        message.success('该服务经理主职位修改成功');
+      } else {
+        message.success('该服务经理主职位设置已被终止');
+      }
       this.setState({
         nextApproverModal: false,
         buttonListData: [],
