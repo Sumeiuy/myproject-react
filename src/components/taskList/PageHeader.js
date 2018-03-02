@@ -67,7 +67,7 @@ export default class Pageheader extends PureComponent {
     filterControl: PropTypes.string,
     // 时间入参
     filterTimer: PropTypes.func,
-    // 灰度
+    // 判断是否有灰度客户
     isGrayFlag: PropTypes.bool.isRequired,
   }
 
