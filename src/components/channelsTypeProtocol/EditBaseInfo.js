@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-02 14:31:35
+ * @Last Modified time: 2018-03-02 16:05:45
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -208,6 +208,11 @@ export default class EditBaseInfo extends PureComponent {
   }
 
   @autobind
+  refHtscTreeSelect(input) {
+    this.htscTreeSelect = input;
+  }
+
+  @autobind
   compareFormData(next) {
     const {
       contactName,
@@ -230,13 +235,20 @@ export default class EditBaseInfo extends PureComponent {
       levelTenFlag: levelTenFlag === 'Y',
       startDt,
       vailDt,
-      // content,
-      // client: {
-      //   cusId: custId,
-      //   custType,
-      //   brokerNumber: econNum,
-      // },
     });
+  }
+
+  // 清除选择的业务类型
+  @autobind
+  clearBussinessType() {
+    this.setState({ businessType: '' });
+  }
+
+  // 清除选择的开通权限
+  @autobind
+  clearOpenPermission() {
+    this.setState({ softPermission: [] });
+    this.htscTreeSelect.clear();
   }
 
   // 通用Select Change方法
@@ -262,17 +274,6 @@ export default class EditBaseInfo extends PureComponent {
       }
       changeOperationType(value);
     } else if (key === 'subType') {
-      // let operate;
-      // if (value === protocolSubTypes.fastConnect) {
-      //   // 紫金快车道
-      //   operate = 1;
-      // } else if (value === protocolSubTypes.expressConnect) {
-      //   // 高速通道
-      //   operate = 11;
-      // } else if (value === protocolSubTypes.arbitrageSoft) {
-      //   // 套利软件
-      //   operate = 111;
-      // }
       // TODO 此处告知父组件，当前选的子类型
       onChangeSubType(value);
       getFlowStepInfo({
@@ -354,7 +355,6 @@ export default class EditBaseInfo extends PureComponent {
   // 开通权限下拉多选框改变
   @autobind
   handleOpenPermissionChange(name, value) {
-    console.warn('handleOpenPermissionChange: ', value);
     const softPermission = value.map(v => ({ code: v.value, value: v.label }));
     this.setState({ softPermission });
   }
@@ -451,6 +451,7 @@ export default class EditBaseInfo extends PureComponent {
       });
       return;
     }
+    // TODO 切换用户后，此处需要将协议模板，业务类型，开通权限，数据清空
     getCustValidate(validatePayload).then(
       () => {
         this.setState({
@@ -459,6 +460,14 @@ export default class EditBaseInfo extends PureComponent {
           if (isSubscribe) {
             // 清空协议模版
             this.selectTemplateComponent.clearValue();
+            // TODO 如果是套利软件，则有可能需要清空
+            if (this.isArbirageSoftware()) {
+              // TODO 如果此时正好用户也已经选择开通权限
+              if (isInvolvePermission()) {
+                this.clearOpenPermission();
+              }
+              this.clearBussinessType();
+            }
           } else {
             // 查询协议 ID 列表
             queryProtocolList({
@@ -796,6 +805,7 @@ export default class EditBaseInfo extends PureComponent {
                 boxStyle={{ width: 220, height: 'auto' }}
                 onSelect={this.handleOpenPermissionChange}
                 getPopupContainer={getParentContainer}
+                ref={this.refHtscTreeSelect}
               />
             </InfoForm>
           )

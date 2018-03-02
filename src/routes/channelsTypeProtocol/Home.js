@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 20:02:42
+ * @Last Modified time: 2018-03-02 17:45:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
-
+import { isInvolvePermission } from '../../components/channelsTypeProtocol/auth';
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -42,7 +42,7 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs } = config;
+const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -381,14 +381,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    // const { getFlowStepInfo } = this.props;
-    // getFlowStepInfo({
-    //   flowId: '',
-    //   operate: 1,
-    // }).then(() => {
-    //   this.showModal('editFormModal');
-    // });
     this.showModal('editFormModal');
+  }
+
+  // 判断当前是否套利软件
+  @autobind
+  isArbirageSoftware(st) {
+    return protocolSubTypes.arbitrageSoft === st;
   }
 
   // 打开弹窗
@@ -427,22 +426,38 @@ export default class ChannelsTypeProtocol extends PureComponent {
       message.error('请选择客户');
       return false;
     }
-    if (!_.includes(subscribeArray, formData.operationType)) {
-      if (!formData.agreementNum) {
-        message.error('请选择协议编号');
-        return false;
-      }
-    }
     if (!formData.templateId) {
       message.error('请选择协议模板');
       return false;
     }
+    if (this.isArbirageSoftware(formData.subType)) {
+      // 针对套利软件的特有数据进行校验
+      if (!formData.businessType) {
+        message.error('请选择业务类型');
+        return false;
+      }
+      // 如果涉及权限，还得判断是否有开通权限
+      if (isInvolvePermission(formData.businessType)) {
+        if (_.isEmpty(formData.softPermission)) {
+          message.error('请选择开通权限');
+          return false;
+        }
+      }
+    } else {
+      // 这两个校验是针对非套利软件子类型的数据
+      if (!formData.item.length) {
+        message.error('请选择协议产品');
+        return false;
+      }
+      if (!_.includes(subscribeArray, formData.operationType)) {
+        if (!formData.agreementNum) {
+          message.error('请选择协议编号');
+          return false;
+        }
+      }
+    }
     if (formData.content && formData.content.length > 120) {
       message.error('备注字段长度不能超过120');
-      return false;
-    }
-    if (!formData.item.length) {
-      message.error('请选择协议产品');
       return false;
     }
     return true;
