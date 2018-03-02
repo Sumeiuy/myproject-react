@@ -1059,7 +1059,6 @@ export default class PerformerView extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
-        filterTimer={this.handleDefaultTime}
         isGrayFlag={envHelper.isGrayFlag()}
       />
     );

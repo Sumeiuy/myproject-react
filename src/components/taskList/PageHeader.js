@@ -65,8 +65,6 @@ export default class Pageheader extends PureComponent {
     filterCallback: PropTypes.func,
     // 当前视图名称
     filterControl: PropTypes.string,
-    // 时间入参
-    filterTimer: PropTypes.func,
     // 判断是否有灰度客户
     isGrayFlag: PropTypes.bool.isRequired,
   }
@@ -80,7 +78,6 @@ export default class Pageheader extends PureComponent {
     filterCallback: () => { },
     filterControl: EXECUTE_VIEW,
     hasPermissionOfManagerView: false,
-    filterTimer: () => { },
   }
 
   constructor(props) {
@@ -246,17 +243,16 @@ export default class Pageheader extends PureComponent {
   // 选择不同视图给定时间入参
   @autobind
   handleViewTypeTime(key, v, before, todays, after) {
-    const { filterTimer } = this.props;
     let timerValue;
     if (v === INITIATOR_VIEW) {
-      timerValue = filterTimer({ before, todays });
+      timerValue = this.handleDefaultTime({ before, todays });
       this.setState({
         startTime: before,
         endTime: todays,
         disabledEndTime: todays,
       });
     } else {
-      timerValue = filterTimer({ todays, after });
+      timerValue = this.handleDefaultTime({ todays, after });
       this.setState({
         startTime: todays,
         endTime: after,
@@ -272,6 +268,18 @@ export default class Pageheader extends PureComponent {
       endTimeEnd,
     });
   }
+
+  // 切换视图设置默认时间设置
+  @autobind
+  handleDefaultTime({ before, todays, after }) {
+    const createTimeStart = _.isEmpty(before) ? null :
+      moment(before).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(todays) ? null : moment(before).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(todays) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
+
   // 任务名称搜索
   @autobind
   handleSearchChange(value) {
@@ -348,25 +356,15 @@ export default class Pageheader extends PureComponent {
 
   // 设置不可选日期
   @autobind
-  disabledDateStart(value, type) {
+  disabledDateStart(value) {
     if (!value) {
       return false;
     }
 
-    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
-    const nowDay = moment(beforeToday).subtract(1, 'days');
-    const currentMonth = moment(type).month() + 1;
-    const localMonth = moment(new Date()).month() + 1;
-    const currentDate = moment(value).format('YYYY-MM-DD');
-    const localDate = moment(new Date()).format('YYYY-MM-DD');
-
-    if (currentMonth === localMonth) {
-      // endValue
-      // return currentDate.valueOf() > localDate.valueOf();
-      return currentDate > localDate;
-    }
+    // 设置间隔日期，只能在大于60天之前日期和当前日期之间选择
+    const time = value.valueOf();
     // startValue
-    return value.valueOf() <= nowDay.valueOf();
+    return time < moment(today).subtract(60, 'days') || time > moment().subtract(0, 'days');
   }
 
   // 我部门的任务和执行者视图 开始时间不限，结束时间根据开始时间后推60天
