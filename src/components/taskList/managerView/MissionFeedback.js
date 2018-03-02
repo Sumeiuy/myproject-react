@@ -26,6 +26,7 @@ const EMPTY_LIST = [];
 //  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]}
 // ]
 
+//分页默认参数
 const curPageNum = 1;
 const curPageSize = 5;
 
@@ -382,7 +383,7 @@ export default class MissionFeedback extends PureComponent {
    * @param {*} curPageSize 当前页条目
    */
   @autobind
-  handlePageChange(nextPage, infoData, quesId) {
+  handlePageChange(nextPage, quesId) {
     const { finalData } = this.state;
     this.setState({
       finalData: {
@@ -598,7 +599,7 @@ export default class MissionFeedback extends PureComponent {
                       {...paginationOption}
                       total={_.size(item.infoData)}
                       onChange={current =>
-                        this.handlePageChange(current, item.infoData, item.quesId)}
+                        this.handlePageChange(current, item.quesId)}
                       current={singleInfo[item.quesId]}
                       className={styles.rowTop}
                     /> : null
