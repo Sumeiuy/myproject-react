@@ -510,6 +510,7 @@ export default class ManagerViewDetail extends PureComponent {
               exportExcel={exportExcel}
               missionProgressStatusDic={missionProgressStatusDic}
               ref={ref => (this.missionImplementationElem = ref)}
+              currentId={currentId}
             />
           </div>
           <div className={styles.missionFeedbackSection}>

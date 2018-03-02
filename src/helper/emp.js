@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-05 14:29:53
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-03-02 14:07:14
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -63,7 +63,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -75,7 +75,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ001041093'; // ZZ001041051南京长江路证券营业部，ZZ001041093南京分公司
+    let orgId = 'ZZ001041'; // ZZ001041051南京长江路证券营业部，ZZ001041093南京分公司,ZZ001041经纪及财富管理部
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }
