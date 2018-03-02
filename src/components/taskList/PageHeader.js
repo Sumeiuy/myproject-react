@@ -98,18 +98,25 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query: { missionViewType } } } = this.props;
+    const { location: { query } } = this.props;
+    const { createTimeStart,
+      createTimeEnd,
+      endTimeStart,
+      endTimeEnd,
+      missionViewType,
+    } = query;
     if (missionViewType === INITIATOR_VIEW) {
+      // 判断URL里是否存在日期，若存在设置日期（例如页面跳转，日期已设置）
       this.setState({
-        startTime: beforeToday,
-        endTime: today,
-        disabledEndTime: today,
+        startTime: this.handleURlTime(createTimeStart, beforeToday),
+        endTime: this.handleURlTime(createTimeEnd, today),
+        disabledEndTime: this.handleURlTime(createTimeEnd, today),
       });
     } else {
       this.setState({
-        startTime: today,
-        endTime: afterToday,
-        disabledEndTime: afterToday,
+        startTime: this.handleURlTime(endTimeStart, today),
+        endTime: this.handleURlTime(endTimeEnd, afterToday),
+        disabledEndTime: this.handleURlTime(endTimeEnd, afterToday),
       });
     }
   }
@@ -151,6 +158,11 @@ export default class Pageheader extends PureComponent {
       sidebarHideBtn.removeEventListener('click', this.onWindowResize, false);
       sidebarShowBtn.removeEventListener('click', this.onWindowResize, false);
     }
+  }
+
+  // 判断url里是否有时间设置
+  handleURlTime(urlTime, time) {
+    return _.isEmpty(urlTime) ? time : moment(urlTime);
   }
 
   @autobind

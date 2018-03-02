@@ -82,6 +82,9 @@ export default class CutScreen extends PureComponent {
   getViewHeight() {
     let h = dom.getViewPortHeight();
     if (env.isIE()) { h -= 10; }
+    if (document.body.clientWidth === 1280) {
+      h -= 17; // 处理视口宽度为最小的1280px时，需要去掉滚动条的宽度
+    }
     return h;
   }
 
@@ -92,7 +95,6 @@ export default class CutScreen extends PureComponent {
     dom.setStyle(this.UTBContentElem, 'marginRight', right);
     dom.setStyle(this.UTBContentElem, 'marginBottom', bottom);
   }
-
   // 设置split下列表和详情区域的高度
   @autobind
   setSplitMainHeight() {
@@ -231,6 +233,11 @@ export default class CutScreen extends PureComponent {
     this.listWrap = input;
   }
 
+  @autobind
+  rightDetailWrapRef(input) {
+    this.rightDetailWrap = input;
+  }
+
   render() {
     const {
       topPanel,
@@ -274,19 +281,23 @@ export default class CutScreen extends PureComponent {
         <div className={hasDataClass} ref={this.splitMainRef}>
           <div className={stretchCls}>
             <div className={styles.growIcon}>
-              <Icon type="zhankai1" onClick={this.growList} />
+              <Icon type="zhankai-" onClick={this.growList} />
             </div>
           </div>
           <div className={styles.listWrap} ref={this.listWrapRef}>
             <leftPanel.type {...leftPanel.props} onShrink={this.shrinkList} />
           </div>
-          <div className={stretchEmptyCls}> { /** 留着占位置 */ } </div>
+          <div className={stretchEmptyCls}> { /** 留着占位置 */} </div>
           <div className={hasFoldCls}>
             {
               _.isEmpty(rightPanel) ? null
-              : (
-                <rightPanel.type {...rightPanel.props} isFold={isFold} />
-              )
+                : (
+                  <rightPanel.type
+                    {...rightPanel.props}
+                    isFold={isFold}
+                    ref={this.rightDetailWrapRef}
+                  />
+                )
             }
           </div>
         </div>

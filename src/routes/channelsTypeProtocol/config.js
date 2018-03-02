@@ -2,8 +2,8 @@
  * @Description: 通道类协议页面配置项
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-06 18:49:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-02-26 14:08:41
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -41,7 +41,9 @@ const config = {
     [channelTypeConfig.ZJKCD_ID]: '1', // 子类型为紫金快车道时对应的operate
     [channelTypeConfig.GSTD_ID]: '11', // 子类型为高速通道时对应的operate
   },
-
+  protocolSubs: {
+    arbitrage: '0503',
+  },
 };
 
 export default config;

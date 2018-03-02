@@ -13,7 +13,7 @@ import styles from './fspUnwrap.less';
 export default function FSPUnwrap({ path, children, loading, loadingForceFull }) {
   if (path.indexOf('/fsp/') === -1) {
     return (
-      <div className={styles.tabpanel}>
+      <div id="tabpanel" className={styles.tabpanel}>
         <Loading loading={loading} forceFull={loadingForceFull} />
         {children}
       </div>

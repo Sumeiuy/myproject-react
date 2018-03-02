@@ -430,7 +430,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('createdBy', {
                 initialValue: newsId === createNewsId ? creator : getInitDate('createdBy'),
-                rules: [{ required: true, message: '请输入晨报作者!' }],
+                rules: [{ required: true, message: '请输入晨报作者' }],
               })(
                 <Input />,
               )}
@@ -441,7 +441,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('title', {
                 initialValue: getInitDate('title'),
-                rules: [{ required: true, message: '请输入标题!' }, { max: 200, message: '字数最多为200' }],
+                rules: [{ required: true, message: '请输入标题' }, { max: 200, message: '字数最多为200' }],
               })(
                 <Input />,
               )}
@@ -452,7 +452,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('summary', {
                 initialValue: getInitDate('summary'),
-                rules: [{ required: true, message: '请输入摘要!' }, { max: 200, message: '字数最多为200' }],
+                rules: [{ required: true, message: '请输入摘要' }, { max: 200, message: '字数最多为200' }],
               })(
                 <TextArea placeholder="请输入摘要内容..." autosize={{ minRows: 2, maxRows: 6 }} />,
               )}
@@ -463,7 +463,7 @@ export default class AddMorningBoradcast extends PureComponent {
             >
               {getFieldDecorator('content', {
                 initialValue: getInitDate('content'),
-                rules: [{ required: true, message: '请输入正文!' }, { max: 1000, message: '字数最多为1000' }],
+                rules: [{ required: true, message: '请输入正文' }, { max: 1000, message: '字数最多为1000' }],
               })(
                 <TextArea placeholder="请输入正文内容..." autosize={{ minRows: 6, maxRows: 10 }} />,
               )}

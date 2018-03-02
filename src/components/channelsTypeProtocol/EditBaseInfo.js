@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-02-08 18:09:50
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-01 20:54:09
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,11 +16,16 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
+import HtscTreeSelect from '../common/Select/TreeSelect';
 import CustomSwitch from '../common/customSwitch';
 import { time, permission } from '../../helper';
 import config from '../../routes/channelsTypeProtocol/config';
 
 import styles from './editBaseInfo.less';
+import {
+  isInvolvePermission,
+  isInvolveSoftware,
+} from './auth';
 
 const { TextArea } = Input;
 
@@ -38,8 +43,11 @@ const subTypeObject = {
   fastConnect: '507070',
   // 高速通道
   expressConnect: '507050',
+  // 套利软件
+  arbitrageSoft: '507095',
 };
 const { subscribeArray } = config;
+
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -47,7 +55,11 @@ export default class EditBaseInfo extends PureComponent {
     onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
     templateList: PropTypes.array.isRequired,
-    // 查询子类型/操作类型
+    // 套利软件业务类型列表
+    businessTypeList: PropTypes.array.isRequired,
+    // 开通权限列表
+    openPermissionList: PropTypes.array.isRequired,
+    // 查询子类型/操作类型/业务类型
     queryTypeVaules: PropTypes.func.isRequired,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
@@ -83,6 +95,9 @@ export default class EditBaseInfo extends PureComponent {
     changeOperationType: PropTypes.func.isRequired,
     // 操作类型子类型发生变化时数据传递到父组件用来判断上传文件必填项
     changeRequiredFile: PropTypes.func.isRequired,
+    getParentContainer: PropTypes.func,
+    // 切换子类型
+    onChangeSubType: PropTypes.func,
   }
 
   static defaultProps = {
@@ -101,6 +116,8 @@ export default class EditBaseInfo extends PureComponent {
     isEdit: false,
     onChangeProtocolNumber: () => { },
     getFlowStepInfo: () => { },
+    getParentContainer: () => {},
+    onChangeSubType: () => {},
   }
 
   constructor(props) {
@@ -242,6 +259,7 @@ export default class EditBaseInfo extends PureComponent {
       changeOperationType,
       changeRequiredFile,
       getFlowStepInfo,
+      onChangeSubType,
     } = this.props;
     let sub = true;
     let isHightSpeed = false;
@@ -255,12 +273,17 @@ export default class EditBaseInfo extends PureComponent {
     } else if (key === 'subType') {
       let operate;
       if (value === subTypeObject.fastConnect) {
-        // 快车道
+        // 紫金快车道
         operate = 1;
       } else if (value === subTypeObject.expressConnect) {
         // 高速通道
         operate = 11;
+      } else if (value === subTypeObject.arbitrageSoft) {
+        // 套利软件
+        operate = 111;
       }
+      // TODO 此处告知父组件，当前选的子类型
+      onChangeSubType(value);
       getFlowStepInfo({
         flowId: '',
         operate,
@@ -315,9 +338,7 @@ export default class EditBaseInfo extends PureComponent {
           type: '05',
           subType: value,
         });
-        // this.clearValue();
       } else if (key === 'operationType') {
-        // const { subType, operationType } = this.state;
         changeRequiredFile(subType, operationType);
         if (_.includes(subscribeArray, value)) {
           // 子类型发生变化且为订购时查询协议模板列表
@@ -326,9 +347,40 @@ export default class EditBaseInfo extends PureComponent {
             subType,
             operationType: value,
           });
+          if (this.isArbirageSoftware()) {
+            // 查询业务类型
+            queryTypeVaules({
+              typeCode: 'businessType',
+              subType,
+              operationType: value,
+            });
+          }
         }
       }
     });
+  }
+
+  // 开通权限下拉多选框改变
+  @autobind
+  handleOpenPermissionChange(name, value) {
+    console.warn('handleOpenPermissionChange: ', value);
+    const softPermission = value.map(v => ({ code: v.value, value: v.label }));
+    this.setState({ softPermission });
+  }
+
+  // 切换业务类型
+  @autobind
+  handleBusinessTypeSelect(key, value) {
+    this.setState({ businessType: value });
+    const { operationType, subType } = this.state;
+    // TODO如果设置权限，需要查询开通权限
+    if (isInvolvePermission(value)) {
+      this.props.queryTypeVaules({
+        typeCode: 'permissionType',
+        subType,
+        operationType,
+      });
+    }
   }
 
   // 清除数据
@@ -558,13 +610,37 @@ export default class EditBaseInfo extends PureComponent {
     });
   }
 
+  // 判断子类型是否套利软件
+  @autobind
+  isArbirageSoftware() {
+    const { subType } = this.state;
+    return subType === subTypeObject.arbitrageSoft;
+  }
+
+  // 判断需要显示开通权限字段吗
+  @autobind
+  needShowOpenPermission() {
+    const { businessType } = this.state;
+    return this.isArbirageSoftware() && isInvolvePermission(businessType);
+  }
+
+  // 判断需要显示软件信息
+  @autobind
+  needShowSoftware() {
+    const { businessType } = this.state;
+    return this.isArbirageSoftware() && isInvolveSoftware(businessType);
+  }
+
   render() {
     const {
       custList,
       operationTypeList,
+      businessTypeList,
       subTypeList,
       formData: protocolDetail,
       protocolList,
+      getParentContainer,
+      openPermissionList,
     } = this.props;
     const {
       isEditPage,
@@ -582,6 +658,7 @@ export default class EditBaseInfo extends PureComponent {
       vailDt,
       needMutliAndTen,
       isHightSpeed,
+      businessType,
     } = this.state;
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
@@ -701,6 +778,44 @@ export default class EditBaseInfo extends PureComponent {
         }
         <InfoItem label="协议开始日期" value={startDt ? time.format(startDt) : '暂无'} />
         <InfoItem label="协议有效期" value={vailDt ? time.format(vailDt) : '暂无'} />
+        {
+          /* 判断是否套利软件 */
+          !this.isArbirageSoftware() ? null
+          :
+          (
+            <InfoForm label="业务类型" required>
+              <Select
+                name="businessType"
+                data={businessTypeList}
+                value={businessType}
+                onChange={this.handleBusinessTypeSelect}
+              />
+            </InfoForm>
+          )
+        }
+        {
+          /* 开通权限(只有在权限或者软件+权限时候才显示) */
+          !this.needShowOpenPermission() ? null :
+          (
+            <InfoForm label="开通权限" required>
+              <HtscTreeSelect
+                name="openPermission"
+                placeholder="请选择开通权限"
+                treeData={openPermissionList}
+                boxStyle={{ width: 220, height: 'auto' }}
+                onSelect={this.handleOpenPermissionChange}
+                getPopupContainer={getParentContainer}
+              />
+            </InfoForm>
+          )
+        }
+        {
+          /* 软件信息 只有在 软件或者软件+权限或者软件续用才显示 */
+          !this.needShowSoftware() ? null : (<InfoItem label="软件账号" value="暂无" />)
+        }
+        {
+          !this.needShowSoftware() ? null : (<InfoItem label="软件密码" value="暂无" />)
+        }
         <InfoForm label="备注">
           <TextArea
             onChange={this.handleChangeContent}
