@@ -1,86 +1,136 @@
-/*
- * @Description: 主职位界面
- * @Author: LiuJianShu
- * @Date: 2017-12-21 15:01:59
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-15 09:32:27
+/**
+ * @Author: hongguangqing
+ * @Description: 服务经理主职位设置Home页面
+ * @Date: 2018-01-29 13:25:30
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-02-28 14:57:20
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
+import { Modal } from 'antd';
 import _ from 'lodash';
-import { message, Modal } from 'antd';
-
-import withRouter from '../../decorators/withRouter';
-import Button from '../../components/common/Button';
-import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
-import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import SetHeight from '../../decorators/setHeight';
+import withRouter from '../../decorators/withRouter';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
+import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import MainPositionList from '../../components/common/appList';
+import CreateMainPostion from '../../components/mainPosition/CreateMainPostion';
+import ViewListRow from '../../components/mainPosition/ViewListRow';
+import Detail from '../../components/mainPosition/Detail';
 import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
-import config from './config';
-import styles from './home.less';
+import config from '../../components/mainPosition/config';
+import seibelHelper from '../../helper/page/seibel';
 
-const { titleList } = config;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
+const { mainPosition, mainPosition: { pageType, status } } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
   forceFull,
 });
+
 const mapStateToProps = state => ({
-  employeeList: state.mainPosition.employeeList,
-  positionList: state.mainPosition.positionList,
+  // 左侧列表数据
+  list: state.app.seibleList,
+  // 右侧详情数据
+  detailInfo: state.mainPosition.detailInfo,
   // 组织机构树
   custRangeList: state.customerPool.custRange,
+  // 员工列表
+  employeeList: state.mainPosition.employeeList,
+  // 员工对应的职位列表
+  positionList: state.mainPosition.positionList,
+  // 获取按钮列表和下一步审批人
+  buttonList: state.mainPosition.buttonList,
+  // 新建（修改）接口返回的业务主键的值
+  itemId: state.mainPosition.itemId,
 });
 
 const mapDispatchToProps = {
+  replace: routerRedux.replace,
+  // 获取左侧列表
+  getList: fetchDataFunction(true, 'app/getSeibleList', true),
+  // 获取右侧详情信息
+  getDetailInfo: fetchDataFunction(true, 'mainPosition/getDetailInfo', true),
   // 搜索员工列表
   searchEmployee: fetchDataFunction(true, 'mainPosition/searchEmployee', true),
   // 搜索员工职位列表
   searchPosition: fetchDataFunction(true, 'mainPosition/searchPosition', true),
-  // 设置主职位
-  updatePosition: fetchDataFunction(true, 'mainPosition/updatePosition', true),
   // 清除 员工列表、员工职位列表
   clearProps: fetchDataFunction(true, 'mainPosition/clearProps', true),
+  // 提交保存
+  updateApplication: fetchDataFunction(true, 'mainPosition/updateApplication', true),
+  // 走流程接口
+  doApprove: fetchDataFunction(true, 'mainPosition/doApprove', true),
+  // 获取按钮列表和下一步审批人
+  getButtonList: fetchDataFunction(true, 'mainPosition/getButtonList', true),
 };
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@SetHeight
 export default class MainPosition extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    // 列表
+    list: PropTypes.object.isRequired,
+    getList: PropTypes.func.isRequired,
+    // 详情
+    detailInfo: PropTypes.object.isRequired,
+    getDetailInfo: PropTypes.func.isRequired,
+    // 搜索员工
     searchEmployee: PropTypes.func.isRequired,
-    searchPosition: PropTypes.func.isRequired,
-    updatePosition: PropTypes.func.isRequired,
-    clearProps: PropTypes.func.isRequired,
     employeeList: PropTypes.array.isRequired,
+    // 搜索员工对应的职位
+    searchPosition: PropTypes.func.isRequired,
     positionList: PropTypes.array.isRequired,
+    // 清除 员工列表、员工职位列表
+    clearProps: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
+    // 新建修改接口
+    updateApplication: PropTypes.func.isRequired,
+    // 新建（修改）接口返回的业务主键的值
+    itemId: PropTypes.string.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+    // 审批按钮列表
+    buttonList: PropTypes.object.isRequired,
+    // 请求审批按钮方法
+    getButtonList: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
   }
 
   constructor(props) {
     super(props);
     this.checkUserIsFiliale();
     this.state = {
-      checkedRadio: -1,
-      defaultChecked: -1,
-      checkedEmployee: {},
-      employeeId: '',
-      disabled: true,
+      // 高亮项的下标索引
+      activeRowIndex: 0,
+      // 默认状态下新建弹窗不可见 false 不可见  true 可见
+      isShowCreateModal: false,
     };
+  }
+
+  componentWillMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    this.queryAppList(query, pageNum, pageSize);
   }
 
   componentWillReceiveProps({ custRangeList }) {
@@ -90,142 +140,268 @@ export default class MainPosition extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    const { clearProps } = this.props;
-    clearProps();
+  // 获取右侧详情
+  @autobind
+  getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      this.props.getDetailInfo({ flowId: item.flowId });
+    }
   }
 
-  // 提交按钮
+  // 获取左侧列表
   @autobind
-  onSubmit() {
-    const { checkedEmployee, employeeId } = this.state;
-    const { updatePosition, clearProps } = this.props;
-    if (!_.isEmpty(checkedEmployee)) {
-      updatePosition({
-        employeeId,
-        positionId: checkedEmployee.positionId,
-      }).then(() => {
-        message.success('提交成功');
-        clearProps();
-      });
-    }
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
+  // 头部筛选后调用方法
+  @autobind
+  handleHeaderFilter(obj) {
+    // 1.将值写入Url
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...obj,
+      },
+    });
+    // 2.调用queryApplicationList接口
+    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
   @autobind
   checkUserIsFiliale() {
     const { custRangeList } = this.props;
-    const that = this;
     if (!_.isEmpty(custRangeList)) {
       if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
         Modal.warning({
           title: '提示',
           content: '您不是分公司人员，无权操作！',
-          onOk() {
-            that.handleCancel();
+          onOk: () => {
+            this.handleCloseTabPage();
           },
         });
       }
     }
   }
 
-  // 关闭 FSP tab 页
+  // 取消
   @autobind
-  handleCancel() {
+  handleCloseTabPage() {
     closeRctTab({
       id: 'FSP_MAIN_POSTN_MANAGE',
     });
   }
 
-  // 选择某个职位
   @autobind
-  checkTableData(record, index) {
-    const { defaultChecked } = this.state;
-    const disabled = defaultChecked === index;
+  clearModal(name) {
+    // 清除模态框组件
+    this.setState({ [name]: false });
+  }
+
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateModalBoard() {
     this.setState({
-      checkedRadio: index,
-      checkedEmployee: record,
-      disabled,
+      isShowCreateModal: true,
     });
   }
 
-  // 点击具体的员工
+  // 切换页码
   @autobind
-  selectHandle(value) {
-    const { searchPosition } = this.props;
-    searchPosition({
-      login: value.login,
-      integrationId: emp.getOrgId(),
-    }).then(() => {
-      const { positionList } = this.props;
-      const checkedRadio = _.findIndex(positionList, ['primary', true]);
-      this.setState({
-        checkedRadio,
-        defaultChecked: checkedRadio,
-        employeeId: value.login,
-      });
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
     });
+    this.queryAppList(query, nextPage, currentPageSize);
   }
 
-  // 搜索员工
+  // 切换每一页显示条数
   @autobind
-  searchHandle(value) {
-    const { searchEmployee } = this.props;
-    if (_.isEmpty(value)) {
-      message.error('请输入工号或姓名');
-      return;
-    }
-    searchEmployee({
-      keyword: value,
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { replace, location } = this.props;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
     });
+    this.queryAppList(query, 1, changedPageSize);
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record, index) {
+    const { id, flowId } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === String(id)) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.props.getDetailInfo({ flowId });
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <ViewListRow
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="mainPosition"
+        type="kehu1"
+        pageData={mainPosition}
+      />
+    );
   }
 
   render() {
-    const { checkedRadio, disabled } = this.state;
-    const { employeeList, positionList } = this.props;
-    const operation = {
-      column: {
-        key: 'radio',
-        title: '设为主要',
-        align: 'right',
-        radio: checkedRadio,
-      },
-      operate: this.checkTableData,
+    const {
+      replace,
+      location,
+      list,
+      detailInfo,
+      searchEmployee,
+      searchPosition,
+      clearProps,
+      employeeList,
+      positionList,
+      // 组织机构树
+      custRangeList,
+      getButtonList,
+      buttonList,
+      updateApplication,
+      itemId,
+      doApprove,
+    } = this.props;
+    const { isShowCreateModal } = this.state;
+    const isEmpty = _.isEmpty(list.resultData);
+    const topPanel = (
+      <ConnectedSeibelHeader
+        location={location}
+        replace={replace}
+        page="mainPositionPage"
+        pageType={pageType}
+        needSubType={false}
+        stateOptions={status}
+        creatSeibelModal={this.openCreateModalBoard}
+        filterCallback={this.handleHeaderFilter}
+      />
+    );
+
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const { resultData = [], page = {} } = list;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
+
+    const leftPanel = (
+      <MainPositionList
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
+      />
+    );
+
+    const rightPanel = (
+      <Detail
+        data={detailInfo}
+      />
+    );
+
     return (
-      <div className={styles.mainPositionWrapper}>
-        <h2>服务经理主职位管理</h2>
-        <div className={styles.infoFormDiv}>
-          <InfoForm label="服务经理" style={{ width: 'auto' }}>
-            <DropDownSelect
-              placeholder="工号/姓名"
-              showObjKey="name"
-              objId="login"
-              value={''}
-              searchList={employeeList}
-              emitSelectItem={this.selectHandle}
-              emitToSearch={this.searchHandle}
-              boxStyle={dropDownSelectBoxStyle}
-              ref={selectEmployee => this.selectEmployee = selectEmployee}
+      <div>
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="MainPositionList"
+        />
+        {
+          !isShowCreateModal ? null
+          : (
+            <CreateMainPostion
+              location={location}
+              updateApplication={updateApplication}
+              itemId={itemId}
+              doApprove={doApprove}
+              searchEmployee={searchEmployee}
+              searchPosition={searchPosition}
+              clearProps={clearProps}
+              employeeList={employeeList}
+              positionList={positionList}
+              custRangeList={custRangeList}
+              getButtonList={getButtonList}
+              buttonList={buttonList}
+              queryAppList={this.queryAppList}
+              onEmitClearModal={this.clearModal}
             />
-          </InfoForm>
-        </div>
-        <div className={styles.tableDiv}>
-          <CommonTable
-            data={positionList}
-            titleList={titleList}
-            operation={operation}
-          />
-        </div>
-        <div className={styles.btnDiv}>
-          <Button
-            type="primary"
-            onClick={this.onSubmit}
-            disabled={disabled}
-          >
-            提交
-          </Button>
-        </div>
+          )
+        }
       </div>
     );
   }
