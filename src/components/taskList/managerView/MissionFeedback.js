@@ -145,7 +145,7 @@ export default class MissionFeedback extends PureComponent {
 
         _.each(item, (childItem) => {
           const { quesTypeCode } = childItem;
-          if (quesTypeCode === TYPE.radioType || quesTypeCode === TYPE.checkboxType ) {
+          if (quesTypeCode === TYPE.radioType || quesTypeCode === TYPE.checkboxType) {
             const tempData = [{
               name: childItem.optionValue,
               value: childItem.cnt,
@@ -435,10 +435,9 @@ export default class MissionFeedback extends PureComponent {
       curDataInfo = _.slice(infoData,
         (pageNum - 1) * curPageSize, curPageSize * pageNum);
     }
-    const totalRecordNum = _.size(infoData);
     return {
       curDataInfo,
-      totalRecordNum,
+      pageNum,
     };
   }
 
@@ -540,10 +539,18 @@ export default class MissionFeedback extends PureComponent {
     );
   }
 
-  renderOneInfo(data) {
+  renderOneInfo({ data, pageNum = 1 }) {
     return _.map(data, (itemChild, index) => {
       if (_.isEmpty(itemChild.data)) {
         return null;
+      }
+      // 手动设置问题的index展示
+      if (pageNum > 1) {
+        return (
+          <div title={itemChild.data} key={itemChild.data}>
+            {index + ((pageNum - 1) * curPageSize) + 1 }.{itemChild.data || ''}
+          </div>
+        );
       }
       return (
         <div title={itemChild.data} key={itemChild.data}>
@@ -571,12 +578,13 @@ export default class MissionFeedback extends PureComponent {
       if (_.isEmpty(item.infoData)) {
         return null;
       }
-      // 当主观题答案条数大于5时，进行分页处理 
+      // 当主观题答案条数大于5时，进行分页处理
       if (_.size(item.infoData) > curPageSize) {
         const firstPageData = this.renderProblemsData(singleInfo[item.quesId], item.infoData);
-        info = this.renderOneInfo(firstPageData.curDataInfo);
+        info = this.renderOneInfo({ data: firstPageData.curDataInfo,
+          pageNum: firstPageData.pageNum });
       } else {
-        info = this.renderOneInfo(item.infoData);
+        info = this.renderOneInfo({ data: item.infoData });
       }
 
       return (
@@ -600,7 +608,7 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
-                {/*判断当前主观题是否超过5条，超过显示分页组件*/}
+                {/* 判断当前主观题是否超过5条，超过显示分页组件 */}
                 {
                   _.size(item.infoData) > curPageSize ?
                     <Pagination
