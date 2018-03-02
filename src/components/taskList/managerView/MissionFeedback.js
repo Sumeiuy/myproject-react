@@ -620,7 +620,6 @@ export default class MissionFeedback extends PureComponent {
                         this.handlePageChange(current, item.quesId)}
                       current={singleInfo[item.quesId]}
                       className={styles.rowTop}
-                      key={item.quesId}
                     /> : null
                 }
               </div>
