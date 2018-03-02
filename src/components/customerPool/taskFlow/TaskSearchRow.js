@@ -23,7 +23,6 @@ import { getCustomerListFilters } from '../../../helper/page/customerPool';
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 10;
-
 const renderColumnTitle = [{
   key: 'brok_id',
   value: '经纪客户号',
@@ -93,40 +92,9 @@ export default class TaskSearchRow extends PureComponent {
       // 当前筛选条件
       argsOfQueryCustomer,
       currentSelectLabelName: '',
+      currentModalKey: '',
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { labelId, filterNumObject, modalVisible } = this.state;
-    const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = nextProps;
-    const showStatus = modalVisible && isLoadingEnd && isSightTelescopeLoadingEnd;
-    // 是否展示筛查客户的modal
-    if (showStatus) {
-      const { custList = [] } = peopleOfLabelData || {};
-      const list = _.map(custList, item => ({
-        ...item,
-        brok_id: item.brokId,
-        brok_org_id: item.brokOrgId,
-        contact_flag: item.contactFlag,
-        lever_code: item.levelName,
-        cust_type: item.custType === 'N' ? '高净值' : '零售',
-      }));
-      let finalFilterNumObject = filterNumObject;
-      // 只有点击了筛查客户，才需要替换filterNumObject
-      if (!_.isEmpty(labelId) && showStatus) {
-        finalFilterNumObject = {
-          [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
-        };
-      }
-
-      this.setState({
-        custTableData: list,
-        filterNumObject: {
-          ...filterNumObject,
-          ...finalFilterNumObject,
-        },
-      });
-    }
+    this.visible = false;
   }
 
   // 获取已筛选客户数
@@ -167,7 +135,7 @@ export default class TaskSearchRow extends PureComponent {
     // 存放可开通、已开通、风险等级、客户类型、客户性质的数组
     const filtersList = [];
     if (!_.isEmpty(filter)) {
-      const { filters, labels } = getCustomerListFilters(filter, payload.labels, filtersList);
+      const { filters, labels } = getCustomerListFilters(filter, labelId, filtersList);
       payload.filtersReq = filters;
       payload.labels = labels;
     }
@@ -176,10 +144,43 @@ export default class TaskSearchRow extends PureComponent {
     }
     // 获取客户列表
     getLabelPeople(payload).then(() => {
+      const { filterNumObject } = this.state;
       // 数据回来后，显示弹框
       this.setState({
         modalVisible: true,
+        // 以当前labelId作为key，在第二次打开modal的时候，如果是同一个label，则保留filter数据，否则清空
+        currentModalKey: `${labelId}_modalKey`,
       });
+      this.visible = true;
+      const { peopleOfLabelData, isLoadingEnd, isSightTelescopeLoadingEnd } = this.props;
+      const showStatus = this.visible && isLoadingEnd && isSightTelescopeLoadingEnd;
+      // 是否展示筛查客户的modal
+      if (showStatus) {
+        const { custList = [] } = peopleOfLabelData || {};
+        const list = _.map(custList, item => ({
+          ...item,
+          brok_id: item.brokId,
+          brok_org_id: item.brokOrgId,
+          contact_flag: item.contactFlag,
+          lever_code: item.levelName,
+          cust_type: item.custType === 'N' ? '高净值' : '零售',
+        }));
+        let finalFilterNumObject = filterNumObject;
+        // 只有点击了筛查客户，才需要替换filterNumObject
+        if (!_.isEmpty(labelId) && showStatus) {
+          finalFilterNumObject = {
+            [labelId]: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
+          };
+        }
+
+        this.setState({
+          custTableData: list,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
+      }
     });
 
     this.setState({
@@ -301,6 +302,7 @@ export default class TaskSearchRow extends PureComponent {
     }
     this.setState({
       currentFilterObject: {
+        ...currentFilterObject,
         [labelId]: newFilterArray,
       },
     }, () => {
@@ -382,6 +384,7 @@ export default class TaskSearchRow extends PureComponent {
       filterNumObject,
       currentSelectLabelName,
       modalVisible,
+      currentModalKey,
     } = this.state;
 
     const {
@@ -392,13 +395,13 @@ export default class TaskSearchRow extends PureComponent {
       dict,
       sightingTelescopeFilters,
     } = this.props;
-
     if (_.isEmpty(condition)) {
       return null;
     }
 
     const currentItems = currentFilterObject[labelId] || [];
     const totalRecordNum = filterNumObject[labelId] || 0;
+
     return (
       <div className={styles.divContent}>
         <RadioGroup
@@ -411,65 +414,64 @@ export default class TaskSearchRow extends PureComponent {
           }
         </RadioGroup>
         <div className={styles.seeCust}>
-          {
-            <Modal
-              visible={modalVisible}
-              title={currentSelectLabelName || ''}
-              maskClosable={false}
-              closable={false}
-              footer={
-                <Clickable
-                  onClick={this.handleCancel}
-                  eventName="/click/taskSearchRow/close"
-                >
-                  <Button key="back" size="large">确定</Button>
-                </Clickable>
-              }
-              width={700}
-              wrapClassName={styles.labelCustModalContainer}
-            >
-              {
-                <div className={styles.filter}>
-                  <FilterCustomers
-                    dict={dict}
-                    currentItems={currentItems}
-                    onFilterChange={this.handleFilterChange}
-                    source={currentSource}
-                    sightingTelescopeFilters={sightingTelescopeFilters}
-                  />
-                </div>
-              }
-              {
-                _.isEmpty(custTableData) ?
-                  <div className={styles.emptyContent}>
-                    <span>
-                      <Icon className={styles.emptyIcon} type="frown-o" />
-                      暂无数据
+          <Modal
+            visible={modalVisible}
+            title={currentSelectLabelName || ''}
+            maskClosable={false}
+            closable={false}
+            // 关闭弹框时，销毁子元素，不然数据会复用,antd升级这个api才会有，所以先用key代替这个api
+            destroyOnClose
+            key={currentModalKey}
+            footer={
+              <Clickable
+                onClick={this.handleCancel}
+                eventName="/click/taskSearchRow/close"
+              >
+                <Button key="back" size="large">确定</Button>
+              </Clickable>
+            }
+            width={700}
+            wrapClassName={styles.labelCustModalContainer}
+          >
+            <div className={styles.filter}>
+              <FilterCustomers
+                dict={dict}
+                currentItems={currentItems}
+                onFilterChange={this.handleFilterChange}
+                source={currentSource}
+                sightingTelescopeFilters={sightingTelescopeFilters}
+              />
+            </div>
+            {
+              _.isEmpty(custTableData) ?
+                <div className={styles.emptyContent}>
+                  <span>
+                    <Icon className={styles.emptyIcon} type="frown-o" />
+                    暂无数据
                     </span>
-                  </div> :
-                  <GroupTable
-                    pageData={{
-                      curPageNum,
-                      curPageSize: INITIAL_PAGE_SIZE,
-                      totalRecordNum,
-                    }}
-                    tableClass={
-                      classnames({
-                        [styles.labelCustTable]: true,
-                        [tableStyles.groupTable]: true,
-                      })
-                    }
-                    isFixedTitle={false}
-                    onSizeChange={this.handleShowSizeChange}
-                    onPageChange={this.handlePageChange}
-                    listData={custTableData}
-                    titleColumn={renderColumnTitle}
-                    isFirstColumnLink={false}
-                    columnWidth={100}
-                  />
-              }
-            </Modal>
-          }
+                </div> :
+                <GroupTable
+                  pageData={{
+                    curPageNum,
+                    curPageSize: INITIAL_PAGE_SIZE,
+                    totalRecordNum,
+                  }}
+                  tableClass={
+                    classnames({
+                      [styles.labelCustTable]: true,
+                      [tableStyles.groupTable]: true,
+                    })
+                  }
+                  isFixedTitle={false}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  listData={custTableData}
+                  titleColumn={renderColumnTitle}
+                  isFirstColumnLink={false}
+                  columnWidth={100}
+                />
+            }
+          </Modal>
         </div>
         {
           <Loading loading={!isLoadingEnd || !isSightTelescopeLoadingEnd} />

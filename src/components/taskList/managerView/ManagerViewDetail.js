@@ -11,9 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import { Tooltip } from 'antd';
 
-import Icon from '../../common/Icon';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
@@ -131,7 +129,7 @@ export default class ManagerViewDetail extends PureComponent {
     let postBody = {
       pageNum: pageNum || INITIAL_PAGE_NUM,
       pageSize: pageSize || INITIAL_PAGE_SIZE,
-      orgId: emp.getOrgId(),
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
     };
 
@@ -194,12 +192,20 @@ export default class ManagerViewDetail extends PureComponent {
       missionProgressStatus,
       progressFlag,
       missionName: mngrMissionDetailInfo.missionName,
-      orgId: emp.getOrgId(),
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
       serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
     return params;
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    if (this.missionImplementationElem) {
+      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
+    }
+    return emp.getOrgId();
   }
 
   /**
@@ -223,6 +229,7 @@ export default class ManagerViewDetail extends PureComponent {
       custDetailResult,
       missionTypeDict,
     } = this.props;
+    const { missionProgressStatus, progressFlag, isEntryFromProgressDetail } = this.state;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
     const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
@@ -233,16 +240,33 @@ export default class ManagerViewDetail extends PureComponent {
         missionType,
       };
     }
+
+    // 如果是来自进度条，则发起任务时，需要将类型传给后台
+    let progressParam = {};
+    let newProgressFlag = progressFlag;
+    if (isEntryFromProgressDetail) {
+      progressParam = {
+        missionProgressStatus,
+      };
+      // 针对进度条发起的任务需要将Y和N标记替换成DONE和NOT_DONE标记，后台需要这么干
+      if (newProgressFlag) {
+        newProgressFlag = progressFlag === 'Y' ? 'DONE' : 'NOT_DONE';
+      }
+      progressParam = {
+        ...progressParam,
+        progressFlag: newProgressFlag,
+      };
+    }
+
     const urlParam = {
-      orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
+      orgId: this.getCurrentOrgId(),
       missionId: currentId,
-      // missionId: '101111171108181',
       entrance: 'managerView',
       source: 'managerView',
       count: totalCustNumber,
       // 任务类型
       ...missionTypeObject,
+      ...progressParam,
     };
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
@@ -269,19 +293,13 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   renderTotalCust() {
     const { mngrMissionDetailInfo = {} } = this.props;
-    const { custNumbers = 0, orgName } = mngrMissionDetailInfo;
+    const { custNumbers = 0 } = mngrMissionDetailInfo;
     return (
       <div className={styles.custValue}>
         <div
           className={styles.totalNum}
-          onClick={() => { this.handlePreview({ canLaunchTask: false }); }}
         >
           {custNumbers}
-        </div>
-        <div className={styles.numDetail}>
-          <Tooltip placement="right" title={`当前${orgName}有效客户总数`}>
-            <Icon className={styles.tip} type="tishi" />
-          </Tooltip>
         </div>
       </div>
     );
@@ -366,7 +384,7 @@ export default class ManagerViewDetail extends PureComponent {
 
     let targetCustInfoData = [{
       id: 'total',
-      key: '客户总数 :',
+      key: '客户数 :',
       value: this.renderTotalCust(),
     },
     {
@@ -491,20 +509,19 @@ export default class ManagerViewDetail extends PureComponent {
               countFlowFeedBack={countFlowFeedBack}
               exportExcel={exportExcel}
               missionProgressStatusDic={missionProgressStatusDic}
+              ref={ref => (this.missionImplementationElem = ref)}
             />
           </div>
-          {
-            _.isEmpty(templateId) ? null :
-            <div className={styles.missionFeedbackSection}>
-              <MissionFeedback
-                missionFeedbackData={missionFeedbackData}
-                isFold={isFold}
-                missionFeedbackCount={missionFeedbackCount}
-                serveManagerCount={serveManagerCount}
-                templateId={templateId}
-              />
-            </div>
-          }
+          <div className={styles.missionFeedbackSection}>
+            <MissionFeedback
+              missionFeedbackData={missionFeedbackData}
+              isFold={isFold}
+              missionFeedbackCount={missionFeedbackCount}
+              serveManagerCount={serveManagerCount}
+              templateId={templateId}
+              ref={ref => (this.missionFeedbackElem = ref)}
+            />
+          </div>
         </div>
       </div>
     );

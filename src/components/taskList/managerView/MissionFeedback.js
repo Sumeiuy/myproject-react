@@ -209,9 +209,10 @@ export default class MissionFeedback extends PureComponent {
       tooltip: {
         trigger: 'item',
         formatter: (params) => {
-          const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
+          const dataShow = `${params.data.name}<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
+        ...this.getCommonTooltipStyle(),
       },
       series: [
         {
@@ -243,6 +244,20 @@ export default class MissionFeedback extends PureComponent {
     return option;
   }
 
+  @autobind
+  getCommonTooltipStyle() {
+    return {
+      position: 'right',
+      backgroundColor: '#fff',
+      textStyle: {
+        color: '#333',
+      },
+      borderWidth: 1,
+      borderColor: '#ddd',
+      // 额外附加到浮层的 css 样式
+      extraCssText: 'box-shadow: -1px 1px 5px 1px #c2c2c2;',
+    };
+  }
 
   @autobind
   handleOptionBar(value, names) {
@@ -252,9 +267,10 @@ export default class MissionFeedback extends PureComponent {
     const option = {
       tooltip: {
         formatter: (params) => {
-          const dataShow = `${params.data.name}：<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
+          const dataShow = `${params.data.name}<br/>共选择人数：${params.data.value}<br/>所占百分比：${params.data.optionPer}`;
           return dataShow;
         },
+        ...this.getCommonTooltipStyle(),
       },
       grid: grids,
       xAxis: {
@@ -336,7 +352,10 @@ export default class MissionFeedback extends PureComponent {
               resizable
               style={{
                 height: '140px',
+                width: 'auto',
               }}
+              // 不要将前面的option与后面的option合并
+              notMerge
               ref={ref => this.chartInstance[key] = ref}
             />
           </div>
@@ -476,7 +495,7 @@ export default class MissionFeedback extends PureComponent {
               placement="topLeft"
               title={() => this.renderTooltipContent(per, count, countPer)}
               arrowPointAtCenter
-              overlayClassName={styles.tooltipOverlay}
+              overlayClassName={styles.missionFeedbackTooltipOverlay}
             >
               <div
                 className="ant-progress-bg"
@@ -487,7 +506,7 @@ export default class MissionFeedback extends PureComponent {
               placement="topLeft"
               title={() => this.renderTooltipContent(type, allCount)}
               arrowPointAtCenter
-              overlayClassName={styles.tooltipOverlay}
+              overlayClassName={styles.missionFeedbackTooltipOverlay}
             >
               <div
                 className="ant-progress-inner"
@@ -526,9 +545,9 @@ export default class MissionFeedback extends PureComponent {
       onShowSizeChange: this.handleSizeChange,
     };
     // 是否显示主观题统计栏目
-    const isHideSubjective = isEmptyData(dataInfo, 'infoData', 'data');
+    // const isHideSubjective = isEmptyData(dataInfo, 'infoData', 'data');
 
-    if (_.isEmpty(dataInfo) || isHideSubjective) {
+    if (_.isEmpty(dataInfo)) {
       return null;
     }
     const value = _.map(dataInfo, (item) => {
@@ -540,9 +559,9 @@ export default class MissionFeedback extends PureComponent {
           return null;
         }
         return (
-          <h5 title={itemChild.data} key={itemChild.data}>
+          <div title={itemChild.data} key={itemChild.data}>
             {index + 1}.{itemChild.data || ''}
-          </h5>
+          </div>
         );
       });
       return (
@@ -583,15 +602,16 @@ export default class MissionFeedback extends PureComponent {
   }
 
   render() {
-    const { isFold } = this.props;
+    const { isFold, templateId } = this.props;
     const { finalData } = this.state;
     const { allFeedback, radioFeedback, checkboxFeedback, dataInfo } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
 
-    if (_.isEmpty(dataInfo) &&
+    if ((_.isEmpty(dataInfo) &&
       _.isEmpty(allFeedback) &&
       _.isEmpty(radioFeedback) &&
-      _.isEmpty(checkboxFeedback)) {
+      _.isEmpty(checkboxFeedback)) ||
+      _.isEmpty(templateId)) {
       return null;
     }
 

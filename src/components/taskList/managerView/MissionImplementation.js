@@ -92,12 +92,14 @@ export default class MissionImplementation extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-
     window.addEventListener('resize', this.onResize);
+    // fsp侧边菜单折叠按钮click事件处理
+    window.onFspSidebarbtn(this.onResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
+    window.offFspSidebarbtn(this.onResize);
   }
 
   /**
@@ -213,11 +215,15 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  getOrgId({ orgId }) {
-    // debugger;
+  updateQueryState({ orgId }) {
     this.setState({
       currentOrgId: orgId,
     });
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    return this.state.currentOrgId || emp.getOrgId();
   }
 
   @autobind
@@ -252,7 +258,7 @@ export default class MissionImplementation extends PureComponent {
       isDown,
       iconType: 'juxing23',
       exportExcel: this.handleExportExcel,
-      updateQueryState: this.getOrgId,
+      updateQueryState: this.updateQueryState,
     };
     return (<TabsExtra {...extraProps} />);
   }
