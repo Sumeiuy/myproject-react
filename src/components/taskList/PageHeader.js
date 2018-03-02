@@ -67,6 +67,8 @@ export default class Pageheader extends PureComponent {
     filterControl: PropTypes.string,
     // 时间入参
     filterTimer: PropTypes.func,
+    // 判断是否有灰度客户
+    isGrayFlag: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -98,14 +100,14 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
+    const { location: { query }, isGrayFlag } = this.props;
     const { createTimeStart,
       createTimeEnd,
       endTimeStart,
       endTimeEnd,
       missionViewType,
     } = query;
-    if (missionViewType === INITIATOR_VIEW) {
+    if (missionViewType === INITIATOR_VIEW || !isGrayFlag) {
       // 判断URL里是否存在日期，若存在设置日期（例如页面跳转，日期已设置）
       this.setState({
         startTime: this.handleURlTime(createTimeStart, beforeToday),
@@ -420,9 +422,10 @@ export default class Pageheader extends PureComponent {
 
 
   // 选择不同视图创建时间不同
-  renderTime(startTime, endTime, isInitiator, isController) {
-    const item = isInitiator;
-    const controller = isController === CONTROLLER_VIEW ?
+  @autobind
+  renderTime(startTime, endTime, missionViewType) {
+    const { isGrayFlag } = this.props;
+    const controller = missionViewType === CONTROLLER_VIEW ?
       (<div className={styles.dropDownSelectBox}>
         <RangePicker
           defaultValue={[startTime, endTime]}
@@ -443,7 +446,7 @@ export default class Pageheader extends PureComponent {
           ref={ref => this.date = ref}
         />
       </div>);
-    const value = item ?
+    const value = missionViewType === INITIATOR_VIEW || !isGrayFlag ?
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
@@ -564,8 +567,8 @@ export default class Pageheader extends PureComponent {
           }
 
           {missionViewTypeValue === INITIATOR_VIEW ?
-            this.renderTime(startTime, endTime, true) :
-            this.renderTime(startTime, endTime, false, missionViewType)
+            this.renderTime(startTime, endTime, missionViewType) :
+            this.renderTime(startTime, endTime, missionViewType)
           }
           {
             this.state.showMore ?
