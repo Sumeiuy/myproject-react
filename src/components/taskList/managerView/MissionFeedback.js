@@ -26,9 +26,15 @@ const EMPTY_LIST = [];
 //  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]}
 // ]
 
-//分页默认参数
+// 分页默认参数
 const curPageNum = 1;
 const curPageSize = 5;
+// 后台返回题目类型
+const TYPE = {
+  radioType: '1',
+  checkboxType: '2',
+  textAreaType: '3',
+};
 
 const isEmptyData = (data, type, value) => {
   if (_.isEmpty(data)) {
@@ -139,20 +145,20 @@ export default class MissionFeedback extends PureComponent {
 
         _.each(item, (childItem) => {
           const { quesTypeCode } = childItem;
-          if (quesTypeCode === '1' || quesTypeCode === 1 || quesTypeCode === '2' || quesTypeCode === 2) {
+          if (quesTypeCode === TYPE.radioType || quesTypeCode === TYPE.checkboxType ) {
             const tempData = [{
               name: childItem.optionValue,
               value: childItem.cnt,
               optionPer: answerTotalCount === 0 ? '0%' : `${((childItem.cnt / answerTotalCount) * 100).toFixed(0) || 0}%`,
             }];
-            if (quesTypeCode === '1') {
+            if (quesTypeCode === TYPE.radioType) {
               // 单选题
               radioData = _.concat(radioData, tempData);
             } else {
               // 多选题
               checkboxData = _.concat(checkboxData, tempData);
             }
-          } else if (quesTypeCode === '3' || quesTypeCode === 3) {
+          } else if (quesTypeCode === TYPE.textAreaType) {
             // 主观题
             infoData = _.concat(infoData, [
               {
@@ -565,7 +571,8 @@ export default class MissionFeedback extends PureComponent {
       if (_.isEmpty(item.infoData)) {
         return null;
       }
-      if (_.size(item.infoData) > 5) {
+      // 当主观题答案条数大于5时，进行分页处理 
+      if (_.size(item.infoData) > curPageSize) {
         const firstPageData = this.renderProblemsData(singleInfo[item.quesId], item.infoData);
         info = this.renderOneInfo(firstPageData.curDataInfo);
       } else {
@@ -593,8 +600,9 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
+                {/*判断当前主观题是否超过5条，超过显示分页组件*/}
                 {
-                  _.size(item.infoData) > 5 ?
+                  _.size(item.infoData) > curPageSize ?
                     <Pagination
                       {...paginationOption}
                       total={_.size(item.infoData)}
