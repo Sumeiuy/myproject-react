@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-01-25 17:38:32
+ * @Last Modified time: 2018-03-02 15:37:43
  * 任务实施简报
  */
 
@@ -48,6 +48,8 @@ export default class MissionImplementation extends PureComponent {
     exportExcel: PropTypes.func.isRequired,
     // 进度条字典
     missionProgressStatusDic: PropTypes.array.isRequired,
+    // current taskId
+    currentId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -56,6 +58,7 @@ export default class MissionImplementation extends PureComponent {
     isFold: false,
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
+    currentId: '',
   }
 
   constructor(props) {
@@ -86,6 +89,8 @@ export default class MissionImplementation extends PureComponent {
       this.orgId = occDivnNum;
     }
 
+    this.originOrgId = this.orgId;
+
     // 根据岗位orgId生成对应的组织机构树
     this.handleCreateCustRange({
       custRange,
@@ -95,6 +100,26 @@ export default class MissionImplementation extends PureComponent {
     window.addEventListener('resize', this.onResize);
     // fsp侧边菜单折叠按钮click事件处理
     window.onFspSidebarbtn(this.onResize);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentId = '' } = this.props;
+    const {
+      currentId: nextCurrentId = '',
+      custRange,
+      empInfo: { empPostnList = EMPTY_OBJECT },
+    } = nextProps;
+
+    if (currentId !== nextCurrentId) {
+      // 当任务切换的时候,清除组织机构树选择项
+      this.orgId = this.originOrgId;
+      // 根据岗位orgId生成对应的组织机构树
+      this.handleCreateCustRange({
+        custRange,
+        posOrgId: this.orgId,
+        empPostnList,
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -139,6 +164,7 @@ export default class MissionImplementation extends PureComponent {
     const { countFlowStatus, countFlowFeedBack } = this.props;
     countFlowStatus(value);
     countFlowFeedBack(value);
+    this.orgId = value;
   }
 
   /**
