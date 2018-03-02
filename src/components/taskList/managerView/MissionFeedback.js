@@ -554,8 +554,8 @@ export default class MissionFeedback extends PureComponent {
       onShowSizeChange: this.handleSizeChange,
     };
     // 是否显示主观题统计栏目
-    const isHideSubjective = isEmptyData(dataInfo, 'infoData', 'data');
-    if (_.isEmpty(dataInfo) || isHideSubjective) {
+
+    if (_.isEmpty(dataInfo)) {
       return null;
     }
     const value = _.map(dataInfo, (item) => {

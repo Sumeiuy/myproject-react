@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 10:29:55
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-03-01 21:21:07
  */
 
 import React, { PureComponent } from 'react';
@@ -691,7 +691,8 @@ export default class TaskFormFlowStep extends PureComponent {
       creator,
       taskBasicInfo,
     } = this.props;
-    const { executeTypes, motCustfeedBackDict } = dict;
+    // motCustfeedBackDict改成新的字典missionType
+    const { executeTypes, missionType: missionTypeDict } = dict;
     const { query: { count } } = location;
     const { tagetCustModel = {} } = taskBasicInfo;
     const { custNum } = tagetCustModel;
@@ -739,7 +740,7 @@ export default class TaskFormFlowStep extends PureComponent {
         approvalList={approvalList}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={motCustfeedBackDict}
+        taskTypes={missionTypeDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
@@ -783,7 +784,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     // 灰度发布展示结果跟踪和任务调查，默认不展示
     if (!envHelper.isGrayFlag()) {
-      steps.splice(2, 1);
+      steps.splice(1, 1);
     }
 
     const stepsCount = _.size(steps);
