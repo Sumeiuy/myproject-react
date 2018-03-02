@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置修改页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 13:26:47
+ * @Last Modified time: 2018-03-02 13:44:33
  */
 
 import React, { PureComponent } from 'react';
@@ -22,8 +22,7 @@ import styles from './editForm.less';
 
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
-const STOP_STATUS_CODE = '02'; // 终止状态code
-const COMPLETE_STATUS_CODE = '03'; // 完成状态code
+const REJECT_STATUS_CODE = '04'; // 驳回状态code
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -69,7 +68,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       flowId,
       statusCode,
     } = this.props.data;
-    if (statusCode !== STOP_STATUS_CODE && statusCode !== COMPLETE_STATUS_CODE) {
+    if (statusCode === REJECT_STATUS_CODE) {
       // 获取下一步骤按钮列表
       this.props.getButtonList({ flowId });
     }
