@@ -349,8 +349,7 @@ export default class PerformerView extends PureComponent {
       today,
       missionViewType: currentView,
     };
-
-    if (currentView === INITIATOR) {
+    if (currentView === INITIATOR || !envHelper.isGrayFlag()) {
       this.queryAppListInit({
         ...commonPostBody,
         beforeToday,
@@ -733,9 +732,9 @@ export default class PerformerView extends PureComponent {
       createTimeEnd: urlCreateTimeEnd,
       endTimeStart: urlEndTimeStart,
       endTimeEnd: urlEndTimeEnd } = query;
-    
+
     // 判断URL里是否存在日期（例如页面跳转，日期已设置）
-    const beforeTime =  this.handleURlTime(urlCreateTimeStart, before);
+    const beforeTime = this.handleURlTime(urlCreateTimeStart, before);
 
     const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
 
@@ -1057,6 +1056,7 @@ export default class PerformerView extends PureComponent {
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
         filterTimer={this.handleDefaultTime}
+        isGrayFlag={envHelper.isGrayFlag()}
       />
     );
 
