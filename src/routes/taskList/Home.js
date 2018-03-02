@@ -300,11 +300,8 @@ export default class PerformerView extends PureComponent {
     this.hasPermissionOfManagerView = permission.hasPermissionOfManagerView();
     // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
     let currentView = '';
-    if (!_.isEmpty(missionViewType)) {
-      currentView = missionViewType;
-    }
-
     let newMissionView = chooseMissionView;
+
     // 默认不展示执行者视图与管理者视图的入口
     if (envHelper.isGrayFlag()) {
       // 支持灰度发布，则展示执行者视图与管理者视图的入口
@@ -317,6 +314,10 @@ export default class PerformerView extends PureComponent {
       } else {
         // 当前视图是管理者视图
         currentView = CONTROLLER;
+      }
+      // 在灰度发布的权限情况下，如果当前url上有当前视图类型，则用url上的视图类型
+      if (!_.isEmpty(missionViewType)) {
+        currentView = missionViewType;
       }
     } else {
       // 默认只展示
@@ -368,7 +369,7 @@ export default class PerformerView extends PureComponent {
       dict: { missionType },
     } = this.props;
     const { typeCode, eventId } = this.state;
-    if (prevState.typeCode !== typeCode) {
+    if (prevState.typeCode !== typeCode || prevState.eventId !== eventId) {
       /**
        * 区分mot任务和自建任务
        * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
@@ -499,9 +500,7 @@ export default class PerformerView extends PureComponent {
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: currentId,
-      // missionId: '101111171108181',
       orgId: newOrgId || emp.getOrgId(),
-      // orgId: 'ZZ001041',
     });
   }
 
@@ -518,8 +517,6 @@ export default class PerformerView extends PureComponent {
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
       missionId: currentId,
-      // missionId: '101111171108181',
-      // orgId: 'ZZ001041',
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -729,12 +726,34 @@ export default class PerformerView extends PureComponent {
   }
 
   // 默认时间设置
+  @autobind
   handleDefaultTime({ before, todays, after }) {
-    const createTimeStart = _.isEmpty(before) ? null : moment(before).format('YYYY-MM-DD');
-    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
+    const { location: { query } } = this.props;
+    const { createTimeStart: urlCreateTimeStart,
+      createTimeEnd: urlCreateTimeEnd,
+      endTimeStart: urlEndTimeStart,
+      endTimeEnd: urlEndTimeEnd } = query;
+
+    // 判断URL里是否存在日期（例如页面跳转，日期已设置）
+    const beforeTime = this.handleURlTime(urlCreateTimeStart, before);
+
+    const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
+
+    const entBeforeTime = this.handleURlTime(urlEndTimeStart, todays);
+
+    const endAfterTime = this.handleURlTime(urlEndTimeEnd, after);
+
+    const createTimeStart = _.isEmpty(before) ? null : beforeTime;
+    const createTimeEnd = _.isEmpty(before) ? null : afterTime;
+    const endTimeStart = _.isEmpty(after) ? null : entBeforeTime;
+    const endTimeEnd = _.isEmpty(after) ? null : endAfterTime;
     return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  }
+
+  // 判断url里是否有时间设置
+  handleURlTime(urlTime, time) {
+    return _.isEmpty(urlTime) ? moment(time).format('YYYY-MM-DD') :
+      moment(urlTime).format('YYYY-MM-DD');
   }
 
   // 第一次加载请求
@@ -1073,6 +1092,7 @@ export default class PerformerView extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="premissionList"
           leftWidth={LEFT_PANEL_WIDTH}
+          ref={ref => (this.splitPanelElem = ref)}
         />
       </div>
     );

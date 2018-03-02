@@ -128,6 +128,7 @@ export default function AppItem(props) {
                 totalCustomer={data.flowNum}
                 showInfo={false}
                 size="small"
+                active={active}
               />
             </div> : null
         }

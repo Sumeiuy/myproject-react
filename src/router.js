@@ -17,6 +17,7 @@ import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
+import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
@@ -67,6 +68,7 @@ const routes = [
   { path: '/feedback', component: FeedBack },
   { path: '/commission', component: CommissionHome },
   { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/commissionAdjustment', component: CommissionAdjustmentHome },
   { path: '/preSaleQuery', component: PreSaleQuery },
   { path: '/modal', component: TemplModal },
   { path: '/relation', component: RelationHome },

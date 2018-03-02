@@ -35,7 +35,7 @@
       :global {
         .ant-select {
           min-width: 100px;
-          max-width: 250px;
+          max-width: 200px;
           height: 28px;
         }
         .ant-select-selection-selected-value {
@@ -74,6 +74,14 @@
 }
 .questionSelect {
   display: block;
+}
+ .selectStyle {
+  :global {
+    .ant-select-dropdown-menu-item {
+      max-width: 200px;
+      text-overflow: ellipsis;
+    }
+  }
 }
 .detailTip {
   background: #ffffcd;

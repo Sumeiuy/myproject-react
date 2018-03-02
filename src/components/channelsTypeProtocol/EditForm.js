@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-05 18:52:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-01 20:03:23
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -48,6 +48,7 @@ const attachmentRequired = {
     attachmentMap[5].type,
   ],
 };
+const ArbirageSoftWareType = '507095'; // 套利软件的子类型值
 const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol'];
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
@@ -58,6 +59,10 @@ export default class EditForm extends PureComponent {
     canApplyCustList: PropTypes.array,
     // 模板列表
     templateList: PropTypes.array.isRequired,
+    // 业务类型
+    businessTypeList: PropTypes.array.isRequired,
+    // 开通权限列表
+    openPermissionList: PropTypes.array.isRequired,
     // 协议详情-编辑时传入
     protocolDetail: PropTypes.object,
     // 查询协议详情接口
@@ -153,6 +158,7 @@ export default class EditForm extends PureComponent {
     });
 
     this.state = {
+      isArbirageSoftWare: false,
       isEdit,
       // 附件类型列表
       attachmentTypeList: attachmentMapRequired,
@@ -566,6 +572,14 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // 设置值
+  @autobind
+  handleChangeSubType(st) {
+    this.setState({
+      isArbirageSoftWare: st === ArbirageSoftWareType,
+    });
+  }
+
   // EditBaseInfo切换子类型和操作类型时改变对应的上传文件必填项
   @autobind
   handleChangeRequiredFile(subType, operateType) {
@@ -580,6 +594,16 @@ export default class EditForm extends PureComponent {
     }
   }
 
+  @autobind
+  editComponentRef(input) {
+    this.editComponent = input;
+  }
+
+  @autobind
+  getEditContainer() {
+    return this.editComponent;
+  }
+
   render() {
     const {
       location,
@@ -591,6 +615,10 @@ export default class EditForm extends PureComponent {
       queryTypeVaules,
       // 模板列表
       templateList,
+      // 业务类型
+      businessTypeList,
+      // 开通权限列表
+      openPermissionList,
       // 操作类型列表
       operationTypeList,
       // 子类型列表
@@ -621,6 +649,7 @@ export default class EditForm extends PureComponent {
       clearDetailData,
     } = this.props;
     const {
+      isArbirageSoftWare,
       isEdit,
       cust,
       attachmentTypeList,
@@ -668,7 +697,7 @@ export default class EditForm extends PureComponent {
       custStatus: '开通处理中',
     })) : EMPTY_LIST;
     return (
-      <div className={styles.editComponent}>
+      <div className={styles.editComponent} ref={this.editComponentRef}>
         <div className={styles.editWrapper}>
           <EditBaseInfo
             location={location}
@@ -676,6 +705,7 @@ export default class EditForm extends PureComponent {
             onSearchCutList={onSearchCutList}
             custList={canApplyCustList}
             templateList={templateList}
+            businessTypeList={businessTypeList}
             ref={ref => this.editBaseInfoComponent = ref}
             queryTypeVaules={queryTypeVaules}
             operationTypeList={operationTypeList}
@@ -697,38 +727,50 @@ export default class EditForm extends PureComponent {
             clearDetailData={clearDetailData}
             changeOperationType={this.handleChangeOperationType}
             changeRequiredFile={this.handleChangeRequiredFile}
-          />
-        </div>
-        <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
-          <InfoTitle
-            head="协议产品"
-          />
-          {
-            _.includes(subscribeArray, operationType) ?
-              <Transfer
-                {...transferProps}
-              />
-              :
-              <CommonTable
-                data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
-                titleList={protocolProductTitleList}
-              />
-          }
-        </div>
-        <div className={styles.editWrapper}>
-          <InfoTitle
-            head="协议条款"
-          />
-          <CommonTable
-            data={(isEdit && _.isEmpty(protocolClauseList)) ?
-              protocolClause
-              :
-              protocolClauseList}
-            titleList={protocolClauseTitleList}
+            getParentContainer={this.getEditContainer}
+            onChangeSubType={this.handleChangeSubType}
+            openPermissionList={openPermissionList}
           />
         </div>
         {
-          multiUsedFlag ?
+          /* 此处新增判断如果是套利软件,则不显示协议产品，下挂客户等 */
+          isArbirageSoftWare ? null :
+          (
+            <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
+              <InfoTitle
+                head="协议产品"
+              />
+              {
+                _.includes(subscribeArray, operationType) ?
+                  <Transfer
+                    {...transferProps}
+                  />
+                  :
+                  <CommonTable
+                    data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
+                    titleList={protocolProductTitleList}
+                  />
+              }
+            </div>
+          )
+        }
+        {
+          isArbirageSoftWare ? null :
+          (
+            <div className={styles.editWrapper}>
+              <InfoTitle head="协议条款" />
+              <CommonTable
+                data={(isEdit && _.isEmpty(protocolClauseList)) ?
+                  protocolClause
+                  :
+                  protocolClauseList}
+                titleList={protocolClauseTitleList}
+              />
+            </div>
+          )
+        }
+        {
+          !isArbirageSoftWare && multiUsedFlag ?
             <div className={styles.editWrapper}>
               <InfoTitle head="下挂客户" />
               {

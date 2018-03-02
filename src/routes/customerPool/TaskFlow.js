@@ -162,7 +162,14 @@ export default class TaskFlow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { current, currentSelectRowKeys, currentSelectRecord } = props.storedTaskFlowData || {};
+    const {
+      current,
+      currentSelectRowKeys,
+      currentSelectRecord,
+      needApproval = false,
+      canGoNextStep = false,
+      needMissionInvestigation = false,
+    } = props.storedTaskFlowData || {};
 
     this.state = {
       current: current || 0,
@@ -180,9 +187,9 @@ export default class TaskFlow extends PureComponent {
       visible: false,
       isApprovalListLoadingEnd: false,
       isShowApprovalModal: false,
-      needApproval: false,
-      canGoNextStep: false,
-      needMissionInvestigation: false,
+      needApproval,
+      canGoNextStep,
+      needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
     };
 
@@ -410,6 +417,11 @@ export default class TaskFlow extends PureComponent {
               current: current + 1,
               // 选择客户当前入口
               currentEntry,
+              // 将审批权限存到redux上，不然切换tab时，权限会丢失
+              needApproval,
+              canGoNextStep,
+              needMissionInvestigation,
+              isIncludeNotMineCust,
             });
             this.setState({
               needApproval,
@@ -453,7 +465,7 @@ export default class TaskFlow extends PureComponent {
       // 校验任务提示
       const templetDesc = formComponent.getData();
       taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -522,10 +534,22 @@ export default class TaskFlow extends PureComponent {
           isMissionInvestigationChecked,
           // 选择的问题idList
           questionList = [],
+          currentSelectedQuestionIdList,
+          addedQuestionSize,
         } = missionInvestigationData;
+        const originQuestionSize = _.size(currentSelectedQuestionIdList);
+        const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
           if (_.isEmpty(questionList)) {
             message.error('请至少选择一个问题');
+            isMissionInvestigationValidate = false;
+          } else if (originQuestionSize !== uniqQuestionSize) {
+            // 查找是否有相同的question被选择
+            message.error('问题选择重复');
+            isMissionInvestigationValidate = false;
+          } else if (addedQuestionSize !== originQuestionSize) {
+            // 新增了问题，但是没选择
+            message.error('请选择问题');
             isMissionInvestigationValidate = false;
           } else {
             isMissionInvestigationValidate = true;
@@ -884,6 +908,7 @@ export default class TaskFlow extends PureComponent {
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
+          needApproval={needApproval}
           storedData={storedTaskFlowData}
         />
         {
@@ -891,8 +916,7 @@ export default class TaskFlow extends PureComponent {
             <MissionInvestigation
               wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
               storedData={storedTaskFlowData}
-            /> :
-            null
+            /> : null
         }
       </div>,
     }, {

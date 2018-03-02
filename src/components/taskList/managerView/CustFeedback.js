@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 14:57:33
+ * @Last Modified time: 2018-02-24 18:32:46
  * 客户反馈
  */
 
@@ -14,35 +14,16 @@ import { constructPieOptions } from './ConstructPieOptions';
 import { constructEmptyPie } from './ConstructEmptyPie';
 import IECharts from '../../IECharts';
 import { data as dataHelper } from '../../../helper';
+import { custFeedbackColorCollection } from '../../../config/CustFeedbackPieColor';
 import styles from './custFeedback.less';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
 
-// 一级反馈颜色表
-const getLevelColor = (index, alpha = 1) => {
-  switch (Math.ceil(Number(index))) {
-    case 0:
-      return `rgba(57,131,255,${alpha})`;
-    case 1:
-      return `rgba(74,218,213,${alpha})`;
-    case 2:
-      return `rgba(117,111,184,${alpha})`;
-    case 3:
-      return `rgba(255,78,123,${alpha})`;
-    case 4:
-      return `rgba(255,178,78,${alpha})`;
-    case 5:
-      return `rgba(112,195,129,${alpha})`;
-    case 6:
-      return `rgba(241,222,90,${alpha})`;
-    case 7:
-      return `rgba(120,146,98,${alpha})`;
-    case 8:
-      return `rgba(255,120,78,${alpha})`;
-    default:
-      return '#fff';
-  }
+// 获取一级、二级反馈颜色表
+const getLevelColor = (index = 0, childIndex = 0) => {
+  const indexColorArray = custFeedbackColorCollection[index].value;
+  return indexColorArray[childIndex];
 };
 
 export default class CustFeedback extends PureComponent {
@@ -93,17 +74,17 @@ export default class CustFeedback extends PureComponent {
   }
 
   /**
-   * 根据当前索引换算透明度，从1开始，0.2往下递减，减到0.2就不再递减
+   * 根据当前索引得出二级反馈颜色，二级反馈第一个为一级反馈的颜色，然后往后一直到第五个往后，颜色都相同
    * @param {*string} index 索引
    * @param {*string} childIndex child索引
    */
   @autobind
   getCurrentColor(index, childIndex) {
-    let alpha = 1 - (Number(childIndex) * 0.2);
-    if (alpha <= 0.2) {
-      alpha = 0.2;
+    let newChildIndex = Number(childIndex) + 1;
+    if (newChildIndex > 4) {
+      newChildIndex = 4;
     }
-    return getLevelColor(index, alpha);
+    return getLevelColor(index, newChildIndex);
   }
 
   @autobind
@@ -217,7 +198,7 @@ export default class CustFeedback extends PureComponent {
       childrenElem += `<div class="item">
           <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
-          <span class="percent">${dataHelper.toPercent(Number(item.value))}</span>
+          <span class="percent">${dataHelper.toPercent(Number(item.realValue))}</span>
         </div>`,
     );
     return childrenElem;
@@ -236,7 +217,7 @@ export default class CustFeedback extends PureComponent {
     let level1Data = custFeedback || [];
     // 然后添加颜色
     level1Data = _.map(level1Data, (item, index) => {
-      const currentLevel1ItemColor = getLevelColor(index, 1);
+      const currentLevel1ItemColor = getLevelColor(index, 0);
       return {
         ...item,
         color: currentLevel1ItemColor,
@@ -252,6 +233,8 @@ export default class CustFeedback extends PureComponent {
             color: currentColor,
             // 将子级数据的占比乘以父级占比
             value: item.value * itemData.value,
+            // 真实的占比
+            realValue: itemData.value,
           };
         }),
       };
@@ -265,6 +248,8 @@ export default class CustFeedback extends PureComponent {
         level2Data.push(_.map(item.children, (itemData, childIndex) => {
           const currentLevel2ItemColor = this.getCurrentColor(index, childIndex);
           return {
+            // 真实的占比
+            realValue: itemData.realValue,
             value: itemData.value,
             name: itemData.name,
             color: currentLevel2ItemColor,
@@ -276,7 +261,7 @@ export default class CustFeedback extends PureComponent {
             parent: {
               name: item.name,
               value: item.value,
-              color: getLevelColor(index, 1),
+              color: getLevelColor(index, 0),
               key: item.key,
             },
           };
@@ -306,7 +291,7 @@ export default class CustFeedback extends PureComponent {
     return (
       <div className={styles.custFeedbackSection}>
         <div className={styles.title}>
-          客户反馈
+          已服务客户反馈
         </div>
         <div className={styles.content}>
           <IECharts
