@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 10:29:55
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-03-01 21:21:07
  */
 
 import React, { PureComponent } from 'react';
@@ -66,9 +66,25 @@ export default class TaskFormFlowStep extends PureComponent {
     super(props);
     const {
       location: { query: { source, flowId } },
-      storedCreateTaskData: { taskFormData, current, custSource, isDisabled },
+      storedCreateTaskData: {
+        taskFormData,
+        current,
+        custSource,
+        isDisabled,
+        needApproval = false,
+        canGoNextStep = false,
+        needMissionInvestigation = false,
+     },
     } = props;
+
+    // 代表是否是来自驳回修改
     const isEntryFromReturnTask = source === 'returnTask';
+    let canGoNextStepFlow = canGoNextStep;
+    let newNeedMissionInvestigation = needMissionInvestigation;
+    if (!_.isEmpty(flowId)) {
+      canGoNextStepFlow = !!((canGoNextStep || !isDisabled));
+      newNeedMissionInvestigation = true;
+    }
 
     this.state = {
       current: current || 0,
@@ -81,15 +97,19 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorIntervalValue: false,
       isShowErrorStrategySuggestion: false,
       isShowErrorTaskName: false,
-      needApproval: isEntryFromReturnTask,
-      canGoNextStep: _.isEmpty(flowId) ? isEntryFromReturnTask : !isDisabled,
-      needMissionInvestigation: true,
+      needApproval: !!((needApproval || isEntryFromReturnTask)),
+      canGoNextStep: canGoNextStepFlow,
+      needMissionInvestigation: newNeedMissionInvestigation,
       isDisabled,
     };
   }
 
   componentDidMount() {
-    const { location: { query: { source } } } = this.props;
+    const {
+      location: { query: { source } },
+      saveCreateTaskData,
+      storedCreateTaskData,
+   } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
@@ -109,16 +129,22 @@ export default class TaskFormFlowStep extends PureComponent {
           needMissionInvestigation,
           isIncludeNotMineCust,
         } = permission.judgeCreateTaskApproval({ ...sendCustsServedByPostnResult });
-        if (isIncludeNotMineCust && !canGoNextStep) {
-          message.error('客户包含非本人名下客户，请重新选择');
-          return;
-        }
-
         this.setState({
           needApproval,
           canGoNextStep,
           needMissionInvestigation,
         });
+
+        saveCreateTaskData({
+          ...storedCreateTaskData,
+          needApproval,
+          canGoNextStep,
+          needMissionInvestigation,
+          isIncludeNotMineCust,
+        });
+        if (isIncludeNotMineCust && !canGoNextStep) {
+          message.error('客户包含非本人名下客户，请重新选择');
+        }
       });
     }
   }
@@ -206,7 +232,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custSources = '绩效目标客户';
         break;
       case 'managerView':
-        custSources = '任务实施细分客户';
+        custSources = '已有任务下钻客户';
         break;
       case 'custGroupList':
         custSources = '客户分组';
@@ -281,7 +307,7 @@ export default class TaskFormFlowStep extends PureComponent {
       // 校验任务提示
       const templetDesc = formComponent.getData();
       taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 314) {
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -360,10 +386,22 @@ export default class TaskFormFlowStep extends PureComponent {
           isMissionInvestigationChecked,
           // 选择的问题idList
           questionList = [],
+          currentSelectedQuestionIdList,
+          addedQuestionSize,
         } = missionInvestigationData;
+        const originQuestionSize = _.size(currentSelectedQuestionIdList);
+        const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
           if (_.isEmpty(questionList)) {
             message.error('请至少选择一个问题');
+            isMissionInvestigationValidate = false;
+          } else if (originQuestionSize !== uniqQuestionSize) {
+            // 查找是否有相同的question被选择
+            message.error('问题选择重复');
+            isMissionInvestigationValidate = false;
+          } else if (addedQuestionSize !== originQuestionSize) {
+            // 新增了问题，但是没选择
+            message.error('请选择问题');
             isMissionInvestigationValidate = false;
           } else {
             isMissionInvestigationValidate = true;
@@ -605,7 +643,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handleSubmitSuccess() {
-    const { submitApporvalResult, saveCreateTaskData } = this.props;
+    const { submitApporvalResult, saveCreateTaskData, storedCreateTaskData } = this.props;
     if (submitApporvalResult.code === '0') {
       message.success('提交成功');
       this.setState({
@@ -613,6 +651,7 @@ export default class TaskFormFlowStep extends PureComponent {
         canGoNextStep: false,
       });
       saveCreateTaskData({
+        ...storedCreateTaskData,
         isDisabled: true,
       });
     }
@@ -652,7 +691,8 @@ export default class TaskFormFlowStep extends PureComponent {
       creator,
       taskBasicInfo,
     } = this.props;
-    const { executeTypes, motCustfeedBackDict } = dict;
+    // motCustfeedBackDict改成新的字典missionType
+    const { executeTypes, missionType: missionTypeDict } = dict;
     const { query: { count } } = location;
     const { tagetCustModel = {} } = taskBasicInfo;
     const { custNum } = tagetCustModel;
@@ -680,6 +720,7 @@ export default class TaskFormFlowStep extends PureComponent {
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
+          needApproval={needApproval}
           storedData={storedCreateTaskData}
         />
         {
@@ -699,7 +740,7 @@ export default class TaskFormFlowStep extends PureComponent {
         approvalList={approvalList}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={motCustfeedBackDict}
+        taskTypes={missionTypeDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
@@ -743,7 +784,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
     // 灰度发布展示结果跟踪和任务调查，默认不展示
     if (!envHelper.isGrayFlag()) {
-      steps.splice(2, 1);
+      steps.splice(1, 1);
     }
 
     const stepsCount = _.size(steps);

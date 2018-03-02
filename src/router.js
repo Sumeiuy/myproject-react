@@ -17,6 +17,7 @@ import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
+import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
@@ -45,6 +46,8 @@ import RelationHome from './routes/relation/Home';
 import CustomerFeedback from './routes/customerFeedback/Home';
 import TaskFeedback from './routes/taskFeedback/Home';
 import MainPosition from './routes/mainPosition/Home';
+import MainPositionEdit from './routes/mainPosition/Edit';
+import MainPositionNotifies from './routes/mainPosition/Notifies';
 import FilialeCustTransfer from './routes/filialeCustTransfer/Home';
 import FilialeCustTransferEdit from './routes/filialeCustTransfer/Edit';
 import FilialeCustTransferNotifies from './routes/filialeCustTransfer/Notifies';
@@ -68,6 +71,7 @@ const routes = [
   { path: '/feedback', component: FeedBack },
   { path: '/commission', component: CommissionHome },
   { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/commissionAdjustment', component: CommissionAdjustmentHome },
   { path: '/preSaleQuery', component: PreSaleQuery },
   { path: '/modal', component: TemplModal },
   { path: '/relation', component: RelationHome },
@@ -128,6 +132,10 @@ const routes = [
   {
     path: '/mainPosition',
     component: MainPosition,
+    children: [
+      { path: '/edit', component: MainPositionEdit },
+      { path: '/notifies', component: MainPositionNotifies },
+    ],
   },
   // 晨间播报
   { path: '/broadcastList',

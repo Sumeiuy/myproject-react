@@ -78,6 +78,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       addServeRecord,
       reloadTargetCustInfo,
+      queryCustUuid,
     } = this.props;
     // 执行提交服务记录的接口
     addServeRecord(postBody)
@@ -85,6 +86,8 @@ export default class ServiceImplementation extends PureComponent {
         if (this.props.addMotServeRecordSuccess) {
           // 服务记录添加成功后重新获取目标客户列表的信息
           reloadTargetCustInfo(() => this.updateList(postBody, callback));
+          // 添加服务记录成功之后，重新获取custUuid
+          queryCustUuid();
           // this.updateList(postBody);
           message.success('添加服务记录成功');
         }

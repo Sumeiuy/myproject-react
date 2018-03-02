@@ -151,14 +151,28 @@
   .progress {
     width: 120px;
     float: right;
+    :global {
+      .ant-progress-bg {
+        background-color: #756fb8;
+      }
+    }
     &.active {
+      .progressText {
+        color: #adcbf1;
+      }
       :global {
-        .ant-progress-line .ant-progress-inner {
+        .ant-progress-inner {
+          background-color: #adcbf1;
+        }
+        .ant-progress-bg {
           background-color: #fff;
         }
         .progressText {
-          color: #fff;
+          color: #adcbf1;
           font-size: 12px;
+        }
+        .activeMark {
+          color: #fff;
         }
       }
     }

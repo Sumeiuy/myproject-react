@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import TaskSearchRow from './TaskSearchRow';
 import SimpleSearch from '../groupManage/CustomerGroupListSearch';
-import { emp } from '../../../helper';
+import { emp, fsp } from '../../../helper';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
@@ -47,6 +47,11 @@ export default class SelectLabelCust extends PureComponent {
       tipsSize,
     };
     this.bigBtn = true;
+  }
+
+  componentDidMount() {
+    // 在初始化的时候，回滚fsp滚动条到顶部
+    fsp.scrollToTop();
   }
 
   componentWillReceiveProps(nextProps) {

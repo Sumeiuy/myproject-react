@@ -261,6 +261,8 @@ export default class TargetCustomerRight extends PureComponent {
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
+    const introducerName = this.handleEmpty(itemData.empName);
+
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -291,7 +293,10 @@ export default class TargetCustomerRight extends PureComponent {
                 <h5
                   className={styles.phoneLeft}
                 >
-                  <span>介绍人：</span><span>{this.handleEmpty(itemData.empName)}</span>
+                  <span>介绍人：</span>
+                  <span title={introducerName}>
+                    {introducerName}
+                  </span>
                   {
                     _.isEmpty(itemData.empName) ?
                       null :
@@ -347,7 +352,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><span>股基佣金率额：</span><span>{miniFee}</span></h5>
+                ><span>股基佣金率：</span><span>{miniFee}</span></h5>
               </Col>
             </Row>
             <Row>
@@ -358,7 +363,7 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <span>持仓资产：</span>
+                  <span>持仓市值：</span>
                   <span>{this.handleAssets(itemData.openAssets)}</span>
                   {openAssetsPercentNode}
                 </h5>

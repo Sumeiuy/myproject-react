@@ -147,7 +147,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
             rules: [{
-              required: true, max: 250, min: 10, message: '问题答案不能小于10个字符，最多250个字符!',
+              required: true, max: 250, min: 10, message: '问题答案不能小于10个字符，最多250个字符',
             }],
           })(
             <div className={styles.radioContent}>
@@ -182,7 +182,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
     const showBtn = _.isEmpty(answerVOList) ?
-      (<Button key="submit" type="primary" onClick={onOk}>
+      (<Button key="submit" type="primary" onClick={_.debounce(onOk, 300, { leading: true })}>
         提交
       </Button>) :
       (<Button key="ok" type="primary" onClick={onCancel}>
