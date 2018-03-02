@@ -92,25 +92,14 @@ export default class CustRange extends PureComponent {
   constructor(props) {
     super(props);
     const { custRange, orgId, defaultFirst } = this.props;
-    const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
-    let initValue = null;
-    if (defaultFirst) {
-      initValue = {
-        label: custRangeNameDedault,
-        value: custRange[0].id,
-      };
-    } else {
-      initValue = {
-        label: '所有',
-        value: '',
-      };
+    this.setDisplay(orgId, custRange, defaultFirst);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { custRange, orgId, defaultFirst } = nextProps;
+    if (orgId !== this.props.orgId) {
+      this.setDisplay(orgId, custRange, defaultFirst);
     }
-    this.state = {
-      formatCustRange,
-      value: initValue,
-      open: false,
-    };
   }
 
   @autobind
@@ -143,6 +132,35 @@ export default class CustRange extends PureComponent {
       level: custRangeLevel,
       scope: Number(custRangeLevel) + 1,
     });
+  }
+
+  /**
+   * 当前客户范围组件显示的内容
+   * @param {*} orgId 当前需要回填的组织机构树对应的orgId
+   * @param {*} custRange 下拉框中的下拉列表的数据
+   * @param {*} defaultFirst 是否显示下拉列表数据的第一个
+   */
+  @autobind
+  setDisplay(orgId, custRange, defaultFirst) {
+    const formatCustRange = transformCustRangeData(custRange);
+    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
+    let initValue = null;
+    if (defaultFirst) {
+      initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+    } else {
+      initValue = {
+        label: '所有',
+        value: '',
+      };
+    }
+    this.state = {
+      formatCustRange,
+      value: initValue,
+      open: false,
+    };
   }
 
   render() {
