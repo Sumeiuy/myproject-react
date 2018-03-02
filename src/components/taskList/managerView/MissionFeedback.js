@@ -391,10 +391,12 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   handlePageChange(nextPage, quesId) {
     const { finalData } = this.state;
+    const { singleInfo } = finalData;
     this.setState({
       finalData: {
         ...finalData,
         singleInfo: {
+          ...singleInfo,
           [quesId]: nextPage,
         },
       },
@@ -618,6 +620,7 @@ export default class MissionFeedback extends PureComponent {
                         this.handlePageChange(current, item.quesId)}
                       current={singleInfo[item.quesId]}
                       className={styles.rowTop}
+                      key={item.quesId}
                     /> : null
                 }
               </div>
