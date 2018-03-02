@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-26 14:08:41
+ * @Last Modified time: 2018-03-02 14:31:02
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -43,6 +43,22 @@ const config = {
   },
   protocolSubs: {
     arbitrage: '0503',
+  },
+  // 新建协议的时候需要用到的子类型代表值
+  // 后端的数值，与首页列表的子类型的值不一样
+  protocolSubTypes: {
+    // 快车道
+    fastConnect: '507070',
+    // 高速通道
+    expressConnect: '507050',
+    // 套利软件
+    arbitrageSoft: '507095',
+  },
+  // 协议管理中查询下一审批步骤的操作值
+  protocolStepOperate: {
+    507070: 1,
+    507050: 11,
+    507095: 111,
   },
 };
 

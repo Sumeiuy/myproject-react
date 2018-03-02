@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 20:54:09
+ * @Last Modified time: 2018-03-02 14:31:35
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -37,16 +37,7 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 紫金通道 subType，新建协议判断切换的子类型
-const subTypeObject = {
-  // 快车道
-  fastConnect: '507070',
-  // 高速通道
-  expressConnect: '507050',
-  // 套利软件
-  arbitrageSoft: '507095',
-};
-const { subscribeArray } = config;
+const { subscribeArray, protocolSubTypes, protocolStepOperate } = config;
 
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
@@ -271,25 +262,25 @@ export default class EditBaseInfo extends PureComponent {
       }
       changeOperationType(value);
     } else if (key === 'subType') {
-      let operate;
-      if (value === subTypeObject.fastConnect) {
-        // 紫金快车道
-        operate = 1;
-      } else if (value === subTypeObject.expressConnect) {
-        // 高速通道
-        operate = 11;
-      } else if (value === subTypeObject.arbitrageSoft) {
-        // 套利软件
-        operate = 111;
-      }
+      // let operate;
+      // if (value === protocolSubTypes.fastConnect) {
+      //   // 紫金快车道
+      //   operate = 1;
+      // } else if (value === protocolSubTypes.expressConnect) {
+      //   // 高速通道
+      //   operate = 11;
+      // } else if (value === protocolSubTypes.arbitrageSoft) {
+      //   // 套利软件
+      //   operate = 111;
+      // }
       // TODO 此处告知父组件，当前选的子类型
       onChangeSubType(value);
       getFlowStepInfo({
         flowId: '',
-        operate,
+        operate: protocolStepOperate[value],
       });
       // 判断子类型是否为紫金通道，不是则不展现多用户和十档行情选择
-      if (value !== subTypeObject.fastConnect) {
+      if (value !== protocolSubTypes.fastConnect) {
         isHightSpeed = true;
       }
     }
@@ -614,7 +605,7 @@ export default class EditBaseInfo extends PureComponent {
   @autobind
   isArbirageSoftware() {
     const { subType } = this.state;
-    return subType === subTypeObject.arbitrageSoft;
+    return subType === protocolSubTypes.arbitrageSoft;
   }
 
   // 判断需要显示开通权限字段吗
