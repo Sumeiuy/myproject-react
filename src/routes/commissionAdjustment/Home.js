@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-02-22 15:08:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-27 10:41:23
+ * @Last Modified time: 2018-03-02 15:04:22
  * @description 单佣金调整
  */
 
@@ -97,10 +97,10 @@ export default class CommissionAdjustmentHome extends PureComponent {
     super(props);
     this.state = {
       remark: '', // 备注
-      newCommission: '0.16', // 新佣金
+      newCommission: '0.16', // 新佣金，业务要求的默认值
       approverId: '', // 审批人id
       customer: {}, // 单佣金选择的客户
-      attachment: '',
+      attachment: '', // 附件
       singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
     };
   }
@@ -129,9 +129,10 @@ export default class CommissionAdjustmentHome extends PureComponent {
   @autobind
   authorityOptions(subTypes) {
     return subTypes.map((item) => {
-      const newItem = {};
       const { empPostnList } = this.props;
-      newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
+      const newItem = {
+        show: permission.hasCommissionSingleAuthority(empPostnList),
+      };
       return {
         ...item,
         ...newItem,
@@ -154,7 +155,7 @@ export default class CommissionAdjustmentHome extends PureComponent {
         deptCode: occDivnNum,
       }).then(() => {
         const { singleCustomerList } = this.props;
-        if (singleCustomerList && singleCustomerList.length) {
+        if (!_.isEmpty(singleCustomerList)) {
           const custmoer = singleCustomerList[0];
           this.handleSelectAssembly(custmoer);
         }
@@ -260,7 +261,6 @@ export default class CommissionAdjustmentHome extends PureComponent {
         id: 'utb-serviceOrdering-wizard',
       });
     }, () => {
-      message.error('单佣金调整提交失败');
       this.submitLoadiing(false);
     });
   }
