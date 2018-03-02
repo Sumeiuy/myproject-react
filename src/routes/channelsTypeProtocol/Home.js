@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:43:21
+ * @Last Modified time: 2018-03-01 20:02:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import seibelHelper from '../../helper/page/seibel';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
+import ArbitRageDetail from '../../components/channelsTypeProtocol/ArbitrageDetail';
 import ChannelsTypeProtocolList from '../../components/common/appList';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
@@ -41,7 +42,7 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-const { subscribeArray, unSubscribeArray, tenHQ, tipsMap } = config;
+const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -70,6 +71,10 @@ const mapStateToProps = state => ({
   subTypeList: state.channelsTypeProtocol.subTypeList,
   // 模板列表
   templateList: state.channelsTypeProtocol.templateList,
+  // 业务类型列表
+  businessTypeList: state.channelsTypeProtocol.businessTypeList,
+  // 开通权限列表
+  openPermissionList: state.channelsTypeProtocol.openPermissionList,
   // 模板对应协议条款列表
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
   // 协议产品列表
@@ -143,6 +148,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     operationTypeList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     templateList: PropTypes.array.isRequired,
+    businessTypeList: PropTypes.array.isRequired,
+    openPermissionList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     protocolClauseList: PropTypes.array.isRequired,
@@ -498,6 +505,34 @@ export default class ChannelsTypeProtocol extends PureComponent {
     );
   }
 
+  // 根据当前子类型相应不同的详情组件
+  @autobind
+  getProtocolDetailComponent(st) {
+    const {
+      protocolDetail,
+      attachmentList,
+      flowHistory,
+    } = this.props;
+    const { currentView } = this.state;
+    if (st === protocolSubs.arbitrage) {
+      return (
+        <ArbitRageDetail
+          protocolDetail={protocolDetail}
+          attachmentList={attachmentList}
+          flowHistory={flowHistory}
+        />
+      );
+    }
+    // 其他情况返回通用的详情组件，高速通道、紫金快车道
+    return (
+      <Detail
+        protocolDetail={protocolDetail}
+        attachmentList={attachmentList}
+        flowHistory={flowHistory}
+        currentView={currentView}
+      />
+    );
+  }
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
@@ -554,7 +589,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       replace,
       seibleList,
       attachmentList,
-      flowHistory,
+      // flowHistory,
       empInfo,
       getCanApplyCustList, // 查询可申请客户列表
       canApplyCustList, // 可申请客户列表
@@ -562,6 +597,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       operationTypeList, // 操作类型列表
       subTypeList, // 子类型列表
       templateList, // 模板列表
+      businessTypeList, // 业务类型
+      openPermissionList, // 开通权限列表
       protocolDetail, // 协议详情
       queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
       protocolClauseList, // 所选模板对应协议条款列表
@@ -617,14 +654,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pagination={paginationOptions}
       />
     );
-    const rightPanel = (
-      <Detail
-        protocolDetail={protocolDetail}
-        attachmentList={attachmentList}
-        flowHistory={flowHistory}
-        currentView={currentView}
-      />
-    );
+    const rightPanel = this.getProtocolDetailComponent(currentView);
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
@@ -644,6 +674,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
       subTypeList,
       // 协议模板列表
       templateList,
+      // 业务类型列表
+      businessTypeList,
+      // 开通权限列表
+      openPermissionList,
       // 根据所选模板id查询模板对应协议条款
       queryChannelProtocolItem,
       // 所选模板对应协议条款列表

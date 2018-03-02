@@ -14,7 +14,7 @@ const config = {
       value: 'single',
     },
     {
-      show: true,
+      show: false,
       label: '批量导入',
       value: 'multi',
     },

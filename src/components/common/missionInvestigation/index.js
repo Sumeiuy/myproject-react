@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-05 15:35:57
+ * @Last Modified time: 2018-02-23 17:54:07
  * 任务调查
  */
 
@@ -93,7 +93,6 @@ export default class MissionInvestigation extends PureComponent {
 
   componentDidMount() {
     const { getQuestionList, questionInfo: { list } } = this.props;
-    // const { newQuestionAndAnswerGroup, questionId } = this.state;
     if (_.isEmpty(list)) {
       // 为空则需要去请求一次问题列表
       getQuestionList({
@@ -106,7 +105,6 @@ export default class MissionInvestigation extends PureComponent {
           // 将题目相同的问题过滤掉
           questionList: _.uniqBy(nextList, 'quesValue') || EMPTY_LIST,
         });
-        // this.renderNextQuestion(questionId, newQuestionAndAnswerGroup);
       });
     }
   }
@@ -124,7 +122,12 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   getData() {
-    const { currentSelectedQuestionIdList, checked, questionList = [] } = this.state;
+    const {
+      currentSelectedQuestionIdList = [],
+      checked,
+      questionList = [],
+      newQuestionAndAnswerGroup = [],
+    } = this.state;
     const idList = _.map(currentSelectedQuestionIdList, item => item.value);
     const selectedQuestionDetailList = [];
     _.each(idList, (item, index) => {
@@ -142,6 +145,10 @@ export default class MissionInvestigation extends PureComponent {
       isMissionInvestigationChecked: checked,
       // 选择的问题idList
       questionList: selectedQuestionDetailList,
+      // current select idList
+      currentSelectedQuestionIdList,
+      // 当前新增的问题选择个数
+      addedQuestionSize: _.size(newQuestionAndAnswerGroup),
     };
   }
 
@@ -272,7 +279,7 @@ export default class MissionInvestigation extends PureComponent {
       <div className={styles.detailTip}>
         <div className={styles.questionSection}>
           <div>问题：</div>
-          <div>{currentQuestionDetail.quesValue}？</div>
+          <div>{currentQuestionDetail.quesValue}</div>
         </div>
         <div className={styles.answerSection}>
           <div className={styles.title}>
@@ -291,16 +298,13 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   renderQuestion(questionId, checked, defaultQues) {
     const { questionInfo: { list } } = this.props;
-    // const finalQuestionList = questionList || list;
 
     return (
       <div
         className={classnames({
           [styles.questionLine]: true,
-          // [styles.hideQuestion]: currentDeleteId === `question_${questionId}`,
         })}
         key={`question_${questionId}`}
-        ref={ref => (this.questionLineElem = ref)}
       >
         <Select
           onChange={value => this.handleSelectChange(questionId, value)}
@@ -310,10 +314,17 @@ export default class MissionInvestigation extends PureComponent {
           optionFilterProp="children"
           filterOption={(input, option) =>
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          dropdownMatchSelectWidth={false}
+          dropdownStyle={{
+            maxWidth: 216,
+          }}
+          dropdownClassName={styles.selectStyle}
         >
           {
             _.map(list, item =>
-              <Option key={item.quesId} value={item.quesValue}>{item.quesValue}</Option>)
+              <Option key={item.quesId} value={item.quesValue} title={item.quesValue}>
+                {item.quesValue}
+              </Option>)
           }
         </Select>
 
@@ -327,7 +338,12 @@ export default class MissionInvestigation extends PureComponent {
         >
           <span
             className={styles.detailLabel}
-            ref={ref => (this.questionDetailElem = ref)}
+            ref={(ref) => {
+              // ref多次重绘可能是null, 这里要判断一下
+              if (!this.questionDetailElem && ref) {
+                this.questionDetailElem = ref;
+              }
+            }}
           >
             问题详情
         </span>

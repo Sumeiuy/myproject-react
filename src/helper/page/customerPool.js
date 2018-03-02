@@ -6,9 +6,9 @@
 import _ from 'lodash';
 
 const customerPool = {
-  getCustomerListFilters(filtersArray = [], labels = [], filters = []) {
+  getCustomerListFilters(filtersArray = [], labelId = '', filters = []) {
     const newFilters = [...filters];
-    let newLabels = [...labels];
+    let newLabels = labelId ? [labelId] : [];
     _.forEach(filtersArray, (item) => {
       const [name, value] = item.split('.');
       // 可开通
@@ -47,7 +47,7 @@ const customerPool = {
         });
       }
       // 瞄准镜的动态筛选
-      if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value) {
+      if (!_.includes(['Unrights', 'Rights', 'RiskLvl', 'CustClass', 'CustomType'], name) && value !== undefined) {
         const itemList = value.split(',');
         newLabels = [
           ...newLabels,
@@ -57,7 +57,7 @@ const customerPool = {
     });
     return {
       filters: newFilters,
-      labels: newLabels,
+      labels: _.filter(newLabels, item => item !== ''),
     };
   },
 };

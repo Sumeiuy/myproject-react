@@ -130,7 +130,6 @@ export default class Filter extends PureComponent {
     const { moreBtnVisible, fold, filterSize } = this.state;
     const foldClass = classnames({ up: !fold });
     const isFold = moreBtnVisible && fold;
-
     return (
       <div className={styles.filterSection}>
         {this.renderSightingTelescopeFilter()}

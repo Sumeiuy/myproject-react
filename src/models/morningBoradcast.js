@@ -183,9 +183,7 @@ export default {
     // 获取晨报详情
     * getBoradcastDetail({ payload }, { call, put }) {
       const response = yield call(api.searchBoradcastDetail, payload);
-      if (!response.resultData) {
-        message.info('对不起，未查询到该条信息', 1);
-      } else {
+      if (response.resultData) {
         const { audioFileId, otherFileId } = response.resultData;
         const [audioFileListRes, otherFileListRes] = yield [
           call(api.ceFileList, { attachment: audioFileId }),
@@ -233,9 +231,7 @@ export default {
     * homaPageNews({ payload }, { call, put }) {
       const response = yield call(api.searchBoradcastList, payload);
       const listResult = response.resultData.newsList;
-      if (!listResult) {
-        message.info('对不起，未查询到该条信息', 1);
-      } else {
+      if (listResult) {
         const homePageList = listResult.filter((item, index) => index < 2);
         yield put({
           type: 'homePageList',
