@@ -60,7 +60,12 @@ export default function ProgressBar({
 }
 
 ProgressBar.propTypes = {
-  servicedCustomer: PropTypes.number.isRequired,
-  totalCustomer: PropTypes.number.isRequired,
+  servicedCustomer: PropTypes.number,
+  totalCustomer: PropTypes.number,
   active: PropTypes.bool.isRequired,
+};
+
+ProgressBar.defaultProps = {
+  totalCustomer: 0,
+  servicedCustomer: 0,
 };

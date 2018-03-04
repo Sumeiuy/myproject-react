@@ -250,11 +250,11 @@ export default class TargetCustomerRight extends PureComponent {
     if (Number(itemData.assets)) {
       const openAssetsRate = itemData.openAssets / itemData.assets;
       openAssetsPercentNode = itemData.openAssets ?
-        <span>({openAssetsRate * 100}%)</span>
+        <span>({(openAssetsRate * 100).toFixed(2)}%)</span>
         :
         null;
       availablBalancePercentNode = itemData.availablBalance ?
-        <span>({(1 - openAssetsRate) * 100}%)</span>
+        <span>({((itemData.availablBalance / itemData.assets) * 100).toFixed(2)}%)</span>
         :
         null;
     }
