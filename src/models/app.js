@@ -37,6 +37,8 @@ export default {
     deleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
+    // 已申请服务经理列表（服务经理接口）
+    ptyMngList: EMPTY_LIST,
     // 创建者,姓名（工号）
     creator: '',
     // mot自建任务的服务类型和反馈类型
@@ -150,6 +152,15 @@ export default {
         approvePersonList: servicePeopleList,
       };
     },
+    // 针对服务经理接口获取已申请的服务经理列表（服务经理接口）
+    getPtyMngListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { servicePeopleList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        ptyMngList: servicePeopleList,
+      };
+    },
     getMotCustfeedBackDictSuccess(state, action) {
       const { payload: { missionList = [] } } = action;
       return {
@@ -246,6 +257,14 @@ export default {
       const response = yield call(seibelApi.getSearchServerPersonelList, payload);
       yield put({
         type: 'getApprovePersonListSuccess',
+        payload: response,
+      });
+    },
+    // 针对服务经理项目获取已申请服务经理列表（服务经理接口）
+    * getPtyMngList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
+      yield put({
+        type: 'getPtyMngListSuccess',
         payload: response,
       });
     },

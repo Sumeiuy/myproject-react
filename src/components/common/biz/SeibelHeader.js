@@ -55,6 +55,10 @@ export default class Pageheader extends PureComponent {
     drafterList: PropTypes.array.isRequired,
     // 获取拟稿人列表
     getDrafterList: PropTypes.func.isRequired,
+    // 已申请服务经理
+    ptyMngList: PropTypes.array.isRequired,
+    // 获取已申请的服务经理
+    getPtyMngList: PropTypes.func.isRequired,
     // 审批人列表
     approvePersonList: PropTypes.array.isRequired,
     // 获取审批人列表
@@ -65,6 +69,8 @@ export default class Pageheader extends PureComponent {
     getCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
+    // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
+    isUseOfCustomer: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -75,6 +81,7 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
     subtypeOptions: [],
     filterCallback: () => {},
+    isUseOfCustomer: true,
   }
 
   constructor(props) {
@@ -218,11 +225,15 @@ export default class Pageheader extends PureComponent {
       needOperate,
       needSubType,
       empInfo,
+      isUseOfCustomer,
+      ptyMngList,
+      getPtyMngList,
       location: {
         query: {
           custNumber,
           drafterId,
           approvalId,
+          ptyMngId,
           orgId,
           subType,
           status,
@@ -240,6 +251,16 @@ export default class Pageheader extends PureComponent {
     let curCust = '全部';
     if (curCustInfo && curCustInfo.custNumber) {
       curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
+    }
+
+    // 增加已申请服务经理的全部
+    const ptyMngAllList = !_.isEmpty(ptyMngList) ?
+      [ptyMngAll, ...ptyMngList] : ptyMngList;
+    // 已申请服务经理的回填
+    const curPtyMngInfo = _.find(ptyMngList, o => o.ptyMngId === ptyMngId);
+    let curPtyMng = '全部';
+    if (curPtyMngInfo && curPtyMngInfo.ptyMngId) {
+      curPtyMng = `${curPtyMngInfo.ptyMngName}(${curPtyMngInfo.ptyMngId})`;
     }
 
     // 拟稿人增加全部
@@ -275,20 +296,38 @@ export default class Pageheader extends PureComponent {
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
-          <div className={styles.filterFl}>
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curCust}
-                placeholder="经纪客户号/客户名称"
-                searchList={customerAllList}
-                showObjKey="custName"
-                objId="custNumber"
-                emitSelectItem={this.selectCustItem}
-                emitToSearch={value => this.toSearch(getCustomerList, value)}
-                name={`${page}-custName`}
-              />
-            </div>
-          </div>
+          {
+            isUseOfCustomer ?
+              <div className={styles.filterFl}>
+                <div className={styles.dropDownSelectBox}>
+                  <DropDownSelect
+                    value={curCust}
+                    placeholder="经纪客户号/客户名称"
+                    searchList={customerAllList}
+                    showObjKey="custName"
+                    objId="custNumber"
+                    emitSelectItem={this.selectCustItem}
+                    emitToSearch={value => this.toSearch(getCustomerList, value)}
+                    name={`${page}-custName`}
+                  />
+                </div>
+              </div>
+            :
+              <div className={styles.filterFl}>
+                <div className={styles.dropDownSelectBox}>
+                  <DropDownSelect
+                    value={curPtyMng}
+                    placeholder="服务经理工号/名称"
+                    searchList={ptyMngAllList}
+                    showObjKey="ptyMngName"
+                    objId="ptyMngId"
+                    emitSelectItem={item => this.selectItem('ptyMngId', item)}
+                    emitToSearch={value => this.toSearch(getPtyMngList, value)}
+                    name={`${page}-ptyMngName`}
+                  />
+                </div>
+              </div>
+          }
           {
             needOperate ?
               <div className={styles.filterFl}>
