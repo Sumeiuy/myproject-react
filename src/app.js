@@ -96,6 +96,8 @@ app.model(require('./models/mainPosition'));
 app.model(require('./models/morningBoradcast'));
 // 售前适当性查询
 app.model(require('./models/preSaleQuery'));
+// 个股资讯
+app.model(require('./models/stock'));
 
 // 4. Router
 app.router(routerConfig);

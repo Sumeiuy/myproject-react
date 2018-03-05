@@ -2,8 +2,8 @@
  * @Description: 降级客户处理页面
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:37:47
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-03-05 09:38:15
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import { message } from 'antd';
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import SetHeight from '../../decorators/setHeight';
+import setHeight from '../../decorators/setHeight';
 import { time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
@@ -43,7 +43,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@SetHeight
+@setHeight
 export default class Demote extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,

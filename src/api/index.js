@@ -17,6 +17,7 @@ import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
 import preSaleQuery from './preSaleQuery';
+import stock from './stock';
 
 const api = apiCreator();
 
@@ -59,5 +60,7 @@ export default {
   morningBoradcast: morningBoradcast(api),
   // ========== 售前适当性查询
   preSaleQuery: preSaleQuery(api),
+  // 个股资讯
+  stock: stock(api),
 };
 
