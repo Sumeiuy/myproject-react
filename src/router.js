@@ -17,6 +17,7 @@ import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
+import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
@@ -53,6 +54,9 @@ import FilialeCustTransferNotifies from './routes/filialeCustTransfer/Notifies';
 // 晨间播报
 import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
 import PreSaleQuery from './routes/preSaleQuery/Home';
+// 个股
+import Stock from './routes/stock/Home';
+import StockDetail from './routes/stock/Detail';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -67,6 +71,7 @@ const routes = [
   { path: '/feedback', component: FeedBack },
   { path: '/commission', component: CommissionHome },
   { path: '/commissionChange', component: CommissionChangeHome },
+  { path: '/commissionAdjustment', component: CommissionAdjustmentHome },
   { path: '/preSaleQuery', component: PreSaleQuery },
   { path: '/modal', component: TemplModal },
   { path: '/relation', component: RelationHome },
@@ -137,6 +142,14 @@ const routes = [
     component: BroadcastList,
   },
   { path: '/broadcastDetail', component: BroadcastDetail },
+  // 个股点评
+  {
+    path: '/stock',
+    component: Stock,
+    children: [
+      { path: '/detail', component: StockDetail },
+    ],
+  },
 ];
 
 // 递归创建路由

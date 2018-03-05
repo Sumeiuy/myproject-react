@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置新建页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 16:25:01
+ * @Last Modified time: 2018-03-02 13:28:36
  */
 
 import React, { PureComponent } from 'react';
@@ -182,7 +182,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       groupName: item.nextGroupName,
       auditors: item.flowAuditors[0].login,
       nextApproverList: item.flowAuditors,
-      approverIdea: item.btnName,
       nextApproverModal: true,
     });
   }
@@ -215,14 +214,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         },
       },
     } = this.props;
-    const { groupName, auditors, operate, approverIdea } = this.state;
+    const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId,
       // 下一组ID
       groupName,
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
-      approverIdea,
     }).then(() => {
       message.success('服务经理主职位设置成功');
       this.setState({

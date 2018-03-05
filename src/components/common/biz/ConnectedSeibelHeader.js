@@ -20,6 +20,8 @@ const mapStateToProps = state => ({
   custRange: state.app.custRange,
   // 已申请客户
   customerList: state.app.customerList,
+  // 已申请服务经理
+  ptyMngList: state.app.ptyMngList,
 });
 
 const mapDispatchToProps = {
@@ -29,6 +31,8 @@ const mapDispatchToProps = {
   getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
   // 获取拟稿人列表
   getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
+  // 获取已申请服务经理列表
+  getPtyMngList: fetchDataFunction(false, 'app/getPtyMngList'),
   // 获取部门
   getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
