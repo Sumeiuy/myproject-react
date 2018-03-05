@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-03 15:41:55
+ * @Last Modified time: 2018-03-05 15:12:49
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -61,6 +61,8 @@ const config = {
     507050: 11,
     507095: 111,
   },
+  // 判断详情中的子类型是否套利软件
+  arbitrageSoftwareArray: ['套利软件', '507095'],
 };
 
 export default config;
