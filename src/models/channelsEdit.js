@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:46:20
+ * @Last Modified time: 2018-03-03 17:15:41
  */
 
 import { message } from 'antd';
@@ -22,6 +22,8 @@ export default {
     flowStepInfo: EMPTY_OBJECT,  // 审批人及按钮
     operationList: EMPTY_LIST, // 操作类型列表
     templateList: EMPTY_LIST, // 模板列表
+    businessTypeList: EMPTY_LIST, // 模板列表
+    openPermissionList: EMPTY_LIST, // 开通权限列表
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
     protocolProductList: EMPTY_LIST, // 协议产品列表
     underCustList: EMPTY_LIST,  // 客户列表
@@ -61,6 +63,20 @@ export default {
         protocolProductList: [],
         protocolClauseList: [],
         templateList: resultData,
+      };
+    },
+    // 查询业务类型列表
+    queryBusinessTypeListSuccess(state, action) {
+      const { payload = [] } = action;
+      return {
+        businessTypeList: payload,
+      };
+    },
+    // 查询业务类型列表
+    queryOpenPermissionListSuccess(state, action) {
+      const { payload = [] } = action;
+      return {
+        openPermissionList: payload,
       };
     },
     // 根据所选模板id查询对应协议条款
@@ -219,6 +235,31 @@ export default {
       yield put({
         type: 'queryTemplateListSuccess',
         payload: response,
+      });
+    },
+    // 查询业务类型
+    * queryBusinessTypeList({ payload }, { call, put }) {
+      const response = yield call(api.queryTypeVaules, payload);
+      const responseData = response.resultData.map(v => ({
+        ...v, show: true, label: v.val, value: v.name,
+      }));
+      yield put({
+        type: 'queryBusinessTypeListSuccess',
+        payload: responseData,
+      });
+    },
+    // 查询开通权限
+    * queryOpenPermissionList({ payload }, { call, put }) {
+      const response = yield call(api.queryTypeVaules, payload);
+      const responseData = response.resultData.map(v => ({
+        label: v.val,
+        value: v.name,
+        key: v.name,
+        code: v.name,
+      }));
+      yield put({
+        type: 'queryOpenPermissionListSuccess',
+        payload: responseData,
       });
     },
     // 根据所选模板id查询对应协议条款
