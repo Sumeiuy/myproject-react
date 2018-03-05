@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置新建页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 13:28:36
+ * @Last Modified time: 2018-03-05 16:42:52
  */
 
 import React, { PureComponent } from 'react';
@@ -156,8 +156,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   checkTableData(record, index) {
     const { defaultChecked } = this.state;
     const disabled = defaultChecked === index;
-    console.warn('recode', record);
-    console.warn('index', index);
     this.setState({
       checkedRadio: index,
       checkedEmployee: record,
@@ -180,17 +178,24 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
-      auditors: item.flowAuditors[0].login,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
       nextApproverModal: true,
     });
   }
 
-  // 发送单客户修改请求,先走修改接口，再走走流程接口
+  // 发送修改请求,先走修改接口，再走走流程接口
   @autobind
   sendModifyRequest(value) {
     const { updateApplication } = this.props;
     const { checkedEmployee, employeeId } = this.state;
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     updateApplication({
       targetEmpId: employeeId,
       postnId: checkedEmployee.positionId,
@@ -222,9 +227,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
     }).then(() => {
-      message.success('服务经理主职位设置成功');
+      message.success('服务经理主职位新建成功');
       this.setState({
-        nextApproverModal: false,
         isShowModal: false,
       }, () => {
         queryAppList(query, pageNum, pageSize);
