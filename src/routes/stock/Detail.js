@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-02 15:50:17
+ * @Last Modified time: 2018-03-05 09:48:47
  */
 
 import React, { PureComponent } from 'react';
@@ -13,8 +13,9 @@ import { connect } from 'dva';
 import { Layout } from 'antd';
 
 import withRouter from '../../decorators/withRouter';
-import SetHeight from '../../decorators/setHeight';
+import setHeight from '../../decorators/setHeight';
 import Icon from '../../components/common/Icon';
+
 import config from './config';
 import styles from './detail.less';
 
@@ -38,7 +39,7 @@ const mapDispatchToProps = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@SetHeight
+@setHeight
 export default class StockDetail extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,

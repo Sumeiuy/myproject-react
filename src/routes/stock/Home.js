@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-02 15:02:50
+ * @Last Modified time: 2018-03-05 09:38:05
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import { Tabs, Table, Input, Message } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import SetHeight from '../../decorators/setHeight';
+import setHeight from '../../decorators/setHeight';
 import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import config from './config';
@@ -43,7 +43,7 @@ const mapDispatchToProps = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@SetHeight
+@setHeight
 export default class Stock extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
