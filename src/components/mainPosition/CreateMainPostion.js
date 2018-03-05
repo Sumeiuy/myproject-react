@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置新建页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-05 16:00:37
+ * @Last Modified time: 2018-03-05 16:42:52
  */
 
 import React, { PureComponent } from 'react';
@@ -193,6 +193,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       message.error('请选择审批人');
       return;
     }
+    this.setState({
+      nextApproverModal: false,
+    });
     updateApplication({
       targetEmpId: employeeId,
       postnId: checkedEmployee.positionId,
@@ -226,7 +229,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }).then(() => {
       message.success('服务经理主职位新建成功');
       this.setState({
-        nextApproverModal: false,
         isShowModal: false,
       }, () => {
         queryAppList(query, pageNum, pageSize);
