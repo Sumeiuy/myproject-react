@@ -2,8 +2,8 @@
  * @Description: 批量划转的错误提醒页面
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-01 16:09:34
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-03-05 09:37:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +11,7 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
-import SetHeight from '../../decorators/setHeight';
+import setHeight from '../../decorators/setHeight';
 import withRouter from '../../decorators/withRouter';
 import styles from './notifies.less';
 
@@ -39,7 +39,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@SetHeight
+@setHeight
 export default class FilialeCustTransferNotifies extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,

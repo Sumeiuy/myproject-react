@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-01 14:40:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 21:07:14
+ * @Last Modified time: 2018-03-02 15:54:43
  * @description 封装antd的TreeSelect组件
  */
 
@@ -73,6 +73,11 @@ export default class HtscTreeSelect extends PureComponent {
       isSHowModal: false,
       value: [],
     };
+  }
+
+  @autobind
+  clear() {
+    this.setState({ value: [] });
   }
 
   @autobind

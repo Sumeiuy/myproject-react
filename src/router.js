@@ -54,6 +54,9 @@ import FilialeCustTransferNotifies from './routes/filialeCustTransfer/Notifies';
 // 晨间播报
 import { BroadcastDetail, BroadcastList } from './routes/morningBroadcast';
 import PreSaleQuery from './routes/preSaleQuery/Home';
+// 个股
+import Stock from './routes/stock/Home';
+import StockDetail from './routes/stock/Detail';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -139,6 +142,14 @@ const routes = [
     component: BroadcastList,
   },
   { path: '/broadcastDetail', component: BroadcastDetail },
+  // 个股点评
+  {
+    path: '/stock',
+    component: Stock,
+    children: [
+      { path: '/detail', component: StockDetail },
+    ],
+  },
 ];
 
 // 递归创建路由

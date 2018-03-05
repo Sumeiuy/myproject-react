@@ -1,0 +1,36 @@
+.stockWrapper {
+  padding: 20px;
+  height: 100%;
+  background-color: #fff;
+  overflow: auto;
+  .search {
+    font-size: 14px;
+    input {
+      margin-right: 24px;
+    }
+  }
+  table {
+    thead {
+      background-color: #f7f7f7;
+    }
+    tr {
+      cursor: pointer;
+      &:nth-child(odd) {
+        background-color: #f9f9f9;
+      }
+      th, td {
+        width: 260px;
+      }
+      td {
+        &:first-child {
+          div {
+            width: 260px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+}
