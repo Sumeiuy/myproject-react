@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置右侧详情
  * @Date: 2018-02-26 15:19:37
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:45:38
+ * @Last Modified time: 2018-03-02 10:23:38
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,7 @@ export default class Detail extends PureComponent {
       empName,
       orgName,
       createTime,
-      statusDesc,
+      status,
       ptyMngName,
       ptyMngId,
       empPostns,
@@ -76,7 +76,7 @@ export default class Detail extends PureComponent {
                     <InfoItem label="提请时间" value={createTime} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="状态" value={statusDesc} />
+                    <InfoItem label="状态" value={status} />
                   </li>
                 </ul>
               </div>
