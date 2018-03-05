@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-02 17:45:49
+ * @Last Modified time: 2018-03-03 15:30:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -432,7 +432,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
     if (this.isArbirageSoftware(formData.subType)) {
       // 针对套利软件的特有数据进行校验
-      if (!formData.businessType) {
+      if (!formData.softBusinessType) {
         message.error('请选择业务类型');
         return false;
       }

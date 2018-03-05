@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-02 14:31:02
+ * @Last Modified time: 2018-03-03 15:41:55
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -40,6 +40,7 @@ const config = {
   doApproveOperate: {
     [channelTypeConfig.ZJKCD_ID]: '1', // 子类型为紫金快车道时对应的operate
     [channelTypeConfig.GSTD_ID]: '11', // 子类型为高速通道时对应的operate
+    [channelTypeConfig.ARBIRAGE_ID]: '111', // 子类型为套利软件时对应的operate
   },
   protocolSubs: {
     arbitrage: '0503',

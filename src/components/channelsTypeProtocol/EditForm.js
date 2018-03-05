@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-02 18:02:14
+ * @Last Modified time: 2018-03-05 12:07:23
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -54,7 +54,7 @@ const attachmentRequired = {
     attachmentMap[5].type,
   ],
 };
-const ArbirageSoftWareType = '507095'; // 套利软件的子类型值
+const ArbirageSoftWareType = config.protocolSubTypes.arbitrageSoft; // 套利软件的子类型值
 const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol', 'arbirageSoftware'];
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
@@ -166,7 +166,7 @@ export default class EditForm extends PureComponent {
     });
 
     this.state = {
-      isArbirageSoftWare: false,
+      isArbirageSoftWare: channelType.isArbirageSoftware(protocolDetail.subType),
       isEdit,
       // 附件类型列表
       attachmentTypeList: attachmentMapRequired,

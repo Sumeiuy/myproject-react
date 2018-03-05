@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 16:51:00
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-05 12:12:05
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,10 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
-
+import channelType from '../../helper/page/channelType';
+import {
+  isInvolvePermission,
+} from '../../components/channelsTypeProtocol/auth';
 import styles from './edit.less';
 
 const confirm = Modal.confirm;
@@ -55,6 +58,10 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 模板列表
   templateList: state.channelsEdit.templateList,
+  // 开通权限列表
+  openPermissionList: state.channelsEdit.openPermissionList,
+  // 业务类型列表
+  businessTypeList: state.channelsEdit.businessTypeList,
   // 模板对应协议条款列表
   protocolClauseList: state.channelsEdit.protocolClauseList,
   // 协议产品列表
@@ -73,6 +80,10 @@ const mapDispatchToProps = {
   getProtocolDetail: fetchDataFunction(true, 'channelsEdit/getProtocolDetail'),
   // 查询操作类型/子类型/模板列表
   queryTypeVaules: fetchDataFunction(false, 'channelsEdit/queryTypeVaules'),
+  // 查询业务类型
+  queryBusinessTypeList: fetchDataFunction(false, 'channelsEdit/queryBusinessTypeList'),
+  // 查询开通权限
+  queryOpenPermissionList: fetchDataFunction(false, 'channelsEdit/queryOpenPermissionList'),
   // 根据所选模板id查询模板对应协议条款
   queryChannelProtocolItem: fetchDataFunction(false, 'channelsEdit/queryChannelProtocolItem'),
   // 查询协议产品列表
@@ -111,7 +122,13 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     // 查询操作类型/子类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
+    // 查询业务类型列表
+    queryBusinessTypeList: PropTypes.func.isRequired,
+    // 查询开通权限列表
+    queryOpenPermissionList: PropTypes.func.isRequired,
     templateList: PropTypes.array.isRequired,
+    businessTypeList: PropTypes.array.isRequired,
+    openPermissionList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     protocolClauseList: PropTypes.array.isRequired,
@@ -170,9 +187,12 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     getProtocolDetail({
       flowId: query.flowId,
     }).then(() => {
+      console.warn(55555555555555555);
       const {
         protocolDetail,
         queryTypeVaules,
+        queryBusinessTypeList,
+        queryOpenPermissionList,
       } = this.props;
       // 获取协议模版
       queryTypeVaules({
@@ -187,6 +207,25 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
           template: filterTemplate[0] || {},
         });
       });
+      console.warn('protocolDetail.subType: ', protocolDetail.subType);
+      // TODO 如果是套利软件，则还需要查询业务类型
+      if (channelType.isArbirageSoftware(protocolDetail.subType)) {
+        console.warn(111111111111);
+        queryBusinessTypeList({
+          typeCode: 'businessType',
+          subType: config.protocolSubTypes.arbitrageSoft,
+          operationType: protocolDetail.operationType,
+        });
+        // 如果用户选择的是权限类型则还需要查询开通权限
+        if (isInvolvePermission(protocolDetail.softBusinessType)) {
+          console.warn(222222222222);
+          queryOpenPermissionList({
+            typeCode: 'permissionType',
+            subType: config.protocolSubTypes.arbitrageSoft,
+            operationType: protocolDetail.operationType,
+          });
+        }
+      }
     });
   }
 
@@ -326,7 +365,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
-    console.warn('formData', formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;
@@ -359,6 +397,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       flowHistory,
       queryTypeVaules, // 查询操作类型/子类型/模板列表
       templateList, // 模板列表
+      businessTypeList, // 业务类型列表
+      openPermissionList, // 开通权限列表
       protocolDetail, // 协议详情
       queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
       protocolClauseList, // 所选模板对应协议条款列表
@@ -393,6 +433,10 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       queryTypeVaules,
       // 协议模板列表
       templateList,
+      // 业务类型列表
+      businessTypeList,
+      // 开通权限列表
+      openPermissionList,
       // 根据所选模板id查询模板对应协议条款
       queryChannelProtocolItem,
       // 所选模板对应协议条款列表
