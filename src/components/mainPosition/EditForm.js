@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置修改页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 13:44:33
+ * @Last Modified time: 2018-03-05 16:00:21
  */
 
 import React, { PureComponent } from 'react';
@@ -35,8 +35,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     getButtonList: PropTypes.func.isRequired,
     // 新建（修改）接口
     updateApplication: PropTypes.func.isRequired,
-    // 新建（修改）接口返回的业务主键的值
-    itemId: PropTypes.string.isRequired,
     // 走流程接口
     doApprove: PropTypes.func.isRequired,
   }
@@ -87,8 +85,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   checkTableData(record, index) {
     const { defaultChecked } = this.state;
     const disabled = defaultChecked === index;
-    console.warn('recode', record);
-    console.warn('index', index);
     this.setState({
       checkedRadio: index,
       checkedEmployee: record,
@@ -107,17 +103,30 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
-      auditors: item.flowAuditors[0].login,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
-      nextApproverModal: true,
+    }, () => {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
+      if (item.approverNum !== 'none') {
+        this.setState({
+          nextApproverModal: true,
+        });
+      } else {
+        this.sendDoApproveRequest();
+      }
     });
   }
 
-  // 发送单客户修改请求,先走修改接口，再走走流程接口
+  // 发送修改请求,先走修改接口，再走走流程接口
   @autobind
   sendModifyRequest(value) {
     const { updateApplication, data } = this.props;
     const { checkedEmployee } = this.state;
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
     const mainPtyMngInfo = _.find(data.empPostns, o => o.primary === true);
     updateApplication({
       targetEmpId: data.ptyMngId,
@@ -133,13 +142,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   sendDoApproveRequest(value) {
     const {
       doApprove,
-      itemId,
       getDetailInfo,
     } = this.props;
-    const { flowId } = this.props.data;
+    const { flowId, appId } = this.props.data;
     const { groupName, auditors, operate } = this.state;
     doApprove({
-      itemId,
+      itemId: appId,
       flowId,
       wobNum: flowId,
       // 下一组ID
