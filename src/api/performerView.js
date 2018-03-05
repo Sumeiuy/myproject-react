@@ -40,5 +40,7 @@ export default function performerView(api) {
     countExamineeByType: query => api.post('/groovynoauth/fsp/assess/common/countExamineeByType', query),
     // 导出
     exportCustListExcel: query => api.post('/groovynoauth/fsp/assess/common/exportCustListExcel', query),
+    // 执行者视图查客户
+    queryCustomer: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustsServedByEmpId', query),
   };
 }
