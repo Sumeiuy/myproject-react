@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置修改页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-05 16:00:21
+ * @Last Modified time: 2018-03-05 16:43:58
  */
 
 import React, { PureComponent } from 'react';
@@ -127,6 +127,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       message.error('请选择审批人');
       return;
     }
+    this.setState({
+      nextApproverModal: false,
+    });
     const mainPtyMngInfo = _.find(data.empPostns, o => o.primary === true);
     updateApplication({
       targetEmpId: data.ptyMngId,
@@ -161,7 +164,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         message.success('该服务经理主职位设置已被终止');
       }
       this.setState({
-        nextApproverModal: false,
         buttonListData: [],
       }, () => {
         getDetailInfo({ flowId });
