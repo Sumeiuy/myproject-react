@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-13 10:03:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-26 14:08:41
+ * @Last Modified time: 2018-03-03 15:41:55
  */
 import { config as channelTypeConfig } from '../../helper/page/channelType';
 
@@ -40,9 +40,26 @@ const config = {
   doApproveOperate: {
     [channelTypeConfig.ZJKCD_ID]: '1', // 子类型为紫金快车道时对应的operate
     [channelTypeConfig.GSTD_ID]: '11', // 子类型为高速通道时对应的operate
+    [channelTypeConfig.ARBIRAGE_ID]: '111', // 子类型为套利软件时对应的operate
   },
   protocolSubs: {
     arbitrage: '0503',
+  },
+  // 新建协议的时候需要用到的子类型代表值
+  // 后端的数值，与首页列表的子类型的值不一样
+  protocolSubTypes: {
+    // 快车道
+    fastConnect: '507070',
+    // 高速通道
+    expressConnect: '507050',
+    // 套利软件
+    arbitrageSoft: '507095',
+  },
+  // 协议管理中查询下一审批步骤的操作值
+  protocolStepOperate: {
+    507070: 1,
+    507050: 11,
+    507095: 111,
   },
 };
 

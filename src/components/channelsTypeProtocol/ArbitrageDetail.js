@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-02-26 13:49:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-28 15:21:37
+ * @Last Modified time: 2018-03-02 14:24:07
  * @description 套利软件展示页详情组件
  */
 
@@ -71,6 +71,11 @@ export default class Detail extends PureComponent {
       flowHistory,
       attachmentList,
     } = this.props;
+    // 客户姓名，
+    // 由于后台接口之前contactName和accountName同时存在，
+    // 有时候有有时候没有，
+    // 所以采取两个字段同时判断，来显示客户名称以及经纪客户号
+    // 都没有数据则显示暂无
     const custName = `${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`;
     const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : EMPTY_PARAM;
     const nowStep = {

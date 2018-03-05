@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 20:03:23
+ * @Last Modified time: 2018-03-05 12:07:23
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -47,9 +47,15 @@ const attachmentRequired = {
     attachmentMap[3].type,
     attachmentMap[5].type,
   ],
+  // 套利软件
+  arbirageSoftware: [
+    attachmentMap[0].type,
+    attachmentMap[3].type,
+    attachmentMap[5].type,
+  ],
 };
-const ArbirageSoftWareType = '507095'; // 套利软件的子类型值
-const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol'];
+const ArbirageSoftWareType = config.protocolSubTypes.arbitrageSoft; // 套利软件的子类型值
+const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol', 'arbirageSoftware'];
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
 export default class EditForm extends PureComponent {
   static propTypes = {
@@ -132,6 +138,8 @@ export default class EditForm extends PureComponent {
       } else if (channelType.isGSChannel(subType)) {
         // 如果子类型是高速通道，对高速通道类型的附件做检验
         hasCust = custAttachment[3];
+      } else if (channelType.isArbirageSoftware(subType)) {
+        hasCust = custAttachment[4];
       }
       if (_.includes(custOperateArray, protocolDetail.operationType)) {
         custOperate = true;
@@ -158,7 +166,7 @@ export default class EditForm extends PureComponent {
     });
 
     this.state = {
-      isArbirageSoftWare: false,
+      isArbirageSoftWare: channelType.isArbirageSoftware(protocolDetail.subType),
       isEdit,
       // 附件类型列表
       attachmentTypeList: attachmentMapRequired,
@@ -290,7 +298,7 @@ export default class EditForm extends PureComponent {
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
-    const { productList, attachmentTypeList, cust, isEdit } = this.state;
+    const { productList, attachmentTypeList, cust, isEdit, isArbirageSoftWare } = this.state;
     let formData = {};
     // 生成订购时的数据，如果是订购
     if (_.includes(subscribeArray, baseInfoData.operationType)) {
@@ -313,6 +321,25 @@ export default class EditForm extends PureComponent {
         flowid: isEdit ? protocolDetail.flowid : '',
         id: isEdit ? protocolDetail.id : '',
       };
+      // TODO 如果是套利软件传递不同的参数
+      if (isArbirageSoftWare) {
+        formData = {
+          subType: baseInfoData.subType,
+          custId: baseInfoData.client.cusId,
+          custType: baseInfoData.client.custType,
+          econNum: baseInfoData.client.brokerNumber,
+          startDt: '',
+          vailDt: '',
+          content: baseInfoData.content,
+          operationType: baseInfoData.operationType,
+          templateId: baseInfoData.protocolTemplate.rowId,
+          attachment: attachmentTypeList,
+          flowid: isEdit ? protocolDetail.flowid : '',
+          id: isEdit ? protocolDetail.id : '',
+          softPermission: baseInfoData.softPermission,
+          softBusinessType: baseInfoData.businessType,
+        };
+      }
     } else {
       // 其他操作类型的数据
       formData = {
@@ -346,6 +373,7 @@ export default class EditForm extends PureComponent {
     const defaultAttachmentArr = attachmentTypeList.map(item => ({
       ...item,
       required: false,
+      order: 2, // 表示放到数组后面
     }));
     // 将附件数组做必传项配置
     const attachmentMapRequired = defaultAttachmentArr.map((item) => {
@@ -353,12 +381,15 @@ export default class EditForm extends PureComponent {
         return {
           ...item,
           required: true,
+          order: 1, // 表示放到数组前面
         };
       }
       return item;
     });
+    // 需要将必填的取出来，放在头部
+    const lastattachmentMapRequired = _.sortBy(attachmentMapRequired, 'order');
     this.setState({
-      attachmentTypeList: attachmentMapRequired,
+      attachmentTypeList: lastattachmentMapRequired,
     });
   }
   // 打开弹窗
@@ -572,11 +603,16 @@ export default class EditForm extends PureComponent {
     });
   }
 
-  // 设置值
+  // 设置子类型
   @autobind
   handleChangeSubType(st) {
+    const isArbirageSoftWare = st === ArbirageSoftWareType;
+    if (isArbirageSoftWare) {
+      // 如果子类型切换到套利软件，则需要修改附件必填项和顺序
+      this.setUploadConfig(custAttachment[4]);
+    }
     this.setState({
-      isArbirageSoftWare: st === ArbirageSoftWareType,
+      isArbirageSoftWare,
     });
   }
 
