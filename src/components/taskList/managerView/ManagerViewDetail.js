@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 13:27:46
+ * @Last Modified time: 2018-03-06 13:49:43
  * 管理者视图详情
  */
 
@@ -101,13 +101,55 @@ export default class ManagerViewDetail extends PureComponent {
     };
   }
 
+  @autobind
+  getCurrentOrgId() {
+    if (this.missionImplementationElem) {
+      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
+    }
+    return emp.getOrgId();
+  }
+
+  @autobind
+  handleExport() {
+    const {
+      location: { query: { currentId } },
+      mngrMissionDetailInfo,
+    } = this.props;
+    const { missionProgressStatus = null, progressFlag = null } = this.state;
+    const params = {
+      missionProgressStatus,
+      progressFlag,
+      missionName: mngrMissionDetailInfo.missionName,
+      orgId: this.getCurrentOrgId(),
+      missionId: currentId,
+      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
+      servicePolicy: mngrMissionDetailInfo.servicePolicy,
+    };
+    return params;
+  }
+
+  @autobind
+  hideCustDetailModal() {
+    this.setState({
+      isShowCustDetailModal: false,
+    });
+  }
+
+  /**
+   * 关闭弹出框
+   */
+  @autobind
+  handleCloseModal() {
+    this.hideCustDetailModal();
+  }
+
   /**
    * 预览客户明细
    */
   @autobind
   handlePreview(params = {}) {
     const {
-      // currentLevel,
+      currentLevel,
       title,
       pageNum,
       pageSize,
@@ -146,9 +188,12 @@ export default class ManagerViewDetail extends PureComponent {
       };
     }
 
-    // TODO
-    // if (isEntryFromPie) {
-    // }
+    if (isEntryFromPie) {
+      postBody = {
+        ...postBody,
+        currentLevel,
+      };
+    }
 
     this.setState({
       ...progressParam,
@@ -164,48 +209,6 @@ export default class ManagerViewDetail extends PureComponent {
         canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
       });
     });
-  }
-
-  /**
-   * 关闭弹出框
-   */
-  @autobind
-  handleCloseModal() {
-    this.hideCustDetailModal();
-  }
-
-  @autobind
-  hideCustDetailModal() {
-    this.setState({
-      isShowCustDetailModal: false,
-    });
-  }
-
-  @autobind
-  handleExport() {
-    const {
-      location: { query: { currentId } },
-      mngrMissionDetailInfo,
-    } = this.props;
-    const { missionProgressStatus = null, progressFlag = null } = this.state;
-    const params = {
-      missionProgressStatus,
-      progressFlag,
-      missionName: mngrMissionDetailInfo.missionName,
-      orgId: this.getCurrentOrgId(),
-      missionId: currentId,
-      serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
-      servicePolicy: mngrMissionDetailInfo.servicePolicy,
-    };
-    return params;
-  }
-
-  @autobind
-  getCurrentOrgId() {
-    if (this.missionImplementationElem) {
-      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
-    }
-    return emp.getOrgId();
   }
 
   /**
