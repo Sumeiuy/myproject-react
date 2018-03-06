@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-06 15:40:22
+ * @Last Modified time: 2018-03-06 15:43:55
  */
 
 
@@ -61,9 +61,9 @@ const otherFeedback2Key = '99999';
 const otherFeedback3Key = '100000';
 const otherFeedbackValue = '其它';
 
-// 二级其它反馈
+// 一级其它反馈
 const otherFeedback2List = [{ key: otherFeedback2Key, value: otherFeedbackValue }];
-// 三级其它反馈
+// 二级其它反馈
 const otherFeedback3List = [{ key: otherFeedback3Key, value: otherFeedbackValue }];
 
 function range(start, end) {
@@ -775,19 +775,19 @@ export default class ServiceRecordContent extends PureComponent {
               </Select>
               {
                 isShowSubCustomerFeedback ? null :
-                  <Select
-                    value={feedbackTypeChild}
-                    style={width}
-                    onChange={this.handleFeedbackTypeChild}
-                    disabled={isReadOnly}
-                    getPopupContainer={() => this.customerFeedbackRef}
-                  >
-                    {
+                <Select
+                  value={feedbackTypeChild}
+                  style={width}
+                  onChange={this.handleFeedbackTypeChild}
+                  disabled={isReadOnly}
+                  getPopupContainer={() => this.customerFeedbackRef}
+                >
+                  {
                       (feedbackTypeChildList).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
-                  </Select>
+                </Select>
               }
             </div>
           </div>
