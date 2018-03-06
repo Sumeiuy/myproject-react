@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-03 17:15:41
+ * @Last Modified time: 2018-03-05 15:04:16
  */
 
 import { message } from 'antd';
@@ -69,6 +69,7 @@ export default {
     queryBusinessTypeListSuccess(state, action) {
       const { payload = [] } = action;
       return {
+        ...state,
         businessTypeList: payload,
       };
     },
@@ -76,6 +77,7 @@ export default {
     queryOpenPermissionListSuccess(state, action) {
       const { payload = [] } = action;
       return {
+        ...state,
         openPermissionList: payload,
       };
     },
@@ -239,6 +241,7 @@ export default {
     },
     // 查询业务类型
     * queryBusinessTypeList({ payload }, { call, put }) {
+      console.log('queryBusinessTypeList: payload ', payload);
       const response = yield call(api.queryTypeVaules, payload);
       const responseData = response.resultData.map(v => ({
         ...v, show: true, label: v.val, value: v.name,

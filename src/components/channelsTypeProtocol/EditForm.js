@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 12:07:23
+ * @Last Modified time: 2018-03-05 17:30:09
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -57,6 +57,7 @@ const attachmentRequired = {
 const ArbirageSoftWareType = config.protocolSubTypes.arbitrageSoft; // 套利软件的子类型值
 const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol', 'arbirageSoftware'];
 const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
+
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -75,6 +76,10 @@ export default class EditForm extends PureComponent {
     getProtocolDetail: PropTypes.func,
     // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
+    // 查询开通权限列表，在驳回后修改的页面中使用
+    queryOpenPermissionList: PropTypes.func.isRequired,
+    // 查询业务类型列表，在驳回后修改的页面中使用
+    queryBusinessTypeList: PropTypes.func.isRequired,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
@@ -683,6 +688,8 @@ export default class EditForm extends PureComponent {
       protocolList,
       getFlowStepInfo,
       clearDetailData,
+      queryOpenPermissionList,
+      queryBusinessTypeList,
     } = this.props;
     const {
       isArbirageSoftWare,
@@ -744,6 +751,8 @@ export default class EditForm extends PureComponent {
             businessTypeList={businessTypeList}
             ref={ref => this.editBaseInfoComponent = ref}
             queryTypeVaules={queryTypeVaules}
+            queryOpenPermissionList={queryOpenPermissionList}
+            queryBusinessTypeList={queryBusinessTypeList}
             operationTypeList={operationTypeList}
             subTypeList={subTypeList}
             queryChannelProtocolProduct={queryChannelProtocolProduct}
