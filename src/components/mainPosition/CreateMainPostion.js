@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置新建页面
  * @Date: 2018-02-28 14:44:53
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-05 16:42:52
+ * @Last Modified time: 2018-03-06 14:29:02
  */
 
 import React, { PureComponent } from 'react';
@@ -231,6 +231,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       this.setState({
         isShowModal: false,
       }, () => {
+        // 服务经理新建成功，清楚新建弹框的数据
+        this.props.clearProps();
         queryAppList(query, pageNum, pageSize);
       });
     });
