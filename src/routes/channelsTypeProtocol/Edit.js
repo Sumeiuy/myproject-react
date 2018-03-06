@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 12:12:05
+ * @Last Modified time: 2018-03-05 18:12:20
  */
 
 import React, { PureComponent } from 'react';
@@ -34,9 +34,7 @@ const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const {
-  // channelsTypeProtocol,
   channelsTypeProtocol: { pageType },
-  // channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -187,7 +185,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     getProtocolDetail({
       flowId: query.flowId,
     }).then(() => {
-      console.warn(55555555555555555);
       const {
         protocolDetail,
         queryTypeVaules,
@@ -207,10 +204,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
           template: filterTemplate[0] || {},
         });
       });
-      console.warn('protocolDetail.subType: ', protocolDetail.subType);
       // TODO 如果是套利软件，则还需要查询业务类型
       if (channelType.isArbirageSoftware(protocolDetail.subType)) {
-        console.warn(111111111111);
         queryBusinessTypeList({
           typeCode: 'businessType',
           subType: config.protocolSubTypes.arbitrageSoft,
@@ -218,7 +213,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
         });
         // 如果用户选择的是权限类型则还需要查询开通权限
         if (isInvolvePermission(protocolDetail.softBusinessType)) {
-          console.warn(222222222222);
           queryOpenPermissionList({
             typeCode: 'permissionType',
             subType: config.protocolSubTypes.arbitrageSoft,
@@ -261,9 +255,23 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       message.error('备注字段长度不能超过120');
       return false;
     }
-    if (!formData.item.length) {
-      message.error('请选择协议产品');
-      return false;
+    if (!channelType.isArbirageSoftware(formData.subType)) {
+      if (!formData.item.length) {
+        message.error('请选择协议产品');
+        return false;
+      }
+    } else {
+      if (!formData.softBusinessType) {
+        message.error('请选择业务类型');
+        return false;
+      }
+      // 如果涉及权限，还得判断是否有开通权限
+      if (isInvolvePermission(formData.softBusinessType)) {
+        if (_.isEmpty(formData.softPermission)) {
+          message.error('请选择开通权限');
+          return false;
+        }
+      }
     }
     return true;
   }
@@ -413,6 +421,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       attachmentList,  // 附件列表
       cleartBtnGroup,  // 清除审批人
       getFlowStepInfo,
+      queryOpenPermissionList, // 查询开通权限列表，在驳回后修改的情况
+      queryBusinessTypeList, // 查询业务类型列表，在驳回后修改的情况
     } = this.props;
     const {
       approverModal,
@@ -464,6 +474,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       // 清除审批人
       cleartBtnGroup,
       getFlowStepInfo,
+      queryOpenPermissionList,
+      queryBusinessTypeList,
     };
     const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : '';
     const nowStep = {
