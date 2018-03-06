@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-03 20:55:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-03 21:11:10
+ * @Last Modified by: ouchangzhi
+ * @Last Modified time: 2018-03-06 14:46:45
  * @description 不能使用的下拉框样式
  */
 import React from 'react';
@@ -13,7 +13,7 @@ import styles from './disabledSelect.less';
 
 export default function DisabledSelect(props) {
   return (
-    <div className={styles.disabledSelectWrap}>
+    <div className={styles.disabledSelectWrap} title={props.text}>
       {props.text}
       <div className={styles.disabledSelectIcon}>
         <Icon type="caret-down" />
