@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-06 15:34:05
+ * @Last Modified time: 2018-03-06 15:40:22
  */
 
 
@@ -57,13 +57,14 @@ const serviceStateMap = {
 
 // 其它类型的客户反馈，容错处理，在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
 // 需要前端容错一下
-const feedback2Key = '99999';
-const feedback3Key = '100000';
+const otherFeedback2Key = '99999';
+const otherFeedback3Key = '100000';
+const otherFeedbackValue = '其它';
 
 // 二级其它反馈
-const otherFeedback2List = [{ key: feedback2Key, value: '其它' }];
+const otherFeedback2List = [{ key: otherFeedback2Key, value: otherFeedbackValue }];
 // 三级其它反馈
-const otherFeedback3List = [{ key: feedback3Key, value: '其它' }];
+const otherFeedback3List = [{ key: otherFeedback3Key, value: otherFeedbackValue }];
 
 function range(start, end) {
   const result = [];
@@ -269,9 +270,9 @@ export default class ServiceRecordContent extends PureComponent {
         // 如果找不到反馈一二级，则前端默认指定两个其它类型，类型取和后端定义的一样，
         // 不然提交接口报错
         if (isTaskFeedbackListOfNone) {
-          formObject.feedbackType = feedback2Key;
+          formObject.feedbackType = otherFeedback2Key;
           formObject.feedbackTypeList = otherFeedback2List;
-          formObject.feedbackTypeChild = feedback3Key;
+          formObject.feedbackTypeChild = otherFeedback3Key;
           formObject.feedbackTypeChildList = otherFeedback3List;
         } else if (!_.isEmpty(customerFeedback)) {
           const {
@@ -774,19 +775,19 @@ export default class ServiceRecordContent extends PureComponent {
               </Select>
               {
                 isShowSubCustomerFeedback ? null :
-                <Select
-                  value={feedbackTypeChild}
-                  style={width}
-                  onChange={this.handleFeedbackTypeChild}
-                  disabled={isReadOnly}
-                  getPopupContainer={() => this.customerFeedbackRef}
-                >
-                  {
-                    (feedbackTypeChildList).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
-                </Select>
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    onChange={this.handleFeedbackTypeChild}
+                    disabled={isReadOnly}
+                    getPopupContainer={() => this.customerFeedbackRef}
+                  >
+                    {
+                      (feedbackTypeChildList).map(obj => (
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
               }
             </div>
           </div>
