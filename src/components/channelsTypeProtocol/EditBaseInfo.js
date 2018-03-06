@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 18:11:49
+ * @Last Modified time: 2018-03-06 14:48:41
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -52,8 +52,8 @@ export default class EditBaseInfo extends PureComponent {
     openPermissionList: PropTypes.array.isRequired,
     // 查询子类型/操作类型/业务类型
     queryTypeVaules: PropTypes.func.isRequired,
-    queryOpenPermissionList: PropTypes.func.isRequired,
-    queryBusinessTypeList: PropTypes.func.isRequired,
+    queryOpenPermissionList: PropTypes.func,
+    queryBusinessTypeList: PropTypes.func,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
@@ -111,6 +111,8 @@ export default class EditBaseInfo extends PureComponent {
     getFlowStepInfo: () => { },
     getParentContainer: () => {},
     onChangeSubType: () => {},
+    queryOpenPermissionList: () => {},
+    queryBusinessTypeList: () => {},
   }
 
   constructor(props) {
@@ -181,6 +183,10 @@ export default class EditBaseInfo extends PureComponent {
         // 协议编号
         protocolNumber: '',
         needMutliAndTen: true,
+        // 业务类型
+        businessType: '',
+        // 开通权限
+        softPermission: [],
       };
     }
     this.state = {
@@ -544,6 +550,8 @@ export default class EditBaseInfo extends PureComponent {
       multiUsedFlag: false,
       levelTenFlag: false,
       protocolTemplate: value,
+      businessType: '',
+      softPermission: [],
     }, () => {
       const {
         queryChannelProtocolItem,
@@ -691,7 +699,7 @@ export default class EditBaseInfo extends PureComponent {
         value: `${item.id}~${item.flowId}`,
       }));
     }
-    let selectSoftPermission = [];
+    let selectSoftPermission = softPermission || [];
     if (isEditPage) {
       newProtocolList = [
         {
@@ -700,8 +708,8 @@ export default class EditBaseInfo extends PureComponent {
           value: protocolNumber,
         },
       ];
-      selectSoftPermission = softPermission.map(v => ({ value: v.code }));
     }
+    selectSoftPermission = selectSoftPermission.map(v => ({ value: v.code }));
     const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
       (<div>
         <InfoForm label="是否多账户使用" >
