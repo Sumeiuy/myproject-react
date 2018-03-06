@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
-import { emp, permission, env as envHelper } from '../../helper';
+import { emp, permission, env as envHelper, data as dataHelper } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -349,8 +349,7 @@ export default class PerformerView extends PureComponent {
       today,
       missionViewType: currentView,
     };
-
-    if (currentView === INITIATOR) {
+    if (currentView === INITIATOR || !envHelper.isGrayFlag()) {
       this.queryAppListInit({
         ...commonPostBody,
         beforeToday,
@@ -875,16 +874,12 @@ export default class PerformerView extends PureComponent {
     // 管理者视图获取客户反馈
     countFlowFeedBack({
       missionId: record.id,
-      // missionId: '101111171108181',
-      // orgId: 'ZZ001041',
       orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: record.id,
-      // missionId: '101111171108181',
       orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
     });
   }
 
@@ -932,6 +927,14 @@ export default class PerformerView extends PureComponent {
       },
     });
     this.queryAppList(query, nextPage, currentPageSize);
+    // 切换页码，将页面的scrollToTop
+    const listWrap = this.splitPanelElem.listWrap;
+    if (listWrap) {
+      const appList = dataHelper.getChainPropertyFromObject(listWrap, 'firstChild.firstChild');
+      if (appList) {
+        appList.scrollTop = 0;
+      }
+    }
   }
 
   // 切换每一页显示条数
@@ -1056,7 +1059,7 @@ export default class PerformerView extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
-        filterTimer={this.handleDefaultTime}
+        isGrayFlag={envHelper.isGrayFlag()}
       />
     );
 

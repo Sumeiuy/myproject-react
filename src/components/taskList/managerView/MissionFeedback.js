@@ -25,6 +25,17 @@ const EMPTY_LIST = [];
 //  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]},
 //  {infoProblem: '', infoData: [{ a: 11, value: 0 }, { a: 11, value: 0 }]}
 // ]
+
+// 分页默认参数
+const curPageNum = 1;
+const curPageSize = 5;
+// 后台返回题目类型
+const TYPE = {
+  radioType: '1',
+  checkboxType: '2',
+  textAreaType: '3',
+};
+
 const isEmptyData = (data, type, value) => {
   if (_.isEmpty(data)) {
     return true;
@@ -121,6 +132,7 @@ export default class MissionFeedback extends PureComponent {
     let checkboxFeedback = [];
     let answerTotalCount = 0;
     let dataInfo = [];
+    let singleInfo = {};
     _.each(missionFeedbackData, (item) => {
       if (_.isArray(item)) {
         let radioData = [];
@@ -133,23 +145,26 @@ export default class MissionFeedback extends PureComponent {
 
         _.each(item, (childItem) => {
           const { quesTypeCode } = childItem;
-          if (quesTypeCode === '1' || quesTypeCode === 1 || quesTypeCode === '2' || quesTypeCode === 2) {
+          if (quesTypeCode === TYPE.radioType || quesTypeCode === TYPE.checkboxType) {
             const tempData = [{
               name: childItem.optionValue,
               value: childItem.cnt,
               optionPer: answerTotalCount === 0 ? '0%' : `${((childItem.cnt / answerTotalCount) * 100).toFixed(0) || 0}%`,
             }];
-            if (quesTypeCode === '1') {
+            if (quesTypeCode === TYPE.radioType) {
               // 单选题
               radioData = _.concat(radioData, tempData);
             } else {
               // 多选题
               checkboxData = _.concat(checkboxData, tempData);
             }
-          } else if (quesTypeCode === '3' || quesTypeCode === 3) {
+          } else if (quesTypeCode === TYPE.textAreaType) {
             // 主观题
             infoData = _.concat(infoData, [
-              { data: childItem.answerText || 0 },
+              {
+                data: childItem.answerText || 0,
+                quesId: childItem.quesId,
+              },
             ]);
           }
         });
@@ -167,16 +182,20 @@ export default class MissionFeedback extends PureComponent {
             checkboxData,
           }]);
         }
-
         if (!_.isEmpty(infoData)) {
           dataInfo = _.concat(dataInfo, [{
             infoProblem: item[0].quesValue,
+            quesId: item[0].quesId,
             infoData,
           }]);
+          // 存储主观题分页，当前页
+          singleInfo = {
+            ...singleInfo,
+            [item[0].quesId]: curPageNum,
+          };
         }
       }
     });
-
     finalData = {
       allFeedback: {
         serviceAllNum: serveManagerCount || 0,
@@ -187,13 +206,8 @@ export default class MissionFeedback extends PureComponent {
       radioFeedback,
       checkboxFeedback,
       dataInfo,
-      pageInfo: {
-        curPageNum: 1,
-        curPageSize: 5,
-        totalRecordNum: _.size(dataInfo),
-      },
+      singleInfo,
     };
-
     return {
       finalData,
     };
@@ -375,19 +389,16 @@ export default class MissionFeedback extends PureComponent {
    * @param {*} curPageSize 当前页条目
    */
   @autobind
-  handlePageChange(nextPage, currentPageSize) {
+  handlePageChange(nextPage, quesId) {
     const { finalData } = this.state;
-    const {
-      curDataInfo,
-    } = this.renderProblemsData(nextPage, currentPageSize);
+    const { singleInfo } = finalData;
     this.setState({
       finalData: {
         ...finalData,
-        pageInfo: {
-          curPageNum: nextPage,
-          curPageSize: currentPageSize,
+        singleInfo: {
+          ...singleInfo,
+          [quesId]: nextPage,
         },
-        dataInfo: curDataInfo,
       },
     });
   }
@@ -416,21 +427,19 @@ export default class MissionFeedback extends PureComponent {
   }
 
   @autobind
-  renderProblemsData(curPageNum, curPageSize) {
-    const { finalData: { dataInfo, pageInfo: { totalRecordNum } } } = this.state;
+  renderProblemsData(pageNum, infoData) {
     let curDataInfo = [];
-    if (curPageNum <= 1) {
+    if (pageNum <= 1) {
       // 第一页
-      curDataInfo = _.slice(dataInfo, 0, curPageSize);
+      curDataInfo = _.slice(infoData, 0, curPageSize);
     } else {
       // 大于一页
-      curDataInfo = _.slice(dataInfo,
-        (curPageNum - 1) * curPageSize, curPageSize);
+      curDataInfo = _.slice(infoData,
+        (pageNum - 1) * curPageSize, curPageSize * pageNum);
     }
-
     return {
       curDataInfo,
-      totalRecordNum,
+      pageNum,
     };
   }
 
@@ -532,38 +541,54 @@ export default class MissionFeedback extends PureComponent {
     );
   }
 
+  renderOneInfo({ data, pageNum = 1 }) {
+    return _.map(data, (itemChild, index) => {
+      if (_.isEmpty(itemChild.data)) {
+        return null;
+      }
+      // 手动设置问题的index展示
+      if (pageNum > 1) {
+        return (
+          <div title={itemChild.data} key={itemChild.data}>
+            {index + ((pageNum - 1) * curPageSize) + 1 }.{itemChild.data || ''}
+          </div>
+        );
+      }
+      return (
+        <div title={itemChild.data} key={itemChild.data}>
+          {index + 1}.{itemChild.data || ''}
+        </div>
+      );
+    });
+  }
+
   @autobind
   renderProblemsInfo(dataInfo) {
     const { isFold } = this.props;
-    const { finalData: { pageInfo } } = this.state;
-    const { curPageNum, curPageSize, totalRecordNum } = pageInfo;
+    const { finalData: { singleInfo } } = this.state;
     const paginationOption = {
-      current: curPageNum,
-      total: totalRecordNum,
       pageSize: curPageSize,
-      onChange: this.handlePageChange,
       onShowSizeChange: this.handleSizeChange,
     };
     // 是否显示主观题统计栏目
-    // const isHideSubjective = isEmptyData(dataInfo, 'infoData', 'data');
 
     if (_.isEmpty(dataInfo)) {
       return null;
     }
     const value = _.map(dataInfo, (item) => {
+      let info = null;
       if (_.isEmpty(item.infoData)) {
         return null;
       }
-      const info = _.map(item.infoData, (itemChild, index) => {
-        if (_.isEmpty(itemChild.data)) {
-          return null;
-        }
-        return (
-          <div title={itemChild.data} key={itemChild.data}>
-            {index + 1}.{itemChild.data || ''}
-          </div>
-        );
-      });
+      // 当主观题答案条数大于5时，进行分页处理
+      if (_.size(item.infoData) > curPageSize) {
+        const firstPageData = this.renderProblemsData(singleInfo[item.quesId], item.infoData);
+        info = this.renderOneInfo({ data: firstPageData.curDataInfo,
+          pageNum: firstPageData.pageNum });
+      } else {
+        info = this.renderOneInfo({ data: item.infoData });
+      }
+
       return (
         <div className={styles.subjective}>
           <div
@@ -585,10 +610,15 @@ export default class MissionFeedback extends PureComponent {
                 <div className={styles.problemList}>
                   {info}
                 </div>
+                {/* 判断当前主观题是否超过5条，超过显示分页组件 */}
                 {
-                  totalRecordNum > 5 ?
+                  _.size(item.infoData) > curPageSize ?
                     <Pagination
                       {...paginationOption}
+                      total={_.size(item.infoData)}
+                      onChange={current =>
+                        this.handlePageChange(current, item.quesId)}
+                      current={singleInfo[item.quesId]}
                       className={styles.rowTop}
                     /> : null
                 }

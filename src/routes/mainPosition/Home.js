@@ -344,6 +344,7 @@ export default class MainPosition extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        isUseOfCustomer={false}
       />
     );
 

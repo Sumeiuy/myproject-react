@@ -25,7 +25,6 @@ if (persistConfig.active) {
 
 // 错误处理
 const onError = (e) => {
-  e.preventDefault();
   const { message: msg, stack } = e;
   const { ERROR_SEPARATOR } = requestConfig;
   // 如果存在分隔符，认为是业务错误
@@ -96,6 +95,8 @@ app.model(require('./models/mainPosition'));
 app.model(require('./models/morningBoradcast'));
 // 售前适当性查询
 app.model(require('./models/preSaleQuery'));
+// 个股资讯
+app.model(require('./models/stock'));
 
 // 4. Router
 app.router(routerConfig);

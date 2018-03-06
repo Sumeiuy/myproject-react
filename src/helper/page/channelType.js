@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-22 15:55:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 16:08:42
+ * @Last Modified time: 2018-03-02 16:58:31
  * @description 通道类型协议特有的辅助函数
  */
 
@@ -13,6 +13,8 @@ const config = {
   ZJKCD_NAME: '紫金快车道协议',  // 紫金快车道子类型名称
   GSTD_ID: '507050', // 高速通道子类型ID
   GSTD_NAME: '高速通道类协议', // 高速通道子类型名称
+  ARBIRAGE_ID: '507095', // 套利软件类型ID
+  ARBIRAGE_NAME: '套利软件', // 套利软件类型中文名称
 };
 
 const channelType = {
@@ -36,6 +38,13 @@ const channelType = {
    */
   isTenLevelTplId(type) {
     return type === config.TEN_LEVEL_TEMPLATE_ID;
+  },
+
+  /**
+   * 是否套利软件
+   */
+  isArbirageSoftware(type) {
+    return type === config.ARBIRAGE_ID || type === config.ARBIRAGE_NAME;
   },
 };
 

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 20:54:09
+ * @Last Modified time: 2018-03-05 18:11:49
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -37,16 +37,7 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 紫金通道 subType，新建协议判断切换的子类型
-const subTypeObject = {
-  // 快车道
-  fastConnect: '507070',
-  // 高速通道
-  expressConnect: '507050',
-  // 套利软件
-  arbitrageSoft: '507095',
-};
-const { subscribeArray } = config;
+const { subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray } = config;
 
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
@@ -61,6 +52,8 @@ export default class EditBaseInfo extends PureComponent {
     openPermissionList: PropTypes.array.isRequired,
     // 查询子类型/操作类型/业务类型
     queryTypeVaules: PropTypes.func.isRequired,
+    queryOpenPermissionList: PropTypes.func.isRequired,
+    queryBusinessTypeList: PropTypes.func.isRequired,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
@@ -160,6 +153,14 @@ export default class EditBaseInfo extends PureComponent {
         // 协议有效时间
         vailDt: formData.vailDt,
         needMutliAndTen: formData.operationType === '协议订购',
+        // 业务类型
+        businessType: formData.softBusinessType,
+        // 开通权限
+        softPermission: formData.softPermission,
+        // 软件密码
+        softPassword: formData.softPassword,
+        // 软件密码
+        softAccount: formData.softAccount,
       };
     } else {
       stateObj = {
@@ -217,6 +218,11 @@ export default class EditBaseInfo extends PureComponent {
   }
 
   @autobind
+  refHtscTreeSelect(input) {
+    this.htscTreeSelect = input;
+  }
+
+  @autobind
   compareFormData(next) {
     const {
       contactName,
@@ -239,13 +245,20 @@ export default class EditBaseInfo extends PureComponent {
       levelTenFlag: levelTenFlag === 'Y',
       startDt,
       vailDt,
-      // content,
-      // client: {
-      //   cusId: custId,
-      //   custType,
-      //   brokerNumber: econNum,
-      // },
     });
+  }
+
+  // 清除选择的业务类型
+  @autobind
+  clearBussinessType() {
+    this.setState({ businessType: '' });
+  }
+
+  // 清除选择的开通权限
+  @autobind
+  clearOpenPermission() {
+    this.setState({ softPermission: [] });
+    this.htscTreeSelect.clear();
   }
 
   // 通用Select Change方法
@@ -271,25 +284,14 @@ export default class EditBaseInfo extends PureComponent {
       }
       changeOperationType(value);
     } else if (key === 'subType') {
-      let operate;
-      if (value === subTypeObject.fastConnect) {
-        // 紫金快车道
-        operate = 1;
-      } else if (value === subTypeObject.expressConnect) {
-        // 高速通道
-        operate = 11;
-      } else if (value === subTypeObject.arbitrageSoft) {
-        // 套利软件
-        operate = 111;
-      }
       // TODO 此处告知父组件，当前选的子类型
       onChangeSubType(value);
       getFlowStepInfo({
         flowId: '',
-        operate,
+        operate: protocolStepOperate[value],
       });
       // 判断子类型是否为紫金通道，不是则不展现多用户和十档行情选择
-      if (value !== subTypeObject.fastConnect) {
+      if (value !== protocolSubTypes.fastConnect) {
         isHightSpeed = true;
       }
     }
@@ -363,7 +365,6 @@ export default class EditBaseInfo extends PureComponent {
   // 开通权限下拉多选框改变
   @autobind
   handleOpenPermissionChange(name, value) {
-    console.warn('handleOpenPermissionChange: ', value);
     const softPermission = value.map(v => ({ code: v.value, value: v.label }));
     this.setState({ softPermission });
   }
@@ -371,15 +372,24 @@ export default class EditBaseInfo extends PureComponent {
   // 切换业务类型
   @autobind
   handleBusinessTypeSelect(key, value) {
-    this.setState({ businessType: value });
-    const { operationType, subType } = this.state;
+    this.setState({ businessType: value, softPermission: [] });
+    const { operationType, subType, isEditPage } = this.state;
     // TODO如果设置权限，需要查询开通权限
     if (isInvolvePermission(value)) {
-      this.props.queryTypeVaules({
-        typeCode: 'permissionType',
-        subType,
-        operationType,
-      });
+      // TODO
+      if (isEditPage) {
+        this.props.queryOpenPermissionList({
+          typeCode: 'permissionType',
+          subType,
+          operationType,
+        });
+      } else {
+        this.props.queryTypeVaules({
+          typeCode: 'permissionType',
+          subType,
+          operationType,
+        });
+      }
     }
   }
 
@@ -460,6 +470,7 @@ export default class EditBaseInfo extends PureComponent {
       });
       return;
     }
+    // TODO 切换用户后，此处需要将协议模板，业务类型，开通权限，数据清空
     getCustValidate(validatePayload).then(
       () => {
         this.setState({
@@ -468,6 +479,14 @@ export default class EditBaseInfo extends PureComponent {
           if (isSubscribe) {
             // 清空协议模版
             this.selectTemplateComponent.clearValue();
+            // TODO 如果是套利软件，则有可能需要清空
+            if (this.isArbirageSoftware()) {
+              // TODO 如果此时正好用户也已经选择开通权限
+              if (isInvolvePermission()) {
+                this.clearOpenPermission();
+              }
+              this.clearBussinessType();
+            }
           } else {
             // 查询协议 ID 列表
             queryProtocolList({
@@ -614,7 +633,8 @@ export default class EditBaseInfo extends PureComponent {
   @autobind
   isArbirageSoftware() {
     const { subType } = this.state;
-    return subType === subTypeObject.arbitrageSoft;
+    // return subType === protocolSubTypes.arbitrageSoft;
+    return _.includes(arbitrageSoftwareArray, subType);
   }
 
   // 判断需要显示开通权限字段吗
@@ -659,6 +679,9 @@ export default class EditBaseInfo extends PureComponent {
       needMutliAndTen,
       isHightSpeed,
       businessType,
+      softPermission,
+      softPassword,
+      softAccount,
     } = this.state;
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
@@ -668,6 +691,7 @@ export default class EditBaseInfo extends PureComponent {
         value: `${item.id}~${item.flowId}`,
       }));
     }
+    let selectSoftPermission = [];
     if (isEditPage) {
       newProtocolList = [
         {
@@ -676,6 +700,7 @@ export default class EditBaseInfo extends PureComponent {
           value: protocolNumber,
         },
       ];
+      selectSoftPermission = softPermission.map(v => ({ value: v.code }));
     }
     const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
       (<div>
@@ -780,7 +805,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoItem label="协议有效期" value={vailDt ? time.format(vailDt) : '暂无'} />
         {
           /* 判断是否套利软件 */
-          !this.isArbirageSoftware() ? null
+          (!this.isArbirageSoftware() || _.isEmpty(businessTypeList)) ? null
           :
           (
             <InfoForm label="业务类型" required>
@@ -795,26 +820,28 @@ export default class EditBaseInfo extends PureComponent {
         }
         {
           /* 开通权限(只有在权限或者软件+权限时候才显示) */
-          !this.needShowOpenPermission() ? null :
+          (!this.needShowOpenPermission() || _.isEmpty(openPermissionList)) ? null :
           (
             <InfoForm label="开通权限" required>
               <HtscTreeSelect
                 name="openPermission"
                 placeholder="请选择开通权限"
+                defaultValue={selectSoftPermission}
                 treeData={openPermissionList}
-                boxStyle={{ width: 220, height: 'auto' }}
+                boxStyle={{ width: 260, height: 'auto' }}
                 onSelect={this.handleOpenPermissionChange}
                 getPopupContainer={getParentContainer}
+                ref={this.refHtscTreeSelect}
               />
             </InfoForm>
           )
         }
         {
           /* 软件信息 只有在 软件或者软件+权限或者软件续用才显示 */
-          !this.needShowSoftware() ? null : (<InfoItem label="软件账号" value="暂无" />)
+          !this.needShowSoftware() ? null : (<InfoItem label="软件账号" value={softAccount || '暂无'} />)
         }
         {
-          !this.needShowSoftware() ? null : (<InfoItem label="软件密码" value="暂无" />)
+          !this.needShowSoftware() ? null : (<InfoItem label="软件密码" value={softPassword || '暂无'} />)
         }
         <InfoForm label="备注">
           <TextArea
