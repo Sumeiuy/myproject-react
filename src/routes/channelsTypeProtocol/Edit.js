@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-07 16:51:00
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-05 18:12:20
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,10 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
-
+import channelType from '../../helper/page/channelType';
+import {
+  isInvolvePermission,
+} from '../../components/channelsTypeProtocol/auth';
 import styles from './edit.less';
 
 const confirm = Modal.confirm;
@@ -31,9 +34,7 @@ const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const {
-  // channelsTypeProtocol,
   channelsTypeProtocol: { pageType },
-  // channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -55,6 +56,10 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 模板列表
   templateList: state.channelsEdit.templateList,
+  // 开通权限列表
+  openPermissionList: state.channelsEdit.openPermissionList,
+  // 业务类型列表
+  businessTypeList: state.channelsEdit.businessTypeList,
   // 模板对应协议条款列表
   protocolClauseList: state.channelsEdit.protocolClauseList,
   // 协议产品列表
@@ -73,6 +78,10 @@ const mapDispatchToProps = {
   getProtocolDetail: fetchDataFunction(true, 'channelsEdit/getProtocolDetail'),
   // 查询操作类型/子类型/模板列表
   queryTypeVaules: fetchDataFunction(false, 'channelsEdit/queryTypeVaules'),
+  // 查询业务类型
+  queryBusinessTypeList: fetchDataFunction(false, 'channelsEdit/queryBusinessTypeList'),
+  // 查询开通权限
+  queryOpenPermissionList: fetchDataFunction(false, 'channelsEdit/queryOpenPermissionList'),
   // 根据所选模板id查询模板对应协议条款
   queryChannelProtocolItem: fetchDataFunction(false, 'channelsEdit/queryChannelProtocolItem'),
   // 查询协议产品列表
@@ -111,7 +120,13 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     // 查询操作类型/子类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
+    // 查询业务类型列表
+    queryBusinessTypeList: PropTypes.func.isRequired,
+    // 查询开通权限列表
+    queryOpenPermissionList: PropTypes.func.isRequired,
     templateList: PropTypes.array.isRequired,
+    businessTypeList: PropTypes.array.isRequired,
+    openPermissionList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     protocolClauseList: PropTypes.array.isRequired,
@@ -173,6 +188,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       const {
         protocolDetail,
         queryTypeVaules,
+        queryBusinessTypeList,
+        queryOpenPermissionList,
       } = this.props;
       // 获取协议模版
       queryTypeVaules({
@@ -187,6 +204,22 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
           template: filterTemplate[0] || {},
         });
       });
+      // TODO 如果是套利软件，则还需要查询业务类型
+      if (channelType.isArbirageSoftware(protocolDetail.subType)) {
+        queryBusinessTypeList({
+          typeCode: 'businessType',
+          subType: config.protocolSubTypes.arbitrageSoft,
+          operationType: protocolDetail.operationType,
+        });
+        // 如果用户选择的是权限类型则还需要查询开通权限
+        if (isInvolvePermission(protocolDetail.softBusinessType)) {
+          queryOpenPermissionList({
+            typeCode: 'permissionType',
+            subType: config.protocolSubTypes.arbitrageSoft,
+            operationType: protocolDetail.operationType,
+          });
+        }
+      }
     });
   }
 
@@ -222,9 +255,23 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       message.error('备注字段长度不能超过120');
       return false;
     }
-    if (!formData.item.length) {
-      message.error('请选择协议产品');
-      return false;
+    if (!channelType.isArbirageSoftware(formData.subType)) {
+      if (!formData.item.length) {
+        message.error('请选择协议产品');
+        return false;
+      }
+    } else {
+      if (!formData.softBusinessType) {
+        message.error('请选择业务类型');
+        return false;
+      }
+      // 如果涉及权限，还得判断是否有开通权限
+      if (isInvolvePermission(formData.softBusinessType)) {
+        if (_.isEmpty(formData.softPermission)) {
+          message.error('请选择开通权限');
+          return false;
+        }
+      }
     }
     return true;
   }
@@ -326,7 +373,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
-    console.warn('formData', formData);
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;
@@ -359,6 +405,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       flowHistory,
       queryTypeVaules, // 查询操作类型/子类型/模板列表
       templateList, // 模板列表
+      businessTypeList, // 业务类型列表
+      openPermissionList, // 开通权限列表
       protocolDetail, // 协议详情
       queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
       protocolClauseList, // 所选模板对应协议条款列表
@@ -373,6 +421,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       attachmentList,  // 附件列表
       cleartBtnGroup,  // 清除审批人
       getFlowStepInfo,
+      queryOpenPermissionList, // 查询开通权限列表，在驳回后修改的情况
+      queryBusinessTypeList, // 查询业务类型列表，在驳回后修改的情况
     } = this.props;
     const {
       approverModal,
@@ -393,6 +443,10 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       queryTypeVaules,
       // 协议模板列表
       templateList,
+      // 业务类型列表
+      businessTypeList,
+      // 开通权限列表
+      openPermissionList,
       // 根据所选模板id查询模板对应协议条款
       queryChannelProtocolItem,
       // 所选模板对应协议条款列表
@@ -420,6 +474,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       // 清除审批人
       cleartBtnGroup,
       getFlowStepInfo,
+      queryOpenPermissionList,
+      queryBusinessTypeList,
     };
     const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : '';
     const nowStep = {
