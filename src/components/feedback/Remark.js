@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import './remark.less';
 
 const FormItem = Form.Item;
+const { TextArea } = Input;
 @createForm()
 export default class Remark extends PureComponent {
   static propTypes = {
@@ -55,7 +56,7 @@ export default class Remark extends PureComponent {
           <Form layout="vertical">
             <FormItem>
               {getFieldDecorator('remarkContent')(
-                <Input type="textarea" rows={5} style={{ width: '100%' }} />,
+                <TextArea rows={5} style={{ width: '100%' }} />,
               )}
             </FormItem>
             <div className="remarkbtn_dv">
