@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-26 10:43:25
+ * @Last Modified time: 2018-03-06 15:34:05
  */
 
 
@@ -55,9 +55,15 @@ const serviceStateMap = {
   40: '30',
 };
 
-// 其他类型的客户反馈，容错处理，在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
+// 其它类型的客户反馈，容错处理，在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
 // 需要前端容错一下
-const otherFeedbackList = [{ key: '-1', value: '其他' }];
+const feedback2Key = '99999';
+const feedback3Key = '100000';
+
+// 二级其它反馈
+const otherFeedback2List = [{ key: feedback2Key, value: '其它' }];
+// 三级其它反馈
+const otherFeedback3List = [{ key: feedback3Key, value: '其它' }];
 
 function range(start, end) {
   const result = [];
@@ -260,12 +266,13 @@ export default class ServiceRecordContent extends PureComponent {
           // customerFeedback,
           attachmentList,
         };
-        // 如果找不到反馈一二级，则前端默认指定两个其他类型。
+        // 如果找不到反馈一二级，则前端默认指定两个其它类型，类型取和后端定义的一样，
+        // 不然提交接口报错
         if (isTaskFeedbackListOfNone) {
-          formObject.feedbackType = '-1';
-          formObject.feedbackTypeList = otherFeedbackList;
-          formObject.feedbackTypeChild = '-1';
-          formObject.feedbackTypeChildList = otherFeedbackList;
+          formObject.feedbackType = feedback2Key;
+          formObject.feedbackTypeList = otherFeedback2List;
+          formObject.feedbackTypeChild = feedback3Key;
+          formObject.feedbackTypeChildList = otherFeedback3List;
         } else if (!_.isEmpty(customerFeedback)) {
           const {
             code,
