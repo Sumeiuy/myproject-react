@@ -2,10 +2,10 @@
  * @Description: 通道类型协议 model
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 21:05:10
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-07 15:53:47
  */
-// import _ from 'lodash';
+import _ from 'lodash';
 import { message } from 'antd';
 // import { parse } from 'query-string';
 
@@ -81,11 +81,15 @@ export default {
     // 查询模板列表
     queryTemplateListSuccess(state, action) {
       const { payload } = action;
+      const newPayload = payload.map(item => ({
+        ...item,
+        isHidden: false, // 是否隐藏，默认不隐藏
+      }));
       return {
         ...state,
         protocolProductList: [],
         protocolClauseList: [],
-        templateList: payload,
+        templateList: newPayload,
       };
     },
     // 查询业务类型列表
@@ -170,6 +174,13 @@ export default {
       return {
         ...state,
         protocolList: resultData,
+      };
+    },
+    filterTemplateSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        templateList: payload,
       };
     },
   },
@@ -390,6 +401,26 @@ export default {
       yield put({
         type: 'queryProtocolListSuccess',
         paylaod: response,
+      });
+    },
+    // 根据关键词筛选协议模板
+    * filterTemplate({ payload }, { put, select }) {
+      const templateList = yield select(state => state.channelsTypeProtocol.templateList);
+      let newTemplateList;
+      if (_.isEmpty(payload)) {
+        newTemplateList = templateList.map(item => ({
+          ...item,
+          isHidden: false,
+        }));
+      } else {
+        newTemplateList = templateList.map(item => ({
+          ...item,
+          isHidden: !(item.prodName.indexOf(payload) > -1),
+        }));
+      }
+      yield put({
+        type: 'filterTemplateSuccess',
+        payload: newTemplateList,
       });
     },
   },

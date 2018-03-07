@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-03 15:30:53
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-07 11:08:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -118,6 +118,8 @@ const mapDispatchToProps = {
   queryProtocolList: fetchDataFunction(true, 'channelsTypeProtocol/queryProtocolList', true),
   // 清除详情数据
   clearDetailData: fetchDataFunction(true, 'channelsTypeProtocol/clearDetailData'),
+  // 筛选协议模板
+  filterTemplate: fetchDataFunction(false, 'channelsTypeProtocol/filterTemplate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -179,6 +181,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     protocolList: PropTypes.array,
     // 清除详情数据
     clearDetailData: PropTypes.func.isRequired,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -632,6 +636,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       getProtocolDetail,  // 查询协议详情
       getFlowStepInfo,  // 查询审批人
       clearDetailData,  // 清除详情数据
+      filterTemplate, // 筛选协议模板
     } = this.props;
     const {
       editFormModal,
@@ -723,6 +728,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       getFlowStepInfo,
       clearDetailData,
+      filterTemplate,
     };
     // editFormModal 需要的 props
     const editFormModalProps = {
