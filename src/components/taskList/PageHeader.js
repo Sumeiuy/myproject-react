@@ -290,8 +290,8 @@ export default class Pageheader extends PureComponent {
   handleDefaultTime({ before, todays, after }) {
     const createTimeStart = _.isEmpty(before) ? null :
       moment(before).format('YYYY-MM-DD');
-    const createTimeEnd = _.isEmpty(todays) ? null : moment(before).format('YYYY-MM-DD');
-    const endTimeStart = _.isEmpty(todays) ? null : moment(todays).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
     const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
     return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
   }
