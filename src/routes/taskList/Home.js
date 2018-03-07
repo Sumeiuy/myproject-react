@@ -49,29 +49,11 @@ const today = moment(new Date()).format('YYYY-MM-DD');
 const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
 const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
-const TASKFEEDBACK_QUERY = {
-  pageNum: 1,
-  pageSize: 10000,
-};
-
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
 });
-
-// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
-const feedbackListOfNone = [{
-  id: 99999,
-  name: '其它',
-  length: 1,
-  childList: [{
-    id: 100000,
-    name: '其它',
-    length: null,
-    childList: null,
-  }],
-}];
 
 const effects = {
   getTaskList: 'performerView/getTaskList',
@@ -362,46 +344,6 @@ export default class PerformerView extends PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {
-      getServiceType,
-      dict: { missionType },
-    } = this.props;
-    const { typeCode, eventId } = this.state;
-    if (prevState.typeCode !== typeCode || prevState.eventId !== eventId) {
-      /**
-       * 区分mot任务和自建任务
-       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-       * 根据descText的值请求对应的任务类型和任务反馈的数据
-       * 再判断当前任务是属于mot任务还是自建任务
-       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       */
-      const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
-      getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
-        .then(() => {
-          let currentType = {};
-          let taskFeedbackList = [];
-          if (+currentItem.descText === 1) {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-          } else {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-          }
-          if (_.isEmpty(currentType)) {
-            // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-            taskFeedbackList = feedbackListOfNone;
-          } else {
-            taskFeedbackList = currentType.feedbackList;
-          }
-          this.setState({
-            taskFeedbackList,
-            isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-          });
-        });
-    }
-  }
-
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -432,7 +374,7 @@ export default class PerformerView extends PureComponent {
         });
         itemIndex = 0;
       }
-      const { missionViewType: st, typeCode, statusCode, typeName } = item;
+      const { missionViewType: st, typeCode, statusCode, typeName, eventId } = item;
       this.setState({
         // 当前视图（三种）
         currentView: st,
@@ -440,6 +382,7 @@ export default class PerformerView extends PureComponent {
         typeCode,
         typeName,
         statusCode,
+        eventId,
       });
       this.getDetailByView(item);
     }
@@ -571,6 +514,8 @@ export default class PerformerView extends PureComponent {
       attachmentList,
       isCustServedByPostn,
       custServedByPostnResult,
+      getServiceType,
+      taskFeedbackList,
     } = this.props;
     const {
       query: { currentId },
@@ -579,9 +524,8 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
       typeName,
-      taskFeedbackList,
       statusCode,
-      isTaskFeedbackListOfNone,
+      eventId,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
@@ -630,7 +574,8 @@ export default class PerformerView extends PureComponent {
             saveAnswersByType={saveAnswersByType}
             saveAnswersSucce={saveAnswersSucce}
             attachmentList={attachmentList}
-            isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
+            eventId={eventId}
+            getServiceType={getServiceType}
           />
         );
         break;
