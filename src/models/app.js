@@ -269,22 +269,31 @@ export default {
       });
     },
     // mot自建任务的服务类型和反馈类型
-    * getMotCustfeedBackDict({ payload }, { call, put }) {
-      const response = yield call(api.getServiceType, payload);
-      if (response.code === '0') {
-        yield put({
-          type: 'getMotCustfeedBackDictSuccess',
-          payload: response.resultData,
-        });
+    * getMotCustfeedBackDict({ payload }, { call, put, select }) {
+      const motSelfBuiltFeedbackList = yield select(state => state.app.motSelfBuiltFeedbackList);
+      if (_.isEmpty(motSelfBuiltFeedbackList)) {
+        const response = yield call(api.getServiceType, payload);
+        if (response.code === '0') {
+          yield put({
+            type: 'getMotCustfeedBackDictSuccess',
+            payload: response.resultData,
+          });
+        }
       }
     },
   },
   subscriptions: {
-    setup({ dispatch }) {
+    setup({ dispatch, history }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
+      return history.listen(({ pathname }) => {
+        if (pathname === '/customerPool/list') {
+          // 获取自建任务平台的服务类型、任务反馈字典
+          dispatch({ type: 'getMotCustfeedBackDict', payload: { pageNum: 1, pageSize: 1000000, type: 2 } });
+        }
+      });
     },
   },
 };
