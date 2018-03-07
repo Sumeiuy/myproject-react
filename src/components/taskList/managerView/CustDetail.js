@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 17:14:14
+ * @Last Modified time: 2018-03-07 15:17:31
  * 客户明细数据
  */
 
@@ -118,11 +118,12 @@ export default class CustDetail extends PureComponent {
     */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { getCustDetailData, isEntryFromProgressDetail } = this.props;
+    const { getCustDetailData, isEntryFromProgressDetail, isEntryFromPie } = this.props;
     getCustDetailData({
       pageNum: nextPage,
       pageSize: currentPageSize,
       isEntryFromProgressDetail,
+      isEntryFromPie,
     });
   }
 
@@ -133,11 +134,12 @@ export default class CustDetail extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { getCustDetailData, isEntryFromProgressDetail } = this.props;
+    const { getCustDetailData, isEntryFromProgressDetail, isEntryFromPie } = this.props;
     getCustDetailData({
       pageNum: currentPageNum,
       pageSize: changedPageSize,
       isEntryFromProgressDetail,
+      isEntryFromPie,
     });
   }
 
