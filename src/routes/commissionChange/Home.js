@@ -194,6 +194,7 @@ export default class RejectionAndAmendment extends PureComponent {
   @autobind
   judgeSubtypeNow() {
     const { location: { query: { type, flowId } } } = this.props;
+    console.warn('judgeSubtypeNow: ', type);
     if (type === 'SINGLE') {
       // 单佣金
       const {

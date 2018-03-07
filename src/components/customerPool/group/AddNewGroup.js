@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-23 16:50:28
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 15:12:00
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-03-06 13:20:10
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import styles from './addNewGroup.less';
 
 const FormItem = Form.Item;
 const create = Form.create;
+const { TextArea } = Input;
 
 const formItemLayout = {
   labelCol: {
@@ -89,7 +90,7 @@ export default class AddNewGroup extends PureComponent {
           label="分组描述"
         >
           {getFieldDecorator('groupDesc', { rules: [{ max: 500, message: '字数限制：0-500字' }], initialValue: '' })(
-            <Input type="textarea" placeholder="请输入分组描述" rows={5} style={{ width: '100%' }} />,
+            <TextArea placeholder="请输入分组描述" rows={5} style={{ width: '100%' }} />,
           )}
         </FormItem>
         <FormItem className={styles.btnContent}>
