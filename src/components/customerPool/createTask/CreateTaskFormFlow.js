@@ -16,7 +16,8 @@ import styles from './createTaskFormFlow.less';
 const noop = _.noop;
 // returnTask是审批驳回之后，编辑自建任务信息界面
 // custGroupList是客户分组
-// managerView是管理者视图
+// entrySource.pie是管理者视图的饼图
+// entrySource.progress是管理者视图的进度条
 const SOURCE_ARRAY = [
   'custGroupList',
   entrySource.pie,
