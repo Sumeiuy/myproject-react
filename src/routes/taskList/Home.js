@@ -49,29 +49,11 @@ const today = moment(new Date()).format('YYYY-MM-DD');
 const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
 const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
-// const TASKFEEDBACK_QUERY = {
-//   pageNum: 1,
-//   pageSize: 10000,
-// };
-
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
 });
-
-// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
-// const feedbackListOfNone = [{
-//   id: 99999,
-//   name: '其它',
-//   length: 1,
-//   childList: [{
-//     id: 100000,
-//     name: '其它',
-//     length: null,
-//     childList: null,
-//   }],
-// }];
 
 const effects = {
   getTaskList: 'performerView/getTaskList',

@@ -44,7 +44,7 @@ const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const customerAll = { name: '所有客户', custId: '' };
-const NOOP = _.noop();
+const NOOP = _.noop;
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -510,8 +510,6 @@ export default class Pageheader extends PureComponent {
           missionViewType,
           type,
           creator,
-          // createTimeStart,
-          // createTimeEnd,
           missionName,
           custId,
         },
@@ -528,7 +526,7 @@ export default class Pageheader extends PureComponent {
 
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
-      [ptyMngAll, ...drafterList] : drafterList;
+      [ptyMngAll, ...drafterList] : [];
     // 创建者回填
     const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === creator);
     let curDrafter = '所有创建者';
@@ -536,7 +534,7 @@ export default class Pageheader extends PureComponent {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
     const allCustomerList = !_.isEmpty(customerList) ?
-      [customerAll, ...customerList] : customerList;
+      [customerAll, ...customerList] : [];
     const currentCustomerInfo = _.find(customerList, item => item.custId === custId);
     let currentCustomer = '所有客户';
     if (currentCustomerInfo && currentCustomerInfo.custId) {
