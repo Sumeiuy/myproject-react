@@ -45,6 +45,8 @@ export default {
     missionFeedbackCount: 0,
     // 执行者视图添加服务记录的附件记录
     attachmentList: [],
+    // 执行者视图头部查询到的客户列表
+    customerList: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -156,6 +158,13 @@ export default {
       return {
         ...state,
         attachmentList: action.payload,
+      };
+    },
+    queryCustomerSuccess(state, action) {
+      const { payload: { custBriefInfoDTOList } } = action;
+      return {
+        ...state,
+        customerList: custBriefInfoDTOList || [],
       };
     },
   },
@@ -290,6 +299,16 @@ export default {
         type: 'countExamineeByTypeSuccess',
         payload: resultData,
       });
+    },
+    // 执行者视图头部根据姓名或经纪客户号查询客户
+    * queryCustomer({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryCustomerSuccess',
+          payload: resultData,
+        });
+      }
     },
   },
   subscriptions: {
