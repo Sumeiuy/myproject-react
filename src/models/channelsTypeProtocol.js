@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-07 15:53:47
+ * @Last Modified time: 2018-03-07 16:27:20
  */
 import _ from 'lodash';
 import { message } from 'antd';
@@ -415,7 +415,7 @@ export default {
       } else {
         newTemplateList = templateList.map(item => ({
           ...item,
-          isHidden: !(item.prodName.indexOf(payload) > -1),
+          isHidden: !((item.prodName || '').indexOf(payload) > -1),
         }));
       }
       yield put({
