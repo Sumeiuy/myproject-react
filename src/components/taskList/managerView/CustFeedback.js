@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-24 18:32:46
+ * @Last Modified time: 2018-03-07 16:16:42
  * 客户反馈
  */
 
@@ -91,21 +91,19 @@ export default class CustFeedback extends PureComponent {
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
     let currentLevel = {};
-    // TODO
-    // 具体数据收集，需要后台接口写好联调
     if (!_.isEmpty(parent)) {
       // 代表点击的是外圈，也就是二级反馈
-      // 取出parent的key和name,
+      // 取出parent的key
       currentLevel = {
-        key: parent.key,
-        name: parent.name,
+        feedBackIdL1: parent.key,
+        name: `选择【${parent.name}】的客户`,
       };
     } else if (!_.isEmpty(children)) {
       // 代表点击的是内圈，也就是一级反馈
-      // 取出当前的key和name
+      // 取出当前的key
       currentLevel = {
-        key,
-        name,
+        feedBackIdL1: key,
+        name: `选择【${name}】的客户`,
       };
     }
 
@@ -302,9 +300,8 @@ export default class CustFeedback extends PureComponent {
               width: '50%',
             }}
             ref={ref => this.chartInstance = ref}
-            // 暂时屏蔽下钻
             onEvents={{
-              click: _.noop,
+              click: this.handlePieClick,
             }}
           />
           <div className={styles.chartExp}>

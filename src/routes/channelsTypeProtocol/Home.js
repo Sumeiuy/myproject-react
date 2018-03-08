@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-07 11:08:48
+ * @Last Modified time: 2018-03-08 09:01:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -441,7 +441,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         return false;
       }
       // 如果涉及权限，还得判断是否有开通权限
-      if (isInvolvePermission(formData.businessType)) {
+      if (isInvolvePermission(formData.softBusinessType)) {
         if (_.isEmpty(formData.softPermission)) {
           message.error('请选择开通权限');
           return false;
@@ -470,8 +470,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    if (_.includes(unSubscribeArray, formData.operationType) ||
-      _.includes(subscribeArray, formData.operationType)) {
+    if (
+      (_.includes(unSubscribeArray, formData.operationType)
+      || _.includes(subscribeArray, formData.operationType))
+      && !this.isArbirageSoftware(formData.subType)
+    ) {
       confirm({
         title: '提示',
         content: tipsMap[formData.operationType],
