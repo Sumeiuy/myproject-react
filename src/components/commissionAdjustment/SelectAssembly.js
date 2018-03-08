@@ -2,7 +2,7 @@
  * @file components/common/Select/SelectAssembly.js
  *  带搜索icon的select和添加按钮
  *  当输入或者选中值后icon变化成关闭点击后清除input的value值
- * @author baojiajia
+ * @author zhufeiyang
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -35,7 +35,7 @@ export default class SelectAssembly extends PureComponent {
     subType: '',
     validResult: {},
     shouldeCheck: true,
-    onValidateCust: () => {},
+    onValidateCust: () => { },
     dataSource: [],
   }
 
@@ -65,11 +65,18 @@ export default class SelectAssembly extends PureComponent {
 
   @autobind
   handleInputValue(value) {
-    this.setState({
-      inputValue: value,
-    });
-    if (value === '') {
+    if (this.selectedCust) {
+      const { custName, custEcom, riskLevelLabel } = this.selectedCust;
       this.setState({
+        inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
+        dataSource: [],
+        typeStyle: 'close',
+      });
+      this.selectedCust = null;
+    } else {
+      this.setState({
+        inputValue: value,
+        dataSource: [],
         typeStyle: 'search',
       });
     }
@@ -179,17 +186,7 @@ export default class SelectAssembly extends PureComponent {
         }).then(() => this.afterValidateSingleCust(item));
       } else {
         this.props.onSelectValue(this.selectedCust);
-        const { custName, custEcom, riskLevelLabel } = this.selectedCust;
-        this.setState({
-          inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
-          typeStyle: 'close',
-        });
       }
-    } else {
-      this.setState({
-        inputValue: '',
-        typeStyle: 'search',
-      });
     }
   }
 
