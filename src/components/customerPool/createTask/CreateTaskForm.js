@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -205,7 +206,12 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;
-      case 'managerView':
+      case entrySource.progress:
+        defaultMissionType = missionType || '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = '请选择';
+        break;
+      case entrySource.pie:
         defaultMissionType = missionType || '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:24
+ * @Last Modified time: 2018-03-07 13:41:39
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -428,7 +428,7 @@ export default class SingleDetailChange extends PureComponent {
   @autobind
   handleRejctBtnClick(btn) {
     const { operate } = btn;
-    if (operate === 'commit') {
+    if (operate === 'commit' || operate === 'trueOver') {
       // 提交按钮
       this.singleSubmit(btn);
     }
@@ -496,7 +496,7 @@ export default class SingleDetailChange extends PureComponent {
   @autobind
   pickApprovalUserListInFlowBtns() {
     const { approvalBtns } = this.props;
-    const list = _.filter(approvalBtns, btn => btn.operate === 'commit')[0].flowAuditors;
+    const list = _.filter(approvalBtns, btn => _.includes(['commit', 'trueOver'], btn.operate))[0].flowAuditors;
     // 转化list的格式
     return list.map((item) => {
       const { empName, login, occupation } = item;
@@ -510,7 +510,7 @@ export default class SingleDetailChange extends PureComponent {
 
   render() {
     const { detail, approvalBtns } = this.props;
-    if (_.isEmpty(detail.base) && _.isEmpty(approvalBtns)) {
+    if (_.isEmpty(detail.base) || _.isEmpty(approvalBtns)) {
       return null;
     }
     const { customer, attachmentList } = detail;

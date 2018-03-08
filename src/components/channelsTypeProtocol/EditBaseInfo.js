@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 18:11:49
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 09:00:52
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -52,8 +52,8 @@ export default class EditBaseInfo extends PureComponent {
     openPermissionList: PropTypes.array.isRequired,
     // 查询子类型/操作类型/业务类型
     queryTypeVaules: PropTypes.func.isRequired,
-    queryOpenPermissionList: PropTypes.func.isRequired,
-    queryBusinessTypeList: PropTypes.func.isRequired,
+    queryOpenPermissionList: PropTypes.func,
+    queryBusinessTypeList: PropTypes.func,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
@@ -91,6 +91,8 @@ export default class EditBaseInfo extends PureComponent {
     getParentContainer: PropTypes.func,
     // 切换子类型
     onChangeSubType: PropTypes.func,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -111,6 +113,8 @@ export default class EditBaseInfo extends PureComponent {
     getFlowStepInfo: () => { },
     getParentContainer: () => {},
     onChangeSubType: () => {},
+    queryOpenPermissionList: () => {},
+    queryBusinessTypeList: () => {},
   }
 
   constructor(props) {
@@ -181,6 +185,10 @@ export default class EditBaseInfo extends PureComponent {
         // 协议编号
         protocolNumber: '',
         needMutliAndTen: true,
+        // 业务类型
+        businessType: '',
+        // 开通权限
+        softPermission: [],
       };
     }
     this.state = {
@@ -544,6 +552,8 @@ export default class EditBaseInfo extends PureComponent {
       multiUsedFlag: false,
       levelTenFlag: false,
       protocolTemplate: value,
+      businessType: '',
+      softPermission: [],
     }, () => {
       const {
         queryChannelProtocolItem,
@@ -571,7 +581,8 @@ export default class EditBaseInfo extends PureComponent {
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    console.warn('进入搜索方法', value);
+    const { filterTemplate } = this.props;
+    filterTemplate(value);
   }
 
   // 修改备注
@@ -691,7 +702,7 @@ export default class EditBaseInfo extends PureComponent {
         value: `${item.id}~${item.flowId}`,
       }));
     }
-    let selectSoftPermission = [];
+    let selectSoftPermission = softPermission || [];
     if (isEditPage) {
       newProtocolList = [
         {
@@ -700,8 +711,8 @@ export default class EditBaseInfo extends PureComponent {
           value: protocolNumber,
         },
       ];
-      selectSoftPermission = softPermission.map(v => ({ value: v.code }));
     }
+    selectSoftPermission = selectSoftPermission.map(v => ({ value: v.code }));
     const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
       (<div>
         <InfoForm label="是否多账户使用" >

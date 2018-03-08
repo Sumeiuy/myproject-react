@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-03-01 21:21:07
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-07 15:59:50
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import Clickable from '../../../components/common/Clickable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
+import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
 import styles from './taskFormFlowStep.less';
 
 const noop = _.noop;
@@ -163,8 +164,12 @@ export default class TaskFormFlowStep extends PureComponent {
     } = parseQuery();
 
     let req = {};
-    if (entrance === 'managerView') {
+    if (entrance === entrySource.progress) {
+      // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
+    } else if (entrance === entrySource.pie) {
+      // 管理者视图饼图发起任务
+      req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
     } else if (source === 'custGroupList') {
       req = {
         enterType,
@@ -231,7 +236,10 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
-      case 'managerView':
+      case entrySource.progress:
+        custSources = '已有任务下钻客户';
+        break;
+      case entrySource.pie:
         custSources = '已有任务下钻客户';
         break;
       case 'custGroupList':

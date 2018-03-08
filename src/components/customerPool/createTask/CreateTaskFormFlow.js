@@ -9,15 +9,19 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
+import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+
 import styles from './createTaskFormFlow.less';
 
 const noop = _.noop;
 // returnTask是审批驳回之后，编辑自建任务信息界面
 // custGroupList是客户分组
-// managerView是管理者视图
+// entrySource.pie是管理者视图的饼图
+// entrySource.progress是管理者视图的进度条
 const SOURCE_ARRAY = [
   'custGroupList',
-  'managerView',
+  entrySource.pie,
+  entrySource.progress,
   'returnTask',
 ];
 

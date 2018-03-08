@@ -88,9 +88,9 @@ export default class TargetCustomer extends PureComponent {
     if (_.isEmpty(list)) {
       return null;
     }
-    return list.map(o => <TargetCustomerRow
-      key={o.custId}
-      item={o}
+    return list.map(item => <TargetCustomerRow
+      key={`${item.custId}-${item.missionFlowId}`}
+      item={item}
       isFold={isFold}
       currentCustId={currentCustId}
       onClick={this.handleRowClick}

@@ -144,7 +144,7 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   handleCreateTaskClick() {
     const url = '/customerPool/createTask';
-    const title = '发起任务';
+    const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');

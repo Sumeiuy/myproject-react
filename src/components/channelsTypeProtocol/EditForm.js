@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 17:30:09
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 09:01:08
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -77,9 +77,9 @@ export default class EditForm extends PureComponent {
     // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
     // 查询开通权限列表，在驳回后修改的页面中使用
-    queryOpenPermissionList: PropTypes.func.isRequired,
+    queryOpenPermissionList: PropTypes.func,
     // 查询业务类型列表，在驳回后修改的页面中使用
-    queryBusinessTypeList: PropTypes.func.isRequired,
+    queryBusinessTypeList: PropTypes.func,
     operationTypeList: PropTypes.array,
     subTypeList: PropTypes.array,
     // 根据所选模板id查询模板对应协议条款
@@ -112,6 +112,8 @@ export default class EditForm extends PureComponent {
     getFlowStepInfo: PropTypes.func.isRequired,
     // 清除详情数据
     clearDetailData: PropTypes.func,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -126,6 +128,8 @@ export default class EditForm extends PureComponent {
     queryProtocolList: () => { },
     protocolList: [],
     clearDetailData: () => { },
+    queryOpenPermissionList: () => { },
+    queryBusinessTypeList: () => { },
   }
 
   constructor(props) {
@@ -690,6 +694,8 @@ export default class EditForm extends PureComponent {
       clearDetailData,
       queryOpenPermissionList,
       queryBusinessTypeList,
+      // 筛选协议模板
+      filterTemplate,
     } = this.props;
     const {
       isArbirageSoftWare,
@@ -775,6 +781,7 @@ export default class EditForm extends PureComponent {
             getParentContainer={this.getEditContainer}
             onChangeSubType={this.handleChangeSubType}
             openPermissionList={openPermissionList}
+            filterTemplate={filterTemplate}
           />
         </div>
         {
