@@ -125,10 +125,11 @@ export default class MorningBroadcast extends PureComponent {
                     >
                       {`${item.newsTypValue}：${item.title}`}
                     </span>
-                    <span
-                      onClick={() => { this.onHandleListen(item.newsId); }}
-                      className={styles.listen}
-                    >收听</span>
+                    {/*  首页收听暂时关闭 */}
+                    {/* <span */}
+                    {/* onClick={() => { this.onHandleListen(item.newsId); }} */}
+                    {/* className={styles.listen} */}
+                    {/* >收听</span> */}
                   </div>
                 );
               })

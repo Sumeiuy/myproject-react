@@ -63,7 +63,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -75,7 +75,7 @@ const emp = {
    */
   getOrgId() {
     // 临时id
-    let orgId = 'ZZ001041'; // ZZ001041051南京长江路证券营业部，ZZ001041093南京分公司,ZZ001041经纪及财富管理部
+    let orgId = 'ZZ001041051'; // ZZ001041051南京长江路证券营业部，ZZ001041093南京分公司,ZZ001041经纪及财富管理部
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
     }

@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-02-22 15:08:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-03-08 17:42:38
+ * @Last Modified time: 2018-03-08 17:47:49
  * @description 单佣金调整
  */
 
@@ -16,12 +16,11 @@ import _ from 'lodash';
 import confirm from '../../components/common/Confirm';
 import InfoTitle from '../../components/common/InfoTitle';
 import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
-import { permission, url } from '../../helper';
+import { permission, url, emp } from '../../helper';
 import { closeRctTab } from '../../utils';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import SingleCreatBoard from '../../components/commissionAdjustment/SingleCreatBoard';
 import DisabledSelect from '../../components/commissionChange/DisabledSelect';
-import getPstnId from '../../helper/emp';
 import styles from './home.less';
 
 const { TextArea } = Input;
@@ -144,7 +143,6 @@ export default class CommissionAdjustmentHome extends PureComponent {
   // 根据用户输入查询单佣金客户列表,默认选取列表中的第一项
   @autobind
   handleChangeSingleAssembly(keywords) {
-    alert(getPstnId());
     if (_.isEmpty(keywords)) {
       confirm({
         content: '请输入经纪客户号/客户名称',
@@ -153,7 +151,7 @@ export default class CommissionAdjustmentHome extends PureComponent {
       const { occDivnNum } = this.props.empInfo;
       this.props.getSingleCustList({
         keywords,
-        postionId: getPstnId(),
+        postionId: emp.getPstnId(),
         deptCode: occDivnNum,
       }).then(() => {
         const { singleCustomerList } = this.props;

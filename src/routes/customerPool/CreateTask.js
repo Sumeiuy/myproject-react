@@ -11,6 +11,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
+import { entrySource } from '../../config/managerViewCustFeedbackEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
 import { closeRctTab } from '../../utils';
@@ -212,9 +213,12 @@ export default class CreateTask extends PureComponent {
     if (source === 'custGroupList') {
       // 从客户分组发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP' });
-    } else if (source === 'managerView') {
-      // 从管理者视图发起任务
-      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW' });
+    } else if (source === entrySource.progress) {
+      // 从管理者视图进度条发起任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS' });
+    } else if (source === entrySource.pie) {
+      // 从管理者视图饼图发起任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE' });
     } else if (source === 'returnTask') {
       // 驳回后编辑任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });

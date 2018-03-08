@@ -18,6 +18,7 @@ import './problemHandling.less';
 
 let COUNT = 0;
 const FormItem = Form.Item;
+const { TextArea } = Input;
 const Option = Select.Option;
 const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
@@ -185,7 +186,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('processSuggest')(
-                      <Input type="textarea" rows={5} style={{ width: '100%' }} />,
+                      <TextArea rows={5} style={{ width: '100%' }} />,
                     )}
                   </FormItem>
                 </Col>
