@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
+import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+
 import styles from './createTaskFormFlow.less';
 
 const noop = _.noop;
@@ -17,7 +19,8 @@ const noop = _.noop;
 // managerView是管理者视图
 const SOURCE_ARRAY = [
   'custGroupList',
-  'managerView',
+  entrySource.pie,
+  entrySource.progress,
   'returnTask',
 ];
 

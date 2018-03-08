@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 13:27:46
+ * @Last Modified time: 2018-03-07 15:23:28
  * 管理者视图详情
  */
 
@@ -20,6 +20,7 @@ import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
+import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
 import { emp, url as urlHelper } from '../../../helper';
 import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
@@ -32,6 +33,11 @@ const INITIAL_PAGE_SIZE = 5;
 // 1代表是自建任务类型
 const TASK_TYPE_SELF = '1';
 const falseValue = false;
+
+// 任务进度条下钻
+const SERVE_CUSTS = 'SERVE_CUSTS';
+// 客户反馈饼图下钻
+const MOT_FEEDBACK_CUSTS = 'MOT_FEEDBACK_CUSTS';
 
 export default class ManagerViewDetail extends PureComponent {
 
@@ -101,84 +107,12 @@ export default class ManagerViewDetail extends PureComponent {
     };
   }
 
-  /**
-   * 预览客户明细
-   */
   @autobind
-  handlePreview(params = {}) {
-    const {
-      // currentLevel,
-      title,
-      pageNum,
-      pageSize,
-      missionProgressStatus,
-      progressFlag,
-      canLaunchTask,
-      // 当前入口是否从进度条过来
-      isEntryFromProgressDetail = false,
-      // 当前入口是否从饼图过来
-      isEntryFromPie = false,
-    } = params;
-    const { previewCustDetail, currentId, mngrMissionDetailInfo } = this.props;
-    const { orgName } = mngrMissionDetailInfo;
-    const {
-      title: nextTitle,
-      missionProgressStatus: nextStatus,
-      progressFlag: nextFlag,
-    } = this.state;
-    let postBody = {
-      pageNum: pageNum || INITIAL_PAGE_NUM,
-      pageSize: pageSize || INITIAL_PAGE_SIZE,
-      orgId: this.getCurrentOrgId(),
-      missionId: currentId,
-    };
-
-    const progressParam = {
-      missionProgressStatus: missionProgressStatus || nextStatus,
-      progressFlag: progressFlag || nextFlag,
-      title: isEntryFromProgressDetail ? (title || nextTitle) : `当前${orgName || ''}有效客户总数`,
-    };
-
-    if (isEntryFromProgressDetail) {
-      postBody = {
-        ...postBody,
-        ..._.omit(progressParam, 'title'),
-      };
+  getCurrentOrgId() {
+    if (this.missionImplementationElem) {
+      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
     }
-
-    // TODO
-    // if (isEntryFromPie) {
-    // }
-
-    this.setState({
-      ...progressParam,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
-    });
-
-    previewCustDetail({
-      ...postBody,
-    }).then(() => {
-      this.setState({
-        isShowCustDetailModal: true,
-        canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
-      });
-    });
-  }
-
-  /**
-   * 关闭弹出框
-   */
-  @autobind
-  handleCloseModal() {
-    this.hideCustDetailModal();
-  }
-
-  @autobind
-  hideCustDetailModal() {
-    this.setState({
-      isShowCustDetailModal: false,
-    });
+    return emp.getOrgId();
   }
 
   @autobind
@@ -201,11 +135,104 @@ export default class ManagerViewDetail extends PureComponent {
   }
 
   @autobind
-  getCurrentOrgId() {
-    if (this.missionImplementationElem) {
-      return this.missionImplementationElem.getCurrentOrgId() || emp.getOrgId();
+  hideCustDetailModal() {
+    this.setState({
+      isShowCustDetailModal: false,
+    });
+  }
+
+  /**
+   * 关闭弹出框
+   */
+  @autobind
+  handleCloseModal() {
+    this.hideCustDetailModal();
+  }
+
+  /**
+   * 预览客户明细
+   */
+  @autobind
+  handlePreview(params = {}) {
+    const {
+      currentLevel = {},
+      title,
+      pageNum,
+      pageSize,
+      missionProgressStatus,
+      progressFlag,
+      canLaunchTask,
+      // 当前入口是否从进度条过来
+      isEntryFromProgressDetail = false,
+      // 当前入口是否从饼图过来
+      isEntryFromPie = false,
+    } = params;
+    const { previewCustDetail, currentId } = this.props;
+
+    const {
+      title: nextTitle,
+      missionProgressStatus: nextStatus,
+      progressFlag: nextFlag,
+      feedBackIdL1: nextFeedBackIdL1,
+    } = this.state;
+
+    let postBody = {
+      pageNum: pageNum || INITIAL_PAGE_NUM,
+      pageSize: pageSize || INITIAL_PAGE_SIZE,
+      orgId: this.getCurrentOrgId(),
+      missionId: currentId,
+    };
+
+    const { feedBackIdL1, name } = currentLevel;
+    let newTitle = '';
+    if (isEntryFromPie) {
+      newTitle = name || nextTitle;
+    } else if (isEntryFromProgressDetail) {
+      newTitle = title || nextTitle;
     }
-    return emp.getOrgId();
+
+    const progressParam = {
+      missionProgressStatus: missionProgressStatus || nextStatus,
+      progressFlag: progressFlag || nextFlag,
+      title: newTitle,
+      queryType: SERVE_CUSTS,
+    };
+
+    const pieParam = {
+      feedBackIdL1: feedBackIdL1 || nextFeedBackIdL1,
+      queryType: MOT_FEEDBACK_CUSTS,
+      title: newTitle,
+    };
+
+    if (isEntryFromProgressDetail) {
+      postBody = {
+        ...postBody,
+        ..._.omit(progressParam, 'title'),
+      };
+    }
+
+    if (isEntryFromPie) {
+      postBody = {
+        ...postBody,
+        ..._.omit(pieParam, 'title'),
+      };
+    }
+
+    this.setState({
+      ...progressParam,
+      ...pieParam,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+    });
+
+    previewCustDetail({
+      ...postBody,
+    }).then(() => {
+      this.setState({
+        isShowCustDetailModal: true,
+        canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
+      });
+    });
   }
 
   /**
@@ -214,9 +241,23 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handleLaunchTask() {
     const { clearCreateTaskData } = this.props;
+    const {
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+    } = this.state;
+    let currentEntryName = '';
+    let currentEntryId = '';
+    if (isEntryFromPie) {
+      currentEntryName = entrySource.pie;
+      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
+    } else if (isEntryFromProgressDetail) {
+      currentEntryName = entrySource.progress;
+      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
+    }
+
     // 发起新的任务之前，先清除数据
-    clearCreateTaskData('managerView');
-    this.openByAllSelect('/customerPool/createTask', 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW', '自建任务');
+    clearCreateTaskData(currentEntryName);
+    this.openByAllSelect('/customerPool/createTask', currentEntryId, '自建任务');
   }
 
   // 发起任务
@@ -229,7 +270,13 @@ export default class ManagerViewDetail extends PureComponent {
       custDetailResult,
       missionTypeDict,
     } = this.props;
-    const { missionProgressStatus, progressFlag, isEntryFromProgressDetail } = this.state;
+    const {
+      missionProgressStatus,
+      progressFlag,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+      feedBackIdL1,
+    } = this.state;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
     const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
@@ -255,18 +302,33 @@ export default class ManagerViewDetail extends PureComponent {
       progressParam = {
         ...progressParam,
         progressFlag: newProgressFlag,
+        // 来自不同的入口，entrance和source不一样
+        entrance: entrySource.progress,
+        source: entrySource.progress,
+      };
+    }
+
+    let pieParam = {};
+    // 如果是来自客户反馈饼图
+    if (isEntryFromPie) {
+      pieParam = {
+        feedBackIdL1,
+        // 来自不同的入口，entrance和source不一样
+        entrance: entrySource.pie,
+        source: entrySource.pie,
       };
     }
 
     const urlParam = {
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
-      entrance: 'managerView',
-      source: 'managerView',
       count: totalCustNumber,
       // 任务类型
       ...missionTypeObject,
+      // 进度条入参
       ...progressParam,
+      // 饼图入参
+      ...pieParam,
     };
     const condition = encodeURIComponent(JSON.stringify(urlParam));
     const query = {
