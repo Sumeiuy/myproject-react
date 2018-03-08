@@ -646,7 +646,7 @@ export default class PerformerView extends PureComponent {
     // 从其他视图切过来
     // 如果当前视图是管理者视图，并且当前url上的status在过滤以后的status字典里面找不到对应的
     // 那么将当前status置为空
-    if (missionViewType === CONTROLLER) {
+    if (missionViewType === CONTROLLER || missionViewType === EXECUTOR) {
       newMissionStatus = _.filter(newMissionStatus, item => item.key === EXECUTE_STATE
         || item.key === RESULT_TRACK_STATE || item.key === COMPLETED_STATE);
       if (_.isEmpty(_.find(newMissionStatus, item => item.key === status))) {
@@ -842,10 +842,11 @@ export default class PerformerView extends PureComponent {
 
   // 头部筛选后调用方法
   @autobind
-  handleHeaderFilter(obj) {
+  handleHeaderFilter(obj = {}) {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    const { missionViewType } = obj;
     replace({
       pathname,
       query: {
@@ -853,6 +854,9 @@ export default class PerformerView extends PureComponent {
         pageNum: 1,
         ...obj,
       },
+    });
+    this.setState({
+      currentView: missionViewType,
     });
     // 2.调用queryApplicationList接口
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);

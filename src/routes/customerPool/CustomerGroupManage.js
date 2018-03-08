@@ -250,7 +250,7 @@ export default class CustomerGroupManage extends PureComponent {
     // const { groupId, count, enterType, source } = obj;
     console.log('XXXXX', obj, titles, ids);
     const { push } = this.props;
-    const firstUrl = '/customerPool/createTask';
+    const firstUrl = '/customerPool/createTaskFromCustGroup';
     // const condition = encodeURIComponent(JSON.stringify(obj));
     // const query = {
     //   condition,

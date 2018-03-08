@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 15:23:28
+ * @Last Modified time: 2018-03-08 10:52:25
  * 管理者视图详情
  */
 
@@ -247,17 +247,19 @@ export default class ManagerViewDetail extends PureComponent {
     } = this.state;
     let currentEntryName = '';
     let currentEntryId = '';
+    let currentRoute = '';
     if (isEntryFromPie) {
       currentEntryName = entrySource.pie;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
+      currentRoute = '/customerPool/createTaskFromPie';
     } else if (isEntryFromProgressDetail) {
       currentEntryName = entrySource.progress;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
+      currentRoute = '/customerPool/createTaskFromProgress';
     }
-
     // 发起新的任务之前，先清除数据
     clearCreateTaskData(currentEntryName);
-    this.openByAllSelect('/customerPool/createTask', currentEntryId, '自建任务');
+    this.openByAllSelect(currentRoute, currentEntryId, '自建任务');
   }
 
   // 发起任务

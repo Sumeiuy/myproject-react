@@ -169,7 +169,7 @@ export default class ToDoList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTask?source=returnTask&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection?source=returnTask&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTask',
         query,
