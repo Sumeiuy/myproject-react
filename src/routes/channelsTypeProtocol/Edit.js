@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 18:12:20
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 13:19:27
  */
 
 import React, { PureComponent } from 'react';
@@ -100,6 +100,8 @@ const mapDispatchToProps = {
   getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate'),
   // 清除审批人
   cleartBtnGroup: fetchDataFunction(false, 'channelsEdit/cleartBtnGroup'),
+  // 筛选协议模板
+  filterTemplate: fetchDataFunction(false, 'channelsTypeProtocol/filterTemplate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -152,6 +154,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     getCustValidate: PropTypes.func.isRequired,
     // 清除审批人
     cleartBtnGroup: PropTypes.func,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -239,6 +243,18 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     });
   }
 
+  // 判断当前是否套利软件
+  @autobind
+  isArbirageSoftware(st) {
+    return _.includes(config.arbitrageSoftwareArray, st);
+  }
+
+  // 判断当前是否终止按钮
+  @autobind
+  isBtnEnd(btnItem) {
+    return (btnItem.nextGroupName === btnEnd && btnItem.operate === textEnd);
+  }
+
   // 检查保存数据是否合法
   @autobind
   checkFormDataIsLegal(formData) {
@@ -276,16 +292,62 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     return true;
   }
 
+  // 提交保存
+  @autobind
+  submitSaveProtocolData(protocolData, btnItem) {
+    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    if (btnItem.approverNum === 'none') {
+      const auth = btnItem.flowAuditors[0];
+      saveProtocolData(protocolData).then(() => {
+        const {
+          location: {
+            query,
+          },
+        } = this.props;
+        const params = {
+          ...seibelHelper.constructSeibelPostBody(query, 1, 10),
+          type: pageType,
+        };
+        doApprove({
+          formData: {
+            // itemId: this.props.itemId,
+            flowId: protocolDetail.flowid,
+            auditors: auth.empNo,
+            groupName: auth.groupName,
+            approverIdea: '',
+          },
+          params,
+        }).then(() => {
+          message.success('提交成功');
+          cleartBtnGroup();
+          this.closeModal('editFormModal');
+        });
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        approverModal: true,
+        flowAuditors: btnItem.flowAuditors,
+        protocolData,
+      });
+    }
+  }
+
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    const { protocolDetail } = this.props;
     let confirmContent = '';
     const protocolData = {
       ...protocolDetail,
       ...formData,
     };
-    if (btnItem.nextGroupName === btnEnd && btnItem.operate === textEnd) {
+    // 如果子类型是套利软件并且点击的不是终止按钮
+    if (this.isArbirageSoftware(protocolData.subType) && !this.isBtnEnd(btnItem)) {
+      this.submitSaveProtocolData(protocolData, btnItem);
+      return;
+    }
+    if (this.isBtnEnd(btnItem)) {
       confirmContent = '是否确定终止？';
     } else {
       confirmContent = '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！';
@@ -294,41 +356,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       title: '提示',
       content: confirmContent,
       onOk: () => {
-        if (btnItem.approverNum === 'none') {
-          const auth = btnItem.flowAuditors[0];
-          saveProtocolData(protocolData).then(() => {
-            const {
-              location: {
-                query,
-              },
-            } = this.props;
-            const params = {
-              ...seibelHelper.constructSeibelPostBody(query, 1, 10),
-              type: pageType,
-            };
-            doApprove({
-              formData: {
-                // itemId: this.props.itemId,
-                flowId: protocolDetail.flowid,
-                auditors: auth.empNo,
-                groupName: auth.groupName,
-                approverIdea: '',
-              },
-              params,
-            }).then(() => {
-              message.success('提交成功');
-              cleartBtnGroup();
-              this.closeModal('editFormModal');
-            });
-          });
-        } else {
-          this.setState({
-            ...this.state,
-            approverModal: true,
-            flowAuditors: btnItem.flowAuditors,
-            protocolData,
-          });
-        }
+        this.submitSaveProtocolData(protocolData, btnItem);
       },
       onCancel: () => {
         console.log('Cancel');
@@ -423,6 +451,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       getFlowStepInfo,
       queryOpenPermissionList, // 查询开通权限列表，在驳回后修改的情况
       queryBusinessTypeList, // 查询业务类型列表，在驳回后修改的情况
+      filterTemplate,
     } = this.props;
     const {
       approverModal,
@@ -476,6 +505,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       getFlowStepInfo,
       queryOpenPermissionList,
       queryBusinessTypeList,
+      filterTemplate,
     };
     const approverName = protocolDetail.approver ? `${protocolDetail.approverName} (${protocolDetail.approver})` : '';
     const nowStep = {

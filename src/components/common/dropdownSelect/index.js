@@ -160,8 +160,7 @@ export default class DropdownSelect extends PureComponent {
   checkListIsEmpty() {
     const { searchList } = this.props;
     return _.isEmpty(searchList)
-      ||
-      (searchList.filter(item => item.isHidden).length === searchList.length);
+      || (searchList.filter(item => item.isHidden).length === searchList.length);
   }
 
   render() {
