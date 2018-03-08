@@ -165,7 +165,7 @@ export default class ToDoList extends PureComponent {
     if (!_.isEmpty(taskBasicInfo) && _.isEmpty(taskBasicInfo.msg)) {
       const param = {
         id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST',
-        title: '发起任务',
+        title: '自建任务',
       };
       openRctTab({
         routerAction: push,
