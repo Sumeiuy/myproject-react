@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import logable from '../../../decorators/logable';
 import styles from './morningBroadcast.less';
 import Marquee from '../../morningBroadcast/Marquee';
 import Audio from '../../common/audio/Audio';
@@ -46,6 +47,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'RTC_TAB_NEWS_LIST' })
   openNewTab(url) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -66,6 +68,7 @@ export default class MorningBroadcast extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
+  @logable({ type: 'RTC_TAB_NEWS_DETAIL' })
   handleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
