@@ -380,8 +380,6 @@ export default class Pageheader extends PureComponent {
     // pageSize传1000000，使能够查到足够的数据
     queryCustomer({
       keyWord: value,
-      pageSize: 1000000,
-      pageNum: 1,
     });
   }
 

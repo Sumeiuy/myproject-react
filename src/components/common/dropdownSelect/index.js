@@ -88,6 +88,9 @@ export default class DropdownSelect extends PureComponent {
       searchValue = this.hackSearchComonent.getValue();
     }
     const result = searchList.map((item, index) => {
+      if (item.isHidden) {
+        return null;
+      }
       const callBack = () => {
         // 多传一个默认输入值，有些场景下需要用到
         emitSelectItem({
@@ -153,6 +156,14 @@ export default class DropdownSelect extends PureComponent {
     }
   }
 
+  @autobind
+  checkListIsEmpty() {
+    const { searchList } = this.props;
+    return _.isEmpty(searchList)
+      ||
+      (searchList.filter(item => item.isHidden).length === searchList.length);
+  }
+
   render() {
     const { theme, disable, getPopupContainer, defaultSearchValue } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
@@ -189,7 +200,7 @@ export default class DropdownSelect extends PureComponent {
             />
           </div>
           {
-            _.isEmpty(this.props.searchList)
+            this.checkListIsEmpty()
               ? <span className={style.notFound}>没有发现与之匹配的结果</span>
               : null
           }
