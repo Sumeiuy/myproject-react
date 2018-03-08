@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-08 13:19:27
+ * @Last Modified time: 2018-03-08 16:05:36
  */
 
 import React, { PureComponent } from 'react';
@@ -101,7 +101,7 @@ const mapDispatchToProps = {
   // 清除审批人
   cleartBtnGroup: fetchDataFunction(false, 'channelsEdit/cleartBtnGroup'),
   // 筛选协议模板
-  filterTemplate: fetchDataFunction(false, 'channelsTypeProtocol/filterTemplate'),
+  filterTemplate: fetchDataFunction(false, 'channelsEdit/filterTemplate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
