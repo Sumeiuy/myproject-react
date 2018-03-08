@@ -83,19 +83,22 @@ const routes = [
       { path: '/edit', component: PermissonEdit },
     ],
   },
-  { path: '/contract',
+  {
+    path: '/contract',
     component: Contract,
     children: [
       { path: '/form', component: Form },
     ],
   },
-  { path: '/channelsTypeProtocol',
+  {
+    path: '/channelsTypeProtocol',
     component: ChannelsTypeProtocol,
     children: [
       { path: '/edit', component: ChannelsTypeProtocolEdit },
     ],
   },
-  { path: '/customerPool',
+  {
+    path: '/customerPool',
     component: CustomerPoolHome,
     children: [
       { path: '/viewpointDetail', component: ViewpointDetail },
@@ -103,7 +106,17 @@ const routes = [
       { path: '/todo', component: ToDo },
       { path: '/list', component: CustomerList },
       { path: '/customerGroup', component: CustomerGroup },
+      // 客户列表发起任务
       { path: '/createTask', component: CreateTask },
+      // 分组管理发起任务
+      { path: '/createTaskFromCustGroup', component: CreateTask },
+      // 管理者视图进度条发起任务
+      { path: '/createTaskFromProgress', component: CreateTask },
+      // 管理者视图饼图发起任务
+      { path: '/createTaskFromPie', component: CreateTask },
+      // 任务驳回修改
+      { path: '/createTaskFromTaskRejection', component: CreateTask },
+      // 客户分组管理
       { path: '/customerGroupManage', component: CustomerGroupManage },
       { path: '/serviceLog', component: ServiceLog },
       { path: '/taskFlow', component: TaskFlow },
@@ -138,7 +151,8 @@ const routes = [
     ],
   },
   // 晨间播报
-  { path: '/broadcastList',
+  {
+    path: '/broadcastList',
     component: BroadcastList,
   },
   { path: '/broadcastDetail', component: BroadcastDetail },

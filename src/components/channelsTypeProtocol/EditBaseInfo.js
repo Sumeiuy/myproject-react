@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-06 14:48:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 09:00:52
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -91,6 +91,8 @@ export default class EditBaseInfo extends PureComponent {
     getParentContainer: PropTypes.func,
     // 切换子类型
     onChangeSubType: PropTypes.func,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -579,7 +581,8 @@ export default class EditBaseInfo extends PureComponent {
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    console.warn('进入搜索方法', value);
+    const { filterTemplate } = this.props;
+    filterTemplate(value);
   }
 
   // 修改备注
