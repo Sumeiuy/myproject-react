@@ -240,7 +240,6 @@ export default class Pageheader extends PureComponent {
 
     // 判断是否改变的是视图选择
     if (key === 'missionViewType') {
-      console.log('key, v, beforeToday, today, afterToday: ', key, v, beforeToday, today, afterToday);
       this.handleViewTypeTime(key, v, beforeToday, today, afterToday);
     } else {
       // 不是视图选择时发送请求

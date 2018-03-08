@@ -98,7 +98,9 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTypeCode,
       eventId,
     } = this.props;
-    this.queryMissionList(serviceTypeCode, eventId);
+    if (serviceTypeCode || eventId) {
+      this.queryMissionList(serviceTypeCode, eventId);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -110,7 +112,6 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTypeCode: typeCode,
       eventId,
     } = nextProps;
-
     if (prevTypeCode !== typeCode || prevEventId !== eventId) {
       this.queryMissionList(typeCode, eventId);
     }
