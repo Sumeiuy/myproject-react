@@ -1,10 +1,11 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-05 15:04:16
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 17:19:27
  */
 
+import _ from 'lodash';
 import { message } from 'antd';
 
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
@@ -132,6 +133,14 @@ export default {
       return {
         ...state,
         flowStepInfo: payload,
+      };
+    },
+    // 筛选协议模板
+    filterTemplateSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        templateList: payload,
       };
     },
   },
@@ -301,6 +310,26 @@ export default {
         payload: {
           resultData: [],
         },
+      });
+    },
+    // 根据关键词筛选协议模板
+    * filterTemplate({ payload }, { put, select }) {
+      const templateList = yield select(state => state.channelsEdit.templateList);
+      const newTemplateList = templateList.map((item) => {
+        let isHidden;
+        if (_.isEmpty(payload)) {
+          isHidden = false;
+        } else {
+          isHidden = !((item.prodName || '').indexOf(payload) > -1);
+        }
+        return {
+          ...item,
+          isHidden,
+        };
+      });
+      yield put({
+        type: 'filterTemplateSuccess',
+        payload: newTemplateList,
       });
     },
   },
