@@ -93,10 +93,18 @@ export default class PerformerViewDetail extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const {
+      serviceTypeCode,
+      eventId,
+    } = this.props;
+    if (serviceTypeCode || eventId) {
+      this.queryMissionList(serviceTypeCode, eventId);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     const {
-      getServiceType,
-      dict: { missionType },
       serviceTypeCode: prevTypeCode,
       eventId: prevEventId,
     } = this.props;
@@ -104,9 +112,20 @@ export default class PerformerViewDetail extends PureComponent {
       serviceTypeCode: typeCode,
       eventId,
     } = nextProps;
-
     if (prevTypeCode !== typeCode || prevEventId !== eventId) {
-      /**
+      this.queryMissionList(typeCode, eventId);
+    }
+  }
+
+  /**
+   * 请求任务反馈的字典
+   * @param {*} typeCode 当前任务为自建任务时任务的typeCode
+   * @param {*} eventId  当前任务为mot任务时任务的eventId
+   */
+  @autobind
+  queryMissionList(typeCode, eventId) {
+    const { getServiceType, dict: { missionType } } = this.props;
+    /**
        * 区分mot任务和自建任务
        * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
        * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
@@ -115,28 +134,27 @@ export default class PerformerViewDetail extends PureComponent {
        * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
        */
-      const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
-      getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
-        .then(() => {
-          let currentType = {};
-          let taskFeedbackList = [];
-          if (+currentItem.descText === 1) {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-          } else {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-          }
-          if (_.isEmpty(currentType)) {
-            // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-            taskFeedbackList = feedbackListOfNone;
-          } else {
-            taskFeedbackList = currentType.feedbackList;
-          }
-          this.setState({
-            taskFeedbackList,
-            isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-          });
+    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
+    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
+      .then(() => {
+        let currentType = {};
+        let taskFeedbackList = [];
+        if (+currentItem.descText === 1) {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
+        } else {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
+        }
+        if (_.isEmpty(currentType)) {
+          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
+          taskFeedbackList = feedbackListOfNone;
+        } else {
+          taskFeedbackList = currentType.feedbackList;
+        }
+        this.setState({
+          taskFeedbackList,
+          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
         });
-    }
+      });
   }
 
   // 查询目标客户的列表和
