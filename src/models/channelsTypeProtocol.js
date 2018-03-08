@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-08 16:05:29
+ * @Last Modified time: 2018-03-08 17:18:38
  */
 import _ from 'lodash';
 import { message } from 'antd';
@@ -406,18 +406,18 @@ export default {
     // 根据关键词筛选协议模板
     * filterTemplate({ payload }, { put, select }) {
       const templateList = yield select(state => state.channelsTypeProtocol.templateList);
-      let newTemplateList;
-      if (_.isEmpty(payload)) {
-        newTemplateList = templateList.map(item => ({
+      const newTemplateList = templateList.map((item) => {
+        let isHidden;
+        if (_.isEmpty(payload)) {
+          isHidden = false;
+        } else {
+          isHidden = !((item.prodName || '').indexOf(payload) > -1);
+        }
+        return {
           ...item,
-          isHidden: false,
-        }));
-      } else {
-        newTemplateList = templateList.map(item => ({
-          ...item,
-          isHidden: !((item.prodName || '').indexOf(payload) > -1),
-        }));
-      }
+          isHidden,
+        };
+      });
       yield put({
         type: 'filterTemplateSuccess',
         payload: newTemplateList,
