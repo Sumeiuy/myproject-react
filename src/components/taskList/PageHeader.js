@@ -240,6 +240,7 @@ export default class Pageheader extends PureComponent {
 
     // 判断是否改变的是视图选择
     if (key === 'missionViewType') {
+      console.log('key, v, beforeToday, today, afterToday: ', key, v, beforeToday, today, afterToday);
       this.handleViewTypeTime(key, v, beforeToday, today, afterToday);
     } else {
       // 不是视图选择时发送请求
@@ -276,12 +277,21 @@ export default class Pageheader extends PureComponent {
       });
     }
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
+    // 视图切换时需要将 搜索关键词 类型 状态 创建者  客户 重置为初始状态
+    const tempObject = {
+      custId: '',
+      type: '',
+      status: '',
+      creator: '',
+      missionName: '',
+    };
     this.props.filterCallback({
       [key]: v,
       createTimeStart,
       createTimeEnd,
       endTimeStart,
       endTimeEnd,
+      ...tempObject,
     });
   }
 
