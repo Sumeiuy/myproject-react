@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:48:47
+ * @Last Modified time: 2018-03-09 15:21:26
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { Layout } from 'antd';
+import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import setHeight from '../../decorators/setHeight';
@@ -56,8 +57,11 @@ export default class StockDetail extends PureComponent {
         },
       },
       getStockDetail,
+      detail,
     } = this.props;
-    getStockDetail({ id });
+    if (_.isEmpty(detail[id])) {
+      getStockDetail({ id });
+    }
   }
   render() {
     const {
@@ -66,26 +70,29 @@ export default class StockDetail extends PureComponent {
           pageSize = 10,
           pageNum = 1,
           keyword = '',
+          id,
         },
       },
-      detail: {
+      detail: dataDetail,
+    } = this.props;
+    const url = `/#/stock?pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`;
+    if (_.isEmpty(dataDetail[id])) {
+      return null;
+    }
+    const {
         title,
         author,
         pubdate,
         detail,
-      },
-    } = this.props;
-    const url = `/#/stock?pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`;
+    } = dataDetail[id];
     return (
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
           <h2>{title}</h2>
-          <h3>作者：{author}    发布日期：{pubdate}</h3>
+          <h3>作者：{author || '暂无'}    发布日期：{pubdate}</h3>
         </Header>
         <Content className={styles.content}>
-          <p>
-            {detail}
-          </p>
+          <div dangerouslySetInnerHTML={{ __html: detail }} />
         </Content>
         <Footer className={styles.footer}>
           <div className={styles.left}>
@@ -94,7 +101,7 @@ export default class StockDetail extends PureComponent {
           <div className={styles.right}>
             <Icon type="fanhui1" />
             {
-              typeList.map(item => (<a href={`${url}&type=${item}`}>相关{config[item].name}</a>))
+              typeList.map(item => (<a href={`${url}&type=${item}`} key={item}>相关{config[item].name}</a>))
             }
           </div>
         </Footer>
