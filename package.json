@@ -40,6 +40,7 @@
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
+    "npm": "^5.7.1",
     "path-to-regexp": "^2.0.0",
     "prop-types": "^15.5.10",
     "query-string": "^5.0.0",

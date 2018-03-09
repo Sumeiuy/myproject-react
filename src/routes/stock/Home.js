@@ -3,15 +3,14 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:38:05
+ * @Last Modified time: 2018-03-09 14:44:09
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Tabs, Table, Input, Message } from 'antd';
+import { Tabs, Table, Input } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
@@ -86,14 +85,23 @@ export default class Stock extends PureComponent {
   }
 
   componentDidMount() {
-    this.sendRequest({});
+    const { keyword, pageNum, pageSize, type } = this.state;
+    if (keyword !== '') {
+      this.sendRequest({
+        keyword,
+        page: pageNum,
+        pageSize,
+        type,
+      });
+    }
   }
 
   @autobind
-  onRowClick() {
+  onRowClick(record) {
+    const { id } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
-    push(`/stock/detail?type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
+    push(`/stock/detail?id=${id}&type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
   }
 
   // tab 切换事件
@@ -120,10 +128,6 @@ export default class Stock extends PureComponent {
   @autobind
   searchHandle() {
     const { keyword } = this.state;
-    if (!keyword) {
-      Message.error('搜索内容不能为空');
-      return;
-    }
     this.sendRequest({
       keyword,
       page: 1,
@@ -192,9 +196,9 @@ export default class Stock extends PureComponent {
 
     // 分页
     const paginationOption = {
-      pageSize,
-      current: pageNum,
-      total,
+      pageSize: Number(pageSize),
+      current: Number(pageNum),
+      total: Number(total),
       onChange: this.pageChangeHandle,
     };
 
