@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 14:20:11
+ * @Last Modified time: 2018-03-09 15:21:26
  */
 
 import React, { PureComponent } from 'react';
@@ -101,7 +101,7 @@ export default class StockDetail extends PureComponent {
           <div className={styles.right}>
             <Icon type="fanhui1" />
             {
-              typeList.map(item => (<a href={`${url}&type=${item}`}>相关{config[item].name}</a>))
+              typeList.map(item => (<a href={`${url}&type=${item}`} key={item}>相关{config[item].name}</a>))
             }
           </div>
         </Footer>

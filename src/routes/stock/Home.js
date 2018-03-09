@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 14:44:09
+ * @Last Modified time: 2018-03-09 15:33:00
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -85,15 +85,8 @@ export default class Stock extends PureComponent {
   }
 
   componentDidMount() {
-    const { keyword, pageNum, pageSize, type } = this.state;
-    if (keyword !== '') {
-      this.sendRequest({
-        keyword,
-        page: pageNum,
-        pageSize,
-        type,
-      });
-    }
+    // 请求所有股票点评
+    this.sendRequest({});
   }
 
   @autobind
