@@ -68,7 +68,7 @@ export default class BroadcastDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'MORNING_BROADCAST/BACK_LIST' })
+  @logable({ type: '/click/morningBroadcast/backList' })
   handleBackClick() {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };

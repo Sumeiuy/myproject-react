@@ -47,7 +47,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'RTC_TAB_NEWS_LIST' })
+  @logable({ type: '/click/morningBroadcast/newsListTab' })
   openNewTab(url) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -68,7 +68,7 @@ export default class MorningBroadcast extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: 'RTC_TAB_NEWS_DETAIL' })
+  @logable({ type: '/click/morningBroadcast/newsDetailTab' })
   handleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
