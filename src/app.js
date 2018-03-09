@@ -12,6 +12,9 @@ import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
+// v2兼容样式
+import 'antd/lib/style/v2-compatible-reset';
+
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';

@@ -41,7 +41,6 @@ module.exports = {
       'rc-pagination',
       'rc-trigger',
       'rc-animate',
-      'rc-touchable',
       'inline-style-prefixer',
       'core-decorators',
       'fbjs',
