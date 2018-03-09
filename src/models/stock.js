@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-03-01 14:34:40
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 14:20:29
+ * @Last Modified time: 2018-03-09 14:54:58
  */
 
 import { stock as api } from '../api';
@@ -34,13 +34,6 @@ export default {
         },
       };
     },
-    clearPropsDataSuccess(state) {
-      return {
-        ...state,
-        list: [],
-        page: {},
-      };
-    },
   },
   effects: {
     // 根据类型、分页、关键字、排序等字段查询列表
@@ -61,13 +54,6 @@ export default {
       yield put({
         type: 'getStockDetailSuccess',
         payload: obj,
-      });
-    },
-    * clearPropsData({ payload }, { put }) {
-      const response = {};
-      yield put({
-        type: 'clearPropsDataSuccess',
-        payload: response,
       });
     },
   },

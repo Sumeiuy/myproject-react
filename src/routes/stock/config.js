@@ -3,9 +3,10 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:47:00
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 14:37:54
+ * @Last Modified time: 2018-03-09 14:56:09
  */
 const config = {
+  // 只开放个股点评，个股研报、个股公告先隐藏
   typeList: ['StockReview'],
   // typeList: ['StockReview', 'StockReport', 'StockEvent'],
   // 个股点评
