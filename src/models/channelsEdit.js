@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-08 17:19:27
+ * @Last Modified time: 2018-03-09 08:49:17
  */
 
 import _ from 'lodash';
@@ -315,18 +315,11 @@ export default {
     // 根据关键词筛选协议模板
     * filterTemplate({ payload }, { put, select }) {
       const templateList = yield select(state => state.channelsEdit.templateList);
-      const newTemplateList = templateList.map((item) => {
-        let isHidden;
-        if (_.isEmpty(payload)) {
-          isHidden = false;
-        } else {
-          isHidden = !((item.prodName || '').indexOf(payload) > -1);
-        }
-        return {
-          ...item,
-          isHidden,
-        };
-      });
+      const keyWord = _.isEmpty(payload) ? '' : payload;
+      const newTemplateList = templateList.map(item => ({
+        ...item,
+        isHidden: !((item.prodName || '').indexOf(keyWord) > -1),
+      }));
       yield put({
         type: 'filterTemplateSuccess',
         payload: newTemplateList,
