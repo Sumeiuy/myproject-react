@@ -6,6 +6,8 @@
 
 import constants from './constants';
 
+const EVENT_PROFILE_ACTION = 'sendProfile';
+
 const config = {
   url: '/fspa/log/sa',
   interval: 1 * 60 * 1000,
@@ -19,7 +21,14 @@ const config = {
     '@@HT_LOADING/HIDE_ACTIVITY_INDICATOR',
     'persist/REHYDRATE',
   ],
-  whitelist: [],
+  whitelist: [
+    // 点击日志
+    /\/?click/,
+    // profile_set
+    EVENT_PROFILE_ACTION,
+    // 路由变化
+    /LOCATION_CHANGE/,
+  ],
   eventPropertyMap: {
     // 页面pv
     '@@router/LOCATION_CHANGE': {
@@ -49,7 +58,7 @@ const config = {
     'users',
   ],
   // 发送profile_set的action名称
-  EVENT_PROFILE_ACTION: 'sendProfile',
+  EVENT_PROFILE_ACTION,
 };
 
 export default config;

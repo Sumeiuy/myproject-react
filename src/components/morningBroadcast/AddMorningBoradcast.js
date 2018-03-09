@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { request } from '../../config/index';
 import { emp } from '../../helper/index';
+import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -136,6 +137,7 @@ export default class AddMorningBoradcast extends PureComponent {
   }
 
   @autobind()
+  @logable({ type: '/click/morningBroadcast/submit' })
   handleSubmit() {
     const { saveBoradcast, newsId } = this.props;
     const { audioFileList, finalNewUuid } = this.state;
@@ -165,6 +167,7 @@ export default class AddMorningBoradcast extends PureComponent {
     });
   }
   @autobind()
+  @logable({ type: '/click/morningBroadcast/closeAddOrEditModal' })
   onHandleCancel() {
     const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
     const { isUpdateFile } = this.state;
@@ -192,6 +195,7 @@ export default class AddMorningBoradcast extends PureComponent {
 
   // audio upload --> start
   @autobind
+  @logable({ type: '/click/morningBroadcast/uploadingAudioFile' })
   onAudioUploading(fileList) {
     const audioFileList = fileList.filter((fileItem) => {
       if (fileItem.response) {
@@ -202,6 +206,7 @@ export default class AddMorningBoradcast extends PureComponent {
     this.setState({ audioFileList });
   }
   @autobind
+  @logable({ type: '/click/morningBroadcast/uploadingOtherFile' })
   onOtherUploading(fileList) {
     const otherFileList = fileList.filter((fileItem) => {
       if (fileItem.response) {
