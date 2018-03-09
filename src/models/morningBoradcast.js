@@ -237,17 +237,20 @@ export default {
           type: 'homePageList',
           payload: homePageList,
         });
-        const audioId = homePageList.map(item => item.audioFileId);
-        const audioSourceList = yield audioId.map(item => (
-          call(api.ceFileList, { attachment: item })
-        ));
-        const resSourceList = audioSourceList.map(item => (
-          item.resultData.length && item.resultData[0]
-        ));
-        yield put({
-          type: 'homePageSource',
-          payload: resSourceList,
-        });
+        // 首页收听暂时关闭
+        /*
+          const audioId = homePageList.map(item => item.audioFileId);
+          const audioSourceList = yield audioId.map(item => (
+            call(api.ceFileList, { attachment: item })
+          ));
+          const resSourceList = audioSourceList.map(item => (
+            item.resultData.length && item.resultData[0]
+          ));
+          yield put({
+            type: 'homePageSource',
+            payload: resSourceList,
+          });
+        */
       }
     },
   },

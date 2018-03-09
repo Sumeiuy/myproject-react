@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-02-22 15:08:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-03-02 15:04:22
+ * @Last Modified time: 2018-03-08 17:47:49
  * @description 单佣金调整
  */
 
@@ -16,7 +16,7 @@ import _ from 'lodash';
 import confirm from '../../components/common/Confirm';
 import InfoTitle from '../../components/common/InfoTitle';
 import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
-import { permission, url } from '../../helper';
+import { permission, url, emp } from '../../helper';
 import { closeRctTab } from '../../utils';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import SingleCreatBoard from '../../components/commissionAdjustment/SingleCreatBoard';
@@ -107,8 +107,8 @@ export default class CommissionAdjustmentHome extends PureComponent {
 
   componentDidMount() {
     const { search } = this.props.location;
-    const { custid } = url.parse(search);
-    this.handleChangeSingleAssembly(custid);
+    this.custid = url.parse(search).custid;
+    this.handleChangeSingleAssembly(this.custid);
   }
 
   @autobind
@@ -148,10 +148,10 @@ export default class CommissionAdjustmentHome extends PureComponent {
         content: '请输入经纪客户号/客户名称',
       });
     } else {
-      const { postnId, occDivnNum } = this.props.empInfo;
+      const { occDivnNum } = this.props.empInfo;
       this.props.getSingleCustList({
         keywords,
-        postionId: postnId,
+        postionId: emp.getPstnId(),
         deptCode: occDivnNum,
       }).then(() => {
         const { singleCustomerList } = this.props;

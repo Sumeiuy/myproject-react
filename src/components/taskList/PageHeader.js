@@ -43,6 +43,8 @@ const afterToday = moment(today).add(60, 'days');
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
+const customerAll = { name: '所有客户', custId: '' };
+const NOOP = _.noop;
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -67,6 +69,10 @@ export default class Pageheader extends PureComponent {
     filterControl: PropTypes.string,
     // 判断是否有灰度客户
     isGrayFlag: PropTypes.bool.isRequired,
+    // 执行者视图头部查询客户
+    queryCustomer: PropTypes.func,
+    // 执行者视图头部查询到的客户列表
+    customerList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -78,6 +84,8 @@ export default class Pageheader extends PureComponent {
     filterCallback: () => { },
     filterControl: EXECUTE_VIEW,
     hasPermissionOfManagerView: false,
+    queryCustomer: NOOP,
+    customerList: [],
   }
 
   constructor(props) {
@@ -213,6 +221,14 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  // 选中客户下拉对象中对应的某个对象
+  @autobind
+  selectCustomerItem(name, item) {
+    this.props.filterCallback({
+      [name]: item.custId,
+    });
+  }
+
   // select改变
   @autobind
   handleSelectChange(key, v) {
@@ -260,12 +276,21 @@ export default class Pageheader extends PureComponent {
       });
     }
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
+    // 视图切换时需要将 搜索关键词 类型 状态 创建者  客户 重置为初始状态
+    const tempObject = {
+      custId: '',
+      type: '',
+      status: '',
+      creator: '',
+      missionName: '',
+    };
     this.props.filterCallback({
       [key]: v,
       createTimeStart,
       createTimeEnd,
       endTimeStart,
       endTimeEnd,
+      ...tempObject,
     });
   }
 
@@ -274,8 +299,8 @@ export default class Pageheader extends PureComponent {
   handleDefaultTime({ before, todays, after }) {
     const createTimeStart = _.isEmpty(before) ? null :
       moment(before).format('YYYY-MM-DD');
-    const createTimeEnd = _.isEmpty(todays) ? null : moment(before).format('YYYY-MM-DD');
-    const endTimeStart = _.isEmpty(todays) ? null : moment(todays).format('YYYY-MM-DD');
+    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
+    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
     const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
     return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
   }
@@ -352,6 +377,19 @@ export default class Pageheader extends PureComponent {
       return newData;
     }
     return null;
+  }
+
+  /**
+   * 发送执行者视图头部查客户的请求
+   * @param {*} value 输入的关键词
+   */
+  @autobind
+  searchCustomer(value) {
+    const { queryCustomer } = this.props;
+    // pageSize传1000000，使能够查到足够的数据
+    queryCustomer({
+      keyWord: value,
+    });
   }
 
   // 设置不可选日期
@@ -477,13 +515,13 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-        type,
-        creator,
-        // createTimeStart,
-        // createTimeEnd,
-        missionName,
+          type,
+          creator,
+          missionName,
+          custId,
         },
       },
+      customerList,
     } = this.props;
 
     const { stateAllOptions, statusValue, startTime, endTime } = this.state;
@@ -495,12 +533,19 @@ export default class Pageheader extends PureComponent {
 
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
-      [ptyMngAll, ...drafterList] : drafterList;
+      [ptyMngAll, ...drafterList] : [];
     // 创建者回填
     const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === creator);
     let curDrafter = '所有创建者';
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+    }
+    const allCustomerList = !_.isEmpty(customerList) ?
+      [customerAll, ...customerList] : [];
+    const currentCustomerInfo = _.find(customerList, item => item.custId === custId);
+    let currentCustomer = '所有客户';
+    if (currentCustomerInfo && currentCustomerInfo.custId) {
+      currentCustomer = `${currentCustomerInfo.name}(${currentCustomerInfo.custId})`;
     }
     // 搜索框回填
     const missionNameValue = !_.isEmpty(missionName) ? missionName : '';
@@ -562,6 +607,24 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+          }
+          {
+            /* 执行者视图中增加客户筛选 */
+            missionViewTypeValue === EXECUTE_VIEW ?
+              <div className={styles.filterFl}>
+                <div className={styles.dropDownSelectBox}>
+                  <DropDownSelect
+                    value={currentCustomer}
+                    placeholder="姓名/经纪客户号"
+                    searchList={allCustomerList}
+                    showObjKey="name"
+                    objId="custId"
+                    emitSelectItem={item => this.selectCustomerItem('custId', item)}
+                    emitToSearch={this.searchCustomer}
+                    name={`${page}-name`}
+                  />
+                </div>
+              </div> : null
           }
 
           {missionViewTypeValue === INITIATOR_VIEW ?

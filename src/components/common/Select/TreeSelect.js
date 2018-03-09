@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-01 14:40:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 21:07:14
+ * @Last Modified time: 2018-03-05 16:13:56
  * @description 封装antd的TreeSelect组件
  */
 
@@ -71,8 +71,23 @@ export default class HtscTreeSelect extends PureComponent {
     super(props);
     this.state = {
       isSHowModal: false,
-      value: [],
+      value: props.defaultValue,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { defaultValue: prevValue } = this.props;
+    const { defaultValue: nextValue } = nextProps;
+    if (prevValue !== nextValue) {
+      this.setState({
+        value: nextValue,
+      });
+    }
+  }
+
+  @autobind
+  clear() {
+    this.setState({ value: [] });
   }
 
   @autobind

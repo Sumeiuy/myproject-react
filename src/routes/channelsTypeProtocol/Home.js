@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-01 20:02:42
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 09:01:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
-
+import { isInvolvePermission } from '../../components/channelsTypeProtocol/auth';
 import styles from './home.less';
 
 const confirm = Modal.confirm;
@@ -42,7 +42,7 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs } = config;
+const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -118,6 +118,8 @@ const mapDispatchToProps = {
   queryProtocolList: fetchDataFunction(true, 'channelsTypeProtocol/queryProtocolList', true),
   // 清除详情数据
   clearDetailData: fetchDataFunction(true, 'channelsTypeProtocol/clearDetailData'),
+  // 筛选协议模板
+  filterTemplate: fetchDataFunction(false, 'channelsTypeProtocol/filterTemplate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -179,6 +181,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     protocolList: PropTypes.array,
     // 清除详情数据
     clearDetailData: PropTypes.func.isRequired,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -381,14 +385,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    // const { getFlowStepInfo } = this.props;
-    // getFlowStepInfo({
-    //   flowId: '',
-    //   operate: 1,
-    // }).then(() => {
-    //   this.showModal('editFormModal');
-    // });
     this.showModal('editFormModal');
+  }
+
+  // 判断当前是否套利软件
+  @autobind
+  isArbirageSoftware(st) {
+    return protocolSubTypes.arbitrageSoft === st;
   }
 
   // 打开弹窗
@@ -427,22 +430,38 @@ export default class ChannelsTypeProtocol extends PureComponent {
       message.error('请选择客户');
       return false;
     }
-    if (!_.includes(subscribeArray, formData.operationType)) {
-      if (!formData.agreementNum) {
-        message.error('请选择协议编号');
-        return false;
-      }
-    }
     if (!formData.templateId) {
       message.error('请选择协议模板');
       return false;
     }
+    if (this.isArbirageSoftware(formData.subType)) {
+      // 针对套利软件的特有数据进行校验
+      if (!formData.softBusinessType) {
+        message.error('请选择业务类型');
+        return false;
+      }
+      // 如果涉及权限，还得判断是否有开通权限
+      if (isInvolvePermission(formData.softBusinessType)) {
+        if (_.isEmpty(formData.softPermission)) {
+          message.error('请选择开通权限');
+          return false;
+        }
+      }
+    } else {
+      // 这两个校验是针对非套利软件子类型的数据
+      if (!formData.item.length) {
+        message.error('请选择协议产品');
+        return false;
+      }
+      if (!_.includes(subscribeArray, formData.operationType)) {
+        if (!formData.agreementNum) {
+          message.error('请选择协议编号');
+          return false;
+        }
+      }
+    }
     if (formData.content && formData.content.length > 120) {
       message.error('备注字段长度不能超过120');
-      return false;
-    }
-    if (!formData.item.length) {
-      message.error('请选择协议产品');
       return false;
     }
     return true;
@@ -451,8 +470,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    if (_.includes(unSubscribeArray, formData.operationType) ||
-      _.includes(subscribeArray, formData.operationType)) {
+    if (
+      (_.includes(unSubscribeArray, formData.operationType)
+      || _.includes(subscribeArray, formData.operationType))
+      && !this.isArbirageSoftware(formData.subType)
+    ) {
       confirm({
         title: '提示',
         content: tipsMap[formData.operationType],
@@ -617,6 +639,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       getProtocolDetail,  // 查询协议详情
       getFlowStepInfo,  // 查询审批人
       clearDetailData,  // 清除详情数据
+      filterTemplate, // 筛选协议模板
     } = this.props;
     const {
       editFormModal,
@@ -708,6 +731,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       getFlowStepInfo,
       clearDetailData,
+      filterTemplate,
     };
     // editFormModal 需要的 props
     const editFormModalProps = {
