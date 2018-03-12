@@ -322,6 +322,7 @@
           font-size: 12px;
           color: #333;
           padding: 0 32px;
+          word-break: break-all;
         }
       }
       .sedBoderTwo {
@@ -408,13 +409,17 @@
           & > div {
             width: 780px;
             .problemList {
-              // height: 140px;
-              // margin-bottom: 17px;
               overflow-y: auto;
-              display: flex;
-              align-items: center;
             }
             h5 {
+              margin-top: 5px;
+              font-size: 12px;
+              color: #333;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            div {
               margin-top: 5px;
               font-size: 12px;
               color: #333;

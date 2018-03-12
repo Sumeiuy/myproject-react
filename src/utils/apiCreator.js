@@ -6,6 +6,7 @@
 import { request, logRequest, fspRequest } from './request';
 
 import config from '../config/request';
+import constants from '../config/constants';
 import { emp, url as urlHelper, encode } from '../helper';
 
 /**
@@ -90,11 +91,18 @@ export default function createApi() {
      * @return {Promise}
      */
     sendLog(url, query = {}, options) {
+      let data = JSON.stringify(query);
+      // 只在华泰域名下才编码
+      // 测试环境为了直观测试，不编码数据
+      if (constants.inHTSCDomain) {
+        data = encode.base64(data);
+        data = encodeURIComponent(data);
+      }
       return logRequest(
         url,
         {
           method: 'POST',
-          body: `data_list=${encodeURIComponent(encode.base64(JSON.stringify(query)))}`,
+          body: `data_list=${data}`,
           ...options,
         },
       );

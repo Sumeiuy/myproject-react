@@ -49,6 +49,24 @@ const today = moment(new Date()).format('YYYY-MM-DD');
 const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
 const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
+const TASKFEEDBACK_QUERY = {
+  pageNum: 1,
+  pageSize: 10000,
+};
+
+// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
+const feedbackListOfNone = [{
+  id: 99999,
+  name: '其它',
+  length: 1,
+  childList: [{
+    id: 100000,
+    name: '其它',
+    length: null,
+    childList: null,
+  }],
+}];
+
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -344,6 +362,57 @@ export default class PerformerView extends PureComponent {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { typeCode, eventId, currentView } = this.state;
+    if (currentView === EXECUTOR &&
+      (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
+      this.queryMissionList(typeCode, eventId);
+    }
+  }
+
+  /**
+   * 发送获取任务反馈字典的请求
+   * @param {*} typeCode 当前左侧列表的选中项的typeCode
+   * @param {*} eventId 当前左侧列表的选中项的eventId
+   */
+  @autobind
+  queryMissionList(typeCode, eventId) {
+    const {
+      getServiceType,
+      dict: { missionType },
+    } = this.props;
+    /**
+       * 区分mot任务和自建任务
+       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
+       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
+       * 根据descText的值请求对应的任务类型和任务反馈的数据
+       * 再判断当前任务是属于mot任务还是自建任务
+       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       */
+    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
+    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
+      .then(() => {
+        let currentType = {};
+        let taskFeedbackList = [];
+        if (+currentItem.descText === 1) {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
+        } else {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
+        }
+        if (_.isEmpty(currentType)) {
+          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
+          taskFeedbackList = feedbackListOfNone;
+        } else {
+          taskFeedbackList = currentType.feedbackList;
+        }
+        this.setState({
+          taskFeedbackList,
+          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
+        });
+      });
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -514,8 +583,6 @@ export default class PerformerView extends PureComponent {
       attachmentList,
       isCustServedByPostn,
       custServedByPostnResult,
-      getServiceType,
-      taskFeedbackList,
     } = this.props;
     const {
       query: { currentId },
@@ -524,8 +591,9 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
       typeName,
+      taskFeedbackList,
       statusCode,
-      eventId,
+      isTaskFeedbackListOfNone,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
@@ -574,8 +642,7 @@ export default class PerformerView extends PureComponent {
             saveAnswersByType={saveAnswersByType}
             saveAnswersSucce={saveAnswersSucce}
             attachmentList={attachmentList}
-            eventId={eventId}
-            getServiceType={getServiceType}
+            isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
           />
         );
         break;
@@ -646,7 +713,7 @@ export default class PerformerView extends PureComponent {
     // 从其他视图切过来
     // 如果当前视图是管理者视图，并且当前url上的status在过滤以后的status字典里面找不到对应的
     // 那么将当前status置为空
-    if (missionViewType === CONTROLLER) {
+    if (missionViewType === CONTROLLER || missionViewType === EXECUTOR) {
       newMissionStatus = _.filter(newMissionStatus, item => item.key === EXECUTE_STATE
         || item.key === RESULT_TRACK_STATE || item.key === COMPLETED_STATE);
       if (_.isEmpty(_.find(newMissionStatus, item => item.key === status))) {
@@ -666,7 +733,17 @@ export default class PerformerView extends PureComponent {
     const params = this.constructViewPostBody(newQuery, pageNum, pageSize);
 
     // 默认筛选条件
-    getTaskList({ ...params }).then(this.getRightDetail);
+    getTaskList({ ...params }).then(() => {
+      if (missionViewType === EXECUTOR) {
+        const { list } = this.props;
+        const { resultData = [] } = list || {};
+        if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
+          const { typeCode, eventId } = resultData[0] || {};
+          this.queryMissionList(typeCode, eventId);
+        }
+      }
+      this.getRightDetail();
+    });
   }
 
   // 默认时间设置
@@ -842,10 +919,11 @@ export default class PerformerView extends PureComponent {
 
   // 头部筛选后调用方法
   @autobind
-  handleHeaderFilter(obj) {
+  handleHeaderFilter(obj = {}) {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    const { missionViewType } = obj;
     replace({
       pathname,
       query: {
@@ -853,6 +931,9 @@ export default class PerformerView extends PureComponent {
         pageNum: 1,
         ...obj,
       },
+    });
+    this.setState({
+      currentView: missionViewType,
     });
     // 2.调用queryApplicationList接口
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);

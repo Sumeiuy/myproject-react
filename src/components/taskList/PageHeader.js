@@ -276,12 +276,21 @@ export default class Pageheader extends PureComponent {
       });
     }
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
+    // 视图切换时需要将 搜索关键词 类型 状态 创建者  客户 重置为初始状态
+    const tempObject = {
+      custId: '',
+      type: '',
+      status: '',
+      creator: '',
+      missionName: '',
+    };
     this.props.filterCallback({
       [key]: v,
       createTimeStart,
       createTimeEnd,
       endTimeStart,
       endTimeEnd,
+      ...tempObject,
     });
   }
 
@@ -380,8 +389,6 @@ export default class Pageheader extends PureComponent {
     // pageSize传1000000，使能够查到足够的数据
     queryCustomer({
       keyWord: value,
-      pageSize: 1000000,
-      pageNum: 1,
     });
   }
 

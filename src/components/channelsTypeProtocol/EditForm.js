@@ -2,8 +2,8 @@
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-06 13:43:20
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-08 09:01:08
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -112,6 +112,8 @@ export default class EditForm extends PureComponent {
     getFlowStepInfo: PropTypes.func.isRequired,
     // 清除详情数据
     clearDetailData: PropTypes.func,
+    // 筛选协议模板
+    filterTemplate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -692,6 +694,8 @@ export default class EditForm extends PureComponent {
       clearDetailData,
       queryOpenPermissionList,
       queryBusinessTypeList,
+      // 筛选协议模板
+      filterTemplate,
     } = this.props;
     const {
       isArbirageSoftWare,
@@ -777,6 +781,7 @@ export default class EditForm extends PureComponent {
             getParentContainer={this.getEditContainer}
             onChangeSubType={this.handleChangeSubType}
             openPermissionList={openPermissionList}
+            filterTemplate={filterTemplate}
           />
         </div>
         {

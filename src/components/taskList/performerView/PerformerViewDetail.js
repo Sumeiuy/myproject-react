@@ -21,24 +21,6 @@ import InfoArea from '../managerView/InfoArea';
 
 import styles from './performerViewDetail.less';
 
-const TASKFEEDBACK_QUERY = {
-  pageNum: 1,
-  pageSize: 10000,
-};
-
-// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
-const feedbackListOfNone = [{
-  id: 99999,
-  name: '其它',
-  length: 1,
-  childList: [{
-    id: 100000,
-    name: '其它',
-    length: null,
-    childList: null,
-  }],
-}];
-
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 const create = Form.create;
@@ -64,12 +46,6 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
-    // 左侧列表当前任务为自建任务时的服务类型状态码
-    serviceTypeCode: PropTypes.string.isRequired,
-    // 左侧列表当前任务为mot任务时的eventId
-    eventId: PropTypes.string.isRequired,
-    getServiceType: PropTypes.func.isRequired,
-    taskFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -91,52 +67,6 @@ export default class PerformerViewDetail extends PureComponent {
       isShowErrorCheckbox: {},
       checkBoxQuesId: [],
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const {
-      getServiceType,
-      dict: { missionType },
-      serviceTypeCode: prevTypeCode,
-      eventId: prevEventId,
-    } = this.props;
-    const {
-      serviceTypeCode: typeCode,
-      eventId,
-    } = nextProps;
-
-    if (prevTypeCode !== typeCode || prevEventId !== eventId) {
-      /**
-       * 区分mot任务和自建任务
-       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-       * 根据descText的值请求对应的任务类型和任务反馈的数据
-       * 再判断当前任务是属于mot任务还是自建任务
-       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       */
-      const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
-      getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
-        .then(() => {
-          let currentType = {};
-          let taskFeedbackList = [];
-          if (+currentItem.descText === 1) {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-          } else {
-            currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-          }
-          if (_.isEmpty(currentType)) {
-            // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-            taskFeedbackList = feedbackListOfNone;
-          } else {
-            taskFeedbackList = currentType.feedbackList;
-          }
-          this.setState({
-            taskFeedbackList,
-            isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-          });
-        });
-    }
   }
 
   // 查询目标客户的列表和
@@ -425,8 +355,6 @@ export default class PerformerViewDetail extends PureComponent {
       keyIndex,
       isDisabled,
       isShowErrorCheckbox,
-      taskFeedbackList,
-      isTaskFeedbackListOfNone,
      } = this.state;
     const { list, page } = targetCustList;
     const { serveStatus = [] } = dict || {};
@@ -516,8 +444,6 @@ export default class PerformerViewDetail extends PureComponent {
               <EmptyTargetCust /> :
               <ServiceImplementation
                 {...this.props}
-                taskFeedbackList={taskFeedbackList}
-                isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
                 list={list}
                 reloadTargetCustInfo={this.reloadTargetCustInfo}
               />

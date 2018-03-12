@@ -71,6 +71,8 @@ export default {
     singleCustValidate: {},
     // 咨讯订阅客户校验结果
     sciCheckCustomer: {},
+    // 单佣金客户和两融信息合并的对象
+    singleCust: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -342,6 +344,13 @@ export default {
       return {
         ...state,
         singleCustValidate: resultData,
+      };
+    },
+
+    queryCustomerInSingleSuccess(state, action) {
+      return {
+        ...state,
+        singleCust: action.payload,
       };
     },
 
@@ -685,6 +694,24 @@ export default {
         type: 'validateCustomerInSingleSuccess',
         payload: response,
       });
+    },
+
+    // 单佣金调整新建页面查询客户列表（选中第一个）和客户检验
+    // SingleCreatBoard组件的customer属性是客户信息和客户两融信息的合集
+    * queryCustomerInSingle({ payload }, { call, put }) {
+      const response = yield call(api.querySingleCustomer, payload);
+      if (response.resultData &&
+            response.resultData.custInfos &&
+            response.resultData.custInfos.length) {
+        const { id, custType } = response.resultData.custInfos[0];
+        const {
+          resultData: { openRzrq },
+        } = yield call(api.validateCustomer, { custRowId: id, custType });
+        yield put({
+          type: 'queryCustomerInSingleSuccess',
+          payload: { ...response.resultData.custInfos[0], openRzrq }, // 合并客户和两融信息
+        });
+      }
     },
 
     // 咨讯订阅页面客户检验
