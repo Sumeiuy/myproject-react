@@ -3,12 +3,12 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:47:00
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 14:56:09
+ * @Last Modified time: 2018-03-12 14:45:27
  */
 const config = {
   // 只开放个股点评，个股研报、个股公告先隐藏
-  typeList: ['StockReview'],
-  // typeList: ['StockReview', 'StockReport', 'StockEvent'],
+  // typeList: ['StockReview'],
+  typeList: ['StockReview', 'StockReport', 'StockEvent'],
   // 个股点评
   StockReview: {
     key: 'StockReview',
@@ -82,8 +82,8 @@ const config = {
         title: '行业',
       },
       {
-        dataIndex: 'rate',
-        key: 'rate',
+        dataIndex: 'rateLevel',
+        key: 'rateLevel',
         title: '评级',
       },
       {
