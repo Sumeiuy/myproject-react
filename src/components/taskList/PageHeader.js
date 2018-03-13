@@ -14,7 +14,7 @@ import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 // import Icon from '../common/Icon';
-import { dom } from '../../helper';
+import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import styles from './pageHeader.less';
 
@@ -45,6 +45,8 @@ const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const customerAll = { name: '所有客户', custId: '' };
 const NOOP = _.noop;
+// url中参数的分割符号,如：customer=id_name
+const separator = '_';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -225,7 +227,7 @@ export default class Pageheader extends PureComponent {
   @autobind
   selectCustomerItem(name, item) {
     this.props.filterCallback({
-      [name]: item.custId,
+      [name]: item.custId ? `${item.custId}${separator}${item.name}` : '',
     });
   }
 
@@ -278,7 +280,7 @@ export default class Pageheader extends PureComponent {
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
     // 视图切换时需要将 搜索关键词 类型 状态 创建者  客户 重置为初始状态
     const tempObject = {
-      custId: '',
+      customer: '',
       type: '',
       status: '',
       creator: '',
@@ -518,7 +520,7 @@ export default class Pageheader extends PureComponent {
           type,
           creator,
           missionName,
-          custId,
+          customer = '',
         },
       },
       customerList,
@@ -540,13 +542,16 @@ export default class Pageheader extends PureComponent {
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
+
+    // 执行者视图按客户搜索
     const allCustomerList = !_.isEmpty(customerList) ?
       [customerAll, ...customerList] : [];
-    const currentCustomerInfo = _.find(customerList, item => item.custId === custId);
     let currentCustomer = '所有客户';
-    if (currentCustomerInfo && currentCustomerInfo.custId) {
-      currentCustomer = `${currentCustomerInfo.name}(${currentCustomerInfo.custId})`;
+    if (!check.isNull(customer)) {
+      const [custId = '', name = ''] = customer.split(separator);
+      currentCustomer = `${name}(${custId})`;
     }
+
     // 搜索框回填
     const missionNameValue = !_.isEmpty(missionName) ? missionName : '';
     // 默认时间
@@ -619,7 +624,7 @@ export default class Pageheader extends PureComponent {
                     searchList={allCustomerList}
                     showObjKey="name"
                     objId="custId"
-                    emitSelectItem={item => this.selectCustomerItem('custId', item)}
+                    emitSelectItem={item => this.selectCustomerItem('customer', item)}
                     emitToSearch={this.searchCustomer}
                     name={`${page}-name`}
                   />
