@@ -814,11 +814,11 @@ const pageConfig = {
         key: 'empName',
         title: '原服务经理',
       },
-      {
-        dataIndex: 'postnName',
-        key: 'postnName',
-        title: '原职位',
-      },
+      // {
+      //   dataIndex: 'postnName',
+      //   key: 'postnName',
+      //   title: '原职位',
+      // },
       {
         dataIndex: 'newOrgName',
         key: 'newOrgName',
@@ -829,11 +829,11 @@ const pageConfig = {
         key: 'newEmpName',
         title: '新服务经理',
       },
-      {
-        dataIndex: 'newPostnName',
-        key: 'newPostnName',
-        title: '新职位',
-      },
+      // {
+      //   dataIndex: 'newPostnName',
+      //   key: 'newPostnName',
+      //   title: '新职位',
+      // },
     ],
     approvalColumns: [
       {
