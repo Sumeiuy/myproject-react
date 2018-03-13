@@ -337,7 +337,6 @@ export default class Pageheader extends PureComponent {
                   value={business2}
                   data={operateOptions}
                   onChange={this.handleSelectChange}
-                  style={{ width: '20%' }}
                 />
               </div>
             : null
