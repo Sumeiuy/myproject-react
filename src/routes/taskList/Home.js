@@ -761,12 +761,8 @@ export default class PerformerView extends PureComponent {
     const item = this.constructViewPostBody(remainingParams, pageNum, pageSize);
     const timersValue = this.handleDefaultTime({ before, todays, after });
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
-    // 从url中的customer参数取出客户的custId，传给获取任务列表的接口
-    const { customer = '', ...otherQuery } = item;
-    const [custId] = customer.split('_');
     const params = {
-      ...otherQuery,
-      custId,
+      ...item,
       createTimeEnd,
       createTimeStart,
       endTimeStart,
@@ -801,7 +797,7 @@ export default class PerformerView extends PureComponent {
       pageSize: _.parseInt(newPageSize, 10),
     };
 
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName']);
     finalPostData = _.merge(
       finalPostData,
       omitData,
@@ -915,10 +911,8 @@ export default class PerformerView extends PureComponent {
     this.setState({
       currentView: missionViewType,
     });
-    const { customer = '', ...otherQuery } = tempObject;
-    const [custId = ''] = customer.split('_');
     // 2.调用queryApplicationList接口
-    this.queryAppList({ ...otherQuery, custId }, 1, query.pageSize);
+    this.queryAppList(tempObject, 1, query.pageSize);
   }
 
   // 切换页码
