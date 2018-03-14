@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 15:33:00
+ * @Last Modified time: 2018-03-12 14:37:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -100,11 +100,13 @@ export default class Stock extends PureComponent {
   // tab 切换事件
   @autobind
   tabChangeHandle(key) {
+    const { keyword } = this.state;
     this.setState({
       type: key,
     }, () => {
       this.sendRequest({
         type: key,
+        keyword,
       });
     });
   }

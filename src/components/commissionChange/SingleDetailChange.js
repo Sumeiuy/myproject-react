@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-07 13:41:39
+ * @Last Modified time: 2018-03-07 16:37:08
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -496,7 +496,9 @@ export default class SingleDetailChange extends PureComponent {
   @autobind
   pickApprovalUserListInFlowBtns() {
     const { approvalBtns } = this.props;
-    const list = _.filter(approvalBtns, btn => _.includes(['commit', 'trueOver'], btn.operate))[0].flowAuditors;
+    // 为了防止接口传递的数据不存在做容错处理
+    const commitBtn = _.filter(approvalBtns, btn => _.includes(['commit', 'trueOver'], btn.operate))[0];
+    const list = (commitBtn && commitBtn.flowAuditors) || [];
     // 转化list的格式
     return list.map((item) => {
       const { empName, login, occupation } = item;

@@ -23,6 +23,7 @@ export default class SelectAssembly extends PureComponent {
     dataSource: PropTypes.array.isRequired,
     onSearchValue: PropTypes.func.isRequired,
     onSelectValue: PropTypes.func.isRequired,
+    unfinishRoute: PropTypes.func, // 选择客户，弹出未完成订单，点击确认的跳转路由
     onValidateCust: PropTypes.func,
     width: PropTypes.string,
     subType: PropTypes.string,
@@ -36,6 +37,7 @@ export default class SelectAssembly extends PureComponent {
     validResult: {},
     shouldeCheck: true,
     onValidateCust: () => { },
+    unfinishRoute: () => {},
     dataSource: [],
   }
 
@@ -45,6 +47,7 @@ export default class SelectAssembly extends PureComponent {
       inputValue: '',
       typeStyle: 'search',
       dataSource: [],
+      isUnfinish: false, // 标识 选中的客户，是否有未完成订单
     };
   }
 
@@ -106,6 +109,12 @@ export default class SelectAssembly extends PureComponent {
         typeStyle: 'close',
       });
     } else {
+      const { unfinishRoute } = this.props;
+      const { isUnfinish } = this.state;
+      // 3.23新需求，选择的客户，有未完成订单，点击确定，跳转到360视图订单列表页面
+      if (isUnfinish) {
+        unfinishRoute(this.selectedCust);
+      }
       // 干掉客户
       this.clearCust();
     }
@@ -138,10 +147,16 @@ export default class SelectAssembly extends PureComponent {
       riskRt,
       investRt,
       investTerm,
-      validmsg,
       hasorder,
     } = this.props.validResult;
     const { subType } = this.props;
+    this.setState({ isUnfinish: false });
+    if (subType === commadj.single && hasorder === 'Y') {
+      this.setState({ isUnfinish: true });
+      // 目前只有单佣金需要对在途订单
+      this.fail2Validate('unfinish');
+      return;
+    }
     // 风险测评校验
     if (riskRt === 'N') {
       this.fail2Validate('custRisk');
@@ -155,11 +170,6 @@ export default class SelectAssembly extends PureComponent {
     // 投资期限校验
     if (investTerm === 'Y') {
       this.fail2Validate('custInvestTerm');
-      return;
-    }
-    if (subType === commadj.single && hasorder === 'Y') {
-      // 目前只有单佣金需要对在途订单
-      this.fail2Validate('', validmsg);
       return;
     }
     this.canSelected = true;
