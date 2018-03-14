@@ -150,7 +150,6 @@ export default class FilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.checkUserIsFiliale();
     this.state = {
       // 高亮项的下标索引
       activeRowIndex: 0,
@@ -170,13 +169,6 @@ export default class FilialeCustTransfer extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
-  }
-
-  componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props.custRangeList;
-    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
-      this.checkUserIsFiliale();
-    }
   }
 
   // 获取右侧详情
@@ -247,25 +239,13 @@ export default class FilialeCustTransfer extends PureComponent {
   @autobind
   checkUserIsFiliale() {
     const { custRangeList } = this.props;
+    let isFiliale = true;
     if (!_.isEmpty(custRangeList)) {
       if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        Modal.warning({
-          title: '提示',
-          content: '您不是分公司人员，无权操作！',
-          onOk: () => {
-            this.handleCloseTabPage();
-          },
-        });
+        isFiliale = false;
       }
     }
-  }
-
-  // 取消
-  @autobind
-  handleCloseTabPage() {
-    closeRctTab({
-      id: 'FSP_CROSS_DEPARTMENT',
-    });
+    return isFiliale;
   }
 
   @autobind
@@ -398,6 +378,7 @@ export default class FilialeCustTransfer extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        checkUserIsFiliale={this.checkUserIsFiliale}
       />
     );
 

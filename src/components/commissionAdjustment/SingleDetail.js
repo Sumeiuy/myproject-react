@@ -44,6 +44,7 @@ export default class Singlecommissiondetail extends PureComponent {
       created, // 提请时间
       status,
       newCommission, // 目标股基佣金率
+      currentCommission, // 当前股基佣金率
       bgCommission, // B股
       zqCommission, // 债券
       hCommission, // 回购
@@ -122,6 +123,9 @@ export default class Singlecommissiondetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
+                    <InfoItem label="当前股基佣金率" value={currentCommission} />
+                  </li>
+                  <li className={styles.item}>
                     <InfoItem label="目标股基佣金率" value={targetCom} />
                   </li>
                 </ul>
@@ -131,24 +135,25 @@ export default class Singlecommissiondetail extends PureComponent {
               <InfoTitle head="其他佣金费率" />
               <div className={styles.modContent}>
                 <div className={styles.leftCommission}>
-                  <OtherCommission name="B股：" value={bgCommission} />
                   <OtherCommission name="债券：" value={zqCommission} />
-                  <OtherCommission name="回购：" value={hCommission} />
-                  <OtherCommission name="场内基金：" value={oCommission} />
                   <OtherCommission name="权证：" value={qCommission} />
-                  <OtherCommission name="担保股基：" value={stkCommission} />
-                  <OtherCommission name="担保债券：" value={dzCommission} />
-                  <OtherCommission name="担保场内基金：" value={doCommission} />
+                  <OtherCommission name="B股：" value={bgCommission} />
+                  <OtherCommission name="大宗交易：" value={dCommission} />
+                  <OtherCommission name="场内基金：" value={oCommission} />
+                  <OtherCommission name="回购：" value={hCommission} />
+                  <OtherCommission name="股转：" value={stbCommission} />
+                  <OtherCommission name="港股通（净佣金）：" value={hkCommission} />
+
                 </div>
                 <div className={styles.rightCommission}>
+                  <OtherCommission name="担保债券：" value={dzCommission} />
                   <OtherCommission name="担保权证：" value={dqCommission} />
-                  <OtherCommission name="信用股基：" value={creditCommission} />
-                  <OtherCommission name="信用场内基金：" value={coCommission} />
-                  <OtherCommission name="港股通（净佣金）：" value={hkCommission} />
-                  <OtherCommission name="个股期权：" value={opCommission} />
+                  <OtherCommission name="担保股基：" value={stkCommission} />
                   <OtherCommission name="担保品大宗：" value={ddCommission} />
-                  <OtherCommission name="股转：" value={stbCommission} />
-                  <OtherCommission name="大宗交易：" value={dCommission} />
+                  <OtherCommission name="担保场内基金：" value={doCommission} />
+                  <OtherCommission name="信用场内基金：" value={coCommission} />
+                  <OtherCommission name="信用股基：" value={creditCommission} />
+                  <OtherCommission name="个股期权：" value={opCommission} />
                 </div>
               </div>
             </div>

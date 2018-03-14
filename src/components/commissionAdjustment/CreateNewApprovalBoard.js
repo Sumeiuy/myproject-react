@@ -106,6 +106,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       openRzrq: true, // 两融开关
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
       modalLoading: false, // 点击提交后，弹出层区域的Loading
+      isClearSelectCustValue: new Date().getTime(), // 选中的客户是否被清空，可以多次选中和清空
     };
   }
 
@@ -581,6 +582,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
+  // 清空选中客户时，将isClearSelectCustValue变为true,
+  // 告知子组件，客户被清空，需要将该客户当前股基佣金率变为空
+  @autobind
+  clearSelectCust() {
+    this.setState({
+      isClearSelectCustValue: new Date().getTime(),
+    });
+  }
+
   // 根据职责权限进行子类型选项
   @autobind
   authorityOptions(subTypes) {
@@ -672,6 +682,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       remark,
       customer,
       modalLoading, // 弹出层点击提交按钮后的页面loading
+      isClearSelectCustValue,
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
@@ -717,6 +728,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
+                      clearSelectCust={this.clearSelectCust}
                     />
                   </CommissionLine>
                 )
@@ -787,6 +799,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   customer={customer}
                   empInfo={empInfo}
                   ref={this.singleCreateBoardRef}
+                  isClearSelectCustValue={isClearSelectCustValue}
                 />
               )
             }
