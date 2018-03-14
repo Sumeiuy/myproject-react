@@ -8,8 +8,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-
-import Header from './Header';
 import CustomerSegment from '../CustomerSegment';
 import { fsp } from '../../../../helper';
 // import CustomerSourceInput from './CustomerSourceInput';
@@ -21,7 +19,6 @@ export default class ImportCustomers extends PureComponent {
 
   static propTypes = {
     visible: PropTypes.bool,
-    switchTo: PropTypes.func,
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
@@ -29,7 +26,6 @@ export default class ImportCustomers extends PureComponent {
 
   static defaultProps = {
     visible: false,
-    switchTo: () => { },
   }
 
   componentDidMount() {
@@ -46,7 +42,6 @@ export default class ImportCustomers extends PureComponent {
   render() {
     const {
       visible,
-      switchTo,
       onPreview,
       priviewCustFileData,
       storedTaskFlowData,
@@ -56,13 +51,6 @@ export default class ImportCustomers extends PureComponent {
     });
     return (
       <div className={cls}>
-        <div className={styles.header}>
-          <Header
-            title="导入客户"
-            switchTarget="瞄准镜圈人"
-            onClick={switchTo}
-          />
-        </div>
         <div className={styles.importCustomersContent}>
           <CustomerSegment
             ref={ref => (this.customerSegmentRef = ref)}

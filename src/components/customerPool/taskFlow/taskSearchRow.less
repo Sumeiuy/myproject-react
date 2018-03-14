@@ -34,36 +34,44 @@
 }
 
 .divContent {
+  position: relative;
   overflow: scroll;
   min-height: 100px;
-  max-height: e("calc(100vh - 454px)");
+  max-height: e("calc(100vh - 420px)");
   // margin-top: 15px;
   overflow-x: hidden;
+  width: e("calc(100% + 6px)");
+  box-sizing: content-box;
+  padding-right: 10px;
   /* 以下是给IE浏览器用的滚动条样式 */
   .scrollBarIEStyle;
   // margin-top: 15px;
   :global {
     .ant-radio-group {
       padding-top: 0;
+      border: 1px solid #ccc;
+      box-sizing: content-box;
     }
   }
   .divRows {
     width: 100%;
-    padding: 10px 15px;
+    min-height: 130px;
+    padding: 20px 10px;
+    border-bottom: 1px solid #ccc;
     position: relative;
-    &:hover {
+   /*  &:hover {
       background: #f1f8ff;
-      .seeCust {
-        // display: block;
-        margin-left: 15px;
-        display: inline-block;
-        height: 28px;
-      }
+    } */
+    &.clearBorder {
+      border: 0;
     }
-    &.active {
+   /*  &.active {
       background: #4897f1;
-      .title, h4 span, .filterCount, .filterCount i, h4, h4.titExp span, h4.titExp span i {
+      .title, .filterCount, .filterCount i, .titExp span, .titExp i {
         color: #fff;
+      }
+      .divider {
+        background: #fff;
       }
       .seeCust {
         background: transparent;
@@ -74,53 +82,74 @@
       .keyword {
         color: #fff000;
       }
+    } */
+    &.active {
+      background: #f1f8ff;
+    }
+    .leftContent {
+      width: e("calc(100% - 260px)");
+    }
+    .keyword {
+      color: #ff784e;
+    }
+    .title {
+      font-size: 15px;
+      font-weight: bold;
+      display: inline-block;
+      color: #4897f1;
+      span {
+        color: #ff784e;
+      }
+    }
+    .titExp {
+      font-size: 14px;
+      span {
+        padding-right: 8px;
+        color: #9b9b9b;
+      }
+      i {
+        padding-right: 8px;
+        font-style: normal;
+        color: #000;
+      }
+    }
+    .description {
+      padding-left: 23px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.75);
+      word-wrap: break-word;
+    }
+    .divider {
+      position: absolute;
+      top: e("calc(50% - 35px)");
+      right: 260px;
+      height: 70px;
+      width: 2px;
+      background: #ccc;
+      margin-left: 2px;
+    }
+    .seeCust {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      margin-left: 15px;
+      display: inline-block;
+      height: 28px;
+      color: #108ee9;
+      border-color: #108ee9;
     }
     .filterCount {
-      margin-left: 10px;
+      position: absolute;
+      top: 27px;
+      right: 20px;
       font-size: 14px;
       color: #9b9b9b;
       i {
-        font-size: 12px;
         font-style: normal;
-        color: #7c7a7a;
+        color: #000;
       }
-    }
-    .title {
-      font-size: 14px;
-      font-weight: bold;
-      display: inline-block;
-      span {
-        color: #ff784e;
-      }
-    }
-    h4 {
-      font-size: 12px;
-      line-height: 24px;
-      span {
-        color: #ff784e;
-        padding: 0 5px;
-      }
-    }
-    h4.titExp {
-      font-size: 12px;
-      span {
-        padding: 0 12px 0 0;
-        color: #9b9b9b;
-        i {
-          font-style: normal;
-          color: #7c7a7a;
-        }
-      }
-    }
-    .seeCust {
-      display: none;
-      // margin-left: 15px;
-      // font-size: 14px;
-      // display: inline-block;
-      // height: 28px;
     }
   }
-
   :global {
     .ant-radio-group {
       width: 100%;
@@ -128,7 +157,6 @@
     }
     .ant-radio-wrapper {
       margin-bottom: 5px;
-      width: 100%;
       height: 28px;
       line-height: 30px;
       .ant-radio-inner {
