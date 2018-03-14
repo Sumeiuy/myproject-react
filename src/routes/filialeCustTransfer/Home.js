@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Modal } from 'antd';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -21,7 +20,6 @@ import CreateFilialeCustTransfer from '../../components/filialeCustTransfer/Crea
 import FilialeCustTransferList from '../../components/common/appList';
 import ViewListRow from '../../components/filialeCustTransfer/ViewListRow';
 import Detail from '../../components/filialeCustTransfer/Detail';
-import { closeRctTab } from '../../utils';
 import { seibelConfig } from '../../config';
 import { emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';

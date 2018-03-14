@@ -152,7 +152,7 @@ export default class SingleCreateBoard extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { customer, isClearSelectCustValue } = nextProps;
-    const { queryCustCurrentCommission } =this.props;
+    const { queryCustCurrentCommission } = this.props;
     console.warn('customer', customer);
     if (customer !== this.props.customer && !_.isEmpty(customer)) {
       console.warn('customer', customer);
@@ -162,16 +162,16 @@ export default class SingleCreateBoard extends PureComponent {
         const { custCurrentCommission } = this.props;
         this.setState({
           newCurrentCommission: _.isEmpty(custCurrentCommission) ? '--' : custCurrentCommission.currentCommission,
-        })
-      })
+        });
+      });
     }
-    console.warn('isClearSelectCustValue', isClearSelectCustValue)
-    console.warn('this.props.isClearSelectCustValue', this.props.isClearSelectCustValue)
+    console.warn('isClearSelectCustValue', isClearSelectCustValue);
+    console.warn('this.props.isClearSelectCustValue', this.props.isClearSelectCustValue);
     if (isClearSelectCustValue !== this.props.isClearSelectCustValue) {
       // 清空客户的同时需要同时去清空目标股基佣金率的值
       this.setState({
         newCurrentCommission: '--',
-      })
+      });
     }
   }
 
@@ -346,7 +346,6 @@ export default class SingleCreateBoard extends PureComponent {
       otherRations,
       approverList,
       productList,
-      custCurrentCommission,
     } = this.props;
     const {
       newCommission,
