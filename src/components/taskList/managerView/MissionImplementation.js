@@ -10,13 +10,15 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-// import { Row, Col } from 'antd';
+import { Tooltip } from 'antd';
 import classNames from 'classnames';
+import Icon from '../../common/Icon';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import { env, permission, emp } from '../../../helper';
+import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 
@@ -50,6 +52,10 @@ export default class MissionImplementation extends PureComponent {
     missionProgressStatusDic: PropTypes.array.isRequired,
     // current taskId
     currentId: PropTypes.string,
+    missionReport: PropTypes.object.isRequired,
+    createMotReport: PropTypes.func.isRequired,
+    queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    urlParams: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -128,10 +134,10 @@ export default class MissionImplementation extends PureComponent {
   }
 
   /**
-    * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
-    * 不然会产生对齐bug
-    * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
-    */
+   * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
+   * 不然会产生对齐bug
+   * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
+   */
   @autobind
   onResize() {
     const contentWidth = this.contentElem && this.contentElem.clientWidth;
@@ -168,15 +174,15 @@ export default class MissionImplementation extends PureComponent {
   }
 
   /**
- * 创建客户范围组件的tree数据
- * @param {*} props 最新的props
- */
+   * 创建客户范围组件的tree数据
+   * @param {*} props 最新的props
+   */
   @autobind
   handleCreateCustRange({
-    custRange,
-    posOrgId,
-    empPostnList,
-  }) {
+        custRange,
+        posOrgId,
+        empPostnList,
+      }) {
     // const myCustomer = {
     //   id: MAIN_MAGEGER_ID,
     //   name: '我的客户',
@@ -288,6 +294,77 @@ export default class MissionImplementation extends PureComponent {
     };
     return (<TabsExtra {...extraProps} />);
   }
+  @autobind
+  getPayload() {
+    const {
+      urlParams,
+    } = this.props;
+    const orgId = this.getCurrentOrgId();
+    const {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+    } = urlParams;
+    return {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+      orgId,
+    };
+  }
+
+  @autobind
+  createMissionReport() {
+    const {
+      createMotReport,
+    } = this.props;
+    const payload = this.getPayload();
+    createMotReport(payload);
+  }
+
+  @autobind
+  queryMOTServeAndFeedBackExcel() {
+    const { queryMOTServeAndFeedBackExcel } = this.props;
+    const payload = this.getPayload();
+    queryMOTServeAndFeedBackExcel(payload);
+  }
+
+  @autobind
+  getSourceSrc(source) {
+    return source && `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
+  }
+
+  @autobind
+  renderCreateFileInfo(currentMissionReport) {
+    const { isCreatingMotReport, createTime, reportFileList } = currentMissionReport;
+    if (isCreatingMotReport) {
+      const text = '生成报告需要一些时间，请10分钟后点击此处刷新状态'; // 提示文本(来自需求)；
+      return (
+        <div className={styles.creatingBtn} onClick={this.queryMOTServeAndFeedBackExcel}>
+          <span className={styles.line}>|</span>
+          <Tooltip placement="bottomLeft" title={text}>
+            <Icon type="shangchuan" className="icon" />
+            <span>正在生成最新报告</span>
+          </Tooltip>
+        </div>
+      );
+    } else if (createTime) {
+      return (
+        <div className={styles.downLoading}>
+          <span className={styles.line}>|</span>
+          <a href={this.getSourceSrc(reportFileList[0])}>
+            <Icon type="xiazai" className="icon" />
+          </a>
+          <a href={this.getSourceSrc(reportFileList[0])}>
+            <span>{createTime}报告</span>
+          </a>
+        </div>
+      );
+    }
+    return null;
+  }
 
   render() {
     const {
@@ -295,8 +372,13 @@ export default class MissionImplementation extends PureComponent {
       // isFold,
       custFeedback = EMPTY_LIST,
       missionProgressStatusDic = EMPTY_LIST,
+      missionReport,
+      currentId,
     } = this.props;
-
+    const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
+    const {
+      isCreatingMotReport,
+    } = currentMissionReport;
     /**
      * 下面三个变量是为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
      * 不然会产生对齐bug
@@ -306,6 +388,10 @@ export default class MissionImplementation extends PureComponent {
     const shouldnoMargin = (contentWidth && contentWidth < COLLAPSE_WIDTH);
     const shouldForceCollapse = shouldnoMargin && contentWidth > COLLAPSE_WIDTH - MARGIN_LEFT;
 
+    const notMissionCust = _.isEmpty(missionImplementationProgress) && _.isEmpty(custFeedback);
+    const canCreateReport = _.isBoolean(isCreatingMotReport) ?
+      notMissionCust || isCreatingMotReport :
+      true;
     return (
       <div className={styles.missionImplementationSection}>
         <div className={styles.title}>
@@ -319,7 +405,23 @@ export default class MissionImplementation extends PureComponent {
           </div>
         </div>
         {
-          _.isEmpty(missionImplementationProgress) && _.isEmpty(custFeedback) ?
+          <div className={styles.report}>
+            <span
+              className={canCreateReport ?
+                styles.noCreateBtn :
+                styles.createBtn
+              }
+              onClick={canCreateReport ? null : this.createMissionReport}
+            >
+              生成最新报告
+            </span>
+            {
+              this.renderCreateFileInfo(currentMissionReport)
+            }
+          </div>
+        }
+        {
+          notMissionCust ?
             <div className={styles.emptyContent}>
               <img src={emptyImg} alt={EMPTY_CONTENT} />
               <div className={styles.tip}>{EMPTY_CONTENT}</div>

@@ -6,10 +6,13 @@
  * 管理者视图model层
  */
 
-import { performerView as api } from '../../api';
+import { customerPool as custApi, performerView as api } from '../../api';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
+
+const CREATEING_FILE = 'ing'; // 正在创建报告
+const CREATEDONE_FILE = 'done'; // 创建报告完成
 
 export default {
   namespace: 'managerView',
@@ -25,6 +28,8 @@ export default {
     // 任务实施进度数据
     missionImplementationDetail: EMPTY_OBJ,
     exportExcel: {},
+    // 生成任务报告相关信息
+    missionReport: EMPTY_OBJ,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -67,6 +72,26 @@ export default {
       return {
         ...state,
         exportExcel: payload,
+      };
+    },
+    createMotReportSuccess(state, action) {
+      const { payload } = action;
+      const { missionId } = payload;
+      return {
+        ...state,
+        missionReport: {
+          [`${missionId}`]: payload,
+        },
+      };
+    },
+    queryMOTServeAndFeedBackExcelSuccess(state, action) {
+      const { payload } = action;
+      const { missionId } = payload;
+      return {
+        ...state,
+        missionReport: {
+          [`${missionId}`]: payload,
+        },
       };
     },
   },
@@ -115,6 +140,52 @@ export default {
       yield put({
         type: 'exportCustListExcelSuccess',
         payload: resultData,
+      });
+    },
+    * createMotReport({ payload }, { call, put }) {
+      const { resultData } = yield call(api.createMotReport, payload);
+      const { missionId } = payload;
+      if (resultData) {
+        const { isCreate } = resultData;
+        yield put({
+          type: 'createMotReportSuccess',
+          payload: {
+            isCreatingMotReport: isCreate,
+            missionId,
+          },
+        });
+      }
+    },
+    * queryMOTServeAndFeedBackExcel({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryMOTServeAndFeedBackExcel, payload);
+      const { missionId } = payload;
+      let createInfo = {
+        missionId,
+        isCreatingMotReport: false,
+      };
+      if (resultData) {
+        const { status } = resultData;
+        if (status === CREATEING_FILE) {
+          createInfo = {
+            ...createInfo,
+            isCreatingMotReport: true,
+          };
+        } else if (status === CREATEDONE_FILE) {
+          const { createTime, fileName } = resultData;
+          const { resultData: reportFileList } = yield call(custApi.ceFileList, {
+            attachment: fileName,
+          });
+          createInfo = {
+            ...createInfo,
+            isCreatingMotReport: false,
+            createTime,
+            reportFileList,
+          };
+        }
+      }
+      yield put({
+        type: 'queryMOTServeAndFeedBackExcelSuccess',
+        payload: createInfo,
       });
     },
   },

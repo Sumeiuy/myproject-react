@@ -85,6 +85,9 @@ export default class ManagerViewDetail extends PureComponent {
     serveManagerCount: PropTypes.number.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    missionReport: PropTypes.object.isRequired,
+    createMotReport: PropTypes.func.isRequired,
+    queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -391,6 +394,9 @@ export default class ManagerViewDetail extends PureComponent {
       isCustServedByPostn,
       custServedByPostnResult,
       currentId,
+      missionReport,
+      createMotReport,
+      queryMOTServeAndFeedBackExcel,
     } = this.props;
 
     const {
@@ -575,6 +581,10 @@ export default class ManagerViewDetail extends PureComponent {
               missionProgressStatusDic={missionProgressStatusDic}
               ref={ref => (this.missionImplementationElem = ref)}
               currentId={currentId}
+              urlParams={urlParams}
+              missionReport={missionReport}
+              createMotReport={createMotReport}
+              queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
             />
           </div>
           <div className={styles.missionFeedbackSection}>
