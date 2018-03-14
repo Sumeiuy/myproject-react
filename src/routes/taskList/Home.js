@@ -36,6 +36,10 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
+
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
 const today = moment(new Date()).format('YYYY-MM-DD');
@@ -294,7 +298,6 @@ export default class PerformerView extends PureComponent {
     // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
     let currentView = '';
     let newMissionView = chooseMissionView;
-
     // 默认不展示执行者视图与管理者视图的入口
     if (envHelper.isGrayFlag()) {
       // 支持灰度发布，则展示执行者视图与管理者视图的入口
@@ -469,16 +472,23 @@ export default class PerformerView extends PureComponent {
     const {
       missionViewType: st,
       flowId,
+      statusCode,
     } = record;
+
     const {
       getTaskBasicInfo,
     } = this.props;
+    // 如果当前视图是创建者视图，并且状态是中，那么将右侧详情展示成管理者视图
     switch (st) {
       case INITIATOR:
-        getTaskBasicInfo({
-          flowId,
-          systemCode: SYSTEMCODE,
-        });
+        if (this.judgeTaskInApproval(statusCode)) {
+          this.loadManagerViewDetailContent(record);
+        } else {
+          getTaskBasicInfo({
+            flowId,
+            systemCode: SYSTEMCODE,
+          });
+        }
         break;
       case EXECUTOR:
         this.loadDetailContent(record);
@@ -590,15 +600,51 @@ export default class PerformerView extends PureComponent {
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
+    const managerViewDetailComponent = (
+      <ManagerViewDetail
+        currentId={currentId}
+        dict={dict}
+        previewCustDetail={previewCustDetail}
+        custDetailResult={custDetailResult}
+        onGetCustFeedback={countFlowFeedBack}
+        custFeedback={custFeedback}
+        custRange={custRange}
+        empInfo={empInfo}
+        location={location}
+        replace={replace}
+        countFlowStatus={this.getFlowStatus}
+        countFlowFeedBack={this.getFlowFeedback}
+        missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
+        mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
+        launchNewTask={this.handleCreateBtnClick}
+        clearCreateTaskData={clearCreateTaskData}
+        push={push}
+        missionType={typeCode}
+        missionTypeDict={missionType}
+        exportExcel={this.handleExportExecl}
+        missionProgressStatusDic={missionProgressStatus}
+        missionFeedbackData={missionFeedbackData}
+        missionFeedbackCount={missionFeedbackCount}
+        serveManagerCount={empNum}
+        isCustServedByPostn={isCustServedByPostn}
+        custServedByPostnResult={custServedByPostnResult}
+      />
+    );
+
     switch (st) {
       case INITIATOR:
-        detailComponent = (
-          <CreatorViewDetail
-            onPreview={this.handlePreview}
-            priviewCustFileData={priviewCustFileData}
-            taskBasicInfo={{ ...taskBasicInfo, currentId }}
-          />
-        );
+        // 如果当前视图是创建者视图，并且状态是执行中，就展示管理者视图
+        if (this.judgeTaskInApproval(statusCode)) {
+          detailComponent = managerViewDetailComponent;
+        } else {
+          detailComponent = (
+            <CreatorViewDetail
+              onPreview={this.handlePreview}
+              priviewCustFileData={priviewCustFileData}
+              taskBasicInfo={{ ...taskBasicInfo, currentId }}
+            />
+          );
+        }
         break;
       case EXECUTOR:
         detailComponent = (
@@ -640,41 +686,17 @@ export default class PerformerView extends PureComponent {
         );
         break;
       case CONTROLLER:
-        detailComponent = (
-          <ManagerViewDetail
-            currentId={currentId}
-            dict={dict}
-            previewCustDetail={previewCustDetail}
-            custDetailResult={custDetailResult}
-            onGetCustFeedback={countFlowFeedBack}
-            custFeedback={custFeedback}
-            custRange={custRange}
-            empInfo={empInfo}
-            location={location}
-            replace={replace}
-            countFlowStatus={this.getFlowStatus}
-            countFlowFeedBack={this.getFlowFeedback}
-            missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
-            mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
-            launchNewTask={this.handleCreateBtnClick}
-            clearCreateTaskData={clearCreateTaskData}
-            push={push}
-            missionType={typeCode}
-            missionTypeDict={missionType}
-            exportExcel={this.handleExportExecl}
-            missionProgressStatusDic={missionProgressStatus}
-            missionFeedbackData={missionFeedbackData}
-            missionFeedbackCount={missionFeedbackCount}
-            serveManagerCount={empNum}
-            isCustServedByPostn={isCustServedByPostn}
-            custServedByPostnResult={custServedByPostnResult}
-          />
-        );
+        detailComponent = managerViewDetailComponent;
         break;
       default:
         break;
     }
     return detailComponent;
+  }
+
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes([EXECUTE_STATE, RESULT_TRACK_STATE, COMPLETED_STATE], status);
   }
 
   // 导出客户

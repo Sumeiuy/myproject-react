@@ -1,13 +1,13 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:13:17
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-14 17:46:40
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -15,7 +15,7 @@ import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import { openFspTab } from '../../../utils';
-import { emp } from '../../../helper';
+// import { emp } from '../../../helper';
 import styles from './customerRow.less';
 
 import maleAvator from './img/icon-avator.png';
@@ -151,40 +151,28 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
-      isCustServedByPostn,
     } = this.props;
-    const postnId = emp.getPstnId();
-    // 跳转之前查询一下是否包含非本人名下客户
-    isCustServedByPostn({
-      postnId,
-      custId,
-    }).then(() => {
-      if (this.props.custServedByPostnResult) {
-        // pOrO代表个人客户，机构客户
-        const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
-        const param = {
-          id: 'FSP_360VIEW_M_TAB',
-          title: '客户360视图-客户信息',
-          forceRefresh: true,
-        };
-        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-        // TODOTAB: 如何与后端是动态接口
-        openFspTab({
-          routerAction: push,
-          url,
-          pathname: '/fsp/customerCenter/customerDetail',
-          param,
-          state: {
-            url,
-          },
-        });
-      } else {
-        message.error('客户非本人名下客户，不能查看客户360视图');
-      }
+    // pOrO代表个人客户，机构客户
+    const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+    };
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+    // TODOTAB: 如何与后端是动态接口
+    openFspTab({
+      routerAction: push,
+      url,
+      pathname: '/fsp/customerCenter/customerDetail',
+      param,
+      state: {
+        url,
+      },
     });
   }
 

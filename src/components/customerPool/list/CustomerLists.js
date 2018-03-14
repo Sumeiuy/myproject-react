@@ -121,6 +121,9 @@ export default class CustomerLists extends PureComponent {
     view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    hasLaunchTaskPermission: PropTypes.bool.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -225,7 +228,7 @@ export default class CustomerLists extends PureComponent {
       bool = ptyMng.split('_')[1] === empInfo.empNum;
     }
     // 0表示当前用户没有权限
-    this.mainServiceManager = !!(bool) || permissionType === 0;
+    this.mainServiceManager = !!(bool) || permissionType === NOPERTMIT;
   }
 
   /**
@@ -348,7 +351,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-        pathname,
+      pathname,
       },
       replace,
       handleSelect,
@@ -479,6 +482,9 @@ export default class CustomerLists extends PureComponent {
       view360Permit,
       isCustServedByPostn,
       custServedByPostnResult,
+      hasLaunchTaskPermission,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -519,8 +525,7 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
-    // ‘HTSC 首页指标查询’ 权限
+    // 有 ‘HTSC 任务管理岗’，‘HTSC 首页指标查询’权限
     if (permissionType !== NOPERTMIT) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
@@ -534,7 +539,7 @@ export default class CustomerLists extends PureComponent {
     if (orgId) {
       curOrgId = orgId;
     } else if (permissionType !== NOPERTMIT) {
-      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
+      // 有 ‘HTSC 任务管理岗’，‘HTSC 首页指标查询’权限
       if (env.isInFsp()) {
         curOrgId = window.forReactPosition.orgId;
       } else {
@@ -637,14 +642,14 @@ export default class CustomerLists extends PureComponent {
             {...paginationOption}
           />
           {
-           /*  <Checkbox
-              checked={isAllSelectBool}
-              onChange={this.selectAll}
-              className={styles.selectAllTwo}
-              disabled={_.isEmpty(custList)}
-            >
-              全选
-          </Checkbox> */
+            /*  <Checkbox
+               checked={isAllSelectBool}
+               onChange={this.selectAll}
+               className={styles.selectAllTwo}
+               disabled={_.isEmpty(custList)}
+             >
+               全选
+           </Checkbox> */
           }
         </div>
         {
@@ -660,6 +665,9 @@ export default class CustomerLists extends PureComponent {
               entertype={entertype}
               clearCreateTaskData={clearCreateTaskData}
               onClick={this.goGroupOrTask}
+              hasLaunchTaskPermission={hasLaunchTaskPermission}
+              isSendCustsServedByPostn={isSendCustsServedByPostn}
+              sendCustsServedByPostnResult={sendCustsServedByPostnResult}
             /> : null
         }
         {

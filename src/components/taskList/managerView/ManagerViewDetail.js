@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 10:52:25
+ * @Last Modified time: 2018-03-14 16:28:18
  * 管理者视图详情
  */
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
@@ -27,7 +27,7 @@ import InfoArea from './InfoArea';
 
 const EMPTY_OBJECT = {};
 const INITIAL_PAGE_NUM = 1;
-const INITIAL_PAGE_SIZE = 5;
+const INITIAL_PAGE_SIZE = 10;
 // const CONTROLLER = 'controller';
 
 // 1代表是自建任务类型
@@ -146,6 +146,7 @@ export default class ManagerViewDetail extends PureComponent {
    */
   @autobind
   handleCloseModal() {
+    this.scrollModalBodyToTop();
     this.hideCustDetailModal();
   }
 
@@ -355,6 +356,15 @@ export default class ManagerViewDetail extends PureComponent {
   }
 
   @autobind
+  scrollModalBodyToTop() {
+    // 翻页之后，恢复当前页面表格的滚动，在小屏的情况下
+    const custDetailContainer = document.querySelector('.custDetailContainer .ant-modal-body');
+    if (custDetailContainer) {
+      custDetailContainer.scrollTop = 0;
+    }
+  }
+
+  @autobind
   renderTotalCust() {
     const { mngrMissionDetailInfo = {} } = this.props;
     const { custNumbers = 0 } = mngrMissionDetailInfo;
@@ -486,11 +496,8 @@ export default class ManagerViewDetail extends PureComponent {
               headLine={'目标客户'}
             />
             <GroupModal
-              wrapperClass={
-                classnames({
-                  [styles.custDetailContainer]: true,
-                })
-              }
+              wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
+              closable
               visible={isShowCustDetailModal}
               title={'客户明细'}
               onCancelHandler={this.handleCloseModal}
@@ -549,14 +556,16 @@ export default class ManagerViewDetail extends PureComponent {
                   isEntryFromProgressDetail={isEntryFromProgressDetail}
                   // 代表是否是从饼图过来的
                   isEntryFromPie={isEntryFromPie}
+                  // scrollTop恢复
+                  scrollModalBodyToTop={this.scrollModalBodyToTop}
                 />
               }
               modalStyle={{
-                maxWidth: 1080,
+                maxWidth: 1165,
                 minWidth: 700,
-                width: 1080,
+                width: 1165,
               }}
-              modalWidth={1080}
+              modalWidth={1165}
             />
           </div>
           <div className={styles.missionImplementationSection}>

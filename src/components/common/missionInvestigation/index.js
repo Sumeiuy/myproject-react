@@ -2,28 +2,53 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 17:54:07
+ * @Last Modified time: 2018-03-14 16:02:06
  * 任务调查
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Checkbox, Tooltip, message } from 'antd';
+import { Checkbox, Tooltip, message } from 'antd';
 import _ from 'lodash';
 // import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
 import { data } from '../../../helper';
+import GroupTable from '../../customerPool/groupManage/GroupTable';
+import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
+import Clickable from '../Clickable';
+import Button from '../Button';
+// import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const Option = Select.Option;
-const defaultQuestion = '请选择问题';
 const posi = 'bottom';
+const INITIAL_PAGE_NUM = 1;
+// 前端分页，下个迭代再干新接口
+const INITIAL_REQUEST_PAGE_SIZE = 1000;
+const INITIAL_PAGE_SIZE = 10;
+const INITIAL_TOTAL_COUNT = 10;
+const INITIAL_TOTAL_PAGE = 1;
+// 1代表单选
+// 2代表多选
+const isSingleOrMultipleQuestion = quesTypeCode => quesTypeCode === '1' || quesTypeCode === '2';
+const renderColumnTitle = () => {
+  const columns = [
+    {
+      key: 'quesTypeValue',
+      value: '问题类型',
+    },
+    {
+      key: 'quesValue',
+      value: '题目',
+    },
+  ];
 
+  return columns;
+};
 @RestoreScrollTop
 export default class MissionInvestigation extends PureComponent {
 
@@ -40,36 +65,38 @@ export default class MissionInvestigation extends PureComponent {
 
   static defaultProps = {
     questionInfo: {
-      list: [],
+      list: EMPTY_LIST,
       page: {
-        pageNum: 1,
-        pageSize: 200,
-        totalCount: 200,
-        totalPage: 1,
+        pageNum: INITIAL_PAGE_NUM,
+        pageSize: INITIAL_PAGE_SIZE,
+        totalCount: INITIAL_TOTAL_COUNT,
+        totalPage: INITIAL_TOTAL_PAGE,
       },
     },
     isChecked: false,
-    storedData: {},
+    storedData: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
-    const { storedData, questionInfo: { list } } = props;
+    const { storedData, questionInfo: { list, page } } = props;
     const { missionInvestigationData = {} } = storedData || {};
     const {
       // 是否选中
       isMissionInvestigationChecked = false,
       // 选择的问题
-      questionList = [],
+      questionList = EMPTY_LIST,
+      // 当前选中的问题的key
+      currentSelectRowKeys,
     } = missionInvestigationData;
     let questionId = 0;
     const idList = _.map(questionList, item => item.quesId) || [];
-    let newQuestionAndAnswerGroup = [];
+    let newQuestionAndAnswerGroup = EMPTY_LIST;
     if (!_.isEmpty(idList)) {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
           ++questionId,
-          isMissionInvestigationChecked,
+          questionList[index].quesId,
           questionList[index].quesValue,
         ));
     }
@@ -86,8 +113,14 @@ export default class MissionInvestigation extends PureComponent {
           value: item.quesId,
         };
       }),
-      questionList: list || [],
+      questionList: list || EMPTY_LIST,
       questionId,
+      currentSelectRowKeys,
+      isShowTable: false,
+      page,
+      currentSelectRowKeysInTable: EMPTY_LIST,
+      // 展示在页面上数据
+      curDataInfo: this.getCurPageData(INITIAL_PAGE_NUM, list).curDataInfo || EMPTY_LIST,
     };
   }
 
@@ -96,14 +129,18 @@ export default class MissionInvestigation extends PureComponent {
     if (_.isEmpty(list)) {
       // 为空则需要去请求一次问题列表
       getQuestionList({
-        pageNum: 1,
-        pageSize: 200,
+        pageNum: INITIAL_PAGE_NUM,
+        pageSize: INITIAL_REQUEST_PAGE_SIZE,
       }).then(() => {
         const { questionInfo: nextQuestionInfo } = this.props;
-        const { list: nextList } = nextQuestionInfo;
+        const { list: nextList, page } = nextQuestionInfo;
+        // 将题目相同的问题过滤掉
+        const questionList = _.uniqBy(nextList, 'quesValue') || EMPTY_LIST;
+        const { curDataInfo } = this.getCurPageData(INITIAL_PAGE_NUM, questionList);
         this.setState({
-          // 将题目相同的问题过滤掉
-          questionList: _.uniqBy(nextList, 'quesValue') || EMPTY_LIST,
+          questionList,
+          page,
+          curDataInfo,
         });
       });
     }
@@ -127,6 +164,7 @@ export default class MissionInvestigation extends PureComponent {
       checked,
       questionList = [],
       newQuestionAndAnswerGroup = [],
+      currentSelectRowKeys,
     } = this.state;
     const idList = _.map(currentSelectedQuestionIdList, item => item.value);
     const selectedQuestionDetailList = [];
@@ -149,6 +187,25 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectedQuestionIdList,
       // 当前新增的问题选择个数
       addedQuestionSize: _.size(newQuestionAndAnswerGroup),
+      // 当前选择的问题row
+      currentSelectRowKeys,
+    };
+  }
+
+  @autobind
+  getCurPageData(pageNum = INITIAL_PAGE_NUM, questionList = EMPTY_LIST) {
+    let curDataInfo = [];
+    if (pageNum <= 1) {
+      // 第一页
+      curDataInfo = _.slice(questionList, 0, INITIAL_PAGE_SIZE);
+    } else {
+      // 大于一页
+      curDataInfo = _.slice(questionList,
+        (pageNum - 1) * INITIAL_PAGE_SIZE, INITIAL_PAGE_SIZE * pageNum);
+    }
+    return {
+      curDataInfo,
+      pageNum,
     };
   }
 
@@ -157,13 +214,22 @@ export default class MissionInvestigation extends PureComponent {
    * @param {*string} currentDeleteId 当前删除的问题id
    */
   @autobind
-  handleDeleteQuestion(currentDeleteId) {
-    const { newQuestionAndAnswerGroup, currentSelectedQuestionIdList } = this.state;
+  handleDeleteQuestion(currentDeleteId, quesId) {
+    const {
+      newQuestionAndAnswerGroup,
+      currentSelectedQuestionIdList,
+      currentSelectRowKeys,
+    } = this.state;
+
     this.setState({
+      // 将当前列表去除一条
       newQuestionAndAnswerGroup: _.filter(newQuestionAndAnswerGroup,
         item => item.key !== currentDeleteId) || EMPTY_LIST,
+      // 从当前列表里面去除quesId
       currentSelectedQuestionIdList: _.filter(currentSelectedQuestionIdList, item =>
         item.key !== currentDeleteId) || EMPTY_LIST,
+      // 从当前选择的row里面去除当前要删除的quesId
+      currentSelectRowKeys: _.filter(currentSelectRowKeys, item => item !== quesId),
     }, () => {
       if (_.isEmpty(this.state.currentSelectedQuestionIdList)) {
         this.setState({
@@ -182,13 +248,19 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   addQuestion() {
-    if (!this.state.checked) {
+    const { checked, questionList } = this.state;
+    if (!checked) {
       message.error('请先勾选任务调查');
       return;
     }
 
-    const { newQuestionAndAnswerGroup, questionId } = this.state;
-    this.renderNextQuestion(questionId, newQuestionAndAnswerGroup);
+    this.setState({
+      isShowTable: true,
+      // 将table的row选择置为空
+      currentSelectRowKeysInTable: [],
+      // 重置第一页数据
+      curDataInfo: this.getCurPageData(INITIAL_PAGE_NUM, questionList).curDataInfo || EMPTY_LIST,
+    });
   }
 
   @autobind
@@ -200,48 +272,153 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  handleSelectChange(id, value) {
-    const { currentSelectedQuestionIdList, questionList } = this.state;
-    const currentQuestion = _.find(questionList, item =>
-      item.quesValue === value) || EMPTY_OBJECT;
-    let newIdList = currentSelectedQuestionIdList;
-    const currentIndex = _.findIndex(newIdList, item => item.key === `question_${id}`);
-    if (currentIndex === -1) {
-      // 在当前编辑的里面没有，则新增
-      newIdList = _.concat(newIdList, [{
-        key: `question_${id}`,
-        value: currentQuestion.quesId,
-      }]);
-    } else {
-      newIdList[currentIndex].value = currentQuestion.quesId;
+  handleRowSelectionChange(selectedRowKeys) {
+    this.setState({
+      // 当前已经选中的问题列，就是已经展示在页面上的列表
+      // 去除假值
+      // 去重
+      currentSelectRowKeys: _.uniq(_.compact(_.concat(selectedRowKeys,
+        this.state.currentSelectRowKeys))),
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record = {}) {
+    const { quesId } = record;
+    this.setState({
+      currentSelectRecord: record,
+      // 在表格里面选中的row
+      currentSelectRowKeysInTable: _.uniq(_.concat([quesId],
+        this.state.currentSelectRowKeysInTable)),
+    });
+  }
+
+  /**
+   * 取消弹窗，则取消刚才勾选的selectedKeys
+   */
+  @autobind
+  handleCancel() {
+    const { currentSelectRowKeys, currentSelectRowKeysInTable, page } = this.state;
+    this.scrollModalBodyToTop();
+    this.setState({
+      isShowTable: false,
+    }, () => {
+      this.setState({
+        currentSelectRowKeysInTable: [],
+        currentSelectRowKeys: _.filter(currentSelectRowKeys, item =>
+          !_.includes(currentSelectRowKeysInTable, item)),
+        // 重置分页
+        page: {
+          ...page,
+          pageNum: INITIAL_PAGE_NUM,
+          pageSize: INITIAL_PAGE_SIZE,
+        },
+      });
+    });
+  }
+
+  /**
+   * 确认，关闭弹窗，将新加的问题加入列表
+   */
+  @autobind
+  handleConfirm() {
+    this.setState({
+      isShowTable: false,
+      // 重置分页
+      page: {
+        ...this.state.page,
+        pageNum: INITIAL_PAGE_NUM,
+        pageSize: INITIAL_PAGE_SIZE,
+      },
+    });
+    this.scrollModalBodyToTop();
+    this.renderNextQuestion();
+  }
+
+  /**
+   * 分页条目改变事件
+   * @param {*number} curPageNum 当前页码
+   * @param {*number} curPageSize 当前分页条目
+   */
+  @autobind
+  handlePageChange(pageNum) {
+    const { curDataInfo } = this.getCurPageData(pageNum, this.state.questionList);
+    this.setState({
+      curDataInfo,
+      page: {
+        ...this.state.page,
+        pageNum,
+      },
+    });
+    this.scrollModalBodyToTop();
+  }
+
+  @autobind
+  scrollModalBodyToTop() {
+    // 翻页之后，恢复当前页面表格的滚动，在小屏的情况下
+    const problemListModalContainer = document.querySelector('.problemListModalContainer .ant-modal-body');
+    if (problemListModalContainer) {
+      problemListModalContainer.scrollTop = 0;
+    }
+  }
+
+  /**
+   * 为数据源的每一项添加一个id属性
+   * @param {*} listData 数据源
+   */
+  addIdToDataSource(listData) {
+    if (!_.isEmpty(listData)) {
+      return _.map(listData, item => _.merge(item, { id: item.quesId }));
     }
 
+    return [];
+  }
+
+  /**
+   * 渲染下一个题目信息
+   */
+  @autobind
+  renderNextQuestion() {
+    const {
+      newQuestionAndAnswerGroup,
+      currentSelectRowKeysInTable,
+      currentSelectedQuestionIdList,
+      questionId,
+      questionList,
+    } = this.state;
+
+    let finalId = questionId;
+    let finalSelectedQuestionIdList = currentSelectedQuestionIdList;
+    let finalQuestionAndAnswerGroup = newQuestionAndAnswerGroup;
+
+    _.each(currentSelectRowKeysInTable,
+      (item) => {
+        const question = _.find(questionList, questionItem =>
+          questionItem.quesId === item) || {};
+        ++finalId;
+        finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
+          this.renderQuestion(finalId, question.quesId, question.quesValue));
+        finalSelectedQuestionIdList = _.concat(finalSelectedQuestionIdList, [{
+          key: `question_${finalId}`,
+          value: item,
+        }]);
+      });
+
     this.setState({
-      currentSelectedQuestionIdList: newIdList,
+      newQuestionAndAnswerGroup: finalQuestionAndAnswerGroup,
+      currentSelectedQuestionIdList: finalSelectedQuestionIdList,
+      questionId: finalId,
     });
   }
 
-  @autobind
-  filterOption(input, option) {
-    return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-  }
-
-  @autobind
-  renderNextQuestion(questionId, newQuestionAndAnswerGroup) {
-    const newQuestionId = questionId + 1;
-    // 最新添加的在最下面
-    this.setState({
-      questionId: newQuestionId,
-      newQuestionAndAnswerGroup: _.concat(newQuestionAndAnswerGroup,
-        this.renderQuestion(newQuestionId, this.state.checked)),
-    });
-  }
-
+  /**
+   * 悬浮框提示问题详情
+   * @param {*object} currentQuestionDetail 当前问题详情
+   */
   @autobind
   renderOption(currentQuestionDetail = {}) {
     const quesTypeCode = currentQuestionDetail.quesTypeCode;
-    // 1代表单选，2代表多选
-    if (quesTypeCode === '1' || quesTypeCode === '2') {
+    if (isSingleOrMultipleQuestion(quesTypeCode)) {
       return (
         <div className={styles.content}>
           {
@@ -275,6 +452,7 @@ export default class MissionInvestigation extends PureComponent {
     if (_.isEmpty(currentQuestionDetail)) {
       return null;
     }
+
     return (
       <div className={styles.detailTip}>
         <div className={styles.questionSection}>
@@ -284,8 +462,7 @@ export default class MissionInvestigation extends PureComponent {
         <div className={styles.answerSection}>
           <div className={styles.title}>
             {
-              // 1代表单选，2代表多选
-              quesTypeCode === '1' || quesTypeCode === '2' ?
+              isSingleOrMultipleQuestion(quesTypeCode) ?
                 '答案：' : '描述：'
             }
           </div>
@@ -296,41 +473,22 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  renderQuestion(questionId, checked, defaultQues) {
-    const { questionInfo: { list } } = this.props;
-
+  renderQuestion(id, quesId, quesValue) {
     return (
       <div
         className={classnames({
           [styles.questionLine]: true,
         })}
-        key={`question_${questionId}`}
+        key={`question_${id}`}
       >
-        <Select
-          onChange={value => this.handleSelectChange(questionId, value)}
-          disabled={!checked}
-          defaultValue={defaultQues || defaultQuestion}
-          showSearch
-          optionFilterProp="children"
-          filterOption={(input, option) =>
-            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          dropdownMatchSelectWidth={false}
-          dropdownStyle={{
-            maxWidth: 216,
-          }}
-          dropdownClassName={styles.selectStyle}
-        >
-          {
-            _.map(list, item =>
-              <Option key={item.quesId} value={item.quesValue} title={item.quesValue}>
-                {item.quesValue}
-              </Option>)
-          }
-        </Select>
+        {/**
+         * 当前选中的题目题干
+         */}
+        <span className={styles.questionTitle}>{quesValue || ''}</span>
 
         <Tooltip
           title={
-            () => this.renderQuestionAndAnswerTooltip(questionId)
+            () => this.renderQuestionAndAnswerTooltip(id)
           }
           placement={posi}
           getPopupContainer={this.getPopupContainer}
@@ -352,14 +510,31 @@ export default class MissionInvestigation extends PureComponent {
         <Icon
           type="close1"
           className={styles.deleteIcon}
-          onClick={() => this.handleDeleteQuestion(`question_${questionId}`)}
+          onClick={() => this.handleDeleteQuestion(`question_${id}`, quesId)}
         />
       </div>
     );
   }
 
   render() {
-    const { checked, newQuestionAndAnswerGroup } = this.state;
+    const {
+      checked,
+      newQuestionAndAnswerGroup,
+      currentSelectRowKeys,
+      isShowTable,
+      page,
+      curDataInfo,
+    } = this.state;
+
+    const {
+      pageNum,
+      totalCount,
+    } = page;
+
+    const titleColumn = renderColumnTitle();
+
+    const dataSource = this.addIdToDataSource(curDataInfo);
+
     return (
       <div className={styles.missionInvestigationContainer}>
         <div className={styles.title}>
@@ -377,6 +552,72 @@ export default class MissionInvestigation extends PureComponent {
             newQuestionAndAnswerGroup
           }
         </div>
+        <GroupModal
+          wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
+          closable
+          visible={isShowTable}
+          title={'问题列表'}
+          footer={
+            <div className={styles.btnSection}>
+              <Clickable
+                onClick={this.handleCancel}
+                eventName="/click/missionInvestigation/cancel"
+              >
+                <Button type="default" size="default">取消</Button>
+              </Clickable>
+              <Clickable
+                onClick={this.handleConfirm}
+                eventName="/click/missionInvestigation/confirm"
+              >
+                <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
+              </Clickable>
+            </div>
+          }
+          modalContent={
+            <div className={styles.modalContainer}>
+              {
+                !_.isEmpty(dataSource) ?
+                  <GroupTable
+                    pageData={{
+                      curPageNum: pageNum,
+                      curPageSize: INITIAL_PAGE_SIZE,
+                      totalRecordNum: totalCount,
+                    }}
+                    showHeader={false}
+                    listData={dataSource}
+                    tableClass={
+                      classnames({
+                        [styles.problemListTable]: true,
+                      })
+                    }
+                    titleColumn={titleColumn}
+                    columnWidth={['80px', '420px']}
+                    bordered={false}
+                    isNeedRowSelection
+                    onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+                    onRowSelectionChange={this.handleRowSelectionChange}
+                    currentSelectRowKeys={currentSelectRowKeys}
+                    selectionType={'checkbox'}
+                    isNeedPaganation={totalCount > INITIAL_TOTAL_COUNT}
+                    // 分页器是否在表格内部
+                    paginationInTable={false}
+                    onPageChange={this.handlePageChange}
+                    // 展示空白行
+                    needShowEmptyRow
+                    // 分页器样式
+                    paginationClass={'selfPagination'}
+                  />
+                  :
+                  <div className={styles.emptyContent}>
+                    <span>
+                      <Icon className={styles.emptyIcon} type="frown-o" />
+                      暂无数据
+                        </span>
+                  </div>
+              }
+            </div>
+          }
+        />
         <div
           className={styles.operationSection}
           disabled={!checked}

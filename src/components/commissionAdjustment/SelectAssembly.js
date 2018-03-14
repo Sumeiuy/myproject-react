@@ -96,7 +96,7 @@ export default class SelectAssembly extends PureComponent {
   }
 
   @autobind
-  handleOKAfterValidate() {
+  handleOKAfterValidate(selectItem) {
     if (this.canSelected) {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
@@ -113,7 +113,7 @@ export default class SelectAssembly extends PureComponent {
       const { isUnfinish } = this.state;
       // 3.23新需求，选择的客户，有未完成订单，点击确定，跳转到360视图订单列表页面
       if (isUnfinish) {
-        unfinishRoute(this.selectedCust);
+        unfinishRoute(selectItem);
       }
       // 干掉客户
       this.clearCust();
@@ -127,18 +127,19 @@ export default class SelectAssembly extends PureComponent {
 
   // 校验不通过，弹框
   @autobind
-  fail2Validate(shortCut, content) {
+  fail2Validate(obj) {
+    const { shortCut, content, selectItem } = obj;
     confirm({
       shortCut,
       content,
-      onOk: this.handleOKAfterValidate,
+      onOk: () => { this.handleOKAfterValidate(selectItem); },
       onCancel: this.handleCancelAfterValidate,
     });
     this.canSelected = false;
   }
   // 客户校验
   @autobind
-  afterValidateSingleCust() {
+  afterValidateSingleCust(selectItem) {
     if (_.isEmpty(this.props.validResult)) {
       confirm({ content: '客户校验失败' });
       return;
@@ -154,26 +155,26 @@ export default class SelectAssembly extends PureComponent {
     if (subType === commadj.single && hasorder === 'Y') {
       this.setState({ isUnfinish: true });
       // 目前只有单佣金需要对在途订单
-      this.fail2Validate('unfinish');
+      this.fail2Validate({ shortCut: 'unfinish', selectItem });
       return;
     }
     // 风险测评校验
     if (riskRt === 'N') {
-      this.fail2Validate('custRisk');
+      this.fail2Validate({ shortCut: 'custRisk' });
       return;
     }
     // 偏好品种校验
     if (investRt === 'Y') {
-      this.fail2Validate('custInvestRt');
+      this.fail2Validate({ shortCut: 'custInvestRt' });
       return;
     }
     // 投资期限校验
     if (investTerm === 'Y') {
-      this.fail2Validate('custInvestTerm');
+      this.fail2Validate({ shortCut: 'custInvestTerm' });
       return;
     }
     this.canSelected = true;
-    this.handleOKAfterValidate();
+    this.handleOKAfterValidate(selectItem);
   }
 
   // 根据用户选中的option的value值获取对应的数组值

@@ -23,6 +23,8 @@ import { getCustomerListFilters } from '../../helper/page/customerPool';
 import {
   NOPERMIT,
   CUST_MANAGER,
+  PERMITS3,
+  PERMITS2,
   ORG,
   ENTER_TYPE,
 } from './config';
@@ -58,6 +60,7 @@ const effects = {
   getCeFileList: 'customerPool/getCeFileList',
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
+  isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -96,9 +99,11 @@ const mapStateToProps = state => ({
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
-  // 是否包含非本人名下客户
+  // 是否是本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
   sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
+  // 是否包含非本人名下客户
+  sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
 
 const mapDispatchToProps = {
@@ -133,8 +138,10 @@ const mapDispatchToProps = {
   }),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  // 查询是否包含本人名下客户
+  // 查询单个客户是否本人名下
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
+  // 查询是否包含本人名下客户或者是否超过1000个客户
+  isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
 };
 
@@ -191,6 +198,8 @@ export default class CustomerList extends PureComponent {
     custServedByPostnResult: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -219,6 +228,10 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
+    // 任务管理岗
+    this.permissionType2 = permissionType().customerPoolPermit2;
+    // 首页指标查询
+    this.permissionType3 = permissionType().customerPoolPermit3;
     this.permissionType = permissionType().customerPoolPermit;
     this.view360Permit = permissionType().view360Permit;
   }
@@ -338,7 +351,8 @@ export default class CustomerList extends PureComponent {
       param.custType = CUST_MANAGER;
       if (query.ptyMng && query.ptyMng.split('_')[1] === empNum) {
         param.custType = CUST_MANAGER;
-      } else if (this.permissionType !== NOPERMIT) {
+        // 首页指标查询职责，传组织机构
+      } else if (this.permissionType3 === PERMITS3) {
         param.custType = ORG;
       }
     }
@@ -359,8 +373,13 @@ export default class CustomerList extends PureComponent {
     // orgId默认取岗位对应的orgId，服务营业部选 '所有' 不传，其余情况取对应的orgId
     if (query.orgId && query.orgId !== 'all') {
       param.orgId = query.orgId;
-    } else if (!query.orgId && this.permissionType !== NOPERMIT) {
-      // 有权限，第一次进入列表页传所处岗位对应orgId
+    } else if (!query.orgId && ((_.includes(['association', 'search', 'tag', 'sightingTelescope', 'business'], query.source)
+      && this.permissionType2 === PERMITS2) ||
+      (_.includes(['custIndicator', 'numOfCustOpened'], query.source)
+        && this.permissionType3 === PERMITS3))) {
+      // 从搜索、联想、热词或者潜在目标客户进来，并且有任务管理岗职责，
+      // 或者从绩效指标进来，但是有首页指标查询职责
+      // 需要传第一次进入列表页传所处岗位对应orgId
       // 在fsp外壳中取岗位切换的id， 本地取empinfo中的occDivnNum
       if (document.querySelector(fspContainer.container)) {
         param.orgId = window.forReactPosition.orgId;
@@ -563,6 +582,8 @@ export default class CustomerList extends PureComponent {
       isCustServedByPostn,
       custServedByPostnResult,
       sightingTelescopeFilters,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
     const {
       sortDirection,
@@ -662,6 +683,10 @@ export default class CustomerList extends PureComponent {
           view360Permit={this.view360Permit}
           custServedByPostnResult={custServedByPostnResult}
           isCustServedByPostn={isCustServedByPostn}
+          // 有任务管理岗职责，可以发起任务
+          hasLaunchTaskPermission={this.permissionType2 === PERMITS2}
+          sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
         />
       </div>
     );

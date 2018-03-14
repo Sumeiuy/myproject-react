@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 15:17:31
+ * @Last Modified time: 2018-03-14 17:05:57
  * 客户明细数据
  */
 
@@ -50,6 +50,10 @@ const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
 
+const INITIAL_PAGE_SIZE = 10;
+const INITIAL_TOTAL_COUNT = 10;
+
+const NOOP = _.noop;
 export default class CustDetail extends PureComponent {
 
   static propTypes = {
@@ -67,13 +71,14 @@ export default class CustDetail extends PureComponent {
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
     isEntryFromPie: PropTypes.bool,
+    scrollModalBodyToTop: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
-    getCustDetailData: () => { },
+    getCustDetailData: NOOP,
     title: '',
-    onClose: () => { },
+    onClose: NOOP,
     isEntryFromProgressDetail: false,
     isEntryFromPie: false,
   }
@@ -118,13 +123,19 @@ export default class CustDetail extends PureComponent {
     */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { getCustDetailData, isEntryFromProgressDetail, isEntryFromPie } = this.props;
+    const {
+      getCustDetailData,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+      scrollModalBodyToTop,
+    } = this.props;
     getCustDetailData({
       pageNum: nextPage,
       pageSize: currentPageSize,
       isEntryFromProgressDetail,
       isEntryFromPie,
     });
+    scrollModalBodyToTop();
   }
 
   /**
@@ -321,12 +332,11 @@ export default class CustDetail extends PureComponent {
 
   render() {
     const {
-      currentSelectRowKeys,
       dataSource,
     } = this.state;
 
     const { title, data: { page = EMPTY_OBJECT } } = this.props;
-    const { totalCount, pageNum, pageSize } = page;
+    const { totalCount, pageNum } = page;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
@@ -335,13 +345,13 @@ export default class CustDetail extends PureComponent {
     let columnWidth;
     if (columnSize === 7) {
       // 列全部保留
-      columnWidth = [100, 60, 150, 100, 100, 150, 150];
+      columnWidth = [150, 80, 200, 100, 100, 200, 300];
     } else if (columnSize === 6) {
       // 去除服务状态列
-      columnWidth = [100, 60, 150, 100, 150, 150];
+      columnWidth = [200, 80, 200, 100, 200, 300];
     } else if (columnSize === 5) {
       // 去除客户反馈和反馈详情列
-      columnWidth = [200, 80, 200, 200, 200];
+      columnWidth = [200, 120, 300, 200, 300];
     }
 
     return (
@@ -352,7 +362,7 @@ export default class CustDetail extends PureComponent {
             <GroupTable
               pageData={{
                 curPageNum: pageNum,
-                curPageSize: pageSize,
+                curPageSize: INITIAL_PAGE_SIZE,
                 totalRecordNum: totalCount,
               }}
               listData={dataSource}
@@ -366,15 +376,6 @@ export default class CustDetail extends PureComponent {
               }
               columnWidth={columnWidth}
               titleColumn={titleColumn}
-              // 固定标题，内容滚动
-              scrollY={330}
-              isFixedTitle
-              selectionType={'checkbox'}
-              isNeedRowSelection={false}
-              onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
-              onRowSelectionChange={this.handleRowSelectionChange}
-              currentSelectRowKeys={currentSelectRowKeys}
-              onSelectAllChange={this.handleSelectAllChange}
               isFirstColumnLink
               firstColumnHandler={this.handleCustNameClick}
               operationColumnClass={
@@ -382,6 +383,13 @@ export default class CustDetail extends PureComponent {
                   [styles.custNameLink]: true,
                 })
               }
+              // 分页器样式
+              paginationClass={'selfPagination'}
+              isNeedPaganation={totalCount > INITIAL_TOTAL_COUNT}
+              // 分页器是否在表格内部
+              paginationInTable={false}
+              // 展示空白行
+              needShowEmptyRow
             /> :
             <div className={styles.emptyContent}>
               <span>

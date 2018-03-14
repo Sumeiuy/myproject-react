@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: zhufeiyang
- * @Last Modified time: 2018-02-06 20:43:33
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-14 15:33:27
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,8 @@ import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+const NOOP = _.noop;
 
 export default class GroupTable extends PureComponent {
   static propTypes = {
@@ -73,6 +75,14 @@ export default class GroupTable extends PureComponent {
     tableStyle: PropTypes.object,
     // 第一列class
     operationColumnClass: PropTypes.string,
+    // 是否展示表头
+    showHeader: PropTypes.bool,
+    // 分页器是否在表格内部
+    paginationInTable: PropTypes.bool,
+    // 是否需要展示空白数据行
+    needShowEmptyRow: PropTypes.bool,
+    // 分页器class
+    paginationClass: PropTypes.string,
   };
 
   static defaultProps = {
@@ -87,18 +97,22 @@ export default class GroupTable extends PureComponent {
     scrollY: 0,
     isFixedTitle: false,
     columnWidth: ['20%', '20%', '20%', '20%', '20%'],
-    firstColumnHandler: () => { },
+    firstColumnHandler: NOOP,
     isNeedRowSelection: false,
-    onSingleRowSelectionChange: () => { },
-    onRowSelectionChange: () => { },
+    onSingleRowSelectionChange: NOOP,
+    onRowSelectionChange: NOOP,
     currentSelectRowKeys: [],
     isNeedPaganation: true,
-    onPageChange: () => { },
-    onSizeChange: () => { },
+    onPageChange: NOOP,
+    onSizeChange: NOOP,
     selectionType: 'radio',
-    onSelectAllChange: () => { },
+    onSelectAllChange: NOOP,
     tableStyle: null,
     operationColumnClass: '',
+    showHeader: true,
+    paginationInTable: false,
+    needShowEmptyRow: false,
+    paginationClass: '',
   };
 
   constructor(props) {
@@ -135,6 +149,10 @@ export default class GroupTable extends PureComponent {
 
   @autobind
   renderColumnValue(record, item) {
+    // 如果存在空白行标记，则不展示--,直接展示空
+    if (!_.isEmpty(record.flag)) {
+      return '';
+    }
     if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
       return '--';
     }
@@ -228,10 +246,28 @@ export default class GroupTable extends PureComponent {
    * 构造数据源
    */
   renderTableDatas(dataSource) {
+    if (_.isEmpty(dataSource)) {
+      return [];
+    }
+
+    const { needShowEmptyRow, pageData: { curPageSize } } = this.props;
     let newDataSource = [];
     newDataSource = _.map(dataSource,
       item => _.merge(item, { key: item.id })); // 在外部传入数据时，统一加入一个id
 
+    const dataSize = _.size(newDataSource);
+    const distanceSize = curPageSize - dataSize;
+    if (distanceSize > 0 && needShowEmptyRow) {
+      // 填充空白行
+      for (let i = 1; i <= distanceSize; i++) {
+        newDataSource = _.concat(newDataSource, [{
+          key: `empty_row_${i}`,
+          id: `empty_row_${i}`,
+          // 空白行标记
+          flag: `empty_row_${i}`,
+        }]);
+      }
+    }
     return newDataSource;
   }
 
@@ -277,6 +313,8 @@ export default class GroupTable extends PureComponent {
       isNeedRowSelection,
       isNeedPaganation,
       tableStyle,
+      showHeader,
+      paginationClass,
      } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
@@ -292,6 +330,7 @@ export default class GroupTable extends PureComponent {
     const columns = this.renderColumns();
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
+    const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
     return (
       <div>
         <Table
@@ -309,13 +348,18 @@ export default class GroupTable extends PureComponent {
                 [styles.rowSelected]: true,
               });
             }
-            return null;
+            // 如果存在flag标记，说明是空白行
+            if (!_.isEmpty(record.flag)) {
+              return 'emptyRow';
+            }
+            return '';
           }}
-          style={tableStyle}
+          showHeader={showHeader}
+          {...tableStyleProp}
         />
         {
           (isNeedPaganation && totalRecordNum > 0) ?
-            <div className={styles.pagination}><Pagination {...paganationOption} /></div> : null
+            <div className={`${styles.pagination} ${paginationClass}`}><Pagination {...paganationOption} /></div> : null
         }
       </div>
     );

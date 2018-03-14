@@ -11,6 +11,7 @@ import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
+import { emp } from '../../../helper';
 import Clickable from '../../../components/common/Clickable';
 
 import styles from './bottomFixedBox.less';
@@ -27,6 +28,10 @@ export default class BottomFixedBox extends PureComponent {
     entertype: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
+    // 是否有权限发起任务
+    hasLaunchTaskPermission: PropTypes.bool.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -37,6 +42,7 @@ export default class BottomFixedBox extends PureComponent {
     super(props);
     this.state = {
       taskAndGroupLeftPos: '0',
+      warningContent: '',
     };
   }
 
@@ -136,6 +142,9 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     if (Number(selectCount) > 500) {
       this.toggleModal();
+      this.setState({
+        warningContent: '一次添加的客户数不能超过500个',
+      });
       return;
     }
     this.handleClick(url, title, id, shouldStay, editPane);
@@ -143,13 +152,42 @@ export default class BottomFixedBox extends PureComponent {
 
   @autobind
   handleCreateTaskClick() {
-    const url = '/customerPool/createTask';
-    const title = '自建任务';
-    const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
-    // 发起新的任务之前，先清除数据
-    this.props.clearCreateTaskData('custList');
+    const {
+      // selectCount,
+      hasLaunchTaskPermission,
+      isSendCustsServedByPostn,
+      condition,
+    } = this.props;
 
-    this.handleClick(url, title, id);
+    // 有职责可以发起任务，没职责判断
+    if (!hasLaunchTaskPermission) {
+      isSendCustsServedByPostn({
+        ...condition,
+        postnId: emp.getPstnId(),
+      }).then(() => {
+        const { sendCustsServedByPostnResult = {} } = this.props;
+        const {
+          // 代表是否超过1000个客户
+          custNumsIsExceedUpperLimit = false,
+          // 代表是否是本人名下的，false代表包含非本人名下
+          sendCustsServedByPostn = false,
+        } = sendCustsServedByPostnResult;
+        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+          this.toggleModal();
+          this.setState({
+            warningContent: '你没有“HTSC 任务管理”职责，不可发起任务',
+          });
+        }
+      });
+    } else {
+      const url = '/customerPool/createTask';
+      const title = '自建任务';
+      const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
+      // 发起新的任务之前，先清除数据
+      this.props.clearCreateTaskData('custList');
+
+      this.handleClick(url, title, id);
+    }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
@@ -248,6 +286,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       taskAndGroupLeftPos,
       visible,
+      warningContent,
     } = this.state;
     return (
       <div
@@ -278,7 +317,7 @@ export default class BottomFixedBox extends PureComponent {
         >
           <div className={'info'}>
             <Icon type="tishi1" className={'tishi'} />
-            <span>一次添加的客户数不能超过500个</span>
+            <span>{warningContent}</span>
           </div>
         </Modal>
       </div>
