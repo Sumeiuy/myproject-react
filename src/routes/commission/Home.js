@@ -137,6 +137,7 @@ const getDataFunction = (loading, type, forceFull) => query => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  push: routerRedux.push,
   // 获取批量佣金调整List
   getCommissionList: getDataFunction(true, effects.list),
   // 获取批量佣金调整Detail
@@ -199,6 +200,7 @@ export default class CommissionHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
@@ -621,6 +623,7 @@ export default class CommissionHome extends PureComponent {
       singleCVR,
       onCheckSubsciCust,
       sciCheckCustomer,
+      push,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -707,6 +710,7 @@ export default class CommissionHome extends PureComponent {
                 singleCustVResult={singleCVR}
                 onCheckSubsciCust={onCheckSubsciCust}
                 sciCheckCustomer={sciCheckCustomer}
+                push={push}
               />
             )
         }
