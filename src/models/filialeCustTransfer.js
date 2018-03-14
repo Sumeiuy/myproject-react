@@ -3,7 +3,7 @@
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-13 14:31:47
+ * @Last Modified time: 2018-03-14 14:59:17
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -120,6 +120,8 @@ export default {
         ...item,
         newOrgName: item.empInfo.orgName,
         newEmpName: item.empId,
+        orgName: (item.orgiEmpInfo || {}).orgName,
+        empName: (item.orgiEmpInfo || {}).empId,
       }));
       return {
         ...state,
