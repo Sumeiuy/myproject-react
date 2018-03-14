@@ -342,11 +342,13 @@ export default class MissionImplementation extends PureComponent {
     if (isCreatingMotReport) {
       const text = '生成报告需要一些时间，请10分钟后点击此处刷新状态'; // 提示文本(来自需求)；
       return (
-        <div className={styles.creatingBtn} onClick={this.queryMOTServeAndFeedBackExcel}>
+        <div>
           <span className={styles.line}>|</span>
           <Tooltip placement="bottomLeft" title={text}>
-            <Icon type="shangchuan" className="icon" />
-            <span>正在生成最新报告</span>
+            <span className={styles.creatingBtn} onClick={this.queryMOTServeAndFeedBackExcel}>
+              <Icon type="shangchuan" className="icon" />
+              <span>正在生成最新报告</span>
+            </span>
           </Tooltip>
         </div>
       );
