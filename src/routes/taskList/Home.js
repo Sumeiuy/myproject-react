@@ -36,13 +36,6 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
-// 50代表执行中
-// 60代表结果跟踪
-// 70代表结束
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
-
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
 const today = moment(new Date()).format('YYYY-MM-DD');
@@ -720,33 +713,9 @@ export default class PerformerView extends PureComponent {
   // 头部筛选请求
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 20) {
-    const { getTaskList, dict: { missionStatus }, replace,
-      location: { pathname } } = this.props;
-    let newQuery = query;
-    let newMissionStatus = missionStatus;
-    const { status, missionViewType } = newQuery;
-
-    // 从其他视图切过来
-    // 如果当前视图是管理者视图，并且当前url上的status在过滤以后的status字典里面找不到对应的
-    // 那么将当前status置为空
-    if (missionViewType === CONTROLLER || missionViewType === EXECUTOR) {
-      newMissionStatus = _.filter(newMissionStatus, item => item.key === EXECUTE_STATE
-        || item.key === RESULT_TRACK_STATE || item.key === COMPLETED_STATE);
-      if (_.isEmpty(_.find(newMissionStatus, item => item.key === status))) {
-        newQuery = {
-          ...newQuery,
-          status: '',
-        };
-        // 替换无效的status为空
-        replace({
-          pathname,
-          query: {
-            ...newQuery,
-          },
-        });
-      }
-    }
-    const params = this.constructViewPostBody(newQuery, pageNum, pageSize);
+    const { getTaskList } = this.props;
+    const { missionViewType } = query;
+    const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
@@ -808,7 +777,13 @@ export default class PerformerView extends PureComponent {
     const item = this.constructViewPostBody(remainingParams, pageNum, pageSize);
     const timersValue = this.handleDefaultTime({ before, todays, after });
     const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
-    const params = { ...item, createTimeEnd, createTimeStart, endTimeStart, endTimeEnd };
+    const params = {
+      ...item,
+      createTimeEnd,
+      createTimeStart,
+      endTimeStart,
+      endTimeEnd,
+    };
 
     replace({
       pathname,
@@ -838,7 +813,7 @@ export default class PerformerView extends PureComponent {
       pageSize: _.parseInt(newPageSize, 10),
     };
 
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName']);
     finalPostData = _.merge(
       finalPostData,
       omitData,
@@ -953,19 +928,20 @@ export default class PerformerView extends PureComponent {
     const { replace, location } = this.props;
     const { query, pathname } = location;
     const { missionViewType } = obj;
+    const tempObject = {
+      ...query,
+      ...obj,
+      pageNum: 1,
+    };
     replace({
       pathname,
-      query: {
-        ...query,
-        pageNum: 1,
-        ...obj,
-      },
+      query: tempObject,
     });
     this.setState({
       currentView: missionViewType,
     });
     // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+    this.queryAppList(tempObject, 1, query.pageSize);
   }
 
   // 切换页码
