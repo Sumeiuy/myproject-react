@@ -52,6 +52,16 @@ function transformNumber(num) {
   return `${number.thousandFormat(num)}人`;
 }
 
+function transformDate(date) { // 2017-01-31 12:33:55.0
+  if (date) {
+    const dateStr = date.split(' ')[0]; // 2017-01-31
+    const dateArray = dateStr.split('-'); // ['2017', '01', '31']
+    return `${dateArray[0]}年${dateArray[1]}月${dateArray[2]}日`; // 2017年01月31日
+  }
+
+  return '--';
+}
+
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
@@ -369,11 +379,12 @@ export default class TaskSearchRow extends PureComponent {
               >
                 <span
                   className={styles.title}
+                  title={item.labelName}
                   dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
                 />
               </Radio>
               <span className={styles.titExp}>
-                <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{item.createDate || '--'}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
+                <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
               </span>
               <div
                 className={styles.description}
