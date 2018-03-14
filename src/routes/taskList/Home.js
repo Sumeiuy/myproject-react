@@ -36,6 +36,7 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+// 执行中、结果跟踪、结束三种状态
 const EXECUTE_STATE = '50';
 const RESULT_TRACK_STATE = '60';
 const COMPLETED_STATE = '70';

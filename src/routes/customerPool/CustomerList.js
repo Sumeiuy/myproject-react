@@ -20,11 +20,10 @@ import { fspContainer } from '../../config';
 import withRouter from '../../decorators/withRouter';
 import permissionType from './permissionType';
 import { getCustomerListFilters } from '../../helper/page/customerPool';
+import { permission } from '../../helper';
 import {
   NOPERMIT,
   CUST_MANAGER,
-  PERMITS3,
-  PERMITS2,
   ORG,
   ENTER_TYPE,
 } from './config';
@@ -228,10 +227,6 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    // 任务管理岗
-    this.permissionType2 = permissionType().customerPoolPermit2;
-    // 首页指标查询
-    this.permissionType3 = permissionType().customerPoolPermit3;
     this.permissionType = permissionType().customerPoolPermit;
     this.view360Permit = permissionType().view360Permit;
   }
@@ -352,7 +347,7 @@ export default class CustomerList extends PureComponent {
       if (query.ptyMng && query.ptyMng.split('_')[1] === empNum) {
         param.custType = CUST_MANAGER;
         // 首页指标查询职责，传组织机构
-      } else if (this.permissionType3 === PERMITS3) {
+      } else if (this.permissionType !== NOPERMIT) {
         param.custType = ORG;
       }
     }
@@ -373,10 +368,7 @@ export default class CustomerList extends PureComponent {
     // orgId默认取岗位对应的orgId，服务营业部选 '所有' 不传，其余情况取对应的orgId
     if (query.orgId && query.orgId !== 'all') {
       param.orgId = query.orgId;
-    } else if (!query.orgId && ((_.includes(['association', 'search', 'tag', 'sightingTelescope', 'business'], query.source)
-      && this.permissionType2 === PERMITS2) ||
-      (_.includes(['custIndicator', 'numOfCustOpened'], query.source)
-        && this.permissionType3 === PERMITS3))) {
+    } else if (!query.orgId && this.permissionType !== NOPERMIT) {
       // 从搜索、联想、热词或者潜在目标客户进来，并且有任务管理岗职责，
       // 或者从绩效指标进来，但是有首页指标查询职责
       // 需要传第一次进入列表页传所处岗位对应orgId
@@ -684,7 +676,7 @@ export default class CustomerList extends PureComponent {
           custServedByPostnResult={custServedByPostnResult}
           isCustServedByPostn={isCustServedByPostn}
           // 有任务管理岗职责，可以发起任务
-          hasLaunchTaskPermission={this.permissionType2 === PERMITS2}
+          hasLaunchTaskPermission={permission.hasTkMampPermission()}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
         />

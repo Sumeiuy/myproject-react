@@ -19,10 +19,8 @@ import { emp, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import permissionType from './permissionType';
 import {
-  // NOPERMIT,
-  // PERMITS1,
-  PERMITS2,
-  PERMITS3,
+  NOPERMIT,
+  PERMITS1,
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
@@ -154,10 +152,6 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    // 任务管理岗
-    this.permissionType2 = permissionType().customerPoolPermit2;
-    // 首页指标查询
-    this.permissionType3 = permissionType().customerPoolPermit3;
     // 任务管理岗或者首页指标查询
     this.permissionType = permissionType().customerPoolPermit;
   }
@@ -182,9 +176,9 @@ export default class Home extends PureComponent {
     }
     // 权限控制是否传给后端orgId  PERMITS2 表示当前用户有
     // ‘HTSC 任务管理岗’
-    const authOrgId = this.permissionType2 === PERMITS2 ? this.orgId : '';
+    const authOrgId = this.permissionType !== NOPERMIT ? this.orgId : '';
     // 猜你感兴趣模块接口，如果是任务管理岗职责，需要传orgId
-    getHotWds({ empNo: empNum, orgId: authOrgId });
+    getHotWds({ empNo: empNum });
     // 待办事项
     getToBeDone({ orgId: authOrgId });
 
@@ -231,7 +225,7 @@ export default class Home extends PureComponent {
     if (orgId) {
       custType = orgId !== MAIN_MAGEGER_ID ? ORG : CUST_MANAGER;
       // 绩效指标，如果是首页指标查询职责，需要传orgId
-    } else if (this.permissionType3 === PERMITS3) {
+    } else if (this.permissionType === PERMITS1) {
       custType = ORG;
     }
     return custType;
@@ -311,7 +305,7 @@ export default class Home extends PureComponent {
     };
     if (orgId) {
       tempObj.orgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
-    } else if (this.permissionType3 === PERMITS3) {
+    } else if (this.permissionType === PERMITS1) {
       tempObj.orgId = this.orgId;
     }
     // 绩效指标
@@ -345,7 +339,7 @@ export default class Home extends PureComponent {
     const { getHotPossibleWds } = this.props;
     const setData = {
       // 任务管理岗需要传orgId
-      orgId: this.permissionType2 === PERMITS2 ? '' : this.orgId, // 组织ID
+      orgId: this.permissionType === NOPERMIT ? '' : this.orgId, // 组织ID
       empNo: emp.getId(), // 用户ID
     };
     getHotPossibleWds({
@@ -368,7 +362,7 @@ export default class Home extends PureComponent {
       name: '我的客户',
     };
     // 有‘HTSC 首页指标查询’职责的普通用户
-    if (this.permissionType3 === PERMITS3) {
+    if (this.permissionType !== NOPERMIT) {
       // 只要不是我的客户，都展开组织机构树
       // 用户职位是经总
       if (posOrgId === (custRange[0] || {}).id) {
@@ -450,7 +444,7 @@ export default class Home extends PureComponent {
     const curCycleSelect = cycleSelect || (_.isArray(cycle) ? cycle[0] : {}).key;
     if (orgId) {
       curOrgId = orgId;
-    } else if (this.permissionType3 !== PERMITS3) {
+    } else if (this.permissionType !== PERMITS1) {
       curOrgId = MAIN_MAGEGER_ID;
     }
     const extraProps = {
@@ -507,7 +501,7 @@ export default class Home extends PureComponent {
               data={process}
               motTaskCountData={motTaskCount}
               // 待办事项里面的潜在目标客户，如果有任务管理岗职责，需要传orgId
-              authority={this.permissionType2 === PERMITS2}
+              authority={this.permissionType === PERMITS1}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
@@ -523,7 +517,7 @@ export default class Home extends PureComponent {
                   location={location}
                   cycle={cycle}
                   category={'manager'}
-                  permissionType={this.permissionType3}
+                  permissionType={this.permissionType}
                 />
               </TabPane>
               {
@@ -537,7 +531,7 @@ export default class Home extends PureComponent {
                       cycle={cycle}
                       custCount={custCount}
                       category={'performance'}
-                      permissionType={this.permissionType3}
+                      permissionType={this.permissionType}
                     />
                   </TabPane>
                 ) : (null)
