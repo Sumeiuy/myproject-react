@@ -28,6 +28,20 @@ const config = {
     EVENT_PROFILE_ACTION,
     // 路由变化
     /LOCATION_CHANGE/,
+    // 按钮点击
+    'ButtonClick',
+    // 下拉选择
+    'DropdownSelect',
+    // 日期选择
+    'CalendarSelect',
+    // 查看列表项
+    'ViewItem',
+    // 下钻
+    'DrillDown',
+    // 其他可点击元素
+    'Click',
+    // 手动发送页面浏览
+    '$pageview',
   ],
   eventPropertyMap: {
     // 页面pv
