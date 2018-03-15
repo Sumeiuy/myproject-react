@@ -177,17 +177,24 @@ export default class BottomFixedBox extends PureComponent {
           this.setState({
             warningContent: '你没有“HTSC 任务管理”职责，不可发起任务',
           });
+        } else if (sendCustsServedByPostn && !custNumsIsExceedUpperLimit) {
+          this.launchTaskIndeed();
         }
       });
     } else {
-      const url = '/customerPool/createTask';
-      const title = '自建任务';
-      const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
-      // 发起新的任务之前，先清除数据
-      this.props.clearCreateTaskData('custList');
-
-      this.handleClick(url, title, id);
+      this.launchTaskIndeed();
     }
+  }
+
+  @autobind
+  launchTaskIndeed() {
+    const url = '/customerPool/createTask';
+    const title = '自建任务';
+    const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
+    // 发起新的任务之前，先清除数据
+    this.props.clearCreateTaskData('custList');
+
+    this.handleClick(url, title, id);
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
