@@ -10,7 +10,7 @@ import { Radio, Modal, Button, Icon } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { emp } from '../../../helper';
+import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
@@ -47,6 +47,21 @@ const renderColumnTitle = [{
   key: 'cust_type',
   value: '客户类型',
 }];
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
+function transformDate(date) { // 2017-01-31 12:33:55.0
+  if (date) {
+    const dateStr = date.split(' ')[0]; // 2017-01-31
+    const dateArray = dateStr.split('-'); // ['2017', '01', '31']
+    return `${dateArray[0]}年${dateArray[1]}月${dateArray[2]}日`; // 2017年01月31日
+  }
+
+  return '--';
+}
+
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
@@ -112,7 +127,7 @@ export default class TaskSearchRow extends PureComponent {
  * @param {*} pageSize 当前页条目
  */
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople } = this.props;
+    const { isAuthorize, orgId, getLabelPeople, onChange } = this.props;
     const { argsOfQueryCustomer } = this.state;
     let payload = {
       curPageNum,
@@ -180,6 +195,13 @@ export default class TaskSearchRow extends PureComponent {
             ...finalFilterNumObject,
           },
         });
+        onChange({
+          currentLabelId: labelId,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
       }
     });
 
@@ -198,10 +220,7 @@ export default class TaskSearchRow extends PureComponent {
     const currentLabelInfo = _.find(circlePeopleData, item => item.id === currentLabelId
       || item.labelMapping === currentLabelId) || {};
     let finalFilterNumObject = filterNumObject;
-    if (!(`${currentLabelId}` in finalFilterNumObject) ||
-      (finalFilterNumObject[`${currentLabelId}`] !== 0
-        && _.isEmpty(finalFilterNumObject[`${currentLabelId}`])
-      )) {
+    if (!(`${currentLabelId}` in finalFilterNumObject)) {
       finalFilterNumObject = {
         [currentLabelId]: currentLabelInfo.customNum,
       };
@@ -214,7 +233,15 @@ export default class TaskSearchRow extends PureComponent {
       },
       currentSelectLabelName: currentLabelInfo.labelName,
     });
-    onChange(currentLabelId);
+
+    onChange({
+      currentLabelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+    });
   }
 
 
@@ -243,7 +270,10 @@ export default class TaskSearchRow extends PureComponent {
       currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
-    this.props.onChange(value.id || '');
+    this.props.onChange({
+      currentLabelId: value.id,
+      currentSelectLabelName: value.labelName,
+    });
   }
 
   @autobind
@@ -321,7 +351,7 @@ export default class TaskSearchRow extends PureComponent {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
     const { filterNumObject } = this.state;
     return _.map(circlePeopleData,
-      (item) => {
+      (item, index) => {
         const currentFilterNum = (`${item.id}` in filterNumObject ?
           filterNumObject[item.id] : item.customNum) || 0;
         let newDesc = item.labelDesc;
@@ -337,38 +367,43 @@ export default class TaskSearchRow extends PureComponent {
         const cls = classnames({
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
+          [styles.clearBorder]: index === circlePeopleData.length - 1, // 最后一个item清除border
         });
 
         return (
           <div className={cls} key={item.id || item.labelMapping}>
-            <Radio
-              value={item.id}
-              key={item.tagNumId || item.labelMapping}
-            >
-              <span
-                className={styles.title}
-                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
-              />
-              <span className={styles.filterCount}>
-                已筛选客户数：<i>{currentFilterNum}</i>
+            <div className={styles.leftContent}>
+              <Radio
+                value={item.id}
+                key={item.tagNumId || item.labelMapping}
+              >
+                <span
+                  className={styles.title}
+                  title={item.labelName}
+                  dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+                />
+              </Radio>
+              <span className={styles.titExp}>
+                <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
               </span>
-              {item.customNum === 0 ? null :
+              <div
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
+              />
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.filterCount}>
+              已选客户数：<i>{transformNumber(currentFilterNum)}</i>
+            </div>
+            {
+              item.customNum === 0 ? null :
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
                 eventName="/click/taskSearchRow/checkCust"
               >
                 <Button className={styles.seeCust}>筛查客户</Button>
               </Clickable>
-              }
-            </Radio>
-            <h4 className={styles.titExp}>
-              <span>创建人：<i>{item.createrName || '--'}</i></span>
-              <span>创建时间：<i>{item.createDate || '--'}</i></span>
-              <span>客户总数：<i>{item.customNum}</i></span>
-            </h4>
-            <h4
-              dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
-            />
+            }
           </div>
         );
       });

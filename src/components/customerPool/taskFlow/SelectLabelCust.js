@@ -2,13 +2,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
+import { Input } from 'antd';
+import classnames from 'classnames';
 import TaskSearchRow from './TaskSearchRow';
-import SimpleSearch from '../groupManage/CustomerGroupListSearch';
-import { emp, fsp } from '../../../helper';
+import { emp, fsp, number } from '../../../helper';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
+const Search = Input.Search;
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
     dict: PropTypes.object.isRequired,
@@ -36,7 +42,14 @@ export default class SelectLabelCust extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
-    const { condition = '', labelId = '', tipsSize = 0 } = labelCust || EMPTY_OBJECT;
+    const {
+      condition = '',
+      labelId = '',
+      tipsSize = 0,
+      clearBottomLabel = true,
+      currentSelectLabelName = null,
+      currentFilterNum = 0,
+      } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: 0,
@@ -45,6 +58,9 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: labelId,
       labelId,
       tipsSize,
+      clearBottomLabel,
+      currentFilterNum,
+      currentSelectLabelName,
     };
     this.bigBtn = true;
   }
@@ -79,6 +95,7 @@ export default class SelectLabelCust extends PureComponent {
       currentFilterObject = {},
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
+    const { clearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', labelMapping, labelName = '', customNum = 0 } = matchedData || EMPTY_OBJECT;
 
@@ -94,6 +111,9 @@ export default class SelectLabelCust extends PureComponent {
       argsOfQueryCustomer,
       currentFilterObject,
       filterNumObject,
+      clearBottomLabel,
+      currentFilterNum,
+      currentSelectLabelName,
     };
 
     return {
@@ -109,6 +129,7 @@ export default class SelectLabelCust extends PureComponent {
     };
 
     this.setState({
+      clearBottomLabel: true,
       condition: value,
       labelId: '',
       labelDesc: '',
@@ -137,11 +158,36 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  handleRadioChange(value) {
+  handleRadioChange({ currentLabelId, filterNumObject, currentSelectLabelName }) {
+    const currentFilterNum = filterNumObject && filterNumObject[currentLabelId];
+    const state = {
+      labelId: currentLabelId || this.state.labelId,
+      currentSelectLabel: currentLabelId || this.state.labelId,
+      currentSelectLabelName: currentSelectLabelName || this.state.currentSelectLabelName,
+      currentFilterNum:
+        currentFilterNum !== undefined ? currentFilterNum : this.state.currentFilterNum,
+      clearBottomLabel: false,
+    };
     this.setState({
-      labelId: value,
-      currentSelectLabel: value,
+      ...state,
     });
+  }
+
+  @autobind
+  renderBottomLabel() {
+    const { currentFilterNum, currentSelectLabelName, clearBottomLabel } = this.state;
+    const cls = classnames({
+      [styles.hide]: clearBottomLabel,
+      [styles.bottomLabel]: true, // 最后一个item清除border
+    });
+    return (
+      <div className={cls}>
+        <span>已选择：</span>
+        <i>{currentSelectLabelName}</i>
+        <span>目标客户数：</span>
+        <i>{transformNumber(currentFilterNum)}</i>
+      </div>
+    );
   }
 
   render() {
@@ -162,24 +208,26 @@ export default class SelectLabelCust extends PureComponent {
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
-        <SimpleSearch
-          titleNode={<span className={styles.searchTitle}>瞄准镜：</span>}
+        <Search
           placeholder="标签名称"
           onSearch={this.handleSearchClick}
-          searchStyle={{
-            height: '30px',
-            width: '400px',
+          style={{
+            height: '28px',
+            width: '186px',
           }}
           defaultValue={condition}
-          isNeedBtn
         />
         {!_.isEmpty(condition)
-          ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
+          ? <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
           :
           null
         }
         <TaskSearchRow
-          ref={ref => this.taskSearchRowRef = ref}
+          ref={(ref) => {
+            if (ref) {
+              this.taskSearchRowRef = ref;
+            }
+          }}
           dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
@@ -197,7 +245,9 @@ export default class SelectLabelCust extends PureComponent {
           getFilterNumberList={this.getFilterNumberList}
           storedData={storedData}
         />
+        {this.renderBottomLabel()}
       </div>
     );
   }
 }
+
