@@ -19,7 +19,7 @@ import { dva } from '../helper';
 // }
 // => { x: 1, y: 2}
 function replaceValue(data, context, args) {
-  return _.mapValues(
+  const result = _.mapValues(
     data,
     (value) => {
       if (_.isFunction(value)) {
@@ -36,6 +36,21 @@ function replaceValue(data, context, args) {
       return value;
     },
   );
+  let resultFanal = {};
+  _.forOwn(result, (value, key) => {
+    if (_.isPlainObject(value)) {
+      resultFanal = {
+        ...resultFanal,
+        ...value,
+      };
+    } else {
+      resultFanal = {
+        ...resultFanal,
+        [key]: value,
+      };
+    }
+  });
+  return resultFanal;
 }
 
 function makeLogger({ type, payload = {} }) {
@@ -84,7 +99,13 @@ function logable({ type = 'Click', payload = {} }) {
 }
 
 /**
- * 处理下拉选择，包括普通下拉以及日期下拉选择
+ * 页面浏览行为（页面跳转、模态对话框）
+ * * 页面跳转无需开发介入
+ * * 记录模态对话框事件
+ * @param {String} pathname 路径名称，必须以/modal/开头，同时保证唯一
+ * @param title 对话框中文说明
+ * @param payload 自定义该条日志数据
+ * @returns {Function}
  */
 function logPV({ pathname, title, payload = {} }) {
   return makeLogger({

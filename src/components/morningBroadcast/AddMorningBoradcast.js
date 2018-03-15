@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import withRouter from '../../decorators/withRouter';
 import { request } from '../../config/index';
 import { emp } from '../../helper/index';
 import logable from '../../decorators/logable';
@@ -17,7 +18,21 @@ const Option = Select.Option;
 // 新建晨报时标记晨报id为-1
 const createNewsId = -1;
 
+/**
+ * 日志：表单提交类型
+ * @param ctx AddMorningBoradcast 组件实例
+ * @returns {string} 提交表格描述
+ */
+function submitTypeName(ctx) {
+  const { newsId } = ctx.props;
+  if (newsId !== createNewsId) {
+    return '修改晨报详情';
+  }
+  return '新建晨报';
+}
+
 @Form.create()
+@withRouter
 export default class AddMorningBoradcast extends PureComponent {
   static propTypes = {
     creator: PropTypes.string.isRequired,
@@ -137,7 +152,12 @@ export default class AddMorningBoradcast extends PureComponent {
   }
 
   @autobind()
-  @logable({ type: '/click/morningBroadcast/submit' })
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: submitTypeName,
+    },
+  })
   handleSubmit() {
     const { saveBoradcast, newsId } = this.props;
     const { audioFileList, finalNewUuid } = this.state;
@@ -167,7 +187,6 @@ export default class AddMorningBoradcast extends PureComponent {
     });
   }
   @autobind()
-  @logable({ type: '/click/morningBroadcast/closeAddOrEditModal' })
   onHandleCancel() {
     const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
     const { isUpdateFile } = this.state;
@@ -194,8 +213,6 @@ export default class AddMorningBoradcast extends PureComponent {
   }
 
   // audio upload --> start
-  @autobind
-  @logable({ type: '/click/morningBroadcast/uploadingAudioFile' })
   onAudioUploading(fileList) {
     const audioFileList = fileList.filter((fileItem) => {
       if (fileItem.response) {
@@ -205,8 +222,7 @@ export default class AddMorningBoradcast extends PureComponent {
     });
     this.setState({ audioFileList });
   }
-  @autobind
-  @logable({ type: '/click/morningBroadcast/uploadingOtherFile' })
+
   onOtherUploading(fileList) {
     const otherFileList = fileList.filter((fileItem) => {
       if (fileItem.response) {
@@ -226,6 +242,14 @@ export default class AddMorningBoradcast extends PureComponent {
     const finalFileAudioList = this.resourceToUpload(resFileList, attachment);
     this.setState({ [fileState]: finalFileAudioList });
   }
+
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '更新晨报音频文件',
+    },
+  })
   @autobind
   onAudioChange({ fileList, file }) {
     if (file.status === 'uploading') {
@@ -256,6 +280,14 @@ export default class AddMorningBoradcast extends PureComponent {
       this.setState({ fileAudioList: fileList });
     }
   }
+
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '更新晨报其他文件',
+    },
+  })
   @autobind
   onOtherChange({ fileList, file }) {
     if (file.status === 'uploading') {
@@ -286,6 +318,14 @@ export default class AddMorningBoradcast extends PureComponent {
       this.setState({ otherFileList: fileList });
     }
   }
+
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '删除其他文件',
+    },
+  })
   @autobind
   onRemove(file) {
     const { delCeFile } = this.props;
