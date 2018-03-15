@@ -75,6 +75,8 @@ export default {
     singleCust: {},
     // 客户的详细信息
     custDetailInfo: {},
+    // 客户的当前股基佣金率
+    custCurrentCommission: {},
   },
   reducers: {
     getCustDetailInfoSuccess(state, action) {
@@ -386,6 +388,14 @@ export default {
       return {
         ...state,
         [name]: value,
+      };
+    },
+
+    queryCustCurrentCommissionSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        custCurrentCommission: resultData,
       };
     },
   },
@@ -758,6 +768,15 @@ export default {
           },
         });
       }
+    },
+
+    // 查询单佣金调整客户的当前股基佣金率
+    * queryCustCurrentCommission({ payload }, { call, put }) {
+      const response = yield call(api.queryCustCommission, payload);
+      yield put({
+        type: 'queryCustCurrentCommissionSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {},
