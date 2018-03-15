@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-15 14:04:53
+ * @Last Modified time: 2018-03-15 14:18:03
  * @description 单佣金申请内容区域
  */
 
@@ -152,9 +152,7 @@ export default class SingleCreateBoard extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { customer } = nextProps;
     const { queryCustCurrentCommission } = this.props;
-    console.warn('customer', customer);
     if (customer !== this.props.customer && !_.isEmpty(customer)) {
-      console.warn('customer', customer);
       queryCustCurrentCommission({
         brokerNumber: customer.custEcom,
       }).then(() => {
