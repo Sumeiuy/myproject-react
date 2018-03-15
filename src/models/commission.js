@@ -73,6 +73,8 @@ export default {
     sciCheckCustomer: {},
     // 单佣金客户和两融信息合并的对象
     singleCust: {},
+    // 客户的当前股基佣金率
+    custCurrentCommission: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -376,6 +378,14 @@ export default {
       return {
         ...state,
         [name]: value,
+      };
+    },
+
+    queryCustCurrentCommissionSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        custCurrentCommission: resultData,
       };
     },
   },
@@ -740,6 +750,15 @@ export default {
           },
         });
       }
+    },
+
+    // 查询单佣金调整客户的当前股基佣金率
+    * queryCustCurrentCommission({ payload }, { call, put }) {
+      const response = yield call(api.queryCustCommission, payload);
+      yield put({
+        type: 'queryCustCurrentCommissionSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {},

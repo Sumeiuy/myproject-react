@@ -29,6 +29,7 @@ export default class SelectAssembly extends PureComponent {
     subType: PropTypes.string,
     validResult: PropTypes.object,
     shouldeCheck: PropTypes.bool,
+    clearSelectCust: PropTypes.func,
   }
 
   static defaultProps = {
@@ -36,9 +37,10 @@ export default class SelectAssembly extends PureComponent {
     subType: '',
     validResult: {},
     shouldeCheck: true,
-    onValidateCust: () => { },
+    onValidateCust: _.noop,
     unfinishRoute: () => {},
     dataSource: [],
+    clearSelectCust: _.noop,
   }
 
   constructor(props) {
@@ -204,6 +206,8 @@ export default class SelectAssembly extends PureComponent {
     if (this.state.typeStyle === 'search') {
       this.props.onSearchValue(this.state.inputValue);
     } else if (this.state.typeStyle === 'close') {
+      // 点击客户清空的icon的时候，掉这个方法告知父组件客户被清空
+      this.props.clearSelectCust();
       this.setState({
         dataSource: [],
         inputValue: '',
