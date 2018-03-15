@@ -37,7 +37,7 @@ InfoItem.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   width: PropTypes.string,
-  valueColor: PropTypes.stying,
+  valueColor: PropTypes.string,
 };
 InfoItem.defaultProps = {
   label: '标题',
