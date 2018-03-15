@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-14 11:00:37
+ * @Last Modified time: 2018-03-15 14:04:53
  * @description 单佣金申请内容区域
  */
 
@@ -106,7 +106,6 @@ export default class SingleCreateBoard extends PureComponent {
     // 当前股基佣金率
     custCurrentCommission: PropTypes.object.isRequired,
     queryCustCurrentCommission: PropTypes.func.isRequired,
-    isClearSelectCustValue: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -151,7 +150,7 @@ export default class SingleCreateBoard extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { customer, isClearSelectCustValue } = nextProps;
+    const { customer } = nextProps;
     const { queryCustCurrentCommission } = this.props;
     console.warn('customer', customer);
     if (customer !== this.props.customer && !_.isEmpty(customer)) {
@@ -163,14 +162,6 @@ export default class SingleCreateBoard extends PureComponent {
         this.setState({
           newCurrentCommission: _.isEmpty(custCurrentCommission) ? '--' : custCurrentCommission.currentCommission,
         });
-      });
-    }
-    console.warn('isClearSelectCustValue', isClearSelectCustValue);
-    console.warn('this.props.isClearSelectCustValue', this.props.isClearSelectCustValue);
-    if (isClearSelectCustValue !== this.props.isClearSelectCustValue) {
-      // 清空客户的同时需要同时去清空目标股基佣金率的值
-      this.setState({
-        newCurrentCommission: '--',
       });
     }
   }
@@ -339,6 +330,14 @@ export default class SingleCreateBoard extends PureComponent {
     this.uploadComponent = input.getWrappedInstance();
   }
 
+  // 清空客户的同时需要同时去清空目标股基佣金率的值
+  @autobind
+  clearSelectCustCurComValue() {
+    this.setState({
+      newCurrentCommission: '--',
+    });
+  }
+
   render() {
     const {
       customer: { openRzrq },
@@ -410,12 +409,14 @@ export default class SingleCreateBoard extends PureComponent {
       ref: this.uploadRef,
     };
 
+    const newCurrentCom = `${newCurrentCommission}‰`;
+
     return (
       <div className={styles.contentBox}>
         {/* 佣金产品 */}
         <div className={styles.approvalBlock}>
           <InfoTitle head="佣金产品选择" />
-          <InfoItem label="当前股基佣金率" value={newCurrentCommission} width="110px" />
+          <InfoItem label="当前股基佣金率" value={newCurrentCom} width="110px" />
           <CommissionLine label="目标股基佣金率" labelWidth="110px" needInputBox={false} extra={createCommon.permil}>
             <AutoComplete
               initValue={newCommission}

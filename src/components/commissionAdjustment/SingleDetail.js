@@ -68,6 +68,7 @@ export default class Singlecommissiondetail extends PureComponent {
     const proList = createProTableData(item);
     const bugTitle = `编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
+    const currentCom = `${currentCommission}‰`;
     const targetCom = `${newCommission}‰`;
     const stepName = (currentStep && currentStep.curentStep) || '';
     const handleName = (currentStep && currentStep.curentUser) || '';
@@ -123,7 +124,7 @@ export default class Singlecommissiondetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="当前股基佣金率" value={currentCommission} />
+                    <InfoItem label="当前股基佣金率" value={currentCom} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="目标股基佣金率" value={targetCom} />

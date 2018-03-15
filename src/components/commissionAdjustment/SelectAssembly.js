@@ -103,9 +103,9 @@ export default class SelectAssembly extends PureComponent {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
-        onSelectValue({ ...this.selectedCust, openRzrq });
+        onSelectValue({ ...selectItem, openRzrq });
       } else {
-        onSelectValue(this.selectedCust);
+        onSelectValue(selectItem);
       }
       this.setState({
         typeStyle: 'close',

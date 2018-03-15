@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 15:19:30
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 13:58:36
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-03-15 13:24:09
  * @description 华泰职责ID视图
  * duty的key值取名规范为中文拼音名称首字母小写,使用下划线'_'连接,value值为职责ID
  */
@@ -23,7 +23,7 @@ const duty = {
   STRING_FWG: '服务岗', // 岗位名称中含有的'服务岗'三个字
   HTSC_TK_MAMPID: '1-4UU25GY', // HTSC 任务管理岗
   HTSC_ZX_MAMPID: '1-4VP1BIC', // HTSC 资讯管理岗
-  HTSC_KHFPG: '1-2435', // HTSC 客户分配岗
+  HTSC_KHFPG: '1-21K11HX', // HTSC 客户分配岗
 };
 
 export default duty;

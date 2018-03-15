@@ -112,7 +112,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       openRzrq: true, // 两融开关
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
       modalLoading: false, // 点击提交后，弹出层区域的Loading
-      isClearSelectCustValue: new Date().getTime(), // 选中的客户是否被清空，可以多次选中和清空
     };
   }
 
@@ -588,13 +587,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  // 清空选中客户时，将isClearSelectCustValue变为true,
-  // 告知子组件，客户被清空，需要将该客户当前股基佣金率变为空
+  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
   @autobind
   clearSelectCust() {
-    this.setState({
-      isClearSelectCustValue: new Date().getTime(),
-    });
+    this.singleBoard.clearSelectCustCurComValue();
   }
 
   // 根据职责权限进行子类型选项
@@ -604,14 +600,18 @@ export default class CreateNewApprovalBoard extends PureComponent {
       const newItem = {};
       const { value } = item;
       if (value === commadj.batch) {
-        newItem.show = permission.hasCommissionBatchAuthority();
+        // newItem.show = permission.hasCommissionBatchAuthority();
+        newItem.show = true;
       } else if (value === commadj.single) {
-        const { empPostnList } = this.props;
-        newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
+        // const { empPostnList } = this.props;
+        // newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
+        newItem.show = true;
       } else if (value === commadj.subscribe) {
-        newItem.show = permission.hasCommissionADSubscribeAuthority();
+        // newItem.show = permission.hasCommissionADSubscribeAuthority();
+        newItem.show = true;
       } else if (value === commadj.unsubscribe) {
-        newItem.show = permission.hasCommissionADUnSubscribeAuthority();
+        // newItem.show = permission.hasCommissionADUnSubscribeAuthority();
+        newItem.show = true;
       }
       return {
         ...item,
@@ -711,7 +711,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       remark,
       customer,
       modalLoading, // 弹出层点击提交按钮后的页面loading
-      isClearSelectCustValue,
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
@@ -829,7 +828,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   customer={customer}
                   empInfo={empInfo}
                   ref={this.singleCreateBoardRef}
-                  isClearSelectCustValue={isClearSelectCustValue}
                 />
               )
             }
