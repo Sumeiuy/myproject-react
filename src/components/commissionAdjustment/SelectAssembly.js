@@ -79,8 +79,6 @@ export default class SelectAssembly extends PureComponent {
     } else {
       this.setState({
         inputValue: value,
-        dataSource: [],
-        typeStyle: 'search',
       });
     }
   }
@@ -101,9 +99,9 @@ export default class SelectAssembly extends PureComponent {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
-        onSelectValue({ ...this.selectedCust, openRzrq });
+        onSelectValue({ ...selectItem, openRzrq });
       } else {
-        onSelectValue(this.selectedCust);
+        onSelectValue(selectItem);
       }
       this.setState({
         typeStyle: 'close',
@@ -196,7 +194,7 @@ export default class SelectAssembly extends PureComponent {
           custType,
         }).then(() => this.afterValidateSingleCust(item));
       } else {
-        this.props.onSelectValue(this.selectedCust);
+        this.props.onSelectValue(item);
       }
     }
   }
@@ -235,6 +233,7 @@ export default class SelectAssembly extends PureComponent {
     return (
       <div className={styles.selectSearchBox}>
         <AutoComplete
+          backfill
           placeholder="客户号/客户姓名"
           className={styles.searchBox}
           dropdownClassName={styles.searchDropDown}
