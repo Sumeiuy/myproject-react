@@ -5,12 +5,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Dropdown } from 'antd';
+import { Icon, Input, AutoComplete } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-import { constants } from '../../../config';
 import style from './style.less';
-import HackSearch from '../hackSearch';
+
+const Option = AutoComplete.Option;
+let currentSelect = null;
 
 export default class DropdownSelect extends PureComponent {
   static propTypes = {
@@ -38,8 +39,8 @@ export default class DropdownSelect extends PureComponent {
     disable: PropTypes.bool,
     // 默认搜索框值
     defaultSearchValue: PropTypes.string,
-    // 菜单渲染父节点
-    getPopupContainer: PropTypes.func,
+    // 下拉框的宽度
+    width: PropTypes.string,
   }
 
   static defaultProps = {
@@ -52,23 +53,19 @@ export default class DropdownSelect extends PureComponent {
     theme: 'theme1',
     disable: false,
     defaultSearchValue: '',
-    getPopupContainer: () => document.querySelector(constants.container),
+    width: '300px',
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 下拉选框是否展示
-      isSHowModal: false,
+      // 搜索框的类型
+      typeStyle: 'search',
       // 选中的值
       value: props.value,
       // 添加id标识
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
-  }
-
-  componentDidMount() {
-    document.addEventListener('click', this.hideModal, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,39 +79,63 @@ export default class DropdownSelect extends PureComponent {
   }
 
   get getSearchListDom() {
-    const { searchList = [], emitSelectItem, showObjKey, objId, name } = this.props;
-    let searchValue = '';
-    if (this.hackSearchComonent) {
-      searchValue = this.hackSearchComonent.getValue();
-    }
+    const { searchList = [], showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
       if (item.isHidden) {
         return null;
       }
-      const callBack = () => {
-        // 多传一个默认输入值，有些场景下需要用到
-        emitSelectItem({
-          ...item,
-          searchValue,
-        });
-        this.setState({
-          isSHowModal: false,
-          value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
-        });
-      };
-      const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
+      const idx = !item[objId] ? `selectList|${index}` : `${name}|${item[objId]}`;
       return (
-        <li
+        <Option
           key={idx}
           className={style.ddsDrapMenuConItem}
-          onClick={callBack}
           title={item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
         >
           {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
-        </li>
+        </Option>
       );
     });
     return result;
+  }
+
+  @autobind
+  handleInputValue(value) {
+    if (_.isEmpty(currentSelect)) {
+      this.setState({
+        value,
+        typeStyle: 'search',
+      });
+    } else {
+      // 下拉框中值选中时，会触发onchange方法, 即handleInputValue方法，故在此处重新职位null
+      currentSelect = null;
+    }
+  }
+
+  // 根据用户选中的option的value值获取对应的数组值
+  @autobind
+  handleSelectedValue(value) {
+    if (value) {
+      const { searchList = [], emitSelectItem, showObjKey, objId } = this.props;
+      const valueArr = value.split('|');
+      let selectItem = {};
+      if (_.first(valueArr) === 'selectList') {
+        selectItem = searchList[parseInt(_.last(valueArr), 10)];
+      } else {
+        selectItem = _.filter(searchList, item => item[objId] === _.last(valueArr))[0];
+      }
+      // 记录当前选中的值
+      currentSelect = selectItem;
+      // 多传一个默认输入值，有些场景下需要用到
+      const { value: searchValue } = this.state;
+      emitSelectItem({
+        ...selectItem,
+        searchValue,
+      });
+      this.setState({
+        value: selectItem[objId] ? `${selectItem[showObjKey]}（${selectItem[objId]}）` : `${selectItem[showObjKey]}`,
+        typeStyle: 'close',
+      });
+    }
   }
 
   @autobind
@@ -122,37 +143,21 @@ export default class DropdownSelect extends PureComponent {
     this.setState({
       ...this.state,
       value: '',
+      typeStyle: 'search',
     });
   }
 
-  componentWillUnMount() {
-    document.removeEventListener('click', this.hideModal, false);
-  }
-
   @autobind
-  showDrapDown() {
-    this.setState({ isSHowModal: !this.state.isSHowModal });
-  }
-
-  @autobind
-  toSearch(value) {
+  toSearch() {
     // 在这里去触发查询搜索信息的方法
-    this.props.emitToSearch(value);
-  }
-
-  @autobind
-  hideModal(e) {
-    // 隐藏下拉框
-    const { isSHowModal } = this.state;
-    if (+e.target.getAttribute('data-id') !== this.state.id && isSHowModal) {
-      this.setState({ isSHowModal: false });
-    }
-  }
-
-  @autobind
-  clearSearchValue() {
-    if (this.hackSearchComonent) {
-      this.hackSearchComonent.clearValue();
+    const { typeStyle, value } = this.state;
+    if (typeStyle === 'search') {
+      this.props.emitToSearch(value);
+    } else if (typeStyle === 'close') {
+      this.setState({
+        value: '',
+        typeStyle: 'search',
+      });
     }
   }
 
@@ -164,84 +169,69 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    const { theme, disable, getPopupContainer, defaultSearchValue } = this.props;
-    const modalClass = classnames([style.ddsDrapMenu,
-    { [style.hide]: !this.state.isSHowModal },
-    ]);
-    const ddsShowBoxClass = classnames([style.ddsShowBox,
-    { [style.active]: this.state.isSHowModal },
-    ]);
+    const { theme, disable, defaultSearchValue, placeholder, width, boxStyle } = this.props;
+    const ddsShowBoxClass = classnames([style.ddsShowBox]);
     const ddsShowBoxClass2 = classnames([
       style.ddsShowBox2,
       { [style.disable]: disable },
-      { [style.active]: this.state.isSHowModal },
     ]);
     const drapDownSelectCls = classnames({
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
     });
-    const menu = (
-      <div
-        className={drapDownSelectCls}
-        onClick={this.handleMenuClick}
+    const empty = [(
+      <Option
+        key={'empty'}
+        className={style.ddsDrapMenuConItem}
       >
-        <div className={modalClass}>
-          <div
-            className={style.ddsDrapMenuSearch}
-            onClick={(e) => { e.nativeEvent.stopImmediatePropagation(); }}
-          >
-            <HackSearch
-              className={style.searhInput}
-              placeholder={this.props.placeholder}
-              onSearch={this.toSearch}
-              defaultValue={defaultSearchValue}
-              ref={ref => this.hackSearchComonent = ref}
-            />
-          </div>
-          {
-            this.checkListIsEmpty()
-              ? <span className={style.notFound}>没有发现与之匹配的结果</span>
-              : null
-          }
-          <ul className={style.ddsDrapMenuCon}>
-            {this.getSearchListDom}
-          </ul>
-        </div>
-      </div>
-    );
+        <span className={style.notFound}>没有发现与之匹配的结果</span>
+      </Option>
+    )];
+    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom;
     if (disable) {
       return (
         <div className={drapDownSelectCls}>
           <div
             className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
             data-id={this.state.id}
-            style={this.props.boxStyle || {}}
+            style={boxStyle || {}}
           >
             {this.state.value}
           </div>
         </div>
       );
     }
+    const dropdownStyle = {
+      width: (_.isEmpty(boxStyle) || _.isEmpty(boxStyle.width)) ? width : boxStyle.width,
+    };
     return (
-      <Dropdown
-        overlay={menu}
-        trigger={['click']}
-        visible={this.state.isSHowModal}
-        getPopupContainer={getPopupContainer}
-      >
-        <div
-          className={drapDownSelectCls}
+      <div className={drapDownSelectCls}>
+        <AutoComplete
+          placeholder={placeholder}
+          dropdownStyle={dropdownStyle}
+          dropdownMatchSelectWidth={false}
+          defaultActiveFirstOption={false}
+          size="large"
+          style={boxStyle || {}}
+          dataSource={options}
+          optionLabelProp="text"
+          defaultValue={defaultSearchValue}
+          onChange={this.handleInputValue}
+          onSelect={this.handleSelectedValue}
+          value={this.state.value}
         >
-          <div
-            onClick={this.showDrapDown}
-            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-            data-id={this.state.id}
-            style={this.props.boxStyle || {}}
-          >
-            {this.state.value}
-          </div>
-        </div>
-      </Dropdown>
+          <Input
+            suffix={
+              <Icon
+                type={this.state.typeStyle}
+                onClick={this.toSearch}
+                className={style.searchIcon}
+              />
+            }
+            onPressEnter={this.toSearch}
+          />
+        </AutoComplete>
+      </div>
     );
   }
 }

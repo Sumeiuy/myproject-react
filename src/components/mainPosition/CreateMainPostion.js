@@ -26,9 +26,8 @@ import styles from './createMainPostion.less';
 const { mainPosition: { titleList, approvalColumns } } = config;
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '220px',
+  height: '32px',
 };
 
 export default class CreateFilialeCustTransfer extends PureComponent {
@@ -292,7 +291,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 placeholder="工号/姓名"
                 showObjKey="name"
                 objId="login"
-                value={''}
                 searchList={employeeList}
                 emitSelectItem={this.selectHandle}
                 emitToSearch={this.searchHandle}

@@ -37,6 +37,7 @@ export default class ServiceManagerFilter extends PureComponent {
           objId="ptyMngId"
           placeholder="输入姓名或工号查询"
           name="服务经理"
+          width={'220px'}
           disable={disable}
           value={serviceManagerDefaultValue}
           searchList={searchServerPersonList}

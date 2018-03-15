@@ -309,6 +309,7 @@ export default class Pageheader extends PureComponent {
                     emitSelectItem={this.selectCustItem}
                     emitToSearch={value => this.toSearch(getCustomerList, value)}
                     name={`${page}-custName`}
+                    width={'220px'}
                   />
                 </div>
               </div>
@@ -324,6 +325,7 @@ export default class Pageheader extends PureComponent {
                     emitSelectItem={item => this.selectItem('ptyMngId', item)}
                     emitToSearch={value => this.toSearch(getPtyMngList, value)}
                     name={`${page}-ptyMngName`}
+                    width={'220px'}
                   />
                 </div>
               </div>
@@ -376,6 +378,7 @@ export default class Pageheader extends PureComponent {
                 emitSelectItem={item => this.selectItem('drafterId', item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
+                width={'220px'}
               />
             </div>
           </div>
@@ -404,6 +407,7 @@ export default class Pageheader extends PureComponent {
                 emitSelectItem={item => this.selectItem('approvalId', item)}
                 emitToSearch={value => this.toSearch(getApprovePersonList, value)}
                 name={`${page}-ptyMngName`}
+                width={'220px'}
               />
             </div>
           </div>

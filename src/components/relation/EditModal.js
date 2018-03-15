@@ -39,9 +39,8 @@ const titleArray = {
 };
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '220px',
+  height: '32px',
 };
 // editModal 组件的弹框类型
 const TEAM_MODAL = 'team';

@@ -37,9 +37,8 @@ const subscribeValue = operationList[0].value;
 const childTypeList = _.filter(subType, v => v.label !== '全部');
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '200px',
+  height: '32px',
 };
 // 时间选择组件样式
 const datePickerBoxStyle = {
@@ -235,7 +234,6 @@ export default class EditDetail extends PureComponent {
           placeholder="经纪客户号/客户名称"
           showObjKey="custName"
           objId="cusId"
-          value={''}
           searchList={canApplyCustList}
           emitSelectItem={this.handleSelectCust}
           emitToSearch={getCanApplyCustList}

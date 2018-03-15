@@ -28,13 +28,6 @@ import {
 } from './auth';
 
 const { TextArea } = Input;
-
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const { subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray } = config;
@@ -457,8 +450,8 @@ export default class EditBaseInfo extends PureComponent {
       vailDt: '',
       protocolNumber: '',
     }, () => {
+      // 开发时，测试提出的
       this.handleSearchClient();
-      this.selectCustComponent.clearSearchValue();
     });
     if (operationType === config.unSubscribeArray[0]) {
       this.setState({
@@ -766,11 +759,10 @@ export default class EditBaseInfo extends PureComponent {
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                  value={_.isEmpty(client) ? '' : `${client.custName || ''} ${client.brokerNumber || ''}`}
                   searchList={custList}
                   emitSelectItem={this.handleSelectClient}
                   emitToSearch={this.handleSearchClient}
-                  boxStyle={dropDownSelectBoxStyle}
                   ref={ref => this.selectCustComponent = ref}
                 />
               </InfoForm>
@@ -787,7 +779,6 @@ export default class EditBaseInfo extends PureComponent {
                 searchList={templateList}
                 emitSelectItem={this.handleSelectTemplate}
                 emitToSearch={this.handleSearchTemplate}
-                boxStyle={dropDownSelectBoxStyle}
                 ref={ref => this.selectTemplateComponent = ref}
               />
             </InfoForm>

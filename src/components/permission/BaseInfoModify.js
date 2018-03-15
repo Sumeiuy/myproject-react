@@ -114,9 +114,9 @@ export default class BaseInfoModify extends PureComponent {
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
+              width={'200px'}
               emitSelectItem={this.selectCustomer}
               emitToSearch={this.searchCanApplyCustList}
-              boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
         </div>

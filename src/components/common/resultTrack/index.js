@@ -714,6 +714,7 @@ export default class ResultTrack extends PureComponent {
                           emitSelectItem={this.handleSelectProductItem}
                           emitToSearch={this.handleQueryProduct}
                           defaultSearchValue={currentSelectedProduct.searchValue || ''}
+                          width={'220px'}
                         />
                       </div> : null
                     }

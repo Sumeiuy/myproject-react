@@ -29,16 +29,15 @@ const { TextArea } = Input;
 const { contract: { operationList, unsubscribe } } = seibelConfig;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 // 时间选择组件样式
 const datePickerBoxStyle = {
   width: 220,
   height: 32,
+};
+// 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '220px',
+  height: '32px',
 };
 const EMPTY_OBJECT = {};
 export default class BaseInfoEdit extends PureComponent {
@@ -143,7 +142,7 @@ export default class BaseInfoEdit extends PureComponent {
       client: value,
     }, () => {
       this.handleSearchClient();
-      this.selectCustComponent.clearSearchValue();
+      // this.selectCustComponent.clearSearchValue();
       this.transferDataToHome();
       const { operation } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
@@ -261,7 +260,6 @@ export default class BaseInfoEdit extends PureComponent {
           searchList={contractNumList}
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={this.handleSearchContractNum}
-          boxStyle={dropDownSelectBoxStyle}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)

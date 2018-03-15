@@ -605,6 +605,7 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
+                width={'220px'}
                 emitSelectItem={item => this.selectItem('creator', item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
@@ -623,6 +624,7 @@ export default class Pageheader extends PureComponent {
                     searchList={allCustomerList}
                     showObjKey="name"
                     objId="custId"
+                    width={'220px'}
                     emitSelectItem={this.selectCustomerItem}
                     emitToSearch={this.searchCustomer}
                     name={`${page}-name`}

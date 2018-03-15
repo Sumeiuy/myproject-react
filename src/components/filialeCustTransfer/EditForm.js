@@ -32,9 +32,8 @@ const STOP_STATUS_CODE = '02'; // 终止状态code
 const COMPLETE_STATUS_CODE = '03'; // 完成状态code
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '220px',
+  height: '32px',
 };
 
 export default class FilialeCustTransferEditForm extends PureComponent {

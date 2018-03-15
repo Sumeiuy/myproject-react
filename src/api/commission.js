@@ -4,6 +4,7 @@
 
 export default function commission(api) {
   return {
+    queryCustDetailInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustBrifeInfo', query),
     // 批量佣金调整Home右侧详情
     getCommissionDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryBatchCommChgOrderInfo', query),
     // 批量佣金调整Home右侧详情内容中的客户列表

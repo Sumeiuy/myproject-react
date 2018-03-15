@@ -35,9 +35,8 @@ const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 const defaultType = config.transferType[0].value;
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '220px',
+  height: '32px',
 };
 
 export default class CreateFilialeCustTransfer extends PureComponent {
@@ -304,11 +303,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
-        this.queryCustComponent.clearSearchValue();
+        // this.queryCustComponent.clearSearchValue();
       }
       if (this.queryManagerComponent) {
         this.queryManagerComponent.clearValue();
-        this.queryManagerComponent.clearSearchValue();
+        // this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
       clearMultiData();
@@ -493,7 +492,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     placeholder="选择客户"
                     showObjKey="custName"
                     objId="brokerNumber"
-                    value=""
                     searchList={custList}
                     emitSelectItem={this.handleSelectClient}
                     emitToSearch={this.handleSearchClient}
@@ -505,7 +503,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                   <DropDownSelect
                     placeholder="选择新服务经理"
                     showObjKey="showSelectName"
-                    value=""
                     searchList={newManagerList}
                     emitSelectItem={this.handleSelectNewManager}
                     emitToSearch={this.handleSearchNewManager}

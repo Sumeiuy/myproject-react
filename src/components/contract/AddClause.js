@@ -18,12 +18,6 @@ import styles from './addClause.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 点击确认的回调
@@ -264,7 +258,6 @@ export default class EditForm extends PureComponent {
                 searchList={departmentList}
                 emitSelectItem={this.handleSelectDepartment}
                 emitToSearch={this.handleSearchDepartment}
-                boxStyle={dropDownSelectBoxStyle}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </InfoForm>

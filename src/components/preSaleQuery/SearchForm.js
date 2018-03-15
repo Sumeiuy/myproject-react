@@ -19,8 +19,8 @@ const FormItem = Form.Item;
 export default class SearchForm extends Component {
   @autobind
   reset() {
-    this.cust.clearSearchValue();
-    this.product.clearSearchValue();
+    // this.cust.clearSearchValue();
+    // this.product.clearSearchValue();
     this.props.onReset();
   }
 
@@ -49,7 +49,7 @@ export default class SearchForm extends Component {
             emitSelectItem={onSelectCustItem}
             emitToSearch={onQueryCustList}
             name="custList"
-            boxStyle={{ width: '276px', border: '1px solid #e9e9e9', borderRadius: '4px' }}
+            boxStyle={{ width: '276px', borderRadius: '4px' }}
           />
         </FormItem>
         <FormItem label="选择产品" required className={styles.formItem}>
@@ -65,7 +65,7 @@ export default class SearchForm extends Component {
             emitSelectItem={onSelectProductItem}
             emitToSearch={onQueryProductList}
             name="productList"
-            boxStyle={{ width: '276px', border: '1px solid #e9e9e9', borderRadius: '4px' }}
+            boxStyle={{ width: '276px', borderRadius: '4px' }}
           />
         </FormItem>
         <FormItem className={styles.formItem} colon={false} label=" ">

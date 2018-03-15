@@ -79,9 +79,9 @@ export default class ServerPersonel extends PureComponent {
               searchList={this.props.searchServerPersonList}
               showObjKey="ptyMngName"
               objId="ptyMngId"
+              width={'220px'}
               emitSelectItem={this.dropdownSelectedItem}
               emitToSearch={this.dropdownToSearchInfo}
-              boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
           {
