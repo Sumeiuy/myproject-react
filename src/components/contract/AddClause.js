@@ -16,6 +16,11 @@ import Select from '../../components/common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import styles from './addClause.less';
 
+ // 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '220px',
+  height: '32px',
+};
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 export default class EditForm extends PureComponent {
@@ -258,6 +263,7 @@ export default class EditForm extends PureComponent {
                 searchList={departmentList}
                 emitSelectItem={this.handleSelectDepartment}
                 emitToSearch={this.handleSearchDepartment}
+                boxStyle={dropDownSelectBoxStyle}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </InfoForm>

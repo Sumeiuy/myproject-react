@@ -260,6 +260,7 @@ export default class BaseInfoEdit extends PureComponent {
           searchList={contractNumList}
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={this.handleSearchContractNum}
+          boxStyle={dropDownSelectBoxStyle}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)

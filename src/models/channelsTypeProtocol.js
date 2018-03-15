@@ -411,7 +411,6 @@ export default {
         ...item,
         isHidden: !((item.prodName || '').indexOf(keyWord) > -1),
       }));
-      console.log('#######filterTemplateSuccess##########', newTemplateList);
       yield put({
         type: 'filterTemplateSuccess',
         payload: newTemplateList,

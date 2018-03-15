@@ -603,18 +603,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
       const newItem = {};
       const { value } = item;
       if (value === commadj.batch) {
-        // newItem.show = permission.hasCommissionBatchAuthority();
-        newItem.show = true;
+        newItem.show = permission.hasCommissionBatchAuthority();
       } else if (value === commadj.single) {
-        // const { empPostnList } = this.props;
-        // newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
-        newItem.show = true;
+        const { empPostnList } = this.props;
+        newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
       } else if (value === commadj.subscribe) {
-        // newItem.show = permission.hasCommissionADSubscribeAuthority();
-        newItem.show = true;
+        newItem.show = permission.hasCommissionADSubscribeAuthority();
       } else if (value === commadj.unsubscribe) {
-        // newItem.show = permission.hasCommissionADUnSubscribeAuthority();
-        newItem.show = true;
+        newItem.show = permission.hasCommissionADUnSubscribeAuthority();
       }
       return {
         ...item,
