@@ -13,9 +13,10 @@ function Header({
   title,
   switchTarget,
   onClick,
+  style,
 }) {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={style}>
       <p className={styles.title}>{title}</p>
       <span className={styles.switchTarget} onClick={onClick}>切换至{switchTarget}</span>
     </div>
@@ -23,9 +24,16 @@ function Header({
 }
 
 Header.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   switchTarget: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  style: PropTypes.object,
+};
+
+Header.defaultProps = {
+  style: {},
+  title: null,
 };
 
 export default Header;
+
