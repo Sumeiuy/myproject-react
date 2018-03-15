@@ -429,6 +429,7 @@ export default class TaskSearchRow extends PureComponent {
       condition,
       dict,
       sightingTelescopeFilters,
+      circlePeopleData,
     } = this.props;
     if (_.isEmpty(condition)) {
       return null;
@@ -437,8 +438,13 @@ export default class TaskSearchRow extends PureComponent {
     const currentItems = currentFilterObject[labelId] || [];
     const totalRecordNum = filterNumObject[labelId] || 0;
 
+    const cls = classnames({
+      [styles.divContent]: true,
+      [styles.clearBorder]: circlePeopleData.length === 0, // 最后一个item清除border
+    });
+
     return (
-      <div className={styles.divContent}>
+      <div className={cls}>
         <RadioGroup
           name="radiogroup"
           onChange={this.change}

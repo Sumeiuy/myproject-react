@@ -26,7 +26,9 @@ export default class SelectTargetCustomer extends PureComponent {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-
+    onChange: PropTypes.func.isRequired,
+    switchBottomFromHeader: PropTypes.func.isRequired,
+    switchBottomFromSearch: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -97,11 +99,14 @@ export default class SelectTargetCustomer extends PureComponent {
 
   @autobind
   changeView() {
+    const showImportCustomers = !this.state.showImportCustomers;
+    const showSightingTelescope = !this.state.showSightingTelescope;
     this.setState({
       showEntry: false,
-      showImportCustomers: !this.state.showImportCustomers,
-      showSightingTelescope: !this.state.showSightingTelescope,
+      showImportCustomers,
+      showSightingTelescope,
     });
+    this.props.switchBottomFromHeader(showImportCustomers);
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
@@ -113,7 +118,8 @@ export default class SelectTargetCustomer extends PureComponent {
       onPreview,
       priviewCustFileData,
       storedTaskFlowData,
-
+      onChange,
+      switchBottomFromSearch,
       onCancel,
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
@@ -165,6 +171,8 @@ export default class SelectTargetCustomer extends PureComponent {
           dict={dict}
           visible={showSightingTelescope}
           onCancel={onCancel}
+          onChange={onChange}
+          switchBottomFromSearch={switchBottomFromSearch}
           isLoadingEnd={isLoadingEnd}
           isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           circlePeopleData={circlePeopleData}
