@@ -23,7 +23,7 @@ import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
-import customerTemplet from './customerTemplet.xlsx';
+import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 
 const EMPTY_LIST = [];
