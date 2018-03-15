@@ -587,6 +587,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
+  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
+  @autobind
+  clearSelectCust() {
+    this.singleBoard.clearSelectCustCurComValue();
+  }
+
   // 根据职责权限进行子类型选项
   @autobind
   authorityOptions(subTypes) {
@@ -746,6 +752,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
+                      clearSelectCust={this.clearSelectCust}
                       unfinishRoute={this.orderFlowRoute}
                     />
                   </CommissionLine>

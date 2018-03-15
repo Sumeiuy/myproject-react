@@ -7,10 +7,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-
+import classnames from 'classnames';
 import Entry from './Entry';
 import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
+import Header from './Header';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
 import { fsp } from '../../../../helper';
 
@@ -94,6 +95,17 @@ export default class SelectTargetCustomer extends PureComponent {
     fsp.scrollToTop();
   }
 
+  @autobind
+  changeView() {
+    this.setState({
+      showEntry: false,
+      showImportCustomers: !this.state.showImportCustomers,
+      showSightingTelescope: !this.state.showSightingTelescope,
+    });
+    // 恢复Fsp滚动条
+    fsp.scrollToTop();
+  }
+
   render() {
     const {
       dict,
@@ -120,9 +132,22 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers,
       showSightingTelescope,
     } = this.state;
+    const cls = classnames({
+      [styles.hide]: showEntry,
+      [styles.header]: true,
+    });
     return (
-      <div>
+      <div className={styles.customerContent}>
         {isShowTitle && <div className={styles.title}>选择目标客户</div>}
+        {
+          <div className={cls}>
+            <Header
+              switchTarget={showImportCustomers ? '瞄准镜圈人' : '导入客户'}
+              onClick={this.changeView}
+              style={{ fontSize: '15px' }}
+            />
+          </div>
+        }
         <Entry
           visible={showEntry}
           importCustomers={this.importCustomers}
@@ -131,7 +156,6 @@ export default class SelectTargetCustomer extends PureComponent {
         <ImportCustomers
           ref={inst => this.importCustRef = inst}
           visible={showImportCustomers}
-          switchTo={this.findPeople}
           onPreview={onPreview}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
@@ -140,7 +164,6 @@ export default class SelectTargetCustomer extends PureComponent {
           ref={r => this.sightingTelescopeRef = r}
           dict={dict}
           visible={showSightingTelescope}
-          switchTo={this.importCustomers}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
           isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
