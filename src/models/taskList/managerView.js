@@ -11,8 +11,8 @@ import { customerPool as custApi, performerView as api } from '../../api';
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
-const CREATEING_FILE = 'ing'; // 正在创建报告
-const CREATEDONE_FILE = 'done'; // 创建报告完成
+const STATUS_FILE_CREATING = 'ing'; // 正在创建报告
+const STATUS_FILE_DONE = 'done'; // 创建报告完成
 
 export default {
   namespace: 'managerView',
@@ -80,7 +80,7 @@ export default {
       return {
         ...state,
         missionReport: {
-          [`${missionId}`]: payload,
+          [missionId]: payload,
         },
       };
     },
@@ -90,7 +90,7 @@ export default {
       return {
         ...state,
         missionReport: {
-          [`${missionId}`]: payload,
+          [missionId]: payload,
         },
       };
     },
@@ -165,12 +165,12 @@ export default {
       };
       if (resultData) {
         const { status } = resultData;
-        if (status === CREATEING_FILE) {
+        if (status === STATUS_FILE_CREATING) {
           createInfo = {
             ...createInfo,
             isCreatingMotReport: true,
           };
-        } else if (status === CREATEDONE_FILE) {
+        } else if (status === STATUS_FILE_DONE) {
           const { createTime, fileName } = resultData;
           const { resultData: reportFileList } = yield call(custApi.ceFileList, {
             attachment: fileName,
