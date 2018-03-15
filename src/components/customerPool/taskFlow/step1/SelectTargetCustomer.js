@@ -13,7 +13,7 @@ import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
 import Header from './Header';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
-import { fsp } from '../../../../helper';
+import { fsp, emp } from '../../../../helper';
 
 import styles from './selectTargetCustomer.less';
 
@@ -86,6 +86,7 @@ export default class SelectTargetCustomer extends PureComponent {
     fsp.scrollToTop();
   }
 
+  // 选中瞄准镜圈人入口时，拉取瞄准镜圈人默认标签列表进行展示
   @autobind
   findPeople() {
     this.setState({
@@ -93,6 +94,22 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: false,
       showSightingTelescope: true,
     });
+    const { getLabelInfo, isAuthorize, orgId } = this.props;
+    const param = {
+      condition: '',
+    };
+    if (isAuthorize) {
+      // 有首页绩效指标查看权限
+      getLabelInfo({
+        ...param,
+        orgId,
+      });
+    } else {
+      getLabelInfo({
+        ...param,
+        ptyMngId: emp.getId(),
+      });
+    }
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }

@@ -139,7 +139,6 @@ export default class SelectLabelCust extends PureComponent {
       this.setState({
         tipsSize: 0,
       });
-      return;
     }
     if (isAuthorize) {
       // 有首页绩效指标查看权限
@@ -203,11 +202,7 @@ export default class SelectLabelCust extends PureComponent {
           }}
           defaultValue={condition}
         />
-        {!_.isEmpty(condition)
-          ? <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
-          :
-          null
-        }
+        <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
         <TaskSearchRow
           ref={(ref) => {
             if (ref) {
