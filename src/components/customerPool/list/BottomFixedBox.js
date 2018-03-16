@@ -256,7 +256,7 @@ export default class BottomFixedBox extends PureComponent {
   renderCreateTaskBtn() {
     return (
       <Clickable
-        onClick={this.handleCreateTaskClick}
+        onClick={this.checkLaunchTaskPermission}
         eventName="/click/custListBottomFixedBox/launchTask"
       >
         <button>发起任务</button>
