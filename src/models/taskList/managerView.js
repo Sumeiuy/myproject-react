@@ -6,13 +6,13 @@
  * 管理者视图model层
  */
 
-import { customerPool as custApi, performerView as api } from '../../api';
+import { performerView as api } from '../../api';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
-const STATUS_FILE_CREATING = 'ing'; // 正在创建报告
-const STATUS_FILE_DONE = 'done'; // 创建报告完成
+const STATUS_FILE_CREATING = 'DOING'; // 正在创建报告
+const STATUS_FILE_DONE = 'DONE'; // 创建报告完成
 
 export default {
   namespace: 'managerView',
@@ -146,11 +146,10 @@ export default {
       const { resultData } = yield call(api.createMotReport, payload);
       const { missionId } = payload;
       if (resultData) {
-        const { isCreate } = resultData;
         yield put({
           type: 'createMotReportSuccess',
           payload: {
-            isCreatingMotReport: isCreate,
+            isCreatingMotReport: true,
             missionId,
           },
         });
@@ -171,15 +170,10 @@ export default {
             isCreatingMotReport: true,
           };
         } else if (status === STATUS_FILE_DONE) {
-          const { createTime, fileName } = resultData;
-          const { resultData: reportFileList } = yield call(custApi.ceFileList, {
-            attachment: fileName,
-          });
           createInfo = {
             ...createInfo,
             isCreatingMotReport: false,
-            createTime,
-            reportFileList,
+            ...resultData,
           };
         }
       }

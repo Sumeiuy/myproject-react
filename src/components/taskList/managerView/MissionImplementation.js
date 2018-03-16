@@ -333,12 +333,12 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   getSourceSrc(source) {
-    return source && `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
+    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.fileName)}`;
   }
 
   @autobind
   renderCreateFileInfo(currentMissionReport) {
-    const { isCreatingMotReport, createTime, reportFileList } = currentMissionReport;
+    const { isCreatingMotReport, createTime } = currentMissionReport;
     if (isCreatingMotReport) {
       const text = '生成报告需要一些时间，请10分钟后点击此处刷新状态'; // 提示文本(来自需求)；
       return (
@@ -356,10 +356,10 @@ export default class MissionImplementation extends PureComponent {
       return (
         <div className={styles.downLoading}>
           <span className={styles.line}>|</span>
-          <a href={this.getSourceSrc(reportFileList[0])}>
+          <a href={this.getSourceSrc(currentMissionReport)}>
             <Icon type="xiazai" className="icon" />
           </a>
-          <a href={this.getSourceSrc(reportFileList[0])}>
+          <a href={this.getSourceSrc(currentMissionReport)}>
             <span>{createTime}报告</span>
           </a>
         </div>
