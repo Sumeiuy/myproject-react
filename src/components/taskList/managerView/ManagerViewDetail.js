@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-14 16:28:18
+ * @Last Modified time: 2018-03-15 19:27:17
  * 管理者视图详情
  */
 
@@ -26,6 +26,7 @@ import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
 
 const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 10;
 // const CONTROLLER = 'controller';
@@ -91,8 +92,8 @@ export default class ManagerViewDetail extends PureComponent {
     isFold: false,
     mngrMissionDetailInfo: EMPTY_OBJECT,
     currentId: '',
-    custFeedback: [],
-    missionTypeDict: [],
+    custFeedback: EMPTY_LIST,
+    missionTypeDict: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -104,6 +105,9 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag: '',
       canLaunchTask: true,
       isEntryFromProgressDetail: false,
+      currentFeedback: EMPTY_LIST,
+      feedBackIdL1: '',
+      destroyOnClose: false,
     };
   }
 
@@ -138,6 +142,7 @@ export default class ManagerViewDetail extends PureComponent {
   hideCustDetailModal() {
     this.setState({
       isShowCustDetailModal: false,
+      destroyOnClose: true,
     });
   }
 
@@ -156,7 +161,10 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handlePreview(params = {}) {
     const {
-      currentLevel = {},
+      // 当前选中的反馈
+      currentSelectFeedback = {},
+      // 当前所有的一级反馈，二级反馈暂时没有
+      currentFeedback = EMPTY_LIST,
       title,
       pageNum,
       pageSize,
@@ -184,10 +192,10 @@ export default class ManagerViewDetail extends PureComponent {
       missionId: currentId,
     };
 
-    const { feedBackIdL1, name } = currentLevel;
+    const { feedBackIdL1, feedbackTitle } = currentSelectFeedback;
     let newTitle = '';
     if (isEntryFromPie) {
-      newTitle = name || nextTitle;
+      newTitle = feedbackTitle || nextTitle;
     } else if (isEntryFromProgressDetail) {
       newTitle = title || nextTitle;
     }
@@ -224,6 +232,8 @@ export default class ManagerViewDetail extends PureComponent {
       ...pieParam,
       isEntryFromProgressDetail,
       isEntryFromPie,
+      // 所有一级反馈
+      currentFeedback,
     });
 
     previewCustDetail({
@@ -231,6 +241,7 @@ export default class ManagerViewDetail extends PureComponent {
     }).then(() => {
       this.setState({
         isShowCustDetailModal: true,
+        destroyOnClose: false,
         canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
       });
     });
@@ -409,6 +420,9 @@ export default class ManagerViewDetail extends PureComponent {
       canLaunchTask,
       isEntryFromProgressDetail,
       isEntryFromPie,
+      currentFeedback,
+      feedBackIdL1,
+      destroyOnClose,
     } = this.state;
 
     const {
@@ -430,7 +444,7 @@ export default class ManagerViewDetail extends PureComponent {
       templateId,
     } = mngrMissionDetailInfo;
 
-    const { list = [] } = custDetailResult || EMPTY_OBJECT;
+    const { list = EMPTY_LIST } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
     const basicInfoData = [{
       id: 'id',
@@ -495,78 +509,89 @@ export default class ManagerViewDetail extends PureComponent {
               data={targetCustInfoData}
               headLine={'目标客户'}
             />
-            <GroupModal
-              wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
-              closable
-              visible={isShowCustDetailModal}
-              title={'客户明细'}
-              onCancelHandler={this.handleCloseModal}
-              footer={
-                <div className={styles.operationBtnSection}>
-                  <Clickable
-                    onClick={this.handleCloseModal}
-                    eventName="/click/managerViewCustDetail/cancel"
-                  >
-                    <Button className={styles.cancel}>取消</Button>
-                  </Clickable>
-                  {/**
-                  * 暂时隐藏导出按钮,等后台性能恢复，再放开
-                  */}
-                  {
-                    falseValue ? <Clickable
-                      eventName="/click/managerViewCustDetail/export"
-                    >
-                      <Button className={styles.export}>
-                        <a
-                          href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                        >导出</a>
-                      </Button>
-                    </Clickable> : null
-                  }
-                  {
-                    canLaunchTask ?
+            {/**
+             * close时destory弹框
+             */}
+            {
+              !destroyOnClose ?
+                <GroupModal
+                  wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
+                  closable
+                  visible={isShowCustDetailModal}
+                  title={'客户明细'}
+                  onCancelHandler={this.handleCloseModal}
+                  footer={
+                    <div className={styles.operationBtnSection}>
                       <Clickable
-                        onClick={this.handleLaunchTask}
-                        eventName="/click/managerViewCustDetail/launchTask"
+                        onClick={this.handleCloseModal}
+                        eventName="/click/managerViewCustDetail/cancel"
                       >
-                        <Button
-                          className={styles.launchTask}
-                          type="default"
-                          disabled={isDisabled}
-                        >
-                          发起新任务
-                        </Button>
+                        <Button className={styles.cancel}>取消</Button>
                       </Clickable>
-                      : null
+                      {/**
+                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
+                   */}
+                      {
+                        falseValue ? <Clickable
+                          eventName="/click/managerViewCustDetail/export"
+                        >
+                          <Button className={styles.export}>
+                            <a
+                              href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                            >导出</a>
+                          </Button>
+                        </Clickable> : null
+                      }
+                      {
+                        canLaunchTask ?
+                          <Clickable
+                            onClick={this.handleLaunchTask}
+                            eventName="/click/managerViewCustDetail/launchTask"
+                          >
+                            <Button
+                              className={styles.launchTask}
+                              type="default"
+                              disabled={isDisabled}
+                            >
+                              发起新任务
+                         </Button>
+                          </Clickable>
+                          : null
+                      }
+                    </div>
                   }
-                </div>
-              }
-              modalContent={
-                <CustDetail
-                  ref={ref => (this.custDetailRef = ref)}
-                  getCustDetailData={this.handlePreview}
-                  data={custDetailResult}
-                  title={title}
-                  onClose={this.handleCloseModal}
-                  hideCustDetailModal={this.hideCustDetailModal}
-                  push={push}
-                  isCustServedByPostn={isCustServedByPostn}
-                  custServedByPostnResult={custServedByPostnResult}
-                  // 代表是否是从进度条点击的
-                  isEntryFromProgressDetail={isEntryFromProgressDetail}
-                  // 代表是否是从饼图过来的
-                  isEntryFromPie={isEntryFromPie}
-                  // scrollTop恢复
-                  scrollModalBodyToTop={this.scrollModalBodyToTop}
+                  modalContent={
+                    <CustDetail
+                      ref={ref => (this.custDetailRef = ref)}
+                      getCustDetailData={this.handlePreview}
+                      data={custDetailResult}
+                      title={title}
+                      onClose={this.handleCloseModal}
+                      hideCustDetailModal={this.hideCustDetailModal}
+                      push={push}
+                      isCustServedByPostn={isCustServedByPostn}
+                      custServedByPostnResult={custServedByPostnResult}
+                      // 代表是否是从进度条点击的
+                      isEntryFromProgressDetail={isEntryFromProgressDetail}
+                      // 代表是否是从饼图过来的
+                      isEntryFromPie={isEntryFromPie}
+                      // scrollTop恢复
+                      scrollModalBodyToTop={this.scrollModalBodyToTop}
+                      // 当前一级二级反馈
+                      currentFilter={currentFeedback}
+                      // 当前选中的一级反馈条件
+                      currentSelectFeedback={feedBackIdL1}
+                    />
+                  }
+                  modalStyle={{
+                    maxWidth: 1165,
+                    minWidth: 700,
+                    width: 1165,
+                  }}
+                  modalWidth={1165}
                 />
-              }
-              modalStyle={{
-                maxWidth: 1165,
-                minWidth: 700,
-                width: 1165,
-              }}
-              modalWidth={1165}
-            />
+                : null
+            }
           </div>
           <div className={styles.missionImplementationSection}>
             <MissionImplementation

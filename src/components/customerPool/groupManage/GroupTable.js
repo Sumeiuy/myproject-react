@@ -2,17 +2,18 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-14 15:33:27
+ * @Last Modified time: 2018-03-16 15:52:39
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'antd';
+// import { Table } from 'antd';
 import { autobind } from 'core-decorators';
 // import { Link } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Pagination from '../../common/Pagination';
+import Table from '../../common/commonTable';
+// import Pagination from '../../common/Pagination';
 import Clickable from '../../../components/common/Clickable';
 import styles from './groupTable.less';
 
@@ -20,6 +21,30 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const NOOP = _.noop;
+
+// 给数据源添加空数据
+// 譬如分页需要一页12条，总数据有45条，那么添加45%12条空白行
+const padDataSource = (dataSource, pageSize) => {
+  if (_.isEmpty(dataSource)) {
+    return EMPTY_LIST;
+  }
+
+  const dataSize = _.size(dataSource);
+  const emptyRowCount = (Math.ceil(dataSize / pageSize) * pageSize) - dataSize;
+  let newDataSource = dataSource;
+  // 填充空白行
+  for (let i = 1; i <= emptyRowCount; i++) {
+    newDataSource = _.concat(newDataSource, [{
+      key: `empty_row_${i}`,
+      id: `empty_row_${i}`,
+      // 空白行标记
+      flag: `empty_row_${i}`,
+    }]);
+  }
+
+  return newDataSource;
+};
+
 
 export default class GroupTable extends PureComponent {
   static propTypes = {
@@ -66,7 +91,7 @@ export default class GroupTable extends PureComponent {
       PropTypes.array,
     ]),
     // 是否需要分页
-    isNeedPaganation: PropTypes.bool,
+    needPagination: PropTypes.bool,
     // 选择框类型
     selectionType: PropTypes.string,
     // 全选，取消全选回调
@@ -102,7 +127,7 @@ export default class GroupTable extends PureComponent {
     onSingleRowSelectionChange: NOOP,
     onRowSelectionChange: NOOP,
     currentSelectRowKeys: [],
-    isNeedPaganation: true,
+    needPagination: true,
     onPageChange: NOOP,
     onSizeChange: NOOP,
     selectionType: 'radio',
@@ -255,18 +280,8 @@ export default class GroupTable extends PureComponent {
     newDataSource = _.map(dataSource,
       item => _.merge(item, { key: item.id })); // 在外部传入数据时，统一加入一个id
 
-    const dataSize = _.size(newDataSource);
-    const distanceSize = curPageSize - dataSize;
-    if (distanceSize > 0 && needShowEmptyRow) {
-      // 填充空白行
-      for (let i = 1; i <= distanceSize; i++) {
-        newDataSource = _.concat(newDataSource, [{
-          key: `empty_row_${i}`,
-          id: `empty_row_${i}`,
-          // 空白行标记
-          flag: `empty_row_${i}`,
-        }]);
-      }
+    if (needShowEmptyRow) {
+      return padDataSource(newDataSource, Number(curPageSize));
     }
     return newDataSource;
   }
@@ -311,11 +326,11 @@ export default class GroupTable extends PureComponent {
       onPageChange,
       onSizeChange,
       isNeedRowSelection,
-      isNeedPaganation,
+      needPagination,
       tableStyle,
       showHeader,
       paginationClass,
-     } = this.props;
+    } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
       current: Number(curPageNum),
@@ -331,6 +346,32 @@ export default class GroupTable extends PureComponent {
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
+
+    // const tableProps = {
+    //   className: tableClass,
+    //   columns,
+    //   dataSource: this.renderTableDatas(listData),
+    //   bordered,
+    //   pagination: true,
+    //   scroll: _.merge(scrollXArea, scrollYArea),
+    //   onRowClick: this.handleRowClick,
+    //   rowSelection: isNeedRowSelection ? this.renderRowSelection() : null,
+    //   rowClassName: (record, index) => {
+    //     if (curSelectedRow === index) {
+    //       return classnames({
+    //         [styles.rowSelected]: true,
+    //       });
+    //     }
+    //     // 如果存在flag标记，说明是空白行
+    //     if (!_.isEmpty(record.flag)) {
+    //       return 'emptyRow';
+    //     }
+    //     return '';
+    //   },
+    //   showHeader,
+    //   ...tableStyleProp,
+    // };
+
     return (
       <div>
         <Table
@@ -338,7 +379,6 @@ export default class GroupTable extends PureComponent {
           columns={columns}
           dataSource={this.renderTableDatas(listData)}
           bordered={bordered}
-          pagination={false}
           scroll={_.merge(scrollXArea, scrollYArea)}
           onRowClick={this.handleRowClick}
           rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
@@ -356,11 +396,17 @@ export default class GroupTable extends PureComponent {
           }}
           showHeader={showHeader}
           {...tableStyleProp}
+          pagination={(needPagination && totalRecordNum > 0) ?
+            paganationOption : false}
+          paginationClass={`${styles.pagination} ${paginationClass}`}
+        /* needPagination={needPagination && totalRecordNum > 0} */
         />
-        {
-          (isNeedPaganation && totalRecordNum > 0) ?
-            <div className={`${styles.pagination} ${paginationClass}`}><Pagination {...paganationOption} /></div> : null
-        }
+        {/* {
+          (needPagination && totalRecordNum > 0) ?
+            <div className={`${styles.pagination} ${paginationClass}`}>
+              <Pagination {...paganationOption} />
+            </div> : null
+        } */}
       </div>
     );
   }

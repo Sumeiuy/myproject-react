@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-14 16:02:06
+ * @Last Modified time: 2018-03-16 17:23:04
  * 任务调查
  */
 
@@ -210,6 +210,14 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   /**
+ * 获取modalContainer引用
+ */
+  @autobind
+  getModalContainerRef(ref) {
+    return this.problemListModalContainerRef = ref;
+  }
+
+  /**
    * 删除问题
    * @param {*string} currentDeleteId 当前删除的问题id
    */
@@ -269,6 +277,9 @@ export default class MissionInvestigation extends PureComponent {
     this.setState({
       checked: !checked,
     });
+    if (checked) {
+      message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
+    }
   }
 
   @autobind
@@ -523,7 +534,8 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectRowKeys,
       isShowTable,
       page,
-      curDataInfo,
+      questionList,
+      // curDataInfo,
     } = this.state;
 
     const {
@@ -533,7 +545,7 @@ export default class MissionInvestigation extends PureComponent {
 
     const titleColumn = renderColumnTitle();
 
-    const dataSource = this.addIdToDataSource(curDataInfo);
+    const dataSource = this.addIdToDataSource(questionList);
 
     return (
       <div className={styles.missionInvestigationContainer}>
@@ -553,6 +565,7 @@ export default class MissionInvestigation extends PureComponent {
           }
         </div>
         <GroupModal
+          wrappedComponentRef={this.getModalContainerRef}
           wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
           closable
           visible={isShowTable}
@@ -598,7 +611,7 @@ export default class MissionInvestigation extends PureComponent {
                     onRowSelectionChange={this.handleRowSelectionChange}
                     currentSelectRowKeys={currentSelectRowKeys}
                     selectionType={'checkbox'}
-                    isNeedPaganation={totalCount > INITIAL_TOTAL_COUNT}
+                    needPagination={totalCount > INITIAL_TOTAL_COUNT}
                     // 分页器是否在表格内部
                     paginationInTable={false}
                     onPageChange={this.handlePageChange}

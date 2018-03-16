@@ -333,6 +333,8 @@ export default class PerformerView extends PureComponent {
       eventId: '',
       statusCode: '',
       isTaskFeedbackListOfNone: false,
+      // 执行中创建者视图右侧展示管理者视图
+      isSourceFromCreatorView: false,
     };
   }
 
@@ -367,80 +369,79 @@ export default class PerformerView extends PureComponent {
     }
   }
 
-  /**
-   * 发送获取任务反馈字典的请求
-   * @param {*} typeCode 当前左侧列表的选中项的typeCode
-   * @param {*} eventId 当前左侧列表的选中项的eventId
-   */
-  @autobind
-  queryMissionList(typeCode, eventId) {
-    const {
-      getServiceType,
-      dict: { missionType },
-    } = this.props;
-    /**
-       * 区分mot任务和自建任务
-       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-       * 根据descText的值请求对应的任务类型和任务反馈的数据
-       * 再判断当前任务是属于mot任务还是自建任务
-       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       */
-    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
-    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
-      .then(() => {
-        let currentType = {};
-        let taskFeedbackList = [];
-        if (+currentItem.descText === 1) {
-          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-        } else {
-          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-        }
-        if (_.isEmpty(currentType)) {
-          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-          taskFeedbackList = feedbackListOfNone;
-        } else {
-          taskFeedbackList = currentType.feedbackList;
-        }
-        this.setState({
-          taskFeedbackList,
-          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-        });
-      });
-  }
-
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
     const {
       replace,
       list,
-      location: { pathname, query, query: { currentId } },
+      location: { pathname, query, query: { currentId, missionViewType } },
     } = this.props;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
       const { pageNum, pageSize } = list.page;
+      // 默认取第一个item
       let item = list.resultData[0];
-      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
-      if (!_.isEmpty(currentId) && itemIndex > -1) {
-        // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      let itemIndex = '';
+      let creatorViewRightFromManagerView = false;
+      const defaultItem = item;
+      const defaultItemIndex = 0;
+
+      if (!_.isEmpty(currentId)) {
+        itemIndex = _.findIndex(list.resultData, o => String(o.id) === currentId);
+        // currentId与id比较，在listData里面找不到
+        if (itemIndex === -1) {
+          // 如果是创建者视图，先比较id是否与currentId一样
+          if (missionViewType === INITIATOR) {
+            // 则用currentId与mssnId比较
+            const mssnObjectIndex = _.findIndex(list.resultData, o =>
+              String(o.mssnId) === currentId);
+            itemIndex = mssnObjectIndex;
+            // 如果能找到，并且当前statusCode为执行中，则右侧详情展示管理者视图
+            if (itemIndex > -1) {
+              item = list.resultData[itemIndex];
+              if (this.judgeTaskInApproval(item.statusCode)) {
+                // 执行中创建者视图右侧展示管理者视图
+                creatorViewRightFromManagerView = true;
+              }
+            } else {
+              // 如果都找不到，则默认取数据的第一条
+              item = defaultItem;
+              itemIndex = defaultItemIndex;
+            }
+          } else {
+            // 如果都找不到，则默认取数据的第一条
+            item = defaultItem;
+            itemIndex = defaultItemIndex;
+          }
+        } else {
+          // 如果id与currentId比较，存在，则取数据
+          item = list.resultData[itemIndex];
+        }
       } else {
         // 不存在currentId
         replace({
           pathname,
           query: {
             ...query,
-            currentId: item.id,
+            // 执行中创建者视图右侧展示管理者视图
+            currentId: creatorViewRightFromManagerView ? item.mssnId : item.id,
             pageNum,
             pageSize,
           },
         });
-        itemIndex = 0;
+        itemIndex = defaultItemIndex;
       }
-      const { missionViewType: st, typeCode, statusCode, typeName, eventId } = item;
+
+      const {
+        missionViewType: st,
+        typeCode,
+        statusCode,
+        typeName,
+        eventId,
+      } = item;
+
       this.setState({
         // 当前视图（三种）
         currentView: st,
@@ -449,6 +450,7 @@ export default class PerformerView extends PureComponent {
         typeName,
         statusCode,
         eventId,
+        isSourceFromCreatorView: creatorViewRightFromManagerView,
       });
       this.getDetailByView(item);
     }
@@ -598,6 +600,7 @@ export default class PerformerView extends PureComponent {
       taskFeedbackList,
       statusCode,
       isTaskFeedbackListOfNone,
+      isSourceFromCreatorView,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
@@ -635,7 +638,7 @@ export default class PerformerView extends PureComponent {
     switch (st) {
       case INITIATOR:
         // 如果当前视图是创建者视图，并且状态是执行中，就展示管理者视图
-        if (this.judgeTaskInApproval(statusCode)) {
+        if (isSourceFromCreatorView) {
           detailComponent = managerViewDetailComponent;
         } else {
           detailComponent = (
@@ -693,6 +696,49 @@ export default class PerformerView extends PureComponent {
         break;
     }
     return detailComponent;
+  }
+
+  /**
+ * 发送获取任务反馈字典的请求
+ * @param {*} typeCode 当前左侧列表的选中项的typeCode
+ * @param {*} eventId 当前左侧列表的选中项的eventId
+ */
+  @autobind
+  queryMissionList(typeCode, eventId) {
+    const {
+      getServiceType,
+      dict: { missionType },
+    } = this.props;
+    /**
+       * 区分mot任务和自建任务
+       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
+       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
+       * 根据descText的值请求对应的任务类型和任务反馈的数据
+       * 再判断当前任务是属于mot任务还是自建任务
+       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       */
+    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
+    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
+      .then(() => {
+        let currentType = {};
+        let taskFeedbackList = [];
+        if (+currentItem.descText === 1) {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
+        } else {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
+        }
+        if (_.isEmpty(currentType)) {
+          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
+          taskFeedbackList = feedbackListOfNone;
+        } else {
+          taskFeedbackList = currentType.feedbackList;
+        }
+        this.setState({
+          taskFeedbackList,
+          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
+        });
+      });
   }
 
   @autobind
@@ -867,9 +913,15 @@ export default class PerformerView extends PureComponent {
       countAnswersByType,
       countExamineeByType,
     } = this.props;
+    const { isSourceFromCreatorView } = this.state;
+    let missionId = record.id;
+    // 如果来源是创建者视图，那么取mssnId作为missionId
+    if (isSourceFromCreatorView) {
+      missionId = record.mssnId;
+    }
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      taskId: record.id,
+      taskId: missionId,
       // taskId: '101111171108181',
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
@@ -893,12 +945,12 @@ export default class PerformerView extends PureComponent {
 
     // 管理者视图获取客户反馈
     countFlowFeedBack({
-      missionId: record.id,
+      missionId,
       orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
-      missionId: record.id,
+      missionId,
       orgId: emp.getOrgId(),
     });
   }
@@ -995,20 +1047,23 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId } = record;
+    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
     const {
       queryCustUuid,
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === String(id)) return;
+    const isSourceFromCreatorView = (st === INITIATOR && this.judgeTaskInApproval(statusCode));
+    if (currentId === (isSourceFromCreatorView ? String(mssnId) : String(id))) return;
+
     replace({
       pathname,
       query: {
         ...query,
-        currentId: id,
+        currentId: isSourceFromCreatorView ? mssnId : id,
       },
     });
+
     this.setState({
       currentView: st,
       activeRowIndex: index,
@@ -1016,8 +1071,10 @@ export default class PerformerView extends PureComponent {
       typeName,
       eventId,
       statusCode,
+      isSourceFromCreatorView,
+    }, () => {
+      this.getDetailByView(record);
     });
-    this.getDetailByView(record);
     // 如果当前视图是执行者视图，则预先请求custUuid
     if (st === EXECUTOR) {
       // 前置请求custuuid
