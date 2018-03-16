@@ -81,16 +81,12 @@ export default class SelectLabelCust extends PureComponent {
   @autobind
   getData() {
     const { labelId = '', condition, tipsSize } = this.state;
-    if (_.isEmpty(condition)) {
-      return {
-        labelCust: {},
-      };
-    }
 
     const {
       filterNumObject = {},
       argsOfQueryCustomer = {},
       currentFilterObject = {},
+      currentAllFilterState = {},
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
     const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
@@ -108,6 +104,7 @@ export default class SelectLabelCust extends PureComponent {
       custSource: '瞄准镜标签',
       argsOfQueryCustomer,
       currentFilterObject,
+      currentAllFilterState,
       filterNumObject,
       shouldclearBottomLabel,
       currentFilterNum,

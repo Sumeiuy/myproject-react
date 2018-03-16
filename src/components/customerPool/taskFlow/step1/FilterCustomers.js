@@ -35,6 +35,7 @@ export default class Filter extends PureComponent {
     sightingTelescopeFilters: PropTypes.object.isRequired,
     source: PropTypes.string,
     currentItems: PropTypes.array.isRequired,
+    currentAllItems: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -121,12 +122,23 @@ export default class Filter extends PureComponent {
   }
 
   render() {
-    const { dict, onFilterChange, currentItems } = this.props;
+    const { dict, onFilterChange, currentItems, currentAllItems } = this.props;
     const currentValue = _.reduce(currentItems, (result, value) => {
       const [name, code] = value.split('.');
       result[name] = code; // eslint-disable-line
       return result;
     }, {});
+
+    const valueObjForCustBusinessType =
+      _.filter(currentAllItems, obj => obj.name === 'Rights')[0];
+    const valueObjForUnrightBusinessType =
+      _.filter(currentAllItems, obj => obj.name === 'Unrights')[0];
+
+    const valueForCustBusinessType =
+      valueObjForCustBusinessType && valueObjForCustBusinessType.valueArray;
+    const valueForUnrightBusinessType =
+      valueObjForUnrightBusinessType && valueObjForUnrightBusinessType.valueArray;
+
     const { moreBtnVisible, fold, filterSize } = this.state;
     const foldClass = classnames({ up: !fold });
     const isFold = moreBtnVisible && fold;
@@ -179,9 +191,18 @@ export default class Filter extends PureComponent {
         >
           <MultiFilter
             value={currentValue.Rights || ''}
+            valueArray={valueForCustBusinessType}
             filterLabel="已开通业务"
             filter="Rights"
             filterField={dict.custBusinessType}
+            onChange={onFilterChange}
+          />
+          <MultiFilter
+            value={currentValue.Unrights || ''}
+            valueArray={valueForUnrightBusinessType}
+            filterLabel="可开通业务"
+            filter="Unrights"
+            filterField={dict.custUnrightBusinessType}
             onChange={onFilterChange}
           />
         </div>
