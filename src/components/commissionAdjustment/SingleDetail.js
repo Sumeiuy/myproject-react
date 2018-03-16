@@ -122,10 +122,10 @@ export default class Singlecommissiondetail extends PureComponent {
               <InfoTitle head="佣金" />
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
-                  <li className={styles.item}>
+                  <li className={styles.leftCurrentCom}>
                     <InfoItem label="当前股基佣金率" value={currentCom} />
                   </li>
-                  <li className={styles.item}>
+                  <li className={styles.rightTargetCom}>
                     <InfoItem label="目标股基佣金率" value={targetCom} />
                   </li>
                 </ul>
