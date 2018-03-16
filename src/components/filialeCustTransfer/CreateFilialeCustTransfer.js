@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 17:00:58
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-13 15:50:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -23,7 +23,7 @@ import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
-import customerTemplet from './customerTemplet.xlsx';
+import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 
 const EMPTY_LIST = [];
@@ -395,12 +395,17 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         auditors: value.login,
       };
       validateData(payload).then(() => {
-        this.emptyData();
-        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
-        this.setState({
-          isShowModal: false,
-        }, () => {
-          queryAppList(query, pageNum, pageSize);
+        Modal.success({
+          title: '提示',
+          content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+          onOk: () => {
+            this.emptyData();
+            this.setState({
+              isShowModal: false,
+            }, () => {
+              queryAppList(query, pageNum, pageSize);
+            });
+          },
         });
       });
     }
