@@ -421,18 +421,19 @@ export default class PerformerView extends PureComponent {
         }
       } else {
         // 不存在currentId
-        replace({
-          pathname,
-          query: {
-            ...query,
-            // 执行中创建者视图右侧展示管理者视图
-            currentId: creatorViewRightFromManagerView ? item.mssnId : item.id,
-            pageNum,
-            pageSize,
-          },
-        });
         itemIndex = defaultItemIndex;
       }
+
+      replace({
+        pathname,
+        query: {
+          ...query,
+          // 执行中创建者视图右侧展示管理者视图
+          currentId: creatorViewRightFromManagerView ? item.mssnId : item.id,
+          pageNum,
+          pageSize,
+        },
+      });
 
       const {
         missionViewType: st,
