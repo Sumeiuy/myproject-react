@@ -29,6 +29,7 @@ export default class SelectAssembly extends PureComponent {
     subType: PropTypes.string,
     validResult: PropTypes.object,
     shouldeCheck: PropTypes.bool,
+    clearSelectCust: PropTypes.func,
   }
 
   static defaultProps = {
@@ -36,9 +37,10 @@ export default class SelectAssembly extends PureComponent {
     subType: '',
     validResult: {},
     shouldeCheck: true,
-    onValidateCust: () => { },
+    onValidateCust: _.noop,
     unfinishRoute: () => {},
     dataSource: [],
+    clearSelectCust: _.noop,
   }
 
   constructor(props) {
@@ -79,8 +81,6 @@ export default class SelectAssembly extends PureComponent {
     } else {
       this.setState({
         inputValue: value,
-        dataSource: [],
-        typeStyle: 'search',
       });
     }
   }
@@ -101,9 +101,9 @@ export default class SelectAssembly extends PureComponent {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
-        onSelectValue({ ...this.selectedCust, openRzrq });
+        onSelectValue({ ...selectItem, openRzrq });
       } else {
-        onSelectValue(this.selectedCust);
+        onSelectValue(selectItem);
       }
       this.setState({
         typeStyle: 'close',
@@ -196,7 +196,7 @@ export default class SelectAssembly extends PureComponent {
           custType,
         }).then(() => this.afterValidateSingleCust(item));
       } else {
-        this.props.onSelectValue(this.selectedCust);
+        this.props.onSelectValue(item);
       }
     }
   }
@@ -206,6 +206,8 @@ export default class SelectAssembly extends PureComponent {
     if (this.state.typeStyle === 'search') {
       this.props.onSearchValue(this.state.inputValue);
     } else if (this.state.typeStyle === 'close') {
+      // 点击客户清空的icon的时候，掉这个方法告知父组件客户被清空
+      this.props.clearSelectCust();
       this.setState({
         dataSource: [],
         inputValue: '',
@@ -235,6 +237,7 @@ export default class SelectAssembly extends PureComponent {
     return (
       <div className={styles.selectSearchBox}>
         <AutoComplete
+          backfill
           placeholder="客户号/客户姓名"
           className={styles.searchBox}
           dropdownClassName={styles.searchDropDown}
