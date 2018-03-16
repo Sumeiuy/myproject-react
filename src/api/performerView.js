@@ -29,7 +29,7 @@ export default function performerView(api) {
     // 管理者视图任务实施进度
     countFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowStatus', query),
     // 添加服务记录中 服务类型
-    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
+    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
     // 问卷调查
     getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
     // 问卷调查保存答案
