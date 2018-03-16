@@ -561,7 +561,7 @@ export default class CustomerLists extends PureComponent {
       curOrgId = orgId;
     } else if (hasPermission) {
       // 有 ‘HTSC 任务管理’ 或者 ‘HTSC 首页指标查询’权限
-      curOrgId = emp.getOrgId;
+      curOrgId = emp.getOrgId();
     }
     const paginationOption = {
       current,
