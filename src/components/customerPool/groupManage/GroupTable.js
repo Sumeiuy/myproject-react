@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-16 15:52:39
+ * @Last Modified time: 2018-03-16 17:39:34
  */
 
 import React, { PureComponent } from 'react';
@@ -346,31 +346,6 @@ export default class GroupTable extends PureComponent {
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
-
-    // const tableProps = {
-    //   className: tableClass,
-    //   columns,
-    //   dataSource: this.renderTableDatas(listData),
-    //   bordered,
-    //   pagination: true,
-    //   scroll: _.merge(scrollXArea, scrollYArea),
-    //   onRowClick: this.handleRowClick,
-    //   rowSelection: isNeedRowSelection ? this.renderRowSelection() : null,
-    //   rowClassName: (record, index) => {
-    //     if (curSelectedRow === index) {
-    //       return classnames({
-    //         [styles.rowSelected]: true,
-    //       });
-    //     }
-    //     // 如果存在flag标记，说明是空白行
-    //     if (!_.isEmpty(record.flag)) {
-    //       return 'emptyRow';
-    //     }
-    //     return '';
-    //   },
-    //   showHeader,
-    //   ...tableStyleProp,
-    // };
 
     return (
       <div>
