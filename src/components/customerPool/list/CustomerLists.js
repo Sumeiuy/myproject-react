@@ -16,15 +16,13 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import BottomFixedBox from './BottomFixedBox';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, env } from '../../../helper';
+import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { ENTERLIST1, ENTERLIST2 } from '../../../routes/customerPool/config';
 
 import styles from './customerLists.less';
-
-// 0 表示没有任何权限
-const NOPERTMIT = 0;
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
@@ -81,7 +79,6 @@ export default class CustomerLists extends PureComponent {
     onSizeChange: PropTypes.func.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
-    source: PropTypes.string.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -100,7 +97,7 @@ export default class CustomerLists extends PureComponent {
     reorderValue: PropTypes.object.isRequired,
     onReorderChange: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func,
-    custRange: PropTypes.array.isRequired,
+    custRange: PropTypes.object.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -117,10 +114,12 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    permissionType: PropTypes.number.isRequired,
-    view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    hasTkMampPermission: PropTypes.bool.isRequired,
+    hasIndexViewPermission: PropTypes.bool.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -219,13 +218,13 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { location: { query: { ptyMng } }, permissionType, empInfo } = props;
+    const { location: { query: { ptyMng } }, empInfo } = props;
     let bool = false;
     if (ptyMng) {
       bool = ptyMng.split('_')[1] === empInfo.empNum;
     }
     // 0表示当前用户没有权限
-    this.mainServiceManager = !!(bool) || permissionType === 0;
+    this.mainServiceManager = !!(bool) || !this.hasPermission();
   }
 
   /**
@@ -428,6 +427,33 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
+  // 判断从首页不同入口处进入列表页有没有相应的权限
+  @autobind
+  hasPermission() {
+    const {
+      hasTkMampPermission,
+      hasIndexViewPermission,
+      location: { query: { source } },
+    } = this.props;
+    return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
+      (_.includes(ENTERLIST2, source) && hasIndexViewPermission);
+  }
+
+  /**
+   * 根据不同的权限入口选择不同的服务营业部的下拉列表数据
+   */
+  @autobind
+  switchCustRange() {
+    const { custRange = {}, location: { query: { source } } } = this.props;
+    if (_.includes(ENTERLIST1, source)) {
+      return custRange.taskManagerResp || EMPTY_ARRAY;
+    }
+    if (_.includes(ENTERLIST2, source)) {
+      return custRange.firstPageResp || EMPTY_ARRAY;
+    }
+    return EMPTY_ARRAY;
+  }
+
   render() {
     const {
       isShowContactModal,
@@ -453,12 +479,10 @@ export default class CustomerLists extends PureComponent {
       custContactData,
       serviceRecordData,
       dict,
-      permissionType,
       custIncomeReqState,
       toggleServiceRecordModal,
       onReorderChange,
       reorderValue,
-      custRange,
       orgId,
       collectCustRange,
       expandAll,
@@ -476,9 +500,11 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      view360Permit,
       isCustServedByPostn,
       custServedByPostnResult,
+      hasTkMampPermission,
+      sendCustsServedByPostnResult,
+      isSendCustsServedByPostn,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -491,6 +517,7 @@ export default class CustomerLists extends PureComponent {
       selectAll,
       ptyMng,
     } = location.query;
+    const hasPermission = this.hasPermission();
     // current: 默认第一页
     // pageSize: 默认每页大小20
     // curTotal: 当前列表数据总数
@@ -519,9 +546,8 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
-    // ‘HTSC 首页指标查询’ 权限
-    if (permissionType !== NOPERTMIT) {
+    // ‘HTSC 首页指标查询’ 权限, 任务管理权限
+    if (hasPermission) {
       if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
       } else {
@@ -533,13 +559,9 @@ export default class CustomerLists extends PureComponent {
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
-    } else if (permissionType !== NOPERTMIT) {
-      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
-      if (env.isInFsp()) {
-        curOrgId = window.forReactPosition.orgId;
-      } else {
-        curOrgId = empInfo.occDivnNum;
-      }
+    } else if (hasPermission) {
+      // 有 ‘HTSC 任务管理’ 或者 ‘HTSC 首页指标查询’权限
+      curOrgId = emp.getOrgId;
     }
     const paginationOption = {
       current,
@@ -549,7 +571,6 @@ export default class CustomerLists extends PureComponent {
       onShowSizeChange: onSizeChange,
       isHideLastButton: true,
     };
-
     return (
       <div className="list-box">
         <div className={styles.listHeader}>
@@ -573,7 +594,7 @@ export default class CustomerLists extends PureComponent {
             <div className={styles.selectBox}>
               <SaleDepartmentFilter
                 orgId={curOrgId}
-                custRange={custRange}
+                custRange={this.switchCustRange()}
                 updateQueryState={this.changeSaleDepartment}
                 collectData={collectCustRange}
                 expandAll={expandAll}
@@ -581,7 +602,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={permissionType === NOPERTMIT}
+                disable={!hasPermission}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}
@@ -598,7 +619,6 @@ export default class CustomerLists extends PureComponent {
                   item => <CustomerRow
                     empInfo={empInfo}
                     handleCheck={handleCheck}
-                    mainServiceManager={this.mainServiceManager}
                     dict={dict}
                     location={location}
                     getCustIncome={getCustIncome}
@@ -621,7 +641,6 @@ export default class CustomerLists extends PureComponent {
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
-                    view360Permit={view360Permit}
                     isCustServedByPostn={isCustServedByPostn}
                     custServedByPostnResult={custServedByPostnResult}
                   />,
@@ -660,6 +679,9 @@ export default class CustomerLists extends PureComponent {
               entertype={entertype}
               clearCreateTaskData={clearCreateTaskData}
               onClick={this.goGroupOrTask}
+              hasTkMampPermission={hasTkMampPermission}
+              sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+              isSendCustsServedByPostn={isSendCustsServedByPostn}
             /> : null
         }
         {
