@@ -125,14 +125,14 @@ function getLogData(action) {
   let extraData = getExtraData(action);
 
   if (eventType.event === '$pageview') {
-    const { payload: { pathname, search } } = action;
+    const { payload: { pathname, search, title } } = action;
     extraData = {
       ...extraData,
       // $referrer: url,
       // $referrer_host: '',
       $url: `${pathname}${search}`,
       $url_path: pathname,
-      $title: pathname,
+      $title: title || pathname,
     };
   }
 

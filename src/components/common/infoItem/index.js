@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styles from './index.less';
 
 export default function InfoItem(props) {
-  const { width, label, value } = props;
+  const { width, label, value, valueColor } = props;
   return (
     <div className={styles.wrap}>
       <div
@@ -26,6 +26,7 @@ export default function InfoItem(props) {
         className={styles.value}
         style={{
           marginLeft: width,
+          color: valueColor,
         }}
       >{value}</div>
     </div>
@@ -36,10 +37,12 @@ InfoItem.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   width: PropTypes.string,
+  valueColor: PropTypes.string,
 };
 InfoItem.defaultProps = {
   label: '标题',
   value: '无内容',
   width: '160px',
+  valueColor: '#333',
 };
 
