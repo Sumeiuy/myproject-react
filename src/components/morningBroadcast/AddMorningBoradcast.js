@@ -7,7 +7,6 @@ import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import withRouter from '../../decorators/withRouter';
 import { request } from '../../config/index';
 import { emp } from '../../helper/index';
 import logable from '../../decorators/logable';
@@ -32,7 +31,6 @@ function submitTypeName(ctx) {
 }
 
 @Form.create()
-@withRouter
 export default class AddMorningBoradcast extends PureComponent {
   static propTypes = {
     creator: PropTypes.string.isRequired,

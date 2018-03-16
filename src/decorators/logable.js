@@ -92,7 +92,7 @@ function logable({ type = 'Click', payload = {} }) {
   return makeLogger({
     type,
     payload: {
-      pathname: '$props.location.pathname',
+      pathname: dva.getLastLocation,
       ...payload,
     },
   });
