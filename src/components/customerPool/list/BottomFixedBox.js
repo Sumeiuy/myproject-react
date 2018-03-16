@@ -28,8 +28,7 @@ export default class BottomFixedBox extends PureComponent {
     entertype: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
-    // 是否有权限发起任务
-    hasLaunchTaskPermission: PropTypes.bool.isRequired,
+    hasTkMampPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
@@ -143,7 +142,7 @@ export default class BottomFixedBox extends PureComponent {
     if (Number(selectCount) > 500) {
       this.toggleModal();
       this.setState({
-        warningContent: '一次添加的客户数不能超过500个',
+        modalContent: '一次添加的客户数不能超过500个',
       });
       return;
     }
@@ -154,13 +153,13 @@ export default class BottomFixedBox extends PureComponent {
   handleCreateTaskClick() {
     const {
       // selectCount,
-      hasLaunchTaskPermission,
+      hasTkMampPermission,
       isSendCustsServedByPostn,
       condition,
     } = this.props;
 
     // 有职责可以发起任务，没职责判断
-    if (!hasLaunchTaskPermission) {
+    if (!hasTkMampPermission) {
       isSendCustsServedByPostn({
         ...condition,
         postnId: emp.getPstnId(),
@@ -195,6 +194,38 @@ export default class BottomFixedBox extends PureComponent {
     this.props.clearCreateTaskData('custList');
 
     this.handleClick(url, title, id);
+  }
+
+  @autobind
+  checkLaunchTaskPermission() {
+    const {
+      condition,
+      hasTkMampPermission,
+      isSendCustsServedByPostn,
+    } = this.props;
+    if (hasTkMampPermission) {
+      this.handleCreateTaskClick();
+    } else {
+      isSendCustsServedByPostn({
+        ...condition,
+        postnId: emp.getPstnId(),
+      }).then(() => {
+        const {
+          sendCustsServedByPostnResult = {},
+        } = this.props;
+        const {
+          custNumsIsExceedUpperLimit = false,
+          sendCustsServedByPostn = false,
+        } = sendCustsServedByPostnResult;
+        // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
+        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+          this.toggleModal();
+          this.setState({ modalContent: '你没有HTSC 任务管理职责，不可发起任务' });
+        } else {
+          this.handleCreateTaskClick();
+        }
+      });
+    }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
@@ -293,7 +324,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       taskAndGroupLeftPos,
       visible,
-      warningContent,
+      modalContent,
     } = this.state;
     return (
       <div
@@ -324,7 +355,7 @@ export default class BottomFixedBox extends PureComponent {
         >
           <div className={'info'}>
             <Icon type="tishi1" className={'tishi'} />
-            <span>{warningContent}</span>
+            <span>{modalContent}</span>
           </div>
         </Modal>
       </div>

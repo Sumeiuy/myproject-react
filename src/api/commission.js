@@ -60,5 +60,7 @@ export default function commission(api) {
     checkCustomer: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailCustRiskInfo', query),
     // 查询驳回后修改的详情页面
     querySingleDetail4Update: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfoForUpdate', query),
+    // 查询单佣金调整客户的当前股基佣金率
+    queryCustCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustCommission', query),
   };
 }

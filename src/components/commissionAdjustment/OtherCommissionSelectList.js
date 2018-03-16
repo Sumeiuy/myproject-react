@@ -96,8 +96,9 @@ export default class OtherCommissionSelectList extends PureComponent {
   render() {
     const { otherRatios, showTip } = this.props;
     const compactRatios = _.compact(otherRatios);
-    const oddCommissionArray = _.filter(compactRatios, (v, index) => index % 2 === 1);
-    const evenCommissionArray = _.filter(compactRatios, (v, index) => index % 2 === 0);
+    const orderRatios = _.sortBy(compactRatios, o => dictMap[o.code].order);
+    const oddCommissionArray = _.filter(orderRatios, (v, index) => index % 2 === 1);
+    const evenCommissionArray = _.filter(orderRatios, (v, index) => index % 2 === 0);
     const tipCls = cx({
       [styles.blockTip]: true,
       [styles.hide]: showTip,

@@ -2,7 +2,7 @@
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-13 17:44:31
+ * @Last Modified time: 2018-03-16 17:34:10
  */
 
 import React, { PureComponent } from 'react';
@@ -14,13 +14,10 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 import moment from 'moment/moment';
 
-import { optionsMap, fspContainer } from '../../config';
-import { emp, time } from '../../helper';
+import { optionsMap } from '../../config';
+import { emp, time, permission } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import permissionType from './permissionType';
 import {
-  NOPERMIT,
-  PERMITS1,
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
@@ -152,35 +149,28 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    // 任务管理岗或者首页指标查询
-    this.permissionType = permissionType().customerPoolPermit;
+    // 登录用户orgId
+    this.orgId = emp.getOrgId();
+    // HTSC 首页指标查询
+    this.hasIndexViewPermission = permission.hasIndexViewPermission();
+    // HTSC 任务管理岗
+    this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo = {}, empPostnList = {} },
+      empInfo: { empPostnList = {} },
       getInformation,
       getToBeDone,
       getHotWds,
       homaPageNews,
     } = this.props;
-    // 获取登录用户empId和occDivnNum
-    const { empNum = '', occDivnNum = '' } = empInfo;
 
-    // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
-    if (document.querySelector(fspContainer.container)) {
-      this.orgId = window.forReactPosition.orgId;
-    } else {
-      this.orgId = occDivnNum;
-    }
-    // 权限控制是否传给后端orgId  PERMITS2 表示当前用户有
-    // ‘HTSC 任务管理岗’
-    const authOrgId = this.permissionType !== NOPERMIT ? this.orgId : '';
-    // 猜你感兴趣模块接口，如果是任务管理岗职责，需要传orgId
-    getHotWds({ empNo: empNum });
-    // 待办事项
-    getToBeDone({ orgId: authOrgId });
+    // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
+    getHotWds({ empNo: emp.getId() });
+    // 待办事项, 有任务管理岗时，将岗位id传给后端
+    getToBeDone({ orgId: this.hasTkMampPermission ? this.orgId : '' });
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
@@ -224,8 +214,7 @@ export default class Home extends PureComponent {
     let custType = CUST_MANAGER;
     if (orgId) {
       custType = orgId !== MAIN_MAGEGER_ID ? ORG : CUST_MANAGER;
-      // 绩效指标，如果是首页指标查询职责，需要传orgId
-    } else if (this.permissionType === PERMITS1) {
+    } else if (this.hasIndexViewPermission) {
       custType = ORG;
     }
     return custType;
@@ -305,7 +294,7 @@ export default class Home extends PureComponent {
     };
     if (orgId) {
       tempObj.orgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
-    } else if (this.permissionType === PERMITS1) {
+    } else if (this.hasIndexViewPermission) {
       tempObj.orgId = this.orgId;
     }
     // 绩效指标
@@ -338,8 +327,7 @@ export default class Home extends PureComponent {
   queryHotPossibleWds(state) {
     const { getHotPossibleWds } = this.props;
     const setData = {
-      // 任务管理岗需要传orgId
-      orgId: this.permissionType === NOPERMIT ? '' : this.orgId, // 组织ID
+      orgId: this.hasTkMampPermission ? this.orgId : '', // 组织ID
       empNo: emp.getId(), // 用户ID
     };
     getHotPossibleWds({
@@ -361,8 +349,8 @@ export default class Home extends PureComponent {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    // 有‘HTSC 首页指标查询’职责的普通用户
-    if (this.permissionType !== NOPERMIT) {
+    // 有‘HTSC 首页指标查询’权限
+    if (this.hasIndexViewPermission) {
       // 只要不是我的客户，都展开组织机构树
       // 用户职位是经总
       if (posOrgId === (custRange[0] || {}).id) {
@@ -444,7 +432,7 @@ export default class Home extends PureComponent {
     const curCycleSelect = cycleSelect || (_.isArray(cycle) ? cycle[0] : {}).key;
     if (orgId) {
       curOrgId = orgId;
-    } else if (this.permissionType !== PERMITS1) {
+    } else if (!this.hasIndexViewPermission) {
       curOrgId = MAIN_MAGEGER_ID;
     }
     const extraProps = {
@@ -487,6 +475,7 @@ export default class Home extends PureComponent {
         <div className={styles.poolContainer}>
           <div className={styles.content}>
             <Search
+              orgId={this.orgId}
               hotWdsList={hotWdsList}
               queryHotPossibleWds={this.queryHotPossibleWds}
               queryHotWdsData={hotPossibleWdsList}
@@ -494,14 +483,14 @@ export default class Home extends PureComponent {
               searchHistoryVal={searchHistoryVal}
               saveSearchVal={this.handleSaveSearchVal}
               location={location}
+              authority={this.hasTkMampPermission}
             />
             <ToBeDone
               location={location}
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
-              // 待办事项里面的潜在目标客户，如果有任务管理岗职责，需要传orgId
-              authority={this.permissionType === PERMITS1}
+              authority={this.hasTkMampPermission}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
@@ -517,7 +506,7 @@ export default class Home extends PureComponent {
                   location={location}
                   cycle={cycle}
                   category={'manager'}
-                  permissionType={this.permissionType}
+                  authority={this.hasIndexViewPermission}
                 />
               </TabPane>
               {
@@ -531,7 +520,7 @@ export default class Home extends PureComponent {
                       cycle={cycle}
                       custCount={custCount}
                       category={'performance'}
-                      permissionType={this.permissionType}
+                      authority={this.hasIndexViewPermission}
                     />
                   </TabPane>
                 ) : (null)

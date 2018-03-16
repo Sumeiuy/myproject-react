@@ -815,11 +815,6 @@ const pageConfig = {
         title: '原服务经理',
       },
       {
-        dataIndex: 'postnName',
-        key: 'postnName',
-        title: '原职位',
-      },
-      {
         dataIndex: 'newOrgName',
         key: 'newOrgName',
         title: '新服务营业部',
@@ -828,11 +823,6 @@ const pageConfig = {
         dataIndex: 'newEmpName',
         key: 'newEmpName',
         title: '新服务经理',
-      },
-      {
-        dataIndex: 'newPostnName',
-        key: 'newPostnName',
-        title: '新职位',
       },
     ],
     approvalColumns: [

@@ -15,7 +15,6 @@ import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import { openFspTab } from '../../../utils';
-// import { emp } from '../../../helper';
 import styles from './customerRow.less';
 
 import maleAvator from './img/icon-avator.png';
@@ -119,7 +118,6 @@ export default class CustomerRow extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
-    mainServiceManager: PropTypes.bool,
     handleCheck: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
@@ -127,7 +125,6 @@ export default class CustomerRow extends PureComponent {
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
   }
@@ -135,7 +132,6 @@ export default class CustomerRow extends PureComponent {
   static defaultProps = {
     q: '',
     selectedIds: [],
-    mainServiceManager: false,
   }
 
   constructor(props) {
@@ -195,17 +191,17 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  // 是否允许进入列表项对应的360详情
-  toDetailPermissibility() {
+  // 判断是否为主服务经理
+  @autobind
+  isMainService() {
     const {
-      view360Permit,
       empInfo,
       listItem: {
         empId,
       },
     } = this.props;
-    // 有HTSC 总部执行岗， HTSC 分中心执行岗,或是客户的主服务经理 控制绩效数据的客户范围展示权限
-    return view360Permit || empInfo.rowId === empId;
+    // 登录者用户中的rowId和客户的主服务经理的工号是否一致
+    return empInfo.rowId === empId;
   }
 
   @autobind
@@ -242,7 +238,7 @@ export default class CustomerRow extends PureComponent {
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    if (this.toDetailPermissibility()) {
+    if (this.isMainService()) {
       return (
         <Clickable
           onClick={this.toDetail}
@@ -268,7 +264,6 @@ export default class CustomerRow extends PureComponent {
   // 是否显示快捷菜单
   renderQuickMenu() {
     const {
-      empInfo: { rowId },
       listItem,
       toggleServiceRecordModal,
       custEmail,
@@ -280,7 +275,7 @@ export default class CustomerRow extends PureComponent {
       entertype,
       goGroupOrTask,
     } = this.props;
-    if (listItem.empId === rowId) {
+    if (this.isMainService()) {
       return (<QuickMenu
         listItem={listItem}
         createModal={this.createModal}
@@ -305,7 +300,7 @@ export default class CustomerRow extends PureComponent {
         name,
       },
     } = this.props;
-    if (this.toDetailPermissibility()) {
+    if (this.isMainService()) {
       return name ? (
         <Clickable
           onClick={this.toDetail}
@@ -325,7 +320,6 @@ export default class CustomerRow extends PureComponent {
       location,
       dict,
       formatAsset,
-      mainServiceManager,
       empInfo: { rowId },
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
@@ -443,7 +437,6 @@ export default class CustomerRow extends PureComponent {
                 dict={dict}
                 location={location}
                 listItem={listItem}
-                mainServiceManager={mainServiceManager}
               />
             </div>
           </div>
