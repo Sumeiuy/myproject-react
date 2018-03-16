@@ -29,6 +29,11 @@ const ENTER_TYPE = {
   sightingTelescope: 'labelSearchCustPool',
 };
 
+// 任务管理岗权限作用的首页入口列表
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'business'];
+// 首页指标查询权限作用的首页入口列表
+const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
+
 export default {
   NOPERMIT,
   PERMITS1,
@@ -36,4 +41,6 @@ export default {
   ORG,
   MAIN_MAGEGER_ID,
   ENTER_TYPE,
+  ENTERLIST1,
+  ENTERLIST2,
 };
