@@ -30,10 +30,11 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
+    authority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -41,7 +42,6 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     saveSearchVal: () => { },
     queryHotWdsData: EMPTY_LIST,
-    orgId: '',
     searchHistoryVal: '',
   }
 
@@ -121,7 +121,7 @@ export default class Search extends PureComponent {
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { push, location: { query } } = this.props;
+    const { push, location: { query }, authority, orgId } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
     const condition = urlHelper.stringify(obj);
@@ -133,12 +133,14 @@ export default class Search extends PureComponent {
       id: ids, // 'FSP_SERACH',
       title: titles, // '搜索目标客户',
     };
+    // 有任务管理岗权限将orgId带到下一个页面
+    const newQuery = authority ? { ...obj, orgId } : obj;
     openRctTab({
       routerAction: push,
       url,
       param,
       pathname: firstUrl,
-      query: obj,
+      query: newQuery,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,
