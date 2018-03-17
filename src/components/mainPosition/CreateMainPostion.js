@@ -24,11 +24,6 @@ import styles from './createMainPostion.less';
 
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -294,7 +289,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 searchList={employeeList}
                 emitSelectItem={this.selectHandle}
                 emitToSearch={this.searchHandle}
-                boxStyle={dropDownSelectBoxStyle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}
               />
             </InfoForm>

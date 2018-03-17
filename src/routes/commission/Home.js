@@ -264,7 +264,7 @@ export default class CommissionHome extends PureComponent {
     unSubsciSubmitProcess: PropTypes.bool,
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
-    getCustDetailInfo: PropTypes.object.isRequired,
+    getCustDetailInfo: PropTypes.func.isRequired,
     custDetailInfo: PropTypes.object,
   }
 

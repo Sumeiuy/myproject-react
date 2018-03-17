@@ -109,7 +109,6 @@ export default class BaseInfoModify extends PureComponent {
           </span>
           <div className={style.inputComponentContent}>
             <DropdownSelect
-              value={this.props.customer}
               placeholder="经纪客户号/客户名称"
               searchList={this.props.canApplyCustList}
               showObjKey="custName"

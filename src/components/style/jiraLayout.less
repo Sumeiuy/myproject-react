@@ -57,7 +57,7 @@
   }
   .dropDownSelectBox {
     display: inline-block;
-    min-width: 70px;
+    width: auto;
     vertical-align: middle;
   }
   :global {
@@ -80,18 +80,21 @@
         line-height: 26px;
       }
       // 字体颜色大小
+      .ant-select-selection__rendered .ant-select-selection__placeholder {
+        color: #a1a1a1;
+        font-size: 14px;
+      }
       .ant-select-selection__rendered div,
       .ant-select-selection__rendered span {
         color: #33393c;
         font-size: 14px;
       }
       .ant-input {
-        border-color: transparent;
         height: 26px;
         font-size: 14px;
         color: #33393c;
       }
-      .ant-input:focus, .ant-input:hover {
+      .ant-input:focus {
         border-color: transparent;
       }
       &.ant-select-open .ant-select-selection {

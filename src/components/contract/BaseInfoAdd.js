@@ -34,11 +34,6 @@ const datePickerBoxStyle = {
   width: 220,
   height: 32,
 };
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 const EMPTY_OBJECT = {};
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
@@ -260,7 +255,6 @@ export default class BaseInfoEdit extends PureComponent {
           searchList={contractNumList}
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={this.handleSearchContractNum}
-          boxStyle={dropDownSelectBoxStyle}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
@@ -334,7 +328,6 @@ export default class BaseInfoEdit extends PureComponent {
             searchList={custList}
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}
-            boxStyle={dropDownSelectBoxStyle}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>

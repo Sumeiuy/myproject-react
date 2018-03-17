@@ -35,11 +35,6 @@ const subscribeValue = operationList[0].value;
 // const unsubscribe = operationList[1].value;
 // 子类型列表
 const childTypeList = _.filter(subType, v => v.label !== '全部');
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '200px',
-  height: '32px',
-};
 // 时间选择组件样式
 const datePickerBoxStyle = {
   width: 220,
@@ -237,7 +232,6 @@ export default class EditDetail extends PureComponent {
           searchList={canApplyCustList}
           emitSelectItem={this.handleSelectCust}
           emitToSearch={getCanApplyCustList}
-          boxStyle={dropDownSelectBoxStyle}
         />
       </InfoForm>
     );
@@ -300,7 +294,6 @@ export default class EditDetail extends PureComponent {
           searchList={contractNumList}
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={getContractNumList}
-          boxStyle={dropDownSelectBoxStyle}
         />
       </InfoForm>
     );

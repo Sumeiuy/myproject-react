@@ -33,11 +33,6 @@ const EMPTY_OBJECT = {};
 const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 // 划转方式默认值
 const defaultType = config.transferType[0].value;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -495,7 +490,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     searchList={custList}
                     emitSelectItem={this.handleSelectClient}
                     emitToSearch={this.handleSearchClient}
-                    boxStyle={dropDownSelectBoxStyle}
                     ref={ref => this.queryCustComponent = ref}
                   />
                 </InfoForm>
@@ -506,7 +500,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     searchList={newManagerList}
                     emitSelectItem={this.handleSelectNewManager}
                     emitToSearch={this.handleSearchNewManager}
-                    boxStyle={dropDownSelectBoxStyle}
                     ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>

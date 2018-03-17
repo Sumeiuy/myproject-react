@@ -23,9 +23,14 @@ const {
   channelsTypeProtocol: { pageType: channelsPageType },
   filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
-
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+ // 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '70px',
+  height: '32px',
+};
+const defalutValue = '全部';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -235,10 +240,10 @@ export default class Pageheader extends PureComponent {
       checkUserIsFiliale,
       location: {
         query: {
-          custNumber,
-          drafterId,
-          approvalId,
-          ptyMngId,
+          // custNumber,
+          // drafterId,
+          // approvalId,
+          // ptyMngId,
           orgId,
           subType,
           status,
@@ -251,43 +256,42 @@ export default class Pageheader extends PureComponent {
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
-    // 客户回填
-    const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
-    let curCust = '全部';
-    if (curCustInfo && curCustInfo.custNumber) {
-      curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
-    }
+    // // 客户回填
+    // const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
+    // let curCust = '全部';
+    // if (curCustInfo && curCustInfo.custNumber) {
+    //   curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
+    // }
 
     // 增加已申请服务经理的全部
     const ptyMngAllList = !_.isEmpty(ptyMngList) ?
       [ptyMngAll, ...ptyMngList] : ptyMngList;
-    // 已申请服务经理的回填
-    const curPtyMngInfo = _.find(ptyMngList, o => o.ptyMngId === ptyMngId);
-    let curPtyMng = '全部';
-    if (curPtyMngInfo && curPtyMngInfo.ptyMngId) {
-      curPtyMng = `${curPtyMngInfo.ptyMngName}(${curPtyMngInfo.ptyMngId})`;
-    }
+    // // 已申请服务经理的回填
+    // const curPtyMngInfo = _.find(ptyMngList, o => o.ptyMngId === ptyMngId);
+    // let curPtyMng = '全部';
+    // if (curPtyMngInfo && curPtyMngInfo.ptyMngId) {
+    //   curPtyMng = `${curPtyMngInfo.ptyMngName}(${curPtyMngInfo.ptyMngId})`;
+    // }
 
     // 拟稿人增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
     // 拟稿人回填
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    let curDrafter = '全部';
-    if (curDrafterInfo && curDrafterInfo.ptyMngId) {
-      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
-    }
+    // const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
+    // let curDrafter = '全部';
+    // if (curDrafterInfo && curDrafterInfo.ptyMngId) {
+    //   curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
+    // }
 
     // 审批人增加全部
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
-    // 审批人回填
-    const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
-    let curApprovePerson = '全部';
-    if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-      curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
-    }
-
+    // // 审批人回填
+    // const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
+    // let curApprovePerson = '全部';
+    // if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
+    //   curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
+    // }
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -302,6 +306,7 @@ export default class Pageheader extends PureComponent {
       hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
         checkUserIsFiliale();
     }
+
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -310,7 +315,7 @@ export default class Pageheader extends PureComponent {
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value={curCust}
+                    value={defalutValue}
                     placeholder="经纪客户号/客户名称"
                     searchList={customerAllList}
                     showObjKey="custName"
@@ -318,7 +323,9 @@ export default class Pageheader extends PureComponent {
                     emitSelectItem={this.selectCustItem}
                     emitToSearch={value => this.toSearch(getCustomerList, value)}
                     name={`${page}-custName`}
+                    boxStyle={dropDownSelectBoxStyle}
                     width={'220px'}
+                    isAutoWidth
                   />
                 </div>
               </div>
@@ -326,7 +333,7 @@ export default class Pageheader extends PureComponent {
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
-                    value={curPtyMng}
+                    value={defalutValue}
                     placeholder="服务经理工号/名称"
                     searchList={ptyMngAllList}
                     showObjKey="ptyMngName"
@@ -334,7 +341,9 @@ export default class Pageheader extends PureComponent {
                     emitSelectItem={item => this.selectItem('ptyMngId', item)}
                     emitToSearch={value => this.toSearch(getPtyMngList, value)}
                     name={`${page}-ptyMngName`}
+                    boxStyle={dropDownSelectBoxStyle}
                     width={'220px'}
+                    isAutoWidth
                   />
                 </div>
               </div>
@@ -379,7 +388,7 @@ export default class Pageheader extends PureComponent {
             拟稿人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value={curDrafter}
+                value={defalutValue}
                 placeholder="工号/名称"
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
@@ -387,7 +396,9 @@ export default class Pageheader extends PureComponent {
                 emitSelectItem={item => this.selectItem('drafterId', item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
+                boxStyle={dropDownSelectBoxStyle}
                 width={'220px'}
+                isAutoWidth
               />
             </div>
           </div>
@@ -408,7 +419,7 @@ export default class Pageheader extends PureComponent {
             审批人:
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
-                value={curApprovePerson}
+                value={defalutValue}
                 placeholder="工号/名称"
                 searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
@@ -416,7 +427,9 @@ export default class Pageheader extends PureComponent {
                 emitSelectItem={item => this.selectItem('approvalId', item)}
                 emitToSearch={value => this.toSearch(getApprovePersonList, value)}
                 name={`${page}-ptyMngName`}
+                boxStyle={dropDownSelectBoxStyle}
                 width={'220px'}
+                isAutoWidth
               />
             </div>
           </div>

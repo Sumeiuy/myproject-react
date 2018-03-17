@@ -65,7 +65,10 @@
   vertical-align: top;
   :global {
     .ant-select-selection {
-      border: 0;
+      border-color: transparent;
+      &:hover, &:focus {
+        border-color: #49a9ee;
+      }
     }
   }
 }

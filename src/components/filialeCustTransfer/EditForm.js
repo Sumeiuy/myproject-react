@@ -30,11 +30,6 @@ const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 const STOP_STATUS_CODE = '02'; // 终止状态code
 const COMPLETE_STATUS_CODE = '03'; // 完成状态code
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 
 export default class FilialeCustTransferEditForm extends PureComponent {
   static propTypes = {
@@ -384,7 +379,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             searchList={custList}
                             emitSelectItem={this.handleSelectClient}
                             emitToSearch={this.handleSearchClient}
-                            boxStyle={dropDownSelectBoxStyle}
                             ref={ref => this.queryCustComponent = ref}
                           />
                         </InfoForm>
@@ -398,7 +392,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             searchList={newManagerList}
                             emitSelectItem={this.handleSelectNewManager}
                             emitToSearch={this.handleSearchNewManager}
-                            boxStyle={dropDownSelectBoxStyle}
                             ref={ref => this.queryManagerComponent = ref}
                           />
                         </InfoForm>

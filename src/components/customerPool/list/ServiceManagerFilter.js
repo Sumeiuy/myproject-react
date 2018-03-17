@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import DropdownSelect from '../../common/dropdownSelect';
 
 import styles from './saleDepartmentFilter.less';
+// 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '180px',
+  height: '24px',
+};
 
 export default class ServiceManagerFilter extends PureComponent {
 
@@ -37,12 +42,13 @@ export default class ServiceManagerFilter extends PureComponent {
           objId="ptyMngId"
           placeholder="输入姓名或工号查询"
           name="服务经理"
-          width={'220px'}
           disable={disable}
           value={serviceManagerDefaultValue}
           searchList={searchServerPersonList}
           emitSelectItem={dropdownSelectedItem}
           emitToSearch={dropdownToSearchInfo}
+          boxStyle={dropDownSelectBoxStyle}
+          isAutoWidth
         />
       </div>
     );

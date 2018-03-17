@@ -673,7 +673,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-产品订单',
-      activeSubTab: '产品订单',
+      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
+      activeSubTab: ['产品订单', '订单流水'],
     };
     const { push, getCustDetailInfo } = this.props;
     const { custEcom } = cust;

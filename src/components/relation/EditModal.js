@@ -37,11 +37,6 @@ const titleArray = {
   member: ['添加成员', '成员:'],
   team: ['添加团队/更新团队', '团队负责人:', '团队名称:'],
 };
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 // editModal 组件的弹框类型
 const TEAM_MODAL = 'team';
 
@@ -131,6 +126,11 @@ export default class EditModal extends Component {
 
   @autobind
   handleSelect(obj) {
+    // 方法参数obj中，统一返回的searchValue ，此处不需要的
+    if (_.isEmpty(_.omit(obj, 'searchValue'))) {
+      this.setState({ select: {}, teamName: '' });
+      return;
+    }
     const { ptyMngName, ptyMngId } = obj;
     this.setState({
       select: { name: ptyMngName, code: ptyMngId, ...obj },
@@ -172,7 +172,6 @@ export default class EditModal extends Component {
               searchList={list}
               emitSelectItem={this.handleSelect}
               emitToSearch={this.handleSearch}
-              boxStyle={dropDownSelectBoxStyle}
             />
           </div>
         </div>
