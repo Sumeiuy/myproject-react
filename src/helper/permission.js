@@ -191,6 +191,19 @@ const permission = {
     const hasPermission = (filterRespYYBZXG.length > 0) || (filterRespYYBFWG.length > 0);
     return hasPermission;
   },
+
+  // 分公司客户人工划转，当前用户是否拥有新建按钮权限
+  hasFilialeCustTransferCreate(empInfo) {
+    // 职责-- HTSC 客户分配岗
+    const permissionKHFPG = duty.HTSC_KHFPG;
+    // 从 empInfo 中取出 empRespList 职责列表
+    const { empRespList = [] } = empInfo;
+    // 从职责列表中找出 职责名称对应的 id 等于 需要检测的职责名称 id 的数组
+    const filterRespKHFPG = _.filter(empRespList, o => o.respId === permissionKHFPG);
+    // 判断两个职责列表，都有数据则有权限
+    const hasPermission = filterRespKHFPG.length > 0;
+    return hasPermission;
+  },
 };
 
 export default permission;

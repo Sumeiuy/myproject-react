@@ -71,7 +71,7 @@ export default class autoComplete extends PureComponent {
     if (this.inputTimeout !== 0) {
       clearTimeout(this.inputTimeout);
     }
-    this.inputTimeout = setTimeout(() => this.validateInput(value), 1000);
+    this.inputTimeout = setTimeout(() => this.validateInput(value), 500);
   }
 
   @autobind
