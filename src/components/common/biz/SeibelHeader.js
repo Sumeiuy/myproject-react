@@ -240,10 +240,6 @@ export default class Pageheader extends PureComponent {
       checkUserIsFiliale,
       location: {
         query: {
-          // custNumber,
-          // drafterId,
-          // approvalId,
-          // ptyMngId,
           orgId,
           subType,
           status,
@@ -256,42 +252,18 @@ export default class Pageheader extends PureComponent {
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
       [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
-    // // 客户回填
-    // const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
-    // let curCust = '全部';
-    // if (curCustInfo && curCustInfo.custNumber) {
-    //   curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
-    // }
 
     // 增加已申请服务经理的全部
     const ptyMngAllList = !_.isEmpty(ptyMngList) ?
       [ptyMngAll, ...ptyMngList] : ptyMngList;
-    // // 已申请服务经理的回填
-    // const curPtyMngInfo = _.find(ptyMngList, o => o.ptyMngId === ptyMngId);
-    // let curPtyMng = '全部';
-    // if (curPtyMngInfo && curPtyMngInfo.ptyMngId) {
-    //   curPtyMng = `${curPtyMngInfo.ptyMngName}(${curPtyMngInfo.ptyMngId})`;
-    // }
 
     // 拟稿人增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : drafterList;
-    // 拟稿人回填
-    // const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    // let curDrafter = '全部';
-    // if (curDrafterInfo && curDrafterInfo.ptyMngId) {
-    //   curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
-    // }
 
     // 审批人增加全部
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
       [ptyMngAll, ...approvePersonList] : approvePersonList;
-    // // 审批人回填
-    // const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
-    // let curApprovePerson = '全部';
-    // if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-    //   curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
-    // }
 
     // 新建按钮权限
     let hasCreatePermission = true;
