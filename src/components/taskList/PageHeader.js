@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
+import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -168,11 +169,6 @@ export default class Pageheader extends PureComponent {
     }
   }
 
-  // 判断url里是否有时间设置
-  handleURlTime(urlTime, time) {
-    return _.isEmpty(urlTime) ? time : moment(urlTime);
-  }
-
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
@@ -183,6 +179,12 @@ export default class Pageheader extends PureComponent {
       dom.removeClass(this.filterMore, 'filterNoneIcon');
       dom.addClass(this.filterMore, 'filterMoreIcon');
     }
+  }
+
+  // 判断url里是否有时间设置
+  @autobind
+  handleURlTime(urlTime, time) {
+    return _.isEmpty(urlTime) ? time : moment(urlTime);
   }
 
   @autobind
@@ -460,6 +462,15 @@ export default class Pageheader extends PureComponent {
   }
 
 
+//   <RangePicker
+//   ref={ref => this.timers = ref}
+//   defaultValue={[startTime, endTime]}
+//   onChange={this.handleDateChange}
+//   placeholder={['开始时间', '结束时间']}
+//   disabledDate={this.disabledDateStart}
+//   key="创建时间"
+// />
+
   // 选择不同视图创建时间不同
   @autobind
   renderTime(startTime, endTime, missionViewType) {
@@ -489,13 +500,9 @@ export default class Pageheader extends PureComponent {
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            ref={ref => this.timers = ref}
-            defaultValue={[startTime, endTime]}
+          <DateRangePicker
+            initialDate={[startTime, endTime]}
             onChange={this.handleDateChange}
-            placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateStart}
-            key="创建时间"
           />
         </div>
       </div>) :
