@@ -54,10 +54,9 @@ export default class MultiFilter extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { value, separator, valueArray } = props;
+    const { value, separator } = props;
     this.state = {
       keyArr: value ? value.split(separator) : [],
-      valueArray,
       moreBtnVisible: false,
       fold: true,
     };
@@ -106,8 +105,8 @@ export default class MultiFilter extends PureComponent {
 
   @autobind
   handleClick({ key, value, filterLabel }) {
-    const { keyArr, valueArray } = this.state;
-    const { separator, filter, onChange } = this.props;
+    const { keyArr } = this.state;
+    const { separator, filter, onChange, valueArray } = this.props;
     const valueArr =
       _.includes(valueArray, value) ? valueArray.filter(v => v !== value) : [...valueArray, value];
     if (key) {

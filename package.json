@@ -19,6 +19,7 @@
     "lint:less": "stylelint src/**/*.less --config .stylelintrc",
     "lint:fsp": "stylelint fspSrc/**/*.less --config .stylelintrc"
   },
+  "//": ["node --max_old_space_size=4096 build/dev-server.js"],
   "keywords": [],
   "dependencies": {
     "add-dom-event-listener": "^1.0.2",

@@ -1,0 +1,78 @@
+.filter {
+  &.hidden {
+    display: none;
+  }
+  .filterLabel {
+    color: #9b9b9b;
+    font-size: 14px;
+    margin-right: 2px;
+    max-width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .closeIcon {
+    margin-left: 2px;
+    margin-right: 2px;
+    color: #cecdcd;
+    font-weight: lighter;
+    cursor: pointer;
+    &.hideCloseIcon {
+      display: none;
+    }
+  }
+  .dropdownfilterLabel {
+    font-size: 14px;
+    min-width: 160px;
+  }
+  display: inline-block;
+  :global {
+    // 兼容ie下拉图标旋转样式
+    .ant-select-arrow {
+      transform: scale(0.75);
+    }
+    .ant-select-selection.ant-select-selection--single {
+      border: 0;
+    }
+    //多选下拉小图标样式
+    .ant-select-arrow:before {
+      content: "";
+      height: 0;
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      width: 0;
+      border: none;
+      border-top: 8px solid #c2c2c2;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+    }
+    //清除单选select小图标旋转
+    .ant-select-open .ant-select-arrow:before {
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+  }
+}
+.dropdownfilterLabel {
+  max-height: 250px;
+  overflow-y: scroll;
+  :global {
+    .ant-select-dropdown-menu-item {
+      font-size: 14px;
+      color: #666;
+    }
+    .ant-select-dropdown-menu-item.ant-select-dropdown-menu-item-selected {
+      background: #ecf6fd;
+      color: #666;
+      font-weight: normal;
+    }
+  }
+}
+.overflowAction {
+  max-width: 230px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

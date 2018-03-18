@@ -87,6 +87,7 @@ export default class SelectLabelCust extends PureComponent {
       argsOfQueryCustomer = {},
       currentFilterObject = {},
       currentAllFilterState = {},
+      allFiltersCloseIconState = {},
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
     const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
@@ -105,6 +106,7 @@ export default class SelectLabelCust extends PureComponent {
       argsOfQueryCustomer,
       currentFilterObject,
       currentAllFilterState,
+      allFiltersCloseIconState,
       filterNumObject,
       shouldclearBottomLabel,
       currentFilterNum,
