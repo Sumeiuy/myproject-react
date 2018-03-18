@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-16 17:23:04
+ * @Last Modified time: 2018-03-18 14:56:02
  * 任务调查
  */
 
@@ -119,8 +119,6 @@ export default class MissionInvestigation extends PureComponent {
       isShowTable: false,
       page,
       currentSelectRowKeysInTable: EMPTY_LIST,
-      // 展示在页面上数据
-      curDataInfo: this.getCurPageData(INITIAL_PAGE_NUM, list).curDataInfo || EMPTY_LIST,
     };
   }
 
@@ -136,11 +134,9 @@ export default class MissionInvestigation extends PureComponent {
         const { list: nextList, page } = nextQuestionInfo;
         // 将题目相同的问题过滤掉
         const questionList = _.uniqBy(nextList, 'quesValue') || EMPTY_LIST;
-        const { curDataInfo } = this.getCurPageData(INITIAL_PAGE_NUM, questionList);
         this.setState({
           questionList,
           page,
-          curDataInfo,
         });
       });
     }
@@ -192,23 +188,6 @@ export default class MissionInvestigation extends PureComponent {
     };
   }
 
-  @autobind
-  getCurPageData(pageNum = INITIAL_PAGE_NUM, questionList = EMPTY_LIST) {
-    let curDataInfo = [];
-    if (pageNum <= 1) {
-      // 第一页
-      curDataInfo = _.slice(questionList, 0, INITIAL_PAGE_SIZE);
-    } else {
-      // 大于一页
-      curDataInfo = _.slice(questionList,
-        (pageNum - 1) * INITIAL_PAGE_SIZE, INITIAL_PAGE_SIZE * pageNum);
-    }
-    return {
-      curDataInfo,
-      pageNum,
-    };
-  }
-
   /**
  * 获取modalContainer引用
  */
@@ -256,7 +235,7 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   addQuestion() {
-    const { checked, questionList } = this.state;
+    const { checked } = this.state;
     if (!checked) {
       message.error('请先勾选任务调查');
       return;
@@ -266,8 +245,6 @@ export default class MissionInvestigation extends PureComponent {
       isShowTable: true,
       // 将table的row选择置为空
       currentSelectRowKeysInTable: [],
-      // 重置第一页数据
-      curDataInfo: this.getCurPageData(INITIAL_PAGE_NUM, questionList).curDataInfo || EMPTY_LIST,
     });
   }
 
@@ -322,7 +299,6 @@ export default class MissionInvestigation extends PureComponent {
         page: {
           ...page,
           pageNum: INITIAL_PAGE_NUM,
-          pageSize: INITIAL_PAGE_SIZE,
         },
       });
     });
@@ -339,7 +315,6 @@ export default class MissionInvestigation extends PureComponent {
       page: {
         ...this.state.page,
         pageNum: INITIAL_PAGE_NUM,
-        pageSize: INITIAL_PAGE_SIZE,
       },
     });
     this.scrollModalBodyToTop();
@@ -353,9 +328,7 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   handlePageChange(pageNum) {
-    const { curDataInfo } = this.getCurPageData(pageNum, this.state.questionList);
     this.setState({
-      curDataInfo,
       page: {
         ...this.state.page,
         pageNum,
@@ -535,7 +508,6 @@ export default class MissionInvestigation extends PureComponent {
       isShowTable,
       page,
       questionList,
-      // curDataInfo,
     } = this.state;
 
     const {
