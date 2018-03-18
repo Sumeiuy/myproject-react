@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-18 14:56:02
+ * @Last Modified time: 2018-03-18 18:03:10
  * 任务调查
  */
 
@@ -80,7 +80,7 @@ export default class MissionInvestigation extends PureComponent {
   constructor(props) {
     super(props);
     const { storedData, questionInfo: { list, page } } = props;
-    const { missionInvestigationData = {} } = storedData || {};
+    const { missionInvestigationData = EMPTY_OBJECT } = storedData || EMPTY_OBJECT;
     const {
       // 是否选中
       isMissionInvestigationChecked = false,
@@ -89,13 +89,17 @@ export default class MissionInvestigation extends PureComponent {
       // 当前选中的问题的key
       currentSelectRowKeys,
     } = missionInvestigationData;
-    let questionId = 0;
     const idList = _.map(questionList, item => item.quesId) || [];
     let newQuestionAndAnswerGroup = EMPTY_LIST;
+    const currentSelectedQuestionIdList = _.map(questionList, item => ({
+      key: `question_${item.quesId}`,
+      value: item.quesId,
+    })) || EMPTY_LIST;
+
     if (!_.isEmpty(idList)) {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
-          ++questionId,
+          currentSelectedQuestionIdList,
           questionList[index].quesId,
           questionList[index].quesValue,
         ));
@@ -106,15 +110,8 @@ export default class MissionInvestigation extends PureComponent {
       // 默认任务调查不选中
       checked: isMissionInvestigationChecked,
       newQuestionAndAnswerGroup,
-      currentSelectedQuestionIdList: _.map(questionList, (item, index) => {
-        const id = index + 1;
-        return {
-          key: `question_${id}`,
-          value: item.quesId,
-        };
-      }),
+      currentSelectedQuestionIdList,
       questionList: list || EMPTY_LIST,
-      questionId,
       currentSelectRowKeys,
       isShowTable: false,
       page,
@@ -264,20 +261,24 @@ export default class MissionInvestigation extends PureComponent {
     this.setState({
       // 当前已经选中的问题列，就是已经展示在页面上的列表
       // 去除假值
-      // 去重
-      currentSelectRowKeys: _.uniq(_.compact(_.concat(selectedRowKeys,
-        this.state.currentSelectRowKeys))),
+      currentSelectRowKeys: _.compact(selectedRowKeys),
     });
   }
 
   @autobind
-  handleSingleRowSelectionChange(record = {}) {
+  handleSingleRowSelectionChange(record = EMPTY_OBJECT, selected) {
     const { quesId } = record;
+    const { currentSelectRowKeysInTable } = this.state;
+    let newSelectRowKeysInTable = currentSelectRowKeysInTable;
+    if (selected) {
+      newSelectRowKeysInTable = _.uniq(_.concat([quesId], newSelectRowKeysInTable));
+    } else {
+      newSelectRowKeysInTable = _.filter(newSelectRowKeysInTable, item => item !== quesId);
+    }
     this.setState({
       currentSelectRecord: record,
       // 在表格里面选中的row
-      currentSelectRowKeysInTable: _.uniq(_.concat([quesId],
-        this.state.currentSelectRowKeysInTable)),
+      currentSelectRowKeysInTable: newSelectRowKeysInTable,
     });
   }
 
@@ -364,34 +365,28 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   renderNextQuestion() {
     const {
-      newQuestionAndAnswerGroup,
-      currentSelectRowKeysInTable,
-      currentSelectedQuestionIdList,
-      questionId,
       questionList,
+      currentSelectRowKeys,
     } = this.state;
 
-    let finalId = questionId;
-    let finalSelectedQuestionIdList = currentSelectedQuestionIdList;
-    let finalQuestionAndAnswerGroup = newQuestionAndAnswerGroup;
+    let finalSelectedQuestionIdList = [];
+    let finalQuestionAndAnswerGroup = [];
 
-    _.each(currentSelectRowKeysInTable,
+    _.each(currentSelectRowKeys,
       (item) => {
         const question = _.find(questionList, questionItem =>
-          questionItem.quesId === item) || {};
-        ++finalId;
-        finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
-          this.renderQuestion(finalId, question.quesId, question.quesValue));
+          questionItem.quesId === item) || EMPTY_OBJECT;
         finalSelectedQuestionIdList = _.concat(finalSelectedQuestionIdList, [{
-          key: `question_${finalId}`,
+          key: `question_${question.quesId}`,
           value: item,
         }]);
+        finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
+          this.renderQuestion(finalSelectedQuestionIdList, question.quesId, question.quesValue));
       });
 
     this.setState({
       newQuestionAndAnswerGroup: finalQuestionAndAnswerGroup,
       currentSelectedQuestionIdList: finalSelectedQuestionIdList,
-      questionId: finalId,
     });
   }
 
@@ -400,7 +395,7 @@ export default class MissionInvestigation extends PureComponent {
    * @param {*object} currentQuestionDetail 当前问题详情
    */
   @autobind
-  renderOption(currentQuestionDetail = {}) {
+  renderOption(currentQuestionDetail = EMPTY_OBJECT) {
     const quesTypeCode = currentQuestionDetail.quesTypeCode;
     if (isSingleOrMultipleQuestion(quesTypeCode)) {
       return (
@@ -427,11 +422,14 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  renderQuestionAndAnswerTooltip(questionId) {
-    const { currentSelectedQuestionIdList, questionList } = this.state;
-    const currentQuestion = _.find(currentSelectedQuestionIdList, item => item.key === `question_${questionId}`) || {};
+  renderQuestionAndAnswerTooltip(finalSelectedQuestionIdList, questionId) {
+    if (!questionId) {
+      return null;
+    }
+    const { questionList } = this.state;
+    const currentQuestion = _.find(finalSelectedQuestionIdList, item => item.key === `question_${questionId}`) || EMPTY_OBJECT;
     const currentQuestionDetail = _.find(questionList,
-      item => item.quesId === currentQuestion.value) || {};
+      item => item.quesId === currentQuestion.value) || EMPTY_OBJECT;
     const { quesTypeCode } = currentQuestionDetail;
     if (_.isEmpty(currentQuestionDetail)) {
       return null;
@@ -457,13 +455,13 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  renderQuestion(id, quesId, quesValue) {
+  renderQuestion(finalSelectedQuestionIdList = EMPTY_LIST, quesId, quesValue) {
     return (
       <div
         className={classnames({
           [styles.questionLine]: true,
         })}
-        key={`question_${id}`}
+        key={`question_${quesId}`}
       >
         {/**
          * 当前选中的题目题干
@@ -471,11 +469,8 @@ export default class MissionInvestigation extends PureComponent {
         <span className={styles.questionTitle}>{quesValue || ''}</span>
 
         <Tooltip
-          title={
-            () => this.renderQuestionAndAnswerTooltip(id)
-          }
+          title={this.renderQuestionAndAnswerTooltip(finalSelectedQuestionIdList, quesId)}
           placement={posi}
-          getPopupContainer={this.getPopupContainer}
           overlayClassName={styles.questionAndAnswer}
         >
           <span
@@ -494,7 +489,7 @@ export default class MissionInvestigation extends PureComponent {
         <Icon
           type="close1"
           className={styles.deleteIcon}
-          onClick={() => this.handleDeleteQuestion(`question_${id}`, quesId)}
+          onClick={() => this.handleDeleteQuestion(`question_${quesId}`, quesId)}
         />
       </div>
     );
@@ -542,6 +537,7 @@ export default class MissionInvestigation extends PureComponent {
           closable
           visible={isShowTable}
           title={'问题列表'}
+          onCancelHandler={this.handleCancel}
           footer={
             <div className={styles.btnSection}>
               <Clickable
