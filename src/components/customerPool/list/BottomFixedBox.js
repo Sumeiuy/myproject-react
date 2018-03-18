@@ -149,44 +149,9 @@ export default class BottomFixedBox extends PureComponent {
     this.handleClick(url, title, id, shouldStay, editPane);
   }
 
+  // 跳转到创建任务页面
   @autobind
-  handleCreateTaskClick() {
-    const {
-      // selectCount,
-      hasTkMampPermission,
-      isSendCustsServedByPostn,
-      condition,
-    } = this.props;
-
-    // 有职责可以发起任务，没职责判断
-    if (!hasTkMampPermission) {
-      isSendCustsServedByPostn({
-        ...condition,
-        postnId: emp.getPstnId(),
-      }).then(() => {
-        const { sendCustsServedByPostnResult = {} } = this.props;
-        const {
-          // 代表是否超过1000个客户
-          custNumsIsExceedUpperLimit = false,
-          // 代表是否是本人名下的，false代表包含非本人名下
-          sendCustsServedByPostn = false,
-        } = sendCustsServedByPostnResult;
-        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-          this.toggleModal();
-          this.setState({
-            warningContent: '你没有“HTSC 任务管理”职责，不可发起任务',
-          });
-        } else if (sendCustsServedByPostn && !custNumsIsExceedUpperLimit) {
-          this.launchTaskIndeed();
-        }
-      });
-    } else {
-      this.launchTaskIndeed();
-    }
-  }
-
-  @autobind
-  launchTaskIndeed() {
+  toCreateTaskPage() {
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
@@ -196,16 +161,19 @@ export default class BottomFixedBox extends PureComponent {
     this.handleClick(url, title, id);
   }
 
+  // 验证通过后跳转到创建任务
   @autobind
-  checkLaunchTaskPermission() {
+  handleCreateTaskClick() {
     const {
       condition,
       hasTkMampPermission,
       isSendCustsServedByPostn,
     } = this.props;
+    // 有任务管理权限
     if (hasTkMampPermission) {
-      this.handleCreateTaskClick();
+      this.toCreateTaskPage();
     } else {
+      // 没有任务管理权限，发请求判断是否超过1000条数据和是否包含非本人名下客户
       isSendCustsServedByPostn({
         ...condition,
         postnId: emp.getPstnId(),
@@ -222,7 +190,7 @@ export default class BottomFixedBox extends PureComponent {
           this.toggleModal();
           this.setState({ modalContent: '你没有HTSC 任务管理职责，不可发起任务' });
         } else {
-          this.handleCreateTaskClick();
+          this.toCreateTaskPage();
         }
       });
     }

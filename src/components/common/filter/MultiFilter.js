@@ -43,18 +43,21 @@ export default class MultiFilter extends PureComponent {
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
     separator: PropTypes.string,
+    valueArray: PropTypes.array,
   }
 
   static defaultProps = {
     filterField: [],
     separator: ',',
+    valueArray: [],
   }
 
   constructor(props) {
     super(props);
-    const { value, separator } = props;
+    const { value, separator, valueArray } = props;
     this.state = {
       keyArr: value ? value.split(separator) : [],
+      valueArray,
       moreBtnVisible: false,
       fold: true,
     };
@@ -102,25 +105,33 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
-  handleClick(value) {
-    const { keyArr } = this.state;
+  handleClick({ key, value, filterLabel }) {
+    const { keyArr, valueArray } = this.state;
     const { separator, filter, onChange } = this.props;
-    if (value) {
+    const valueArr =
+      _.includes(valueArray, value) ? valueArray.filter(v => v !== value) : [...valueArray, value];
+    if (key) {
       this.setState({
-        keyArr: _.includes(keyArr, value) ? keyArr.filter(v => v !== value) : [...keyArr, value],
+        keyArr: _.includes(keyArr, key) ? keyArr.filter(v => v !== key) : [...keyArr, key],
+        valueArray: valueArr,
       }, () => {
         onChange({
           name: filter,
-          value: this.state.keyArr.join(separator),
+          filterLabel,
+          key: this.state.keyArr.join(separator),
+          valueArray: valueArr,
         });
       });
-    } else {
+    } else { // 如果选中了不限
       this.setState({
         keyArr: [],
+        valueArray: [],
       }, () => {
         onChange({
           name: filter,
-          value: '',
+          filterLabel,
+          valueArray: [],
+          key: '',
         });
       });
     }
@@ -135,13 +146,13 @@ export default class MultiFilter extends PureComponent {
 
   @autobind
   renderList() {
-    const { filterField } = this.props;
+    const { filterField, filterLabel } = this.props;
     const { keyArr } = this.state;
     return filterField.map(item => (
       <li
         key={item.key}
         className={generateCls(keyArr, item.key)}
-        onClick={() => this.handleClick(item.key)}
+        onClick={() => this.handleClick({ key: item.key, value: item.value, filterLabel })}
       >
         {item.value}
       </li>

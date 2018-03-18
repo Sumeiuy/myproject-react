@@ -18,6 +18,8 @@ export default class SightingTelescope extends PureComponent {
     dict: PropTypes.object.isRequired,
     visible: PropTypes.bool,
     onCancel: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    switchBottomFromSearch: PropTypes.func.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -52,6 +54,8 @@ export default class SightingTelescope extends PureComponent {
       dict,
       visible,
       onCancel,
+      onChange,
+      switchBottomFromSearch,
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
       circlePeopleData,
@@ -74,6 +78,8 @@ export default class SightingTelescope extends PureComponent {
           <SelectLabelCust
             dict={dict}
             onCancel={onCancel}
+            onChange={onChange}
+            switchBottomFromSearch={switchBottomFromSearch}
             isLoadingEnd={isLoadingEnd}
             isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
             visible={filterModalvisible}
