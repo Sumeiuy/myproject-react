@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-18 18:03:10
+ * @Last Modified time: 2018-03-18 18:24:42
  * 任务调查
  */
 
@@ -100,6 +100,7 @@ export default class MissionInvestigation extends PureComponent {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
           currentSelectedQuestionIdList,
+          questionList,
           questionList[index].quesId,
           questionList[index].quesValue,
         ));
@@ -381,7 +382,11 @@ export default class MissionInvestigation extends PureComponent {
           value: item,
         }]);
         finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
-          this.renderQuestion(finalSelectedQuestionIdList, question.quesId, question.quesValue));
+          this.renderQuestion(
+            finalSelectedQuestionIdList,
+            questionList,
+            question.quesId,
+            question.quesValue));
       });
 
     this.setState({
@@ -422,11 +427,10 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  renderQuestionAndAnswerTooltip(finalSelectedQuestionIdList, questionId) {
+  renderQuestionAndAnswerTooltip(finalSelectedQuestionIdList, questionList, questionId) {
     if (!questionId) {
       return null;
     }
-    const { questionList } = this.state;
     const currentQuestion = _.find(finalSelectedQuestionIdList, item => item.key === `question_${questionId}`) || EMPTY_OBJECT;
     const currentQuestionDetail = _.find(questionList,
       item => item.quesId === currentQuestion.value) || EMPTY_OBJECT;
@@ -455,7 +459,11 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  renderQuestion(finalSelectedQuestionIdList = EMPTY_LIST, quesId, quesValue) {
+  renderQuestion(
+    finalSelectedQuestionIdList = EMPTY_LIST,
+    questionList = EMPTY_LIST,
+    quesId,
+    quesValue) {
     return (
       <div
         className={classnames({
@@ -469,7 +477,10 @@ export default class MissionInvestigation extends PureComponent {
         <span className={styles.questionTitle}>{quesValue || ''}</span>
 
         <Tooltip
-          title={this.renderQuestionAndAnswerTooltip(finalSelectedQuestionIdList, quesId)}
+          title={this.renderQuestionAndAnswerTooltip(
+            finalSelectedQuestionIdList,
+            questionList,
+            quesId)}
           placement={posi}
           overlayClassName={styles.questionAndAnswer}
         >
