@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 12:10:43
+ * @Last Modified time: 2018-03-15 17:46:33
  */
 
 import React, { PureComponent } from 'react';
@@ -374,6 +374,7 @@ export default class FilialeCustTransfer extends PureComponent {
         pageType={pageType}
         needSubType={false}
         stateOptions={status}
+        empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         checkUserIsFiliale={this.checkUserIsFiliale}

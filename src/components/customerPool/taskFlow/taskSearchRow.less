@@ -32,7 +32,6 @@
     }
   }
 }
-
 .divContent {
   position: relative;
   overflow: scroll;
@@ -51,6 +50,14 @@
       padding-top: 0;
       border: 1px solid #ccc;
       box-sizing: content-box;
+    }
+  }
+
+  &.clearBorder {
+     :global {
+      .ant-radio-group {
+        border: 0;
+      }
     }
   }
   .divRows {
@@ -154,6 +161,18 @@
         color: #000;
       }
     }
+    .selectFiltersInfo {
+      position: absolute;
+      top: 53px;
+      right: 20px;
+      width: 230px;
+      padding-left: 30px;
+      font-size: 14px;
+      color: #9b9b9b;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
   :global {
     .ant-radio-group {
@@ -185,7 +204,27 @@
     }
   }
 }
-
+.filtersTooltip {
+  .toolTipItem {
+    display: flex;
+    .title {
+      flex: 0 0 auto;
+      color: #9b9b9b;
+    }
+    .tipsContent {
+      color: #000;
+    }
+  }
+  :global {
+    .ant-tooltip-arrow {
+      display: none;
+    }
+    .ant-tooltip-inner {
+      max-width: 423px;
+      background-color: #fff;
+    }
+  }
+}
 .labelCustTable {
   text-align: center;
   table > thead > tr > th, tbody > tr > td {

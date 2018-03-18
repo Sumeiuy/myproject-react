@@ -57,7 +57,6 @@ export default class Singlecommissiondetail extends PureComponent {
       creditCommission, // 信用股基
       coCommission, // 信用场内基金
       hkCommission, // 港股通（净佣金）
-      opCommission, // 个股期权
       ddCommission, // 担保品大宗
       stbCommission, // 股转
       dCommission, // 大宗交易
@@ -123,10 +122,10 @@ export default class Singlecommissiondetail extends PureComponent {
               <InfoTitle head="佣金" />
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
-                  <li className={styles.item}>
+                  <li className={styles.leftCurrentCom}>
                     <InfoItem label="当前股基佣金率" value={currentCom} />
                   </li>
-                  <li className={styles.item}>
+                  <li className={styles.rightTargetCom}>
                     <InfoItem label="目标股基佣金率" value={targetCom} />
                   </li>
                 </ul>
@@ -150,11 +149,10 @@ export default class Singlecommissiondetail extends PureComponent {
                   <OtherCommission name="担保债券：" value={dzCommission} />
                   <OtherCommission name="担保权证：" value={dqCommission} />
                   <OtherCommission name="担保股基：" value={stkCommission} />
-                  <OtherCommission name="担保品大宗：" value={ddCommission} />
+                  <OtherCommission name="担保品大宗交易：" value={ddCommission} />
                   <OtherCommission name="担保场内基金：" value={doCommission} />
                   <OtherCommission name="信用场内基金：" value={coCommission} />
                   <OtherCommission name="信用股基：" value={creditCommission} />
-                  <OtherCommission name="个股期权：" value={opCommission} />
                 </div>
               </div>
             </div>
