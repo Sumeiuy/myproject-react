@@ -20,12 +20,10 @@ const dropDownSelectBoxStyle = {
 };
 export default class DropdownSelect extends PureComponent {
   static propTypes = {
-    // 组件名称
+    // 组件名称，用于设置下拉选项id使用
     name: PropTypes.string,
     // 查询框中的placeholder
     placeholder: PropTypes.string,
-    // 所选取的值
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 查询得到的数据里表
     searchList: PropTypes.array,
     // 列表展示的数据 多对应的Object中的key
@@ -43,11 +41,17 @@ export default class DropdownSelect extends PureComponent {
     // 是否可操作
     disable: PropTypes.bool,
     // 默认搜索框值
-    defaultSearchValue: PropTypes.string,
+    defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    // 所选取的值。此属性，将被回收，不暴露，不需要回填。
+    // 如想预填值，用 defaultSearchValue（后面会更改属性名为presetValue） 属性
+    // 如想拿到搜素框中的值，通过 emitSelectItem 选中方法
+    // 如想清空搜索框中的值，通过 ref，调用 clearValue 方法
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 下拉框的宽度
     width: PropTypes.string,
     // 是否允许宽度自适应效果
     isAutoWidth: PropTypes.bool,
+    // presetData: PropTypes.array,
   }
 
   static defaultProps = {
@@ -75,7 +79,7 @@ export default class DropdownSelect extends PureComponent {
       typeStyle: 'search',
       // 选中的值
       value: '', // 输入框中的值
-      lastSearchValue: props.value, // div上的显示值
+      lastSearchValue: props.defaultSearchValue, // div上的显示值
       // 添加id标识
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
@@ -297,7 +301,7 @@ export default class DropdownSelect extends PureComponent {
   // 渲染 disable 状态下的标签显示
   @autobind
   renderDisableContent() {
-    const { disable, value, theme, boxStyle } = this.props;
+    const { disable, defaultSearchValue, theme, boxStyle } = this.props;
     const { id } = this.state;
     const ddsShowBoxClass = classnames([style.ddsShowBox]);
     const ddsShowBoxClass2 = classnames([
@@ -315,7 +319,7 @@ export default class DropdownSelect extends PureComponent {
           data-id={id}
           style={boxStyle || {}}
         >
-          {value}
+          {defaultSearchValue}
         </div>
       </div>
     );
