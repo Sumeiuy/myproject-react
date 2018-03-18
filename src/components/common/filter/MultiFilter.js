@@ -43,13 +43,11 @@ export default class MultiFilter extends PureComponent {
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
     separator: PropTypes.string,
-    valueArray: PropTypes.array,
   }
 
   static defaultProps = {
     filterField: [],
     separator: ',',
-    valueArray: [],
   }
 
   constructor(props) {
@@ -104,33 +102,25 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
-  handleClick({ key, value, filterLabel }) {
+  handleClick(value) {
     const { keyArr } = this.state;
-    const { separator, filter, onChange, valueArray } = this.props;
-    const valueArr =
-      _.includes(valueArray, value) ? valueArray.filter(v => v !== value) : [...valueArray, value];
-    if (key) {
+    const { separator, filter, onChange } = this.props;
+    if (value) {
       this.setState({
-        keyArr: _.includes(keyArr, key) ? keyArr.filter(v => v !== key) : [...keyArr, key],
-        valueArray: valueArr,
+        keyArr: _.includes(keyArr, value) ? keyArr.filter(v => v !== value) : [...keyArr, value],
       }, () => {
         onChange({
           name: filter,
-          filterLabel,
-          key: this.state.keyArr.join(separator),
-          valueArray: valueArr,
+          value: this.state.keyArr.join(separator),
         });
       });
-    } else { // 如果选中了不限
+    } else {
       this.setState({
         keyArr: [],
-        valueArray: [],
       }, () => {
         onChange({
           name: filter,
-          filterLabel,
-          valueArray: [],
-          key: '',
+          value: '',
         });
       });
     }
@@ -145,13 +135,13 @@ export default class MultiFilter extends PureComponent {
 
   @autobind
   renderList() {
-    const { filterField, filterLabel } = this.props;
+    const { filterField } = this.props;
     const { keyArr } = this.state;
     return filterField.map(item => (
       <li
         key={item.key}
         className={generateCls(keyArr, item.key)}
-        onClick={() => this.handleClick({ key: item.key, value: item.value, filterLabel })}
+        onClick={() => this.handleClick(item.key)}
       >
         {item.value}
       </li>

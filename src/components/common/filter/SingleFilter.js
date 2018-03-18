@@ -85,16 +85,14 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
-  handleClick({ key, value }) {
-    const { filter, filterLabel, onChange } = this.props;
+  handleClick(value) {
+    const { filter, onChange } = this.props;
     this.setState({
-      key,
+      key: value,
     }, () => {
       onChange({
         name: filter,
-        filterLabel,
-        key,
-        valueArray: [value],
+        value,
       });
     });
   }
@@ -122,7 +120,7 @@ export default class SingleFilter extends PureComponent {
               <li
                 key={item.key}
                 className={value === item.key ? 'current' : ''}
-                onClick={() => this.handleClick({ key: item.key, value: item.value })}
+                onClick={() => this.handleClick(item.key)}
               >
                 {item.value}
               </li>
