@@ -31,9 +31,9 @@ export default class DropdownSelect extends PureComponent {
     // 数据中的key 作为react中辅助标识key
     objId: PropTypes.string,
     // 选中对象 并触发选中方法 向父组件传递一个obj（必填）
-    emitSelectItem: PropTypes.func.isRequired,
+    onSelect: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
-    emitToSearch: PropTypes.func.isRequired,
+    onSearch: PropTypes.func.isRequired,
     // 用户自定义style
     boxStyle: PropTypes.object,
     // 样式主题
@@ -42,10 +42,7 @@ export default class DropdownSelect extends PureComponent {
     disable: PropTypes.bool,
     // 默认搜索框值
     defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    // 所选取的值。此属性，将被回收，不暴露，不需要回填。
-    // 如想预填值，用 defaultSearchValue（后面会更改属性名为presetValue） 属性
-    // 如想拿到搜素框中的值，通过 emitSelectItem 选中方法
-    // 如想清空搜索框中的值，通过 ref，调用 clearValue 方法
+    // 所选取的值
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 下拉框的宽度
     width: PropTypes.string,
@@ -78,8 +75,8 @@ export default class DropdownSelect extends PureComponent {
       // 搜索框的类型
       typeStyle: 'search',
       // 选中的值
-      value: '', // 输入框中的值
-      lastSearchValue: props.defaultSearchValue, // div上的显示值
+      value: props.isAutoWidth ? '' : props.value, // 输入框中的值
+      lastSearchValue: props.value, // div上的显示值
       // 添加id标识
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
@@ -102,7 +99,7 @@ export default class DropdownSelect extends PureComponent {
     }
   }
 
-  get getSearchListDom() {
+  getSearchListDom() {
     const { searchList = [], showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
       if (item.isHidden) {
@@ -124,7 +121,7 @@ export default class DropdownSelect extends PureComponent {
 
   // 拿到autocomplelte元素，子元素通过ref，拿到为undifined
   @autobind
-  getAutoComplete(ref) {
+  saveAutoCompleteRef(ref) {
     this.autoComplete = ref;
   }
 
@@ -148,7 +145,7 @@ export default class DropdownSelect extends PureComponent {
     // 重置标志
     isClickSearch = false;
     if (value) {
-      const { searchList = [], emitSelectItem, showObjKey, objId, isAutoWidth } = this.props;
+      const { searchList = [], onSelect, showObjKey, objId, isAutoWidth } = this.props;
       const valueArr = value.split('|');
       let selectItem = {};
       if (_.first(valueArr) === 'selectList') {
@@ -160,7 +157,7 @@ export default class DropdownSelect extends PureComponent {
       currentSelect = selectItem;
       // 多传一个默认输入值，有些场景下需要用到
       const { value: searchValue } = this.state;
-      emitSelectItem({
+      onSelect({
         ...selectItem,
         searchValue,
       });
@@ -178,7 +175,7 @@ export default class DropdownSelect extends PureComponent {
 
   // 触发查询搜索信息的方法
   @autobind
-  toSearch(event, clickType) {
+  handleSearch(event, clickType) {
     // AutoComplete 组件特点：
     // 当点击搜索框的放大镜，AutoComplete若处于聚焦状态，则会失焦,反之，会聚焦
     // 当点击enter 搜索，AutoComplete若处于聚焦状态， 不会失焦
@@ -195,7 +192,7 @@ export default class DropdownSelect extends PureComponent {
     const { typeStyle, value } = this.state;
     if (typeStyle === 'search') {
       // 发起搜索
-      this.props.emitToSearch(value);
+      this.props.onSearch(value);
     } else if (typeStyle === 'close') {
       // 清空输入框，并设置为搜索状态
       this.setState(
@@ -205,7 +202,7 @@ export default class DropdownSelect extends PureComponent {
         },
         () => {
           // 手动清空选中值，传递到组件外
-          this.props.emitSelectItem({ searchValue: '' });
+          this.props.onSelect({ searchValue: '' });
         },
       );
     }
@@ -301,7 +298,7 @@ export default class DropdownSelect extends PureComponent {
   // 渲染 disable 状态下的标签显示
   @autobind
   renderDisableContent() {
-    const { disable, defaultSearchValue, theme, boxStyle } = this.props;
+    const { disable, value, theme, boxStyle } = this.props;
     const { id } = this.state;
     const ddsShowBoxClass = classnames([style.ddsShowBox]);
     const ddsShowBoxClass2 = classnames([
@@ -319,7 +316,7 @@ export default class DropdownSelect extends PureComponent {
           data-id={id}
           style={boxStyle || {}}
         >
-          {defaultSearchValue}
+          {value}
         </div>
       </div>
     );
@@ -339,7 +336,7 @@ export default class DropdownSelect extends PureComponent {
         <span className={style.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom;
+    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom();
     return (
       <AutoComplete
         className={style.complete}
@@ -359,17 +356,17 @@ export default class DropdownSelect extends PureComponent {
         value={value === ' ' ? '' : value}
         visible={inputVisible}
         onBlur={this.handleBlur}
-        ref={this.getAutoComplete}
+        ref={this.saveAutoCompleteRef}
       >
         <Input
           suffix={
             <Icon
               type={typeStyle}
-              onClick={(event) => { this.toSearch(event, 'iconClick'); }}
+              onClick={(event) => { this.handleSearch(event, 'iconClick'); }}
               className={style.searchIcon}
             />
           }
-          onPressEnter={(event) => { this.toSearch(event, 'enterClick'); }}
+          onPressEnter={(event) => { this.handleSearch(event, 'enterClick'); }}
         />
       </AutoComplete>
     );

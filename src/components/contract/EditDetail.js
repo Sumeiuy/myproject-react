@@ -230,8 +230,8 @@ export default class EditDetail extends PureComponent {
           showObjKey="custName"
           objId="cusId"
           searchList={canApplyCustList}
-          emitSelectItem={this.handleSelectCust}
-          emitToSearch={getCanApplyCustList}
+          onSelect={this.handleSelectCust}
+          onSearch={getCanApplyCustList}
         />
       </InfoForm>
     );
@@ -292,8 +292,8 @@ export default class EditDetail extends PureComponent {
           objId="id"
           value={''}
           searchList={contractNumList}
-          emitSelectItem={this.handleSelectContractNum}
-          emitToSearch={getContractNumList}
+          onSelect={this.handleSelectContractNum}
+          onSearch={getContractNumList}
         />
       </InfoForm>
     );

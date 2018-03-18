@@ -168,10 +168,10 @@ export default class EditModal extends Component {
               placeholder="工号/姓名"
               showObjKey="ptyMngName"
               objId="ptyMngId"
-              defaultSearchValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
+              value={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
               searchList={list}
-              emitSelectItem={this.handleSelect}
-              emitToSearch={this.handleSearch}
+              onSelect={this.handleSelect}
+              onSearch={this.handleSearch}
             />
           </div>
         </div>

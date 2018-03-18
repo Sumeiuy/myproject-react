@@ -80,8 +80,8 @@ export default class ServerPersonel extends PureComponent {
               showObjKey="ptyMngName"
               objId="ptyMngId"
               width={'220px'}
-              emitSelectItem={this.dropdownSelectedItem}
-              emitToSearch={this.dropdownToSearchInfo}
+              onSelect={this.dropdownSelectedItem}
+              onSearch={this.dropdownToSearchInfo}
             />
           </div>
           {

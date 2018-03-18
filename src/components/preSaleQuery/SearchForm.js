@@ -46,8 +46,8 @@ export default class SearchForm extends Component {
             searchList={custList}
             showObjKey="custName"
             objId="custNumber"
-            emitSelectItem={onSelectCustItem}
-            emitToSearch={onQueryCustList}
+            onSelect={onSelectCustItem}
+            onSearch={onQueryCustList}
             name="custList"
             boxStyle={{ width: '276px', borderRadius: '4px' }}
           />
@@ -62,8 +62,8 @@ export default class SearchForm extends Component {
             searchList={productList}
             showObjKey="productName"
             objId="productCode"
-            emitSelectItem={onSelectProductItem}
-            emitToSearch={onQueryProductList}
+            onSelect={onSelectProductItem}
+            onSearch={onQueryProductList}
             name="productList"
             boxStyle={{ width: '276px', borderRadius: '4px' }}
           />

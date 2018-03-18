@@ -377,8 +377,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             objId="brokerNumber"
                             value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
                             searchList={custList}
-                            emitSelectItem={this.handleSelectClient}
-                            emitToSearch={this.handleSearchClient}
+                            onSelect={this.handleSelectClient}
+                            onSearch={this.handleSearchClient}
                             ref={ref => this.queryCustComponent = ref}
                           />
                         </InfoForm>
@@ -390,8 +390,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             showObjKey="showSelectName"
                             value={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
-                            emitSelectItem={this.handleSelectNewManager}
-                            emitToSearch={this.handleSearchNewManager}
+                            onSelect={this.handleSelectNewManager}
+                            onSearch={this.handleSearchNewManager}
                             ref={ref => this.queryManagerComponent = ref}
                           />
                         </InfoForm>

@@ -287,8 +287,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 showObjKey="name"
                 objId="login"
                 searchList={employeeList}
-                emitSelectItem={this.selectHandle}
-                emitToSearch={this.searchHandle}
+                onSelect={this.selectHandle}
+                onSearch={this.searchHandle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}
               />
             </InfoForm>

@@ -43,10 +43,10 @@ export default class ServiceManagerFilter extends PureComponent {
           placeholder="输入姓名或工号查询"
           name="serviceManager"
           disable={disable}
-          defaultSearchValue={serviceManagerDefaultValue}
+          value={serviceManagerDefaultValue}
           searchList={searchServerPersonList}
-          emitSelectItem={dropdownSelectedItem}
-          emitToSearch={dropdownToSearchInfo}
+          onSelect={dropdownSelectedItem}
+          onSearch={dropdownToSearchInfo}
           boxStyle={dropDownSelectBoxStyle}
           isAutoWidth
         />

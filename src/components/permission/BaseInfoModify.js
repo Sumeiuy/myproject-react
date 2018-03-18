@@ -114,8 +114,8 @@ export default class BaseInfoModify extends PureComponent {
               showObjKey="custName"
               objId="cusId"
               width={'200px'}
-              emitSelectItem={this.selectCustomer}
-              emitToSearch={this.searchCanApplyCustList}
+              onSelect={this.selectCustomer}
+              onSearch={this.searchCanApplyCustList}
             />
           </div>
         </div>

@@ -292,8 +292,8 @@ export default class Pageheader extends PureComponent {
                     searchList={customerAllList}
                     showObjKey="custName"
                     objId="custNumber"
-                    emitSelectItem={this.selectCustItem}
-                    emitToSearch={value => this.toSearch(getCustomerList, value)}
+                    onSelect={this.selectCustItem}
+                    onSearch={value => this.toSearch(getCustomerList, value)}
                     name={`${page}-custName`}
                     boxStyle={dropDownSelectBoxStyle}
                     width={'220px'}
@@ -310,8 +310,8 @@ export default class Pageheader extends PureComponent {
                     searchList={ptyMngAllList}
                     showObjKey="ptyMngName"
                     objId="ptyMngId"
-                    emitSelectItem={item => this.selectItem('ptyMngId', item)}
-                    emitToSearch={value => this.toSearch(getPtyMngList, value)}
+                    onSelect={item => this.selectItem('ptyMngId', item)}
+                    onSearch={value => this.toSearch(getPtyMngList, value)}
                     name={`${page}-ptyMngName`}
                     boxStyle={dropDownSelectBoxStyle}
                     width={'220px'}
@@ -365,8 +365,8 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('drafterId', item)}
-                emitToSearch={value => this.toSearch(getDrafterList, value)}
+                onSelect={item => this.selectItem('drafterId', item)}
+                onSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
                 boxStyle={dropDownSelectBoxStyle}
                 width={'220px'}
@@ -396,8 +396,8 @@ export default class Pageheader extends PureComponent {
                 searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('approvalId', item)}
-                emitToSearch={value => this.toSearch(getApprovePersonList, value)}
+                onSelect={item => this.selectItem('approvalId', item)}
+                onSearch={value => this.toSearch(getApprovePersonList, value)}
                 name={`${page}-ptyMngName`}
                 boxStyle={dropDownSelectBoxStyle}
                 width={'220px'}

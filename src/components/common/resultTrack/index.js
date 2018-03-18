@@ -711,8 +711,8 @@ export default class ResultTrack extends PureComponent {
                           name="产品"
                           disable={!checked}
                           searchList={searchedProductList || EMPTY_LIST}
-                          emitSelectItem={this.handleSelectProductItem}
-                          emitToSearch={this.handleQueryProduct}
+                          onSelect={this.handleSelectProductItem}
+                          onSearch={this.handleQueryProduct}
                           defaultSearchValue={currentSelectedProduct.searchValue || ''}
                           width={'220px'}
                         />

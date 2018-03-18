@@ -493,8 +493,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     showObjKey="custName"
                     objId="brokerNumber"
                     searchList={custList}
-                    emitSelectItem={this.handleSelectClient}
-                    emitToSearch={this.handleSearchClient}
+                    onSelect={this.handleSelectClient}
+                    onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
                   />
                 </InfoForm>
@@ -503,8 +503,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     placeholder="选择新服务经理"
                     showObjKey="showSelectName"
                     searchList={newManagerList}
-                    emitSelectItem={this.handleSelectNewManager}
-                    emitToSearch={this.handleSearchNewManager}
+                    onSelect={this.handleSelectNewManager}
+                    onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>

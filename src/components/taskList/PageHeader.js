@@ -613,8 +613,8 @@ export default class Pageheader extends PureComponent {
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
                 width={'220px'}
-                emitSelectItem={item => this.selectItem('creator', item)}
-                emitToSearch={value => this.toSearch(getDrafterList, value)}
+                onSelect={item => this.selectItem('creator', item)}
+                onSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />
             </div>
@@ -632,8 +632,8 @@ export default class Pageheader extends PureComponent {
                     showObjKey="name"
                     objId="custId"
                     width={'220px'}
-                    emitSelectItem={this.selectCustomerItem}
-                    emitToSearch={this.searchCustomer}
+                    onSelect={this.selectCustomerItem}
+                    onSearch={this.searchCustomer}
                     name={`${page}-name`}
                   />
                 </div>

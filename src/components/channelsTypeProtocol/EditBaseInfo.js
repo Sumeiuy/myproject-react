@@ -766,8 +766,8 @@ export default class EditBaseInfo extends PureComponent {
                   objId="brokerNumber"
                   value={_.isEmpty(client) ? '' : `${client.custName || ''} ${client.brokerNumber || ''}`}
                   searchList={custList}
-                  emitSelectItem={this.handleSelectClient}
-                  emitToSearch={this.handleSearchClient}
+                  onSelect={this.handleSelectClient}
+                  onSearch={this.handleSearchClient}
                   boxStyle={dropDownSelectBoxStyle}
                   ref={ref => this.selectCustComponent = ref}
                 />
@@ -783,8 +783,8 @@ export default class EditBaseInfo extends PureComponent {
                 objId="rowId"
                 value={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
                 searchList={templateList}
-                emitSelectItem={this.handleSelectTemplate}
-                emitToSearch={this.handleSearchTemplate}
+                onSelect={this.handleSelectTemplate}
+                onSearch={this.handleSearchTemplate}
                 boxStyle={dropDownSelectBoxStyle}
                 ref={ref => this.selectTemplateComponent = ref}
               />

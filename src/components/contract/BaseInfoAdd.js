@@ -253,8 +253,8 @@ export default class BaseInfoEdit extends PureComponent {
           showObjKey="id"
           value={this.state.contractNum.id || ''}
           searchList={contractNumList}
-          emitSelectItem={this.handleSelectContractNum}
-          emitToSearch={this.handleSearchContractNum}
+          onSelect={this.handleSelectContractNum}
+          onSearch={this.handleSearchContractNum}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
@@ -326,8 +326,8 @@ export default class BaseInfoEdit extends PureComponent {
             objId="brokerNumber"
             value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
             searchList={custList}
-            emitSelectItem={this.handleSelectClient}
-            emitToSearch={this.handleSearchClient}
+            onSelect={this.handleSelectClient}
+            onSearch={this.handleSearchClient}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>

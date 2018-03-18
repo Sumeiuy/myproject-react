@@ -256,8 +256,8 @@ export default class EditForm extends PureComponent {
                 showObjKey="name"
                 value={department.name || ''}
                 searchList={departmentList}
-                emitSelectItem={this.handleSelectDepartment}
-                emitToSearch={this.handleSearchDepartment}
+                onSelect={this.handleSelectDepartment}
+                onSearch={this.handleSearchDepartment}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </InfoForm>
