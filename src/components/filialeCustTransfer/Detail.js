@@ -15,7 +15,10 @@ import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import Pagination from '../common/Pagination';
-import { seibelConfig } from '../../config';
+import Icon from '../common/Icon';
+import { request, seibelConfig } from '../../config';
+import { emp } from '../../helper';
+import config from './config';
 import styles from './detail.less';
 
 // 表头
@@ -23,6 +26,7 @@ const { titleList } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 export default class Detail extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     // 客户表格的分页信息
     getPageAssignment: PropTypes.func.isRequired,
@@ -80,8 +84,17 @@ export default class Detail extends PureComponent {
       assignmentList,
       page,
       currentNodeName,
+      errorDesc,
+      appId: dataId,
     } = this.props.data;
-    const { pageAssignment } = this.props;
+    const {
+      pageAssignment,
+      location: {
+        query: {
+          appId = '',
+        },
+      },
+    } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
@@ -111,6 +124,29 @@ export default class Detail extends PureComponent {
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
             <div id="detailModule" className={styles.module}>
+              <div className={styles.error}>
+                {
+                  errorDesc
+                  ?
+                    <p>
+                      <Icon type="tishi" />
+                      {config.tips[errorDesc]}
+                    </p>
+                  :
+                    null
+                }
+                {
+                  errorDesc === config.errorArray[0]
+                  ?
+                    <p>
+                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`}>
+                        下载报错信息
+                      </a>
+                    </p>
+                  :
+                    null
+                }
+              </div>
               <InfoTitle head="基本信息" />
               <div className={styles.modContent}>
                 <div className={styles.propertyList}>
