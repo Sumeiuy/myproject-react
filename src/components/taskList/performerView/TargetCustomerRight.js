@@ -345,18 +345,6 @@ export default class TargetCustomerRight extends PureComponent {
                     </span>
                   }
                 </h5>
-              </Col>
-              <Col span={thrSpan}>
-                <h5
-                  className={classnames({
-                    [styles.peopleThr]: isFold === true,
-                    [styles.people]: isFold === false,
-                  })}
-                ><span>股基佣金率：</span><span>{miniFee}</span></h5>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={sendSpan}>
                 <h5
                   className={classnames({
                     [styles.peopleTwo]: isFold === true,
@@ -367,18 +355,6 @@ export default class TargetCustomerRight extends PureComponent {
                   <span>{this.handleAssets(itemData.openAssets)}</span>
                   {openAssetsPercentNode}
                 </h5>
-              </Col>
-              <Col span={thrSpan}>
-                <h5
-                  className={classnames({
-                    [styles.peopleThr]: isFold === true,
-                    [styles.people]: isFold === false,
-                  })}
-                ><span>沪深归集率：</span><span>{hsRate}</span></h5>
-              </Col>
-            </Row>
-            <Row className={styles.lastCol}>
-              <Col span={sendSpan}>
                 <h5
                   className={classnames({
                     [styles.peopleTwo]: isFold === true,
@@ -396,6 +372,18 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
+                ><span>股基佣金率：</span><span>{miniFee}</span></h5>
+                <h5
+                  className={classnames({
+                    [styles.peopleThr]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
+                ><span>沪深归集率：</span><span>{hsRate}</span></h5>
+                <h5
+                  className={classnames({
+                    [styles.peopleThr]: isFold === true,
+                    [styles.people]: isFold === false,
+                  })}
                 >
                   <span>信息完备率：</span><span>{infoCompletionRate}</span>
                   <TipsInfo
@@ -406,7 +394,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
           <div className={styles.asset}>
-            <Row>
+            <Row className={styles.borderTop}>
               <Col span={24}>
                 <h5
                   className={classnames({
