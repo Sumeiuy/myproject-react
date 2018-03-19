@@ -17,12 +17,13 @@ const permissionType = () => {
   /**
    * 当前用户的权限类型
    * NOPERMIT 表示当前用户没有目标客户池的权限
-   * PERMITS1 表示当前用户有‘HTSC 任务管理岗’
+   * PERMITS1 表示当前用户有‘HTSC 任务管理岗’或者‘首页指标查询权限’
    */
   let permit = NOPERMIT;
   if (permission1) {
     permit = PERMITS1;
   }
+
   return {
     customerPoolPermit: permit,
     view360Permit: permission2,

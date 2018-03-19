@@ -324,7 +324,7 @@ export function linkTo({
   location,
   empInfo,
   type = 'rightType',
-  permissionType,
+  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -345,7 +345,7 @@ export function linkTo({
     } else {
       obj.orgId = orgId;
     }
-  } else if (permissionType === 0) {
+  } else if (!authority) {
     // 0 表示用户没有权限
     obj.ptyMng = `${empName}_${empNum}`;
   }

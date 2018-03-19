@@ -2,13 +2,15 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
+import { Input } from 'antd';
 import TaskSearchRow from './TaskSearchRow';
-import SimpleSearch from '../groupManage/CustomerGroupListSearch';
 import { emp, fsp } from '../../../helper';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
+const Search = Input.Search;
+
+
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
     dict: PropTypes.object.isRequired,
@@ -25,6 +27,8 @@ export default class SelectLabelCust extends PureComponent {
     isAuthorize: PropTypes.bool,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
+    switchBottomFromSearch: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -36,7 +40,14 @@ export default class SelectLabelCust extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
-    const { condition = '', labelId = '', tipsSize = 0 } = labelCust || EMPTY_OBJECT;
+    const {
+      condition = '',
+      labelId = '',
+      tipsSize = 0,
+      shouldclearBottomLabel = true,
+      currentSelectLabelName = null,
+      currentFilterNum = 0,
+    } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: 0,
@@ -45,6 +56,9 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: labelId,
       labelId,
       tipsSize,
+      shouldclearBottomLabel,
+      currentFilterNum,
+      currentSelectLabelName,
     };
     this.bigBtn = true;
   }
@@ -67,18 +81,16 @@ export default class SelectLabelCust extends PureComponent {
   @autobind
   getData() {
     const { labelId = '', condition, tipsSize } = this.state;
-    if (_.isEmpty(condition)) {
-      return {
-        labelCust: {},
-      };
-    }
 
     const {
       filterNumObject = {},
       argsOfQueryCustomer = {},
       currentFilterObject = {},
+      currentAllFilterState = {},
+      allFiltersCloseIconState = {},
     } = this.taskSearchRowRef.getSelectFilters();
     const { circlePeopleData } = this.props;
+    const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', labelMapping, labelName = '', customNum = 0 } = matchedData || EMPTY_OBJECT;
 
@@ -93,7 +105,12 @@ export default class SelectLabelCust extends PureComponent {
       custSource: '瞄准镜标签',
       argsOfQueryCustomer,
       currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
       filterNumObject,
+      shouldclearBottomLabel,
+      currentFilterNum,
+      currentSelectLabelName,
     };
 
     return {
@@ -107,20 +124,20 @@ export default class SelectLabelCust extends PureComponent {
     const param = {
       condition: value,
     };
-
     this.setState({
+      shouldclearBottomLabel: true,
       condition: value,
       labelId: '',
       labelDesc: '',
       custNum: 0,
       currentSelectLabel: '',
     });
-
+    const clearFromSearch = true;
+    this.props.switchBottomFromSearch(clearFromSearch); // 隐藏底部标签文字
     if (_.isEmpty(value)) {
       this.setState({
         tipsSize: 0,
       });
-      return;
     }
     if (isAuthorize) {
       // 有首页绩效指标查看权限
@@ -137,12 +154,25 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  handleRadioChange(value) {
+  handleRadioChange({ currentLabelId, filterNumObject, currentSelectLabelName }) {
+    const currentFilterNum = filterNumObject && filterNumObject[currentLabelId];
+    const state = {
+      labelId: currentLabelId || this.state.labelId,
+      currentSelectLabel: currentLabelId || this.state.labelId,
+      currentSelectLabelName: currentSelectLabelName || this.state.currentSelectLabelName,
+      currentFilterNum:
+        currentFilterNum !== undefined ? currentFilterNum : this.state.currentFilterNum,
+      clearFromSearch: false,
+    };
     this.setState({
-      labelId: value,
-      currentSelectLabel: value,
+      ...state,
+    });
+    // 将标签列表项的全部状态信息暴露出去
+    this.props.onChange({
+      ...state,
     });
   }
+
 
   render() {
     const {
@@ -162,24 +192,22 @@ export default class SelectLabelCust extends PureComponent {
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
-        <SimpleSearch
-          titleNode={<span className={styles.searchTitle}>瞄准镜：</span>}
+        <Search
           placeholder="标签名称"
           onSearch={this.handleSearchClick}
-          searchStyle={{
-            height: '30px',
-            width: '400px',
+          style={{
+            height: '28px',
+            width: '186px',
           }}
           defaultValue={condition}
-          isNeedBtn
         />
-        {!_.isEmpty(condition)
-          ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
-          :
-          null
-        }
+        <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
         <TaskSearchRow
-          ref={ref => this.taskSearchRowRef = ref}
+          ref={(ref) => {
+            if (ref) {
+              this.taskSearchRowRef = ref;
+            }
+          }}
           dict={dict}
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
@@ -201,3 +229,4 @@ export default class SelectLabelCust extends PureComponent {
     );
   }
 }
+

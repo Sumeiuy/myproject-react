@@ -54,7 +54,7 @@ export default class PerformanceIndicators extends PureComponent {
       PropTypes.object,
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
-    permissionType: PropTypes.number.isRequired,
+    authority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -101,7 +101,7 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       empInfo,
       indicators,
-      permissionType,
+      authority,
     } = this.props;
     let formatIndicator = [];
     const tempArr = this.formatIndicators(indicators || {});
@@ -117,7 +117,7 @@ export default class PerformanceIndicators extends PureComponent {
         location: this.props.location,
         empInfo,
         bname: arg.name || arg.value,
-        permissionType,
+        authority,
       };
       // 点击柱子，arg.name，arg.value都有值
       // 点击x轴， arg.value有值，不存在arg.name
@@ -384,7 +384,7 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
-    const { permissionType } = this.props;
+    const { authority } = this.props;
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -393,7 +393,7 @@ export default class PerformanceIndicators extends PureComponent {
               dataSource={finalData}
               key={param.key}
               type={'productSale'}
-              permissionType={permissionType}
+              authority={authority}
             />
           </IfEmpty>
         </RectFrame>
@@ -474,7 +474,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { cycle, push, location, empInfo, custCount, permissionType } = this.props;
+    const { cycle, push, location, empInfo, custCount, authority } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
@@ -491,7 +491,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
-              permissionType={permissionType}
+              authority={authority}
             />
           </IfEmpty>
         </RectFrame>

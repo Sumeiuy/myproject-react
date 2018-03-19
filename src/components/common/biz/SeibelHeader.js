@@ -21,6 +21,7 @@ import { fspContainer, seibelConfig } from '../../../config';
 const {
   contract: { pageType: contractPageType },
   channelsTypeProtocol: { pageType: channelsPageType },
+  filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 
 // 头部筛选filterBox的高度
@@ -71,6 +72,8 @@ export default class Pageheader extends PureComponent {
     filterCallback: PropTypes.func,
     // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
     isUseOfCustomer: PropTypes.bool,
+    // 判断登录人当前切换的职位所在部门为分公司层级
+    checkUserIsFiliale: PropTypes.func,
   }
 
   static defaultProps = {
@@ -80,8 +83,9 @@ export default class Pageheader extends PureComponent {
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
-    filterCallback: () => {},
+    filterCallback: _.noop,
     isUseOfCustomer: true,
+    checkUserIsFiliale: _.noop,
   }
 
   constructor(props) {
@@ -228,6 +232,7 @@ export default class Pageheader extends PureComponent {
       isUseOfCustomer,
       ptyMngList,
       getPtyMngList,
+      checkUserIsFiliale,
       location: {
         query: {
           custNumber,
@@ -292,6 +297,10 @@ export default class Pageheader extends PureComponent {
     } else if (pageType === channelsPageType) {
       // 如果是通道类协议页面
       hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
+    } else if (pageType === filialeCustTransfer) {
+      // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
+      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
+        checkUserIsFiliale();
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
@@ -337,7 +346,6 @@ export default class Pageheader extends PureComponent {
                   value={business2}
                   data={operateOptions}
                   onChange={this.handleSelectChange}
-                  style={{ width: '20%' }}
                 />
               </div>
             : null

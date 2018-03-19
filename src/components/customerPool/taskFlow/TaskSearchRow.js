@@ -6,18 +6,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
-import { Radio, Modal, Button, Icon } from 'antd';
+import { Radio, Modal, Button, Icon, Tooltip } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { emp } from '../../../helper';
+import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
-import tableStyles from '../groupManage/groupTable.less';
 import Clickable from '../../../components/common/Clickable';
 import FilterCustomers from './step1/FilterCustomers';
 import { isSightingScope } from '../helper';
+import { fspContainer } from '../../../config';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
 
 const RadioGroup = Radio.Group;
@@ -47,6 +47,21 @@ const renderColumnTitle = [{
   key: 'cust_type',
   value: '客户类型',
 }];
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
+function transformDate(date) { // 2017-01-31 12:33:55.0
+  if (date) {
+    const dateStr = date.split(' ')[0]; // 2017-01-31
+    const dateArray = dateStr.split('-'); // ['2017', '01', '31']
+    return `${dateArray[0]}年${dateArray[1]}月${dateArray[2]}日`; // 2017年01月31日
+  }
+
+  return '--';
+}
+
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
@@ -78,7 +93,14 @@ export default class TaskSearchRow extends PureComponent {
       // currentSelectLabel = '',
     } = props;
 
-    const { argsOfQueryCustomer = {}, currentFilterObject, filterNumObject } = labelCust || {};
+    const {
+      argsOfQueryCustomer = {},
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+      filterNumObject,
+    } = labelCust || {};
+
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       // totalRecordNum: 0,
@@ -88,6 +110,8 @@ export default class TaskSearchRow extends PureComponent {
       title: '',
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
+      currentAllFilterState: _.isEmpty(currentAllFilterState) ? {} : currentAllFilterState,
+      allFiltersCloseIconState: _.isEmpty(allFiltersCloseIconState) ? {} : allFiltersCloseIconState,
       filterNumObject: _.isEmpty(filterNumObject) ? {} : filterNumObject,
       // 当前筛选条件
       argsOfQueryCustomer,
@@ -102,7 +126,13 @@ export default class TaskSearchRow extends PureComponent {
   // 获取当前筛选客户查询条件
   @autobind
   getSelectFilters() {
-    return _.pick(this.state, ['filterNumObject', 'argsOfQueryCustomer', 'currentFilterObject']);
+    return _.pick(this.state, [
+      'filterNumObject',
+      'argsOfQueryCustomer',
+      'currentFilterObject',
+      'currentAllFilterState',
+      'allFiltersCloseIconState',
+    ]);
   }
 
   /**
@@ -112,7 +142,7 @@ export default class TaskSearchRow extends PureComponent {
  * @param {*} pageSize 当前页条目
  */
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople } = this.props;
+    const { isAuthorize, orgId, getLabelPeople, onChange } = this.props;
     const { argsOfQueryCustomer } = this.state;
     let payload = {
       curPageNum,
@@ -180,6 +210,13 @@ export default class TaskSearchRow extends PureComponent {
             ...finalFilterNumObject,
           },
         });
+        onChange({
+          currentLabelId: labelId,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
       }
     });
 
@@ -188,6 +225,10 @@ export default class TaskSearchRow extends PureComponent {
         [labelId]: payload,
       },
     });
+  }
+  @autobind
+  getPopupContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
   }
 
   @autobind
@@ -198,10 +239,7 @@ export default class TaskSearchRow extends PureComponent {
     const currentLabelInfo = _.find(circlePeopleData, item => item.id === currentLabelId
       || item.labelMapping === currentLabelId) || {};
     let finalFilterNumObject = filterNumObject;
-    if (!(`${currentLabelId}` in finalFilterNumObject) ||
-      (finalFilterNumObject[`${currentLabelId}`] !== 0
-        && _.isEmpty(finalFilterNumObject[`${currentLabelId}`])
-      )) {
+    if (!(`${currentLabelId}` in finalFilterNumObject)) {
       finalFilterNumObject = {
         [currentLabelId]: currentLabelInfo.customNum,
       };
@@ -214,7 +252,15 @@ export default class TaskSearchRow extends PureComponent {
       },
       currentSelectLabelName: currentLabelInfo.labelName,
     });
-    onChange(currentLabelId);
+
+    onChange({
+      currentLabelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+    });
   }
 
 
@@ -243,7 +289,10 @@ export default class TaskSearchRow extends PureComponent {
       currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
-    this.props.onChange(value.id || '');
+    this.props.onChange({
+      currentLabelId: value.id,
+      currentSelectLabelName: value.labelName,
+    });
   }
 
   @autobind
@@ -287,23 +336,37 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   /**
-   * 筛查客户弹窗中的 筛选项 变化值
+   * 筛查客户弹窗中的 筛选项 变化值,
+   * 该对象包含该筛选条件对应的名称name，代码key，选中字段名value
    */
   @autobind
   handleFilterChange(obj) {
-    const { labelId, currentFilterObject } = this.state;
+    const { labelId, currentFilterObject, currentAllFilterState } = this.state;
     const newFilterArray = currentFilterObject[labelId] ? [...currentFilterObject[labelId]] : [];
+    const newFilterAllArray =
+      currentAllFilterState[labelId] ? [...currentAllFilterState[labelId]] : [];
     const index = _.findIndex(newFilterArray, o => o.split('.')[0] === obj.name);
-    const filterItem = `${obj.name}.${obj.value}`;
+    const filterItem = `${obj.name}.${obj.key}`;
+    const filterAllItem = {
+      name: obj.name,
+      filterLabel: obj.filterLabel,
+      valueArray: obj.valueArray,
+    };
     if (index > -1) {
       newFilterArray[index] = filterItem;
+      newFilterAllArray[index] = filterAllItem;
     } else {
       newFilterArray.push(filterItem);
+      newFilterAllArray.push(filterAllItem);
     }
     this.setState({
       currentFilterObject: {
         ...currentFilterObject,
         [labelId]: newFilterArray,
+      },
+      currentAllFilterState: {
+        ...currentAllFilterState,
+        [labelId]: newFilterAllArray,
       },
     }, () => {
       this.queryPeopleOfLabel({
@@ -315,15 +378,101 @@ export default class TaskSearchRow extends PureComponent {
     });
   }
 
+  @autobind
+  onCheckFilterMoreButton(obj) {
+    const { labelId, allFiltersCloseIconState } = this.state;
+    const newFilterStatusArray =
+      allFiltersCloseIconState[labelId] ? [...allFiltersCloseIconState[labelId]] : [];
+    const index = _.findIndex(newFilterStatusArray, o => o.name === obj.name);
+    const filterStatusItem = {
+      name: obj.name,
+      status: obj.status,
+    };
+    if (index > -1) {
+      newFilterStatusArray[index] = filterStatusItem;
+    } else {
+      newFilterStatusArray.push(filterStatusItem);
+    }
+    this.setState({
+      allFiltersCloseIconState: {
+        ...allFiltersCloseIconState,
+        [labelId]: newFilterStatusArray,
+      },
+    });
+  }
+
+  // 瞄准镜关闭按钮状态切换并保存allFiltersCloseIconState
+  @autobind
+  onCloseIconClick(obj) {
+    this.onCheckFilterMoreButton(obj);
+  }
+
+  @autobind
+  renderFilterTooltip(filters) {
+    let stringArray = _.map(filters, (filterObj) => {
+      if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
+        return {
+          title: filterObj.filterLabel,
+          value: filterObj.valueArray.join('，'),
+        };
+      }
+      return null;
+    });
+    stringArray = _.compact(stringArray);
+    return (
+      <div className={styles.filterTooltip}>
+        {
+          _.map(stringArray, (filter, index) => (
+            <div className={styles.toolTipItem} key={index}>
+              <span className={styles.title}>{`${filter.title}：`}</span>
+              <span className={styles.tipsContent}>{filter.value}</span>
+            </div>))
+        }
+      </div>
+    );
+  }
+
+  @autobind
+  getFilterInfo(filters) {
+    const stringArray = _.map(filters, (filterObj) => {
+      if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
+        return `${filterObj.filterLabel}：${filterObj.valueArray.join('，')}`;
+      }
+      return null;
+    });
+    return _.compact(stringArray).join(' ； ');
+  }
+
+  @autobind
+  getSelectFiltersInfo(filters) {
+    if (filters) {
+      return (
+        <Tooltip
+          title={this.renderFilterTooltip(filters)}
+          overlayClassName={styles.filtersTooltip}
+          getPopupContainer={this.getPopupContainer}
+          placement="bottomLeft"
+          trigger="hover"
+        >
+          <div className={styles.selectFiltersInfo}>
+            {this.getFilterInfo(filters)}
+          </div>
+        </Tooltip>
+      );
+    }
+    return null;
+  }
+
   // Y为高净值、N为非高净值
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
-    const { filterNumObject } = this.state;
+    const { filterNumObject, currentAllFilterState } = this.state;
     return _.map(circlePeopleData,
-      (item) => {
+      (item, index) => {
         const currentFilterNum = (`${item.id}` in filterNumObject ?
           filterNumObject[item.id] : item.customNum) || 0;
+        const currentSelectFilters = currentAllFilterState[item.id];
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
@@ -337,38 +486,47 @@ export default class TaskSearchRow extends PureComponent {
         const cls = classnames({
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
+          [styles.clearBorder]: index === circlePeopleData.length - 1, // 最后一个item清除border
         });
 
         return (
-          <div className={cls} key={item.id || item.labelMapping}>
-            <Radio
-              value={item.id}
-              key={item.tagNumId || item.labelMapping}
-            >
-              <span
-                className={styles.title}
-                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
-              />
-              <span className={styles.filterCount}>
-                已筛选客户数：<i>{currentFilterNum}</i>
+          <div
+            className={cls}
+            key={item.id || item.labelMapping}
+          >
+            <div className={styles.leftContent}>
+              <Radio
+                value={item.id}
+                key={item.tagNumId || item.labelMapping}
+              >
+                <span
+                  className={styles.title}
+                  title={item.labelName}
+                  dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+                />
+              </Radio>
+              <span className={styles.titExp}>
+                <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
               </span>
-              {item.customNum === 0 ? null :
+              <div
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
+              />
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.filterCount}>
+              已选客户数：<i>{transformNumber(currentFilterNum)}</i>
+            </div>
+            {this.getSelectFiltersInfo(currentSelectFilters)}
+            {
+              item.customNum === 0 ? null :
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
                 eventName="/click/taskSearchRow/checkCust"
               >
                 <Button className={styles.seeCust}>筛查客户</Button>
               </Clickable>
-              }
-            </Radio>
-            <h4 className={styles.titExp}>
-              <span>创建人：<i>{item.createrName || '--'}</i></span>
-              <span>创建时间：<i>{item.createDate || '--'}</i></span>
-              <span>客户总数：<i>{item.customNum}</i></span>
-            </h4>
-            <h4
-              dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
-            />
+            }
           </div>
         );
       });
@@ -379,6 +537,8 @@ export default class TaskSearchRow extends PureComponent {
       curPageNum = INITIAL_PAGE_NUM,
       custTableData,
       currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
       currentSource,
       labelId,
       filterNumObject,
@@ -391,19 +551,23 @@ export default class TaskSearchRow extends PureComponent {
       currentSelectLabel,
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
-      condition,
       dict,
       sightingTelescopeFilters,
+      circlePeopleData,
     } = this.props;
-    if (_.isEmpty(condition)) {
-      return null;
-    }
 
     const currentItems = currentFilterObject[labelId] || [];
+    const currentAllItems = currentAllFilterState[labelId] || [];
+    const filtersCloseIconState = allFiltersCloseIconState[labelId] || [];
     const totalRecordNum = filterNumObject[labelId] || 0;
 
+    const cls = classnames({
+      [styles.divContent]: true,
+      [styles.clearBorder]: circlePeopleData.length === 0, // 最后一个item清除border
+    });
+
     return (
-      <div className={styles.divContent}>
+      <div className={cls}>
         <RadioGroup
           name="radiogroup"
           onChange={this.change}
@@ -418,26 +582,30 @@ export default class TaskSearchRow extends PureComponent {
             visible={modalVisible}
             title={currentSelectLabelName || ''}
             maskClosable={false}
-            closable={false}
             // 关闭弹框时，销毁子元素，不然数据会复用,antd升级这个api才会有，所以先用key代替这个api
             destroyOnClose
             key={currentModalKey}
+            onCancel={this.handleCancel}
+            width={1090}
             footer={
               <Clickable
                 onClick={this.handleCancel}
                 eventName="/click/taskSearchRow/close"
               >
-                <Button key="back" size="large">确定</Button>
+                <Button className={styles.modalButton} key="back" size="large">确定</Button>
               </Clickable>
             }
-            width={700}
             wrapClassName={styles.labelCustModalContainer}
           >
             <div className={styles.filter}>
               <FilterCustomers
                 dict={dict}
                 currentItems={currentItems}
+                currentAllItems={currentAllItems}
+                filtersCloseIconState={filtersCloseIconState}
                 onFilterChange={this.handleFilterChange}
+                onCloseIconClick={this.onCloseIconClick}
+                onCheckMoreButton={this.onCheckFilterMoreButton}
                 source={currentSource}
                 sightingTelescopeFilters={sightingTelescopeFilters}
               />
@@ -459,7 +627,6 @@ export default class TaskSearchRow extends PureComponent {
                   tableClass={
                     classnames({
                       [styles.labelCustTable]: true,
-                      [tableStyles.groupTable]: true,
                     })
                   }
                   isFixedTitle={false}

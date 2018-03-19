@@ -7,8 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-import Header from './Header';
 import SelectLabelCust from '../SelectLabelCust';
 import { fsp } from '../../../../helper';
 
@@ -19,8 +17,9 @@ export default class SightingTelescope extends PureComponent {
   static propTypes = {
     dict: PropTypes.object.isRequired,
     visible: PropTypes.bool,
-    switchTo: PropTypes.func,
     onCancel: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    switchBottomFromSearch: PropTypes.func.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -37,7 +36,6 @@ export default class SightingTelescope extends PureComponent {
 
   static defaultProps = {
     visible: false,
-    switchTo: () => { },
     isAuthorize: false,
     filterModalvisible: false,
   }
@@ -55,8 +53,9 @@ export default class SightingTelescope extends PureComponent {
     const {
       dict,
       visible,
-      switchTo,
       onCancel,
+      onChange,
+      switchBottomFromSearch,
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
       circlePeopleData,
@@ -75,17 +74,12 @@ export default class SightingTelescope extends PureComponent {
     });
     return (
       <div className={cls}>
-        <div className={styles.header}>
-          <Header
-            title="瞄准镜圈人"
-            switchTarget="导入客户"
-            onClick={switchTo}
-          />
-        </div>
         <div>
           <SelectLabelCust
             dict={dict}
             onCancel={onCancel}
+            onChange={onChange}
+            switchBottomFromSearch={switchBottomFromSearch}
             isLoadingEnd={isLoadingEnd}
             isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
             visible={filterModalvisible}
