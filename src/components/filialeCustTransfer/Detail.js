@@ -139,7 +139,7 @@ export default class Detail extends PureComponent {
                   errorDesc === config.errorArray[0]
                   ?
                     <p>
-                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`}>
+                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`} download>
                         下载报错信息
                       </a>
                     </p>

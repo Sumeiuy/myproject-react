@@ -8,6 +8,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { Layout } from 'antd';
@@ -36,6 +37,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  push: routerRedux.push,
   // 获取列表
   getStockDetail: fetchDataFunction(true, 'stock/getStockDetail', true),
 };
@@ -46,6 +48,7 @@ export default class StockDetail extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
     getStockDetail: PropTypes.func.isRequired,
     detail: PropTypes.object.isRequired,
   }
@@ -64,20 +67,31 @@ export default class StockDetail extends PureComponent {
       getStockDetail({ id });
     }
   }
-  render() {
+
+  @autobind
+  hrefHandle(item) {
     const {
       location: {
         query: {
           pageSize = 10,
           pageNum = 1,
           keyword = '',
-          id,
           type = '',
+        },
+      },
+      push,
+    } = this.props;
+    push(`/stock?type=${item}&pageSize=${pageSize}&pageNum=${item === type ? pageNum : 1}&keyword=${keyword}`);
+  }
+  render() {
+    const {
+      location: {
+        query: {
+          id,
         },
       },
       detail: dataDetail,
     } = this.props;
-    const url = `/#/stock?pageSize=${pageSize}&keyword=${keyword}`;
     if (_.isEmpty(dataDetail[id])) {
       return null;
     }
@@ -133,7 +147,9 @@ export default class StockDetail extends PureComponent {
           <div className={styles.right}>
             <Icon type="fanhui1" />
             {
-              typeList.map(item => (<a href={`${url}&pageNum=${item === type ? pageNum : 1}&type=${item}`} key={item}>相关{config[item].name}</a>))
+              typeList.map(item => (
+                <a onClick={() => this.hrefHandle(item)} key={item}>相关{config[item].name}</a>
+              ))
             }
           </div>
         </Footer>
