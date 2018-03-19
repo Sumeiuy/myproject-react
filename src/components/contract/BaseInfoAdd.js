@@ -246,6 +246,7 @@ export default class BaseInfoEdit extends PureComponent {
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
     const { operation, tdDescription, remark, client } = this.state;
+    const { custName = '', brokerNumber = '' } = client || {};
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>
         <AutoComplete
@@ -324,7 +325,7 @@ export default class BaseInfoEdit extends PureComponent {
             placeholder="经纪客户号/客户名称"
             showObjKey="custName"
             objId="brokerNumber"
-            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+            defaultSearchValue={`${custName} ${brokerNumber}`}
             searchList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}

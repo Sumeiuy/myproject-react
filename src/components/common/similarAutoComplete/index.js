@@ -12,7 +12,6 @@ import style from './style.less';
 
 const Option = AutoComplete.Option;
 let currentSelect = null; // 当前选中的对象
-let presetValue = ''; // input 的预置值
  // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: '220px',
@@ -51,7 +50,6 @@ export default class SimilarAutoComplete extends PureComponent {
   static defaultProps = {
     name: 'customerDrop',
     placeholder: '',
-    value: '',
     searchList: [],
     objId: '',
     boxStyle: dropDownSelectBoxStyle,
@@ -65,20 +63,15 @@ export default class SimilarAutoComplete extends PureComponent {
   constructor(props) {
     super(props);
     const { defaultSearchValue, searchList, presetOptionList } = props;
-    const isEmptyValue = _.isString(defaultSearchValue);
-    const propsDefaultValue = isEmptyValue ? defaultSearchValue : `${defaultSearchValue}`;
-    const optionListDom = this.getSearchListDom(isEmptyValue ? presetOptionList : searchList);
-    // input 的预置值
-    presetValue = propsDefaultValue;
+    const isEmptyValue = _.isEmpty(_.trim(defaultSearchValue));
+    const optionList = isEmptyValue ? presetOptionList : searchList;
     this.state = {
+      // 下拉框选项列表
+      optionList,
       // 搜索框的类型
-      typeStyle: 'search',
+      typeStyle: isEmptyValue ? 'search' : 'close',
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
-      // 下拉框选项列表
-      optionListDom,
-      // 添加id标识
-      id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
   }
 
@@ -88,7 +81,7 @@ export default class SimilarAutoComplete extends PureComponent {
     if (preSearchList !== nextSearchList) {
       // 更新下拉选项框列表
       this.setState({
-        optionListDom: this.getSearchListDom(nextSearchList),
+        optionList: nextSearchList,
       });
     }
   }
@@ -117,18 +110,15 @@ export default class SimilarAutoComplete extends PureComponent {
 
   @autobind
   handleInputValue(value) {
-    // 清空input的预置值，否则，input为空时，总是会显示 预置值
-    // 预置值 只显示一次
-    presetValue = '';
     if (_.isEmpty(currentSelect)) {
       const { presetOptionList } = this.props;
-      const { optionListDom } = this.state;
+      const { optionList } = this.state;
       // 记录要搜索的字段，并设置当前的状态为搜索状态
       this.setState({
         value,
         typeStyle: 'search',
         // 当输入值为空时，显示预置下拉选项
-        optionListDom: _.isEmpty(value) ? this.getSearchListDom(presetOptionList) : optionListDom,
+        optionList: _.isEmpty(value) ? presetOptionList : optionList,
       });
     } else {
       // 下拉框中值选中时，会触发onchange方法, 即handleInputValue方法，故在此处重置选中项为null
@@ -150,11 +140,8 @@ export default class SimilarAutoComplete extends PureComponent {
       );
       // 记录当前选中的值
       currentSelect = selectItem || {};
-      // 多传一个默认输入值，有些场景下需要用到
-      const { value: searchValue } = this.state;
       onSelect({
         ...currentSelect,
-        searchValue,
       });
 
       // 更新state中的值
@@ -182,7 +169,7 @@ export default class SimilarAutoComplete extends PureComponent {
         },
         () => {
           // 手动清空选中值，传递到组件外
-          this.props.onSelect({ searchValue: '' });
+          this.props.onSelect({});
         },
       );
     }
@@ -196,11 +183,10 @@ export default class SimilarAutoComplete extends PureComponent {
   clearValue() {
     const { presetOptionList } = this.props;
     this.setState({
-      ...this.state,
       value: '',
       typeStyle: 'search',
       // 当输入值为空时，显示预置下拉选项
-      optionListDom: this.getSearchListDom(presetOptionList),
+      optionList: presetOptionList,
     });
   }
 
@@ -208,9 +194,9 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   checkListIsEmpty() {
     const { searchList } = this.props;
-    const { optionListDom } = this.state;
+    const { optionList } = this.state;
     const hiddenSearchList = searchList.filter(item => item.isHidden);
-    return _.isEmpty(optionListDom)
+    return _.isEmpty(optionList)
       || (!_.isEmpty(searchList) && hiddenSearchList.length === searchList.length);
   }
 
@@ -218,7 +204,6 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   renderDisableContent() {
     const { disable, defaultSearchValue, theme, boxStyle } = this.props;
-    const { id } = this.state;
     const ddsShowBoxClass = classnames([style.ddsShowBox]);
     const ddsShowBoxClass2 = classnames([
       style.ddsShowBox2,
@@ -232,7 +217,6 @@ export default class SimilarAutoComplete extends PureComponent {
       <div className={drapDownSelectCls}>
         <div
           className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-          data-id={id}
           style={boxStyle || {}}
         >
           {defaultSearchValue}
@@ -242,9 +226,8 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   renderAutoComplete() {
-    const { placeholder, boxStyle, width } = this.props;
-    const { typeStyle, value, optionListDom } = this.state;
-
+    const { placeholder, boxStyle, width, ...otherPorps } = this.props;
+    const { typeStyle, value, optionList } = this.state;
     const empty = [(
       <Option
         key={'empty'}
@@ -254,12 +237,11 @@ export default class SimilarAutoComplete extends PureComponent {
         <span className={style.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : optionListDom;
-    // AutoComplete组件，有value属性时，defaultValue属性就不起作用了。
-    const valueProps = _.isEmpty(presetValue) ? { value } : {};
+    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(optionList);
+    const inputValue = _.isString(value) ? value : `${value}`;
     return (
       <AutoComplete
-        {...valueProps}
+        {...otherPorps}
         className={style.complete}
         placeholder={placeholder}
         dropdownStyle={{ width: `${width}px` || boxStyle.width }}
@@ -269,7 +251,7 @@ export default class SimilarAutoComplete extends PureComponent {
         style={boxStyle}
         dataSource={options}
         optionLabelProp="value"
-        defaultValue={presetValue}
+        value={inputValue}
         onChange={this.handleInputValue}
         onSelect={this.handleSelectedValue}
       >

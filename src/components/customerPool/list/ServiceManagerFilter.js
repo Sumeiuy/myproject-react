@@ -29,9 +29,9 @@ export default class ServiceManagerFilter extends PureComponent {
       disable,
     } = this.props;
     // 预置下拉框数据列表
+    // { ptyMngName: '我的', ptyMngId: '' },
     const presetList = [
       { ptyMngName: '所有人', ptyMngId: '' },
-      { ptyMngName: '我的', ptyMngId: '' },
     ];
     return (
       <div>

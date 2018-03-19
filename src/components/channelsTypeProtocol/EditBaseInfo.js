@@ -692,6 +692,7 @@ export default class EditBaseInfo extends PureComponent {
       softPassword,
       softAccount,
     } = this.state;
+    const { custName = '', brokerNumber = '' } = client || {};
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
@@ -764,7 +765,7 @@ export default class EditBaseInfo extends PureComponent {
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  defaultSearchValue={_.isEmpty(client) ? '' : `${client.custName || ''} ${client.brokerNumber || ''}`}
+                  defaultSearchValue={`${custName} ${brokerNumber}`}
                   searchList={custList}
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}

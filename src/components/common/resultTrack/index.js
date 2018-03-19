@@ -585,7 +585,7 @@ export default class ResultTrack extends PureComponent {
   @autobind
   handleSelectProductItem(value) {
     console.log(value);
-    if (!_.isEmpty(value)) {
+    if (!_.isEmpty(_.omit(value, 'searchValue'))) {
       this.setState({
         currentSelectedProduct: value,
       });
@@ -641,7 +641,7 @@ export default class ResultTrack extends PureComponent {
 
     const stateText = this.renderStateText();
 
-    let currentSelectProductValue = '请输入产品';
+    let currentSelectProductValue = '';
     if (!_.isEmpty(currentSelectedProduct)) {
       currentSelectProductValue = `${currentSelectedProduct.aliasName || ''}${currentSelectedProduct.name ? `(${currentSelectedProduct.name || ''})` : ''}`;
     }
