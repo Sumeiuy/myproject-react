@@ -1,13 +1,14 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 10:56:32
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
@@ -48,6 +49,11 @@ const fetchData = (type, loading) => query => ({
   payload: query || EMPTY_OBJECT,
   loading,
 });
+
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
 
 const mapStateToProps = state => ({
   // 字典信息
@@ -191,6 +197,10 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep,
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
+      shouldclearBottomLabel: false,
+      clearFromSearch: true,
+      currentSelectLabelName: null,
+      currentFilterNum: 0,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -607,6 +617,58 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+  // 新建任务上报日志
+  feedbackTaskFlowLog() {
+    const { dispatch } = dva;
+    const { storedTaskFlowData, dict: { missionType = {} } } = this.props;
+    const {
+      taskFormData: {
+        taskType: taskTypeCode,
+        timelyIntervalValue,
+        taskName,
+      },
+      custSegment: {
+        custSource: segmentCustSource,
+      },
+      labelCust: {
+        custSource: lableCustSource,
+      },
+      resultTrackData: {
+        trackWindowDate = '无',
+        currentIndicatorDescription = '无',
+      },
+      missionInvestigationData: {
+        isMissionInvestigationChecked = false,
+      },
+      currentEntry,
+    } = storedTaskFlowData;
+    let custSource;
+    if (currentEntry === 0) {
+      custSource = segmentCustSource;
+    } else {
+      custSource = lableCustSource;
+    }
+    let taskType = '';
+    _.map(missionType, (item) => {
+      if (item.key === taskTypeCode) {
+        taskType = item.value;
+      }
+    });
+    const result = {
+      taskType,
+      taskName,
+      timelyIntervalValue: `${timelyIntervalValue}天`,
+      custSource,
+      trackWindowDate: `${trackWindowDate}天`,
+      currentIndicatorDescription,
+      isMissionInvestigationChecked,
+    };
+    dispatch({
+      type: 'ButtonClick',
+      payload: result,
+    });
+  }
+
   @autobind
   handleSubmitTaskFlow() {
     const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
@@ -745,7 +807,7 @@ export default class TaskFlow extends PureComponent {
         },
       };
     }
-
+    this.feedbackTaskFlowLog();
     submitTaskFlow({ ...postBody });
   }
 
@@ -809,6 +871,60 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+  @autobind
+  onChange(value) {
+    const { currentFilterNum, currentSelectLabelName, clearFromSearch } = value;
+    this.setState({
+      currentFilterNum,
+      currentSelectLabelName,
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  switchBottomFromHeader(shouldclearBottomLabel) {
+    this.setState({
+      shouldclearBottomLabel,
+    });
+  }
+
+  @autobind
+  switchBottomFromSearch(clearFromSearch) {
+    this.setState({
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  renderBottomLabel() {
+    const {
+      current,
+      currentFilterNum,
+      currentSelectLabelName,
+      shouldclearBottomLabel,
+      clearFromSearch,
+    } = this.state;
+
+    // 是否应该隐藏底部的标签显示取决于三个条件
+    // 1. 选中标签,clearFromSearch控制
+    // 2. 使用头部的切换导入客户按钮，shouldclearBottomLabel控制
+    // 3. 是否处于第一步 current !== 0
+    // 条件1的优先级最高，条件3的优先级最低
+    const shouldHideBottom = clearFromSearch || shouldclearBottomLabel || current !== 0;
+    const cls = classnames({
+      [styles.hide]: shouldHideBottom,
+      [styles.bottomLabel]: true,
+    });
+    return (
+      <div className={cls}>
+        <span>已选择：</span>
+        <i>{currentSelectLabelName}</i>
+        <span>目标客户数：</span>
+        <i>{transformNumber(currentFilterNum)}</i>
+      </div>
+    );
+  }
+
   render() {
     const {
       current,
@@ -866,7 +982,9 @@ export default class TaskFlow extends PureComponent {
           location={location}
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
-
+          onChange={this.onChange}
+          switchBottomFromHeader={this.switchBottomFromHeader}
+          switchBottomFromSearch={this.switchBottomFromSearch}
           onPreview={previewCustFile}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
@@ -963,6 +1081,7 @@ export default class TaskFlow extends PureComponent {
           </Steps>
           <div className={styles.stepsContent}>
             {steps[current].content}
+            {this.renderBottomLabel()}
           </div>
           <div className={styles.stepsAction}>
             {

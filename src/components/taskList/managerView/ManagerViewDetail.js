@@ -535,8 +535,8 @@ export default class ManagerViewDetail extends PureComponent {
                         <Button className={styles.cancel}>取消</Button>
                       </Clickable>
                       {/**
-                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
-                   */}
+                       * 暂时隐藏导出按钮,等后台性能恢复，再放开
+                       */}
                       {
                         falseValue ? <Clickable
                           eventName="/click/managerViewCustDetail/export"
@@ -560,7 +560,7 @@ export default class ManagerViewDetail extends PureComponent {
                               disabled={isDisabled}
                             >
                               发起新任务
-                         </Button>
+                            </Button>
                           </Clickable>
                           : null
                       }

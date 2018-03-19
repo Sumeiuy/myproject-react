@@ -248,7 +248,6 @@ export default class AddMorningBoradcast extends PureComponent {
       name: '更新晨报音频文件',
     },
   })
-  @autobind
   onAudioChange({ fileList, file }) {
     if (file.status === 'uploading') {
       this.onAudioUploading(fileList);
