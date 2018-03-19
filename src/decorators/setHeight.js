@@ -14,17 +14,22 @@ import { dom, env } from '../helper';
 const config = {
   container: '#container', // 需要设置高度的容器
   content: '#content', // 需要设置高度的容器
+  utb: '#UTBContent',
 };
 
 export default (ComposedComponent) => {
   class SetHeightComponent extends PureComponent {
     componentDidMount() {
+      // 初始化当前系统
+      this.UTBContentElem = document.querySelector(config.utb);
+      this.setUTBContentMargin(0, 0, 0);
       // 监听window.onResize事件
       window.addEventListener('resize', this.onResizeChange, false);
       this.setContentHeight(true);
     }
 
     componentWillUnmount() {
+      this.setUTBContentMargin('10px', '30px', '10px');
       // 取消监听 window.onResize 事件
       window.removeEventListener('resize', this.onResizeChange);
       this.setContentHeight(false);
@@ -59,6 +64,14 @@ export default (ComposedComponent) => {
       dom.setStyle(pageContainer, 'height', flag ? `${pch}px` : 'auto');
       dom.setStyle(pageContent, 'height', flag ? '100%' : 'auto');
       dom.setStyle(childDiv, 'height', flag ? '100%' : 'auto');
+    }
+
+    // 设置系统容器的局部样式
+    @autobind
+    setUTBContentMargin(top, right, bottom) {
+      dom.setStyle(this.UTBContentElem, 'marginTop', top);
+      dom.setStyle(this.UTBContentElem, 'marginRight', right);
+      dom.setStyle(this.UTBContentElem, 'marginBottom', bottom);
     }
 
     render() {
