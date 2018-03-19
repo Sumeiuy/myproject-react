@@ -46,7 +46,7 @@ function RectFrame(props) {
 
 RectFrame.defaultProps = {
   desc: null,
-}
+};
 
 RectFrame.propTypes = {
   dataSource: PropTypes.object.isRequired,
