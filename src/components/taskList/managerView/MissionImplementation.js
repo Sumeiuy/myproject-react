@@ -21,6 +21,7 @@ import { env, permission, emp } from '../../../helper';
 import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
+import loadingImg from './img/loading.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -333,20 +334,20 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   getSourceSrc(source) {
-    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.fileName)}`;
+    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&fileName=${window.encodeURIComponent(source.fileName)}`;
   }
 
   @autobind
   renderCreateFileInfo(currentMissionReport) {
     const { isCreatingMotReport, createTime } = currentMissionReport;
     if (isCreatingMotReport) {
-      const text = '生成报告需要一些时间，请10分钟后点击此处刷新状态'; // 提示文本(来自需求)；
+      const text = '生成报告需要一些时间，请稍后点击此处刷新状态'; // 提示文本(来自需求)；
       return (
         <div>
           <span className={styles.line}>|</span>
           <Tooltip placement="bottomLeft" title={text}>
             <span className={styles.creatingBtn} onClick={this.queryMOTServeAndFeedBackExcel}>
-              <Icon type="shangchuan" className="icon" />
+              <img src={loadingImg} alt="刷新" />
               <span>正在生成最新报告</span>
             </span>
           </Tooltip>

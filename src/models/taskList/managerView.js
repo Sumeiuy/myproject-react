@@ -143,17 +143,15 @@ export default {
       });
     },
     * createMotReport({ payload }, { call, put }) {
-      const { resultData } = yield call(api.createMotReport, payload);
+      yield call(api.createMotReport, payload);
       const { missionId } = payload;
-      if (resultData) {
-        yield put({
-          type: 'createMotReportSuccess',
-          payload: {
-            isCreatingMotReport: true,
-            missionId,
-          },
-        });
-      }
+      yield put({
+        type: 'createMotReportSuccess',
+        payload: {
+          isCreatingMotReport: true,
+          missionId,
+        },
+      });
     },
     * queryMOTServeAndFeedBackExcel({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryMOTServeAndFeedBackExcel, payload);

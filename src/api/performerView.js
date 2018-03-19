@@ -43,8 +43,8 @@ export default function performerView(api) {
     // 执行者视图查客户
     queryCustomer: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustsServedByEmpId', query),
     // 任务列表管理者视图下任务实施简报的生成
-    createMotReport: query => api.post('/doClever/groovynoauth/fsp/campaign/mot/createMOTServeAndFeedBackExcel', query),
+    createMotReport: query => api.post('/groovynoauth/fsp/campaign/mot/createMOTFeedBackExcelFile', query),
     // 获取生成报告信息
-    queryMOTServeAndFeedBackExcel: query => api.post('/doClever/groovynoauth/fsp/campaign/mot/queryMOTServeAndFeedBackExcel', query),
+    queryMOTServeAndFeedBackExcel: query => api.post('/groovynoauth/fsp/campaign/mot/queryMOTFeedBackExcel', query),
   };
 }
