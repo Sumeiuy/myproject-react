@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 17:28:32
+ * @Last Modified time: 2018-03-12 09:47:13
  * 结果跟踪
  */
 
@@ -324,8 +324,9 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   getfirstAllowedDate() {
-    const { needApproval, storedData } = this.props;
-    const { timelyIntervalValue } = storedData.taskFormData;
+    const { needApproval, storedData = {} } = this.props;
+    const { taskFormData = {} } = storedData || {};
+    const { timelyIntervalValue } = taskFormData;
     const momentNow = moment();
     // 修正可以选择的开始时间
     const firstAllowedDate = timelyIntervalValue ? momentNow.add(Number(timelyIntervalValue), 'days') : momentNow;
@@ -353,7 +354,8 @@ export default class ResultTrack extends PureComponent {
   fixDays(value, reverse) {
     let days;
     const { needApproval, storedData } = this.props;
-    const { timelyIntervalValue } = storedData.taskFormData;
+    const { taskFormData = {} } = storedData || {};
+    const { timelyIntervalValue } = taskFormData;
     if (reverse) {
       days = needApproval ? value - timelyIntervalValue - 5 :
         value - timelyIntervalValue;

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:33:32
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-03-16 10:56:19
  * @description 单佣金申请内容区域
  */
 
@@ -16,6 +16,7 @@ import _ from 'lodash';
 import ChoiceApproverBoard from './ChoiceApproverBoard';
 import confirm from '../common/Confirm';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import AutoComplete from '../common/AutoComplete';
 import CommissionLine from './CommissionLine';
 import CommonUpload from '../common/biz/CommonUpload';
@@ -45,6 +46,7 @@ const effects = {
   match: 'commission/queryThreeMatchInfo',
   approver: 'commission/getAprovalUserList',
   clearRedux: 'commission/clearReduxState',
+  custCurrentCommission: 'commission/queryCustCurrentCommission',
 };
 
 // redux store
@@ -57,6 +59,8 @@ const mapStateToProps = state => ({
   matchInfo: state.commission.threeMatchInfo,
   // 审批人员列表
   approverList: state.commission.approvalUserList,
+  // 客户当前估计佣金率
+  custCurrentCommission: state.commission.custCurrentCommission,
 });
 
 // redux dispatch
@@ -71,6 +75,8 @@ const mapDispatchToProps = {
   queryApprovalList: getDataFunction(false, effects.approver),
   // 清除Redux
   clearRedux: getDataFunction(false, effects.clearRedux),
+  // 客户当前股基佣金率
+  queryCustCurrentCommission: getDataFunction(false, effects.custCurrentCommission),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
@@ -97,6 +103,9 @@ export default class SingleCreateBoard extends PureComponent {
     approverList: PropTypes.array.isRequired,
     queryApprovalList: PropTypes.func.isRequired,
     clearRedux: PropTypes.func.isRequired,
+    // 当前股基佣金率
+    custCurrentCommission: PropTypes.object.isRequired,
+    queryCustCurrentCommission: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -125,6 +134,8 @@ export default class SingleCreateBoard extends PureComponent {
       // 审批人
       approverName: '',
       approverId: '',
+      // 当前股基佣金率
+      newCurrentCommission: '--',
     };
   }
 
@@ -136,6 +147,22 @@ export default class SingleCreateBoard extends PureComponent {
       loginUser: empNum,
       btnId,
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { customer } = nextProps;
+    const { queryCustCurrentCommission } = this.props;
+    if (customer !== this.props.customer && !_.isEmpty(customer)) {
+      queryCustCurrentCommission({
+        brokerNumber: customer.custEcom,
+      }).then(() => {
+        const { custCurrentCommission } = this.props;
+        this.setState({
+          newCurrentCommission: _.isEmpty(custCurrentCommission) ||
+            _.isNull(custCurrentCommission.currentCommission) ? '--' : custCurrentCommission.currentCommission,
+        });
+      });
+    }
   }
 
   // 获取用户选择的数据
@@ -302,6 +329,14 @@ export default class SingleCreateBoard extends PureComponent {
     this.uploadComponent = input.getWrappedInstance();
   }
 
+  // 清空客户的同时需要同时去清空目标股基佣金率的值
+  @autobind
+  clearSelectCustCurComValue() {
+    this.setState({
+      newCurrentCommission: '--',
+    });
+  }
+
   render() {
     const {
       customer: { openRzrq },
@@ -318,6 +353,7 @@ export default class SingleCreateBoard extends PureComponent {
       choiceApprover,
       singleProductMatchInfo,
       userProductList,
+      newCurrentCommission,
     } = this.state;
 
     const newApproverList = approverList.map((item, index) => {
@@ -372,20 +408,29 @@ export default class SingleCreateBoard extends PureComponent {
       ref: this.uploadRef,
     };
 
+    const newCurrentCom = `${newCurrentCommission}‰`;
+
     return (
       <div className={styles.contentBox}>
         {/* 佣金产品 */}
         <div className={styles.approvalBlock}>
           <InfoTitle head="佣金产品选择" />
-          <CommissionLine label="目标股基佣金率" labelWidth="110px" needInputBox={false} extra={createCommon.permil}>
-            <AutoComplete
-              initValue={newCommission}
-              dataSource={gjList}
-              onChangeValue={this.changeTargetGJCommission}
-              onSelectValue={this.selectTargetGJCommission}
-              width="100px"
-            />
-          </CommissionLine>
+          <ul className={styles.commissionUlBox}>
+            <li className={styles.leftCurrentCom}>
+              <InfoItem label="当前股基佣金率" value={newCurrentCom} width="110px" valueColor="#9b9b9b" />
+            </li>
+            <li className={styles.rightTargetCom}>
+              <CommissionLine label="目标股基佣金率" labelWidth="110px" needInputBox={false} extra={createCommon.permil}>
+                <AutoComplete
+                  initValue={newCommission}
+                  dataSource={gjList}
+                  onChangeValue={this.changeTargetGJCommission}
+                  onSelectValue={this.selectTargetGJCommission}
+                  width="100px"
+                />
+              </CommissionLine>
+            </li>
+          </ul>
           <Transfer {...singleTransferProps} />
           <ThreeMatchTip info={singleProductMatchInfo} userList={userProductList} />
         </div>

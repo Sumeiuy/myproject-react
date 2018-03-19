@@ -14,6 +14,9 @@ import TargetCustomerRow from './TargetCustomerRow';
 
 import styles from './targetCustomer.less';
 
+// 当前分页条目
+const CURRENT_PAGE_SIZE = 10;
+
 export default class TargetCustomer extends PureComponent {
 
   static propTypes = {
@@ -88,12 +91,14 @@ export default class TargetCustomer extends PureComponent {
     if (_.isEmpty(list)) {
       return null;
     }
-    return list.map(item => <TargetCustomerRow
+    return list.map((item, index) => <TargetCustomerRow
       key={`${item.custId}-${item.missionFlowId}`}
       item={item}
       isFold={isFold}
       currentCustId={currentCustId}
       onClick={this.handleRowClick}
+      // 去除满数据时，最后一个item的border-bottom，一页10条
+      lastItemStyle={Number(index) + 1 === CURRENT_PAGE_SIZE ? styles.hideLastItemBorder : null}
     />);
   }
 

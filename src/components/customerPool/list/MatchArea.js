@@ -36,7 +36,6 @@ export default class MatchArea extends PureComponent {
     location: PropTypes.object.isRequired,
     listItem: PropTypes.object.isRequired,
     q: PropTypes.string.isRequired,
-    mainServiceManager: PropTypes.bool.isRequired,
   }
 
   constructor(props) {

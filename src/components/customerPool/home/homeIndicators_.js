@@ -42,6 +42,7 @@ export function getNewFormattedUnitAndItem(data) {
 }
 
 function getProgressDataSource({
+  descArray,
   dataArray,
   categoryArray,
   colorArray,
@@ -63,6 +64,7 @@ function getProgressDataSource({
         id: index,
         unit: finalData[index].unit,
         value: finalData[index].item,
+        description: descArray[index],
       }),
     );
     return items;
@@ -102,8 +104,10 @@ export function getPureAddCust({ pureAddData }) {
 export function getProductSale({
   numberArray,
   nameArray = ['公募基金', '证券投资类私募', '紫金产品', 'OTC'],
+  descArray,
 }) {
   const param = {
+    descArray,
     dataArray: numberArray,
     categoryArray: nameArray,
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
@@ -179,12 +183,12 @@ export function getClientsNumber({
 }
 
 // 经营指标的资产和交易量
-export function getTradingVolume({ numberArray, nameArray }) {
+export function getTradingVolume({ numberArray, nameArray, descArray }) {
   const finalTradingData = getNewFormattedUnitAndItem(numberArray);
   // { newUnit, items: thousandsFormatSeries || [] };
   return _.map(
     finalTradingData,
-    (item, index) => ({ ...item, title: (nameArray[index] || '--') }),
+    (item, index) => ({ ...item, title: (nameArray[index] || '--'), description: (descArray[index] || '--') }),
   );
 }
 
@@ -210,13 +214,14 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
     grid: {
       left: '15px',
       right: '15px',
-      bottom: '40px',
+      bottom: '0px',
       top: '30px',
       containLabel: false,
     },
     xAxis: {
       type: 'category',
-      data: ['必做MOT\n任务完成率', '服务\n覆盖率', '多元产\n品覆盖率', '客户信\n息完备率'],
+      triggerEvent: true,
+      data: ['', '', '', ''],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
@@ -224,6 +229,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
         fontSize: '12',
         interval: 0,
         margin: 6,
+        show: false,
       },
     },
     yAxis: {
@@ -244,9 +250,9 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const { value = '', name = '', key } = dataArray[i];
-    const { value: propertyValue } = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(value), name, key });
+    const { value = '', name = '', key, description } = dataArray[i];
+    const { value: propertyValue, description: propertyDesc } = dataArray[(i + 1)];
+    custArray.push({ value: filterEmptyToInteger(value), name, key, description, propertyDesc });
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
@@ -318,7 +324,7 @@ export function linkTo({
   location,
   empInfo,
   type = 'rightType',
-  permissionType,
+  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -339,7 +345,7 @@ export function linkTo({
     } else {
       obj.orgId = orgId;
     }
-  } else if (permissionType === 0) {
+  } else if (!authority) {
     // 0 表示用户没有权限
     obj.ptyMng = `${empName}_${empNum}`;
   }

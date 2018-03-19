@@ -85,6 +85,7 @@ export default class Detail extends PureComponent {
       page,
       currentNodeName,
       errorDesc,
+      appId: dataId,
     } = this.props.data;
     const {
       pageAssignment,
@@ -138,7 +139,7 @@ export default class Detail extends PureComponent {
                   errorDesc === config.errorArray[0]
                   ?
                     <p>
-                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId}&empId=${emp.getId()}`}>
+                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`}>
                         下载报错信息
                       </a>
                     </p>

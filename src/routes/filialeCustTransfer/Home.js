@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-06 12:10:43
+ * @Last Modified time: 2018-03-15 17:46:33
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Modal } from 'antd';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -21,7 +20,6 @@ import CreateFilialeCustTransfer from '../../components/filialeCustTransfer/Crea
 import FilialeCustTransferList from '../../components/common/appList';
 import ViewListRow from '../../components/filialeCustTransfer/ViewListRow';
 import Detail from '../../components/filialeCustTransfer/Detail';
-import { closeRctTab } from '../../utils';
 import { seibelConfig } from '../../config';
 import { emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
@@ -150,7 +148,6 @@ export default class FilialeCustTransfer extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.checkUserIsFiliale();
     this.state = {
       // 高亮项的下标索引
       activeRowIndex: 0,
@@ -170,13 +167,6 @@ export default class FilialeCustTransfer extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
-  }
-
-  componentWillReceiveProps({ custRangeList }) {
-    const oldCustRangeList = this.props.custRangeList;
-    if (!_.isEmpty(custRangeList) && oldCustRangeList !== custRangeList) {
-      this.checkUserIsFiliale();
-    }
   }
 
   // 获取右侧详情
@@ -239,35 +229,24 @@ export default class FilialeCustTransfer extends PureComponent {
         pageNum: 1,
         ...obj,
         id: '',
+        appId: '',
       },
     });
-    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id
-    this.queryAppList({ ...query, ...obj, id: '' }, 1, query.pageSize);
+    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
+    this.queryAppList({ ...query, ...obj, id: '', appId: '', }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
   @autobind
   checkUserIsFiliale() {
     const { custRangeList } = this.props;
+    let isFiliale = true;
     if (!_.isEmpty(custRangeList)) {
       if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        Modal.warning({
-          title: '提示',
-          content: '您不是分公司人员，无权操作！',
-          onOk: () => {
-            this.handleCloseTabPage();
-          },
-        });
+        isFiliale = false;
       }
     }
-  }
-
-  // 取消
-  @autobind
-  handleCloseTabPage() {
-    closeRctTab({
-      id: 'FSP_CROSS_DEPARTMENT',
-    });
+    return isFiliale;
   }
 
   @autobind
@@ -398,8 +377,10 @@ export default class FilialeCustTransfer extends PureComponent {
         pageType={pageType}
         needSubType={false}
         stateOptions={status}
+        empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        checkUserIsFiliale={this.checkUserIsFiliale}
       />
     );
 

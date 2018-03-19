@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
 
+import { openFspTab, closeRctTabById } from '../../utils';
 import confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
@@ -29,6 +30,10 @@ const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
 const newSubTypes = _.filter(subType, item => !!item.value);
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
@@ -71,6 +76,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 资讯订阅调整客户校验
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -581,6 +587,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
+  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
+  @autobind
+  clearSelectCust() {
+    this.singleBoard.clearSelectCustCurComValue();
+  }
+
   // 根据职责权限进行子类型选项
   @autobind
   authorityOptions(subTypes) {
@@ -652,6 +664,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.unSubBoard = input.getWrappedInstance();
   }
 
+  // 360订单流程 路由
+  @autobind
+  orderFlowRoute(cust) {
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-产品订单',
+      activeSubTab: '产品订单',
+    };
+    const { push } = this.props;
+    const { custType } = cust;
+    // pOrO代表个人客户，机构客户
+    const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main`;
+    openFspTab({
+      routerAction: push,
+      pathname: '/fsp/customerCenter/customerDetail',
+      url,
+      param,
+    });
+    // 关闭当前tab
+    closeRctTabById({ id: 'FSP_BUSINESS_APPLYMENT_COMMISSION' });
+  }
+
   render() {
     const {
       modalKey,
@@ -717,6 +752,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
+                      clearSelectCust={this.clearSelectCust}
+                      unfinishRoute={this.orderFlowRoute}
                     />
                   </CommissionLine>
                 )

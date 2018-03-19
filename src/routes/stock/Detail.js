@@ -91,7 +91,7 @@ export default class StockDetail extends PureComponent {
     } = dataDetail[id];
 
     // Д 为替换后端返回数据中的换行符而设置，无实际价值
-    const newDetail = detail.replace(/\r\n|\n\t|\t\n/g, 'Д');
+    const newDetail = detail.replace(/\r\n|\n\t|\t\n|\n/g, 'Д');
     const splitArray = newDetail.split('Д');
     return (
       <Layout className={styles.detailWrapper}>
