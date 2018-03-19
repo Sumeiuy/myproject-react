@@ -92,7 +92,7 @@ function logCreateTask(instance) {
       taskType = item.value;
     }
   });
-  const result = {
+  return {
     taskType,
     taskName,
     timelyIntervalValue: `${timelyIntervalValue}天`,
@@ -101,7 +101,6 @@ function logCreateTask(instance) {
     currentIndicatorDescription,
     isMissionInvestigationChecked,
   };
-  return result;
 }
 
 
