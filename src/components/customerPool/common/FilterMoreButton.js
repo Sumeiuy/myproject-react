@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Menu, Dropdown, Checkbox } from 'antd';
 
-import styles from './newMutiFilter.less';
+import styles from './filterMoreButton.less';
 
 const generateCheckStatus = (valueArray, name) => {
   const Statusitem = _.find(valueArray, item => item.name === name);
@@ -66,7 +66,7 @@ export default class FilterMoreButton extends PureComponent {
                   filterLabel: item.filterDesc,
                 })}
               >
-                {item.value}
+                <span title={item.filterDesc}>{item.filterDesc}</span>
               </Checkbox>
             </Menu.Item>
           ))

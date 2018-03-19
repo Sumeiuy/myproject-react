@@ -1,14 +1,16 @@
 .filter {
-  margin-right: 30px;
   display: inline-block;
+  margin-left: 5px;
+  vertical-align: super;
+  font-size: 14px;
   .filterContent {
     position: relative;
     display: inline-block;
     font-size: 14px;
-    vertical-align: middle;
     cursor: pointer;
     .filterValue {
       display: inline-block;
+      color: #333;
     }
     .icon {
       position: absolute;
@@ -29,13 +31,14 @@
      .ant-dropdown-menu-item {
       .ant-checkbox-wrapper {
         font-size: 14px;
-        color: #666;
+        color: #333;
+        font-weight: normal;
       }
     }
   }
 }
 .overflowAction {
-  max-width: 230px;
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

@@ -263,7 +263,6 @@ export default class TaskSearchRow extends PureComponent {
     });
   }
 
-
   @autobind
   handleSeeCust(value = {}) {
     const { currentFilterObject } = this.state;
@@ -296,12 +295,60 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
-  handleCancel() {
+  handleAccept() {
     const { onCancel } = this.props;
     this.setState({
       modalVisible: false,
     });
     onCancel();
+  }
+
+  @autobind
+  handleCancel() {
+    const { onChange, circlePeopleData, onCancel } = this.props;
+    const {
+      filterNumObject,
+      labelId,
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+     } = this.state;
+    const currentLabelInfo = _.find(circlePeopleData, item => item.id === labelId
+      || item.labelMapping === labelId) || {};
+
+    const finalFilterNumObject = {
+      [labelId]: currentLabelInfo.customNum,
+    };
+
+    this.setState({
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentFilterObject: {
+        ...currentFilterObject,
+        [labelId]: [],
+      },
+      currentAllFilterState: {
+        ...currentAllFilterState,
+        [labelId]: [],
+      },
+      allFiltersCloseIconState: {
+        ...allFiltersCloseIconState,
+        [labelId]: [],
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+      modalVisible: false,
+    });
+    onCancel();
+    onChange({
+      currentLabelId: labelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+    });
   }
 
   // 表格信息
@@ -532,6 +579,24 @@ export default class TaskSearchRow extends PureComponent {
       });
   }
 
+  @autobind
+  renderBottomButton() {
+    return (<div>
+      <Clickable
+        onClick={this.handleCancel}
+        eventName="/click/taskSearchRow/close"
+      >
+        <Button className={styles.modalButton} key="back" size="large">取消</Button>
+      </Clickable>
+      <Clickable
+        onClick={this.handleAccept}
+        eventName="/click/taskSearchRow/close"
+      >
+        <Button className={styles.modalButton} key="back" size="large" type="primary">确定</Button>
+      </Clickable>
+    </div>);
+  }
+
   render() {
     const {
       curPageNum = INITIAL_PAGE_NUM,
@@ -587,29 +652,20 @@ export default class TaskSearchRow extends PureComponent {
             key={currentModalKey}
             onCancel={this.handleCancel}
             width={1090}
-            footer={
-              <Clickable
-                onClick={this.handleCancel}
-                eventName="/click/taskSearchRow/close"
-              >
-                <Button className={styles.modalButton} key="back" size="large">确定</Button>
-              </Clickable>
-            }
+            footer={this.renderBottomButton()}
             wrapClassName={styles.labelCustModalContainer}
           >
-            <div className={styles.filter}>
-              <FilterCustomers
-                dict={dict}
-                currentItems={currentItems}
-                currentAllItems={currentAllItems}
-                filtersCloseIconState={filtersCloseIconState}
-                onFilterChange={this.handleFilterChange}
-                onCloseIconClick={this.onCloseIconClick}
-                onCheckMoreButton={this.onCheckFilterMoreButton}
-                source={currentSource}
-                sightingTelescopeFilters={sightingTelescopeFilters}
-              />
-            </div>
+            <FilterCustomers
+              dict={dict}
+              currentItems={currentItems}
+              currentAllItems={currentAllItems}
+              filtersCloseIconState={filtersCloseIconState}
+              onFilterChange={this.handleFilterChange}
+              onCloseIconClick={this.onCloseIconClick}
+              onCheckMoreButton={this.onCheckFilterMoreButton}
+              source={currentSource}
+              sightingTelescopeFilters={sightingTelescopeFilters}
+            />
             {
               _.isEmpty(custTableData) ?
                 <div className={styles.emptyContent}>

@@ -7,8 +7,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-/* import classnames from 'classnames'; */
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import { isSightingScope } from '../../helper';
 import SingleFilter from '../../common/NewSingleFilter';
 import MultiFilter from '../../common/NewMutiFilter';
@@ -75,10 +75,18 @@ export default class Filter extends PureComponent {
       const backfillValue = (target || '').split('.')[1] || '';
 
       const statusItem = _.find(filtersCloseIconState, item => item.name === obj.filterCode);
-      const status = (statusItem && statusItem.status) || true;
+      let status = statusItem && statusItem.status;
+      if (status === undefined) {
+        status = true;
+      }
+      const cls = classnames({
+        [styles.filter]: true,
+        [styles.hidden]: status,
+      });
+
       // 筛选出来对应筛选条件的hideCloseIcon状态
       return (
-        <div className={styles.filter}>
+        <div className={cls}>
           <SingleFilter
             key={obj.filterCode}
             value={backfillValue}
@@ -110,9 +118,9 @@ export default class Filter extends PureComponent {
       _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
-
+/*     debugger; */
     return (
-      <div className={styles.filterMoreButton}>
+      <div className={styles.filter}>
         <FilterMoreButton
           valueArray={filtersCloseIconState}
           labelArray={sightingTelescopeFilters.filterList}
@@ -144,56 +152,60 @@ export default class Filter extends PureComponent {
 
 
     return (
-      <div className={styles.filterSection}>
-        <div className={styles.filter}>
-          <SingleFilter
-            value={currentValue.CustomType || ''}
-            filterLabel="客户性质"
-            filter="CustomType"
-            filterField={dict.custNature}
-            onChange={onFilterChange}
-          />
+      <div className={styles.mainFilter}>
+        <div className={styles.filterSection}>
+          <div className={styles.filter}>
+            <SingleFilter
+              value={currentValue.CustomType || ''}
+              filterLabel="客户性质"
+              filter="CustomType"
+              filterField={dict.custNature}
+              onChange={onFilterChange}
+            />
+          </div>
+          <div className={styles.filter}>
+            <SingleFilter
+              value={currentValue.CustClass || ''}
+              filterLabel="客户类型"
+              filter="CustClass"
+              filterField={dict.custType}
+              onChange={onFilterChange}
+            />
+          </div>
+          <div className={styles.filter}>
+            <SingleFilter
+              value={currentValue.RiskLvl || ''}
+              filterLabel="风险等级"
+              filter="RiskLvl"
+              filterField={dict.custRiskBearing}
+              onChange={onFilterChange}
+            />
+          </div>
+          <div className={styles.filter}>
+            <MultiFilter
+              value={currentValue.Rights || ''}
+              valueArray={valueForCustBusinessType}
+              filterLabel="已开通业务"
+              filter="Rights"
+              filterField={dict.custBusinessType}
+              onChange={onFilterChange}
+            />
+          </div>
+          <div className={styles.filter}>
+            <MultiFilter
+              value={currentValue.Unrights || ''}
+              valueArray={valueForUnrightBusinessType}
+              filterLabel="可开通业务"
+              filter="Unrights"
+              filterField={dict.custUnrightBusinessType}
+              onChange={onFilterChange}
+            />
+          </div>
+          {this.renderMoreFilterSelect()}
         </div>
-        <div className={styles.filter}>
-          <SingleFilter
-            value={currentValue.CustClass || ''}
-            filterLabel="客户类型"
-            filter="CustClass"
-            filterField={dict.custType}
-            onChange={onFilterChange}
-          />
+        <div className={styles.filterSection}>
+          {this.renderSightingTelescopeFilter()}
         </div>
-        <div className={styles.filter}>
-          <SingleFilter
-            value={currentValue.RiskLvl || ''}
-            filterLabel="风险等级"
-            filter="RiskLvl"
-            filterField={dict.custRiskBearing}
-            onChange={onFilterChange}
-          />
-        </div>
-        <div className={styles.filter}>
-          <MultiFilter
-            value={currentValue.Rights || ''}
-            valueArray={valueForCustBusinessType}
-            filterLabel="已开通业务"
-            filter="Rights"
-            filterField={dict.custBusinessType}
-            onChange={onFilterChange}
-          />
-        </div>
-        <div className={styles.filter}>
-          <MultiFilter
-            value={currentValue.Unrights || ''}
-            valueArray={valueForUnrightBusinessType}
-            filterLabel="可开通业务"
-            filter="Unrights"
-            filterField={dict.custUnrightBusinessType}
-            onChange={onFilterChange}
-          />
-        </div>
-        {this.renderMoreFilterSelect()}
-        {this.renderSightingTelescopeFilter()}
       </div>
     );
   }
