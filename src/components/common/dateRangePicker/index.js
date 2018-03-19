@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-17 15:03:54
+ * @Last Modified time: 2018-03-19 10:25:47
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -39,8 +39,9 @@ export default class CommonDateRangePicker extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      endDate: props.initialDate[0],
-      startDate: props.initialDate[1],
+      startDate: props.initialDate[0],
+      endDate: props.initialDate[1],
+      dateHasChanged: false,
     };
   }
 
@@ -49,7 +50,14 @@ export default class CommonDateRangePicker extends PureComponent {
     this.drp = input;
   }
 
+  // 格式化日期
+  @autobind
+  formateDate(date) {
+    const { displayFormat } = this.props;
+    return date.format(displayFormat);
+  }
 
+  // 计算日历下拉框的位置
   @autobind
   calcCalendarPosition() {
     const { width: viewWidth } = dom.getRect(document.body);
@@ -67,9 +75,10 @@ export default class CommonDateRangePicker extends PureComponent {
     }
   }
 
+  // 切换了日期
   @autobind
   handleDatesChange({ startDate, endDate }) {
-    this.setState({ startDate, endDate });
+    this.setState({ startDate, endDate, dateHasChanged: true });
   }
 
   @autobind
@@ -90,12 +99,17 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   handleCalenderClose(obj) {
+    // 判断时间是否改变了
     const { startDate, endDate } = obj;
-    const { displayFormat } = this.props;
-    this.props.onChange([
-      startDate.format(displayFormat),
-      endDate.format(displayFormat),
-    ]);
+    if (this.state.dateHasChanged) {
+      this.setState({
+        dateHasChanged: false,
+      });
+      this.props.onChange([
+        this.formateDate(startDate),
+        this.formateDate(endDate),
+      ]);
+    }
   }
 
   render() {

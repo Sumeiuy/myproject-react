@@ -14,7 +14,6 @@ import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
-import tableStyles from '../groupManage/groupTable.less';
 import Clickable from '../../../components/common/Clickable';
 import FilterCustomers from './step1/FilterCustomers';
 import { isSightingScope } from '../helper';
@@ -98,6 +97,7 @@ export default class TaskSearchRow extends PureComponent {
       argsOfQueryCustomer = {},
       currentFilterObject,
       currentAllFilterState,
+      allFiltersCloseIconState,
       filterNumObject,
     } = labelCust || {};
 
@@ -111,6 +111,7 @@ export default class TaskSearchRow extends PureComponent {
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
       currentAllFilterState: _.isEmpty(currentAllFilterState) ? {} : currentAllFilterState,
+      allFiltersCloseIconState: _.isEmpty(allFiltersCloseIconState) ? {} : allFiltersCloseIconState,
       filterNumObject: _.isEmpty(filterNumObject) ? {} : filterNumObject,
       // 当前筛选条件
       argsOfQueryCustomer,
@@ -125,7 +126,13 @@ export default class TaskSearchRow extends PureComponent {
   // 获取当前筛选客户查询条件
   @autobind
   getSelectFilters() {
-    return _.pick(this.state, ['filterNumObject', 'argsOfQueryCustomer', 'currentFilterObject', 'currentAllFilterState']);
+    return _.pick(this.state, [
+      'filterNumObject',
+      'argsOfQueryCustomer',
+      'currentFilterObject',
+      'currentAllFilterState',
+      'allFiltersCloseIconState',
+    ]);
   }
 
   /**
@@ -372,6 +379,35 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  onCheckFilterMoreButton(obj) {
+    const { labelId, allFiltersCloseIconState } = this.state;
+    const newFilterStatusArray =
+      allFiltersCloseIconState[labelId] ? [...allFiltersCloseIconState[labelId]] : [];
+    const index = _.findIndex(newFilterStatusArray, o => o.name === obj.name);
+    const filterStatusItem = {
+      name: obj.name,
+      status: obj.status,
+    };
+    if (index > -1) {
+      newFilterStatusArray[index] = filterStatusItem;
+    } else {
+      newFilterStatusArray.push(filterStatusItem);
+    }
+    this.setState({
+      allFiltersCloseIconState: {
+        ...allFiltersCloseIconState,
+        [labelId]: newFilterStatusArray,
+      },
+    });
+  }
+
+  // 瞄准镜关闭按钮状态切换并保存allFiltersCloseIconState
+  @autobind
+  onCloseIconClick(obj) {
+    this.onCheckFilterMoreButton(obj);
+  }
+
+  @autobind
   renderFilterTooltip(filters) {
     let stringArray = _.map(filters, (filterObj) => {
       if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
@@ -386,8 +422,8 @@ export default class TaskSearchRow extends PureComponent {
     return (
       <div className={styles.filterTooltip}>
         {
-          _.map(stringArray, filter => (
-            <div className={styles.toolTipItem} key={filter.name}>
+          _.map(stringArray, (filter, index) => (
+            <div className={styles.toolTipItem} key={index}>
               <span className={styles.title}>{`${filter.title}：`}</span>
               <span className={styles.tipsContent}>{filter.value}</span>
             </div>))
@@ -416,7 +452,7 @@ export default class TaskSearchRow extends PureComponent {
           overlayClassName={styles.filtersTooltip}
           getPopupContainer={this.getPopupContainer}
           placement="bottomLeft"
-          trigger="click"
+          trigger="hover"
         >
           <div className={styles.selectFiltersInfo}>
             {this.getFilterInfo(filters)}
@@ -502,6 +538,7 @@ export default class TaskSearchRow extends PureComponent {
       custTableData,
       currentFilterObject,
       currentAllFilterState,
+      allFiltersCloseIconState,
       currentSource,
       labelId,
       filterNumObject,
@@ -521,6 +558,7 @@ export default class TaskSearchRow extends PureComponent {
 
     const currentItems = currentFilterObject[labelId] || [];
     const currentAllItems = currentAllFilterState[labelId] || [];
+    const filtersCloseIconState = allFiltersCloseIconState[labelId] || [];
     const totalRecordNum = filterNumObject[labelId] || 0;
 
     const cls = classnames({
@@ -544,19 +582,19 @@ export default class TaskSearchRow extends PureComponent {
             visible={modalVisible}
             title={currentSelectLabelName || ''}
             maskClosable={false}
-            closable={false}
             // 关闭弹框时，销毁子元素，不然数据会复用,antd升级这个api才会有，所以先用key代替这个api
             destroyOnClose
             key={currentModalKey}
+            onCancel={this.handleCancel}
+            width={1090}
             footer={
               <Clickable
                 onClick={this.handleCancel}
                 eventName="/click/taskSearchRow/close"
               >
-                <Button key="back" size="large">确定</Button>
+                <Button className={styles.modalButton} key="back" size="large">确定</Button>
               </Clickable>
             }
-            width={700}
             wrapClassName={styles.labelCustModalContainer}
           >
             <div className={styles.filter}>
@@ -564,7 +602,10 @@ export default class TaskSearchRow extends PureComponent {
                 dict={dict}
                 currentItems={currentItems}
                 currentAllItems={currentAllItems}
+                filtersCloseIconState={filtersCloseIconState}
                 onFilterChange={this.handleFilterChange}
+                onCloseIconClick={this.onCloseIconClick}
+                onCheckMoreButton={this.onCheckFilterMoreButton}
                 source={currentSource}
                 sightingTelescopeFilters={sightingTelescopeFilters}
               />
@@ -586,7 +627,6 @@ export default class TaskSearchRow extends PureComponent {
                   tableClass={
                     classnames({
                       [styles.labelCustTable]: true,
-                      [tableStyles.groupTable]: true,
                     })
                   }
                   isFixedTitle={false}
