@@ -22,6 +22,7 @@ import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
 import { emp, url as urlHelper } from '../../../helper';
+import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
 
@@ -86,6 +87,9 @@ export default class ManagerViewDetail extends PureComponent {
     serveManagerCount: PropTypes.number.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    missionReport: PropTypes.object.isRequired,
+    createMotReport: PropTypes.func.isRequired,
+    queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -150,6 +154,12 @@ export default class ManagerViewDetail extends PureComponent {
    * 关闭弹出框
    */
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '关闭客户详情modal',
+    },
+  })
   handleCloseModal() {
     this.scrollModalBodyToTop();
     this.hideCustDetailModal();
@@ -412,6 +422,9 @@ export default class ManagerViewDetail extends PureComponent {
       isCustServedByPostn,
       custServedByPostnResult,
       currentId,
+      missionReport,
+      createMotReport,
+      queryMOTServeAndFeedBackExcel,
     } = this.props;
 
     const {
@@ -522,15 +535,15 @@ export default class ManagerViewDetail extends PureComponent {
                   onCancelHandler={this.handleCloseModal}
                   footer={
                     <div className={styles.operationBtnSection}>
-                      <Clickable
+                      <Button
+                        className={styles.cancel}
                         onClick={this.handleCloseModal}
-                        eventName="/click/managerViewCustDetail/cancel"
                       >
-                        <Button className={styles.cancel}>取消</Button>
-                      </Clickable>
+                        取消
+                      </Button>
                       {/**
-                   * 暂时隐藏导出按钮,等后台性能恢复，再放开
-                   */}
+                       * 暂时隐藏导出按钮,等后台性能恢复，再放开
+                       */}
                       {
                         falseValue ? <Clickable
                           eventName="/click/managerViewCustDetail/export"
@@ -554,7 +567,7 @@ export default class ManagerViewDetail extends PureComponent {
                               disabled={isDisabled}
                             >
                               发起新任务
-                         </Button>
+                            </Button>
                           </Clickable>
                           : null
                       }
@@ -609,6 +622,10 @@ export default class ManagerViewDetail extends PureComponent {
               missionProgressStatusDic={missionProgressStatusDic}
               ref={ref => (this.missionImplementationElem = ref)}
               currentId={currentId}
+              urlParams={urlParams}
+              missionReport={missionReport}
+              createMotReport={createMotReport}
+              queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
             />
           </div>
           <div className={styles.missionFeedbackSection}>
