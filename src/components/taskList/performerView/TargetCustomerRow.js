@@ -57,7 +57,12 @@ export default class TargetCustomerRow extends PureComponent {
     onClick: PropTypes.func.isRequired,
     // 当前选中的客户id
     currentCustId: PropTypes.string.isRequired,
+    lastItemStyle: PropTypes.string,
   }
+
+  static defaultProps = {
+    lastItemStyle: null,
+  };
 
   @autobind
   handleClick() {
@@ -125,7 +130,7 @@ export default class TargetCustomerRow extends PureComponent {
     return (<span
       className={`${styles.riskLevel} ${styles[cls]}`}
     >
-      { name }
+      {name}
     </span>);
   }
 
@@ -142,6 +147,7 @@ export default class TargetCustomerRow extends PureComponent {
       isFold,
       item = {},
       currentCustId = '',
+      lastItemStyle,
     } = this.props;
     const {
       missionStatusValue,
@@ -167,7 +173,7 @@ export default class TargetCustomerRow extends PureComponent {
       [styles.long]: isFold,
     });
     return (
-      <div className={rowItemCls} onClick={this.handleClick}>
+      <div className={`${rowItemCls} ${lastItemStyle || ''}`} onClick={this.handleClick}>
         <div className={styles.status}>{missionStatusValue}</div>
         <div className={customerInfoCls}>
           <div className={styles.custInfoWrap}>

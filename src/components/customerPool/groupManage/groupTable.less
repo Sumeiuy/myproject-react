@@ -52,6 +52,16 @@
     .ant-table-scroll {
       .scrollBarIEStyle;
     }
+    .emptyRow {
+      pointer-events: none;
+      cursor: none;
+      :global {
+        // 空白行，清除选中项
+        .ant-checkbox-wrapper {
+          display: none;
+        }
+      }
+    }
   }
   .totalPageSection {
     font-size: 12px;

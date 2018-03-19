@@ -97,7 +97,7 @@ const mapStateToProps = state => ({
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
-  // 是否包含非本人名下客户
+  // 是否是本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
   sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
   // 是否包含非本人名下客户和超出1000条数据限制
@@ -136,7 +136,7 @@ const mapDispatchToProps = {
   }),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  // 查询是否包含本人名下客户
+  // 查询单个客户是否本人名下
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
   // 查询是否包含非本人名下客户和超出1000条数据限制
