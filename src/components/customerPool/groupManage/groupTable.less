@@ -7,6 +7,7 @@
 }
 .groupTable {
   padding: 15px 20px 20px 15px;
+  padding-bottom: 0;
   table {
     border: 1px solid #ddd;
   }
@@ -19,28 +20,19 @@
     padding-top: 11px;
     font-size: 14px;
     color: #727272;
-    text-align: left !important;
-  }
-  table > thead > tr > th:first-child, tbody > tr > td:first-child {
-    padding-left: 40px;
-    padding-right: 10px;
+    text-align: left;
   }
   table > thead > tr > th {
     background-color: #fff;
     color: #333;
-    text-align: left !important;
+    text-align: left;
     font-weight: 600;
   }
+
   table > tbody > tr > td {
     border-bottom: 0;
   }
-  .column {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-  }
+
   :global {
     .mini {
       display: flex;
@@ -62,6 +54,16 @@
         }
       }
     }
+    .hideLastItemBorder {
+      border-bottom: 0;
+    }
+    .column {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
   }
   .totalPageSection {
     font-size: 12px;
@@ -71,7 +73,6 @@
     }
   }
   .operation {
-    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -91,6 +92,5 @@
 }
 
 .pagination {
-  margin-right: 20px;
   padding-bottom: 10px;
 }

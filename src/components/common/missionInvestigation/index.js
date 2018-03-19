@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-18 18:24:42
+ * @Last Modified time: 2018-03-18 21:02:48
  * 任务调查
  */
 
@@ -544,6 +544,7 @@ export default class MissionInvestigation extends PureComponent {
         </div>
         <GroupModal
           wrappedComponentRef={this.getModalContainerRef}
+          ref={ref => (this.modalContainerRef = ref)}
           wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
           closable
           visible={isShowTable}

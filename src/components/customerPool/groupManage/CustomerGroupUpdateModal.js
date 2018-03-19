@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 21:40:33
+ * @Last Modified time: 2018-03-19 10:20:39
  */
 
 import React, { PureComponent } from 'react';
@@ -64,6 +64,21 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   }
 
   @autobind
+  getInstance() {
+    return this.modalInstance;
+  }
+
+  @autobind
+  getData() {
+    return this.a;
+  }
+
+  @autobind
+  setInstance(ref) {
+    return this.a = ref;
+  }
+
+  @autobind
   handleCancel() {
     const { visible } = this.state;
     const { onCancelHandler } = this.props;
@@ -89,30 +104,37 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       wrappedComponentRef,
     } = this.props;
     const { visible } = this.state;
+    const modalNode = (
+      <Modal
+        wrappedComponentRef={this.setInstance}
+        wrapClassName={wrapperClass}
+        visible={visible}
+        title={title}
+        onOk={onOkHandler}
+        okText={okText}
+        okType={okType}
+        cancelText={cancelText}
+        maskClosable={false}
+        width={modalWidth}
+        onCancel={this.handleCancel}
+        closable={closable}
+        footer={footer}
+        style={modalStyle}
+      >
+        {
+          modalContent
+        }
+      </Modal>
+    );
+
+    this.modalInstance = modalNode;
+
     return (
       <div
         className={styles.groupUpdateWrapper}
         ref={wrappedComponentRef}
       >
-        <Modal
-          wrapClassName={wrapperClass}
-          visible={visible}
-          title={title}
-          onOk={onOkHandler}
-          okText={okText}
-          okType={okType}
-          cancelText={cancelText}
-          maskClosable={false}
-          width={modalWidth}
-          onCancel={this.handleCancel}
-          closable={closable}
-          footer={footer}
-          style={modalStyle}
-        >
-          {
-            modalContent
-          }
-        </Modal>
+        {modalNode}
       </div>
     );
   }
