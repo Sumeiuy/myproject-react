@@ -1,13 +1,13 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:13:17
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-14 17:46:40
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -15,7 +15,6 @@ import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import { openFspTab } from '../../../utils';
-import { emp } from '../../../helper';
 import styles from './customerRow.less';
 
 import maleAvator from './img/icon-avator.png';
@@ -119,7 +118,6 @@ export default class CustomerRow extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
-    mainServiceManager: PropTypes.bool,
     handleCheck: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
@@ -127,7 +125,6 @@ export default class CustomerRow extends PureComponent {
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
   }
@@ -135,7 +132,6 @@ export default class CustomerRow extends PureComponent {
   static defaultProps = {
     q: '',
     selectedIds: [],
-    mainServiceManager: false,
   }
 
   constructor(props) {
@@ -151,40 +147,28 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
-      isCustServedByPostn,
     } = this.props;
-    const postnId = emp.getPstnId();
-    // 跳转之前查询一下是否包含非本人名下客户
-    isCustServedByPostn({
-      postnId,
-      custId,
-    }).then(() => {
-      if (this.props.custServedByPostnResult) {
-        // pOrO代表个人客户，机构客户
-        const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
-        const param = {
-          id: 'FSP_360VIEW_M_TAB',
-          title: '客户360视图-客户信息',
-          forceRefresh: true,
-        };
-        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-        // TODOTAB: 如何与后端是动态接口
-        openFspTab({
-          routerAction: push,
-          url,
-          pathname: '/fsp/customerCenter/customerDetail',
-          param,
-          state: {
-            url,
-          },
-        });
-      } else {
-        message.error('客户非本人名下客户，不能查看客户360视图');
-      }
+    // pOrO代表个人客户，机构客户
+    const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+    };
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+    // TODOTAB: 如何与后端是动态接口
+    openFspTab({
+      routerAction: push,
+      url,
+      pathname: '/fsp/customerCenter/customerDetail',
+      param,
+      state: {
+        url,
+      },
     });
   }
 
@@ -207,17 +191,17 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  // 是否允许进入列表项对应的360详情
-  toDetailPermissibility() {
+  // 判断是否为主服务经理
+  @autobind
+  isMainService() {
     const {
-      view360Permit,
       empInfo,
       listItem: {
         empId,
       },
     } = this.props;
-    // 有HTSC 总部执行岗， HTSC 分中心执行岗,或是客户的主服务经理 控制绩效数据的客户范围展示权限
-    return view360Permit || empInfo.rowId === empId;
+    // 登录者用户中的rowId和客户的主服务经理的工号是否一致
+    return empInfo.rowId === empId;
   }
 
   @autobind
@@ -254,7 +238,7 @@ export default class CustomerRow extends PureComponent {
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    if (this.toDetailPermissibility()) {
+    if (this.isMainService()) {
       return (
         <Clickable
           onClick={this.toDetail}
@@ -280,7 +264,6 @@ export default class CustomerRow extends PureComponent {
   // 是否显示快捷菜单
   renderQuickMenu() {
     const {
-      empInfo: { rowId },
       listItem,
       toggleServiceRecordModal,
       custEmail,
@@ -292,7 +275,7 @@ export default class CustomerRow extends PureComponent {
       entertype,
       goGroupOrTask,
     } = this.props;
-    if (listItem.empId === rowId) {
+    if (this.isMainService()) {
       return (<QuickMenu
         listItem={listItem}
         createModal={this.createModal}
@@ -317,7 +300,7 @@ export default class CustomerRow extends PureComponent {
         name,
       },
     } = this.props;
-    if (this.toDetailPermissibility()) {
+    if (this.isMainService()) {
       return name ? (
         <Clickable
           onClick={this.toDetail}
@@ -337,7 +320,6 @@ export default class CustomerRow extends PureComponent {
       location,
       dict,
       formatAsset,
-      mainServiceManager,
       empInfo: { rowId },
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
@@ -455,7 +437,6 @@ export default class CustomerRow extends PureComponent {
                 dict={dict}
                 location={location}
                 listItem={listItem}
-                mainServiceManager={mainServiceManager}
               />
             </div>
           </div>

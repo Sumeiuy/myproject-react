@@ -19,6 +19,7 @@
     "lint:less": "stylelint src/**/*.less --config .stylelintrc",
     "lint:fsp": "stylelint fspSrc/**/*.less --config .stylelintrc"
   },
+  "//": ["node --max_old_space_size=4096 build/dev-server.js"],
   "keywords": [],
   "dependencies": {
     "add-dom-event-listener": "^1.0.2",
@@ -46,6 +47,7 @@
     "rc-form": "^1.4.3",
     "rc-util": "^4.3.1",
     "react": "^15.1.0",
+    "react-dates": "^16.3.6",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.1",
     "react-dom": "^15.4.1",

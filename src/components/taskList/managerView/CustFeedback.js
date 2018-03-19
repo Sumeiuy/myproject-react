@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 16:16:42
+ * @Last Modified time: 2018-03-15 17:12:38
  * 客户反馈
  */
 
@@ -90,26 +90,43 @@ export default class CustFeedback extends PureComponent {
   @autobind
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
+    const { level1Data } = this.state;
+    // 构造全部一级反馈
+    const currentFeedback = _.map(level1Data, item => ({
+      feedBackIdL1: item.key,
+      feedbackName: item.name,
+    }));
+
     let currentLevel = {};
     if (!_.isEmpty(parent)) {
       // 代表点击的是外圈，也就是二级反馈
       // 取出parent的key
       currentLevel = {
         feedBackIdL1: parent.key,
-        name: `选择【${parent.name}】的客户`,
+        feedbackName: parent.name,
+        // 等二级反馈再改成动态的
+        // feedbackTitle: `选择【${parent.name}】的客户`,
+        feedbackTitle: '已服务反馈客户',
       };
     } else if (!_.isEmpty(children)) {
       // 代表点击的是内圈，也就是一级反馈
       // 取出当前的key
       currentLevel = {
         feedBackIdL1: key,
-        name: `选择【${name}】的客户`,
+        feedbackName: name,
+        // 等二级反馈再改成动态的
+        // feedbackTitle: `选择【${name}】的客户`,
+        feedbackTitle: '已服务反馈客户',
       };
     }
 
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
-      currentLevel,
+      // 当前选中的反馈类型
+      currentSelectFeedback: currentLevel,
+      // 当前所有一级反馈类型
+      // 二级反馈等后台支持，再加上
+      currentFeedback,
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,

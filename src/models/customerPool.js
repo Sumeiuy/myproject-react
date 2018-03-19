@@ -108,7 +108,7 @@ export default {
     // 可查询服务人员列表
     searchServerPersonList: EMPTY_LIST,
     // 列表页的服务营业部
-    serviceDepartment: EMPTY_LIST,
+    serviceDepartment: EMPTY_OBJECT,
     // 标签圈人
     circlePeopleData: [],
     peopleOfLabelData: {},

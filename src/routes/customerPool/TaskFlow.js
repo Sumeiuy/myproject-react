@@ -13,7 +13,7 @@ import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper, dva } from '../../helper';
+import { emp, permission, env as envHelper, number, dva } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
@@ -607,58 +607,6 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-  // 新建任务上报日志
-  feedbackTaskFlowLog() {
-    const { dispatch } = dva;
-    const { storedTaskFlowData, dict: { missionType = {} } } = this.props;
-    const {
-      taskFormData: {
-        taskType: taskTypeCode,
-        timelyIntervalValue,
-        taskName,
-      },
-      custSegment: {
-        custSource: segmentCustSource,
-      },
-      labelCust: {
-        custSource: lableCustSource,
-      },
-      resultTrackData: {
-        trackWindowDate = '无',
-        currentIndicatorDescription = '无',
-      },
-      missionInvestigationData: {
-        isMissionInvestigationChecked = false,
-      },
-      currentEntry,
-    } = storedTaskFlowData;
-    let custSource;
-    if (currentEntry === 0) {
-      custSource = segmentCustSource;
-    } else {
-      custSource = lableCustSource;
-    }
-    let taskType = '';
-    _.map(missionType, (item) => {
-      if (item.key === taskTypeCode) {
-        taskType = item.value;
-      }
-    });
-    const result = {
-      taskType,
-      taskName,
-      timelyIntervalValue: `${timelyIntervalValue}天`,
-      custSource,
-      trackWindowDate: `${trackWindowDate}天`,
-      currentIndicatorDescription,
-      isMissionInvestigationChecked,
-    };
-    dispatch({
-      type: 'ButtonClick',
-      payload: result,
-    });
-  }
-
   @autobind
   handleSubmitTaskFlow() {
     const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
@@ -797,7 +745,7 @@ export default class TaskFlow extends PureComponent {
         },
       };
     }
-    this.feedbackTaskFlowLog();
+
     submitTaskFlow({ ...postBody });
   }
 
