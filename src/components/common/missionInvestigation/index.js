@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-19 14:17:09
+ * @Last Modified time: 2018-03-19 14:48:09
  * 任务调查
  */
 
@@ -342,6 +342,8 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   scrollModalBodyToTop() {
     // 翻页之后，恢复当前页面表格的滚动，在小屏的情况下
+    // 因为取不到Modal的Dialog,这里用container前缀的情况下，querySelector
+    // 最好不用JS操作CSS
     const problemListModalContainer = document.querySelector('.problemListModalContainer .ant-modal-body');
     if (problemListModalContainer) {
       problemListModalContainer.scrollTop = 0;

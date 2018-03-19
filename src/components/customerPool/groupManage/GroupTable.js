@@ -367,10 +367,6 @@ export default class GroupTable extends PureComponent {
             if (!_.isEmpty(record.flag)) {
               return 'emptyRow';
             }
-            // 去除满数据时，最后一个item的border-bottom，一页{curPageSize}条
-            if (Number(index) + 1 === Number(curPageSize)) {
-              return 'hideLastItemBorder';
-            }
 
             return '';
           }}
