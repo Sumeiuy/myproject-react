@@ -212,10 +212,10 @@ export function getServiceIndicatorOfManage({ motOkMnt, motTotMnt, taskCust, tot
 export function getServiceIndicatorOfPerformance({ performanceData }) {
   return {
     grid: {
-      left: '15px',
-      right: '15px',
+      left: '0px',
+      right: '0px',
       bottom: '0px',
-      top: '30px',
+      top: '20px',
       containLabel: false,
     },
     xAxis: {
@@ -324,7 +324,7 @@ export function linkTo({
   location,
   empInfo,
   type = 'rightType',
-  authority,
+  permissionType,
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -345,7 +345,7 @@ export function linkTo({
     } else {
       obj.orgId = orgId;
     }
-  } else if (!authority) {
+  } else if (permissionType === 0) {
     // 0 表示用户没有权限
     obj.ptyMng = `${empName}_${empNum}`;
   }

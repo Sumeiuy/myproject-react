@@ -14,8 +14,8 @@ import TargetCustomerRow from './TargetCustomerRow';
 
 import styles from './targetCustomer.less';
 
-// 当前分页条目
-const CURRENT_PAGE_SIZE = 10;
+// // 当前分页条目
+// const CURRENT_PAGE_SIZE = 10;
 
 export default class TargetCustomer extends PureComponent {
 
@@ -91,15 +91,17 @@ export default class TargetCustomer extends PureComponent {
     if (_.isEmpty(list)) {
       return null;
     }
-    return list.map((item, index) => <TargetCustomerRow
-      key={`${item.custId}-${item.missionFlowId}`}
-      item={item}
-      isFold={isFold}
-      currentCustId={currentCustId}
-      onClick={this.handleRowClick}
-      // 去除满数据时，最后一个item的border-bottom，一页10条
-      lastItemStyle={Number(index) + 1 === CURRENT_PAGE_SIZE ? styles.hideLastItemBorder : null}
-    />);
+    return list.map(item =>
+      <div className={styles.listWrap}>
+        <TargetCustomerRow
+          key={`${item.custId}-${item.missionFlowId}`}
+          item={item}
+          isFold={isFold}
+          currentCustId={currentCustId}
+          onClick={this.handleRowClick}
+        />
+      </div>,
+    );
   }
 
   render() {

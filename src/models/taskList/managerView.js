@@ -11,6 +11,9 @@ import { performerView as api } from '../../api';
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
+const STATUS_FILE_CREATING = 'DOING'; // 正在创建报告
+const STATUS_FILE_DONE = 'DONE'; // 创建报告完成
+
 export default {
   namespace: 'managerView',
   state: {
@@ -25,6 +28,8 @@ export default {
     // 任务实施进度数据
     missionImplementationDetail: EMPTY_OBJ,
     exportExcel: {},
+    // 生成任务报告相关信息
+    missionReport: EMPTY_OBJ,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -67,6 +72,26 @@ export default {
       return {
         ...state,
         exportExcel: payload,
+      };
+    },
+    createMotReportSuccess(state, action) {
+      const { payload } = action;
+      const { missionId } = payload;
+      return {
+        ...state,
+        missionReport: {
+          [missionId]: payload,
+        },
+      };
+    },
+    queryMOTServeAndFeedBackExcelSuccess(state, action) {
+      const { payload } = action;
+      const { missionId } = payload;
+      return {
+        ...state,
+        missionReport: {
+          [missionId]: payload,
+        },
       };
     },
   },
@@ -115,6 +140,44 @@ export default {
       yield put({
         type: 'exportCustListExcelSuccess',
         payload: resultData,
+      });
+    },
+    * createMotReport({ payload }, { call, put }) {
+      yield call(api.createMotReport, payload);
+      const { missionId } = payload;
+      yield put({
+        type: 'createMotReportSuccess',
+        payload: {
+          isCreatingMotReport: true,
+          missionId,
+        },
+      });
+    },
+    * queryMOTServeAndFeedBackExcel({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryMOTServeAndFeedBackExcel, payload);
+      const { missionId } = payload;
+      let createInfo = {
+        missionId,
+        isCreatingMotReport: false,
+      };
+      if (resultData) {
+        const { status } = resultData;
+        if (status === STATUS_FILE_CREATING) {
+          createInfo = {
+            ...createInfo,
+            isCreatingMotReport: true,
+          };
+        } else if (status === STATUS_FILE_DONE) {
+          createInfo = {
+            ...createInfo,
+            isCreatingMotReport: false,
+            ...resultData,
+          };
+        }
+      }
+      yield put({
+        type: 'queryMOTServeAndFeedBackExcelSuccess',
+        payload: createInfo,
       });
     },
   },
