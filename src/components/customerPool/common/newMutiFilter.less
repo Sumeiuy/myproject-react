@@ -4,21 +4,28 @@
   .filterLabel {
     color: #9b9b9b;
     font-size: 14px;
-    margin-right: 7px;
-    width: 100px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100px;
+  }
+  .filterSeperator {
+    display: inline-block;
+    margin-right: 7px;
+    color: #9b9b9b;
+    font-size: 14px;
+    vertical-align: super;
   }
   .filterContent {
     position: relative;
     display: inline-block;
     font-size: 14px;
-    vertical-align: middle;
+    color: #333;
     cursor: pointer;
     .filterValue {
       display: inline-block;
-      width: 98px;
+      width: 70px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -46,13 +53,14 @@
     .ant-dropdown-menu-item {
       .ant-checkbox-wrapper {
          font-size: 14px;
-        color: #666;
+         color: #333;
+        font-weight: normal;
       }
     }
   }
 }
 .overflowAction {
-  max-width: 230px;
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

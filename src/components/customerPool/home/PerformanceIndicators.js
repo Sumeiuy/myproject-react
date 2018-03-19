@@ -34,13 +34,6 @@ import {
 
 // [{name: 1}, {name: 2}] 转成 [1,2]
 const getLabelList = arr => arr.map(v => (v || {}).name);
-// 正则表达式去除换行
-const ClearBr = (string) => {
-  let nextString;
-  nextString = string.replace(/<\/?.+?>/g, '');
-  nextString = string.replace(/[\r\n]/g, '');
-  return nextString;
-};
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -147,35 +140,6 @@ export default class PerformanceIndicators extends PureComponent {
       // clientY鼠标距离浏览器可视区域左上角的垂直距离
       const { event: { event: { clientX: posX, clientY: posY } }, value } = arg;
       const descKey = _.findKey(indicators, o => o.name === value);
-      timeout = setTimeout(() => {
-        this.setState({
-          isToolTipVisible: true,
-          posX,
-          posY,
-          desc: indicators[descKey].description,
-        });
-      }, 200);
-    });
-
-    instance.on('mouseout', () => {
-      clearTimeout(timeout);
-      this.setState({
-        isToolTipVisible: false,
-        desc: '',
-      });
-    });
-  }
-
-  @autobind
-  handleServiceIndicatorsReady(instance) {
-    const { indicators } = this.props;
-    // timeout变量用于鼠标移出label时，取消显示Popover
-    let timeout;
-    instance.on('mouseover', (arg) => {
-      // clientX鼠标距离浏览器可视区域左上角的水平距离
-      // clientY鼠标距离浏览器可视区域左上角的垂直距离
-      const { event: { event: { clientX: posX, clientY: posY } }, value } = arg;
-      const descKey = _.findKey(indicators, o => o.name === ClearBr(value));
       timeout = setTimeout(() => {
         this.setState({
           isToolTipVisible: true,
@@ -315,7 +279,6 @@ export default class PerformanceIndicators extends PureComponent {
   renderCustAndPropertyIndicator(param) {
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
-    console.log('data1213312', data);
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -423,7 +386,6 @@ export default class PerformanceIndicators extends PureComponent {
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <div>
               <IECharts
-                onReady={this.handleServiceIndicatorsReady}
                 option={option}
                 resizable
                 style={{
@@ -432,6 +394,7 @@ export default class PerformanceIndicators extends PureComponent {
               />
               <div className={styles.labelWrap}>
                 <Popover
+                  title={`${data[0].name}`}
                   content={data[0].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
@@ -440,6 +403,7 @@ export default class PerformanceIndicators extends PureComponent {
                   <span className={styles.chartLabel}>{data[0].name}</span>
                 </Popover>
                 <Popover
+                  title={`${data[1].name}`}
                   content={data[1].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
@@ -448,6 +412,7 @@ export default class PerformanceIndicators extends PureComponent {
                   <span className={styles.chartLabel}>{data[1].name}</span>
                 </Popover>
                 <Popover
+                  title={`${data[2].name}`}
                   content={data[2].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
@@ -456,6 +421,7 @@ export default class PerformanceIndicators extends PureComponent {
                   <span className={styles.chartLabel}>{data[2].name}</span>
                 </Popover>
                 <Popover
+                  title={`${data[3].name}`}
                   content={data[3].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
@@ -506,7 +472,6 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
-    console.log('finalTradeingVolumeData1213', finalTradeingVolumeData);
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>

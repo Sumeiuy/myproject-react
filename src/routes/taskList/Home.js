@@ -104,6 +104,10 @@ const effects = {
   // 查看是否是自己名下的客户
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
   exportCustListExcel: 'managerView/exportCustListExcel',
+  // 生成mot任务实施简报
+  createMotReport: 'managerView/createMotReport',
+  // 获取生成报告的信息
+  queryMOTServeAndFeedBackExcel: 'managerView/queryMOTServeAndFeedBackExcel',
 };
 
 const mapStateToProps = state => ({
@@ -153,6 +157,7 @@ const mapStateToProps = state => ({
   attachmentList: state.performerView.attachmentList,
   // 是否包含非本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
+  missionReport: state.managerView.missionReport,
 });
 
 const mapDispatchToProps = {
@@ -212,6 +217,8 @@ const mapDispatchToProps = {
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
+  createMotReport: fetchDataFunction(true, effects.createMotReport),
+  queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -280,6 +287,9 @@ export default class PerformerView extends PureComponent {
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     exportCustListExcel: PropTypes.func.isRequired,
+    missionReport: PropTypes.object.isRequired,
+    createMotReport: PropTypes.func.isRequired,
+    queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -590,6 +600,9 @@ export default class PerformerView extends PureComponent {
       attachmentList,
       isCustServedByPostn,
       custServedByPostnResult,
+      missionReport,
+      createMotReport,
+      queryMOTServeAndFeedBackExcel,
     } = this.props;
     const {
       query: { currentId },
@@ -633,6 +646,9 @@ export default class PerformerView extends PureComponent {
         serveManagerCount={empNum}
         isCustServedByPostn={isCustServedByPostn}
         custServedByPostnResult={custServedByPostnResult}
+        missionReport={missionReport}
+        createMotReport={createMotReport}
+        queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
       />
     );
 
@@ -930,7 +946,12 @@ export default class PerformerView extends PureComponent {
       eventId: record.eventId,
     }).then(
       () => {
-        const { mngrMissionDetailInfo: { templateId } } = this.props;
+        const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
+        const {
+          templateId,
+          missionName,
+          servicePolicy,
+        } = mngrMissionDetailInfo;
         if (templateId !== null) {
           // 管理者视图任务反馈统计
           countAnswersByType({
@@ -941,6 +962,14 @@ export default class PerformerView extends PureComponent {
             templateId,
           });
         }
+        const paylaod = {
+          missionName,
+          orgId: emp.getOrgId(),
+          missionId: record.id,
+          serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
+          servicePolicy,
+        };
+        queryMOTServeAndFeedBackExcel(paylaod);
       },
     );
 

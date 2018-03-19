@@ -19,6 +19,11 @@ const config = {
       value: 'multi',
     },
   ],
+  errorArray: ['validateError', 'otherError'],
+  tips: {
+    validateError: '该申请单数据导入失败，请点击下载报错信息查看报错信息，如有需要，请重新发起流程。',
+    otherError: '该申请单流程提交失败，如有需要，请重新发起流程或联系运维人员核查处理。',
+  },
 };
 
 export default config;
