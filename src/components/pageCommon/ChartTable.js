@@ -224,11 +224,12 @@ export default class ChartTable extends PureComponent {
     const childrenArr = [];
     if (item.children) {
       item.children.map((child) => {
+        const stamp = new Date().getTime();
         const childObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
-          key: `key${child.key}`,
+          key: `key${child.key}${stamp}`,
         };
         const hasThreeEle = child.children;
         if (hasThreeEle) {
@@ -247,11 +248,12 @@ export default class ChartTable extends PureComponent {
     const threeEleArr = [];
     if (item.children) {
       item.children.map((child) => {
+        const stamp = new Date().getTime();
         const threeEleObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
-          key: `key${child.key}`,
+          key: `key${child.key}${stamp}`,
         };
         return threeEleArr.push(threeEleObj);
       });

@@ -13,6 +13,7 @@ import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
 // v2兼容样式
+// import 'antd/lib/style/v2-compatible-reset';
 import 'antd/lib/style/v2-compatible-reset';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
