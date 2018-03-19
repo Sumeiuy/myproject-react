@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-16 17:39:34
+ * @Last Modified time: 2018-03-19 12:02:06
  */
 
 import React, { PureComponent } from 'react';
@@ -259,7 +259,7 @@ export default class GroupTable extends PureComponent {
         }
 
         return (
-          <span title={record[item.key]} className={styles.column}>
+          <span title={record[item.key]} className={'column'}>
             {this.renderColumnValue(record, item)}
           </span>
         );
@@ -348,7 +348,7 @@ export default class GroupTable extends PureComponent {
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
 
     return (
-      <div>
+      <div className={styles.groupTable}>
         <Table
           className={tableClass}
           columns={columns}
@@ -367,6 +367,7 @@ export default class GroupTable extends PureComponent {
             if (!_.isEmpty(record.flag)) {
               return 'emptyRow';
             }
+
             return '';
           }}
           showHeader={showHeader}
