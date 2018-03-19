@@ -55,14 +55,19 @@ export default class TargetCustomerRow extends PureComponent {
     isFold: PropTypes.bool.isRequired,
     item: PropTypes.object.isRequired,
     onClick: PropTypes.func.isRequired,
-    // 当前选中的客户id
-    currentCustId: PropTypes.string.isRequired,
+    lastItemStyle: PropTypes.string,
+    // 当前选中的客户的missionFlowId
+    currentMissionFlowId: PropTypes.string.isRequired,
   }
+
+  static defaultProps = {
+    lastItemStyle: null,
+  };
 
   @autobind
   handleClick() {
     const { item, onClick } = this.props;
-    onClick({ id: item.custId });
+    onClick({ id: item.custId, missionFlowId: item.missionFlowId });
   }
 
   /**
@@ -125,7 +130,7 @@ export default class TargetCustomerRow extends PureComponent {
     return (<span
       className={`${styles.riskLevel} ${styles[cls]}`}
     >
-      { name }
+      {name}
     </span>);
   }
 
@@ -141,7 +146,8 @@ export default class TargetCustomerRow extends PureComponent {
     const {
       isFold,
       item = {},
-      currentCustId = '',
+      currentMissionFlowId = '',
+      lastItemStyle,
     } = this.props;
     const {
       missionStatusValue,
@@ -150,13 +156,13 @@ export default class TargetCustomerRow extends PureComponent {
       custNature,
       levelCode,
       custName,
-      custId,
       isSign,
       isAllocate,
+      missionFlowId,
     } = item;
     // url中的targetCustId存在，就选中url中targetCustId对应的数据，否则默认选中第一条数据
     const rowItemCls = classnames([styles.rowItem], {
-      [styles.active]: custId === currentCustId,
+      [styles.active]: missionFlowId === currentMissionFlowId,
     });
     const signCls = classnames({
       [styles.sign]: true,
@@ -167,7 +173,7 @@ export default class TargetCustomerRow extends PureComponent {
       [styles.long]: isFold,
     });
     return (
-      <div className={rowItemCls} onClick={this.handleClick}>
+      <div className={`${rowItemCls} ${lastItemStyle || ''}`} onClick={this.handleClick}>
         <div className={styles.status}>{missionStatusValue}</div>
         <div className={customerInfoCls}>
           <div className={styles.custInfoWrap}>

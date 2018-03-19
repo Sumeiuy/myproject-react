@@ -169,6 +169,7 @@ export default class PerformanceIndicators extends PureComponent {
     const param = { clientNumberData, names: clientNameData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
+
     // 沪深归集率
     const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };

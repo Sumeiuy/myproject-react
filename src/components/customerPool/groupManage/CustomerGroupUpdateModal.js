@@ -7,10 +7,12 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerGroupUpdateModal.less';
 
+const NOOP = _.noop;
 export default class CustomerGroupUpdateModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
@@ -26,6 +28,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     modalStyle: PropTypes.object,
     modalWidth: PropTypes.number,
     closable: PropTypes.bool,
+    // 拿到包裹的modal
+    wrappedComponentRef: PropTypes.func,
   };
 
   static defaultProps = {
@@ -35,13 +39,14 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     okType: 'primary',
     cancelText: '取消',
     modalContent: null,
-    onCancelHandler: () => { },
+    onCancelHandler: NOOP,
     footer: null,
     modalStyle: {},
     modalWidth: 700,
-    onOkHandler: () => { },
+    onOkHandler: NOOP,
     okText: '',
     closable: false,
+    wrappedComponentRef: NOOP,
   };
 
   constructor(props) {
@@ -81,10 +86,14 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       modalWidth,
       footer,
       closable,
+      wrappedComponentRef,
     } = this.props;
     const { visible } = this.state;
     return (
-      <div className={styles.groupUpdateWrapper}>
+      <div
+        className={styles.groupUpdateWrapper}
+        ref={wrappedComponentRef}
+      >
         <Modal
           wrapClassName={wrapperClass}
           visible={visible}

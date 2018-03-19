@@ -347,7 +347,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-        pathname,
+      pathname,
       },
       replace,
       handleSelect,
@@ -656,14 +656,14 @@ export default class CustomerLists extends PureComponent {
             {...paginationOption}
           />
           {
-           /*  <Checkbox
-              checked={isAllSelectBool}
-              onChange={this.selectAll}
-              className={styles.selectAllTwo}
-              disabled={_.isEmpty(custList)}
-            >
-              全选
-          </Checkbox> */
+            /*  <Checkbox
+               checked={isAllSelectBool}
+               onChange={this.selectAll}
+               className={styles.selectAllTwo}
+               disabled={_.isEmpty(custList)}
+             >
+               全选
+           </Checkbox> */
           }
         </div>
         {

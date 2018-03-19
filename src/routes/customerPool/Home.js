@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Wang Junjun
- * @Last Modified time: 2018-01-30 16:58:12
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-16 17:34:10
  */
 
 import React, { PureComponent } from 'react';
@@ -24,13 +24,14 @@ import {
 } from './config';
 
 import styles from './home.less';
-import
-{ MorningBroadcast,
+import {
+  MorningBroadcast,
   ToBeDone,
   Viewpoint,
   PerformanceIndicators,
   TabsExtra,
-  Search } from '../../components/customerPool/home';
+  Search,
+} from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
 const EMPTY_LIST = [];
@@ -186,7 +187,8 @@ export default class Home extends PureComponent {
       createdFrom: moment().subtract(1, 'months').format('YYYY-MM-DD'),
       createdTo: moment().format('YYYY-MM-DD'),
       pageNum: 1,
-      pageSize: 10 });
+      pageSize: 10,
+    });
   }
 
   componentWillReceiveProps(nextProps) {

@@ -2,7 +2,7 @@
 
 /**
  * NOPERMIT = 0 表示当前用户没有目标客户池的权限
- * PERMITS1 = 1 表示当前用户有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’
+ * PERMITS1 = 1 表示当前用户有 ‘HTSC任务管理岗’，‘HTSC 首页指标查询’
  */
 const NOPERMIT = 0;
 const PERMITS1 = 1;

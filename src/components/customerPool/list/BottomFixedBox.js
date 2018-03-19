@@ -11,8 +11,8 @@ import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
-import Clickable from '../../../components/common/Clickable';
 import { emp } from '../../../helper';
+import Clickable from '../../../components/common/Clickable';
 
 import styles from './bottomFixedBox.less';
 
@@ -41,6 +41,7 @@ export default class BottomFixedBox extends PureComponent {
     super(props);
     this.state = {
       taskAndGroupLeftPos: '0',
+      warningContent: '',
     };
   }
 
