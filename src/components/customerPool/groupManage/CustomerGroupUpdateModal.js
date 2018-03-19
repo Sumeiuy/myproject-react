@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-19 10:20:39
+ * @Last Modified time: 2018-03-19 13:35:32
  */
 
 import React, { PureComponent } from 'react';
@@ -69,13 +69,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   }
 
   @autobind
-  getData() {
-    return this.a;
-  }
-
-  @autobind
   setInstance(ref) {
-    return this.a = ref;
+    this.modalInstance = ref;
   }
 
   @autobind
@@ -126,8 +121,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
         }
       </Modal>
     );
-
-    this.modalInstance = modalNode;
 
     return (
       <div

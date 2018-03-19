@@ -190,7 +190,7 @@ export default class MissionInvestigation extends PureComponent {
  * 获取modalContainer引用
  */
   @autobind
-  getModalContainerRef(ref) {
+  saveRef(ref) {
     return this.problemListModalContainerRef = ref;
   }
 
@@ -543,8 +543,7 @@ export default class MissionInvestigation extends PureComponent {
           }
         </div>
         <GroupModal
-          wrappedComponentRef={this.getModalContainerRef}
-          ref={ref => (this.modalContainerRef = ref)}
+          wrappedComponentRef={this.saveRef}
           wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
           closable
           visible={isShowTable}
