@@ -3,18 +3,26 @@
     display: none;
   }
   .filterLabel {
+    display: inline-block;
     color: #9b9b9b;
     font-size: 14px;
-    margin-right: 2px;
     max-width: 120px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  .filterSeperator {
+    display: inline-block;
+    color: #9b9b9b;
+    font-size: 14px;
+    vertical-align: super;
+  }
   .closeIcon {
     margin-left: 2px;
     margin-right: 2px;
     color: #cecdcd;
+    vertical-align: super;
+    transform: translateY(-1px);
     font-weight: lighter;
     cursor: pointer;
     &.hideCloseIcon {
@@ -24,15 +32,28 @@
   .dropdownfilterLabel {
     font-size: 14px;
     min-width: 160px;
+    color: #333;
   }
-  display: inline-block;
+
   :global {
+    .ant-select {
+      display: inline-block;
+       overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      vertical-align: bottom;
+    }
     // 兼容ie下拉图标旋转样式
     .ant-select-arrow {
       transform: scale(0.75);
     }
     .ant-select-selection.ant-select-selection--single {
       border: 0;
+      .ant-select-selection-selected-value {
+        font-size: 14px;
+        color: #333;
+        font-weight: normal;
+      }
     }
     //多选下拉小图标样式
     .ant-select-arrow:before {
@@ -61,17 +82,17 @@
   :global {
     .ant-select-dropdown-menu-item {
       font-size: 14px;
-      color: #666;
+      color: #333;
     }
     .ant-select-dropdown-menu-item.ant-select-dropdown-menu-item-selected {
       background: #ecf6fd;
-      color: #666;
+      color: #333;
       font-weight: normal;
     }
   }
 }
 .overflowAction {
-  max-width: 230px;
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

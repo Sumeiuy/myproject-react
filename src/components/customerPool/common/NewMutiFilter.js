@@ -95,7 +95,7 @@ export default class MultiFilter extends PureComponent {
                 checked={generateCheckStatus(keyArr, item.key)}
                 onChange={() => this.handleClick({ key: item.key, value: item.value, filterLabel })}
               >
-                {item.value}
+                <span title={item.value}>{item.value}</span>
               </Checkbox>
             </Menu.Item>
           ))
@@ -113,7 +113,8 @@ export default class MultiFilter extends PureComponent {
     }
     return (
       <div className={styles.filter}>
-        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}:</span>
+        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}</span>
+        <span className={styles.filterSeperator}>：</span>
         <Dropdown
           className={styles.filterDropDown}
           overlay={menu}

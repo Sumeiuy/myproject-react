@@ -5,14 +5,10 @@
   .emptyContent {
     .emptyContent;
   }
-  .filter {
-    padding: 30px 20px;
-  }
 
   :global {
     .ant-modal {
       overflow-y: hidden;
-      height: 658px;
       padding-bottom: 0;
     }
     .ant-modal-content {
@@ -24,6 +20,7 @@
       .ant-modal-footer {
         height: 56px;
         padding-right: 28px;
+        padding-bottom: 0;
       }
       .ant-modal-header,
       .ant-modal-footer {
@@ -34,11 +31,13 @@
       .ant-modal-close-x:before {
         font-size: 20px;
         color: #4a4a4a;
+        font-weight: bolder;
       }
     }
     .ant-modal-body {
       overflow-y: scroll;
-      height: 546px;
+      max-height: 586px;
+      min-height: 580px;
       padding: 0 20px 0 31px;
     }
     .ant-modal-title {
@@ -246,15 +245,29 @@
   }
 }
 .labelCustTable {
-  border: 1px solid #e9e9e9;
   padding: 0;
   text-align: left;
-  table > thead > tr > th, tbody > tr > td {
-    padding: 7px 0 7px 8px !important;
+  table {
+     border: 1px solid #e9e9e9;
+  }
+  table > thead > tr > th {
+    padding: 9px 0 9px 8px !important;
     text-align: left;
-    border-bottom: 1px solid #e9e9e9 !important;
+    border-bottom: 1px solid #e9e9e9;
     font-size: 14px;
     color: #727272;
+  }
+  tbody > tr > td {
+    padding: 7px 0 7px 8px !important;
+    text-align: left;
+    border-bottom: 1px solid #e9e9e9;
+    font-size: 14px;
+    color: #727272;
+  }
+  table > tbody > tr:nth-child(10) {
+    td {
+      border-bottom: 0;
+    }
   }
   table > tbody > tr:nth-child(odd) {
     background-color: #fff;
