@@ -233,7 +233,7 @@ export default class FilialeCustTransfer extends PureComponent {
       },
     });
     // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...obj, id: '', appId: '', }, 1, query.pageSize);
+    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
