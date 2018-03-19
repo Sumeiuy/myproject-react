@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import styles from './customerGroupUpdateModal.less';
 
 const NOOP = _.noop;
+const EMPTY_OBJECT = {};
 export default class CustomerGroupUpdateModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
@@ -30,6 +31,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     closable: PropTypes.bool,
     // 拿到包裹的modal
     wrappedComponentRef: PropTypes.func,
+    bodyStyle: PropTypes.object,
   };
 
   static defaultProps = {
@@ -41,12 +43,13 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     modalContent: null,
     onCancelHandler: NOOP,
     footer: null,
-    modalStyle: {},
+    modalStyle: EMPTY_OBJECT,
     modalWidth: 700,
     onOkHandler: NOOP,
     okText: '',
     closable: false,
     wrappedComponentRef: NOOP,
+    bodyStyle: EMPTY_OBJECT,
   };
 
   constructor(props) {
@@ -61,16 +64,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     this.setState({
       visible: nextVisible,
     });
-  }
-
-  @autobind
-  getInstance() {
-    return this.modalInstance;
-  }
-
-  @autobind
-  setInstance(ref) {
-    this.modalInstance = ref;
   }
 
   @autobind
@@ -97,11 +90,11 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       footer,
       closable,
       wrappedComponentRef,
+      bodyStyle,
     } = this.props;
     const { visible } = this.state;
     const modalNode = (
       <Modal
-        wrappedComponentRef={this.setInstance}
         wrapClassName={wrapperClass}
         visible={visible}
         title={title}
@@ -115,6 +108,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
         closable={closable}
         footer={footer}
         style={modalStyle}
+        bodyStyle={bodyStyle}
       >
         {
           modalContent
