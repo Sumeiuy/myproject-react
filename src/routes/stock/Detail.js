@@ -142,7 +142,7 @@ export default class StockDetail extends PureComponent {
               :
                 null
             }
-            <a><Icon type="chakan" />查看持仓客户</a>
+            { /*<a><Icon type="chakan" />查看持仓客户</a>*/ }
           </div>
           <div className={styles.right}>
             <Icon type="fanhui1" />
