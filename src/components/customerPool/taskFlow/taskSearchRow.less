@@ -6,31 +6,51 @@
     .emptyContent;
   }
   .filter {
-    margin: 0 20px 0 15px;
-    padding: 5px 14px;
-    border: 1px solid #e9e9e9;
+    padding: 30px 20px;
   }
-  // 保证弹框距离底部10px
-  // 距离顶部100px
+
   :global {
     .ant-modal {
       overflow-y: hidden;
-      height: e("calc(100vh - 110px)");
+      height: 658px;
       padding-bottom: 0;
     }
     .ant-modal-content {
+      .ant-modal-header {
+        height: 56px;
+        padding-left: 31px;
+        padding-right: 18px;
+      }
+      .ant-modal-footer {
+        height: 56px;
+        padding-right: 28px;
+      }
+      .ant-modal-header,
+      .ant-modal-footer {
+        border: 0;
+        background: #f7f7f7;
+      }
       height: 100%;
+      .ant-modal-close-x:before {
+        font-size: 20px;
+        color: #4a4a4a;
+      }
     }
     .ant-modal-body {
       overflow-y: scroll;
-      height: e("calc(100vh - 210px)");
+      height: 546px;
+      padding: 0 20px 0 31px;
     }
     .ant-modal-title {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       color: #4a4a4a;
     }
   }
+}
+.modalButton {
+  font-size: 12px;
+  padding: 5px 19px 7px;
 }
 .divContent {
   position: relative;
@@ -226,10 +246,12 @@
   }
 }
 .labelCustTable {
-  text-align: center;
+  border: 1px solid #e9e9e9;
+  padding: 0;
+  text-align: left;
   table > thead > tr > th, tbody > tr > td {
     padding: 7px 0 7px 8px !important;
-    text-align: center !important;
+    text-align: left;
     border-bottom: 1px solid #e9e9e9 !important;
     font-size: 14px;
     color: #727272;
@@ -255,7 +277,7 @@
         background: none;
       }
     .ant-table-tbody {
-      text-align: center;
+      text-align: left;
     }
     .ant-table-scroll {
       .scrollBarIEStyle;
