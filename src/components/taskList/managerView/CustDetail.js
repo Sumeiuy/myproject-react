@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 15:17:31
+ * @Last Modified time: 2018-03-15 18:28:24
  * 客户明细数据
  */
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Icon, message } from 'antd';
+import { Icon, message, Select } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
@@ -26,6 +26,8 @@ import iconEmpty from './img/icon-empty.png';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+const Option = Select.Option;
 
 // 客户等级的图片源
 const rankImgSrcConfig = {
@@ -50,6 +52,11 @@ const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
 
+const INITIAL_PAGE_SIZE = 10;
+const INITIAL_TOTAL_COUNT = 10;
+const INITIAL_PAGE_NUM = 1;
+
+const NOOP = _.noop;
 export default class CustDetail extends PureComponent {
 
   static propTypes = {
@@ -67,36 +74,47 @@ export default class CustDetail extends PureComponent {
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
     isEntryFromPie: PropTypes.bool,
+    scrollModalBodyToTop: PropTypes.func.isRequired,
+    // 当前筛选框数据
+    currentFilter: PropTypes.array,
+    // 当前选中的一级反馈条件
+    currentSelectFeedback: PropTypes.string,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
-    getCustDetailData: () => { },
+    getCustDetailData: NOOP,
     title: '',
-    onClose: () => { },
+    onClose: NOOP,
     isEntryFromProgressDetail: false,
     isEntryFromPie: false,
+    currentFilter: EMPTY_LIST,
+    currentSelectFeedback: '',
   }
 
   constructor(props) {
     super(props);
     const {
       data: { list = EMPTY_LIST },
+      currentSelectFeedback,
     } = props;
 
     this.state = {
       dataSource: this.addIdToDataSource(list) || EMPTY_LIST,
-      currentSelectRecord: {},
+      currentSelectRecord: EMPTY_OBJECT,
       currentSelectRowKeys: [],
       isSelectAll: false,
+      currentSelectFeedBackIdL1: currentSelectFeedback || '',
     };
     // 代表当前feedback详情是否是多选形式
     this.isFeedbackDetailMore = false;
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: { list: nextData = EMPTY_LIST } } = nextProps;
-    const { data: { list = EMPTY_LIST } } = this.props;
+    const { data: { list: nextData = EMPTY_LIST },
+      currentSelectFeedback: nextSelectFeedback,
+    } = nextProps;
+    const { data: { list = EMPTY_LIST }, currentSelectFeedback } = this.props;
     const { currentSelectRowKeys, isSelectAll } = this.state;
 
     if (list !== nextData) {
@@ -109,38 +127,98 @@ export default class CustDetail extends PureComponent {
         currentSelectRowKeys: newSelectRowKeys,
       });
     }
+
+    if (nextSelectFeedback !== currentSelectFeedback) {
+      this.setState({
+        currentSelectFeedBackIdL1: nextSelectFeedback,
+      });
+    }
   }
 
   /**
-    * 页码改变事件，翻页事件
-    * @param {*} nextPage 下一页码
-    * @param {*} curPageSize 当前页条目
-    */
+ * select发生改变
+ * @param {*string} value feedBackIdL1
+ */
   @autobind
-  handlePageChange(nextPage, currentPageSize) {
-    const { getCustDetailData, isEntryFromProgressDetail, isEntryFromPie } = this.props;
-    getCustDetailData({
-      pageNum: nextPage,
-      pageSize: currentPageSize,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
-    });
+  onChange(value) {
+    if (!_.isEmpty(value)) {
+      const {
+        getCustDetailData,
+        isEntryFromProgressDetail,
+        isEntryFromPie,
+        currentFilter,
+      } = this.props;
+      const filterObject = _.find(currentFilter, item =>
+        item.feedBackIdL1 === value) || EMPTY_OBJECT;
+      // 获取
+      getCustDetailData({
+        isEntryFromProgressDetail,
+        isEntryFromPie,
+        // 分页重置
+        pageNum: INITIAL_PAGE_NUM,
+        pageSize: INITIAL_PAGE_SIZE,
+        // 当前选择的一级反馈
+        currentSelectFeedback: filterObject,
+        currentFeedback: currentFilter,
+      });
+      this.setState({
+        currentSelectFeedBackIdL1: value,
+      });
+    }
   }
 
   /**
-   * 改变每一页的条目
-   * @param {*} currentPageNum 当前页码
-   * @param {*} changedPageSize 当前每页条目
+   * 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位
    */
   @autobind
+  getPopupContainer() {
+    return this.filterElem;
+  }
+
+  /**
+ * 改变每一页的条目
+ * @param {*} currentPageNum 当前页码
+ * @param {*} changedPageSize 当前每页条目
+ */
+  @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { getCustDetailData, isEntryFromProgressDetail, isEntryFromPie } = this.props;
+    const {
+      getCustDetailData,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+      currentFilter,
+    } = this.props;
     getCustDetailData({
       pageNum: currentPageNum,
       pageSize: changedPageSize,
       isEntryFromProgressDetail,
       isEntryFromPie,
+      currentFeedback: currentFilter,
     });
+  }
+
+  /**
+  * 页码改变事件，翻页事件
+  * @param {*} nextPage 下一页码
+  * @param {*} curPageSize 当前页条目
+  */
+  @autobind
+  handlePageChange(nextPage, currentPageSize) {
+    const {
+        getCustDetailData,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+      scrollModalBodyToTop,
+      currentFilter,
+      } = this.props;
+    getCustDetailData({
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+      isEntryFromProgressDetail,
+      isEntryFromPie,
+      currentFeedback: currentFilter,
+    });
+    scrollModalBodyToTop();
   }
 
   /**
@@ -319,14 +397,28 @@ export default class CustDetail extends PureComponent {
     return columns;
   }
 
+  @autobind
+  renderFilterOption() {
+    const { currentFilter } = this.props;
+    return _.map(currentFilter, item =>
+      <Option key={item.feedBackIdL1} value={item.feedBackIdL1}>
+        {item.feedbackName}
+      </Option>,
+    );
+  }
+
   render() {
     const {
-      currentSelectRowKeys,
       dataSource,
+      currentSelectFeedBackIdL1,
     } = this.state;
 
-    const { title, data: { page = EMPTY_OBJECT } } = this.props;
-    const { totalCount, pageNum, pageSize } = page;
+    const {
+      title,
+      data: { page = EMPTY_OBJECT },
+      isEntryFromPie,
+    } = this.props;
+    const { totalCount, pageNum } = page;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
@@ -335,24 +427,46 @@ export default class CustDetail extends PureComponent {
     let columnWidth;
     if (columnSize === 7) {
       // 列全部保留
-      columnWidth = [100, 60, 150, 100, 100, 150, 150];
+      columnWidth = [150, 80, 200, 100, 100, 200, 300];
     } else if (columnSize === 6) {
       // 去除服务状态列
-      columnWidth = [100, 60, 150, 100, 150, 150];
+      columnWidth = [200, 80, 200, 100, 200, 300];
     } else if (columnSize === 5) {
       // 去除客户反馈和反馈详情列
-      columnWidth = [200, 80, 200, 200, 200];
+      columnWidth = [200, 120, 300, 200, 300];
     }
 
     return (
       <div className={styles.custDetailWrapper}>
-        <div className={styles.title}>{title}共{totalCount || 0}人</div>
+        <div className={styles.header}>
+          <div className={styles.title}>{title}共{totalCount || 0}人</div>
+          {isEntryFromPie ? <div
+            className={styles.filter}
+            ref={(ref) => {
+              if (ref && !this.filterElem) {
+                this.filterElem = ref;
+              }
+            }}
+          >
+            <span className={styles.title}>客户反馈：</span>
+            <Select
+              onChange={this.onChange}
+              value={currentSelectFeedBackIdL1}
+              getPopupContainer={this.getPopupContainer}
+              dropdownClassName={styles.filterDropdownList}
+              dropdownMatchSelectWidth={false}
+            >
+              {this.renderFilterOption()}
+            </Select>
+          </div> : null
+          }
+        </div>
         <div className={styles.custDetailTableSection}>
           {!_.isEmpty(dataSource) ?
             <GroupTable
               pageData={{
                 curPageNum: pageNum,
-                curPageSize: pageSize,
+                curPageSize: INITIAL_PAGE_SIZE,
                 totalRecordNum: totalCount,
               }}
               listData={dataSource}
@@ -366,15 +480,6 @@ export default class CustDetail extends PureComponent {
               }
               columnWidth={columnWidth}
               titleColumn={titleColumn}
-              // 固定标题，内容滚动
-              scrollY={330}
-              isFixedTitle
-              selectionType={'checkbox'}
-              isNeedRowSelection={false}
-              onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
-              onRowSelectionChange={this.handleRowSelectionChange}
-              currentSelectRowKeys={currentSelectRowKeys}
-              onSelectAllChange={this.handleSelectAllChange}
               isFirstColumnLink
               firstColumnHandler={this.handleCustNameClick}
               operationColumnClass={
@@ -382,6 +487,13 @@ export default class CustDetail extends PureComponent {
                   [styles.custNameLink]: true,
                 })
               }
+              // 分页器样式
+              paginationClass={'selfPagination'}
+              needPagination={totalCount > INITIAL_TOTAL_COUNT}
+              // 分页器是否在表格内部
+              paginationInTable={false}
+              // 展示空白行
+              needShowEmptyRow
             /> :
             <div className={styles.emptyContent}>
               <span>

@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Progress } from 'antd';
+import { Progress, Popover } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
@@ -120,6 +120,13 @@ export default class ProgressList extends PureComponent {
   renderList() {
     // const { cycle, push, location, empInfo } = this.props;
     const { dataSource, location, type } = this.props;
+    // 新增客户模块指标说明文案
+    const description = {
+      新开有效户: '统计周期内新开客户数量',
+      新增高净值客户: '本考核期新增的高净值客户数-上一考核期末的高净值客户在本考核期内降级为零售客户且资产降幅超过同期市场指数跌幅的客户数量',
+      新增高端产品户: '年初到当前新增高端客户数',
+      新增产品客户: '年初到当前新增产品客户数',
+    };
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
@@ -134,7 +141,18 @@ export default class ProgressList extends PureComponent {
             ref={ref => (this[rowId] = ref)}
           >
             <div className={styles.intro}>
-              <div className={styles.title}>{item.cust}</div>
+              {/*
+                接口传了description字段，则用接口的指标说明
+                接口未传description字段，则用页面中定义的指标说明
+              */}
+              <Popover
+                content={item.description || description[item.cust]}
+                placement="bottom"
+                overlayStyle={{ maxWidth: '320px' }}
+                mouseEnterDelay={0.2}
+              >
+                <div className={styles.title}>{item.cust}</div>
+              </Popover>
               <div
                 className={classnames(
                   styles.count,

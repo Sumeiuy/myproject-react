@@ -1,0 +1,67 @@
+.filter {
+  margin-right: 30px;
+  display: inline-block;
+  .filterLabel {
+    color: #9b9b9b;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100px;
+  }
+  .filterSeperator {
+    display: inline-block;
+    margin-right: 7px;
+    color: #9b9b9b;
+    font-size: 14px;
+    vertical-align: super;
+  }
+  .filterContent {
+    position: relative;
+    display: inline-block;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    .filterValue {
+      display: inline-block;
+      width: 70px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .icon {
+      position: absolute;
+      top: 7px;
+      border-top: 6px solid #c2c2c2;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      margin-left: 14px;
+    }
+  }
+}
+.dropDownMenu {
+  max-width: 230px;
+  max-height: 250px;
+  overflow-y: scroll;
+  :global {
+    .ant-dropdown-menu-item:first-child {
+      .ant-checkbox {
+        visibility: hidden;
+      }
+    }
+    .ant-dropdown-menu-item {
+      .ant-checkbox-wrapper {
+         font-size: 14px;
+         color: #333;
+        font-weight: normal;
+      }
+    }
+  }
+}
+.overflowAction {
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

@@ -136,7 +136,7 @@ export default class CustomerFeedback extends PureComponent {
 
   // 查询任务列表
   @autobind
-  queryMissionList(type = 1, pageNum = 1, pageSize = 20) {
+  queryMissionList(type = 1, pageNum = 1, pageSize = 20, keyWord = '') {
     const {
       replace,
       getMissionList,
@@ -149,6 +149,7 @@ export default class CustomerFeedback extends PureComponent {
       type,
       pageNum,
       pageSize,
+      keyWord,
     };
     getMissionList(params).then(() => {
       const { missionData } = this.props;
@@ -159,6 +160,7 @@ export default class CustomerFeedback extends PureComponent {
           ...query,
           pageNum: missionPage.pageNum,
           pageSize: missionPage.pageSize,
+          keyWord,
         },
       });
     });
@@ -213,6 +215,7 @@ export default class CustomerFeedback extends PureComponent {
         ...query,
         childActiveKey: key,
         pageNum: 1,
+        keyWord: '',
       },
     });
     emptyMissionData();
@@ -234,6 +237,7 @@ export default class CustomerFeedback extends PureComponent {
       location: {
         query: {
           parentActiveKey = TAB_LIST[0].key,
+          childActiveKey,
         },
       },
      } = this.props;
@@ -243,6 +247,7 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
+      childActiveKey,
       replace,
       location,
       queryMissionList: this.queryMissionList,

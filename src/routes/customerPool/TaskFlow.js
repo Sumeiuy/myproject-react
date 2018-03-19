@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 10:56:32
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
@@ -54,6 +55,54 @@ const fetchData = (type, loading) => query => ({
 function transformNumber(num) {
   return `${number.thousandFormat(num)}人`;
 }
+
+// 新建任务上报日志
+function logCreateTask(instance) {
+  const { storedTaskFlowData, dict: { missionType = {} } } = instance.props;
+  const {
+    taskFormData: {
+      taskType: taskTypeCode,
+      timelyIntervalValue,
+      taskName,
+    },
+    custSegment: {
+      custSource: segmentCustSource,
+    },
+    labelCust: {
+      custSource: lableCustSource,
+    },
+    resultTrackData: {
+      trackWindowDate = '无',
+      currentIndicatorDescription = '无',
+    },
+    missionInvestigationData: {
+      isMissionInvestigationChecked = false,
+    },
+    currentEntry,
+  } = storedTaskFlowData;
+  let custSource;
+  if (currentEntry === 0) {
+    custSource = segmentCustSource;
+  } else {
+    custSource = lableCustSource;
+  }
+  let taskType = '';
+  _.map(missionType, (item) => {
+    if (item.key === taskTypeCode) {
+      taskType = item.value;
+    }
+  });
+  return {
+    taskType,
+    taskName,
+    timelyIntervalValue: `${timelyIntervalValue}天`,
+    custSource,
+    trackWindowDate: `${trackWindowDate}天`,
+    currentIndicatorDescription,
+    isMissionInvestigationChecked,
+  };
+}
+
 
 const mapStateToProps = state => ({
   // 字典信息
@@ -618,9 +667,20 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleSubmitTaskFlow() {
-    const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      logCreateTask,
+    },
+  })
+  decoratorSubmitTaskFlow(option) {
+    const { submitTaskFlow } = this.props;
+    submitTaskFlow({ ...option });
+  }
 
+  @autobind
+  handleSubmitTaskFlow() {
+    const { storedTaskFlowData, templateId } = this.props;
     const {
       currentSelectRecord: { login: flowAuditorId = null },
       currentEntry,
@@ -755,8 +815,7 @@ export default class TaskFlow extends PureComponent {
         },
       };
     }
-
-    submitTaskFlow({ ...postBody });
+    this.decoratorSubmitTaskFlow(postBody);
   }
 
   @autobind

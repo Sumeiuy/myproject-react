@@ -11,6 +11,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { Popover } from 'antd';
 
 import styles from './checkLayout.less';
 
@@ -23,7 +24,9 @@ function renderItem(data = {}, itemStyle = null) {
           <span>{data.unit || ''}</span>
         </span>
       </div>
-      <div className={styles.title}>{data.title || ''}</div>
+      <Popover content={data.description} placement="bottom" overlayStyle={{ maxWidth: '320px' }}>
+        <div className={styles.title}>{data.title || ''}</div>
+      </Popover>
     </div>
   );
 }

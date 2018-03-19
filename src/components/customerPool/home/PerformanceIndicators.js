@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Row, Col } from 'antd';
+import { Row, Col, Popover } from 'antd';
 import _ from 'lodash';
 import 'echarts-liquidfill';
 
@@ -57,17 +57,29 @@ export default class PerformanceIndicators extends PureComponent {
     custCount: {},
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isToolTipVisible: false, // 是否显示柱状图lable上的Popover
+      posX: 0, // 鼠标距离浏览器可视区域左上角的水平距离clientX
+      posY: 0, // toolTip距离浏览器可视区域左上角的垂直距离clientY
+      desc: '', // 指标说明
+    };
+  }
+
   getNameAndValue(data, formatterNumber) {
     const numberArray = [];
     const nameArray = [];
+    const descArray = [];
     _.forEach(
       data,
       (item) => {
         numberArray.push(formatterNumber(item.value));
         nameArray.push(item.name);
+        descArray.push(item.description);
       },
     );
-    return { nameArray, numberArray };
+    return { nameArray, numberArray, descArray };
   }
 
   // 过滤掉假值(false, null, 0, '', undefined, NaN)的数组
@@ -120,6 +132,30 @@ export default class PerformanceIndicators extends PureComponent {
         param.value = 'cyb';
       }
       linkTo(param);
+    });
+    // timeout变量用于鼠标移出label时，取消显示Popover
+    let timeout;
+    instance.on('mouseover', (arg) => {
+      // clientX鼠标距离浏览器可视区域左上角的水平距离
+      // clientY鼠标距离浏览器可视区域左上角的垂直距离
+      const { event: { event: { clientX: posX, clientY: posY } }, value } = arg;
+      const descKey = _.findKey(indicators, o => o.name === value);
+      timeout = setTimeout(() => {
+        this.setState({
+          isToolTipVisible: true,
+          posX,
+          posY,
+          desc: indicators[descKey].description,
+        });
+      }, 200);
+    });
+
+    instance.on('mouseout', () => {
+      clearTimeout(timeout);
+      this.setState({
+        isToolTipVisible: false,
+        desc: '',
+      });
     });
   }
 
@@ -282,9 +318,15 @@ export default class PerformanceIndicators extends PureComponent {
     const { value = '' } = param.data[0] || {};
     const data = getHSRate([filterEmptyToNumber(value)]);
     const headLine = { icon: 'jiaoyiliang', title: param.headLine };
+    // description指标说明
+    let description = null;
+    const { indicators: { shzNpRate } } = this.props;
+    if (shzNpRate && shzNpRate.description) {
+      description = shzNpRate.description;
+    }
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} desc={description}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               option={data}
@@ -337,17 +379,58 @@ export default class PerformanceIndicators extends PureComponent {
     );
     const option = getServiceIndicatorOfPerformance({ performanceData });
     const headLine = { icon: 'kehufuwu', title: param.headLine };
+    const { data } = param;
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <IECharts
-              option={option}
-              resizable
-              style={{
-                height: '170px',
-              }}
-            />
+            <div>
+              <IECharts
+                option={option}
+                resizable
+                style={{
+                  height: '132px',
+                }}
+              />
+              <div className={styles.labelWrap}>
+                <Popover
+                  title={`${data[0].name}`}
+                  content={data[0].description}
+                  placement="bottom"
+                  mouseEnterDelay={0.2}
+                  overlayStyle={{ maxWidth: '320px' }}
+                >
+                  <span className={styles.chartLabel}>{data[0].name}</span>
+                </Popover>
+                <Popover
+                  title={`${data[1].name}`}
+                  content={data[1].description}
+                  placement="bottom"
+                  mouseEnterDelay={0.2}
+                  overlayStyle={{ maxWidth: '320px' }}
+                >
+                  <span className={styles.chartLabel}>{data[1].name}</span>
+                </Popover>
+                <Popover
+                  title={`${data[2].name}`}
+                  content={data[2].description}
+                  placement="bottom"
+                  mouseEnterDelay={0.2}
+                  overlayStyle={{ maxWidth: '320px' }}
+                >
+                  <span className={styles.chartLabel}>{data[2].name}</span>
+                </Popover>
+                <Popover
+                  title={`${data[3].name}`}
+                  content={data[3].description}
+                  placement="bottom"
+                  mouseEnterDelay={0.2}
+                  overlayStyle={{ maxWidth: '320px' }}
+                >
+                  <span className={styles.chartLabel}>{data[3].name}</span>
+                </Popover>
+              </div>
+            </div>
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -389,7 +472,6 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
-
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -403,6 +485,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   render() {
     const { indicators, category } = this.props;
+    const { posX, posY, isToolTipVisible, desc } = this.state;
     let formatIndicator = this.formatIndicators((indicators || {}), category);
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
@@ -431,6 +514,14 @@ export default class PerformanceIndicators extends PureComponent {
             }
           </Row>
         </div>
+        <Popover
+          visible={isToolTipVisible}
+          title={null}
+          content={desc}
+          placement="bottom"
+        >
+          <span style={{ position: 'fixed', left: posX, top: posY }} />
+        </Popover>
       </div>
     );
   }

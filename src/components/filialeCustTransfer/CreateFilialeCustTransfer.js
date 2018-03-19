@@ -281,7 +281,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       this.setState({
         isShowModal: false,
       }, () => {
-        queryAppList(query, pageNum, pageSize);
+        // 清空掉从消息提醒页面带过来的 id,appId
+        queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
       });
     });
   }
@@ -397,7 +398,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             this.setState({
               isShowModal: false,
             }, () => {
-              queryAppList(query, pageNum, pageSize);
+              // 清空掉从消息提醒页面带过来的 id, appId
+              queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
             });
           },
         });

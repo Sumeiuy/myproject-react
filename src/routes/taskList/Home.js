@@ -36,6 +36,11 @@ const EXECUTOR = 'executor'; // 执行者视图
 const INITIATOR = 'initiator'; // 创造者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+// 执行中、结果跟踪、结束三种状态
+const EXECUTE_STATE = '50';
+const RESULT_TRACK_STATE = '60';
+const COMPLETED_STATE = '70';
+
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
 const today = moment(new Date()).format('YYYY-MM-DD');
@@ -99,6 +104,10 @@ const effects = {
   // 查看是否是自己名下的客户
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
   exportCustListExcel: 'managerView/exportCustListExcel',
+  // 生成mot任务实施简报
+  createMotReport: 'managerView/createMotReport',
+  // 获取生成报告的信息
+  queryMOTServeAndFeedBackExcel: 'managerView/queryMOTServeAndFeedBackExcel',
 };
 
 const mapStateToProps = state => ({
@@ -148,6 +157,7 @@ const mapStateToProps = state => ({
   attachmentList: state.performerView.attachmentList,
   // 是否包含非本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
+  missionReport: state.managerView.missionReport,
 });
 
 const mapDispatchToProps = {
@@ -207,6 +217,8 @@ const mapDispatchToProps = {
   // 查询是否包含本人名下客户
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
+  createMotReport: fetchDataFunction(true, effects.createMotReport),
+  queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -275,6 +287,9 @@ export default class PerformerView extends PureComponent {
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     exportCustListExcel: PropTypes.func.isRequired,
+    missionReport: PropTypes.object.isRequired,
+    createMotReport: PropTypes.func.isRequired,
+    queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -294,7 +309,6 @@ export default class PerformerView extends PureComponent {
     // 如果当前用户有职责权限并且url上没有当前视图类型，默认显示管理者视图
     let currentView = '';
     let newMissionView = chooseMissionView;
-
     // 默认不展示执行者视图与管理者视图的入口
     if (envHelper.isGrayFlag()) {
       // 支持灰度发布，则展示执行者视图与管理者视图的入口
@@ -329,6 +343,8 @@ export default class PerformerView extends PureComponent {
       eventId: '',
       statusCode: '',
       isTaskFeedbackListOfNone: false,
+      // 执行中创建者视图右侧展示管理者视图
+      isSourceFromCreatorView: false,
     };
   }
 
@@ -363,80 +379,80 @@ export default class PerformerView extends PureComponent {
     }
   }
 
-  /**
-   * 发送获取任务反馈字典的请求
-   * @param {*} typeCode 当前左侧列表的选中项的typeCode
-   * @param {*} eventId 当前左侧列表的选中项的eventId
-   */
-  @autobind
-  queryMissionList(typeCode, eventId) {
-    const {
-      getServiceType,
-      dict: { missionType },
-    } = this.props;
-    /**
-       * 区分mot任务和自建任务
-       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-       * 根据descText的值请求对应的任务类型和任务反馈的数据
-       * 再判断当前任务是属于mot任务还是自建任务
-       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-       */
-    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
-    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
-      .then(() => {
-        let currentType = {};
-        let taskFeedbackList = [];
-        if (+currentItem.descText === 1) {
-          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-        } else {
-          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-        }
-        if (_.isEmpty(currentType)) {
-          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-          taskFeedbackList = feedbackListOfNone;
-        } else {
-          taskFeedbackList = currentType.feedbackList;
-        }
-        this.setState({
-          taskFeedbackList,
-          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-        });
-      });
-  }
-
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
     const {
       replace,
       list,
-      location: { pathname, query, query: { currentId } },
+      location: { pathname, query, query: { currentId, missionViewType } },
     } = this.props;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
       const { pageNum, pageSize } = list.page;
+      // 默认取第一个item
       let item = list.resultData[0];
-      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
-      if (!_.isEmpty(currentId) && itemIndex > -1) {
-        // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      let itemIndex = '';
+      let creatorViewRightFromManagerView = false;
+      const defaultItem = item;
+      const defaultItemIndex = 0;
+
+      if (!_.isEmpty(currentId)) {
+        itemIndex = _.findIndex(list.resultData, o => String(o.id) === currentId);
+        // currentId与id比较，在listData里面找不到
+        if (itemIndex === -1) {
+          // 如果是创建者视图，先比较id是否与currentId一样
+          if (missionViewType === INITIATOR) {
+            // 则用currentId与mssnId比较
+            const mssnObjectIndex = _.findIndex(list.resultData, o =>
+              String(o.mssnId) === currentId);
+            itemIndex = mssnObjectIndex;
+            // 如果能找到，并且当前statusCode为执行中，则右侧详情展示管理者视图
+            if (itemIndex > -1) {
+              item = list.resultData[itemIndex];
+              if (this.judgeTaskInApproval(item.statusCode)) {
+                // 执行中创建者视图右侧展示管理者视图
+                creatorViewRightFromManagerView = true;
+              }
+            } else {
+              // 如果都找不到，则默认取数据的第一条
+              item = defaultItem;
+              itemIndex = defaultItemIndex;
+            }
+          } else {
+            // 如果都找不到，则默认取数据的第一条
+            item = defaultItem;
+            itemIndex = defaultItemIndex;
+          }
+        } else {
+          // 如果id与currentId比较，存在，则取数据
+          item = list.resultData[itemIndex];
+        }
       } else {
         // 不存在currentId
-        replace({
-          pathname,
-          query: {
-            ...query,
-            currentId: item.id,
-            pageNum,
-            pageSize,
-          },
-        });
-        itemIndex = 0;
+        itemIndex = defaultItemIndex;
       }
-      const { missionViewType: st, typeCode, statusCode, typeName, eventId } = item;
+
+      replace({
+        pathname,
+        query: {
+          ...query,
+          // 执行中创建者视图右侧展示管理者视图
+          currentId: creatorViewRightFromManagerView ? item.mssnId : item.id,
+          pageNum,
+          pageSize,
+        },
+      });
+
+      const {
+        missionViewType: st,
+        typeCode,
+        statusCode,
+        typeName,
+        eventId,
+      } = item;
+
       this.setState({
         // 当前视图（三种）
         currentView: st,
@@ -445,6 +461,7 @@ export default class PerformerView extends PureComponent {
         typeName,
         statusCode,
         eventId,
+        isSourceFromCreatorView: creatorViewRightFromManagerView,
       });
       this.getDetailByView(item);
     }
@@ -469,16 +486,23 @@ export default class PerformerView extends PureComponent {
     const {
       missionViewType: st,
       flowId,
+      statusCode,
     } = record;
+
     const {
       getTaskBasicInfo,
     } = this.props;
+    // 如果当前视图是创建者视图，并且状态是中，那么将右侧详情展示成管理者视图
     switch (st) {
       case INITIATOR:
-        getTaskBasicInfo({
-          flowId,
-          systemCode: SYSTEMCODE,
-        });
+        if (this.judgeTaskInApproval(statusCode)) {
+          this.loadManagerViewDetailContent(record);
+        } else {
+          getTaskBasicInfo({
+            flowId,
+            systemCode: SYSTEMCODE,
+          });
+        }
         break;
       case EXECUTOR:
         this.loadDetailContent(record);
@@ -576,6 +600,9 @@ export default class PerformerView extends PureComponent {
       attachmentList,
       isCustServedByPostn,
       custServedByPostnResult,
+      missionReport,
+      createMotReport,
+      queryMOTServeAndFeedBackExcel,
     } = this.props;
     const {
       query: { currentId },
@@ -587,18 +614,58 @@ export default class PerformerView extends PureComponent {
       taskFeedbackList,
       statusCode,
       isTaskFeedbackListOfNone,
+      isSourceFromCreatorView,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
+    const managerViewDetailComponent = (
+      <ManagerViewDetail
+        currentId={currentId}
+        dict={dict}
+        previewCustDetail={previewCustDetail}
+        custDetailResult={custDetailResult}
+        onGetCustFeedback={countFlowFeedBack}
+        custFeedback={custFeedback}
+        custRange={custRange}
+        empInfo={empInfo}
+        location={location}
+        replace={replace}
+        countFlowStatus={this.getFlowStatus}
+        countFlowFeedBack={this.getFlowFeedback}
+        missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
+        mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
+        launchNewTask={this.handleCreateBtnClick}
+        clearCreateTaskData={clearCreateTaskData}
+        push={push}
+        missionType={typeCode}
+        missionTypeDict={missionType}
+        exportExcel={this.handleExportExecl}
+        missionProgressStatusDic={missionProgressStatus}
+        missionFeedbackData={missionFeedbackData}
+        missionFeedbackCount={missionFeedbackCount}
+        serveManagerCount={empNum}
+        isCustServedByPostn={isCustServedByPostn}
+        custServedByPostnResult={custServedByPostnResult}
+        missionReport={missionReport}
+        createMotReport={createMotReport}
+        queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+      />
+    );
+
     switch (st) {
       case INITIATOR:
-        detailComponent = (
-          <CreatorViewDetail
-            onPreview={this.handlePreview}
-            priviewCustFileData={priviewCustFileData}
-            taskBasicInfo={{ ...taskBasicInfo, currentId }}
-          />
-        );
+        // 如果当前视图是创建者视图，并且状态是执行中，就展示管理者视图
+        if (isSourceFromCreatorView) {
+          detailComponent = managerViewDetailComponent;
+        } else {
+          detailComponent = (
+            <CreatorViewDetail
+              onPreview={this.handlePreview}
+              priviewCustFileData={priviewCustFileData}
+              taskBasicInfo={{ ...taskBasicInfo, currentId }}
+            />
+          );
+        }
         break;
       case EXECUTOR:
         detailComponent = (
@@ -640,41 +707,60 @@ export default class PerformerView extends PureComponent {
         );
         break;
       case CONTROLLER:
-        detailComponent = (
-          <ManagerViewDetail
-            currentId={currentId}
-            dict={dict}
-            previewCustDetail={previewCustDetail}
-            custDetailResult={custDetailResult}
-            onGetCustFeedback={countFlowFeedBack}
-            custFeedback={custFeedback}
-            custRange={custRange}
-            empInfo={empInfo}
-            location={location}
-            replace={replace}
-            countFlowStatus={this.getFlowStatus}
-            countFlowFeedBack={this.getFlowFeedback}
-            missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
-            mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
-            launchNewTask={this.handleCreateBtnClick}
-            clearCreateTaskData={clearCreateTaskData}
-            push={push}
-            missionType={typeCode}
-            missionTypeDict={missionType}
-            exportExcel={this.handleExportExecl}
-            missionProgressStatusDic={missionProgressStatus}
-            missionFeedbackData={missionFeedbackData}
-            missionFeedbackCount={missionFeedbackCount}
-            serveManagerCount={empNum}
-            isCustServedByPostn={isCustServedByPostn}
-            custServedByPostnResult={custServedByPostnResult}
-          />
-        );
+        detailComponent = managerViewDetailComponent;
         break;
       default:
         break;
     }
     return detailComponent;
+  }
+
+  /**
+ * 发送获取任务反馈字典的请求
+ * @param {*} typeCode 当前左侧列表的选中项的typeCode
+ * @param {*} eventId 当前左侧列表的选中项的eventId
+ */
+  @autobind
+  queryMissionList(typeCode, eventId) {
+    const {
+      getServiceType,
+      dict: { missionType },
+    } = this.props;
+    /**
+       * 区分mot任务和自建任务
+       * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
+       * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
+       * 根据descText的值请求对应的任务类型和任务反馈的数据
+       * 再判断当前任务是属于mot任务还是自建任务
+       * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
+       */
+    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
+    getServiceType({ ...TASKFEEDBACK_QUERY, type: +currentItem.descText + 1 })
+      .then(() => {
+        let currentType = {};
+        let taskFeedbackList = [];
+        if (+currentItem.descText === 1) {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
+        } else {
+          currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
+        }
+        if (_.isEmpty(currentType)) {
+          // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
+          taskFeedbackList = feedbackListOfNone;
+        } else {
+          taskFeedbackList = currentType.feedbackList;
+        }
+        this.setState({
+          taskFeedbackList,
+          isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
+        });
+      });
+  }
+
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes([EXECUTE_STATE, RESULT_TRACK_STATE, COMPLETED_STATE], status);
   }
 
   // 导出客户
@@ -844,9 +930,15 @@ export default class PerformerView extends PureComponent {
       countAnswersByType,
       countExamineeByType,
     } = this.props;
+    const { isSourceFromCreatorView } = this.state;
+    let missionId = record.id;
+    // 如果来源是创建者视图，那么取mssnId作为missionId
+    if (isSourceFromCreatorView) {
+      missionId = record.mssnId;
+    }
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
-      taskId: record.id,
+      taskId: missionId,
       // taskId: '101111171108181',
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
@@ -854,7 +946,12 @@ export default class PerformerView extends PureComponent {
       eventId: record.eventId,
     }).then(
       () => {
-        const { mngrMissionDetailInfo: { templateId } } = this.props;
+        const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
+        const {
+          templateId,
+          missionName,
+          servicePolicy,
+        } = mngrMissionDetailInfo;
         if (templateId !== null) {
           // 管理者视图任务反馈统计
           countAnswersByType({
@@ -865,17 +962,25 @@ export default class PerformerView extends PureComponent {
             templateId,
           });
         }
+        const paylaod = {
+          missionName,
+          orgId: emp.getOrgId(),
+          missionId: record.id,
+          serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
+          servicePolicy,
+        };
+        queryMOTServeAndFeedBackExcel(paylaod);
       },
     );
 
     // 管理者视图获取客户反馈
     countFlowFeedBack({
-      missionId: record.id,
+      missionId,
       orgId: emp.getOrgId(),
     });
     // 管理者视图任务实施进度
     countFlowStatus({
-      missionId: record.id,
+      missionId,
       orgId: emp.getOrgId(),
     });
   }
@@ -972,20 +1077,23 @@ export default class PerformerView extends PureComponent {
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
-    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId } = record;
+    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
     const {
       queryCustUuid,
       replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
-    if (currentId === String(id)) return;
+    const isSourceFromCreatorView = (st === INITIATOR && this.judgeTaskInApproval(statusCode));
+    if (currentId === (isSourceFromCreatorView ? String(mssnId) : String(id))) return;
+
     replace({
       pathname,
       query: {
         ...query,
-        currentId: id,
+        currentId: isSourceFromCreatorView ? mssnId : id,
       },
     });
+
     this.setState({
       currentView: st,
       activeRowIndex: index,
@@ -993,8 +1101,10 @@ export default class PerformerView extends PureComponent {
       typeName,
       eventId,
       statusCode,
+      isSourceFromCreatorView,
+    }, () => {
+      this.getDetailByView(record);
     });
-    this.getDetailByView(record);
     // 如果当前视图是执行者视图，则预先请求custUuid
     if (st === EXECUTOR) {
       // 前置请求custuuid

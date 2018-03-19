@@ -1,24 +1,16 @@
-.filterSection {
-  .moreBtn {
-    width: 100%;
+.mainFilter {
+  padding: 10px 20px;
+  .filterSection {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #108ee9;
-    cursor: pointer;
-    :global {
-      .icon-more-down-copy {
-        display: inline-block;
-        font-weight: bold;
-        transition: transform 0.2s ease;
-        transform: rotate(0deg);
-        &.up {
-          transform: rotate(180deg);
-        }
+    flex-wrap: wrap;
+    .filter {
+      flex: 0 0 auto;
+      margin-right: 15px;
+      padding: 10px 0;
+      align-self: baseline;
+      &.hidden {
+        display: none;
       }
     }
-  }
-  .none {
-    display: none;
   }
 }

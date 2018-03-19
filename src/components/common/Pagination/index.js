@@ -53,8 +53,8 @@ function shouldHideLastButton(current, pageSize, total) {
 // 从而导致的页码折行问题
 function shouldFixPagination(current, totalPageNumber, needFixPageNum, isShortPageList) {
   if (isShortPageList &&
-      (totalPageNumber >= needFixPageNum) &&
-      (totalPageNumber <= PAGE_NINE)) {
+    (totalPageNumber >= needFixPageNum) &&
+    (totalPageNumber <= PAGE_NINE)) {
     if (needFixPageNum === PAGE_SENVEN && current > 4) {
       return true;
     }
@@ -74,8 +74,8 @@ function shouldHiddenPage(current, totalPageNumber, isShortPageList, needHiddenP
       return true;
     }
     if (totalPageNumber === PAGE_NINE
-        && current === 5 &&
-        needHiddenPageNum === PAGE_EIGHT) {
+      && current === 5 &&
+      needHiddenPageNum === PAGE_EIGHT) {
       return true;
     }
   }
@@ -94,6 +94,10 @@ export default class PaginationComponent extends PureComponent {
     isShortPageList: PropTypes.bool,
     // 如果为true， 就不要加commonPage了，历史遗留问题，默认false
     useClearStyle: PropTypes.bool,
+    // 给pagination组件的class name,继承antd的className
+    wrapClassName: PropTypes.string,
+    // 给pagination组件的key,继承antd的pagination
+    paginationKey: PropTypes.string,
   };
   static defaultProps = {
     current: 1,
@@ -105,17 +109,17 @@ export default class PaginationComponent extends PureComponent {
     onChange: _.noop,
     onShowSizeChange: _.noop,
     useClearStyle: false,
+    wrapClassName: '',
+    paginationKey: '',
   };
 
   constructor(props) {
     super(props);
     const { current, pageSize, total, isHideLastButton } = props;
-    this.state = isHideLastButton ?
-    {
+    this.state = isHideLastButton ? {
       current,
       shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
-    } :
-    { current };
+    } : { current };
   }
 
   // 之所以这里写这个生命周期，是为了应对当props请求的数据在组件初始化以后才到来时，
@@ -184,7 +188,14 @@ export default class PaginationComponent extends PureComponent {
   }
 
   render() {
-    const { pageSize, isShortPageList, total, useClearStyle } = this.props;
+    const {
+      pageSize,
+      isShortPageList,
+      total,
+      useClearStyle,
+      wrapClassName,
+      paginationKey,
+    } = this.props;
     const { current } = this.state;
 
     const totalPageNumber = pageSize && Math.ceil((total / pageSize));
@@ -197,24 +208,26 @@ export default class PaginationComponent extends PureComponent {
           [styles.shortPageList]: isShortPageList,
           [styles.hideLastButton]: this.state.shouldHideLastButton,
           [styles.fixTotalPage7]:
-            shouldFixPagination(current, totalPageNumber, PAGE_SENVEN, isShortPageList),
+          shouldFixPagination(current, totalPageNumber, PAGE_SENVEN, isShortPageList),
           [styles.fixTotalPage8]:
-            shouldFixPagination(current, totalPageNumber, PAGE_EIGHT, isShortPageList),
+          shouldFixPagination(current, totalPageNumber, PAGE_EIGHT, isShortPageList),
           [styles.hiddenPage7]:
-            shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_SENVEN),
+          shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_SENVEN),
           [styles.fixTotalPage9]:
-            shouldFixPagination(current, totalPageNumber, PAGE_NINE, isShortPageList),
+          shouldFixPagination(current, totalPageNumber, PAGE_NINE, isShortPageList),
           [styles.hiddenPage8]:
-            shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_EIGHT),
+          shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_EIGHT),
         })}
       >
         <Pagination
+          key={paginationKey}
           {...this.props}
           showTotal={renderTotal}
           pageSizeOptions={renderPageSizeOptions(pageSize)}
           onChange={this.handlePageChange}
           onShowSizeChange={this.handlePageSizeChange}
           current={current}
+          className={wrapClassName}
         />
       </div>
     );
