@@ -29,7 +29,7 @@ import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import Button from '../common/Button';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import styles from './editModal.less';
 
 const titleArray = {
@@ -164,11 +164,11 @@ export default class EditModal extends Component {
         <div className={styles.row}>
           <div className={styles.infoColumn}>{titles[1]}</div>
           <div className={styles.inputColumn}>
-            <DropDownSelect
+            <AutoComplete
               placeholder="工号/姓名"
               showObjKey="ptyMngName"
               objId="ptyMngId"
-              value={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
+              defaultSearchValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
               searchList={list}
               onSelect={this.handleSelect}
               onSearch={this.handleSearch}

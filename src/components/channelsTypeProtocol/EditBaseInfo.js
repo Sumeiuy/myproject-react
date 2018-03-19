@@ -15,7 +15,7 @@ import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import HtscTreeSelect from '../common/Select/TreeSelect';
 import CustomSwitch from '../common/customSwitch';
 import { time, permission } from '../../helper';
@@ -760,11 +760,11 @@ export default class EditBaseInfo extends PureComponent {
                 />
               </InfoForm>
               <InfoForm label="客户" required>
-                <DropDownSelect
+                <AutoComplete
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={_.isEmpty(client) ? '' : `${client.custName || ''} ${client.brokerNumber || ''}`}
+                  defaultSearchValue={_.isEmpty(client) ? '' : `${client.custName || ''} ${client.brokerNumber || ''}`}
                   searchList={custList}
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}
@@ -777,11 +777,11 @@ export default class EditBaseInfo extends PureComponent {
         {
           isSubscribe ?
             <InfoForm label="协议模板" required>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="协议模板"
                 showObjKey="prodName"
                 objId="rowId"
-                value={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
+                defaultSearchValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
                 searchList={templateList}
                 onSelect={this.handleSelectTemplate}
                 onSearch={this.handleSearchTemplate}

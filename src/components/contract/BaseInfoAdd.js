@@ -17,7 +17,7 @@ import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
@@ -248,10 +248,10 @@ export default class BaseInfoEdit extends PureComponent {
     const { operation, tdDescription, remark, client } = this.state;
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>
-        <DropDownSelect
+        <AutoComplete
           placeholder="合约编号"
           showObjKey="id"
-          value={this.state.contractNum.id || ''}
+          defaultSearchValue={this.state.contractNum.id || ''}
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={this.handleSearchContractNum}
@@ -320,11 +320,11 @@ export default class BaseInfoEdit extends PureComponent {
           />
         </InfoForm>
         <InfoForm label="客户" required>
-          <DropDownSelect
+          <AutoComplete
             placeholder="经纪客户号/客户名称"
             showObjKey="custName"
             objId="brokerNumber"
-            value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
             searchList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}

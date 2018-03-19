@@ -12,7 +12,7 @@ import { message, Modal, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import Select from '../../components/common/Select';
@@ -488,7 +488,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             isDefaultType ?
               <div>
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择客户"
                     showObjKey="custName"
                     objId="brokerNumber"
@@ -499,7 +499,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择新服务经理"
                     showObjKey="showSelectName"
                     searchList={newManagerList}

@@ -13,7 +13,7 @@ import _ from 'lodash';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoForm from '../common/infoForm';
 import Select from '../../components/common/Select';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import styles from './addClause.less';
 
 const EMPTY_OBJECT = {};
@@ -251,10 +251,10 @@ export default class EditForm extends PureComponent {
               />
             </InfoForm>
             <InfoForm label="合作部门" required>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="合作部门"
                 showObjKey="name"
-                value={department.name || ''}
+                defaultSearchValue={department.name || ''}
                 searchList={departmentList}
                 onSelect={this.handleSelectDepartment}
                 onSearch={this.handleSearchDepartment}

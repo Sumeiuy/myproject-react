@@ -17,7 +17,7 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import Select from '../common/Select';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import DatePicker from '../common/datePicker';
 import ApproveList from '../common/approveList';
 import styles from './editDetail.less';
@@ -225,7 +225,7 @@ export default class EditDetail extends PureComponent {
     // 可申请客户列表 html
     const canApplyCustHtml = (
       <InfoForm label="客户" required>
-        <DropDownSelect
+        <AutoComplete
           placeholder="经纪客户号/客户名称"
           showObjKey="custName"
           objId="cusId"
@@ -286,11 +286,10 @@ export default class EditDetail extends PureComponent {
     // 合约编号 html
     const contractNumHtml = (
       <InfoForm label="合约编号" required>
-        <DropDownSelect
+        <AutoComplete
           placeholder="合约编号"
           showObjKey="contractName"
           objId="id"
-          value={''}
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={getContractNumList}

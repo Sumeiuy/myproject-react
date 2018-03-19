@@ -5,7 +5,7 @@ import { autobind } from 'core-decorators';
 import style from './baseinfomodify.less';
 import InfoTitle from '../common/InfoTitle';
 import TextareaComponent from '../common/textareacomponent';
-import DropdownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import { seibelConfig } from '../../config';
 
@@ -108,12 +108,12 @@ export default class BaseInfoModify extends PureComponent {
             <i className={style.isRequired}>*</i>客户：
           </span>
           <div className={style.inputComponentContent}>
-            <DropdownSelect
+            <AutoComplete
               placeholder="经纪客户号/客户名称"
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
-              width={'200px'}
+              width={200}
               onSelect={this.selectCustomer}
               onSearch={this.searchCanApplyCustList}
             />

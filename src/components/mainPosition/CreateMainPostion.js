@@ -13,7 +13,7 @@ import { message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
@@ -282,7 +282,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         <div className={styles.mainPositionWrapper} >
           <div className={styles.infoFormDiv}>
             <InfoForm label="服务经理" style={{ width: 'auto' }}>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="工号/姓名"
                 showObjKey="name"
                 objId="login"

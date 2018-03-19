@@ -3,14 +3,90 @@
 
 .drapDowmSelect, .drapDowmSelect2 {
 	position: relative;
+	.complete {
+		font-size: 14px;
+	}
+	.editContent {
+		margin-left: 10px;
+		margin-right: 26px;
+		height: 30px;
+		line-height: 30px;
+		width: auto;
+		min-width: 54px;
+		display: flex;
+		display: -webkit-flex; /* Safari */
+		align-items: center;
+		justify-content: space-between;
+		.content {
+			color: #33393c;
+    	font-size: 14px;
+			max-width: 200px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+		.downIcon {
+			margin-top: 3px;
+			margin-left: 2px;
+			border: none;
+			border-top: 8px solid #c2c2c2;
+			border-left: 4px solid transparent;
+			border-right: 4px solid transparent;
+		}
+	}
+	:global {
+		.ant-select-auto-complete.ant-select-lg .ant-input {
+			padding: 6px 24px 6px 7px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
 }
 .drapDowmSelect {
 	width: 100%;
 	height: 32px;
+	:global {
+		.ant-input-affix-wrapper .ant-input-suffix {
+			top: 55%;
+		}
+	}
 }
 .drapDowmSelect2 {
 	display: inline-block;
-	height: 24px;
+	height: 28px;
+	.editContent {
+    height: 24px;
+    line-height: 24px;
+	}
+	:global {
+    .ant-select-lg .ant-select-selection--single {
+      height: 28px;
+    }
+    .ant-select-auto-complete.ant-select-lg .ant-input {
+      height: 28px;
+    }
+    .ant-select-auto-complete.ant-select-lg .ant-select-selection__rendered {
+      line-height: 28px;
+    }
+	}
+}
+
+.searchDropDown {
+  color: #666;
+  font-weight: bold;
+  border-bottom: 1px solid #f6f6f6;
+  text-align: center;
+  cursor: pointer;
+  max-height: 343px;
+  :global {
+    .ant-select-dropdown-menu-item {
+      cursor: pointer;
+      height: 40px;
+      font-size: 14px;
+      text-align: left;
+      }
+  }
 }
 
 .ddsShowBox, .ddsShowBox2 {
@@ -43,10 +119,6 @@
 }
 .ddsShowBox {
 	line-height: 30px;
-	&.active {
-		border: 1px solid rgb(52, 140, 240) !important;
-		box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2) !important;
-	}
 }
 .ddsShowBox2 {
 	line-height: 24px;
@@ -56,53 +128,7 @@
 		display: none;
 	}
 }
-.ddsDrapMenu {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 220px;
-	height: auto;
-	max-height: 167px;
-	padding-top: 6px;
-	border-radius: 4px;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
-	background: #fff;
-	cursor: pointer;
-	z-index: 999;
-	line-height: initial;
-	&.hide {
-		display: none;
-	}
-}
-.ddsDrapMenuSearch {
-	width: 94%;
-	height: 32px;
-	margin: auto;
-}
-// .searhInput {
-// 	width: 100%;
-// 	height: 32px;
-// 	padding: 0 20px 0 6px;
-// 	border-radius: 4px;
-// 	border: 1px solid #d9d9d9;
-// 	line-height: 30px;
-// 	color: #333;
-// 	font-size: 14px;
-// 	appearance: none;
-// 	outline: none;
-// }
-// .searchSub {
-// 	position: absolute;
-// 	top: 13px;
-// 	right: 12px;
-// 	cursor: pointer;
-// 	:global {
-// 		.anticon-search {
-// 			font-size: 14px;
-// 			vertical-align: bottom;
-// 		}
-// 	}
-// }
+
 .ddsDrapMenuCon {
 	width: 100%;
 	height: auto;
@@ -121,6 +147,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-family: @font-family;
+  padding: 0;
 	&:hover {
 		background: rgba(52, 140, 240, .2);
 	}

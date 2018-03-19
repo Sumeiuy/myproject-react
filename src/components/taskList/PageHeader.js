@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
-import DateRangePicker from '../common/dateRangePicker';
+// import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -461,16 +461,6 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-
-//   <RangePicker
-//   ref={ref => this.timers = ref}
-//   defaultValue={[startTime, endTime]}
-//   onChange={this.handleDateChange}
-//   placeholder={['开始时间', '结束时间']}
-//   disabledDate={this.disabledDateStart}
-//   key="创建时间"
-// />
-
   // 选择不同视图创建时间不同
   @autobind
   renderTime(startTime, endTime, missionViewType) {
@@ -500,9 +490,19 @@ export default class Pageheader extends PureComponent {
       (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <DateRangePicker
-            initialDate={[startTime, endTime]}
+          { /*
+            <DateRangePicker
+              initialDate={[startTime, endTime]}
+              onChange={this.handleDateChange}
+            />
+          */ }
+          <RangePicker
+            ref={ref => this.timers = ref}
+            defaultValue={[startTime, endTime]}
             onChange={this.handleDateChange}
+            placeholder={['开始时间', '结束时间']}
+            disabledDate={this.disabledDateStart}
+            key="创建时间"
           />
         </div>
       </div>) :
@@ -612,9 +612,8 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                width={'220px'}
-                onSelect={item => this.selectItem('creator', item)}
-                onSearch={value => this.toSearch(getDrafterList, value)}
+                emitSelectItem={item => this.selectItem('creator', item)}
+                emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />
             </div>
@@ -631,9 +630,8 @@ export default class Pageheader extends PureComponent {
                     searchList={allCustomerList}
                     showObjKey="name"
                     objId="custId"
-                    width={'220px'}
-                    onSelect={this.selectCustomerItem}
-                    onSearch={this.searchCustomer}
+                    emitSelectItem={this.selectCustomerItem}
+                    emitToSearch={this.searchCustomer}
                     name={`${page}-name`}
                   />
                 </div>

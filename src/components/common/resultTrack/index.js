@@ -13,7 +13,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import DropdownSelect from '../dropdownSelect';
+import AutoComplete from '../similarAutoComplete';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
@@ -701,22 +701,24 @@ export default class ResultTrack extends PureComponent {
                      * 当isProdBound为true时，代表有搜索产品功能
                      */}
                     {
-                      isProdBound ? <div className={styles.indicatorLevel3}>
-                        <DropdownSelect
-                          theme="theme2"
-                          value={currentSelectProductValue}
-                          showObjKey="aliasName"
-                          objId="name"
-                          placeholder="产品编码/产品名称"
-                          name="产品"
-                          disable={!checked}
-                          searchList={searchedProductList || EMPTY_LIST}
-                          onSelect={this.handleSelectProductItem}
-                          onSearch={this.handleQueryProduct}
-                          defaultSearchValue={currentSelectedProduct.searchValue || ''}
-                          width={'220px'}
-                        />
-                      </div> : null
+                      isProdBound ? (
+                        <div className={styles.indicatorLevel3}>
+                          <span>产品：</span>
+                          <AutoComplete
+                            theme="theme2"
+                            defaultSearchValue={currentSelectProductValue}
+                            showObjKey="aliasName"
+                            objId="name"
+                            placeholder="产品编码/产品名称"
+                            name="产品"
+                            disable={!checked}
+                            searchList={searchedProductList || EMPTY_LIST}
+                            onSelect={this.handleSelectProductItem}
+                            onSearch={this.handleQueryProduct}
+                            width={220}
+                          />
+                        </div>
+                      ) : null
                     }
 
                     {/**

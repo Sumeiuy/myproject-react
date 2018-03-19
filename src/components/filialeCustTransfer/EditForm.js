@@ -13,7 +13,7 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
@@ -371,11 +371,11 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                     <div className={styles.selectBox}>
                       <div className={styles.selectLeft}>
                         <InfoForm label="选择客户" required>
-                          <DropDownSelect
+                          <AutoComplete
                             placeholder="选择客户"
                             showObjKey="custName"
                             objId="brokerNumber"
-                            value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
                             searchList={custList}
                             onSelect={this.handleSelectClient}
                             onSearch={this.handleSearchClient}
@@ -385,10 +385,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                       </div>
                       <div className={styles.selectRight}>
                         <InfoForm label="选择新服务经理" required>
-                          <DropDownSelect
+                          <AutoComplete
                             placeholder="选择新服务经理"
                             showObjKey="showSelectName"
-                            value={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
+                            defaultSearchValue={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
                             onSelect={this.handleSelectNewManager}
                             onSearch={this.handleSearchNewManager}
