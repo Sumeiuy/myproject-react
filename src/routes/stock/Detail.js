@@ -22,6 +22,7 @@ import styles from './detail.less';
 
 const { typeList } = config;
 const { Header, Footer, Content } = Layout;
+const EMPTY_PARAM = '暂无';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -71,11 +72,12 @@ export default class StockDetail extends PureComponent {
           pageNum = 1,
           keyword = '',
           id,
+          type = '',
         },
       },
       detail: dataDetail,
     } = this.props;
-    const url = `/#/stock?pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`;
+    const url = `/#/stock?pageSize=${pageSize}&keyword=${keyword}`;
     if (_.isEmpty(dataDetail[id])) {
       return null;
     }
@@ -84,24 +86,54 @@ export default class StockDetail extends PureComponent {
         author,
         pubdate,
         detail,
+        pdfDownloadUrl = '',
+        wordDownloadUrl = '',
     } = dataDetail[id];
+
+    // Д 为替换后端返回数据中的换行符而设置，无实际价值
+    const newDetail = detail.replace(/\r\n|\n\t|\t\n/g, 'Д');
+    const splitArray = newDetail.split('Д');
     return (
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
           <h2>{title}</h2>
-          <h3>作者：{author || '暂无'}    发布日期：{pubdate}</h3>
+          <h3>作者：{author || EMPTY_PARAM}    发布日期：{pubdate || EMPTY_PARAM}</h3>
         </Header>
         <Content className={styles.content}>
-          <div dangerouslySetInnerHTML={{ __html: detail }} />
+          {
+            detail
+            ?
+              splitArray.map(item => ((<div dangerouslySetInnerHTML={{ __html: _.trim(item) }} />)))
+            :
+              <div>{EMPTY_PARAM}</div>
+          }
         </Content>
         <Footer className={styles.footer}>
           <div className={styles.left}>
+            {
+              pdfDownloadUrl
+              ?
+                <a href={pdfDownloadUrl} download>
+                  <Icon type="pdf1" />PDF 全文
+                </a>
+              :
+                null
+            }
+            {
+              wordDownloadUrl
+              ?
+                <a href={wordDownloadUrl} download>
+                  <Icon type="word1" />WORD 全文
+                </a>
+              :
+                null
+            }
             <a><Icon type="chakan" />查看持仓客户</a>
           </div>
           <div className={styles.right}>
             <Icon type="fanhui1" />
             {
-              typeList.map(item => (<a href={`${url}&type=${item}`} key={item}>相关{config[item].name}</a>))
+              typeList.map(item => (<a href={`${url}&pageNum=${item === type ? pageNum : 1}&type=${item}`} key={item}>相关{config[item].name}</a>))
             }
           </div>
         </Footer>

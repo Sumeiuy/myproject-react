@@ -792,6 +792,11 @@ const pageConfig = {
         label: '驳回',
         value: '04',
       },
+      {
+        show: true,
+        label: '失败',
+        value: '05',
+      },
     ],
     titleList: [
       {

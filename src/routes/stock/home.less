@@ -24,11 +24,15 @@
       }
       td {
         &:first-child {
-          div {
+          // 个股点评、个股研报、个股公告
+          .StockReview, .StockReport, .StockEvent {
             width: 260px;
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
+          }
+          .StockEvent {
+            width: 324px;
           }
         }
       }
