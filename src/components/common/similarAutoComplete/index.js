@@ -44,6 +44,7 @@ export default class SimilarAutoComplete extends PureComponent {
     defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 下拉框的宽度
     width: PropTypes.number,
+    // 下拉预置列表
     presetOptionList: PropTypes.array,
   }
 
@@ -64,7 +65,9 @@ export default class SimilarAutoComplete extends PureComponent {
   constructor(props) {
     super(props);
     const { defaultSearchValue, searchList, presetOptionList } = props;
-    const propsDefaultValue = _.isString(defaultSearchValue) ? defaultSearchValue : `${defaultSearchValue}`;
+    const isEmptyValue = _.isString(defaultSearchValue);
+    const propsDefaultValue = isEmptyValue ? defaultSearchValue : `${defaultSearchValue}`;
+    const optionListDom = this.getSearchListDom(isEmptyValue ? presetOptionList : searchList);
     // input 的预置值
     presetValue = propsDefaultValue;
     this.state = {
@@ -73,7 +76,7 @@ export default class SimilarAutoComplete extends PureComponent {
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
       // 下拉框选项列表
-      optionListDom: this.getSearchListDom(_.isEmpty(searchList) ? presetOptionList : searchList),
+      optionListDom,
       // 添加id标识
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
@@ -206,8 +209,9 @@ export default class SimilarAutoComplete extends PureComponent {
   checkListIsEmpty() {
     const { searchList } = this.props;
     const { optionListDom } = this.state;
+    const hiddenSearchList = searchList.filter(item => item.isHidden);
     return _.isEmpty(optionListDom)
-      || (searchList.filter(item => item.isHidden).length === searchList.length);
+      || (!_.isEmpty(searchList) && hiddenSearchList.length === searchList.length);
   }
 
   // 渲染 disable 状态下的标签显示
@@ -238,8 +242,8 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   renderAutoComplete() {
-    const { placeholder, boxStyle, width, searchList = [] } = this.props;
-    const { typeStyle, value } = this.state;
+    const { placeholder, boxStyle, width } = this.props;
+    const { typeStyle, value, optionListDom } = this.state;
 
     const empty = [(
       <Option
@@ -250,9 +254,12 @@ export default class SimilarAutoComplete extends PureComponent {
         <span className={style.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
+    const options = this.checkListIsEmpty() ? empty : optionListDom;
+    // AutoComplete组件，有value属性时，defaultValue属性就不起作用了。
+    const valueProps = _.isEmpty(presetValue) ? { value } : {};
     return (
       <AutoComplete
+        {...valueProps}
         className={style.complete}
         placeholder={placeholder}
         dropdownStyle={{ width: `${width}px` || boxStyle.width }}
@@ -263,7 +270,6 @@ export default class SimilarAutoComplete extends PureComponent {
         dataSource={options}
         optionLabelProp="value"
         defaultValue={presetValue}
-        value={value}
         onChange={this.handleInputValue}
         onSelect={this.handleSelectedValue}
       >

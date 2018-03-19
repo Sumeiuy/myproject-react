@@ -599,10 +599,10 @@ export default {
       if (!payload.keyword) {
         yield put({
           type: 'getSearchServerPersonListSuccess',
-          payload: [{
-            ptyMngName: '所有人',
-            ptyMngId: '',
-          }],
+          payload: [
+            { ptyMngName: '所有人', ptyMngId: '' },
+            { ptyMngName: '我的', ptyMngId: '' },
+          ],
         });
       } else {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);

@@ -40,6 +40,8 @@ export default class DropdownSelect extends PureComponent {
     defaultSearchValue: PropTypes.string,
     // 菜单渲染父节点
     getPopupContainer: PropTypes.func,
+    // 下拉预置列表
+    presetOptionList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -52,18 +54,25 @@ export default class DropdownSelect extends PureComponent {
     theme: 'theme1',
     disable: false,
     defaultSearchValue: '',
+    presetOptionList: [],
     getPopupContainer: () => document.querySelector(constants.container),
   }
 
   constructor(props) {
     super(props);
+    const { searchList, presetOptionList, defaultSearchValue, value } = props;
+    // 搜索框为空，显示预置下拉列表
+    const isEmptySearchInput = _.isEmpty(defaultSearchValue);
+    const optionListDom = this.getSearchListDom(isEmptySearchInput ? presetOptionList : searchList);
     this.state = {
       // 下拉选框是否展示
       isSHowModal: false,
-      // 选中的值
-      value: props.value,
       // 添加id标识
       id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+      // 下拉框选项列表
+      optionListDom,
+      // 选中的值
+      value,
     };
   }
 
@@ -72,25 +81,44 @@ export default class DropdownSelect extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value: nextValue } = nextProps;
-    const { value: preValue } = this.props;
+    const { value: nextValue, searchList: nextSearchList } = nextProps;
+    const { value: preValue, searchList: preSearchList } = this.props;
     if (preValue !== nextValue) {
       this.setState({
         value: nextValue,
       });
     }
+    if (preSearchList !== nextSearchList) {
+      // 更新下拉选项框列表
+      this.setState({
+        optionListDom: this.getSearchListDom(nextSearchList),
+      });
+    }
   }
 
-  get getSearchListDom() {
-    const { searchList = [], emitSelectItem, showObjKey, objId, name } = this.props;
+  @autobind
+  onChange(searchValue) {
+    if (_.isEmpty(searchValue)) {
+      const { presetOptionList } = this.props;
+      this.setState({
+        ...this.state,
+        // 当输入值为空时，显示预置下拉选项
+        optionListDom: this.getSearchListDom(presetOptionList),
+      });
+    }
+  }
+
+  getSearchListDom(datList) {
+    const { emitSelectItem, showObjKey, objId, name } = this.props;
     let searchValue = '';
     if (this.hackSearchComonent) {
       searchValue = this.hackSearchComonent.getValue();
     }
-    const result = searchList.map((item, index) => {
+    const result = _.map(datList, (item, index) => {
       if (item.isHidden) {
         return null;
       }
+      const value = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
       const callBack = () => {
         // 多传一个默认输入值，有些场景下需要用到
         emitSelectItem({
@@ -99,7 +127,7 @@ export default class DropdownSelect extends PureComponent {
         });
         this.setState({
           isSHowModal: false,
-          value: item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`,
+          value,
         });
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
@@ -108,9 +136,9 @@ export default class DropdownSelect extends PureComponent {
           key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
-          title={item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
+          title={value}
         >
-          {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
+          {value}
         </li>
       );
     });
@@ -159,8 +187,10 @@ export default class DropdownSelect extends PureComponent {
   @autobind
   checkListIsEmpty() {
     const { searchList } = this.props;
-    return _.isEmpty(searchList)
-      || (searchList.filter(item => item.isHidden).length === searchList.length);
+    const { optionListDom } = this.state;
+    const hiddenSearchList = searchList.filter(item => item.isHidden);
+    return _.isEmpty(optionListDom)
+      || (!_.isEmpty(searchList) && hiddenSearchList.length === searchList.length);
   }
 
   render() {
@@ -195,17 +225,19 @@ export default class DropdownSelect extends PureComponent {
               placeholder={this.props.placeholder}
               onSearch={this.toSearch}
               defaultValue={defaultSearchValue}
+              handleChange={this.onChange}
               ref={ref => this.hackSearchComonent = ref}
             />
           </div>
           {
-            this.checkListIsEmpty()
-              ? <span className={style.notFound}>没有发现与之匹配的结果</span>
-              : null
+            this.checkListIsEmpty() ? (
+              <span className={style.notFound}>没有发现与之匹配的结果</span>
+            ) : (
+              <ul className={style.ddsDrapMenuCon}>
+                {this.state.optionListDom}
+              </ul>
+            )
           }
-          <ul className={style.ddsDrapMenuCon}>
-            {this.getSearchListDom}
-          </ul>
         </div>
       </div>
     );
