@@ -17,10 +17,26 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper, permission, fsp } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBoradcast';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
+// 新建晨报时标记晨报id为-1
+const createNewsId = -1;
+
+function getOpenModalLog(ctx) {
+  const newsId = ctx.state.newsId;
+  if (newsId === createNewsId) {
+    return {
+      pathname: '/modal/createBoradcastList',
+      title: '新建晨报',
+    };
+  }
+  return {
+    pathname: '/modal/modifyBoradcastList',
+    title: '修改晨报详情',
+  };
+}
 
 const effects = {
   getBoradcastList: 'morningBoradcast/getBoradcastList',
@@ -177,7 +193,6 @@ export default class BroadcastList extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: '/click/morningBroadcast/toDetail' })
   onHandleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -194,7 +209,11 @@ export default class BroadcastList extends PureComponent {
 
   // Model(晨报新增、修改) --> start
   @autobind()
-  @logable({ type: '/click/morningBroadcast/showAddOrEditModal' })
+  @logPV({
+    payload: {
+      payload: getOpenModalLog,
+    },
+  })
   showModal(newsId = -1) {
     this.setState({
       visible: true,
@@ -305,6 +324,12 @@ export default class BroadcastList extends PureComponent {
   }
   // 列表项删除
   @autobind()
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '删除晨报',
+    },
+  })
   onDelItem(newsId) {
     const { delBoradcastItem } = this.props;
     delBoradcastItem({ newsId });

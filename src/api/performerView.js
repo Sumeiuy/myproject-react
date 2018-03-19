@@ -29,7 +29,7 @@ export default function performerView(api) {
     // 管理者视图任务实施进度
     countFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowStatus', query),
     // 添加服务记录中 服务类型
-    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
+    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
     // 问卷调查
     getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
     // 问卷调查保存答案
@@ -42,5 +42,9 @@ export default function performerView(api) {
     exportCustListExcel: query => api.post('/groovynoauth/fsp/assess/common/exportCustListExcel', query),
     // 执行者视图查客户
     queryCustomer: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustsServedByEmpId', query),
+    // 任务列表管理者视图下任务实施简报的生成
+    createMotReport: query => api.post('/groovynoauth/fsp/campaign/mot/createMOTFeedBackExcelFile', query),
+    // 获取生成报告信息
+    queryMOTServeAndFeedBackExcel: query => api.post('/groovynoauth/fsp/campaign/mot/queryMOTFeedBackExcel', query),
   };
 }
