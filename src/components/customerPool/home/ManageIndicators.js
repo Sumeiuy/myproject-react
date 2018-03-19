@@ -44,7 +44,7 @@ export default class PerformanceIndicators extends PureComponent {
       PropTypes.object,
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
-    permissionType: PropTypes.number.isRequired,
+    authority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -68,7 +68,7 @@ export default class PerformanceIndicators extends PureComponent {
         cycle,
         location,
         empInfo,
-        permissionType,
+        authority,
       } = this.props;
 
       const param = {
@@ -78,7 +78,7 @@ export default class PerformanceIndicators extends PureComponent {
         location,
         empInfo,
         bname: arg.name || arg.value,
-        permissionType,
+        authority,
       };
       // 点击柱子，arg.name，arg.value都有值
       // 点击x轴， arg.value有值，不存在arg.name
@@ -138,7 +138,7 @@ export default class PerformanceIndicators extends PureComponent {
       location,
       empInfo,
       custCount,
-      permissionType,
+      authority,
     } = this.props;
     // 解析hsRateAndBusinessIndicator数据
     const {
@@ -211,7 +211,7 @@ export default class PerformanceIndicators extends PureComponent {
                       push={push}
                       location={location}
                       empInfo={empInfo}
-                      permissionType={permissionType}
+                      authority={authority}
                     />
                   </IfEmpty>
                 </RectFrame>
