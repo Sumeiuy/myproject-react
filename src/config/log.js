@@ -13,7 +13,7 @@ const config = {
   interval: 1 * 60 * 1000,
   // 开启日志监控
   enable: true,
-  projectName: constants.inHTSCDomain ? 'FSP_1' : 'DEV_TEST',
+  projectName: constants.inHTSCDomain ? 'FSP_2' : 'DEV_TEST',
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',
