@@ -73,10 +73,20 @@ export default {
     sciCheckCustomer: {},
     // 单佣金客户和两融信息合并的对象
     singleCust: {},
+    // 客户的详细信息
+    custDetailInfo: {},
     // 客户的当前股基佣金率
     custCurrentCommission: {},
   },
   reducers: {
+    getCustDetailInfoSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        custDetailInfo: resultData,
+      };
+    },
+
     getProductListSuccess(state, action) {
       const { payload: { resultData } } = action;
       let list = [];
@@ -390,6 +400,14 @@ export default {
     },
   },
   effects: {
+    // 新建批量佣金调整用户选择的目标产品列表
+    * getCustDetailInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryCustDetailInfo, payload);
+      yield put({
+        type: 'getCustDetailInfoSuccess',
+        payload: response,
+      });
+    },
     // 新建批量佣金调整用户选择的目标产品列表
     * getProductList({ payload }, { call, put }) {
       const response = yield call(api.queryProductList, payload);

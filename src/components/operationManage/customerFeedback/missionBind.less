@@ -1,3 +1,4 @@
+@import "../../../css/variable";
 .tipsBox {
   margin-bottom: 20px;
   p {
@@ -35,7 +36,14 @@
   span {
     &.parentClass {
       padding-left: 30px;
+      width: 15%;
+    }
+    &.parentClassSelf {
+      padding-left: 30px;
       width: 30%;
+    }
+    &.missionId {
+      width: 15%;
     }
     &.childClass {
       width: 40%;
@@ -125,11 +133,15 @@
   .pageBox {
     float: right;
     margin: 20px;
+    margin-right: 40px;
     :global {
       .ant-pagination-item {
         margin-bottom: 0;
       }
     }
+  }
+  .emptyContent {
+    .emptyContent;
   }
 }
 .opcityPopover {

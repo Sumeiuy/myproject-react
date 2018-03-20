@@ -85,6 +85,7 @@ export default class SingleFilter extends PureComponent {
 
   render() {
     const { filterLabel, filterField, value } = this.props;
+   /*  debugger; */
     const selectFilter = _.find(filterField, filter => filter.key === value);
     const selectValue = {
       key: selectFilter.key,
@@ -100,7 +101,8 @@ export default class SingleFilter extends PureComponent {
     });
     return (
       <div className={filterCls}>
-        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}:</span>
+        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}</span>
+        <span className={styles.filterSeperator}>：</span>
         <Select
           value={selectValue}
           style={{ minWidth: '73px', fontSize: '14px' }}

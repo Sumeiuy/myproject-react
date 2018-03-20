@@ -12,7 +12,7 @@ import { message, Modal, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import Select from '../../components/common/Select';
@@ -33,12 +33,6 @@ const EMPTY_OBJECT = {};
 const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 // 划转方式默认值
 const defaultType = config.transferType[0].value;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -287,7 +281,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       this.setState({
         isShowModal: false,
       }, () => {
-        queryAppList(query, pageNum, pageSize);
+        // 清空掉从消息提醒页面带过来的 id,appId
+        queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
       });
     });
   }
@@ -304,11 +299,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
-        this.queryCustComponent.clearSearchValue();
+        // this.queryCustComponent.clearSearchValue();
       }
       if (this.queryManagerComponent) {
         this.queryManagerComponent.clearValue();
-        this.queryManagerComponent.clearSearchValue();
+        // this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
       clearMultiData();
@@ -403,7 +398,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             this.setState({
               isShowModal: false,
             }, () => {
-              queryAppList(query, pageNum, pageSize);
+              // 清空掉从消息提醒页面带过来的 id, appId
+              queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
             });
           },
         });
@@ -494,27 +490,23 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             isDefaultType ?
               <div>
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择客户"
                     showObjKey="custName"
                     objId="brokerNumber"
-                    value=""
                     searchList={custList}
-                    emitSelectItem={this.handleSelectClient}
-                    emitToSearch={this.handleSearchClient}
-                    boxStyle={dropDownSelectBoxStyle}
+                    onSelect={this.handleSelectClient}
+                    onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择新服务经理"
                     showObjKey="showSelectName"
-                    value=""
                     searchList={newManagerList}
-                    emitSelectItem={this.handleSelectNewManager}
-                    emitToSearch={this.handleSearchNewManager}
-                    boxStyle={dropDownSelectBoxStyle}
+                    onSelect={this.handleSelectNewManager}
+                    onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>

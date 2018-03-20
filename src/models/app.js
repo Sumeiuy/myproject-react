@@ -48,7 +48,7 @@ export default {
     // 获取员工职责与职位
     getEmpInfoSuccess(state, action) {
       const { payload } = action;
-      const { empInfo = {} } = payload;
+      const { empInfo = {} } = payload || EMPTY_OBJECT;
       let creator = '';
       if (!_.isEmpty(empInfo)) {
         creator = `${empInfo.empName}(${empInfo.login})`;
@@ -63,7 +63,7 @@ export default {
     // 获取已申请客户列表
     getCustomerListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { custList = EMPTY_LIST } = resultData;
+      const { custList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         customerList: custList,
@@ -72,7 +72,7 @@ export default {
     // 获取可申请客户列表
     getCanApplyCustListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { custList = EMPTY_LIST } = resultData;
+      const { custList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         canApplyCustList: custList,
@@ -81,7 +81,7 @@ export default {
     // 获取拟稿人
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { servicePeopleList = EMPTY_LIST } = resultData;
+      const { servicePeopleList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         drafterList: servicePeopleList,
@@ -90,7 +90,10 @@ export default {
     // 获取列表
     getSeibleListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationBaseInfoList = EMPTY_LIST } = resultData;
+      const {
+        page = EMPTY_OBJECT,
+        applicationBaseInfoList = EMPTY_LIST,
+      } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         seibleList: {
@@ -137,7 +140,7 @@ export default {
     // 删除附件
     deleteAttachmentSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { attaches = EMPTY_LIST } = resultData;
+      const { attaches = EMPTY_LIST } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         deleteAttachmentList: attaches,
@@ -145,8 +148,9 @@ export default {
     },
     // 审批人列表（服务经理接口）
     getApprovePersonListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { servicePeopleList = EMPTY_LIST } = resultData;
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      // 当 resultData 为null时，不会启用 resultData 的默认值的。此处要在用使用时写成 resultData || EMPTY_LIST
+      const { servicePeopleList = EMPTY_LIST } = resultData || EMPTY_LIST;
       return {
         ...state,
         approvePersonList: servicePeopleList,
@@ -155,7 +159,7 @@ export default {
     // 针对服务经理接口获取已申请的服务经理列表（服务经理接口）
     getPtyMngListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { servicePeopleList = EMPTY_LIST } = resultData;
+      const { servicePeopleList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
       return {
         ...state,
         ptyMngList: servicePeopleList,

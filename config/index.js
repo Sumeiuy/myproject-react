@@ -46,14 +46,14 @@ module.exports = {
       prefix + '/groovynoauth/fsp/biz/chgcommsion/queryCustCommission',
       {
         // target: 'http://168.61.8.81:5086', // SIT
-         target: 'http://168.61.8.81:5090', // DOClever
+        //  target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.146:8082/', // 张宝成 接口访问地址
-        // target: 'http://168.61.8.82:5086', // uat
+        target: 'http://168.61.8.82:5086', // uat
       },
       prefix,
       {
-        // target: 'http://168.61.8.82:5086', // uat
-        target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.159:8082/', // 王必强 接口访问地址
       },

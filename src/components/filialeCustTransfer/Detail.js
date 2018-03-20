@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-09 14:03:48
+ * @Last Modified time: 2018-03-20 16:06:47
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,10 @@ import InfoItem from '../common/infoItem';
 import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import Pagination from '../common/Pagination';
-import { seibelConfig } from '../../config';
+import Icon from '../common/Icon';
+import { request, seibelConfig } from '../../config';
+import { emp } from '../../helper';
+import config from './config';
 import styles from './detail.less';
 
 // 表头
@@ -23,6 +26,7 @@ const { titleList } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 export default class Detail extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     // 客户表格的分页信息
     getPageAssignment: PropTypes.func.isRequired,
@@ -35,16 +39,20 @@ export default class Detail extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { assignmentList } = props.data;
+    const { assignmentList, page } = props.data;
     this.state = {
       assignmentListData: assignmentList,
+      pageData: page,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { data } = nextProps;
     if (data !== this.props.data) {
-      this.setState({ assignmentListData: data.assignmentList });
+      this.setState({
+        assignmentListData: data.assignmentList,
+        pageData: data.page,
+      });
     }
   }
 
@@ -61,6 +69,7 @@ export default class Detail extends PureComponent {
       const { pageAssignment } = this.props;
       this.setState({
         assignmentListData: pageAssignment.assignmentList,
+        pageData: pageAssignment.page,
       });
     });
   }
@@ -78,10 +87,18 @@ export default class Detail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       assignmentList,
-      page,
       currentNodeName,
+      errorDesc,
+      appId: dataId,
     } = this.props.data;
-    const { pageAssignment } = this.props;
+    const {
+      location: {
+        query: {
+          appId = '',
+        },
+      },
+    } = this.props;
+    const { pageData, assignmentListData } = this.state;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
@@ -96,12 +113,11 @@ export default class Detail extends PureComponent {
     }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
-    const multiCustPage = pageAssignment.page;
     // 分页
     const paginationOption = {
-      current: _.isEmpty(multiCustPage) ? page.curPageNum : multiCustPage.curPageNum,
-      total: _.isEmpty(multiCustPage) ? page.totalRecordNum : multiCustPage.totalRecordNum,
-      pageSize: page.pageSize,
+      current: pageData.curPageNum,
+      total: pageData.totalRecordNum,
+      pageSize: pageData.pageSize,
       onChange: this.handlePageNumberChange,
     };
 
@@ -111,6 +127,29 @@ export default class Detail extends PureComponent {
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
             <div id="detailModule" className={styles.module}>
+              <div className={styles.error}>
+                {
+                  errorDesc
+                  ?
+                    <p>
+                      <Icon type="tishi" />
+                      {config.tips[errorDesc]}
+                    </p>
+                  :
+                    null
+                }
+                {
+                  errorDesc === config.errorArray[0]
+                  ?
+                    <p>
+                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`} download>
+                        下载报错信息
+                      </a>
+                    </p>
+                  :
+                    null
+                }
+              </div>
               <InfoTitle head="基本信息" />
               <div className={styles.modContent}>
                 <div className={styles.propertyList}>
@@ -130,7 +169,7 @@ export default class Detail extends PureComponent {
                   }
                 </div>
                 <CommonTable
-                  data={this.state.assignmentListData}
+                  data={assignmentListData}
                   titleList={titleList}
                 />
                 {

@@ -14,8 +14,8 @@ import TargetCustomerRow from './TargetCustomerRow';
 
 import styles from './targetCustomer.less';
 
-// 当前分页条目
-const CURRENT_PAGE_SIZE = 10;
+// // 当前分页条目
+// const CURRENT_PAGE_SIZE = 10;
 
 export default class TargetCustomer extends PureComponent {
 
@@ -31,21 +31,20 @@ export default class TargetCustomer extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
-    // 列表中当前选中的数据
-    currentCustId: PropTypes.string,
     targetCustDetail: PropTypes.object.isRequired,
     changeParameter: PropTypes.func.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     getCustDetail: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    currentMissionFlowId: PropTypes.string,
   }
 
   static defaultProps = {
     dict: {},
     serviceRecordData: {},
-    currentCustId: '',
     filesList: [],
+    currentMissionFlowId: '',
   };
 
   constructor(props) {
@@ -62,7 +61,7 @@ export default class TargetCustomer extends PureComponent {
 
   // 查询客户列表项对应的详情
   @autobind
-  handleRowClick({ id }) {
+  handleRowClick({ id, missionFlowId }) {
     const {
       currentId,
       changeParameter,
@@ -71,6 +70,7 @@ export default class TargetCustomer extends PureComponent {
     } = this.props;
     changeParameter({
       targetCustId: id,
+      targetMissionFlowId: missionFlowId,
     });
     getCustDetail({
       custId: id,
@@ -86,19 +86,17 @@ export default class TargetCustomer extends PureComponent {
     const {
       list,
       isFold,
-      currentCustId,
+      currentMissionFlowId,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
     }
-    return list.map((item, index) => <TargetCustomerRow
+    return list.map(item => <TargetCustomerRow
       key={`${item.custId}-${item.missionFlowId}`}
       item={item}
       isFold={isFold}
-      currentCustId={currentCustId}
+      currentMissionFlowId={currentMissionFlowId}
       onClick={this.handleRowClick}
-      // 去除满数据时，最后一个item的border-bottom，一页10条
-      lastItemStyle={Number(index) + 1 === CURRENT_PAGE_SIZE ? styles.hideLastItemBorder : null}
     />);
   }
 
