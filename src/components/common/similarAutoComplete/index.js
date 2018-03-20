@@ -92,6 +92,7 @@ export default class SimilarAutoComplete extends PureComponent {
     }
   }
 
+  // 默认的option样式
   getSearchListDom(dataList) {
     const { showObjKey, objId, name, renderOption } = this.props;
     const result = _.map(dataList, (item, index, array) => {
@@ -126,27 +127,24 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   // 根据用户选中的option的value值获取对应的数组值
+  // 第一个参数是 AutoComplete 组件的optionLabelProp指定的key对应的值
+  // 第二个参数是当前选中元素的的Dom项（可以打印出来看下）
   @autobind
-  handleSelectedValue(value) {
+  handleSelectedValue(value, item) {
     if (value) {
-      const { searchList = [], onSelect, showObjKey, objId } = this.props;
-      const selectItem = _.find(
-        searchList,
-        (item) => {
-          const optionValue = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
-          return optionValue === value;
-        },
-      );
-      // 记录当前选中的值
-      currentSelect = selectItem || {};
+      const { onSelect } = this.props;
+      const { dataSource } = this.state;
+      // 当前选中的索引
+      const selectedIndex = item.props.index;
+      // 当前的选中值
+      currentSelect = dataSource[selectedIndex];
       onSelect({
         ...currentSelect,
       });
 
       // 更新state中的值
-      const currentValue = currentSelect[objId] ? `${currentSelect[showObjKey]}（${currentSelect[objId]}）` : `${currentSelect[showObjKey]}`;
       this.setState({
-        value: currentValue,
+        value,
         typeStyle: 'clear',
       });
     }

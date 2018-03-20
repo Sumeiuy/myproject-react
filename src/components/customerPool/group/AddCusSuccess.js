@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import Button from '../../common/Button';
 import styles from './addCusSuccess.less';
 import { openRctTab, navTo } from '../../../utils';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 
 @RestoreScrollTop
@@ -61,6 +61,7 @@ export default class AddCusSuccess extends PureComponent {
 
   /* 跳转到客户分组管理列表 */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '客户分组' } })
   LinkToGroupManage() {
     this.clearTimeInterval();
     const { push } = this.props;
@@ -118,22 +119,12 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在
-            <Clickable
-              onClick={this.LinkToGroupManage}
-              eventName="/click/addCustSuccess/linkToCustGroup"
-            >
-              <span className={styles.linkTo}>客户分组</span>
-            </Clickable>
+            <span className={styles.linkTo} onClick={this.LinkToGroupManage}>客户分组</span>
             查看该分组
           </div>
           <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
           <div className={styles.successBtn}>
-            <Clickable
-              onClick={this.goToIndex}
-              eventName="/click/addCustSuccess/backHome"
-            >
-              <Button type="primary">返回首页</Button>
-            </Clickable>
+            <Button type="primary" onClick={this.goToIndex}>返回首页</Button>
           </div>
         </div>
       </div>
