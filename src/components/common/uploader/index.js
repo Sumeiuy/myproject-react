@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 09:59:50
+ * @Last Modified time: 2018-03-20 18:50:34
  */
 
 import React, { PureComponent } from 'react';
@@ -41,7 +41,7 @@ export default class Uploader extends PureComponent {
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
     deleteFileResult: PropTypes.array,
-    accept: PropTypes.array,
+    accept: PropTypes.string,
   }
 
   static defaultProps = {
@@ -60,7 +60,7 @@ export default class Uploader extends PureComponent {
     custUuid: '',
     isSupportUploadMultiple: false,
     deleteFileResult: [],
-    accept: [],
+    accept: '',
   }
 
   constructor(props) {
@@ -141,7 +141,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleFileChange(info) {
-    const { onOperateFile, isSupportUploadMultiple, accept } = this.props;
+    const { onOperateFile, isSupportUploadMultiple } = this.props;
     const { upData, custUuid } = this.state;
     // 当前操作upload项
     const currentFile = info.file;
@@ -150,11 +150,10 @@ export default class Uploader extends PureComponent {
 
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
-
-    if (!_.isEmpty(accept) && _.isRegExp(accept[0]) && !accept[0].test(currentFile.name)) {
-      message.error('仅支持上传EXCEL文件', 2);
-      return;
-    }
+    // if (!_.isEmpty(accept) ) {
+    //   message.error('仅支持上传EXCEL文件', 2);
+    //   return;
+    // }
 
     if (status === 'removed') {
       if (!_.isEmpty(newFileList)) {
@@ -231,7 +230,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
-    const { uploadTitle, uploadTarget } = this.props;
+    const { uploadTitle, uploadTarget, accept } = this.props;
     const { upData, fileList } = this.state;
 
     return (
@@ -245,6 +244,7 @@ export default class Uploader extends PureComponent {
         showUploadList={false}
         fileList={fileList}
         listType={'text'}
+        accept={accept}
       >
         <div className="upload_txt">
           + {uploadTitle}
