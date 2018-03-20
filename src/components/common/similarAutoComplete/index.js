@@ -43,8 +43,6 @@ export default class SimilarAutoComplete extends PureComponent {
     defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 下拉框的宽度
     width: PropTypes.number,
-    // 下拉预置列表
-    presetOptionList: PropTypes.array,
     // 定制下拉选项框(用AutoComplete.Option来实现，一定要有value属性值)
     renderOption: PropTypes.func,
     // 是否即时搜索（默认为true，用于模糊匹配；精准匹配时，置为false），
@@ -61,35 +59,20 @@ export default class SimilarAutoComplete extends PureComponent {
     disable: false,
     defaultSearchValue: '',
     width: 0,
-    presetOptionList: [],
     renderOption: null,
     isImmediatelySearch: true,
   }
 
   constructor(props) {
     super(props);
-    const { defaultSearchValue, searchList, presetOptionList } = props;
+    const { defaultSearchValue } = props;
     const isEmptyValue = _.isEmpty(_.trim(defaultSearchValue));
-    const dataSource = isEmptyValue ? presetOptionList : searchList;
     this.state = {
-      // 下拉框选项列表
-      dataSource,
       // 搜索框的类型
       typeStyle: isEmptyValue ? 'search' : 'clear',
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { searchList: nextSearchList } = nextProps;
-    const { searchList: preSearchList } = this.props;
-    if (preSearchList !== nextSearchList) {
-      // 更新下拉选项框列表
-      this.setState({
-        dataSource: nextSearchList,
-      });
-    }
   }
 
   getSearchListDom(dataList) {
@@ -103,6 +86,7 @@ export default class SimilarAutoComplete extends PureComponent {
       if (renderOption) {
         return renderOption(item, index, array);
       }
+      // 默认的option样式
       return (
         <Option
           key={idx}
@@ -126,27 +110,23 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   // 根据用户选中的option的value值获取对应的数组值
+  // 第一个参数是 AutoComplete 组件的optionLabelProp指定的key对应的值
+  // 第二个参数是当前选中元素的的Dom项（可以打印出来看下）
   @autobind
-  handleSelectedValue(value) {
+  handleSelectedValue(value, item) {
     if (value) {
-      const { searchList = [], onSelect, showObjKey, objId } = this.props;
-      const selectItem = _.find(
-        searchList,
-        (item) => {
-          const optionValue = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
-          return optionValue === value;
-        },
-      );
-      // 记录当前选中的值
-      currentSelect = selectItem || {};
+      const { onSelect, searchList } = this.props;
+      // 当前选中的索引
+      const selectedIndex = item.props.index;
+      // 当前的选中值
+      currentSelect = searchList[selectedIndex];
       onSelect({
         ...currentSelect,
       });
 
       // 更新state中的值
-      const currentValue = currentSelect[objId] ? `${currentSelect[showObjKey]}（${currentSelect[objId]}）` : `${currentSelect[showObjKey]}`;
       this.setState({
-        value: currentValue,
+        value,
         typeStyle: 'clear',
       });
     }
@@ -155,7 +135,7 @@ export default class SimilarAutoComplete extends PureComponent {
   // 即时搜索
   @autobind
   handleImmediatelySearch(searchValue) {
-    const { presetOptionList, onSelect, isImmediatelySearch } = this.props;
+    const { onSelect, isImmediatelySearch } = this.props;
     const { typeStyle } = this.state;
     let value = searchValue;
     if (typeStyle === 'clear') {
@@ -164,15 +144,11 @@ export default class SimilarAutoComplete extends PureComponent {
       this.setState({
         value,
         typeStyle: 'search',
-        // 当输入值为空时，显示预置下拉选项
-        dataSource: presetOptionList,
       });
     } else {
-      const optionObj = _.isEmpty(value) ? { dataSource: presetOptionList } : {};
       // 记录要搜索的字段，并设置当前的状态为搜索状态
       this.setState({
         value,
-        ...optionObj,
       });
     }
     if (isImmediatelySearch) {
@@ -190,14 +166,11 @@ export default class SimilarAutoComplete extends PureComponent {
       // 发起搜索
       this.props.onSearch(value);
     } else if (typeStyle === 'clear') {
-      // 预置数据列表
-      const { presetOptionList } = this.props;
       // 清空输入框，并设置为搜索状态
       this.setState(
         {
           value: '',
           typeStyle: 'search',
-          dataSource: presetOptionList,
         },
         () => {
           // 手动清空选中值，传递到组件外
@@ -213,12 +186,9 @@ export default class SimilarAutoComplete extends PureComponent {
   // 组件外部使用，场景是，部分使用该组件时，需要对选中的值做验证（组件外部验证），验证不通过，需要清空
   @autobind
   clearValue() {
-    const { presetOptionList } = this.props;
     this.setState({
       value: '',
       typeStyle: 'search',
-      // 当输入值为空时，显示预置下拉选项
-      dataSource: presetOptionList,
     });
   }
 
@@ -226,10 +196,9 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   checkListIsEmpty() {
     const { searchList } = this.props;
-    const { dataSource } = this.state;
     const hiddenSearchList = searchList.filter(item => item.isHidden);
-    return _.isEmpty(dataSource)
-      || (!_.isEmpty(searchList) && hiddenSearchList.length === searchList.length);
+    return _.isEmpty(searchList)
+      || (hiddenSearchList.length === searchList.length);
   }
 
   // 渲染 disable 状态下的标签显示
@@ -258,8 +227,8 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   renderAutoComplete() {
-    const { placeholder, boxStyle, width, ...otherPorps } = this.props;
-    const { typeStyle, value, dataSource } = this.state;
+    const { placeholder, boxStyle, width, searchList, ...otherPorps } = this.props;
+    const { typeStyle, value } = this.state;
     const empty = [(
       <Option
         key={'empty'}
@@ -269,7 +238,7 @@ export default class SimilarAutoComplete extends PureComponent {
         <span className={style.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(dataSource);
+    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
     const inputValue = _.isString(value) ? value : `${value}`;
     const iconType = typeStyle === 'search' ? 'search' : 'close';
     return (
