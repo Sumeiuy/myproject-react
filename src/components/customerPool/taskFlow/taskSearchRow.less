@@ -36,10 +36,10 @@
     }
     .ant-modal-body {
       overflow-y: scroll;
-      max-height: 586px;
-      min-height: 580px;
+      height: 586px;
       padding: 0 20px 0 31px;
     }
+
     .ant-modal-title {
       font-size: 18px;
       font-weight: bold;
@@ -294,6 +294,22 @@
     }
     .ant-table-scroll {
       .scrollBarIEStyle;
+    }
+  }
+}
+
+  @media screen and (max-height: 800px) {
+    .labelCustModalContainer {
+      :global {
+        .ant-modal {
+        .ant-modal-content {
+          height: e("calc(100vh - 150px)");
+          .ant-modal-body {
+            overflow-y: scroll;
+            height: e("calc(100vh - 262px)");
+          }
+        }
+      }
     }
   }
 }
