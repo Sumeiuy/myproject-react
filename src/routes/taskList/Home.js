@@ -176,7 +176,7 @@ const mapDispatchToProps = {
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   // 改变详情中的用来查询的参数
   changeParameter: fetchDataFunction(false, effects.changeParameter),
-  // 查询详情中目标客户列表
+  // 查询详情中目标客户信息（列表和列表第一条客户的详情）
   queryTargetCust: fetchDataFunction(true, effects.queryTargetCust),
   // 查询详情中目标客户的详情
   queryTargetCustDetail: fetchDataFunction(true, effects.queryTargetCustDetail),
@@ -916,7 +916,7 @@ export default class PerformerView extends PureComponent {
       missionId: obj.id,
       pageNum: 1,
       pageSize: 10,
-    }).then(() => this.getCustDetail({ missionId: obj.id }));
+    });
   }
 
   /**
