@@ -7,14 +7,9 @@
  */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
 import { Table } from 'antd';
-// import _ from 'lodash';
-// import { autobind } from 'core-decorators';
 import classNames from 'classnames';
 import Pagination from '../Pagination';
-
-// const EMPTY_OBJECT = {};
 
 export default class CommonTable extends Table {
 
