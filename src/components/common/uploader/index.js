@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 21:26:05
+ * @Last Modified time: 2018-03-20 09:59:50
  */
 
 import React, { PureComponent } from 'react';
@@ -151,7 +151,7 @@ export default class Uploader extends PureComponent {
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
-    if (!_.isEmpty(accept) && !accept.test(currentFile.name)) {
+    if (!_.isEmpty(accept) && !new RegExp(accept).test(currentFile.name)) {
       message.error('仅支持上传EXCEL文件', 2);
       return;
     }

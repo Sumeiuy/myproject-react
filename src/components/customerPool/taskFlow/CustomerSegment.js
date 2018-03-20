@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 15:21:23
+ * @Last Modified time: 2018-03-20 10:08:36
  * 客户细分组件
  */
 
@@ -288,7 +288,7 @@ export default class CustomerSegment extends PureComponent {
             uploadTitle={'上传客户列表'}
             uploadTarget={`${request.prefix}/file/khxfFileUpload`}
             // 只支持EXCEL文件
-            accept={/\.(xlsx|xls)(\?.*)?$/}
+            accept={'\\.(xlsx|xls)(\\?.*)?$'}
           />
         </div>
         <div className={styles.tipSection}>
