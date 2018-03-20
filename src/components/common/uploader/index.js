@@ -41,7 +41,7 @@ export default class Uploader extends PureComponent {
     isUploadFileManually: PropTypes.bool,
     isSupportUploadMultiple: PropTypes.bool,
     deleteFileResult: PropTypes.array,
-    accept: PropTypes.string,
+    accept: PropTypes.array,
   }
 
   static defaultProps = {
@@ -60,7 +60,7 @@ export default class Uploader extends PureComponent {
     custUuid: '',
     isSupportUploadMultiple: false,
     deleteFileResult: [],
-    accept: '',
+    accept: [],
   }
 
   constructor(props) {
@@ -151,7 +151,7 @@ export default class Uploader extends PureComponent {
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
-    if (!_.isEmpty(accept) && !new RegExp(accept).test(currentFile.name)) {
+    if (!_.isEmpty(accept) && _.isRegExp(accept[0]) && !accept[0].test(currentFile.name)) {
       message.error('仅支持上传EXCEL文件', 2);
       return;
     }
