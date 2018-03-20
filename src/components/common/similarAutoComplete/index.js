@@ -111,8 +111,11 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleInputValue(value) {
     if (_.isEmpty(currentSelect)) {
-      const { presetOptionList } = this.props;
-      const { optionList } = this.state;
+      const { presetOptionList, onSelect } = this.props;
+      const { optionList, typeStyle } = this.state;
+      if (typeStyle === 'close') {
+        onSelect({});
+      }
       // 记录要搜索的字段，并设置当前的状态为搜索状态
       this.setState({
         value,
