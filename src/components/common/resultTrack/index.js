@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-22 17:28:32
+ * @Last Modified time: 2018-03-12 09:47:13
  * 结果跟踪
  */
 
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import DropdownSelect from '../dropdownSelect';
+import AutoComplete from '../similarAutoComplete';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
@@ -324,8 +324,9 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   getfirstAllowedDate() {
-    const { needApproval, storedData } = this.props;
-    const { timelyIntervalValue } = storedData.taskFormData;
+    const { needApproval, storedData = {} } = this.props;
+    const { taskFormData = {} } = storedData || {};
+    const { timelyIntervalValue } = taskFormData;
     const momentNow = moment();
     // 修正可以选择的开始时间
     const firstAllowedDate = timelyIntervalValue ? momentNow.add(Number(timelyIntervalValue), 'days') : momentNow;
@@ -353,7 +354,8 @@ export default class ResultTrack extends PureComponent {
   fixDays(value, reverse) {
     let days;
     const { needApproval, storedData } = this.props;
-    const { timelyIntervalValue } = storedData.taskFormData;
+    const { taskFormData = {} } = storedData || {};
+    const { timelyIntervalValue } = taskFormData;
     if (reverse) {
       days = needApproval ? value - timelyIntervalValue - 5 :
         value - timelyIntervalValue;
@@ -583,7 +585,7 @@ export default class ResultTrack extends PureComponent {
   @autobind
   handleSelectProductItem(value) {
     console.log(value);
-    if (!_.isEmpty(value)) {
+    if (!_.isEmpty(_.omit(value, 'searchValue'))) {
       this.setState({
         currentSelectedProduct: value,
       });
@@ -639,7 +641,7 @@ export default class ResultTrack extends PureComponent {
 
     const stateText = this.renderStateText();
 
-    let currentSelectProductValue = '请输入产品';
+    let currentSelectProductValue = '';
     if (!_.isEmpty(currentSelectedProduct)) {
       currentSelectProductValue = `${currentSelectedProduct.aliasName || ''}${currentSelectedProduct.name ? `(${currentSelectedProduct.name || ''})` : ''}`;
     }
@@ -701,21 +703,24 @@ export default class ResultTrack extends PureComponent {
                      * 当isProdBound为true时，代表有搜索产品功能
                      */}
                     {
-                      isProdBound ? <div className={styles.indicatorLevel3}>
-                        <DropdownSelect
-                          theme="theme2"
-                          value={currentSelectProductValue}
-                          showObjKey="aliasName"
-                          objId="name"
-                          placeholder="产品编码/产品名称"
-                          name="产品"
-                          disable={!checked}
-                          searchList={searchedProductList || EMPTY_LIST}
-                          emitSelectItem={this.handleSelectProductItem}
-                          emitToSearch={this.handleQueryProduct}
-                          defaultSearchValue={currentSelectedProduct.searchValue || ''}
-                        />
-                      </div> : null
+                      isProdBound ? (
+                        <div className={styles.indicatorLevel3}>
+                          <span>产品：</span>
+                          <AutoComplete
+                            theme="theme2"
+                            defaultSearchValue={currentSelectProductValue}
+                            showObjKey="aliasName"
+                            objId="name"
+                            placeholder="产品编码/产品名称"
+                            name="产品"
+                            disable={!checked}
+                            searchList={searchedProductList || EMPTY_LIST}
+                            onSelect={this.handleSelectProductItem}
+                            onSearch={this.handleQueryProduct}
+                            width={220}
+                          />
+                        </div>
+                      ) : null
                     }
 
                     {/**

@@ -7,7 +7,7 @@ import InfoTitle from '../common/InfoTitle';
 import Button from '../common/Button';
 import TableList from '../common/TableList';
 import style from './serverpersonel.less';
-import DropdownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 
 // 私密客户取消
 const PERMISSION_CUST_CANCLE = '0102';
@@ -73,15 +73,14 @@ export default class ServerPersonel extends PureComponent {
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
           <div className={style.spAddDropdownSelect}>
-            <DropdownSelect
-              value="工号/名称"
+            <AutoComplete
               placeholder="请输入姓名或工号"
               searchList={this.props.searchServerPersonList}
               showObjKey="ptyMngName"
               objId="ptyMngId"
-              emitSelectItem={this.dropdownSelectedItem}
-              emitToSearch={this.dropdownToSearchInfo}
-              boxStyle={{ border: '1px solid #d9d9d9' }}
+              width={220}
+              onSelect={this.dropdownSelectedItem}
+              onSearch={this.dropdownToSearchInfo}
             />
           </div>
           {

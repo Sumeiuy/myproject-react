@@ -9,7 +9,7 @@
 export default function cust(api) {
   return {
     // 查询任务列表
-    getMissionList: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList', query),
+    getMissionList: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
     // 删除任务下所关联客户反馈选项
     delCustomerFeedback: query => api.post('/groovynoauth/fsp/campaign/mot/delCustomerFeedback', query),
     // 删除客户反馈

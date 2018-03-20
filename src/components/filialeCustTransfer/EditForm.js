@@ -13,7 +13,7 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
@@ -30,12 +30,6 @@ const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
 const STOP_STATUS_CODE = '02'; // 终止状态code
 const COMPLETE_STATUS_CODE = '03'; // 完成状态code
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 
 export default class FilialeCustTransferEditForm extends PureComponent {
   static propTypes = {
@@ -377,29 +371,27 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                     <div className={styles.selectBox}>
                       <div className={styles.selectLeft}>
                         <InfoForm label="选择客户" required>
-                          <DropDownSelect
+                          <AutoComplete
                             placeholder="选择客户"
                             showObjKey="custName"
                             objId="brokerNumber"
-                            value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
                             searchList={custList}
-                            emitSelectItem={this.handleSelectClient}
-                            emitToSearch={this.handleSearchClient}
-                            boxStyle={dropDownSelectBoxStyle}
+                            onSelect={this.handleSelectClient}
+                            onSearch={this.handleSearchClient}
                             ref={ref => this.queryCustComponent = ref}
                           />
                         </InfoForm>
                       </div>
                       <div className={styles.selectRight}>
                         <InfoForm label="选择新服务经理" required>
-                          <DropDownSelect
+                          <AutoComplete
                             placeholder="选择新服务经理"
                             showObjKey="showSelectName"
-                            value={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
+                            defaultSearchValue={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
                             searchList={newManagerList}
-                            emitSelectItem={this.handleSelectNewManager}
-                            emitToSearch={this.handleSearchNewManager}
-                            boxStyle={dropDownSelectBoxStyle}
+                            onSelect={this.handleSelectNewManager}
+                            onSearch={this.handleSearchNewManager}
                             ref={ref => this.queryManagerComponent = ref}
                           />
                         </InfoForm>

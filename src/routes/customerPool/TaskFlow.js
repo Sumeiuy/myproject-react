@@ -1,19 +1,20 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 10:56:32
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper } from '../../helper';
+import { emp, permission, env as envHelper, number } from '../../helper';
 import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
@@ -23,6 +24,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
@@ -48,6 +50,59 @@ const fetchData = (type, loading) => query => ({
   payload: query || EMPTY_OBJECT,
   loading,
 });
+
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
+// 新建任务上报日志
+function logCreateTask(instance) {
+  const { storedTaskFlowData, dict: { missionType = {} } } = instance.props;
+  const {
+    taskFormData: {
+      taskType: taskTypeCode,
+      timelyIntervalValue,
+      taskName,
+    },
+    custSegment: {
+      custSource: segmentCustSource,
+    },
+    labelCust: {
+      custSource: lableCustSource,
+    },
+    resultTrackData: {
+      trackWindowDate = '无',
+      currentIndicatorDescription = '无',
+    },
+    missionInvestigationData: {
+      isMissionInvestigationChecked = false,
+    },
+    currentEntry,
+  } = storedTaskFlowData;
+  let custSource;
+  if (currentEntry === 0) {
+    custSource = segmentCustSource;
+  } else {
+    custSource = lableCustSource;
+  }
+  let taskType = '';
+  _.map(missionType, (item) => {
+    if (item.key === taskTypeCode) {
+      taskType = item.value;
+    }
+  });
+  return {
+    taskType,
+    taskName,
+    timelyIntervalValue: `${timelyIntervalValue}天`,
+    custSource,
+    trackWindowDate: `${trackWindowDate}天`,
+    currentIndicatorDescription,
+    isMissionInvestigationChecked,
+  };
+}
+
 
 const mapStateToProps = state => ({
   // 字典信息
@@ -191,6 +246,10 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep,
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
+      shouldclearBottomLabel: false,
+      clearFromSearch: true,
+      currentSelectLabelName: null,
+      currentFilterNum: 0,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -608,9 +667,20 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleSubmitTaskFlow() {
-    const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      logCreateTask,
+    },
+  })
+  decoratorSubmitTaskFlow(option) {
+    const { submitTaskFlow } = this.props;
+    submitTaskFlow({ ...option });
+  }
 
+  @autobind
+  handleSubmitTaskFlow() {
+    const { storedTaskFlowData, templateId } = this.props;
     const {
       currentSelectRecord: { login: flowAuditorId = null },
       currentEntry,
@@ -745,8 +815,7 @@ export default class TaskFlow extends PureComponent {
         },
       };
     }
-
-    submitTaskFlow({ ...postBody });
+    this.decoratorSubmitTaskFlow(postBody);
   }
 
   @autobind
@@ -809,6 +878,60 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+  @autobind
+  onChange(value) {
+    const { currentFilterNum, currentSelectLabelName, clearFromSearch } = value;
+    this.setState({
+      currentFilterNum,
+      currentSelectLabelName,
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  switchBottomFromHeader(shouldclearBottomLabel) {
+    this.setState({
+      shouldclearBottomLabel,
+    });
+  }
+
+  @autobind
+  switchBottomFromSearch(clearFromSearch) {
+    this.setState({
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  renderBottomLabel() {
+    const {
+      current,
+      currentFilterNum,
+      currentSelectLabelName,
+      shouldclearBottomLabel,
+      clearFromSearch,
+    } = this.state;
+
+    // 是否应该隐藏底部的标签显示取决于三个条件
+    // 1. 选中标签,clearFromSearch控制
+    // 2. 使用头部的切换导入客户按钮，shouldclearBottomLabel控制
+    // 3. 是否处于第一步 current !== 0
+    // 条件1的优先级最高，条件3的优先级最低
+    const shouldHideBottom = clearFromSearch || shouldclearBottomLabel || current !== 0;
+    const cls = classnames({
+      [styles.hide]: shouldHideBottom,
+      [styles.bottomLabel]: true,
+    });
+    return (
+      <div className={cls}>
+        <span>已选择：</span>
+        <i>{currentSelectLabelName}</i>
+        <span>目标客户数：</span>
+        <i>{transformNumber(currentFilterNum)}</i>
+      </div>
+    );
+  }
+
   render() {
     const {
       current,
@@ -866,7 +989,9 @@ export default class TaskFlow extends PureComponent {
           location={location}
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
-
+          onChange={this.onChange}
+          switchBottomFromHeader={this.switchBottomFromHeader}
+          switchBottomFromSearch={this.switchBottomFromSearch}
           onPreview={previewCustFile}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
@@ -963,6 +1088,7 @@ export default class TaskFlow extends PureComponent {
           </Steps>
           <div className={styles.stepsContent}>
             {steps[current].content}
+            {this.renderBottomLabel()}
           </div>
           <div className={styles.stepsAction}>
             {

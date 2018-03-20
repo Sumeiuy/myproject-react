@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Popover } from 'antd';
 
 import IECharts from '../../IECharts';
 import styles from './funney.less';
@@ -53,16 +54,31 @@ function renderIntro(data, push) {
           eventName="/click/fuuney/linkToList"
         >
           <div
-            title={item.value}
             className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
           >
-            {item.value}
+            <Popover
+              title={`${item.value}`}
+              content={item.description}
+              placement="bottom"
+              mouseEnterDelay={0.2}
+              overlayStyle={{ maxWidth: '320px' }}
+            >
+              {item.value}
+            </Popover>
           </div>
         </Clickable>
         <div className={styles.count2}>
           <span>/</span>
-          <span title={item.property}>{item.property}</span>
-          <span title={item.unit}>{item.unit}</span>
+          <Popover
+            title={`${item.property}${item.unit}`}
+            content={item.propertyDesc}
+            placement="bottom"
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
+          >
+            <span>{item.property}</span>
+            <span>{item.unit}</span>
+          </Popover>
         </div>
       </div>
     ),

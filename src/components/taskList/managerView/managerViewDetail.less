@@ -38,10 +38,7 @@
       display: flex;
       .totalNum {
         font-size: 14px;
-        // color: #108ee9;
-        text-align: right;
-        min-width: 80;
-        // cursor: pointer;
+        text-align: left;
       }
       .tip {
         color: #2782d7;
@@ -57,9 +54,30 @@
   .operationBtnSection {
     padding-bottom: 20px;
   }
+
+  // 保证弹框距离底部10px
+  // 距离顶部50px
   :global {
+    .ant-modal {
+      overflow-y: hidden;
+      height: e("calc(100vh - 150px)");
+      padding-bottom: 0;
+      // max-height: 662px;
+      width: 1165px !important;
+      top: 50px;
+    }
     .ant-modal-content {
-      // height: 590px;
+      height: 100%;
+    }
+    .ant-modal-body {
+      overflow-y: scroll;
+      height: e("calc(100vh - 250px)");
+      padding-top: 10px;
+    }
+    .ant-modal-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #4a4a4a;
     }
     .ant-modal-footer {
       div .commonBtn:not(:last-child) {
@@ -74,11 +92,25 @@
       }
       padding-left: 30px;
     }
-    .ant-modal-body {
-      padding-left: 30px;
-      max-height: 500px;
-      // overflow-y: scroll;
-      // overflow-x: hidden;
+    .ant-modal-close-x {
+      font-size: 18px;
+      color: #333;
+    }
+    .ant-table {
+      border-radius: 0;
+    }
+    .emptyRow {
+      pointer-events: none;
+      cursor: none;
+      :global {
+        // 空白行，清除选中项
+        .ant-checkbox-wrapper {
+          display: none;
+        }
+      }
+    }
+    .selfPagination {
+      margin-right: 0;
     }
   }
 }

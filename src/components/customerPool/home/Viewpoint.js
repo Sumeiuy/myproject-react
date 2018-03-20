@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
@@ -39,6 +39,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
     this.openNewTab('/customerPool/viewpointList', null,
@@ -49,6 +50,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '详情' } })
   handleDetailClick(index) {
     // 跳转到资讯详情界面
     this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index },
@@ -59,6 +61,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]' } })
   handleListClick(title, index) {
     if (!_.isEmpty(title)) {
       this.handleDetailClick(index);
@@ -68,20 +71,18 @@ export default class Viewpoint extends PureComponent {
   @autobind
   renderContent(titleArray) {
     return titleArray.map((item, index) => (
-      <Clickable
+      <div
+        className={classnames(styles.row, { [styles.none]: (index >= 12) })}
         onClick={() => { this.handleListClick(item.subtitle, index); }}
-        eventName="/click/Home/viewpointList"
         key={item.id}
       >
-        <div className={classnames(styles.row, { [styles.none]: (index >= 12) })}>
-          <a
-            className={classnames(styles.news, { [styles.emptyNews]: _.isEmpty(item.subtitle) })}
-            title={_.isEmpty(item.subtitle) ? '' : item.subtitle}
-          >
-            {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
-          </a>
-        </div>
-      </Clickable>
+        <a
+          className={classnames(styles.news, { [styles.emptyNews]: _.isEmpty(item.subtitle) })}
+          title={_.isEmpty(item.subtitle) ? '' : item.subtitle}
+        >
+          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+        </a>
+      </div>
     ));
   }
 
@@ -133,12 +134,7 @@ export default class Viewpoint extends PureComponent {
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <Clickable
-                onClick={() => { this.handleDetailClick(0); }}
-                eventName="/click/Home/viewpointDetail"
-              >
-                <a>[详情]</a>
-              </Clickable>
+              <a onClick={() => { this.handleDetailClick(0); }}>[详情]</a>
             </div>
           </div>
         </div>
@@ -148,12 +144,7 @@ export default class Viewpoint extends PureComponent {
             {
               isShowMore ? (
                 <div className={styles.fold} >
-                  <Clickable
-                    onClick={this.handleMoreClick}
-                    eventName="/click/Home/viewpointMore"
-                  >
-                    <a>{'更多 >'}</a>
-                  </Clickable>
+                  <a onClick={this.handleMoreClick}>{'更多 >'}</a>
                 </div>
               ) : (
                   null

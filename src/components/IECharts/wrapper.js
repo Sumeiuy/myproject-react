@@ -62,7 +62,6 @@ function wrapECharts(ECharts) {
 
     // componentWillMount() {
     // const that = this;
-    // console.log('componentWillMount', that.props, that.state);
     // }
     componentDidMount() {
       this.myInit();
@@ -87,7 +86,6 @@ function wrapECharts(ECharts) {
 
     // componentWillUpdate(nextProps, nextState) {
     // const that = this;
-    // console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
     // }
     componentDidUpdate() {
       if (this.props.option) {
@@ -115,7 +113,6 @@ function wrapECharts(ECharts) {
     @autobind
     myInit() {
       const that = this;
-      // console.log('_init');
       // let instance = that._getInstance();
       // if (!instance) {
       if (!that.state.instance) {
@@ -155,7 +152,6 @@ function wrapECharts(ECharts) {
     @autobind
     myupdate() {
       const that = this;
-      // console.log('_update');
       that.state.instance.setOption(that.props.option, that.props.notMerge, that.props.lazyUpdate);
       // const instance = that._getInstance()
       // if (instance) {
@@ -165,7 +161,6 @@ function wrapECharts(ECharts) {
     @autobind
     myresize() {
       const that = this;
-      // console.log('_resize');
       if (that.state.instance) {
         that.state.instance.resize();
       }
@@ -183,15 +178,12 @@ function wrapECharts(ECharts) {
     }
     @autobind
     mygetInstance() {
-      // console.log('_getInstance');
-      // console.log('IECharts', this.chartBox);
       return ECharts.getInstanceByDom(this.chartBox);
       // return ECharts.getInstanceByDom(ReactDOM.findDOMNode(that));
     }
     @autobind
     mybind(instance) {
       const that = this;
-      // console.log('_bind');
       const on = (name, func) => {
         if (typeof func === 'function') {
           const newfunc = func.bind(instance);
@@ -214,7 +206,6 @@ function wrapECharts(ECharts) {
     }
     render() {
       const that = this;
-      // console.log('render');
       const { className, style } = that.props;
 
       return (

@@ -9,5 +9,13 @@
   border: 1px solid #ddd;
   .list {
     border-right: 1px solid #ddd;
+    .listWrap:nth-child(10) {
+      & > div {
+        border-bottom: 0;
+      }
+    }
   }
+}
+.hideLastItemBorder {
+  border-bottom: 0;
 }

@@ -2,20 +2,51 @@
 
 .custDetailWrapper {
   .custNameLink {
-    max-width: 100px !important;
+    max-width: 130px !important;
     padding-left: 5px;
     padding-right: 5px;
     margin: 0 auto;
   }
-  & > .title {
-    font-size: 14px;
-    color: #333;
-    padding-bottom: 20px;
+  & > .header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-content: center;
+    & > .filter {
+      width: 50%;
+      text-align: right;
+      & > .title {
+        font-size: 13px;
+        // color: #9b9b9b;
+      }
+      :global {
+        .ant-select {
+          min-width: 142px;
+          max-width: 142px;
+          height: 28px;
+        }
+      }
+      .filterDropdownList {
+        :global {
+          .ant-select-dropdown-menu-item {
+            text-align: left;
+          }
+        }
+      }
+    }
+    & > .title {
+      text-align: left;
+      width: 50%;
+      font-size: 14px;
+      color: #333;
+      padding-bottom: 20px;
+    }
   }
   & > .custDetailTableSection {
     display: block;
     .custDetailTable {
       padding: 0 !important;
+      max-height: 700px;
       table > thead > tr > th {
         color: #333;
       }
@@ -23,7 +54,7 @@
         pointer-events: none;
       }
       table > thead > tr > th, tbody > tr > td {
-        padding: 10px 0 !important;
+        padding: 8px 0 !important;
         text-align: left !important;
         font-size: 14px;
         line-height: 18px;
@@ -38,10 +69,6 @@
         text-align: left !important;
       }
       tbody > tr > td > span:last-child {
-        // max-width: 120px;
-        // overflow: hidden;
-        // text-overflow: ellipsis;
-        // white-space: nowrap;
         margin: 0 auto;
       }
       tbody > tr > td:last-child > span > div {

@@ -16,15 +16,15 @@ import TimeCycle from '../../components/customerPool/list/TimeCycle';
 import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
 import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
-import { fspContainer } from '../../config';
+import { permission, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import permissionType from './permissionType';
 import { getCustomerListFilters } from '../../helper/page/customerPool';
 import {
-  NOPERMIT,
   CUST_MANAGER,
   ORG,
   ENTER_TYPE,
+  ENTERLIST1,
+  ENTERLIST2,
 } from './config';
 
 import styles from './customerlist.less';
@@ -58,6 +58,7 @@ const effects = {
   getCeFileList: 'customerPool/getCeFileList',
   isCustServedByPostn: 'customerPool/isCustServedByPostn',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
+  isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -96,9 +97,11 @@ const mapStateToProps = state => ({
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
-  // 是否包含非本人名下客户
+  // 是否是本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
   sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
+  // 是否包含非本人名下客户和超出1000条数据限制
+  sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
 });
 
 const mapDispatchToProps = {
@@ -133,9 +136,11 @@ const mapDispatchToProps = {
   }),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  // 查询是否包含本人名下客户
+  // 查询单个客户是否本人名下
   isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
+  // 查询是否包含非本人名下客户和超出1000条数据限制
+  isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -173,7 +178,7 @@ export default class CustomerList extends PureComponent {
     isContactLoading: PropTypes.bool,
     // 服务记录接口loading
     isRecordLoading: PropTypes.bool,
-    serviceDepartment: PropTypes.array.isRequired,
+    serviceDepartment: PropTypes.object.isRequired,
     // 手动上传日志
     handleFilter: PropTypes.func.isRequired,
     handleSelect: PropTypes.func.isRequired,
@@ -191,6 +196,8 @@ export default class CustomerList extends PureComponent {
     custServedByPostnResult: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -219,8 +226,10 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    this.permissionType = permissionType().customerPoolPermit;
-    this.view360Permit = permissionType().view360Permit;
+    // HTSC 首页指标查询
+    this.hasIndexViewPermission = permission.hasIndexViewPermission();
+    // HTSC 任务管理岗
+    this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   getChildContext() {
@@ -301,9 +310,7 @@ export default class CustomerList extends PureComponent {
     const {
       cycle = [],
       getCustomerData, location: { query },
-      empInfo: { empInfo = EMPTY_OBJECT },
     } = props;
-    const { occDivnNum = '', empNum } = empInfo;
     const keyword = decodeURIComponent(query.q);
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
@@ -334,13 +341,7 @@ export default class CustomerList extends PureComponent {
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
-      // 我的客户 和 没有权限时，custType=1,其余情况custType=3
-      param.custType = CUST_MANAGER;
-      if (query.ptyMng && query.ptyMng.split('_')[1] === empNum) {
-        param.custType = CUST_MANAGER;
-      } else if (this.permissionType !== NOPERMIT) {
-        param.custType = ORG;
-      }
+      param.custType = this.getPostCustType(query);
     }
     // 客户业绩参数
     if (query.customerType) {
@@ -356,25 +357,9 @@ export default class CustomerList extends PureComponent {
         value: query.rightType,
       };
     }
-    // orgId默认取岗位对应的orgId，服务营业部选 '所有' 不传，其余情况取对应的orgId
-    if (query.orgId && query.orgId !== 'all') {
-      param.orgId = query.orgId;
-    } else if (!query.orgId && this.permissionType !== NOPERMIT) {
-      // 有权限，第一次进入列表页传所处岗位对应orgId
-      // 在fsp外壳中取岗位切换的id， 本地取empinfo中的occDivnNum
-      if (document.querySelector(fspContainer.container)) {
-        param.orgId = window.forReactPosition.orgId;
-      } else {
-        param.orgId = occDivnNum;
-      }
-    }
-    // 服务经理ptyMngId
-    if (this.permissionType === NOPERMIT) {
-      param.ptyMngId = empNum;
-    }
-    if (query.ptyMng) {
-      param.ptyMngId = query.ptyMng.split('_')[1];
-    }
+
+    param.orgId = this.getPostOrgId(query);
+    param.ptyMngId = this.getPostPtyMngId(query);
     // 过滤数组
     const filtersReq = [];
     // 排序条件
@@ -406,6 +391,63 @@ export default class CustomerList extends PureComponent {
       queryParam: param,
     });
     getCustomerData(param);
+  }
+
+  // 获取 客户列表接口的orgId入参的值
+  getPostOrgId(query = {}) {
+    // url中存在了orgId且不等于all时,则返回url中的orgId
+    if (query.orgId && query.orgId !== 'all') {
+      return query.orgId;
+    }
+    /**
+     * url中不存在orgId时且
+     * 任务管理岗权限和首页指标查询权限作用的首页入口进入且都有相应的权限时，返回当前登录人的orgId
+     */
+    if (!query.orgId &&
+      ((_.includes(ENTERLIST1, query.source) && this.hasTkMampPermission) ||
+      (_.includes(ENTERLIST2, query.source) && this.hasIndexViewPermission))
+    ) {
+      return emp.getOrgId();
+    }
+    /**
+     * url中存在了orgId等于all,
+     * 任务管理岗权限作用的首页入口进入列表，没有任务管理岗权限
+     * 首页指标查询权限作用的首页入口进入列表，没有首页指标查询权限
+     * 3中情况返回空字符串
+     */
+    return '';
+  }
+
+  // 获取 客户列表接口的ptyMngId入参的值
+  getPostPtyMngId(query = {}) {
+    // url中存在ptyMng，取id
+    if (query.ptyMng) {
+      return query.ptyMng.split('_')[1];
+    }
+    /**
+     * url中不存在ptyMng时且
+     * 任务管理岗权限和首页指标查询权限作用的首页入口进入且都没有相应的权限时，返回当前登录人的工号
+     */
+    if (
+      (_.includes(ENTERLIST1, query.source) && !this.hasTkMampPermission) ||
+      (_.includes(ENTERLIST2, query.source) && !this.hasIndexViewPermission)
+    ) {
+      return emp.getId();
+    }
+    return '';
+  }
+
+  // 获取 客户列表接口的custType入参的值
+  getPostCustType(query = {}) {
+    // 首页从客户范围组件中我的客户进入客户列表页面custType=1
+    if (query.ptyMng && query.ptyMng.split('_')[1] === emp.getId()) {
+      return CUST_MANAGER;
+    }
+    // 有首页指标查询权限时custType = 3
+    if (this.hasIndexViewPermission) {
+      return ORG;
+    }
+    return CUST_MANAGER;
   }
 
   @autobind
@@ -563,6 +605,8 @@ export default class CustomerList extends PureComponent {
       isCustServedByPostn,
       custServedByPostnResult,
       sightingTelescopeFilters,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
     const {
       sortDirection,
@@ -625,7 +669,6 @@ export default class CustomerList extends PureComponent {
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
-          source={source}
           entertype={ENTER_TYPE[source]}
           location={location}
           replace={replace}
@@ -658,10 +701,12 @@ export default class CustomerList extends PureComponent {
           queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}
           filesList={filesList}
-          permissionType={this.permissionType}
-          view360Permit={this.view360Permit}
           custServedByPostnResult={custServedByPostnResult}
           isCustServedByPostn={isCustServedByPostn}
+          hasTkMampPermission={this.hasTkMampPermission}
+          hasIndexViewPermission={this.hasIndexViewPermission}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
+          sendCustsServedByPostnResult={sendCustsServedByPostnResult}
         />
       </div>
     );
