@@ -6127,6 +6127,15 @@ rc-util@4.x, rc-util@^4.0.2, rc-util@^4.0.4, rc-util@^4.3.0:
     prop-types "^15.5.10"
     shallowequal "^0.2.2"
 
+rc-util@^4.3.1:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-4.4.0.tgz#f6a320a67100cfceaaa1b0a955b01e9be643576c"
+  dependencies:
+    add-dom-event-listener "1.x"
+    babel-runtime "6.x"
+    prop-types "^15.5.10"
+    shallowequal "^0.2.2"
+
 rc@^1.1.7:
   version "1.2.3"
   resolved "http://168.61.9.74:4873/rc/-/rc-1.2.3.tgz#51575a900f8dd68381c710b4712c2154c3e2035b"
