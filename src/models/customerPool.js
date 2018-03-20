@@ -597,11 +597,12 @@ export default {
     },
     * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
-        // { ptyMngName: '我的', ptyMngId: '' },
+        // 和之前的用户行为(输入空时，搜索结果为预置数据项)，保持一致
         yield put({
           type: 'getSearchServerPersonListSuccess',
           payload: [
             { ptyMngName: '所有人', ptyMngId: '' },
+            { ptyMngName: '我的', ptyMngId: emp.getId() },
           ],
         });
       } else {
