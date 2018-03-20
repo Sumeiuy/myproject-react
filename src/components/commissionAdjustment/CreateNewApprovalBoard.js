@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
 
-import { openFspTab, closeRctTabById } from '../../utils';
+import { openFspTab, closeRctTab } from '../../utils';
 import confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
@@ -77,6 +77,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    getCustDetailInfo: PropTypes.func.isRequired,
+    custDetailInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -85,6 +87,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     otherRatios: [],
     consultSubId: '',
     consultUnsubId: '',
+    custDetailInfo: {},
   }
 
   constructor(props) {
@@ -670,21 +673,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-产品订单',
-      activeSubTab: '产品订单',
+      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
+      activeSubTab: ['产品订单', '订单流水'],
     };
-    const { push } = this.props;
-    const { custType } = cust;
-    // pOrO代表个人客户，机构客户
-    const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url = `/customerCenter/360/${type}/main`;
-    openFspTab({
-      routerAction: push,
-      pathname: '/fsp/customerCenter/customerDetail',
-      url,
-      param,
-    });
-    // 关闭当前tab
-    closeRctTabById({ id: 'FSP_BUSINESS_APPLYMENT_COMMISSION' });
+    const { push, getCustDetailInfo } = this.props;
+    const { custEcom } = cust;
+    // 请求 ptyId， custId， rowId 跳转到360的必须参数
+    getCustDetailInfo({ brokerNumber: custEcom }).then(
+      () => {
+        const { custDetailInfo } = this.props;
+        const { custType, ptyId, custId, rowId } = custDetailInfo || {};
+        // pOrO代表个人客户，机构客户
+        const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+        openFspTab({
+          routerAction: push,
+          pathname: '/fsp/customerCenter/customerDetail',
+          url,
+          param,
+        });
+        // 关闭当前tab
+        closeRctTab({ id: 'FSP_BUSINESS_APPLYMENT_COMMISSION' });
+      },
+    );
   }
 
   render() {
