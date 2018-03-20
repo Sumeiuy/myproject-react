@@ -13,17 +13,11 @@ import _ from 'lodash';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoForm from '../common/infoForm';
 import Select from '../../components/common/Select';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import styles from './addClause.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 点击确认的回调
@@ -257,14 +251,13 @@ export default class EditForm extends PureComponent {
               />
             </InfoForm>
             <InfoForm label="合作部门" required>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="合作部门"
                 showObjKey="name"
-                value={department.name || ''}
+                defaultSearchValue={department.name || ''}
                 searchList={departmentList}
-                emitSelectItem={this.handleSelectDepartment}
-                emitToSearch={this.handleSearchDepartment}
-                boxStyle={dropDownSelectBoxStyle}
+                onSelect={this.handleSelectDepartment}
+                onSearch={this.handleSearchDepartment}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </InfoForm>

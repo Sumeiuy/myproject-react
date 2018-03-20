@@ -96,10 +96,10 @@ export default class ServiceImplementation extends PureComponent {
 
   // 更新组件state的list信息
   @autobind
-  updateList({ custId, flowStatus }, callback = _.noop) {
+  updateList({ missionFlowId, flowStatus }, callback = _.noop) {
     const { list } = this.state;
     const newList = _.map(list, (item) => {
-      if (item.custId === custId) {
+      if (item.missionFlowId === missionFlowId) {
         const { name } = _.find(missionStatusList, o => o.id === +flowStatus);
         return {
           ...item,
@@ -142,7 +142,7 @@ export default class ServiceImplementation extends PureComponent {
       targetCustDetail,
       changeParameter,
       parameter: {
-        targetCustId = '',
+        targetMissionFlowId = '',
       },
       queryCustUuid,
       custUuid,
@@ -161,11 +161,11 @@ export default class ServiceImplementation extends PureComponent {
       isTaskFeedbackListOfNone,
     } = this.props;
     // 获取当前选中的数据的custId
-    const currentCustId = targetCustId || (list[0] || {}).custId;
+    const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
     // if (targetCustomerState) {
 
     // }
-    const currentCustomer = _.find(list, o => o.custId === currentCustId);
+    const currentCustomer = _.find(list, o => o.missionFlowId === currentMissionFlowId);
     let serviceStatusName = '';
     let serviceStatusCode = '';
     let missionFlowId = '';
@@ -223,7 +223,7 @@ export default class ServiceImplementation extends PureComponent {
           list={list}
           currentId={currentId}
           isFold={isFold}
-          currentCustId={currentCustId}
+          currentMissionFlowId={currentMissionFlowId}
           handleCollapseClick={handleCollapseClick}
           dict={dict}
           getServiceRecord={getServiceRecord}
