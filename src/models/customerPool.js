@@ -597,12 +597,12 @@ export default {
     },
     * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
+        // { ptyMngName: '我的', ptyMngId: '' },
         yield put({
           type: 'getSearchServerPersonListSuccess',
-          payload: [{
-            ptyMngName: '所有人',
-            ptyMngId: '',
-          }],
+          payload: [
+            { ptyMngName: '所有人', ptyMngId: '' },
+          ],
         });
       } else {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
