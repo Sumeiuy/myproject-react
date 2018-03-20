@@ -28,7 +28,7 @@ import iconGold from './img/icon-gold-card.png';
 import iconSliver from './img/icon-sliver-card.png';
 import iconWhiteGold from './img/icon-white-gold.png';
 import iconEmpty from './img/icon-empty.png';
-import Clickable from '../../../components/common/Clickable';
+import logable, { logPV } from '../../../decorators/logable';
 
 // 客户男女code码
 const MALE_CODE = '109001';
@@ -142,6 +142,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户列表头像/$props.listItem.name' } })
   toDetail() {
     const { push } = this.props;
     const {
@@ -181,6 +182,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/createContact', title: '电话联系' })
   createModal(listItem) {
     const { pOrO, custId, name } = listItem;
     const { createContact } = this.props;
@@ -240,16 +242,12 @@ export default class CustomerRow extends PureComponent {
     }
     if (this.isMainService()) {
       return (
-        <Clickable
+        <img
           onClick={this.toDetail}
-          eventName="/click/custListRow/imgClick"
-        >
-          <img
-            className={`${styles.avatorImage} ${styles.clickable}`}
-            src={imgSrc}
-            alt=""
-          />
-        </Clickable>
+          className={`${styles.avatorImage} ${styles.clickable}`}
+          src={imgSrc}
+          alt=""
+        />
       );
     }
     return <img className={styles.avatorImage} src={imgSrc} alt="" />;
@@ -302,12 +300,7 @@ export default class CustomerRow extends PureComponent {
     } = this.props;
     if (this.isMainService()) {
       return name ? (
-        <Clickable
-          onClick={this.toDetail}
-          eventName="/click/custListRow/nameClick"
-        >
-          <span className="name clickable">{name}</span>
-        </Clickable>
+        <span className="name clickable" onClick={this.toDetail}>{name}</span>
       ) : null;
     }
     return <span className="name">{name}</span>;

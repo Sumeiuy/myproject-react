@@ -29,8 +29,7 @@ export default class ServiceManagerFilter extends PureComponent {
       dropdownToSearchInfo,
       disable,
     } = this.props;
-    // 预置下拉框数据列表,下拉列表显示的数据为ptyMngName（ptyMngId），
-    // 增加 optionKey，作为判断用
+    // 预置下拉框数据列表
     const presetList = [
       { ptyMngName: '所有人', ptyMngId: '' },
       { ptyMngName: '我的', ptyMngId: emp.getId() },

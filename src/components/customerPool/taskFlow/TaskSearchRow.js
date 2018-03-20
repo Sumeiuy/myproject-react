@@ -14,7 +14,7 @@ import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import FilterCustomers from './step1/FilterCustomers';
 import { isSightingScope } from '../helper';
 import { fspContainer } from '../../../config';
@@ -264,6 +264,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '筛查客户' } })
   handleSeeCust(value = {}) {
     const { currentFilterObject } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
@@ -295,6 +296,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleAccept() {
     const { onCancel } = this.props;
     this.setState({
@@ -304,6 +306,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     const { onChange, circlePeopleData, onCancel } = this.props;
     const {
@@ -567,12 +570,12 @@ export default class TaskSearchRow extends PureComponent {
             {this.getSelectFiltersInfo(currentSelectFilters)}
             {
               item.customNum === 0 ? null :
-              <Clickable
+              <Button
+                className={styles.seeCust}
                 onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow/checkCust"
               >
-                <Button className={styles.seeCust}>筛查客户</Button>
-              </Clickable>
+                筛查客户
+              </Button>
             }
           </div>
         );
@@ -582,18 +585,23 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   renderBottomButton() {
     return (<div>
-      <Clickable
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
         onClick={this.handleCancel}
-        eventName="/click/taskSearchRow/close"
       >
-        <Button className={styles.modalButton} key="back" size="large">取消</Button>
-      </Clickable>
-      <Clickable
+        取消
+      </Button>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        type="primary"
         onClick={this.handleAccept}
-        eventName="/click/taskSearchRow/close"
       >
-        <Button className={styles.modalButton} key="back" size="large" type="primary">确定</Button>
-      </Clickable>
+        确定
+      </Button>
     </div>);
   }
 
