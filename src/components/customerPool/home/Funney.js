@@ -45,6 +45,7 @@ function linkToList({ item, push }) {
 }
 
 function renderIntro(data, push) {
+  console.log('datadatadata', data);
   return _.map(
     data,
     (item, index) => (

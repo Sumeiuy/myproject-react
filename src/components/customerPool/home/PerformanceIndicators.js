@@ -315,6 +315,7 @@ export default class PerformanceIndicators extends PureComponent {
   renderCustAndPropertyIndicator(param) {
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
+    console.log('data1213312', data);
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -505,6 +506,7 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
+    console.log('finalTradeingVolumeData1213', finalTradeingVolumeData);
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
