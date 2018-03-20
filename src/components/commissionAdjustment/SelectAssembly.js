@@ -7,13 +7,16 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { Icon, Input, AutoComplete } from 'antd';
+import { AutoComplete } from 'antd';
 import _ from 'lodash';
 
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import { seibelConfig } from '../../config';
 import confirm from '../common/Confirm';
 
+import styles from './selectAssembly.less';
+
+const Option = AutoComplete.Option;
 const { comsubs: commadj } = seibelConfig;
 
 export default class SelectAssembly extends PureComponent {
@@ -48,23 +51,26 @@ export default class SelectAssembly extends PureComponent {
     super(props);
     this.state = {
       isUnfinish: false, // 标识 选中的客户，是否有未完成订单
+      canSelected: false,
     };
   }
 
-  // 该用户是否能够被选中
-  canSelected = true
-  // 选中的客户
-  selectedCust = null
-
   @autobind
   clearCust() {
-    this.selectedCust = null;
-    this.canSelected = false;
+    this.setState({
+      canSelected: false,
+    });
+    this.custSearch.clearValue();
+  }
+
+  @autobind
+  custSearchRef(input) {
+    this.custSeatch = input;
   }
 
   @autobind
   handleOKAfterValidate(selectItem) {
-    if (this.canSelected) {
+    if (this.state.canSelected) {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
@@ -99,7 +105,9 @@ export default class SelectAssembly extends PureComponent {
       onOk: () => { this.handleOKAfterValidate(selectItem); },
       onCancel: this.handleCancelAfterValidate,
     });
-    this.canSelected = false;
+    this.setState({
+      canSelected: false,
+    });
   }
 
   // 客户校验
@@ -138,7 +146,9 @@ export default class SelectAssembly extends PureComponent {
       this.fail2Validate({ shortCut: 'custInvestTerm' });
       return;
     }
-    this.canSelected = true;
+    this.setState({
+      canSelected: true,
+    });
     this.handleOKAfterValidate(selectItem);
   }
 
@@ -150,7 +160,6 @@ export default class SelectAssembly extends PureComponent {
       // 选中值了
       const { shouldeCheck, onValidateCust } = this.props;
       const { id, custType } = cust;
-      this.selectedCust = cust;
       if (shouldeCheck) {
         onValidateCust({
           custRowId: id,
@@ -160,7 +169,6 @@ export default class SelectAssembly extends PureComponent {
         this.props.onSelectValue(cust);
       }
     } else {
-      this.selectedCust = null;
       // 删除客户
       this.props.clearSelectCust();
     }
@@ -172,10 +180,23 @@ export default class SelectAssembly extends PureComponent {
     this.props.onSearchValue(value);
   }
 
+  @autobind
+  renderOption(cust) {
+    const { custName, custEcom, riskLevelLabel = '' } = cust;
+    const text = `${custName}（${custEcom}） - ${riskLevelLabel}`;
+    return (
+      <Option key={custEcom} value={text} >
+        <span className={styles.prodValue} title={text}>{text}</span>
+      </Option>
+    );
+  }
+
   render() {
     const { width, name, dataSource } = this.props;
     return (
       <SimilarAutoComplete
+        ref={this.custSearchRef}
+        isImmediatelySearch={false}
         name={name}
         placeholder="经纪客户号/客户名称"
         searchList={dataSource}
@@ -185,6 +206,7 @@ export default class SelectAssembly extends PureComponent {
         objId="id"
         onSelect={this.handleSelectCust}
         onSearch={this.handleSearchCustList}
+        renderOption={this.renderOption}
       />
     );
   }
