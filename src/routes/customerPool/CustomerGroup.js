@@ -14,7 +14,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
 
-import Clickable from '../../components/common/Clickable';
+import logable from '../../decorators/logable';
 import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
@@ -167,6 +167,7 @@ export default class CustomerGroup extends PureComponent {
 
   /*  添加到已有分组 */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   handleSubmit() {
     const { groupId } = this.state;
     /* groupId不为空，表示已经选中了分组 */
@@ -230,6 +231,7 @@ export default class CustomerGroup extends PureComponent {
 
   // 点击取消按钮回到列表页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     const {
       push,
@@ -400,18 +402,8 @@ export default class CustomerGroup extends PureComponent {
                         <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
                       </Col>
                       <Col span={12}>
-                        <Clickable
-                          onClick={this.handleCancel}
-                          eventName="/click/customerGroup/cancel"
-                        >
-                          <Button>取消</Button>
-                        </Clickable>
-                        <Clickable
-                          onClick={this.handleSubmit}
-                          eventName="/click/customerGroup/submit"
-                        >
-                          <Button type="primary">保存</Button>
-                        </Clickable>
+                        <Button onClick={this.handleCancel}>取消</Button>
+                        <Button type="primary" onClick={this.handleSubmit}>保存</Button>
                       </Col>
                     </Row>
                   </div>
