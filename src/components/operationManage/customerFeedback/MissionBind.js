@@ -167,6 +167,7 @@ export default class MissionBind extends PureComponent {
           childActiveKey,
           pageNum,
           pageSize,
+          keyWord,
         },
       },
     } = this.props;
@@ -186,7 +187,7 @@ export default class MissionBind extends PureComponent {
           type: childActiveKey,
         }).then(() => {
           // 删除成功之后更新任务列表
-          queryMissionList(childActiveKey, pageNum, pageSize);
+          queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
         });
       },
     });
@@ -213,6 +214,7 @@ export default class MissionBind extends PureComponent {
           childActiveKey,
           pageNum,
           pageSize,
+          keyWord,
         },
       },
     } = this.props;
@@ -229,7 +231,7 @@ export default class MissionBind extends PureComponent {
       }).then(() => {
         this.handleCloseModal();
         // 添加成功之后更新任务列表
-        queryMissionList(childActiveKey, pageNum, pageSize);
+        queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
       });
     }
   }
@@ -283,6 +285,8 @@ export default class MissionBind extends PureComponent {
       accordion: true,
     };
     const isMOTMission = childActiveKey === FIRST_TAB;
+    const missionList = missionData.missionList || EMPTY_LIST;
+
     return (
       <div className={styles.missionBindWapper}>
         <div className={styles.tipsBox}>
@@ -324,14 +328,25 @@ export default class MissionBind extends PureComponent {
             <span className={styles.childClass}>任务子类/事件名称</span>
             <span className={styles.optionClass}>客户反馈选项</span>
           </div>
-          <Collapse {...collapseProps}>
-            {
-              this.getPanelList()
-            }
-          </Collapse>
-          <div className={styles.pageBox}>
-            <Pagination {...paginationOption} />
-          </div>
+          {
+            missionList.length ?
+              <span>
+                <Collapse {...collapseProps}>
+                  {
+                    this.getPanelList()
+                  }
+                </Collapse>
+                <div className={styles.pageBox}>
+                  <Pagination {...paginationOption} />
+                </div>
+              </span> :
+              <div className={styles.emptyContent}>
+                <span>
+                  <Icon type="frown-o" />
+                  暂无数据
+                </span>
+              </div>
+          }
           <div className={styles.clear} />
         </div>
         {

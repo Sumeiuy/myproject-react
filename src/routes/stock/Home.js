@@ -15,7 +15,7 @@ import { Tabs, Table, Input } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import config from './config';
@@ -44,7 +44,7 @@ const mapDispatchToProps = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@setHeight
+@fspPatch()
 export default class Stock extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
@@ -135,9 +135,11 @@ export default class Stock extends PureComponent {
   // 翻页事件
   @autobind
   pageChangeHandle(page, pageSize) {
+    const { keyword } = this.state;
     const payload = {
       page,
       pageSize,
+      keyword,
     };
     this.setState({
       pageSize,
@@ -192,7 +194,9 @@ export default class Stock extends PureComponent {
     if (!_.isEmpty(array)) {
       resultArr = array.map((item) => {
         const newItem = item;
-        newItem.render = text => <div className={divClassName}>{text || EMPTY_PARAM}</div>;
+        newItem.render = text => <div className={divClassName} title={text || EMPTY_PARAM}>
+          {text || EMPTY_PARAM}
+        </div>;
         return newItem;
       });
     }
@@ -237,6 +241,7 @@ export default class Stock extends PureComponent {
                 dataSource={list}
                 pagination={false}
                 onRowClick={this.onRowClick}
+                rowKey="id"
               />
               <Pagination {...paginationOption} />
             </TabPane>))
