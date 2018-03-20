@@ -45,6 +45,10 @@ export default class SimilarAutoComplete extends PureComponent {
     width: PropTypes.number,
     // 下拉预置列表
     presetOptionList: PropTypes.array,
+    // 定制下拉选项框(用AutoComplete.Option来实现，一定要有value属性值)
+    renderOption: PropTypes.func,
+    // 是否即时搜索（默认为true，用于模糊匹配；精准匹配时，置为false），
+    isImmediatelySearch: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -58,18 +62,20 @@ export default class SimilarAutoComplete extends PureComponent {
     defaultSearchValue: '',
     width: 0,
     presetOptionList: [],
+    renderOption: null,
+    isImmediatelySearch: true,
   }
 
   constructor(props) {
     super(props);
     const { defaultSearchValue, searchList, presetOptionList } = props;
     const isEmptyValue = _.isEmpty(_.trim(defaultSearchValue));
-    const optionList = isEmptyValue ? presetOptionList : searchList;
+    const dataSource = isEmptyValue ? presetOptionList : searchList;
     this.state = {
       // 下拉框选项列表
-      optionList,
+      dataSource,
       // 搜索框的类型
-      typeStyle: isEmptyValue ? 'search' : 'close',
+      typeStyle: isEmptyValue ? 'search' : 'clear',
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
     };
@@ -81,19 +87,22 @@ export default class SimilarAutoComplete extends PureComponent {
     if (preSearchList !== nextSearchList) {
       // 更新下拉选项框列表
       this.setState({
-        optionList: nextSearchList,
+        dataSource: nextSearchList,
       });
     }
   }
 
   getSearchListDom(dataList) {
-    const { showObjKey, objId, name } = this.props;
-    const result = _.map(dataList, (item, index) => {
+    const { showObjKey, objId, name, renderOption } = this.props;
+    const result = _.map(dataList, (item, index, array) => {
       if (item.isHidden) {
         return null;
       }
       const idx = !item[objId] ? `selectList|${index}` : `${name}|${item[objId]}`;
       const optionValue = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
+      if (renderOption) {
+        return renderOption(item, index, array);
+      }
       return (
         <Option
           key={idx}
@@ -138,7 +147,7 @@ export default class SimilarAutoComplete extends PureComponent {
       const currentValue = currentSelect[objId] ? `${currentSelect[showObjKey]}（${currentSelect[objId]}）` : `${currentSelect[showObjKey]}`;
       this.setState({
         value: currentValue,
-        typeStyle: 'close',
+        typeStyle: 'clear',
       });
     }
   }
@@ -146,29 +155,31 @@ export default class SimilarAutoComplete extends PureComponent {
   // 即时搜索
   @autobind
   handleImmediatelySearch(searchValue) {
-    const { presetOptionList, onSelect } = this.props;
+    const { presetOptionList, onSelect, isImmediatelySearch } = this.props;
     const { typeStyle } = this.state;
     let value = searchValue;
-    if (typeStyle === 'close') {
+    if (typeStyle === 'clear') {
       value = '';
       onSelect({});
       this.setState({
         value,
         typeStyle: 'search',
         // 当输入值为空时，显示预置下拉选项
-        optionList: presetOptionList,
+        dataSource: presetOptionList,
       });
     } else {
-      const optionObj = _.isEmpty(value) ? { optionList: presetOptionList } : {};
+      const optionObj = _.isEmpty(value) ? { dataSource: presetOptionList } : {};
       // 记录要搜索的字段，并设置当前的状态为搜索状态
       this.setState({
         value,
         ...optionObj,
       });
     }
-    // 发起搜索
-    const { onSearch } = this.props;
-    onSearch(value);
+    if (isImmediatelySearch) {
+      // 发起搜索
+      const { onSearch } = this.props;
+      onSearch(value);
+    }
   }
 
   // 触发查询搜索信息的方法
@@ -178,7 +189,7 @@ export default class SimilarAutoComplete extends PureComponent {
     if (typeStyle === 'search') {
       // 发起搜索
       this.props.onSearch(value);
-    } else if (typeStyle === 'close') {
+    } else if (typeStyle === 'clear') {
       // 预置数据列表
       const { presetOptionList } = this.props;
       // 清空输入框，并设置为搜索状态
@@ -186,7 +197,7 @@ export default class SimilarAutoComplete extends PureComponent {
         {
           value: '',
           typeStyle: 'search',
-          optionList: presetOptionList,
+          dataSource: presetOptionList,
         },
         () => {
           // 手动清空选中值，传递到组件外
@@ -207,7 +218,7 @@ export default class SimilarAutoComplete extends PureComponent {
       value: '',
       typeStyle: 'search',
       // 当输入值为空时，显示预置下拉选项
-      optionList: presetOptionList,
+      dataSource: presetOptionList,
     });
   }
 
@@ -215,9 +226,9 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   checkListIsEmpty() {
     const { searchList } = this.props;
-    const { optionList } = this.state;
+    const { dataSource } = this.state;
     const hiddenSearchList = searchList.filter(item => item.isHidden);
-    return _.isEmpty(optionList)
+    return _.isEmpty(dataSource)
       || (!_.isEmpty(searchList) && hiddenSearchList.length === searchList.length);
   }
 
@@ -248,7 +259,7 @@ export default class SimilarAutoComplete extends PureComponent {
 
   renderAutoComplete() {
     const { placeholder, boxStyle, width, ...otherPorps } = this.props;
-    const { typeStyle, value, optionList } = this.state;
+    const { typeStyle, value, dataSource } = this.state;
     const empty = [(
       <Option
         key={'empty'}
@@ -258,8 +269,9 @@ export default class SimilarAutoComplete extends PureComponent {
         <span className={style.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(optionList);
+    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(dataSource);
     const inputValue = _.isString(value) ? value : `${value}`;
+    const iconType = typeStyle === 'search' ? 'search' : 'close';
     return (
       <AutoComplete
         {...otherPorps}
@@ -283,7 +295,7 @@ export default class SimilarAutoComplete extends PureComponent {
         <Input
           suffix={
             <Icon
-              type={typeStyle}
+              type={iconType}
               onClick={this.handleSearch}
               className={style.searchIcon}
             />
