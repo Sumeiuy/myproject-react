@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './createTaskSuccess.less';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
 import { navTo } from '../../../utils';
@@ -67,6 +67,7 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回首页' } })
   goToHome() {
     this.clearTimeInterval();
     const { onCloseTab, push, location: { query } } = this.props;
@@ -122,12 +123,12 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Clickable
+              <Button
+                type="primary"
                 onClick={this.goToHome}
-                eventName="/click/createTaskSuccess/backHome"
               >
-                <Button type="primary">返回首页</Button>
-              </Clickable>
+                返回首页
+              </Button>
             </div>
           </div>
         </div>
