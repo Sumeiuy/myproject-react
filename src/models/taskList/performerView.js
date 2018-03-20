@@ -210,6 +210,16 @@ export default {
           type: 'queryTargetCustSuccess',
           payload: resultData,
         });
+        const { list = EMPTY_LIST } = resultData;
+        if (list.length) {
+          yield put({
+            type: 'queryTargetCustDetail',
+            payload: {
+              missionId: payload.missionId,
+              custId: (list[0] || EMPTY_OBJ).custId,
+            },
+          });
+        }
       }
     },
     // 根据目标客户列表的当前选中项的custId查询详情
