@@ -914,7 +914,7 @@ export default class PerformerView extends PureComponent {
       missionId: obj.id,
       pageNum: 1,
       pageSize: 10,
-    }).then(() => this.getCustDetail({ missionId: obj.id }));
+    });
   }
 
   /**
