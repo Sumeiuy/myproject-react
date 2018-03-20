@@ -3,7 +3,7 @@
  * @Description: 开发关系认定的新开发团队页面
  * @Date: 2018-01-04 13:59:02
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-20 15:42:06
+ * @Last Modified time: 2018-03-20 16:06:47
  */
 
 import React, { PureComponent } from 'react';
@@ -120,7 +120,6 @@ export default class Detail extends PureComponent {
       pageSize: pageData.pageSize,
       onChange: this.handlePageNumberChange,
     };
-    console.warn('paginationOption', paginationOption);
 
     return (
       <div className={styles.detailBox}>
