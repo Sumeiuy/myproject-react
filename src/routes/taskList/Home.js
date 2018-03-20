@@ -965,7 +965,7 @@ export default class PerformerView extends PureComponent {
         const paylaod = {
           missionName,
           orgId: emp.getOrgId(),
-          missionId: record.id,
+          missionId,
           serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
           servicePolicy,
         };
