@@ -11,7 +11,7 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
 import styles from './notifies.less';
 
@@ -39,7 +39,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@setHeight
+@fspPatch()
 export default class FilialeCustTransferNotifies extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
