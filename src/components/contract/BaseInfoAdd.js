@@ -329,7 +329,6 @@ export default class BaseInfoEdit extends PureComponent {
             searchList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}
-            isImmediatelySearch={false}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>
