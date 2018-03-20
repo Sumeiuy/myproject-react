@@ -70,8 +70,6 @@ export default class PerformanceIndicators extends PureComponent {
         empInfo,
         authority,
       } = this.props;
-      // console.log('arg>>', arg);
-      // console.log('clientNameData: ', clientNameData);
 
       const param = {
         source: 'numOfCustOpened',
