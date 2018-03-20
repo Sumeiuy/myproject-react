@@ -203,6 +203,7 @@ export default class PaginationComponent extends PureComponent {
     return (
       <div
         className={classnames({
+          commonPage: true,
           [styles.commonPage]: useClearStyle === false,
           [styles.hidden]: total === 0,
           [styles.shortPageList]: isShortPageList,
