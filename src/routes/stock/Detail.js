@@ -15,7 +15,7 @@ import { Layout } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import Icon from '../../components/common/Icon';
 
 import config from './config';
@@ -43,7 +43,7 @@ const mapDispatchToProps = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@setHeight
+@fspPatch()
 export default class StockDetail extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
@@ -111,13 +111,20 @@ export default class StockDetail extends PureComponent {
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
           <h2>{title}</h2>
-          <h3>作者：{author || EMPTY_PARAM}    发布日期：{pubdate || EMPTY_PARAM}</h3>
+          <h3>作者：{author || EMPTY_PARAM}　　　发布日期：{pubdate || EMPTY_PARAM}</h3>
         </Header>
         <Content className={styles.content}>
           {
             detail
             ?
-              splitArray.map(item => ((<div dangerouslySetInnerHTML={{ __html: _.trim(item) }} />)))
+              splitArray.map((item, index) => {
+                const itemKey = `item${index}`;
+                return (<div
+                  key={itemKey}
+                  className={styles.contentDiv}
+                  dangerouslySetInnerHTML={{ __html: _.trim(item) }}
+                />);
+              })
             :
               <div>{EMPTY_PARAM}</div>
           }

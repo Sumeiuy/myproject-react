@@ -18,7 +18,7 @@ import {
   mapFiledList,
   EVENT_PROFILE_ACTION,
 } from '../config/log';
-import { emp, data as dataHelper, env as envHelper } from '../helper';
+import { emp, env as envHelper } from '../helper';
 
 const EVENT_PROFILE_KEY = 'profile_set';
 
@@ -91,7 +91,7 @@ function getExtraData(action) {
           if (value === '*') {
             return { ...mergedData, ...payload };
           }
-          const propertyValue = dataHelper.getChainPropertyFromObject(payload, value);
+          const propertyValue = _.get(payload, value);
           if (_.isObject(propertyValue)) {
             return { ...mergedData, ...propertyValue };
           }

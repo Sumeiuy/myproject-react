@@ -18,7 +18,7 @@ import { message } from 'antd';
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import { time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
@@ -43,7 +43,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@setHeight
+@fspPatch()
 export default class Demote extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,

@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
-import { emp, permission, env as envHelper, data as dataHelper } from '../../helper';
+import { emp, permission, env as envHelper } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -1037,7 +1037,7 @@ export default class PerformerView extends PureComponent {
     // 切换页码，将页面的scrollToTop
     const listWrap = this.splitPanelElem.listWrap;
     if (listWrap) {
-      const appList = dataHelper.getChainPropertyFromObject(listWrap, 'firstChild.firstChild');
+      const appList = _.get(listWrap, 'firstChild.firstChild');
       if (appList) {
         appList.scrollTop = 0;
       }
