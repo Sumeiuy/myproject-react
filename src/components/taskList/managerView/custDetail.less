@@ -45,7 +45,7 @@
   & > .custDetailTableSection {
     display: block;
     .custDetailTable {
-      padding: 0 !important;
+      padding: 0;
       max-height: 700px;
       table > thead > tr > th {
         color: #333;
@@ -54,8 +54,8 @@
         pointer-events: none;
       }
       table > thead > tr > th, tbody > tr > td {
-        padding: 8px 0 !important;
-        text-align: left !important;
+        padding: 8px 0;
+        text-align: left;
         font-size: 14px;
         line-height: 18px;
         background: #fff;
@@ -66,7 +66,7 @@
         color: #666;
       }
       table > tbody > tr > td:last-child {
-        text-align: left !important;
+        text-align: left;
       }
       tbody > tr > td > span:last-child {
         margin: 0 auto;
@@ -75,41 +75,54 @@
         max-width: 220px;
       }
       table > thead > tr > th {
-          text-align: left !important;
-          background-color: #f7f7f7;
-        }
-        table > tbody > tr > td:first-child, table > thead > tr > th:first-child {
-          text-align: center !important;
-        }
-        :global {
-          .ant-table-header {
-            background-color: #fff;
-            table {
-              border-bottom: 0;
-            }
+        text-align: left;
+        background-color: #f7f7f7;
+      }
+      table > tbody > tr > td:first-child, table > thead > tr > th:first-child {
+        text-align: center;
+      }
+      table > thead > tr > th:first-child {
+        text-align: left;
+      }
+      table > thead > tr > th:first-child > span {
+        margin-left: 25px;
+      }
+      table > tbody > tr > td:first-child > div {
+        text-align: left;
+      }
+      table > tbody > tr > td:first-child > div {
+        margin: 0;
+        margin-left: 20px;
+      }
+      :global {
+        .ant-table-header {
+          background-color: #fff;
+          table {
+            border-bottom: 0;
           }
-        }
-        .detailColumn {
-          display: flex;
-          justify-content: flex-start;
-          align-items: flex-start;
-          flex-wrap: wrap;
-          // margin-left: -10px;
-          width: 100%;
-          div {
-            width: 100px;
-            margin-right: 10px;
-            // margin-left: 10px;
-            text-align: left;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-          }
-        }
-        .iconMoneyImage {
-          height: 14px;
         }
       }
+      .detailColumn {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        // margin-left: -10px;
+        width: 100%;
+        div {
+          width: 100px;
+          margin-right: 10px;
+          // margin-left: 10px;
+          text-align: left;
+          font-size: 14px;
+          color: #666;
+          margin-bottom: 5px;
+        }
+      }
+      .iconMoneyImage {
+        height: 14px;
+      }
+    }
     .emptyContent {
       .emptyContent;
     }
