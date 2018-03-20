@@ -109,21 +109,8 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   @autobind
-  handleInputValue(value) {
-    if (_.isEmpty(currentSelect)) {
-      const { presetOptionList, onSelect } = this.props;
-      const { optionList, typeStyle } = this.state;
-      if (typeStyle === 'close') {
-        onSelect({});
-      }
-      // 记录要搜索的字段，并设置当前的状态为搜索状态
-      this.setState({
-        value,
-        typeStyle: 'search',
-        // 当输入值为空时，显示预置下拉选项
-        optionList: _.isEmpty(value) ? presetOptionList : optionList,
-      });
-    } else {
+  handleInputValue() {
+    if (!_.isEmpty(currentSelect)) {
       // 下拉框中值选中时，会触发onchange方法, 即handleInputValue方法，故在此处重置选中项为null
       currentSelect = null;
     }
@@ -156,6 +143,34 @@ export default class SimilarAutoComplete extends PureComponent {
     }
   }
 
+  // 即时搜索
+  @autobind
+  handleImmediatelySearch(searchValue) {
+    const { presetOptionList, onSelect } = this.props;
+    const { typeStyle } = this.state;
+    let value = searchValue;
+    if (typeStyle === 'close') {
+      value = '';
+      onSelect({});
+      this.setState({
+        value,
+        typeStyle: 'search',
+        // 当输入值为空时，显示预置下拉选项
+        optionList: presetOptionList,
+      });
+    } else {
+      const optionObj = _.isEmpty(value) ? { optionList: presetOptionList } : {};
+      // 记录要搜索的字段，并设置当前的状态为搜索状态
+      this.setState({
+        value,
+        ...optionObj,
+      });
+    }
+    // 发起搜索
+    const { onSearch } = this.props;
+    onSearch(value);
+  }
+
   // 触发查询搜索信息的方法
   @autobind
   handleSearch() {
@@ -164,11 +179,14 @@ export default class SimilarAutoComplete extends PureComponent {
       // 发起搜索
       this.props.onSearch(value);
     } else if (typeStyle === 'close') {
+      // 预置数据列表
+      const { presetOptionList } = this.props;
       // 清空输入框，并设置为搜索状态
       this.setState(
         {
           value: '',
           typeStyle: 'search',
+          optionList: presetOptionList,
         },
         () => {
           // 手动清空选中值，传递到组件外
@@ -255,8 +273,12 @@ export default class SimilarAutoComplete extends PureComponent {
         dataSource={options}
         optionLabelProp="value"
         value={inputValue}
+        // 选中下拉列表框中的某项，会触发onChange方法，不触发onSearch方法
         onChange={this.handleInputValue}
         onSelect={this.handleSelectedValue}
+        // 当输入框变化时，AutoComplete 组件会先调用 onSearch 方法，在调用 onChange 方法
+        // 添加 onSearch 属性，可实现即时搜索
+        onSearch={this.handleImmediatelySearch}
       >
         <Input
           suffix={

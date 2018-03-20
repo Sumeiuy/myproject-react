@@ -17,7 +17,7 @@ import Icon from '../Icon';
 import { data } from '../../../helper';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import Clickable from '../Clickable';
+import logable from '../../../decorators/logable';
 import Button from '../Button';
 // import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -287,6 +287,7 @@ export default class MissionInvestigation extends PureComponent {
    * 取消弹窗，则取消刚才勾选的selectedKeys
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     const { currentSelectRowKeys, currentSelectRowKeysInTable, page } = this.state;
     this.scrollModalBodyToTop();
@@ -310,6 +311,7 @@ export default class MissionInvestigation extends PureComponent {
    * 确认，关闭弹窗，将新加的问题加入列表
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
     this.setState({
       isShowTable: false,
@@ -553,18 +555,21 @@ export default class MissionInvestigation extends PureComponent {
           onCancelHandler={this.handleCancel}
           footer={
             <div className={styles.btnSection}>
-              <Clickable
+              <Button
+                type="default"
+                size="default"
                 onClick={this.handleCancel}
-                eventName="/click/missionInvestigation/cancel"
               >
-                <Button type="default" size="default">取消</Button>
-              </Clickable>
-              <Clickable
+                取消
+              </Button>
+              <Button
+                type="primary"
+                size="default"
+                className={styles.confirmBtn}
                 onClick={this.handleConfirm}
-                eventName="/click/missionInvestigation/confirm"
               >
-                <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
-              </Clickable>
+                确定
+              </Button>
             </div>
           }
           modalContent={
