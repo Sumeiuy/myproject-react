@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-15 17:12:38
+ * @Last Modified time: 2018-03-20 19:37:39
  * 客户反馈
  */
 
@@ -324,15 +324,22 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item =>
-                <div
-                  className={styles.content}
-                  key={item.key}
-                >
-                  <i className={styles.parentIcon} style={{ background: item.color }} />
-                  <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
-                </div>,
-              )}
+              _.map(level1Data, (item) => {
+                // 过滤掉没有比例的数据
+                if (item.value === 0) {
+                  return null;
+                }
+
+                return (
+                  <div
+                    className={styles.content}
+                    key={item.key}
+                  >
+                    <i className={styles.parentIcon} style={{ background: item.color }} />
+                    <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
