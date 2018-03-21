@@ -78,11 +78,14 @@ export default class BaseInfoModify extends PureComponent {
         this.props.onEmitEvent('subType', this.state.subTypeTxt);
       });
     }
-    this.context.getSubTypeList({
-      customerId: item.brokerNumber,
-      customerType: item.custType,
-      type: pageType,
-    });
+    // 当前选中的客户不为空时，才发起接口申请
+    if (!_.isEmpty(item)) {
+      this.context.getSubTypeList({
+        customerId: item.brokerNumber,
+        customerType: item.custType,
+        type: pageType,
+      });
+    }
   }
 
   @autobind

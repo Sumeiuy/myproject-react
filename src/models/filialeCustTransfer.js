@@ -119,9 +119,9 @@ export default {
       const newList = list.map(item => ({
         ...item,
         newOrgName: item.empInfo.orgName,
-        newEmpName: item.empId,
+        newEmpId: item.empId,
         orgName: (item.orgiEmpInfo || {}).orgName,
-        empName: (item.orgiEmpInfo || {}).empId,
+        empName: (item.orgiEmpInfo || {}).empName,
       }));
       return {
         ...state,

@@ -377,7 +377,7 @@ export default class CustomerGroupDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '分组管理客户详情',
       type: '$args[1]',
     },
   })

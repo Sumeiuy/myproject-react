@@ -152,11 +152,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       client: v,
     }, () => {
-      // 选择客户之后触发查询该客户的原服务经理
-      const { getOldManager } = this.props;
-      getOldManager({
-        brokerNumber: v.brokerNumber,
-      });
+      if (!_.isEmpty(v)) {
+        // 选择客户之后触发查询该客户的原服务经理
+        const { getOldManager } = this.props;
+        getOldManager({
+          brokerNumber: v.brokerNumber,
+        });
+      }
     });
   }
 
@@ -178,9 +180,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       newManager: v,
     }, () => {
-      // 将选择的新服务经理和原服务经理数据合并用作展示
-      const { selectNewManager } = this.props;
-      selectNewManager(v);
+      if (!_.isEmpty(v)) {
+        // 将选择的新服务经理和原服务经理数据合并用作展示
+        const { selectNewManager } = this.props;
+        selectNewManager(v);
+      }
     });
   }
 
@@ -299,11 +303,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
-        // this.queryCustComponent.clearSearchValue();
       }
       if (this.queryManagerComponent) {
         this.queryManagerComponent.clearValue();
-        // this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
       clearMultiData();
@@ -497,6 +499,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     searchList={custList}
                     onSelect={this.handleSelectClient}
                     onSearch={this.handleSearchClient}
+                    isImmediatelySearch={false}
                     ref={ref => this.queryCustComponent = ref}
                     isImmediatelySearch={false}
                   />
@@ -508,6 +511,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     searchList={newManagerList}
                     onSelect={this.handleSelectNewManager}
                     onSearch={this.handleSearchNewManager}
+                    isImmediatelySearch={false}
                     ref={ref => this.queryManagerComponent = ref}
                     isImmediatelySearch={false}
                   />
