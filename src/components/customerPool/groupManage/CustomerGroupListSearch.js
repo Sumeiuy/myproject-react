@@ -58,7 +58,7 @@ export default class CustomerGroupListSearch extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$props.placeholder' } })
+  @logable({ type: 'Click', payload: { name: '分组管理搜索' } })
   handleSearchEnter() {
     const { onSearch } = this.props;
     const { curSearchValue } = this.state;

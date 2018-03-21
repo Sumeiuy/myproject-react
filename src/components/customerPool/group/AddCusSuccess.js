@@ -61,7 +61,7 @@ export default class AddCusSuccess extends PureComponent {
 
   /* 跳转到客户分组管理列表 */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '客户分组' } })
+  @logable({ type: 'Click', payload: { name: '客户分组' } })
   LinkToGroupManage() {
     this.clearTimeInterval();
     const { push } = this.props;
