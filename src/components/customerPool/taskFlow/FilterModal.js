@@ -98,6 +98,7 @@ export default class FilterModal extends PureComponent {
       currentAllFilterState,
       allFiltersCloseIconState,
       curPageNum,
+      argsOfQueryCustomer,
     } = nextProps;
 
     if (shouldrenderModal !== this.props.shouldrenderModal) {
@@ -106,6 +107,7 @@ export default class FilterModal extends PureComponent {
         currentFilterObject,
         currentAllFilterState,
         allFiltersCloseIconState,
+        argsOfQueryCustomer,
         curPageNum,
       });
     }

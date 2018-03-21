@@ -56,7 +56,7 @@ export default class FilterMoreButton extends PureComponent {
       <Menu className={styles.dropDownMenu}>
         {
           labelArray.map(item => (
-            <Menu.Item key={item.key} className={styles.filterItem}>
+            <Menu.Item key={item.filterCode} className={styles.filterItem}>
               <Checkbox
                 className={styles.overflowAction}
                 checked={generateCheckStatus(valueArray, item.filterCode)}

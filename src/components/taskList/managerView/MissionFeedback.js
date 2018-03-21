@@ -345,7 +345,7 @@ export default class MissionFeedback extends PureComponent {
     }
 
     return (
-      <div className={styles.radioFeedAll}>
+      <div className={styles.radioFeedAll} key={key}>
         <div
           className={classnames({
             [styles.firBorder]: !onOff,

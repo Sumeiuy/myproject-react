@@ -21,7 +21,7 @@ import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
-import { emp, permission, env as envHelper, data as dataHelper } from '../../helper';
+import { emp, permission, env as envHelper } from '../../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -65,10 +65,11 @@ const feedbackListOfNone = [{
   }],
 }];
 
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull = false) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const effects = {
@@ -175,7 +176,7 @@ const mapDispatchToProps = {
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   // 改变详情中的用来查询的参数
   changeParameter: fetchDataFunction(false, effects.changeParameter),
-  // 查询详情中目标客户列表
+  // 查询详情中目标客户信息（列表和列表第一条客户的详情）
   queryTargetCust: fetchDataFunction(true, effects.queryTargetCust),
   // 查询详情中目标客户的详情
   queryTargetCustDetail: fetchDataFunction(true, effects.queryTargetCustDetail),
@@ -201,7 +202,7 @@ const mapDispatchToProps = {
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
   // 预览客户明细
-  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
+  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail, true),
   // 查询管理者视图任务详细信息中的基本信息
   queryMngrMissionDetailInfo: fetchDataFunction(true, effects.queryMngrMissionDetailInfo),
   // 管理者视图一二级客户反馈
@@ -411,14 +412,15 @@ export default class PerformerView extends PureComponent {
             // 如果能找到，并且当前statusCode为执行中，则右侧详情展示管理者视图
             if (itemIndex > -1) {
               item = list.resultData[itemIndex];
-              if (this.judgeTaskInApproval(item.statusCode)) {
-                // 执行中创建者视图右侧展示管理者视图
-                creatorViewRightFromManagerView = true;
-              }
             } else {
               // 如果都找不到，则默认取数据的第一条
               item = defaultItem;
               itemIndex = defaultItemIndex;
+            }
+            // 当前状态是执行中，则右侧详情展示管理者视图
+            if (this.judgeTaskInApproval(item.statusCode)) {
+              // 执行中创建者视图右侧展示管理者视图
+              creatorViewRightFromManagerView = true;
             }
           } else {
             // 如果都找不到，则默认取数据的第一条
@@ -914,7 +916,7 @@ export default class PerformerView extends PureComponent {
       missionId: obj.id,
       pageNum: 1,
       pageSize: 10,
-    }).then(() => this.getCustDetail({ missionId: obj.id }));
+    });
   }
 
   /**
@@ -932,9 +934,11 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     const { isSourceFromCreatorView } = this.state;
     let missionId = record.id;
+    let eventId = record.eventId;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     if (isSourceFromCreatorView) {
       missionId = record.mssnId;
+      eventId = record.id;
     }
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
@@ -943,7 +947,7 @@ export default class PerformerView extends PureComponent {
       orgId: emp.getOrgId(),
       // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
-      eventId: record.eventId,
+      eventId,
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
@@ -965,7 +969,7 @@ export default class PerformerView extends PureComponent {
         const paylaod = {
           missionName,
           orgId: emp.getOrgId(),
-          missionId: record.id,
+          missionId,
           serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
           servicePolicy,
         };
@@ -1037,7 +1041,7 @@ export default class PerformerView extends PureComponent {
     // 切换页码，将页面的scrollToTop
     const listWrap = this.splitPanelElem.listWrap;
     if (listWrap) {
-      const appList = dataHelper.getChainPropertyFromObject(listWrap, 'firstChild.firstChild');
+      const appList = _.get(listWrap, 'firstChild.firstChild');
       if (appList) {
         appList.scrollTop = 0;
       }

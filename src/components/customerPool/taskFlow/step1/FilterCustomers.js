@@ -86,7 +86,7 @@ export default class Filter extends PureComponent {
 
       // 筛选出来对应筛选条件的hideCloseIcon状态
       return (
-        <div className={cls}>
+        <div className={cls} key={obj.filterCode}>
           <SingleFilter
             key={obj.filterCode}
             value={backfillValue}

@@ -13,6 +13,7 @@ import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import styles from './taskSearchRow.less';
 import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import { isSightingScope } from '../helper';
 import { fspContainer } from '../../../config';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
@@ -308,6 +309,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '筛查客户' } })
   handleSeeCust(value = {}) {
     const { currentFilterObject, shouldrenderModal } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
@@ -404,7 +406,6 @@ export default class TaskSearchRow extends PureComponent {
             {
               <Clickable
                 onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow/checkCust"
               >
                 <Button className={btncls} disabled={item.customNum === 0}>筛查客户</Button>
               </Clickable>
@@ -417,18 +418,23 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   renderBottomButton() {
     return (<div>
-      <Clickable
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
         onClick={this.handleCancel}
-        eventName="/click/taskSearchRow/close"
       >
-        <Button className={styles.modalButton} key="back" size="large">取消</Button>
-      </Clickable>
-      <Clickable
+        取消
+      </Button>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        type="primary"
         onClick={this.handleAccept}
-        eventName="/click/taskSearchRow/close"
       >
-        <Button className={styles.modalButton} key="back" size="large" type="primary">确定</Button>
-      </Clickable>
+        确定
+      </Button>
     </div>);
   }
 

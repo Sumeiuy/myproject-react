@@ -28,25 +28,6 @@ const data = {
   },
 
   /**
-   * 查找object上某个链式属性的值
-   * 类似于在对象a上查找 b.c.d的值，即返回 a.b.c.d的值
-   * @author sunweibin
-   * @param {Object} object 查找的基对象数据
-   * @param {String} chain key值得链式字符串
-   */
-  getChainPropertyFromObject(object, chain) {
-    const paths = chain.split('.');
-    let property = object[paths.shift()];
-    while (paths.length) {
-      if (property === null || property === undefined) {
-        return property;
-      }
-      property = property[paths.shift()];
-    }
-    return property;
-  },
-
-  /**
    * 递归遍历组织机构树
    * @param {Array} orgArr 组织机构数
    * @param {*} func 对组织机构数进行的处理

@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 import DropdownSelect from '../../common/dropdownSelect';
+import { emp } from '../../../helper';
 
 import styles from './saleDepartmentFilter.less';
 
@@ -28,6 +29,11 @@ export default class ServiceManagerFilter extends PureComponent {
       dropdownToSearchInfo,
       disable,
     } = this.props;
+    // 预置下拉框数据列表
+    const presetList = [
+      { ptyMngName: '所有人', ptyMngId: '' },
+      { ptyMngName: '我的', ptyMngId: emp.getId() },
+    ];
     return (
       <div>
         <span className={styles.selectLabel}>服务经理：</span>
@@ -42,6 +48,7 @@ export default class ServiceManagerFilter extends PureComponent {
           searchList={searchServerPersonList}
           emitSelectItem={dropdownSelectedItem}
           emitToSearch={dropdownToSearchInfo}
+          presetOptionList={presetList}
         />
       </div>
     );

@@ -7,25 +7,28 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Icon, Input, AutoComplete } from 'antd';
+import { AutoComplete } from 'antd';
 import _ from 'lodash';
 
+import SimilarAutoComplete from '../common/similarAutoComplete';
 import { seibelConfig } from '../../config';
 import confirm from '../common/Confirm';
+
 import styles from './selectAssembly.less';
 
-const { comsubs: commadj } = seibelConfig;
 const Option = AutoComplete.Option;
+const { comsubs: commadj } = seibelConfig;
 
 export default class SelectAssembly extends PureComponent {
 
   static propTypes = {
+    name: PropTypes.string,
     dataSource: PropTypes.array.isRequired,
     onSearchValue: PropTypes.func.isRequired,
     onSelectValue: PropTypes.func.isRequired,
     unfinishRoute: PropTypes.func, // 选择客户，弹出未完成订单，点击确认的跳转路由
     onValidateCust: PropTypes.func,
-    width: PropTypes.string,
+    width: PropTypes.number,
     subType: PropTypes.string,
     validResult: PropTypes.object,
     shouldeCheck: PropTypes.bool,
@@ -33,7 +36,8 @@ export default class SelectAssembly extends PureComponent {
   }
 
   static defaultProps = {
-    width: '300px',
+    name: 'commissionSelect',
+    width: 300,
     subType: '',
     validResult: {},
     shouldeCheck: true,
@@ -46,58 +50,27 @@ export default class SelectAssembly extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: '',
-      typeStyle: 'search',
-      dataSource: [],
       isUnfinish: false, // 标识 选中的客户，是否有未完成订单
+      canSelected: false,
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { dataSource: nextData } = nextProps;
-    const { dataSource: prevData } = this.props;
-    if (nextData !== prevData) {
-      this.setState({
-        dataSource: _.cloneDeep(nextData),
-      });
-    }
-  }
-
-  // 该用户是否能够被选中
-  canSelected = true
-  // 选中的客户
-  selectedCust = null
-
-  @autobind
-  handleInputValue(value) {
-    if (this.selectedCust) {
-      const { custName, custEcom, riskLevelLabel } = this.selectedCust;
-      this.setState({
-        inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
-        dataSource: [],
-        typeStyle: 'close',
-      });
-      this.selectedCust = null;
-    } else {
-      this.setState({
-        inputValue: value,
-      });
-    }
   }
 
   @autobind
   clearCust() {
     this.setState({
-      inputValue: '',
-      typeStyle: 'search',
+      canSelected: false,
     });
-    this.selectedCust = null;
-    this.canSelected = false;
+    this.custSearch.clearValue();
+  }
+
+  @autobind
+  custSearchRef(input) {
+    this.custSeatch = input;
   }
 
   @autobind
   handleOKAfterValidate(selectItem) {
-    if (this.canSelected) {
+    if (this.state.canSelected) {
       // 可以选中
       const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
@@ -105,9 +78,6 @@ export default class SelectAssembly extends PureComponent {
       } else {
         onSelectValue(selectItem);
       }
-      this.setState({
-        typeStyle: 'close',
-      });
     } else {
       const { unfinishRoute } = this.props;
       const { isUnfinish } = this.state;
@@ -135,8 +105,11 @@ export default class SelectAssembly extends PureComponent {
       onOk: () => { this.handleOKAfterValidate(selectItem); },
       onCancel: this.handleCancelAfterValidate,
     });
-    this.canSelected = false;
+    this.setState({
+      canSelected: false,
+    });
   }
+
   // 客户校验
   @autobind
   afterValidateSingleCust(selectItem) {
@@ -173,96 +146,68 @@ export default class SelectAssembly extends PureComponent {
       this.fail2Validate({ shortCut: 'custInvestTerm' });
       return;
     }
-    this.canSelected = true;
+    this.setState({
+      canSelected: true,
+    });
     this.handleOKAfterValidate(selectItem);
   }
 
-  // 根据用户选中的option的value值获取对应的数组值
+  // 选择某个客户
   @autobind
-  handleSelectedValue(value) {
-    if (value) {
-      const keyId = value.substr(0, value.length - 3);
-      // 找出那个用户选择的客户数据
-      const { shouldeCheck } = this.props;
-      const { dataSource } = this.state;
-      const item = _.filter(dataSource, o => o.id === keyId)[0];
-      // 首先需要做客户校验
-      this.selectedCust = null;
-      const { id, custType } = item;
-      this.selectedCust = item;
+  handleSelectCust(cust) {
+    console.warn('handleSelectCust: cust> ', cust);
+    if (!_.isEmpty(cust)) {
+      // 选中值了
+      const { shouldeCheck, onValidateCust } = this.props;
+      const { id, custType } = cust;
       if (shouldeCheck) {
-        this.props.onValidateCust({
+        onValidateCust({
           custRowId: id,
           custType,
-        }).then(() => this.afterValidateSingleCust(item));
+        }).then(() => this.afterValidateSingleCust(cust));
       } else {
-        this.props.onSelectValue(item);
+        this.props.onSelectValue(cust);
       }
+    } else {
+      // 删除客户
+      this.props.clearSelectCust();
     }
   }
 
+  // 搜索客户列表
   @autobind
-  changeDataSource() {
-    if (this.state.typeStyle === 'search') {
-      this.props.onSearchValue(this.state.inputValue);
-    } else if (this.state.typeStyle === 'close') {
-      // 点击客户清空的icon的时候，掉这个方法告知父组件客户被清空
-      this.props.clearSelectCust();
-      this.setState({
-        dataSource: [],
-        inputValue: '',
-        typeStyle: 'search',
-      });
-    }
+  handleSearchCustList(value) {
+    this.props.onSearchValue(value);
+  }
+
+  @autobind
+  renderOption(cust) {
+    const { custName, custEcom, riskLevelLabel = '' } = cust;
+    const text = `${custName}（${custEcom}） - ${riskLevelLabel}`;
+    return (
+      <Option key={custEcom} value={text} >
+        <span className={styles.prodValue} title={text}>{text}</span>
+      </Option>
+    );
   }
 
   render() {
-    const { width } = this.props;
-    const { inputValue, typeStyle, dataSource } = this.state;
-    const options = dataSource.map((opt) => {
-      const { custName, custEcom, riskLevelLabel } = opt;
-      const levelText = riskLevelLabel ? ` - ${riskLevelLabel}` : '';
-      return (
-        <Option
-          key={opt.id}
-          value={`${opt.id}%%%`}
-          text={`${custName}（${custEcom}）${levelText}`}
-        >
-          <span className={styles.prodValue}>
-            {custName}（{custEcom}） {levelText}
-          </span>
-        </Option>
-      );
-    });
+    const { width, name, dataSource } = this.props;
     return (
-      <div className={styles.selectSearchBox}>
-        <AutoComplete
-          backfill
-          placeholder="客户号/客户姓名"
-          className={styles.searchBox}
-          dropdownClassName={styles.searchDropDown}
-          dropdownStyle={{ width }}
-          dropdownMatchSelectWidth={false}
-          size="large"
-          style={{ width }}
-          dataSource={options}
-          optionLabelProp="text"
-          onChange={this.handleInputValue}
-          onSelect={this.handleSelectedValue}
-          value={inputValue}
-        >
-          <Input
-            suffix={
-              <Icon
-                type={typeStyle}
-                onClick={this.changeDataSource}
-                className={styles.searchIcon}
-              />
-            }
-            onPressEnter={this.changeDataSource}
-          />
-        </AutoComplete>
-      </div>
+      <SimilarAutoComplete
+        ref={this.custSearchRef}
+        isImmediatelySearch={false}
+        name={name}
+        placeholder="经纪客户号/客户名称"
+        searchList={dataSource}
+        width={width}
+        boxStyle={{ width: '300px' }}
+        showObjKey="custEcom"
+        objId="id"
+        onSelect={this.handleSelectCust}
+        onSearch={this.handleSearchCustList}
+        renderOption={this.renderOption}
+      />
     );
   }
 }
