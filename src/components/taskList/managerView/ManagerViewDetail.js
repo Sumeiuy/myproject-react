@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-15 19:27:17
+ * @Last Modified time: 2018-03-21 13:46:21
  * 管理者视图详情
  */
 
@@ -90,6 +90,8 @@ export default class ManagerViewDetail extends PureComponent {
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    // 客户反馈一二级
+    currentFeedback: PropTypes.array,
   }
 
   static defaultProps = {
@@ -98,6 +100,7 @@ export default class ManagerViewDetail extends PureComponent {
     currentId: '',
     custFeedback: EMPTY_LIST,
     missionTypeDict: EMPTY_LIST,
+    currentFeedback: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -173,8 +176,6 @@ export default class ManagerViewDetail extends PureComponent {
     const {
       // 当前选中的反馈
       currentSelectFeedback = {},
-      // 当前所有的一级反馈，二级反馈暂时没有
-      currentFeedback = EMPTY_LIST,
       title,
       pageNum,
       pageSize,
@@ -186,7 +187,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前入口是否从饼图过来
       isEntryFromPie = false,
     } = params;
-    const { previewCustDetail, currentId } = this.props;
+    const { previewCustDetail, currentId, currentFeedback } = this.props;
 
     const {
       title: nextTitle,

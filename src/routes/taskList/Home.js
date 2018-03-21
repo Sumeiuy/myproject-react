@@ -373,9 +373,14 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { typeCode, eventId, currentView } = this.state;
-    if (currentView === EXECUTOR &&
-      (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
+    const { typeCode, eventId, currentView, isSourceFromCreatorView } = this.state;
+    // 当前视图是执行者视图
+    // 管理者视图
+    // 创建者视图，但是是执行中的状态
+    // 需要请求客户反馈字典，进行比较，得出这个任务的一二级客户反馈字典数据
+    if ((currentView === EXECUTOR || currentView === CONTROLLER ||
+      (isSourceFromCreatorView && currentView === INITIATOR))
+      && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
       this.queryMissionList(typeCode, eventId);
     }
   }
@@ -620,6 +625,12 @@ export default class PerformerView extends PureComponent {
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
+    // 选出一级客户反馈
+    const currentFeedback = _.map(taskFeedbackList, item => ({
+      feedBackIdL1: String(item.id),
+      feedbackName: String(item.name),
+    }));
+
     const managerViewDetailComponent = (
       <ManagerViewDetail
         currentId={currentId}
@@ -651,6 +662,8 @@ export default class PerformerView extends PureComponent {
         missionReport={missionReport}
         createMotReport={createMotReport}
         queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+        // 一二级所有的客户反馈
+        currentFeedback={currentFeedback}
       />
     );
 
@@ -791,11 +804,17 @@ export default class PerformerView extends PureComponent {
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
-      if (missionViewType === EXECUTOR) {
-        const { list } = this.props;
-        const { resultData = [] } = list || {};
+      const { list } = this.props;
+      const { resultData = [] } = list || {};
+      const firstData = resultData[0] || {};
+      // 当前视图是执行者视图
+      // 管理者视图
+      // 创建者视图，但是是执行中的状态
+      // 需要请求客户反馈字典，进行比较，得出这个任务的一二级客户反馈字典数据
+      if (missionViewType === EXECUTOR || missionViewType === CONTROLLER
+      || (missionViewType === INITIATOR && this.judgeTaskInApproval(firstData.statusCode))) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
-          const { typeCode, eventId } = resultData[0] || {};
+          const { typeCode, eventId } = firstData;
           this.queryMissionList(typeCode, eventId);
         }
       }
@@ -1006,7 +1025,6 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    const { missionViewType } = obj;
     const tempObject = {
       ...query,
       ...obj,
@@ -1017,7 +1035,7 @@ export default class PerformerView extends PureComponent {
       query: tempObject,
     });
     this.setState({
-      currentView: missionViewType,
+      currentView: query.missionViewType,
     });
     // 2.调用queryApplicationList接口
     this.queryAppList(tempObject, 1, query.pageSize);
