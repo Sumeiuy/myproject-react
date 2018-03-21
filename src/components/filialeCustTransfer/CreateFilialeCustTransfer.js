@@ -303,11 +303,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
-        // this.queryCustComponent.clearSearchValue();
       }
       if (this.queryManagerComponent) {
         this.queryManagerComponent.clearValue();
-        // this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
       clearMultiData();
