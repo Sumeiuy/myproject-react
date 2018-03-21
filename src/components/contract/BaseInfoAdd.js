@@ -137,7 +137,6 @@ export default class BaseInfoEdit extends PureComponent {
       client: value,
     }, () => {
       this.handleSearchClient();
-      this.selectCustComponent.clearValue();
       this.transferDataToHome();
       const { operation } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
