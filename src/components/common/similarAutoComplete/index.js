@@ -276,7 +276,7 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   render() {
-    const { theme, disable } = this.props;
+    const { theme, disable, boxStyle } = this.props;
     const drapDownSelectCls = classnames({
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
@@ -286,7 +286,7 @@ export default class SimilarAutoComplete extends PureComponent {
       return this.renderDisableContent();
     }
     return (
-      <div className={drapDownSelectCls}>
+      <div className={drapDownSelectCls} style={boxStyle}>
         {this.renderAutoComplete()}
       </div>
     );
