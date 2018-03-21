@@ -34,7 +34,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  onHandleListen(newsId, audioFileId) {
+  onListen(newsId, audioFileId) {
     const { queryAudioFile } = this.props;
     queryAudioFile({ newsId, audioFileId });
     this.setState({
@@ -136,7 +136,7 @@ export default class MorningBroadcast extends PureComponent {
                       {`${newsTypValue}：${title}`}
                     </span>
                     <span
-                      onClick={() => { this.onHandleListen(newsId, audioFileId); }}
+                      onClick={() => { this.onListen(newsId, audioFileId); }}
                       className={styles.listen}
                     >收听</span>
                   </div>
