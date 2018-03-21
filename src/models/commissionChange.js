@@ -93,25 +93,20 @@ export default {
         payload: {
         detailRes,
         attachmentRes,
-        subscribeCustListRs,
+        custRs,
         subProListRs,
         approvListRs,
         },
       } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const { resultData: custResultData } = subscribeCustListRs;
       const approvList = approvListRs.resultData.employList;
-      let list = {};
-      if (!_.isEmpty(custResultData)) {
-        list = custResultData[0];
-      }
       const subProList = subProListRs.resultData;
       return {
         ...state,
         subscribeDetailToChange: {
           base: detailResult,
-          subscribeCustList: list,
+          subscribeCustList: custRs,
           subProList,
           attachmentList: attachmentResult,
           approvList,
@@ -124,25 +119,20 @@ export default {
         payload: {
         detailRes,
         attachmentRes,
-        unSubscriCustListRs,
+        custRs,
         unSubProListRs,
         approvListRs,
       },
     } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const { resultData: custResultData } = unSubscriCustListRs;
       const approvList = approvListRs.resultData.employList;
-      let list = {};
-      if (!_.isEmpty(custResultData)) {
-        list = custResultData[0];
-      }
       const unSubProList = unSubProListRs.resultData;
       return {
         ...state,
         unsubscribeDetailToChange: {
           base: detailResult,
-          unSubscribeCustList: list,
+          unSubscribeCustList: custRs,
           unSubProList,
           attachmentList: attachmentResult,
           approvList,
@@ -379,19 +369,20 @@ export default {
         flowCode,
       });
       const detailRD = detailRes.resultData;
-      // 获取客户信息
-      const customerRes = yield call(api.querySingleCustomer, {
-        keywords: detailRD.custNum,
-        postionId: empInfo.postnId,
-        deptCode: empInfo.occDivnNum,
-      });
-      const customerRD = customerRes.resultData.custInfos[0];
+      // 此处由于详情接口中包含了客户信息，
+      // 因此，不在需要查询客户信息接口了
+      const customerRD = detailRD.custInfo;
       // 获取客户的校验信息
       const custRiskRes = yield call(api.validateCustomer, {
         custRowId: customerRD.id,
         custType: customerRD.custType,
       });
       const custRiskRD = custRiskRes.resultData;
+      // 获取客户当前股基佣金率
+      const custCurrentCommissionRes = yield call(api.queryCustCommission, {
+        brokerNumber: customerRD.custEcom,
+      });
+      const custCurrentCommissionRD = custCurrentCommissionRes.resultData;
       // 获取目前目标股基佣金率下的可选产品
       yield put({
         type: 'getSingleComProductList',
@@ -436,7 +427,7 @@ export default {
         type: 'getSingleDetailToChangeSuccess',
         payload: {
           base: { ...detailRD, item: userProductListAfter3Match },
-          customer: { ...customerRD, ...custRiskRD },
+          customer: { ...customerRD, ...custRiskRD, ...custCurrentCommissionRD },
           attachment: attachRD,
           approval: approvalUserRD,
         },
@@ -460,21 +451,12 @@ export default {
     // 驳回后修改查询咨询订阅详情数据
     * getSubscribeDetailToChange({ payload }, { call, put, select }) {
       const { empInfo } = yield select(state => state.app.empInfo);
-      const { postnId, occDivnNum, empNum } = empInfo;
+      const { empNum } = empInfo;
       const detailRes = yield call(api.queryConsultDetail, payload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const subscribeCustListRs = yield call(api.querySubscriptionCustomer, {
-        keyword: detailRD.custNum,
-        postionId: postnId,
-        deptId: occDivnNum,
-      });
-      let list = {};
-      if (!_.isEmpty(subscribeCustListRs)) {
-        list = subscribeCustListRs.resultData[0];
-      }
-      const custRs = list;
+      const custRs = detailRD.custInfo;
       const { id, custType } = custRs;
       const subProListRs = yield call(api.queryConsultSubscribeProductList, {
         custId: id,
@@ -486,28 +468,19 @@ export default {
       });
       yield put({
         type: 'getSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs, approvListRs },
+        payload: { detailRes, attachmentRes, custRs, subProListRs, approvListRs },
       });
     },
 
     // 驳回后修改查询咨讯退订详情数据
     * getUnSubscribeDetailToChange({ payload }, { call, put, select }) {
       const { empInfo } = yield select(state => state.app.empInfo);
-      const { postnId, occDivnNum, empNum } = empInfo;
+      const { empNum } = empInfo;
       const detailRes = yield call(api.queryConsultDetail, payload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const unSubscriCustListRs = yield call(api.querySubscriptionCustomer, {
-        keyword: detailRD.custNum,
-        postionId: postnId,
-        deptId: occDivnNum,
-      });
-      let list = {};
-      if (!_.isEmpty(unSubscriCustListRs)) {
-        list = unSubscriCustListRs.resultData[0];
-      }
-      const custRs = list;
+      const custRs = detailRD.custInfo;
       const { id } = custRs;
       const unSubProListRs = yield call(api.queryConsultUnSubProductList, {
         custRowId: id,
@@ -518,7 +491,7 @@ export default {
       });
       yield put({
         type: 'getUnSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, unSubscriCustListRs, unSubProListRs, approvListRs },
+        payload: { detailRes, attachmentRes, custRs, unSubProListRs, approvListRs },
       });
     },
 

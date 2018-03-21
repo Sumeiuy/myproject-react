@@ -153,7 +153,7 @@ export default class CustomerFeedback extends PureComponent {
     };
     getMissionList(params).then(() => {
       const { missionData } = this.props;
-      const missionPage = missionData.page;
+      const missionPage = missionData.page || {};
       replace({
         pathname,
         query: {

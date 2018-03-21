@@ -465,7 +465,8 @@ export default class EditBaseInfo extends PureComponent {
         if (isSubscribe) {
           // 清空协议模版
           this.selectTemplateComponent.clearValue();
-        } else {
+        } else if (!_.isEmpty(value)) {
+          // 只有当前选择的值不为空，才执行 查询协议 ID 列表， 否则会报 缺少参数
           // 查询协议 ID 列表
           queryProtocolList({
             custId: cusId,
@@ -473,6 +474,16 @@ export default class EditBaseInfo extends PureComponent {
             operationType,
           });
         }
+      });
+      return;
+    }
+    // 当前选中的为空时，即value为空时，直接清空客户列表，不执行getCustValidate方法
+    // 否则会报 缺少参数
+    if (_.isEmpty(value)) {
+      // 清除客户列表
+      this.selectCustComponent.clearValue();
+      this.setState({
+        client: {},
       });
       return;
     }
@@ -567,12 +578,15 @@ export default class EditBaseInfo extends PureComponent {
         resetUpload();
       }
       resetProduct();
-      queryChannelProtocolItem({
-        subType,
-        keyword: value.rowId,
-      });
-      // 触发查询协议产品列表
-      this.queryChannelProtocolProduct();
+      // 当前选中的值 value 不为空时，请求接口
+      if (!_.isEmpty(value)) {
+        queryChannelProtocolItem({
+          subType,
+          keyword: value.rowId,
+        });
+        // 触发查询协议产品列表
+        this.queryChannelProtocolProduct();
+      }
     });
   }
 
