@@ -501,6 +501,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     onSearch={this.handleSearchClient}
                     isImmediatelySearch={false}
                     ref={ref => this.queryCustComponent = ref}
+                    isImmediatelySearch={false}
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
@@ -512,6 +513,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     onSearch={this.handleSearchNewManager}
                     isImmediatelySearch={false}
                     ref={ref => this.queryManagerComponent = ref}
+                    isImmediatelySearch={false}
                   />
                 </InfoForm>
               </div>

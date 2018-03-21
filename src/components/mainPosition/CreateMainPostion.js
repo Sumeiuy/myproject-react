@@ -293,6 +293,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 onSelect={this.selectHandle}
                 onSearch={this.searchHandle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}
+                isImmediatelySearch={false}
               />
             </InfoForm>
           </div>
