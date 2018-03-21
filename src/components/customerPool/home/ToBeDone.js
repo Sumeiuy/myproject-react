@@ -12,7 +12,7 @@ import { emp } from '../../../helper';
 
 import styles from './toBeDone.less';
 import { openRctTab, openFspTab } from '../../../utils';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -82,6 +82,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 跳转到满足业务办理客户列表
   @autobind
+  @logable({ type: 'Click', payload: { name: '潜在业务客户' } })
   linkToBusiness() {
     const { location: { query }, authority, push } = this.props;
     const url = '/customerPool/list';
@@ -110,6 +111,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '今日可做任务' } })
   handleMotClick() {
     // 点击事件
     const { location: { query }, push } = this.props;
@@ -154,6 +156,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '消息提醒' } })
   handleMessageClick() {
     // 点击事件
     const { push } = this.props;
@@ -172,6 +175,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '待办流程' } })
   handleTodoClick() {
     // 点击事件
     const url = '/customerPool/todo';
@@ -202,75 +206,55 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <div className={styles.row}>
           <div className={`${styles.item} ${styles.item_a}`}>
-            <Clickable
-              onClick={this.handleMotClick}
-              eventName="/click/taskOverview/canDoTodayClick"
-            >
-              <a className="item">
-                <div className={styles.content}>
-                  <div className={styles.description}>
-                    <div className={styles.count}>
-                      {this.farmtNum(todayToDoNumbers)}
-                    </div>
-                    <div className={styles.intro}>今日可做任务</div>
+            <a className="item" onClick={this.handleMotClick}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.farmtNum(todayToDoNumbers)}
                   </div>
+                  <div className={styles.intro}>今日可做任务</div>
                 </div>
-              </a>
-            </Clickable>
+              </div>
+            </a>
           </div>
           <div className={`${styles.item} ${styles.item_b}`}>
-            <Clickable
-              onClick={this.linkToBusiness}
-              eventName="/click/taskOverview/bisinessCust"
-            >
-              <a className="item">
-                <div className={styles.content}>
-                  <div className={styles.description}>
-                    <div
-                      className={styles.count}
-                      ref={(ref) => { this.itemBElem = ref; }}
-                    >
-                      {this.farmtNum(businessNumbers)}
-                    </div>
-                    <div className={styles.intro}>潜在业务客户</div>
+            <a className="item" onClick={this.linkToBusiness}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div
+                    className={styles.count}
+                    ref={(ref) => { this.itemBElem = ref; }}
+                  >
+                    {this.farmtNum(businessNumbers)}
                   </div>
+                  <div className={styles.intro}>潜在业务客户</div>
                 </div>
-              </a>
-            </Clickable>
+              </div>
+            </a>
           </div>
           <div className={`${styles.item} ${styles.item_c}`}>
-            <Clickable
-              onClick={this.handleTodoClick}
-              eventName="/click/taskOverview/toDoFlow"
-            >
-              <a className="item">
-                <div className={styles.content}>
-                  <div className={styles.description}>
-                    <div className={styles.count}>
-                      {this.processNum(workFlowNumbers)}
-                    </div>
-                    <div className={styles.intro}>待办流程</div>
+            <a className="item" onClick={this.handleTodoClick}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(workFlowNumbers)}
                   </div>
+                  <div className={styles.intro}>待办流程</div>
                 </div>
-              </a>
-            </Clickable>
+              </div>
+            </a>
           </div>
           <div className={`${styles.item} ${styles.item_d}`}>
-            <Clickable
-              onClick={this.handleMessageClick}
-              eventName="/click/taskOverview/messageNotification"
-            >
-              <a className="item">
-                <div className={styles.content}>
-                  <div className={styles.description}>
-                    <div className={styles.count}>
-                      {this.processNum(notificationNumbers)}
-                    </div>
-                    <div className={styles.intro}>消息提醒</div>
+            <a className="item" onClick={this.handleMessageClick}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(notificationNumbers)}
                   </div>
+                  <div className={styles.intro}>消息提醒</div>
                 </div>
-              </a>
-            </Clickable>
+              </div>
+            </a>
           </div>
         </div>
       </div>
