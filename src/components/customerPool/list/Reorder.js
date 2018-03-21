@@ -54,19 +54,34 @@ export default class Order extends PureComponent {
     return sortType === value ? ACTIVE : '';
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]升序' } })
+  toggleAscOrder(sortType) {
+    const { onChange } = this.props;
+    onChange({
+      sortType,
+      sortDirection: ASC,
+    });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]降序' } })
+  toggleDescOrder(sortType) {
+    const { onChange } = this.props;
+    onChange({
+      sortType,
+      sortDirection: DESC,
+    });
+  }
+
   // 处理点击排序按钮
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]' } })
   toggleOrder(st) {
-    const { onChange, value: { sortType, sortDirection } } = this.props;
-    let sd = DESC;
-    if (sortType === st) {
-      sd = sortDirection === DESC ? ASC : DESC;
+    const { value: { sortType, sortDirection } } = this.props;
+    if (sortType === st && sortDirection === DESC) {
+      this.toggleAscOrder(st);
     }
-    onChange({
-      sortType: st,
-      sortDirection: sd,
-    });
+    this.toggleDescOrder(st);
   }
 
   render() {
