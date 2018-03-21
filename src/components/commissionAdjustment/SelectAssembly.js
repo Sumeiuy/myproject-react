@@ -155,7 +155,6 @@ export default class SelectAssembly extends PureComponent {
   // 选择某个客户
   @autobind
   handleSelectCust(cust) {
-    console.warn('handleSelectCust: cust> ', cust);
     if (!_.isEmpty(cust)) {
       // 选中值了
       const { shouldeCheck, onValidateCust } = this.props;
@@ -169,7 +168,11 @@ export default class SelectAssembly extends PureComponent {
         this.props.onSelectValue(cust);
       }
     } else {
+      // 此时有可能客户搜索组件会传递一个空对象
+      // 将空值传递出去以便可以让父组件更新其他组件数据
       // 删除客户
+      // 向父组件传递一个空对象
+      this.props.onSelectValue(null);
       this.props.clearSelectCust();
     }
   }
