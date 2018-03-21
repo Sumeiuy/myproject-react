@@ -126,8 +126,7 @@ export default class EditModal extends Component {
 
   @autobind
   handleSelect(obj) {
-    // 方法参数obj中，统一返回的searchValue ，此处不需要的
-    if (_.isEmpty(_.omit(obj, 'searchValue'))) {
+    if (_.isEmpty(obj)) {
       this.setState({ select: {}, teamName: '' });
       return;
     }

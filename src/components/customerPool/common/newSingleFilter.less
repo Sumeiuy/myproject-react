@@ -42,18 +42,25 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       vertical-align: bottom;
+
+       .ant-select-selection.ant-select-selection--single {
+         border-color: transparent;
+        .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #333;
+          font-weight: normal;
+        }
+      }
+      &.ant-select-open {
+        .ant-select-selection.ant-select-selection--single {
+          border-color: #348cf0;
+          box-shadow: 0 0 0 5px rgba(16, 142, 233, 0.2);
+        }
+      }
     }
     // 兼容ie下拉图标旋转样式
     .ant-select-arrow {
       transform: scale(0.75);
-    }
-    .ant-select-selection.ant-select-selection--single {
-      border: 0;
-      .ant-select-selection-selected-value {
-        font-size: 14px;
-        color: #333;
-        font-weight: normal;
-      }
     }
     //多选下拉小图标样式
     .ant-select-arrow:before {

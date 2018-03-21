@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-15 19:27:17
+ * @Last Modified time: 2018-03-21 13:46:21
  * 管理者视图详情
  */
 
@@ -15,7 +15,6 @@ import _ from 'lodash';
 import MissionImplementation from './MissionImplementation';
 import MissionFeedback from './MissionFeedback';
 import CustDetail from './CustDetail';
-import Clickable from '../../common/Clickable';
 import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
@@ -90,6 +89,8 @@ export default class ManagerViewDetail extends PureComponent {
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    // 客户反馈一二级
+    currentFeedback: PropTypes.array,
   }
 
   static defaultProps = {
@@ -98,6 +99,7 @@ export default class ManagerViewDetail extends PureComponent {
     currentId: '',
     custFeedback: EMPTY_LIST,
     missionTypeDict: EMPTY_LIST,
+    currentFeedback: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -173,8 +175,6 @@ export default class ManagerViewDetail extends PureComponent {
     const {
       // 当前选中的反馈
       currentSelectFeedback = {},
-      // 当前所有的一级反馈，二级反馈暂时没有
-      currentFeedback = EMPTY_LIST,
       title,
       pageNum,
       pageSize,
@@ -186,7 +186,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前入口是否从饼图过来
       isEntryFromPie = false,
     } = params;
-    const { previewCustDetail, currentId } = this.props;
+    const { previewCustDetail, currentId, currentFeedback } = this.props;
 
     const {
       title: nextTitle,
@@ -261,6 +261,7 @@ export default class ManagerViewDetail extends PureComponent {
    * 发起新任务
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发起新任务' } })
   handleLaunchTask() {
     const { clearCreateTaskData } = this.props;
     const {
@@ -545,31 +546,25 @@ export default class ManagerViewDetail extends PureComponent {
                        * 暂时隐藏导出按钮,等后台性能恢复，再放开
                        */}
                       {
-                        falseValue ? <Clickable
-                          eventName="/click/managerViewCustDetail/export"
-                        >
+                        falseValue ? (
                           <Button className={styles.export}>
                             <a
                               href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                             >导出</a>
                           </Button>
-                        </Clickable> : null
+                        ) : null
                       }
                       {
-                        canLaunchTask ?
-                          <Clickable
+                        canLaunchTask ? (
+                          <Button
+                            className={styles.launchTask}
+                            type="default"
+                            disabled={isDisabled}
                             onClick={this.handleLaunchTask}
-                            eventName="/click/managerViewCustDetail/launchTask"
                           >
-                            <Button
-                              className={styles.launchTask}
-                              type="default"
-                              disabled={isDisabled}
-                            >
-                              发起新任务
-                            </Button>
-                          </Clickable>
-                          : null
+                            发起新任务
+                          </Button>
+                        ) : null
                       }
                     </div>
                   }
@@ -599,9 +594,8 @@ export default class ManagerViewDetail extends PureComponent {
                   modalStyle={{
                     maxWidth: 1165,
                     minWidth: 700,
-                    width: 1165,
                   }}
-                  modalWidth={1165}
+                  modalWidth={'auto'}
                 />
                 : null
             }

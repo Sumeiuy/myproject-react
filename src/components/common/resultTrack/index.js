@@ -584,12 +584,9 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   handleSelectProductItem(value) {
-    console.log(value);
-    if (!_.isEmpty(_.omit(value, 'searchValue'))) {
-      this.setState({
-        currentSelectedProduct: value,
-      });
-    }
+    this.setState({
+      currentSelectedProduct: value,
+    });
   }
 
   @autobind

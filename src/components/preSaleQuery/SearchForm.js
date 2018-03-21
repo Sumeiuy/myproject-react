@@ -19,8 +19,8 @@ const FormItem = Form.Item;
 export default class SearchForm extends Component {
   @autobind
   reset() {
-    // this.cust.clearSearchValue();
-    // this.product.clearSearchValue();
+    this.cust.clearValue();
+    this.product.clearValue();
     this.props.onReset();
   }
 

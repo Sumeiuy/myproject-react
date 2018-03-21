@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-15 17:12:38
+ * @Last Modified time: 2018-03-20 19:37:39
  * 客户反馈
  */
 
@@ -90,12 +90,6 @@ export default class CustFeedback extends PureComponent {
   @autobind
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
-    const { level1Data } = this.state;
-    // 构造全部一级反馈
-    const currentFeedback = _.map(level1Data, item => ({
-      feedBackIdL1: item.key,
-      feedbackName: item.name,
-    }));
 
     let currentLevel = {};
     if (!_.isEmpty(parent)) {
@@ -124,9 +118,6 @@ export default class CustFeedback extends PureComponent {
     onPreviewCustDetail({
       // 当前选中的反馈类型
       currentSelectFeedback: currentLevel,
-      // 当前所有一级反馈类型
-      // 二级反馈等后台支持，再加上
-      currentFeedback,
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,
@@ -324,15 +315,22 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item =>
-                <div
-                  className={styles.content}
-                  key={item.key}
-                >
-                  <i className={styles.parentIcon} style={{ background: item.color }} />
-                  <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
-                </div>,
-              )}
+              _.map(level1Data, (item) => {
+                // 过滤掉没有比例的数据
+                if (item.value === 0) {
+                  return null;
+                }
+
+                return (
+                  <div
+                    className={styles.content}
+                    key={item.key}
+                  >
+                    <i className={styles.parentIcon} style={{ background: item.color }} />
+                    <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>

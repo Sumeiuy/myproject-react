@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-08 21:26:05
+ * @Last Modified time: 2018-03-21 09:03:17
  */
 
 import React, { PureComponent } from 'react';
@@ -141,7 +141,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleFileChange(info) {
-    const { onOperateFile, isSupportUploadMultiple, accept } = this.props;
+    const { onOperateFile, isSupportUploadMultiple } = this.props;
     const { upData, custUuid } = this.state;
     // 当前操作upload项
     const currentFile = info.file;
@@ -150,11 +150,6 @@ export default class Uploader extends PureComponent {
 
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
-
-    if (!_.isEmpty(accept) && !accept.test(currentFile.name)) {
-      message.error('仅支持上传EXCEL文件', 2);
-      return;
-    }
 
     if (status === 'removed') {
       if (!_.isEmpty(newFileList)) {
@@ -231,7 +226,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
-    const { uploadTitle, uploadTarget } = this.props;
+    const { uploadTitle, uploadTarget, accept } = this.props;
     const { upData, fileList } = this.state;
 
     return (
@@ -245,6 +240,7 @@ export default class Uploader extends PureComponent {
         showUploadList={false}
         fileList={fileList}
         listType={'text'}
+        accept={accept}
       >
         <div className="upload_txt">
           + {uploadTitle}

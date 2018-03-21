@@ -65,10 +65,11 @@ const feedbackListOfNone = [{
   }],
 }];
 
-const fetchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type, forceFull = false) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
+  forceFull,
 });
 
 const effects = {
@@ -201,7 +202,7 @@ const mapDispatchToProps = {
   // 删除文件接口
   ceFileDelete: fetchDataFunction(true, effects.ceFileDelete),
   // 预览客户明细
-  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail),
+  previewCustDetail: fetchDataFunction(true, effects.previewCustDetail, true),
   // 查询管理者视图任务详细信息中的基本信息
   queryMngrMissionDetailInfo: fetchDataFunction(true, effects.queryMngrMissionDetailInfo),
   // 管理者视图一二级客户反馈
@@ -372,9 +373,14 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { typeCode, eventId, currentView } = this.state;
-    if (currentView === EXECUTOR &&
-      (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
+    const { typeCode, eventId, currentView, isSourceFromCreatorView } = this.state;
+    // 当前视图是执行者视图
+    // 管理者视图
+    // 创建者视图，但是是执行中的状态
+    // 需要请求客户反馈字典，进行比较，得出这个任务的一二级客户反馈字典数据
+    if ((currentView === EXECUTOR || currentView === CONTROLLER ||
+      (isSourceFromCreatorView && currentView === INITIATOR))
+      && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
       this.queryMissionList(typeCode, eventId);
     }
   }
@@ -411,14 +417,15 @@ export default class PerformerView extends PureComponent {
             // 如果能找到，并且当前statusCode为执行中，则右侧详情展示管理者视图
             if (itemIndex > -1) {
               item = list.resultData[itemIndex];
-              if (this.judgeTaskInApproval(item.statusCode)) {
-                // 执行中创建者视图右侧展示管理者视图
-                creatorViewRightFromManagerView = true;
-              }
             } else {
               // 如果都找不到，则默认取数据的第一条
               item = defaultItem;
               itemIndex = defaultItemIndex;
+            }
+            // 当前状态是执行中，则右侧详情展示管理者视图
+            if (this.judgeTaskInApproval(item.statusCode)) {
+              // 执行中创建者视图右侧展示管理者视图
+              creatorViewRightFromManagerView = true;
             }
           } else {
             // 如果都找不到，则默认取数据的第一条
@@ -618,6 +625,12 @@ export default class PerformerView extends PureComponent {
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
+    // 选出一级客户反馈
+    const currentFeedback = _.map(taskFeedbackList, item => ({
+      feedBackIdL1: String(item.id),
+      feedbackName: String(item.name),
+    }));
+
     const managerViewDetailComponent = (
       <ManagerViewDetail
         currentId={currentId}
@@ -649,6 +662,8 @@ export default class PerformerView extends PureComponent {
         missionReport={missionReport}
         createMotReport={createMotReport}
         queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+        // 一二级所有的客户反馈
+        currentFeedback={currentFeedback}
       />
     );
 
@@ -789,11 +804,17 @@ export default class PerformerView extends PureComponent {
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
-      if (missionViewType === EXECUTOR) {
-        const { list } = this.props;
-        const { resultData = [] } = list || {};
+      const { list } = this.props;
+      const { resultData = [] } = list || {};
+      const firstData = resultData[0] || {};
+      // 当前视图是执行者视图
+      // 管理者视图
+      // 创建者视图，但是是执行中的状态
+      // 需要请求客户反馈字典，进行比较，得出这个任务的一二级客户反馈字典数据
+      if (missionViewType === EXECUTOR || missionViewType === CONTROLLER
+      || (missionViewType === INITIATOR && this.judgeTaskInApproval(firstData.statusCode))) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
-          const { typeCode, eventId } = resultData[0] || {};
+          const { typeCode, eventId } = firstData;
           this.queryMissionList(typeCode, eventId);
         }
       }
@@ -932,18 +953,19 @@ export default class PerformerView extends PureComponent {
     } = this.props;
     const { isSourceFromCreatorView } = this.state;
     let missionId = record.id;
+    let eventId = record.eventId;
     // 如果来源是创建者视图，那么取mssnId作为missionId
+    // 取id作为eventId
     if (isSourceFromCreatorView) {
       missionId = record.mssnId;
+      eventId = record.id;
     }
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
       taskId: missionId,
-      // taskId: '101111171108181',
       orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
-      eventId: record.eventId,
+      eventId,
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
@@ -1003,7 +1025,6 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    const { missionViewType } = obj;
     const tempObject = {
       ...query,
       ...obj,
@@ -1014,7 +1035,7 @@ export default class PerformerView extends PureComponent {
       query: tempObject,
     });
     this.setState({
-      currentView: missionViewType,
+      currentView: query.missionViewType,
     });
     // 2.调用queryApplicationList接口
     this.queryAppList(tempObject, 1, query.pageSize);

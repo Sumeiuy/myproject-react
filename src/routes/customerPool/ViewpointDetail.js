@@ -16,7 +16,7 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
-import Clickable from '../../components/common/Clickable';
+import logable from '../../decorators/logable';
 import Icon from '../../components/common/Icon';
 import styles from './viewpointDetail.less';
 
@@ -47,6 +47,7 @@ export default class ViewpointDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '资讯列表' } })
   handleBackClick() {
     const { push, location: { query: { curPageNum = 1, pageSize = 20 } } } = this.props;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
@@ -62,6 +63,7 @@ export default class ViewpointDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].format' } })
   handleDownloadClick({ format }) {
     const { downloadFile } = this.props;
     downloadFile({ module: 'viewpointDetail', param: `${format}_download` });
@@ -69,17 +71,13 @@ export default class ViewpointDetail extends PureComponent {
 
   renderDownLoad({ loadUrl, format, fileName }) {
     return (
-      <Clickable
+      <a
         onClick={() => this.handleDownloadClick({ format })}
-        eventName="/click/viewpointDetail/download"
+        href={loadUrl}
+        download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
       >
-        <a
-          href={loadUrl}
-          download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
-        >
-          {`${_.toUpper(format)} 全文`}
-        </a>
-      </Clickable>
+        {`${_.toUpper(format)} 全文`}
+      </a>
     );
   }
 
@@ -121,17 +119,15 @@ export default class ViewpointDetail extends PureComponent {
           <div className={styles.content}>
             <div className={styles.head}>
               <div className={styles.titleRow}>
-                <Clickable
+                <div
+                  className={classnames(styles.backColumn, styles.upper)}
                   onClick={this.handleBackClick}
-                  eventName="/click/viewpointDetail/backToList"
                 >
-                  <div className={classnames(styles.backColumn, styles.upper)}>
-                    <div className={styles.iconContainer}>
-                      <Icon type="fanhui" className={styles.backIcon} />
-                    </div>
-                    <div className={styles.backTitle}>资讯列表</div>
+                  <div className={styles.iconContainer}>
+                    <Icon type="fanhui" className={styles.backIcon} />
                   </div>
-                </Clickable>
+                  <div className={styles.backTitle}>资讯列表</div>
+                </div>
                 <div className={styles.title}>
                   {_.isEmpty(texttitle) ? '暂无标题' : texttitle}
                 </div>
@@ -187,17 +183,15 @@ export default class ViewpointDetail extends PureComponent {
                   })}
                 </div>
               </div>
-              <Clickable
+              <div
+                className={classnames(styles.backColumn, styles.under)}
                 onClick={this.handleBackClick}
-                eventName="/click/viewpointDetail/backToList"
               >
-                <div className={classnames(styles.backColumn, styles.under)}>
-                  <div className={styles.iconContainer}>
-                    <Icon type="fanhui" className={styles.backIcon} />
-                  </div>
-                  <div className={styles.backTitle}>资讯列表</div>
+                <div className={styles.iconContainer}>
+                  <Icon type="fanhui" className={styles.backIcon} />
                 </div>
-              </Clickable>
+                <div className={styles.backTitle}>资讯列表</div>
+              </div>
             </div>
           </div>
         </div>

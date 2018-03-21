@@ -247,6 +247,11 @@ export default class MissionBind extends PureComponent {
     const { queryMissionList } = this.props;
     queryMissionList(FIRST_TAB, pageNum, pageSize, value);
   }
+  // 修复tab上input中左右键切换不符合预期
+  preventKeyDownPropagation(e) {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  }
   render() {
     const {
       showModal,
@@ -303,6 +308,7 @@ export default class MissionBind extends PureComponent {
             tabBarExtraContent={
               isMOTMission ?
                 <Search
+                  onKeyDown={this.preventKeyDownPropagation}
                   placeholder="事件ID/事件名称"
                   style={{ width: 186 }}
                   onSearch={this.searchMotMission}
