@@ -496,7 +496,8 @@ export default class TaskSearchRow extends PureComponent {
 
     const cls = classnames({
       [styles.divContent]: true,
-      [styles.clearBorder]: circlePeopleData.length === 0, // 最后一个item清除border
+      [styles.clearBorder]: circlePeopleData.length === 0, // 没有item清除border
+      [styles.hidden]: circlePeopleData.length === 0, // 没有item隐藏
     });
 
     const filterModalProps = {
