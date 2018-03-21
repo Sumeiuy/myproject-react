@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-15 18:28:24
+ * @Last Modified time: 2018-03-21 16:23:21
  * 客户明细数据
  */
 
@@ -243,7 +243,8 @@ export default class CustDetail extends PureComponent {
 
         return {
           ...item,
-          id: item.custId,
+          // 用流水id，流水id不可能一样
+          id: item.missionFlowId,
         };
       });
     }
@@ -437,13 +438,16 @@ export default class CustDetail extends PureComponent {
     let columnWidth;
     if (columnSize === 7) {
       // 列全部保留
-      columnWidth = [150, 80, 200, 100, 100, 200, 300];
+      // columnWidth = [150, 100, 250, 100, 100, 150, 150];
+      columnWidth = ['15%', '10%', '25%', '10%', '10%', '15%', '15%'];
     } else if (columnSize === 6) {
       // 去除服务状态列
-      columnWidth = [200, 80, 200, 100, 200, 300];
+      // columnWidth = [150, 100, 300, 100, 175, 175];
+      columnWidth = ['15%', '10%', '30%', '10%', '17%', '18%'];
     } else if (columnSize === 5) {
       // 去除客户反馈和反馈详情列
-      columnWidth = [200, 120, 300, 200, 300];
+      // columnWidth = [200, 150, 350, 150, 150];
+      columnWidth = ['20%', '15%', '35%', '15%', '15%'];
     }
 
     return (
