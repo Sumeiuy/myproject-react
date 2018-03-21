@@ -172,13 +172,18 @@ export default class TargetCustomerRow extends PureComponent {
       [styles.customerInfo]: true,
       [styles.long]: isFold,
     });
+
+    const nameCls = classnames({
+      [styles.name]: true,
+      [styles.noAllocate]: isAllocate === '1',
+    });
     return (
       <div className={`${rowItemCls} ${lastItemStyle || ''}`} onClick={this.handleClick}>
         <div className={styles.status}>{missionStatusValue}</div>
         <div className={customerInfoCls}>
           <div className={styles.custInfoWrap}>
             {this.renderAvator(genderCode, custNature)}
-            <div className={styles.name} title={custName}>{custName}</div>
+            <div className={nameCls} title={custName}>{custName}</div>
             {this.renderAllocate(isAllocate)}
           </div>
         </div>
