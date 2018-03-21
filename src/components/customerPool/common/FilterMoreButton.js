@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { Menu, Dropdown, Checkbox } from 'antd';
+import { Menu, Dropdown, Checkbox, Button } from 'antd';
 
 import styles from './filterMoreButton.less';
 
@@ -56,7 +56,7 @@ export default class FilterMoreButton extends PureComponent {
       <Menu className={styles.dropDownMenu}>
         {
           labelArray.map(item => (
-            <Menu.Item key={item.key} className={styles.filterItem}>
+            <Menu.Item key={item.filterCode} className={styles.filterItem}>
               <Checkbox
                 className={styles.overflowAction}
                 checked={generateCheckStatus(valueArray, item.filterCode)}
@@ -88,10 +88,10 @@ export default class FilterMoreButton extends PureComponent {
           overlay={menu}
           trigger={['click']}
         >
-          <div className={styles.filterContent}>
+          <Button className={styles.filterContent}>
             <span className={styles.filterValue}>更多</span>
             <span className={styles.icon} />
-          </div>
+          </Button>
         </Dropdown>
       </div>
     );

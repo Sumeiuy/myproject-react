@@ -1,5 +1,4 @@
 .filter {
-  margin-right: 30px;
   display: inline-block;
   .filterLabel {
     color: #9b9b9b;
@@ -18,25 +17,36 @@
     vertical-align: super;
   }
   .filterContent {
+    border-color: transparent;
+    border-radius: 3px;
+    padding: 0;
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #333;
     cursor: pointer;
     .filterValue {
+      margin-left: 5px;
       display: inline-block;
       width: 70px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      text-align: left;
     }
     .icon {
-      position: absolute;
-      top: 7px;
+      display: inline-block;
+      margin-right: 5px;
+      transform: translateY(-7px);
       border-top: 6px solid #c2c2c2;
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
-      margin-left: 14px;
+    }
+
+    &:active, &:focus {
+      transition: none;
+      border: 1px solid #348cf0;
+      box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
     }
   }
 }
