@@ -825,8 +825,8 @@ const pageConfig = {
         title: '新服务营业部',
       },
       {
-        dataIndex: 'newEmpName',
-        key: 'newEmpName',
+        dataIndex: 'newEmpId',
+        key: 'newEmpId',
         title: '新服务经理',
       },
     ],
