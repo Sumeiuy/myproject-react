@@ -118,7 +118,7 @@ export default class Filter extends PureComponent {
       _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
-/*     debugger; */
+
     return (
       <div className={styles.filter}>
         <FilterMoreButton

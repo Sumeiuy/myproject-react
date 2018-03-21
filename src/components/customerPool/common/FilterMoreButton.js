@@ -88,9 +88,10 @@ export default class FilterMoreButton extends PureComponent {
           overlay={menu}
           trigger={['click']}
         >
-          <div className={styles.filterContent}>
-            <Button className={styles.filterValue}>更多<span className={styles.icon} /></Button>
-          </div>
+          <Button className={styles.filterContent}>
+            <span className={styles.filterValue}>更多</span>
+            <span className={styles.icon} />
+          </Button>
         </Dropdown>
       </div>
     );

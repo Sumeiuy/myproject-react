@@ -69,6 +69,7 @@ export default class FilterModal extends PureComponent {
     changeModalVisible: PropTypes.func.isRequired,
     shouldrenderModal: PropTypes.bool.isRequired,
     curPageNum: PropTypes.number.isRequired,
+    currentSource: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -348,7 +349,6 @@ export default class FilterModal extends PureComponent {
       currentFilterObject,
       currentAllFilterState,
       allFiltersCloseIconState,
-      currentSource,
       filterNumObject,
     } = this.state;
 
@@ -359,6 +359,7 @@ export default class FilterModal extends PureComponent {
       currentSelectLabelName,
       modalVisible,
       labelId,
+      currentSource,
     } = this.props;
 
     const currentItems = currentFilterObject[labelId] || [];

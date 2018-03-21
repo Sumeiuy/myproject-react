@@ -91,6 +91,7 @@ export default class TaskSearchRow extends PureComponent {
       argsOfQueryCustomer,
       currentSelectLabelName: '',
       currentModalKey: '',
+      currentSource: '',
     };
     this.visible = false;
   }
@@ -469,6 +470,7 @@ export default class TaskSearchRow extends PureComponent {
       shouldrenderModal,
       currentModalKey,
       curPageNum,
+      currentSource,
     } = this.state;
 
     const {
@@ -514,6 +516,7 @@ export default class TaskSearchRow extends PureComponent {
       shouldrenderModal,
       currentModalKey,
       curPageNum,
+      currentSource,
     };
 
     return (
