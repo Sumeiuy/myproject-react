@@ -392,6 +392,11 @@ export default {
         custType: customerRD.custType,
       });
       const custRiskRD = custRiskRes.resultData;
+      // 获取客户当前股基佣金率
+      const custCurrentCommissionRes = yield call(api.queryCustCommission, {
+        brokerNumber: customerRD.custEcom,
+      });
+      const custCurrentCommissionRD = custCurrentCommissionRes.resultData;
       // 获取目前目标股基佣金率下的可选产品
       yield put({
         type: 'getSingleComProductList',
@@ -436,7 +441,7 @@ export default {
         type: 'getSingleDetailToChangeSuccess',
         payload: {
           base: { ...detailRD, item: userProductListAfter3Match },
-          customer: { ...customerRD, ...custRiskRD },
+          customer: { ...customerRD, ...custRiskRD, ...custCurrentCommissionRD },
           attachment: attachRD,
           approval: approvalUserRD,
         },
