@@ -97,7 +97,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const {
       serviceWay,
@@ -143,7 +143,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
     const { onToggleServiceRecordModal, handleCloseClick } = this.props;
     // 手动上传日志

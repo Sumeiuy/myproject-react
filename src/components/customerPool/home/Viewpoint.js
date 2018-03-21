@@ -39,7 +39,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '更多 >' } })
+  @logable({ type: 'Click', payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
     this.openNewTab('/customerPool/viewpointList', null,
@@ -50,7 +50,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '详情' } })
+  @logable({ type: 'Click', payload: { name: '详情' } })
   handleDetailClick(index) {
     // 跳转到资讯详情界面
     this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index },

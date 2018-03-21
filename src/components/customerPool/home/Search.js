@@ -120,7 +120,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[1]' } })
+  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(obj, titles, ids) {
     const { push, location: { query }, authority, orgId } = this.props;
     const firstUrl = '/customerPool/list';
@@ -243,7 +243,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字' } })
+  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleSearchBtn() {
     const { inputVal } = this.state;
     if (!this.checkInputValue(inputVal)) {

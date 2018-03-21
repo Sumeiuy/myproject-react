@@ -12,7 +12,6 @@ import classnames from 'classnames';
 import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import styles from './taskSearchRow.less';
-import Clickable from '../../../components/common/Clickable';
 import logable from '../../../decorators/logable';
 import { isSightingScope } from '../helper';
 import { fspContainer } from '../../../config';
@@ -404,11 +403,13 @@ export default class TaskSearchRow extends PureComponent {
             </div>
             {this.getSelectFiltersInfo(currentSelectFilters)}
             {
-              <Clickable
+              <Button
+                className={btncls}
+                disabled={item.customNum === 0}
                 onClick={() => this.handleSeeCust(item)}
               >
-                <Button className={btncls} disabled={item.customNum === 0}>筛查客户</Button>
-              </Clickable>
+                筛查客户
+              </Button>
             }
           </div>
         );
@@ -496,7 +497,8 @@ export default class TaskSearchRow extends PureComponent {
 
     const cls = classnames({
       [styles.divContent]: true,
-      [styles.clearBorder]: circlePeopleData.length === 0, // 最后一个item清除border
+      [styles.clearBorder]: circlePeopleData.length === 0, // 没有item清除border
+      [styles.hidden]: circlePeopleData.length === 0, // 没有item隐藏
     });
 
     const filterModalProps = {

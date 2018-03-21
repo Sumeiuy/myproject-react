@@ -246,7 +246,7 @@ export default class GroupTable extends PureComponent {
                   className={styles.link}
                   key={itemData.type}
                   // 多增加一个参数，用于logable的name
-                  onClick={() => itemData.handler(record, item.value)}
+                  onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}
                 </span>
