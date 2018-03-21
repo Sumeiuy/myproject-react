@@ -411,6 +411,7 @@ export default class TaskFlow extends PureComponent {
           labelId,
           argsOfQueryCustomer = {},
           custNum,
+          customNum,
         },
       } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
@@ -440,8 +441,12 @@ export default class TaskFlow extends PureComponent {
           fileId: uploadedFileKey,
         };
       } else {
-        if (custNum === 0) {
+        if (customNum === 0) {
           message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          return;
+        }
+        if (custNum === 0) {
+          message.error('此标签下未筛选出客户，请重新筛选');
           return;
         }
 
