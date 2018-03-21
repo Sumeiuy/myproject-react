@@ -336,7 +336,8 @@ export default class CustomerList extends PureComponent {
         };
       }
     } else if (query.source === 'association') { // 联想词
-      param.searchTypeReq = query.labelMapping;
+      // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
+      param.searchTypeReq = query.labelMapping === 'local' ? 'Any' : query.labelMapping;
       param.searchText = keyword;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期

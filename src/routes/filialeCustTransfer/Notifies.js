@@ -16,7 +16,7 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import { request } from '../../config';
 import { emp } from '../../helper';
 import Barable from '../../decorators/selfBar';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
 import Icon from '../../components/common/Icon';
 import styles from './notifies.less';
@@ -63,7 +63,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-@setHeight
+@fspPatch()
 export default class FilialeCustTransferNotifies extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,

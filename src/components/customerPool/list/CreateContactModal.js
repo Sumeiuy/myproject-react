@@ -12,7 +12,7 @@ import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
 import { check } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 
 import styles from './createContactModal.less';
 
@@ -58,6 +58,7 @@ export default class CreateContactModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭' } })
   handleCancel() {
     const { onClose, handleCloseClick } = this.props;
     // 手动发送日志
@@ -190,6 +191,7 @@ export default class CreateContactModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加服务记录' } })
   handleServiceRecordClick() {
     const {
       onClose,
@@ -342,12 +344,7 @@ export default class CreateContactModal extends PureComponent {
         onCancel={this.handleCancel}
         closable={false}
         footer={[
-          <Clickable
-            onClick={this.handleCancel}
-            eventName="/click/createContactModal/close"
-          >
-            <Button key="close" size="large">关闭</Button>
-          </Clickable>,
+          (<Button key="close" size="large" onClick={this.handleCancel}>关闭</Button>),
         ]}
       >
         <div className={styles.custName}>
@@ -374,15 +371,10 @@ export default class CreateContactModal extends PureComponent {
                   客户未预留主要联系方式，请尽快完善信息
               </div>
               <div className={styles.rightSection}>
-                <Clickable
-                  onClick={this.handleServiceRecordClick}
-                  eventName="/click/createContactModal/addRecord"
-                >
-                  <Button>
-                    <Icon type="jia" className={styles.addIcon} />
-                    <span>添加服务记录</span>
-                  </Button>
-                </Clickable>
+                <Button onClick={this.handleServiceRecordClick}>
+                  <Icon type="jia" className={styles.addIcon} />
+                  <span>添加服务记录</span>
+                </Button>
               </div>
             </div> :
             <div className={styles.number}>
@@ -401,15 +393,10 @@ export default class CreateContactModal extends PureComponent {
                   </div> : null
               }
               <div className={styles.rightSection}>
-                <Clickable
-                  onClick={this.handleServiceRecordClick}
-                  eventName="/click/createContactModal/addRecord"
-                >
-                  <Button>
-                    <Icon type="jia" className={styles.addIcon} />
-                    <span>添加服务记录</span>
-                  </Button>
-                </Clickable>
+                <Button onClick={this.handleServiceRecordClick}>
+                  <Icon type="jia" className={styles.addIcon} />
+                  <span>添加服务记录</span>
+                </Button>
               </div>
             </div>
         }

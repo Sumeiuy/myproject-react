@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-19 13:35:32
+ * @Last Modified time: 2018-03-20 13:32:34
  */
 
 import React, { PureComponent } from 'react';
@@ -27,7 +27,10 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     onCancelHandler: PropTypes.func,
     footer: PropTypes.node,
     modalStyle: PropTypes.object,
-    modalWidth: PropTypes.number,
+    modalWidth: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+    ]),
     closable: PropTypes.bool,
     // 拿到包裹的modal
     wrappedComponentRef: PropTypes.func,

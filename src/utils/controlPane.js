@@ -5,7 +5,7 @@
  */
 import warning from 'warning';
 import _ from 'lodash';
-import { env, data as dataHelper } from '../helper';
+import { env } from '../helper';
 
 function exec(method, ...args) {
   try {
@@ -25,7 +25,7 @@ function execOpenTab(method, ...args) {
 
 function execSwitchTab(tabId) {
   try {
-    const activeReactTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.activeReactTab');
+    const activeReactTab = _.get(window, 'eb.component.SmartTab.activeReactTab');
     activeReactTab($('#UTB'), { tabId });
   } catch (e) {
     warning(false, `execSwitchTab方法执行出错 ${e}`);
@@ -42,7 +42,7 @@ function closeTab(arg) {
 
 function removeTabMenu(tabId) {
   try {
-    const removeFspTab = dataHelper.getChainPropertyFromObject(window, 'eb.component.SmartTab.remove');
+    const removeFspTab = _.get(window, 'eb.component.SmartTab.remove');
     removeFspTab($('#UTB'), { tabId });
   } catch (e) {
     warning(false, `removeTabMenu方法执行出错 ${e}`);

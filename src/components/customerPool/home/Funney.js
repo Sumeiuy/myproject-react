@@ -10,7 +10,6 @@ import { Popover } from 'antd';
 import IECharts from '../../IECharts';
 import styles from './funney.less';
 import { openFspTab } from '../../../utils';
-import Clickable from '../../../components/common/Clickable';
 
 // 服务客户数的 key
 const SERVICE_CUST_NUM = 'custNum';
@@ -27,6 +26,13 @@ function getDataConfig(data) {
   }));
 }
 
+// @logable({
+//   type: 'DrillDown',
+//   payload: {
+//     name: '客户及资产服务客户数下钻',
+//     element: '$args[0].item.name',
+//   }
+// })
 function linkToList({ item, push }) {
   return function linkToListHandle() {
     if (item.key !== SERVICE_CUST_NUM) {
@@ -49,24 +55,20 @@ function renderIntro(data, push) {
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <Clickable
+        <div
+          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
           onClick={() => linkToList(item, push)}
-          eventName="/click/fuuney/linkToList"
         >
-          <div
-            className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+          <Popover
+            title={`${item.value}`}
+            content={item.description}
+            placement="bottom"
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
           >
-            <Popover
-              title={`${item.value}`}
-              content={item.description}
-              placement="bottom"
-              mouseEnterDelay={0.2}
-              overlayStyle={{ maxWidth: '320px' }}
-            >
-              {item.value}
-            </Popover>
-          </div>
-        </Clickable>
+            {item.value}
+          </Popover>
+        </div>
         <div className={styles.count2}>
           <span>/</span>
           <Popover
