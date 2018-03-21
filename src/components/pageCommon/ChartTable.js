@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-02 10:31:59
+ * @Last Modified by: ouchangzhi
+ * @Last Modified time: 2018-03-19 11:46:17
  */
 
 import React, { PureComponent } from 'react';
@@ -116,7 +116,6 @@ export default class ChartTable extends PureComponent {
     const tableTbody = currentTable.querySelector('.ant-table-tbody');
     // 表格body
     const tableBody = currentTable.querySelector('.ant-table-body');
-    // console.warn('tableBody',tableBody);
     // 表格向左滚动距离
     const tableScrollLeft = tableBody.scrollLeft;
     // 窗口可视高度

@@ -221,16 +221,19 @@ export default class FilialeCustTransfer extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    // 清空掉消息提醒页面带过来的 id
     replace({
       pathname,
       query: {
         ...query,
         pageNum: 1,
         ...obj,
+        id: '',
+        appId: '',
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
+    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
+    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -402,6 +405,7 @@ export default class FilialeCustTransfer extends PureComponent {
 
     const rightPanel = (
       <Detail
+        location={location}
         data={detailInfo}
         getPageAssignment={getPageAssignment}
         pageAssignment={pageAssignment}

@@ -5,11 +5,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Popover } from 'antd';
 
 import IECharts from '../../IECharts';
 import styles from './funney.less';
 import { openFspTab } from '../../../utils';
-import Clickable from '../../../components/common/Clickable';
 
 // 服务客户数的 key
 const SERVICE_CUST_NUM = 'custNum';
@@ -26,6 +26,13 @@ function getDataConfig(data) {
   }));
 }
 
+// @logable({
+//   type: 'DrillDown',
+//   payload: {
+//     name: '客户及资产服务客户数下钻',
+//     element: '$args[0].item.name',
+//   }
+// })
 function linkToList({ item, push }) {
   return function linkToListHandle() {
     if (item.key !== SERVICE_CUST_NUM) {
@@ -48,21 +55,32 @@ function renderIntro(data, push) {
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <Clickable
+        <div
+          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
           onClick={() => linkToList(item, push)}
-          eventName="/click/fuuney/linkToList"
         >
-          <div
-            title={item.value}
-            className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+          <Popover
+            title={`${item.value}`}
+            content={item.description}
+            placement="bottom"
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
           >
             {item.value}
-          </div>
-        </Clickable>
+          </Popover>
+        </div>
         <div className={styles.count2}>
           <span>/</span>
-          <span title={item.property}>{item.property}</span>
-          <span title={item.unit}>{item.unit}</span>
+          <Popover
+            title={`${item.property}${item.unit}`}
+            content={item.propertyDesc}
+            placement="bottom"
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
+          >
+            <span>{item.property}</span>
+            <span>{item.unit}</span>
+          </Popover>
         </div>
       </div>
     ),

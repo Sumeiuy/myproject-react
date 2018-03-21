@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Input, Icon, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerGroupListSearch.less';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 
 const Search = Input.Search;
 
@@ -58,6 +58,7 @@ export default class CustomerGroupListSearch extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$props.placeholder' } })
   handleSearchEnter() {
     const { onSearch } = this.props;
     const { curSearchValue } = this.state;
@@ -86,14 +87,14 @@ export default class CustomerGroupListSearch extends PureComponent {
               style={searchStyle}
               onPressEnter={this.handleSearchEnter}
               suffix={(
-                <Clickable
+                <Button
+                  className="search-btn"
+                  size="large"
+                  type="primary"
                   onClick={this.handleSearchEnter}
-                  eventName="/click/customerGroupListSearch/inputSearch"
                 >
-                  <Button className="search-btn" size="large" type="primary">
-                    <Icon type="search" />
-                  </Button>
-                </Clickable>
+                  <Icon type="search" />
+                </Button>
               )}
             /> :
             <Search

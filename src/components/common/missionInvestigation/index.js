@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-18 18:24:42
+ * @Last Modified time: 2018-03-20 19:12:16
  * 任务调查
  */
 
@@ -17,7 +17,7 @@ import Icon from '../Icon';
 import { data } from '../../../helper';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import Clickable from '../Clickable';
+import logable from '../../../decorators/logable';
 import Button from '../Button';
 // import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -116,7 +116,6 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectRowKeys,
       isShowTable: false,
       page,
-      currentSelectRowKeysInTable: EMPTY_LIST,
     };
   }
 
@@ -190,7 +189,7 @@ export default class MissionInvestigation extends PureComponent {
  * 获取modalContainer引用
  */
   @autobind
-  getModalContainerRef(ref) {
+  saveRef(ref) {
     return this.problemListModalContainerRef = ref;
   }
 
@@ -233,7 +232,7 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   addQuestion() {
-    const { checked } = this.state;
+    const { checked, currentSelectRowKeys } = this.state;
     if (!checked) {
       message.error('请先勾选任务调查');
       return;
@@ -241,8 +240,8 @@ export default class MissionInvestigation extends PureComponent {
 
     this.setState({
       isShowTable: true,
-      // 将table的row选择置为空
-      currentSelectRowKeysInTable: [],
+      // 记住现在状态的selectedRowKeys
+      originSelectRowKeys: currentSelectRowKeys,
     });
   }
 
@@ -266,37 +265,20 @@ export default class MissionInvestigation extends PureComponent {
     });
   }
 
-  @autobind
-  handleSingleRowSelectionChange(record = EMPTY_OBJECT, selected) {
-    const { quesId } = record;
-    const { currentSelectRowKeysInTable } = this.state;
-    let newSelectRowKeysInTable = currentSelectRowKeysInTable;
-    if (selected) {
-      newSelectRowKeysInTable = _.uniq(_.concat([quesId], newSelectRowKeysInTable));
-    } else {
-      newSelectRowKeysInTable = _.filter(newSelectRowKeysInTable, item => item !== quesId);
-    }
-    this.setState({
-      currentSelectRecord: record,
-      // 在表格里面选中的row
-      currentSelectRowKeysInTable: newSelectRowKeysInTable,
-    });
-  }
-
   /**
    * 取消弹窗，则取消刚才勾选的selectedKeys
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    const { currentSelectRowKeys, currentSelectRowKeysInTable, page } = this.state;
+    const { originSelectRowKeys, page } = this.state;
     this.scrollModalBodyToTop();
     this.setState({
       isShowTable: false,
     }, () => {
       this.setState({
-        currentSelectRowKeysInTable: [],
-        currentSelectRowKeys: _.filter(currentSelectRowKeys, item =>
-          !_.includes(currentSelectRowKeysInTable, item)),
+        // 恢复原来的选中项，只有点击确定，才真正的将currentSelectRowKeys设置
+        currentSelectRowKeys: originSelectRowKeys,
         // 重置分页
         page: {
           ...page,
@@ -310,6 +292,7 @@ export default class MissionInvestigation extends PureComponent {
    * 确认，关闭弹窗，将新加的问题加入列表
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
     this.setState({
       isShowTable: false,
@@ -342,6 +325,8 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   scrollModalBodyToTop() {
     // 翻页之后，恢复当前页面表格的滚动，在小屏的情况下
+    // 因为取不到Modal的Dialog,这里用container前缀的情况下，querySelector
+    // 最好不用JS操作CSS
     const problemListModalContainer = document.querySelector('.problemListModalContainer .ant-modal-body');
     if (problemListModalContainer) {
       problemListModalContainer.scrollTop = 0;
@@ -543,7 +528,7 @@ export default class MissionInvestigation extends PureComponent {
           }
         </div>
         <GroupModal
-          wrappedComponentRef={this.getModalContainerRef}
+          wrappedComponentRef={this.saveRef}
           wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
           closable
           visible={isShowTable}
@@ -551,18 +536,21 @@ export default class MissionInvestigation extends PureComponent {
           onCancelHandler={this.handleCancel}
           footer={
             <div className={styles.btnSection}>
-              <Clickable
+              <Button
+                type="default"
+                size="default"
                 onClick={this.handleCancel}
-                eventName="/click/missionInvestigation/cancel"
               >
-                <Button type="default" size="default">取消</Button>
-              </Clickable>
-              <Clickable
+                取消
+              </Button>
+              <Button
+                type="primary"
+                size="default"
+                className={styles.confirmBtn}
                 onClick={this.handleConfirm}
-                eventName="/click/missionInvestigation/confirm"
               >
-                <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
-              </Clickable>
+                确定
+              </Button>
             </div>
           }
           modalContent={
@@ -586,7 +574,6 @@ export default class MissionInvestigation extends PureComponent {
                     columnWidth={['80px', '420px']}
                     bordered={false}
                     isNeedRowSelection
-                    onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
                     onRowSelectionChange={this.handleRowSelectionChange}
                     currentSelectRowKeys={currentSelectRowKeys}
                     selectionType={'checkbox'}

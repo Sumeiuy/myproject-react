@@ -352,6 +352,7 @@ export default class CustomerLists extends PureComponent {
       replace,
       handleSelect,
     } = this.props;
+
     const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
     handleSelect({ param: ptyMng });

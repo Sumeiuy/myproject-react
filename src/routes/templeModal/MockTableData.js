@@ -318,11 +318,14 @@ export const productColumns = [
     dataIndex: 'productName',
     key: 'productName',
     width: '30%',
-    render: item => (
-      <div className={classnames(styles.column, styles.productName)} title={item}>
-        {item}
-      </div>
-    ),
+    render: (item, record) => {
+      console.log('########record############', record);
+      return (
+        <div className={classnames(styles.column, styles.productName)} title={item}>
+          {item}
+        </div>
+      );
+    },
   }, {
     title: '类型',
     dataIndex: 'type',

@@ -16,7 +16,7 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
@@ -119,12 +119,14 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '选择审批人：$props.currentSelectRecord.empName' } })
   handleClick() {
     const { getApprovalList } = this.props;
     getApprovalList();
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消/确定' } })
   handleCloseModal() {
     const { onCancel } = this.props;
     this.setState({
@@ -150,6 +152,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '员工号/员工姓名' } })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);
@@ -457,15 +460,13 @@ export default class TaskPreview extends PureComponent {
         {
           needApproval ? (
             <div>
-              <Clickable
+              <div
+                className={styles.selectApprover}
                 onClick={this.handleClick}
-                eventName="/click/taskPreview/selectApprover"
               >
-                <div className={styles.selectApprover}>
-                  <span>选择审批人：</span>
-                  <Search className={styles.searchSection} readOnly value={empName} />
-                </div>
-              </Clickable>
+                <span>选择审批人：</span>
+                <Search className={styles.searchSection} readOnly value={empName} />
+              </div>
               <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />注：新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
             </div>
 
@@ -487,18 +488,21 @@ export default class TaskPreview extends PureComponent {
               onCancelHandler={this.handleCloseModal}
               footer={
                 <div className={styles.btnSection}>
-                  <Clickable
+                  <Button
+                    type="default"
+                    size="default"
                     onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview/cancel"
                   >
-                    <Button type="default" size="default">取消</Button>
-                  </Clickable>
-                  <Clickable
+                    取消
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="default"
+                    className={styles.confirmBtn}
                     onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview/confirm"
                   >
-                    <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
-                  </Clickable>
+                    确定
+                  </Button>
                 </div>
               }
               modalContent={
@@ -513,18 +517,14 @@ export default class TaskPreview extends PureComponent {
                       }}
                       ref={inst => (this.inputRef = inst)}
                       suffix={(
-                        <Clickable
+                        <Button
+                          className="search-btn"
+                          size="large"
+                          type="primary"
                           onClick={this.handleSearchApproval}
-                          eventName="/click/taskPreview/search"
                         >
-                          <Button
-                            className="search-btn"
-                            size="large"
-                            type="primary"
-                          >
-                            <Icon type="search" />
-                          </Button>
-                        </Clickable>
+                          <Icon type="search" />
+                        </Button>
                       )}
                     />
                   </div>

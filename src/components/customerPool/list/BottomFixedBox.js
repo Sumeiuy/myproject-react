@@ -12,7 +12,7 @@ import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
 import { emp } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
 
@@ -127,6 +127,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '用户分组' } })
   handleCustomerGroupClick() {
     const url = '/customerPool/customerGroup';
     const title = '新建分组';
@@ -163,6 +164,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 验证通过后跳转到创建任务
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发起任务' } })
   handleCreateTaskClick() {
     const {
       condition,
@@ -247,12 +249,7 @@ export default class BottomFixedBox extends PureComponent {
   renderGroup() {
     if (this.props.mainServiceManager) {
       return (
-        <Clickable
-          onClick={this.handleCustomerGroupClick}
-          eventName="/click/custListBottomFixedBox/custGroup"
-        >
-          <button>用户分组</button>
-        </Clickable>
+        <button onClick={this.handleCustomerGroupClick}>用户分组</button>
       );
     }
     return null;
@@ -260,12 +257,7 @@ export default class BottomFixedBox extends PureComponent {
 
   renderCreateTaskBtn() {
     return (
-      <Clickable
-        onClick={this.handleCreateTaskClick}
-        eventName="/click/custListBottomFixedBox/launchTask"
-      >
-        <button>发起任务</button>
-      </Clickable>
+      <button onClick={this.handleCreateTaskClick}>发起任务</button>
     );
   }
 

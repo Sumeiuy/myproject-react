@@ -75,15 +75,11 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       currentId,
       queryTargetCust,
-      getCustDetail,
     } = this.props;
     queryTargetCust({
       ...obj,
       missionId: currentId,
-    }).then(() => getCustDetail({
-      missionId: currentId,
-      custId: obj.custId,
-    }));
+    });
   }
 
   /**
@@ -107,7 +103,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState,
+        targetCustomerState,
       },
       changeParameter,
     } = this.props;

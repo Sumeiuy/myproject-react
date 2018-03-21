@@ -14,7 +14,7 @@ import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import FilterCustomers from './step1/FilterCustomers';
 import { isSightingScope } from '../helper';
 import { fspContainer } from '../../../config';
@@ -106,7 +106,7 @@ export default class TaskSearchRow extends PureComponent {
       // totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
-      modalVisible: false,
+      modalVisible: true,
       title: '',
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
@@ -263,8 +263,8 @@ export default class TaskSearchRow extends PureComponent {
     });
   }
 
-
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '筛查客户' } })
   handleSeeCust(value = {}) {
     const { currentFilterObject } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
@@ -296,12 +296,62 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
-  handleCancel() {
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
+  handleAccept() {
     const { onCancel } = this.props;
     this.setState({
       modalVisible: false,
     });
     onCancel();
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancel() {
+    const { onChange, circlePeopleData, onCancel } = this.props;
+    const {
+      filterNumObject,
+      labelId,
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+     } = this.state;
+    const currentLabelInfo = _.find(circlePeopleData, item => item.id === labelId
+      || item.labelMapping === labelId) || {};
+
+    const finalFilterNumObject = {
+      [labelId]: currentLabelInfo.customNum,
+    };
+
+    this.setState({
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentFilterObject: {
+        ...currentFilterObject,
+        [labelId]: [],
+      },
+      currentAllFilterState: {
+        ...currentAllFilterState,
+        [labelId]: [],
+      },
+      allFiltersCloseIconState: {
+        ...allFiltersCloseIconState,
+        [labelId]: [],
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+      modalVisible: false,
+    });
+    onCancel();
+    onChange({
+      currentLabelId: labelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+    });
   }
 
   // 表格信息
@@ -520,16 +570,39 @@ export default class TaskSearchRow extends PureComponent {
             {this.getSelectFiltersInfo(currentSelectFilters)}
             {
               item.customNum === 0 ? null :
-              <Clickable
+              <Button
+                className={styles.seeCust}
                 onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow/checkCust"
               >
-                <Button className={styles.seeCust}>筛查客户</Button>
-              </Clickable>
+                筛查客户
+              </Button>
             }
           </div>
         );
       });
+  }
+
+  @autobind
+  renderBottomButton() {
+    return (<div>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        onClick={this.handleCancel}
+      >
+        取消
+      </Button>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        type="primary"
+        onClick={this.handleAccept}
+      >
+        确定
+      </Button>
+    </div>);
   }
 
   render() {
@@ -587,29 +660,20 @@ export default class TaskSearchRow extends PureComponent {
             key={currentModalKey}
             onCancel={this.handleCancel}
             width={1090}
-            footer={
-              <Clickable
-                onClick={this.handleCancel}
-                eventName="/click/taskSearchRow/close"
-              >
-                <Button className={styles.modalButton} key="back" size="large">确定</Button>
-              </Clickable>
-            }
+            footer={this.renderBottomButton()}
             wrapClassName={styles.labelCustModalContainer}
           >
-            <div className={styles.filter}>
-              <FilterCustomers
-                dict={dict}
-                currentItems={currentItems}
-                currentAllItems={currentAllItems}
-                filtersCloseIconState={filtersCloseIconState}
-                onFilterChange={this.handleFilterChange}
-                onCloseIconClick={this.onCloseIconClick}
-                onCheckMoreButton={this.onCheckFilterMoreButton}
-                source={currentSource}
-                sightingTelescopeFilters={sightingTelescopeFilters}
-              />
-            </div>
+            <FilterCustomers
+              dict={dict}
+              currentItems={currentItems}
+              currentAllItems={currentAllItems}
+              filtersCloseIconState={filtersCloseIconState}
+              onFilterChange={this.handleFilterChange}
+              onCloseIconClick={this.onCloseIconClick}
+              onCheckMoreButton={this.onCheckFilterMoreButton}
+              source={currentSource}
+              sightingTelescopeFilters={sightingTelescopeFilters}
+            />
             {
               _.isEmpty(custTableData) ?
                 <div className={styles.emptyContent}>

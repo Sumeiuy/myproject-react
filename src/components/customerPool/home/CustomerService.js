@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
+import { Popover } from 'antd';
 import IECharts from '../../IECharts';
 import styles from './customerService.less';
 
@@ -89,7 +90,15 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text} title={_.head(data).name || ''}>{_.head(data).name || '--'}</div>
+          <Popover
+            title={_.head(data).name || ''}
+            content={_.head(data).description || '--'}
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
+            placement="bottom"
+          >
+            <div className={styles.text}>{_.head(data).name || '--'}</div>
+          </Popover>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
@@ -99,7 +108,15 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <div className={styles.text} title={_.last(data).name || ''}>{_.last(data).name || '--'}</div>
+          <Popover
+            title={_.last(data).name || ''}
+            content={_.last(data).description || '--'}
+            mouseEnterDelay={0.2}
+            overlayStyle={{ maxWidth: '320px' }}
+            placement="bottom"
+          >
+            <div className={styles.text}>{_.last(data).name || '--'}</div>
+          </Popover>
         </div>
       </div>
     );

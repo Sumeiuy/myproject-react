@@ -67,24 +67,26 @@ export default class CustomerGrouplist extends PureComponent {
     const dataSource = this.addIdToDataSource(data);
 
     return (
-      <GroupTable
-        pageData={pageData}
-        listData={dataSource}
-        onSizeChange={onSizeChange}
-        onPageChange={onPageChange}
-        tableClass={
-          classnames({
-            [tableStyles.groupTable]: true,
-          })
-        }
-        // 构造表格头部
-        titleColumn={renderColumnTitle}
-        columnWidth={['30%', '25%', '15%', '20%']}
-        isNeedRowSelection
-        onSingleRowSelectionChange={onSingleRowSelectionChange}
-        onRowSelectionChange={onRowSelectionChange}
-        currentSelectRowKeys={currentSelectRowKeys}
-      />
+      <div className={'customerGrouplistTable'}>
+        <GroupTable
+          pageData={pageData}
+          listData={dataSource}
+          onSizeChange={onSizeChange}
+          onPageChange={onPageChange}
+          tableClass={
+            classnames({
+              [tableStyles.groupTable]: true,
+            })
+          }
+          // 构造表格头部
+          titleColumn={renderColumnTitle}
+          columnWidth={['30%', '25%', '15%', '20%']}
+          isNeedRowSelection
+          onSingleRowSelectionChange={onSingleRowSelectionChange}
+          onRowSelectionChange={onRowSelectionChange}
+          currentSelectRowKeys={currentSelectRowKeys}
+        />
+      </div>
     );
   }
 

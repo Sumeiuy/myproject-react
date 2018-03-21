@@ -15,7 +15,7 @@ import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import HtscTreeSelect from '../common/Select/TreeSelect';
 import CustomSwitch from '../common/customSwitch';
 import { time, permission } from '../../helper';
@@ -28,12 +28,10 @@ import {
 } from './auth';
 
 const { TextArea } = Input;
-
-// 下拉搜索组件样式
+ // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
+  width: '220px',
+  height: '32px',
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -457,8 +455,8 @@ export default class EditBaseInfo extends PureComponent {
       vailDt: '',
       protocolNumber: '',
     }, () => {
+      // 开发时，测试提出的
       this.handleSearchClient();
-      this.selectCustComponent.clearSearchValue();
     });
     if (operationType === config.unSubscribeArray[0]) {
       this.setState({
@@ -694,6 +692,7 @@ export default class EditBaseInfo extends PureComponent {
       softPassword,
       softAccount,
     } = this.state;
+    const { custName = '', brokerNumber = '' } = client || {};
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
@@ -762,14 +761,14 @@ export default class EditBaseInfo extends PureComponent {
                 />
               </InfoForm>
               <InfoForm label="客户" required>
-                <DropDownSelect
+                <AutoComplete
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                  defaultSearchValue={`${custName} ${brokerNumber}`}
                   searchList={custList}
-                  emitSelectItem={this.handleSelectClient}
-                  emitToSearch={this.handleSearchClient}
+                  onSelect={this.handleSelectClient}
+                  onSearch={this.handleSearchClient}
                   boxStyle={dropDownSelectBoxStyle}
                   ref={ref => this.selectCustComponent = ref}
                 />
@@ -779,14 +778,14 @@ export default class EditBaseInfo extends PureComponent {
         {
           isSubscribe ?
             <InfoForm label="协议模板" required>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="协议模板"
                 showObjKey="prodName"
                 objId="rowId"
-                value={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
+                defaultSearchValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
                 searchList={templateList}
-                emitSelectItem={this.handleSelectTemplate}
-                emitToSearch={this.handleSearchTemplate}
+                onSelect={this.handleSelectTemplate}
+                onSearch={this.handleSearchTemplate}
                 boxStyle={dropDownSelectBoxStyle}
                 ref={ref => this.selectTemplateComponent = ref}
               />
