@@ -145,18 +145,21 @@ export default class FilialeCustTransferEditForm extends PureComponent {
         newLogin: '',
       }],
     }, () => {
-      // 选择客户之后触发查询该客户的原服务经理
-      const { getOrigiManagerList } = this.props;
-      getOrigiManagerList({
-        brokerNumber: v.brokerNumber,
-      }).then(() => {
-        this.setState({
-          assignmentListData: [{
-            ...this.state.assignmentListData[0],
-            ...this.props.origiManagerList,
-          }],
+      // 当前客户不为空时，才发起请求
+      if (!_.isEmpty(v)) {
+        // 选择客户之后触发查询该客户的原服务经理
+        const { getOrigiManagerList } = this.props;
+        getOrigiManagerList({
+          brokerNumber: v.brokerNumber,
+        }).then(() => {
+          this.setState({
+            assignmentListData: [{
+              ...this.state.assignmentListData[0],
+              ...this.props.origiManagerList,
+            }],
+          });
         });
-      });
+      }
     });
   }
 
@@ -179,10 +182,17 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       newManager: v,
     }, () => {
       const { assignmentListData } = this.state;
+      const emptyManager = {
+        newEmpName: '',
+        newOrgName: '',
+        newPostnName: '',
+        newLogin: '',
+      };
+      const currentManager = _.isEmpty(v) ? emptyManager : v;
       this.setState({
         assignmentListData: [{
           ...assignmentListData[0],
-          ...v,
+          ...currentManager,
         }],
       });
     });
