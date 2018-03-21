@@ -17,7 +17,7 @@ import Icon from '../../common/Icon';
 import Button from '../../common/Button';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import Clickable from '../../../components/common/Clickable';
+import logable, { logPV } from '../../../decorators/logable';
 import pageConfig from '../pageConfig';
 
 const EMPTY_OBJECT = {};
@@ -76,6 +76,7 @@ export default class RightPanel extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/createPreview', title: '查看预览' })
   handleSeeCust() {
     const { onPreview, taskBasicInfo } = this.props;
     // const { curPageNum, curPageSize } = this.state;
@@ -139,6 +140,7 @@ export default class RightPanel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleCloseModal() {
     this.setState({
       isShowTable: false,
@@ -187,12 +189,12 @@ export default class RightPanel extends PureComponent {
               <span className={styles.value}>
                 <Icon type="excel" className={styles.excel} />
                 客户列表
-                  <Clickable
+                  <a
                     onClick={this.handleSeeCust}
-                    eventName="/click/taskListRightPanel/lookOverview"
+                    className={styles.seeCust}
                   >
-                    <a className={styles.seeCust}>查看预览</a>
-                  </Clickable>
+                    查看预览
+                  </a>
               </span>
               :
               <span className={styles.value}>--</span>
@@ -371,12 +373,13 @@ export default class RightPanel extends PureComponent {
             onOkHandler={this.handleCloseModal}
             onCancelHandler={this.handleCloseModal}
             footer={
-              <Clickable
+              <Button
+                type="primary"
+                size="default"
                 onClick={this.handleCloseModal}
-                eventName="/click/taskListRightPanel/confirm"
               >
-                <Button type="primary" size="default">确定</Button>
-              </Clickable>
+                确定
+              </Button>
             }
             width={700}
             modalContent={

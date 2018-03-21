@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-19 12:02:06
+ * @Last Modified time: 2018-03-20 17:46:03
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import Table from '../../common/commonTable';
 // import Pagination from '../../common/Pagination';
-import Clickable from '../../../components/common/Clickable';
 import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
@@ -223,14 +222,14 @@ export default class GroupTable extends PureComponent {
                   [operationColumnClass]: true,
                 })}
             >
-              <Clickable
-                onClick={() => firstColumnHandler(record)}
-                eventName="/click/groupTabel/operationFirstColumn"
+              <span
+                title={record[item.key]}
+                className={styles.link}
+                // 多传一个参数，用于logable的name
+                onClick={() => firstColumnHandler(record, item.value)}
               >
-                <span title={record[item.key]} className={styles.link}>
-                  {this.renderColumnValue(record, item)}
-                </span>
-              </Clickable>
+                {this.renderColumnValue(record, item)}
+              </span>
             </div>
           );
         }
@@ -242,16 +241,15 @@ export default class GroupTable extends PureComponent {
               })}
           >
             {
-              _.map(actionSource, (itemData, key) => (
-                <Clickable
-                  key={key}
-                  onClick={() => itemData.handler(record)}
-                  eventName="/click/groupTabel/operationLastColumn"
+              _.map(actionSource, itemData => (
+                <span
+                  className={styles.link}
+                  key={itemData.type}
+                  // 多增加一个参数，用于logable的name
+                  onClick={() => itemData.handler(record, item.value)}
                 >
-                  <span className={styles.link} key={itemData.type}>
-                    {itemData.type}
-                  </span>
-                </Clickable>
+                  {itemData.type}
+                </span>
               ),
               )
             }
@@ -339,7 +337,13 @@ export default class GroupTable extends PureComponent {
       isHideLastButton,
       isShortPageList,
       showSizeChanger,
-      onChange: onPageChange,
+      onChange: (page, pageSize) => {
+        // 翻页的时候，将高亮取消
+        this.setState({
+          curSelectedRow: -1,
+        });
+        onPageChange(page, pageSize);
+      },
       onShowSizeChange: onSizeChange,
     };
     const columns = this.renderColumns();
@@ -357,32 +361,18 @@ export default class GroupTable extends PureComponent {
           scroll={_.merge(scrollXArea, scrollYArea)}
           onRowClick={this.handleRowClick}
           rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
-          rowClassName={(record, index) => {
-            if (curSelectedRow === index) {
-              return classnames({
-                [styles.rowSelected]: true,
-              });
-            }
-            // 如果存在flag标记，说明是空白行
-            if (!_.isEmpty(record.flag)) {
-              return 'emptyRow';
-            }
-
-            return '';
-          }}
+          rowClassName={(record, index) =>
+            classnames({
+              [styles.rowSelected]: curSelectedRow === index,
+              // 如果存在flag标记，说明是空白行
+              emptyRow: !_.isEmpty(record.flag),
+            })}
           showHeader={showHeader}
           {...tableStyleProp}
           pagination={(needPagination && totalRecordNum > 0) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
-        /* needPagination={needPagination && totalRecordNum > 0} */
         />
-        {/* {
-          (needPagination && totalRecordNum > 0) ?
-            <div className={`${styles.pagination} ${paginationClass}`}>
-              <Pagination {...paganationOption} />
-            </div> : null
-        } */}
       </div>
     );
   }

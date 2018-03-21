@@ -137,7 +137,6 @@ export default class BaseInfoEdit extends PureComponent {
       client: value,
     }, () => {
       this.handleSearchClient();
-      // this.selectCustComponent.clearSearchValue();
       this.transferDataToHome();
       const { operation } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
@@ -160,7 +159,10 @@ export default class BaseInfoEdit extends PureComponent {
     const { subType, client } = this.state;
     this.selectContractComponent.clearValue();
     this.props.resetUnsubscribeDetail();
-    this.props.onSearchContractNum({ subType, client });
+    // 当前选中的客户不为空时，执行 合作合约编号查询
+    if (!_.isEmpty(client)) {
+      this.props.onSearchContractNum({ subType, client });
+    }
     this.transferDataToHome();
   }
 
@@ -178,8 +180,11 @@ export default class BaseInfoEdit extends PureComponent {
       contractNum: value,
     }, () => {
       this.transferDataToHome();
-      // 退订选择合约编号后搜索该合约详情
-      this.props.onSearchContractDetail(value);
+      // 当前选中的值不为空时，才请求数据
+      if (!_.isEmpty(value)) {
+        // 退订选择合约编号后搜索该合约详情
+        this.props.onSearchContractDetail(value);
+      }
     });
   }
 

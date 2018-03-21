@@ -14,7 +14,6 @@ import _ from 'lodash';
 import { linkTo } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import Clickable from '../../components/common/Clickable';
 import Pagination from '../../components/common/Pagination';
 import styles from './viewpointList.less';
 
@@ -33,17 +32,13 @@ const columns = ({ actionClick }) => {
     key: 'texttitle',
     width: '30%',
     render: item => (
-      <Clickable
+      <div
+        className={classnames(styles.td, styles.headLine)}
+        title={formatString(item.texttitle)}
         onClick={() => { handleClick(item); }}
-        eventName="/click/viewpointList/clickTitle"
       >
-        <div
-          className={classnames(styles.td, styles.headLine)}
-          title={formatString(item.texttitle)}
-        >
-          <a>{formatString(item.texttitle)}</a>
-        </div>
-      </Clickable>
+        <a>{formatString(item.texttitle)}</a>
+      </div>
     ),
   }, {
     title: '类型',

@@ -48,6 +48,7 @@ const effects = {
   getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
   homaPageNews: 'morningBoradcast/homaPageNews', // 晨报列表
+  queryAudioFile: 'morningBoradcast/queryAudioFile',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -86,6 +87,7 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
   homaPageNews: fetchDataFunction(false, effects.homaPageNews),
+  queryAudioFile: fetchDataFunction(false, effects.queryAudioFile),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -122,8 +124,9 @@ export default class Home extends PureComponent {
     ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
     getCustCount: PropTypes.func.isRequired,
     initBoradcastList: PropTypes.array.isRequired,
-    initBoradcastFile: PropTypes.array.isRequired,
+    initBoradcastFile: PropTypes.object.isRequired,
     homaPageNews: PropTypes.func.isRequired,
+    queryAudioFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -466,6 +469,7 @@ export default class Home extends PureComponent {
       custCount, // 经营指标新增客户指标数据
       initBoradcastList,
       initBoradcastFile,
+      queryAudioFile,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -529,6 +533,7 @@ export default class Home extends PureComponent {
           </div>
           <div className={styles.viewpoint}>
             <MorningBroadcast
+              queryAudioFile={queryAudioFile}
               dataList={initBoradcastList}
               sourceList={initBoradcastFile}
               push={push}
