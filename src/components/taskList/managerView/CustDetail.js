@@ -23,6 +23,7 @@ import iconGold from './img/icon-gold-card.png';
 import iconSliver from './img/icon-sliver-card.png';
 import iconWhiteGold from './img/icon-white-gold.png';
 import iconEmpty from './img/icon-empty.png';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -324,9 +325,18 @@ export default class CustDetail extends PureComponent {
   /**
    * 处理客户名称点击事件
    * @param {*object} record 当前行记录
+   * 第二个参数用于logable 的name
    */
   @autobind
-  handleCustNameClick(record) {
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '$args[1]',
+      type: '管理者视图客户反馈',
+    },
+  })
+  handleCustNameClick(record, columnTitle) {
+    console.log(columnTitle);
     const { custNature, custId, rowId, ptyId } = record;
     this.toDetail(custNature, custId, rowId, ptyId);
   }

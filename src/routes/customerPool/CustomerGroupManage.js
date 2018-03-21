@@ -15,7 +15,7 @@ import { message } from 'antd';
 import _ from 'lodash';
 
 import Button from '../../components/common/Button';
-import Clickable from '../../components/common/Clickable';
+import logable, { logPV } from '../../decorators/logable';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
@@ -327,6 +327,7 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
+  @logPV({ pathname: '/modal/createGroupDetailRecord', title: '编辑或者新建分组详情记录' })
   showGroupDetailModal(record = {}) {
     console.log('add customer group');
     const { groupName = '', xComments = '', groupId = '' } = record;
@@ -366,6 +367,7 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCloseModal() {
     const { groupId, includeCustIdList } = this.detailRef.refs
       .wrappedComponent.refs.formWrappedComponent.getData();
@@ -432,6 +434,7 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit(e) {
     if (this.detailRef) {
       const { groupId, includeCustIdList } = this.detailRef.refs
@@ -634,12 +637,13 @@ export default class CustomerGroupManage extends PureComponent {
             />
           </div>
           <div className={styles.rightSection}>
-            <Clickable
+            <Button
+              type="primary"
+              className={styles.addBtn}
               onClick={this.showGroupDetailModal}
-              eventName="/click/customerGroupManager/add"
             >
-              <Button type="primary" className={styles.addBtn}>新增</Button>
-            </Clickable>
+              新增
+            </Button>
           </div>
         </div>
         <div className={styles.groupTableContainer}>
@@ -681,25 +685,21 @@ export default class CustomerGroupManage extends PureComponent {
               okType={'primary'}
               onCancelHandler={this.handleCloseModal}
               footer={<div className={styles.operationBtnSection}>
-                <Clickable
+                <Button
+                  className={styles.cancel}
                   onClick={this.handleCloseModal}
-                  eventName="/click/customerGroupManager/cancel"
                 >
-                  <Button className={styles.cancel}>取消</Button>
-                </Clickable>
-                <Clickable
+                  取消
+                </Button>
+                <Button
+                  htmlType="submit"
+                  className={styles.submit}
+                  type="primary"
                   // 加入节流函数
                   onClick={_.debounce(this.handleSubmit, 250)}
-                  eventName="/click/customerGroupManager/submit"
                 >
-                  <Button
-                    htmlType="submit"
-                    className={styles.submit}
-                    type="primary"
-                  >
-                    提交
-                  </Button>
-                </Clickable>
+                  提交
+                </Button>
               </div>}
               modalContent={
                 <CustomerGroupDetail

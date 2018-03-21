@@ -15,7 +15,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
-import Clickable from '../../components/common/Clickable';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -375,6 +374,7 @@ export default class TaskFlow extends PureComponent {
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     // 下一步
     const {
@@ -653,6 +653,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePreviousStep() {
     const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { current } = this.state;
@@ -679,6 +680,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
   handleSubmitTaskFlow() {
     const { storedTaskFlowData, templateId } = this.props;
     const {
@@ -861,6 +863,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleRemoveTab() {
     closeRctTab({
       id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
@@ -1094,42 +1097,46 @@ export default class TaskFlow extends PureComponent {
             {
               current === 0
               &&
-              <Clickable
+              <Button
+                className={styles.cancelBtn}
+                type="default"
                 onClick={this.handleRemoveTab}
-                eventName="/click/taskFlow/cancel"
               >
-                <Button className={styles.cancelBtn} type="default">取消</Button>
-              </Clickable>
+                取消
+              </Button>
             }
             {
               current > 0
               &&
-              <Clickable
+              <Button
+                className={styles.prevStepBtn}
+                type="default"
                 onClick={this.handlePreviousStep}
-                eventName="/click/taskFlow/lastStep"
               >
-                <Button className={styles.prevStepBtn} type="default">上一步</Button>
-              </Clickable>
+                上一步
+              </Button>
             }
             {
               current < stepsCount - 1
               &&
-              <Clickable
+              <Button
+                className={styles.nextStepBtn}
+                type="primary"
                 onClick={_.debounce(this.handleNextStep, 250)}
-                eventName="/click/taskFlow/nextStep"
               >
-                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
-              </Clickable>
+                下一步
+              </Button>
             }
             {
               current === stepsCount - 1
               &&
-              <Clickable
+              <Button
+                className={styles.confirmBtn}
+                type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                eventName="/click/taskFlow/submit"
               >
-                <Button className={styles.confirmBtn} type="primary">确认无误，提交</Button>
-              </Clickable>
+                确认无误，提交
+              </Button>
             }
           </div>
         </div>

@@ -10,7 +10,7 @@ import _ from 'lodash';
 
 import Icon from '../../common/Icon';
 import { event } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 
 import styles from './quickMenu.less';
 
@@ -98,6 +98,7 @@ export default class QuickMenu extends PureComponent {
   // }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加服务记录' } })
   handleAddServiceRecordClick(listItem) {
     const { toggleServiceRecordModal } = this.props;
     toggleServiceRecordModal({
@@ -108,6 +109,7 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加到分组' } })
   addToGroup({ custId, name }) {
     const {
       condition,
@@ -154,33 +156,18 @@ export default class QuickMenu extends PureComponent {
     return (
       <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
-          <Clickable
-            onClick={() => createModal(listItem)}
-            eventName="/click/quickMenu/telcontact"
-          >
-            <li>
-              <Icon type="dianhua" />
-              <span>电话联系</span>
-            </li>
-          </Clickable>
-          <Clickable
-            onClick={() => this.addToGroup(listItem)}
-            eventName="/click/quickMenu/addToGroup"
-          >
-            <li>
-              <Icon type="fenzu" />
-              <span>添加到分组</span>
-            </li>
-          </Clickable>
-          <Clickable
-            onClick={() => this.handleAddServiceRecordClick(listItem)}
-            eventName="/click/quickMenu/addRecord"
-          >
-            <li>
-              <Icon type="jilu" />
-              <span>添加服务记录</span>
-            </li>
-          </Clickable>
+          <li onClick={() => createModal(listItem)}>
+            <Icon type="dianhua" />
+            <span>电话联系</span>
+          </li>
+          <li onClick={() => this.addToGroup(listItem)}>
+            <Icon type="fenzu" />
+            <span>添加到分组</span>
+          </li>
+          <li onClick={() => this.handleAddServiceRecordClick(listItem)}>
+            <Icon type="jilu" />
+            <span>添加服务记录</span>
+          </li>
         </ul>
       </div>
     );

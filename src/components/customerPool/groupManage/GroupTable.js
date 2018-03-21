@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import Table from '../../common/commonTable';
 // import Pagination from '../../common/Pagination';
-import Clickable from '../../../components/common/Clickable';
 import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
@@ -223,14 +222,14 @@ export default class GroupTable extends PureComponent {
                   [operationColumnClass]: true,
                 })}
             >
-              <Clickable
-                onClick={() => firstColumnHandler(record)}
-                eventName="/click/groupTabel/operationFirstColumn"
+              <span
+                title={record[item.key]}
+                className={styles.link}
+                // 多传一个参数，用于logable的name
+                onClick={() => firstColumnHandler(record, item.value)}
               >
-                <span title={record[item.key]} className={styles.link}>
-                  {this.renderColumnValue(record, item)}
-                </span>
-              </Clickable>
+                {this.renderColumnValue(record, item)}
+              </span>
             </div>
           );
         }
@@ -242,16 +241,15 @@ export default class GroupTable extends PureComponent {
               })}
           >
             {
-              _.map(actionSource, (itemData, key) => (
-                <Clickable
-                  key={key}
-                  onClick={() => itemData.handler(record)}
-                  eventName="/click/groupTabel/operationLastColumn"
+              _.map(actionSource, itemData => (
+                <span
+                  className={styles.link}
+                  key={itemData.type}
+                  // 多增加一个参数，用于logable的name
+                  onClick={() => itemData.handler(record, item.value)}
                 >
-                  <span className={styles.link} key={itemData.type}>
-                    {itemData.type}
-                  </span>
-                </Clickable>
+                  {itemData.type}
+                </span>
               ),
               )
             }
