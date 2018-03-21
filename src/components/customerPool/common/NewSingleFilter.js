@@ -85,7 +85,6 @@ export default class SingleFilter extends PureComponent {
 
   render() {
     const { filterLabel, filterField, value } = this.props;
-   /*  debugger; */
     const selectFilter = _.find(filterField, filter => filter.key === value);
     const selectValue = {
       key: selectFilter.key,

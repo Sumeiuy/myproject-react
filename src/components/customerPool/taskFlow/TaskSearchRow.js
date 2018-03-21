@@ -203,16 +203,13 @@ export default class TaskSearchRow extends PureComponent {
     } else {
       payload.ptyMngId = emp.getId();
     }
-    // 存放可开通、已开通、风险等级、客户类型、客户性质的数组
-    const filtersList = [];
+
     if (!_.isEmpty(filter)) {
-      const { filters, labels } = getCustomerListFilters(filter, labelId, filtersList);
+      const { filters, labels } = getCustomerListFilters(filter, labelId);
       payload.filtersReq = filters;
       payload.labels = labels;
     }
-    if (!_.isEmpty(filtersList)) {
-      payload.filtersReq = filtersList;
-    }
+
     // 获取客户列表
     getLabelPeople(payload).then(() => {
       const { filterNumObject } = this.state;
@@ -270,7 +267,10 @@ export default class TaskSearchRow extends PureComponent {
 
     this.setState({
       argsOfQueryCustomer: {
-        [labelId]: payload,
+        ...argsOfQueryCustomer,
+        [labelId]: {
+          ...payload,
+        },
       },
     });
   }
