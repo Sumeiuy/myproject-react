@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { Menu, Dropdown, Checkbox } from 'antd';
+import { Menu, Dropdown, Checkbox, Button } from 'antd';
 
 import styles from './filterMoreButton.less';
 
@@ -89,8 +89,7 @@ export default class FilterMoreButton extends PureComponent {
           trigger={['click']}
         >
           <div className={styles.filterContent}>
-            <span className={styles.filterValue}>更多</span>
-            <span className={styles.icon} />
+            <Button className={styles.filterValue}>更多<span className={styles.icon} /></Button>
           </div>
         </Dropdown>
       </div>

@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { Menu, Dropdown, Checkbox } from 'antd';
+import { Menu, Dropdown, Checkbox, Button } from 'antd';
 
 import styles from './newMutiFilter.less';
 
-const generateCheckStatus = (v, k) => {
+const generateCheckStatus = (v, k, valueArray) => {
+  if (_.isEmpty(valueArray)) {
+    return false;
+  }
   if (_.isEmpty(v) && k === '') {
     return true;
   } else if (v.indexOf(k) > -1) {
@@ -38,6 +41,15 @@ export default class MultiFilter extends PureComponent {
     this.state = {
       keyArr: value ? value.split(separator) : [],
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { value, separator } = nextProps;
+    if (value !== this.props.value) {
+      this.setState({
+        keyArr: value ? value.split(separator) : [],
+      });
+    }
   }
 
   @autobind
@@ -83,7 +95,7 @@ export default class MultiFilter extends PureComponent {
 
   @autobind
   renderFilterChoice() {
-    const { filterField, filterLabel } = this.props;
+    const { filterField, filterLabel, valueArray } = this.props;
     const { keyArr } = this.state;
     return (
       <Menu className={styles.dropDownMenu}>
@@ -92,7 +104,7 @@ export default class MultiFilter extends PureComponent {
             <Menu.Item key={item.key} className={styles.filterItem}>
               <Checkbox
                 className={styles.overflowAction}
-                checked={generateCheckStatus(keyArr, item.key)}
+                checked={generateCheckStatus(keyArr, item.key, valueArray)}
                 onChange={() => this.handleClick({ key: item.key, value: item.value, filterLabel })}
               >
                 <span title={item.value}>{item.value}</span>
@@ -120,10 +132,10 @@ export default class MultiFilter extends PureComponent {
           overlay={menu}
           trigger={['click']}
         >
-          <div className={styles.filterContent}>
+          <Button className={styles.filterContent}>
             <span className={styles.filterValue} title={filterValue}>{filterValue}</span>
             <span className={styles.icon} />
-          </div>
+          </Button>
         </Dropdown>
       </div>
     );
