@@ -89,6 +89,9 @@ export default class SelectLabelCust extends PureComponent {
       currentAllFilterState = {},
       allFiltersCloseIconState = {},
     } = this.taskSearchRowRef.getSelectFilters();
+
+    // 以后circlePeopleData分页这个地方的代码需要调整
+    // 先标记一下
     const { circlePeopleData } = this.props;
     const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
@@ -100,6 +103,7 @@ export default class SelectLabelCust extends PureComponent {
       labelDesc,
       condition,
       custNum: `${labelId}` in filterNumObject ? filterNumObject[labelId] : customNum,
+      customNum,
       tipsSize,
       labelName,
       custSource: '瞄准镜标签',
