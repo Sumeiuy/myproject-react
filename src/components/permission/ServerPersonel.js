@@ -11,6 +11,11 @@ import AutoComplete from '../common/similarAutoComplete';
 
 // 私密客户取消
 const PERMISSION_CUST_CANCLE = '0102';
+// 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '200px',
+  height: '32px',
+};
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
@@ -78,7 +83,7 @@ export default class ServerPersonel extends PureComponent {
               searchList={this.props.searchServerPersonList}
               showObjKey="ptyMngName"
               objId="ptyMngId"
-              width={220}
+              boxStyle={dropDownSelectBoxStyle}
               onSelect={this.dropdownSelectedItem}
               onSearch={this.dropdownToSearchInfo}
             />

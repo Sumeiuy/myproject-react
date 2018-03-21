@@ -171,6 +171,7 @@ export default class EditModal extends Component {
               searchList={list}
               onSelect={this.handleSelect}
               onSearch={this.handleSearch}
+              isImmediatelySearch={false}
             />
           </div>
         </div>

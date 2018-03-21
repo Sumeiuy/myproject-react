@@ -261,6 +261,7 @@ export default class BaseInfoEdit extends PureComponent {
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={this.handleSearchContractNum}
+          isImmediatelySearch={false}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
@@ -334,6 +335,7 @@ export default class BaseInfoEdit extends PureComponent {
             searchList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}
+            isImmediatelySearch={false}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>

@@ -10,6 +10,11 @@ import Select from '../common/Select';
 import { seibelConfig } from '../../config';
 
 const { permission: { subType, pageType } } = seibelConfig;
+// 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: '200px',
+  height: '32px',
+};
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
@@ -116,7 +121,7 @@ export default class BaseInfoModify extends PureComponent {
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
-              width={200}
+              boxStyle={dropDownSelectBoxStyle}
               onSelect={this.selectCustomer}
               onSearch={this.searchCanApplyCustList}
             />

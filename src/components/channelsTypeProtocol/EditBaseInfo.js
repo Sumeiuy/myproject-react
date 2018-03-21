@@ -784,6 +784,7 @@ export default class EditBaseInfo extends PureComponent {
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}
                   boxStyle={dropDownSelectBoxStyle}
+                  isImmediatelySearch={false}
                   ref={ref => this.selectCustComponent = ref}
                 />
               </InfoForm>
@@ -801,6 +802,7 @@ export default class EditBaseInfo extends PureComponent {
                 onSelect={this.handleSelectTemplate}
                 onSearch={this.handleSearchTemplate}
                 boxStyle={dropDownSelectBoxStyle}
+                isImmediatelySearch={false}
                 ref={ref => this.selectTemplateComponent = ref}
               />
             </InfoForm>

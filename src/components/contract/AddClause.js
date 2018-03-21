@@ -258,6 +258,7 @@ export default class EditForm extends PureComponent {
                 searchList={departmentList}
                 onSelect={this.handleSelectDepartment}
                 onSearch={this.handleSearchDepartment}
+                isImmediatelySearch={false}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </InfoForm>
