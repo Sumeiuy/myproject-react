@@ -593,9 +593,8 @@ export default class ManagerViewDetail extends PureComponent {
                   modalStyle={{
                     maxWidth: 1165,
                     minWidth: 700,
-                    width: 1165,
                   }}
-                  modalWidth={1165}
+                  modalWidth={'auto'}
                 />
                 : null
             }

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-19 14:48:09
+ * @Last Modified time: 2018-03-20 19:12:16
  * 任务调查
  */
 
@@ -116,7 +116,6 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectRowKeys,
       isShowTable: false,
       page,
-      currentSelectRowKeysInTable: EMPTY_LIST,
     };
   }
 
@@ -233,7 +232,7 @@ export default class MissionInvestigation extends PureComponent {
    */
   @autobind
   addQuestion() {
-    const { checked } = this.state;
+    const { checked, currentSelectRowKeys } = this.state;
     if (!checked) {
       message.error('请先勾选任务调查');
       return;
@@ -241,8 +240,8 @@ export default class MissionInvestigation extends PureComponent {
 
     this.setState({
       isShowTable: true,
-      // 将table的row选择置为空
-      currentSelectRowKeysInTable: [],
+      // 记住现在状态的selectedRowKeys
+      originSelectRowKeys: currentSelectRowKeys,
     });
   }
 
@@ -266,38 +265,20 @@ export default class MissionInvestigation extends PureComponent {
     });
   }
 
-  @autobind
-  handleSingleRowSelectionChange(record = EMPTY_OBJECT, selected) {
-    const { quesId } = record;
-    const { currentSelectRowKeysInTable } = this.state;
-    let newSelectRowKeysInTable = currentSelectRowKeysInTable;
-    if (selected) {
-      newSelectRowKeysInTable = _.uniq(_.concat([quesId], newSelectRowKeysInTable));
-    } else {
-      newSelectRowKeysInTable = _.filter(newSelectRowKeysInTable, item => item !== quesId);
-    }
-    this.setState({
-      currentSelectRecord: record,
-      // 在表格里面选中的row
-      currentSelectRowKeysInTable: newSelectRowKeysInTable,
-    });
-  }
-
   /**
    * 取消弹窗，则取消刚才勾选的selectedKeys
    */
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    const { currentSelectRowKeys, currentSelectRowKeysInTable, page } = this.state;
+    const { originSelectRowKeys, page } = this.state;
     this.scrollModalBodyToTop();
     this.setState({
       isShowTable: false,
     }, () => {
       this.setState({
-        currentSelectRowKeysInTable: [],
-        currentSelectRowKeys: _.filter(currentSelectRowKeys, item =>
-          !_.includes(currentSelectRowKeysInTable, item)),
+        // 恢复原来的选中项，只有点击确定，才真正的将currentSelectRowKeys设置
+        currentSelectRowKeys: originSelectRowKeys,
         // 重置分页
         page: {
           ...page,
@@ -593,7 +574,6 @@ export default class MissionInvestigation extends PureComponent {
                     columnWidth={['80px', '420px']}
                     bordered={false}
                     isNeedRowSelection
-                    onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
                     onRowSelectionChange={this.handleRowSelectionChange}
                     currentSelectRowKeys={currentSelectRowKeys}
                     selectionType={'checkbox'}

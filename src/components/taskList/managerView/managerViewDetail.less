@@ -52,7 +52,7 @@
 }
 .custDetailContainer {
   .operationBtnSection {
-    padding-bottom: 20px;
+    // padding-bottom: 20px;
   }
 
   // 保证弹框距离底部10px
@@ -60,19 +60,22 @@
   :global {
     .ant-modal {
       overflow-y: hidden;
-      height: e("calc(100vh - 150px)");
+      height: e("calc(100vh - 30px)");
       padding-bottom: 0;
-      // max-height: 662px;
-      width: 1165px !important;
-      top: 50px;
+      max-height: 642px;
+      top: 20px;
+      min-width: 700px;
+      margin-left: 100px;
+      margin-right: 100px;
     }
     .ant-modal-content {
       height: 100%;
     }
     .ant-modal-body {
       overflow-y: scroll;
-      height: e("calc(100vh - 250px)");
-      padding-top: 10px;
+      height: e("calc(100vh - 126px)");
+      max-height: 546px;
+      padding: 10px 30px 0;
     }
     .ant-modal-title {
       font-size: 16px;
@@ -111,6 +114,12 @@
     }
     .selfPagination {
       margin-right: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      .commonPage {
+        padding-bottom: 0;
+        margin-top: 0;
+      }
     }
   }
 }

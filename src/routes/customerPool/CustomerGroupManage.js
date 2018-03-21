@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 13:18:09
+ * @Last Modified time: 2018-03-20 11:37:39
  */
 
 import React, { PureComponent } from 'react';
@@ -646,26 +646,28 @@ export default class CustomerGroupManage extends PureComponent {
             </Button>
           </div>
         </div>
-        <GroupTable
-          pageData={{
-            curPageNum,
-            curPageSize,
-            totalRecordNum,
-          }}
-          listData={dataSource}
-          onSizeChange={this.handleShowSizeChange}
-          onPageChange={this.handlePageChange}
-          tableClass={
-            classnames({
-              [tableStyles.groupTable]: true,
-            })
-          }
-          titleColumn={titleColumn}
-          actionSource={actionSource}
-          isFirstColumnLink
-          firstColumnHandler={this.handleShowGroupDetail}
-          columnWidth={['25%', '25%', '10%', '20%', '20%']}
-        />
+        <div className={styles.groupTableContainer}>
+          <GroupTable
+            pageData={{
+              curPageNum,
+              curPageSize,
+              totalRecordNum,
+            }}
+            listData={dataSource}
+            onSizeChange={this.handleShowSizeChange}
+            onPageChange={this.handlePageChange}
+            tableClass={
+              classnames({
+                [tableStyles.groupTable]: true,
+              })
+            }
+            titleColumn={titleColumn}
+            actionSource={actionSource}
+            isFirstColumnLink
+            firstColumnHandler={this.handleShowGroupDetail}
+            columnWidth={['25%', '25%', '10%', '20%', '20%']}
+          />
+        </div>
         {
           visible ?
             <GroupModal
