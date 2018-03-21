@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置右侧详情
  * @Date: 2018-02-26 15:19:37
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 10:23:38
+ * @Last Modified time: 2018-03-21 10:44:14
  */
 
 import React, { PureComponent } from 'react';
@@ -62,6 +62,7 @@ export default class Detail extends PureComponent {
                 <CommonTable
                   data={empPostns}
                   titleList={titleList}
+                  rowKey={'positionId'}
                 />
               </div>
             </div>
