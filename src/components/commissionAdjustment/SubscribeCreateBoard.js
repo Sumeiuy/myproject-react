@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-08 15:51:25
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 10:33:39
+ * @Last Modified time: 2018-03-21 10:26:43
  * @description 资讯订阅新建的内容组件
  */
 import React, { PureComponent } from 'react';
@@ -143,7 +143,7 @@ export default class SubscribeCreateBoard extends PureComponent {
     });
   }
 
-    @autobind
+  @autobind
   resetData() {
     this.cleanRedux();
     this.uploadComponent.resetUpload();

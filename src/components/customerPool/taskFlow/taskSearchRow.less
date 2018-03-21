@@ -1,6 +1,9 @@
 @import '../../../css/variable.less';
 
 .divContent {
+  &.hidden {
+    display: none;
+  }
   position: relative;
   overflow: scroll;
   min-height: 100px;
@@ -118,8 +121,9 @@
       color: #108ee9;
       border-color: #108ee9;
       &.disabled {
-        border-color: #c9c9c9;
-        color: rgba(0, 0, 0, 0.75);
+        color: rgba(0, 0, 0, .25);
+        background-color: #f7f7f7;
+        border-color: #d9d9d9;
       }
     }
     .filterCount {
