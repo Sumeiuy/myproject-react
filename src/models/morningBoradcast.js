@@ -17,7 +17,7 @@ export default {
     },
     boradcastList: [], // 晨报列表
     initBoradcastList: [],  // 初始化列表数据，为首页服务
-    initBoradcastFile: [],  // 首页数据文件
+    initBoradcastFile: {},  // 首页数据文件
     pagination: {},  // 分页信息
     boradcastDetail: {},  // 晨报详情
     saveboradcastInfo: {},  // 添加晨报结果信息
@@ -122,10 +122,13 @@ export default {
     },
     // 首页晨报资源
     homePageSource(state, action) {
-      const { payload } = action;
+      const { payload: { newsId, audioSource } } = action;
       return {
         ...state,
-        initBoradcastFile: payload,
+        initBoradcastFile: {
+          ...state.initBoradcastFile,
+          [newsId]: audioSource,
+        },
       };
     },
     // 更新文件
@@ -237,16 +240,19 @@ export default {
           type: 'homePageList',
           payload: homePageList,
         });
-        const audioId = homePageList.map(item => item.audioFileId);
-        const audioSourceList = yield audioId.map(item => (
-          call(api.ceFileList, { attachment: item })
-        ));
-        const resSourceList = audioSourceList.map(item => (
-          item.resultData.length && item.resultData[0]
-        ));
+      }
+    },
+    * queryAudioFile({ payload }, { call, put }) {
+      const { newsId, audioFileId } = payload;
+      const res = yield call(api.ceFileList, { attachment: audioFileId });
+      const audioSource = res.resultData.length && res.resultData[0];
+      if (audioSource) {
         yield put({
           type: 'homePageSource',
-          payload: resSourceList,
+          payload: {
+            newsId,
+            audioSource,
+          },
         });
       }
     },

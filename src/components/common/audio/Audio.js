@@ -19,13 +19,14 @@ let IS_PROGRESS = false;
 export default class Audio extends PureComponent {
   static propTypes = {
     autoPlay: PropTypes.bool,
-    src: PropTypes.string.isRequired,
+    src: PropTypes.string,
     volume: PropTypes.number,
   };
 
   static defaultProps = {
     autoPlay: false,
     volume: 0.8,
+    src: '',
   };
 
   constructor(props) {
