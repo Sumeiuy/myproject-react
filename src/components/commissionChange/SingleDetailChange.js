@@ -16,6 +16,7 @@ import confirm from '../common/Confirm';
 import DisabledSelect from './DisabledSelect';
 import RejectButtons from './RejectButtons';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import CommonUpload from '../common/biz/CommonUpload';
 import AutoComplete from '../common/AutoComplete';
 import CommissionLine from '../commissionAdjustment/CommissionLine';
@@ -570,6 +571,8 @@ export default class SingleDetailChange extends PureComponent {
       attachment: attachmentNum,
       needDefaultText: false,
     };
+    // 客户当前股基佣金率
+    const newCurrentCom = _.isNull(customer.currentCommission) ? '--' : customer.currentCommission;
 
     return (
       <div className={styles.rejectContainer}>
@@ -595,31 +598,38 @@ export default class SingleDetailChange extends PureComponent {
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="佣金产品选择" />
-            <CommissionLine
-              label="目标股基佣金率"
-              labelWidth="110px"
-              needInputBox={false}
-              extra={
-                <span
-                  style={{
-                    fontSize: '14px',
-                    color: '#9b9b9b',
-                    lineHeight: '26px',
-                    paddingLeft: '4px',
-                  }}
+            <ul className={styles.commissionUlBox}>
+              <li className={styles.leftCurrentCom}>
+                <InfoItem label="当前股基佣金率" value={newCurrentCom} width="110px" valueColor="#9b9b9b" />
+              </li>
+              <li className={styles.rightTargetCom}>
+                <CommissionLine
+                  label="目标股基佣金率"
+                  labelWidth="110px"
+                  needInputBox={false}
+                  extra={
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: '#9b9b9b',
+                        lineHeight: '26px',
+                        paddingLeft: '4px',
+                      }}
+                    >
+                      ‰
+                    </span>
+                  }
                 >
-                  ‰
-                </span>
-              }
-            >
-              <AutoComplete
-                initValue={newCommission}
-                dataSource={singleGJ}
-                onChangeValue={this.changeTargetGJCommission}
-                onSelectValue={this.selectTargetGJCommission}
-                width="100px"
-              />
-            </CommissionLine>
+                  <AutoComplete
+                    initValue={newCommission}
+                    dataSource={singleGJ}
+                    onChangeValue={this.changeTargetGJCommission}
+                    onSelectValue={this.selectTargetGJCommission}
+                    width="100px"
+                  />
+                </CommissionLine>
+              </li>
+            </ul>
             <Transfer {...singleTransferProps} />
             <ThreeMatchTip info={singleProductMatchInfo} userList={singleProductList} />
           </div>

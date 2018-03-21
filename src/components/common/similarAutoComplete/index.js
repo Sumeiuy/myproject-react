@@ -47,6 +47,7 @@ export default class SimilarAutoComplete extends PureComponent {
     renderOption: PropTypes.func,
     // 是否即时搜索（默认为true，用于模糊匹配；精准匹配时，置为false），
     isImmediatelySearch: PropTypes.bool,
+    display: PropTypes.string,
   }
 
   static defaultProps = {
@@ -61,6 +62,7 @@ export default class SimilarAutoComplete extends PureComponent {
     width: 0,
     renderOption: null,
     isImmediatelySearch: true,
+    display: 'inline-block',
   }
 
   constructor(props) {
@@ -241,6 +243,7 @@ export default class SimilarAutoComplete extends PureComponent {
     const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
     const inputValue = _.isString(value) ? value : `${value}`;
     const iconType = typeStyle === 'search' ? 'search' : 'close';
+    const autoStyle = { ...dropDownSelectBoxStyle, ...boxStyle };
     return (
       <AutoComplete
         {...otherPorps}
@@ -250,7 +253,7 @@ export default class SimilarAutoComplete extends PureComponent {
         dropdownMatchSelectWidth={false}
         defaultActiveFirstOption={false}
         size="large"
-        style={boxStyle}
+        style={autoStyle}
         dataSource={options}
         optionLabelProp="value"
         value={inputValue}
@@ -276,17 +279,18 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   render() {
-    const { theme, disable } = this.props;
+    const { theme, disable, boxStyle, display } = this.props;
     const drapDownSelectCls = classnames({
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
     });
+    const autoStyle = { ...dropDownSelectBoxStyle, ...boxStyle, display };
 
     if (disable) {
       return this.renderDisableContent();
     }
     return (
-      <div className={drapDownSelectCls}>
+      <div className={drapDownSelectCls} style={autoStyle}>
         {this.renderAutoComplete()}
       </div>
     );

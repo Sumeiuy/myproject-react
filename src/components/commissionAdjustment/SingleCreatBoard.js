@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-16 10:56:19
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-21 10:49:07
  * @description 单佣金申请内容区域
  */
 
@@ -195,6 +195,7 @@ export default class SingleCreateBoard extends PureComponent {
       userProductList: [],
       singleProductMatchInfo: [],
       otherComReset: new Date().getTime(),
+      newCurrentCommission: '--',
     });
   }
 
@@ -329,17 +330,9 @@ export default class SingleCreateBoard extends PureComponent {
     this.uploadComponent = input.getWrappedInstance();
   }
 
-  // 清空客户的同时需要同时去清空目标股基佣金率的值
-  @autobind
-  clearSelectCustCurComValue() {
-    this.setState({
-      newCurrentCommission: '--',
-    });
-  }
-
   render() {
     const {
-      customer: { openRzrq },
+      customer,
       gjList,
       otherRations,
       approverList,
@@ -437,14 +430,19 @@ export default class SingleCreateBoard extends PureComponent {
         {/* 其他佣金费率 */}
         <div className={styles.approvalBlock}>
           <InfoTitle head="其他佣金费率" />
-          <OtherCommissionSelectList
-            showTip
-            reset={otherComReset}
-            otherRatios={otherRations}
-            onChange={this.changeOtherCommission}
-            custOpenRzrq={openRzrq}
-            subType={commadj.single}
-          />
+          {
+            _.isEmpty(customer) ? null :
+            (
+              <OtherCommissionSelectList
+                showTip
+                reset={otherComReset}
+                otherRatios={otherRations}
+                onChange={this.changeOtherCommission}
+                custOpenRzrq={customer.openRzrq}
+                subType={commadj.single}
+              />
+            )
+          }
         </div>
         {/* 附件信息 */}
         <div className={styles.approvalBlock}>
