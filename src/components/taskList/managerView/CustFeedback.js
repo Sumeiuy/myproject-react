@@ -90,12 +90,6 @@ export default class CustFeedback extends PureComponent {
   @autobind
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
-    const { level1Data } = this.state;
-    // 构造全部一级反馈
-    const currentFeedback = _.map(level1Data, item => ({
-      feedBackIdL1: item.key,
-      feedbackName: item.name,
-    }));
 
     let currentLevel = {};
     if (!_.isEmpty(parent)) {
@@ -124,9 +118,6 @@ export default class CustFeedback extends PureComponent {
     onPreviewCustDetail({
       // 当前选中的反馈类型
       currentSelectFeedback: currentLevel,
-      // 当前所有一级反馈类型
-      // 二级反馈等后台支持，再加上
-      currentFeedback,
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,
