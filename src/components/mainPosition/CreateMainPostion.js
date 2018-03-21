@@ -130,19 +130,22 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 点击具体的员工
   @autobind
   selectHandle(value) {
-    const { searchPosition } = this.props;
-    searchPosition({
-      login: value.login,
-      integrationId: emp.getOrgId(),
-    }).then(() => {
-      const { positionList } = this.props;
-      const checkedRadio = _.findIndex(positionList, ['primary', true]);
-      this.setState({
-        checkedRadio,
-        defaultChecked: checkedRadio,
-        employeeId: value.login,
+    // 当前选择的员工不为空时，请求接口
+    if (!_.isEmpty(value)) {
+      const { searchPosition } = this.props;
+      searchPosition({
+        login: value.login,
+        integrationId: emp.getOrgId(),
+      }).then(() => {
+        const { positionList } = this.props;
+        const checkedRadio = _.findIndex(positionList, ['primary', true]);
+        this.setState({
+          checkedRadio,
+          defaultChecked: checkedRadio,
+          employeeId: value.login,
+        });
       });
-    });
+    }
   }
 
   // 选择某个职位
