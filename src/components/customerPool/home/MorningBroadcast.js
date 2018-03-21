@@ -35,8 +35,11 @@ export default class MorningBroadcast extends PureComponent {
 
   @autobind
   onListen(newsId, audioFileId) {
-    const { queryAudioFile } = this.props;
-    queryAudioFile({ newsId, audioFileId });
+    const { queryAudioFile, sourceList = [] } = this.props;
+    const sourceFile = sourceList[newsId];
+    if (!sourceFile) {
+      queryAudioFile({ newsId, audioFileId });
+    }
     this.setState({
       activeMusic: newsId,
     });
