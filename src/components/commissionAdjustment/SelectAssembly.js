@@ -65,7 +65,7 @@ export default class SelectAssembly extends PureComponent {
 
   @autobind
   custSearchRef(input) {
-    this.custSeatch = input;
+    this.custSearch = input;
   }
 
   @autobind
