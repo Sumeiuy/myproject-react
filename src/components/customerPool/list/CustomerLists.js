@@ -27,6 +27,8 @@ import styles from './customerLists.less';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
+// 服务营业中的'所有'选项
+const allSaleDepartment = { id: 'all', name: '所有' };
 
 /*
  * 格式化钱款数据和单位
@@ -145,10 +147,7 @@ export default class CustomerLists extends PureComponent {
       modalKey: `modalKeyCount${modalKeyCount}`,
       emailCustId: '',
     };
-  }
-
-  componentDidMount() {
-    this.checkMainServiceManager(this.props);
+    this.checkMainServiceManager(props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -218,13 +217,18 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { location: { query: { ptyMng } }, empInfo } = props;
+    const { location: { query: { ptyMng } } } = props;
     let bool = false;
-    if (ptyMng) {
-      bool = ptyMng.split('_')[1] === empInfo.empNum;
-    }
+    bool = ptyMng ? ptyMng.split('_')[1] === emp.getId() : this.orgIdIsMsm();
     // 0表示当前用户没有权限
     this.mainServiceManager = !!(bool) || !this.hasPermission();
+  }
+
+  // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
+  @autobind
+  orgIdIsMsm() {
+    const { location: { query: { orgId = '' } } } = this.props;
+    return orgId === 'msm';
   }
 
   /**
@@ -387,7 +391,7 @@ export default class CustomerLists extends PureComponent {
     const { orgId } = state;
     const obj = {};
     if (orgId) {
-      obj.orgId = orgId;
+      obj.departmentOrgId = orgId;
     }
     // 手动上传日志
     handleSelect({ param: obj.orgId });
@@ -444,12 +448,20 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   switchCustRange() {
-    const { custRange = {}, location: { query: { source } } } = this.props;
+    const {
+      custRange = {},
+      location: { query: { source } },
+    } = this.props;
+    const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
     if (_.includes(ENTERLIST1, source)) {
-      return custRange.taskManagerResp || EMPTY_ARRAY;
+      return taskManagerResp;
     }
     if (_.includes(ENTERLIST2, source)) {
-      return custRange.firstPageResp || EMPTY_ARRAY;
+      // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
+      if (this.orgIdIsMsm()) {
+        return [allSaleDepartment, ...firstPageResp];
+      }
+      return firstPageResp;
     }
     return EMPTY_ARRAY;
   }
@@ -516,8 +528,10 @@ export default class CustomerLists extends PureComponent {
       selectedIds = '',
       selectAll,
       ptyMng,
+      departmentOrgId,
     } = location.query;
     const hasPermission = this.hasPermission();
+    const orgIdIsMsm = this.orgIdIsMsm();
     // current: 默认第一页
     // pageSize: 默认每页大小20
     // curTotal: 当前列表数据总数
@@ -554,13 +568,18 @@ export default class CustomerLists extends PureComponent {
         serviceManagerDefaultValue = '所有人';
       }
     }
+    if (orgId && orgIdIsMsm) {
+      serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    }
     // 当前所处的orgId,默认所有
-    let curOrgId = 'all';
+    let curOrgId = allSaleDepartment.id;
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
-    if (orgId) {
-      curOrgId = orgId;
-    } else if (hasPermission) {
-      // 有 ‘HTSC 任务管理’ 或者 ‘HTSC 首页指标查询’权限
+    if (departmentOrgId) {
+      curOrgId = departmentOrgId;
+    } else if (orgId) {
+      // url中orgId=msm 时,服务营业部选中所有
+      curOrgId = orgIdIsMsm ? allSaleDepartment.id : orgId;
+    } else if (!this.mainServiceManager) {
       curOrgId = emp.getOrgId();
     }
     const paginationOption = {
@@ -602,7 +621,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={!hasPermission}
+                disable={orgIdIsMsm}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}

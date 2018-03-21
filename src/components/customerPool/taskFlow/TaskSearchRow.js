@@ -106,7 +106,7 @@ export default class TaskSearchRow extends PureComponent {
       // totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
-      modalVisible: true,
+      modalVisible: false,
       title: '',
       custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,

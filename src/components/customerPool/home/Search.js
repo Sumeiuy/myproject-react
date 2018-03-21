@@ -133,14 +133,14 @@ export default class Search extends PureComponent {
       id: ids, // 'FSP_SERACH',
       title: titles, // '搜索目标客户',
     };
-    // 有任务管理岗权限将orgId带到下一个页面
-    const newQuery = authority ? { ...obj, orgId } : obj;
+    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
+    const newOrgId = authority ? orgId : 'msm';
     openRctTab({
       routerAction: push,
       url,
       param,
       pathname: firstUrl,
-      query: newQuery,
+      query: { ...obj, orgId: newOrgId },
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,

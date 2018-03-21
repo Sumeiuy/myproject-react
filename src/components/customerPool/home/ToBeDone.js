@@ -92,7 +92,8 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const authOrgId = authority ? emp.getOrgId() : '';
+    // 有权限时，传登陆者的orgId， 没有权限传 msm 给列表页
+    const authOrgId = authority ? emp.getOrgId() : 'msm';
     const data = {
       source: 'business',
       orgId: authOrgId,
