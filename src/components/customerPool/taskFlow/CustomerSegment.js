@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 15:21:23
+ * @Last Modified time: 2018-03-20 18:58:40
  * 客户细分组件
  */
 
@@ -30,7 +30,7 @@ const INITIAL_PAGE_SIZE = 10;
 const INITIAL_PAGE_NUM = 1;
 const COLUMN_HEIGHT = 36;
 
-
+const acceptFile = '.xls,.xlsx';
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
@@ -288,7 +288,7 @@ export default class CustomerSegment extends PureComponent {
             uploadTitle={'上传客户列表'}
             uploadTarget={`${request.prefix}/file/khxfFileUpload`}
             // 只支持EXCEL文件
-            accept={/\.(xlsx|xls)(\?.*)?$/}
+            accept={acceptFile}
           />
         </div>
         <div className={styles.tipSection}>
@@ -314,6 +314,11 @@ export default class CustomerSegment extends PureComponent {
                   <Button type="primary" size="default">确定</Button>
                 </Clickable>
               }
+              modalStyle={{
+                maxWidth: 1165,
+                minWidth: 700,
+              }}
+              modalWidth={'auto'}
               modalContent={
                 <GroupTable
                   pageData={{

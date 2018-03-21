@@ -6,6 +6,9 @@
   background-color: white;
   border-radius: 5px;
   min-height: e("calc(100vh - 186px)");
+  .groupTableContainer {
+    padding: 15px 20px 15px 15px;
+  }
   :global {
     .column {
       overflow: hidden;
@@ -87,6 +90,9 @@
 .groupModalContainer {
   box-shadow: 5px 5px 5px #c6c7c8;
   :global {
+    & .ant-modal {
+      width: 700px !important;
+    }
     & .ant-modal-title {
       color: #696969;
       font-size: 14px;
