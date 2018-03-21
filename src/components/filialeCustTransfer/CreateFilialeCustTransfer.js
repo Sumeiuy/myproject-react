@@ -498,6 +498,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     onSelect={this.handleSelectClient}
                     onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
+                    isImmediatelySearch={false}
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
@@ -508,6 +509,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                     onSelect={this.handleSelectNewManager}
                     onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
+                    isImmediatelySearch={false}
                   />
                 </InfoForm>
               </div>
