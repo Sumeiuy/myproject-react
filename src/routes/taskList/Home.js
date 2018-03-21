@@ -936,6 +936,7 @@ export default class PerformerView extends PureComponent {
     let missionId = record.id;
     let eventId = record.eventId;
     // 如果来源是创建者视图，那么取mssnId作为missionId
+    // 取id作为eventId
     if (isSourceFromCreatorView) {
       missionId = record.mssnId;
       eventId = record.id;
@@ -943,9 +944,7 @@ export default class PerformerView extends PureComponent {
     // 管理者视图获取任务基本信息
     queryMngrMissionDetailInfo({
       taskId: missionId,
-      // taskId: '101111171108181',
       orgId: emp.getOrgId(),
-      // orgId: 'ZZ001041',
       // 管理者视图需要eventId来查询详细信息
       eventId,
     }).then(
