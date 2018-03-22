@@ -17,7 +17,7 @@ const getViewInfo = (missionViewType = '') => {
   if (envHelper.isGrayFlag()) {
     // 支持灰度发布，则展示执行者视图与管理者视图的入口
     // 然后根据权限来，到底需不需要展示管理者视图的入口
-    if (hasPermissionOfManagerView) {
+    if (!hasPermissionOfManagerView) {
       // 没有管理者视图查看权限
       missionViewList = _.filter(chooseMissionView, item => item.value !== CONTROLLER);
       // 当前视图是执行者视图

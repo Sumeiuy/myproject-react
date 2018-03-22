@@ -30,6 +30,10 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
+  EXECUTE_STATE,
+  RESULT_TRACK_STATE,
+  COMPLETED_STATE,
+  SYSTEMCODE,
 } from './config';
 import {
   getViewInfo,
@@ -43,17 +47,6 @@ const {
   taskList,
   taskList: { pageType },
 } = pageConfig;
-
-// 执行中、结果跟踪、结束三种状态
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
-
-const SYSTEMCODE = '102330'; // 理财平台系统编号
-
-const today = moment(new Date()).format('YYYY-MM-DD');
-const beforeToday = moment(moment(today).subtract(60, 'days')).format('YYYY-MM-DD');
-const afterToday = moment(moment(today).add(60, 'days')).format('YYYY-MM-DD');
 
 const TASKFEEDBACK_QUERY = {
   pageNum: 1,
@@ -333,26 +326,8 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidMount() {
-    const { location: { query, query: { pageNum, pageSize } } } = this.props;
-    const { currentView } = this.state;
-    const commonPostBody = {
-      ...query,
-      pageNum,
-      pageSize,
-      today,
-      missionViewType: currentView,
-    };
-    if (currentView === INITIATOR || !envHelper.isGrayFlag()) {
-      this.queryAppListInit({
-        ...commonPostBody,
-        beforeToday,
-      });
-    } else {
-      this.queryAppListInit({
-        ...commonPostBody,
-        afterToday,
-      });
-    }
+    const { location: { query } } = this.props;
+    this.queryAppList(query);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -361,11 +336,7 @@ export default class PerformerView extends PureComponent {
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      this.queryAppList(
-        otherQuery,
-        otherQuery.pageNum,
-        otherQuery.pageSize,
-      );
+      this.queryAppList(otherQuery);
     }
   }
 
@@ -807,9 +778,9 @@ export default class PerformerView extends PureComponent {
 
   // 头部筛选请求
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 20) {
+  queryAppList(query) {
     const { getTaskList } = this.props;
-    const { missionViewType } = query;
+    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
@@ -830,62 +801,6 @@ export default class PerformerView extends PureComponent {
       }
       this.getRightDetail();
     });
-  }
-
-  // 默认时间设置
-  @autobind
-  handleDefaultTime({ before, todays, after }) {
-    const { location: { query } } = this.props;
-    const { createTimeStart: urlCreateTimeStart,
-      createTimeEnd: urlCreateTimeEnd,
-      endTimeStart: urlEndTimeStart,
-      endTimeEnd: urlEndTimeEnd } = query;
-
-    // 判断URL里是否存在日期（例如页面跳转，日期已设置）
-    const beforeTime = this.handleURlTime(urlCreateTimeStart, before);
-
-    const afterTime = this.handleURlTime(urlCreateTimeEnd, todays);
-
-    const entBeforeTime = this.handleURlTime(urlEndTimeStart, todays);
-
-    const endAfterTime = this.handleURlTime(urlEndTimeEnd, after);
-
-    const createTimeStart = _.isEmpty(before) ? null : beforeTime;
-    const createTimeEnd = _.isEmpty(before) ? null : afterTime;
-    const endTimeStart = _.isEmpty(after) ? null : entBeforeTime;
-    const endTimeEnd = _.isEmpty(after) ? null : endAfterTime;
-    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
-  }
-
-  // 判断url里是否有时间设置
-  handleURlTime(urlTime, time) {
-    return _.isEmpty(urlTime) ? moment(time).format('YYYY-MM-DD') :
-      moment(urlTime).format('YYYY-MM-DD');
-  }
-
-  // 第一次加载请求
-  @autobind
-  queryAppListInit({
-    pageNum = 1,
-    pageSize = 20,
-    beforeToday: before,
-    today: todays,
-    afterToday: after,
-    ...remainingParams
-   }) {
-    const { getTaskList } = this.props;
-    const item = this.constructViewPostBody(remainingParams, pageNum, pageSize);
-    const timersValue = this.handleDefaultTime({ before, todays, after });
-    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timersValue;
-    const params = {
-      ...item,
-      createTimeEnd,
-      createTimeStart,
-      endTimeStart,
-      endTimeEnd,
-    };
-    // 默认筛选条件
-    getTaskList({ ...params }).then(this.getRightDetail);
   }
 
   /**
@@ -909,14 +824,10 @@ export default class PerformerView extends PureComponent {
       { orgId: emp.getOrgId() },
     );
 
-    // 对反馈状态做处理
-    if (!('missionViewType' in finalPostData)
-      || _.isEmpty(finalPostData.missionViewType)) {
-      finalPostData = _.merge(finalPostData, { missionViewType: EXECUTOR });
-    }
     const { missionViewType } = query;
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
+    finalPostData = { ...finalPostData, missionViewType: currentViewType };
     if (currentViewType === INITIATOR) {
       const { createTimeEnd, createTimeStart } = finalPostData;
       finalPostData = {
@@ -1050,25 +961,11 @@ export default class PerformerView extends PureComponent {
         },
       });
     }
-    // const tempObject = {
-    //   ...query,
-    //   ...obj,
-    //   pageNum: 1,
-    // };
-    // replace({
-    //   pathname,
-    //   query: tempObject,
-    // });
-    // this.setState({
-    //   currentView: query.missionViewType,
-    // });
-    // // 2.调用queryApplicationList接口
-    // this.queryAppList(tempObject, 1, query.pageSize);
   }
 
   // 切换页码
   @autobind
-  handlePageNumberChange(nextPage, currentPageSize) {
+  handlePageNumberChange(nextPage) {
     const { replace, location } = this.props;
     const { query, pathname } = location;
     replace({
@@ -1076,10 +973,8 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
-        pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
     // 切换页码，将页面的scrollToTop
     const listWrap = this.splitPanelElem.listWrap;
     if (listWrap) {
@@ -1103,7 +998,6 @@ export default class PerformerView extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   /**
@@ -1130,7 +1024,7 @@ export default class PerformerView extends PureComponent {
       location: { pathname, query, query: { currentId } },
     } = this.props;
     const isSourceFromCreatorView = (st === INITIATOR && this.judgeTaskInApproval(statusCode));
-    if (currentId === (isSourceFromCreatorView ? String(mssnId) : String(id))) return;
+    if (currentId === (isSourceFromCreatorView ? mssnId : id)) return;
 
     replace({
       pathname,
@@ -1205,6 +1099,7 @@ export default class PerformerView extends PureComponent {
       queryCustUuid,
     } = this.props;
     const { currentView } = this.state;
+    console.log('currentView: ', currentView);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
