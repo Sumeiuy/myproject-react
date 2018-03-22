@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-07 16:37:08
+ * @Last Modified time: 2018-03-22 17:54:20
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -104,9 +104,11 @@ export default class SingleDetailChange extends PureComponent {
         attachmentNum,
         item,
       } = base;
+      // 过滤掉action为删除的
+      const filterList = _.filter(item, product => product.action !== '删除');
       const userBaseCommission = this.pickUserOtherCommission();
       // 初始化将父产品的三匹配信息提取出来并保存
-      const initMatchs = item.map((p) => {
+      const initMatchs = filterList.map((p) => {
         const { riskRankMhrt, investProdMhrt, investTypeMhrt, prodCode, isMatch } = p;
         const matchInfo = {
           productCode: prodCode,
@@ -121,7 +123,7 @@ export default class SingleDetailChange extends PureComponent {
         newCommission,
         remark: comments,
         attachment: attachmentNum,
-        singleProductList: item,
+        singleProductList: filterList,
         singleProductMatchInfo: _.cloneDeep(initMatchs),
         ...userBaseCommission,
       });
