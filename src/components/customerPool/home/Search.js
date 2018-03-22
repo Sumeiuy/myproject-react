@@ -16,6 +16,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -135,7 +136,7 @@ export default class Search extends PureComponent {
       title: titles, // '搜索目标客户',
     };
     // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
-    const newOrgId = authority ? orgId : 'msm';
+    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
     openRctTab({
       routerAction: push,
       url,
