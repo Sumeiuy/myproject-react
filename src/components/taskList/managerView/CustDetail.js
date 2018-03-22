@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 15:41:11
+ * @Last Modified time: 2018-03-22 19:58:10
  * 客户明细数据
  */
 
@@ -10,10 +10,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Icon, message, Select } from 'antd';
+import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
+import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import { emp } from '../../../helper';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
@@ -28,7 +29,7 @@ import logable from '../../../decorators/logable';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const Option = Select.Option;
+// const Option = Select.Option;
 
 // 客户等级的图片源
 const rankImgSrcConfig = {
@@ -141,8 +142,8 @@ export default class CustDetail extends PureComponent {
  * @param {*string} value feedBackIdL1
  */
   @autobind
-  onChange(value) {
-    if (!_.isEmpty(value)) {
+  onChange({ key }) {
+    if (!_.isEmpty(key)) {
       const {
         getCustDetailData,
         isEntryFromProgressDetail,
@@ -150,7 +151,7 @@ export default class CustDetail extends PureComponent {
         currentFilter,
       } = this.props;
       const filterObject = _.find(currentFilter, item =>
-        item.feedBackIdL1 === value) || EMPTY_OBJECT;
+        item.feedBackIdL1 === key) || EMPTY_OBJECT;
       // 获取
       getCustDetailData({
         isEntryFromProgressDetail,
@@ -163,7 +164,7 @@ export default class CustDetail extends PureComponent {
         currentFeedback: currentFilter,
       });
       this.setState({
-        currentSelectFeedBackIdL1: value,
+        currentSelectFeedBackIdL1: key,
       });
     }
   }
@@ -411,11 +412,13 @@ export default class CustDetail extends PureComponent {
   @autobind
   renderFilterOption() {
     const { currentFilter } = this.props;
-    return _.map(currentFilter, item =>
-      <Option key={item.feedBackIdL1} value={item.feedBackIdL1}>
-        {item.feedbackName}
-      </Option>,
-    );
+    return _.map(currentFilter, item => ({
+      // show: true,
+      // value: item.feedBackIdL1,
+      // label: item.feedbackName,
+      key: item.feedBackIdL1,
+      value: item.feedbackName,
+    }));
   }
 
   render() {
@@ -423,6 +426,10 @@ export default class CustDetail extends PureComponent {
       dataSource,
       currentSelectFeedBackIdL1,
     } = this.state;
+
+    // 找出当前的客户反馈
+    const currentSelectFeedBackL1 = _.find(this.props.currentFilter, item =>
+      item.feedBackIdL1 === currentSelectFeedBackIdL1) || EMPTY_OBJECT;
 
     const {
       title,
@@ -462,16 +469,14 @@ export default class CustDetail extends PureComponent {
               }
             }}
           >
-            <span className={styles.title}>客户反馈：</span>
-            <Select
+            {/* <span className={styles.title}>客户反馈：</span> */}
+            <SingleFilter
+              value={currentSelectFeedBackL1.feedBackIdL1 || ''}
+              filterLabel="客户反馈"
+              filter="custFeedback"
+              filterField={this.renderFilterOption()}
               onChange={this.onChange}
-              value={currentSelectFeedBackIdL1}
-              getPopupContainer={this.getPopupContainer}
-              dropdownClassName={styles.filterDropdownList}
-              dropdownMatchSelectWidth={false}
-            >
-              {this.renderFilterOption()}
-            </Select>
+            />
           </div> : null
           }
         </div>

@@ -20,11 +20,19 @@
         // color: #9b9b9b;
       }
       :global {
+        .selectFeedBackIdL1Dropdown {
+          .ant-select-dropdown-menu-item {
+            text-overflow: ellipsis;
+            max-width: 180px;
+            overflow-x: hidden;
+            white-space: nowrap;
+          }
+        }
         //select边框
         .ant-select {
-          min-width: 142px;
-          max-width: 142px;
           height: 28px;
+          width: auto;
+          max-width: 200px !important;
           .ant-select-selection {
             background-color: transparent;
             border: 1px solid transparent;
