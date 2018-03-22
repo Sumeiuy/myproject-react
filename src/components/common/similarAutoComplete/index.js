@@ -11,8 +11,6 @@ import _ from 'lodash';
 import style from './style.less';
 
 const Option = AutoComplete.Option;
-let searchType = 'search';
-const clearType = 'clear';
 let currentSelect = null; // 当前选中的对象
  // 下拉搜索组件样式
 const defaultStyle = {
@@ -34,7 +32,7 @@ export default class SimilarAutoComplete extends PureComponent {
     // 选中对象 并触发选中方法 向父组件传递一个obj（必填）
     onSelect: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
-    onSearch: PropTypes.func,
+    onSearch: PropTypes.func.isRequired,
     // 样式主题
     theme: PropTypes.string,
     // 是否可操作
@@ -49,8 +47,6 @@ export default class SimilarAutoComplete extends PureComponent {
     display: PropTypes.string,
     // 控件宽度
     width: PropTypes.number,
-    // 是否需要搜索功能
-    isNeedSearch: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -65,19 +61,15 @@ export default class SimilarAutoComplete extends PureComponent {
     renderOption: null,
     isImmediatelySearch: false,
     display: 'inline-block',
-    onSearch: () => {},
-    isNeedSearch: true,
   }
 
   constructor(props) {
     super(props);
-    const { defaultSearchValue, isNeedSearch } = props;
+    const { defaultSearchValue } = props;
     const isEmptyValue = _.isEmpty(_.trim(defaultSearchValue));
-    // 值为search时，input框右边的图标为放大镜，值为空时，右边图标为空
-    searchType = isNeedSearch ? searchType : '';
     this.state = {
       // 搜索框的类型
-      typeStyle: isEmptyValue ? searchType : clearType,
+      typeStyle: isEmptyValue ? 'search' : 'clear',
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
     };
@@ -135,7 +127,7 @@ export default class SimilarAutoComplete extends PureComponent {
       // 更新state中的值
       this.setState({
         value,
-        typeStyle: clearType,
+        typeStyle: 'clear',
       });
     }
   }
@@ -143,15 +135,15 @@ export default class SimilarAutoComplete extends PureComponent {
   // 即时搜索
   @autobind
   handleImmediatelySearch(searchValue) {
-    const { onSelect, isImmediatelySearch, isNeedSearch } = this.props;
+    const { onSelect, isImmediatelySearch } = this.props;
     const { typeStyle } = this.state;
     let value = searchValue;
-    if (typeStyle === clearType) {
+    if (typeStyle === 'clear') {
       value = '';
       onSelect({});
       this.setState({
         value,
-        typeStyle: searchType,
+        typeStyle: 'search',
       });
     } else {
       // 记录要搜索的字段，并设置当前的状态为搜索状态
@@ -161,7 +153,7 @@ export default class SimilarAutoComplete extends PureComponent {
     }
     // 有的搜索不支持 keyword 为空字符串，比如 售前适当性查询，会弹warn框提醒用具输入
     // 即时搜索关闭 输入框清空 时，对 空字符串的 搜索
-    if (isNeedSearch && isImmediatelySearch && value !== '') {
+    if (isImmediatelySearch && value !== '') {
       // 发起搜索
       const { onSearch } = this.props;
       onSearch(value);
@@ -172,15 +164,15 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleSearch() {
     const { typeStyle, value } = this.state;
-    if (typeStyle === searchType) {
+    if (typeStyle === 'search') {
       // 发起搜索
       this.props.onSearch(value);
-    } else if (typeStyle === clearType) {
+    } else if (typeStyle === 'clear') {
       // 清空输入框，并设置为搜索状态
       this.setState(
         {
           value: '',
-          typeStyle: searchType,
+          typeStyle: 'search',
         },
         () => {
           // 手动清空选中值，传递到组件外
@@ -198,7 +190,7 @@ export default class SimilarAutoComplete extends PureComponent {
   clearValue() {
     this.setState({
       value: '',
-      typeStyle: searchType,
+      typeStyle: 'search',
     });
   }
 
@@ -252,7 +244,7 @@ export default class SimilarAutoComplete extends PureComponent {
     )];
     const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
     const inputValue = _.isString(value) ? value : `${value}`;
-    const iconType = typeStyle === searchType ? searchType : 'close';
+    const iconType = typeStyle === 'search' ? 'search' : 'close';
     const domWidth = width > 0 ? { width: `${width}px` } : {};
     const autoStyle = { ...defaultStyle, ...domWidth };
     return (
