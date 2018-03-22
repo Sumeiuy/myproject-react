@@ -211,7 +211,7 @@ export default {
           payload: resultData,
         });
         const { list = EMPTY_LIST } = resultData;
-        if (_.isEmpty(list)) {
+        if (!_.isEmpty(list)) {
           yield put({
             type: 'queryTargetCustDetail',
             payload: {
