@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 12:54:15
+ * @Last Modified time: 2018-03-22 14:10:06
  * 任务调查
  */
 
@@ -99,7 +99,7 @@ export default class MissionInvestigation extends PureComponent {
     if (!_.isEmpty(idList)) {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
-          Number(index) + 1,
+          index + 1,
           currentSelectedQuestionIdList,
           questionList,
           questionList[index].quesId,
@@ -369,7 +369,7 @@ export default class MissionInvestigation extends PureComponent {
         }]);
         finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
           this.renderQuestion(
-            Number(index) + 1,
+            index + 1,
             finalSelectedQuestionIdList,
             questionList,
             question.quesId,
