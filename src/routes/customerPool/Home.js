@@ -171,9 +171,14 @@ export default class Home extends PureComponent {
     } = this.props;
 
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
-    getHotWds({ empNo: emp.getId() });
+    getHotWds({ empNo: this.orgId });
     // 待办事项, 有任务管理岗时，将岗位id传给后端
-    getToBeDone({ orgId: this.hasTkMampPermission ? this.orgId : '' });
+
+    // 判断当前登录用户是否在非营业部
+    const isNotSaleDepartment = emp.isManagementHeadquarters(this.orgId)
+      || emp.isFiliale(custRange, this.orgId);
+    // 非营业部登录用户有权限时，传登陆者的orgId
+    getToBeDone({ orgId: isNotSaleDepartment && this.hasTkMampPermission ? this.orgId : '' });
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
