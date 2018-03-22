@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 16:51:52
+ * @Last Modified time: 2018-03-22 17:02:30
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const NOOP = _.noop;
 
 const Search = Input.Search;
 const COLUMN_WIDTH = ['10%', '30%', '30%', '30%'];
@@ -62,13 +63,14 @@ export default class TaskPreview extends PureComponent {
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
-    onCancelSelectedRowKeys: PropTypes.func.isRequired,
+    onCancelSelectedRowKeys: PropTypes.func,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     needApproval: false,
     currentEntry: 0,
+    onCancelSelectedRowKeys: NOOP,
   };
 
   constructor(props) {
