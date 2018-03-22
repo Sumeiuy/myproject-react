@@ -20,10 +20,51 @@
         // color: #9b9b9b;
       }
       :global {
+        //select边框
         .ant-select {
           min-width: 142px;
           max-width: 142px;
           height: 28px;
+          .ant-select-selection {
+            background-color: transparent;
+            border: 1px solid transparent;
+          }
+          // 字体颜色大小
+          .ant-select-selection__rendered div,
+          .ant-select-selection__rendered span {
+            color: #33393c;
+            font-size: 14px;
+            padding-right: 25px;
+          }
+          &.ant-select-open .ant-select-selection {
+            border: 1px solid #348cf0;
+            box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
+          }
+        }
+
+        // 兼容ie下拉图标旋转样式
+        .ant-select-arrow {
+          transform: scale(0.75);
+        }
+
+        //多选下拉小图标样式
+        .ant-select-arrow:before {
+          content: "";
+          height: 0;
+          position: absolute;
+          right: 2px;
+          top: 5px;
+          width: 0;
+          border: none;
+          border-top: 10px solid #c2c2c2;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+        }
+        //清楚单选select小图标旋转
+        .ant-select-open .ant-select-arrow:before {
+          -webkit-transform: rotate(0deg);
+          -ms-transform: rotate(0deg);
+          transform: rotate(0deg);
         }
       }
       .filterDropdownList {

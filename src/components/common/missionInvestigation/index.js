@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 19:12:16
+ * @Last Modified time: 2018-03-22 12:54:15
  * 任务调查
  */
 
@@ -99,6 +99,7 @@ export default class MissionInvestigation extends PureComponent {
     if (!_.isEmpty(idList)) {
       newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
         this.renderQuestion(
+          Number(index) + 1,
           currentSelectedQuestionIdList,
           questionList,
           questionList[index].quesId,
@@ -359,7 +360,7 @@ export default class MissionInvestigation extends PureComponent {
     let finalQuestionAndAnswerGroup = [];
 
     _.each(currentSelectRowKeys,
-      (item) => {
+      (item, index) => {
         const question = _.find(questionList, questionItem =>
           questionItem.quesId === item) || EMPTY_OBJECT;
         finalSelectedQuestionIdList = _.concat(finalSelectedQuestionIdList, [{
@@ -368,6 +369,7 @@ export default class MissionInvestigation extends PureComponent {
         }]);
         finalQuestionAndAnswerGroup = _.concat(finalQuestionAndAnswerGroup,
           this.renderQuestion(
+            Number(index) + 1,
             finalSelectedQuestionIdList,
             questionList,
             question.quesId,
@@ -445,6 +447,7 @@ export default class MissionInvestigation extends PureComponent {
 
   @autobind
   renderQuestion(
+    currentIndex,
     finalSelectedQuestionIdList = EMPTY_LIST,
     questionList = EMPTY_LIST,
     quesId,
@@ -456,6 +459,7 @@ export default class MissionInvestigation extends PureComponent {
         })}
         key={`question_${quesId}`}
       >
+        <span className={styles.questionIndex}>{currentIndex}.&nbsp;</span>
         {/**
          * 当前选中的题目题干
          */}
@@ -598,7 +602,11 @@ export default class MissionInvestigation extends PureComponent {
           }
         />
         <div
-          className={styles.operationSection}
+          className={
+            classnames({
+              [styles.operationSection]: true,
+              [styles.disabledAdd]: !checked,
+            })}
           disabled={!checked}
           onClick={this.addQuestion}
         >

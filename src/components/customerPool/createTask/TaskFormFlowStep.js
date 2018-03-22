@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 15:59:50
+ * @Last Modified time: 2018-03-22 10:15:36
  */
 
 import React, { PureComponent } from 'react';
@@ -272,7 +272,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.props;
 
     const { tagetCustModel } = taskBasicInfo || {};
-    const { custNum, custSource: taskSource } = tagetCustModel || {};
+    const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
     const {
       needMissionInvestigation,
@@ -436,6 +436,12 @@ export default class TaskFormFlowStep extends PureComponent {
         current: current + 1,
         custSource,
         custTotal: count || custNum,
+        labelCust: {
+          // 标签描述
+          labelDesc: custLabelDesc,
+        },
+        // 如果当前客户来源是标签圈人，则代表是第二个入口
+        currentEntry: custSource === '标签圈人' ? 1 : 0,
       });
       // 只有能够下一步，再update
       if (canGoNextStep) {
@@ -696,6 +702,7 @@ export default class TaskFormFlowStep extends PureComponent {
       storedCreateTaskData: {
         currentSelectRecord = {},
         currentSelectRowKeys = [],
+        currentEntry,
       },
       isApprovalListLoadingEnd,
       isShowApprovalModal,
@@ -763,6 +770,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
         creator={creator}
+        currentEntry={currentEntry}
       />,
     }];
 
