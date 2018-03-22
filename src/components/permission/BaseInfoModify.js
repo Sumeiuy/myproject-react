@@ -116,6 +116,7 @@ export default class BaseInfoModify extends PureComponent {
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
+              isImmediatelySearch
               width={200}
               onSelect={this.selectCustomer}
               onSearch={this.searchCanApplyCustList}
