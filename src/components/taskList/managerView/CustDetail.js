@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-21 16:23:21
+ * @Last Modified time: 2018-03-22 15:41:11
  * 客户明细数据
  */
 
@@ -506,8 +506,6 @@ export default class CustDetail extends PureComponent {
               needPagination={totalCount > INITIAL_TOTAL_COUNT}
               // 分页器是否在表格内部
               paginationInTable={false}
-              // 展示空白行
-              needShowEmptyRow
             /> :
             <div className={styles.emptyContent}>
               <span>

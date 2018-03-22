@@ -124,7 +124,7 @@ export default class AddCusSuccess extends PureComponent {
           </div>
           <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
           <div className={styles.successBtn}>
-            <Button type="primary" onClick={this.goToIndex}>返回首页</Button>
+            <Button type="primary" onClick={this.goToHome}>返回首页</Button>
           </div>
         </div>
       </div>

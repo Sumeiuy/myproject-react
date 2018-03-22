@@ -30,6 +30,9 @@
     }
     & > .questionLine {
       margin-bottom: 10px;
+      & > .questionIndex {
+        font-size: 14px;
+      }
       & > .questionTitle {
         font-size: 14px;
         color: #4a4a4a;
@@ -70,6 +73,12 @@
     border-radius: 3px;
     text-align: center;
     cursor: pointer;
+  }
+  & > .disabledAdd {
+    background: #f7f7f7;
+    cursor: not-allowed;
+    color: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
   }
 }
 .problemListModalContainer {
