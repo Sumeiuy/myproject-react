@@ -18,4 +18,21 @@
       }
     }
   }
+  .filterSectionMore {
+    display: flex;
+    flex-wrap: wrap;
+    .filter {
+      flex: 0 0 auto;
+      margin-right: 15px;
+      padding: 5px 0;
+      align-self: baseline;
+      &.hidden {
+        display: none;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
 }
