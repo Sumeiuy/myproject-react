@@ -104,7 +104,7 @@ export default class SingleFilter extends PureComponent {
         <span className={styles.filterSeperator}>：</span>
         <Select
           value={selectValue}
-          style={{ width: '73px', fontSize: '14px' }}
+          style={{ maxWidth: '84px', fontSize: '14px' }}
           dropdownClassName={styles.dropdownfilterLabel}
           onChange={this.handleSelectChange}
           dropdownMatchSelectWidth={false}

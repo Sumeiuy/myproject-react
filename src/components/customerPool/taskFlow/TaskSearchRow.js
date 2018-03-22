@@ -138,7 +138,7 @@ export default class TaskSearchRow extends PureComponent {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
-  @autobind
+ /*  @autobind
   getFilterInfo(filters) {
     const stringArray = _.map(filters, (filterObj) => {
       if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
@@ -147,26 +147,33 @@ export default class TaskSearchRow extends PureComponent {
       return null;
     });
     return _.compact(stringArray).join(' ； ');
-  }
+  } */
 
   @autobind
   getSelectFiltersInfo(filters) {
     if (filters) {
-      return (
-        <Tooltip
-          title={this.renderFilterTooltip(filters)}
-          overlayClassName={styles.filtersTooltip}
-          getPopupContainer={this.getPopupContainer}
-          placement="bottomLeft"
-          trigger="hover"
-        >
-          <div className={styles.selectFiltersInfo}>
-            {this.getFilterInfo(filters)}
+      const title = this.renderFilterTooltip(filters);
+      if (title) {
+        return (
+          <Tooltip
+            title={title}
+            overlayClassName={styles.filtersTooltip}
+            getPopupContainer={this.getPopupContainer}
+            placement="bottomLeft"
+            trigger="hover"
+          >
+            <div className={styles.selectFiltersInfoActive}>
+              查看筛选条件
           </div>
-        </Tooltip>
-      );
+          </Tooltip>
+        );
+      }
     }
-    return null;
+    return (
+      <div className={styles.selectFiltersInfo}>
+        无筛选条件
+      </div>
+    );
   }
 
   @autobind
@@ -379,7 +386,7 @@ export default class TaskSearchRow extends PureComponent {
             className={cls}
             key={item.id || item.labelMapping}
           >
-            <div className={styles.leftContent}>
+            <div className={styles.titleContent}>
               <Radio
                 value={item.id}
                 key={item.tagNumId || item.labelMapping}
@@ -389,10 +396,12 @@ export default class TaskSearchRow extends PureComponent {
                   title={item.labelName}
                   dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
                 />
+                <span className={styles.titExp}>
+                  <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
+                </span>
               </Radio>
-              <span className={styles.titExp}>
-                <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
-              </span>
+            </div>
+            <div className={styles.leftContent}>
               <div
                 className={styles.description}
                 dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
@@ -450,6 +459,9 @@ export default class TaskSearchRow extends PureComponent {
       return null;
     });
     stringArray = _.compact(stringArray);
+    if (_.isEmpty(stringArray)) {
+      return null;
+    }
     return (
       <div className={styles.filterTooltip}>
         {
