@@ -393,7 +393,6 @@ export default class DurationSelect extends PureComponent {
           allowClear={false}
           disabledDate={this.disabledDate}
           value={[beginMoment, endMoment]}
-          getCalendarContainer={this.findContainer}
           format="YYYY/MM/DD"
           onChange={this.rangePickerChange}
           open={selfDatePickerOpen}
