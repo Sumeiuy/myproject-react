@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 17:46:03
+ * @Last Modified time: 2018-03-22 15:06:50
  */
 
 import React, { PureComponent } from 'react';
@@ -135,7 +135,7 @@ export default class GroupTable extends PureComponent {
     operationColumnClass: '',
     showHeader: true,
     paginationInTable: false,
-    needShowEmptyRow: false,
+    needShowEmptyRow: true,
     paginationClass: '',
   };
 
@@ -220,6 +220,7 @@ export default class GroupTable extends PureComponent {
                 classnames({
                   [styles.operation]: true,
                   [operationColumnClass]: true,
+                  operation: true,
                 })}
             >
               <span
@@ -238,6 +239,7 @@ export default class GroupTable extends PureComponent {
             className={
               classnames({
                 [styles.operation]: true,
+                operation: true,
               })}
           >
             {
