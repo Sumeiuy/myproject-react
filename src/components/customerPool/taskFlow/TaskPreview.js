@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-07 15:30:29
+ * @Last Modified time: 2018-03-22 17:02:30
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const NOOP = _.noop;
 
 const Search = Input.Search;
 const COLUMN_WIDTH = ['10%', '30%', '30%', '30%'];
@@ -62,21 +63,26 @@ export default class TaskPreview extends PureComponent {
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    onCancelSelectedRowKeys: PropTypes.func,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     needApproval: false,
     currentEntry: 0,
+    onCancelSelectedRowKeys: NOOP,
   };
 
   constructor(props) {
     super(props);
+    const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = props;
     this.state = {
       isShowTable: false,
       titleColumn: renderColumnTitle(),
       dataSource: [],
       dataSize: 0,
+      currentSelectRowKeys,
+      currentSelectRecord,
     };
   }
 
@@ -89,6 +95,8 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList: nextData = EMPTY_LIST,
       isShowApprovalModal: nextApprovalModal,
+      currentSelectRecord,
+      currentSelectRowKeys,
      } = nextProps;
 
     if (approvalList !== nextData) {
@@ -104,6 +112,11 @@ export default class TaskPreview extends PureComponent {
         isShowTable: nextApprovalModal,
       });
     }
+
+    this.setState({
+      currentSelectRecord,
+      currentSelectRowKeys,
+    });
   }
 
   /**
@@ -122,11 +135,29 @@ export default class TaskPreview extends PureComponent {
   @logable({ type: 'Click', payload: { name: '选择审批人：$props.currentSelectRecord.empName' } })
   handleClick() {
     const { getApprovalList } = this.props;
+    const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;
+    // 点击的时候设置一下原先的选中人员
+    this.setState({
+      originSelectRowKeys: currentSelectRowKeys,
+      originSelectRecord: currentSelectRecord,
+    });
     getApprovalList();
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消/确定' } })
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancel() {
+    const { originSelectRowKeys, originSelectRecord } = this.state;
+    this.setState({
+      currentSelectRowKeys: originSelectRowKeys,
+      currentSelectRecord: originSelectRecord,
+    });
+    this.handleCloseModal();
+    this.props.onCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord);
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleCloseModal() {
     const { onCancel } = this.props;
     this.setState({
@@ -485,13 +516,13 @@ export default class TaskPreview extends PureComponent {
               okText={'确定'}
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
-              onCancelHandler={this.handleCloseModal}
+              onCancelHandler={this.handleCancel}
               footer={
                 <div className={styles.btnSection}>
                   <Button
                     type="default"
                     size="default"
-                    onClick={this.handleCloseModal}
+                    onClick={this.handleCancel}
                   >
                     取消
                   </Button>
