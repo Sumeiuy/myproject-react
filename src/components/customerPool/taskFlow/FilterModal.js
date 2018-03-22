@@ -187,8 +187,8 @@ export default class FilterModal extends PureComponent {
       payload.labels = labels;
     }
 
-    // 获取客户列表
-    getLabelPeople(payload).then(() => {
+    // 获取客户列表, true为全屏loading
+    getLabelPeople(payload, true).then(() => {
       const { filterNumObject } = this.state;
       const { peopleOfLabelData } = this.props;
       // 是否展示筛查客户的modal

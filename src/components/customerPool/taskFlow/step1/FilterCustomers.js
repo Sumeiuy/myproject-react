@@ -203,7 +203,7 @@ export default class Filter extends PureComponent {
           </div>
           {this.renderMoreFilterSelect()}
         </div>
-        <div className={styles.filterSection}>
+        <div className={styles.filterSectionMore}>
           {this.renderSightingTelescopeFilter()}
         </div>
       </div>
