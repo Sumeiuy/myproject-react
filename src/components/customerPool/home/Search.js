@@ -126,7 +126,10 @@ export default class Search extends PureComponent {
     const { push, location: { query }, authority, orgId } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const condition = urlHelper.stringify(obj);
+    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
+    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
+    const newQuery = { ...obj, orgId: newOrgId };
+    const condition = urlHelper.stringify(newQuery);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -135,14 +138,12 @@ export default class Search extends PureComponent {
       id: ids, // 'FSP_SERACH',
       title: titles, // '搜索目标客户',
     };
-    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
-    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
     openRctTab({
       routerAction: push,
       url,
       param,
       pathname: firstUrl,
-      query: { ...obj, orgId: newOrgId },
+      query: newQuery,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,
