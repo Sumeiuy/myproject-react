@@ -358,7 +358,7 @@ export default class MissionImplementation extends PureComponent {
         <div className={styles.downLoading}>
           <span className={styles.line}>|</span>
           <a href={this.getSourceSrc(currentMissionReport)}>
-            <Icon type="xiazai" className="icon" />
+            <Icon type="xiazai" className={`icon ${styles.icon_mr}`} />
           </a>
           <a href={this.getSourceSrc(currentMissionReport)}>
             <span>{createTime}报告</span>
@@ -416,6 +416,7 @@ export default class MissionImplementation extends PureComponent {
               }
               onClick={canCreateReport ? null : this.createMissionReport}
             >
+              <Icon type="wenben" className={`icon ${styles.icon_mr}`} />
               生成最新报告
             </span>
             {
