@@ -1099,7 +1099,6 @@ export default class PerformerView extends PureComponent {
       queryCustUuid,
     } = this.props;
     const { currentView } = this.state;
-    console.log('currentView: ', currentView);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
