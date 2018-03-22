@@ -17,6 +17,8 @@ const ORG = '3';
 
 // 主服务经理id，用于url和custrange组件中，不传给后端
 const MAIN_MAGEGER_ID = 'msm';
+// 列表页主服务经理组件中下拉列表 ‘所有’ 选项的id
+const ALL_DEPARTMENT_ID = 'all';
 
 // 根据不同的url中source的值，传给后端enterType值不同
 const ENTER_TYPE = {
@@ -43,4 +45,5 @@ export default {
   ENTER_TYPE,
   ENTERLIST1,
   ENTERLIST2,
+  ALL_DEPARTMENT_ID,
 };

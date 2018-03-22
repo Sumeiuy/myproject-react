@@ -95,6 +95,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       storedCreateTaskData,
       taskBasicInfo,
     } = this.props;
+
     let currentFlowData = taskBasicInfo;
     const { motDetailModel } = currentFlowData || {};
     const { quesVO: quesList = [], resultTraceVO: resultTraceList = {} } = motDetailModel || {};
@@ -143,6 +144,9 @@ export default class CreateTaskFormFlow extends PureComponent {
         quesDesp: item.remark,
       }));
 
+      // 当前选中的rowKeys
+      const currentSelectRowKeys = _.map(quesVO, item => item.rowId);
+
       currentFlowData = {
         resultTrackData: {
           // 跟踪窗口期
@@ -170,6 +174,7 @@ export default class CreateTaskFormFlow extends PureComponent {
         missionInvestigationData: {
           isMissionInvestigationChecked,
           questionList: quesInfoList,
+          currentSelectRowKeys,
         },
       };
     }

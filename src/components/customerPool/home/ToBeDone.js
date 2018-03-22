@@ -13,6 +13,7 @@ import { emp } from '../../../helper';
 import styles from './toBeDone.less';
 import { openRctTab, openFspTab } from '../../../utils';
 import logable from '../../../decorators/logable';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -20,10 +21,12 @@ export default class PerformanceIndicators extends PureComponent {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     authority: PropTypes.bool.isRequired,
+    custRange: PropTypes.array,
   }
 
   static defaultProps = {
     data: {},
+    custRange: [],
   }
 
   componentDidMount() {
@@ -84,7 +87,7 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '潜在业务客户' } })
   linkToBusiness() {
-    const { location: { query }, authority, push } = this.props;
+    const { location: { query }, authority, push, custRange } = this.props;
     const url = '/customerPool/list';
     const param = {
       closable: true,
@@ -93,7 +96,18 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const authOrgId = authority ? emp.getOrgId() : '';
+    const currentOrgId = emp.getOrgId();
+    // 当前登录用户在非营业部
+    const isNotSaleDepartment = emp.isManagementHeadquarters(currentOrgId)
+      || emp.isFiliale(custRange, currentOrgId);
+    // 营业部登录用户只能看名下客户传msm
+    // 非营业部登录用户有权限时，传登陆者的orgId， 没有权限传 msm 给列表页
+    let authOrgId;
+    if (isNotSaleDepartment) {
+      authOrgId = authority ? emp.getOrgId() : MAIN_MAGEGER_ID;
+    } else {
+      authOrgId = MAIN_MAGEGER_ID;
+    }
     const data = {
       source: 'business',
       orgId: authOrgId,

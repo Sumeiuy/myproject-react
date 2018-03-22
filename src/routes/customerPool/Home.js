@@ -470,6 +470,7 @@ export default class Home extends PureComponent {
       initBoradcastList,
       initBoradcastFile,
       queryAudioFile,
+      custRange,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -495,6 +496,7 @@ export default class Home extends PureComponent {
               data={process}
               motTaskCountData={motTaskCount}
               authority={this.hasTkMampPermission}
+              custRange={custRange}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}

@@ -67,7 +67,6 @@ export default class PerformanceIndicators extends PureComponent {
         push,
         cycle,
         location,
-        empInfo,
         authority,
       } = this.props;
 
@@ -76,7 +75,6 @@ export default class PerformanceIndicators extends PureComponent {
         cycle,
         push,
         location,
-        empInfo,
         bname: arg.name || arg.value,
         authority,
       };

@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper } from '../../../helper';
+import { url as urlHelper, number as numberHelper, emp } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -14,6 +14,7 @@ import {
   getBarAdaptiveMax,
   transformItemUnit,
 } from '../../chartRealTime/FixNumber';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -322,32 +323,33 @@ export function linkTo({
   cycle,
   push,
   location,
-  empInfo,
   type = 'rightType',
-  permissionType,
+  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  const MAIN_MAGEGER_ID = 'msm';
   const obj = {
     source,
     [type]: value,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
-  const { empInfo: { empName, empNum } } = empInfo;
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
-      obj.ptyMng = `${empName}_${empNum}`;
+      // obj.ptyMng = `${empName}_${empNum}`;
+      obj.orgId = MAIN_MAGEGER_ID;
     } else {
       obj.orgId = orgId;
     }
-  } else if (permissionType === 0) {
-    // 0 表示用户没有权限
-    obj.ptyMng = `${empName}_${empNum}`;
+  } else if (!authority) {
+    // 用户没有权限
+    // obj.ptyMng = `${empName}_${empNum}`;
+    obj.orgId = MAIN_MAGEGER_ID;
+  } else {
+    obj.orgId = emp.getOrgId();
   }
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {
