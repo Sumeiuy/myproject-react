@@ -20,7 +20,7 @@ import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { ENTERLIST1, ENTERLIST2 } from '../../../routes/customerPool/config';
+import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
 
 import styles from './customerLists.less';
 
@@ -28,7 +28,7 @@ const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
 // 服务营业中的'所有'选项
-const allSaleDepartment = { id: 'all', name: '所有' };
+const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '所有' };
 
 /*
  * 格式化钱款数据和单位
@@ -218,17 +218,16 @@ export default class CustomerLists extends PureComponent {
   @autobind
   checkMainServiceManager(props) {
     const { location: { query: { ptyMng } } } = props;
-    let bool = false;
-    bool = ptyMng ? ptyMng.split('_')[1] === emp.getId() : this.orgIdIsMsm();
-    // 0表示当前用户没有权限
-    this.mainServiceManager = !!(bool) || !this.hasPermission();
+    const isMyCustomer = ptyMng ? ptyMng.split('_')[1] === emp.getId() : this.orgIdIsMsm();
+    // 是否主服务经理
+    this.mainServiceManager = !!(isMyCustomer) || !this.hasPermission();
   }
 
   // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
   @autobind
   orgIdIsMsm() {
     const { location: { query: { orgId = '' } } } = this.props;
-    return orgId === 'msm';
+    return orgId === MAIN_MAGEGER_ID;
   }
 
   /**

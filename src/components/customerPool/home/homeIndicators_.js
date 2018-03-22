@@ -14,6 +14,7 @@ import {
   getBarAdaptiveMax,
   transformItemUnit,
 } from '../../chartRealTime/FixNumber';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -330,7 +331,6 @@ export function linkTo({
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  const MAIN_MAGEGER_ID = 'msm';
   const obj = {
     source,
     [type]: value,
@@ -345,9 +345,9 @@ export function linkTo({
       obj.orgId = orgId;
     }
   } else if (!authority) {
-    // 0 表示用户没有权限
+    // 用户没有权限
     // obj.ptyMng = `${empName}_${empNum}`;
-    obj.orgId = 'msm';
+    obj.orgId = MAIN_MAGEGER_ID;
   } else {
     obj.orgId = emp.getOrgId();
   }
