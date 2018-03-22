@@ -26,13 +26,6 @@ function getDataConfig(data) {
   }));
 }
 
-// @logable({
-//   type: 'DrillDown',
-//   payload: {
-//     name: '客户及资产服务客户数下钻',
-//     element: '$args[0].item.name',
-//   }
-// })
 function linkToList({ item, push }) {
   return function linkToListHandle() {
     if (item.key !== SERVICE_CUST_NUM) {

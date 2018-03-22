@@ -13,7 +13,7 @@ import style from './style.less';
 const Option = AutoComplete.Option;
 let currentSelect = null; // 当前选中的对象
  // 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
+const defaultStyle = {
   width: '220px',
   height: '32px',
 };
@@ -33,21 +33,20 @@ export default class SimilarAutoComplete extends PureComponent {
     onSelect: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
     onSearch: PropTypes.func.isRequired,
-    // 用户自定义style
-    boxStyle: PropTypes.object,
     // 样式主题
     theme: PropTypes.string,
     // 是否可操作
     disable: PropTypes.bool,
     // 默认搜索框值
     defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    // 下拉框的宽度
-    width: PropTypes.number,
     // 定制下拉选项框(用AutoComplete.Option来实现，一定要有value属性值)
     renderOption: PropTypes.func,
     // 是否即时搜索（默认为true，用于模糊匹配；精准匹配时，置为false），
     isImmediatelySearch: PropTypes.bool,
+    // 样式
     display: PropTypes.string,
+    // 控件宽度
+    width: PropTypes.number,
   }
 
   static defaultProps = {
@@ -55,13 +54,12 @@ export default class SimilarAutoComplete extends PureComponent {
     placeholder: '',
     searchList: [],
     objId: '',
-    boxStyle: dropDownSelectBoxStyle,
     theme: 'theme1',
     disable: false,
     defaultSearchValue: '',
     width: 0,
     renderOption: null,
-    isImmediatelySearch: true,
+    isImmediatelySearch: false,
     display: 'inline-block',
   }
 
@@ -153,7 +151,9 @@ export default class SimilarAutoComplete extends PureComponent {
         value,
       });
     }
-    if (isImmediatelySearch) {
+    // 有的搜索不支持 keyword 为空字符串，比如 售前适当性查询，会弹warn框提醒用具输入
+    // 即时搜索关闭 输入框清空 时，对 空字符串的 搜索
+    if (isImmediatelySearch && value !== '') {
       // 发起搜索
       const { onSearch } = this.props;
       onSearch(value);
@@ -206,7 +206,7 @@ export default class SimilarAutoComplete extends PureComponent {
   // 渲染 disable 状态下的标签显示
   @autobind
   renderDisableContent() {
-    const { disable, defaultSearchValue, theme, boxStyle } = this.props;
+    const { disable, defaultSearchValue, theme, width } = this.props;
     const ddsShowBoxClass = classnames([style.ddsShowBox]);
     const ddsShowBoxClass2 = classnames([
       style.ddsShowBox2,
@@ -216,11 +216,13 @@ export default class SimilarAutoComplete extends PureComponent {
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
     });
+    const domWidth = width > 0 ? { width: `${width}px` } : {};
+    const boxStyle = { ...defaultStyle, ...domWidth };
     return (
       <div className={drapDownSelectCls}>
         <div
           className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-          style={boxStyle || {}}
+          style={boxStyle}
         >
           {defaultSearchValue}
         </div>
@@ -229,7 +231,7 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   renderAutoComplete() {
-    const { placeholder, boxStyle, width, searchList, ...otherPorps } = this.props;
+    const { placeholder, width, searchList, ...otherPorps } = this.props;
     const { typeStyle, value } = this.state;
     const empty = [(
       <Option
@@ -243,14 +245,13 @@ export default class SimilarAutoComplete extends PureComponent {
     const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
     const inputValue = _.isString(value) ? value : `${value}`;
     const iconType = typeStyle === 'search' ? 'search' : 'close';
-    const autoStyle = { ...dropDownSelectBoxStyle, ...boxStyle };
+    const domWidth = width > 0 ? { width: `${width}px` } : {};
+    const autoStyle = { ...defaultStyle, ...domWidth };
     return (
       <AutoComplete
         {...otherPorps}
         className={style.complete}
         placeholder={placeholder}
-        dropdownStyle={{ width: `${width}px` || boxStyle.width }}
-        dropdownMatchSelectWidth={false}
         defaultActiveFirstOption={false}
         size="large"
         style={autoStyle}
@@ -279,12 +280,13 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   render() {
-    const { theme, disable, boxStyle, display } = this.props;
+    const { theme, disable, width, display } = this.props;
     const drapDownSelectCls = classnames({
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
     });
-    const autoStyle = { ...dropDownSelectBoxStyle, ...boxStyle, display };
+    const domWidth = width > 0 ? { width: `${width}px` } : {};
+    const autoStyle = { ...defaultStyle, ...domWidth, display };
 
     if (disable) {
       return this.renderDisableContent();

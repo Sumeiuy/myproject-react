@@ -152,7 +152,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '员工号/员工姓名' } })
+  @logable({ type: 'Click', payload: { name: '选择审批人员' } })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);

@@ -232,6 +232,7 @@ export default class EditDetail extends PureComponent {
           searchList={canApplyCustList}
           onSelect={this.handleSelectCust}
           onSearch={getCanApplyCustList}
+          isImmediatelySearch
         />
       </InfoForm>
     );
@@ -293,6 +294,7 @@ export default class EditDetail extends PureComponent {
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={getContractNumList}
+          isImmediatelySearch
         />
       </InfoForm>
     );

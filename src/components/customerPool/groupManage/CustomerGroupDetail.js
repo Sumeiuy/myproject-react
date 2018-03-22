@@ -378,11 +378,10 @@ export default class CustomerGroupDetail extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '分组管理客户详情',
-      type: '$args[1]',
+      type: '操作',
     },
   })
-  handleDeleteBtnClick(record, colomnTitle) {
-    console.log(colomnTitle);
+  handleDeleteBtnClick(record) {
     this.setState({
       // 当前删除行记录数据
       record,

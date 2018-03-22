@@ -332,7 +332,7 @@ export default class CustDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '$args[1]',
+      name: '客户名称',
       type: '管理者视图客户反馈',
     },
   })

@@ -712,6 +712,7 @@ export default class ResultTrack extends PureComponent {
                             placeholder="产品编码/产品名称"
                             name="产品"
                             disable={!checked}
+                            isImmediatelySearch
                             searchList={searchedProductList || EMPTY_LIST}
                             onSelect={this.handleSelectProductItem}
                             onSearch={this.handleQueryProduct}
