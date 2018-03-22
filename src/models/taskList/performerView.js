@@ -3,7 +3,7 @@
  * @file models/taskList/performerView.js
  * @author hongguangqing
  */
-
+import _ from 'lodash';
 import { performerView as api, customerPool as custApi } from '../../api';
 
 const EMPTY_OBJ = {};
@@ -211,7 +211,7 @@ export default {
           payload: resultData,
         });
         const { list = EMPTY_LIST } = resultData;
-        if (list.length) {
+        if (_.isEmpty(list)) {
           yield put({
             type: 'queryTargetCustDetail',
             payload: {
