@@ -51,7 +51,8 @@ export default class SearchForm extends Component {
             onSelect={onSelectCustItem}
             onSearch={onQueryCustList}
             name="custList"
-            boxStyle={{ width: '276px', borderRadius: '4px' }}
+            isImmediatelySearch
+            width={276}
           />
         </FormItem>
         <FormItem label="选择产品" required className={styles.formItem}>
@@ -67,7 +68,8 @@ export default class SearchForm extends Component {
             onSelect={onSelectProductItem}
             onSearch={onQueryProductList}
             name="productList"
-            boxStyle={{ width: '276px', borderRadius: '4px' }}
+            isImmediatelySearch
+            width={276}
           />
         </FormItem>
         <FormItem className={styles.formItem} colon={false} label=" ">

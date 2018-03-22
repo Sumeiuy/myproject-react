@@ -28,11 +28,6 @@ import {
 } from './auth';
 
 const { TextArea } = Input;
- // 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: '220px',
-  height: '32px',
-};
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const { subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray } = config;
@@ -783,8 +778,6 @@ export default class EditBaseInfo extends PureComponent {
                   searchList={custList}
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}
-                  boxStyle={dropDownSelectBoxStyle}
-                  isImmediatelySearch={false}
                   ref={ref => this.selectCustComponent = ref}
                 />
               </InfoForm>
@@ -801,8 +794,6 @@ export default class EditBaseInfo extends PureComponent {
                 searchList={templateList}
                 onSelect={this.handleSelectTemplate}
                 onSearch={this.handleSearchTemplate}
-                boxStyle={dropDownSelectBoxStyle}
-                isImmediatelySearch={false}
                 ref={ref => this.selectTemplateComponent = ref}
               />
             </InfoForm>

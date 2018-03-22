@@ -76,11 +76,10 @@ export default class SearchSelect extends PureComponent {
       <div className={styles.selectSearchBox}>
         <span className={styles.labelName}>{`${labelName}：`}</span>
         <SimilarAutoComplete
-          isImmediatelySearch={false}
           name="batchCustSelect"
           placeholder="经纪客户号/客户名称"
           searchList={newDataSource}
-          boxStyle={{ width: '184px' }}
+          width={184}
           showObjKey="key"
           objId="key"
           onSelect={this.handleSelectCust}

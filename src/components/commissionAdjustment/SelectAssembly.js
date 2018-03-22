@@ -7,8 +7,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { AutoComplete } from 'antd';
 import _ from 'lodash';
+import { AutoComplete } from 'antd';
 
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import { seibelConfig } from '../../config';
@@ -199,12 +199,10 @@ export default class SelectAssembly extends PureComponent {
     return (
       <SimilarAutoComplete
         ref={this.custSearchRef}
-        isImmediatelySearch={false}
         name={name}
         placeholder="经纪客户号/客户名称"
         searchList={dataSource}
         width={width}
-        boxStyle={{ width: '300px' }}
         showObjKey="custEcom"
         objId="id"
         onSelect={this.handleSelectCust}
