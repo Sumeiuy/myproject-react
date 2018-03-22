@@ -62,8 +62,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-      timelyIntervalValue,
-      taskName,
+    timelyIntervalValue,
+    taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -840,6 +840,21 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  handleCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord) {
+    const { storedTaskFlowData, saveTaskFlowData } = this.props;
+    // 取消修改后选中的审批人员
+    this.setState({
+      currentSelectRowKeys: originSelectRowKeys,
+      currentSelectRecord: originSelectRecord,
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      currentSelectRecord: originSelectRecord,
+      currentSelectRowKeys: originSelectRowKeys,
+    });
+  }
+
+  @autobind
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
     const { saveTaskFlowData, storedTaskFlowData } = this.props;
@@ -1072,6 +1087,7 @@ export default class TaskFlow extends PureComponent {
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}
         creator={creator}
+        onCancelSelectedRowKeys={this.handleCancelSelectedRowKeys}
       />,
     }];
 
