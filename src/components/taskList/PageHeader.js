@@ -515,7 +515,6 @@ export default class Pageheader extends PureComponent {
       const endTime = endTimeEnd ?
         moment(endTimeEnd, dateFormat) :
         moment(moment(afterCurrentDate60Days).format(dateFormat), dateFormat);
-      console.log('startTime endTime : ', startTime, endTime, afterCurrentDate60Days);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         结束时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
