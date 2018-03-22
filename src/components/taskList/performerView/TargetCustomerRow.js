@@ -160,6 +160,7 @@ export default class TargetCustomerRow extends PureComponent {
       isAllocate,
       missionFlowId,
     } = item;
+    // const isAllocate = '0';
     // url中的targetCustId存在，就选中url中targetCustId对应的数据，否则默认选中第一条数据
     const rowItemCls = classnames([styles.rowItem], {
       [styles.active]: missionFlowId === currentMissionFlowId,
