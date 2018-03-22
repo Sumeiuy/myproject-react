@@ -79,6 +79,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     push: PropTypes.func.isRequired,
     getCustDetailInfo: PropTypes.func.isRequired,
     custDetailInfo: PropTypes.object,
+    // 刷新列表
+    onRefreshList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -351,8 +353,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
         message.success('批量佣金调整提交成功');
         this.submitLoadiing(false);
         this.clearApprovalBoard();
-        const { modalKey, onClose } = this.props;
+        const { modalKey, onClose, onRefreshList } = this.props;
         onClose(modalKey);
+        onRefreshList();
       },
       () => {
         message.error('批量佣金调整提交失败');
@@ -392,10 +395,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.onSubmitSingle(params).then(() => {
       message.success('单佣金调整提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('单佣金调整提交失败');
       this.submitLoadiing(false);
@@ -429,10 +433,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.submitSub(params).then(() => {
       message.success('资讯订阅提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('资讯订阅提交失败');
       this.submitLoadiing(false);
@@ -466,10 +471,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.submitUnSub(unParams).then(() => {
       message.success('资讯退订提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('资讯退订提交失败');
       this.submitLoadiing(false);

@@ -23,8 +23,6 @@ import {
   CUST_MANAGER,
   ORG,
   ENTER_TYPE,
-  ENTERLIST1,
-  ENTERLIST2,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
 } from './config';
@@ -407,16 +405,6 @@ export default class CustomerList extends PureComponent {
       return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
     }
     /**
-     * url中不存在orgId时且
-     * 任务管理岗权限和首页指标查询权限(客户范围选中的不是我的客户)作用的首页入口进入且都有相应的权限时，返回当前登录人的orgId
-     */
-    if (!query.orgId &&
-      ((_.includes(ENTERLIST1, query.source) && this.hasTkMampPermission) ||
-      (_.includes(ENTERLIST2, query.source) && this.hasIndexViewPermission))
-    ) {
-      return emp.getOrgId();
-    }
-    /**
      * url中存在了orgId等于all,
      * 任务管理岗权限作用的首页入口进入列表，没有任务管理岗权限
      * 首页指标查询权限作用的首页入口进入列表，没有首页指标查询权限
@@ -428,21 +416,11 @@ export default class CustomerList extends PureComponent {
   // 获取 客户列表接口的ptyMngId入参的值
   getPostPtyMngId(query = {}) {
     // url中存在ptyMng，取id
-    if (query.ptyMng) {
-      return query.ptyMng.split('_')[1];
+    if (query.ptyMngId) {
+      return query.ptyMngId;
     }
     // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
     if (query.orgId === MAIN_MAGEGER_ID) {
-      return emp.getId();
-    }
-    /**
-     * url中不存在ptyMng时且
-     * 任务管理岗权限和首页指标查询权限作用的首页入口进入且都没有相应的权限时，返回当前登录人的工号
-     */
-    if (
-      (_.includes(ENTERLIST1, query.source) && !this.hasTkMampPermission) ||
-      (_.includes(ENTERLIST2, query.source) && !this.hasIndexViewPermission)
-    ) {
       return emp.getId();
     }
     return '';

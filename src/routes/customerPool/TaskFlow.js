@@ -44,10 +44,11 @@ const effects = {
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
 };
 
-const fetchData = (type, loading) => query => ({
+const fetchData = (type, loading) => (query, forceFull = false) => ({
   type,
   payload: query || EMPTY_OBJECT,
   loading,
+  forceFull,
 });
 
 

@@ -438,6 +438,13 @@ export default class CommissionHome extends PureComponent {
     getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
+  // 创建新的成功后，刷新页面列表
+  @autobind
+  refreshListAfterCreateSuccess() {
+    const { location: { query } } = this.props;
+    this.queryAppList(query);
+  }
+
   // 点击列表每条的时候对应请求详情
   @autobind
   handleListRowClick(record, index) {
@@ -722,6 +729,7 @@ export default class CommissionHome extends PureComponent {
                 push={push}
                 getCustDetailInfo={getCustDetailInfo}
                 custDetailInfo={custDetailInfo}
+                onRefreshList={this.refreshListAfterCreateSuccess}
               />
             )
         }

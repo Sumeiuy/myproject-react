@@ -26,23 +26,14 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
+  MANAGER_VIEW_STATUS,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
-// 50代表执行中
-// 60代表结果跟踪
-// 70代表结束
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
-const MANAGER_VIEW_STATUS = [
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
-];
+
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
 // 时间设置
