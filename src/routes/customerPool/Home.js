@@ -171,7 +171,7 @@ export default class Home extends PureComponent {
     } = this.props;
 
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
-    getHotWds({ empNo: this.orgId });
+    getHotWds({ empNo: emp.getId() });
     // 待办事项, 有任务管理岗时，将岗位id传给后端
 
     // 判断当前登录用户是否在非营业部
