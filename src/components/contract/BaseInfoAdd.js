@@ -188,12 +188,6 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
-  // 根据填入关键词筛选合约编号
-  @autobind
-  handleSearchContractNum(value) {
-    console.log('筛选合约编号', value);
-  }
-
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
@@ -257,10 +251,10 @@ export default class BaseInfoEdit extends PureComponent {
         <AutoComplete
           placeholder="合约编号"
           showObjKey="id"
+          isNeedSearch={false}
           defaultSearchValue={this.state.contractNum.id || ''}
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
-          onSearch={this.handleSearchContractNum}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
