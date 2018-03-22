@@ -455,7 +455,7 @@ export default class CustomerLists extends PureComponent {
     const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
     if (_.includes(ENTERLIST1, source)) {
       // 从首页的潜在业务点击进入的列表页
-      if (source === 'business' && this.orgIdIsMsm()) {
+      if (this.orgIdIsMsm()) {
         return [allSaleDepartment, ...taskManagerResp];
       }
       return taskManagerResp;
