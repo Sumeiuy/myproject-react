@@ -6,10 +6,7 @@
     display: inline-block;
     color: #9b9b9b;
     font-size: 14px;
-    max-width: 120px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    overflow: auto;
   }
   .filterSeperator {
     display: inline-block;
@@ -44,6 +41,9 @@
       vertical-align: bottom;
 
        .ant-select-selection.ant-select-selection--single {
+         .ant-select-selection__rendered {
+           margin-left: 5px;
+         }
          border-color: transparent;
         .ant-select-selection-selected-value {
           font-size: 14px;
@@ -53,6 +53,9 @@
       }
       &.ant-select-open {
         .ant-select-selection.ant-select-selection--single {
+          .ant-select-selection__rendered {
+            margin-left: 5px;
+          }
           border-color: #348cf0;
           box-shadow: 0 0 0 5px rgba(16, 142, 233, 0.2);
         }
@@ -67,8 +70,8 @@
       content: "";
       height: 0;
       position: absolute;
-      right: 2px;
-      top: 2px;
+      right: -5px;
+      top: 4px;
       width: 0;
       border: none;
       border-top: 8px solid #c2c2c2;
