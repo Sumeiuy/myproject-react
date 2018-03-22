@@ -344,6 +344,4 @@ export default class BaseInfoEdit extends PureComponent {
       </div>
     );
   }
-
 }
-
