@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 19:37:39
+ * @Last Modified time: 2018-03-22 15:38:34
  * 客户反馈
  */
 
@@ -80,7 +80,7 @@ export default class CustFeedback extends PureComponent {
    */
   @autobind
   getCurrentColor(index, childIndex) {
-    let newChildIndex = Number(childIndex) + 1;
+    let newChildIndex = childIndex;
     if (newChildIndex > 4) {
       newChildIndex = 4;
     }
