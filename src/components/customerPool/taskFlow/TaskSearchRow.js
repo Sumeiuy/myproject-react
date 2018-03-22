@@ -159,7 +159,7 @@ export default class TaskSearchRow extends PureComponent {
             title={title}
             overlayClassName={styles.filtersTooltip}
             getPopupContainer={this.getPopupContainer}
-            placement="bottomLeft"
+            placement="bottomRight"
             trigger="hover"
           >
             <div className={styles.selectFiltersInfoActive}>
