@@ -157,7 +157,7 @@ export default class CustomerLists extends PureComponent {
       custEmail,
       location: {
         query: {
-          ptyMng: prePtyMng,
+          ptyMngId: prePtyMngId,
         },
       },
      } = this.props;
@@ -167,7 +167,7 @@ export default class CustomerLists extends PureComponent {
       custEmail: nextCustEmail,
       location: {
         query: {
-          ptyMng,
+          ptyMngId,
         },
       },
      } = nextProps;
@@ -187,7 +187,7 @@ export default class CustomerLists extends PureComponent {
     if (custEmail !== nextCustEmail) {
       this.getEmail(nextCustEmail[currentCustId]);
     }
-    if (prePtyMng !== ptyMng) {
+    if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
     }
   }
@@ -217,8 +217,8 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { location: { query: { ptyMng } } } = props;
-    const isMyCustomer = ptyMng ? ptyMng.split('_')[1] === emp.getId() : this.orgIdIsMsm();
+    const { location: { query: { ptyMngId } } } = props;
+    const isMyCustomer = ptyMngId ? ptyMngId === emp.getId() : this.orgIdIsMsm();
     // 是否主服务经理
     this.mainServiceManager = !!(isMyCustomer) || !this.hasPermission();
   }
@@ -364,7 +364,8 @@ export default class CustomerLists extends PureComponent {
       pathname,
       query: {
         ...query,
-        ptyMng,
+        ptyMngId: item.ptyMngId,
+        ptyMngName: encodeURIComponent(item.ptyMngName),
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -527,7 +528,8 @@ export default class CustomerLists extends PureComponent {
     const {
       selectedIds = '',
       selectAll,
-      ptyMng,
+      ptyMngId,
+      ptyMngName,
       departmentOrgId,
     } = location.query;
     const hasPermission = this.hasPermission();
@@ -562,8 +564,8 @@ export default class CustomerLists extends PureComponent {
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     // ‘HTSC 首页指标查询’ 权限, 任务管理权限
     if (hasPermission) {
-      if (ptyMng && ptyMng.split('_')[1]) {
-        serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
+      if (ptyMngId) {
+        serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
       } else {
         serviceManagerDefaultValue = '所有人';
       }

@@ -428,8 +428,8 @@ export default class CustomerList extends PureComponent {
   // 获取 客户列表接口的ptyMngId入参的值
   getPostPtyMngId(query = {}) {
     // url中存在ptyMng，取id
-    if (query.ptyMng) {
-      return query.ptyMng.split('_')[1];
+    if (query.ptyMngId) {
+      return query.ptyMngId;
     }
     // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
     if (query.orgId === MAIN_MAGEGER_ID) {
