@@ -97,7 +97,7 @@ export default class PerformanceIndicators extends PureComponent {
       title: '客户列表',
     };
     const currentOrgId = emp.getOrgId();
-    // 当前登录用户在非营业部
+    // 判断当前登录用户是否在非营业部
     const isNotSaleDepartment = emp.isManagementHeadquarters(currentOrgId)
       || emp.isFiliale(custRange, currentOrgId);
     // 营业部登录用户只能看名下客户传msm
