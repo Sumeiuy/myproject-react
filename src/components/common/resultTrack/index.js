@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-12 09:47:13
+ * @Last Modified time: 2018-03-22 10:55:12
  * 结果跟踪
  */
 
@@ -660,6 +660,7 @@ export default class ResultTrack extends PureComponent {
                 value={currentSelectedTrackDate}
                 disabledDate={this.disabledDate}
                 onChange={this.handleTrackDateChange}
+                disabled={!checked}
               />
             </div>
           </div>
@@ -711,6 +712,7 @@ export default class ResultTrack extends PureComponent {
                             placeholder="产品编码/产品名称"
                             name="产品"
                             disable={!checked}
+                            isImmediatelySearch
                             searchList={searchedProductList || EMPTY_LIST}
                             onSelect={this.handleSelectProductItem}
                             onSearch={this.handleQueryProduct}

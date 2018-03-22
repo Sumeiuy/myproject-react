@@ -675,6 +675,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       title: '客户360视图-产品订单',
       // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
       activeSubTab: ['产品订单', '订单流水'],
+      // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，360视图不会刷新，且React界面如果有弹框存在，不会消失
+      forceRefresh: true,
     };
     const { push, getCustDetailInfo } = this.props;
     const { custEcom } = cust;

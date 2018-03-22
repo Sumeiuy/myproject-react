@@ -21,10 +21,20 @@
         & > .ant-steps-step {
           & > .ant-steps-main {
             & > .ant-steps-title {
-              color: #108ee9;
+              color: #000;
+              font-weight: bold;
             }
           }
         }
+      }
+      .ant-steps-status-finish {
+        & > .ant-steps-step {
+        & > .ant-steps-main {
+          & > .ant-steps-title {
+            color: #000;
+          }
+        }
+      }
       }
       .ant-steps-step {
         display: flex;
@@ -42,6 +52,7 @@
         text-align: center;
         padding-right: 0;
         font-weight: normal;
+        margin-right: 8px;
       }
       .ant-steps-item.ant-steps-status-finish .ant-steps-head-inner {
         background: #108ee9;
