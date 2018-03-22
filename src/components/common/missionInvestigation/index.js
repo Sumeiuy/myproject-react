@@ -585,8 +585,6 @@ export default class MissionInvestigation extends PureComponent {
                     // 分页器是否在表格内部
                     paginationInTable={false}
                     onPageChange={this.handlePageChange}
-                    // 展示空白行
-                    needShowEmptyRow
                     // 分页器样式
                     paginationClass={'selfPagination'}
                   />
