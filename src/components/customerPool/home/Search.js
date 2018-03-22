@@ -16,6 +16,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -134,14 +135,14 @@ export default class Search extends PureComponent {
       id: ids, // 'FSP_SERACH',
       title: titles, // '搜索目标客户',
     };
-    // 有任务管理岗权限将orgId带到下一个页面
-    const newQuery = authority ? { ...obj, orgId } : obj;
+    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
+    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
     openRctTab({
       routerAction: push,
       url,
       param,
       pathname: firstUrl,
-      query: newQuery,
+      query: { ...obj, orgId: newOrgId },
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,

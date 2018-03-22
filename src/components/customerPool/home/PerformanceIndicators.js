@@ -92,7 +92,6 @@ export default class PerformanceIndicators extends PureComponent {
     const {
       push,
       cycle,
-      empInfo,
       indicators,
       authority,
     } = this.props;
@@ -108,7 +107,6 @@ export default class PerformanceIndicators extends PureComponent {
         cycle,
         push,
         location: this.props.location,
-        empInfo,
         bname: arg.name || arg.value,
         authority,
       };

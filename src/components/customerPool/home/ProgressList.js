@@ -85,7 +85,7 @@ export default class ProgressList extends PureComponent {
   */
   @autobind
   handleClick(index, item) {
-    const { cycle, push, location, empInfo, authority } = this.props;
+    const { cycle, push, location, authority } = this.props;
     const bname = this.transformName(item.cust);
     const param = {
       source: 'custIndicator',
@@ -95,7 +95,6 @@ export default class ProgressList extends PureComponent {
       cycle,
       push,
       location,
-      empInfo,
       authority,
     };
     linkTo(param);

@@ -105,6 +105,16 @@ const emp = {
     const orgData = findOrgDataByOrgId(arr, id);
     return (!_.isEmpty(orgData) && org.isFiliale(orgData.level));
   },
+
+  /**
+   * 判断当前登录人部门是否是经总
+   * 经纪及财富管理部 orgId='ZZ001041'
+   * @author Wangjunjun
+   * @returns {Boolean}
+   */
+  isManagementHeadquarters(orgId) {
+    return orgId === 'ZZ001041';
+  },
 };
 
 export default emp;
