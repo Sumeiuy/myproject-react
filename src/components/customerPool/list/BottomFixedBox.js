@@ -170,14 +170,32 @@ export default class BottomFixedBox extends PureComponent {
       condition,
       hasTkMampPermission,
       isSendCustsServedByPostn,
+      location: {
+        query: {
+          selectAll,
+          selectedIds,
+        },
+      },
     } = this.props;
     // 有任务管理权限
     if (hasTkMampPermission) {
       this.toCreateTaskPage();
     } else {
+      const payload = {};
+      if (selectAll) {
+        payload.searchReq = condition;
+      }
+      if (selectedIds) {
+        const custList = decodeURIComponent(selectedIds).split(',');
+        const custIdList = [];
+        _.forEach(custList, (item) => {
+          custIdList.push(item.split('.')[0]);
+        });
+        payload.custIdList = custIdList;
+      }
       // 没有任务管理权限，发请求判断是否超过1000条数据和是否包含非本人名下客户
       isSendCustsServedByPostn({
-        ...condition,
+        ...payload,
         postnId: emp.getPstnId(),
       }).then(() => {
         const {

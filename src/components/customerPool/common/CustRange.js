@@ -97,7 +97,7 @@ export default class CustRange extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custRange, orgId, defaultFirst } = nextProps;
-    if (orgId !== this.props.orgId) {
+    if (orgId !== this.props.orgId || custRange !== this.props.custRange) {
       this.setDisplay(orgId, custRange, defaultFirst);
     }
   }

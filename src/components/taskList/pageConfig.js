@@ -5,6 +5,9 @@
  * 以及各个子类型和状态配置项
  *
 */
+import {
+  chooseMissionView,
+} from '../../routes/taskList/config';
 
 const pageConfig = {
   // 执行者视图
@@ -53,23 +56,7 @@ const pageConfig = {
         value: '70',
       },
     ],
-    chooseMissionView: [
-      {
-        show: true,
-        label: '我创建的任务',
-        value: 'initiator',
-      },
-      {
-        show: true,
-        label: '我执行的任务',
-        value: 'executor',
-      },
-      {
-        show: true,
-        label: '我部门的任务',
-        value: 'controller',
-      },
-    ],
+    chooseMissionView,
   },
 
 };
