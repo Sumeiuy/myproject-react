@@ -672,7 +672,7 @@ export default class PerformerView extends PureComponent {
         break;
       case CONTROLLER:
         detailComponent = (<ManagerViewDetail
-          currentId={currentId || firstItem.Id}
+          currentId={currentId || firstItem.id}
           dict={dict}
           previewCustDetail={previewCustDetail}
           custDetailResult={custDetailResult}
