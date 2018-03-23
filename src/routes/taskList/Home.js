@@ -443,10 +443,10 @@ export default class PerformerView extends PureComponent {
   @autobind
   getCurrentId() {
     const { list = {}, location: { query: { currentId, missionViewType } } } = this.props;
-    const [firstItem = {}] = list.resultData;
     if (currentId) {
       return currentId;
     }
+    const [firstItem = {}] = list.resultData;
     const currentViewType = getViewInfo(missionViewType).currentViewType;
     if (currentViewType === INITIATOR && this.state.isSourceFromCreatorView) {
       return firstItem.mssnId;
