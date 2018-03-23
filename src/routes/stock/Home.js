@@ -93,10 +93,10 @@ export default class Stock extends PureComponent {
 
   @autobind
   onRowClick(record) {
-    const { id } = record;
+    const { id, code } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
-    push(`/stock/detail?id=${id}&type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
+    push(`/stock/detail?id=${id}&type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}&code=${code}`);
   }
 
   // tab 切换事件
@@ -109,6 +109,8 @@ export default class Stock extends PureComponent {
       this.sendRequest({
         type: key,
         keyword,
+        page: 1,
+        pageSize: 10,
       });
     });
   }
