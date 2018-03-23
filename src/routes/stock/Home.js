@@ -24,6 +24,7 @@ import styles from './home.less';
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
 const EMPTY_PARAM = '暂无';
+const pathname = '/stock/detail';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -96,7 +97,24 @@ export default class Stock extends PureComponent {
     const { id, code } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
-    push(`/stock/detail?id=${id}&type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}&code=${code}`);
+    const urlQuery = {
+      // 点击的列表 ID
+      id,
+      // 类型
+      type,
+      // 每页条数
+      pageSize,
+      // 第几页
+      pageNum,
+      // 搜索关键字
+      keyword,
+      // 股票代码
+      code,
+    };
+    push({
+      pathname,
+      query: urlQuery,
+    });
   }
 
   // tab 切换事件

@@ -24,6 +24,7 @@ import styles from './detail.less';
 const { typeList } = config;
 const { Header, Footer, Content } = Layout;
 const EMPTY_PARAM = '暂无';
+const pathname = '/stock';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -60,8 +61,6 @@ export default class StockDetail extends PureComponent {
         query: {
           id,
           type,
-          pageSize = 10,
-          pageNum = 1,
           keyword = '',
           code,
         },
@@ -73,8 +72,6 @@ export default class StockDetail extends PureComponent {
     this.state = {
       id,
       type,
-      pageSize,
-      pageNum,
       keyword,
       code,
       detail,
@@ -98,26 +95,66 @@ export default class StockDetail extends PureComponent {
   // a 链接事件
   @autobind
   hrefHandle(item) {
-    const { push } = this.props;
-    const { pageSize, pageNum, keyword, type, code } = this.state;
-    // 如果搜索关键字为空，则取 code 为关键字，否则用 keyword
-    const kw = _.isEmpty(keyword) ? code : keyword;
-    push(`/stock?type=${item}&pageSize=${pageSize}&pageNum=${item === type ? pageNum : 1}&keyword=${kw}`);
+    const {
+      location: {
+        query: {
+          pageSize = 10,
+          pageNum = 1,
+        },
+      },
+      push,
+    } = this.props;
+    const { keyword, type, code } = this.state;
+
+    const urlQuery = {
+      // 类型
+      type: item,
+      // 每页条数
+      pageSize,
+      // 第几页
+      pageNum: item === type ? pageNum : 1,
+      // 搜索关键字
+      // 如果搜索关键字为空，则取 code 为关键字，否则用 keyword
+      keyword: _.isEmpty(keyword) ? code : keyword,
+    };
+    push({
+      pathname,
+      query: urlQuery,
+    });
   }
 
   // 返回按钮事件
   @autobind
   goBackHandle() {
-    const { push } = this.props;
-    const { pageSize, pageNum, keyword, type } = this.state;
-    push(`/stock?type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
+    const {
+      location: {
+        query: {
+          pageSize = 10,
+          pageNum = 1,
+        },
+      },
+      push,
+    } = this.props;
+    const { keyword, type } = this.state;
+
+    const urlQuery = {
+      // 类型
+      type,
+      // 每页条数
+      pageSize,
+      // 第几页
+      pageNum,
+      // 搜索关键字
+      keyword,
+    };
+    push({
+      pathname,
+      query: urlQuery,
+    });
   }
 
   render() {
     const { id, detail: dataDetail = {}, filterTypeList } = this.state;
-    // if (_.isEmpty(dataDetail[id])) {
-    //   return null;
-    // }
     let title = '';
     let author = '';
     let pubdate = '';
