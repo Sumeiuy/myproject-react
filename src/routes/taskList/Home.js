@@ -668,7 +668,7 @@ export default class PerformerView extends PureComponent {
         break;
       case CONTROLLER:
         detailComponent = (<ManagerViewDetail
-          currentId={currentId || firstItem.Id}
+          currentId={currentId || firstItem.id}
           dict={dict}
           previewCustDetail={previewCustDetail}
           custDetailResult={custDetailResult}
@@ -1091,7 +1091,6 @@ export default class PerformerView extends PureComponent {
       queryCustUuid,
     } = this.props;
     const { currentView } = this.state;
-    console.log('currentView: ', currentView);
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedPageHeader
