@@ -418,7 +418,7 @@ export default class Pageheader extends PureComponent {
       return false;
     }
     const time = value.valueOf();
-    return time < moment(today).subtract(60, 'days') || time > moment().subtract(0, 'days');
+    return time > moment().subtract(0, 'days');
   }
 
   // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
@@ -428,7 +428,7 @@ export default class Pageheader extends PureComponent {
       return false;
     }
     const time = value.valueOf();
-    return time < moment().subtract(0, 'days') || time > moment(today).add(60, 'days');
+    return time > moment(currentDate).add(60, 'days');
   }
 
 

@@ -24,6 +24,7 @@ import styles from './detail.less';
 const { typeList } = config;
 const { Header, Footer, Content } = Layout;
 const EMPTY_PARAM = '暂无';
+const pathname = '/stock';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -53,21 +54,45 @@ export default class StockDetail extends PureComponent {
     detail: PropTypes.object.isRequired,
   }
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
     const {
       location: {
         query: {
           id,
+          type,
+          keyword = '',
+          code,
         },
       },
-      getStockDetail,
       detail,
     } = this.props;
+    // 从类型数组里去掉当前点击的类型
+    const filterTypeList = _.filter(typeList, o => o !== type);
+    this.state = {
+      id,
+      type,
+      keyword,
+      code,
+      detail,
+      filterTypeList,
+    };
+  }
+
+  componentDidMount() {
+    const { getStockDetail } = this.props;
+    const { id, detail } = this.state;
     if (_.isEmpty(detail[id])) {
-      getStockDetail({ id });
+      getStockDetail({ id }).then(() => {
+        const { detail: newDetail } = this.props;
+        this.setState({
+          detail: newDetail,
+        });
+      });
     }
   }
 
+  // a 链接事件
   @autobind
   hrefHandle(item) {
     const {
@@ -75,42 +100,85 @@ export default class StockDetail extends PureComponent {
         query: {
           pageSize = 10,
           pageNum = 1,
-          keyword = '',
-          type = '',
         },
       },
       push,
     } = this.props;
-    push(`/stock?type=${item}&pageSize=${pageSize}&pageNum=${item === type ? pageNum : 1}&keyword=${keyword}`);
+    const { keyword, type, code } = this.state;
+
+    const urlQuery = {
+      // 类型
+      type: item,
+      // 每页条数
+      pageSize,
+      // 第几页
+      pageNum: item === type ? pageNum : 1,
+      // 搜索关键字
+      // 如果搜索关键字为空，则取 code 为关键字，否则用 keyword
+      keyword: _.isEmpty(keyword) ? code : keyword,
+    };
+    push({
+      pathname,
+      query: urlQuery,
+    });
   }
-  render() {
+
+  // 返回按钮事件
+  @autobind
+  goBackHandle() {
     const {
       location: {
         query: {
-          id,
+          pageSize = 10,
+          pageNum = 1,
         },
       },
-      detail: dataDetail,
+      push,
     } = this.props;
-    if (_.isEmpty(dataDetail[id])) {
-      return null;
+    const { keyword, type } = this.state;
+
+    const urlQuery = {
+      // 类型
+      type,
+      // 每页条数
+      pageSize,
+      // 第几页
+      pageNum,
+      // 搜索关键字
+      keyword,
+    };
+    push({
+      pathname,
+      query: urlQuery,
+    });
+  }
+
+  render() {
+    const { id, detail: dataDetail = {}, filterTypeList } = this.state;
+    let title = '';
+    let author = '';
+    let pubdate = '';
+    let detail = '';
+    let pdfDownloadUrl = '';
+    let wordDownloadUrl = '';
+
+    if (!_.isEmpty(dataDetail[id])) {
+      title = dataDetail[id].title;
+      author = dataDetail[id].author;
+      pubdate = dataDetail[id].pubdate;
+      detail = dataDetail[id].detail;
+      pdfDownloadUrl = dataDetail[id].pdfDownloadUrl;
+      wordDownloadUrl = dataDetail[id].wordDownloadUrl;
     }
-    const {
-        title,
-        author,
-        pubdate,
-        detail,
-        pdfDownloadUrl = '',
-        wordDownloadUrl = '',
-    } = dataDetail[id];
 
     // Д 为替换后端返回数据中的换行符而设置，无实际价值
     const newDetail = detail.replace(/\r\n|\n\t|\t\n|\n/g, 'Д');
     const splitArray = newDetail.split('Д');
+
     return (
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
-          <h2>{title}</h2>
+          <h2>{title || EMPTY_PARAM}</h2>
           <h3>作者：{author || EMPTY_PARAM}　　　发布日期：{pubdate || EMPTY_PARAM}</h3>
         </Header>
         <Content className={styles.content}>
@@ -152,9 +220,9 @@ export default class StockDetail extends PureComponent {
             { /* <a><Icon type="chakan" />查看持仓客户</a> */ }
           </div>
           <div className={styles.right}>
-            <Icon type="fanhui1" />
+            <a onClick={this.goBackHandle}><Icon type="fanhui1" />返回</a>
             {
-              typeList.map(item => (
+              filterTypeList.map(item => (
                 <a onClick={() => this.hrefHandle(item)} key={item}>相关{config[item].name}</a>
               ))
             }
