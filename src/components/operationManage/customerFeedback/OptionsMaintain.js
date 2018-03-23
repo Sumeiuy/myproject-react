@@ -2,8 +2,8 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 10:22:29
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-23 20:35:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -72,7 +72,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 查询客户反馈列表
   @autobind
-  queryFeedbackList(pageNum = 1, pageSize = 10) {
+  queryFeedbackList(pageNum = 1, pageSize = 20) {
     const {
       queryFeedbackList,
     } = this.props;
