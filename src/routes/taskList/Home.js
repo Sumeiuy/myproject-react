@@ -415,7 +415,7 @@ export default class PerformerView extends PureComponent {
         typeName,
         statusCode,
         eventId,
-        isSourceFromCreatorView: missionViewType === INITIATOR &&
+        isSourceFromCreatorView: st === INITIATOR &&
         this.judgeTaskInApproval(item.statusCode),
       }, () => { this.getDetailByView(item); });
     }
