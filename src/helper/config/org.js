@@ -9,6 +9,8 @@
 const orgConfig = {
   // 分公司级别字符串
   FILIALE_LEVEL: '2',
+  // 经纪及财富管理部的orgid
+  MANAGEMENTHEADQUARTERS_ORGID: 'ZZ001041',
 };
 
 export default orgConfig;

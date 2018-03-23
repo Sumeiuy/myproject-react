@@ -136,7 +136,7 @@ export default class PerformanceIndicators extends PureComponent {
         forceRefresh: true,
         isSpecialTab: true,
         id: 'FSP_MOT_SELFBUILT_TASK',
-        title: '自建任务管理',
+        title: '任务管理',
       };
       const data = {
         missionViewType: 'executor',
