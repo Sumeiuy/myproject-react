@@ -125,7 +125,7 @@ export default class ManagerViewDetail extends PureComponent {
   @autobind
   handleExport() {
     const {
-      location: { query: { currentId } },
+      currentId,
       mngrMissionDetailInfo,
     } = this.props;
     const { missionProgressStatus = null, progressFlag = null } = this.state;
