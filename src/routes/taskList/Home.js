@@ -435,6 +435,25 @@ export default class PerformerView extends PureComponent {
     }).then(callback);
   }
 
+  /**
+   * 获取左侧列表当前选中任务的id
+   * 创建者视图中左侧任务状态为 执行中、结果跟踪、结束时，取mssnId
+   * 其余任务取id
+   */
+  @autobind
+  getCurrentId() {
+    const { list = {}, location: { query: { currentId, missionViewType } } } = this.props;
+    if (currentId) {
+      return currentId;
+    }
+    const [firstItem = {}] = list.resultData;
+    const currentViewType = getViewInfo(missionViewType).currentViewType;
+    if (currentViewType === INITIATOR && this.state.isSourceFromCreatorView) {
+      return firstItem.mssnId;
+    }
+    return firstItem.id;
+  }
+
   // 查询不同视图的详情信息
   getDetailByView(record) {
     const {
@@ -476,12 +495,11 @@ export default class PerformerView extends PureComponent {
   getFlowStatus({ orgId }) {
     const {
       countFlowStatus,
-      location: { query: { currentId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
-      missionId: currentId,
+      missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -493,12 +511,11 @@ export default class PerformerView extends PureComponent {
   getFlowFeedback({ orgId }) {
     const {
       countFlowFeedBack,
-      location: { query: { currentId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
-      missionId: currentId,
+      missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
     });
   }
@@ -759,13 +776,12 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleExportExecl(orgId) {
     const {
-      location: { query: { currentId } },
       mngrMissionDetailInfo,
     } = this.props;
     const params = {
       missionName: mngrMissionDetailInfo.missionName,
       orgId,
-      missionId: currentId,
+      missionId: this.getCurrentId(),
       serviceTips: _.isEmpty(mngrMissionDetailInfo.missionDesc) ? ' ' : mngrMissionDetailInfo.missionDesc,
       servicePolicy: mngrMissionDetailInfo.servicePolicy,
     };
@@ -1013,10 +1029,10 @@ export default class PerformerView extends PureComponent {
     const {
       queryCustUuid,
       replace,
-      location: { pathname, query, query: { currentId } },
+      location: { pathname, query },
     } = this.props;
     const isSourceFromCreatorView = (st === INITIATOR && this.judgeTaskInApproval(statusCode));
-    if (currentId === (isSourceFromCreatorView ? mssnId : id)) return;
+    if (this.getCurrentId() === (isSourceFromCreatorView ? mssnId : id)) return;
 
     replace({
       pathname,
