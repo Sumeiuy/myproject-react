@@ -639,7 +639,7 @@ export default class PerformerView extends PureComponent {
             <CreatorViewDetail
               onPreview={this.handlePreview}
               priviewCustFileData={priviewCustFileData}
-              taskBasicInfo={{ ...taskBasicInfo, currentId }}
+              taskBasicInfo={{ ...taskBasicInfo, currentId: this.getCurrentId() }}
             />
           );
         }
