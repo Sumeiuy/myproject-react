@@ -444,11 +444,14 @@ export default class PerformerView extends PureComponent {
   getCurrentId() {
     const { list = {}, location: { query: { currentId, missionViewType } } } = this.props;
     const [firstItem = {}] = list.resultData;
+    if (currentId) {
+      return currentId;
+    }
     const currentViewType = getViewInfo(missionViewType).currentViewType;
     if (currentViewType === INITIATOR && this.state.isSourceFromCreatorView) {
-      return currentId || firstItem.mssnId;
+      return firstItem.mssnId;
     }
-    return currentId || firstItem.id;
+    return firstItem.id;
   }
 
   // 查询不同视图的详情信息
