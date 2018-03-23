@@ -13,7 +13,7 @@ import { message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
@@ -24,12 +24,6 @@ import styles from './createMainPostion.less';
 
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -136,19 +130,22 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 点击具体的员工
   @autobind
   selectHandle(value) {
-    const { searchPosition } = this.props;
-    searchPosition({
-      login: value.login,
-      integrationId: emp.getOrgId(),
-    }).then(() => {
-      const { positionList } = this.props;
-      const checkedRadio = _.findIndex(positionList, ['primary', true]);
-      this.setState({
-        checkedRadio,
-        defaultChecked: checkedRadio,
-        employeeId: value.login,
+    // 当前选择的员工不为空时，请求接口
+    if (!_.isEmpty(value)) {
+      const { searchPosition } = this.props;
+      searchPosition({
+        login: value.login,
+        integrationId: emp.getOrgId(),
+      }).then(() => {
+        const { positionList } = this.props;
+        const checkedRadio = _.findIndex(positionList, ['primary', true]);
+        this.setState({
+          checkedRadio,
+          defaultChecked: checkedRadio,
+          employeeId: value.login,
+        });
       });
-    });
+    }
   }
 
   // 选择某个职位
@@ -288,15 +285,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         <div className={styles.mainPositionWrapper} >
           <div className={styles.infoFormDiv}>
             <InfoForm label="服务经理" style={{ width: 'auto' }}>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="工号/姓名"
                 showObjKey="name"
                 objId="login"
-                value={''}
                 searchList={employeeList}
-                emitSelectItem={this.selectHandle}
-                emitToSearch={this.searchHandle}
-                boxStyle={dropDownSelectBoxStyle}
+                onSelect={this.selectHandle}
+                onSearch={this.searchHandle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}
               />
             </InfoForm>

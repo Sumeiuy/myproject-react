@@ -5,48 +5,37 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
-import { Radio, Modal, Button, Icon } from 'antd';
+import { Radio, Button, Tooltip } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { emp } from '../../../helper';
+import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
-import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
-import tableStyles from '../groupManage/groupTable.less';
-import Clickable from '../../../components/common/Clickable';
-import FilterCustomers from './step1/FilterCustomers';
+import logable from '../../../decorators/logable';
 import { isSightingScope } from '../helper';
+import { fspContainer } from '../../../config';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
+import FilterModal from './FilterModal';
 
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 10;
-const renderColumnTitle = [{
-  key: 'brok_id',
-  value: '经纪客户号',
-},
-{
-  key: 'name',
-  value: '客户名称',
-},
-{
-  key: 'empName',
-  value: '服务经理',
-},
-{
-  key: 'orgName',
-  value: '所在营业部',
-},
-{
-  key: 'lever_code',
-  value: '客户等级',
-},
-{
-  key: 'cust_type',
-  value: '客户类型',
-}];
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
+function transformDate(date) { // 2017-01-31 12:33:55.0
+  if (date) {
+    const dateStr = date.split(' ')[0]; // 2017-01-31
+    const dateArray = dateStr.split('-'); // ['2017', '01', '31']
+    return `${dateArray[0]}年${dateArray[1]}月${dateArray[2]}日`; // 2017年01月31日
+  }
+
+  return '--';
+}
+
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
@@ -78,23 +67,55 @@ export default class TaskSearchRow extends PureComponent {
       // currentSelectLabel = '',
     } = props;
 
-    const { argsOfQueryCustomer = {}, currentFilterObject, filterNumObject } = labelCust || {};
+    const {
+      argsOfQueryCustomer = {},
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+      filterNumObject,
+    } = labelCust || {};
+
     this.state = {
       curPageNum: INITIAL_PAGE_NUM,
       // totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
       modalVisible: false,
+      shouldrenderModal: false,
       title: '',
-      custTableData: [],
       currentFilterObject: _.isEmpty(currentFilterObject) ? {} : currentFilterObject,
+      currentAllFilterState: _.isEmpty(currentAllFilterState) ? {} : currentAllFilterState,
+      allFiltersCloseIconState: _.isEmpty(allFiltersCloseIconState) ? {} : allFiltersCloseIconState,
       filterNumObject: _.isEmpty(filterNumObject) ? {} : filterNumObject,
       // 当前筛选条件
       argsOfQueryCustomer,
       currentSelectLabelName: '',
       currentModalKey: '',
+      currentSource: '',
     };
     this.visible = false;
+  }
+
+  @autobind
+  onAccpeptFilter({
+    filterNumObject,
+    argsOfQueryCustomer,
+    currentFilterObject,
+    currentAllFilterState,
+    allFiltersCloseIconState,
+  }) {
+    const { labelId } = this.state;
+    this.setState({
+      filterNumObject,
+      argsOfQueryCustomer,
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+    });
+    this.props.onChange({
+      currentLabelId: labelId,
+      filterNumObject,
+    });
   }
 
   // 获取已筛选客户数
@@ -102,7 +123,63 @@ export default class TaskSearchRow extends PureComponent {
   // 获取当前筛选客户查询条件
   @autobind
   getSelectFilters() {
-    return _.pick(this.state, ['filterNumObject', 'argsOfQueryCustomer', 'currentFilterObject']);
+    return _.pick(this.state, [
+      'filterNumObject',
+      'argsOfQueryCustomer',
+      'currentFilterObject',
+      'currentAllFilterState',
+      'allFiltersCloseIconState',
+    ]);
+  }
+
+  @autobind
+  getPopupContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
+  }
+
+ /*  @autobind
+  getFilterInfo(filters) {
+    const stringArray = _.map(filters, (filterObj) => {
+      if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
+        return `${filterObj.filterLabel}：${filterObj.valueArray.join('，')}`;
+      }
+      return null;
+    });
+    return _.compact(stringArray).join(' ； ');
+  } */
+
+  @autobind
+  getSelectFiltersInfo(filters) {
+    if (filters) {
+      const title = this.renderFilterTooltip(filters);
+      if (title) {
+        return (
+          <Tooltip
+            title={title}
+            overlayClassName={styles.filtersTooltip}
+            getPopupContainer={this.getPopupContainer}
+            placement="bottomRight"
+            trigger="hover"
+          >
+            <div className={styles.selectFiltersInfoActive}>
+              查看筛选条件
+          </div>
+          </Tooltip>
+        );
+      }
+    }
+    return (
+      <div className={styles.selectFiltersInfo}>
+        无筛选条件
+      </div>
+    );
+  }
+
+  @autobind
+  changeModalVisible({ modalVisible }) {
+    this.setState({
+      modalVisible,
+    });
   }
 
   /**
@@ -111,8 +188,9 @@ export default class TaskSearchRow extends PureComponent {
  * @param {*} curPageNum 当前页
  * @param {*} pageSize 当前页条目
  */
+  @autobind
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople } = this.props;
+    const { isAuthorize, orgId, getLabelPeople, onChange } = this.props;
     const { argsOfQueryCustomer } = this.state;
     let payload = {
       curPageNum,
@@ -132,16 +210,13 @@ export default class TaskSearchRow extends PureComponent {
     } else {
       payload.ptyMngId = emp.getId();
     }
-    // 存放可开通、已开通、风险等级、客户类型、客户性质的数组
-    const filtersList = [];
+
     if (!_.isEmpty(filter)) {
-      const { filters, labels } = getCustomerListFilters(filter, labelId, filtersList);
+      const { filters, labels } = getCustomerListFilters(filter, labelId);
       payload.filtersReq = filters;
       payload.labels = labels;
     }
-    if (!_.isEmpty(filtersList)) {
-      payload.filtersReq = filtersList;
-    }
+
     // 获取客户列表
     getLabelPeople(payload).then(() => {
       const { filterNumObject } = this.state;
@@ -173,8 +248,22 @@ export default class TaskSearchRow extends PureComponent {
           };
         }
 
+        this.filterModal.setFilterTableData({
+          list,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
+
         this.setState({
-          custTableData: list,
+          filterNumObject: {
+            ...filterNumObject,
+            ...finalFilterNumObject,
+          },
+        });
+        onChange({
+          currentLabelId: labelId,
           filterNumObject: {
             ...filterNumObject,
             ...finalFilterNumObject,
@@ -185,7 +274,10 @@ export default class TaskSearchRow extends PureComponent {
 
     this.setState({
       argsOfQueryCustomer: {
-        [labelId]: payload,
+        ...argsOfQueryCustomer,
+        [labelId]: {
+          ...payload,
+        },
       },
     });
   }
@@ -198,10 +290,7 @@ export default class TaskSearchRow extends PureComponent {
     const currentLabelInfo = _.find(circlePeopleData, item => item.id === currentLabelId
       || item.labelMapping === currentLabelId) || {};
     let finalFilterNumObject = filterNumObject;
-    if (!(`${currentLabelId}` in finalFilterNumObject) ||
-      (finalFilterNumObject[`${currentLabelId}`] !== 0
-        && _.isEmpty(finalFilterNumObject[`${currentLabelId}`])
-      )) {
+    if (!(`${currentLabelId}` in finalFilterNumObject)) {
       finalFilterNumObject = {
         [currentLabelId]: currentLabelInfo.customNum,
       };
@@ -214,13 +303,21 @@ export default class TaskSearchRow extends PureComponent {
       },
       currentSelectLabelName: currentLabelInfo.labelName,
     });
-    onChange(currentLabelId);
+
+    onChange({
+      currentLabelId,
+      filterNumObject: {
+        ...filterNumObject,
+        ...finalFilterNumObject,
+      },
+      currentSelectLabelName: currentLabelInfo.labelName,
+    });
   }
 
-
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '筛查客户' } })
   handleSeeCust(value = {}) {
-    const { currentFilterObject } = this.state;
+    const { currentFilterObject, shouldrenderModal } = this.state;
     const { getFiltersOfSightingTelescope } = this.props;
     // 瞄准镜的label 时取获取对应的筛选条件
     if (isSightingScope(value.source)) {
@@ -235,6 +332,7 @@ export default class TaskSearchRow extends PureComponent {
       filter: currentFilterObject[value.labelMapping] || [],
     });
     this.setState({
+      shouldrenderModal: !shouldrenderModal,
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,
@@ -243,87 +341,23 @@ export default class TaskSearchRow extends PureComponent {
       currentSelectLabelName: value.labelName,
     });
     // 点击筛查客户，将当前标签选中
-    this.props.onChange(value.id || '');
-  }
-
-  @autobind
-  handleCancel() {
-    const { onCancel } = this.props;
-    this.setState({
-      modalVisible: false,
-    });
-    onCancel();
-  }
-
-  // 表格信息
-  @autobind
-  handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { labelId, currentFilterObject } = this.state;
-    this.queryPeopleOfLabel({
-      labelId,
-      curPageNum: currentPageNum,
-      pageSize: changedPageSize,
-      filter: currentFilterObject[labelId] || [],
-    });
-
-    this.setState({
-      curPageNum: currentPageNum,
+    this.props.onChange({
+      currentLabelId: value.id,
+      currentSelectLabelName: value.labelName,
     });
   }
 
-  @autobind
-  handlePageChange(nextPage, currentPageSize) {
-    const { labelId, currentFilterObject } = this.state;
-    this.queryPeopleOfLabel({
-      labelId,
-      curPageNum: nextPage,
-      pageSize: currentPageSize,
-      filter: currentFilterObject[labelId] || [],
-    });
-
-    this.setState({
-      curPageNum: nextPage,
-    });
-  }
-
-  /**
-   * 筛查客户弹窗中的 筛选项 变化值
-   */
-  @autobind
-  handleFilterChange(obj) {
-    const { labelId, currentFilterObject } = this.state;
-    const newFilterArray = currentFilterObject[labelId] ? [...currentFilterObject[labelId]] : [];
-    const index = _.findIndex(newFilterArray, o => o.split('.')[0] === obj.name);
-    const filterItem = `${obj.name}.${obj.value}`;
-    if (index > -1) {
-      newFilterArray[index] = filterItem;
-    } else {
-      newFilterArray.push(filterItem);
-    }
-    this.setState({
-      currentFilterObject: {
-        ...currentFilterObject,
-        [labelId]: newFilterArray,
-      },
-    }, () => {
-      this.queryPeopleOfLabel({
-        labelId,
-        curPageNum: INITIAL_PAGE_NUM,
-        pageSize: INITIAL_PAGE_SIZE,
-        filter: newFilterArray,
-      });
-    });
-  }
 
   // Y为高净值、N为非高净值
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData, currentSelectLabel } = this.props;
-    const { filterNumObject } = this.state;
+    const { filterNumObject, currentAllFilterState } = this.state;
     return _.map(circlePeopleData,
-      (item) => {
+      (item, index) => {
         const currentFilterNum = (`${item.id}` in filterNumObject ?
           filterNumObject[item.id] : item.customNum) || 0;
+        const currentSelectFilters = currentAllFilterState[item.id];
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
@@ -337,73 +371,176 @@ export default class TaskSearchRow extends PureComponent {
         const cls = classnames({
           [styles.divRows]: true,
           [styles.active]: currentSelectLabel === item.id,
+          [styles.clearBorder]: index === circlePeopleData.length - 1, // 最后一个item清除border
         });
 
+        const btncls = classnames({
+          [styles.seeCust]: true,
+          [styles.disabled]: item.customNum === 0, // 最后一个item清除border
+        });
+
+
         return (
-          <div className={cls} key={item.id || item.labelMapping}>
-            <Radio
-              value={item.id}
-              key={item.tagNumId || item.labelMapping}
-            >
-              <span
-                className={styles.title}
-                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
-              />
-              <span className={styles.filterCount}>
-                已筛选客户数：<i>{currentFilterNum}</i>
-              </span>
-              {item.customNum === 0 ? null :
-              <Clickable
-                onClick={() => this.handleSeeCust(item)}
-                eventName="/click/taskSearchRow/checkCust"
+          <div
+            className={cls}
+            key={item.id || item.labelMapping}
+          >
+            <div className={styles.titleContent}>
+              <Radio
+                value={item.id}
+                key={item.tagNumId || item.labelMapping}
               >
-                <Button className={styles.seeCust}>筛查客户</Button>
-              </Clickable>
-              }
-            </Radio>
-            <h4 className={styles.titExp}>
-              <span>创建人：<i>{item.createrName || '--'}</i></span>
-              <span>创建时间：<i>{item.createDate || '--'}</i></span>
-              <span>客户总数：<i>{item.customNum}</i></span>
-            </h4>
-            <h4
-              dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
-            />
+                <span
+                  className={styles.title}
+                  title={item.labelName}
+                  dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+                />
+                <span className={styles.titExp}>
+                  <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
+                </span>
+              </Radio>
+            </div>
+            <div className={styles.leftContent}>
+              <div
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
+              />
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.filterCount}>
+              已选客户数：<i>{transformNumber(currentFilterNum)}</i>
+            </div>
+            {this.getSelectFiltersInfo(currentSelectFilters)}
+            {
+              <Button
+                className={btncls}
+                disabled={item.customNum === 0}
+                onClick={() => this.handleSeeCust(item)}
+              >
+                筛查客户
+              </Button>
+            }
           </div>
         );
       });
   }
 
+  @autobind
+  renderBottomButton() {
+    return (<div>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        onClick={this.handleCancel}
+      >
+        取消
+      </Button>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        type="primary"
+        onClick={this.handleAccept}
+      >
+        确定
+      </Button>
+    </div>);
+  }
+
+  @autobind
+  renderFilterTooltip(filters) {
+    let stringArray = _.map(filters, (filterObj) => {
+      if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
+        return {
+          title: filterObj.filterLabel,
+          value: filterObj.valueArray.join('，'),
+        };
+      }
+      return null;
+    });
+    stringArray = _.compact(stringArray);
+    if (_.isEmpty(stringArray)) {
+      return null;
+    }
+    return (
+      <div className={styles.filterTooltip}>
+        {
+          _.map(stringArray, (filter, index) => (
+            <div className={styles.toolTipItem} key={index}>
+              <span className={styles.title}>{`${filter.title}：`}</span>
+              <span className={styles.tipsContent}>{filter.value}</span>
+            </div>))
+        }
+      </div>
+    );
+  }
+
   render() {
     const {
-      curPageNum = INITIAL_PAGE_NUM,
-      custTableData,
       currentFilterObject,
-      currentSource,
-      labelId,
-      filterNumObject,
+      currentAllFilterState,
       currentSelectLabelName,
+      allFiltersCloseIconState,
+      filterNumObject,
+      argsOfQueryCustomer,
+      labelId,
       modalVisible,
+      shouldrenderModal,
       currentModalKey,
+      curPageNum,
+      currentSource,
     } = this.state;
 
     const {
       currentSelectLabel,
-      isLoadingEnd,
-      isSightTelescopeLoadingEnd,
-      condition,
       dict,
       sightingTelescopeFilters,
+      circlePeopleData,
+      peopleOfLabelData,
+      getLabelPeople,
+      onChange,
+      orgId,
+      onCancel,
+      isAuthorize,
+      isLoadingEnd,
+      isSightTelescopeLoadingEnd,
     } = this.props;
-    if (_.isEmpty(condition)) {
-      return null;
-    }
 
-    const currentItems = currentFilterObject[labelId] || [];
-    const totalRecordNum = filterNumObject[labelId] || 0;
+    const cls = classnames({
+      [styles.divContent]: true,
+      [styles.clearBorder]: circlePeopleData.length === 0, // 没有item清除border
+      [styles.hidden]: circlePeopleData.length === 0, // 没有item隐藏
+    });
+
+    const filterModalProps = {
+      dict,
+      circlePeopleData,
+      peopleOfLabelData,
+      getLabelPeople,
+      onChange,
+      orgId,
+      onCancel,
+      isAuthorize,
+      sightingTelescopeFilters,
+      argsOfQueryCustomer,
+      currentFilterObject,
+      currentAllFilterState,
+      allFiltersCloseIconState,
+      currentSelectLabelName,
+      filterNumObject,
+      onAccpeptFilter: this.onAccpeptFilter,
+      labelId,
+      modalVisible,
+      changeModalVisible: this.changeModalVisible,
+      shouldrenderModal,
+      currentModalKey,
+      curPageNum,
+      currentSource,
+    };
 
     return (
-      <div className={styles.divContent}>
+      <div className={cls}>
         <RadioGroup
           name="radiogroup"
           onChange={this.change}
@@ -413,66 +550,7 @@ export default class TaskSearchRow extends PureComponent {
             this.renderRadioSection()
           }
         </RadioGroup>
-        <div className={styles.seeCust}>
-          <Modal
-            visible={modalVisible}
-            title={currentSelectLabelName || ''}
-            maskClosable={false}
-            closable={false}
-            // 关闭弹框时，销毁子元素，不然数据会复用,antd升级这个api才会有，所以先用key代替这个api
-            destroyOnClose
-            key={currentModalKey}
-            footer={
-              <Clickable
-                onClick={this.handleCancel}
-                eventName="/click/taskSearchRow/close"
-              >
-                <Button key="back" size="large">确定</Button>
-              </Clickable>
-            }
-            width={700}
-            wrapClassName={styles.labelCustModalContainer}
-          >
-            <div className={styles.filter}>
-              <FilterCustomers
-                dict={dict}
-                currentItems={currentItems}
-                onFilterChange={this.handleFilterChange}
-                source={currentSource}
-                sightingTelescopeFilters={sightingTelescopeFilters}
-              />
-            </div>
-            {
-              _.isEmpty(custTableData) ?
-                <div className={styles.emptyContent}>
-                  <span>
-                    <Icon className={styles.emptyIcon} type="frown-o" />
-                    暂无数据
-                    </span>
-                </div> :
-                <GroupTable
-                  pageData={{
-                    curPageNum,
-                    curPageSize: INITIAL_PAGE_SIZE,
-                    totalRecordNum,
-                  }}
-                  tableClass={
-                    classnames({
-                      [styles.labelCustTable]: true,
-                      [tableStyles.groupTable]: true,
-                    })
-                  }
-                  isFixedTitle={false}
-                  onSizeChange={this.handleShowSizeChange}
-                  onPageChange={this.handlePageChange}
-                  listData={custTableData}
-                  titleColumn={renderColumnTitle}
-                  isFirstColumnLink={false}
-                  columnWidth={100}
-                />
-            }
-          </Modal>
-        </div>
+        <FilterModal {...filterModalProps} ref={ref => this.filterModal = ref} />
         {
           <Loading loading={!isLoadingEnd || !isSightTelescopeLoadingEnd} />
         }

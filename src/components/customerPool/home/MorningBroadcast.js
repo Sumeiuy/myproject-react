@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import logable from '../../../decorators/logable';
 import styles from './morningBroadcast.less';
 import Marquee from '../../morningBroadcast/Marquee';
 import Audio from '../../common/audio/Audio';
@@ -22,8 +21,9 @@ import { request } from '../../../config';
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
-    sourceList: PropTypes.array.isRequired,
+    sourceList: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    queryAudioFile: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -33,9 +33,15 @@ export default class MorningBroadcast extends PureComponent {
     };
   }
 
-  onHandleListen(id) {
+  @autobind
+  onListen(newsId, audioFileId) {
+    const { queryAudioFile, sourceList = [] } = this.props;
+    const sourceFile = sourceList[newsId];
+    if (!sourceFile) {
+      queryAudioFile({ newsId, audioFileId });
+    }
     this.setState({
-      activeMusic: id,
+      activeMusic: newsId,
     });
   }
 
@@ -47,7 +53,6 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: '/click/morningBroadcast/newsListTab' })
   openNewTab(url) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -68,7 +73,6 @@ export default class MorningBroadcast extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: '/click/morningBroadcast/newsDetailTab' })
   handleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -98,16 +102,22 @@ export default class MorningBroadcast extends PureComponent {
         <div className={styles.listWrap}>
           {
             dataList
-              .map((item, index) => {
+              .map((item) => {
+                const {
+                  newsId,
+                  newsTypValue,
+                  title,
+                  audioFileId,
+                } = item;
                 if (activeMusic === item.newsId) {
-                  const sourceFile = sourceList[index];
+                  const sourceFile = sourceList[newsId];
                   const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
-                    <div key={item.newsId} className={styles.item}>
+                    <div key={newsId} className={styles.item}>
                       <div
                         className={styles.simpleName}
                       >
-                        <Marquee content={`${item.newsTypValue}：${item.title}`} speed={40} />
+                        <Marquee content={`${newsTypValue}：${title}`} speed={40} />
                       </div>
                       <div className={styles.music}>
                         <Audio src={audioSrc} autoPlay />
@@ -118,21 +128,20 @@ export default class MorningBroadcast extends PureComponent {
                 }
                 return (
                   <div
-                    key={item.newsId}
+                    key={newsId}
                     className={styles.item}
                   >
                     <span
                       className={styles.desc}
-                      onClick={() => { this.handleToDetail(item.newsId); }}
-                      title={item.title}
+                      onClick={() => { this.handleToDetail(newsId); }}
+                      title={title}
                     >
-                      {`${item.newsTypValue}：${item.title}`}
+                      {`${newsTypValue}：${title}`}
                     </span>
-                    {/*  首页收听暂时关闭 */}
-                    {/* <span */}
-                    {/* onClick={() => { this.onHandleListen(item.newsId); }} */}
-                    {/* className={styles.listen} */}
-                    {/* >收听</span> */}
+                    <span
+                      onClick={() => { this.onListen(newsId, audioFileId); }}
+                      className={styles.listen}
+                    >收听</span>
                   </div>
                 );
               })

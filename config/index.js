@@ -43,7 +43,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      prefix + '/morningBoradcast',
+      prefix + '/groovynoauth/fsp/biz/chgcommsion/queryCustCommission',
       {
         // target: 'http://168.61.8.81:5086', // SIT
         //  target: 'http://168.61.8.81:5090', // DOClever

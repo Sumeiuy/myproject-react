@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-07 13:41:39
+ * @Last Modified time: 2018-03-22 17:54:20
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -16,6 +16,7 @@ import confirm from '../common/Confirm';
 import DisabledSelect from './DisabledSelect';
 import RejectButtons from './RejectButtons';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import CommonUpload from '../common/biz/CommonUpload';
 import AutoComplete from '../common/AutoComplete';
 import CommissionLine from '../commissionAdjustment/CommissionLine';
@@ -103,9 +104,11 @@ export default class SingleDetailChange extends PureComponent {
         attachmentNum,
         item,
       } = base;
+      // 过滤掉action为删除的
+      const filterList = _.filter(item, product => product.action !== '删除');
       const userBaseCommission = this.pickUserOtherCommission();
       // 初始化将父产品的三匹配信息提取出来并保存
-      const initMatchs = item.map((p) => {
+      const initMatchs = filterList.map((p) => {
         const { riskRankMhrt, investProdMhrt, investTypeMhrt, prodCode, isMatch } = p;
         const matchInfo = {
           productCode: prodCode,
@@ -120,7 +123,7 @@ export default class SingleDetailChange extends PureComponent {
         newCommission,
         remark: comments,
         attachment: attachmentNum,
-        singleProductList: item,
+        singleProductList: filterList,
         singleProductMatchInfo: _.cloneDeep(initMatchs),
         ...userBaseCommission,
       });
@@ -496,7 +499,9 @@ export default class SingleDetailChange extends PureComponent {
   @autobind
   pickApprovalUserListInFlowBtns() {
     const { approvalBtns } = this.props;
-    const list = _.filter(approvalBtns, btn => _.includes(['commit', 'trueOver'], btn.operate))[0].flowAuditors;
+    // 为了防止接口传递的数据不存在做容错处理
+    const commitBtn = _.filter(approvalBtns, btn => _.includes(['commit', 'trueOver'], btn.operate))[0];
+    const list = (commitBtn && commitBtn.flowAuditors) || [];
     // 转化list的格式
     return list.map((item) => {
       const { empName, login, occupation } = item;
@@ -568,6 +573,8 @@ export default class SingleDetailChange extends PureComponent {
       attachment: attachmentNum,
       needDefaultText: false,
     };
+    // 客户当前股基佣金率
+    const newCurrentCom = _.isNull(customer.currentCommission) ? '--' : customer.currentCommission;
 
     return (
       <div className={styles.rejectContainer}>
@@ -593,31 +600,38 @@ export default class SingleDetailChange extends PureComponent {
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="佣金产品选择" />
-            <CommissionLine
-              label="目标股基佣金率"
-              labelWidth="110px"
-              needInputBox={false}
-              extra={
-                <span
-                  style={{
-                    fontSize: '14px',
-                    color: '#9b9b9b',
-                    lineHeight: '26px',
-                    paddingLeft: '4px',
-                  }}
+            <ul className={styles.commissionUlBox}>
+              <li className={styles.leftCurrentCom}>
+                <InfoItem label="当前股基佣金率" value={newCurrentCom} width="110px" valueColor="#9b9b9b" />
+              </li>
+              <li className={styles.rightTargetCom}>
+                <CommissionLine
+                  label="目标股基佣金率"
+                  labelWidth="110px"
+                  needInputBox={false}
+                  extra={
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: '#9b9b9b',
+                        lineHeight: '26px',
+                        paddingLeft: '4px',
+                      }}
+                    >
+                      ‰
+                    </span>
+                  }
                 >
-                  ‰
-                </span>
-              }
-            >
-              <AutoComplete
-                initValue={newCommission}
-                dataSource={singleGJ}
-                onChangeValue={this.changeTargetGJCommission}
-                onSelectValue={this.selectTargetGJCommission}
-                width="100px"
-              />
-            </CommissionLine>
+                  <AutoComplete
+                    initValue={newCommission}
+                    dataSource={singleGJ}
+                    onChangeValue={this.changeTargetGJCommission}
+                    onSelectValue={this.selectTargetGJCommission}
+                    width="100px"
+                  />
+                </CommissionLine>
+              </li>
+            </ul>
             <Transfer {...singleTransferProps} />
             <ThreeMatchTip info={singleProductMatchInfo} userList={singleProductList} />
           </div>

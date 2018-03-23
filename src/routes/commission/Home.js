@@ -57,6 +57,7 @@ const effects = {
   clearReduxState: 'commission/clearReduxState',
   singleCustValidate: 'commission/validateCustomerInSingle',
   onCheckSubsciCust: 'commission/validateCustomerInSub',
+  custDetailInfo: 'commission/getCustDetailInfo',
 };
 
 const mapStateToProps = state => ({
@@ -126,6 +127,7 @@ const mapStateToProps = state => ({
   singleCVR: state.commission.singleCustValidate,
   // 资讯订阅客户校验
   sciCheckCustomer: state.commission.sciCheckCustomer,
+  custDetailInfo: state.commission.custDetailInfo,
 });
 
 const getDataFunction = (loading, type, forceFull) => query => ({
@@ -137,6 +139,7 @@ const getDataFunction = (loading, type, forceFull) => query => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  push: routerRedux.push,
   // 获取批量佣金调整List
   getCommissionList: getDataFunction(true, effects.list),
   // 获取批量佣金调整Detail
@@ -189,6 +192,8 @@ const mapDispatchToProps = {
   singleCustValidate: getDataFunction(false, effects.singleCustValidate),
   // 资讯订阅调整客户校验
   onCheckSubsciCust: getDataFunction(false, effects.onCheckSubsciCust),
+  // 获取客户详细信息
+  getCustDetailInfo: getDataFunction(false, effects.custDetailInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -199,6 +204,7 @@ export default class CommissionHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
@@ -258,6 +264,8 @@ export default class CommissionHome extends PureComponent {
     unSubsciSubmitProcess: PropTypes.bool,
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
+    getCustDetailInfo: PropTypes.func.isRequired,
+    custDetailInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -265,6 +273,7 @@ export default class CommissionHome extends PureComponent {
     batchSubmitProcess: false,
     subsciSubmitProcess: false,
     unSubsciSubmitProcess: false,
+    custDetailInfo: {},
   }
 
   constructor(props) {
@@ -427,6 +436,13 @@ export default class CommissionHome extends PureComponent {
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
+  // 创建新的成功后，刷新页面列表
+  @autobind
+  refreshListAfterCreateSuccess() {
+    const { location: { query } } = this.props;
+    this.queryAppList(query);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -621,6 +637,9 @@ export default class CommissionHome extends PureComponent {
       singleCVR,
       onCheckSubsciCust,
       sciCheckCustomer,
+      push,
+      getCustDetailInfo,
+      custDetailInfo,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -707,6 +726,10 @@ export default class CommissionHome extends PureComponent {
                 singleCustVResult={singleCVR}
                 onCheckSubsciCust={onCheckSubsciCust}
                 sciCheckCustomer={sciCheckCustomer}
+                push={push}
+                getCustDetailInfo={getCustDetailInfo}
+                custDetailInfo={custDetailInfo}
+                onRefreshList={this.refreshListAfterCreateSuccess}
               />
             )
         }

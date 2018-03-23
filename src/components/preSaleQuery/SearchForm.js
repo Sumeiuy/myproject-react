@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Form, Button } from 'antd';
 
-import DropDownSelect from '../../components/common/dropdownSelect/index';
+import AutoComplete from '../../components/common/similarAutoComplete/index';
 
 import styles from './searchForm.less';
 
@@ -19,8 +19,8 @@ const FormItem = Form.Item;
 export default class SearchForm extends Component {
   @autobind
   reset() {
-    this.cust.clearSearchValue();
-    this.product.clearSearchValue();
+    this.cust.clearValue();
+    this.product.clearValue();
     this.props.onReset();
   }
 
@@ -37,24 +37,27 @@ export default class SearchForm extends Component {
       onQueryProductList,
     } = this.props;
     return (
-      <Form layout="inline" onSubmit={onSearch} className={styles.searchForm}>
+      // form 表单的onSubmit，和 子组件 AutoComplete的 enter方法冲突了。
+      // 将onSubmit方法，放到表单的button内，否则在AutoComplete内，点击enter，触发的是form的onSubmit方法
+      <Form layout="inline" className={styles.searchForm}>
         <FormItem label="选择客户" required className={styles.formItem}>
-          <DropDownSelect
+          <AutoComplete
             ref={ref => this.cust = ref}
-            value={selectedCustItem.custName ? `${selectedCustItem.custName}（${selectedCustItem.custNumber}）` : ''}
+            defaultSearchValue={selectedCustItem.custName ? `${selectedCustItem.custName}（${selectedCustItem.custNumber}）` : ''}
             placeholder="经纪客户号/客户名称"
             searchList={custList}
             showObjKey="custName"
             objId="custNumber"
-            emitSelectItem={onSelectCustItem}
-            emitToSearch={onQueryCustList}
+            onSelect={onSelectCustItem}
+            onSearch={onQueryCustList}
             name="custList"
-            boxStyle={{ width: '276px', border: '1px solid #e9e9e9', borderRadius: '4px' }}
+            isImmediatelySearch
+            width={276}
           />
         </FormItem>
         <FormItem label="选择产品" required className={styles.formItem}>
-          <DropDownSelect
-            value={
+          <AutoComplete
+            defaultSearchValue={
               selectedProductItem.productName ? `${selectedProductItem.productName}（${selectedProductItem.productCode}）` : ''
             }
             ref={ref => this.product = ref}
@@ -62,14 +65,21 @@ export default class SearchForm extends Component {
             searchList={productList}
             showObjKey="productName"
             objId="productCode"
-            emitSelectItem={onSelectProductItem}
-            emitToSearch={onQueryProductList}
+            onSelect={onSelectProductItem}
+            onSearch={onQueryProductList}
             name="productList"
-            boxStyle={{ width: '276px', border: '1px solid #e9e9e9', borderRadius: '4px' }}
+            isImmediatelySearch
+            width={276}
           />
         </FormItem>
         <FormItem className={styles.formItem} colon={false} label=" ">
-          <Button type="primary" htmlType="submit" className={styles.btn}>查询</Button>
+          <Button
+            type="primary"
+            className={styles.btn}
+            onClick={onSearch}
+          >
+            查询
+          </Button>
           <Button className={styles.btn} onClick={this.reset}>重置</Button>
         </FormItem>
       </Form>

@@ -16,19 +16,19 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import BottomFixedBox from './BottomFixedBox';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, env } from '../../../helper';
+import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
 
 import styles from './customerLists.less';
-
-// 0 表示没有任何权限
-const NOPERTMIT = 0;
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
+// 服务营业中的'所有'选项
+const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '所有' };
 
 /*
  * 格式化钱款数据和单位
@@ -81,7 +81,6 @@ export default class CustomerLists extends PureComponent {
     onSizeChange: PropTypes.func.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
-    source: PropTypes.string.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -100,7 +99,7 @@ export default class CustomerLists extends PureComponent {
     reorderValue: PropTypes.object.isRequired,
     onReorderChange: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func,
-    custRange: PropTypes.array.isRequired,
+    custRange: PropTypes.object.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -117,10 +116,12 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    permissionType: PropTypes.number.isRequired,
-    view360Permit: PropTypes.bool.isRequired,
     isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    hasTkMampPermission: PropTypes.bool.isRequired,
+    hasIndexViewPermission: PropTypes.bool.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -146,10 +147,7 @@ export default class CustomerLists extends PureComponent {
       modalKey: `modalKeyCount${modalKeyCount}`,
       emailCustId: '',
     };
-  }
-
-  componentDidMount() {
-    this.checkMainServiceManager(this.props);
+    this.checkMainServiceManager(props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -159,7 +157,7 @@ export default class CustomerLists extends PureComponent {
       custEmail,
       location: {
         query: {
-          ptyMng: prePtyMng,
+          ptyMngId: prePtyMngId,
         },
       },
      } = this.props;
@@ -169,7 +167,7 @@ export default class CustomerLists extends PureComponent {
       custEmail: nextCustEmail,
       location: {
         query: {
-          ptyMng,
+          ptyMngId,
         },
       },
      } = nextProps;
@@ -189,7 +187,7 @@ export default class CustomerLists extends PureComponent {
     if (custEmail !== nextCustEmail) {
       this.getEmail(nextCustEmail[currentCustId]);
     }
-    if (prePtyMng !== ptyMng) {
+    if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
     }
   }
@@ -219,13 +217,17 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { location: { query: { ptyMng } }, permissionType, empInfo } = props;
-    let bool = false;
-    if (ptyMng) {
-      bool = ptyMng.split('_')[1] === empInfo.empNum;
-    }
-    // 0表示当前用户没有权限
-    this.mainServiceManager = !!(bool) || permissionType === 0;
+    const { location: { query: { ptyMngId } } } = props;
+    const isMyCustomer = ptyMngId ? ptyMngId === emp.getId() : this.orgIdIsMsm();
+    // 是否主服务经理
+    this.mainServiceManager = !!(isMyCustomer) || !this.hasPermission();
+  }
+
+  // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
+  @autobind
+  orgIdIsMsm() {
+    const { location: { query: { orgId = '' } } } = this.props;
+    return orgId === MAIN_MAGEGER_ID;
   }
 
   /**
@@ -348,11 +350,12 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-        pathname,
+      pathname,
       },
       replace,
       handleSelect,
     } = this.props;
+
     const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
     handleSelect({ param: ptyMng });
@@ -361,7 +364,8 @@ export default class CustomerLists extends PureComponent {
       pathname,
       query: {
         ...query,
-        ptyMng,
+        ptyMngId: item.ptyMngId,
+        ptyMngName: encodeURIComponent(item.ptyMngName),
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -388,7 +392,7 @@ export default class CustomerLists extends PureComponent {
     const { orgId } = state;
     const obj = {};
     if (orgId) {
-      obj.orgId = orgId;
+      obj.departmentOrgId = orgId;
     }
     // 手动上传日志
     handleSelect({ param: obj.orgId });
@@ -428,6 +432,45 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
+  // 判断从首页不同入口处进入列表页有没有相应的权限
+  @autobind
+  hasPermission() {
+    const {
+      hasTkMampPermission,
+      hasIndexViewPermission,
+      location: { query: { source } },
+    } = this.props;
+    return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
+      (_.includes(ENTERLIST2, source) && hasIndexViewPermission);
+  }
+
+  /**
+   * 根据不同的权限入口选择不同的服务营业部的下拉列表数据
+   */
+  @autobind
+  switchCustRange() {
+    const {
+      custRange = {},
+      location: { query: { source } },
+    } = this.props;
+    const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
+    if (_.includes(ENTERLIST1, source)) {
+      // 从首页的潜在业务点击进入的列表页
+      if (this.orgIdIsMsm()) {
+        return [allSaleDepartment, ...taskManagerResp];
+      }
+      return taskManagerResp;
+    }
+    if (_.includes(ENTERLIST2, source)) {
+      // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
+      if (this.orgIdIsMsm()) {
+        return [allSaleDepartment, ...firstPageResp];
+      }
+      return firstPageResp;
+    }
+    return EMPTY_ARRAY;
+  }
+
   render() {
     const {
       isShowContactModal,
@@ -453,12 +496,10 @@ export default class CustomerLists extends PureComponent {
       custContactData,
       serviceRecordData,
       dict,
-      permissionType,
       custIncomeReqState,
       toggleServiceRecordModal,
       onReorderChange,
       reorderValue,
-      custRange,
       orgId,
       collectCustRange,
       expandAll,
@@ -476,9 +517,11 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      view360Permit,
       isCustServedByPostn,
       custServedByPostnResult,
+      hasTkMampPermission,
+      sendCustsServedByPostnResult,
+      isSendCustsServedByPostn,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -489,8 +532,12 @@ export default class CustomerLists extends PureComponent {
     const {
       selectedIds = '',
       selectAll,
-      ptyMng,
+      ptyMngId,
+      ptyMngName,
+      departmentOrgId,
     } = location.query;
+    const hasPermission = this.hasPermission();
+    const orgIdIsMsm = this.orgIdIsMsm();
     // current: 默认第一页
     // pageSize: 默认每页大小20
     // curTotal: 当前列表数据总数
@@ -519,27 +566,27 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
-    // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’
-    // ‘HTSC 首页指标查询’ 权限
-    if (permissionType !== NOPERTMIT) {
-      if (ptyMng && ptyMng.split('_')[1]) {
-        serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
+    // ‘HTSC 首页指标查询’ 权限, 任务管理权限
+    if (hasPermission) {
+      if (ptyMngId) {
+        serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
       } else {
         serviceManagerDefaultValue = '所有人';
       }
     }
+    if (orgId && orgIdIsMsm) {
+      serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    }
     // 当前所处的orgId,默认所有
-    let curOrgId = 'all';
+    let curOrgId = allSaleDepartment.id;
     // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
-    if (orgId) {
-      curOrgId = orgId;
-    } else if (permissionType !== NOPERTMIT) {
-      // 有 ‘HTSC 营销活动-总部执行岗’ 和 ‘HTSC 营销活动-分中心管理岗’ ‘HTSC 首页指标查询’权限
-      if (env.isInFsp()) {
-        curOrgId = window.forReactPosition.orgId;
-      } else {
-        curOrgId = empInfo.occDivnNum;
-      }
+    if (departmentOrgId) {
+      curOrgId = departmentOrgId;
+    } else if (orgId) {
+      // url中orgId=msm 时,服务营业部选中所有
+      curOrgId = orgIdIsMsm ? allSaleDepartment.id : orgId;
+    } else if (!this.mainServiceManager) {
+      curOrgId = emp.getOrgId();
     }
     const paginationOption = {
       current,
@@ -549,7 +596,6 @@ export default class CustomerLists extends PureComponent {
       onShowSizeChange: onSizeChange,
       isHideLastButton: true,
     };
-
     return (
       <div className="list-box">
         <div className={styles.listHeader}>
@@ -573,7 +619,7 @@ export default class CustomerLists extends PureComponent {
             <div className={styles.selectBox}>
               <SaleDepartmentFilter
                 orgId={curOrgId}
-                custRange={custRange}
+                custRange={this.switchCustRange()}
                 updateQueryState={this.changeSaleDepartment}
                 collectData={collectCustRange}
                 expandAll={expandAll}
@@ -581,7 +627,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={permissionType === NOPERTMIT}
+                disable={orgIdIsMsm}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}
@@ -598,7 +644,6 @@ export default class CustomerLists extends PureComponent {
                   item => <CustomerRow
                     empInfo={empInfo}
                     handleCheck={handleCheck}
-                    mainServiceManager={this.mainServiceManager}
                     dict={dict}
                     location={location}
                     getCustIncome={getCustIncome}
@@ -621,7 +666,6 @@ export default class CustomerLists extends PureComponent {
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
-                    view360Permit={view360Permit}
                     isCustServedByPostn={isCustServedByPostn}
                     custServedByPostnResult={custServedByPostnResult}
                   />,
@@ -637,14 +681,14 @@ export default class CustomerLists extends PureComponent {
             {...paginationOption}
           />
           {
-           /*  <Checkbox
-              checked={isAllSelectBool}
-              onChange={this.selectAll}
-              className={styles.selectAllTwo}
-              disabled={_.isEmpty(custList)}
-            >
-              全选
-          </Checkbox> */
+            /*  <Checkbox
+               checked={isAllSelectBool}
+               onChange={this.selectAll}
+               className={styles.selectAllTwo}
+               disabled={_.isEmpty(custList)}
+             >
+               全选
+           </Checkbox> */
           }
         </div>
         {
@@ -660,6 +704,9 @@ export default class CustomerLists extends PureComponent {
               entertype={entertype}
               clearCreateTaskData={clearCreateTaskData}
               onClick={this.goGroupOrTask}
+              hasTkMampPermission={hasTkMampPermission}
+              sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+              isSendCustsServedByPostn={isSendCustsServedByPostn}
             /> : null
         }
         {

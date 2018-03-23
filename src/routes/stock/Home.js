@@ -3,19 +3,19 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:38:05
+ * @Last Modified time: 2018-03-12 14:37:41
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Tabs, Table, Input, Message } from 'antd';
+import { Tabs, Table, Input } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import setHeight from '../../decorators/setHeight';
+import fspPatch from '../../decorators/fspPatch';
 import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import config from './config';
@@ -23,6 +23,7 @@ import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
+const EMPTY_PARAM = '暂无';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -43,7 +44,7 @@ const mapDispatchToProps = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@setHeight
+@fspPatch()
 export default class Stock extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
@@ -86,24 +87,28 @@ export default class Stock extends PureComponent {
   }
 
   componentDidMount() {
+    // 请求所有股票点评
     this.sendRequest({});
   }
 
   @autobind
-  onRowClick() {
+  onRowClick(record) {
+    const { id } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
-    push(`/stock/detail?type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
+    push(`/stock/detail?id=${id}&type=${type}&pageSize=${pageSize}&pageNum=${pageNum}&keyword=${keyword}`);
   }
 
   // tab 切换事件
   @autobind
   tabChangeHandle(key) {
+    const { keyword } = this.state;
     this.setState({
       type: key,
     }, () => {
       this.sendRequest({
         type: key,
+        keyword,
       });
     });
   }
@@ -120,10 +125,6 @@ export default class Stock extends PureComponent {
   @autobind
   searchHandle() {
     const { keyword } = this.state;
-    if (!keyword) {
-      Message.error('搜索内容不能为空');
-      return;
-    }
     this.sendRequest({
       keyword,
       page: 1,
@@ -134,9 +135,11 @@ export default class Stock extends PureComponent {
   // 翻页事件
   @autobind
   pageChangeHandle(page, pageSize) {
+    const { keyword } = this.state;
     const payload = {
       page,
       pageSize,
+      keyword,
     };
     this.setState({
       pageSize,
@@ -179,22 +182,35 @@ export default class Stock extends PureComponent {
 
   @autobind
   wrapperTD(array) {
-    const newArray = _.cloneDeep(array);
+    const { type } = this.state;
+    // 为包裹的 div 设置 className
+    const boolArray = typeList.map(item => type === item);
+    const divClassName = classnames({
+      [styles[typeList[0]]]: boolArray[0],
+      [styles[typeList[1]]]: boolArray[1],
+      [styles[typeList[2]]]: boolArray[2],
+    });
+    let resultArr = { ...array };
     if (!_.isEmpty(array)) {
-      newArray[0].render = text => <div>{text}</div>;
+      resultArr = array.map((item) => {
+        const newItem = item;
+        newItem.render = text => <div className={divClassName} title={text || EMPTY_PARAM}>
+          {text || EMPTY_PARAM}
+        </div>;
+        return newItem;
+      });
     }
-    return newArray;
+    return resultArr;
   }
 
   render() {
     const { type, keyword, pageNum, pageSize, total } = this.state;
     const { list } = this.props;
-
     // 分页
     const paginationOption = {
-      pageSize,
-      current: pageNum,
-      total,
+      pageSize: Number(pageSize),
+      current: Number(pageNum),
+      total: Number(total),
       onChange: this.pageChangeHandle,
     };
 
@@ -225,6 +241,7 @@ export default class Stock extends PureComponent {
                 dataSource={list}
                 pagination={false}
                 onRowClick={this.onRowClick}
+                rowKey="id"
               />
               <Pagination {...paginationOption} />
             </TabPane>))

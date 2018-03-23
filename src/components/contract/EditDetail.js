@@ -17,7 +17,7 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import Select from '../common/Select';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import DatePicker from '../common/datePicker';
 import ApproveList from '../common/approveList';
 import styles from './editDetail.less';
@@ -35,12 +35,6 @@ const subscribeValue = operationList[0].value;
 // const unsubscribe = operationList[1].value;
 // 子类型列表
 const childTypeList = _.filter(subType, v => v.label !== '全部');
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 // 时间选择组件样式
 const datePickerBoxStyle = {
   width: 220,
@@ -231,15 +225,14 @@ export default class EditDetail extends PureComponent {
     // 可申请客户列表 html
     const canApplyCustHtml = (
       <InfoForm label="客户" required>
-        <DropDownSelect
+        <AutoComplete
           placeholder="经纪客户号/客户名称"
           showObjKey="custName"
           objId="cusId"
-          value={''}
           searchList={canApplyCustList}
-          emitSelectItem={this.handleSelectCust}
-          emitToSearch={getCanApplyCustList}
-          boxStyle={dropDownSelectBoxStyle}
+          onSelect={this.handleSelectCust}
+          onSearch={getCanApplyCustList}
+          isImmediatelySearch
         />
       </InfoForm>
     );
@@ -294,15 +287,14 @@ export default class EditDetail extends PureComponent {
     // 合约编号 html
     const contractNumHtml = (
       <InfoForm label="合约编号" required>
-        <DropDownSelect
+        <AutoComplete
           placeholder="合约编号"
           showObjKey="contractName"
           objId="id"
-          value={''}
           searchList={contractNumList}
-          emitSelectItem={this.handleSelectContractNum}
-          emitToSearch={getContractNumList}
-          boxStyle={dropDownSelectBoxStyle}
+          onSelect={this.handleSelectContractNum}
+          onSearch={getContractNumList}
+          isImmediatelySearch
         />
       </InfoForm>
     );

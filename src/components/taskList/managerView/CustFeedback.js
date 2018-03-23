@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 16:16:42
+ * @Last Modified time: 2018-03-22 15:38:34
  * 客户反馈
  */
 
@@ -80,7 +80,7 @@ export default class CustFeedback extends PureComponent {
    */
   @autobind
   getCurrentColor(index, childIndex) {
-    let newChildIndex = Number(childIndex) + 1;
+    let newChildIndex = childIndex;
     if (newChildIndex > 4) {
       newChildIndex = 4;
     }
@@ -90,26 +90,34 @@ export default class CustFeedback extends PureComponent {
   @autobind
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
+
     let currentLevel = {};
     if (!_.isEmpty(parent)) {
       // 代表点击的是外圈，也就是二级反馈
       // 取出parent的key
       currentLevel = {
         feedBackIdL1: parent.key,
-        name: `选择【${parent.name}】的客户`,
+        feedbackName: parent.name,
+        // 等二级反馈再改成动态的
+        // feedbackTitle: `选择【${parent.name}】的客户`,
+        feedbackTitle: '已服务反馈客户',
       };
     } else if (!_.isEmpty(children)) {
       // 代表点击的是内圈，也就是一级反馈
       // 取出当前的key
       currentLevel = {
         feedBackIdL1: key,
-        name: `选择【${name}】的客户`,
+        feedbackName: name,
+        // 等二级反馈再改成动态的
+        // feedbackTitle: `选择【${name}】的客户`,
+        feedbackTitle: '已服务反馈客户',
       };
     }
 
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
-      currentLevel,
+      // 当前选中的反馈类型
+      currentSelectFeedback: currentLevel,
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,
@@ -307,15 +315,22 @@ export default class CustFeedback extends PureComponent {
           <div className={styles.chartExp}>
             {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
               <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, item =>
-                <div
-                  className={styles.content}
-                  key={item.key}
-                >
-                  <i className={styles.parentIcon} style={{ background: item.color }} />
-                  <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
-                </div>,
-              )}
+              _.map(level1Data, (item) => {
+                // 过滤掉没有比例的数据
+                if (item.value === 0) {
+                  return null;
+                }
+
+                return (
+                  <div
+                    className={styles.content}
+                    key={item.key}
+                  >
+                    <i className={styles.parentIcon} style={{ background: item.color }} />
+                    <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>

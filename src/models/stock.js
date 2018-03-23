@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-03-01 14:34:40
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-01 15:06:30
+ * @Last Modified time: 2018-03-09 14:54:58
  */
 
 import { stock as api } from '../api';
@@ -17,8 +17,7 @@ export default {
   },
   reducers: {
     getStockListSuccess(state, action) {
-      console.warn('action', action);
-      const { paylaod: { resultData: { list = [], page = {} } } } = action;
+      const { payload: { resultData: { list = [], page = {} } } } = action;
       return {
         ...state,
         list,
@@ -26,10 +25,13 @@ export default {
       };
     },
     getStockDetailSuccess(state, action) {
-      const { paylaod: { resultData = {} } } = action;
+      const { payload = {} } = action;
       return {
         ...state,
-        detail: resultData,
+        detail: {
+          ...state.detail,
+          [payload.key]: payload.value,
+        },
       };
     },
   },
@@ -39,15 +41,19 @@ export default {
       const response = yield call(api.getStockList, payload);
       yield put({
         type: 'getStockListSuccess',
-        paylaod: response,
+        payload: response,
       });
     },
     // 根据 ID 查询详情
     * getStockDetail({ payload }, { call, put }) {
       const response = yield call(api.getStockDetail, payload);
+      const obj = {
+        key: payload.id,
+        value: response.resultData || {},
+      };
       yield put({
         type: 'getStockDetailSuccess',
-        paylaod: response,
+        payload: obj,
       });
     },
   },

@@ -16,6 +16,7 @@ const preDefine = {
   custInvestRt: '该客户投资偏好信息缺失，先请客户补齐信息！',
   custInvestTerm: '该客户投资期限信息缺失，先请客户补齐信息！',
   custPass: '该客户通过检验，可以创建申请！',
+  unfinish: '当前客户存在未完成订单，请点击确认前往360视图订单流水中进行处理！',
 };
 
 export default preDefine;

@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
 
+import { openFspTab, closeRctTab } from '../../utils';
 import confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
@@ -29,6 +30,10 @@ const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
 const newSubTypes = _.filter(subType, item => !!item.value);
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
@@ -71,6 +76,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 资讯订阅调整客户校验
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    getCustDetailInfo: PropTypes.func.isRequired,
+    custDetailInfo: PropTypes.object,
+    // 刷新列表
+    onRefreshList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -79,6 +89,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     otherRatios: [],
     consultSubId: '',
     consultUnsubId: '',
+    custDetailInfo: {},
   }
 
   constructor(props) {
@@ -342,8 +353,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
         message.success('批量佣金调整提交成功');
         this.submitLoadiing(false);
         this.clearApprovalBoard();
-        const { modalKey, onClose } = this.props;
+        const { modalKey, onClose, onRefreshList } = this.props;
         onClose(modalKey);
+        onRefreshList();
       },
       () => {
         message.error('批量佣金调整提交失败');
@@ -383,10 +395,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.onSubmitSingle(params).then(() => {
       message.success('单佣金调整提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('单佣金调整提交失败');
       this.submitLoadiing(false);
@@ -420,10 +433,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.submitSub(params).then(() => {
       message.success('资讯订阅提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('资讯订阅提交失败');
       this.submitLoadiing(false);
@@ -457,10 +471,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     this.props.submitUnSub(unParams).then(() => {
       message.success('资讯退订提交成功');
-      const { modalKey, onClose } = this.props;
+      const { modalKey, onClose, onRefreshList } = this.props;
       this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
+      onRefreshList();
     }, () => {
       message.error('资讯退订提交失败');
       this.submitLoadiing(false);
@@ -581,6 +596,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
+  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
+  @autobind
+  clearSelectCust() {
+    this.singleBoard.clearSelectCustCurComValue();
+  }
+
   // 根据职责权限进行子类型选项
   @autobind
   authorityOptions(subTypes) {
@@ -652,6 +673,39 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.unSubBoard = input.getWrappedInstance();
   }
 
+  // 360订单流程 路由
+  @autobind
+  orderFlowRoute(cust) {
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-产品订单',
+      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
+      activeSubTab: ['产品订单', '订单流水'],
+      // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，360视图不会刷新，且React界面如果有弹框存在，不会消失
+      forceRefresh: true,
+    };
+    const { push, getCustDetailInfo } = this.props;
+    const { custEcom } = cust;
+    // 请求 ptyId， custId， rowId 跳转到360的必须参数
+    getCustDetailInfo({ brokerNumber: custEcom }).then(
+      () => {
+        const { custDetailInfo } = this.props;
+        const { custType, ptyId, custId, rowId } = custDetailInfo || {};
+        // pOrO代表个人客户，机构客户
+        const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
+        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+        openFspTab({
+          routerAction: push,
+          pathname: '/fsp/customerCenter/customerDetail',
+          url,
+          param,
+        });
+        // 关闭当前tab
+        closeRctTab({ id: 'FSP_BUSINESS_APPLYMENT_COMMISSION' });
+      },
+    );
+  }
+
   render() {
     const {
       modalKey,
@@ -717,6 +771,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
+                      clearSelectCust={this.clearSelectCust}
+                      unfinishRoute={this.orderFlowRoute}
                     />
                   </CommissionLine>
                 )

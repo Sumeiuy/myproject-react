@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import { autobind } from 'core-decorators';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import { checkSpecialCharacter } from '../../../decorators/checkSpecialCharacter';
 import Button from '../../common/Button';
 import styles from './addNewGroup.less';
@@ -49,6 +49,7 @@ export default class AddNewGroup extends PureComponent {
     count: PropTypes.string.isRequired,
   };
 
+  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   addNewGroupSubmit = (e) => {
     e.preventDefault();
 
@@ -98,12 +99,7 @@ export default class AddNewGroup extends PureComponent {
             <span className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</span>
           </div>
           <div className={styles.rightSection}>
-            <Clickable
-              onClick={goBack}
-              eventName="/click/addNewGroup/cancel"
-            >
-              <Button>取消</Button>
-            </Clickable>
+            <Button onClick={goBack}>取消</Button>
             <Button type="primary" htmlType="submit">保存</Button>
           </div>
         </FormItem>

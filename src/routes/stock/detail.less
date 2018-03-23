@@ -1,25 +1,29 @@
 .detailWrapper {
   padding: 20px;
   height: 100%;
+  overflow: hidden;
   background-color: #fff;
+  :global {
+    .ant-layout-header {
+      height: auto !important;
+      line-height: inherit !important;
+    }
+  }
   .header {
-    height: 98px;
     margin: 0 50px;
     background: #fff;
     text-align: center;
     border-bottom: 1px solid #e9e9e9;
-    position: relative;
     h2 {
       font-size: 24px;
       color: #333;
+      line-height: 34px;
     }
     h3 {
       font-size: 14px;
       color: #a1a1a1;
-      position: absolute;
       width: 100%;
-      margin-left: -50px;
-      bottom: 4px;
+      margin-top: 10px;
       line-height: 20px;
     }
   }
@@ -27,15 +31,11 @@
     margin: 0 50px;
     text-indent: 2em;
     overflow: auto;
-    p {
+    .contentDiv, p {
       line-height: 28px;
-      margin-top: 18px;
       font-size: 14px;
       &:first-child {
-        margin-top: 8px;
-      }
-      &:last-child {
-        margin-bottom: 8px;
+        margin-top: 4px;
       }
     }
   }
@@ -44,14 +44,26 @@
     border-top: 1px solid #e9e9e9;
     .left {
       float: left;
-      i {
+      a {
         margin-right: 6px;
+        i {
+          margin-right: 4px;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+        &:first-child i {
+          font-size: 19px;
+        }
+        &:last-child i {
+          font-size: 16px;
+        }
       }
     }
     .right {
       float: right;
       i {
         margin-right: 4px;
+        font-size: 18px;
         color: #108ee9;
       }
       a {

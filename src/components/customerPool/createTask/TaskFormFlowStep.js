@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-07 15:59:50
+ * @Last Modified time: 2018-03-22 10:15:36
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
@@ -186,6 +186,7 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePreviousStep() {
     const { storedCreateTaskData,
       storedCreateTaskData: { taskFormData, resultTrackData, missionInvestigationData },
@@ -256,6 +257,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     const { current } = this.state;
     // 下一步
@@ -270,7 +272,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.props;
 
     const { tagetCustModel } = taskBasicInfo || {};
-    const { custNum, custSource: taskSource } = tagetCustModel || {};
+    const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
     const {
       needMissionInvestigation,
@@ -434,6 +436,12 @@ export default class TaskFormFlowStep extends PureComponent {
         current: current + 1,
         custSource,
         custTotal: count || custNum,
+        labelCust: {
+          // 标签描述
+          labelDesc: custLabelDesc,
+        },
+        // 如果当前客户来源是标签圈人，则代表是第二个入口
+        currentEntry: custSource === '标签圈人' ? 1 : 0,
       });
       // 只有能够下一步，再update
       if (canGoNextStep) {
@@ -453,6 +461,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 自建任务提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
   handleSubmit() {
     const {
       storedCreateTaskData,
@@ -614,6 +623,7 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     // 关闭当前tab
     this.props.onCloseTab();
@@ -621,6 +631,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 获取审批流程按钮
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '终止' } })
   handleStopFlow() {
     const { getApprovalBtn, location: { query: { flowId } } } = this.props;
     getApprovalBtn({
@@ -691,6 +702,7 @@ export default class TaskFormFlowStep extends PureComponent {
       storedCreateTaskData: {
         currentSelectRecord = {},
         currentSelectRowKeys = [],
+        currentEntry,
       },
       isApprovalListLoadingEnd,
       isShowApprovalModal,
@@ -758,37 +770,43 @@ export default class TaskFormFlowStep extends PureComponent {
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={onCancel}
         creator={creator}
+        currentEntry={currentEntry}
       />,
     }];
 
     const cancleBtn = source === 'returnTask' ?
-      (<Clickable
-        onClick={this.handleStopFlow}
-        eventName="/click/taskFormFlowStep/cancel"
-      >
-        <Button className={styles.cancelBtn} type="default" disabled={isDisabled}>
+      (
+        <Button
+          className={styles.cancelBtn}
+          type="default"
+          disabled={isDisabled}
+          onClick={this.handleStopFlow}
+        >
           终止
         </Button>
-      </Clickable>) :
-      (<Clickable
-        onClick={this.handleCancel}
-        eventName="/click/taskFormFlowStep/cancel"
-      >
-        <Button className={styles.cancelBtn} type="default">
+      ) :
+      (
+        <Button
+          className={styles.cancelBtn}
+          type="default"
+          onClick={this.handleCancel}
+        >
           取消
         </Button>
-      </Clickable>);
+      );
 
     // 根据来源判断按钮类型
     const stopBtn = source === 'returnTask' ?
-      (<Clickable
-        onClick={this.handleStopFlow}
-        eventName="/click/taskFormFlowStep/cancel"
-      >
-        <Button className={styles.stopBtn} type="default" disabled={isDisabled}>
+      (
+        <Button
+          className={styles.stopBtn}
+          type="default"
+          disabled={isDisabled}
+          onClick={this.handleStopFlow}
+        >
           终止
         </Button>
-      </Clickable>) : null;
+      ) : null;
 
     // 灰度发布展示结果跟踪和任务调查，默认不展示
     if (!envHelper.isGrayFlag()) {
@@ -818,39 +836,39 @@ export default class TaskFormFlowStep extends PureComponent {
             &&
             <div>
               {stopBtn}
-              <Clickable
+              <Button
+                className={styles.prevStepBtn}
+                type="default"
+                disabled={isDisabled}
                 onClick={this.handlePreviousStep}
-                eventName="/click/taskFormFlowStep/lastStep"
               >
-                <Button className={styles.prevStepBtn} type="default" disabled={isDisabled}>
-                  上一步
+                上一步
               </Button>
-              </Clickable>
             </div>
           }
           {
             current < stepsCount - 1
             &&
-            <Clickable
+            <Button
+              className={styles.handlePreviousStep}
+              type="primary"
+              disabled={!canGoNextStep}
               onClick={this.handleNextStep}
-              eventName="/click/taskFormFlowStep/nextStep"
             >
-              <Button className={styles.handlePreviousStep} type="primary" disabled={!canGoNextStep}>
-                下一步
-              </Button>
-            </Clickable>
+              下一步
+            </Button>
           }
           {
             current === stepsCount - 1
             &&
-            <Clickable
+            <Button
+              className={styles.confirmBtn}
+              type="primary"
+              disabled={isDisabled}
               onClick={this.handleSubmit}
-              eventName="/click/taskFormFlowStep/submit"
             >
-              <Button className={styles.confirmBtn} type="primary" disabled={isDisabled}>
-                确认无误，提交
-              </Button>
-            </Clickable>
+              确认无误，提交
+            </Button>
           }
         </div>
       </div>
