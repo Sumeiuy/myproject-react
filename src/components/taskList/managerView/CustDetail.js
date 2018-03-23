@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 19:58:10
+ * @Last Modified time: 2018-03-23 10:08:36
  * 客户明细数据
  */
 
@@ -150,6 +150,7 @@ export default class CustDetail extends PureComponent {
         isEntryFromPie,
         currentFilter,
       } = this.props;
+
       const filterObject = _.find(currentFilter, item =>
         item.feedBackIdL1 === key) || EMPTY_OBJECT;
       // 获取
@@ -413,9 +414,6 @@ export default class CustDetail extends PureComponent {
   renderFilterOption() {
     const { currentFilter } = this.props;
     return _.map(currentFilter, item => ({
-      // show: true,
-      // value: item.feedBackIdL1,
-      // label: item.feedbackName,
       key: item.feedBackIdL1,
       value: item.feedbackName,
     }));

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 15:38:34
+ * @Last Modified time: 2018-03-23 10:17:20
  * 客户反馈
  */
 
@@ -90,7 +90,11 @@ export default class CustFeedback extends PureComponent {
   @autobind
   handlePieClick(params) {
     const { data: { children, parent, key, name } } = params;
-
+    const { level1Data } = this.state;
+    const currentFeedback = _.map(level1Data, item => ({
+      feedBackIdL1: item.key,
+      feedbackName: item.name,
+    }));
     let currentLevel = {};
     if (!_.isEmpty(parent)) {
       // 代表点击的是外圈，也就是二级反馈
@@ -121,6 +125,7 @@ export default class CustFeedback extends PureComponent {
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,
+      currentFeedback,
     });
   }
 
