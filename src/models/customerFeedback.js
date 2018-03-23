@@ -3,7 +3,7 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 15:15:46
+ * @Last Modified time: 2018-03-23 20:26:37
  */
 
 import { customerFeedback as api } from '../api';
@@ -114,6 +114,7 @@ export default {
             pageNum: newQuery.pageNum || 1,
             pageSize: newQuery.pageSize || 20,
           };
+          console.log('feedbackPayload', feedbackPayload);
           if (newQuery.parentActiveKey !== oldQuery.parentActiveKey) { // 父级tab状态发生变化请求对应面板数据
             if (newQuery.parentActiveKey === SECOND_TAB) {
               dispatch({ type: 'getFeedbackList', payload: feedbackPayload });
