@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 10:15:36
+ * @Last Modified time: 2018-03-23 21:16:23
  */
 
 import React, { PureComponent } from 'react';
@@ -267,7 +267,7 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count } },
+      location: { query: { source, count, labelDesc } },
       taskBasicInfo,
     } = this.props;
 
@@ -438,7 +438,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
         labelCust: {
           // 标签描述
-          labelDesc: custLabelDesc,
+          labelDesc: labelDesc || custLabelDesc,
         },
         // 如果当前客户来源是标签圈人，则代表是第二个入口
         currentEntry: custSource === '标签圈人' ? 1 : 0,
