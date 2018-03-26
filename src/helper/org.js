@@ -15,6 +15,15 @@ const org = {
   isFiliale(level) {
     return level === config.FILIALE_LEVEL;
   },
+
+  /**
+   * 判断当前登录人部门是否是经总
+   * @author Wangjunjun
+   * @returns {Boolean}
+   */
+  isManagementHeadquarters(orgId) {
+    return orgId === config.MANAGEMENTHEADQUARTERS_ORGID;
+  },
 };
 
 export default org;

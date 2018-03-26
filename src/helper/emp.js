@@ -108,12 +108,11 @@ const emp = {
 
   /**
    * 判断当前登录人部门是否是经总
-   * 经纪及财富管理部 orgId='ZZ001041'
    * @author Wangjunjun
    * @returns {Boolean}
    */
   isManagementHeadquarters(orgId) {
-    return orgId === 'ZZ001041';
+    return org.isManagementHeadquarters(orgId);
   },
 };
 

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 10:15:36
+ * @Last Modified time: 2018-03-23 23:01:41
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,9 @@ import styles from './taskFormFlowStep.less';
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+
+// 标签来源，热点标签，普通标签，搜索标签
+const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -255,6 +258,15 @@ export default class TaskFormFlowStep extends PureComponent {
     return custSources;
   }
 
+  /**
+   * 判断来源是否来自标签,热点标签，普通标签，搜索出来的标签
+   */
+  @autobind
+  judgeSourceIsFromLabel() {
+    const { location: { query: { source } } } = this.props;
+    return _.includes(SOURCE_FROM_LABEL, source);
+  }
+
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
@@ -267,7 +279,7 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count } },
+      location: { query: { source, count, labelDesc } },
       taskBasicInfo,
     } = this.props;
 
@@ -438,10 +450,10 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
         labelCust: {
           // 标签描述
-          labelDesc: custLabelDesc,
+          labelDesc: labelDesc || custLabelDesc,
         },
         // 如果当前客户来源是标签圈人，则代表是第二个入口
-        currentEntry: custSource === '标签圈人' ? 1 : 0,
+        currentEntry: (custSource === '标签圈人' || this.judgeSourceIsFromLabel()) ? 1 : 0,
       });
       // 只有能够下一步，再update
       if (canGoNextStep) {

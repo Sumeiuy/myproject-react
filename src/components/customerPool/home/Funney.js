@@ -26,21 +26,19 @@ function getDataConfig(data) {
   }));
 }
 
-function linkToList({ item, push }) {
-  return function linkToListHandle() {
-    if (item.key !== SERVICE_CUST_NUM) {
-      return;
-    }
-    openFspTab({
-      routerAction: push,
-      url: '/customer/manage/showCustManageTabWin',
-      param: {
-        id: 'FSP_CUST_TAB_CENTER_MANAGE',
-        title: '客户管理',
-        forceRefresh: true,
-      },
-    });
-  };
+function linkToList(item, push) {
+  if (item.key !== SERVICE_CUST_NUM) {
+    return;
+  }
+  openFspTab({
+    routerAction: push,
+    url: '/customer/manage/showCustManageTabWin',
+    param: {
+      id: 'FSP_CUST_TAB_CENTER_MANAGE',
+      title: '客户管理',
+      forceRefresh: true,
+    },
+  });
 }
 
 function renderIntro(data, push) {
