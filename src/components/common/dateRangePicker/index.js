@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-19 10:25:47
+ * @Last Modified time: 2018-03-26 15:41:42
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -16,24 +16,29 @@ import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 
-import { dom } from '../../../helper';
+// import { dom } from '../../../helper';
+// import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from './utils';
 
 import styles from './index.less';
 
 export default class CommonDateRangePicker extends PureComponent {
   static propTypes = {
     displayFormat: PropTypes.string,
-    allowPastDays: PropTypes.bool,
     placeholderText: PropTypes.arrayOf(PropTypes.string),
     initialDate: PropTypes.arrayOf(PropTypes.object).isRequired,
     onChange: PropTypes.func,
+    isOutsideRange: PropTypes.func,
+    selectStart: PropTypes.func,
+    selectEnd: PropTypes.func,
   }
   static defaultProps = {
-    allowPastDays: true,
     displayFormat: 'YYYY-MM-DD',
     placeholderText: ['开始时间', '结束时间'],
     initialDate: [null, null],
     onChange: _.noop,
+    isOutsideRange: () => false,
+    selectStart: _.noop,
+    selectEnd: _.noop,
   }
 
   constructor(props) {
@@ -60,25 +65,26 @@ export default class CommonDateRangePicker extends PureComponent {
   // 计算日历下拉框的位置
   @autobind
   calcCalendarPosition() {
-    const { width: viewWidth } = dom.getRect(document.body);
-    const { left, width: drpWidth } = dom.getRect(this.drp);
-    const picker = this.drp.querySelector('.DateRangePicker_picker');
-    if (picker) {
-      const { width } = dom.getRect(picker);
-      const leftPlusWidth = left + width;
-      if (leftPlusWidth > viewWidth) {
-        const realLeft = left - (width - drpWidth);
-        dom.setStyle(picker, 'left', `${realLeft}px`);
-      } else {
-        dom.setStyle(picker, 'left', `${left}px`);
-      }
-    }
+    // const { width: viewWidth } = dom.getRect(document.body);
+    // const { left, width: drpWidth } = dom.getRect(this.drp);
+    // const picker = this.drp.querySelector('.DateRangePicker_picker');
+    // if (picker) {
+    //   const { width } = dom.getRect(picker);
+    //   const leftPlusWidth = left + width;
+    //   if (leftPlusWidth > viewWidth) {
+    //     const realLeft = left - (width - drpWidth);
+    //     dom.setStyle(picker, 'left', `${realLeft}px`);
+    //   } else {
+    //     dom.setStyle(picker, 'left', `${left}px`);
+    //   }
+    // }
   }
 
   // 切换了日期
   @autobind
   handleDatesChange({ startDate, endDate }) {
     this.setState({ startDate, endDate, dateHasChanged: true });
+    // 根据切换的时间，需要将outsideRange修改
   }
 
   @autobind
@@ -102,29 +108,34 @@ export default class CommonDateRangePicker extends PureComponent {
     // 判断时间是否改变了
     const { startDate, endDate } = obj;
     if (this.state.dateHasChanged) {
-      this.setState({
-        dateHasChanged: false,
-      });
-      this.props.onChange([
-        this.formateDate(startDate),
-        this.formateDate(endDate),
-      ]);
+      this.setState({ dateHasChanged: false });
+      // 将用户选择起始和结束时间的moment对象传递出去
+      this.props.onChange({ startDate, endDate });
     }
   }
 
   render() {
     const {
-      allowPastDays,
       placeholderText,
+      selectStart,
+      selectEnd,
+      isOutsideRange,
     } = this.props;
     const {
       focusedInput,
       endDate,
       startDate,
     } = this.state;
-    // 此处是airbnb的组件中是否能够选择当前日期之前的日期
-    // 如果需要选择当前日期之前的日期，则传递一个空函数即可
-    const noop = allowPastDays ? _.noop : null;
+    // 挑选出airbnb的props
+    const airbnbDrpProps = _.omit(this.props, [
+      'displayFormat',
+      'placeholderText',
+      'initialDate',
+      'onChange',
+      'dateRange',
+      'selectStart',
+      'selectEnd',
+    ]);
 
     return (
       <div className={styles.drpWraper} ref={this.drpWraperRef}>
@@ -138,7 +149,7 @@ export default class CommonDateRangePicker extends PureComponent {
           startDatePlaceholderText={placeholderText[0]}
           endDatePlaceholderText={placeholderText[1]}
           onDatesChange={this.handleDatesChange}
-          isOutsideRange={noop}
+          isOutsideRange={isOutsideRange}
           monthFormat="YYYY[年]MMMM"
           onFocusChange={this.handleFoucusChange}
           startDateId="startDateID"
@@ -148,6 +159,9 @@ export default class CommonDateRangePicker extends PureComponent {
           navPrev={<Icon type="left" />}
           navNext={<Icon type="right" />}
           onClose={this.handleCalenderClose}
+          startDateOffset={selectStart}
+          endDateOffset={selectEnd}
+          {...airbnbDrpProps}
         />
       </div>
     );
