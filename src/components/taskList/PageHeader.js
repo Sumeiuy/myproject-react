@@ -10,40 +10,41 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
+// import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
 // import Icon from '../common/Icon';
-import { dom } from '../../helper';
+import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
+import { getViewInfo } from '../../routes/taskList/helper';
+import {
+  EXECUTOR,
+  INITIATOR,
+  CONTROLLER,
+  currentDate,
+  beforeCurrentDate60Days,
+  afterCurrentDate60Days,
+  dateFormat,
+  MANAGER_VIEW_STATUS,
+} from '../../routes/taskList/config';
+
 import styles from './pageHeader.less';
 
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
-const CONTROLLER_VIEW = 'controller'; // 管理者视图
-const EXECUTE_VIEW = 'executor'; // 执行者视图
-const INITIATOR_VIEW = 'initiator'; // 创建者视图
-// 50代表执行中
-// 60代表结果跟踪
-// 70代表结束
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
-const MANAGER_VIEW_STATUS = [
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
-];
+
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
 // 时间设置
 const today = moment(new Date());
 const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
+const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
-const customerAll = { name: '所有客户', custId: '' };
+const unlimitedCustomers = { name: allCustomers, custId: '' };
 const NOOP = _.noop;
 
 export default class Pageheader extends PureComponent {
@@ -82,7 +83,7 @@ export default class Pageheader extends PureComponent {
     chooseMissionViewOptions: [],
     dict: {},
     filterCallback: () => { },
-    filterControl: EXECUTE_VIEW,
+    filterControl: EXECUTOR,
     hasPermissionOfManagerView: false,
     queryCustomer: NOOP,
     customerList: [],
@@ -90,7 +91,7 @@ export default class Pageheader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { dict = {}, filterControl, location: { query: { status } } } = props;
+    const { dict = {}, filterControl, location: { query: { status, missionName } } } = props;
     const { missionStatus } = dict || {};
     this.missionStatus = missionStatus;
     const { stateAllOptions, statusValue } = this.renderStatusOptions(filterControl, status);
@@ -101,6 +102,8 @@ export default class Pageheader extends PureComponent {
       startTime: '',
       endTime: '',
       disabledEndTime: '',
+      // 任务搜索框内容默认取url中的missionName
+      missionName,
     };
   }
 
@@ -112,7 +115,7 @@ export default class Pageheader extends PureComponent {
       endTimeEnd,
       missionViewType,
     } = query;
-    if (missionViewType === INITIATOR_VIEW || !isGrayFlag) {
+    if (missionViewType === INITIATOR || !isGrayFlag) {
       // 判断URL里是否存在日期，若存在设置日期（例如页面跳转，日期已设置）
       this.setState({
         startTime: this.handleURlTime(createTimeStart, beforeToday),
@@ -129,12 +132,16 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { status } }, filterControl } = this.props;
+    const { location: { query: { status, missionName } }, filterControl } = this.props;
     const { location: nextLocation, filterControl: nextFilterControl } = nextProps;
     const { query: nextQuery } = nextLocation;
     const { status: nextStatus } = nextQuery;
 
-    if (status !== nextStatus || filterControl !== nextFilterControl) {
+    if (
+      status !== nextStatus ||
+      filterControl !== nextFilterControl ||
+      nextQuery.missionName !== missionName
+    ) {
       const {
         stateAllOptions,
         statusValue,
@@ -142,6 +149,7 @@ export default class Pageheader extends PureComponent {
       this.setState({
         stateAllOptions,
         statusValue,
+        missionName: nextQuery.missionName,
       });
     }
   }
@@ -167,11 +175,6 @@ export default class Pageheader extends PureComponent {
     }
   }
 
-  // 判断url里是否有时间设置
-  handleURlTime(urlTime, time) {
-    return _.isEmpty(urlTime) ? time : moment(urlTime);
-  }
-
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
@@ -182,6 +185,12 @@ export default class Pageheader extends PureComponent {
       dom.removeClass(this.filterMore, 'filterNoneIcon');
       dom.addClass(this.filterMore, 'filterMoreIcon');
     }
+  }
+
+  // 判断url里是否有时间设置
+  @autobind
+  handleURlTime(urlTime, time) {
+    return _.isEmpty(urlTime) ? time : moment(urlTime);
   }
 
   @autobind
@@ -223,9 +232,10 @@ export default class Pageheader extends PureComponent {
 
   // 选中客户下拉对象中对应的某个对象
   @autobind
-  selectCustomerItem(name, item) {
+  selectCustomerItem(item) {
     this.props.filterCallback({
-      [name]: item.custId,
+      custId: item.custId,
+      custName: encodeURIComponent(item.name),
     });
   }
 
@@ -240,7 +250,7 @@ export default class Pageheader extends PureComponent {
 
     // 判断是否改变的是视图选择
     if (key === 'missionViewType') {
-      this.handleViewTypeTime(key, v, beforeToday, today, afterToday);
+      this.handleViewTypeTime(key, v);
     } else {
       // 不是视图选择时发送请求
       this.props.filterCallback({
@@ -258,40 +268,51 @@ export default class Pageheader extends PureComponent {
 
   // 选择不同视图给定时间入参
   @autobind
-  handleViewTypeTime(key, v, before, todays, after) {
-    let timerValue;
-    if (v === INITIATOR_VIEW) {
-      timerValue = this.handleDefaultTime({ before, todays });
-      this.setState({
-        startTime: before,
-        endTime: todays,
-        disabledEndTime: todays,
+  handleViewTypeTime(key, v) {
+    const { filterCallback } = this.props;
+    if (v === INITIATOR) {
+      const {
+        createTimeStart,
+        createTimeEnd,
+      } = this.handleDefaultTime(
+        {
+          before: beforeCurrentDate60Days,
+          todays: currentDate,
+        },
+      );
+      filterCallback({
+        name: 'switchView',
+        [key]: v,
+        createTimeStart,
+        createTimeEnd,
       });
+      // this.setState({
+      //   startTime: before,
+      //   endTime: todays,
+      //   disabledEndTime: todays,
+      // });
     } else {
-      timerValue = this.handleDefaultTime({ todays, after });
-      this.setState({
-        startTime: todays,
-        endTime: after,
-        disabledEndTime: after,
+      const {
+        endTimeStart,
+        endTimeEnd,
+      } = this.handleDefaultTime(
+        {
+          todays: currentDate,
+          after: afterCurrentDate60Days,
+        },
+      );
+      filterCallback({
+        name: 'switchView',
+        [key]: v,
+        endTimeStart,
+        endTimeEnd,
       });
+      // this.setState({
+      //   startTime: todays,
+      //   endTime: after,
+      //   disabledEndTime: after,
+      // });
     }
-    const { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd } = timerValue;
-    // 视图切换时需要将 搜索关键词 类型 状态 创建者  客户 重置为初始状态
-    const tempObject = {
-      custId: '',
-      type: '',
-      status: '',
-      creator: '',
-      missionName: '',
-    };
-    this.props.filterCallback({
-      [key]: v,
-      createTimeStart,
-      createTimeEnd,
-      endTimeStart,
-      endTimeEnd,
-      ...tempObject,
-    });
   }
 
   // 切换视图设置默认时间设置
@@ -307,7 +328,13 @@ export default class Pageheader extends PureComponent {
 
   // 任务名称搜索
   @autobind
-  handleSearchChange(value) {
+  handleSearchChange(e) {
+    const value = e.target.value;
+    this.setState({ missionName: value });
+  }
+
+  @autobind
+  handleSearch(value) {
     this.props.filterCallback({
       missionName: value,
     });
@@ -322,33 +349,28 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  handleDateChange(dateStrings) {
-    const { location: { query: { missionViewType } } } = this.props;
-    const createTimePartFrom = dateStrings[0];
-    const createTimePartTo = dateStrings[1];
-    // 改变开始时间，限定结束时间范围
-    const disabledTime = moment(createTimePartFrom).add(60, 'days');
-    const createTimeStarts = createTimePartFrom && moment(createTimePartFrom).format('YYYY-MM-DD');
-    const createTimeEnds = createTimePartTo && moment(createTimePartTo).format('YYYY-MM-DD');
-    const param = this.handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds });
-    this.setState({
-      startTime: createTimeStarts,
-      endTime: createTimeEnds,
-      disabledEndTime: disabledTime,
-    });
-    if (createTimeEnds && createTimeStarts) {
-      if (createTimeEnds >= createTimeStarts) {
-        this.props.filterCallback(param);
-        return true;
-      }
-      return false;
-    }
+  handleCreateDateChange(date) {
+    const { startDate, endDate } = date;
+    const createTimeStart = startDate.format(dateFormat);
+    const createTimeEnd = endDate.format(dateFormat);
+    // const createTimeStart = moment(date[0]).format(dateFormat);
+    // const createTimeEnd = moment(date[1]).format(dateFormat);
     this.props.filterCallback({
-      createTimeStart: '',
-      createTimeEnd: '',
+      createTimeStart,
+      createTimeEnd,
     });
-    return false;
   }
+
+  @autobind
+  handleEndDateChange(date) {
+    const endTimeStart = moment(date[0]).format(dateFormat);
+    const endTimeEnd = moment(date[1]).format(dateFormat);
+    this.props.filterCallback({
+      endTimeStart,
+      endTimeEnd,
+    });
+  }
+
   // 视图不变下，判断视图是否为创建视图，修改时间入参
   @autobind
   handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds }) {
@@ -356,7 +378,7 @@ export default class Pageheader extends PureComponent {
     let endTimeEnd = null;
     let createTimeStart = createTimeStarts;
     let createTimeEnd = createTimeEnds;
-    if (missionViewType !== INITIATOR_VIEW) {
+    if (missionViewType !== INITIATOR) {
       endTimeStart = createTimeStarts;
       endTimeEnd = createTimeEnds;
       createTimeStart = null;
@@ -392,37 +414,36 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-  // 设置不可选日期
+  // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
   @autobind
   disabledDateStart(value) {
     if (!value) {
       return false;
     }
-
-    // 设置间隔日期，只能在大于60天之前日期和当前日期之间选择
     const time = value.valueOf();
-    // startValue
-    return time < moment(today).subtract(60, 'days') || time > moment().subtract(0, 'days');
+    return time > moment().subtract(0, 'days');
   }
 
-  // 我部门的任务和执行者视图 开始时间不限，结束时间根据开始时间后推60天
   @autobind
-  disabledDateEnd(value, type) {
-    const { disabledEndTime } = this.state;
+  handleSelectStart(day) {
+    console.warn('handleSelectStart');
+    console.warn(day);
+  }
+
+  @autobind
+  handleSelectEnd(day) {
+    console.warn('handleSelectEnd');
+    console.warn(day);
+  }
+
+  // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
+  @autobind
+  disabledDateEnd(value) {
     if (!value) {
       return false;
     }
-
-    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
-    const currentMonth = moment(type).month() + 1;
-    const localMonth = moment(type).month() + 1;
-
-    if (currentMonth === localMonth) {
-      // endValue
-      return value.valueOf() >= disabledEndTime.valueOf();
-    }
-    // startValue
-    return true;
+    const time = value.valueOf();
+    return time > moment(currentDate).add(60, 'days');
   }
 
 
@@ -436,7 +457,7 @@ export default class Pageheader extends PureComponent {
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
 
-    if (filterControl === CONTROLLER_VIEW || filterControl === EXECUTE_VIEW) {
+    if (filterControl === CONTROLLER || filterControl === EXECUTOR) {
       // 管理者视图或者执行者视图只有保留三种状态和所有状态
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(MANAGER_VIEW_STATUS, item.value));
@@ -456,52 +477,93 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-
   // 选择不同视图创建时间不同
   @autobind
-  renderTime(startTime, endTime, missionViewType) {
-    const { isGrayFlag } = this.props;
-    const controller = missionViewType === CONTROLLER_VIEW ?
-      (<div className={styles.dropDownSelectBox}>
-        <RangePicker
-          defaultValue={[startTime, endTime]}
-          onChange={this.handleDateChange}
-          placeholder={['开始时间', '结束时间']}
-          disabledDate={this.disabledDateEnd}
-          key="controller结束时间"
-          ref={ref => this.date = ref}
-        />
-      </div>) :
-      (<div className={styles.dropDownSelectBox}>
-        <RangePicker
-          defaultValue={[startTime, endTime]}
-          onChange={this.handleDateChange}
-          placeholder={['开始时间', '结束时间']}
-          disabledDate={this.disabledDateEnd}
-          key="executor结束时间"
-          ref={ref => this.date = ref}
-        />
-      </div>);
-    const value = missionViewType === INITIATOR_VIEW || !isGrayFlag ?
-      (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
+  renderTime() {
+    const {
+      isGrayFlag,
+      location: {
+        query: {
+          missionViewType,
+          endTimeStart = '',
+          endTimeEnd = '',
+          createTimeEnd = '',
+          createTimeStart = '',
+        },
+      },
+    } = this.props;
+    let node;
+    if (missionViewType === INITIATOR || !isGrayFlag) {
+      const startTime = createTimeStart ?
+        moment(createTimeStart, dateFormat) :
+        moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);
+      const endTime = createTimeEnd ?
+        moment(createTimeEnd, dateFormat) :
+        moment(moment(currentDate).format(dateFormat), dateFormat);
+      node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
           <RangePicker
             ref={ref => this.timers = ref}
-            defaultValue={[startTime, endTime]}
-            onChange={this.handleDateChange}
+            value={[startTime, endTime]}
+            onChange={this.handleCreateDateChange}
             placeholder={['开始时间', '结束时间']}
             disabledDate={this.disabledDateStart}
-            key="创建时间"
+            key={`${missionViewType}创建时间`}
+            format={dateFormat}
+          />
+          { /*
+            <DateRangePicker
+              initialDate={[startTime, endTime]}
+              onChange={this.handleCreateDateChange}
+              isOutsideRange={this.disabledDateStart}
+              selectStart={this.handleSelectStart}
+              selectEnd={this.handleSelectEnd}
+            />
+          */ }
+        </div>
+      </div>);
+    } else {
+      const startTime = endTimeStart ?
+        moment(endTimeStart, dateFormat) :
+        moment(moment(currentDate).format(dateFormat), dateFormat);
+      const endTime = endTimeEnd ?
+        moment(endTimeEnd, dateFormat) :
+        moment(moment(afterCurrentDate60Days).format(dateFormat), dateFormat);
+      node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
+        结束时间&nbsp;:&nbsp;
+        <div className={styles.dropDownSelectBox}>
+          <RangePicker
+            value={[startTime, endTime]}
+            onChange={this.handleEndDateChange}
+            placeholder={['开始时间', '结束时间']}
+            disabledDate={this.disabledDateEnd}
+            key={`${missionViewType}结束时间`}
+            ref={ref => this.date = ref}
+            format={dateFormat}
           />
         </div>
-      </div>) :
-      (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间&nbsp;:&nbsp;
-        {controller}
       </div>);
+    }
+    return node;
+  }
 
-    return value;
+  /**
+   * 将字典里面的状态数据前面加一个 ‘所有状态’
+   * 根据不同的视图渲染构造不同的页面状态数据
+   */
+  @autobind
+  getStateAllOptions(missionStatus) {
+    const { location: { query: { missionViewType } } } = this.props;
+    const currentViewType = getViewInfo(missionViewType).currentViewType;
+    // 管理者视图或者执行者视图只有保留三种状态和所有状态
+    const newMissionStatus = this.constructorDataType(missionStatus);
+    if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+      const stateAllOptions = _.filter(newMissionStatus,
+        item => _.includes(MANAGER_VIEW_STATUS, item.value));
+      return [stateAll, ...stateAllOptions];
+    }
+    return [stateAll, ...newMissionStatus];
   }
 
   render() {
@@ -517,15 +579,16 @@ export default class Pageheader extends PureComponent {
           missionViewType,
           type,
           creator,
-          missionName,
-          custId,
+          custId = '',
+          custName = '',
         },
       },
       customerList,
     } = this.props;
 
-    const { stateAllOptions, statusValue, startTime, endTime } = this.state;
-    const { missionType } = dict;
+    const { missionName, statusValue } = this.state;
+    const { missionType, missionStatus } = dict;
+    const stateAllOptions = this.getStateAllOptions(missionStatus);
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?
@@ -540,19 +603,20 @@ export default class Pageheader extends PureComponent {
     if (curDrafterInfo && curDrafterInfo.ptyMngId) {
       curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
     }
+
+    // 执行者视图按客户搜索
     const allCustomerList = !_.isEmpty(customerList) ?
-      [customerAll, ...customerList] : [];
-    const currentCustomerInfo = _.find(customerList, item => item.custId === custId);
-    let currentCustomer = '所有客户';
-    if (currentCustomerInfo && currentCustomerInfo.custId) {
-      currentCustomer = `${currentCustomerInfo.name}(${currentCustomerInfo.custId})`;
-    }
+      [unlimitedCustomers, ...customerList] : [];
+    const currentCustomer = check.isNull(custId) ?
+      allCustomers : `${decodeURIComponent(custName)}(${custId})`;
+
     // 搜索框回填
     const missionNameValue = !_.isEmpty(missionName) ? missionName : '';
     // 默认时间
-    const typeValue = !_.isEmpty(type) ? type : '所有类型';
-
-    const missionViewTypeValue = !_.isEmpty(missionViewType) ? missionViewType : '我执行的任务';
+    const typeValue = !_.isEmpty(type) ? type : typeAll.value;
+    // 默认取url中的missionViewType，否则从helper的getViewInfo方法中取
+    const missionViewTypeValue = !_.isEmpty(missionViewType) ?
+      missionViewType : getViewInfo().currentViewType;
     return (
       <div className={`${styles.pageCommonHeader}`} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -570,8 +634,9 @@ export default class Pageheader extends PureComponent {
             <Search
               placeholder="任务名称"
               style={{ width: 186 }}
-              onSearch={this.handleSearchChange}
-              defaultValue={missionNameValue}
+              value={missionNameValue}
+              onChange={this.handleSearchChange}
+              onSearch={this.handleSearch}
             />
           </div>
 
@@ -592,7 +657,7 @@ export default class Pageheader extends PureComponent {
               onChange={this.handleSelectChange}
             />
           </div>
-          {missionViewTypeValue === INITIATOR_VIEW ? null :
+          {missionViewTypeValue === INITIATOR ? null :
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
@@ -610,7 +675,7 @@ export default class Pageheader extends PureComponent {
           }
           {
             /* 执行者视图中增加客户筛选 */
-            missionViewTypeValue === EXECUTE_VIEW ?
+            missionViewTypeValue === EXECUTOR ?
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
                   <DropDownSelect
@@ -619,7 +684,7 @@ export default class Pageheader extends PureComponent {
                     searchList={allCustomerList}
                     showObjKey="name"
                     objId="custId"
-                    emitSelectItem={item => this.selectCustomerItem('custId', item)}
+                    emitSelectItem={this.selectCustomerItem}
                     emitToSearch={this.searchCustomer}
                     name={`${page}-name`}
                   />
@@ -627,10 +692,7 @@ export default class Pageheader extends PureComponent {
               </div> : null
           }
 
-          {missionViewTypeValue === INITIATOR_VIEW ?
-            this.renderTime(startTime, endTime, missionViewType) :
-            this.renderTime(startTime, endTime, missionViewType)
-          }
+          {this.renderTime()}
           {
             this.state.showMore ?
               <div

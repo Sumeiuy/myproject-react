@@ -18,7 +18,7 @@ import {
   mapFiledList,
   EVENT_PROFILE_ACTION,
 } from '../config/log';
-import { emp, data as dataHelper, env as envHelper } from '../helper';
+import { emp, env as envHelper } from '../helper';
 
 const EVENT_PROFILE_KEY = 'profile_set';
 
@@ -91,7 +91,7 @@ function getExtraData(action) {
           if (value === '*') {
             return { ...mergedData, ...payload };
           }
-          const propertyValue = dataHelper.getChainPropertyFromObject(payload, value);
+          const propertyValue = _.get(payload, value);
           if (_.isObject(propertyValue)) {
             return { ...mergedData, ...propertyValue };
           }
@@ -125,14 +125,14 @@ function getLogData(action) {
   let extraData = getExtraData(action);
 
   if (eventType.event === '$pageview') {
-    const { payload: { pathname, search } } = action;
+    const { payload: { pathname, search, title } } = action;
     extraData = {
       ...extraData,
       // $referrer: url,
       // $referrer_host: '',
       $url: `${pathname}${search}`,
       $url_path: pathname,
-      $title: pathname,
+      $title: title || pathname,
     };
   }
 

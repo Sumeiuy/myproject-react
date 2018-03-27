@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -97,6 +97,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const {
       serviceWay,
@@ -142,6 +143,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 关闭弹窗
   @autobind
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
     const { onToggleServiceRecordModal, handleCloseClick } = this.props;
     // 手动上传日志
@@ -190,18 +192,8 @@ export default class CreateServiceRecord extends PureComponent {
 
     const footer = (
       <div className={styles.customFooter}>
-        <Clickable
-          onClick={this.handleCancel}
-          eventName="/click/createServiceRecord/cancel"
-        >
-          <a className={styles.cancelBtn}>取消</a>
-        </Clickable>
-        <Clickable
-          onClick={this.handleSubmit}
-          eventName="/click/createServiceRecord/submit"
-        >
-          <a className={styles.submitBtn}>提交</a>
-        </Clickable>
+        <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
+        <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     );
 

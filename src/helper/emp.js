@@ -63,7 +63,7 @@ const emp = {
    */
   getId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001750'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -104,6 +104,15 @@ const emp = {
   isFiliale(arr, id) {
     const orgData = findOrgDataByOrgId(arr, id);
     return (!_.isEmpty(orgData) && org.isFiliale(orgData.level));
+  },
+
+  /**
+   * 判断当前登录人部门是否是经总
+   * @author Wangjunjun
+   * @returns {Boolean}
+   */
+  isManagementHeadquarters(orgId) {
+    return org.isManagementHeadquarters(orgId);
   },
 };
 

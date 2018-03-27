@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-06 16:58:26
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-14 14:59:17
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -75,7 +75,8 @@ export default {
           newOrgName: v.orgName,
           newPostnId: v.postnId,
           newPostnName: v.postnName,
-          showSelectName: `${v.empName} ${v.postnName} ${v.login}`,
+          // showSelectName: `${v.empName} ${v.postnName} ${v.login}`,
+          showSelectName: `${v.empName} ${v.login}`,
         }
       ));
       return {
@@ -118,7 +119,9 @@ export default {
       const newList = list.map(item => ({
         ...item,
         newOrgName: item.empInfo.orgName,
-        newEmpName: item.empId,
+        newEmpId: item.empId,
+        orgName: (item.orgiEmpInfo || {}).orgName,
+        empName: (item.orgiEmpInfo || {}).empName,
       }));
       return {
         ...state,

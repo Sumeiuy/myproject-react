@@ -7,12 +7,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-
+import classnames from 'classnames';
 import Entry from './Entry';
 import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
+import Header from './Header';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
-import { fsp } from '../../../../helper';
+import { fsp, emp } from '../../../../helper';
 
 import styles from './selectTargetCustomer.less';
 
@@ -25,7 +26,9 @@ export default class SelectTargetCustomer extends PureComponent {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-
+    onChange: PropTypes.func.isRequired,
+    switchBottomFromHeader: PropTypes.func.isRequired,
+    switchBottomFromSearch: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -83,6 +86,7 @@ export default class SelectTargetCustomer extends PureComponent {
     fsp.scrollToTop();
   }
 
+  // 选中瞄准镜圈人入口时，拉取瞄准镜圈人默认标签列表进行展示
   @autobind
   findPeople() {
     this.setState({
@@ -90,6 +94,36 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: false,
       showSightingTelescope: true,
     });
+    const { getLabelInfo, isAuthorize, orgId } = this.props;
+    const param = {
+      condition: '',
+    };
+    if (isAuthorize) {
+      // 有首页绩效指标查看权限
+      getLabelInfo({
+        ...param,
+        orgId,
+      });
+    } else {
+      getLabelInfo({
+        ...param,
+        ptyMngId: emp.getId(),
+      });
+    }
+    // 恢复Fsp滚动条
+    fsp.scrollToTop();
+  }
+
+  @autobind
+  changeView() {
+    const showImportCustomers = !this.state.showImportCustomers;
+    const showSightingTelescope = !this.state.showSightingTelescope;
+    this.setState({
+      showEntry: false,
+      showImportCustomers,
+      showSightingTelescope,
+    });
+    this.props.switchBottomFromHeader(showImportCustomers);
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
@@ -101,7 +135,8 @@ export default class SelectTargetCustomer extends PureComponent {
       onPreview,
       priviewCustFileData,
       storedTaskFlowData,
-
+      onChange,
+      switchBottomFromSearch,
       onCancel,
       isLoadingEnd,
       isSightTelescopeLoadingEnd,
@@ -120,9 +155,22 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers,
       showSightingTelescope,
     } = this.state;
+    const cls = classnames({
+      [styles.hide]: showEntry,
+      [styles.header]: true,
+    });
     return (
-      <div>
+      <div className={styles.customerContent}>
         {isShowTitle && <div className={styles.title}>选择目标客户</div>}
+        {
+          <div className={cls}>
+            <Header
+              switchTarget={showImportCustomers ? '瞄准镜圈人' : '导入客户'}
+              onClick={this.changeView}
+              style={{ fontSize: '15px' }}
+            />
+          </div>
+        }
         <Entry
           visible={showEntry}
           importCustomers={this.importCustomers}
@@ -131,7 +179,6 @@ export default class SelectTargetCustomer extends PureComponent {
         <ImportCustomers
           ref={inst => this.importCustRef = inst}
           visible={showImportCustomers}
-          switchTo={this.findPeople}
           onPreview={onPreview}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
@@ -140,8 +187,9 @@ export default class SelectTargetCustomer extends PureComponent {
           ref={r => this.sightingTelescopeRef = r}
           dict={dict}
           visible={showSightingTelescope}
-          switchTo={this.importCustomers}
           onCancel={onCancel}
+          onChange={onChange}
+          switchBottomFromSearch={switchBottomFromSearch}
           isLoadingEnd={isLoadingEnd}
           isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
           circlePeopleData={circlePeopleData}

@@ -4,6 +4,8 @@
 
 export default function commission(api) {
   return {
+    // 跳转到360视图界面必须的参数（场景：单佣金调整，新建，选择客户时，若改客户有未完成订单，会弹框提醒，点击确定会跳转到360视图界面）
+    queryCustDetailInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustBrifeInfo', query),
     // 批量佣金调整Home右侧详情
     getCommissionDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryBatchCommChgOrderInfo', query),
     // 批量佣金调整Home右侧详情内容中的客户列表
@@ -60,5 +62,7 @@ export default function commission(api) {
     checkCustomer: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailCustRiskInfo', query),
     // 查询驳回后修改的详情页面
     querySingleDetail4Update: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfoForUpdate', query),
+    // 查询单佣金调整客户的当前股基佣金率
+    queryCustCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustCommission', query),
   };
 }

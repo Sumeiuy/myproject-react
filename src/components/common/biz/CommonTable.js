@@ -4,8 +4,8 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-03 09:13:40
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-03-20 16:59:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,6 +21,10 @@ export default class CommonTable extends PureComponent {
     operation: PropTypes.object,
     pagination: PropTypes.object,
     scroll: PropTypes.object,
+    rowKey: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.func,
+    ]),
   }
 
   static defaultProps = {
@@ -28,10 +32,11 @@ export default class CommonTable extends PureComponent {
     operation: null,
     pagination: {},
     scroll: {},
+    rowKey: '',
   }
 
   render() {
-    const { scroll, data, operation, titleList, ...resetProps } = this.props;
+    const { scroll, data, operation, titleList, rowKey, ...resetProps } = this.props;
     let newTitleList = [...titleList];
     if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
@@ -108,14 +113,22 @@ export default class CommonTable extends PureComponent {
         }
       }
     }
+    const newData = _.map(
+      data,
+      (item, index) => ({
+        ...item,
+        tableRowKey: `${index}`,
+      }),
+    );
     return (
       <div className={styles.commonTable}>
         <Table
           {...resetProps}
           scroll={scroll}
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
-          dataSource={data}
+          dataSource={newData}
           columns={newTitleList}
+          rowKey={_.isEmpty(rowKey) ? 'tableRowKey' : rowKey}
         />
       </div>
     );

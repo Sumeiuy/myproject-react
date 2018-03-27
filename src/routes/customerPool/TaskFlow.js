@@ -1,20 +1,20 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-08 10:56:32
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper } from '../../helper';
-import Clickable from '../../components/common/Clickable';
+import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -23,6 +23,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
@@ -43,11 +44,65 @@ const effects = {
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
 };
 
-const fetchData = (type, loading) => query => ({
+const fetchData = (type, loading) => (query, forceFull = false) => ({
   type,
   payload: query || EMPTY_OBJECT,
   loading,
+  forceFull,
 });
+
+
+function transformNumber(num) {
+  return `${number.thousandFormat(num)}人`;
+}
+
+// 新建任务上报日志
+function logCreateTask(instance) {
+  const { storedTaskFlowData, dict: { missionType = {} } } = instance.props;
+  const {
+    taskFormData: {
+      taskType: taskTypeCode,
+    timelyIntervalValue,
+    taskName,
+    },
+    custSegment: {
+      custSource: segmentCustSource,
+    },
+    labelCust: {
+      custSource: lableCustSource,
+    },
+    resultTrackData: {
+      trackWindowDate = '无',
+      currentIndicatorDescription = '无',
+    },
+    missionInvestigationData: {
+      isMissionInvestigationChecked = false,
+    },
+    currentEntry,
+  } = storedTaskFlowData;
+  let custSource;
+  if (currentEntry === 0) {
+    custSource = segmentCustSource;
+  } else {
+    custSource = lableCustSource;
+  }
+  let taskType = '';
+  _.map(missionType, (item) => {
+    if (item.key === taskTypeCode) {
+      taskType = item.value;
+    }
+  });
+  return {
+    taskType,
+    taskName,
+    timelyIntervalValue: `${timelyIntervalValue}天`,
+    custSource,
+    trackWindowDate: `${trackWindowDate}天`,
+    currentIndicatorDescription,
+    isMissionInvestigationChecked,
+  };
+}
+
 
 const mapStateToProps = state => ({
   // 字典信息
@@ -191,6 +246,10 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep,
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
+      shouldclearBottomLabel: false,
+      clearFromSearch: true,
+      currentSelectLabelName: null,
+      currentFilterNum: 0,
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -316,6 +375,7 @@ export default class TaskFlow extends PureComponent {
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     // 下一步
     const {
@@ -352,6 +412,7 @@ export default class TaskFlow extends PureComponent {
           labelId,
           argsOfQueryCustomer = {},
           custNum,
+          customNum,
         },
       } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
@@ -381,8 +442,12 @@ export default class TaskFlow extends PureComponent {
           fileId: uploadedFileKey,
         };
       } else {
-        if (custNum === 0) {
+        if (customNum === 0) {
           message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          return;
+        }
+        if (custNum === 0) {
+          message.error('此标签下未筛选出客户，请重新筛选');
           return;
         }
 
@@ -594,6 +659,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePreviousStep() {
     const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { current } = this.state;
@@ -608,9 +674,21 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleSubmitTaskFlow() {
-    const { submitTaskFlow, storedTaskFlowData, templateId } = this.props;
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      logCreateTask,
+    },
+  })
+  decoratorSubmitTaskFlow(option) {
+    const { submitTaskFlow } = this.props;
+    submitTaskFlow({ ...option });
+  }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
+  handleSubmitTaskFlow() {
+    const { storedTaskFlowData, templateId } = this.props;
     const {
       currentSelectRecord: { login: flowAuditorId = null },
       currentEntry,
@@ -745,8 +823,7 @@ export default class TaskFlow extends PureComponent {
         },
       };
     }
-
-    submitTaskFlow({ ...postBody });
+    this.decoratorSubmitTaskFlow(postBody);
   }
 
   @autobind
@@ -759,6 +836,21 @@ export default class TaskFlow extends PureComponent {
     saveTaskFlowData({
       ...storedTaskFlowData,
       currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord) {
+    const { storedTaskFlowData, saveTaskFlowData } = this.props;
+    // 取消修改后选中的审批人员
+    this.setState({
+      currentSelectRowKeys: originSelectRowKeys,
+      currentSelectRecord: originSelectRecord,
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      currentSelectRecord: originSelectRecord,
+      currentSelectRowKeys: originSelectRowKeys,
     });
   }
 
@@ -792,6 +884,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleRemoveTab() {
     closeRctTab({
       id: 'FSP_ST_TAB_MOT_SELFBUILD_ADD',
@@ -807,6 +900,60 @@ export default class TaskFlow extends PureComponent {
       isApprovalListLoadingEnd: true,
       isSightTelescopeLoadingEnd: true,
     });
+  }
+
+  @autobind
+  onChange(value) {
+    const { currentFilterNum, currentSelectLabelName, clearFromSearch } = value;
+    this.setState({
+      currentFilterNum,
+      currentSelectLabelName,
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  switchBottomFromHeader(shouldclearBottomLabel) {
+    this.setState({
+      shouldclearBottomLabel,
+    });
+  }
+
+  @autobind
+  switchBottomFromSearch(clearFromSearch) {
+    this.setState({
+      clearFromSearch,
+    });
+  }
+
+  @autobind
+  renderBottomLabel() {
+    const {
+      current,
+      currentFilterNum,
+      currentSelectLabelName,
+      shouldclearBottomLabel,
+      clearFromSearch,
+    } = this.state;
+
+    // 是否应该隐藏底部的标签显示取决于三个条件
+    // 1. 选中标签,clearFromSearch控制
+    // 2. 使用头部的切换导入客户按钮，shouldclearBottomLabel控制
+    // 3. 是否处于第一步 current !== 0
+    // 条件1的优先级最高，条件3的优先级最低
+    const shouldHideBottom = clearFromSearch || shouldclearBottomLabel || current !== 0;
+    const cls = classnames({
+      [styles.hide]: shouldHideBottom,
+      [styles.bottomLabel]: true,
+    });
+    return (
+      <div className={cls}>
+        <span>已选择：</span>
+        <i>{currentSelectLabelName}</i>
+        <span>目标客户数：</span>
+        <i>{transformNumber(currentFilterNum)}</i>
+      </div>
+    );
   }
 
   render() {
@@ -866,7 +1013,9 @@ export default class TaskFlow extends PureComponent {
           location={location}
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
-
+          onChange={this.onChange}
+          switchBottomFromHeader={this.switchBottomFromHeader}
+          switchBottomFromSearch={this.switchBottomFromSearch}
           onPreview={previewCustFile}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
@@ -938,6 +1087,7 @@ export default class TaskFlow extends PureComponent {
         isApprovalListLoadingEnd={isApprovalListLoadingEnd}
         onCancel={this.resetLoading}
         creator={creator}
+        onCancelSelectedRowKeys={this.handleCancelSelectedRowKeys}
       />,
     }];
 
@@ -963,47 +1113,52 @@ export default class TaskFlow extends PureComponent {
           </Steps>
           <div className={styles.stepsContent}>
             {steps[current].content}
+            {this.renderBottomLabel()}
           </div>
           <div className={styles.stepsAction}>
             {
               current === 0
               &&
-              <Clickable
+              <Button
+                className={styles.cancelBtn}
+                type="default"
                 onClick={this.handleRemoveTab}
-                eventName="/click/taskFlow/cancel"
               >
-                <Button className={styles.cancelBtn} type="default">取消</Button>
-              </Clickable>
+                取消
+              </Button>
             }
             {
               current > 0
               &&
-              <Clickable
+              <Button
+                className={styles.prevStepBtn}
+                type="default"
                 onClick={this.handlePreviousStep}
-                eventName="/click/taskFlow/lastStep"
               >
-                <Button className={styles.prevStepBtn} type="default">上一步</Button>
-              </Clickable>
+                上一步
+              </Button>
             }
             {
               current < stepsCount - 1
               &&
-              <Clickable
+              <Button
+                className={styles.nextStepBtn}
+                type="primary"
                 onClick={_.debounce(this.handleNextStep, 250)}
-                eventName="/click/taskFlow/nextStep"
               >
-                <Button className={styles.nextStepBtn} type="primary">下一步</Button>
-              </Clickable>
+                下一步
+              </Button>
             }
             {
               current === stepsCount - 1
               &&
-              <Clickable
+              <Button
+                className={styles.confirmBtn}
+                type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                eventName="/click/taskFlow/submit"
               >
-                <Button className={styles.confirmBtn} type="primary">确认无误，提交</Button>
-              </Clickable>
+                确认无误，提交
+              </Button>
             }
           </div>
         </div>

@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper } from '../../../helper';
+import { url as urlHelper, number as numberHelper, emp } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -14,6 +14,7 @@ import {
   getBarAdaptiveMax,
   transformItemUnit,
 } from '../../chartRealTime/FixNumber';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -42,6 +43,7 @@ export function getNewFormattedUnitAndItem(data) {
 }
 
 function getProgressDataSource({
+  descArray,
   dataArray,
   categoryArray,
   colorArray,
@@ -63,6 +65,7 @@ function getProgressDataSource({
         id: index,
         unit: finalData[index].unit,
         value: finalData[index].item,
+        description: descArray[index],
       }),
     );
     return items;
@@ -102,8 +105,10 @@ export function getPureAddCust({ pureAddData }) {
 export function getProductSale({
   numberArray,
   nameArray = ['公募基金', '证券投资类私募', '紫金产品', 'OTC'],
+  descArray,
 }) {
   const param = {
+    descArray,
     dataArray: numberArray,
     categoryArray: nameArray,
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
@@ -179,12 +184,12 @@ export function getClientsNumber({
 }
 
 // 经营指标的资产和交易量
-export function getTradingVolume({ numberArray, nameArray }) {
+export function getTradingVolume({ numberArray, nameArray, descArray }) {
   const finalTradingData = getNewFormattedUnitAndItem(numberArray);
   // { newUnit, items: thousandsFormatSeries || [] };
   return _.map(
     finalTradingData,
-    (item, index) => ({ ...item, title: (nameArray[index] || '--') }),
+    (item, index) => ({ ...item, title: (nameArray[index] || '--'), description: (descArray[index] || '--') }),
   );
 }
 
@@ -208,15 +213,16 @@ export function getServiceIndicatorOfManage({ motOkMnt, motTotMnt, taskCust, tot
 export function getServiceIndicatorOfPerformance({ performanceData }) {
   return {
     grid: {
-      left: '15px',
-      right: '15px',
-      bottom: '40px',
-      top: '30px',
+      left: '0px',
+      right: '0px',
+      bottom: '0px',
+      top: '20px',
       containLabel: false,
     },
     xAxis: {
       type: 'category',
-      data: ['必做MOT\n任务完成率', '服务\n覆盖率', '多元产\n品覆盖率', '客户信\n息完备率'],
+      triggerEvent: true,
+      data: ['', '', '', ''],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
@@ -224,6 +230,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
         fontSize: '12',
         interval: 0,
         margin: 6,
+        show: false,
       },
     },
     yAxis: {
@@ -244,9 +251,9 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const { value = '', name = '', key } = dataArray[i];
-    const { value: propertyValue } = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(value), name, key });
+    const { value = '', name = '', key, description } = dataArray[i];
+    const { value: propertyValue, description: propertyDesc } = dataArray[(i + 1)];
+    custArray.push({ value: filterEmptyToInteger(value), name, key, description, propertyDesc });
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
@@ -316,32 +323,33 @@ export function linkTo({
   cycle,
   push,
   location,
-  empInfo,
   type = 'rightType',
-  permissionType,
+  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  const MAIN_MAGEGER_ID = 'msm';
   const obj = {
     source,
     [type]: value,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
-  const { empInfo: { empName, empNum } } = empInfo;
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
-      obj.ptyMng = `${empName}_${empNum}`;
+      // obj.ptyMng = `${empName}_${empNum}`;
+      obj.orgId = MAIN_MAGEGER_ID;
     } else {
       obj.orgId = orgId;
     }
-  } else if (permissionType === 0) {
-    // 0 表示用户没有权限
-    obj.ptyMng = `${empName}_${empNum}`;
+  } else if (!authority) {
+    // 用户没有权限
+    // obj.ptyMng = `${empName}_${empNum}`;
+    obj.orgId = MAIN_MAGEGER_ID;
+  } else {
+    obj.orgId = emp.getOrgId();
   }
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {

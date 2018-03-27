@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs, Modal, Collapse, Icon, Popover, Button, message } from 'antd';
+import { Tabs, Modal, Collapse, Icon, Popover, Button, message, Input } from 'antd';
 import _ from 'lodash';
 
 import FeedbackAdd from './FeedbackAdd';
@@ -19,6 +19,7 @@ import styles from './missionBind.less';
 const TabPane = Tabs.TabPane;
 const Panel = Collapse.Panel;
 const confirm = Modal.confirm;
+const Search = Input.Search;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -33,6 +34,8 @@ const TAB_LIST = [
     key: '2',
   },
 ];
+// 第一个tab的状态
+const FIRST_TAB = '1';
 
 export default class MissionBind extends PureComponent {
   static propTypes = {
@@ -89,11 +92,28 @@ export default class MissionBind extends PureComponent {
   // 获取任务Panel
   @autobind
   getPanelList() {
-    const { missionData } = this.props;
+    const {
+      missionData,
+      location: {
+        query: {
+          childActiveKey = TAB_LIST[0].key,
+        },
+      },
+    } = this.props;
     const missionList = missionData.missionList || EMPTY_LIST;
+    const isMOTMission = childActiveKey === FIRST_TAB;
     return missionList.map((item) => {
       const header = (<div className={styles.collapseHead}>
-        <span className={styles.parentClass}>{item.parentClassName}</span>
+        <span
+          className={isMOTMission ? styles.parentClass : styles.parentClassSelf}
+        >
+          {item.parentClassName}
+        </span>
+        {
+          isMOTMission ?
+            <span className={styles.missionId}>{item.id}</span> :
+            null
+        }
         <span className={styles.childClass}>{item.childClassName}</span>
         <span className={styles.optionClass}>{`${item.length}项`}<Icon type="up" /><Icon type="down" /></span>
       </div>);
@@ -125,14 +145,14 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  handlePageChange(pageNum) {
+  handlePageChange(pageNum, pagaSize) {
     const {
       queryMissionList,
       location: {
-        query: { childActiveKey },
+        query: { childActiveKey, keyWord },
       },
     } = this.props;
-    queryMissionList(childActiveKey, pageNum);
+    queryMissionList(childActiveKey, pageNum, pagaSize, keyWord);
   }
 
   // 删除任务下所关联客户反馈选项
@@ -147,6 +167,7 @@ export default class MissionBind extends PureComponent {
           childActiveKey,
           pageNum,
           pageSize,
+          keyWord,
         },
       },
     } = this.props;
@@ -166,7 +187,7 @@ export default class MissionBind extends PureComponent {
           type: childActiveKey,
         }).then(() => {
           // 删除成功之后更新任务列表
-          queryMissionList(childActiveKey, pageNum, pageSize);
+          queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
         });
       },
     });
@@ -193,6 +214,7 @@ export default class MissionBind extends PureComponent {
           childActiveKey,
           pageNum,
           pageSize,
+          keyWord,
         },
       },
     } = this.props;
@@ -209,11 +231,27 @@ export default class MissionBind extends PureComponent {
       }).then(() => {
         this.handleCloseModal();
         // 添加成功之后更新任务列表
-        queryMissionList(childActiveKey, pageNum, pageSize);
+        queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
       });
     }
   }
 
+  /**
+   * 搜索Mot任务列表
+   * @param value 搜索关键字
+   * @param pageNum 列表页，默认为第一页
+   * @param pageSize 列表页容量，默认为20
+   */
+  @autobind
+  searchMotMission(value, pageNum = 1, pageSize = 20) {
+    const { queryMissionList } = this.props;
+    queryMissionList(FIRST_TAB, pageNum, pageSize, value);
+  }
+  // 修复tab上input中左右键切换不符合预期
+  preventKeyDownPropagation(e) {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  }
   render() {
     const {
       showModal,
@@ -251,6 +289,9 @@ export default class MissionBind extends PureComponent {
       onChange: this.handleChangeCollapse,
       accordion: true,
     };
+    const isMOTMission = childActiveKey === FIRST_TAB;
+    const missionList = missionData.missionList || EMPTY_LIST;
+
     return (
       <div className={styles.missionBindWapper}>
         <div className={styles.tipsBox}>
@@ -261,7 +302,20 @@ export default class MissionBind extends PureComponent {
           </p>
         </div>
         <div className={styles.tabBox}>
-          <Tabs onChange={missionBindChangeTab} activeKey={childActiveKey} >
+          <Tabs
+            onChange={missionBindChangeTab}
+            activeKey={childActiveKey}
+            tabBarExtraContent={
+              isMOTMission ?
+                <Search
+                  onKeyDown={this.preventKeyDownPropagation}
+                  placeholder="事件ID/事件名称"
+                  style={{ width: 186 }}
+                  onSearch={this.searchMotMission}
+                /> :
+                null
+            }
+          >
             {
               TAB_LIST.map(item => (
                 <TabPane tab={item.tabName} key={item.key} />
@@ -271,18 +325,34 @@ export default class MissionBind extends PureComponent {
         </div>
         <div className={styles.collapseBox}>
           <div className={styles.titleBox}>
-            <span className={styles.parentClass}>任务大类</span>
+            <span className={isMOTMission ? styles.parentClass : styles.parentClassSelf}>任务大类</span>
+            {
+              isMOTMission ?
+                <span className={styles.missionId}>事件ID</span> :
+                null
+            }
             <span className={styles.childClass}>任务子类/事件名称</span>
             <span className={styles.optionClass}>客户反馈选项</span>
           </div>
-          <Collapse {...collapseProps}>
-            {
-              this.getPanelList()
-            }
-          </Collapse>
-          <div className={styles.pageBox}>
-            <Pagination {...paginationOption} />
-          </div>
+          {
+            missionList.length ?
+              <span>
+                <Collapse {...collapseProps}>
+                  {
+                    this.getPanelList()
+                  }
+                </Collapse>
+                <div className={styles.pageBox}>
+                  <Pagination {...paginationOption} />
+                </div>
+              </span> :
+              <div className={styles.emptyContent}>
+                <span>
+                  <Icon type="frown-o" />
+                  暂无数据
+                </span>
+              </div>
+          }
           <div className={styles.clear} />
         </div>
         {

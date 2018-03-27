@@ -792,6 +792,11 @@ const pageConfig = {
         label: '驳回',
         value: '04',
       },
+      {
+        show: true,
+        label: '失败',
+        value: '05',
+      },
     ],
     titleList: [
       {
@@ -815,24 +820,14 @@ const pageConfig = {
         title: '原服务经理',
       },
       {
-        dataIndex: 'postnName',
-        key: 'postnName',
-        title: '原职位',
-      },
-      {
         dataIndex: 'newOrgName',
         key: 'newOrgName',
         title: '新服务营业部',
       },
       {
-        dataIndex: 'newEmpName',
-        key: 'newEmpName',
+        dataIndex: 'newEmpId',
+        key: 'newEmpId',
         title: '新服务经理',
-      },
-      {
-        dataIndex: 'newPostnName',
-        key: 'newPostnName',
-        title: '新职位',
       },
     ],
     approvalColumns: [

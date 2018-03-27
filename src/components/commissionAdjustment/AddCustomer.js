@@ -93,21 +93,15 @@ export default class AddCustomer extends PureComponent {
     const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
     // 如果存在，则不给添加
     if (exist) {
-      confirm({
-        shortCut: 'custExist',
-      });
+      confirm({ shortCut: 'custExist' });
       return;
     }
     // 如果客户列表中已经有200个客户，则不让再添加
     if (customerList.length >= 200) {
-      confirm({
-        shortCut: 'custListMaxLength',
-      });
+      confirm({ shortCut: 'custListMaxLength' });
       return;
     }
-    this.setState({
-      customer,
-    });
+    this.setState({ customer });
     this.props.onValidate(customer);
   }
 

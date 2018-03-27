@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-07 15:30:29
+ * @Last Modified time: 2018-03-22 17:02:30
  */
 
 import React, { PureComponent } from 'react';
@@ -16,11 +16,12 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const NOOP = _.noop;
 
 const Search = Input.Search;
 const COLUMN_WIDTH = ['10%', '30%', '30%', '30%'];
@@ -62,21 +63,26 @@ export default class TaskPreview extends PureComponent {
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
+    onCancelSelectedRowKeys: PropTypes.func,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     needApproval: false,
     currentEntry: 0,
+    onCancelSelectedRowKeys: NOOP,
   };
 
   constructor(props) {
     super(props);
+    const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = props;
     this.state = {
       isShowTable: false,
       titleColumn: renderColumnTitle(),
       dataSource: [],
       dataSize: 0,
+      currentSelectRowKeys,
+      currentSelectRecord,
     };
   }
 
@@ -89,6 +95,8 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList: nextData = EMPTY_LIST,
       isShowApprovalModal: nextApprovalModal,
+      currentSelectRecord,
+      currentSelectRowKeys,
      } = nextProps;
 
     if (approvalList !== nextData) {
@@ -104,6 +112,11 @@ export default class TaskPreview extends PureComponent {
         isShowTable: nextApprovalModal,
       });
     }
+
+    this.setState({
+      currentSelectRecord,
+      currentSelectRowKeys,
+    });
   }
 
   /**
@@ -119,12 +132,32 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '选择审批人：$props.currentSelectRecord.empName' } })
   handleClick() {
     const { getApprovalList } = this.props;
+    const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;
+    // 点击的时候设置一下原先的选中人员
+    this.setState({
+      originSelectRowKeys: currentSelectRowKeys,
+      originSelectRecord: currentSelectRecord,
+    });
     getApprovalList();
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancel() {
+    const { originSelectRowKeys, originSelectRecord } = this.state;
+    this.setState({
+      currentSelectRowKeys: originSelectRowKeys,
+      currentSelectRecord: originSelectRecord,
+    });
+    this.handleCloseModal();
+    this.props.onCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord);
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleCloseModal() {
     const { onCancel } = this.props;
     this.setState({
@@ -150,6 +183,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '选择审批人员' } })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);
@@ -457,15 +491,13 @@ export default class TaskPreview extends PureComponent {
         {
           needApproval ? (
             <div>
-              <Clickable
+              <div
+                className={styles.selectApprover}
                 onClick={this.handleClick}
-                eventName="/click/taskPreview/selectApprover"
               >
-                <div className={styles.selectApprover}>
-                  <span>选择审批人：</span>
-                  <Search className={styles.searchSection} readOnly value={empName} />
-                </div>
-              </Clickable>
+                <span>选择审批人：</span>
+                <Search className={styles.searchSection} readOnly value={empName} />
+              </div>
               <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />注：新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
             </div>
 
@@ -484,21 +516,24 @@ export default class TaskPreview extends PureComponent {
               okText={'确定'}
               okType={'primary'}
               onOkHandler={this.handleCloseModal}
-              onCancelHandler={this.handleCloseModal}
+              onCancelHandler={this.handleCancel}
               footer={
                 <div className={styles.btnSection}>
-                  <Clickable
-                    onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview/cancel"
+                  <Button
+                    type="default"
+                    size="default"
+                    onClick={this.handleCancel}
                   >
-                    <Button type="default" size="default">取消</Button>
-                  </Clickable>
-                  <Clickable
+                    取消
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="default"
+                    className={styles.confirmBtn}
                     onClick={this.handleCloseModal}
-                    eventName="/click/taskPreview/confirm"
                   >
-                    <Button type="primary" size="default" className={styles.confirmBtn}>确定</Button>
-                  </Clickable>
+                    确定
+                  </Button>
                 </div>
               }
               modalContent={
@@ -513,18 +548,14 @@ export default class TaskPreview extends PureComponent {
                       }}
                       ref={inst => (this.inputRef = inst)}
                       suffix={(
-                        <Clickable
+                        <Button
+                          className="search-btn"
+                          size="large"
+                          type="primary"
                           onClick={this.handleSearchApproval}
-                          eventName="/click/taskPreview/search"
                         >
-                          <Button
-                            className="search-btn"
-                            size="large"
-                            type="primary"
-                          >
-                            <Icon type="search" />
-                          </Button>
-                        </Clickable>
+                          <Icon type="search" />
+                        </Button>
                       )}
                     />
                   </div>

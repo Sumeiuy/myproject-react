@@ -2,8 +2,8 @@
  * @Description: 客户反馈 home 页面
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 16:19:49
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-23 20:28:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -136,7 +136,7 @@ export default class CustomerFeedback extends PureComponent {
 
   // 查询任务列表
   @autobind
-  queryMissionList(type = 1, pageNum = 1, pageSize = 20) {
+  queryMissionList(type = 1, pageNum = 1, pageSize = 20, keyWord = '') {
     const {
       replace,
       getMissionList,
@@ -149,16 +149,18 @@ export default class CustomerFeedback extends PureComponent {
       type,
       pageNum,
       pageSize,
+      keyWord,
     };
     getMissionList(params).then(() => {
       const { missionData } = this.props;
-      const missionPage = missionData.page;
+      const missionPage = missionData.page || {};
       replace({
         pathname,
         query: {
           ...query,
           pageNum: missionPage.pageNum,
           pageSize: missionPage.pageSize,
+          keyWord,
         },
       });
     });
@@ -213,6 +215,7 @@ export default class CustomerFeedback extends PureComponent {
         ...query,
         childActiveKey: key,
         pageNum: 1,
+        keyWord: '',
       },
     });
     emptyMissionData();
@@ -234,6 +237,7 @@ export default class CustomerFeedback extends PureComponent {
       location: {
         query: {
           parentActiveKey = TAB_LIST[0].key,
+          childActiveKey,
         },
       },
      } = this.props;
@@ -243,6 +247,7 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
+      childActiveKey,
       replace,
       location,
       queryMissionList: this.queryMissionList,

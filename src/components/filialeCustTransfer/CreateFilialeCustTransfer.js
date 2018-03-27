@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 17:00:58
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-13 15:50:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { message, Modal, Upload } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
-import DropDownSelect from '../../components/common/dropdownSelect';
+import AutoComplete from '../../components/common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import Select from '../../components/common/Select';
@@ -23,7 +23,7 @@ import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
-import customerTemplet from './customerTemplet.xlsx';
+import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 
 const EMPTY_LIST = [];
@@ -33,12 +33,6 @@ const EMPTY_OBJECT = {};
 const { filialeCustTransfer: { titleList, approvalColumns } } = seibelConfig;
 // 划转方式默认值
 const defaultType = config.transferType[0].value;
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 
 export default class CreateFilialeCustTransfer extends PureComponent {
   static propTypes = {
@@ -158,11 +152,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       client: v,
     }, () => {
-      // 选择客户之后触发查询该客户的原服务经理
-      const { getOldManager } = this.props;
-      getOldManager({
-        brokerNumber: v.brokerNumber,
-      });
+      if (!_.isEmpty(v)) {
+        // 选择客户之后触发查询该客户的原服务经理
+        const { getOldManager } = this.props;
+        getOldManager({
+          brokerNumber: v.brokerNumber,
+        });
+      }
     });
   }
 
@@ -184,9 +180,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     this.setState({
       newManager: v,
     }, () => {
-      // 将选择的新服务经理和原服务经理数据合并用作展示
-      const { selectNewManager } = this.props;
-      selectNewManager(v);
+      if (!_.isEmpty(v)) {
+        // 将选择的新服务经理和原服务经理数据合并用作展示
+        const { selectNewManager } = this.props;
+        selectNewManager(v);
+      }
     });
   }
 
@@ -287,7 +285,8 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       this.setState({
         isShowModal: false,
       }, () => {
-        queryAppList(query, pageNum, pageSize);
+        // 清空掉从消息提醒页面带过来的 id,appId
+        queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
       });
     });
   }
@@ -304,11 +303,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }, () => {
       if (this.queryCustComponent) {
         this.queryCustComponent.clearValue();
-        this.queryCustComponent.clearSearchValue();
       }
       if (this.queryManagerComponent) {
         this.queryManagerComponent.clearValue();
-        this.queryManagerComponent.clearSearchValue();
       }
       emptyQueryData();
       clearMultiData();
@@ -395,12 +392,18 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         auditors: value.login,
       };
       validateData(payload).then(() => {
-        this.emptyData();
-        message.success('提交成功，后台正在进行数据处理！若数据处理失败，将在首页生成一条通知提醒。');
-        this.setState({
-          isShowModal: false,
-        }, () => {
-          queryAppList(query, pageNum, pageSize);
+        Modal.success({
+          title: '提示',
+          content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+          onOk: () => {
+            this.emptyData();
+            this.setState({
+              isShowModal: false,
+            }, () => {
+              // 清空掉从消息提醒页面带过来的 id, appId
+              queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
+            });
+          },
         });
       });
     }
@@ -489,27 +492,23 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             isDefaultType ?
               <div>
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择客户"
                     showObjKey="custName"
                     objId="brokerNumber"
-                    value=""
                     searchList={custList}
-                    emitSelectItem={this.handleSelectClient}
-                    emitToSearch={this.handleSearchClient}
-                    boxStyle={dropDownSelectBoxStyle}
+                    onSelect={this.handleSelectClient}
+                    onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
-                  <DropDownSelect
+                  <AutoComplete
                     placeholder="选择新服务经理"
                     showObjKey="showSelectName"
-                    value=""
                     searchList={newManagerList}
-                    emitSelectItem={this.handleSelectNewManager}
-                    emitToSearch={this.handleSearchNewManager}
-                    boxStyle={dropDownSelectBoxStyle}
+                    onSelect={this.handleSelectNewManager}
+                    onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
                   />
                 </InfoForm>

@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import Clickable from '../../components/common/Clickable';
+import logable from '../../decorators/logable';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
@@ -164,6 +164,7 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '加载更多服务记录' } })
   handleMore() {
     const { location: { query },
       getServiceLogMore,
@@ -302,12 +303,7 @@ export default class ServiceLog extends PureComponent {
             }
           >
             <Col className={styles.more}>
-              <Clickable
-                onClick={this.handleMore}
-                eventName="/click/serviceLog/loadMore"
-              >
-                <Button>加载更多服务记录</Button>
-              </Clickable>
+              <Button onClick={this.handleMore}>加载更多服务记录</Button>
             </Col>
           </Row>
         </div>

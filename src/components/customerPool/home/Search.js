@@ -11,11 +11,12 @@ import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import Clickable from '../../../components/common/Clickable';
+import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
+import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -30,10 +31,11 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
-    orgId: PropTypes.string,
+    orgId: PropTypes.string.isRequired,
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
+    authority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -41,7 +43,6 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     saveSearchVal: () => { },
     queryHotWdsData: EMPTY_LIST,
-    orgId: '',
     searchHistoryVal: '',
   }
 
@@ -120,11 +121,15 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(obj, titles, ids) {
-    const { push, location: { query } } = this.props;
+    const { push, location: { query }, authority, orgId } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    const condition = urlHelper.stringify(obj);
+    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
+    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
+    const newQuery = { ...obj, orgId: newOrgId };
+    const condition = urlHelper.stringify(newQuery);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -138,7 +143,7 @@ export default class Search extends PureComponent {
       url,
       param,
       pathname: firstUrl,
-      query: obj,
+      query: newQuery,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,
@@ -204,7 +209,10 @@ export default class Search extends PureComponent {
     const recommendList = [];
     data.forEach((item) => {
       recommendList.push(
-        <Clickable
+        <a
+          className="item"
+          title={item.description}
+          rel="noopener noreferrer"
           onClick={() => this.handleOpenTab({
             source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
             labelMapping: item.id || '',
@@ -212,17 +220,10 @@ export default class Search extends PureComponent {
             labelDesc: encodeURIComponent(item.description),
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          eventName="/click/search/recommend"
           key={item.id}
         >
-          <a
-            className="item"
-            title={item.description}
-            rel="noopener noreferrer"
-          >
-            {item.name}
-          </a>
-        </Clickable>);
+          {item.name}
+        </a>);
     });
     return recommendList;
   }
@@ -244,6 +245,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleSearchBtn() {
     const { inputVal } = this.state;
     if (!this.checkInputValue(inputVal)) {
@@ -283,7 +285,9 @@ export default class Search extends PureComponent {
     // 标签 tag
     return (
       <Option key={item.name} text={item.name}>
-        <Clickable
+        <a
+          dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
+          rel="noopener noreferrer"
           onClick={() => this.handleOpenTab({
             source: sightingScopeBool ? 'sightingTelescope' : 'association',
             labelMapping: sightingScopeBool ? item.id : item.type,
@@ -291,13 +295,7 @@ export default class Search extends PureComponent {
             labelDesc: encodeURIComponent(item.description),
             q: encodeURIComponent(item.name),
           }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          eventName="/click/search/option"
-        >
-          <a
-            dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
-            rel="noopener noreferrer"
-          />
-        </Clickable>
+        />
         <span className="desc">{sightingScopeBool ? '瞄准镜' : item.description}</span>
       </Option>
     );
@@ -334,18 +332,14 @@ export default class Search extends PureComponent {
               >
                 <Input
                   suffix={(
-                    <Clickable
+                    <Button
+                      className="search-btn"
+                      size="large"
+                      type="primary"
                       onClick={this.handleSearchBtn}
-                      eventName="/click/search"
                     >
-                      <Button
-                        className="search-btn"
-                        size="large"
-                        type="primary"
-                      >
-                        <AntdIcon type="search" />
-                      </Button>
-                    </Clickable>
+                      <AntdIcon type="search" />
+                    </Button>
                   )}
                 />
               </AutoComplete>

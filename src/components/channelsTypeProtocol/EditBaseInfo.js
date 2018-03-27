@@ -15,7 +15,7 @@ import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
-import DropDownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import HtscTreeSelect from '../common/Select/TreeSelect';
 import CustomSwitch from '../common/customSwitch';
 import { time, permission } from '../../helper';
@@ -28,13 +28,6 @@ import {
 } from './auth';
 
 const { TextArea } = Input;
-
-// 下拉搜索组件样式
-const dropDownSelectBoxStyle = {
-  width: 220,
-  height: 32,
-  border: '1px solid #d9d9d9',
-};
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const { subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray } = config;
@@ -457,8 +450,8 @@ export default class EditBaseInfo extends PureComponent {
       vailDt: '',
       protocolNumber: '',
     }, () => {
+      // 开发时，测试提出的
       this.handleSearchClient();
-      this.selectCustComponent.clearSearchValue();
     });
     if (operationType === config.unSubscribeArray[0]) {
       this.setState({
@@ -467,7 +460,8 @@ export default class EditBaseInfo extends PureComponent {
         if (isSubscribe) {
           // 清空协议模版
           this.selectTemplateComponent.clearValue();
-        } else {
+        } else if (!_.isEmpty(value)) {
+          // 只有当前选择的值不为空，才执行 查询协议 ID 列表， 否则会报 缺少参数
           // 查询协议 ID 列表
           queryProtocolList({
             custId: cusId,
@@ -475,6 +469,16 @@ export default class EditBaseInfo extends PureComponent {
             operationType,
           });
         }
+      });
+      return;
+    }
+    // 当前选中的为空时，即value为空时，直接清空客户列表，不执行getCustValidate方法
+    // 否则会报 缺少参数
+    if (_.isEmpty(value)) {
+      // 清除客户列表
+      this.selectCustComponent.clearValue();
+      this.setState({
+        client: {},
       });
       return;
     }
@@ -569,12 +573,15 @@ export default class EditBaseInfo extends PureComponent {
         resetUpload();
       }
       resetProduct();
-      queryChannelProtocolItem({
-        subType,
-        keyword: value.rowId,
-      });
-      // 触发查询协议产品列表
-      this.queryChannelProtocolProduct();
+      // 当前选中的值 value 不为空时，请求接口
+      if (!_.isEmpty(value)) {
+        queryChannelProtocolItem({
+          subType,
+          keyword: value.rowId,
+        });
+        // 触发查询协议产品列表
+        this.queryChannelProtocolProduct();
+      }
     });
   }
 
@@ -694,6 +701,7 @@ export default class EditBaseInfo extends PureComponent {
       softPassword,
       softAccount,
     } = this.state;
+    const { custName = '', brokerNumber = '' } = client || {};
     let newProtocolList = [];
     if (protocolList && protocolList.length) {
       newProtocolList = protocolList.map(item => ({
@@ -762,15 +770,14 @@ export default class EditBaseInfo extends PureComponent {
                 />
               </InfoForm>
               <InfoForm label="客户" required>
-                <DropDownSelect
+                <AutoComplete
                   placeholder="经纪客户号/客户名称"
                   showObjKey="custName"
                   objId="brokerNumber"
-                  value={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                  defaultSearchValue={`${custName} ${brokerNumber}`}
                   searchList={custList}
-                  emitSelectItem={this.handleSelectClient}
-                  emitToSearch={this.handleSearchClient}
-                  boxStyle={dropDownSelectBoxStyle}
+                  onSelect={this.handleSelectClient}
+                  onSearch={this.handleSearchClient}
                   ref={ref => this.selectCustComponent = ref}
                 />
               </InfoForm>
@@ -779,15 +786,14 @@ export default class EditBaseInfo extends PureComponent {
         {
           isSubscribe ?
             <InfoForm label="协议模板" required>
-              <DropDownSelect
+              <AutoComplete
                 placeholder="协议模板"
                 showObjKey="prodName"
                 objId="rowId"
-                value={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
+                defaultSearchValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
                 searchList={templateList}
-                emitSelectItem={this.handleSelectTemplate}
-                emitToSearch={this.handleSearchTemplate}
-                boxStyle={dropDownSelectBoxStyle}
+                onSelect={this.handleSelectTemplate}
+                onSearch={this.handleSearchTemplate}
                 ref={ref => this.selectTemplateComponent = ref}
               />
             </InfoForm>

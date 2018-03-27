@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-02-22 15:08:11
  * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-03-08 17:47:49
+ * @Last Modified time: 2018-03-09 19:29:27
  * @description 单佣金调整
  */
 
@@ -16,11 +16,14 @@ import _ from 'lodash';
 import confirm from '../../components/common/Confirm';
 import InfoTitle from '../../components/common/InfoTitle';
 import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
-import { permission, url, emp } from '../../helper';
+import { permission, emp } from '../../helper';
 import { closeRctTab } from '../../utils';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import SingleCreatBoard from '../../components/commissionAdjustment/SingleCreatBoard';
 import DisabledSelect from '../../components/commissionChange/DisabledSelect';
+import withRouter from '../../decorators/withRouter';
+import Barable from '../../decorators/selfBar';
+
 import styles from './home.less';
 
 const { TextArea } = Input;
@@ -28,10 +31,10 @@ const { TextArea } = Input;
 const effects = {
   singleComOptions: 'commission/getSingleOtherCommissionOptions',
   threeMatchInfo: 'commission/queryThreeMatchInfo',
-  singleCustList: 'commission/getSingleCustList',
   submitSingle: 'commission/submitSingleCommission',
   clearReduxState: 'commission/clearReduxState',
   singleCustValidate: 'commission/validateCustomerInSingle',
+  queryCustomerInSingle: 'commission/queryCustomerInSingle',
 };
 
 const mapStateToProps = state => ({
@@ -45,12 +48,12 @@ const mapStateToProps = state => ({
   singleOtherRatio: state.commission.singleOtherCommissionOptions,
   // 客户与产品的三匹配信息
   threeMatchInfo: state.commission.threeMatchInfo,
-  // 单佣金调整页面客户查询列表
-  singleCustomerList: state.commission.singleCustomerList,
   // 单佣金调整申请结果
   singleSubmit: state.commission.singleSubmit,
   // 单佣金调整客户检验返回数据
   singleCVR: state.commission.singleCustValidate,
+  // 单佣金客户和两融信息合并的对象
+  singleCust: state.commission.singleCust,
 });
 
 const getDataFunction = (loading, type, forceFull) => query => ({
@@ -65,17 +68,19 @@ const mapDispatchToProps = {
   getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询产品与客户的三匹配信息
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
-  // 查询单佣金调整页面客户列表
-  getSingleCustList: getDataFunction(false, effects.singleCustList),
   // 提交单佣金调整申请
   submitSingle: getDataFunction(false, effects.submitSingle),
   // 清空redux保存的state
   clearReduxState: getDataFunction(false, effects.clearReduxState),
   // 单佣金调整客户校验
   singleCustValidate: getDataFunction(false, effects.singleCustValidate),
+  // 单佣金调整新建页面查询客户列表（选中第一个）和客户检验
+  queryCustomerInSingle: getDataFunction(false, effects.queryCustomerInSingle),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
+@Barable
 export default class CommissionAdjustmentHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -83,14 +88,14 @@ export default class CommissionAdjustmentHome extends PureComponent {
     empPostnList: PropTypes.array.isRequired,
     getSingleOtherRates: PropTypes.func.isRequired,
     singleOtherRatio: PropTypes.array.isRequired,
-    singleCustomerList: PropTypes.array.isRequired,
     singleSubmit: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
     singleCustValidate: PropTypes.func.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
-    getSingleCustList: PropTypes.func.isRequired,
+    queryCustomerInSingle: PropTypes.func.isRequired,
     submitSingle: PropTypes.func.isRequired,
     singleCVR: PropTypes.object.isRequired,
+    singleCust: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -99,16 +104,24 @@ export default class CommissionAdjustmentHome extends PureComponent {
       remark: '', // 备注
       newCommission: '0.16', // 新佣金，业务要求的默认值
       approverId: '', // 审批人id
-      customer: {}, // 单佣金选择的客户
+      customer: { custName: '' }, // 单佣金选择的客户
       attachment: '', // 附件
       singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
     };
   }
 
   componentDidMount() {
-    const { search } = this.props.location;
-    this.custid = url.parse(search).custid;
-    this.handleChangeSingleAssembly(this.custid);
+    const { location: { query: { custid } } } = this.props;
+    this.handleChangeSingleAssembly(custid);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { custid: preCustid } } } = this.props;
+    const { location: { query: { custid: nextCustid } } } = nextProps;
+    if (preCustid !== nextCustid) {
+      this.clearRedux();
+      this.handleChangeSingleAssembly(nextCustid);
+    }
   }
 
   @autobind
@@ -117,7 +130,7 @@ export default class CommissionAdjustmentHome extends PureComponent {
     this.props.clearReduxState({
       clearList: [
         { name: 'singleOtherCommissionOptions' },
-        { name: 'singleCustomerList' },
+        { name: 'singleCust' },
         { name: 'singleComProductList' },
         { name: 'threeMatchInfo', value: {} },
         { name: 'singleGJCommission' },
@@ -143,24 +156,15 @@ export default class CommissionAdjustmentHome extends PureComponent {
   // 根据用户输入查询单佣金客户列表,默认选取列表中的第一项
   @autobind
   handleChangeSingleAssembly(keywords) {
-    if (_.isEmpty(keywords)) {
-      confirm({
-        content: '请输入经纪客户号/客户名称',
-      });
-    } else {
-      const { occDivnNum } = this.props.empInfo;
-      this.props.getSingleCustList({
-        keywords,
-        postionId: emp.getPstnId(),
-        deptCode: occDivnNum,
-      }).then(() => {
-        const { singleCustomerList } = this.props;
-        if (!_.isEmpty(singleCustomerList)) {
-          const custmoer = singleCustomerList[0];
-          this.handleSelectAssembly(custmoer);
-        }
-      });
-    }
+    const { occDivnNum } = this.props.empInfo;
+    this.props.queryCustomerInSingle({
+      keywords,
+      postionId: emp.getPstnId(),
+      deptCode: occDivnNum,
+    }).then(() => {
+      console.info('this.props.singleCust', this.props.singleCust);
+      this.handleSelectAssembly(this.props.singleCust);
+    });
   }
 
   // 修改单佣金父产品参数

@@ -1,13 +1,17 @@
 /**
- * @file components/common/Select/SearchSelect.js
- *  带搜索icon的select和添加按钮
- *  根据客户input中输入的值将所选中的对象传给添加按钮进行进一步处理
- * @author baojiajia
+ * @Author: sunweibin
+ * @Date: 2018-03-21 14:14:58
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-21 14:15:29
+ * @description 批量佣金调整中的客户搜索组件
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Icon, Input, AutoComplete, Button } from 'antd';
+import { AutoComplete, Button } from 'antd';
+
+import SimilarAutoComplete from '../similarAutoComplete';
 import styles from './searchSelect.less';
 
 const Option = AutoComplete.Option;
@@ -32,82 +36,56 @@ export default class SearchSelect extends PureComponent {
     super(props);
     this.state = {
       selectItem: {},
-      inputValue: '',
-      proValue: '',
     };
-  }
-
-   @autobind
-  onChange(value) {
-    this.setState({
-      inputValue: value,
-      proValue: value,
-    });
-  }
-
-  // 根据用户选中的option的value值获取对应的数组值
-  @autobind
-  setSelectValue(value, option) {
-    this.setState({
-      proValue: value,
-      inputValue: '',
-      selectItem: this.props.dataSource[option.props.index],
-    });
   }
 
   // 把对应的数组值传入外部接口
   @autobind
   handleAddBtnClick() {
     this.props.onAddCustomer(this.state.selectItem);
-    this.setState({
-      proValue: '',
-      inputValue: '',
-      selectItem: {},
-    });
+    this.setState({ selectItem: {} });
+  }
+
+  // 搜索客户列表
+  @autobind
+  handleSearchCustList(value) {
+    this.props.onChangeValue(value);
+  }
+
+  // 选择某个客户
+  @autobind
+  handleSelectCust(cust) {
+    this.setState({ selectItem: cust });
   }
 
   @autobind
-  changeDataSource() {
-    this.props.onChangeValue(this.state.inputValue);
+  renderOption(cust) {
+    const { cusId, custId, custName, econNum, brokerNumber } = cust;
+    return (
+      <Option key={cusId || custId} value={custName} text={custName}>
+        <span className={styles.prodValue}>{custName}({brokerNumber || econNum})</span>
+      </Option>
+    );
   }
 
 
   render() {
-    const { labelName, dataSource, width, defaultInput } = this.props;
-    const { proValue } = this.state;
+    const { labelName, dataSource } = this.props;
     const newDataSource = dataSource.map(item => ({ key: item.cusId || item.custId, ...item }));
-    const options = newDataSource.map(opt => (
-      <Option key={opt.cusId || opt.custId} value={opt.cusId || opt.custId} text={opt.custName}>
-        <span className={styles.prodValue}>{opt.custName}({opt.brokerNumber || opt.econNum})</span>
-      </Option>
-    ));
     return (
       <div className={styles.selectSearchBox}>
         <span className={styles.labelName}>{`${labelName}：`}</span>
-        <AutoComplete
-          className={styles.searchBox}
-          dropdownClassName={styles.searchDropDown}
-          dropdownStyle={{ width }}
-          dropdownMatchSelectWidth={false}
-          size="large"
-          placeholder={defaultInput}
-          style={{ width }}
-          dataSource={options}
-          optionLabelProp="text"
-          onChange={this.onChange}
-          value={proValue}
-          onSelect={this.setSelectValue}
-        >
-          <Input
-            suffix={
-              <Icon
-                type="search"
-                onClick={this.changeDataSource}
-                className={styles.searchIcon}
-              />
-            }
-          />
-        </AutoComplete>
+        <SimilarAutoComplete
+          name="batchCustSelect"
+          placeholder="经纪客户号/客户名称"
+          searchList={newDataSource}
+          width={184}
+          showObjKey="key"
+          objId="key"
+          onSelect={this.handleSelectCust}
+          onSearch={this.handleSearchCustList}
+          renderOption={this.renderOption}
+        />
         <Button className={styles.addButton} onClick={this.handleAddBtnClick}>添加</Button>
       </div>
     );

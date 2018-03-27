@@ -11,7 +11,8 @@ import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
-import Clickable from '../../../components/common/Clickable';
+import { emp } from '../../../helper';
+import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
 
@@ -27,6 +28,9 @@ export default class BottomFixedBox extends PureComponent {
     entertype: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
+    hasTkMampPermission: PropTypes.bool.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -37,6 +41,7 @@ export default class BottomFixedBox extends PureComponent {
     super(props);
     this.state = {
       taskAndGroupLeftPos: '0',
+      warningContent: '',
     };
   }
 
@@ -84,7 +89,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick(url, title, id, shouldStay, editPane) {
+  handleClick({ url, title, id, shouldStay, editPane, labelDesc }) {
     const {
       page,
       condition,
@@ -92,8 +97,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-        selectAll,
-        source,
+          selectAll,
+          source,
         },
         pathname,
         search,
@@ -114,14 +119,16 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
+        labelDesc,
       );
     } else if (selectAll) {
       this.openByAllSelect(url,
-        condition, page.total, title, id, entertype, source, fr, shouldStay, editPane);
+        condition, page.total, title, id, entertype, source, fr, shouldStay, editPane, labelDesc);
     }
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '用户分组' } })
   handleCustomerGroupClick() {
     const url = '/customerPool/customerGroup';
     const title = '新建分组';
@@ -136,25 +143,96 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     if (Number(selectCount) > 500) {
       this.toggleModal();
+      this.setState({
+        modalContent: '一次添加的客户数不能超过500个',
+      });
       return;
     }
-    this.handleClick(url, title, id, shouldStay, editPane);
+    this.handleClick({ url, title, id, shouldStay, editPane });
   }
 
+  // 跳转到创建任务页面
   @autobind
-  handleCreateTaskClick() {
+  toCreateTaskPage() {
+    const { location: { query: { labelDesc } } } = this.props;
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick(url, title, id);
+    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc) });
+  }
+
+  // 验证通过后跳转到创建任务
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发起任务' } })
+  handleCreateTaskClick() {
+    const {
+      condition,
+      hasTkMampPermission,
+      isSendCustsServedByPostn,
+      location: {
+        query: {
+          selectAll,
+          selectedIds,
+        },
+      },
+    } = this.props;
+    // 有任务管理权限
+    if (hasTkMampPermission) {
+      this.toCreateTaskPage();
+    } else {
+      const payload = {};
+      if (selectAll) {
+        payload.searchReq = condition;
+      }
+      if (selectedIds) {
+        const custList = decodeURIComponent(selectedIds).split(',');
+        const custIdList = [];
+        _.forEach(custList, (item) => {
+          custIdList.push(item.split('.')[0]);
+        });
+        payload.custIdList = custIdList;
+      }
+      // 没有任务管理权限，发请求判断是否超过1000条数据和是否包含非本人名下客户
+      isSendCustsServedByPostn({
+        ...payload,
+        postnId: emp.getPstnId(),
+      }).then(() => {
+        const {
+          sendCustsServedByPostnResult = {},
+        } = this.props;
+        const {
+          custNumsIsExceedUpperLimit = false,
+          sendCustsServedByPostn = false,
+        } = sendCustsServedByPostnResult;
+        // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
+        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+          this.toggleModal();
+          this.setState({ modalContent: '你没有HTSC 任务管理职责，不可发起任务' });
+        } else {
+          this.toCreateTaskPage();
+        }
+      });
+    }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, condition, ids, count, title, id, entertype, source, fr, shouldStay, editPane) {
+  openByIds(url,
+    condition,
+    ids,
+    count,
+    title,
+    id,
+    entertype,
+    source,
+    fr,
+    shouldStay,
+    editPane,
+    labelDesc,
+  ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -168,6 +246,7 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
+      labelDesc,
       condition: condt,
       fr,
     };
@@ -176,7 +255,18 @@ export default class BottomFixedBox extends PureComponent {
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, entertype, source, fr, shouldStay, editPane) {
+  openByAllSelect(url,
+    condition,
+    count,
+    title,
+    id,
+    entertype,
+    source,
+    fr,
+    shouldStay,
+    editPane,
+    labelDesc,
+  ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -187,6 +277,7 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
+      labelDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
@@ -203,12 +294,7 @@ export default class BottomFixedBox extends PureComponent {
   renderGroup() {
     if (this.props.mainServiceManager) {
       return (
-        <Clickable
-          onClick={this.handleCustomerGroupClick}
-          eventName="/click/custListBottomFixedBox/custGroup"
-        >
-          <button>用户分组</button>
-        </Clickable>
+        <button onClick={this.handleCustomerGroupClick}>用户分组</button>
       );
     }
     return null;
@@ -216,12 +302,7 @@ export default class BottomFixedBox extends PureComponent {
 
   renderCreateTaskBtn() {
     return (
-      <Clickable
-        onClick={this.handleCreateTaskClick}
-        eventName="/click/custListBottomFixedBox/launchTask"
-      >
-        <button>发起任务</button>
-      </Clickable>
+      <button onClick={this.handleCreateTaskClick}>发起任务</button>
     );
   }
 
@@ -248,6 +329,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       taskAndGroupLeftPos,
       visible,
+      modalContent,
     } = this.state;
     return (
       <div
@@ -278,7 +360,7 @@ export default class BottomFixedBox extends PureComponent {
         >
           <div className={'info'}>
             <Icon type="tishi1" className={'tishi'} />
-            <span>一次添加的客户数不能超过500个</span>
+            <span>{modalContent}</span>
           </div>
         </Modal>
       </div>

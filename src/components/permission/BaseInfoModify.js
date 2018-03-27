@@ -5,7 +5,7 @@ import { autobind } from 'core-decorators';
 import style from './baseinfomodify.less';
 import InfoTitle from '../common/InfoTitle';
 import TextareaComponent from '../common/textareacomponent';
-import DropdownSelect from '../common/dropdownSelect';
+import AutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import { seibelConfig } from '../../config';
 
@@ -78,11 +78,14 @@ export default class BaseInfoModify extends PureComponent {
         this.props.onEmitEvent('subType', this.state.subTypeTxt);
       });
     }
-    this.context.getSubTypeList({
-      customerId: item.brokerNumber,
-      customerType: item.custType,
-      type: pageType,
-    });
+    // 当前选中的客户不为空时，才发起接口申请
+    if (!_.isEmpty(item)) {
+      this.context.getSubTypeList({
+        customerId: item.brokerNumber,
+        customerType: item.custType,
+        type: pageType,
+      });
+    }
   }
 
   @autobind
@@ -108,15 +111,15 @@ export default class BaseInfoModify extends PureComponent {
             <i className={style.isRequired}>*</i>客户：
           </span>
           <div className={style.inputComponentContent}>
-            <DropdownSelect
-              value={this.props.customer}
+            <AutoComplete
               placeholder="经纪客户号/客户名称"
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
-              emitSelectItem={this.selectCustomer}
-              emitToSearch={this.searchCanApplyCustList}
-              boxStyle={{ border: '1px solid #d9d9d9' }}
+              isImmediatelySearch
+              width={200}
+              onSelect={this.selectCustomer}
+              onSearch={this.searchCanApplyCustList}
             />
           </div>
         </div>

@@ -18,6 +18,7 @@ import Search from '../../common/Search';
 
 import tableStyles from './groupTable.less';
 import styles from './customerGroupDetail.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -373,6 +374,13 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '分组管理客户详情',
+      type: '操作',
+    },
+  })
   handleDeleteBtnClick(record) {
     this.setState({
       // 当前删除行记录数据

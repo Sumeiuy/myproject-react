@@ -108,7 +108,7 @@ export default {
     // 可查询服务人员列表
     searchServerPersonList: EMPTY_LIST,
     // 列表页的服务营业部
-    serviceDepartment: EMPTY_LIST,
+    serviceDepartment: EMPTY_OBJECT,
     // 标签圈人
     circlePeopleData: [],
     peopleOfLabelData: {},
@@ -597,12 +597,13 @@ export default {
     },
     * getSearchServerPersonList({ payload }, { call, put }) {
       if (!payload.keyword) {
+        // 和之前的用户行为(输入空时，搜索结果为预置数据项)，保持一致
         yield put({
           type: 'getSearchServerPersonListSuccess',
-          payload: [{
-            ptyMngName: '所有人',
-            ptyMngId: '',
-          }],
+          payload: [
+            { ptyMngName: '所有人', ptyMngId: '' },
+            { ptyMngName: '我的', ptyMngId: emp.getId() },
+          ],
         });
       } else {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
