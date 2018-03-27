@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 16:32:19
+ * @Last Modified time: 2018-03-27 19:57:04
  * 客户明细数据
  */
 
@@ -84,6 +84,8 @@ export default class CustDetail extends PureComponent {
     feedBackIdL1: PropTypes.string,
     feedBackIdL2: PropTypes.string,
     canLaunchTask: PropTypes.bool,
+    isShowFeedbackFilter: PropTypes.bool,
+    isEntryFromResultStatisfy: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -98,6 +100,8 @@ export default class CustDetail extends PureComponent {
     feedBackIdL1: '',
     canLaunchTask: false,
     feedBackIdL2: '',
+    isShowFeedbackFilter: false,
+    isEntryFromResultStatisfy: false,
   }
 
   constructor(props) {
@@ -164,18 +168,22 @@ export default class CustDetail extends PureComponent {
  */
   @autobind
   handleFeedbackL1Change({ key }) {
-    const { getCustDetailData, ...remainingProps } = this.props;
+    const { getCustDetailData, isEntryFromCustTotal, ...remainingProps } = this.props;
 
     this.setState({
       currentSelectFeedBackIdL1: key,
     }, () => {
       this.setState({
-        feedbackL2List: this.renderFeedbackL2Option(key, this.state.currentSelectFeedBackIdL2),
+        feedbackL2List: this.renderFeedbackL2Option(
+          key,
+          this.state.currentSelectFeedBackIdL2,
+        ),
       });
     });
     // 查看客户明细
     getCustDetailData({
       ...remainingProps,
+      isEntryFromCustTotal,
       feedBackIdL1: key,
       // 一级反馈一旦发生变化，二级反馈就传默认的所有反馈
       feedBackIdL2: '',
@@ -342,8 +350,13 @@ export default class CustDetail extends PureComponent {
 
   @autobind
   renderColumnTitle() {
-    const { isEntryFromPie, isEntryFromProgressDetail, isEntryFromCustTotal } = this.props;
-    const columns = [{
+    const {
+      isEntryFromPie,
+      isEntryFromProgressDetail,
+      isEntryFromCustTotal,
+      isEntryFromResultStatisfy,
+    } = this.props;
+    let columns = [{
       key: 'custName',
       value: '客户名称',
     },
@@ -377,6 +390,16 @@ export default class CustDetail extends PureComponent {
     if (isEntryFromPie || isEntryFromCustTotal) {
       // 从饼图点击过来，不展示服务状态字段
       columns.splice(4, 1);
+    } else if (isEntryFromResultStatisfy) {
+      // 从进度条的结果达标过来的，不展示客户反馈和反馈详情，不展示服务状态
+      columns.splice(4, 3);
+      columns = _.concat(columns, [{
+        key: 'realityValue',
+        value: '达标指标值',
+      }, {
+        key: 'finishDt',
+        value: '达标日期',
+      }]);
     } else if (isEntryFromProgressDetail) {
       // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
       columns.splice(5, 2);
@@ -396,7 +419,10 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
-  renderFeedbackL2Option(currentSelectFeedBackIdL1, currentSelectFeedBackIdL2) {
+  renderFeedbackL2Option(
+    currentSelectFeedBackIdL1,
+    currentSelectFeedBackIdL2,
+  ) {
     const { currentFeedback = EMPTY_LIST } = this.props;
     // 构造二级客户反馈
     const currentFeedbackL1Object = _.find(currentFeedback, item =>
@@ -427,10 +453,10 @@ export default class CustDetail extends PureComponent {
     } = this.state;
 
     const {
-      // title,
       data: { page = EMPTY_OBJECT },
       isEntryFromPie,
       isEntryFromCustTotal,
+      isShowFeedbackFilter,
     } = this.props;
     const { totalCount, pageNum } = page;
     // 构造表格头部
@@ -442,67 +468,69 @@ export default class CustDetail extends PureComponent {
     if (columnSize === 7) {
       // 列全部保留
       // columnWidth = [150, 100, 250, 100, 100, 150, 150];
-      columnWidth = ['15%', '10%', '25%', '10%', '10%', '15%', '15%'];
+      columnWidth = ['20%', '10%', '20%', '10%', '10%', '15%', '15%'];
     } else if (columnSize === 6) {
       // 去除服务状态列
-      // columnWidth = [150, 100, 300, 100, 175, 175];
-      columnWidth = ['15%', '10%', '30%', '10%', '17%', '18%'];
+      // columnWidth = [150, 100, 300, 150, 150, 150];
+      columnWidth = ['20%', '10%', '25%', '15%', '15%', '15%'];
     } else if (columnSize === 5) {
       // 去除客户反馈和反馈详情列
       // columnWidth = [200, 150, 350, 150, 150];
-      columnWidth = ['20%', '15%', '35%', '15%', '15%'];
+      columnWidth = ['20%', '15%', '31%', '17%', '17%'];
     }
 
     return (
       <div className={styles.custDetailWrapper}>
-        <div className={styles.header}>
-          {/* <div className={styles.title}>{title}共{totalCount || 0}人</div> */}
-          {/**
-           * 饼图或者客户总数下钻，展示筛选客户反馈
-           */}
-          {isEntryFromPie || isEntryFromCustTotal ?
-            <div className={styles.filterSection}>
-              <div
-                className={styles.filter}
-                ref={(ref) => {
-                  if (ref && !this.feedbackL1Elem) {
-                    this.feedbackL1Elem = ref;
-                  }
-                }}
-              >
-                <SelectFilter
-                  value={currentSelectFeedBackIdL1 || ''}
-                  filterLabel="客户反馈"
-                  filter="custFeedbackL1"
-                  filterField={feedbackL1List}
-                  onChange={this.handleFeedbackL1Change}
-                  getPopupContainer={this.getFeedbackL1PopupContainer}
-                />
-              </div>
-              {
-                !_.isEmpty(feedbackL2List) ?
+        {
+          isShowFeedbackFilter ?
+            <div className={styles.header}>
+              {/**
+              * 饼图或者客户总数下钻，展示筛选客户反馈
+              */}
+              {isEntryFromPie || isEntryFromCustTotal ?
+                <div className={styles.filterSection}>
                   <div
                     className={styles.filter}
                     ref={(ref) => {
-                      if (ref && !this.feedbackL2Elem) {
-                        this.feedbackL2Elem = ref;
+                      if (ref && !this.feedbackL1Elem) {
+                        this.feedbackL1Elem = ref;
                       }
                     }}
                   >
                     <SelectFilter
-                      value={currentSelectFeedBackIdL2 || ''}
-                      filterLabel=""
-                      filter="custFeedbackL2"
-                      filterField={feedbackL2List}
-                      onChange={this.handleFeedbackL2Change}
-                      getPopupContainer={this.getFeedbackL2PopupContainer}
+                      value={currentSelectFeedBackIdL1 || ''}
+                      filterLabel="客户反馈"
+                      filter="custFeedbackL1"
+                      filterField={feedbackL1List}
+                      onChange={this.handleFeedbackL1Change}
+                      getPopupContainer={this.getFeedbackL1PopupContainer}
                     />
-                  </div> : null
+                  </div>
+                  {
+                    !_.isEmpty(feedbackL2List) ?
+                      <div
+                        className={styles.filter}
+                        ref={(ref) => {
+                          if (ref && !this.feedbackL2Elem) {
+                            this.feedbackL2Elem = ref;
+                          }
+                        }}
+                      >
+                        <SelectFilter
+                          value={currentSelectFeedBackIdL2 || ''}
+                          filterLabel=""
+                          filter="custFeedbackL2"
+                          filterField={feedbackL2List}
+                          onChange={this.handleFeedbackL2Change}
+                          getPopupContainer={this.getFeedbackL2PopupContainer}
+                        />
+                      </div> : null
+                  }
+                </div>
+                : null
               }
-            </div>
-            : null
-          }
-        </div>
+            </div> : <div className={styles.emptyHeader} />
+        }
         <div className={styles.custDetailTableSection}>
           {!_.isEmpty(dataSource) ?
             <GroupTable

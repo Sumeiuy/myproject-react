@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-06 16:26:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 16:50:01
+ * @Last Modified time: 2018-03-27 18:08:53
  * 客户反馈
  */
 
@@ -94,6 +94,10 @@ export default class CustFeedback extends PureComponent {
     const currentFeedback = _.map(level1Data, item => ({
       feedBackIdL1: item.key,
       feedbackName: item.name,
+      childList: !_.isEmpty(item.children) ? _.map(item.children, child => ({
+        feedBackIdL2: child.key,
+        feedbackName: child.name,
+      })) : EMPTY_LIST,
     }));
     let feedBackIdL1 = '';
     if (!_.isEmpty(parent)) {

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 16:51:10
+ * @Last Modified time: 2018-03-27 18:28:35
  * 管理者视图详情
  */
 
@@ -115,6 +115,7 @@ export default class ManagerViewDetail extends PureComponent {
       feedBackIdL1: '',
       destroyOnClose: false,
       feedBackIdL2: '',
+      isEntryFromResultStatisfy: false,
     };
   }
 
@@ -180,7 +181,6 @@ export default class ManagerViewDetail extends PureComponent {
       feedBackIdL1 = '',
       // 当前选中的二级客户反馈
       feedBackIdL2 = '',
-      // feedbackTitle,
       pageNum = INITIAL_PAGE_NUM,
       pageSize = INITIAL_PAGE_SIZE,
       missionProgressStatus = '',
@@ -192,6 +192,8 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromProgressDetail = false,
       // 当前入口是否从饼图过来
       isEntryFromPie = false,
+      // 当前入口是从进度条的结果达标过来的
+      isEntryFromResultStatisfy = false,
     } = params;
     const { previewCustDetail, currentId, taskFeedbackList } = this.props;
 
@@ -252,8 +254,10 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromProgressDetail,
       isEntryFromPie,
       isEntryFromCustTotal,
+      isEntryFromResultStatisfy,
       canLaunchTask,
-      // 所有一级反馈
+      // 所有一级二级反馈
+      // 添加客户反馈，所有反馈
       currentFeedback: isEntryFromCustTotal ? taskFeedbackList : currentFeedback,
     });
 
@@ -456,6 +460,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionProgressStatus,
       progressFlag,
       feedBackIdL2,
+      isEntryFromResultStatisfy,
     } = this.state;
 
     const {
@@ -476,6 +481,11 @@ export default class ManagerViewDetail extends PureComponent {
       // orgName,
       templateId,
     } = mngrMissionDetailInfo;
+
+    const {
+      // 已服务客户
+      servedNums = 0,
+    } = missionImplementationDetail || EMPTY_OBJECT;
 
     const { list = EMPTY_LIST } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
@@ -615,6 +625,10 @@ export default class ManagerViewDetail extends PureComponent {
                       canLaunchTask={canLaunchTask}
                       missionProgressStatus={missionProgressStatus}
                       progressFlag={progressFlag}
+                      // 是否显示客户反馈筛选，只有已服务客户总数大于0，才需要展示客户反馈
+                      isShowFeedbackFilter={servedNums > 0}
+                      // 结果达标进度条下钻标记
+                      isEntryFromResultStatisfy={isEntryFromResultStatisfy}
                     />
                   }
                   modalStyle={{
