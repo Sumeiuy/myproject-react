@@ -347,13 +347,11 @@ export default class TaskFormInfo extends PureComponent {
     const { getFieldDecorator } = form;
 
     const errorProps = isShowErrorInfo ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '请选择任务类型',
     } : null;
@@ -365,25 +363,21 @@ export default class TaskFormInfo extends PureComponent {
     // } : null;
 
     const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '请选择执行方式',
     } : null;
 
     const taskNameErrorProps = isShowErrorTaskName ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '任务名称不能为空，最多30个字符',
     } : null;
 
     const timelyIntervalValueErrorProps = isShowErrorIntervalValue ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '有效期只能为正整数，不能超过365天',
     } : null;
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
 

@@ -41,6 +41,9 @@ export default class SelectTargetCustomer extends PureComponent {
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
+    // 设置下一步按钮可点击状态
+    setNextStepBtnDisabled: PropTypes.func.isRequired,
+    nextStepBtnIsDisabled: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -149,6 +152,8 @@ export default class SelectTargetCustomer extends PureComponent {
       filterModalvisible,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      setNextStepBtnDisabled,
+      nextStepBtnIsDisabled,
     } = this.props;
     const {
       showEntry,
@@ -182,6 +187,8 @@ export default class SelectTargetCustomer extends PureComponent {
           onPreview={onPreview}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
+          setNextStepBtnDisabled={setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
         <SightingTelescope
           ref={r => this.sightingTelescopeRef = r}
@@ -202,6 +209,8 @@ export default class SelectTargetCustomer extends PureComponent {
           filterModalvisible={filterModalvisible}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
+          setNextStepBtnDisabled={setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
       </div>
     );

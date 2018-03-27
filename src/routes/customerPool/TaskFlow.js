@@ -250,6 +250,7 @@ export default class TaskFlow extends PureComponent {
       clearFromSearch: true,
       currentSelectLabelName: null,
       currentFilterNum: 0,
+      nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -319,6 +320,15 @@ export default class TaskFlow extends PureComponent {
         isShowApprovalModal: true,
       });
     }
+  }
+
+  // 设置下一步按钮的是否可点击状态
+  @autobind
+  setNextStepBtnDisabled(disabled) {
+    console.log('disabled', disabled);
+    this.setState({
+      nextStepBtnIsDisabled: disabled,
+    });
   }
 
   /**
@@ -420,13 +430,13 @@ export default class TaskFlow extends PureComponent {
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
-          message.error('请导入Excel文件');
+          // message.error('请导入Excel文件');
           return;
         }
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
-          message.error('请利用标签圈出目标客户');
+          // message.error('请利用标签圈出目标客户');
           return;
         }
       }
@@ -443,11 +453,11 @@ export default class TaskFlow extends PureComponent {
         };
       } else {
         if (customNum === 0) {
-          message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          // message.error('此标签下无客户，不可发起任务，请选择其他标签');
           return;
         }
         if (custNum === 0) {
-          message.error('此标签下未筛选出客户，请重新筛选');
+          // message.error('此标签下未筛选出客户，请重新筛选');
           return;
         }
 
@@ -543,6 +553,7 @@ export default class TaskFlow extends PureComponent {
     } else if (current === 2) {
       isAllowGoNextStep = true;
       const resultTrackComponent = this.resultTrackRef;
+      console.log('222222', resultTrackData, resultTrackComponent.getData());
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
         ...resultTrackData,
@@ -566,6 +577,7 @@ export default class TaskFlow extends PureComponent {
       } = resultTrackData;
 
       if (isResultTrackChecked) {
+        resultTrackComponent.requiredDataValidate();
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
           errMsg = '请设置结果跟踪任务指标';
@@ -580,7 +592,7 @@ export default class TaskFlow extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          message.error(errMsg);
+          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -976,6 +988,7 @@ export default class TaskFlow extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
+      nextStepBtnIsDisabled,
     } = this.state;
 
     const {
@@ -1032,6 +1045,8 @@ export default class TaskFlow extends PureComponent {
           orgId={orgId}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
+          setNextStepBtnDisabled={this.setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
       </div>,
     }, {
@@ -1145,6 +1160,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.nextStepBtn}
                 type="primary"
                 onClick={_.debounce(this.handleNextStep, 250)}
+                disabled={nextStepBtnIsDisabled}
               >
                 下一步
               </Button>
