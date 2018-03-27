@@ -65,7 +65,7 @@ export default class autoComplete extends PureComponent {
   inputTimeout = 0;
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '清楚输入框内容' } })
+  @logable({ type: 'Click', payload: { name: '清除输入框内容' } })
   clearInput() {
     this.setState({
       inputValue: '',

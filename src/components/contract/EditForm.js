@@ -165,9 +165,7 @@ export default class EditForm extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '编辑',
-      type: '合约条款',
-      subType: '操作',
+      name: '合约条款编辑',
     },
   })
   editTableData(record, index) {
@@ -185,9 +183,7 @@ export default class EditForm extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '删除',
-      type: '合约条款',
-      subType: '操作',
+      name: '合约条款删除',
     },
   })
   deleteTableData(record, index) {

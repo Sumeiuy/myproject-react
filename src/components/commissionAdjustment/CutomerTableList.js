@@ -65,8 +65,7 @@ export default class CutomerTableList extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '$args[0]',
-      type: '批量佣金添加客户',
+      name: '批量佣金添加客户$args[0]',
     },
   })
   onSelectChange(selectedRowKeys) {

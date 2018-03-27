@@ -55,13 +55,6 @@ export default class ProductsDropdownBox extends PureComponent {
 
   // 获取到value值后隐藏icon
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标产品',
-      value: '$args[0]',
-    },
-  })
   changeInputbox(value) {
     if (value) {
       this.setState({
@@ -90,12 +83,17 @@ export default class ProductsDropdownBox extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '清除输入内容' } })
+  handleClearInput() {
+    this.setState({
+      value: '',
+      iconType: 'search',
+    });
+  }
+
+  @autobind
   clearValue() {
     if (this.state.iconType === 'close') {
-      this.setState({
-        value: '',
-        iconType: 'search',
-      });
+      this.handleClearInput();
     }
   }
   render() {

@@ -649,7 +649,6 @@ export default class EditBaseInfo extends PureComponent {
 
   // 修改备注
   @autobind
-  @logable({ type: 'Click', payload: { name: '备注' } })
   handleChangeContent(e) {
     this.setState({
       content: e.target.value,

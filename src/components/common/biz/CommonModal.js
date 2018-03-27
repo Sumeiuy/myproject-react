@@ -98,7 +98,7 @@ export default class CommonModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: 'okText.cancelText' } })
+  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
   handleCancel(modalKey) {
     this.props.closeModal(modalKey);
   }

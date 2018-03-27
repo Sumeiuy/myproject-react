@@ -115,8 +115,7 @@ export default class Demote extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '是否划转',
-      type: '降级客户处理',
+      name: '降级客户处理是否划转',
     },
   })
   checkTableData(checked, record, index) {

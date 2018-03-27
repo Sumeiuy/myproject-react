@@ -121,7 +121,7 @@ export default class Home extends PureComponent {
     custCount: React.PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
-    ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
+    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
     getCustCount: PropTypes.func.isRequired,
     initBoradcastList: PropTypes.array.isRequired,
     initBoradcastFile: PropTypes.object.isRequired,

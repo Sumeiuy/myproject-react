@@ -86,8 +86,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '设为主要',
-      type: '服务经理主职位设置',
+      name: '服务经理主职位设置',
     },
   })
   checkTableData(record, index) {

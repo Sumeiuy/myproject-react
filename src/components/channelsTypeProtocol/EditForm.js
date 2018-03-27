@@ -425,9 +425,7 @@ export default class EditForm extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '穿梭',
-      type: '协议产品',
-      subType: '操作',
+      name: '协议产品穿梭',
     },
   })
   handleTransferChange(flag, newSelect, changeSecondArray) {
@@ -517,9 +515,7 @@ export default class EditForm extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '删除',
-      type: '下挂客户',
-      subType: '操作',
+      name: '下挂客户删除',
     },
   })
   deleteTableData(record, index) {
