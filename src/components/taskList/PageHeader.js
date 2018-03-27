@@ -350,8 +350,11 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   handleCreateDateChange(date) {
-    const createTimeStart = moment(date[0]).format(dateFormat);
-    const createTimeEnd = moment(date[1]).format(dateFormat);
+    const { startDate, endDate } = date;
+    const createTimeStart = startDate.format(dateFormat);
+    const createTimeEnd = endDate.format(dateFormat);
+    // const createTimeStart = moment(date[0]).format(dateFormat);
+    // const createTimeEnd = moment(date[1]).format(dateFormat);
     this.props.filterCallback({
       createTimeStart,
       createTimeEnd,
@@ -419,6 +422,18 @@ export default class Pageheader extends PureComponent {
     }
     const time = value.valueOf();
     return time > moment().subtract(0, 'days');
+  }
+
+  @autobind
+  handleSelectStart(day) {
+    console.warn('handleSelectStart');
+    console.warn(day);
+  }
+
+  @autobind
+  handleSelectEnd(day) {
+    console.warn('handleSelectEnd');
+    console.warn(day);
   }
 
   // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
@@ -497,6 +512,15 @@ export default class Pageheader extends PureComponent {
             key={`${missionViewType}创建时间`}
             format={dateFormat}
           />
+          { /*
+            <DateRangePicker
+              initialDate={[startTime, endTime]}
+              onChange={this.handleCreateDateChange}
+              isOutsideRange={this.disabledDateStart}
+              selectStart={this.handleSelectStart}
+              selectEnd={this.handleSelectEnd}
+            />
+          */ }
         </div>
       </div>);
     } else {

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-26 15:41:42
+ * @Last Modified time: 2018-03-26 17:29:09
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -36,14 +36,15 @@ export default class CommonDateRangePicker extends PureComponent {
     placeholderText: ['开始时间', '结束时间'],
     initialDate: [null, null],
     onChange: _.noop,
-    isOutsideRange: () => false,
     selectStart: _.noop,
     selectEnd: _.noop,
+    isOutsideRange: () => false,
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      focusedInput: null,
       startDate: props.initialDate[0],
       endDate: props.initialDate[1],
       dateHasChanged: false,
@@ -83,8 +84,13 @@ export default class CommonDateRangePicker extends PureComponent {
   // 切换了日期
   @autobind
   handleDatesChange({ startDate, endDate }) {
+    const { focusedInput } = this.state;
+    if (focusedInput === 'startDateID') {
+      this.props.selectStart(startDate);
+    } else if (focusedInput === 'endDateID') {
+      this.props.selectEnd(endDate);
+    }
     this.setState({ startDate, endDate, dateHasChanged: true });
-    // 根据切换的时间，需要将outsideRange修改
   }
 
   @autobind
@@ -96,11 +102,6 @@ export default class CommonDateRangePicker extends PureComponent {
       // 此处需要对弹出框的位置进行重新计算
       setTimeout(() => { this.calcCalendarPosition(); }, 200);
     }
-  }
-
-  @autobind
-  handleDisplayFormat() {
-    return this.props.displayFormat;
   }
 
   @autobind
@@ -117,8 +118,7 @@ export default class CommonDateRangePicker extends PureComponent {
   render() {
     const {
       placeholderText,
-      selectStart,
-      selectEnd,
+      displayFormat,
       isOutsideRange,
     } = this.props;
     const {
@@ -132,7 +132,7 @@ export default class CommonDateRangePicker extends PureComponent {
       'placeholderText',
       'initialDate',
       'onChange',
-      'dateRange',
+      'isOutsideRange',
       'selectStart',
       'selectEnd',
     ]);
@@ -155,12 +155,10 @@ export default class CommonDateRangePicker extends PureComponent {
           startDateId="startDateID"
           endDateId="endDateID"
           focusedInput={focusedInput}
-          displayFormat={this.handleDisplayFormat}
+          displayFormat={displayFormat}
           navPrev={<Icon type="left" />}
           navNext={<Icon type="right" />}
           onClose={this.handleCalenderClose}
-          startDateOffset={selectStart}
-          endDateOffset={selectEnd}
           {...airbnbDrpProps}
         />
       </div>
