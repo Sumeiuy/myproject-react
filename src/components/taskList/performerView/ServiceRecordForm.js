@@ -145,7 +145,7 @@ export default class ServiceRecordForm extends PureComponent {
             <div className={styles.operationSection}>
               <Button
                 className={styles.submitBtn}
-                onClick={this.handleSubmit}
+                onClick={_.debounce(this.handleSubmit, 300)}
                 type="primary"
               >
                 提交</Button>

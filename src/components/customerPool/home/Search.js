@@ -112,10 +112,15 @@ export default class Search extends PureComponent {
       if (!this.checkInputValue(searchVal)) {
         return false;
       }
-      this.handleOpenTab({
-        source: 'search',
-        q: encodeURIComponent(searchVal),
-      }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
+      if (!_.isEmpty(searchVal)) {
+        this.setState({
+          inputVal: '',
+        });
+        this.handleOpenTab({
+          source: 'search',
+          q: encodeURIComponent(searchVal),
+        }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
+      }
     }
     return true;
   }
