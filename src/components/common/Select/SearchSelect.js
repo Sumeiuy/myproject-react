@@ -50,7 +50,7 @@ export default class SearchSelect extends PureComponent {
 
   // 搜索客户列表
   @autobind
-  @logable({ type: 'Click', payload: { name: '搜索$args[0]' } })
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchCustList(value) {
     this.props.onChangeValue(value);
   }
