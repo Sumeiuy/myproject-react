@@ -425,7 +425,7 @@ export default class EditForm extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '协议产品穿梭',
+      name: '协议产品 $args[1] $args[0]',
     },
   })
   handleTransferChange(flag, newSelect, changeSecondArray) {

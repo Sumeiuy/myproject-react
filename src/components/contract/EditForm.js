@@ -24,7 +24,7 @@ import AddClause from './AddClause';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
 import styles from './editForm.less';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
@@ -201,6 +201,7 @@ export default class EditForm extends PureComponent {
   }
   // 打开弹窗
   @autobind
+  @logPV({ pathname: '/modal/addClauseModal', title: '合约条款弹窗' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,

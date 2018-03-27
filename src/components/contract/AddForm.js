@@ -17,7 +17,7 @@ import CommonTable from '../common/biz/CommonTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import Button from '../common/Button';
 import AddClause from './AddClause';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 import { seibelConfig } from '../../config';
 import styles from './addForm.less';
@@ -192,6 +192,7 @@ export default class AddForm extends PureComponent {
 
   // 打开弹窗
   @autobind
+  @logPV({ pathname: '/modal/showProtocol', title: '打开合作合约条款弹框' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,

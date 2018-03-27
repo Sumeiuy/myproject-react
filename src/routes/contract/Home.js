@@ -30,7 +30,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
@@ -519,6 +519,7 @@ export default class Contract extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建合作合约' })
   handleCreateBtnClick() {
     const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
     getFlowStepInfo({
@@ -568,6 +569,7 @@ export default class Contract extends PureComponent {
 
   // 弹窗底部按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   footerBtnHandle(btnItem) {
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;

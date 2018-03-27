@@ -15,6 +15,7 @@ import InfoForm from '../common/infoForm';
 import Select from '../../components/common/Select';
 import AutoComplete from '../common/similarAutoComplete';
 import styles from './addClause.less';
+import logable from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -165,8 +166,39 @@ export default class EditForm extends PureComponent {
     }
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '条款名称',
+      value: '$args[1]',
+    },
+  })
+  handleSelectClause(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '明细参数',
+      value: '$args[1]',
+    },
+  })
+  handleSelectDetail(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
   // 选择部门
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '合作部门',
+      value: '$args[0]',
+    },
+  })
   handleSelectDepartment(v) {
     this.setState({
       ...this.state,
@@ -176,6 +208,7 @@ export default class EditForm extends PureComponent {
 
   // 筛选部门
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索合作部门' } })
   handleSearchDepartment(v) {
     this.props.searchDepartment(v);
   }
@@ -233,7 +266,7 @@ export default class EditForm extends PureComponent {
                 name="clauseName"
                 data={clauseNameList}
                 value={clauseName.value || ''}
-                onChange={this.handleSelectChange}
+                onChange={this.handleSelectClause}
               />
             </InfoForm>
             <InfoForm label="明细参数" required>
@@ -241,7 +274,7 @@ export default class EditForm extends PureComponent {
                 name="detailParam"
                 data={detailParamList}
                 value={detailParam.val || ''}
-                onChange={this.handleSelectChange}
+                onChange={this.handleSelectDetail}
               />
             </InfoForm>
             <InfoForm label="值" required>

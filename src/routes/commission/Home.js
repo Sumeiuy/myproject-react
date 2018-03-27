@@ -26,7 +26,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import './home.less';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
@@ -505,6 +505,7 @@ export default class CommissionHome extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建佣金调整' })
   handleCreateBtnClick() {
     // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
     if (this.hasCreatApplyAuthority()) {

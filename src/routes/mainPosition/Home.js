@@ -25,6 +25,7 @@ import { closeRctTab } from '../../utils';
 import { emp } from '../../helper';
 import config from '../../components/mainPosition/config';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 const { mainPosition, mainPosition: { pageType, status } } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
@@ -237,6 +238,7 @@ export default class MainPosition extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建服务经理主职位设置' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,
@@ -277,6 +279,14 @@ export default class MainPosition extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '服务经理主职位设置左侧列表',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const {
