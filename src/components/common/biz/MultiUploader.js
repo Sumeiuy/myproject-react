@@ -17,6 +17,7 @@ import { request } from '../../../config';
 import { emp } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
+import logable from '../../../decorators/logable';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -109,6 +110,7 @@ export default class MultiUpload extends PureComponent {
 
   // 上传事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
     const { type, uploadCallback } = this.props;
     const uploadFile = info.file;
@@ -146,6 +148,7 @@ export default class MultiUpload extends PureComponent {
 
   // 删除事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]是否删除该附件？' } })
   onRemove(attachId) {
     const { type, deleteAttachment, deleteCallback } = this.props;
     const { empId, attachment, fileList } = this.state;

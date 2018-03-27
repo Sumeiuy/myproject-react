@@ -39,6 +39,7 @@ import { request } from '../../../config';
 import { emp } from '../../../helper';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
+import logable from '../../../decorators/logable';
 
 // const EMPTY_OBJECT = {};
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -163,6 +164,7 @@ export default class CommonUpload extends PureComponent {
 
   // 删除事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]是否删除该附件？' } })
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;

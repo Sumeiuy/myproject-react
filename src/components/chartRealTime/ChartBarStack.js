@@ -29,6 +29,7 @@ import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
+import logable from '../../decorators/logable';
 
 const {
   REN,
@@ -370,6 +371,13 @@ export default class ChartBarStack extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '图例',
+      element: '$args[0].currentTarget',
+    },
+  })
   handleLegendClick(e) {
     const current = e.currentTarget;
     const legend = Number.parseInt(current.dataset.legend, 10);

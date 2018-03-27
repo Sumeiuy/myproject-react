@@ -17,6 +17,7 @@ import CommonTable from '../common/biz/CommonTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import Button from '../common/Button';
 import AddClause from './AddClause';
+import logable from '../../decorators/logable';
 
 import { seibelConfig } from '../../config';
 import styles from './addForm.less';
@@ -209,6 +210,14 @@ export default class AddForm extends PureComponent {
 
   // 表格编辑事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '编辑',
+      type: '合约条款',
+      subType: '操作',
+    },
+  })
   editTableData(record, index) {
     // 更新数据，打开合约条款弹窗
     this.setState({
@@ -221,6 +230,14 @@ export default class AddForm extends PureComponent {
   }
   // 表格删除事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '删除',
+      type: '合约条款',
+      subType: '操作',
+    },
+  })
   deleteTableData(record, index) {
     const { formData: { terms } } = this.state;
     const testArr = _.cloneDeep(terms);

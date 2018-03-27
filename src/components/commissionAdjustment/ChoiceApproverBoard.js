@@ -13,6 +13,7 @@ import _ from 'lodash';
 import CommonTable from '../common/biz/CommonTable';
 import CommonModal from '../common/biz/CommonModal';
 import styles from './choiceApproverBoard.less';
+import logable from '../../decorators/logable';
 
 const Search = Input.Search;
 // 表头
@@ -90,6 +91,13 @@ export default class ChoiceApproverBoard extends PureComponent {
 
   // 点击Radio
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '单选',
+      type: '选择审批人员',
+    },
+  })
   handleApproverRadio(record, index) {
     this.setState({
       approverRadio: index,

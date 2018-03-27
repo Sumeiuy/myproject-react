@@ -23,6 +23,7 @@ import AutoComplete from '../common/AutoComplete';
 import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import createCommon from './commissionCreateCommon/common';
+import { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
@@ -258,6 +259,7 @@ export default class BatchCreatBoard extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,

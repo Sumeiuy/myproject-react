@@ -24,6 +24,7 @@ import AddClause from './AddClause';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
 import styles from './editForm.less';
+import logable from '../../decorators/logable';
 
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
@@ -161,6 +162,14 @@ export default class EditForm extends PureComponent {
   }
   // 表格编辑事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '编辑',
+      type: '合约条款',
+      subType: '操作',
+    },
+  })
   editTableData(record, index) {
     // 更新数据，打开合约条款弹窗
     this.setState({
@@ -173,6 +182,14 @@ export default class EditForm extends PureComponent {
   }
   // 表格删除事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '删除',
+      type: '合约条款',
+      subType: '操作',
+    },
+  })
   deleteTableData(record, index) {
     const { formData: { terms } } = this.state;
     const testArr = _.cloneDeep(terms);

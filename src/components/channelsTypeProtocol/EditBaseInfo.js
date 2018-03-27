@@ -9,8 +9,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
 import { Input } from 'antd';
+
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -20,6 +20,7 @@ import HtscTreeSelect from '../common/Select/TreeSelect';
 import CustomSwitch from '../common/customSwitch';
 import { time, permission } from '../../helper';
 import config from '../../routes/channelsTypeProtocol/config';
+import logable from '../../decorators/logable';
 
 import styles from './editBaseInfo.less';
 import {
@@ -262,6 +263,30 @@ export default class EditBaseInfo extends PureComponent {
     this.htscTreeSelect.clear();
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSubTypeSelect(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '操作类型',
+      value: '$args[1]',
+    },
+  })
+  handleOperateTypeSelect(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
@@ -365,6 +390,13 @@ export default class EditBaseInfo extends PureComponent {
 
   // 开通权限下拉多选框改变
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '开通权限',
+      value: '$args[1]',
+    },
+  })
   handleOpenPermissionChange(name, value) {
     const softPermission = value.map(v => ({ code: v.value, value: v.label }));
     this.setState({ softPermission });
@@ -372,6 +404,13 @@ export default class EditBaseInfo extends PureComponent {
 
   // 切换业务类型
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '业务类型',
+      value: '$args[1]',
+    },
+  })
   handleBusinessTypeSelect(key, value) {
     this.setState({ businessType: value, softPermission: [] });
     const { operationType, subType, isEditPage } = this.state;
@@ -410,6 +449,13 @@ export default class EditBaseInfo extends PureComponent {
 
   // 选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0]',
+    },
+  })
   handleSelectClient(value) {
     const {
       getCustValidate,
@@ -539,6 +585,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户' } })
   handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
@@ -550,6 +597,13 @@ export default class EditBaseInfo extends PureComponent {
 
   // 选择协议模板
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '协议模板',
+      value: '$args[0]',
+    },
+  })
   handleSelectTemplate(value) {
     this.setState({
       content: '',
@@ -587,6 +641,7 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据填入关键词筛选协议模板
   @autobind
+  @logable({ type: 'Click', payload: { name: '协议模板' } })
   handleSearchTemplate(value) {
     const { filterTemplate } = this.props;
     filterTemplate(value);
@@ -594,10 +649,25 @@ export default class EditBaseInfo extends PureComponent {
 
   // 修改备注
   @autobind
+  @logable({ type: 'Click', payload: { name: '备注' } })
   handleChangeContent(e) {
     this.setState({
       content: e.target.value,
     }, this.transferDataToHome);
+  }
+
+  // switch处理，是否使用多账户
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'switch控制是否使用多账户' } })
+  handleUseSwitch(name, value) {
+    this.handleChangeSwitchValue(name, value);
+  }
+
+  // switch处理，是否订购十档行情
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'switch控制是否订购十档行情' } })
+  handleOrderSwitch(name, value) {
+    this.handleChangeSwitchValue(name, value);
   }
 
   // 修改开关
@@ -617,6 +687,13 @@ export default class EditBaseInfo extends PureComponent {
 
   // 选择协议 ID
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '协议编号',
+      value: '$args[1]',
+    },
+  })
   handleSelectProtocol(key, value) {
     const [id, flowId] = value.split('~');
     const {
@@ -727,14 +804,14 @@ export default class EditBaseInfo extends PureComponent {
           <CustomSwitch
             name="multiUsedFlag"
             value={multiUsedFlag}
-            onChange={this.handleChangeSwitchValue}
+            onChange={this.handleUseSwitch}
           />
         </InfoForm>
         <InfoForm label="是否订购十档行情">
           <CustomSwitch
             name="levelTenFlag"
             value={levelTenFlag}
-            onChange={this.handleChangeSwitchValue}
+            onChange={this.handleOrderSwitch}
           />
         </InfoForm>
       </div>
@@ -758,7 +835,7 @@ export default class EditBaseInfo extends PureComponent {
                   name="subType"
                   data={subTypeList}
                   value={subType}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleSubTypeSelect}
                 />
               </InfoForm>
               <InfoForm label="操作类型" required>
@@ -766,7 +843,7 @@ export default class EditBaseInfo extends PureComponent {
                   name="operationType"
                   data={operationTypeList}
                   value={operationType}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleOperateTypeSelect}
                 />
               </InfoForm>
               <InfoForm label="客户" required>

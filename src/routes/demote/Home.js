@@ -23,6 +23,7 @@ import { time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
 import styles from './home.less';
+import logable from '../../decorators/logable';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -111,6 +112,13 @@ export default class Demote extends PureComponent {
 
   // 切换表格的 switch 事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '是否划转',
+      type: '降级客户处理',
+    },
+  })
   checkTableData(checked, record, index) {
     const { data, currentPage, pageSize } = this.state;
     const newData = [...data];

@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import confirm from '../Confirm';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const Option = AutoComplete.Option;
 
@@ -49,6 +50,13 @@ export default class autoComplete extends PureComponent {
   }
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标股基佣金率',
+      value: '$args[0]',
+    },
+  })
   setSelectValue(value, option) {
     const selectItem = this.props.dataSource[option.props.index];
     this.props.onSelectValue(selectItem);
@@ -57,6 +65,7 @@ export default class autoComplete extends PureComponent {
   inputTimeout = 0;
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '清楚输入框内容' } })
   clearInput() {
     this.setState({
       inputValue: '',
@@ -64,6 +73,13 @@ export default class autoComplete extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标股基佣金率',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     this.setState({
       inputValue: value,
