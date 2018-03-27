@@ -158,5 +158,6 @@
     "run": [
       "lint-staged"
     ]
-  }
+  },
+  "theme": "./src/css/antd-theme.js"
 }
