@@ -13,6 +13,7 @@ import { fsp } from '../../helper';
 import Anchor from '../../components/common/anchor';
 import { reportAnchorOptions } from '../../config';
 import styles from './pageAnchor.less';
+import logable from '../../decorators/logable';
 
 const { Link } = Anchor;
 
@@ -40,6 +41,7 @@ export default class PageAnchor extends PureComponent {
    * 点击返回顶部图标滚动顶部
   */
   @autobind
+  @logable({ type: 'Click', payload: { name: '返回顶部' } })
   handleGotoTop() {
     fsp.scrollToTop();
   }

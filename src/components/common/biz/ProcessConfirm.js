@@ -43,7 +43,7 @@ export default class ProcessConfirm extends Component {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
   handleOk() {
     const { onOk, modalKey } = this.props;
     onOk(modalKey);

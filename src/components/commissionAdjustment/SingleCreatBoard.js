@@ -30,6 +30,7 @@ import {
 } from './commissionTransferHelper/transferPropsHelper';
 import createCommon from './commissionCreateCommon/common';
 import styles from './createNewApprovalBoard.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const { comsubs: commadj } = seibelConfig;
 
@@ -201,6 +202,7 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 客户输入目标股基佣金率调用方法
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询目标股基佣金率' } })
   changeTargetGJCommission(v) {
     // 单佣金 , 如果没有选择客户，提示用户选择客户
     const { customer, queryGj } = this.props;
@@ -218,6 +220,13 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 切换目标产品股基佣金率
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标股基佣金率',
+      value: '$args[0]',
+    },
+  })
   selectTargetGJCommission(v) {
     this.setState({
       newCommission: v.codeValue,
@@ -257,6 +266,12 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 单佣金调整穿梭变化的时候处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '单佣金调整产品 args[1] args[0]',
+    },
+  })
   handleParentProductAction(flag, item, array, dValue) {
     this.setState({
       userProductList: array,
@@ -276,6 +291,12 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 单佣金调整选择子产品的时候的处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '单佣金调整通过check框选择子产品',
+    },
+  })
   handleChildProductCheck(item, array) {
     this.setState({
       userProductList: array,
@@ -300,6 +321,7 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,

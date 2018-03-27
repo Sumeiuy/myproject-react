@@ -50,13 +50,6 @@ export default class autoComplete extends PureComponent {
   }
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标股基佣金率',
-      value: '$args[0]',
-    },
-  })
   setSelectValue(value, option) {
     const selectItem = this.props.dataSource[option.props.index];
     this.props.onSelectValue(selectItem);
@@ -73,13 +66,6 @@ export default class autoComplete extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标股基佣金率',
-      value: '$args[0]',
-    },
-  })
   handleSearch(value) {
     this.setState({
       inputValue: value,

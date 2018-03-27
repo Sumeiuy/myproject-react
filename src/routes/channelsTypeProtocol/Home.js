@@ -30,6 +30,7 @@ import withRouter from '../../decorators/withRouter';
 import config from './config';
 import { isInvolvePermission } from '../../components/channelsTypeProtocol/auth';
 import styles from './home.less';
+import logable from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 
@@ -345,6 +346,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '通道类型协议左侧列表项$args[0]',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, subType: st } = record;
     const {

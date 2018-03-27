@@ -70,13 +70,6 @@ export default class ProductsDropdownBox extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标产品',
-      value: '$args[0]',
-    },
-  })
   selectProduct(value) {
     this.props.onSelect(value);
   }

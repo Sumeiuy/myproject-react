@@ -17,6 +17,7 @@ import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
+import logable from '../../../decorators/logable';
 
 const {
   contract: { pageType: contractPageType },
@@ -182,6 +183,13 @@ export default class Pageheader extends PureComponent {
 
   // 选中部门下拉对象中对应的某个对象
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '部门',
+      value: '$args[0]',
+    },
+  })
   selectCustRange(obj) {
     const { filterCallback } = this.props;
     filterCallback({
@@ -201,6 +209,42 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '操作类型',
+      value: '$args[1]',
+    },
+  })
+  handleOperateTypeChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSubtypeChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleStatusChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
   toSearch(method, value) {
@@ -210,6 +254,12 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '新建' } })
+  handleCreate() {
+    this.props.creatSeibelModal();
+  }
+
   render() {
     const {
       getCustomerList,
@@ -217,7 +267,6 @@ export default class Pageheader extends PureComponent {
       getDrafterList,
       subtypeOptions,
       stateOptions,
-      creatSeibelModal,
       drafterList,
       approvePersonList,
       customerList,
@@ -345,7 +394,7 @@ export default class Pageheader extends PureComponent {
                   name="business2"
                   value={business2}
                   data={operateOptions}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleOperateTypeChange}
                 />
               </div>
             : null
@@ -358,7 +407,7 @@ export default class Pageheader extends PureComponent {
                   name="subType"
                   value={subType}
                   data={subtypeOptions}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleSubtypeChange}
                 />
               </div>
             : null
@@ -369,7 +418,7 @@ export default class Pageheader extends PureComponent {
               name="status"
               value={status}
               data={stateOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleStatusChange}
             />
           </div>
 
@@ -443,7 +492,7 @@ export default class Pageheader extends PureComponent {
               type="primary"
               icon="plus"
               size="small"
-              onClick={creatSeibelModal}
+              onClick={() => { this.creatSeibelModal(); }}
             >
               新建
             </Button>
