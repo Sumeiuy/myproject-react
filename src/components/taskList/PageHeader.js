@@ -44,6 +44,7 @@ const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const stateAll = { label: '所有状态', value: '', show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
+const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
 const NOOP = _.noop;
 
@@ -525,6 +526,28 @@ export default class Pageheader extends PureComponent {
   }
 
   /**
+   * 渲染'执行方式'筛选组件
+   * 默认显示'所有方式'
+   */
+  @autobind
+  renderExecuteType() {
+    const { dict: { executeTypes } } = this.props;
+    const list = _.isEmpty(executeTypes) ? [] :
+      this.constructorDataType(executeTypes);
+    const { location: { query: { executeType } } } = this.props;
+    return (
+      <div className={styles.filterFl}>
+        <Select
+          name="executeType"
+          value={executeType || executeTypeAll.value}
+          data={[executeTypeAll, ...list]}
+          onChange={this.handleSelectChange}
+        />
+      </div>
+    );
+  }
+
+  /**
    * 将字典里面的状态数据前面加一个 ‘所有状态’
    * 根据不同的视图渲染构造不同的页面状态数据
    */
@@ -667,7 +690,7 @@ export default class Pageheader extends PureComponent {
                 </div>
               </div> : null
           }
-
+          {this.renderExecuteType()}
           {this.renderTime()}
           {
             this.state.showMore ?

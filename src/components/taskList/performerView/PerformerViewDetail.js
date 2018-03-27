@@ -137,7 +137,7 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   /**
-   * 添加服务记录成功后重新加载目标客户的列表信息
+   * 添加服务记录成功后重新加载当前目标客户的详细信息
    */
   @autobind
   reloadTargetCustInfo(callback) {
