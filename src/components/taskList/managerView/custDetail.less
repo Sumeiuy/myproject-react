@@ -2,7 +2,7 @@
 
 .custDetailWrapper {
   .custNameLink {
-    max-width: 130px !important;
+    max-width: 110px !important;
     padding-left: 5px;
     padding-right: 5px;
     margin: 0 auto;
@@ -12,83 +12,80 @@
     display: flex;
     justify-content: flex-start;
     align-content: center;
-    & > .filter {
-      width: 50%;
-      text-align: right;
-      & > .title {
-        font-size: 13px;
-        // color: #9b9b9b;
-      }
-      :global {
-        .selectFeedBackIdL1Dropdown {
-          .ant-select-dropdown-menu-item {
-            text-overflow: ellipsis;
-            max-width: 180px;
-            overflow-x: hidden;
-            white-space: nowrap;
-          }
-        }
-        //select边框
-        .ant-select {
-          height: 28px;
-          width: auto;
-          max-width: 200px !important;
-          .ant-select-selection {
-            background-color: transparent;
-            border: 1px solid transparent;
-          }
-          // 字体颜色大小
-          .ant-select-selection__rendered div,
-          .ant-select-selection__rendered span {
-            color: #33393c;
-            font-size: 14px;
-            padding-right: 25px;
-          }
-          &.ant-select-open .ant-select-selection {
-            border: 1px solid #348cf0;
-            box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
-          }
-        }
-
-        // 兼容ie下拉图标旋转样式
-        .ant-select-arrow {
-          transform: scale(0.75);
-        }
-
-        //多选下拉小图标样式
-        .ant-select-arrow:before {
-          content: "";
-          height: 0;
-          position: absolute;
-          right: 2px;
-          top: 5px;
-          width: 0;
-          border: none;
-          border-top: 10px solid #c2c2c2;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-        }
-        //清楚单选select小图标旋转
-        .ant-select-open .ant-select-arrow:before {
-          -webkit-transform: rotate(0deg);
-          -ms-transform: rotate(0deg);
-          transform: rotate(0deg);
-        }
-      }
-      .filterDropdownList {
-        :global {
-          .ant-select-dropdown-menu-item {
-            text-align: left;
-          }
-        }
+    padding-bottom: 10px;
+    & > .filterSection {
+      display: flex;
+      justify-content: flex-start;
+      align-content: center;
+      & > .filter:first-child {
+        margin-right: 18px;
       }
     }
-    & > .title {
-      text-align: left;
-      width: 50%;
-      font-size: 14px;
-      color: #333;
-      padding-bottom: 10px;
+    :global {
+      .selectFeedBackIdL1Dropdown {
+        .ant-select-dropdown-menu {
+          text-align: left;
+        }
+        .ant-select-dropdown-menu-item {
+          text-overflow: ellipsis;
+          max-width: 180px;
+          overflow-x: hidden;
+          white-space: nowrap;
+        }
+      }
+      //select边框
+      .ant-select {
+        height: 28px;
+        width: auto;
+        max-width: 200px !important;
+        .ant-select-selection {
+          background-color: transparent;
+          border: 1px solid transparent;
+        }
+        // 字体颜色大小
+        .ant-select-selection__rendered div,
+        .ant-select-selection__rendered span {
+          color: #33393c;
+          font-size: 14px;
+          padding-right: 25px;
+        }
+        &.ant-select-open .ant-select-selection {
+          border: 1px solid #348cf0;
+          box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
+        }
+      }
+
+      // 兼容ie下拉图标旋转样式
+      .ant-select-arrow {
+        transform: scale(0.75);
+      }
+
+      //多选下拉小图标样式
+      .ant-select-arrow:before {
+        content: "";
+        height: 0;
+        position: absolute;
+        right: 2px;
+        top: 5px;
+        width: 0;
+        border: none;
+        border-top: 10px solid #c2c2c2;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+      }
+      //清楚单选select小图标旋转
+      .ant-select-open .ant-select-arrow:before {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+    }
+    .filterDropdownList {
+      :global {
+        .ant-select-dropdown-menu-item {
+          text-align: left;
+        }
+      }
     }
   }
   & > .custDetailTableSection {

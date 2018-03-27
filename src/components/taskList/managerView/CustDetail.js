@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-23 10:08:36
+ * @Last Modified time: 2018-03-27 16:32:19
  * 客户明细数据
  */
 
@@ -14,7 +14,7 @@ import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
-import SingleFilter from '../../customerPool/common/NewSingleFilter';
+import SelectFilter from '../../common/selectFilter';
 import { emp } from '../../../helper';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
@@ -56,7 +56,7 @@ const ORG_CODE = 'org';
 
 const INITIAL_PAGE_SIZE = 10;
 const INITIAL_TOTAL_COUNT = 10;
-const INITIAL_PAGE_NUM = 1;
+// const INITIAL_PAGE_NUM = 1;
 
 const NOOP = _.noop;
 export default class CustDetail extends PureComponent {
@@ -76,11 +76,14 @@ export default class CustDetail extends PureComponent {
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
     isEntryFromPie: PropTypes.bool,
+    isEntryFromCustTotal: PropTypes.bool,
     scrollModalBodyToTop: PropTypes.func.isRequired,
     // 当前筛选框数据
-    currentFilter: PropTypes.array,
+    currentFeedback: PropTypes.array,
     // 当前选中的一级反馈条件
-    currentSelectFeedback: PropTypes.string,
+    feedBackIdL1: PropTypes.string,
+    feedBackIdL2: PropTypes.string,
+    canLaunchTask: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -90,23 +93,27 @@ export default class CustDetail extends PureComponent {
     onClose: NOOP,
     isEntryFromProgressDetail: false,
     isEntryFromPie: false,
-    currentFilter: EMPTY_LIST,
-    currentSelectFeedback: '',
+    isEntryFromCustTotal: false,
+    currentFeedback: EMPTY_LIST,
+    feedBackIdL1: '',
+    canLaunchTask: false,
+    feedBackIdL2: '',
   }
 
   constructor(props) {
     super(props);
     const {
       data: { list = EMPTY_LIST },
-      currentSelectFeedback,
+      feedBackIdL1,
+      feedBackIdL2,
     } = props;
 
     this.state = {
       dataSource: this.addIdToDataSource(list) || EMPTY_LIST,
-      currentSelectRecord: EMPTY_OBJECT,
-      currentSelectRowKeys: [],
-      isSelectAll: false,
-      currentSelectFeedBackIdL1: currentSelectFeedback || '',
+      currentSelectFeedBackIdL1: feedBackIdL1 || '',
+      currentSelectFeedBackIdL2: feedBackIdL2 || '',
+      feedbackL1List: this.renderFeedbackL1Option(),
+      feedbackL2List: this.renderFeedbackL2Option(feedBackIdL1, feedBackIdL2),
     };
     // 代表当前feedback详情是否是多选形式
     this.isFeedbackDetailMore = false;
@@ -114,58 +121,26 @@ export default class CustDetail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { data: { list: nextData = EMPTY_LIST },
-      currentSelectFeedback: nextSelectFeedback,
+      feedBackIdL1: nextFeedBackIdL1,
+      feedBackIdL2: nextFeedBackIdL2,
     } = nextProps;
-    const { data: { list = EMPTY_LIST }, currentSelectFeedback } = this.props;
-    const { currentSelectRowKeys, isSelectAll } = this.state;
+    const { data: { list = EMPTY_LIST }, feedBackIdL1, feedBackIdL2 } = this.props;
 
     if (list !== nextData) {
-      let newSelectRowKeys = currentSelectRowKeys;
-      if (isSelectAll) {
-        newSelectRowKeys = _.map(nextData, item => item.custId);
-      }
       this.setState({
         dataSource: this.addIdToDataSource(nextData),
-        currentSelectRowKeys: newSelectRowKeys,
       });
     }
 
-    if (nextSelectFeedback !== currentSelectFeedback) {
+    if (nextFeedBackIdL1 !== feedBackIdL1) {
       this.setState({
-        currentSelectFeedBackIdL1: nextSelectFeedback,
+        currentSelectFeedBackIdL1: nextFeedBackIdL1,
       });
     }
-  }
 
-  /**
- * select发生改变
- * @param {*string} value feedBackIdL1
- */
-  @autobind
-  onChange({ key }) {
-    if (!_.isEmpty(key)) {
-      const {
-        getCustDetailData,
-        isEntryFromProgressDetail,
-        isEntryFromPie,
-        currentFilter,
-      } = this.props;
-
-      const filterObject = _.find(currentFilter, item =>
-        item.feedBackIdL1 === key) || EMPTY_OBJECT;
-      // 获取
-      getCustDetailData({
-        isEntryFromProgressDetail,
-        isEntryFromPie,
-        // 分页重置
-        pageNum: INITIAL_PAGE_NUM,
-        pageSize: INITIAL_PAGE_SIZE,
-        // 当前选择的一级反馈
-        currentSelectFeedback: filterObject,
-        currentFeedback: currentFilter,
-      });
+    if (nextFeedBackIdL2 !== feedBackIdL2) {
       this.setState({
-        currentSelectFeedBackIdL1: key,
+        currentSelectFeedBackIdL2: nextFeedBackIdL2,
       });
     }
   }
@@ -174,10 +149,53 @@ export default class CustDetail extends PureComponent {
    * 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位
    */
   @autobind
-  getPopupContainer() {
-    return this.filterElem;
+  getFeedbackL1PopupContainer() {
+    return this.feedbackL1Elem;
   }
 
+  @autobind
+  getFeedbackL2PopupContainer() {
+    return this.feedbackL2Elem;
+  }
+
+  /**
+ * select发生改变
+ * @param {*string} value feedBackIdL1
+ */
+  @autobind
+  handleFeedbackL1Change({ key }) {
+    const { getCustDetailData, ...remainingProps } = this.props;
+
+    this.setState({
+      currentSelectFeedBackIdL1: key,
+    }, () => {
+      this.setState({
+        feedbackL2List: this.renderFeedbackL2Option(key, this.state.currentSelectFeedBackIdL2),
+      });
+    });
+    // 查看客户明细
+    getCustDetailData({
+      ...remainingProps,
+      feedBackIdL1: key,
+      // 一级反馈一旦发生变化，二级反馈就传默认的所有反馈
+      feedBackIdL2: '',
+    });
+  }
+
+  @autobind
+  handleFeedbackL2Change({ key }) {
+    const { getCustDetailData, ...remainingProps } = this.props;
+
+    // 获取
+    getCustDetailData({
+      ...remainingProps,
+      feedBackIdL1: this.state.currentSelectFeedBackIdL1,
+      feedBackIdL2: key,
+    });
+    this.setState({
+      currentSelectFeedBackIdL2: key,
+    });
+  }
   /**
  * 改变每一页的条目
  * @param {*} currentPageNum 当前页码
@@ -187,16 +205,12 @@ export default class CustDetail extends PureComponent {
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const {
       getCustDetailData,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
-      currentFilter,
+      ...remainingProps
     } = this.props;
     getCustDetailData({
+      ...remainingProps,
       pageNum: currentPageNum,
       pageSize: changedPageSize,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
-      currentFeedback: currentFilter,
     });
   }
 
@@ -208,18 +222,14 @@ export default class CustDetail extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     const {
-        getCustDetailData,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
+      getCustDetailData,
       scrollModalBodyToTop,
-      currentFilter,
-      } = this.props;
+      ...remainingProps
+    } = this.props;
     getCustDetailData({
+      ...remainingProps,
       pageNum: nextPage,
       pageSize: currentPageSize,
-      isEntryFromProgressDetail,
-      isEntryFromPie,
-      currentFeedback: currentFilter,
     });
     scrollModalBodyToTop();
   }
@@ -252,40 +262,6 @@ export default class CustDetail extends PureComponent {
     }
 
     return newDataSource;
-  }
-
-  @autobind
-  handleRowSelectionChange(selectedRowKeys, selectedRows) {
-    console.log(selectedRowKeys, selectedRows);
-    this.setState({
-      currentSelectRowKeys: selectedRowKeys,
-    });
-  }
-
-  @autobind
-  handleSingleRowSelectionChange(record, selected, selectedRows) {
-    console.log(record, selected, selectedRows);
-    const { custId } = record;
-    const { currentSelectRowKeys } = this.state;
-    let newSelectRowKeys = currentSelectRowKeys;
-    if (selected) {
-      newSelectRowKeys = _.uniq([...newSelectRowKeys, custId]);
-    } else {
-      newSelectRowKeys = _.filter(newSelectRowKeys, item => item !== custId);
-    }
-    this.setState({
-      currentSelectRecord: record,
-      currentSelectRowKeys: newSelectRowKeys,
-    });
-  }
-
-  @autobind
-  handleSelectAllChange(selected, selectedRows, changeRows) {
-    console.log(selected, selectedRows, changeRows);
-    this.setState({
-      isSelectAll: selected,
-      currentSelectRowKeys: selected ? _.map(selectedRows, item => item.key) : [],
-    });
   }
 
   /**
@@ -338,8 +314,7 @@ export default class CustDetail extends PureComponent {
       type: '管理者视图客户反馈',
     },
   })
-  handleCustNameClick(record, columnTitle) {
-    console.log(columnTitle);
+  handleCustNameClick(record) {
     const { custNature, custId, rowId, ptyId } = record;
     this.toDetail(custNature, custId, rowId, ptyId);
   }
@@ -367,7 +342,7 @@ export default class CustDetail extends PureComponent {
 
   @autobind
   renderColumnTitle() {
-    const { isEntryFromPie, isEntryFromProgressDetail } = this.props;
+    const { isEntryFromPie, isEntryFromProgressDetail, isEntryFromCustTotal } = this.props;
     const columns = [{
       key: 'custName',
       value: '客户名称',
@@ -399,7 +374,7 @@ export default class CustDetail extends PureComponent {
       render: this.renderFeedbackDetail,
     }];
 
-    if (isEntryFromPie) {
+    if (isEntryFromPie || isEntryFromCustTotal) {
       // 从饼图点击过来，不展示服务状态字段
       columns.splice(4, 1);
     } else if (isEntryFromProgressDetail) {
@@ -411,28 +386,51 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
-  renderFilterOption() {
-    const { currentFilter } = this.props;
-    return _.map(currentFilter, item => ({
+  renderFeedbackL1Option() {
+    const { currentFeedback = EMPTY_LIST } = this.props;
+    // 构造一级客户反馈
+    return _.map(currentFeedback, item => ({
       key: item.feedBackIdL1,
       value: item.feedbackName,
     }));
+  }
+
+  @autobind
+  renderFeedbackL2Option(currentSelectFeedBackIdL1, currentSelectFeedBackIdL2) {
+    const { currentFeedback = EMPTY_LIST } = this.props;
+    // 构造二级客户反馈
+    const currentFeedbackL1Object = _.find(currentFeedback, item =>
+      item.feedBackIdL1 === currentSelectFeedBackIdL1);
+    if (!_.isEmpty(currentFeedbackL1Object) && !_.isEmpty(currentFeedbackL1Object.childList)) {
+      const feedbackL2List = _.map(currentFeedbackL1Object.childList, item => ({
+        key: item.feedBackIdL2,
+        value: item.feedbackName,
+      }));
+      // 如果当前选中的二级反馈没有，则默认显示所有反馈
+      if (_.isEmpty(currentSelectFeedBackIdL2)) {
+        return _.concat([{
+          key: '',
+          value: '所有反馈',
+        }], feedbackL2List);
+      }
+    }
+    return EMPTY_LIST;
   }
 
   render() {
     const {
       dataSource,
       currentSelectFeedBackIdL1,
+      currentSelectFeedBackIdL2,
+      feedbackL1List,
+      feedbackL2List,
     } = this.state;
 
-    // 找出当前的客户反馈
-    const currentSelectFeedBackL1 = _.find(this.props.currentFilter, item =>
-      item.feedBackIdL1 === currentSelectFeedBackIdL1) || EMPTY_OBJECT;
-
     const {
-      title,
+      // title,
       data: { page = EMPTY_OBJECT },
       isEntryFromPie,
+      isEntryFromCustTotal,
     } = this.props;
     const { totalCount, pageNum } = page;
     // 构造表格头部
@@ -458,24 +456,51 @@ export default class CustDetail extends PureComponent {
     return (
       <div className={styles.custDetailWrapper}>
         <div className={styles.header}>
-          <div className={styles.title}>{title}共{totalCount || 0}人</div>
-          {isEntryFromPie ? <div
-            className={styles.filter}
-            ref={(ref) => {
-              if (ref && !this.filterElem) {
-                this.filterElem = ref;
+          {/* <div className={styles.title}>{title}共{totalCount || 0}人</div> */}
+          {/**
+           * 饼图或者客户总数下钻，展示筛选客户反馈
+           */}
+          {isEntryFromPie || isEntryFromCustTotal ?
+            <div className={styles.filterSection}>
+              <div
+                className={styles.filter}
+                ref={(ref) => {
+                  if (ref && !this.feedbackL1Elem) {
+                    this.feedbackL1Elem = ref;
+                  }
+                }}
+              >
+                <SelectFilter
+                  value={currentSelectFeedBackIdL1 || ''}
+                  filterLabel="客户反馈"
+                  filter="custFeedbackL1"
+                  filterField={feedbackL1List}
+                  onChange={this.handleFeedbackL1Change}
+                  getPopupContainer={this.getFeedbackL1PopupContainer}
+                />
+              </div>
+              {
+                !_.isEmpty(feedbackL2List) ?
+                  <div
+                    className={styles.filter}
+                    ref={(ref) => {
+                      if (ref && !this.feedbackL2Elem) {
+                        this.feedbackL2Elem = ref;
+                      }
+                    }}
+                  >
+                    <SelectFilter
+                      value={currentSelectFeedBackIdL2 || ''}
+                      filterLabel=""
+                      filter="custFeedbackL2"
+                      filterField={feedbackL2List}
+                      onChange={this.handleFeedbackL2Change}
+                      getPopupContainer={this.getFeedbackL2PopupContainer}
+                    />
+                  </div> : null
               }
-            }}
-          >
-            {/* <span className={styles.title}>客户反馈：</span> */}
-            <SingleFilter
-              value={currentSelectFeedBackL1.feedBackIdL1 || ''}
-              filterLabel="客户反馈"
-              filter="custFeedback"
-              filterField={this.renderFilterOption()}
-              onChange={this.onChange}
-            />
-          </div> : null
+            </div>
+            : null
           }
         </div>
         <div className={styles.custDetailTableSection}>
@@ -507,8 +532,6 @@ export default class CustDetail extends PureComponent {
               // 分页器样式
               paginationClass={'selfPagination'}
               needPagination={totalCount > INITIAL_TOTAL_COUNT}
-              // 分页器是否在表格内部
-              paginationInTable={false}
             /> :
             <div className={styles.emptyContent}>
               <span>
