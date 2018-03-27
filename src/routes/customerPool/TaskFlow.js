@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-03-09 10:53:32
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-27 17:45:25
  */
 
 import React, { PureComponent } from 'react';
@@ -492,7 +492,6 @@ export default class TaskFlow extends PureComponent {
               needApproval,
               canGoNextStep,
               needMissionInvestigation,
-              currentEntry,
               current: current + 1,
             });
           }
@@ -691,15 +690,9 @@ export default class TaskFlow extends PureComponent {
     const { storedTaskFlowData, templateId } = this.props;
     const {
       currentSelectRecord: { login: flowAuditorId = null },
-      currentEntry,
       needApproval,
       needMissionInvestigation,
     } = this.state;
-
-    if (_.isEmpty(flowAuditorId) && needApproval) {
-      message.error('任务需要审批，请选择审批人');
-      return;
-    }
 
     const {
       taskFormData = EMPTY_OBJECT,
@@ -707,7 +700,13 @@ export default class TaskFlow extends PureComponent {
       custSegment = EMPTY_OBJECT,
       resultTrackData,
       missionInvestigationData,
+      currentEntry,
     } = storedTaskFlowData;
+
+    if (_.isEmpty(flowAuditorId) && needApproval) {
+      message.error('任务需要审批，请选择审批人');
+      return;
+    }
 
     let finalData = {};
     finalData = {
