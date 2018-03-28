@@ -10,9 +10,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button } from 'antd';
+import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -31,6 +32,7 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const { toString } = Mention;
 
 const effects = {
   // 预览客户细分数据
@@ -62,8 +64,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-    timelyIntervalValue,
-    taskName,
+      timelyIntervalValue,
+      taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -262,7 +264,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
       getFiltersOfSightingTelescopeLoading,
-     } = this.props;
+    } = this.props;
     const {
       submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
@@ -512,13 +514,24 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
+        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
+        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
+        const serviceStrategyString = toString(serviceStateData);
+        const serviceStrategyHtml = stateToHTML(serviceStateData);
 
-        const formDataValidation = this.checkFormField({ ...values, isFormError });
+        const formDataValidation =
+          this.checkFormField({
+            ...values,
+            isFormError,
+            serviceStrategySuggestion: serviceStrategyHtml,
+          });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
+            serviceStrategySuggestion: serviceStrategyString,
+            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
@@ -528,7 +541,9 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      taskFormData = { ...taskFormData, templetDesc };
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+
+      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
@@ -722,11 +737,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       labelId,
-      templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -755,10 +770,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
       taskName,
       taskType,
-      templetDesc,
+      templetDesc: templeteDescHtml, // 转换成html提交
       timelyIntervalValue,
     };
 

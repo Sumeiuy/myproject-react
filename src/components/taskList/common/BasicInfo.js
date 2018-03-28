@@ -76,7 +76,9 @@ export default class BasicInfo extends PureComponent {
             <Col className={styles.colItem}>
               <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
               <p className={`${styles.content}`}>
-                {servicePolicy || '--'}
+                <div
+                  dangerouslySetInnerHTML={{ __html: servicePolicy || '--' }}
+                />
               </p>
             </Col>
           </Row>
@@ -86,7 +88,9 @@ export default class BasicInfo extends PureComponent {
                 <Col className={styles.colItem}>
                   <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
                   <p className={`${styles.content}`}>
-                    {missionDescription || '--'}
+                    <div
+                      dangerouslySetInnerHTML={{ __html: missionDescription || '--' }}
+                    />
                   </p>
                 </Col>
               </Row> :
