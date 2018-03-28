@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 10:55:12
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-28 17:16:29
  * 结果跟踪
  */
 
@@ -123,6 +123,7 @@ export default class ResultTrack extends PureComponent {
       inputValue, // 指标值
       level1Indicator, // 一级指标list
       operationType,
+      isProdBound,
     } = this.state;
 
     const indicatorLevel1 = _.find(level1Indicator, item =>
@@ -136,17 +137,22 @@ export default class ResultTrack extends PureComponent {
         this.setState({
           isShowIndicatorLevel1KeyError: true,
         });
-      } else if (!((!_.isEmpty(operationType)
-            && !_.isEmpty(operationType[0])
-            && _.isArray(operationType)
-            && _.size(operationType) === 1
-            && (operationType[0].key === 'TRUE'
-              || operationType[0].key === 'OPEN'
-              || operationType[0].key === 'COMPLETE'))
-              || (_.isEmpty(operationType[0]))) && !_.isNumber(inputValue)) {
-              // 如果已经选择指标目标
-              // 并且当前显示指标值输入框
-        this.showInputValueError('请输入指标目标值');
+      } else {
+        if (!((!_.isEmpty(operationType)
+              && !_.isEmpty(operationType[0])
+              && _.isArray(operationType)
+              && _.size(operationType) === 1
+              && (operationType[0].key === 'TRUE'
+                || operationType[0].key === 'OPEN'
+                || operationType[0].key === 'COMPLETE'))
+                || (_.isEmpty(operationType[0]))) && !_.isNumber(inputValue)) {
+                // 如果已经选择指标目标
+                // 并且当前显示指标值输入框
+          this.showInputValueError('请输入指标目标值');
+        }
+        if (isProdBound && _.isEmpty(currentSelectedProduct)) {
+          this.autoCompleteComponent.showErrorMsg('请选择一个产品');
+        }
       }
       // if (currentSelectedLevel1Indicator !== defaultIndicatorValue) {
 
@@ -670,7 +676,7 @@ export default class ResultTrack extends PureComponent {
   handleSelectProductItem(value) {
     this.setState({
       currentSelectedProduct: value,
-    });
+    }, this.autoCompleteComponent.hiddenErrorMsg);
   }
 
   @autobind
@@ -822,6 +828,7 @@ export default class ResultTrack extends PureComponent {
                               onSelect={this.handleSelectProductItem}
                               onSearch={this.handleQueryProduct}
                               width={220}
+                              ref={ref => this.autoCompleteComponent = ref}
                             />
                           </div>
                         ) : null
@@ -877,6 +884,7 @@ export default class ResultTrack extends PureComponent {
                                   max={!_.isEmpty(currentMax) ?
                                         Number(currentMax) : Number.MAX_VALUE}
                                   onChange={this.handleInputChange}
+                                  size="default"
                                 />
                               </FormItem>
                             </div>
