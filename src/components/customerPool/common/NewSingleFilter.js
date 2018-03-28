@@ -1,3 +1,11 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-11-23 15:47:33
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-28 16:22:31
+ * 下拉框筛选
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -102,8 +110,18 @@ export default class SingleFilter extends PureComponent {
     });
     return (
       <div className={filterCls}>
-        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}</span>
-        <span className={styles.filterSeperator}>：</span>
+        {
+          !_.isEmpty(filterLabel) ?
+            <span className={styles.filterLabel} title={filterLabel}>
+              {filterLabel}
+            </span>
+            : null
+        }
+        {
+          !_.isEmpty(filterLabel) ?
+            <span className={styles.filterSeperator}>：</span>
+            : null
+        }
         <Select
           value={selectValue}
           style={{ maxWidth: '84px', fontSize: '14px' }}
@@ -131,4 +149,3 @@ export default class SingleFilter extends PureComponent {
     );
   }
 }
-

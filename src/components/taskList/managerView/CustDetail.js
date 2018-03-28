@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 19:20:21
+ * @Last Modified time: 2018-03-28 19:27:21
  * 客户明细数据
  */
 
@@ -14,8 +14,7 @@ import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
-import SelectFilter from '../../common/selectFilter';
-import { emp } from '../../../helper';
+import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -103,6 +102,10 @@ export default class CustDetail extends PureComponent {
     isShowFeedbackFilter: false,
     isEntryFromResultStatisfy: false,
   }
+
+  static contextTypes = {
+    empInfo: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
@@ -281,39 +284,34 @@ export default class CustDetail extends PureComponent {
 
   /**
    * 跳转到fsp的360信息界面
+   * empId 为客户的主服务经理的id
    */
   @autobind
-  toDetail(custNature, custId, rowId, ptyId) {
+  toDetail({ custNature, custId, rowId, ptyId, empId }) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, isCustServedByPostn, hideCustDetailModal } = this.props;
-    const postnId = emp.getPstnId();
-    // 跳转之前查看一下是否都是本人名下的客户
-    isCustServedByPostn({
-      postnId,
-      custId,
-    }).then(() => {
-      if (this.props.custServedByPostnResult) {
-        // 跳转前关闭模态框
-        hideCustDetailModal();
-        const param = {
-          id: 'FSP_360VIEW_M_TAB',
-          title: '客户360视图-客户信息',
-          forceRefresh: true,
-        };
-        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-        openFspTab({
-          routerAction: push,
+    const { push, hideCustDetailModal } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 主服务经理判断
+    if (empInfo.rowId === empId) {
+      hideCustDetailModal();
+      const param = {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+      };
+      const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+      openFspTab({
+        routerAction: push,
+        url,
+        pathname: '/customerCenter/fspcustomerDetail',
+        param,
+        state: {
           url,
-          pathname: '/customerCenter/fspcustomerDetail',
-          param,
-          state: {
-            url,
-          },
-        });
-      } else {
-        message.error('客户非本人名下客户，不能查看客户360视图');
-      }
-    });
+        },
+      });
+    } else {
+      message.error('客户非本人名下客户，不能查看客户360视图');
+    }
   }
 
   /**
@@ -330,8 +328,7 @@ export default class CustDetail extends PureComponent {
     },
   })
   handleCustNameClick(record) {
-    const { custNature, custId, rowId, ptyId } = record;
-    this.toDetail(custNature, custId, rowId, ptyId);
+    this.toDetail(record);
   }
 
   @autobind
@@ -509,7 +506,7 @@ export default class CustDetail extends PureComponent {
                   <div
                     className={styles.filter}
                   >
-                    <SelectFilter
+                    <SingleFilter
                       value={currentSelectFeedbackIdL1 || ''}
                       filterLabel="客户反馈"
                       filter="custFeedbackL1"
@@ -522,7 +519,7 @@ export default class CustDetail extends PureComponent {
                       <div
                         className={styles.filter}
                       >
-                        <SelectFilter
+                        <SingleFilter
                           value={currentSelectFeedbackIdL2 || ''}
                           filterLabel=""
                           filter="custFeedbackL2"
