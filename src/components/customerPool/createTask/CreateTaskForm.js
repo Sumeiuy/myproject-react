@@ -89,8 +89,8 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   @autobind
-  getData() {
-    return this.taskFormInfoRef.getData();
+  getData(isStateData) {
+    return this.taskFormInfoRef.getData(isStateData);
   }
 
   // 从业务目标池客户：businessCustPool
