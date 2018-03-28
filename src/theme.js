@@ -7,4 +7,7 @@ module.exports = {
   'btn-height-base': '28px',
   'btn-height-lg': '32px',
   'btn-height-sm': '22px',
+  'input-height-base': '28px',
+  'input-height-lg': '32px',
+  'input-height-sm': '22px',
 };
