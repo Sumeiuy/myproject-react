@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 19:57:04
+ * @Last Modified time: 2018-03-28 17:01:59
  * 客户明细数据
  */
 
@@ -427,11 +427,21 @@ export default class CustDetail extends PureComponent {
     // 构造二级客户反馈
     const currentFeedbackL1Object = _.find(currentFeedback, item =>
       item.feedBackIdL1 === currentSelectFeedBackIdL1);
+
     if (!_.isEmpty(currentFeedbackL1Object) && !_.isEmpty(currentFeedbackL1Object.childList)) {
       const feedbackL2List = _.map(currentFeedbackL1Object.childList, item => ({
         key: item.feedBackIdL2,
         value: item.feedbackName,
       }));
+
+      // 如果当前选中的二级反馈和一级反馈一模一样，也不展示二级反馈
+      // 如果都是所有，需要显示二级，默认进来，两个都是所有反馈
+      if (_.size(feedbackL2List) === 1 &&
+        currentFeedbackL1Object.feedbackName === feedbackL2List[0].value
+        && !_.isEmpty(currentSelectFeedBackIdL1)) {
+        return EMPTY_LIST;
+      }
+
       // 如果当前选中的二级反馈没有，则默认显示所有反馈
       if (_.isEmpty(currentSelectFeedBackIdL2)) {
         return _.concat([{
@@ -491,11 +501,6 @@ export default class CustDetail extends PureComponent {
                 <div className={styles.filterSection}>
                   <div
                     className={styles.filter}
-                    ref={(ref) => {
-                      if (ref && !this.feedbackL1Elem) {
-                        this.feedbackL1Elem = ref;
-                      }
-                    }}
                   >
                     <SelectFilter
                       value={currentSelectFeedBackIdL1 || ''}
@@ -503,18 +508,12 @@ export default class CustDetail extends PureComponent {
                       filter="custFeedbackL1"
                       filterField={feedbackL1List}
                       onChange={this.handleFeedbackL1Change}
-                      getPopupContainer={this.getFeedbackL1PopupContainer}
                     />
                   </div>
                   {
                     !_.isEmpty(feedbackL2List) ?
                       <div
                         className={styles.filter}
-                        ref={(ref) => {
-                          if (ref && !this.feedbackL2Elem) {
-                            this.feedbackL2Elem = ref;
-                          }
-                        }}
                       >
                         <SelectFilter
                           value={currentSelectFeedBackIdL2 || ''}
@@ -522,7 +521,6 @@ export default class CustDetail extends PureComponent {
                           filter="custFeedbackL2"
                           filterField={feedbackL2List}
                           onChange={this.handleFeedbackL2Change}
-                          getPopupContainer={this.getFeedbackL2PopupContainer}
                         />
                       </div> : null
                   }
