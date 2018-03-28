@@ -2225,12 +2225,28 @@ dot-prop@^4.1.1:
   dependencies:
     is-obj "^1.0.0"
 
-draft-convert@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/draft-convert/-/draft-convert-2.0.1.tgz#dfaa812b489fa87b38a54e16d04523eab63564d9"
+draft-js-export-html@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/draft-js-export-html/-/draft-js-export-html-1.2.0.tgz#1cbe2b78e1fed74fc29c7cdcbfd7540468eca209"
   dependencies:
-    immutable "~3.7.4"
-    invariant "^2.2.1"
+    draft-js-utils "^1.2.0"
+
+draft-js-import-element@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/draft-js-import-element/-/draft-js-import-element-1.2.1.tgz#9a6a56d74690d48d35d8d089564e6d710b4926eb"
+  dependencies:
+    draft-js-utils "^1.2.0"
+    synthetic-dom "^1.2.0"
+
+draft-js-import-html@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/draft-js-import-html/-/draft-js-import-html-1.2.1.tgz#88adb8ce5dbe1a5a777663b1893cee6a35239eaa"
+  dependencies:
+    draft-js-import-element "^1.2.1"
+
+draft-js-utils@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/draft-js-utils/-/draft-js-utils-1.2.0.tgz#f5cb23eb167325ffed3d79882fdc317721d2fd12"
 
 draft-js@^0.10.0, draft-js@~0.10.0:
   version "0.10.5"
@@ -7478,6 +7494,10 @@ symbol-observable@1.0.1:
 symbol-observable@^1.0.3:
   version "1.1.0"
   resolved "http://168.61.9.74:4873/symbol-observable/-/symbol-observable-1.1.0.tgz#5c68fd8d54115d9dfb72a84720549222e8db9b32"
+
+synthetic-dom@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/synthetic-dom/-/synthetic-dom-1.2.0.tgz#f3589aafe2b5e299f337bb32973a9be42dd5625e"
 
 table@^3.7.8:
   version "3.8.3"

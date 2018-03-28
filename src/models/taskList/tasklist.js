@@ -4,7 +4,7 @@
  * @author wangjunjun
  */
 
-import { convertFromHTML } from 'draft-convert';
+import { stateFromHTML } from 'draft-js-import-html';
 import { Mention } from 'antd';
 import { customerPool as api } from '../../api';
 
@@ -60,8 +60,8 @@ export default {
         ...resultData,
         motDetailModel: {
           ...motDetailModel,
-          infoContent: toString(convertFromHTML(infoContent)),
-          strategyDesc: toString(convertFromHTML(strategyDesc)),
+          infoContent: toString(stateFromHTML(infoContent)),
+          strategyDesc: toString(stateFromHTML(strategyDesc)),
           infoContentHtml: infoContent,
           strategyDescHtml: strategyDesc,
         },

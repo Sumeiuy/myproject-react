@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Button, message, Steps, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { convertToHTML } from 'draft-convert';
+import { stateToHTML } from 'draft-js-export-html';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
@@ -321,14 +321,7 @@ export default class TaskFormFlowStep extends PureComponent {
         // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
         const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
         const serviceStrategyString = toString(serviceStateData);
-        const serviceStrategyHtml = convertToHTML({
-          blockToHTML: (block) => {
-            if (block.text) {
-              return <p />;
-            }
-            return <br />;
-          },
-        })(serviceStateData);
+        const serviceStrategyHtml = stateToHTML(serviceStateData);
         const formDataValidation = this.saveFormContent({
           ...values,
           serviceStrategySuggestion: serviceStrategyHtml,
@@ -349,14 +342,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = convertToHTML({
-        blockToHTML: (block) => {
-          if (block.text) {
-            return <p />;
-          }
-          return <br />;
-        },
-      })(formComponent.getData(true));
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;

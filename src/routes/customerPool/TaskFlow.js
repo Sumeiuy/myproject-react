@@ -13,7 +13,7 @@ import { routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { convertToHTML } from 'draft-convert';
+import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -518,14 +518,8 @@ export default class TaskFlow extends PureComponent {
         // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
         const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
         const serviceStrategyString = toString(serviceStateData);
-        const serviceStrategyHtml = convertToHTML({
-          blockToHTML: (block) => {
-            if (block.text) {
-              return <p />;
-            }
-            return <br />;
-          },
-        })(serviceStateData);
+        const serviceStrategyHtml = stateToHTML(serviceStateData);
+
         const formDataValidation =
           this.checkFormField({
             ...values,
@@ -548,14 +542,7 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = convertToHTML({
-        blockToHTML: (block) => {
-          if (block.text) {
-            return <p />;
-          }
-          return <br />;
-        },
-      })(formComponent.getData(true));
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
 
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
