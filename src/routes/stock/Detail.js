@@ -80,10 +80,23 @@ export default class StockDetail extends PureComponent {
   }
 
   componentDidMount() {
-    const { getStockDetail } = this.props;
+    const {
+      getStockDetail,
+      location: {
+        query: {
+          eventType,
+          type,
+        },
+      },
+    } = this.props;
     const { id, detail } = this.state;
     if (_.isEmpty(detail[id])) {
-      getStockDetail({ id }).then(() => {
+      const payload = {
+        id,
+        type,
+        eventType,
+      };
+      getStockDetail(payload).then(() => {
         const { detail: newDetail } = this.props;
         this.setState({
           detail: newDetail,
