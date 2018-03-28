@@ -3,4 +3,8 @@ module.exports = {
     ? '"/static/font/anticon/iconfont"' : '"/fspa/static/font/anticon/iconfont"',
   'pagination-item-size': '28px',
   'font-size-base': '12px',
+  'checkbox-size': '14px',
+  'btn-height-base': '28px',
+  'btn-height-lg': '32px',
+  'btn-height-sm': '22px',
 };
