@@ -15,7 +15,7 @@ import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
-import { emp } from '../../../helper';
+// import { emp } from '../../../helper';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -93,6 +93,10 @@ export default class CustDetail extends PureComponent {
     currentFilter: EMPTY_LIST,
     currentSelectFeedback: '',
   }
+
+  static contextTypes = {
+    empInfo: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
@@ -290,39 +294,34 @@ export default class CustDetail extends PureComponent {
 
   /**
    * 跳转到fsp的360信息界面
+   * empId 为客户的主服务经理的id
    */
   @autobind
-  toDetail(custNature, custId, rowId, ptyId) {
+  toDetail({ custNature, custId, rowId, ptyId, empId }) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, isCustServedByPostn, hideCustDetailModal } = this.props;
-    const postnId = emp.getPstnId();
-    // 跳转之前查看一下是否都是本人名下的客户
-    isCustServedByPostn({
-      postnId,
-      custId,
-    }).then(() => {
-      if (this.props.custServedByPostnResult) {
-        // 跳转前关闭模态框
-        hideCustDetailModal();
-        const param = {
-          id: 'FSP_360VIEW_M_TAB',
-          title: '客户360视图-客户信息',
-          forceRefresh: true,
-        };
-        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-        openFspTab({
-          routerAction: push,
+    const { push, hideCustDetailModal } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 主服务经理判断
+    if (empInfo.rowId === empId) {
+      hideCustDetailModal();
+      const param = {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+      };
+      const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+      openFspTab({
+        routerAction: push,
+        url,
+        pathname: '/customerCenter/fspcustomerDetail',
+        param,
+        state: {
           url,
-          pathname: '/customerCenter/fspcustomerDetail',
-          param,
-          state: {
-            url,
-          },
-        });
-      } else {
-        message.error('客户非本人名下客户，不能查看客户360视图');
-      }
-    });
+        },
+      });
+    } else {
+      message.error('客户非本人名下客户，不能查看客户360视图');
+    }
   }
 
   /**
@@ -338,10 +337,8 @@ export default class CustDetail extends PureComponent {
       type: '管理者视图客户反馈',
     },
   })
-  handleCustNameClick(record, columnTitle) {
-    console.log(columnTitle);
-    const { custNature, custId, rowId, ptyId } = record;
-    this.toDetail(custNature, custId, rowId, ptyId);
+  handleCustNameClick(record) {
+    this.toDetail(record);
   }
 
   @autobind

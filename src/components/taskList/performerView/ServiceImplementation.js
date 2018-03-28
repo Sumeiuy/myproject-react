@@ -79,13 +79,19 @@ export default class ServiceImplementation extends PureComponent {
       addServeRecord,
       reloadTargetCustInfo,
       queryCustUuid,
+      modifyLocalTaskList,
+      currentId,
     } = this.props;
     // 执行提交服务记录的接口
     addServeRecord(postBody)
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新获取目标客户列表的信息
-          reloadTargetCustInfo(() => this.updateList(postBody, callback));
+          // 服务记录添加成功后重新加载当前目标客户的详细信息
+          reloadTargetCustInfo(() => {
+            this.updateList(postBody, callback);
+            // 更新新左侧列表
+            modifyLocalTaskList({ missionId: currentId, serviceStatusCode: postBody.flowStatus });
+          });
           // 添加服务记录成功之后，重新获取custUuid
           queryCustUuid();
           // this.updateList(postBody);
@@ -155,7 +161,6 @@ export default class ServiceImplementation extends PureComponent {
       deleteFileResult,
       taskFeedbackList,
       addMotServeRecordSuccess,
-      reloadTargetCustInfo,
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
@@ -253,7 +258,6 @@ export default class ServiceImplementation extends PureComponent {
               ceFileDelete={ceFileDelete}
               deleteFileResult={deleteFileResult}
               addMotServeRecordSuccess={addMotServeRecordSuccess}
-              reloadTargetCustInfo={reloadTargetCustInfo}
               getCeFileList={getCeFileList}
             /> : null
         }
@@ -292,6 +296,7 @@ ServiceImplementation.propTypes = {
   attachmentList: PropTypes.array.isRequired,
   statusCode: PropTypes.string,
   isTaskFeedbackListOfNone: PropTypes.bool,
+  modifyLocalTaskList: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {
