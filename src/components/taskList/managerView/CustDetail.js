@@ -337,10 +337,8 @@ export default class CustDetail extends PureComponent {
       type: '管理者视图客户反馈',
     },
   })
-  handleCustNameClick(record, columnTitle) {
-    console.log(columnTitle);
-    const { custNature, custId, rowId, ptyId, empId } = record;
-    this.toDetail({ custNature, custId, rowId, ptyId, empId });
+  handleCustNameClick(record) {
+    this.toDetail(record);
   }
 
   @autobind

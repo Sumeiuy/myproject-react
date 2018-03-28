@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import Loading from './Loading';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
@@ -53,6 +54,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
+  replace: routerRedux.replace,
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
@@ -86,6 +89,8 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -98,13 +103,17 @@ export default class Main extends Component {
   static childContextTypes = {
     empInfo: PropTypes.object,
     location: PropTypes.object,
+    push: PropTypes.func,
+    replace: PropTypes.func,
   };
 
   getChildContext() {
-    const { location, empInfo } = this.props;
+    const { location, empInfo, push, replace } = this.props;
     return {
       location,
       empInfo,
+      push,
+      replace,
     };
   }
 

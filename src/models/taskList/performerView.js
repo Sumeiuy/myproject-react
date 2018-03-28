@@ -5,6 +5,10 @@
  */
 import _ from 'lodash';
 import { performerView as api, customerPool as custApi } from '../../api';
+import {
+  STATE_COMPLETED_NAME,
+  STATE_COMPLETED_CODE,
+} from '../../routes/taskList/config';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
@@ -12,9 +16,6 @@ const EMPTY_LIST = [];
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 
-// 任务列表中已完成的显示文字和编号
-const COMPLETED_NAME = '已完成';
-const COMPLETED_CODE = '80';
 // 添加服务记录时，入参服务状态完成的编号,
 const POSTCOMPLETED_CODE = '30';
 
@@ -188,8 +189,8 @@ export default {
               // 当前选中任务项的已完成数量和总数量相等且任务未过期时，将本地存储的任务列表中的此条任务状态修改为已完成，且此条数据的已完成数量加一
               return {
                 ...item,
-                statusName: COMPLETED_NAME,
-                statusCode: COMPLETED_CODE,
+                statusName: STATE_COMPLETED_NAME,
+                statusCode: STATE_COMPLETED_CODE,
                 doneFlowNum: curentDoneFlowNum,
               };
             }

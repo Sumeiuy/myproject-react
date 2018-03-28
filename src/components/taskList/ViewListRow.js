@@ -14,14 +14,14 @@ import Tag from '../common/tag';
 import ProgressBar from './ProgressBar';
 import styles from './viewListRow.less';
 import {
-  PROCESSING_STATE,
-  REJECT_STATE,
-  CLOSE_STATE,
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  WAITEXECUTE_STATE,
-  FINISHED_STATE,
-  COMPLETED_STATE,
+  STATE_PROCESSING_CODE,
+  STATE_REJECT_CODE,
+  STATE_CLOSE_CODE,
+  STATE_EXECUTE_CODE,
+  STATE_RESULTTRACK_CODE,
+  STATE_WAITEXECUTE_CODE,
+  STATE_FINISHED_CODE,
+  STATE_COMPLETED_CODE,
 } from '../../routes/taskList/config';
 
 // 执行者视图和创建者视图左侧列表项需要显示进度条
@@ -66,14 +66,14 @@ export default function AppItem(props) {
     [styles.active]: active,
   });
   const tagStatusType = cx({
-    pvProcessing: data.statusCode === PROCESSING_STATE && !active,
-    pvReject: data.statusCode === REJECT_STATE && !active,
-    pvClose: data.statusCode === CLOSE_STATE && !active,
-    pvEnd: data.statusCode === FINISHED_STATE && !active,
-    pvExecuting: data.statusCode === EXECUTE_STATE && !active,
-    pvResult: data.statusCode === RESULT_TRACK_STATE && !active,
-    pvWaitExecute: data.statusCode === WAITEXECUTE_STATE && !active,
-    pvCompleted: data.statusCode === COMPLETED_STATE && !active,
+    pvProcessing: data.statusCode === STATE_PROCESSING_CODE && !active,
+    pvReject: data.statusCode === STATE_REJECT_CODE && !active,
+    pvClose: data.statusCode === STATE_CLOSE_CODE && !active,
+    pvEnd: data.statusCode === STATE_FINISHED_CODE && !active,
+    pvExecuting: data.statusCode === STATE_EXECUTE_CODE && !active,
+    pvResult: data.statusCode === STATE_RESULTTRACK_CODE && !active,
+    pvWaitExecute: data.statusCode === STATE_WAITEXECUTE_CODE && !active,
+    pvCompleted: data.statusCode === STATE_COMPLETED_CODE && !active,
     transparent: active,
   });
   const progressCls = cx({

@@ -26,9 +26,9 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  MANAGER_VIEW_STATUS,
-  EXECUTOR_VIEW_STATUS,
-  COMPLETED_STATE,
+  STATUS_MANAGER_VIEW,
+  STATUS_EXECUTOR_VIEW,
+  STATE_COMPLETED_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -438,19 +438,19 @@ export default class Pageheader extends PureComponent {
     if (filterControl === CONTROLLER) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
-        item => _.includes(MANAGER_VIEW_STATUS, item.value));
+        item => _.includes(STATUS_MANAGER_VIEW, item.value));
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(
         stateAllOptions,
-        item => _.includes(EXECUTOR_VIEW_STATUS, item.value),
+        item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
-        item => COMPLETED_STATE !== item.value);
+        item => STATE_COMPLETED_CODE !== item.value);
     }
 
     let statusValue = status;
