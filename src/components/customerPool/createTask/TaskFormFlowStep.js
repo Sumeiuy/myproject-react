@@ -17,7 +17,7 @@ import logable from '../../../decorators/logable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { returnTaskEntrySource, PIE_ENTRY, PROGRESS_ENTRY, CUST_GROUP_LIST } from '../../../config/returnTaskEntry';
 import styles from './taskFormFlowStep.less';
 
 const noop = _.noop;
@@ -84,7 +84,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = props;
 
     // 代表是否是来自驳回修改
-    const isEntryFromReturnTask = source === 'returnTask';
+    const isEntryFromReturnTask = _.includes(returnTaskEntrySource, source);
     let canGoNextStepFlow = canGoNextStep;
     let newNeedMissionInvestigation = needMissionInvestigation;
     if (!_.isEmpty(flowId)) {
@@ -121,7 +121,7 @@ export default class TaskFormFlowStep extends PureComponent {
       postnId: emp.getPstnId(),
     };
 
-    if (source !== 'returnTask') {
+    if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -169,13 +169,13 @@ export default class TaskFormFlowStep extends PureComponent {
     } = parseQuery();
 
     let req = {};
-    if (entrance === entrySource.progress) {
+    if (entrance === PROGRESS_ENTRY) {
       // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === entrySource.pie) {
+    } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (source === 'custGroupList') {
+    } else if (source === CUST_GROUP_LIST) {
       req = {
         enterType,
         groupId,
@@ -242,13 +242,13 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
-      case entrySource.progress:
+      case PROGRESS_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case entrySource.pie:
+      case PIE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case 'custGroupList':
+      case CUST_GROUP_LIST:
         custSources = '客户分组';
         break;
       case 'sightingTelescope':
@@ -801,7 +801,7 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
-    const cancleBtn = source === 'returnTask' ?
+    const cancleBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.cancelBtn}
@@ -823,7 +823,7 @@ export default class TaskFormFlowStep extends PureComponent {
       );
 
     // 根据来源判断按钮类型
-    const stopBtn = source === 'returnTask' ?
+    const stopBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.stopBtn}

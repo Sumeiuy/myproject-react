@@ -6,12 +6,20 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
-import { entrySource } from '../../config/managerViewCustFeedbackEntry';
+import {
+  returnTaskEntrySource,
+  PIE_ENTRY,
+  PROGRESS_ENTRY,
+  RETURN_TASK_FROM_TODOLIST,
+  RETURN_TASK_FROM_TASKLIST,
+  CUST_GROUP_LIST,
+} from '../../config/returnTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
 import { closeRctTab } from '../../utils';
@@ -132,7 +140,7 @@ export default class CreateTask extends PureComponent {
   componentWillMount() {
     const { location: { query }, getTaskBasicInfo } = this.props;
     const { source, flowId } = query;
-    if (source === 'returnTask') {
+    if (_.includes(returnTaskEntrySource, source)) {
       getTaskBasicInfo({
         systemCode,
         flowId,
@@ -198,7 +206,7 @@ export default class CreateTask extends PureComponent {
       location: { query: { source } },
     } = this.props;
     // 调用接口，创建任务
-    if (source === 'returnTask') {
+    if (_.includes(returnTaskEntrySource, source)) {
       updateTask(value);
     } else {
       createTask(value);
@@ -210,18 +218,21 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;
-    if (source === 'custGroupList') {
+    if (source === CUST_GROUP_LIST) {
       // 从客户分组发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP' });
-    } else if (source === entrySource.progress) {
+    } else if (source === PROGRESS_ENTRY) {
       // 从管理者视图进度条发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS' });
-    } else if (source === entrySource.pie) {
+    } else if (source === PIE_ENTRY) {
       // 从管理者视图饼图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE' });
-    } else if (source === 'returnTask') {
-      // 驳回后编辑任务
-      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
+    } else if (source === RETURN_TASK_FROM_TODOLIST) {
+      // 待办流程，驳回后编辑任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_ToDoList' });
+    } else if (source === RETURN_TASK_FROM_TASKLIST) {
+      // 任务管理，创建者视图，驳回后编辑任务，创建者视图驳回修改，用的是任务管理的tab
+      closeRctTab({ id: 'FSP_MOT_SELFBUILT_TASK' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
