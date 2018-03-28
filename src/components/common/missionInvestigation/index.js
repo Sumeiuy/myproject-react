@@ -8,7 +8,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, Tooltip, message } from 'antd';
+import { Checkbox, Tooltip, message, Modal } from 'antd';
 import _ from 'lodash';
 // import classnames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -23,6 +23,7 @@ import Button from '../Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 
+const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const posi = 'bottom';
@@ -117,6 +118,7 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectRowKeys,
       isShowTable: false,
       page,
+      isShowErr: false, // 是否显示错误信息
     };
   }
 
@@ -136,6 +138,20 @@ export default class MissionInvestigation extends PureComponent {
           questionList,
           page,
         });
+      });
+    }
+  }
+
+  // 数据校验
+  @autobind
+  requiredDataValidate() {
+    const {
+      checked,
+      currentSelectRowKeys,
+    } = this.state;
+    if (checked && _.isEmpty(currentSelectRowKeys)) {
+      this.setState({
+        isShowErr: true,
       });
     }
   }
@@ -248,12 +264,30 @@ export default class MissionInvestigation extends PureComponent {
 
   @autobind
   handleCheckChange() {
-    const { checked } = this.state;
-    this.setState({
-      checked: !checked,
-    });
-    if (checked) {
-      message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
+    const {
+      checked,
+      currentSelectRowKeys,
+      } = this.state;
+    // 如果当前已选择任务调查并且已设置问题
+    if (checked && !_.isEmpty(currentSelectRowKeys)) {
+      // message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
+      confirm({
+        title: '提示',
+        content: '您已设置任务调查问题，如果取消选择将不对此任务进行任务调查',
+        onOk: () => {
+          this.setState({
+            checked: !checked,
+            currentSelectRowKeys: EMPTY_LIST,
+          }, () => {
+            this.renderNextQuestion();
+          });
+        },
+      });
+    } else {
+      this.setState({
+        checked: !checked,
+        isShowErr: false,
+      });
     }
   }
 
@@ -295,6 +329,7 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
+    const { currentSelectRowKeys } = this.state;
     this.setState({
       isShowTable: false,
       // 重置分页
@@ -305,6 +340,11 @@ export default class MissionInvestigation extends PureComponent {
     });
     this.scrollModalBodyToTop();
     this.renderNextQuestion();
+    if (!_.isEmpty(currentSelectRowKeys)) {
+      this.setState({
+        isShowErr: false,
+      });
+    }
   }
 
   /**
@@ -503,6 +543,7 @@ export default class MissionInvestigation extends PureComponent {
       isShowTable,
       page,
       questionList,
+      isShowErr,
     } = this.state;
 
     const {
@@ -513,6 +554,7 @@ export default class MissionInvestigation extends PureComponent {
     const titleColumn = renderColumnTitle();
 
     const dataSource = this.addIdToDataSource(questionList);
+    console.log('dataSource', questionList, dataSource, currentSelectRowKeys);
 
     return (
       <div className={styles.missionInvestigationContainer}>
@@ -599,6 +641,10 @@ export default class MissionInvestigation extends PureComponent {
             </div>
           }
         />
+        {
+          isShowErr ?
+            <div className={styles.errBox}>请至少选择一个问题</div> : null
+        }
         <div
           className={
             classnames({

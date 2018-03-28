@@ -675,9 +675,11 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   handleQueryProduct(value) {
-    this.props.queryProduct({
-      keyword: value,
-    });
+    if (!_.isEmpty(value)) {
+      this.props.queryProduct({
+        keyword: value,
+      });
+    }
   }
 
   @autobind

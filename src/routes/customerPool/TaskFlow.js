@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-03-09 10:53:32
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-28 16:34:24
  */
 
 import React, { PureComponent } from 'react';
@@ -251,6 +251,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectLabelName: null,
       currentFilterNum: 0,
       nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
+      submitBtnIsDisabled: true, // 用来控制 “确认无误&提交” 按钮是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -617,8 +618,9 @@ export default class TaskFlow extends PureComponent {
         const originQuestionSize = _.size(currentSelectedQuestionIdList);
         const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
+          missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择
@@ -838,6 +840,25 @@ export default class TaskFlow extends PureComponent {
     this.decoratorSubmitTaskFlow(postBody);
   }
 
+  // 校验审批人是否为空
+  @autobind
+  checkApproverIsEmpty() {
+    const {
+      currentSelectRecord: { login: flowAuditorId = null },
+      needApproval,
+    } = this.state;
+
+    if (_.isEmpty(flowAuditorId) && needApproval) {
+      this.setState({
+        submitBtnIsDisabled: true,
+      });
+    } else {
+      this.setState({
+        submitBtnIsDisabled: false,
+      });
+    }
+  }
+
   @autobind
   handleRowSelectionChange(selectedRowKeys, selectedRows) {
     console.log(selectedRowKeys, selectedRows);
@@ -858,6 +879,8 @@ export default class TaskFlow extends PureComponent {
     this.setState({
       currentSelectRowKeys: originSelectRowKeys,
       currentSelectRecord: originSelectRecord,
+    }, () => {
+      this.checkApproverIsEmpty();
     });
     saveTaskFlowData({
       ...storedTaskFlowData,
@@ -989,6 +1012,7 @@ export default class TaskFlow extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       nextStepBtnIsDisabled,
+      submitBtnIsDisabled,
     } = this.state;
 
     const {
@@ -1103,6 +1127,7 @@ export default class TaskFlow extends PureComponent {
         onCancel={this.resetLoading}
         creator={creator}
         onCancelSelectedRowKeys={this.handleCancelSelectedRowKeys}
+        checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
 
@@ -1172,6 +1197,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.confirmBtn}
                 type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
+                disabled={submitBtnIsDisabled}
               >
                 确认无误，提交
               </Button>
