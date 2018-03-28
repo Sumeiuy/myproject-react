@@ -12,9 +12,11 @@ import { autobind } from 'core-decorators';
 import { dom, env } from '../helper';
 
 const config = {
-  container: '#container', // 需要设置高度的容器
-  content: '#content', // 需要设置高度的容器
-  utb: '#UTBContent',
+  utb: '#UTBContent',  // FSP 外层容器
+  reactHeaderHeight: 140, // 在React框架下的头部高度
+  fspHeaderHeight: 55, // 在FSP框架下的头部高度
+  UTBContentMargin: '10px 30px 10px 25px',  // FSP 框架下顶层容器的 margin
+  newUTBContentMargin: '0 0 0 25px',  // 需要设置的新 margin
 };
 
 const fspPatch = (...arg) => (ComposedComponent) => {
@@ -28,58 +30,91 @@ const fspPatch = (...arg) => (ComposedComponent) => {
     componentDidMount() {
       // 初始化当前系统
       this.UTBContentElem = document.querySelector(config.utb);
-      // 监听window.onResize事件
-      window.addEventListener('resize', this.onResizeChange, false);
-      this.setContentStyle(true);
+
+      // 设置新的 系统的 margin
+      this.setUTBContentMargin(config.newUTBContentMargin);
+
+      // 添加监听 window.onResize 事件
+      this.registerWindowResize();
+
+      // 设置滚动区域
+      this.setContentStyle();
     }
 
     componentWillUnmount() {
+      // 重置外层容器 margin 样式,防止影响其他界面
+      this.setUTBContentMargin(config.UTBContentMargin);
+
       // 取消监听 window.onResize 事件
-      window.removeEventListener('resize', this.onResizeChange);
-      this.setContentStyle(false);
+      this.cancelWindowResize();
     }
 
     // Resize事件
     @autobind
     onResizeChange() {
-      this.setContentStyle(true);
+      this.setContentStyle();
     }
 
-    // 设置 fsp content 样式
+    // 获取浏览器视口高度
     @autobind
-    setContentStyle(flag) {
+    getViewHeight() {
+      let h = dom.getViewPortHeight();
+      if (env.isIE()) { h -= 10; }
+      if (document.body.clientWidth === 1280) {
+        h -= 17; // 处理视口宽度为最小的1280px时，需要去掉滚动条的宽度
+      }
+      return h;
+    }
+
+    // 设置装饰器包裹的组件样式
+    @autobind
+    setContentStyle() {
       // 传入的参数
       console.log('传入的参数 arg', arg);
-      // 次变量用来判断是否在FSP系统中
-      let viewHeight = document.documentElement.clientHeight;
-      if (env.isIE()) {
-        viewHeight -= 10;
-      }
-      // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
-      // 需要给改容器设置高度，以防止页面出现滚动
-      // FSP头部Tab的高度
-      const fspTabHeight = 55;
-      // FSP UTBContent 的 margin 值
-      const UTBContentMargin = '10px 30px 10px 25px';
-      // 设置新的 FSP UTBContent 的 margin 值
-      const newUTBContentMargin = '0 0 0 25px';
-      // 设置系统容器高度
-      let pch = viewHeight;
+      // 1.首先获取视口高度
+      const viewportHeight = this.getViewHeight();
+      // 目前CRM系统存在三种情况: 1.嵌入FSP系统页面 2.嵌入React系统页面 3.独立的开发页面
+      // 嵌入FSP系统容器高度需要减去头部的 55px
+      // 嵌入React系统容器高度需要减去头部的 90px
+      // 独立开发的页面容器高度就是 viewportHeight
+      // 组件只需要计算出容器的高度并赋值即可
+      let pch = viewportHeight;
       if (env.isInFsp()) {
-        pch = viewHeight - fspTabHeight;
+        // 因为FSP系统和独立开发系统均在 '#container', '#content'容器下
+        pch = viewportHeight - config.fspHeaderHeight;
       }
-      const pageContainer = document.querySelector(config.container);
-      const pageContent = document.querySelector(config.content);
-      const childDiv = pageContent.querySelector('div');
-      dom.setStyle(pageContainer, 'height', flag ? `${pch}px` : 'auto');
-      dom.setStyle(pageContent, 'height', flag ? '100%' : 'auto');
-      dom.setStyle(childDiv, 'height', flag ? '100%' : 'auto');
-      dom.setStyle(this.UTBContentElem, 'margin', flag ? newUTBContentMargin : UTBContentMargin);
+      if (env.isInReact()) {
+        // React系统下是在'#react-content'容器下
+        pch = viewportHeight - config.reactHeaderHeight;
+      }
+      dom.setStyle(this.patchComponent, 'height', `${pch}px`);
+    }
+
+    // 设置系统容器的局部样式，margin
+    @autobind
+    setUTBContentMargin(str) {
+      if (this.UTBContentElem) {
+        dom.setStyle(this.UTBContentElem, 'margin', str);
+      }
+    }
+
+    // 注册window的resize事件
+    @autobind
+    registerWindowResize() {
+      window.addEventListener('resize', this.onResizeChange, false);
+    }
+
+    // 注销window的resize事件
+    @autobind
+    cancelWindowResize() {
+      window.removeEventListener('resize', this.onResizeChange, false);
     }
 
     render() {
       return (
-        <ComposedComponent {...this.props} />
+        <div ref={ref => this.patchComponent = ref}>
+          <ComposedComponent {...this.props} />
+        </div>
       );
     }
   }
