@@ -10,11 +10,11 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import {
-  returnTaskFromToDoList,
-  returnTaskFromTaskList,
-  pieEntry,
-  progressEntry,
-  custGroupList,
+  RETURN_TASK_FROM_TODOLIST,
+  RETURN_TASK_FROM_TASKLIST,
+  PIE_ENTRY,
+  PROGRESS_ENTRY,
+  CUST_GROUP_LIST,
 } from '../../../config/returnTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -200,20 +200,20 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;
-      case progressEntry:
-      case pieEntry:
+      case PROGRESS_ENTRY:
+      case PIE_ENTRY:
         defaultMissionType = missionType || '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
-      case custGroupList:
+      case CUST_GROUP_LIST:
         defaultMissionName = '';
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
-      case returnTaskFromToDoList:
-      case returnTaskFromTaskList:
+      case RETURN_TASK_FROM_TODOLIST:
+      case RETURN_TASK_FROM_TASKLIST:
         defaultMissionName = motDetailModel.eventName; // 任务名称
         defaultMissionType = motDetailModel.eventType; // 任务类型
         defaultTaskSubType = '请选择'; // 任务子类型

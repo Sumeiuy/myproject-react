@@ -20,7 +20,7 @@ import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import logable, { logPV } from '../../../decorators/logable';
 import { linkTo } from '../../../utils';
-import { returnTaskFromTaskList } from '../../../config/returnTaskEntry';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/returnTaskEntry';
 import pageConfig from '../pageConfig';
 import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
 
@@ -173,18 +173,18 @@ export default class RightPanel extends PureComponent {
     const { push, taskBasicInfo, flowId, clearCreateTaskData } = this.props;
     if (!_.isEmpty(taskBasicInfo) || !_.isEmpty(flowId)) {
       // 发起任务之前
-      clearCreateTaskData(returnTaskFromTaskList);
+      clearCreateTaskData(RETURN_TASK_FROM_TASKLIST);
       const param = {
         id: 'FSP_MOT_SELFBUILT_TASK',
         title: '任务管理',
       };
       linkTo({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection2?source=${returnTaskFromTaskList}&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection2?source=${RETURN_TASK_FROM_TASKLIST}&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection2',
         query: {
-          source: returnTaskFromTaskList,
+          source: RETURN_TASK_FROM_TASKLIST,
           flowId,
         },
       });
@@ -373,31 +373,31 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-              <div className={styles.module}>
-                <InfoTitle head="结果跟踪" />
-                <div className={styles.modContent}>
-                  <div className={styles.rowWidth}>
-                    <span>跟踪窗口期&nbsp;:</span>
-                    <span>{trackDay || '--'}天</span>
-                  </div>
-                  <div>
-                    <span>{resultTraceVO.indexName}&nbsp;:</span>
-                    <span>{this.renderResultData() || '--'}</span>
-                  </div>
+            <div className={styles.module}>
+              <InfoTitle head="结果跟踪" />
+              <div className={styles.modContent}>
+                <div className={styles.rowWidth}>
+                  <span>跟踪窗口期&nbsp;:</span>
+                  <span>{trackDay || '--'}天</span>
+                </div>
+                <div>
+                  <span>{resultTraceVO.indexName}&nbsp;:</span>
+                  <span>{this.renderResultData() || '--'}</span>
                 </div>
               </div>
+            </div>
             }
             {
               _.isEmpty(quesVO) ? null :
-                <div className={styles.module}>
-                  <InfoTitle head="任务调查" />
-                  <div className={styles.modContent}>
-                    <div>
-                      <span>调查内容&nbsp;:</span>
-                      <span>{this.renderTaskSurvey() || '--'}</span>
-                    </div>
+              <div className={styles.module}>
+                <InfoTitle head="任务调查" />
+                <div className={styles.modContent}>
+                  <div>
+                    <span>调查内容&nbsp;:</span>
+                    <span>{this.renderTaskSurvey() || '--'}</span>
                   </div>
                 </div>
+              </div>
             }
             <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />

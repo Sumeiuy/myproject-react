@@ -14,10 +14,11 @@ import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTa
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import {
   returnTaskEntrySource,
-  pieEntry,
-  progressEntry,
-  returnTaskFromToDoList,
-  returnTaskFromTaskList,
+  PIE_ENTRY,
+  PROGRESS_ENTRY,
+  RETURN_TASK_FROM_TODOLIST,
+  RETURN_TASK_FROM_TASKLIST,
+  CUST_GROUP_LIST,
 } from '../../config/returnTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
@@ -217,19 +218,19 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCancleTab() {
     const { location: { query: { source = '' } } } = this.props;
-    if (source === 'custGroupList') {
+    if (source === CUST_GROUP_LIST) {
       // 从客户分组发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTGROUP' });
-    } else if (source === progressEntry) {
+    } else if (source === PROGRESS_ENTRY) {
       // 从管理者视图进度条发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS' });
-    } else if (source === pieEntry) {
+    } else if (source === PIE_ENTRY) {
       // 从管理者视图饼图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE' });
-    } else if (source === returnTaskFromToDoList) {
+    } else if (source === RETURN_TASK_FROM_TODOLIST) {
       // 待办流程，驳回后编辑任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_ToDoList' });
-    } else if (source === returnTaskFromTaskList) {
+    } else if (source === RETURN_TASK_FROM_TASKLIST) {
       // 任务管理，创建者视图，驳回后编辑任务，创建者视图驳回修改，用的是任务管理的tab
       closeRctTab({ id: 'FSP_MOT_SELFBUILT_TASK' });
     } else {

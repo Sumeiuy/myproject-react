@@ -19,7 +19,7 @@ import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
-import { pieEntry, progressEntry } from '../../../config/returnTaskEntry';
+import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/returnTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
@@ -287,11 +287,11 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryId = '';
     let currentRoute = '';
     if (isEntryFromPie) {
-      currentEntryName = pieEntry;
+      currentEntryName = PIE_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
     } else if (isEntryFromProgressDetail) {
-      currentEntryName = progressEntry;
+      currentEntryName = PROGRESS_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
     }
@@ -344,8 +344,8 @@ export default class ManagerViewDetail extends PureComponent {
         ...progressParam,
         progressFlag: newProgressFlag,
         // 来自不同的入口，entrance和source不一样
-        entrance: progressEntry,
-        source: progressEntry,
+        entrance: PROGRESS_ENTRY,
+        source: PROGRESS_ENTRY,
       };
     }
 
@@ -356,8 +356,8 @@ export default class ManagerViewDetail extends PureComponent {
         feedBackIdL1: feedbackIdL1,
         feedBackIdL2: feedbackIdL2,
         // 来自不同的入口，entrance和source不一样
-        entrance: pieEntry,
-        source: pieEntry,
+        entrance: PIE_ENTRY,
+        source: PIE_ENTRY,
       };
     }
 

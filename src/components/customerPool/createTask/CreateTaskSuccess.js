@@ -14,7 +14,7 @@ import { env } from '../../../helper';
 import { navTo, openRctTab } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { returnTaskFromTaskList } from '../../../config/returnTaskEntry';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/returnTaskEntry';
 
 const EMPTY_OBJECT = {};
 
@@ -76,7 +76,7 @@ export default class CreateTaskSuccess extends PureComponent {
   switchRoute() {
     const { location: { query = EMPTY_OBJECT } } = this.props;
     const { source } = query;
-    if (source === returnTaskFromTaskList) {
+    if (source === RETURN_TASK_FROM_TASKLIST) {
       // 如果是驳回修改的任务，并且来自创建者视图快捷入口，则成功之后，自动返回taskList的创建者视图
       this.goToTaskList();
     } else {
