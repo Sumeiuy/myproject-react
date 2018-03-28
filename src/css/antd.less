@@ -1,17 +1,11 @@
 @import '../../node_modules/antd/lib/style/v2-compatible-reset.less';
 
 :global {
-  // antd的分页器
-  .ant-pagination {
-    color: red;
-    font-size: 12px;
-  }
-  .ant-pagination-total-text {
-    height: 28px;
-    line-height: 28px;
-  }
-  .ant-pagination-item {
-    height: 28px;
-    line-height: 26px;
+  // 在body上添加一个ant-v2-compatible的calss
+  .ant-v2-compatible {
+    // 等下要删除这个
+    .test {
+      color: red;
+    }
   }
 }
