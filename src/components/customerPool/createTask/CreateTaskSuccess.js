@@ -14,8 +14,10 @@ import { env } from '../../../helper';
 import { navTo, openRctTab } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { returnTaskFromTaskList } from '../../../config/returnTaskEntry';
 
 const EMPTY_OBJECT = {};
+
 @RestoreScrollTop
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
@@ -74,7 +76,7 @@ export default class CreateTaskSuccess extends PureComponent {
   switchRoute() {
     const { location: { query = EMPTY_OBJECT } } = this.props;
     const { source } = query;
-    if (source === 'returnTaskFromTaskList') {
+    if (source === returnTaskFromTaskList) {
       // 如果是驳回修改的任务，并且来自创建者视图快捷入口，则成功之后，自动返回taskList的创建者视图
       this.goToTaskList();
     } else {
@@ -108,7 +110,7 @@ export default class CreateTaskSuccess extends PureComponent {
   goToTaskList() {
     this.clearTimeInterval();
     const { push } = this.props;
-    // 跳转到首页
+    // 跳转到任务管理
     const param = {
       id: 'FSP_MOT_SELFBUILT_TASK',
       title: '任务管理',

@@ -19,7 +19,7 @@ import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { pieEntry, progressEntry } from '../../../config/returnTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
@@ -112,9 +112,9 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromCustTotal: false,
       isEntryFromPie: false,
       currentFeedback: EMPTY_LIST,
-      feedBackIdL1: '',
+      feedbackIdL1: '',
       destroyOnClose: false,
-      feedBackIdL2: '',
+      feedbackIdL2: '',
       isEntryFromResultStatisfy: false,
     };
   }
@@ -178,9 +178,9 @@ export default class ManagerViewDetail extends PureComponent {
       // 一二级客户反馈
       currentFeedback,
       // 当前选中的一级客户反馈
-      feedBackIdL1 = '',
+      feedbackIdL1 = '',
       // 当前选中的二级客户反馈
-      feedBackIdL2 = '',
+      feedbackIdL2 = '',
       pageNum = INITIAL_PAGE_NUM,
       pageSize = INITIAL_PAGE_SIZE,
       missionProgressStatus = '',
@@ -213,8 +213,9 @@ export default class ManagerViewDetail extends PureComponent {
 
     // 饼下钻图的入参
     const pieParam = {
-      feedBackIdL1,
-      feedBackIdL2,
+      // 后端字母拼错了
+      feedBackIdL1: feedbackIdL1,
+      feedBackIdL2: feedbackIdL2,
       queryType: MOT_FEEDBACK_CUSTS,
     };
 
@@ -222,8 +223,8 @@ export default class ManagerViewDetail extends PureComponent {
     const totalCustParam = {
       queryType: SERVE_CUSTS,
       // 客户总数一进来，默认一二级客户反馈都是空
-      feedBackIdL2,
-      feedBackIdL1,
+      feedBackIdL1: feedbackIdL1,
+      feedBackIdL2: feedbackIdL2,
     };
 
     if (isEntryFromProgressDetail) {
@@ -286,11 +287,11 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryId = '';
     let currentRoute = '';
     if (isEntryFromPie) {
-      currentEntryName = entrySource.pie;
+      currentEntryName = pieEntry;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
     } else if (isEntryFromProgressDetail) {
-      currentEntryName = entrySource.progress;
+      currentEntryName = progressEntry;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
     }
@@ -314,7 +315,8 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag,
       isEntryFromProgressDetail,
       isEntryFromPie,
-      feedBackIdL1,
+      feedbackIdL1,
+      feedbackIdL2,
     } = this.state;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
@@ -342,8 +344,8 @@ export default class ManagerViewDetail extends PureComponent {
         ...progressParam,
         progressFlag: newProgressFlag,
         // 来自不同的入口，entrance和source不一样
-        entrance: entrySource.progress,
-        source: entrySource.progress,
+        entrance: progressEntry,
+        source: progressEntry,
       };
     }
 
@@ -351,10 +353,11 @@ export default class ManagerViewDetail extends PureComponent {
     // 如果是来自客户反馈饼图
     if (isEntryFromPie) {
       pieParam = {
-        feedBackIdL1,
+        feedBackIdL1: feedbackIdL1,
+        feedBackIdL2: feedbackIdL2,
         // 来自不同的入口，entrance和source不一样
-        entrance: entrySource.pie,
-        source: entrySource.pie,
+        entrance: pieEntry,
+        source: pieEntry,
       };
     }
 
@@ -455,11 +458,11 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromPie,
       isEntryFromCustTotal,
       currentFeedback,
-      feedBackIdL1,
+      feedbackIdL1,
       destroyOnClose,
       missionProgressStatus,
       progressFlag,
-      feedBackIdL2,
+      feedbackIdL2,
       isEntryFromResultStatisfy,
     } = this.state;
 
@@ -616,9 +619,9 @@ export default class ManagerViewDetail extends PureComponent {
                       // 当前一级二级反馈
                       currentFeedback={currentFeedback}
                       // 当前选中的一级反馈条件
-                      feedBackIdL1={feedBackIdL1}
+                      feedbackIdL1={feedbackIdL1}
                       // 当前选中的二级级反馈条件
-                      feedBackIdL2={feedBackIdL2}
+                      feedbackIdL2={feedbackIdL2}
                       // 代表是从客户总数过来的
                       isEntryFromCustTotal={isEntryFromCustTotal}
                       // 是否可以发起任务

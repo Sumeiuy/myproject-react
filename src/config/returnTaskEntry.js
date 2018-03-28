@@ -1,8 +1,25 @@
 export default {};
 
-// returnTaskFromToDoList，驳回修改来自待办
-// returnTaskFromTaskList，驳回修改来自任务管理，创建者视图
+export const returnTaskFromToDoList = 'returnTaskFromToDoList';
+
+export const returnTaskFromTaskList = 'returnTaskFromTaskList';
+
+export const custGroupList = 'custGroupList';
+
+export const pieEntry = 'pieEntry';
+
+export const progressEntry = 'progressEntry';
+
+// returnTaskFromToDoList是待办，审批驳回之后，编辑自建任务信息界面
+// returnTaskFromTaskList是创建者视图，审批驳回之后，编辑自建任务信息界面
+// custGroupList是客户分组
+// pieEntry是管理者视图的饼图
+// progressEntry是管理者视图的进度条
+// custGroupList, 客户分组管理
 export const returnTaskEntrySource = [
-  'returnTaskFromToDoList',
-  'returnTaskFromTaskList',
+  returnTaskFromTaskList,
+  returnTaskFromToDoList,
+  custGroupList,
+  progressEntry,
+  pieEntry,
 ];

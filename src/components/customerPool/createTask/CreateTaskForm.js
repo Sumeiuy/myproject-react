@@ -9,7 +9,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import {
+  returnTaskFromToDoList,
+  returnTaskFromTaskList,
+  pieEntry,
+  progressEntry,
+  custGroupList,
+} from '../../../config/returnTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -167,19 +173,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 8; // 有效期
         break;
       case 'search':
-        defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
-        defaultExecutionType = 'Chance';
-        defaultMissionDesc = '';
-        defaultInitialValue = 4;
-        break;
       case 'association':
-        defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
-        defaultExecutionType = 'Chance';
-        defaultMissionDesc = '';
-        defaultInitialValue = 4;
-        break;
       case 'tag':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
@@ -206,34 +200,20 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;
-      case entrySource.progress:
+      case progressEntry:
+      case pieEntry:
         defaultMissionType = missionType || '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
-      case entrySource.pie:
-        defaultMissionType = missionType || '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
-        defaultExecutionType = '请选择';
-        break;
-      case 'custGroupList':
+      case custGroupList:
         defaultMissionName = '';
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
-      case 'returnTaskFromToDoList':
-        defaultMissionName = motDetailModel.eventName; // 任务名称
-        defaultMissionType = motDetailModel.eventType; // 任务类型
-        defaultTaskSubType = '请选择'; // 任务子类型
-        defaultExecutionType = this.handleTaskType(motDetailModel.exeType); // 执行方式
-        defaultKey = 'UNRIGHTS';
-        defaultServiceStrategySuggestion = motDetailModel.strategyDesc;
-        // 任务提示
-        defaultMissionDesc = motDetailModel.infoContent;
-        defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
-        break;
-      case 'returnTaskFromTaskList':
+      case returnTaskFromToDoList:
+      case returnTaskFromTaskList:
         defaultMissionName = motDetailModel.eventName; // 任务名称
         defaultMissionType = motDetailModel.eventType; // 任务类型
         defaultTaskSubType = '请选择'; // 任务子类型

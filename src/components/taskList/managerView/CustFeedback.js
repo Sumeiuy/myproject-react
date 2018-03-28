@@ -92,28 +92,28 @@ export default class CustFeedback extends PureComponent {
     const { data: { children, parent, key } } = params;
     const { level1Data } = this.state;
     const currentFeedback = _.map(level1Data, item => ({
-      feedBackIdL1: item.key,
+      feedbackIdL1: item.key,
       feedbackName: item.name,
-      childList: !_.isEmpty(item.children) ? _.map(item.children, child => ({
-        feedBackIdL2: child.key,
+      childList: _.map(item.children, child => ({
+        feedbackIdL2: child.key,
         feedbackName: child.name,
-      })) : EMPTY_LIST,
+      })),
     }));
-    let feedBackIdL1 = '';
+    let feedbackIdL1 = '';
     if (!_.isEmpty(parent)) {
       // 代表点击的是外圈，也就是二级反馈
       // 取出parent的key
-      feedBackIdL1 = parent.key;
+      feedbackIdL1 = parent.key;
     } else if (!_.isEmpty(children)) {
       // 代表点击的是内圈，也就是一级反馈
       // 取出当前的key
-      feedBackIdL1 = key;
+      feedbackIdL1 = key;
     }
 
     const { onPreviewCustDetail } = this.props;
     onPreviewCustDetail({
       // 当前选中的一级反馈类型
-      feedBackIdL1,
+      feedbackIdL1,
       canLaunchTask: true,
       // 代表是从饼图点击的
       isEntryFromPie: true,

@@ -343,6 +343,8 @@ export default class PerformerView extends PureComponent {
   componentDidUpdate(prevProps, prevState) {
     const { typeCode, eventId, currentView, isSourceFromCreatorView } = this.state;
     // 当前视图是执行者视图
+    // 当前视图是管理者视图
+    // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
     if ((currentView === EXECUTOR || currentView === CONTROLLER ||
       (currentView === INITIATOR && isSourceFromCreatorView))
       && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
@@ -600,21 +602,21 @@ export default class PerformerView extends PureComponent {
 
     // 选出一级客户反馈
     let currentFeedback = _.map(taskFeedbackList, item => ({
-      feedBackIdL1: String(item.id),
+      feedbackIdL1: String(item.id),
       feedbackName: String(item.name),
-      childList: !_.isEmpty(item.childList) ? _.map(item.childList,
+      childList: _.map(item.childList,
         child => ({
-          feedBackIdL2: String(child.id),
+          feedbackIdL2: String(child.id),
           feedbackName: String(child.name),
-        })) : EMPTY_LIST,
+        })),
     }));
 
     // 添加默认选中项，所有
     currentFeedback = _.concat([{
-      feedBackIdL1: '',
+      feedbackIdL1: '',
       feedbackName: '所有反馈',
       childList: [{
-        feedBackIdL2: '',
+        feedbackIdL2: '',
         feedbackName: '所有反馈',
       }],
     }], currentFeedback);
@@ -827,6 +829,8 @@ export default class PerformerView extends PureComponent {
       const { resultData = [] } = list || {};
       const firstData = resultData[0] || {};
       // 当前视图是执行者视图
+      // 当前视图是管理者视图
+      // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
       if (missionViewType === EXECUTOR || missionViewType === CONTROLLER
         || (missionViewType === INITIATOR && this.judgeTaskInApproval(firstData.statusCode))) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {

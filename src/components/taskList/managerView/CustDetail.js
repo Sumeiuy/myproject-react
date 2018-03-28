@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 17:11:17
+ * @Last Modified time: 2018-03-28 19:20:21
  * 客户明细数据
  */
 
@@ -81,8 +81,8 @@ export default class CustDetail extends PureComponent {
     // 当前筛选框数据
     currentFeedback: PropTypes.array,
     // 当前选中的一级反馈条件
-    feedBackIdL1: PropTypes.string,
-    feedBackIdL2: PropTypes.string,
+    feedbackIdL1: PropTypes.string,
+    feedbackIdL2: PropTypes.string,
     canLaunchTask: PropTypes.bool,
     isShowFeedbackFilter: PropTypes.bool,
     isEntryFromResultStatisfy: PropTypes.bool,
@@ -97,9 +97,9 @@ export default class CustDetail extends PureComponent {
     isEntryFromPie: false,
     isEntryFromCustTotal: false,
     currentFeedback: EMPTY_LIST,
-    feedBackIdL1: '',
+    feedbackIdL1: '',
     canLaunchTask: false,
-    feedBackIdL2: '',
+    feedbackIdL2: '',
     isShowFeedbackFilter: false,
     isEntryFromResultStatisfy: false,
   }
@@ -108,16 +108,16 @@ export default class CustDetail extends PureComponent {
     super(props);
     const {
       data: { list = EMPTY_LIST },
-      feedBackIdL1,
-      feedBackIdL2,
+      feedbackIdL1,
+      feedbackIdL2,
     } = props;
 
     this.state = {
       dataSource: this.addIdToDataSource(list) || EMPTY_LIST,
-      currentSelectFeedBackIdL1: feedBackIdL1 || '',
-      currentSelectFeedBackIdL2: feedBackIdL2 || '',
+      currentSelectFeedbackIdL1: feedbackIdL1 || '',
+      currentSelectFeedbackIdL2: feedbackIdL2 || '',
       feedbackL1List: this.renderFeedbackL1Option(),
-      feedbackL2List: this.renderFeedbackL2Option(feedBackIdL1, feedBackIdL2),
+      feedbackL2List: this.renderFeedbackL2Option(feedbackIdL1, feedbackIdL2),
     };
     // 代表当前feedback详情是否是多选形式
     this.isFeedbackDetailMore = false;
@@ -125,10 +125,10 @@ export default class CustDetail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { data: { list: nextData = EMPTY_LIST },
-      feedBackIdL1: nextFeedBackIdL1,
-      feedBackIdL2: nextFeedBackIdL2,
+      feedbackIdL1: nextFeedbackIdL1,
+      feedbackIdL2: nextFeedbackIdL2,
     } = nextProps;
-    const { data: { list = EMPTY_LIST }, feedBackIdL1, feedBackIdL2 } = this.props;
+    const { data: { list = EMPTY_LIST }, feedbackIdL1, feedbackIdL2 } = this.props;
 
     if (list !== nextData) {
       this.setState({
@@ -136,15 +136,15 @@ export default class CustDetail extends PureComponent {
       });
     }
 
-    if (nextFeedBackIdL1 !== feedBackIdL1) {
+    if (nextFeedbackIdL1 !== feedbackIdL1) {
       this.setState({
-        currentSelectFeedBackIdL1: nextFeedBackIdL1,
+        currentSelectFeedbackIdL1: nextFeedbackIdL1,
       });
     }
 
-    if (nextFeedBackIdL2 !== feedBackIdL2) {
+    if (nextFeedbackIdL2 !== feedbackIdL2) {
       this.setState({
-        currentSelectFeedBackIdL2: nextFeedBackIdL2,
+        currentSelectFeedbackIdL2: nextFeedbackIdL2,
       });
     }
   }
@@ -164,29 +164,36 @@ export default class CustDetail extends PureComponent {
 
   /**
  * select发生改变
- * @param {*string} value feedBackIdL1
+ * @param {*string} value feedbackIdL1
  */
   @autobind
   handleFeedbackL1Change({ key }) {
     const { getCustDetailData, isEntryFromCustTotal, ...remainingProps } = this.props;
 
     this.setState({
-      currentSelectFeedBackIdL1: key,
+      currentSelectFeedbackIdL1: key,
     }, () => {
       this.setState({
         feedbackL2List: this.renderFeedbackL2Option(
           key,
-          this.state.currentSelectFeedBackIdL2,
+          this.state.currentSelectFeedbackIdL2,
         ),
+      }, () => {
+        // 如果当前的二级反馈没有，那么将默认选中的二级反馈改成空
+        if (_.isEmpty(this.state.feedbackL2List)) {
+          this.setState({
+            currentSelectFeedbackIdL2: '',
+          });
+        }
       });
     });
     // 查看客户明细
     getCustDetailData({
       ...remainingProps,
       isEntryFromCustTotal,
-      feedBackIdL1: key,
+      feedbackIdL1: key,
       // 一级反馈一旦发生变化，二级反馈就传默认的所有反馈
-      feedBackIdL2: '',
+      feedbackIdL2: '',
     });
   }
 
@@ -197,11 +204,11 @@ export default class CustDetail extends PureComponent {
     // 获取
     getCustDetailData({
       ...remainingProps,
-      feedBackIdL1: this.state.currentSelectFeedBackIdL1,
-      feedBackIdL2: key,
+      feedbackIdL1: this.state.currentSelectFeedbackIdL1,
+      feedbackIdL2: key,
     });
     this.setState({
-      currentSelectFeedBackIdL2: key,
+      currentSelectFeedbackIdL2: key,
     });
   }
   /**
@@ -413,24 +420,24 @@ export default class CustDetail extends PureComponent {
     const { currentFeedback = EMPTY_LIST } = this.props;
     // 构造一级客户反馈
     return _.map(currentFeedback, item => ({
-      key: item.feedBackIdL1,
+      key: item.feedbackIdL1,
       value: item.feedbackName,
     }));
   }
 
   @autobind
   renderFeedbackL2Option(
-    currentSelectFeedBackIdL1,
-    currentSelectFeedBackIdL2,
+    currentSelectFeedbackIdL1,
+    currentSelectFeedbackIdL2,
   ) {
     const { currentFeedback = EMPTY_LIST } = this.props;
     // 构造二级客户反馈
     const currentFeedbackL1Object = _.find(currentFeedback, item =>
-      item.feedBackIdL1 === currentSelectFeedBackIdL1);
+      item.feedbackIdL1 === currentSelectFeedbackIdL1);
 
     if (!_.isEmpty(currentFeedbackL1Object) && !_.isEmpty(currentFeedbackL1Object.childList)) {
       const feedbackL2List = _.map(currentFeedbackL1Object.childList, item => ({
-        key: item.feedBackIdL2,
+        key: item.feedbackIdL2,
         value: item.feedbackName,
       }));
 
@@ -438,12 +445,12 @@ export default class CustDetail extends PureComponent {
       // 如果都是所有，需要显示二级，默认进来，两个都是所有反馈
       if (_.size(feedbackL2List) === 1 &&
         currentFeedbackL1Object.feedbackName === feedbackL2List[0].value
-        && !_.isEmpty(currentSelectFeedBackIdL1)) {
+        && !_.isEmpty(currentSelectFeedbackIdL1)) {
         return EMPTY_LIST;
       }
 
       // 如果当前选中的二级反馈没有，则默认显示所有反馈
-      if (_.isEmpty(currentSelectFeedBackIdL2)) {
+      if (_.isEmpty(currentSelectFeedbackIdL2)) {
         return _.concat([{
           key: '',
           value: '所有反馈',
@@ -456,8 +463,8 @@ export default class CustDetail extends PureComponent {
   render() {
     const {
       dataSource,
-      currentSelectFeedBackIdL1,
-      currentSelectFeedBackIdL2,
+      currentSelectFeedbackIdL1,
+      currentSelectFeedbackIdL2,
       feedbackL1List,
       feedbackL2List,
     } = this.state;
@@ -503,7 +510,7 @@ export default class CustDetail extends PureComponent {
                     className={styles.filter}
                   >
                     <SelectFilter
-                      value={currentSelectFeedBackIdL1 || ''}
+                      value={currentSelectFeedbackIdL1 || ''}
                       filterLabel="客户反馈"
                       filter="custFeedbackL1"
                       filterField={feedbackL1List}
@@ -516,7 +523,7 @@ export default class CustDetail extends PureComponent {
                         className={styles.filter}
                       >
                         <SelectFilter
-                          value={currentSelectFeedBackIdL2 || ''}
+                          value={currentSelectFeedbackIdL2 || ''}
                           filterLabel=""
                           filter="custFeedbackL2"
                           filterField={feedbackL2List}

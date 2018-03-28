@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 15:04:30
+ * @Last Modified time: 2018-03-28 18:58:11
  * 创建者视图右侧详情信息
  */
 
@@ -10,7 +10,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { message } from 'antd';
 import InfoTitle from '../../common/InfoTitle';
 import ApproveList from '../../common/approveList';
 import TaskListDetailInfo from './TaskListDetailInfo';
@@ -21,6 +20,7 @@ import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import logable, { logPV } from '../../../decorators/logable';
 import { linkTo } from '../../../utils';
+import { returnTaskFromTaskList } from '../../../config/returnTaskEntry';
 import pageConfig from '../pageConfig';
 
 const EMPTY_OBJECT = {};
@@ -172,30 +172,29 @@ export default class RightPanel extends PureComponent {
     const { push, taskBasicInfo, flowId, clearCreateTaskData } = this.props;
     if (!_.isEmpty(taskBasicInfo) || !_.isEmpty(flowId)) {
       // 发起任务之前
-      clearCreateTaskData('returnTaskFromTaskList');
+      clearCreateTaskData(returnTaskFromTaskList);
       const param = {
         id: 'FSP_MOT_SELFBUILT_TASK',
         title: '任务管理',
       };
       linkTo({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection2?source=returnTaskFromTaskList&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection2?source=${returnTaskFromTaskList}&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection2',
         query: {
-          source: 'returnTaskFromTaskList',
+          source: returnTaskFromTaskList,
           flowId,
         },
       });
-    } else {
-      message.error('flowId为空');
     }
   }
 
   // 后台返回的子类型字段、状态字段转化为对应的中文显示
-  changeDisplay(st, options) {
-    if (st && !_.isEmpty(st)) {
-      const nowStatus = _.find(options, o => o.value === st) || {};
+  // statusCode代表状态
+  changeDisplay(statusCode, options) {
+    if (statusCode && !_.isEmpty(statusCode)) {
+      const nowStatus = _.find(options, o => o.value === statusCode) || {};
       return nowStatus.label || '--';
     }
     return '--';

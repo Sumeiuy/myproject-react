@@ -16,8 +16,7 @@ import logable from '../../../decorators/logable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
-import { returnTaskEntrySource } from '../../../config/returnTaskEntry';
+import { returnTaskEntrySource, pieEntry, progressEntry, custGroupList } from '../../../config/returnTaskEntry';
 import styles from './taskFormFlowStep.less';
 
 const noop = _.noop;
@@ -168,10 +167,10 @@ export default class TaskFormFlowStep extends PureComponent {
     } = parseQuery();
 
     let req = {};
-    if (entrance === entrySource.progress) {
+    if (entrance === progressEntry) {
       // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === entrySource.pie) {
+    } else if (entrance === pieEntry) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
     } else if (source === 'custGroupList') {
@@ -241,13 +240,13 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
-      case entrySource.progress:
+      case progressEntry:
         custSources = '已有任务下钻客户';
         break;
-      case entrySource.pie:
+      case pieEntry:
         custSources = '已有任务下钻客户';
         break;
-      case 'custGroupList':
+      case custGroupList:
         custSources = '客户分组';
         break;
       case 'sightingTelescope':
