@@ -2,8 +2,9 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 16:29:01
+ * @Last Modified time: 2018-03-28 16:22:31
  * 下拉框筛选
+ * 拷贝的朱飞扬的，我做了一下修改，适应我的业务，不改他的逻辑
  */
 
 import React, { PureComponent } from 'react';
