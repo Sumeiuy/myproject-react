@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 17:01:59
+ * @Last Modified time: 2018-03-28 17:11:17
  * 客户明细数据
  */
 
@@ -395,10 +395,10 @@ export default class CustDetail extends PureComponent {
       columns.splice(4, 3);
       columns = _.concat(columns, [{
         key: 'realityValue',
-        value: '达标指标值',
+        value: '结果达标值',
       }, {
         key: 'finishDt',
-        value: '达标日期',
+        value: '结果达标日期',
       }]);
     } else if (isEntryFromProgressDetail) {
       // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
