@@ -33,6 +33,8 @@ export default class SimilarAutoComplete extends PureComponent {
     onSelect: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
     onSearch: PropTypes.func.isRequired,
+    // 输入框输入内容变化事件
+    onChange: PropTypes.func,
     // 样式主题
     theme: PropTypes.string,
     // 是否可操作
@@ -61,6 +63,7 @@ export default class SimilarAutoComplete extends PureComponent {
     renderOption: null,
     isImmediatelySearch: false,
     display: 'inline-block',
+    onChange: () => {},
   }
 
   constructor(props) {
@@ -72,6 +75,7 @@ export default class SimilarAutoComplete extends PureComponent {
       typeStyle: isEmptyValue ? 'search' : 'clear',
       // 选中的值
       value: defaultSearchValue, // 输入框中的值
+      showError: '', // 显示的报错信息
     };
   }
 
@@ -102,10 +106,12 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   @autobind
-  handleInputValue() {
+  handleInputValue(value) {
     if (!_.isEmpty(currentSelect)) {
       // 下拉框中值选中时，会触发onchange方法, 即handleInputValue方法，故在此处重置选中项为null
       currentSelect = null;
+    } else {
+      this.props.onChange(value);
     }
   }
 
@@ -194,6 +200,20 @@ export default class SimilarAutoComplete extends PureComponent {
     });
   }
 
+  @autobind
+  showErrorMsg(msg) {
+    this.setState({
+      showError: msg,
+    });
+  }
+
+  @autobind
+  hiddenErrorMsg() {
+    this.setState({
+      showError: '',
+    });
+  }
+
   // 检查数据源是否为空
   @autobind
   checkListIsEmpty() {
@@ -232,7 +252,7 @@ export default class SimilarAutoComplete extends PureComponent {
 
   renderAutoComplete() {
     const { placeholder, width, searchList, ...otherPorps } = this.props;
-    const { typeStyle, value } = this.state;
+    const { typeStyle, value, showError } = this.state;
     const empty = [(
       <Option
         key={'empty'}
@@ -247,10 +267,13 @@ export default class SimilarAutoComplete extends PureComponent {
     const iconType = typeStyle === 'search' ? 'search' : 'close';
     const domWidth = width > 0 ? { width: `${width}px` } : {};
     const autoStyle = { ...defaultStyle, ...domWidth };
+    const completeClassName = classnames(
+      { [style.error]: !_.isEmpty(showError) },
+    );
     return (
       <AutoComplete
         {...otherPorps}
-        className={style.complete}
+        className={completeClassName}
         placeholder={placeholder}
         defaultActiveFirstOption={false}
         size="large"
@@ -281,6 +304,7 @@ export default class SimilarAutoComplete extends PureComponent {
 
   render() {
     const { theme, disable, width, display } = this.props;
+    const { showError } = this.state;
     const drapDownSelectCls = classnames({
       [style.drapDowmSelect]: theme === 'theme1',
       [style.drapDowmSelect2]: theme !== 'theme1',
@@ -294,6 +318,7 @@ export default class SimilarAutoComplete extends PureComponent {
     return (
       <div className={drapDownSelectCls} style={autoStyle}>
         {this.renderAutoComplete()}
+        <div className={style.showError} title={showError}>{showError}</div>
       </div>
     );
   }
