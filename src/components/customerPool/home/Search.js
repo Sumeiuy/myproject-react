@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -21,9 +20,9 @@ import styles from './search.less';
 
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-let searchInput;
 const NONE_INFO = '按回车键发起搜索';
+let guid = 0;
+
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -53,95 +52,42 @@ export default class Search extends PureComponent {
     this.state = {
       // 页面初始化的时候，选择上一次的数据，生成option
       dataSource: this.searchResult(searchHistoryVal, queryHotWdsData),
-      inputVal: searchHistoryVal || '',
-      isHasSearchResult: !_.isEmpty(searchHistoryVal),
+      value: searchHistoryVal || '',
+      hasSearchResult: !_.isEmpty(queryHotWdsData),
     };
+
+    this.dropdownClassName = `customerpool-search-${guid++}`;
   }
 
-
-  componentDidMount() {
-    searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
-    if (searchInput) {
-      searchInput.addEventListener('keydown', this.handleSearchInput, false);
-    }
-  }
 
   componentWillReceiveProps(nextProps) {
     const { queryHotWdsData: nextQueryHotWdsData } = nextProps;
-    const { inputVal } = this.state;
+    const { value } = this.state;
     this.setState({
-      dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
-      isHasSearchResult: !_.isEmpty(nextQueryHotWdsData),
+      dataSource: value ? this.searchResult(value, nextQueryHotWdsData) : [],
+      hasSearchResult: !_.isEmpty(nextQueryHotWdsData),
     });
-  }
-
-  componentWillUnmount() {
-    if (searchInput) {
-      searchInput.removeEventListener('keydown', this.handleSearchInput);
-    }
-  }
-
-  @autobind
-  onSelect(value) {
-    this.setState({
-      inputVal: value,
-    }, () => this.props.queryHotPossibleWds({
-      wd: value,
-    }));
-  }
-
-  @autobind
-  checkInputValue(value) {
-    if (value.length > 0 && value.replace(/\s+/, '').length === 0) {
-      console.log('全是空格');
-      return false;
-    }
-    return true;
-  }
-
-  @autobind
-  handleSearchInput(event) {
-    const e = event || window.event; // || arguments.callee.caller.arguments[0];
-    if (e.stopPropagation) {
-      e.stopPropagation();
-    } else {
-      e.cancelBubble = true;
-    }
-    if (e && e.keyCode === 13) {
-      const searchVal = e.target.value;
-      if (!this.checkInputValue(searchVal)) {
-        return false;
-      }
-      if (!_.isEmpty(searchVal)) {
-        this.setState({
-          inputVal: '',
-        });
-        this.handleOpenTab({
-          source: 'search',
-          q: encodeURIComponent(searchVal),
-        }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
-      }
-    }
-    return true;
   }
 
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
-  handleOpenTab(obj, titles, ids) {
+  handleOpenTab(options) {
     const { push, location: { query }, authority, orgId } = this.props;
     const firstUrl = '/customerPool/list';
-    this.handleSaveSearchVal();
+    this.props.saveSearchVal({
+      searchVal: this.state.value,
+    });
     // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
     const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
-    const newQuery = { ...obj, orgId: newOrgId };
+    const newQuery = { ...options, orgId: newOrgId };
     const condition = urlHelper.stringify(newQuery);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: ids, // 'FSP_SERACH',
-      title: titles, // '搜索目标客户',
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      title: '客户列表',
     };
     openRctTab({
       routerAction: push,
@@ -192,98 +138,80 @@ export default class Search extends PureComponent {
   handleSearch(value) {
     if (_.isEmpty(value)) {
       this.setState({
-        inputVal: value,
+        value,
         dataSource: [],
       });
       return;
     }
-    const { queryHotPossibleWds } = this.props;
-    this.setState({
-      inputVal: value,
-    });
-    queryHotPossibleWds({
+    this.props.queryHotPossibleWds({
       wd: value,
     });
   }
 
   @autobind
-  handleCreatRecommend(data) {
-    if (data.length <= 0) {
-      return null;
-    }
-    const recommendList = [];
-    data.forEach((item) => {
-      recommendList.push(
-        <a
-          className="item"
-          title={item.description}
-          rel="noopener noreferrer"
-          onClick={() => this.handleOpenTab({
-            source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
-            labelMapping: item.id || '',
-            labelName: encodeURIComponent(item.name),
-            labelDesc: encodeURIComponent(item.description),
-            q: encodeURIComponent(item.name),
-          }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
-          key={item.id}
-        >
-          {item.name}
-        </a>);
+  handleSelect(value) {
+    const item = _.find(this.state.dataSource, child => child.name === value);
+    const sightingScopeBool = isSightingScope(item.type);
+    this.handleOpenTab({
+      source: sightingScopeBool ? 'sightingTelescope' : 'association',
+      labelMapping: sightingScopeBool ? item.id : item.type,
+      labelName: encodeURIComponent(item.name),
+      labelDesc: encodeURIComponent(item.description),
+      q: encodeURIComponent(item.name),
     });
-    return recommendList;
   }
 
-  createOption() {
-    const { dataSource, inputVal, isHasSearchResult } = this.state;
+  renderDatasource() {
+    const { dataSource, value, hasSearchResult } = this.state;
     let newData;
-    if (isHasSearchResult) {
+    if (hasSearchResult) {
       // 有搜索结果
       newData = _.map(dataSource, this.renderOption);
     } else {
       // 无搜索结果
       newData = _.map(dataSource, this.renderNoneSearchResult);
     }
-    if (!_.isEmpty(inputVal)) {
+    if (!_.isEmpty(value)) {
       return newData;
     }
     return null;
   }
 
   @autobind
+  handleChange(value) {
+    this.setState({ value });
+  }
+
+  @autobind
+  handlePressEnter() {
+    // 如果当期有选中项，走select逻辑，不做任何处理
+    const activeItemElement = document.querySelector(
+      `.${this.dropdownClassName} .ant-select-dropdown-menu-item-active`,
+    );
+    if (activeItemElement) {
+      return;
+    }
+    this.handleClickButton();
+  }
+
+  @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
-  handleSearchBtn() {
-    const { inputVal } = this.state;
-    if (!this.checkInputValue(inputVal)) {
+  handleClickButton() {
+    const { value } = this.state;
+    if (_.trim(value).length === 0) {
       return false;
     }
-    if (!_.isEmpty(inputVal)) {
-      this.setState({
-        inputVal: '',
-      });
-      this.handleOpenTab({
-        source: 'search',
-        q: encodeURIComponent(inputVal),
-      }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
-    }
+    this.handleOpenTab({
+      source: 'search',
+      q: encodeURIComponent(value),
+    });
     return true;
   }
 
   @autobind
-  handleSaveSearchVal() {
-    const { saveSearchVal } = this.props;
-    let saveVal = '';
-    if (searchInput) {
-      saveVal = searchInput.value;
-    }
-    saveSearchVal({
-      searchVal: saveVal,
-    });
-  }
-
-  @autobind
   renderOption(item) {
-    const { inputVal } = this.state;
-    const newContent = item.name.replace(inputVal, `<em>${inputVal}</em>`);
+    const { value } = this.state;
+    const newContent = item.name.replace(value, `<em>${value}</em>`);
     const sightingScopeBool = isSightingScope(item.type);
     // 联想 association
     // 搜索 search
@@ -293,13 +221,6 @@ export default class Search extends PureComponent {
         <a
           dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"
-          onClick={() => this.handleOpenTab({
-            source: sightingScopeBool ? 'sightingTelescope' : 'association',
-            labelMapping: sightingScopeBool ? item.id : item.type,
-            labelName: encodeURIComponent(item.name),
-            labelDesc: encodeURIComponent(item.description),
-            q: encodeURIComponent(item.name),
-          }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
         />
         <span className="desc">{sightingScopeBool ? '瞄准镜' : item.description}</span>
       </Option>
@@ -315,6 +236,30 @@ export default class Search extends PureComponent {
     );
   }
 
+  @autobind
+  renderRecommend(data) {
+    if (data.length <= 0) {
+      return null;
+    }
+    return _.map(data, item => (
+      <a
+        className="item"
+        title={item.description}
+        rel="noopener noreferrer"
+        onClick={() => this.handleOpenTab({
+          source: item.source === 'jzyx' ? 'sightingTelescope' : 'tag',
+          labelMapping: item.id || '',
+          labelName: encodeURIComponent(item.name),
+          labelDesc: encodeURIComponent(item.description),
+          q: encodeURIComponent(item.name),
+        })}
+        key={item.id}
+      >
+        {item.name}
+      </a>
+    ));
+  }
+
   render() {
     const { hotWdsList = EMPTY_LIST, searchHistoryVal } = this.props;
 
@@ -324,24 +269,28 @@ export default class Search extends PureComponent {
           <div className={styles.inputBox}>
             <div className="global-search-wrapper">
               <AutoComplete
+                ref={ref => this.autoComplete = ref}
                 className="global-search"
-                dropdownClassName="certain-category-search-dropdown"
+                dropdownClassName={`certain-category-search-dropdown ${this.dropdownClassName}`}
                 size="large"
                 style={{ width: '100%' }}
-                dataSource={this.createOption()}
-                onSelect={this.onSelect}
+                dataSource={this.renderDatasource()}
+                onSelect={this.handleSelect}
                 onSearch={this.handleSearch}
+                onChange={this.handleChange}
                 placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}
+                defaultActiveFirstOption={false}
               >
                 <Input
+                  onPressEnter={this.handlePressEnter}
                   suffix={(
                     <Button
                       className="search-btn"
                       size="large"
                       type="primary"
-                      onClick={this.handleSearchBtn}
+                      onClick={this.handleClickButton}
                     >
                       <AntdIcon type="search" />
                     </Button>
@@ -354,7 +303,7 @@ export default class Search extends PureComponent {
             <span className={styles.s_title}>
               <Icon type="dengpao" />猜你感兴趣：
             </span>
-            <div>{this.handleCreatRecommend(hotWdsList)}</div>
+            <div>{this.renderRecommend(hotWdsList)}</div>
           </div>
         </div>
       </div>
