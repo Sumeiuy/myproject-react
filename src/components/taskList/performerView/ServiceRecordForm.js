@@ -29,7 +29,6 @@ export default class ServiceRecordForm extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    reloadTargetCustInfo: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
   }
 

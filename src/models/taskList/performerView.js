@@ -167,6 +167,15 @@ export default {
         customerList: custBriefInfoDTOList || [],
       };
     },
+    modifyLocalTaskListSuccess(state, action) {
+      return {
+        ...state,
+        taskList: {
+          ...state.taskList,
+          resultData: action.payload,
+        },
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -217,6 +226,7 @@ export default {
             payload: {
               missionId: payload.missionId,
               custId: (list[0] || EMPTY_OBJ).custId,
+              missionFlowId: (list[0] || EMPTY_OBJ).missionFlowId,
             },
           });
         }
@@ -319,6 +329,34 @@ export default {
           payload: resultData,
         });
       }
+    },
+    // 添加服务记录，本地更新左侧任务列表当前选中任务的数据（状态、进度条）信息
+    * modifyLocalTaskList({ payload }, { select, put }) {
+      const { resultData } = yield select(state => state.performerView.taskList);
+      const { missionId, serviceStatusCode } = payload;
+      const newList = _.map(resultData, (item) => {
+        // 添加服务记录时服务状态选择的时完成，完成的状态码时30
+        if (item.id === missionId && serviceStatusCode === '30') {
+          // 添加成功一条服务状态为完成的记录，则该条数据的已完成数量加一
+          const curentDoneFlowNum = item.doneFlowNum + 1;
+          // 已完成数量和总数量相等
+          if (curentDoneFlowNum === item.flowNum) {
+            // 未到期：当前时间小于结束时间
+            if (Date.now() <= new Date(item.processTime).getTime()) {
+              // 当前选中任务项的已完成数量和总数量相等且任务未过期时，将本地存储的任务列表中的此条任务状态修改为已完成，且此条数据的已完成数量加一
+              return { ...item, statusName: '已完成', statusCode: '80', doneFlowNum: curentDoneFlowNum };
+            }
+          } else {
+            // 当前选中任务项的已完成数量和总数量不相等时，将本地存储的任务列表中的此条任务的已完成数量加一
+            return { ...item, doneFlowNum: curentDoneFlowNum };
+          }
+        }
+        return item;
+      });
+      yield put({
+        type: 'modifyLocalTaskListSuccess',
+        payload: newList,
+      });
     },
   },
   subscriptions: {

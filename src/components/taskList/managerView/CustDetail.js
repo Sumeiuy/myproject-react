@@ -292,37 +292,30 @@ export default class CustDetail extends PureComponent {
    * 跳转到fsp的360信息界面
    */
   @autobind
-  toDetail(custNature, custId, rowId, ptyId) {
+  toDetail(custNature, custId, rowId, ptyId, empId) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const { push, isCustServedByPostn, hideCustDetailModal } = this.props;
-    const postnId = emp.getPstnId();
-    // 跳转之前查看一下是否都是本人名下的客户
-    isCustServedByPostn({
-      postnId,
-      custId,
-    }).then(() => {
-      if (this.props.custServedByPostnResult) {
-        // 跳转前关闭模态框
-        hideCustDetailModal();
-        const param = {
-          id: 'FSP_360VIEW_M_TAB',
-          title: '客户360视图-客户信息',
-          forceRefresh: true,
-        };
-        const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-        openFspTab({
-          routerAction: push,
+    const { push, hideCustDetailModal } = this.props;
+    // 主服务经理判断
+    if (emp.getRowId() === empId) {
+      hideCustDetailModal();
+      const param = {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+      };
+      const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+      openFspTab({
+        routerAction: push,
+        url,
+        pathname: '/customerCenter/fspcustomerDetail',
+        param,
+        state: {
           url,
-          pathname: '/customerCenter/fspcustomerDetail',
-          param,
-          state: {
-            url,
-          },
-        });
-      } else {
-        message.error('客户非本人名下客户，不能查看客户360视图');
-      }
-    });
+        },
+      });
+    } else {
+      message.error('客户非本人名下客户，不能查看客户360视图');
+    }
   }
 
   /**
@@ -340,8 +333,8 @@ export default class CustDetail extends PureComponent {
   })
   handleCustNameClick(record, columnTitle) {
     console.log(columnTitle);
-    const { custNature, custId, rowId, ptyId } = record;
-    this.toDetail(custNature, custId, rowId, ptyId);
+    const { custNature, custId, rowId, ptyId, empId } = record;
+    this.toDetail(custNature, custId, rowId, ptyId, empId);
   }
 
   @autobind

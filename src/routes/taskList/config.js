@@ -8,16 +8,18 @@ const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
-// 50代表执行中
-// 60代表结果跟踪
-// 70代表结束
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
+const PROCESSING_STATE = '10'; // 审批中
+const REJECT_STATE = '20'; // 驳回
+const CLOSE_STATE = '30'; // 终止
+const WAITEXECUTE_STATE = '40'; // 等待执行
+const EXECUTE_STATE = '50'; // 执行中
+const RESULT_TRACK_STATE = '60'; // 结果跟踪
+const FINISHED_STATE = '70'; // 结束
+const COMPLETED_STATE = '80'; // 已完成
 const MANAGER_VIEW_STATUS = [
   EXECUTE_STATE,
   RESULT_TRACK_STATE,
-  COMPLETED_STATE,
+  FINISHED_STATE,
 ];
 
 const chooseMissionView = [
@@ -51,8 +53,13 @@ export default {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
+  PROCESSING_STATE,
+  REJECT_STATE,
+  CLOSE_STATE,
   EXECUTE_STATE,
   RESULT_TRACK_STATE,
+  WAITEXECUTE_STATE,
+  FINISHED_STATE,
   COMPLETED_STATE,
   MANAGER_VIEW_STATUS,
   SYSTEMCODE,

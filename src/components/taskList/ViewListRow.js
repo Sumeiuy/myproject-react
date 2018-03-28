@@ -13,14 +13,16 @@ import moment from 'moment';
 import Tag from '../common/tag';
 import ProgressBar from './ProgressBar';
 import styles from './viewListRow.less';
-
-const PROCESSING = '10'; // 执行者视图状态审批中
-const REJECT = '20'; // 执行中视图状态驳回
-const CLOSE = '30'; // 执行中视图状态终止
-const WAITEXECUTE = '40'; // 等待执行
-const END = '70'; // 执行者视图状态结束
-const EXECUTING = '50'; // 执行者视图状态执行中
-const RESULT = '60';  // 执行中视图状态结果跟踪
+import {
+  PROCESSING_STATE,
+  REJECT_STATE,
+  CLOSE_STATE,
+  EXECUTE_STATE,
+  RESULT_TRACK_STATE,
+  WAITEXECUTE_STATE,
+  FINISHED_STATE,
+  COMPLETED_STATE,
+} from '../../routes/taskList/config';
 
 // 执行者视图和创建者视图左侧列表项需要显示进度条
 const needProgress = ['executor', 'controller'];
@@ -64,13 +66,14 @@ export default function AppItem(props) {
     [styles.active]: active,
   });
   const tagStatusType = cx({
-    pvProcessing: data.statusCode === PROCESSING && !active,
-    pvReject: data.statusCode === REJECT && !active,
-    pvClose: data.statusCode === CLOSE && !active,
-    pvEnd: data.statusCode === END && !active,
-    pvExecuting: data.statusCode === EXECUTING && !active,
-    pvResult: data.statusCode === RESULT && !active,
-    pvWaitExecute: data.statusCode === WAITEXECUTE && !active,
+    pvProcessing: data.statusCode === PROCESSING_STATE && !active,
+    pvReject: data.statusCode === REJECT_STATE && !active,
+    pvClose: data.statusCode === CLOSE_STATE && !active,
+    pvEnd: data.statusCode === FINISHED_STATE && !active,
+    pvExecuting: data.statusCode === EXECUTE_STATE && !active,
+    pvResult: data.statusCode === RESULT_TRACK_STATE && !active,
+    pvWaitExecute: data.statusCode === WAITEXECUTE_STATE && !active,
+    pvCompleted: data.statusCode === COMPLETED_STATE && !active,
     transparent: active,
   });
   const progressCls = cx({

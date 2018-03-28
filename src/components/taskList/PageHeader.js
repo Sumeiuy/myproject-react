@@ -27,6 +27,10 @@ import {
   afterCurrentDate60Days,
   dateFormat,
   MANAGER_VIEW_STATUS,
+  EXECUTE_STATE,
+  RESULT_TRACK_STATE,
+  FINISHED_STATE,
+  COMPLETED_STATE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -287,11 +291,6 @@ export default class Pageheader extends PureComponent {
         createTimeStart,
         createTimeEnd,
       });
-      // this.setState({
-      //   startTime: before,
-      //   endTime: todays,
-      //   disabledEndTime: todays,
-      // });
     } else {
       const {
         endTimeStart,
@@ -308,11 +307,6 @@ export default class Pageheader extends PureComponent {
         endTimeStart,
         endTimeEnd,
       });
-      // this.setState({
-      //   startTime: todays,
-      //   endTime: after,
-      //   disabledEndTime: after,
-      // });
     }
   }
 
@@ -443,10 +437,26 @@ export default class Pageheader extends PureComponent {
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
 
-    if (filterControl === CONTROLLER || filterControl === EXECUTOR) {
-      // 管理者视图或者执行者视图只有保留三种状态和所有状态
+    if (filterControl === CONTROLLER) {
+      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(MANAGER_VIEW_STATUS, item.value));
+    }
+    if (filterControl === EXECUTOR) {
+      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      stateAllOptions = _.filter(stateAllOptions,
+        item => _.includes([
+          EXECUTE_STATE,
+          RESULT_TRACK_STATE,
+          FINISHED_STATE,
+          COMPLETED_STATE,
+        ],
+          item.value));
+    }
+    if (filterControl === INITIATOR) {
+      // 我创建的任务没有'已完成' 筛选项
+      stateAllOptions = _.filter(stateAllOptions,
+        item => COMPLETED_STATE !== item.value);
     }
 
     let statusValue = status;
@@ -547,24 +557,6 @@ export default class Pageheader extends PureComponent {
     );
   }
 
-  /**
-   * 将字典里面的状态数据前面加一个 ‘所有状态’
-   * 根据不同的视图渲染构造不同的页面状态数据
-   */
-  @autobind
-  getStateAllOptions(missionStatus) {
-    const { location: { query: { missionViewType } } } = this.props;
-    const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 管理者视图或者执行者视图只有保留三种状态和所有状态
-    const newMissionStatus = this.constructorDataType(missionStatus);
-    if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-      const stateAllOptions = _.filter(newMissionStatus,
-        item => _.includes(MANAGER_VIEW_STATUS, item.value));
-      return [stateAll, ...stateAllOptions];
-    }
-    return [stateAll, ...newMissionStatus];
-  }
-
   render() {
     const {
       getDrafterList,
@@ -585,9 +577,8 @@ export default class Pageheader extends PureComponent {
       customerList,
     } = this.props;
 
-    const { missionName, statusValue } = this.state;
-    const { missionType, missionStatus } = dict;
-    const stateAllOptions = this.getStateAllOptions(missionStatus);
+    const { missionName, statusValue, stateAllOptions } = this.state;
+    const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?

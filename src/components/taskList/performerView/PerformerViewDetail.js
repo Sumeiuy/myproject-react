@@ -46,6 +46,7 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
+    modifyLocalTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -86,7 +87,7 @@ export default class PerformerViewDetail extends PureComponent {
    * 重新查询目标客户的详情信息
    */
   @autobind
-  requeryTargetCustDetail({ custId, callback }) {
+  requeryTargetCustDetail({ custId, missionFlowId, callback }) {
     const {
       currentId,
       getCustDetail,
@@ -94,6 +95,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail({
       missionId: currentId,
       custId,
+      missionFlowId,
       callback,
     });
   }
@@ -144,10 +146,12 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustId,
+        targetMissionFlowId,
       },
     } = this.props;
     this.requeryTargetCustDetail({
       custId: targetCustId,
+      missionFlowId: targetMissionFlowId,
       callback,
     });
   }
