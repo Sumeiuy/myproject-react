@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { Form, Select, Input, Mention, InputNumber } from 'antd';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
+import { convertToHTML } from 'draft-convert';
 import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
@@ -179,7 +180,14 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = toString(contentState);
+      const content = convertToHTML({
+        blockToHTML: (block) => {
+          if (block.text) {
+            return <p />;
+          }
+          return <br />;
+        },
+      })(contentState);
       if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }

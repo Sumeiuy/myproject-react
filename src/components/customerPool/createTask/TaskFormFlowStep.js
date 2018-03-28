@@ -329,12 +329,11 @@ export default class TaskFormFlowStep extends PureComponent {
             return <br />;
           },
         })(serviceStateData);
-        const formDataValidation =
-          this.saveFormContent({
-            ...values,
-            serviceStrategySuggestion: serviceStrategyString,
-            isFormError,
-          });
+        const formDataValidation = this.saveFormContent({
+          ...values,
+          serviceStrategySuggestion: serviceStrategyHtml,
+          isFormError,
+        });
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
