@@ -20,7 +20,10 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
-import { dva as dvaHelper } from './helper';
+import { dva as dvaHelper, dom } from './helper';
+
+// 尝试通过给body添加class来达到覆盖antd v3的样式
+dom.addClass(document.body, 'ant-v2-compatible');
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -117,6 +120,7 @@ const store = app._store; // eslint-disable-line
 if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
+
 
 // window.navTo = (url) => {
 //   const state = store.getState();

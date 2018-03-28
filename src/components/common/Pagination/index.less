@@ -16,16 +16,17 @@
     .hideLastPage {
       display: none;
     }
-    .ant-pagination-item {
-      margin-bottom: 0;
-    }
-    .ant-pagination-item.ant-pagination-item-active,
-    .ant-pagination-item.ant-pagination-item-active:focus {
+    .ant-pagination-item-active,
+    .ant-pagination-item-active:focus {
       color: #fff;
       background-color: #108ee9;
       border-color: #108ee9;
       // 关掉动画效果
       transition: none;
+    }
+
+    .ant-pagination-item-active a {
+      color: #fff;
     }
 
     li a {
