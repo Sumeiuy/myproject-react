@@ -222,7 +222,18 @@ export default class CreateTaskForm extends PureComponent {
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
-      case 'returnTask':
+      case 'returnTaskFromToDoList':
+        defaultMissionName = motDetailModel.eventName; // 任务名称
+        defaultMissionType = motDetailModel.eventType; // 任务类型
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = this.handleTaskType(motDetailModel.exeType); // 执行方式
+        defaultKey = 'UNRIGHTS';
+        defaultServiceStrategySuggestion = motDetailModel.strategyDesc;
+        // 任务提示
+        defaultMissionDesc = motDetailModel.infoContent;
+        defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
+        break;
+      case 'returnTaskFromTaskList':
         defaultMissionName = motDetailModel.eventName; // 任务名称
         defaultMissionType = motDetailModel.eventType; // 任务类型
         defaultTaskSubType = '请选择'; // 任务子类型

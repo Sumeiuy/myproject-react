@@ -17,6 +17,7 @@ import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
 import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { returnTaskEntrySource } from '../../../config/returnTaskEntry';
 import styles from './taskFormFlowStep.less';
 
 const noop = _.noop;
@@ -82,7 +83,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } = props;
 
     // 代表是否是来自驳回修改
-    const isEntryFromReturnTask = source === 'returnTask';
+    const isEntryFromReturnTask = _.includes(returnTaskEntrySource, source);
     let canGoNextStepFlow = canGoNextStep;
     let newNeedMissionInvestigation = needMissionInvestigation;
     if (!_.isEmpty(flowId)) {
@@ -119,7 +120,7 @@ export default class TaskFormFlowStep extends PureComponent {
       postnId: emp.getPstnId(),
     };
 
-    if (source !== 'returnTask') {
+    if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -786,7 +787,7 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
-    const cancleBtn = source === 'returnTask' ?
+    const cancleBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.cancelBtn}
@@ -808,7 +809,7 @@ export default class TaskFormFlowStep extends PureComponent {
       );
 
     // 根据来源判断按钮类型
-    const stopBtn = source === 'returnTask' ?
+    const stopBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.stopBtn}

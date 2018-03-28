@@ -472,6 +472,10 @@ export default class PerformerView extends PureComponent {
         if (this.judgeTaskInApproval(statusCode)) {
           this.loadManagerViewDetailContent(record, st);
         } else {
+          // 将创建者视图的flowId存起来，供驳回修改跳转使用
+          this.setState({
+            flowId,
+          });
           getTaskBasicInfo({
             flowId,
             systemCode: SYSTEMCODE,
@@ -589,6 +593,7 @@ export default class PerformerView extends PureComponent {
       statusCode,
       isTaskFeedbackListOfNone,
       isSourceFromCreatorView,
+      flowId,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
@@ -657,6 +662,10 @@ export default class PerformerView extends PureComponent {
               onPreview={this.handlePreview}
               priviewCustFileData={priviewCustFileData}
               taskBasicInfo={{ ...taskBasicInfo, currentId: this.getCurrentId() }}
+              flowId={flowId}
+              push={push}
+              location={location}
+              clearCreateTaskData={clearCreateTaskData}
             />
           );
         }

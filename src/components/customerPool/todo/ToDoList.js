@@ -137,7 +137,7 @@ export default class ToDoList extends PureComponent {
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
-    clearCreateTaskData('returnTask');
+    clearCreateTaskData('returnTaskFromToDoList');
     if (flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
@@ -164,12 +164,12 @@ export default class ToDoList extends PureComponent {
     }
     if (!_.isEmpty(taskBasicInfo) && _.isEmpty(taskBasicInfo.msg)) {
       const param = {
-        id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST',
+        id: 'RCT_FSP_CREATE_TASK_FROM_ToDoList',
         title: '自建任务',
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection?source=returnTask&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection1?source=returnTaskFromToDoList&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTask',
         query,

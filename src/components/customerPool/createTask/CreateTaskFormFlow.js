@@ -10,22 +10,23 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { returnTaskEntrySource } from '../../../config/returnTaskEntry';
 
 import styles from './createTaskFormFlow.less';
 
 const noop = _.noop;
-// returnTask是审批驳回之后，编辑自建任务信息界面
+// returnTaskFromToDoList是待办，审批驳回之后，编辑自建任务信息界面
+// returnTaskFromTaskList是创建者视图，审批驳回之后，编辑自建任务信息界面
 // custGroupList是客户分组
 // entrySource.pie是管理者视图的饼图
 // entrySource.progress是管理者视图的进度条
 const SOURCE_ARRAY = [
   'custGroupList',
+  'returnTaskFromToDoList',
+  'returnTaskFromTaskList',
   entrySource.pie,
   entrySource.progress,
-  'returnTask',
 ];
-
-const RETURN_TASK_ENTRY = 'returnTask';
 
 // 从业务目标池客户：businessCustPool
 // 标签、搜索目标客户：searchCustPool
@@ -180,7 +181,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     }
 
     let storedData = {};
-    if (source === RETURN_TASK_ENTRY) {
+    if (_.includes(returnTaskEntrySource, source)) {
       // 驳回修改
       storedData = { ...currentFlowData, ...storedCreateTaskData[source] } || {};
     } else if (this.judgeSource(source)) {

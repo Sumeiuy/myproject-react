@@ -6,12 +6,14 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import { entrySource } from '../../config/managerViewCustFeedbackEntry';
+import { returnTaskEntrySource } from '../../config/returnTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
 import { closeRctTab } from '../../utils';
@@ -132,7 +134,7 @@ export default class CreateTask extends PureComponent {
   componentWillMount() {
     const { location: { query }, getTaskBasicInfo } = this.props;
     const { source, flowId } = query;
-    if (source === 'returnTask') {
+    if (_.includes(returnTaskEntrySource, source)) {
       getTaskBasicInfo({
         systemCode,
         flowId,
@@ -198,7 +200,7 @@ export default class CreateTask extends PureComponent {
       location: { query: { source } },
     } = this.props;
     // 调用接口，创建任务
-    if (source === 'returnTask') {
+    if (_.includes(returnTaskEntrySource, source)) {
       updateTask(value);
     } else {
       createTask(value);
@@ -219,9 +221,12 @@ export default class CreateTask extends PureComponent {
     } else if (source === entrySource.pie) {
       // 从管理者视图饼图发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE' });
-    } else if (source === 'returnTask') {
-      // 驳回后编辑任务
-      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
+    } else if (source === 'returnTaskFromToDoList') {
+      // 待办流程，驳回后编辑任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_ToDoList' });
+    } else if (source === 'returnTaskFromTaskList') {
+      // 任务管理，创建者视图，驳回后编辑任务，创建者视图驳回修改，用的是任务管理的tab
+      closeRctTab({ id: 'FSP_MOT_SELFBUILT_TASK' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
