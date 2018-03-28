@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 18:58:11
+ * @Last Modified time: 2018-03-28 19:33:18
  * 创建者视图右侧详情信息
  */
 
@@ -22,6 +22,7 @@ import logable, { logPV } from '../../../decorators/logable';
 import { linkTo } from '../../../utils';
 import { returnTaskFromTaskList } from '../../../config/returnTaskEntry';
 import pageConfig from '../pageConfig';
+import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -343,7 +344,7 @@ export default class RightPanel extends PureComponent {
               * 驳回修改的任务增加快捷入口
               */}
               {
-                motDetailModel.status === '20' ?
+                motDetailModel.status === STATE_REJECT_CODE ?
                   <div
                     className={styles.editTask}
                     onClick={this.handleModifyTask}
@@ -372,31 +373,31 @@ export default class RightPanel extends PureComponent {
               </div>
             </div>
             {_.isEmpty(resultTraceVO) ? null :
-            <div className={styles.module}>
-              <InfoTitle head="结果跟踪" />
-              <div className={styles.modContent}>
-                <div className={styles.rowWidth}>
-                  <span>跟踪窗口期&nbsp;:</span>
-                  <span>{trackDay || '--'}天</span>
-                </div>
-                <div>
-                  <span>{resultTraceVO.indexName}&nbsp;:</span>
-                  <span>{this.renderResultData() || '--'}</span>
-                </div>
-              </div>
-            </div>
-            }
-            {
-              _.isEmpty(quesVO) ? null :
               <div className={styles.module}>
-                <InfoTitle head="任务调查" />
+                <InfoTitle head="结果跟踪" />
                 <div className={styles.modContent}>
+                  <div className={styles.rowWidth}>
+                    <span>跟踪窗口期&nbsp;:</span>
+                    <span>{trackDay || '--'}天</span>
+                  </div>
                   <div>
-                    <span>调查内容&nbsp;:</span>
-                    <span>{this.renderTaskSurvey() || '--'}</span>
+                    <span>{resultTraceVO.indexName}&nbsp;:</span>
+                    <span>{this.renderResultData() || '--'}</span>
                   </div>
                 </div>
               </div>
+            }
+            {
+              _.isEmpty(quesVO) ? null :
+                <div className={styles.module}>
+                  <InfoTitle head="任务调查" />
+                  <div className={styles.modContent}>
+                    <div>
+                      <span>调查内容&nbsp;:</span>
+                      <span>{this.renderTaskSurvey() || '--'}</span>
+                    </div>
+                  </div>
+                </div>
             }
             <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />
