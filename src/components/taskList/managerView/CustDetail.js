@@ -15,7 +15,7 @@ import classnames from 'classnames';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import { openFspTab } from '../../../utils';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
-import { emp } from '../../../helper';
+// import { emp } from '../../../helper';
 import styles from './custDetail.less';
 import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import iconMoney from './img/icon-money.png';
@@ -93,6 +93,10 @@ export default class CustDetail extends PureComponent {
     currentFilter: EMPTY_LIST,
     currentSelectFeedback: '',
   }
+
+  static contextTypes = {
+    empInfo: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
@@ -290,13 +294,15 @@ export default class CustDetail extends PureComponent {
 
   /**
    * 跳转到fsp的360信息界面
+   * empId 为客户的主服务经理的id
    */
   @autobind
-  toDetail(custNature, custId, rowId, ptyId, empId) {
+  toDetail({ custNature, custId, rowId, ptyId, empId }) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const { push, hideCustDetailModal } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
     // 主服务经理判断
-    if (emp.getRowId() === empId) {
+    if (empInfo.rowId === empId) {
       hideCustDetailModal();
       const param = {
         id: 'FSP_360VIEW_M_TAB',
@@ -334,7 +340,7 @@ export default class CustDetail extends PureComponent {
   handleCustNameClick(record, columnTitle) {
     console.log(columnTitle);
     const { custNature, custId, rowId, ptyId, empId } = record;
-    this.toDetail(custNature, custId, rowId, ptyId, empId);
+    this.toDetail({ custNature, custId, rowId, ptyId, empId });
   }
 
   @autobind

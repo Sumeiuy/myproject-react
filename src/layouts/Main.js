@@ -85,6 +85,7 @@ export default class Main extends Component {
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -92,6 +93,19 @@ export default class Main extends Component {
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
+  }
+
+  static childContextTypes = {
+    empInfo: PropTypes.object,
+    location: PropTypes.object,
+  };
+
+  getChildContext() {
+    const { location, empInfo } = this.props;
+    return {
+      location,
+      empInfo,
+    };
   }
 
   componentDidMount() {

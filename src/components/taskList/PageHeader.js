@@ -27,9 +27,7 @@ import {
   afterCurrentDate60Days,
   dateFormat,
   MANAGER_VIEW_STATUS,
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  FINISHED_STATE,
+  EXECUTOR_VIEW_STATUS,
   COMPLETED_STATE,
 } from '../../routes/taskList/config';
 
@@ -444,14 +442,10 @@ export default class Pageheader extends PureComponent {
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
-      stateAllOptions = _.filter(stateAllOptions,
-        item => _.includes([
-          EXECUTE_STATE,
-          RESULT_TRACK_STATE,
-          FINISHED_STATE,
-          COMPLETED_STATE,
-        ],
-          item.value));
+      stateAllOptions = _.filter(
+        stateAllOptions,
+        item => _.includes(EXECUTOR_VIEW_STATUS, item.value),
+      );
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项

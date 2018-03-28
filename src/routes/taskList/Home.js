@@ -432,10 +432,11 @@ export default class PerformerView extends PureComponent {
     if (_.isEmpty(list)) {
       return;
     }
+    const firstItem = list[0] || EMPTY_OBJECT;
     queryTargetCustDetail({
       missionId,
-      custId: custId || (list[0] || EMPTY_OBJECT).custId,
-      missionFlowId: missionFlowId || (list[0] || EMPTY_OBJECT).missionFlowId,
+      custId: custId || firstItem.custId,
+      missionFlowId: missionFlowId || firstItem.missionFlowId,
     }).then(callback);
   }
 

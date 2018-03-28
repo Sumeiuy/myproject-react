@@ -48,13 +48,12 @@ const emp = {
     // 因为此处是针对新的外部React框架所使用的
     // 因为在独立开发环境下也需要进行初始设置
     if (env.isInFsp()) return;
-    const { empId, postId, orgId, occDivnNum, postnId, empNum, rowId } = loginInfo;
+    const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
     window.curUserCode = empId || empNum;
     window.curOrgCode = orgId || occDivnNum;
     window.forReactPosition = {
       pstnId: postId || postnId,
       orgId: orgId || occDivnNum,
-      rowId,
     };
   },
   /**
@@ -95,20 +94,6 @@ const emp = {
       pstnId = window.forReactPosition.pstnId;
     }
     return pstnId;
-  },
-
-  /**
-   * 获取登录人的rowId,用来判断是否为主服务经理（rowId与客户信息中的主服务经理的rowId比较相等）
-   * @author wangjunjun
-   * @returns {String|null}
-   */
-  getRowId() {
-    // rowId=1-OXZ5，供本地使用，工号002332对应的
-    let rowId = '1-OXZ5';
-    if (!_.isEmpty(window.forReactPosition)) {
-      rowId = window.forReactPosition.rowId;
-    }
-    return rowId;
   },
 
   /**
