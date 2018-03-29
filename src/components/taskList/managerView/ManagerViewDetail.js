@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 18:28:35
+ * @Last Modified time: 2018-03-29 09:07:42
  * 管理者视图详情
  */
 
@@ -19,7 +19,7 @@ import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
-import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/returnTaskEntry';
+import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/createTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
@@ -89,7 +89,6 @@ export default class ManagerViewDetail extends PureComponent {
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
-    taskFeedbackList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -98,7 +97,6 @@ export default class ManagerViewDetail extends PureComponent {
     currentId: '',
     custFeedback: EMPTY_LIST,
     missionTypeDict: EMPTY_LIST,
-    taskFeedbackList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -195,7 +193,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前入口是从进度条的结果达标过来的
       isEntryFromResultStatisfy = false,
     } = params;
-    const { previewCustDetail, currentId, taskFeedbackList } = this.props;
+    const { previewCustDetail, currentId } = this.props;
 
     let postBody = {
       pageNum,
@@ -257,9 +255,11 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromCustTotal,
       isEntryFromResultStatisfy,
       canLaunchTask,
+      feedbackIdL1,
+      feedbackIdL2,
       // 所有一级二级反馈
       // 添加客户反馈，所有反馈
-      currentFeedback: isEntryFromCustTotal ? taskFeedbackList : currentFeedback,
+      currentFeedback,
     });
 
     previewCustDetail({
@@ -405,14 +405,35 @@ export default class ManagerViewDetail extends PureComponent {
 
   @autobind
   renderTotalCust() {
-    const { mngrMissionDetailInfo = {} } = this.props;
+    const { mngrMissionDetailInfo = {}, custFeedback } = this.props;
     const { custNumbers = 0 } = mngrMissionDetailInfo;
+    // 构造一二级客户反馈
+    let currentFeedback = _.map(custFeedback, item => ({
+      feedbackIdL1: item.key,
+      feedbackName: item.name,
+      childList: _.map(item.children, child => ({
+        feedbackIdL2: child.key,
+        feedbackName: child.name,
+      })),
+    }));
+
+    // 添加默认选中项，所有
+    currentFeedback = _.concat([{
+      feedbackIdL1: '',
+      feedbackName: '所有反馈',
+      childList: [{
+        feedbackIdL2: '',
+        feedbackName: '所有反馈',
+      }],
+    }], currentFeedback);
+
     return (
       <div
         className={styles.custValue}
         onClick={() => this.handlePreview({
           isEntryFromCustTotal: true,
           canLaunchTask: false,
+          currentFeedback,
         })}
       >
         <div

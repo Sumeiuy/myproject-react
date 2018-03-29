@@ -17,10 +17,15 @@ export const PIE_ENTRY = 'pieEntry';
 
 export const PROGRESS_ENTRY = 'progressEntry';
 
-export const returnTaskEntrySource = [
+export const createTaskEntrySource = [
   RETURN_TASK_FROM_TODOLIST,
   RETURN_TASK_FROM_TASKLIST,
   CUST_GROUP_LIST,
   PIE_ENTRY,
   PROGRESS_ENTRY,
+];
+
+export const returnTaskEntrySource = [
+  RETURN_TASK_FROM_TODOLIST,
+  RETURN_TASK_FROM_TASKLIST,
 ];

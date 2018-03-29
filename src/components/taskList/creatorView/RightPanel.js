@@ -20,7 +20,7 @@ import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import logable, { logPV } from '../../../decorators/logable';
 import { linkTo } from '../../../utils';
-import { RETURN_TASK_FROM_TASKLIST } from '../../../config/returnTaskEntry';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 import pageConfig from '../pageConfig';
 import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
 

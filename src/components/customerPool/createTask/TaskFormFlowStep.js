@@ -16,7 +16,12 @@ import { permission, emp, env as envHelper } from '../../../helper';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
-import { returnTaskEntrySource, PIE_ENTRY, PROGRESS_ENTRY, CUST_GROUP_LIST } from '../../../config/returnTaskEntry';
+import {
+  PIE_ENTRY,
+  PROGRESS_ENTRY,
+  CUST_GROUP_LIST,
+  returnTaskEntrySource,
+} from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable from '../../../decorators/logable';
 

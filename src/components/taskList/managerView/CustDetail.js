@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 19:27:21
+ * @Last Modified time: 2018-03-29 11:18:05
  * 客户明细数据
  */
 
@@ -427,6 +427,10 @@ export default class CustDetail extends PureComponent {
     currentSelectFeedbackIdL2,
   ) {
     const { currentFeedback = EMPTY_LIST } = this.props;
+    // 如果当前的一级反馈是所有反馈，那么不展示二级反馈筛选
+    if (_.isEmpty(currentSelectFeedbackIdL1)) {
+      return EMPTY_LIST;
+    }
     // 构造二级客户反馈
     const currentFeedbackL1Object = _.find(currentFeedback, item =>
       item.feedbackIdL1 === currentSelectFeedbackIdL1);
