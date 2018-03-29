@@ -164,6 +164,7 @@ export default class ServiceImplementation extends PureComponent {
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
+      push,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
@@ -242,6 +243,7 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          push={push}
         />
         {
           !_.isEmpty(taskFeedbackList)
@@ -297,6 +299,7 @@ ServiceImplementation.propTypes = {
   statusCode: PropTypes.string,
   isTaskFeedbackListOfNone: PropTypes.bool,
   modifyLocalTaskList: PropTypes.func.isRequired,
+  push: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

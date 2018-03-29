@@ -689,6 +689,7 @@ export default class PerformerView extends PureComponent {
             attachmentList={attachmentList}
             isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
             modifyLocalTaskList={modifyLocalTaskList}
+            push={push}
           />
         );
         break;

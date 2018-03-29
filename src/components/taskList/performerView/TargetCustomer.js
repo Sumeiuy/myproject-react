@@ -38,6 +38,7 @@ export default class TargetCustomer extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     currentMissionFlowId: PropTypes.string,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -115,6 +116,7 @@ export default class TargetCustomer extends PureComponent {
       targetCustDetail,
       getCeFileList,
       filesList,
+      push,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
@@ -145,6 +147,7 @@ export default class TargetCustomer extends PureComponent {
                     custIncomeReqState={custIncomeReqState}
                     getCeFileList={getCeFileList}
                     filesList={filesList}
+                    push={push}
                   /> : null
               }
             </Col>
