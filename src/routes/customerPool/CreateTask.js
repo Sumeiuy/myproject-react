@@ -13,13 +13,13 @@ import { autobind } from 'core-decorators';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import {
-  returnTaskEntrySource,
   PIE_ENTRY,
   PROGRESS_ENTRY,
-  RETURN_TASK_FROM_TODOLIST,
-  RETURN_TASK_FROM_TASKLIST,
   CUST_GROUP_LIST,
-} from '../../config/returnTaskEntry';
+  RETURN_TASK_FROM_TASKLIST,
+  RETURN_TASK_FROM_TODOLIST,
+  returnTaskEntrySource,
+} from '../../config/createTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
 import { closeRctTab } from '../../utils';

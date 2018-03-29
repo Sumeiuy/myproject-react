@@ -14,7 +14,7 @@ import { env } from '../../../helper';
 import { navTo, openRctTab } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { RETURN_TASK_FROM_TASKLIST } from '../../../config/returnTaskEntry';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 
 const EMPTY_OBJECT = {};
 
