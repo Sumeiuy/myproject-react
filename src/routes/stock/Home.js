@@ -94,7 +94,7 @@ export default class Stock extends PureComponent {
 
   @autobind
   onRowClick(record) {
-    const { id, code } = record;
+    const { id, code, eventType } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
     const urlQuery = {
@@ -110,6 +110,8 @@ export default class Stock extends PureComponent {
       keyword,
       // 股票代码
       code,
+      // 事件类型
+      eventType,
     };
     push({
       pathname,

@@ -30,9 +30,7 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
+  MANAGER_VIEW_STATUS,
   SYSTEMCODE,
 } from './config';
 import {
@@ -41,6 +39,7 @@ import {
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+const NOOP = _.noop;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const LEFT_PANEL_WIDTH = 400;
 const {
@@ -110,6 +109,8 @@ const effects = {
   createMotReport: 'managerView/createMotReport',
   // 获取生成报告的信息
   queryMOTServeAndFeedBackExcel: 'managerView/queryMOTServeAndFeedBackExcel',
+  // 修改左侧列表的任务状态
+  modifyLocalTaskList: 'performerView/modifyLocalTaskList',
 };
 
 const mapStateToProps = state => ({
@@ -221,6 +222,7 @@ const mapDispatchToProps = {
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
   createMotReport: fetchDataFunction(true, effects.createMotReport),
   queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
+  modifyLocalTaskList: fetchDataFunction(false, effects.modifyLocalTaskList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -292,6 +294,7 @@ export default class PerformerView extends PureComponent {
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    modifyLocalTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -341,9 +344,12 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { typeCode, eventId, currentView } = this.state;
+    const { typeCode, eventId, currentView, isSourceFromCreatorView } = this.state;
     // 当前视图是执行者视图
-    if (currentView === EXECUTOR
+    // 当前视图是管理者视图
+    // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
+    if ((currentView === EXECUTOR || currentView === CONTROLLER ||
+      (currentView === INITIATOR && isSourceFromCreatorView))
       && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
       this.queryMissionList(typeCode, eventId);
     }
@@ -423,15 +429,17 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', callback }) {
+  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = [] } = targetCustList;
     if (_.isEmpty(list)) {
       return;
     }
+    const firstItem = list[0] || EMPTY_OBJECT;
     queryTargetCustDetail({
       missionId,
-      custId: custId || (list[0] || EMPTY_OBJECT).custId,
+      custId: custId || firstItem.custId,
+      missionFlowId: missionFlowId || firstItem.missionFlowId,
     }).then(callback);
   }
 
@@ -471,6 +479,10 @@ export default class PerformerView extends PureComponent {
         if (this.judgeTaskInApproval(statusCode)) {
           this.loadManagerViewDetailContent(record, st);
         } else {
+          // 将创建者视图的flowId存起来，供驳回修改跳转使用
+          this.setState({
+            flowId,
+          });
           getTaskBasicInfo({
             flowId,
             systemCode: SYSTEMCODE,
@@ -575,6 +587,7 @@ export default class PerformerView extends PureComponent {
       createMotReport,
       queryMOTServeAndFeedBackExcel,
       list = {},
+      modifyLocalTaskList,
     } = this.props;
     const [firstItem = {}] = list.resultData;
     const {
@@ -588,14 +601,31 @@ export default class PerformerView extends PureComponent {
       statusCode,
       isTaskFeedbackListOfNone,
       isSourceFromCreatorView,
+      flowId,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
+
     // 选出一级客户反馈
-    const currentFeedback = _.map(taskFeedbackList, item => ({
-      feedBackIdL1: String(item.id),
+    let currentFeedback = _.map(taskFeedbackList, item => ({
+      feedbackIdL1: String(item.id),
       feedbackName: String(item.name),
+      childList: _.map(item.childList,
+        child => ({
+          feedbackIdL2: String(child.id),
+          feedbackName: String(child.name),
+        })),
     }));
+
+    // 添加默认选中项，所有
+    currentFeedback = _.concat([{
+      feedbackIdL1: '',
+      feedbackName: '所有反馈',
+      childList: [{
+        feedbackIdL2: '',
+        feedbackName: '所有反馈',
+      }],
+    }], currentFeedback);
 
     switch (st) {
       case INITIATOR:
@@ -632,7 +662,7 @@ export default class PerformerView extends PureComponent {
             createMotReport={createMotReport}
             queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
             // 一二级所有的客户反馈
-            currentFeedback={currentFeedback}
+            taskFeedbackList={currentFeedback}
           />);
         } else {
           detailComponent = (
@@ -640,6 +670,10 @@ export default class PerformerView extends PureComponent {
               onPreview={this.handlePreview}
               priviewCustFileData={priviewCustFileData}
               taskBasicInfo={{ ...taskBasicInfo, currentId: this.getCurrentId() }}
+              flowId={flowId}
+              push={push}
+              location={location}
+              clearCreateTaskData={clearCreateTaskData}
             />
           );
         }
@@ -680,6 +714,7 @@ export default class PerformerView extends PureComponent {
             saveAnswersSucce={saveAnswersSucce}
             attachmentList={attachmentList}
             isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
+            modifyLocalTaskList={modifyLocalTaskList}
           />
         );
         break;
@@ -715,7 +750,7 @@ export default class PerformerView extends PureComponent {
           createMotReport={createMotReport}
           queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
           // 一二级所有的客户反馈
-          currentFeedback={currentFeedback}
+          taskFeedbackList={currentFeedback}
         />);
         break;
       default:
@@ -769,7 +804,7 @@ export default class PerformerView extends PureComponent {
 
   @autobind
   judgeTaskInApproval(status) {
-    return _.includes([EXECUTE_STATE, RESULT_TRACK_STATE, COMPLETED_STATE], status);
+    return _.includes(MANAGER_VIEW_STATUS, status);
   }
 
   // 导出客户
@@ -801,7 +836,10 @@ export default class PerformerView extends PureComponent {
       const { resultData = [] } = list || {};
       const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      if (missionViewType === EXECUTOR) {
+      // 当前视图是管理者视图
+      // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
+      if (missionViewType === EXECUTOR || missionViewType === CONTROLLER
+        || (missionViewType === INITIATOR && this.judgeTaskInApproval(firstData.statusCode))) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
           const { typeCode, eventId } = firstData;
           this.queryMissionList(typeCode, eventId);

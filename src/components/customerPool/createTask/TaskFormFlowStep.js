@@ -6,22 +6,24 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, message, Steps } from 'antd';
+import { Button, message, Steps, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { stateToHTML } from 'draft-js-export-html';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { returnTaskEntrySource, PIE_ENTRY, PROGRESS_ENTRY, CUST_GROUP_LIST } from '../../../config/returnTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const { toString } = Mention;
 
 // 标签来源，热点标签，普通标签，搜索标签
 const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
@@ -78,11 +80,11 @@ export default class TaskFormFlowStep extends PureComponent {
         needApproval = false,
         canGoNextStep = false,
         needMissionInvestigation = false,
-     },
+      },
     } = props;
 
     // 代表是否是来自驳回修改
-    const isEntryFromReturnTask = source === 'returnTask';
+    const isEntryFromReturnTask = _.includes(returnTaskEntrySource, source);
     let canGoNextStepFlow = canGoNextStep;
     let newNeedMissionInvestigation = needMissionInvestigation;
     if (!_.isEmpty(flowId)) {
@@ -113,13 +115,13 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
-   } = this.props;
+    } = this.props;
     const postBody = {
       ...this.parseParam(),
       postnId: emp.getPstnId(),
     };
 
-    if (source !== 'returnTask') {
+    if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -167,13 +169,13 @@ export default class TaskFormFlowStep extends PureComponent {
     } = parseQuery();
 
     let req = {};
-    if (entrance === entrySource.progress) {
+    if (entrance === PROGRESS_ENTRY) {
       // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === entrySource.pie) {
+    } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (source === 'custGroupList') {
+    } else if (source === CUST_GROUP_LIST) {
       req = {
         enterType,
         groupId,
@@ -240,13 +242,13 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
-      case entrySource.progress:
+      case PROGRESS_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case entrySource.pie:
+      case PIE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case 'custGroupList':
+      case CUST_GROUP_LIST:
         custSources = '客户分组';
         break;
       case 'sightingTelescope':
@@ -315,20 +317,33 @@ export default class TaskFormFlowStep extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-        const formDataValidation = this.saveFormContent({ ...values, isFormError });
+
+        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
+        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
+        const serviceStrategyString = toString(serviceStateData);
+        const serviceStrategyHtml = stateToHTML(serviceStateData);
+        const formDataValidation = this.saveFormContent({
+          ...values,
+          serviceStrategySuggestion: serviceStrategyHtml,
+          isFormError,
+        });
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
+            serviceStrategySuggestion: serviceStrategyString,
+            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
           isFormValidate = false;
         }
       });
+
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      taskFormData = { ...taskFormData, templetDesc };
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
@@ -517,11 +532,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       // taskSubType,
-      templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -553,10 +568,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategySuggestion: serviceStrategyHtml,
       taskName,
       taskType,
-      templetDesc,
+      templetDesc: templeteDescHtml,
       timelyIntervalValue,
       // // 任务子类型
       // taskSubType,
@@ -792,7 +807,7 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
-    const cancleBtn = source === 'returnTask' ?
+    const cancleBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.cancelBtn}
@@ -814,7 +829,7 @@ export default class TaskFormFlowStep extends PureComponent {
       );
 
     // 根据来源判断按钮类型
-    const stopBtn = source === 'returnTask' ?
+    const stopBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.stopBtn}

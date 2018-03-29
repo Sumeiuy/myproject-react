@@ -83,23 +83,6 @@ export default class MissionProgress extends PureComponent {
     return this.remainingElem && this.remainingElem[remainingType];
   }
 
-  @autobind
-  handlePreview({
-    type,
-    missionProgressStatus,
-    progressFlag,
-  }) {
-    const { onPreviewCustDetail } = this.props;
-    onPreviewCustDetail({
-      title: type,
-      missionProgressStatus,
-      progressFlag,
-      canLaunchTask: true,
-      // 代表是从进度条点击的
-      isEntryFromProgressDetail: true,
-    });
-  }
-
   getParam(param) {
     const { total, activeCount, ratio, activeType, remainingType } = param;
     // 真实百分比
@@ -112,6 +95,23 @@ export default class MissionProgress extends PureComponent {
       remainingCount: total - activeCount,
       totalCount: total,
     };
+  }
+
+  @autobind
+  handlePreview({
+    missionProgressStatus,
+    progressFlag,
+  }) {
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail({
+      missionProgressStatus,
+      progressFlag,
+      canLaunchTask: true,
+      // 代表是从进度条下钻的
+      isEntryFromProgressDetail: true,
+      // 代表是结果达标下钻的
+      isEntryFromResultStatisfy: missionProgressStatus === MISSION_PROGRESS_MAP[2].key,
+    });
   }
 
   @autobind

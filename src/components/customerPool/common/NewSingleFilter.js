@@ -1,3 +1,11 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-11-23 15:47:33
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-28 16:22:31
+ * 下拉框筛选
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -27,12 +35,14 @@ export default class SingleFilter extends PureComponent {
     hideCloseIcon: PropTypes.bool,
 
     status: PropTypes.bool,
+    getPopupContainer: PropTypes.func,
   }
   static defaultProps = {
     filterField: [],
     hideCloseIcon: true,
     onCloseIconClick: _.noop,
     status: false,
+    getPopupContainer: () => document.body,
   }
   constructor(props) {
     super(props);
@@ -93,7 +103,7 @@ export default class SingleFilter extends PureComponent {
   }
 
   render() {
-    const { filterLabel, filterField, value } = this.props;
+    const { filterLabel, filterField, value, getPopupContainer } = this.props;
     const selectFilter = _.find(filterField, filter => filter.key === value);
     const selectValue = {
       key: selectFilter.key,
@@ -109,8 +119,18 @@ export default class SingleFilter extends PureComponent {
     });
     return (
       <div className={filterCls}>
-        <span className={styles.filterLabel} title={filterLabel}>{filterLabel}</span>
-        <span className={styles.filterSeperator}>：</span>
+        {
+          !_.isEmpty(filterLabel) ?
+            <span className={styles.filterLabel} title={filterLabel}>
+              {filterLabel}
+            </span>
+            : null
+        }
+        {
+          !_.isEmpty(filterLabel) ?
+            <span className={styles.filterSeperator}>：</span>
+            : null
+        }
         <Select
           value={selectValue}
           style={{ maxWidth: '84px', fontSize: '14px' }}
@@ -118,6 +138,7 @@ export default class SingleFilter extends PureComponent {
           onChange={this.handleSelectChange}
           dropdownMatchSelectWidth={false}
           labelInValue
+          getPopupContainer={getPopupContainer}
         >
           {
             filterField.map(item => (
@@ -137,4 +158,3 @@ export default class SingleFilter extends PureComponent {
     );
   }
 }
-
