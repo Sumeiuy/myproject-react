@@ -11,9 +11,12 @@ import styles from './createTaskSuccess.less';
 import logable from '../../../decorators/logable';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
-import { navTo } from '../../../utils';
+import { navTo, openRctTab } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/returnTaskEntry';
+
+const EMPTY_OBJECT = {};
 
 @RestoreScrollTop
 export default class CreateTaskSuccess extends PureComponent {
@@ -66,6 +69,21 @@ export default class CreateTaskSuccess extends PureComponent {
     }
   }
 
+  /**
+   * 创建任务成功之后，决定跳转到哪个页面
+   */
+  @autobind
+  switchRoute() {
+    const { location: { query = EMPTY_OBJECT } } = this.props;
+    const { source } = query;
+    if (source === RETURN_TASK_FROM_TASKLIST) {
+      // 如果是驳回修改的任务，并且来自创建者视图快捷入口，则成功之后，自动返回taskList的创建者视图
+      this.goToTaskList();
+    } else {
+      this.goToHome();
+    }
+  }
+
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '返回首页' } })
   goToHome() {
@@ -88,6 +106,25 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回任务管理' } })
+  goToTaskList() {
+    this.clearTimeInterval();
+    const { push } = this.props;
+    // 跳转到任务管理
+    const param = {
+      id: 'FSP_MOT_SELFBUILT_TASK',
+      title: '任务管理',
+    };
+    openRctTab({
+      routerAction: push,
+      url: '/taskList',
+      param,
+      pathname: '/taskList',
+      query: {},
+    });
+  }
+
+  @autobind
   handleMovTime() {
     let { changeTime } = this.state;
     this.setState({
@@ -95,7 +132,7 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (changeTime <= 0) {
         // 跳转之前关闭interval
-        this.goToHome();
+        this.switchRoute();
       }
     });
   }
