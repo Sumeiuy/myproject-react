@@ -16,9 +16,6 @@ const EMPTY_LIST = [];
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 
-// 添加服务记录时，入参服务状态完成的编号,
-const POSTCOMPLETED_CODE = '30';
-
 export default {
   namespace: 'performerView',
   state: {
@@ -176,10 +173,10 @@ export default {
     },
     modifyLocalTaskList(state, action) {
       const { resultData } = state.taskList;
-      const { missionId, serviceStatusCode } = action.payload;
+      const { missionId } = action.payload;
       const newList = _.map(resultData, (item) => {
         // 添加服务记录时服务状态选择的时完成，完成的状态码时30
-        if (item.id === missionId && serviceStatusCode === POSTCOMPLETED_CODE) {
+        if (item.id === missionId) {
           // 添加成功一条服务状态为完成的记录，则该条数据的已完成数量加一
           const curentDoneFlowNum = item.doneFlowNum + 1;
           // 已完成数量和总数量相等

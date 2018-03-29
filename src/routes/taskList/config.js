@@ -47,6 +47,9 @@ const chooseMissionView = [
   },
 ];
 
+// 添加服务记录时，入参服务状态完成的编号,
+const POSTCOMPLETED_CODE = '30';
+
 const currentDate = moment(new Date());
 const beforeCurrentDate60Days = moment(currentDate).subtract(60, 'days');
 const afterCurrentDate60Days = moment(currentDate).add(60, 'days');
@@ -72,4 +75,5 @@ export default {
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
   SYSTEMCODE,
+  POSTCOMPLETED_CODE,
 };
