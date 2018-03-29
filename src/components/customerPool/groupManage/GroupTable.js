@@ -147,8 +147,7 @@ export default class GroupTable extends PureComponent {
   }
 
   @autobind
-  handleRowClick(record, index, event) {
-    console.log(record, index, event);
+  handleRowClick(record, index) {
     this.setState({
       curSelectedRow: index,
     });
@@ -361,7 +360,9 @@ export default class GroupTable extends PureComponent {
           dataSource={this.renderTableDatas(listData)}
           bordered={bordered}
           scroll={_.merge(scrollXArea, scrollYArea)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
           rowClassName={(record, index) =>
             classnames({

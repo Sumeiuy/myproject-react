@@ -93,7 +93,7 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
-  onRowClick(record) {
+  rowClickHandle(record) {
     const { id, code } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
@@ -260,7 +260,9 @@ export default class Stock extends PureComponent {
                 columns={this.wrapperTD(config[item].titleList)}
                 dataSource={list}
                 pagination={false}
-                onRowClick={this.onRowClick}
+                onRow={record => ({
+                  onClick: () => this.rowClickHandle(record),       // 点击行
+                })}
                 rowKey="id"
               />
               <Pagination {...paginationOption} />
