@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 18:28:35
+ * @Last Modified time: 2018-03-29 09:07:42
  * 管理者视图详情
  */
 
@@ -257,6 +257,8 @@ export default class ManagerViewDetail extends PureComponent {
       isEntryFromCustTotal,
       isEntryFromResultStatisfy,
       canLaunchTask,
+      feedbackIdL1,
+      feedbackIdL2,
       // 所有一级二级反馈
       // 添加客户反馈，所有反馈
       currentFeedback: isEntryFromCustTotal ? taskFeedbackList : currentFeedback,
