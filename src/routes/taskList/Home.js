@@ -30,7 +30,7 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  MANAGER_VIEW_STATUS,
+  STATUS_MANAGER_VIEW,
   SYSTEMCODE,
 } from './config';
 import {
@@ -776,7 +776,7 @@ export default class PerformerView extends PureComponent {
 
   @autobind
   judgeTaskInApproval(status) {
-    return _.includes(MANAGER_VIEW_STATUS, status);
+    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 导出客户
