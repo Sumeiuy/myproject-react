@@ -1003,6 +1003,7 @@ export default class PerformerView extends PureComponent {
         query: {
           ...query,
           ...otherQuery,
+          currentId: '',
           pageNum: 1,
         },
       });
