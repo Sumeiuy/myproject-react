@@ -16,6 +16,7 @@ import withRouter from '../../../decorators/withRouter';
 import { emp, url as urlHelper } from '../../../helper';
 import more from './img/more.png';
 import { request } from '../../../config';
+import logable from '../../../decorators/logable';
 
 @withRouter
 export default class MorningBroadcast extends PureComponent {
@@ -34,6 +35,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
   onListen(newsId, audioFileId) {
     const { queryAudioFile, sourceList = [] } = this.props;
     const sourceFile = sourceList[newsId];
@@ -46,6 +48,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '停止播放' } })
   onHandleClose() {
     this.setState({
       activeMusic: '',
@@ -53,6 +56,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
   openNewTab(url) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -73,6 +77,7 @@ export default class MorningBroadcast extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
+  @logable({ type: 'Click', payload: { name: '跳转至晨报详情' } })
   handleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };

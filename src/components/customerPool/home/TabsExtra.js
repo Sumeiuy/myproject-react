@@ -89,6 +89,13 @@ export default class TabsExtra extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '',
+      value: '$args[0]',
+    },
+  })
   handleChange(value) {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;

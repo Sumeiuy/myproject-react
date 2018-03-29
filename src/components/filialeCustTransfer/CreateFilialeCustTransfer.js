@@ -356,6 +356,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转申请弹框' } })
   closeModal() {
     // 关闭模态框
     commonConfirm({

@@ -21,6 +21,7 @@ import UploadFiles from './UploadFiles';
 import { emp } from '../../helper';
 import { feedbackOptions, request } from '../../config';
 import './detail.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -277,18 +278,21 @@ export default class Detail extends PureComponent {
   /**
    * 弹窗处理（开启）
   */
+  @logPV({ pathname: '/modal/handlerproblem', title: '问题反馈-解决弹窗' })
   showModal = () => {
     this.setState({ visible: true });
   }
   /**
    * 弹窗处理（关闭）
   */
+  @logable({ type: 'Click', payload: { name: '关闭问题反馈-解决弹窗' } })
   handleCancel = () => {
     this.setState({ visible: false });
   }
   /**
    * 备注显示
   */
+  @logable({ type: 'ButtonClick', payload: { name: '备注' } })
   showRemark = () => {
     this.setState({ remarkVisible: true });
   }
@@ -428,11 +432,13 @@ export default class Detail extends PureComponent {
    * 缩略图预览
    */
   @autobind
+  @logPV({ pathname: '/modal/imgPreview', title: '缩略图预览' })
   handlePreview() {
     this.calculateRealSize();
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   handlePreviewCancel() {
     this.setState({
       previewVisible: false,

@@ -133,8 +133,6 @@ export default class Filter extends PureComponent {
     const {
       sightingTelescopeFilters,
       onFilterChange,
-      onCloseIconClick,
-      onCheckMoreButton,
       source,
       filtersCloseIconState,
     } = this.props;
@@ -150,8 +148,8 @@ export default class Filter extends PureComponent {
           valueArray={filtersCloseIconState}
           labelArray={sightingTelescopeFilters.filterList}
           onChange={onFilterChange}
-          onCloseIconClick={onCloseIconClick}
-          onCheckMoreButton={onCheckMoreButton}
+          onCloseIconClick={this.handleCloseIconClick}
+          onCheckMoreButton={this.handleCheckMoreButton}
         />
       </div>
     );

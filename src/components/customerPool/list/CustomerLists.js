@@ -21,7 +21,7 @@ import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
-
+import logable from '../../../decorators/logable';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
@@ -270,6 +270,7 @@ export default class CustomerLists extends PureComponent {
 
   // 点击全选，获取按钮的状态赋值url中的selectAll,并且将selectedIds置空
   @autobind
+  @logable({ type: 'Click', payload: { name: '全选' } })
   selectAll(e) {
     const status = e.target.checked;
     const {

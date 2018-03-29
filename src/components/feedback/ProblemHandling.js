@@ -15,6 +15,7 @@ import Icon from '../common/Icon';
 import uploadRequest from '../../utils/uploadRequest';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
+import logable from '../../decorators/logable';
 
 let COUNT = 0;
 const FormItem = Form.Item;
@@ -89,6 +90,7 @@ export default class ProblemHandling extends PureComponent {
 
   // 数据提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);

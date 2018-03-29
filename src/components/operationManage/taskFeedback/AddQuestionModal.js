@@ -11,7 +11,7 @@ import { Modal, Button } from 'antd';
 import classnames from 'classnames';
 
 import AddQuestionForm from './AddQuestionForm';
-
+import logable from '../../../decorators/logable';
 import styles from './addQuestionModal.less';
 
 
@@ -43,6 +43,7 @@ export default class AddQuestionModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   submitOneQuestion() {
     this.form.validateFields((err, values) => {
       if (err) {

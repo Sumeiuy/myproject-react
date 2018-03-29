@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import { constants } from '../../config';
 import styles from './custRange.less';
+import logable from '../../decorators/logable';
 
 const TreeNode = TreeSelect.TreeNode;
 const EMPTY_OBJECT = {};
@@ -80,6 +81,13 @@ export default class CustRange extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '',
+      value: '$args[0]',
+    },
+  })
   onChange(value, label, extra) {
     const { location: { query }, replace } = this.props;
     if (extra.triggerValue === extra.preValue[0].value) {

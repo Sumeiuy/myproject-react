@@ -101,6 +101,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     this.setState({
       operate: item.operate,

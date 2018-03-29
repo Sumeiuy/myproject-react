@@ -22,13 +22,13 @@ const createNewsId = -1;
  * @param ctx AddMorningBoradcast 组件实例
  * @returns {string} 提交表格描述
  */
-function submitTypeName(ctx) {
-  const { newsId } = ctx.props;
-  if (newsId !== createNewsId) {
-    return '修改晨报详情';
-  }
-  return '新建晨报';
-}
+// function submitTypeName(ctx) {
+//   const { newsId } = ctx.props;
+//   if (newsId !== createNewsId) {
+//     return '修改晨报详情';
+//   }
+//   return '新建晨报';
+// }
 
 @Form.create()
 export default class AddMorningBoradcast extends PureComponent {
@@ -153,7 +153,7 @@ export default class AddMorningBoradcast extends PureComponent {
   @logable({
     type: 'ButtonClick',
     payload: {
-      name: submitTypeName,
+      name: '提交',
     },
   })
   handleSubmit() {
@@ -184,7 +184,9 @@ export default class AddMorningBoradcast extends PureComponent {
       }
     });
   }
+
   @autobind()
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   onHandleCancel() {
     const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
     const { isUpdateFile } = this.state;

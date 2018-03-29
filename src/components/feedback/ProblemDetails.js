@@ -14,6 +14,7 @@ import _ from 'lodash';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions } from '../../config';
 import './problemDetails.less';
+import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
@@ -81,6 +82,23 @@ export default class ProblemDetail extends PureComponent {
     return '--';
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '问题标签' } })
+  handleProblemClick(event, type) {
+    this.handleShowEdit(event, type);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'Jira编号' } })
+  handleJiraNumClick(event, type) {
+    this.handleShowEdit(event, type);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '经办人' } })
+  handleProcesserClick(event, type) {
+    this.handleShowEdit(event, type);
+  }
 
   /**
    * 问题详情编辑
@@ -147,6 +165,7 @@ export default class ProblemDetail extends PureComponent {
     return time;
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭图标' } })
   handleClose() {
     this.setState({
       qtab: false,
@@ -159,6 +178,7 @@ export default class ProblemDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交图标' } })
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
@@ -270,7 +290,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.changeDisplay(tag, questionTagOptions)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
+                  <span className={qtValue} onClick={event => this.handleProblemClick(event, 'qt')} title="点击编辑">
                     {this.changeDisplay(tag, questionTagOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -297,7 +317,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.dataNull(jiraId)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={jiraValue} onClick={event => this.handleShowEdit(event, 'jira')} title="点击编辑">
+                  <span className={jiraValue} onClick={event => this.handleJiraNumClick(event, 'jira')} title="点击编辑">
                     {this.dataNull(jiraId)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -322,7 +342,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.changeDisplay(processer, allOperatorOptions)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
+                  <span className={processerValue} onClick={event => this.handleProcesserClick(event, 'processer')} title="点击编辑">
                     {this.changeDisplay(processer, allOperatorOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>

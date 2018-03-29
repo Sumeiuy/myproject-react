@@ -15,6 +15,7 @@ import FeedbackAdd from './FeedbackAdd';
 import Pagination from '../../common/Pagination';
 
 import styles from './missionBind.less';
+import logable from '../../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 const Panel = Collapse.Panel;
@@ -138,6 +139,7 @@ export default class MissionBind extends PureComponent {
 
   // 切换折叠面板
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换折叠面板' } })
   handleChangeCollapse(collapseActiveKey) {
     this.setState({
       collapseActiveKey,
@@ -243,6 +245,7 @@ export default class MissionBind extends PureComponent {
    * @param pageSize 列表页容量，默认为20
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索Mot任务列表' } })
   searchMotMission(value, pageNum = 1, pageSize = 20) {
     const { queryMissionList } = this.props;
     queryMissionList(FIRST_TAB, pageNum, pageSize, value);
@@ -252,6 +255,13 @@ export default class MissionBind extends PureComponent {
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
   }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：MOT任务/自建任务' } })
+  handleSwitchTabClick() {
+    this.props.missionBindChangeTab();
+  }
+
   render() {
     const {
       showModal,
@@ -259,7 +269,6 @@ export default class MissionBind extends PureComponent {
       beAddMissionId,
     } = this.state;
     const {
-      missionBindChangeTab,
       missionData,
       queryFeedbackList,
       feedbackData,
@@ -303,7 +312,7 @@ export default class MissionBind extends PureComponent {
         </div>
         <div className={styles.tabBox}>
           <Tabs
-            onChange={missionBindChangeTab}
+            onChange={this.handleSwitchTabClick}
             activeKey={childActiveKey}
             tabBarExtraContent={
               isMOTMission ?

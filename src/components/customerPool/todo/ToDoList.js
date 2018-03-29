@@ -14,7 +14,7 @@ import {
 } from '../../../config/returnTaskEntry';
 import { openRctTab } from '../../../utils';
 import styles from './toDoList.less';
-
+import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
 
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
@@ -132,6 +132,12 @@ export default class ToDoList extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '任务名称',
+    },
+  })
   handleOpenNewPage(e) {
     const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
     const tardetLab = e.target;

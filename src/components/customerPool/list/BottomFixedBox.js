@@ -283,6 +283,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   toggleModal() {
     this.setState({
       visible: !this.state.visible,

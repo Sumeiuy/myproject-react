@@ -174,6 +174,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户列表行的check框' } })
   handleSelect() {
     const { onChange, listItem: { custId, name }, handleCheck } = this.props;
     // 手动发送日志

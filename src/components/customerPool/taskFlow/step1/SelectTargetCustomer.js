@@ -14,6 +14,7 @@ import SightingTelescope from './SightingTelescope';
 import Header from './Header';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
 import { fsp, emp } from '../../../../helper';
+import logable from '../../../../decorators/logable';
 
 import styles from './selectTargetCustomer.less';
 
@@ -76,6 +77,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '导入客户' } })
   importCustomers() {
     this.setState({
       showEntry: false,
@@ -88,6 +90,7 @@ export default class SelectTargetCustomer extends PureComponent {
 
   // 选中瞄准镜圈人入口时，拉取瞄准镜圈人默认标签列表进行展示
   @autobind
+  @logable({ type: 'Click', payload: { name: '瞄准镜圈人' } })
   findPeople() {
     this.setState({
       showEntry: false,
@@ -115,6 +118,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换至 瞄准镜圈人/导入客户' } })
   changeView() {
     const showImportCustomers = !this.state.showImportCustomers;
     const showSightingTelescope = !this.state.showSightingTelescope;

@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import { Row, Col, DatePicker, Radio, Button } from 'antd';
 import { constants, optionsMap } from '../../config';
 import { time } from '../../helper';
-
+import logable from '../../decorators/logable';
 // 选择项字典
 import styles from './SelfDatePicker.less';
 
@@ -207,6 +207,7 @@ export default class SelfDatePicker extends PureComponent {
   }
   // 确认事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '确认' } })
   okHandle() {
     this.saveMoment('ok');
   }
@@ -227,6 +228,13 @@ export default class SelfDatePicker extends PureComponent {
   }
   // 用户自己选的时间段事件
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '选的时间段事件',
+      value: '$args[1]',
+    },
+  })
   rangePickerChange(dates, dateStrings) {
     const { compare } = this.state;
     const beginMoment = dates[0];

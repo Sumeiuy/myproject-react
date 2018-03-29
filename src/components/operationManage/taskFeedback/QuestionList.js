@@ -13,7 +13,7 @@ import { Modal, message } from 'antd';
 import ListItem from './ListItem';
 import EmptyData from '../EmptyData';
 import Pagination from '../../common/Pagination';
-
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './questionList.less';
 
 export default class QuestionList extends PureComponent {
@@ -71,6 +71,7 @@ export default class QuestionList extends PureComponent {
    * 删除成功后重新获取问题列表
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmDelete({ quesId }) {
     const {
       deleteQuestion,
@@ -109,6 +110,7 @@ export default class QuestionList extends PureComponent {
    * @param {*} obj 被删除的问题信息对象
    */
   @autobind
+  @logPV({ pathname: '/modal/deleteTip', title: '删除的提示弹框' })
   deleteOneQuestion(obj) {
     Modal.confirm({
       title: '确认',

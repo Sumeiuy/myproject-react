@@ -135,6 +135,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字目标客户池首页搜索' } })
   handleSearch(value) {
     if (_.isEmpty(value)) {
       this.setState({
@@ -149,6 +150,13 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标客户池首页搜索框',
+      value: '$args[0]',
+    },
+  })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.name === value);
     const sightingScopeBool = isSightingScope(item.type);
@@ -183,6 +191,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(

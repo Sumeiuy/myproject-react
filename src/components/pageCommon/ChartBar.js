@@ -5,8 +5,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import ChartBarStack from '../chartRealTime/ChartBarStack';
 import ChartBarNormal from '../chartRealTime/ChartBarNormal';
+import logable from '../../decorators/logable';
 
 export default class ChartBar extends PureComponent {
 
@@ -25,10 +27,16 @@ export default class ChartBar extends PureComponent {
     chartData: {},
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
+  handleUpdateQueryState() {
+    this.props.updateQueryState();
+  }
+
 
   render() {
     const { chartData: { orgModel } } = this.props;
-    const { chartData, level, location, scope, custRange, updateQueryState, barColor } = this.props;
+    const { chartData, level, location, scope, custRange, barColor } = this.props;
     // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)
@@ -43,7 +51,7 @@ export default class ChartBar extends PureComponent {
           level={level}
           scope={scope}
           custRange={custRange}
-          updateQueryState={updateQueryState}
+          updateQueryState={this.handleUpdateQueryState}
         />
       );
     }
@@ -54,7 +62,7 @@ export default class ChartBar extends PureComponent {
         level={level}
         scope={scope}
         custRange={custRange}
-        updateQueryState={updateQueryState}
+        updateQueryState={this.handleUpdateQueryState}
         barColor={barColor}
       />
     );

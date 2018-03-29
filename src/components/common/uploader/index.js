@@ -207,7 +207,7 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除文件' } })
+  @logable({ type: 'Click', payload: { name: '从$props.uploadTitle中删除文件' } })
   handleFileRemove(file) {
     const { error } = file;
     this.currentfile = file;
