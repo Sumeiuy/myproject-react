@@ -10,8 +10,9 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import {
+  createTaskEntrySource,
   returnTaskEntrySource,
-} from '../../../config/returnTaskEntry';
+} from '../../../config/createTaskEntry';
 
 import styles from './createTaskFormFlow.less';
 
@@ -187,7 +188,7 @@ export default class CreateTaskFormFlow extends PureComponent {
    */
   @autobind
   judgeSource(source) {
-    return _.includes(returnTaskEntrySource, source);
+    return _.includes(createTaskEntrySource, source);
   }
 
   @autobind

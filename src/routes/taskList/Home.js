@@ -344,12 +344,9 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { typeCode, eventId, currentView, isSourceFromCreatorView } = this.state;
+    const { typeCode, eventId, currentView } = this.state;
     // 当前视图是执行者视图
-    // 当前视图是管理者视图
-    // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
-    if ((currentView === EXECUTOR || currentView === CONTROLLER ||
-      (currentView === INITIATOR && isSourceFromCreatorView))
+    if (currentView === EXECUTOR
       && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
       this.queryMissionList(typeCode, eventId);
     }
@@ -606,27 +603,6 @@ export default class PerformerView extends PureComponent {
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
 
-    // 选出一级客户反馈
-    let currentFeedback = _.map(taskFeedbackList, item => ({
-      feedbackIdL1: String(item.id),
-      feedbackName: String(item.name),
-      childList: _.map(item.childList,
-        child => ({
-          feedbackIdL2: String(child.id),
-          feedbackName: String(child.name),
-        })),
-    }));
-
-    // 添加默认选中项，所有
-    currentFeedback = _.concat([{
-      feedbackIdL1: '',
-      feedbackName: '所有反馈',
-      childList: [{
-        feedbackIdL2: '',
-        feedbackName: '所有反馈',
-      }],
-    }], currentFeedback);
-
     switch (st) {
       case INITIATOR:
         // 如果当前视图是创建者视图，并且状态是执行中，就展示管理者视图
@@ -661,8 +637,6 @@ export default class PerformerView extends PureComponent {
             missionReport={missionReport}
             createMotReport={createMotReport}
             queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
-            // 一二级所有的客户反馈
-            taskFeedbackList={currentFeedback}
           />);
         } else {
           detailComponent = (
@@ -749,8 +723,6 @@ export default class PerformerView extends PureComponent {
           missionReport={missionReport}
           createMotReport={createMotReport}
           queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
-          // 一二级所有的客户反馈
-          taskFeedbackList={currentFeedback}
         />);
         break;
       default:
@@ -836,10 +808,7 @@ export default class PerformerView extends PureComponent {
       const { resultData = [] } = list || {};
       const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      // 当前视图是管理者视图
-      // 当前视图是创建者视图，并且是执行中、结果跟踪、结束状态
-      if (missionViewType === EXECUTOR || missionViewType === CONTROLLER
-        || (missionViewType === INITIATOR && this.judgeTaskInApproval(firstData.statusCode))) {
+      if (missionViewType === EXECUTOR) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
           const { typeCode, eventId } = firstData;
           this.queryMissionList(typeCode, eventId);

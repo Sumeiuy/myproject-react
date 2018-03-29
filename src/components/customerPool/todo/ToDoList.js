@@ -11,7 +11,7 @@ import { Table, message } from 'antd';
 import _ from 'lodash';
 import {
   RETURN_TASK_FROM_TODOLIST,
-} from '../../../config/returnTaskEntry';
+} from '../../../config/createTaskEntry';
 import { openRctTab } from '../../../utils';
 import styles from './toDoList.less';
 
