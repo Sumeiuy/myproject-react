@@ -8,12 +8,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './createTaskSuccess.less';
-import logable from '../../../decorators/logable';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
 import { navTo } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import logable from '../../../decorators/logable';
 
 @RestoreScrollTop
 export default class CreateTaskSuccess extends PureComponent {

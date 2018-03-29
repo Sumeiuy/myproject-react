@@ -21,6 +21,7 @@ import classnames from 'classnames';
 import Icon from '../Icon';
 import { dom } from '../../../helper';
 import { fspContainer } from '../../../config';
+import logable from '../../../decorators/logable';
 
 import styles from './filter.less';
 
@@ -102,6 +103,7 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '多选filter为$args[0]' } })
   handleClick(value) {
     const { keyArr } = this.state;
     const { separator, filter, onChange } = this.props;
@@ -127,6 +129,7 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '展开/收起' } })
   handleMore() {
     const { fold } = this.state;
     this.domNode.style.height = fold ? 'auto' : this.domNodeLineHeight;

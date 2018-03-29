@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
-
+import logable from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -189,6 +189,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '任务类型:',
+      value: '$args[0]',
+    },
+  })
   handleTaskTypeChange(value) {
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       const currentTaskSubTypeCollection = this.getCurrentTaskSubTypes(value);
@@ -208,6 +215,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '执行方式',
+      value: '$args[0]',
+    },
+  })
   handleExcuteTypeChange(value) {
     this.setState({
       isShowErrorExcuteType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
@@ -222,6 +236,7 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '任务提示' } })
   handleSearchChange(value, trigger) {
     const { users } = this.props;
     const searchValue = value.toLowerCase();

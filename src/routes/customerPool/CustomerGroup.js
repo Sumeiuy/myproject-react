@@ -14,7 +14,6 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
 
-import logable from '../../decorators/logable';
 import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
@@ -23,6 +22,7 @@ import { removeTab, linkTo } from '../../utils';
 import { emp, url } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 
 import styles from './customerGroup_.less';
 
@@ -299,6 +299,12 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '添加到已有分组',
+    },
+  })
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
     const { handleRadio } = this.props;

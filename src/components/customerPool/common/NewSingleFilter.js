@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { Select, Icon } from 'antd';
 import classnames from 'classnames';
 import styles from './newSingleFilter.less';
+import logable from '../../../decorators/logable';
 
 const Option = Select.Option;
 
@@ -55,6 +56,13 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$props.filterLabel',
+      value: '$args[0].label',
+    },
+  })
   handleSelectChange(value) {
     this.handleClick({
       key: value.key,
@@ -63,6 +71,7 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭icon' } })
   handleSelectClose() {
     const { filter, filterLabel, onChange, onCloseIconClick } = this.props;
     const key = '';

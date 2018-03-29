@@ -14,6 +14,7 @@ import SingleFilter from '../../common/NewSingleFilter';
 import MultiFilter from '../../common/NewMutiFilter';
 import FilterMoreButton from '../../common/FilterMoreButton';
 import styles from './filterCustomers.less';
+import logable from '../../../../decorators/logable';
 
 // 数据转化
 // [{itemCode: '1', itemDesc: 'fg'}] => [{key: '1', value: 'fg'}]
@@ -49,6 +50,30 @@ export default class Filter extends PureComponent {
     super(props);
     this.state = {
     };
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '取消选中',
+      value: '$args[0].name',
+    },
+  })
+  handleCloseIconClick(obj) {
+    this.props.onCloseIconClick(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选中',
+      value: '$args[0].name',
+    },
+  })
+  handleCheckMoreButton(obj) {
+    this.props.onCheckMoreButton(obj);
   }
 
   // 瞄准镜筛选
