@@ -15,7 +15,7 @@ import {
   PIE_ENTRY,
   PROGRESS_ENTRY,
   CUST_GROUP_LIST,
-} from '../../../config/returnTaskEntry';
+} from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 

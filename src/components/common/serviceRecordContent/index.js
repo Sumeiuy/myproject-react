@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-06 15:43:55
+ * @Last Modified time: 2018-03-29 12:44:52
  */
 
 
@@ -34,6 +34,7 @@ const CURRENT_DATE = moment(new Date(), dateFormat);
 const width = { width: 142 };
 
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 
 const NO_HREF = 'javascript:void(0);'; // eslint-disable-line
 
@@ -592,6 +593,9 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
       deleteFileResult,
       formData: { motCustfeedBackDict },
+      dict: {
+        serveStatus = [],
+      },
     } = this.props;
     const {
       serviceWay,
@@ -613,8 +617,18 @@ export default class ServiceRecordContent extends PureComponent {
     if (!dict) {
       return null;
     }
-    // const firstCol = isFold ? 8 : 24;
-    // const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
+
+    // 服务状态文本
+    const serviceStatusText = (_.find(serveStatus, item =>
+      item.key === serviceStatus) || EMPTY_OBJECT).value;
+
+    // 客户反馈一级value
+    const feedbackTypeL1Text = (_.find(feedbackTypeList, item =>
+      item.key === feedbackType) || EMPTY_OBJECT).value;
+
+    // 客户反馈二级value
+    const feedbackTypeL2Text = (_.find(feedbackTypeChildList, item =>
+      item.key === feedbackTypeChild) || EMPTY_OBJECT).value;
 
     const serviceDateProps = {
       allowClear: false,
@@ -660,21 +674,23 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>
               服务方式:
             </div>
-            <div className={styles.content} ref={r => this.serviceWayRef = r} >
-              <Select
-                value={serviceWay}
-                style={width}
-                onChange={this.handleServiceWay}
-                disabled={isReadOnly}
-                getPopupContainer={() => this.serviceWayRef}
-              >
-                {
-                  (dict.serveWay || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
+            {
+              !isReadOnly ?
+                <div className={styles.content} ref={r => this.serviceWayRef = r} >
+                  <Select
+                    value={serviceWay}
+                    style={width}
+                    onChange={this.handleServiceWay}
+                    getPopupContainer={() => this.serviceWayRef}
+                  >
+                    {
+                      (dict.serveWay || EMPTY_LIST).map(obj => (
+                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
+                </div> : <div className={styles.readOnlyText}>{serviceWay}</div>
+            }
           </div>
           {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
           {
@@ -683,15 +699,20 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>
                   服务状态:
                 </div>
-                <div className={styles.content}>
-                  <RadioGroup
-                    onChange={this.onRadioChange}
-                    value={serviceStatus}
-                    disabled={isReadOnly}
-                  >
-                    {this.renderServiceStatusChoice()}
-                  </RadioGroup>
-                </div>
+                {
+                  !isReadOnly ?
+                    <div className={styles.content}>
+                      <RadioGroup
+                        onChange={this.onRadioChange}
+                        value={serviceStatus}
+                      >
+                        {this.renderServiceStatusChoice()}
+                      </RadioGroup>
+                    </div> :
+                    <div className={styles.readOnlyText}>
+                      {serviceStatusText}
+                    </div>
+                }
               </div> : null
           }
           {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
@@ -719,37 +740,41 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>
               服务时间:
             </div>
-            <div className={styles.content} ref={r => this.serviceTimeRef = r}>
-              <DatePicker
-                style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
-                {...serviceDateProps}
-                defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                getCalendarContainer={() => this.serviceTimeRef}
-              />
-              <TimePicker
-                style={width}
-                className={styles.hidden}
-                {...serviceTimeProps}
-                defaultValue={moment(CURRENT_DATE, timeFormat)}
-              />
-            </div>
+            {
+              !isReadOnly ?
+                <div className={styles.content} ref={r => this.serviceTimeRef = r}>
+                  <DatePicker
+                    style={width}
+                    {...serviceDateProps}
+                    defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                    getCalendarContainer={() => this.serviceTimeRef}
+                  />
+                  <TimePicker
+                    style={width}
+                    className={styles.hidden}
+                    {...serviceTimeProps}
+                    defaultValue={moment(CURRENT_DATE, timeFormat)}
+                  />
+                </div> :
+                <div className={styles.readOnlyText}>
+                  {moment(CURRENT_DATE, showDateFormat).format(showDateFormat)}
+                </div>
+            }
           </div>
-
         </div>
 
         <div className={styles.serveRecord}>
           <div className={styles.title}>服务记录:</div>
-          <div className={styles.content}>
-            <TextArea
-              rows={5}
-              disabled={isReadOnly}
-              value={serviceContent}
-              onChange={this.handleServiceRecordInputChange}
-            />
-          </div>
+          {
+            !isReadOnly ?
+              <div className={styles.content}>
+                <TextArea
+                  rows={5}
+                  value={serviceContent}
+                  onChange={this.handleServiceRecordInputChange}
+                />
+              </div> : <div className={styles.readOnlyText}>{serviceContent}</div>
+          }
         </div>
 
         <div className={styles.divider} />
@@ -759,51 +784,59 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>
               客户反馈:
             </div>
-            <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
-              <Select
-                value={feedbackType}
-                style={width}
-                onChange={this.handleFeedbackType}
-                disabled={isReadOnly}
-                getPopupContainer={() => this.customerFeedbackRef}
-              >
-                {
-                  (feedbackTypeList).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-              {
-                isShowSubCustomerFeedback ? null :
-                <Select
-                  value={feedbackTypeChild}
-                  style={width}
-                  onChange={this.handleFeedbackTypeChild}
-                  disabled={isReadOnly}
-                  getPopupContainer={() => this.customerFeedbackRef}
-                >
-                  {
-                      (feedbackTypeChildList).map(obj => (
+            {
+              !isReadOnly ?
+                <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
+                  <Select
+                    value={feedbackType}
+                    style={width}
+                    onChange={this.handleFeedbackType}
+                    getPopupContainer={() => this.customerFeedbackRef}
+                  >
+                    {
+                      (feedbackTypeList).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
-                </Select>
-              }
-            </div>
+                  </Select>
+                  {
+                    !isShowSubCustomerFeedback ?
+                      <Select
+                        value={feedbackTypeChild}
+                        style={width}
+                        onChange={this.handleFeedbackTypeChild}
+                        getPopupContainer={() => this.customerFeedbackRef}
+                      >
+                        {
+                          (feedbackTypeChildList).map(obj => (
+                            <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                          ))
+                        }
+                      </Select> : null
+                  }
+                </div> :
+                <div className={styles.readOnlyText}>
+                  <span className={styles.feedbackTypeL1}>{feedbackTypeL1Text}</span>
+                  <span className={styles.feedbackTypeL2}>{feedbackTypeL2Text}</span>
+                </div>
+            }
           </div>
           <div className={styles.feedbackTime}>
             <div className={styles.title}>反馈时间:</div>
-            <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
-              <DatePicker
-                style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
-                {...feedbackTimeProps}
-                defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                getCalendarContainer={() => this.feedbackTimeRef}
-              />
-            </div>
+            {
+              !isReadOnly ?
+                <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
+                  <DatePicker
+                    style={width}
+                    {...feedbackTimeProps}
+                    defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                    getCalendarContainer={() => this.feedbackTimeRef}
+                  />
+                </div> :
+                <div className={styles.readOnlyText}>
+                  {moment(CURRENT_DATE, showDateFormat).format(showDateFormat)}
+                </div>
+            }
           </div>
         </div>
 
