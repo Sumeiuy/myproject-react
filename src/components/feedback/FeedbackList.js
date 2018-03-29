@@ -274,7 +274,9 @@ export default class FeedbackList extends PureComponent {
           className="feedbackTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}

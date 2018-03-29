@@ -281,7 +281,9 @@ export default class LeftPanel extends PureComponent {
           className="leftPanelTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}
