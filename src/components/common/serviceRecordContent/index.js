@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 17:32:28
+ * @Last Modified time: 2018-03-29 17:41:35
  */
 
 
@@ -161,15 +161,8 @@ export default class ServiceRecordContent extends PureComponent {
   getData() {
     const { serviceStatus, serviceContent } = this.state;
 
-    let isShowServiceContentError = false;
-    let isShowServeStatusError = false;
-    if (!serviceContent || serviceContent.length > 1000) {
-      isShowServiceContentError = true;
-    }
-
-    if (!serviceStatus) {
-      isShowServeStatusError = true;
-    }
+    const isShowServiceContentError = !serviceContent || serviceContent.length > 1000;
+    const isShowServeStatusError = !serviceStatus;
 
     this.setState({
       isShowServeStatusError,
@@ -550,6 +543,9 @@ export default class ServiceRecordContent extends PureComponent {
   handleServiceRecordInputChange(e) {
     const value = e.target.value;
     if (!_.isEmpty(value) && value.length > 1000) {
+      this.setState({
+        isShowServiceContentError: true,
+      });
       return;
     }
     this.setState({
