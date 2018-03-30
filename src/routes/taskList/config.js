@@ -8,16 +8,25 @@ const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
-// 50代表执行中
-// 60代表结果跟踪
-// 70代表结束
-const EXECUTE_STATE = '50';
-const RESULT_TRACK_STATE = '60';
-const COMPLETED_STATE = '70';
-const MANAGER_VIEW_STATUS = [
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
+const STATE_PROCESSING_CODE = '10'; // 审批中编号
+const STATE_REJECT_CODE = '20'; // 驳回编号
+const STATE_CLOSE_CODE = '30'; // 终止编号
+const STATE_WAITEXECUTE_CODE = '40'; // 等待执行编号
+const STATE_EXECUTE_CODE = '50'; // 执行中编号
+const STATE_RESULTTRACK_CODE = '60'; // 结果跟踪编号
+const STATE_FINISHED_CODE = '70'; // 结束编号
+const STATE_COMPLETED_CODE = '80'; // 已完成编号
+const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
+const STATUS_MANAGER_VIEW = [
+  STATE_EXECUTE_CODE,
+  STATE_RESULTTRACK_CODE,
+  STATE_FINISHED_CODE,
+];
+const STATUS_EXECUTOR_VIEW = [
+  STATE_EXECUTE_CODE,
+  STATE_RESULTTRACK_CODE,
+  STATE_FINISHED_CODE,
+  STATE_COMPLETED_CODE,
 ];
 
 const chooseMissionView = [
@@ -38,6 +47,9 @@ const chooseMissionView = [
   },
 ];
 
+// 添加服务记录时，入参服务状态完成的编号,
+const POSTCOMPLETED_CODE = '30';
+
 const currentDate = moment(new Date());
 const beforeCurrentDate60Days = moment(currentDate).subtract(60, 'days');
 const afterCurrentDate60Days = moment(currentDate).add(60, 'days');
@@ -51,9 +63,17 @@ export default {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
-  MANAGER_VIEW_STATUS,
+  STATE_PROCESSING_CODE,
+  STATE_REJECT_CODE,
+  STATE_CLOSE_CODE,
+  STATE_WAITEXECUTE_CODE,
+  STATE_EXECUTE_CODE,
+  STATE_RESULTTRACK_CODE,
+  STATE_FINISHED_CODE,
+  STATE_COMPLETED_CODE,
+  STATE_COMPLETED_NAME,
+  STATUS_MANAGER_VIEW,
+  STATUS_EXECUTOR_VIEW,
   SYSTEMCODE,
+  POSTCOMPLETED_CODE,
 };

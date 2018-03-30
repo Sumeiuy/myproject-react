@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:43
+ * @Last Modified time: 2018-03-29 10:03:27
  */
 
 import React, { PureComponent } from 'react';
@@ -24,8 +24,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const FormItem = Form.Item;
-// withRef 拿到被包裹的wrappedComponent
-@Form.create({ withRef: true })
+
+@Form.create()
 export default class CustomerGroupDetail extends PureComponent {
   static propTypes = {
     detailData: PropTypes.object,

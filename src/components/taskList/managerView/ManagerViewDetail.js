@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-23 10:01:55
+ * @Last Modified time: 2018-03-29 09:07:42
  * 管理者视图详情
  */
 
@@ -19,7 +19,7 @@ import Button from '../../common/Button';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/createTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
@@ -103,14 +103,17 @@ export default class ManagerViewDetail extends PureComponent {
     super(props);
     this.state = {
       isShowCustDetailModal: false,
-      title: '已反馈客户',
       missionProgressStatus: '',
       progressFlag: '',
-      canLaunchTask: true,
+      canLaunchTask: false,
       isEntryFromProgressDetail: false,
+      isEntryFromCustTotal: false,
+      isEntryFromPie: false,
       currentFeedback: EMPTY_LIST,
-      feedBackIdL1: '',
+      feedbackIdL1: '',
       destroyOnClose: false,
+      feedbackIdL2: '',
+      isEntryFromResultStatisfy: false,
     };
   }
 
@@ -172,76 +175,90 @@ export default class ManagerViewDetail extends PureComponent {
     const {
       // 一二级客户反馈
       currentFeedback,
-      // 当前选中的反馈
-      currentSelectFeedback = {},
-      title,
-      pageNum,
-      pageSize,
-      missionProgressStatus,
-      progressFlag,
-      canLaunchTask,
+      // 当前选中的一级客户反馈
+      feedbackIdL1 = '',
+      // 当前选中的二级客户反馈
+      feedbackIdL2 = '',
+      pageNum = INITIAL_PAGE_NUM,
+      pageSize = INITIAL_PAGE_SIZE,
+      missionProgressStatus = '',
+      progressFlag = '',
+      canLaunchTask = false,
+      // 当前入口是从客户总数来的
+      isEntryFromCustTotal = false,
       // 当前入口是否从进度条过来
       isEntryFromProgressDetail = false,
       // 当前入口是否从饼图过来
       isEntryFromPie = false,
+      // 当前入口是从进度条的结果达标过来的
+      isEntryFromResultStatisfy = false,
     } = params;
     const { previewCustDetail, currentId } = this.props;
 
-    const {
-      title: nextTitle,
-      missionProgressStatus: nextStatus,
-      progressFlag: nextFlag,
-      feedBackIdL1: nextFeedBackIdL1,
-    } = this.state;
-
     let postBody = {
-      pageNum: pageNum || INITIAL_PAGE_NUM,
-      pageSize: pageSize || INITIAL_PAGE_SIZE,
+      pageNum,
+      pageSize,
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
     };
 
-    const { feedBackIdL1, feedbackTitle } = currentSelectFeedback;
-    let newTitle = '';
-    if (isEntryFromPie) {
-      newTitle = feedbackTitle || nextTitle;
-    } else if (isEntryFromProgressDetail) {
-      newTitle = title || nextTitle;
-    }
-
+    // 进度条下钻的入参
     const progressParam = {
-      missionProgressStatus: missionProgressStatus || nextStatus,
-      progressFlag: progressFlag || nextFlag,
-      title: newTitle,
+      missionProgressStatus,
+      progressFlag,
       queryType: SERVE_CUSTS,
     };
 
+    // 饼下钻图的入参
     const pieParam = {
-      feedBackIdL1: feedBackIdL1 || nextFeedBackIdL1,
+      // 后端字母拼错了
+      feedBackIdL1: feedbackIdL1,
+      feedBackIdL2: feedbackIdL2,
       queryType: MOT_FEEDBACK_CUSTS,
-      title: newTitle,
+    };
+
+    // 客户总数下钻的入参
+    const totalCustParam = {
+      queryType: SERVE_CUSTS,
+      // 客户总数一进来，默认一二级客户反馈都是空
+      feedBackIdL1: feedbackIdL1,
+      feedBackIdL2: feedbackIdL2,
     };
 
     if (isEntryFromProgressDetail) {
       postBody = {
         ...postBody,
-        ..._.omit(progressParam, 'title'),
+        ...progressParam,
       };
     }
 
     if (isEntryFromPie) {
       postBody = {
         ...postBody,
-        ..._.omit(pieParam, 'title'),
+        ...pieParam,
+      };
+    }
+
+    if (isEntryFromCustTotal) {
+      postBody = {
+        ...postBody,
+        ...totalCustParam,
       };
     }
 
     this.setState({
       ...progressParam,
       ...pieParam,
+      ...totalCustParam,
       isEntryFromProgressDetail,
       isEntryFromPie,
-      // 所有一级反馈
+      isEntryFromCustTotal,
+      isEntryFromResultStatisfy,
+      canLaunchTask,
+      feedbackIdL1,
+      feedbackIdL2,
+      // 所有一级二级反馈
+      // 添加客户反馈，所有反馈
       currentFeedback,
     });
 
@@ -251,7 +268,6 @@ export default class ManagerViewDetail extends PureComponent {
       this.setState({
         isShowCustDetailModal: true,
         destroyOnClose: false,
-        canLaunchTask: (isEntryFromProgressDetail || isEntryFromPie) ? true : canLaunchTask,
       });
     });
   }
@@ -271,11 +287,11 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryId = '';
     let currentRoute = '';
     if (isEntryFromPie) {
-      currentEntryName = entrySource.pie;
+      currentEntryName = PIE_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
     } else if (isEntryFromProgressDetail) {
-      currentEntryName = entrySource.progress;
+      currentEntryName = PROGRESS_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
     }
@@ -299,7 +315,8 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag,
       isEntryFromProgressDetail,
       isEntryFromPie,
-      feedBackIdL1,
+      feedbackIdL1,
+      feedbackIdL2,
     } = this.state;
     const { page = {} } = custDetailResult || EMPTY_OBJECT;
     const totalCustNumber = page.totalCount || 0;
@@ -327,8 +344,8 @@ export default class ManagerViewDetail extends PureComponent {
         ...progressParam,
         progressFlag: newProgressFlag,
         // 来自不同的入口，entrance和source不一样
-        entrance: entrySource.progress,
-        source: entrySource.progress,
+        entrance: PROGRESS_ENTRY,
+        source: PROGRESS_ENTRY,
       };
     }
 
@@ -336,10 +353,11 @@ export default class ManagerViewDetail extends PureComponent {
     // 如果是来自客户反馈饼图
     if (isEntryFromPie) {
       pieParam = {
-        feedBackIdL1,
+        feedBackIdL1: feedbackIdL1,
+        feedBackIdL2: feedbackIdL2,
         // 来自不同的入口，entrance和source不一样
-        entrance: entrySource.pie,
-        source: entrySource.pie,
+        entrance: PIE_ENTRY,
+        source: PIE_ENTRY,
       };
     }
 
@@ -387,10 +405,37 @@ export default class ManagerViewDetail extends PureComponent {
 
   @autobind
   renderTotalCust() {
-    const { mngrMissionDetailInfo = {} } = this.props;
+    const { mngrMissionDetailInfo = {}, custFeedback } = this.props;
     const { custNumbers = 0 } = mngrMissionDetailInfo;
+    // 构造一二级客户反馈
+    let currentFeedback = _.map(custFeedback, item => ({
+      feedbackIdL1: item.key,
+      feedbackName: item.name,
+      childList: _.map(item.children, child => ({
+        feedbackIdL2: child.key,
+        feedbackName: child.name,
+      })),
+    }));
+
+    // 添加默认选中项，所有
+    currentFeedback = _.concat([{
+      feedbackIdL1: '',
+      feedbackName: '所有反馈',
+      childList: [{
+        feedbackIdL2: '',
+        feedbackName: '所有反馈',
+      }],
+    }], currentFeedback);
+
     return (
-      <div className={styles.custValue}>
+      <div
+        className={styles.custValue}
+        onClick={() => this.handlePreview({
+          isEntryFromCustTotal: true,
+          canLaunchTask: false,
+          currentFeedback,
+        })}
+      >
         <div
           className={styles.totalNum}
         >
@@ -429,13 +474,17 @@ export default class ManagerViewDetail extends PureComponent {
 
     const {
       isShowCustDetailModal,
-      title,
       canLaunchTask,
       isEntryFromProgressDetail,
       isEntryFromPie,
+      isEntryFromCustTotal,
       currentFeedback,
-      feedBackIdL1,
+      feedbackIdL1,
       destroyOnClose,
+      missionProgressStatus,
+      progressFlag,
+      feedbackIdL2,
+      isEntryFromResultStatisfy,
     } = this.state;
 
     const {
@@ -456,6 +505,11 @@ export default class ManagerViewDetail extends PureComponent {
       // orgName,
       templateId,
     } = mngrMissionDetailInfo;
+
+    const {
+      // 已服务客户
+      servedNums = 0,
+    } = missionImplementationDetail || EMPTY_OBJECT;
 
     const { list = EMPTY_LIST } = custDetailResult || EMPTY_OBJECT;
     const isDisabled = _.isEmpty(list);
@@ -572,7 +626,6 @@ export default class ManagerViewDetail extends PureComponent {
                       ref={ref => (this.custDetailRef = ref)}
                       getCustDetailData={this.handlePreview}
                       data={custDetailResult}
-                      title={title}
                       onClose={this.handleCloseModal}
                       hideCustDetailModal={this.hideCustDetailModal}
                       push={push}
@@ -585,9 +638,21 @@ export default class ManagerViewDetail extends PureComponent {
                       // scrollTop恢复
                       scrollModalBodyToTop={this.scrollModalBodyToTop}
                       // 当前一级二级反馈
-                      currentFilter={currentFeedback}
+                      currentFeedback={currentFeedback}
                       // 当前选中的一级反馈条件
-                      currentSelectFeedback={feedBackIdL1}
+                      feedbackIdL1={feedbackIdL1}
+                      // 当前选中的二级级反馈条件
+                      feedbackIdL2={feedbackIdL2}
+                      // 代表是从客户总数过来的
+                      isEntryFromCustTotal={isEntryFromCustTotal}
+                      // 是否可以发起任务
+                      canLaunchTask={canLaunchTask}
+                      missionProgressStatus={missionProgressStatus}
+                      progressFlag={progressFlag}
+                      // 是否显示客户反馈筛选，只有已服务客户总数大于0，才需要展示客户反馈
+                      isShowFeedbackFilter={servedNums > 0}
+                      // 结果达标进度条下钻标记
+                      isEntryFromResultStatisfy={isEntryFromResultStatisfy}
                     />
                   }
                   modalStyle={{
