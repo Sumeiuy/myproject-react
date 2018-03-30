@@ -81,12 +81,12 @@ export default class TargetCustomerRight extends PureComponent {
    * @param {*boolean} forceRefresh 是否需要强制刷新
    */
   @autobind
-  getTabConfig(id, title, forceRefresh = false, activeSubTab = []) {
+  get360FspTabConfig(activeSubTab = {}) {
     return {
-      id,
-      title,
-      activeSubTab,
-      forceRefresh,
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+      ...activeSubTab,
     };
   }
 
@@ -109,15 +109,7 @@ export default class TargetCustomerRight extends PureComponent {
 
   @autobind
   handleSeeMoreClick(itemData) {
-    const param = this.getTabConfig(
-      'FSP_360VIEW_M_TAB',
-      '客户360视图-客户信息',
-      // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，
-      // 360视图不会刷新，且React界面如果有弹框存在，不会消失
-      true,
-      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
-      ['服务记录'],
-    );
+    const param = this.get360FspTabConfig({ activeSubTab: ['服务记录'] });
     this.openFsp360TabAction({ itemData, param });
   }
 
@@ -146,11 +138,7 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   handleCustNameClick(itemData) {
-    const param = this.getTabConfig(
-      'FSP_360VIEW_M_TAB',
-      '客户360视图-客户信息',
-      true,
-    );
+    const param = this.get360FspTabConfig();
     this.openFsp360TabAction({ itemData, param });
   }
 
