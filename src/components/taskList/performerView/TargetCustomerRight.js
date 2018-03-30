@@ -81,12 +81,12 @@ export default class TargetCustomerRight extends PureComponent {
    * @param {*boolean} forceRefresh 是否需要强制刷新
    */
   @autobind
-  get360FspTabConfig(activeSubTab = {}) {
+  get360FspTabConfig(activeSubTab = []) {
     return {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
       forceRefresh: true,
-      ...activeSubTab,
+      activeSubTab,
     };
   }
 
@@ -109,7 +109,7 @@ export default class TargetCustomerRight extends PureComponent {
 
   @autobind
   handleSeeMoreClick(itemData) {
-    const param = this.get360FspTabConfig({ activeSubTab: ['服务记录'] });
+    const param = this.get360FspTabConfig(['服务记录']);
     this.openFsp360TabAction({ itemData, param });
   }
 
