@@ -123,7 +123,6 @@ export default class TaskFormFlowStep extends PureComponent {
     } = this.props;
     const postBody = {
       ...this.parseParam(),
-      postnId: emp.getPstnId(),
     };
 
     if (!_.includes(returnTaskEntrySource, source)) {

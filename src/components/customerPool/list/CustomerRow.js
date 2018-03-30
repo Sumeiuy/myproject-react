@@ -125,7 +125,6 @@ export default class CustomerRow extends PureComponent {
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
   }
 

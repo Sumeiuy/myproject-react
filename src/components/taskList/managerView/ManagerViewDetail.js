@@ -84,7 +84,6 @@ export default class ManagerViewDetail extends PureComponent {
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
@@ -464,7 +463,6 @@ export default class ManagerViewDetail extends PureComponent {
       missionFeedbackCount,
       serveManagerCount,
       push,
-      isCustServedByPostn,
       custServedByPostnResult,
       currentId,
       missionReport,
@@ -629,7 +627,6 @@ export default class ManagerViewDetail extends PureComponent {
                       onClose={this.handleCloseModal}
                       hideCustDetailModal={this.hideCustDetailModal}
                       push={push}
-                      isCustServedByPostn={isCustServedByPostn}
                       custServedByPostnResult={custServedByPostnResult}
                       // 代表是否是从进度条点击的
                       isEntryFromProgressDetail={isEntryFromProgressDetail}
