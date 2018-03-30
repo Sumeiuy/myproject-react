@@ -125,7 +125,7 @@ export default class TabsExtra extends PureComponent {
   }
 
   // 空方法，用于日志上传
-  @logable({ type: 'Click', payload: { name: '下载' } })
+  @logable({ type: 'Click', payload: { name: '导出' } })
   handleDownloadClick() {}
 
   render() {
