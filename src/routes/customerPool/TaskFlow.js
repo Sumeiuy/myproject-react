@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 09:54:41
+ * @Last Modified time: 2018-03-30 16:04:00
  */
 
 import React, { PureComponent } from 'react';
@@ -249,7 +249,7 @@ export default class TaskFlow extends PureComponent {
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
       shouldclearBottomLabel: false,
-      clearFromSearch: true,
+      clearFromSearch: _.isEmpty(props.storedTaskFlowData),
       currentSelectLabelName: null,
       currentFilterNum: 0,
     };
