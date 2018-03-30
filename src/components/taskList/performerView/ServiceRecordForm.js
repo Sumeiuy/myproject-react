@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 13:19:26
+ * @Last Modified time: 2018-03-30 14:50:57
  * 服务记录表单
  */
 
@@ -28,7 +28,6 @@ export default class ServiceRecordForm extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    reloadTargetCustInfo: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
   }
 
@@ -40,6 +39,11 @@ export default class ServiceRecordForm extends PureComponent {
 
   @autobind
   handleSubmit() {
+    const data = this.serviceRecordContentRef.getData();
+    if (!data) {
+      return;
+    }
+
     const {
       serviceWay,
       serviceType,
@@ -51,23 +55,13 @@ export default class ServiceRecordForm extends PureComponent {
       serviceStatus,
       serviceContent,
       currentFile,
-    } = this.serviceRecordContentRef.getData();
+    } = data;
 
     const {
       formData: { custId = '', missionFlowId = '' },
       addServeRecord,
       custUuid,
     } = this.props;
-    this.serviceRecordContentRef.requiredDataValidate();
-    if (!serviceContent) {
-      // message.error('请输入此次服务的内容');
-      return;
-    }
-
-    if (serviceContent.length > 1000) {
-      // message.error('服务的内容字数不能超过1000');
-      return;
-    }
     const postBody = {
       // 经纪客户号
       custId,
@@ -145,7 +139,7 @@ export default class ServiceRecordForm extends PureComponent {
             <div className={styles.operationSection}>
               <Button
                 className={styles.submitBtn}
-                onClick={this.handleSubmit}
+                onClick={_.debounce(this.handleSubmit, 300)}
                 type="primary"
               >
                 提交</Button>

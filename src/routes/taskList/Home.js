@@ -30,9 +30,7 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  EXECUTE_STATE,
-  RESULT_TRACK_STATE,
-  COMPLETED_STATE,
+  STATUS_MANAGER_VIEW,
   SYSTEMCODE,
 } from './config';
 import {
@@ -41,6 +39,7 @@ import {
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+const NOOP = _.noop;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const LEFT_PANEL_WIDTH = 400;
 const {
@@ -103,13 +102,13 @@ const effects = {
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
-  // 查看是否是自己名下的客户
-  isCustServedByPostn: 'customerPool/isCustServedByPostn',
   exportCustListExcel: 'managerView/exportCustListExcel',
   // 生成mot任务实施简报
   createMotReport: 'managerView/createMotReport',
   // 获取生成报告的信息
   queryMOTServeAndFeedBackExcel: 'managerView/queryMOTServeAndFeedBackExcel',
+  // 修改左侧列表的任务状态
+  modifyLocalTaskList: 'performerView/modifyLocalTaskList',
 };
 
 const mapStateToProps = state => ({
@@ -216,11 +215,10 @@ const mapDispatchToProps = {
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
   countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
-  // 查询是否包含本人名下客户
-  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
   createMotReport: fetchDataFunction(true, effects.createMotReport),
   queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
+  modifyLocalTaskList: fetchDataFunction(false, effects.modifyLocalTaskList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -286,12 +284,12 @@ export default class PerformerView extends PureComponent {
     missionFeedbackCount: PropTypes.number.isRequired,
     countExamineeByType: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     exportCustListExcel: PropTypes.func.isRequired,
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    modifyLocalTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -423,15 +421,17 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', callback }) {
+  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = [] } = targetCustList;
     if (_.isEmpty(list)) {
       return;
     }
+    const firstItem = list[0] || EMPTY_OBJECT;
     queryTargetCustDetail({
       missionId,
-      custId: custId || (list[0] || EMPTY_OBJECT).custId,
+      custId: custId || firstItem.custId,
+      missionFlowId: missionFlowId || firstItem.missionFlowId,
     }).then(callback);
   }
 
@@ -471,6 +471,10 @@ export default class PerformerView extends PureComponent {
         if (this.judgeTaskInApproval(statusCode)) {
           this.loadManagerViewDetailContent(record, st);
         } else {
+          // 将创建者视图的flowId存起来，供驳回修改跳转使用
+          this.setState({
+            flowId,
+          });
           getTaskBasicInfo({
             flowId,
             systemCode: SYSTEMCODE,
@@ -569,12 +573,13 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
-      isCustServedByPostn,
       custServedByPostnResult,
       missionReport,
       createMotReport,
       queryMOTServeAndFeedBackExcel,
       list = {},
+      modifyLocalTaskList,
+      getTaskDetailBasicInfo,
     } = this.props;
     const [firstItem = {}] = list.resultData;
     const {
@@ -588,14 +593,10 @@ export default class PerformerView extends PureComponent {
       statusCode,
       isTaskFeedbackListOfNone,
       isSourceFromCreatorView,
+      flowId,
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
-    // 选出一级客户反馈
-    const currentFeedback = _.map(taskFeedbackList, item => ({
-      feedBackIdL1: String(item.id),
-      feedbackName: String(item.name),
-    }));
 
     switch (st) {
       case INITIATOR:
@@ -626,13 +627,10 @@ export default class PerformerView extends PureComponent {
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
             serveManagerCount={empNum}
-            isCustServedByPostn={isCustServedByPostn}
             custServedByPostnResult={custServedByPostnResult}
             missionReport={missionReport}
             createMotReport={createMotReport}
             queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
-            // 一二级所有的客户反馈
-            currentFeedback={currentFeedback}
           />);
         } else {
           detailComponent = (
@@ -640,6 +638,10 @@ export default class PerformerView extends PureComponent {
               onPreview={this.handlePreview}
               priviewCustFileData={priviewCustFileData}
               taskBasicInfo={{ ...taskBasicInfo, currentId: this.getCurrentId() }}
+              flowId={flowId}
+              push={push}
+              location={location}
+              clearCreateTaskData={clearCreateTaskData}
             />
           );
         }
@@ -680,6 +682,8 @@ export default class PerformerView extends PureComponent {
             saveAnswersSucce={saveAnswersSucce}
             attachmentList={attachmentList}
             isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
+            modifyLocalTaskList={modifyLocalTaskList}
+            getTaskDetailBasicInfo={getTaskDetailBasicInfo}
           />
         );
         break;
@@ -709,13 +713,10 @@ export default class PerformerView extends PureComponent {
           missionFeedbackData={missionFeedbackData}
           missionFeedbackCount={missionFeedbackCount}
           serveManagerCount={empNum}
-          isCustServedByPostn={isCustServedByPostn}
           custServedByPostnResult={custServedByPostnResult}
           missionReport={missionReport}
           createMotReport={createMotReport}
           queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
-          // 一二级所有的客户反馈
-          currentFeedback={currentFeedback}
         />);
         break;
       default:
@@ -769,7 +770,7 @@ export default class PerformerView extends PureComponent {
 
   @autobind
   judgeTaskInApproval(status) {
-    return _.includes([EXECUTE_STATE, RESULT_TRACK_STATE, COMPLETED_STATE], status);
+    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 导出客户
@@ -965,6 +966,7 @@ export default class PerformerView extends PureComponent {
         query: {
           ...query,
           ...otherQuery,
+          currentId: '',
           pageNum: 1,
         },
       });

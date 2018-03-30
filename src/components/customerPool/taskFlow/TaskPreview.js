@@ -93,13 +93,13 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList = EMPTY_LIST,
       isShowApprovalModal,
-     } = this.props;
+    } = this.props;
     const {
       approvalList: nextData = EMPTY_LIST,
       isShowApprovalModal: nextApprovalModal,
       currentSelectRecord,
       currentSelectRowKeys,
-     } = nextProps;
+    } = nextProps;
 
     if (approvalList !== nextData) {
       // 审批人数据
@@ -299,10 +299,11 @@ export default class TaskPreview extends PureComponent {
       custNum,
       // originFileName,
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -358,7 +359,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable,
       titleColumn,
       dataSize,
-     } = this.state;
+    } = this.state;
 
     const { empName = '' } = currentSelectRecord;
 
@@ -439,11 +440,19 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div>{serviceStrategySuggestion || '--'}</div>
+              <div
+                dangerouslySetInnerHTML={{ __html: serviceStrategyHtml || '--' }}
+              />
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
+              {
+                !_.isEmpty(templetDesc) ?
+                  <div
+                    dangerouslySetInnerHTML={{ __html: templeteDescHtml }}
+                  /> :
+                  <div>--</div>
+              }
             </div>
           </div>
         </div>

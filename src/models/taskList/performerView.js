@@ -5,6 +5,10 @@
  */
 import _ from 'lodash';
 import { performerView as api, customerPool as custApi } from '../../api';
+import {
+  STATE_COMPLETED_NAME,
+  STATE_COMPLETED_CODE,
+} from '../../routes/taskList/config';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
@@ -167,6 +171,41 @@ export default {
         customerList: custBriefInfoDTOList || [],
       };
     },
+    modifyLocalTaskList(state, action) {
+      const { resultData } = state.taskList;
+      const { missionId } = action.payload;
+      const newList = _.map(resultData, (item) => {
+        // 添加服务记录时服务状态选择的时完成，完成的状态码时30
+        if (item.id === missionId) {
+          // 添加成功一条服务状态为完成的记录，则该条数据的已完成数量加一
+          const curentDoneFlowNum = item.doneFlowNum + 1;
+          // 已完成数量和总数量相等
+          if (curentDoneFlowNum === item.flowNum) {
+            // 未到期：当前时间小于结束时间
+            if (Date.now() <= new Date(item.processTime).getTime()) {
+              // 当前选中任务项的已完成数量和总数量相等且任务未过期时，将本地存储的任务列表中的此条任务状态修改为已完成，且此条数据的已完成数量加一
+              return {
+                ...item,
+                statusName: STATE_COMPLETED_NAME,
+                statusCode: STATE_COMPLETED_CODE,
+                doneFlowNum: curentDoneFlowNum,
+              };
+            }
+          } else {
+            // 当前选中任务项的已完成数量和总数量不相等时，将本地存储的任务列表中的此条任务的已完成数量加一
+            return { ...item, doneFlowNum: curentDoneFlowNum };
+          }
+        }
+        return item;
+      });
+      return {
+        ...state,
+        taskList: {
+          ...state.taskList,
+          resultData: newList,
+        },
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -191,8 +230,6 @@ export default {
 
     // 执行者视图的详情基本信息
     * getTaskDetailBasicInfo({ payload }, { call, put }) {
-      // 清除查询上次目标客户列表的条件
-      yield put({ type: 'clearParameter' });
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, payload);
       if (resultData) {
         yield put({
@@ -204,6 +241,8 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
+      // 清除查询上次目标客户列表的条件
+      yield put({ type: 'clearParameter' });
       const { resultData } = yield call(api.queryTargetCust, payload);
       if (resultData) {
         yield put({
@@ -212,11 +251,13 @@ export default {
         });
         const { list = EMPTY_LIST } = resultData;
         if (!_.isEmpty(list)) {
+          const firstItem = list[0] || EMPTY_OBJ;
           yield put({
             type: 'queryTargetCustDetail',
             payload: {
               missionId: payload.missionId,
-              custId: (list[0] || EMPTY_OBJ).custId,
+              custId: firstItem.custId,
+              missionFlowId: firstItem.missionFlowId,
             },
           });
         }

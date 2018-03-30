@@ -12,6 +12,7 @@ import { message } from 'antd';
 
 import TargetCustomer from './TargetCustomer';
 import ServiceRecordForm from './ServiceRecordForm';
+import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 
 // 客户任务所处未开始和处理中时服务记录可编辑
 // 处理中 20
@@ -79,13 +80,25 @@ export default class ServiceImplementation extends PureComponent {
       addServeRecord,
       reloadTargetCustInfo,
       queryCustUuid,
+      modifyLocalTaskList,
+      currentId,
+      getTaskDetailBasicInfo,
     } = this.props;
     // 执行提交服务记录的接口
     addServeRecord(postBody)
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新获取目标客户列表的信息
-          reloadTargetCustInfo(() => this.updateList(postBody, callback));
+          // 服务记录添加成功后重新加载当前目标客户的详细信息
+          reloadTargetCustInfo(() => {
+            this.updateList(postBody, callback);
+            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
+            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
+              // 重新加载基本信息
+              getTaskDetailBasicInfo({ taskId: currentId });
+              // 更新新左侧列表
+              modifyLocalTaskList({ missionId: currentId });
+            }
+          });
           // 添加服务记录成功之后，重新获取custUuid
           queryCustUuid();
           // this.updateList(postBody);
@@ -155,7 +168,6 @@ export default class ServiceImplementation extends PureComponent {
       deleteFileResult,
       taskFeedbackList,
       addMotServeRecordSuccess,
-      reloadTargetCustInfo,
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
@@ -253,7 +265,6 @@ export default class ServiceImplementation extends PureComponent {
               ceFileDelete={ceFileDelete}
               deleteFileResult={deleteFileResult}
               addMotServeRecordSuccess={addMotServeRecordSuccess}
-              reloadTargetCustInfo={reloadTargetCustInfo}
               getCeFileList={getCeFileList}
             /> : null
         }
@@ -292,6 +303,8 @@ ServiceImplementation.propTypes = {
   attachmentList: PropTypes.array.isRequired,
   statusCode: PropTypes.string,
   isTaskFeedbackListOfNone: PropTypes.bool,
+  modifyLocalTaskList: PropTypes.func.isRequired,
+  getTaskDetailBasicInfo: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

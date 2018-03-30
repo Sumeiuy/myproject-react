@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { Form, Select, Input, Mention, InputNumber } from 'antd';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
+import { stateToHTML } from 'draft-js-export-html';
 import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
@@ -16,7 +17,6 @@ import styles from './createTaskForm.less';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
-const { TextArea } = Input;
 const { toContentState, toString } = Mention;
 const Nav = Mention.Nav;
 
@@ -74,6 +74,7 @@ export default class TaskFormInfo extends PureComponent {
     super(props);
     // 用来处理页面一进来会触发mentionChange事件
     this.isFirstLoad = true;
+    this.isServiceFirstLoad = true;
     // 找到默认任务类型的子类型集合
     const currentTaskSubTypeCollection = this.getCurrentTaskSubTypes(props.defaultMissionType);
     const {
@@ -168,7 +169,10 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  getData() {
+  getData(isStateData) {
+    if (isStateData) {
+      return this.state.currentMention;
+    }
     return toString(this.state.currentMention);
   }
 
@@ -176,8 +180,13 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = toString(contentState);
-      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
+      const content = stateToHTML(contentState);
+      // content即使是空字符串经过stateToHTML方法也会变成带有标签的字符串，所以得用转成字符串之后的值来进行非空判断
+      const contentString = toString(contentState);
+      // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+      if (_.isEmpty(contentString)
+          || content.length < MIN_LENGTH
+          || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -246,6 +255,11 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  handleServiceMentionBlur() {
+    this.isServiceFirstLoad = false;
+  }
+
+  @autobind
   handleIntervalValueChange(value) {
     const isShowErrorIntervalValue = !regxp.positiveInteger.test(value)
       || Number(value) <= 0
@@ -264,12 +278,16 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  handleStrategySuggestionChange(e) {
-    const value = e.target.value;
-    this.setState({
-      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
+  handleStrategySuggestionChange() {
+    if (!this.isServiceFirstLoad) {
+      const { getFieldValue } = this.props.form;
+      const StrategySuggestion = getFieldValue('serviceStrategySuggestion');
+      const value = toString(StrategySuggestion);
+      this.setState({
+        isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
         || value.length > MAX_LENGTH,
-    });
+      });
+    }
   }
 
   handleCreatOptions(data) {
@@ -293,6 +311,7 @@ export default class TaskFormInfo extends PureComponent {
   renderMention() {
     const { defaultMissionDesc } = this.props;
     const { suggestions } = this.state;
+
     return (
       <div className={styles.wrapper}>
         <Mention
@@ -525,16 +544,16 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem
             {...serviceStrategySuggestionErrorProps}
           >
-            {getFieldDecorator('serviceStrategySuggestion',
-              {
-                initialValue: defaultServiceStrategySuggestion,
-              })(<TextArea
-                id="desc"
-                rows={5}
+            {getFieldDecorator('serviceStrategySuggestion', {
+              initialValue: toContentState(defaultServiceStrategySuggestion),
+            })(
+              <Mention
+                mentionStyle={mentionTextStyle}
+                style={{ width: '100%', height: 100 }}
                 placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
-                style={{ width: '100%' }}
-                maxLength={MAX_LENGTH}
+                multiLines
                 onChange={this.handleStrategySuggestionChange}
+                onBlur={this.handleServiceMentionBlur}  // 处理首次进入触发onChange
               />,
             )}
           </FormItem>

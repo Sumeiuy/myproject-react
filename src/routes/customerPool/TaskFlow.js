@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-29 13:58:05
+ * @Last Modified time: 2018-03-30 17:29:10
  */
 
 import React, { PureComponent } from 'react';
@@ -10,9 +10,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button } from 'antd';
+import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -31,6 +32,7 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const { toString } = Mention;
 
 const effects = {
   // 预览客户细分数据
@@ -62,8 +64,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-    timelyIntervalValue,
-    taskName,
+      timelyIntervalValue,
+      taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -264,7 +266,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
       getFiltersOfSightingTelescopeLoading,
-     } = this.props;
+    } = this.props;
     const {
       submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
@@ -441,9 +443,7 @@ export default class TaskFlow extends PureComponent {
         }
       }
 
-      let postBody = {
-        postnId: emp.getPstnId(),
-      };
+      let postBody = {};
 
       // 当前tab是第一个，则代表导入客户
       if (currentEntry === 0) {
@@ -502,7 +502,6 @@ export default class TaskFlow extends PureComponent {
               needApproval,
               canGoNextStep,
               needMissionInvestigation,
-              currentEntry,
               current: current + 1,
             });
           }
@@ -523,13 +522,26 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
+        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
+        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
+        const serviceStrategyString = toString(serviceStateData);
+        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
+        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
 
-        const formDataValidation = this.checkFormField({ ...values, isFormError });
+        const formDataValidation =
+          this.checkFormField({
+            ...values,
+            isFormError,
+            serviceStrategySuggestion: serviceStrategyHtml,
+          });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
+            serviceStrategySuggestion: serviceStrategyString,
+            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
@@ -539,8 +551,12 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+
+      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
+      if (_.isEmpty(templetDesc)
+          || templeteDescHtml.length < 10 
+          || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -703,15 +719,9 @@ export default class TaskFlow extends PureComponent {
     const { storedTaskFlowData, templateId } = this.props;
     const {
       currentSelectRecord: { login: flowAuditorId = null },
-      currentEntry,
       needApproval,
       needMissionInvestigation,
     } = this.state;
-
-    if (_.isEmpty(flowAuditorId) && needApproval) {
-      message.error('任务需要审批，请选择审批人');
-      return;
-    }
 
     const {
       taskFormData = EMPTY_OBJECT,
@@ -719,7 +729,13 @@ export default class TaskFlow extends PureComponent {
       custSegment = EMPTY_OBJECT,
       resultTrackData,
       missionInvestigationData,
+      currentEntry,
     } = storedTaskFlowData;
+
+    if (_.isEmpty(flowAuditorId) && needApproval) {
+      message.error('任务需要审批，请选择审批人');
+      return;
+    }
 
     let finalData = {};
     finalData = {
@@ -735,11 +751,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       labelId,
-      templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -768,10 +784,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
       taskName,
       taskType,
-      templetDesc,
+      templetDesc: templeteDescHtml, // 转换成html提交
       timelyIntervalValue,
     };
 
@@ -1013,6 +1029,9 @@ export default class TaskFlow extends PureComponent {
       submitBtnIsDisabled,
     } = this.state;
 
+    // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
+    const finalSubmitBtnIsDisabled = needApproval ? submitBtnIsDisabled : needApproval;
+
     const {
       dict,
       dict: { executeTypes, missionType },
@@ -1195,7 +1214,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.confirmBtn}
                 type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                disabled={submitBtnIsDisabled}
+                disabled={finalSubmitBtnIsDisabled}
               >
                 确认无误，提交
               </Button>

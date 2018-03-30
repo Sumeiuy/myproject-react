@@ -9,7 +9,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, message } from 'antd';
 import _ from 'lodash';
-
+import {
+  RETURN_TASK_FROM_TODOLIST,
+} from '../../../config/createTaskEntry';
 import { openRctTab } from '../../../utils';
 import styles from './toDoList.less';
 
@@ -137,7 +139,7 @@ export default class ToDoList extends PureComponent {
     const flowData = _.find(data, ['id', Number(flowId)]);
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
-    clearCreateTaskData('returnTask');
+    clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
     if (flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
@@ -164,12 +166,12 @@ export default class ToDoList extends PureComponent {
     }
     if (!_.isEmpty(taskBasicInfo) && _.isEmpty(taskBasicInfo.msg)) {
       const param = {
-        id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST',
+        id: 'RCT_FSP_CREATE_TASK_FROM_ToDoList',
         title: '自建任务',
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection?source=returnTask&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTask',
         query,
