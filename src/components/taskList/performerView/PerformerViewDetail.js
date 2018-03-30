@@ -46,7 +46,6 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
-    modifyLocalTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
