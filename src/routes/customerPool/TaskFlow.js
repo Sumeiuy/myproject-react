@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 17:29:10
+ * @Last Modified time: 2018-03-30 17:50:14
  */
 
 import React, { PureComponent } from 'react';
@@ -249,7 +249,7 @@ export default class TaskFlow extends PureComponent {
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
       shouldclearBottomLabel: false,
-      clearFromSearch: true,
+      clearFromSearch: _.isEmpty(props.storedTaskFlowData),
       currentSelectLabelName: null,
       currentFilterNum: 0,
       nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
