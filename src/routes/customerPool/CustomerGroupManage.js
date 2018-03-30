@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 11:37:39
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-29 10:02:52
  */
 
 import React, { PureComponent } from 'react';
@@ -369,8 +369,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCloseModal() {
-    const { groupId, includeCustIdList } = this.detailRef.refs
-      .wrappedComponent.refs.formWrappedComponent.getData();
+    const { groupId, includeCustIdList } = this.detailRef.getData();
     if (groupId) {
       // 编辑模式下
       if (!_.isEmpty(includeCustIdList)) {
@@ -503,6 +502,11 @@ export default class CustomerGroupManage extends PureComponent {
       },
       keyWord,
     });
+  }
+
+  @autobind
+  customerGroupDetailRef(ref) {
+    this.detailRef = ref;
   }
 
   @autobind
@@ -703,7 +707,7 @@ export default class CustomerGroupManage extends PureComponent {
               </div>}
               modalContent={
                 <CustomerGroupDetail
-                  ref={ref => (this.detailRef = ref)}
+                  wrappedComponentRef={this.customerGroupDetailRef}
                   deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
                   deleteCustomerFromGroup={this.deleteCustomerFromGroup}
                   custRiskBearing={custRiskBearing}
