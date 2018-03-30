@@ -22,7 +22,7 @@ import {
   ORG,
   MAIN_MAGEGER_ID,
 } from './config';
-
+import logable from '../../decorators/logable';
 import styles from './home.less';
 import {
   MorningBroadcast,
@@ -408,6 +408,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：经营指标/投顾绩效' } })
   handleTabClick(param) {
     const { switchTab } = this.props;
     // 发送日志

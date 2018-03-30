@@ -21,9 +21,9 @@ import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/createTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
-import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -159,7 +159,7 @@ export default class ManagerViewDetail extends PureComponent {
   @logable({
     type: 'ButtonClick',
     payload: {
-      name: '关闭客户详情modal',
+      name: '取消',
     },
   })
   handleCloseModal() {

@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../Icon';
 import Pagination from '../../common/Pagination';
-
+import logable from '../../../decorators/logable';
 import styles from './index.less';
 
 export default class ApplicationList extends PureComponent {
@@ -28,6 +28,7 @@ export default class ApplicationList extends PureComponent {
   };
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
   handleShrinkClick() {
     this.props.onShrink();
   }

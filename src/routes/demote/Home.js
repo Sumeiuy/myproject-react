@@ -90,6 +90,7 @@ export default class Demote extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   onSubmit() {
     const { location: { query: { notifiId } }, updateCust } = this.props;
     const { data } = this.state;

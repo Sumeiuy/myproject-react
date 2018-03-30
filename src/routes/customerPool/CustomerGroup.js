@@ -121,6 +121,7 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   @checkSpecialCharacter
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索分组名称' } })
   handleSearch(value) {
     const { replace, location: { query, pathname } } = this.props;
     replace({
@@ -321,6 +322,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：添加到已有分组/添加到新建分组' } })
   handleTabClick(param) {
     const { switchTab } = this.props;
     // 发送日志

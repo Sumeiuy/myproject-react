@@ -19,6 +19,7 @@ import selectHandlers from '../../components/Edit/selectHelper';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
 import withRouter from '../../decorators/withRouter';
 import styles from './Home.less';
+import logable from '../../decorators/logable';
 
 const reactApp = fspContainer.reactApp;
 
@@ -354,6 +355,7 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发布' } })
   handlePublishBtnClick() {
     this.setState({ clickWhichBtn: 'publish' });
     this.openPublishConfirmModal();
@@ -388,6 +390,7 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回' } })
   handleBackBtnClick() {
     // 需要判断，是否进行了指标选择
     const { saveBt } = this.state;
@@ -399,6 +402,7 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '预览' } })
   handlePreviewBtnClick() {
     this.setState({ clickWhichBtn: 'preview' });
     // 预览按钮点击之后，需要先保存
@@ -408,6 +412,7 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   handleSaveBtnClick() {
     this.setState({
       saveBt: false,

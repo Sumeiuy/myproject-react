@@ -22,6 +22,7 @@ import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 import loadingImg from './img/loading.png';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -273,6 +274,7 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '生成最新报告' } })
   createMissionReport() {
     const {
       createMotReport,
@@ -282,6 +284,7 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '正在生成最新报告' } })
   queryMOTServeAndFeedBackExcel() {
     const { queryMOTServeAndFeedBackExcel } = this.props;
     const payload = this.getPayload();

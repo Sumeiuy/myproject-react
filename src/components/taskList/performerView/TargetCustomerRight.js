@@ -18,6 +18,7 @@ import TipsInfo from './TipsInfo';
 import Collapse from '../../customerPool/list/CreateCollapse';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
+import logable, { logPV } from '../../../decorators/logable';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -76,6 +77,7 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/ServiceRecord', title: '服务记录弹框' })
   showModal() {
     const { itemData = {}, getServiceRecord } = this.props;
     getServiceRecord({ custId: itemData.custId }).then(() => {
@@ -93,6 +95,7 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭最近一次服务记录弹框' } })
   handleCancel() {
     this.setState({
       visible: false,

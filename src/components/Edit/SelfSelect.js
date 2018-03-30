@@ -141,7 +141,7 @@ export default class SelfSelect extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'check选中' } })
+  @logable({ type: 'Click', payload: { name: 'checkbox选中' } })
   handleCheckboxGroupChange(groupCheckedList) {
     const { options } = this.props;
     const childrenOptions = options.slice(1);

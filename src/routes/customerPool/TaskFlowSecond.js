@@ -2,10 +2,12 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Radio } from 'antd';
+import { autobind } from 'core-decorators';
 import Search from '../../components/common/Search';
 import TaskSearchRow from '../../components/customerPool/taskFlow/TaskSearchRow';
 import withRouter from '../../decorators/withRouter';
 import styles from './taskFlowSecond.less';
+import logable from '../../decorators/logable';
 
 const RadioGroup = Radio.Group;
 
@@ -35,6 +37,9 @@ export default class TaskFlow extends PureComponent {
       current: 0,
     };
   }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   change(e) {
     console.log(1111111111);
     console.log('e.target.value', e.target.value);
