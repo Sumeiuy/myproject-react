@@ -124,6 +124,9 @@ export default class TabsExtra extends PureComponent {
     this.props.updateQueryState(obj);
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
 
   render() {
     const {
@@ -200,6 +203,7 @@ export default class TabsExtra extends PureComponent {
                   </div>
                   <div className={styles.downLoad}>
                     <a
+                      onClick={this.handleDownloadClick}
                       href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                     >导出</a>
                   </div>

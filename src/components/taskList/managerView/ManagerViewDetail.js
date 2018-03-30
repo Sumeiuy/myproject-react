@@ -402,6 +402,10 @@ export default class ManagerViewDetail extends PureComponent {
     }
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '导出' } })
+  handleDownloadClick() {}
+
   @autobind
   renderTotalCust() {
     const { mngrMissionDetailInfo = {}, custFeedback } = this.props;
@@ -600,6 +604,7 @@ export default class ManagerViewDetail extends PureComponent {
                         falseValue ? (
                           <Button className={styles.export}>
                             <a
+                              onClick={this.handleDownloadClick}
                               href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                             >导出</a>
                           </Button>

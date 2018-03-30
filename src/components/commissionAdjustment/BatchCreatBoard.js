@@ -174,7 +174,6 @@ export default class BatchCreatBoard extends PureComponent {
 
   // 客户输入目标股基佣金率调用方法
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索目标股基佣金率' } })
   changeTargetGJCommission(v) {
     // 批量
     this.props.queryGj({

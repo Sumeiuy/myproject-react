@@ -585,7 +585,6 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
   handleSearchClient(v = '') {
     const { subType } = this.state;
     this.props.onSearchCutList({
@@ -641,7 +640,6 @@ export default class EditBaseInfo extends PureComponent {
 
   // 根据填入关键词筛选协议模板
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键词筛选协议模板' } })
   handleSearchTemplate(value) {
     const { filterTemplate } = this.props;
     filterTemplate(value);

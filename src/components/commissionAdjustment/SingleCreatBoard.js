@@ -202,7 +202,6 @@ export default class SingleCreateBoard extends PureComponent {
 
   // 客户输入目标股基佣金率调用方法
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询目标股基佣金率' } })
   changeTargetGJCommission(v) {
     // 单佣金 , 如果没有选择客户，提示用户选择客户
     const { customer, queryGj } = this.props;

@@ -174,7 +174,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 查询客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
   handleSearchClient(v) {
     if (!v) {
       return;
@@ -208,7 +207,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 查询新服务经理
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询服务经理' } })
   handleSearchNewManager(v) {
     if (!v) {
       return;
@@ -394,6 +392,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     queryCustomerAssignImport(payload);
   }
 
+  @logable({ type: 'Click', payload: { name: '下载模板' } })
+  handleDownloadClick() {}
+
   // 发送单客户修改请求,先走修改接口，再走走流程接口
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
@@ -547,7 +548,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
               <div className={styles.filialeBtn}>
                 {uploadElement}
                 |
-                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                <a
+                  onClick={this.handleDownloadClick}
+                  href={customerTemplet} className={styles.downloadLink}
+                >下载模板</a>
               </div>
           }
           <CommonTable

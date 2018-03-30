@@ -138,7 +138,6 @@ export default class ServerPersonel extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$args[0]关键字查询服务人员' } })
   dropdownToSearchInfo(value) {
     // 下拉菜单搜错查询关键字
     this.context.getSearchServerPersonList(value);

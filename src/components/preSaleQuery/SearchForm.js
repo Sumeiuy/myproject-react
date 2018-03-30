@@ -11,29 +11,58 @@ import { autobind } from 'core-decorators';
 import { Form, Button } from 'antd';
 
 import AutoComplete from '../../components/common/similarAutoComplete/index';
-
+import logable from '../../decorators/logable';
 import styles from './searchForm.less';
 
 const FormItem = Form.Item;
 
 export default class SearchForm extends Component {
+
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   reset() {
     this.cust.clearValue();
     this.product.clearValue();
     this.props.onReset();
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0]',
+    },
+  })
+  handleSelectCustItem(obj) {
+    this.props.onSelectCustItem(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择产品',
+      value: '$args[0]',
+    },
+  })
+  handleSelectProductItem(obj) {
+    this.props.onSelectProductItem(obj);
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '查询' } })
+  handleSearchClick(event) {
+    this.props.onSearch(event);
+  }
+
   render() {
     const {
-      onSearch,
       selectedCustItem,
       custList,
-      onSelectCustItem,
       onQueryCustList,
       selectedProductItem,
       productList,
-      onSelectProductItem,
       onQueryProductList,
     } = this.props;
     return (
@@ -48,7 +77,7 @@ export default class SearchForm extends Component {
             searchList={custList}
             showObjKey="custName"
             objId="custNumber"
-            onSelect={onSelectCustItem}
+            onSelect={this.handleSelectCustItem}
             onSearch={onQueryCustList}
             name="custList"
             isImmediatelySearch
@@ -65,7 +94,7 @@ export default class SearchForm extends Component {
             searchList={productList}
             showObjKey="productName"
             objId="productCode"
-            onSelect={onSelectProductItem}
+            onSelect={this.handleSelectProductItem}
             onSearch={onQueryProductList}
             name="productList"
             isImmediatelySearch
@@ -76,7 +105,7 @@ export default class SearchForm extends Component {
           <Button
             type="primary"
             className={styles.btn}
-            onClick={onSearch}
+            onClick={this.handleSearchClick}
           >
             查询
           </Button>

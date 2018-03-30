@@ -169,6 +169,13 @@ export default class StockDetail extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载PDF 全文' } })
+  handleDownloadClick() {}
+
+  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } }) 
+  handleDownload() {}
+
   render() {
     const { id, detail: dataDetail = {}, filterTypeList } = this.state;
     let title = '';
@@ -218,7 +225,11 @@ export default class StockDetail extends PureComponent {
             {
               pdfDownloadUrl
               ?
-                <a href={pdfDownloadUrl} download>
+                <a
+                  onClick={this.handleDownloadClick}
+                  href={pdfDownloadUrl}
+                  download
+                >
                   <Icon type="pdf1" />PDF 全文
                 </a>
               :
@@ -227,7 +238,11 @@ export default class StockDetail extends PureComponent {
             {
               wordDownloadUrl
               ?
-                <a href={wordDownloadUrl} download>
+                <a
+                  onClick={this.handleDownload}
+                  href={wordDownloadUrl}
+                  download
+                >
                   <Icon type="word1" />WORD 全文
                 </a>
               :

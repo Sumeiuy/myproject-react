@@ -117,7 +117,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 搜索员工
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
   searchHandle(value) {
     const { searchEmployee } = this.props;
     if (_.isEmpty(value)) {

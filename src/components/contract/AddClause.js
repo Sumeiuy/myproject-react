@@ -208,7 +208,6 @@ export default class EditForm extends PureComponent {
 
   // 筛选部门
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索合作部门' } })
   handleSearchDepartment(v) {
     this.props.searchDepartment(v);
   }

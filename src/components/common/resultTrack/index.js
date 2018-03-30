@@ -627,7 +627,6 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询产品' } })
   handleQueryProduct(value) {
     this.props.queryProduct({
       keyword: value,

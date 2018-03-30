@@ -45,8 +45,6 @@ export default class ServiceManagerFilter extends PureComponent {
     const {
       searchServerPersonList,
       serviceManagerDefaultValue,
-      dropdownSelectedItem,
-      dropdownToSearchInfo,
       disable,
     } = this.props;
     // 预置下拉框数据列表
@@ -66,8 +64,8 @@ export default class ServiceManagerFilter extends PureComponent {
           disable={disable}
           value={serviceManagerDefaultValue}
           searchList={searchServerPersonList}
-          emitSelectItem={dropdownSelectedItem}
-          emitToSearch={dropdownToSearchInfo}
+          emitSelectItem={this.handleSelct}
+          emitToSearch={this.handleSearch}
           presetOptionList={presetList}
         />
       </div>
