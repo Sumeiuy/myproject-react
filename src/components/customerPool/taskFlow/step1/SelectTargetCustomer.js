@@ -62,6 +62,7 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: currentEntry === 0,
       // 展示入口2，瞄准镜标签
       showSightingTelescope: currentEntry === 1,
+      isFirstTimeChange: true, // 是否是第一次点击切换视图
     };
   }
 
@@ -126,8 +127,27 @@ export default class SelectTargetCustomer extends PureComponent {
       showEntry: false,
       showImportCustomers,
       showSightingTelescope,
+      isFirstTimeChange: false,
     });
     this.props.switchBottomFromHeader(showImportCustomers);
+    if (showSightingTelescope && this.state.isFirstTimeChange) {
+      const { getLabelInfo, isAuthorize, orgId } = this.props;
+      const param = {
+        condition: '',
+      };
+      if (isAuthorize) {
+        // 有首页绩效指标查看权限
+        getLabelInfo({
+          ...param,
+          orgId,
+        });
+      } else {
+        getLabelInfo({
+          ...param,
+          ptyMngId: emp.getId(),
+        });
+      }
+    }
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
