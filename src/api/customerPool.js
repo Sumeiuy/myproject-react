@@ -54,6 +54,9 @@ export default function customerPool(api) {
     // 添加客户到新建分组
     createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup2', query),
 
+    // 客户分组批量导入客户解析客户列表
+    queryBatchCustList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryBatchCust', query),
+
     // 自建任务提交
     createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 

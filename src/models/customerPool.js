@@ -24,7 +24,6 @@ const EMPTY_OBJECT = {};
 // const LIST_MAX = 1e4;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_TEN_SIZE = 10;
-const INITIAL_PAGE_FIVE_SIZE = 5;
 // 题目类型，暂时写死，以后可能需要改成从接口获取，可能有多个
 const assessType = 'MOT_EMP_FEEDBACK';
 
@@ -141,6 +140,8 @@ export default {
     custServedByPostnResult: true,
     // 瞄准镜的筛选项
     sightingTelescopeFilters: {},
+    // 客户分组批量导入客户解析客户列表
+    batchCustList: {},
   },
 
   subscriptions: {
@@ -347,6 +348,14 @@ export default {
         });
       }
     },
+    // 客户分组批量导入客户解析客户列表
+    * queryBatchCustList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryBatchCustList, payload);
+      yield put({
+        type: 'queryBatchCustListSuccess',
+        payload: { resultData },
+      });
+    },
     // 自建任务提交
     * createTask({ payload }, { call, put }) {
       const createTaskResult = yield call(api.createTask, payload);
@@ -507,7 +516,7 @@ export default {
           type: 'getGroupCustomerList',
           payload: {
             pageNum: INITIAL_PAGE_NUM,
-            pageSize: INITIAL_PAGE_FIVE_SIZE,
+            pageSize: INITIAL_PAGE_TEN_SIZE,
             groupId,
           },
         });
@@ -558,7 +567,7 @@ export default {
         type: 'getGroupCustomerList',
         payload: {
           pageNum: INITIAL_PAGE_NUM,
-          pageSize: INITIAL_PAGE_FIVE_SIZE,
+          pageSize: INITIAL_PAGE_TEN_SIZE,
           groupId,
         },
       });
@@ -987,6 +996,14 @@ export default {
         ...state,
         resultgroupId: groupId,
         cusGroupSaveResult: result,
+      };
+    },
+    // 客户分组批量导入客户解析客户列表
+    queryBatchCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        batchCustList: resultData,
       };
     },
     // 自建任务提交
