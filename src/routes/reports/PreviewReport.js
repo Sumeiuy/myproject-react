@@ -144,13 +144,15 @@ export default class PreviewReport extends PureComponent {
     };
     return (
       <div className={styles.previewReport}>
-        <ReportHome
-          preView
-          reportName={name}
-          location={location}
-          boardId={id}
-          boardType={boardType}
-        />
+        <div className={styles.previewHome}>
+          <ReportHome
+            preView
+            reportName={name}
+            location={location}
+            boardId={id}
+            boardType={boardType}
+          />
+        </div>
         <div
           className={styles.previewLayout}
           style={{

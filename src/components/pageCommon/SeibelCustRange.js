@@ -96,7 +96,7 @@ export default class CustRange extends PureComponent {
       formatCustRange = [];
       initValue = {
         label: '全部',
-        value: '',
+        value: 'all',
       };
     }
 
@@ -195,6 +195,9 @@ export default class CustRange extends PureComponent {
     const { custRange } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
+    if (_.isEmpty(value)) {
+      return null;
+    }
     return (
       <TreeSelect
         notFoundContent="没有结果"

@@ -115,10 +115,13 @@ export default class CommonTable extends PureComponent {
     }
     const newData = _.map(
       data,
-      (item, index) => ({
-        ...item,
-        tableRowKey: `${index}`,
-      }),
+      (item, index) => {
+        const newRowKey = rowKey || index;
+        return {
+          ...item,
+          key: item.key || newRowKey,
+        };
+      },
     );
     return (
       <div className={styles.commonTable}>
@@ -128,7 +131,6 @@ export default class CommonTable extends PureComponent {
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={newData}
           columns={newTitleList}
-          rowKey={_.isEmpty(rowKey) ? 'tableRowKey' : rowKey}
         />
       </div>
     );

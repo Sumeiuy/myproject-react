@@ -76,12 +76,11 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   getSearchListDom(dataList) {
-    const { showObjKey, objId, name, renderOption } = this.props;
+    const { showObjKey, objId, renderOption } = this.props;
     const result = _.map(dataList, (item, index, array) => {
       if (item.isHidden) {
         return null;
       }
-      const idx = !item[objId] ? `selectList|${index}` : `${name}|${item[objId]}`;
       const optionValue = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
       if (renderOption) {
         return renderOption(item, index, array);
@@ -89,7 +88,7 @@ export default class SimilarAutoComplete extends PureComponent {
       // 默认的option样式
       return (
         <Option
-          key={idx}
+          key={item[showObjKey]}
           className={style.ddsDrapMenuConItem}
           value={optionValue}
           title={optionValue}
@@ -115,11 +114,10 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleSelectedValue(value, item) {
     if (value) {
-      const { onSelect, searchList } = this.props;
-      // 当前选中的索引
-      const selectedIndex = item.props.index;
+      const { onSelect, searchList, showObjKey } = this.props;
+      const selectedKey = item.key;
       // 当前的选中值
-      currentSelect = searchList[selectedIndex];
+      currentSelect = _.find(searchList, listItem => listItem[showObjKey] === selectedKey);
       onSelect({
         ...currentSelect,
       });
