@@ -1,0 +1,39 @@
+@import '../../../css/variable.less';
+
+.dropdownToggle {
+  border: none;
+}
+.dropdownToggle_disabled {
+  border: 1px solid #d9d9d9;
+}
+.notFound {
+	margin-top: 6px;
+	line-height: 32px;
+	color: #c2c2c2;
+	font-size: 13px;
+}
+.ddsDrapMenuConItem {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-indent: 10px;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: @font-family;
+	&:hover {
+		background: rgba(52, 140, 240, .2);
+	}
+}
+.dropdownSelectWraper {
+  :global {
+    .ant-popover-title {
+      border-bottom: none;
+      padding: 10px;
+    }
+    .ant-popover-inner-content {
+      padding: 0 0 10px 10px;
+    }
+  }
+}
