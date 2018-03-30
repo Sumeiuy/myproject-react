@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-28 17:16:29
+ * @Last Modified time: 2018-03-29 13:57:15
  * 结果跟踪
  */
 
@@ -131,7 +131,6 @@ export default class ResultTrack extends PureComponent {
 
     // 当前所选中的指标目标
     const indicatorLevel1Key = indicatorLevel1.key;
-    console.log('requiredDataValidate', indicatorLevel1Key, checked, currentSelectedProduct, inputValue);
     if (checked) { // 如果是选择结果跟踪
       if (_.isEmpty(indicatorLevel1Key)) { // 如果当前所选的指标目标为空 显示报错信息
         this.setState({

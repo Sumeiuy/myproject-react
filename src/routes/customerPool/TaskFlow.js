@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-28 16:34:24
+ * @Last Modified time: 2018-03-29 13:58:05
  */
 
 import React, { PureComponent } from 'react';
@@ -326,7 +326,6 @@ export default class TaskFlow extends PureComponent {
   // 设置下一步按钮的是否可点击状态
   @autobind
   setNextStepBtnDisabled(disabled) {
-    console.log('disabled', disabled);
     this.setState({
       nextStepBtnIsDisabled: disabled,
     });
@@ -554,7 +553,6 @@ export default class TaskFlow extends PureComponent {
     } else if (current === 2) {
       isAllowGoNextStep = true;
       const resultTrackComponent = this.resultTrackRef;
-      console.log('222222', resultTrackData, resultTrackComponent.getData());
       // 第三步是结果跟踪和任务调查页面
       resultTrackData = {
         ...resultTrackData,

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-06 15:43:55
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-29 16:06:42
  */
 
 
@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Select, DatePicker, TimePicker, Input, Radio } from 'antd';
+import { Select, DatePicker, TimePicker, Input, Radio, Form } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
 import Uploader from '../../common/uploader';
@@ -19,6 +19,7 @@ import { emp, getIconType } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
 
+const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
@@ -125,6 +126,8 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey: '',
       originFileName: '',
       originFormData: formData,
+      isShowServiceContentError: false, // 是否显示服务内容错误信息
+      serviceContentErrMsg: '', // 服务内容具体错误信息
     };
     // 代表是否是删除操作
     this.isDeletingFile = false;
@@ -181,6 +184,24 @@ export default class ServiceRecordContent extends PureComponent {
       // 当前上传的附件
       'currentFile',
     );
+  }
+
+  // 校验必填项信息
+  @autobind
+  requiredDataValidate() {
+    const { serviceContent } = this.state;
+    if (!serviceContent) {
+      this.setState({
+        isShowServiceContentError: true,
+        serviceContentErrMsg: '请输入此次服务的内容',
+      });
+    }
+    if (serviceContent.length > 1000) {
+      this.setState({
+        isShowServiceContentError: true,
+        serviceContentErrMsg: '服务的内容字数不能超过1000',
+      });
+    }
   }
 
   @autobind
@@ -522,6 +543,7 @@ export default class ServiceRecordContent extends PureComponent {
     }
     this.setState({
       serviceContent: value,
+      isShowServiceContentError: false,
     });
   }
 
@@ -609,12 +631,18 @@ export default class ServiceRecordContent extends PureComponent {
       originFileName,
       serviceContent,
       // attachmentRecord,
+      isShowServiceContentError,
+      serviceContentErrMsg,
     } = this.state;
     if (!dict) {
       return null;
     }
     // const firstCol = isFold ? 8 : 24;
     // const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
+    const serviceContentErrorProps = isShowServiceContentError ? {
+      validateStatus: 'error',
+      help: serviceContentErrMsg,
+    } : null;
 
     const serviceDateProps = {
       allowClear: false,
@@ -654,183 +682,189 @@ export default class ServiceRecordContent extends PureComponent {
     }
 
     return (
-      <div className={styles.serviceRecordContent}>
-        <div className={styles.gridWrapper}>
-          <div className={styles.serveWay}>
-            <div className={styles.title}>
-              服务方式:
-            </div>
-            <div className={styles.content} ref={r => this.serviceWayRef = r} >
-              <Select
-                value={serviceWay}
-                style={width}
-                onChange={this.handleServiceWay}
-                disabled={isReadOnly}
-                getPopupContainer={() => this.serviceWayRef}
-              >
-                {
-                  (dict.serveWay || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-          </div>
-          {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
-          {
-            isEntranceFromPerformerView ?
-              <div className={styles.serveStatus}>
-                <div className={styles.title}>
-                  服务状态:
-                </div>
-                <div className={styles.content}>
-                  <RadioGroup
-                    onChange={this.onRadioChange}
-                    value={serviceStatus}
-                    disabled={isReadOnly}
-                  >
-                    {this.renderServiceStatusChoice()}
-                  </RadioGroup>
-                </div>
-              </div> : null
-          }
-          {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
-          <div className={serveType}>
-            <div className={styles.title}>
-              服务类型:
-            </div>
-            <div className={styles.content} ref={r => this.serviceTypeRef = r}>
-              <Select
-                value={serviceType}
-                style={width}
-                onChange={this.handleServiceType}
-                getPopupContainer={() => this.serviceTypeRef}
-              >
-                {
-                  (motCustfeedBackDict || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-          </div>
-
-          <div className={styles.serveTime}>
-            <div className={styles.title}>
-              服务时间:
-            </div>
-            <div className={styles.content} ref={r => this.serviceTimeRef = r}>
-              <DatePicker
-                style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
-                {...serviceDateProps}
-                defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                getCalendarContainer={() => this.serviceTimeRef}
-              />
-              <TimePicker
-                style={width}
-                className={styles.hidden}
-                {...serviceTimeProps}
-                defaultValue={moment(CURRENT_DATE, timeFormat)}
-              />
-            </div>
-          </div>
-
-        </div>
-
-        <div className={styles.serveRecord}>
-          <div className={styles.title}>服务记录:</div>
-          <div className={styles.content}>
-            <TextArea
-              rows={5}
-              disabled={isReadOnly}
-              value={serviceContent}
-              onChange={this.handleServiceRecordInputChange}
-            />
-          </div>
-        </div>
-
-        <div className={styles.divider} />
-
-        <div className={styles.custFeedbackSection}>
-          <div className={styles.feedbackType}>
-            <div className={styles.title}>
-              客户反馈:
-            </div>
-            <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
-              <Select
-                value={feedbackType}
-                style={width}
-                onChange={this.handleFeedbackType}
-                disabled={isReadOnly}
-                getPopupContainer={() => this.customerFeedbackRef}
-              >
-                {
-                  (feedbackTypeList).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-              {
-                isShowSubCustomerFeedback ? null :
+      <Form>
+        <div className={styles.serviceRecordContent}>
+          <div className={styles.gridWrapper}>
+            <div className={styles.serveWay}>
+              <div className={styles.title}>
+                服务方式:
+              </div>
+              <div className={styles.content} ref={r => this.serviceWayRef = r} >
                 <Select
-                  value={feedbackTypeChild}
+                  value={serviceWay}
                   style={width}
-                  onChange={this.handleFeedbackTypeChild}
+                  onChange={this.handleServiceWay}
+                  disabled={isReadOnly}
+                  getPopupContainer={() => this.serviceWayRef}
+                >
+                  {
+                    (dict.serveWay || EMPTY_LIST).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
+                </Select>
+              </div>
+            </div>
+            {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
+            {
+              isEntranceFromPerformerView ?
+                <div className={styles.serveStatus}>
+                  <div className={styles.title}>
+                    服务状态:
+                  </div>
+                  <div className={styles.content}>
+                    <RadioGroup
+                      onChange={this.onRadioChange}
+                      value={serviceStatus}
+                      disabled={isReadOnly}
+                    >
+                      {this.renderServiceStatusChoice()}
+                    </RadioGroup>
+                  </div>
+                </div> : null
+            }
+            {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
+            <div className={serveType}>
+              <div className={styles.title}>
+                服务类型:
+              </div>
+              <div className={styles.content} ref={r => this.serviceTypeRef = r}>
+                <Select
+                  value={serviceType}
+                  style={width}
+                  onChange={this.handleServiceType}
+                  getPopupContainer={() => this.serviceTypeRef}
+                >
+                  {
+                    (motCustfeedBackDict || EMPTY_LIST).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
+                </Select>
+              </div>
+            </div>
+
+            <div className={styles.serveTime}>
+              <div className={styles.title}>
+                服务时间:
+              </div>
+              <div className={styles.content} ref={r => this.serviceTimeRef = r}>
+                <DatePicker
+                  style={width}
+                  className={classnames({
+                    [styles.disabledDate]: isReadOnly,
+                  })}
+                  {...serviceDateProps}
+                  defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                  getCalendarContainer={() => this.serviceTimeRef}
+                />
+                <TimePicker
+                  style={width}
+                  className={styles.hidden}
+                  {...serviceTimeProps}
+                  defaultValue={moment(CURRENT_DATE, timeFormat)}
+                />
+              </div>
+            </div>
+
+          </div>
+
+          <div className={styles.serveRecord}>
+            <div className={styles.title}>服务记录:</div>
+            <div className={styles.content}>
+              <FormItem
+                {...serviceContentErrorProps}
+              >
+                <TextArea
+                  rows={5}
+                  disabled={isReadOnly}
+                  value={serviceContent}
+                  onChange={this.handleServiceRecordInputChange}
+                />
+              </FormItem>
+            </div>
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.custFeedbackSection}>
+            <div className={styles.feedbackType}>
+              <div className={styles.title}>
+                客户反馈:
+              </div>
+              <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
+                <Select
+                  value={feedbackType}
+                  style={width}
+                  onChange={this.handleFeedbackType}
                   disabled={isReadOnly}
                   getPopupContainer={() => this.customerFeedbackRef}
                 >
                   {
-                      (feedbackTypeChildList).map(obj => (
-                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                      ))
-                    }
+                    (feedbackTypeList).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
                 </Select>
-              }
+                {
+                  isShowSubCustomerFeedback ? null :
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    onChange={this.handleFeedbackTypeChild}
+                    disabled={isReadOnly}
+                    getPopupContainer={() => this.customerFeedbackRef}
+                  >
+                    {
+                        (feedbackTypeChildList).map(obj => (
+                          <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                        ))
+                      }
+                  </Select>
+                }
+              </div>
+            </div>
+            <div className={styles.feedbackTime}>
+              <div className={styles.title}>反馈时间:</div>
+              <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
+                <DatePicker
+                  style={width}
+                  className={classnames({
+                    [styles.disabledDate]: isReadOnly,
+                  })}
+                  {...feedbackTimeProps}
+                  defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                  getCalendarContainer={() => this.feedbackTimeRef}
+                />
+              </div>
             </div>
           </div>
-          <div className={styles.feedbackTime}>
-            <div className={styles.title}>反馈时间:</div>
-            <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
-              <DatePicker
-                style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
-                {...feedbackTimeProps}
-                defaultValue={moment(CURRENT_DATE, showDateFormat)}
-                getCalendarContainer={() => this.feedbackTimeRef}
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className={styles.uploadSection}>
-          {
-            !isReadOnly ? <Uploader
-              ref={ref => (this.uploadElem = ref)}
-              onOperateFile={this.handleFileUpload}
-              attachModel={currentFile}
-              fileKey={uploadedFileKey}
-              originFileName={originFileName}
-              uploadTitle={'上传附件'}
-              upData={{
-                empId: emp.getId(),
-                // 第一次上传没有，如果曾经返回过，则必须传
-                attachment: '',
-              }}
-              beforeUpload={beforeUpload}
-              custUuid={custUuid}
-              uploadTarget={`${request.prefix}/file/ceFileUpload`}
-              isSupportUploadMultiple
-              onDeleteFile={this.handleDeleteFile}
-              deleteFileResult={deleteFileResult}
-            /> : this.renderFileList()
-          }
+          <div className={styles.uploadSection}>
+            {
+              !isReadOnly ? <Uploader
+                ref={ref => (this.uploadElem = ref)}
+                onOperateFile={this.handleFileUpload}
+                attachModel={currentFile}
+                fileKey={uploadedFileKey}
+                originFileName={originFileName}
+                uploadTitle={'上传附件'}
+                upData={{
+                  empId: emp.getId(),
+                  // 第一次上传没有，如果曾经返回过，则必须传
+                  attachment: '',
+                }}
+                beforeUpload={beforeUpload}
+                custUuid={custUuid}
+                uploadTarget={`${request.prefix}/file/ceFileUpload`}
+                isSupportUploadMultiple
+                onDeleteFile={this.handleDeleteFile}
+                deleteFileResult={deleteFileResult}
+              /> : this.renderFileList()
+            }
+          </div>
         </div>
-      </div>
+      </Form>
     );
   }
 }

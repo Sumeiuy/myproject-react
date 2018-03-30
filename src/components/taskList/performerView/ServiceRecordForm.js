@@ -1,14 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 12:37:50
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 13:19:26
  * 服务记录表单
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { message } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
@@ -59,13 +58,14 @@ export default class ServiceRecordForm extends PureComponent {
       addServeRecord,
       custUuid,
     } = this.props;
+    this.serviceRecordContentRef.requiredDataValidate();
     if (!serviceContent) {
-      message.error('请输入此次服务的内容');
+      // message.error('请输入此次服务的内容');
       return;
     }
 
     if (serviceContent.length > 1000) {
-      message.error('服务的内容字数不能超过1000');
+      // message.error('服务的内容字数不能超过1000');
       return;
     }
     const postBody = {

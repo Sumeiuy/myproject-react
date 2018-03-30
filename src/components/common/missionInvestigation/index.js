@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 14:10:06
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-29 13:57:27
  * 任务调查
  */
 
@@ -554,7 +554,6 @@ export default class MissionInvestigation extends PureComponent {
     const titleColumn = renderColumnTitle();
 
     const dataSource = this.addIdToDataSource(questionList);
-    console.log('dataSource', questionList, dataSource, currentSelectRowKeys);
 
     return (
       <div className={styles.missionInvestigationContainer}>
