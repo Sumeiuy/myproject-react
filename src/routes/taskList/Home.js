@@ -102,8 +102,6 @@ const effects = {
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
-  // 查看是否是自己名下的客户
-  isCustServedByPostn: 'customerPool/isCustServedByPostn',
   exportCustListExcel: 'managerView/exportCustListExcel',
   // 生成mot任务实施简报
   createMotReport: 'managerView/createMotReport',
@@ -217,8 +215,6 @@ const mapDispatchToProps = {
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
   countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
-  // 查询是否包含本人名下客户
-  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
   createMotReport: fetchDataFunction(true, effects.createMotReport),
   queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
@@ -288,7 +284,6 @@ export default class PerformerView extends PureComponent {
     missionFeedbackCount: PropTypes.number.isRequired,
     countExamineeByType: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     exportCustListExcel: PropTypes.func.isRequired,
     missionReport: PropTypes.object.isRequired,
@@ -578,7 +573,6 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
-      isCustServedByPostn,
       custServedByPostnResult,
       missionReport,
       createMotReport,
@@ -633,7 +627,6 @@ export default class PerformerView extends PureComponent {
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
             serveManagerCount={empNum}
-            isCustServedByPostn={isCustServedByPostn}
             custServedByPostnResult={custServedByPostnResult}
             missionReport={missionReport}
             createMotReport={createMotReport}
@@ -720,7 +713,6 @@ export default class PerformerView extends PureComponent {
           missionFeedbackData={missionFeedbackData}
           missionFeedbackCount={missionFeedbackCount}
           serveManagerCount={empNum}
-          isCustServedByPostn={isCustServedByPostn}
           custServedByPostnResult={custServedByPostnResult}
           missionReport={missionReport}
           createMotReport={createMotReport}

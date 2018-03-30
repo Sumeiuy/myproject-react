@@ -130,7 +130,7 @@ export default function customerPool(api) {
     queryProduct: query => api.post('/groovynoauth/fsp/product/finprod/queryFinProductList', query),
 
     // 查询导入的客户、标签圈人下的客户、客户列表选择的客户、客户分组下的客户是否超过了1000个或者是否是我名下的客户
-    isSendCustsServedByPostn: query => api.post('/groovynoauth/fsp/cust/task/isSendCustsServedByPostn', query),
+    isSendCustsServedByPostn: query => api.post('/groovynoauth/fsp/cust/task/isSendCustsServedByEmp', query),
 
     // 查询客户是否是我名下的客户
     isCustServedByPostn: query => api.post('/groovynoauth/fsp/cust/task/isCustServedByPostn', query),
