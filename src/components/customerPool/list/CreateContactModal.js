@@ -212,6 +212,7 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
+  @autobind
   @logable({ type: 'Click', payload: { name: '最近服务记录展开/折叠' } })
   handleCollapseClick() {
     this.props.handleCollapseClick();

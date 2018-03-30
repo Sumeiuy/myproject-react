@@ -324,7 +324,6 @@ export default class AddMorningBoradcast extends PureComponent {
       name: '删除其他文件',
     },
   })
-  @autobind
   onRemove(file) {
     const { delCeFile } = this.props;
     if (file.status === 'removed') {

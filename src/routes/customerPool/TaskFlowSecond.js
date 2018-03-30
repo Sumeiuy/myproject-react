@@ -41,7 +41,6 @@ export default class TaskFlow extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '' } })
   change(e) {
-    console.log(1111111111);
     console.log('e.target.value', e.target.value);
   }
 
