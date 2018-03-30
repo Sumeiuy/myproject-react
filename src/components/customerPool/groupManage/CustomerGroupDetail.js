@@ -483,10 +483,9 @@ export default class CustomerGroupDetail extends PureComponent {
   // 上传批量客户的分页切换
   @autobind
   multiPageChangeHandle(page, pageSize) {
-    console.warn('page', page);
-    console.warn('pageSize', pageSize);
     const { queryBatchCustList, getGroupCustomerList } = this.props;
     const { groupId = '', attachmentId } = this.state;
+    // groupId为空，新建页面，取得是上传解析后的客户列表
     if (_.isEmpty(groupId)) {
       queryBatchCustList({
         attachmentId,
@@ -494,10 +493,11 @@ export default class CustomerGroupDetail extends PureComponent {
         pageSize,
       });
     } else {
+      // groupId不为空，为编辑页面，取得是客户分组成功后的新的客户列表
       getGroupCustomerList({
         groupId,
         pageNum: page,
-        pageSize: pageSize,
+        pageSize,
       });
     }
   }
