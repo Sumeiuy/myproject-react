@@ -111,6 +111,18 @@ export default class Demote extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  handlePageChange(page, pageSize) {
+    this.onChange(page, pageSize);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  handlePageSizeChange(page, pageSize) {
+    this.onChange(page, pageSize);
+  }
+
   // 切换表格的 switch 事件
   @autobind
   @logable({
@@ -166,8 +178,8 @@ export default class Demote extends PureComponent {
             total: data.length,
             defaultPageSize: 10,
             current: this.state.currentPage,
-            onChange: this.onChange,
-            onShowSizeChange: this.onChange,
+            onChange: this.handlePageChange,
+            onShowSizeChange: this.handlePageSizeChange,
             showSizeChanger: true,
           }}
         />

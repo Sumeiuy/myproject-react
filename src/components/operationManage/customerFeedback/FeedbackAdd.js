@@ -91,6 +91,7 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(value) {
     console.log(value);
     const { keyword } = this.state;

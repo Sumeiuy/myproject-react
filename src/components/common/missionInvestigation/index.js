@@ -264,7 +264,7 @@ export default class MissionInvestigation extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '问题列表',
     },
   })
   handleRowSelectionChange(selectedRowKeys) {
