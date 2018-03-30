@@ -141,6 +141,8 @@ export default {
     custServedByPostnResult: true,
     // 瞄准镜的筛选项
     sightingTelescopeFilters: {},
+    // 客户分组批量导入客户解析客户列表
+    batchCustList: {},
   },
 
   subscriptions: {
@@ -346,6 +348,14 @@ export default {
           },
         });
       }
+    },
+    // 客户分组批量导入客户解析客户列表
+    * queryBatchCustList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryBatchCustList, payload);
+      yield put({
+        type: 'queryBatchCustListSuccess',
+        payload: { resultData },
+      });
     },
     // 自建任务提交
     * createTask({ payload }, { call, put }) {
@@ -987,6 +997,14 @@ export default {
         ...state,
         resultgroupId: groupId,
         cusGroupSaveResult: result,
+      };
+    },
+    // 客户分组批量导入客户解析客户列表
+    queryBatchCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        batchCustList: resultData,
       };
     },
     // 自建任务提交

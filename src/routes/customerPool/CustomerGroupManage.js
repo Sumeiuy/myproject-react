@@ -37,6 +37,7 @@ const effects = {
   operateGroup: 'customerPool/operateGroup',
   deleteGroup: 'customerPool/deleteGroup',
   deleteCustomerFromGroup: 'customerPool/deleteCustomerFromGroup',
+  queryBatchCustList: 'customerPool/queryBatchCustList',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -60,6 +61,8 @@ const mapStateToProps = state => ({
   deleteGroupResult: state.customerPool.deleteGroupResult,
   // 删除分组下客户结果
   deleteCustomerFromGroupResult: state.customerPool.deleteCustomerFromGroupResult,
+  // 批量导入客户信息
+  batchCustList: state.customerPool.batchCustList,
 });
 
 const mapDispatchToProps = {
@@ -73,6 +76,8 @@ const mapDispatchToProps = {
   deleteGroup: fetchData(effects.deleteGroup, true),
   // 删除分组下客户
   deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
+  // 删除分组下客户
+  queryBatchCustList: fetchData(effects.queryBatchCustList, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
   // 清除数据
@@ -104,6 +109,9 @@ export default class CustomerGroupManage extends PureComponent {
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
     deleteCustomerFromGroup: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    // 批量导入客户信息
+    queryBatchCustList: PropTypes.func.isRequired,
+    batchCustList: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -204,7 +212,7 @@ export default class CustomerGroupManage extends PureComponent {
     getGroupCustomerList({
       groupId,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -357,7 +365,7 @@ export default class CustomerGroupManage extends PureComponent {
     getGroupCustomerList({
       groupId,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -439,7 +447,6 @@ export default class CustomerGroupManage extends PureComponent {
     if (this.detailRef) {
       const { groupId, includeCustIdList } = this.detailRef.refs
         .wrappedComponent.refs.formWrappedComponent.getData();
-
       e.preventDefault();
       this.detailRef.validateFields((err, values) => {
         if (!err) {
@@ -588,6 +595,8 @@ export default class CustomerGroupManage extends PureComponent {
       deleteCustomerFromGroupResult,
       location,
       replace,
+      queryBatchCustList,
+      batchCustList,
      } = this.props;
 
     const {
@@ -722,6 +731,8 @@ export default class CustomerGroupManage extends PureComponent {
                   location={location}
                   replace={replace}
                   onAddCustomerToGroup={this.addCustomerToExistedGroup}
+                  queryBatchCustList={queryBatchCustList}
+                  batchCustList={batchCustList}
                 />
               }
               onOkHandler={this.handleUpdateGroup}
