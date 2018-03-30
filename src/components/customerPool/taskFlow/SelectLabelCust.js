@@ -81,8 +81,8 @@ export default class SelectLabelCust extends PureComponent {
       setNextStepBtnDisabled,
       nextStepBtnIsDisabled,
     } = nextProps;
-    const { currentFilterNum } = this.state;
-    const hasCust = currentFilterNum > 0;
+    const { currentFilterNum, labelId } = this.state;
+    const hasCust = currentFilterNum > 0 && !_.isEmpty(labelId);
     const { circlePeopleData: prevCirclePeopleData } = this.props;
     if (circlePeopleData !== prevCirclePeopleData) {
       this.setState({
@@ -149,7 +149,12 @@ export default class SelectLabelCust extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索标签名称' } })
   handleSearchClick(value) {
-    const { getLabelInfo, isAuthorize, orgId } = this.props;
+    const {
+      getLabelInfo,
+      isAuthorize,
+      orgId,
+      setNextStepBtnDisabled,
+    } = this.props;
     const param = {
       condition: value,
     };
@@ -160,6 +165,9 @@ export default class SelectLabelCust extends PureComponent {
       labelDesc: '',
       custNum: 0,
       currentSelectLabel: '',
+    }, () => {
+      // 点击搜索时会清空当前选择的客户，所以将下一步按钮设置不可点
+      setNextStepBtnDisabled(true);
     });
     const clearFromSearch = true;
     this.props.switchBottomFromSearch(clearFromSearch); // 隐藏底部标签文字
