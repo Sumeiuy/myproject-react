@@ -585,6 +585,7 @@ export default class PerformerView extends PureComponent {
       queryMOTServeAndFeedBackExcel,
       list = {},
       modifyLocalTaskList,
+      getTaskDetailBasicInfo,
     } = this.props;
     const [firstItem = {}] = list.resultData;
     const {
@@ -689,6 +690,7 @@ export default class PerformerView extends PureComponent {
             attachmentList={attachmentList}
             isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
             modifyLocalTaskList={modifyLocalTaskList}
+            getTaskDetailBasicInfo={getTaskDetailBasicInfo}
           />
         );
         break;
@@ -972,6 +974,7 @@ export default class PerformerView extends PureComponent {
         query: {
           ...query,
           ...otherQuery,
+          currentId: '',
           pageNum: 1,
         },
       });
