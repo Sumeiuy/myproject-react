@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 17:22:03
+ * @Last Modified time: 2018-03-30 19:28:28
  */
 
 import React, { PureComponent } from 'react';
@@ -112,7 +112,6 @@ export default class TaskFormFlowStep extends PureComponent {
       canGoNextStep: canGoNextStepFlow,
       needMissionInvestigation: newNeedMissionInvestigation,
       isDisabled,
-      approverIsEmpty: true, // 审批人是否为空
     };
   }
 
@@ -505,16 +504,7 @@ export default class TaskFormFlowStep extends PureComponent {
       needApproval,
     } = this.state;
     const { login: flowAuditorId = null } = currentSelectRecord || {};
-
-    if (_.isEmpty(flowAuditorId) && needApproval) {
-      this.setState({
-        approverIsEmpty: true,
-      });
-    } else {
-      this.setState({
-        approverIsEmpty: false,
-      });
-    }
+    return _.isEmpty(flowAuditorId) && needApproval;
   }
 
   // 自建任务提交
@@ -755,18 +745,15 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       isDisabled,
-      approverIsEmpty, // 审批人是否为空
     } = this.state;
 
-    // 最终的提交按钮点击状态,
-    // const submitBtnIsDisabled = isDisabled || approverIsEmpty;
     let finalSubmitBtnIsDisabled;
     if (isDisabled) {
       // 如果全局状态是true “确认提交”按钮状态就是true
       finalSubmitBtnIsDisabled = isDisabled;
     } else {
       // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-      finalSubmitBtnIsDisabled = needApproval ? approverIsEmpty : needApproval;
+      finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
     }
 
     const {

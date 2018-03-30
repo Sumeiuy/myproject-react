@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 17:50:14
+ * @Last Modified time: 2018-03-30 19:27:54
  */
 
 import React, { PureComponent } from 'react';
@@ -253,7 +253,6 @@ export default class TaskFlow extends PureComponent {
       currentSelectLabelName: null,
       currentFilterNum: 0,
       nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
-      submitBtnIsDisabled: true, // 用来控制 “确认无误&提交” 按钮是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -861,16 +860,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRecord: { login: flowAuditorId = null },
       needApproval,
     } = this.state;
-
-    if (_.isEmpty(flowAuditorId) && needApproval) {
-      this.setState({
-        submitBtnIsDisabled: true,
-      });
-    } else {
-      this.setState({
-        submitBtnIsDisabled: false,
-      });
-    }
+    return _.isEmpty(flowAuditorId) && needApproval;
   }
 
   @autobind
@@ -1032,12 +1022,12 @@ export default class TaskFlow extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       nextStepBtnIsDisabled,
-      submitBtnIsDisabled,
     } = this.state;
 
     // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-    const finalSubmitBtnIsDisabled = needApproval ? submitBtnIsDisabled : needApproval;
-
+    const finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+    // 只有在第一步是需要判断下一步是否可点击
+    const finalNextStepBtnIsDisabled = current > 0 ? false : nextStepBtnIsDisabled;
     const {
       dict,
       dict: { executeTypes, missionType },
@@ -1208,7 +1198,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.nextStepBtn}
                 type="primary"
                 onClick={_.debounce(this.handleNextStep, 250)}
-                disabled={nextStepBtnIsDisabled}
+                disabled={finalNextStepBtnIsDisabled}
               >
                 下一步
               </Button>
