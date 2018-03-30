@@ -173,7 +173,7 @@ export default class StockDetail extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载PDF 全文' } })
   handleDownloadClick() {}
 
-  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } }) 
+  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
   handleDownload() {}
 
   render() {
