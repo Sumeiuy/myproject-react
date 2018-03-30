@@ -116,7 +116,6 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     hasTkMampPermission: PropTypes.bool.isRequired,
     hasIndexViewPermission: PropTypes.bool.isRequired,
@@ -518,7 +517,6 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      isCustServedByPostn,
       custServedByPostnResult,
       hasTkMampPermission,
       sendCustsServedByPostnResult,
@@ -667,7 +665,6 @@ export default class CustomerLists extends PureComponent {
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
-                    isCustServedByPostn={isCustServedByPostn}
                     custServedByPostnResult={custServedByPostnResult}
                   />,
                 )

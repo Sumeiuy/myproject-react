@@ -71,7 +71,6 @@ export default class CustDetail extends PureComponent {
     onClose: PropTypes.func,
     push: PropTypes.func.isRequired,
     hideCustDetailModal: PropTypes.func.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
     isEntryFromPie: PropTypes.bool,

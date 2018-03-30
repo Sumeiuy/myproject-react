@@ -207,12 +207,13 @@ export default class Search extends PureComponent {
   @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
-    if (_.trim(value).length === 0) {
+    const newValue = _.trim(value);
+    if (newValue.length === 0) {
       return false;
     }
     this.handleOpenTab({
       source: 'search',
-      q: encodeURIComponent(value),
+      q: encodeURIComponent(newValue),
     });
     return true;
   }

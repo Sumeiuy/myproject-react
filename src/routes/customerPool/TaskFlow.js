@@ -433,9 +433,7 @@ export default class TaskFlow extends PureComponent {
         }
       }
 
-      let postBody = {
-        postnId: emp.getPstnId(),
-      };
+      let postBody = {};
 
       // 当前tab是第一个，则代表导入客户
       if (currentEntry === 0) {
