@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-12 14:37:41
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-30 10:33:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -94,7 +94,7 @@ export default class Stock extends PureComponent {
 
   @autobind
   rowClickHandle(record) {
-    const { id, code } = record;
+    const { id, code, eventType } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
     const urlQuery = {
@@ -110,6 +110,8 @@ export default class Stock extends PureComponent {
       keyword,
       // 股票代码
       code,
+      // 事件类型
+      eventType,
     };
     push({
       pathname,

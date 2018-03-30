@@ -158,9 +158,34 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  handlePreview(title) {
-    const { onPreviewCustDetail } = this.props;
-    onPreviewCustDetail(title);
+  getSourceSrc(source) {
+    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&fileName=${window.encodeURIComponent(source.fileName)}`;
+  }
+
+  @autobind
+  getPayload() {
+    const {
+      urlParams,
+    } = this.props;
+    const orgId = this.getCurrentOrgId();
+    const {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+    } = urlParams;
+    return {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+      orgId,
+    };
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    return this.state.currentOrgId || emp.getOrgId();
   }
 
   /**
@@ -180,19 +205,12 @@ export default class MissionImplementation extends PureComponent {
    */
   @autobind
   handleCreateCustRange({
-        custRange,
-        posOrgId,
-        empPostnList,
-      }) {
-    // const myCustomer = {
-    //   id: MAIN_MAGEGER_ID,
-    //   name: '我的客户',
-    // };
+    custRange,
+    posOrgId,
+    empPostnList,
+  }) {
     // 职责的普通用户，取值 '我的客户'
     if (!this.isAuthorize) {
-      //   this.setState({
-      //     createCustRange: [myCustomer],
-      //   });
       return;
     }
 
@@ -255,9 +273,27 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  getCurrentOrgId() {
-    return this.state.currentOrgId || emp.getOrgId();
+  createMissionReport() {
+    const {
+      createMotReport,
+    } = this.props;
+    const payload = this.getPayload();
+    createMotReport(payload);
   }
+
+  @autobind
+  queryMOTServeAndFeedBackExcel() {
+    const { queryMOTServeAndFeedBackExcel } = this.props;
+    const payload = this.getPayload();
+    queryMOTServeAndFeedBackExcel(payload);
+  }
+
+  @autobind
+  handlePreview(params) {
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail(params);
+  }
+
 
   @autobind
   renderTabsExtra() {
@@ -294,47 +330,6 @@ export default class MissionImplementation extends PureComponent {
       updateQueryState: this.updateQueryState,
     };
     return (<TabsExtra {...extraProps} />);
-  }
-  @autobind
-  getPayload() {
-    const {
-      urlParams,
-    } = this.props;
-    const orgId = this.getCurrentOrgId();
-    const {
-      missionName,
-      missionId,
-      serviceTips,
-      servicePolicy,
-    } = urlParams;
-    return {
-      missionName,
-      missionId,
-      serviceTips,
-      servicePolicy,
-      orgId,
-    };
-  }
-
-  @autobind
-  createMissionReport() {
-    const {
-      createMotReport,
-    } = this.props;
-    const payload = this.getPayload();
-    createMotReport(payload);
-  }
-
-  @autobind
-  queryMOTServeAndFeedBackExcel() {
-    const { queryMOTServeAndFeedBackExcel } = this.props;
-    const payload = this.getPayload();
-    queryMOTServeAndFeedBackExcel(payload);
-  }
-
-  @autobind
-  getSourceSrc(source) {
-    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&fileName=${window.encodeURIComponent(source.fileName)}`;
   }
 
   @autobind

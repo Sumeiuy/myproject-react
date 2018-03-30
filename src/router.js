@@ -107,16 +107,18 @@ const routes = [
       { path: '/todo', component: ToDo },
       { path: '/list', component: CustomerList },
       { path: '/customerGroup', component: CustomerGroup },
-      // 客户列表发起任务
-      { path: '/createTask', component: CreateTask },
       // 分组管理发起任务
       { path: '/createTaskFromCustGroup', component: CreateTask },
       // 管理者视图进度条发起任务
       { path: '/createTaskFromProgress', component: CreateTask },
       // 管理者视图饼图发起任务
       { path: '/createTaskFromPie', component: CreateTask },
-      // 任务驳回修改
-      { path: '/createTaskFromTaskRejection', component: CreateTask },
+      // 从代办流程进去，任务驳回修改
+      { path: '/createTaskFromTaskRejection1', component: CreateTask },
+      // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
+      { path: '/createTaskFromTaskRejection2', component: CreateTask },
+      // 客户列表发起任务
+      { path: '/createTask', component: CreateTask },
       // 客户分组管理
       { path: '/customerGroupManage', component: CustomerGroupManage },
       { path: '/serviceLog', component: ServiceLog },
