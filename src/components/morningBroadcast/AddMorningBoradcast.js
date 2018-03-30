@@ -287,7 +287,6 @@ export default class AddMorningBoradcast extends PureComponent {
       name: '更新晨报其他文件',
     },
   })
-  @autobind
   onOtherChange({ fileList, file }) {
     if (file.status === 'uploading') {
       this.onOtherUploading(fileList);

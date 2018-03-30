@@ -130,6 +130,7 @@ export default class CommonUpload extends PureComponent {
 
   // 上传事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
     const { uploadAttachment } = this.props;
     const uploadFile = info.file;
@@ -164,7 +165,7 @@ export default class CommonUpload extends PureComponent {
 
   // 删除事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]是否删除该附件？' } })
+  @logable({ type: 'Click', payload: { name: '$args[0]删除附件' } })
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;

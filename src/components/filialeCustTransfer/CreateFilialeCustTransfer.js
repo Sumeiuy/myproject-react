@@ -110,6 +110,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 上传事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '导入' } })
   onChange(info) {
     this.setState({
       importVisible: false,

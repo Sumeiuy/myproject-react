@@ -148,7 +148,7 @@ export default class MultiUpload extends PureComponent {
 
   // 删除事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]是否删除该附件？' } })
+  @logable({ type: 'Click', payload: { name: '$args[0]删除附件' } })
   onRemove(attachId) {
     const { type, deleteAttachment, deleteCallback } = this.props;
     const { empId, attachment, fileList } = this.state;
