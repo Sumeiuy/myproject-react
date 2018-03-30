@@ -24,7 +24,6 @@ const EMPTY_OBJECT = {};
 // const LIST_MAX = 1e4;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_TEN_SIZE = 10;
-const INITIAL_PAGE_FIVE_SIZE = 5;
 // 题目类型，暂时写死，以后可能需要改成从接口获取，可能有多个
 const assessType = 'MOT_EMP_FEEDBACK';
 
@@ -517,7 +516,7 @@ export default {
           type: 'getGroupCustomerList',
           payload: {
             pageNum: INITIAL_PAGE_NUM,
-            pageSize: INITIAL_PAGE_FIVE_SIZE,
+            pageSize: INITIAL_PAGE_TEN_SIZE,
             groupId,
           },
         });
@@ -568,7 +567,7 @@ export default {
         type: 'getGroupCustomerList',
         payload: {
           pageNum: INITIAL_PAGE_NUM,
-          pageSize: INITIAL_PAGE_FIVE_SIZE,
+          pageSize: INITIAL_PAGE_TEN_SIZE,
           groupId,
         },
       });

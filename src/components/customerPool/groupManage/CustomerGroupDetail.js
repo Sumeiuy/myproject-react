@@ -480,17 +480,26 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
-  // 上传批量客户的切换
+  // 上传批量客户的分页切换
   @autobind
-  pageChangeHandle(page, pageSize) {
-    const { queryBatchCustList } = this.props;
-    const { attachmentId } = this.state;
-    const payload = {
-      attachmentId,
-      pageNum: page,
-      pageSize,
-    };
-    queryBatchCustList(payload);
+  multiPageChangeHandle(page, pageSize) {
+    console.warn('page', page);
+    console.warn('pageSize', pageSize);
+    const { queryBatchCustList, getGroupCustomerList } = this.props;
+    const { groupId = '', attachmentId } = this.state;
+    if (_.isEmpty(groupId)) {
+      queryBatchCustList({
+        attachmentId,
+        pageNum: page,
+        pageSize,
+      });
+    } else {
+      getGroupCustomerList({
+        groupId,
+        pageNum: page,
+        pageSize: pageSize,
+      });
+    }
   }
 
   // 上传事件
@@ -851,7 +860,7 @@ export default class CustomerGroupDetail extends PureComponent {
               <GroupTable
                 pageData={newPageData}
                 listData={newMultiCustList}
-                onPageChange={this.pageChangeHandle}
+                onPageChange={this.multiPageChangeHandle}
                 tableClass={
                 classnames({
                   [tableStyles.groupTable]: true,
