@@ -8,7 +8,6 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { message } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
@@ -40,6 +39,11 @@ export default class ServiceRecordForm extends PureComponent {
 
   @autobind
   handleSubmit() {
+    const data = this.serviceRecordContentRef.getData();
+    if (!data) {
+      return;
+    }
+
     const {
       serviceWay,
       serviceType,
@@ -51,22 +55,14 @@ export default class ServiceRecordForm extends PureComponent {
       serviceStatus,
       serviceContent,
       currentFile,
-    } = this.serviceRecordContentRef.getData();
+    } = data;
 
     const {
       formData: { custId = '', missionFlowId = '' },
       addServeRecord,
       custUuid,
     } = this.props;
-    if (!serviceContent) {
-      message.error('请输入此次服务的内容');
-      return;
-    }
 
-    if (serviceContent.length > 1000) {
-      message.error('服务的内容字数不能超过1000');
-      return;
-    }
     const postBody = {
       // 经纪客户号
       custId,
