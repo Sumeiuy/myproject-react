@@ -17,7 +17,7 @@ import styles from './boradcastDetail.less';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import Audio from '../../components/common/audio/Audio';
 import Icon from '../../components/common/Icon';
-
+import logable from '../../decorators/logable';
 
 const effects = {
   getBoradcastDetail: 'morningBoradcast/getBoradcastDetail',
@@ -67,6 +67,7 @@ export default class BroadcastDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '晨间播报列表' } })
   handleBackClick() {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };

@@ -16,6 +16,8 @@ import _ from 'lodash';
 import Icon from '../common/Icon';
 import DetailTable from './DetailTable';
 import styles from './treeDetail.less';
+import logable from '../../decorators/logable';
+
 // detailTable 组件的表格类型
 const COMPANY_TABLE = '2';
 const CENTER_TABLE = '3';
@@ -62,8 +64,14 @@ export default class TreeDetail extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '负责人' } })
+  handleEditClick(obj, flag, category, hasManager) {
+    this.props.onUpdate(obj, flag, category, hasManager);
+  }
+
+  @autobind
   renderHeader(obj) {
-    const { category, onUpdate, headerLine } = this.props;
+    const { category, headerLine } = this.props;
     const { orgName, postnDesc, login, loginName, postnId } = obj || {};
     const hasManager = !_.isEmpty(postnId);
     const isHiddenManager = _.isEmpty(login) && _.isEmpty(login);
@@ -86,7 +94,7 @@ export default class TreeDetail extends Component {
             category === COMPANY_TABLE ? null : (
               <Icon
                 type={'beizhu'}
-                onClick={() => { onUpdate(obj, true, category, hasManager); }}
+                onClick={() => { this.handleEditClick(obj, true, category, hasManager); }}
                 className={styles.editIcon}
               />
             )

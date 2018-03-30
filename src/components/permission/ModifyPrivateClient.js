@@ -13,6 +13,7 @@ import BottonGroup from './BottonGroup';
 import { seibelConfig } from '../../config';
 import TextareaComponent from '../common/textareacomponent';
 import style from './modifyPrivateClient.less';
+import logable from '../../decorators/logable';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
@@ -178,6 +179,7 @@ export default class modifyPrivateClient extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   submitModifyInfo(item) {
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
@@ -199,6 +201,7 @@ export default class modifyPrivateClient extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmSubmit(value) {
     const { location: { query } } = this.props;
     // 提交 修改私密客户申请

@@ -17,6 +17,7 @@ import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
+import logable from '../../../decorators/logable';
 
 const {
   contract: { pageType: contractPageType },
@@ -162,8 +163,27 @@ export default class Pageheader extends PureComponent {
     this.onWindowResize();
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
+  handleMore() {
+    this.handleMoreChange();
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
+  handleShrik() {
+    this.handleMoreChange();
+  }
+
   // 选中客户下拉对象中对应的某个对象
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0]',
+    },
+  })
   selectCustItem(item) {
     const { filterCallback } = this.props;
     filterCallback({
@@ -180,8 +200,51 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务经理',
+      value: '$args[1]',
+    },
+  })
+  handleManagerSelect(name, item) {
+    this.selectItem(name, item);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '拟稿人',
+      value: '$args[1]',
+    },
+  })
+  handleDrafterSelect(name, item) {
+    this.selectItem(name, item);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '审批人',
+      value: '$args[1]',
+    },
+  })
+  handleApproverSelect(name, item) {
+    this.selectItem(name, item);
+  }
+
   // 选中部门下拉对象中对应的某个对象
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '部门',
+      value: '$args[0]',
+    },
+  })
   selectCustRange(obj) {
     const { filterCallback } = this.props;
     filterCallback({
@@ -201,6 +264,47 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '操作类型',
+      value: '$args[1]',
+    },
+  })
+  handleOperateTypeChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSubtypeChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleStatusChange(key, v) {
+    this.handleSelectChange(key, v);
+  }
+
+  @autobind
+  handleCreate() {
+    this.props.creatSeibelModal();
+  }
+
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
   toSearch(method, value) {
@@ -210,14 +314,46 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
+  handleCustSearch(value) {
+    this.props.getCustomerList({
+      keyword: value,
+      type: this.props.pageType,
+    });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询服务经理' } })
+  handleManagerSearch(value) {
+    this.props.getPtyMngList({
+      keyword: value,
+      type: this.props.pageType,
+    });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询拟稿人' } })
+  handleDrafterSearch(value) {
+    this.props.getDrafterList({
+      keyword: value,
+      type: this.props.pageType,
+    });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询审批人' } })
+  handleApproverSearch(value) {
+    this.props.getApprovePersonList({
+      keyword: value,
+      type: this.props.pageType,
+    });
+  }
+
   render() {
     const {
-      getCustomerList,
-      getApprovePersonList,
-      getDrafterList,
       subtypeOptions,
       stateOptions,
-      creatSeibelModal,
       drafterList,
       approvePersonList,
       customerList,
@@ -231,7 +367,6 @@ export default class Pageheader extends PureComponent {
       empInfo,
       isUseOfCustomer,
       ptyMngList,
-      getPtyMngList,
       checkUserIsFiliale,
       location: {
         query: {
@@ -316,7 +451,7 @@ export default class Pageheader extends PureComponent {
                     showObjKey="custName"
                     objId="custNumber"
                     emitSelectItem={this.selectCustItem}
-                    emitToSearch={value => this.toSearch(getCustomerList, value)}
+                    emitToSearch={this.handleCustSearch}
                     name={`${page}-custName`}
                   />
                 </div>
@@ -330,8 +465,8 @@ export default class Pageheader extends PureComponent {
                     searchList={ptyMngAllList}
                     showObjKey="ptyMngName"
                     objId="ptyMngId"
-                    emitSelectItem={item => this.selectItem('ptyMngId', item)}
-                    emitToSearch={value => this.toSearch(getPtyMngList, value)}
+                    emitSelectItem={item => this.handleManagerSelect('ptyMngId', item)}
+                    emitToSearch={this.handleManagerSearch}
                     name={`${page}-ptyMngName`}
                   />
                 </div>
@@ -345,7 +480,7 @@ export default class Pageheader extends PureComponent {
                   name="business2"
                   value={business2}
                   data={operateOptions}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleOperateTypeChange}
                 />
               </div>
             : null
@@ -358,7 +493,7 @@ export default class Pageheader extends PureComponent {
                   name="subType"
                   value={subType}
                   data={subtypeOptions}
-                  onChange={this.handleSelectChange}
+                  onChange={this.handleSubtypeChange}
                 />
               </div>
             : null
@@ -369,7 +504,7 @@ export default class Pageheader extends PureComponent {
               name="status"
               value={status}
               data={stateOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleStatusChange}
             />
           </div>
 
@@ -382,8 +517,8 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('drafterId', item)}
-                emitToSearch={value => this.toSearch(getDrafterList, value)}
+                emitSelectItem={item => this.handleDrafterSelect('drafterId', item)}
+                emitToSearch={this.handleDrafterSearch}
                 name={`${page}-ptyMngName`}
               />
             </div>
@@ -410,8 +545,8 @@ export default class Pageheader extends PureComponent {
                 searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('approvalId', item)}
-                emitToSearch={value => this.toSearch(getApprovePersonList, value)}
+                emitSelectItem={item => this.handleApproverSelect('approvalId', item)}
+                emitToSearch={this.handleApproverSearch}
                 name={`${page}-ptyMngName`}
               />
             </div>
@@ -420,7 +555,7 @@ export default class Pageheader extends PureComponent {
             this.state.showMore ?
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleMore}
                 ref={this.filterMoreRef}
               >
                 <span>更多</span>
@@ -429,7 +564,7 @@ export default class Pageheader extends PureComponent {
               :
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleShrik}
                 ref={this.filterMoreRef}
               >
                 <span>收起</span>
@@ -443,7 +578,7 @@ export default class Pageheader extends PureComponent {
               type="primary"
               icon="plus"
               size="small"
-              onClick={creatSeibelModal}
+              onClick={() => { this.creatSeibelModal(); }}
             >
               新建
             </Button>

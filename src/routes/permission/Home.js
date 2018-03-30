@@ -22,6 +22,7 @@ import CreatePrivateClient from '../../components/permission/CreatePrivateClient
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
@@ -256,6 +257,7 @@ export default class Permission extends PureComponent {
 
   // 头部新建页面
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建权限申请' })
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
     this.setState({ isShowCreateModal: true });
@@ -268,6 +270,14 @@ export default class Permission extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '权限申请左侧列表项$args[0]',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id } = record;
     const {

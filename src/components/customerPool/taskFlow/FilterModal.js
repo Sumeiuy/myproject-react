@@ -12,9 +12,9 @@ import classnames from 'classnames';
 import { emp } from '../../../helper';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './filterModal.less';
-import Clickable from '../../../components/common/Clickable';
 import FilterCustomers from './step1/FilterCustomers';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
+import logable from '../../../decorators/logable';
 
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_SIZE = 10;
@@ -229,6 +229,7 @@ export default class FilterModal extends PureComponent {
 
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleAccept() {
     const { onCancel, onAccpeptFilter } = this.props;
     onAccpeptFilter({
@@ -241,6 +242,7 @@ export default class FilterModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     const { onCancel } = this.props;
     this.props.changeModalVisible({
@@ -329,18 +331,19 @@ export default class FilterModal extends PureComponent {
   @autobind
   renderBottomButton() {
     return (<div>
-      <Clickable
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
         onClick={this.handleCancel}
-        eventName="/click/taskSearchRow/close"
-      >
-        <Button className={styles.modalButton} key="back" size="large">取消</Button>
-      </Clickable>
-      <Clickable
+      >取消</Button>
+      <Button
+        className={styles.modalButton}
+        key="back"
+        size="large"
+        type="primary"
         onClick={this.handleAccept}
-        eventName="/click/taskSearchRow/close"
-      >
-        <Button className={styles.modalButton} key="back" size="large" type="primary">确定</Button>
-      </Clickable>
+      >确定</Button>
     </div>);
   }
 

@@ -25,7 +25,6 @@ export default class FilterMoreButton extends PureComponent {
     onCheckMoreButton: PropTypes.func.isRequired,
   }
 
-
   @autobind
   handleClick({ name, value, filterLabel }) {
     const { onChange, onCloseIconClick, onCheckMoreButton } = this.props;

@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './modalCommon.less';
+import logable from '../../decorators/logable';
 
 const create = Form.create;
 
@@ -50,6 +51,7 @@ export default class DeleteHistoryBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeDeleteModal() {
     const { closeModal, modalKey } = this.props;
     // 隐藏Modal
@@ -57,6 +59,7 @@ export default class DeleteHistoryBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmDeleteModal() {
     const { deleteBoardConfirm, orgId, boardId } = this.props;
     // TODO 调用删除历史看板接口

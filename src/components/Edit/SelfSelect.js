@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import { dom, event } from '../../helper';
 import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
+import logable from '../../decorators/logable';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -120,6 +121,7 @@ export default class SelfSelect extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'check选中全部' } })
   handleAllCheckboxChange(e) {
     const { options } = this.props;
     const childrenOptions = options.slice(1).map(item => item.id);
@@ -139,6 +141,7 @@ export default class SelfSelect extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'checkbox选中' } })
   handleCheckboxGroupChange(groupCheckedList) {
     const { options } = this.props;
     const childrenOptions = options.slice(1);

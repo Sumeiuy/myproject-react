@@ -26,6 +26,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import './home.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
@@ -447,6 +448,14 @@ export default class CommissionHome extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '佣金调整左侧列表项$args[0]',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, subType: st } = record;
     const {
@@ -496,6 +505,7 @@ export default class CommissionHome extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建佣金调整' })
   handleCreateBtnClick() {
     // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
     if (this.hasCreatApplyAuthority()) {

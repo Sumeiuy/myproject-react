@@ -22,6 +22,7 @@ import Pagination from '../common/Pagination';
 import { emp } from '../../helper';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
+import logable from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 const { filialeCustTransfer: { pageType } } = seibelConfig;
@@ -133,6 +134,13 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0]',
+    },
+  })
   handleSelectClient(v) {
     this.setState({
       client: v,
@@ -165,6 +173,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 查询客户
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchClient(v) {
     if (!v) {
       return;
@@ -177,6 +186,13 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 选择新服务经理
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择新服务经理',
+      value: '$args[0]',
+    },
+  })
   handleSelectNewManager(v) {
     this.setState({
       newManager: v,
@@ -200,6 +216,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 查询新服务经理
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
   handleSearchNewManager(v) {
     if (!v) {
       return;
@@ -235,6 +252,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 提交前校验
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   submitCreateInfo(item) {
     const { client, newManager } = this.state;
     const { origiManagerList } = this.props;

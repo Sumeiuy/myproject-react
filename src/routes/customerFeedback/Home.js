@@ -17,7 +17,7 @@ import choosePage from '../../components/operationManage/choosePage';
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
 import withRouter from '../../decorators/withRouter';
-
+import logable from '../../decorators/logable';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
@@ -180,6 +180,7 @@ export default class CustomerFeedback extends PureComponent {
 
   // 切换tab
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：任务绑定客户反馈/客户反馈选项维护' } })
   handleChangeTab(key) {
     const {
       replace,

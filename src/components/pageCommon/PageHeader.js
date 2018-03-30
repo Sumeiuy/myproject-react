@@ -15,6 +15,7 @@ import BoardSelect from './BoardSelect';
 import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
 import { dom } from '../../helper';
+import logable from '../../decorators/logable';
 // 选择项字典
 import styles from './PageHeader.less';
 
@@ -140,9 +141,28 @@ export default class PageHeader extends PureComponent {
 
   // 汇总方式切换,按绩效视图汇总，按组织机构汇总
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '汇总方式切换',
+      value: '$args[0]',
+    },
+  })
   handleSummaryTypeChange(v) {
     this.setState({ summaryTypeValue: v });
     this.props.updateOrgTreeValue(v);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '营业地址选择项：',
+      value: '$args[0]',
+    },
+  })
+  handleCustRange(obj) {
+    this.props.updateQueryState(obj);
   }
 
   render() {
@@ -223,7 +243,7 @@ export default class PageHeader extends PureComponent {
                   custRange={custRange}
                   location={location}
                   replace={replace}
-                  updateQueryState={updateQueryState}
+                  updateQueryState={this.handleCustRange}
                   orgId={orgId}
                   collectData={collectCustRange}
                 />

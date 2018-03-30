@@ -16,6 +16,7 @@ import IECharts from '../../IECharts';
 import { data as dataHelper } from '../../../helper';
 import { custFeedbackColorCollection } from '../../../config/CustFeedbackPieColor';
 import styles from './custFeedback.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -88,6 +89,7 @@ export default class CustFeedback extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   handlePieClick(params) {
     const { data: { children, parent, key } } = params;
     const { level1Data } = this.state;

@@ -14,6 +14,7 @@ import { constants, BoardBasic, optionsMap } from '../../config';
 import { dom, event } from '../../helper';
 import { canCustomBoard } from '../../permissions';
 import styles from './BoardSelect.less';
+import logable from '../../decorators/logable';
 
 const defaultBoardId = constants.boardId;
 const sliceLength = BoardBasic.regular.length;
@@ -131,6 +132,7 @@ export default class BoardSelect extends PureComponent {
 
   // 鼠标进入
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标进入' } })
   mouseEnter() {
     // 清除定时器
     if (this.timer) {
@@ -155,6 +157,7 @@ export default class BoardSelect extends PureComponent {
 
   // 鼠标离开
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标离开' } })
   mouseLeave() {
     // 清除定时器
     if (this.timer) {
@@ -171,6 +174,7 @@ export default class BoardSelect extends PureComponent {
 
   // 二级菜单鼠标进入
   @autobind
+  @logable({ type: 'Click', payload: { name: '自定义看板鼠标进入' } })
   subMouseEnter() {
     // 清除定时器
     if (this.timer) {
@@ -183,8 +187,15 @@ export default class BoardSelect extends PureComponent {
     }, this.registerScrollEvent);
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '二级菜单鼠标进入' } })
+  subMenuMouseEnter() {
+    this.subMouseEnter();
+  }
+
   // 二级菜单鼠标移出
   @autobind
+  @logable({ type: 'Click', payload: { name: '自定义看板鼠标移出' } })
   subMouseLeave() {
     // 清除定时器
     if (this.timer) {
@@ -198,8 +209,40 @@ export default class BoardSelect extends PureComponent {
     }, 500);
   }
 
+  // 原始看板菜单点击事件
+  @autobind
+  @logable({ type: 'Click', payload: { name: '原始看板菜单点击事件' } })
+  handleOrdinaryBoardMenuClick(e) {
+    this.menuClick(e);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '历史看板菜单点击事件' } })
+  handleHistoryBoardMenuClick(e) {
+    this.menuClick(e);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '可见看板数组最后一个对象中的普通看板菜单点击事件' } })
+  handleVisibleOrdinaryBoardMenuClick(e) {
+    this.menuClick(e);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '可见看板数组最后一个对象中的普通看板菜单点击事件' } })
+  handleCustomerBorderMenuClick(e) {
+    this.menuClick(e);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '可见看板数组最后一个对象中的历史看板菜单点击事件' } })
+  handleVisibleHistoryBoardMenuClick(e) {
+    this.menuClick(e);
+  }
+
   // 菜单点击事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '菜单点击事件' } })
   menuClick(e) {
     const target = e.target;
     const { push, collectData, visibleBoards } = this.props;
@@ -266,7 +309,7 @@ export default class BoardSelect extends PureComponent {
     const ordinaryHtml = (
       ordinaryStaticBoards.map(item => (
         <li
-          onClick={this.menuClick}
+          onClick={this.handleOrdinaryBoardMenuClick}
           data-key={item.id}
           data-type={visibleBoardType.ordinary.key}
           title={item.name}
@@ -280,7 +323,7 @@ export default class BoardSelect extends PureComponent {
     const historyHtml = (
       historyStaticBoards.map(item => (
         <li
-          onClick={this.menuClick}
+          onClick={this.handleHistoryBoardMenuClick}
           data-key={item.id}
           data-type={visibleBoardType.history.key}
           data-board-type={item.boardType}
@@ -295,7 +338,7 @@ export default class BoardSelect extends PureComponent {
     const lastVisibleBoardsOrdinaryHtml = (
       lastVisibleBoards.ordinary.map(item => (
         <li
-          onClick={this.menuClick}
+          onClick={this.handleVisibleBoardBoardMenuClick}
           data-key={item.id}
           data-type={visibleBoardType.ordinary.key}
           title={item.name}
@@ -309,7 +352,7 @@ export default class BoardSelect extends PureComponent {
     const lastVisibleBoardsHistoryHtml = (
       lastVisibleBoards.history.map(item => (
         <li
-          onClick={this.menuClick}
+          onClick={this.handleVisibleHistoryBoardMenuClick}
           data-key={String(item.id)}
           data-type={visibleBoardType.history.key}
           data-board-type={item.boardType}
@@ -362,7 +405,7 @@ export default class BoardSelect extends PureComponent {
             {
               canCustomBoard() ?
                 <li
-                  onClick={this.menuClick}
+                  onClick={this.handleCustomerBorderMenuClick}
                   data-key="0"
                   data-type={visibleBoardType.manage.key}
                 >
@@ -377,7 +420,7 @@ export default class BoardSelect extends PureComponent {
         <ul
           className={styles.subMenuUl}
           style={{ display: showSubMenu ? 'block' : 'none' }}
-          onMouseEnter={this.subMouseEnter}
+          onMouseEnter={this.subMenuMouseEnter}
           ref={this.setSubMenuUl}
         >
           {lastVisibleBoardsHistoryHtml}

@@ -17,6 +17,7 @@ import Icon from '../../common/Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
 import './index.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
@@ -140,6 +141,7 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$props.uploadTitle' } })
   handleFileChange(info) {
     const { onOperateFile, isSupportUploadMultiple } = this.props;
     const { upData, custUuid } = this.state;
@@ -206,6 +208,7 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除文件' } })
   handleFileRemove(file) {
     const { error } = file;
     this.currentfile = file;
@@ -288,6 +291,7 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除' } })
   handleDeleteFile() {
     confirm({
       onOk: this.handleDeleteConfirm,
@@ -296,6 +300,7 @@ export default class Uploader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '预览' } })
   handlePreview() {
     const { onHandleOverview } = this.props;
     const { uploadedFileKey } = this.state;

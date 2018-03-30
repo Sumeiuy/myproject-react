@@ -20,6 +20,7 @@ import Icon from '../../components/common/Icon';
 
 import config from './config';
 import styles from './detail.less';
+import logable from '../../decorators/logable';
 
 const { typeList } = config;
 const { Header, Footer, Content } = Layout;
@@ -107,6 +108,7 @@ export default class StockDetail extends PureComponent {
 
   // a 链接事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '相关' } })
   hrefHandle(item) {
     const {
       location: {
@@ -138,6 +140,7 @@ export default class StockDetail extends PureComponent {
 
   // 返回按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '返回' } })
   goBackHandle() {
     const {
       location: {

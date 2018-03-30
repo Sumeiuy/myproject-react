@@ -12,11 +12,11 @@ import classnames from 'classnames';
 import { emp, number } from '../../../helper';
 import Loading from '../../../layouts/Loading';
 import styles from './taskSearchRow.less';
-import logable from '../../../decorators/logable';
 import { isSightingScope } from '../helper';
 import { fspContainer } from '../../../config';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
 import FilterModal from './FilterModal';
+import logable from '../../../decorators/logable';
 
 const RadioGroup = Radio.Group;
 const INITIAL_PAGE_NUM = 1;
@@ -283,6 +283,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   change(e) {
     const { onChange, circlePeopleData } = this.props;
     const { filterNumObject } = this.state;

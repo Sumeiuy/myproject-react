@@ -17,6 +17,7 @@ import { time } from '../../helper';
 import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './DurationSelect.less';
+import logable from '../../decorators/logable';
 
 moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
@@ -96,6 +97,7 @@ export default class DurationSelect extends PureComponent {
   }
   // 期间变化
   @autobind
+  @logable({ type: 'Click', payload: { name: '期间变化' } })
   handleDurationChange(e) {
     const value = e.target.value;
     const { initialData } = this.props;
@@ -179,6 +181,7 @@ export default class DurationSelect extends PureComponent {
   }
   // 环比同比切换事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '环比同比切换事件' } })
   compareChangeHandle(e) {
     const compare = e.target.value;
     const { beginMoment, endMoment } = this.state;
@@ -202,6 +205,7 @@ export default class DurationSelect extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$state.durationStr' } })
   handleDurationClick() {
     // 需要给document一个click事件
     document.addEventListener('click', this.hideDurationPicker, false);
@@ -223,6 +227,13 @@ export default class DurationSelect extends PureComponent {
   }
   // 用户自己选的时间段事件
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '用户自己选的时间段事件',
+      value: '$args[1]',
+    },
+  })
   rangePickerChange(dates, dateStrings) {
     const { compare } = this.state;
     const beginMoment = dates[0];
@@ -249,6 +260,7 @@ export default class DurationSelect extends PureComponent {
     });
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '自定义' } })
   showSelfDatePicker() {
     this.setState({
       selfDatePickerOpen: true,
@@ -257,6 +269,7 @@ export default class DurationSelect extends PureComponent {
 
   // 历史看板预定义时间范围切换事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '历史看板预定义时间范围切换事件' } })
   historyChangeDuration(e) {
     const { compare } = this.state;
     const { initialData } = this.props;

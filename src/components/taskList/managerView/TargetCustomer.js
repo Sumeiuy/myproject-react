@@ -15,6 +15,7 @@ import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
 import TipsInfo from '../performerView/TipsInfo';
 import styles from './targetCustomer.less';
+import logable from '../../../decorators/logable';
 
 export default class TargetCustomer extends PureComponent {
 
@@ -61,6 +62,7 @@ export default class TargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户总数' } })
   handlePreview() {
     const { onPreview } = this.props;
     onPreview({

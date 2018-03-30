@@ -11,6 +11,7 @@ import { Tooltip } from 'antd';
 import classnames from 'classnames';
 import { fspContainer } from '../../../config';
 import ChartLineWidget from './ChartLine';
+import logable from '../../../decorators/logable';
 // import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
@@ -50,6 +51,7 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标进入$props.displayText' } })
   getCustIncome() {
     const { getCustIncome, listItem, monthlyProfits, custIncomeReqState } = this.props;
     const thisProfits = monthlyProfits[listItem.custId];
@@ -66,7 +68,8 @@ export default class SixMonthEarnings extends PureComponent {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
-    @autobind
+  @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标离开$props.displayText' } })
   handleMouseLeave() {
     this.debounced.cancel();
     this.setState({

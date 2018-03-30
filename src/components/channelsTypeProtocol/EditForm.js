@@ -21,6 +21,7 @@ import { seibelConfig } from '../../config';
 import config from '../../routes/channelsTypeProtocol/config';
 import styles from './editForm.less';
 import channelType from '../../helper/page/channelType';
+import logable from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -421,6 +422,12 @@ export default class EditForm extends PureComponent {
 
   // 添加协议产品
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '协议产品 $args[1] $args[0]',
+    },
+  })
   handleTransferChange(flag, newSelect, changeSecondArray) {
     this.setState({
       productList: changeSecondArray,
@@ -505,6 +512,12 @@ export default class EditForm extends PureComponent {
 
   // 表格删除事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '下挂客户删除',
+    },
+  })
   deleteTableData(record, index) {
     const { cust } = this.state;
     const testArr = _.cloneDeep(cust);

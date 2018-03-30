@@ -8,10 +8,10 @@ import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-
 import Icon from '../common/Icon';
 import Item from './Item';
 import styles from './PerformanceItem.less';
+import logable from '../../decorators/logable';
 
 const pageSize = 8;
 export default class PerformanceItem extends PureComponent {
@@ -62,6 +62,18 @@ export default class PerformanceItem extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
+  hanldePreClick(preOrNext) {
+    this.clickHandle(preOrNext);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
+  handleNextClick(preOrNext) {
+    this.clickHandle(preOrNext);
+  }
+
+  @autobind
   clickHandle(preOrNext) {
     const { page, pageNum } = this.state;
     const { data } = this.props;
@@ -99,7 +111,7 @@ export default class PerformanceItem extends PureComponent {
               <div>
                 {
                   showPreBtn ?
-                    <a className={styles.preBtn} onClick={() => this.clickHandle('pre')}>
+                    <a className={styles.preBtn} onClick={() => this.hanldePreClick('pre')}>
                       <Icon type="more" />
                     </a>
                   :
@@ -107,7 +119,7 @@ export default class PerformanceItem extends PureComponent {
                 }
                 {
                   !showNextBtn ?
-                    <a className={styles.nextBtn} onClick={() => this.clickHandle('next')}>
+                    <a className={styles.nextBtn} onClick={() => this.handleNextClick('next')}>
                       <Icon type="more" />
                     </a>
                   :

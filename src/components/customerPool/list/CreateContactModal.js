@@ -212,6 +212,12 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '最近服务记录展开/折叠' } })
+  handleCollapseClick() {
+    this.props.handleCollapseClick();
+  }
+
   render() {
     const {
       visible,
@@ -224,7 +230,6 @@ export default class CreateContactModal extends PureComponent {
       currentCustId,
       executeTypes,
       serveWay,
-      handleCollapseClick,
       getCeFileList,
       filesList,
     } = this.props;
@@ -428,7 +433,7 @@ export default class CreateContactModal extends PureComponent {
           data={serviceRecordData}
           executeTypes={executeTypes}
           serveWay={serveWay}
-          handleCollapseClick={handleCollapseClick}
+          handleCollapseClick={this.handleCollapseClick}
           getCeFileList={getCeFileList}
           filesList={filesList}
         />

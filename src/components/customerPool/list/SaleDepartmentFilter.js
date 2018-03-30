@@ -5,9 +5,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-
+import { autobind } from 'core-decorators';
 import CustRange from '../common/CustRange';
-
+import logable from '../../../decorators/logable';
 import styles from './saleDepartmentFilter.less';
 
 const custRangeStyle = { width: 'auto', maxWidth: 150 };
@@ -28,13 +28,24 @@ export default class SaleDepartmentFilter extends PureComponent {
     collectCustRange: () => { },
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务营业部：',
+      value: '$args[0]',
+    },
+  })
+  handleCustRange(obj) {
+    this.props.updateQueryState(obj);
+  }
+
   render() {
     const {
       orgId,
       custRange,
       collectCustRange,
       expandAll,
-      updateQueryState,
     } = this.props;
     if (custRange && custRange.length <= 0) {
       return null;
@@ -48,7 +59,7 @@ export default class SaleDepartmentFilter extends PureComponent {
           defaultFirst
           orgId={orgId}
           custRange={custRange}
-          updateQueryState={updateQueryState}
+          updateQueryState={this.handleCustRange}
           collectData={collectCustRange}
           expandAll={expandAll}
         />

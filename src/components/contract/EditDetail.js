@@ -24,7 +24,7 @@ import styles from './editDetail.less';
 import CommonUpload from '../common/biz/CommonUpload';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
-
+import logable from '../../decorators/logable';
 
 const { TextArea } = Input;
 // 操作类型列表
@@ -125,8 +125,39 @@ export default class EditDetail extends PureComponent {
       [key]: value,
     }, () => this.props.saveModalData(this.state));
   }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '操作类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelectOpereateType(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelectSubtype(key, value) {
+    this.handleSelectChange(key, value);
+  }
   // 选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0]',
+    },
+  })
   handleSelectCust(value) {
     this.setState({
       ...this.state,
@@ -142,8 +173,22 @@ export default class EditDetail extends PureComponent {
     //   }
     // }
   }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
+  handleSearchCust(value) {
+    this.props.getCanApplyCustList(value);
+  }
+
   // 选择合约编号
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '合约编号',
+      value: '$args[0]',
+    },
+  })
   handleSelectContractNum(value) {
     this.setState({
       ...this.state,
@@ -152,6 +197,12 @@ export default class EditDetail extends PureComponent {
     // 退订选择合约编号后搜索该合约详情
     // this.props.onSearchContractDetail(value);
   }
+
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
+  handleSearchContractNum(value) {
+    this.props.getContractNumList(value);
+  }
+
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
@@ -160,6 +211,43 @@ export default class EditDetail extends PureComponent {
       [obj.name]: obj.value,
     }, () => this.props.saveModalData(this.state));
   }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约开始期',
+      value: '$args[0]',
+    },
+  })
+  handleChangeStartTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约有效期',
+      value: '$args[0]',
+    },
+  })
+  handleChangeValidityTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约终止日期',
+      value: '$args[0]',
+    },
+  })
+  handleChangeEndTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
   // 修改备注
   @autobind
   handleChangeRemark(e) {
@@ -175,9 +263,7 @@ export default class EditDetail extends PureComponent {
       attachmentList,
       uploadAttachment,
       canApplyCustList,
-      getCanApplyCustList,
       contractNumList,
-      getContractNumList,
     } = this.props;
     const {
       operation,
@@ -207,7 +293,7 @@ export default class EditDetail extends PureComponent {
           name="operation"
           data={operationList}
           value={operation}
-          onChange={this.handleSelectChange}
+          onChange={this.handleSelectOpereateType}
         />
       </InfoForm>
     );
@@ -218,7 +304,7 @@ export default class EditDetail extends PureComponent {
           name="childType"
           data={childTypeList}
           value={this.state.childType}
-          onChange={this.handleSelectChange}
+          onChange={this.handleSelectSubtype}
         />
       </InfoForm>
     );
@@ -231,7 +317,7 @@ export default class EditDetail extends PureComponent {
           objId="cusId"
           searchList={canApplyCustList}
           onSelect={this.handleSelectCust}
-          onSearch={getCanApplyCustList}
+          onSearch={this.handleSearchCust}
           isImmediatelySearch
         />
       </InfoForm>
@@ -241,7 +327,7 @@ export default class EditDetail extends PureComponent {
       <InfoForm label="合约开始日期" required>
         <DatePicker
           name="contractStartDate"
-          onChange={this.handleChangeDate}
+          onChange={this.handleChangeStartTime}
           value={
             contractStartDate ?
             moment(contractStartDate, 'YYYY-MM-DD')
@@ -257,7 +343,7 @@ export default class EditDetail extends PureComponent {
       <InfoForm label="合约有效期" required>
         <DatePicker
           name="contractValidDate"
-          onChange={this.handleChangeDate}
+          onChange={this.handleChangeValidityTime}
           value={
             contractValidDate ?
             moment(contractValidDate, 'YYYY-MM-DD')
@@ -273,7 +359,7 @@ export default class EditDetail extends PureComponent {
       <InfoForm label="合约终止日期" required>
         <DatePicker
           name="contractEndDate"
-          onChange={this.handleChangeDate}
+          onChange={this.handleChangeEndTime}
           value={
             contractEndDate ?
             moment(contractEndDate, 'YYYY-MM-DD')
@@ -293,7 +379,7 @@ export default class EditDetail extends PureComponent {
           objId="id"
           searchList={contractNumList}
           onSelect={this.handleSelectContractNum}
-          onSearch={getContractNumList}
+          onSearch={this.handleSearchContractNum}
           isImmediatelySearch
         />
       </InfoForm>
