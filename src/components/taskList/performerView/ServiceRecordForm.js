@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 12:37:50
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 14:50:57
  * 服务记录表单
  */
 
@@ -64,7 +64,6 @@ export default class ServiceRecordForm extends PureComponent {
       addServeRecord,
       custUuid,
     } = this.props;
-
     const postBody = {
       // 经纪客户号
       custId,

@@ -22,6 +22,9 @@ export default class ImportCustomers extends PureComponent {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
+    // 设置下一步按钮可点击状态
+    setNextStepBtnDisabled: PropTypes.func.isRequired,
+    nextStepBtnIsDisabled: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -45,6 +48,8 @@ export default class ImportCustomers extends PureComponent {
       onPreview,
       priviewCustFileData,
       storedTaskFlowData,
+      setNextStepBtnDisabled,
+      nextStepBtnIsDisabled,
     } = this.props;
     const cls = classnames({
       [styles.hide]: !visible,
@@ -57,6 +62,9 @@ export default class ImportCustomers extends PureComponent {
             onPreview={onPreview}
             priviewCustFileData={priviewCustFileData}
             storedData={storedTaskFlowData}
+            setNextStepBtnDisabled={setNextStepBtnDisabled}
+            nextStepBtnIsDisabled={nextStepBtnIsDisabled}
+            visible={visible}
           />
           {/*
             <CustomerSourceInput

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 17:02:30
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-28 16:06:01
  */
 
 import React, { PureComponent } from 'react';
@@ -64,6 +64,7 @@ export default class TaskPreview extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     onCancelSelectedRowKeys: PropTypes.func,
+    checkApproverIsEmpty: PropTypes.func,
   };
 
   static defaultProps = {
@@ -71,6 +72,7 @@ export default class TaskPreview extends PureComponent {
     needApproval: false,
     currentEntry: 0,
     onCancelSelectedRowKeys: NOOP,
+    checkApproverIsEmpty: NOOP,
   };
 
   constructor(props) {
@@ -164,6 +166,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable: false,
     });
     onCancel();
+    this.props.checkApproverIsEmpty();
   }
 
   @autobind
