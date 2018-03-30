@@ -75,6 +75,7 @@ export default class TargetCustomer extends PureComponent {
     getCustDetail({
       custId: id,
       missionId: currentId,
+      missionFlowId,
     });
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid

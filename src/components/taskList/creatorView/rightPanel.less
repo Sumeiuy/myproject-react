@@ -23,7 +23,8 @@
     height: 100%;
     overflow: auto;
     .innerWrap {
-      min-width: 650px;
+      // 不晓得为啥加最小宽度，导致x轴方向出现滚动条，不合理
+      // min-width: 650px;
     }
     .modContent {
       & > div {
@@ -60,11 +61,33 @@
         }
       }
     }
-    .bugTitle {
+    .header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
       border-bottom: 1px solid #ccc;
-      padding: 0 0 15px;
-      font-size: 15px;
-      font-weight: bold;
+      width: 100%;
+      .bugTitle {
+        padding: 0 0 15px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 80%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .editTask {
+        width: 20%;
+        color: #108ee9;
+        font-size: 15px;
+        text-align: right;
+        height: 37px;
+        cursor: pointer;
+      }
+    }
+    .emptyHeader {
+      width: 20%;
+      border-bottom: 1px solid #ccc;
     }
     .module {
       padding: 15px 0;

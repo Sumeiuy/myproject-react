@@ -29,7 +29,6 @@ export default class ServiceRecordForm extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    reloadTargetCustInfo: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
   }
 
@@ -145,7 +144,7 @@ export default class ServiceRecordForm extends PureComponent {
             <div className={styles.operationSection}>
               <Button
                 className={styles.submitBtn}
-                onClick={this.handleSubmit}
+                onClick={_.debounce(this.handleSubmit, 300)}
                 type="primary"
               >
                 提交</Button>
