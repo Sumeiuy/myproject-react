@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-23 23:01:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 17:22:03
  */
 
 import React, { PureComponent } from 'react';
@@ -112,6 +112,7 @@ export default class TaskFormFlowStep extends PureComponent {
       canGoNextStep: canGoNextStepFlow,
       needMissionInvestigation: newNeedMissionInvestigation,
       isDisabled,
+      approverIsEmpty: true, // 审批人是否为空
     };
   }
 
@@ -325,7 +326,9 @@ export default class TaskFormFlowStep extends PureComponent {
         // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
         const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
         const serviceStrategyString = toString(serviceStateData);
-        const serviceStrategyHtml = stateToHTML(serviceStateData);
+        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
+        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
         const formDataValidation = this.saveFormContent({
           ...values,
           serviceStrategySuggestion: serviceStrategyHtml,
@@ -394,6 +397,7 @@ export default class TaskFormFlowStep extends PureComponent {
       //   message.error('请勾选结果跟踪');
       // } else
       if (isResultTrackChecked) {
+        resultTrackComponent.requiredDataValidate();
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
           errMsg = '请设置结果跟踪任务指标';
@@ -408,7 +412,7 @@ export default class TaskFormFlowStep extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          message.error(errMsg);
+          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -433,8 +437,9 @@ export default class TaskFormFlowStep extends PureComponent {
         const originQuestionSize = _.size(currentSelectedQuestionIdList);
         const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
+          missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择
@@ -488,6 +493,28 @@ export default class TaskFormFlowStep extends PureComponent {
   @validateFormContent
   saveFormContent(values) {
     console.log(values);
+  }
+
+  // 校验审批人是否为空
+  @autobind
+  checkApproverIsEmpty() {
+    const {
+      storedCreateTaskData: { currentSelectRecord = {} },
+    } = this.props;
+    const {
+      needApproval,
+    } = this.state;
+    const { login: flowAuditorId = null } = currentSelectRecord || {};
+
+    if (_.isEmpty(flowAuditorId) && needApproval) {
+      this.setState({
+        approverIsEmpty: true,
+      });
+    } else {
+      this.setState({
+        approverIsEmpty: false,
+      });
+    }
   }
 
   // 自建任务提交
@@ -728,7 +755,19 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       isDisabled,
+      approverIsEmpty, // 审批人是否为空
     } = this.state;
+
+    // 最终的提交按钮点击状态,
+    // const submitBtnIsDisabled = isDisabled || approverIsEmpty;
+    let finalSubmitBtnIsDisabled;
+    if (isDisabled) {
+      // 如果全局状态是true “确认提交”按钮状态就是true
+      finalSubmitBtnIsDisabled = isDisabled;
+    } else {
+      // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
+      finalSubmitBtnIsDisabled = needApproval ? approverIsEmpty : needApproval;
+    }
 
     const {
       dict,
@@ -808,6 +847,7 @@ export default class TaskFormFlowStep extends PureComponent {
         onCancel={onCancel}
         creator={creator}
         currentEntry={currentEntry}
+        checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
 
@@ -901,7 +941,7 @@ export default class TaskFormFlowStep extends PureComponent {
             <Button
               className={styles.confirmBtn}
               type="primary"
-              disabled={isDisabled}
+              disabled={finalSubmitBtnIsDisabled}
               onClick={this.handleSubmit}
             >
               确认无误，提交

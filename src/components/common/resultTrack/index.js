@@ -1,14 +1,14 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 10:55:12
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-29 13:57:15
  * 结果跟踪
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Checkbox, InputNumber, message, DatePicker } from 'antd';
+import { Select, Checkbox, InputNumber, DatePicker, Form, Modal } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
@@ -18,6 +18,8 @@ import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
 
+const FormItem = Form.Item;
+const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const Option = Select.Option;
@@ -83,6 +85,10 @@ export default class ResultTrack extends PureComponent {
       currentSelectedOperationId: '',
       isProdBound: false,
       currentSelectedProduct: {},
+      isShowIndicatorLevel1KeyError: false, // 是否显示指标目标错误信息
+      isShowCurrentSelectedProductError: false, // 是否显示选择产品错误信息
+      isShowInputValueError: false, // 是否显示指标值错误信息
+      inputValueErrorMsg: '', // 指标值错误信息
     };
   }
 
@@ -96,6 +102,61 @@ export default class ResultTrack extends PureComponent {
       });
     } else {
       this.setDefaultState(this.initData(indicatorTargetData));
+    }
+  }
+
+  // 显示指标值错误信息
+  @autobind
+  showInputValueError(msg) {
+    this.setState({
+      isShowInputValueError: true,
+      inputValueErrorMsg: msg,
+    });
+  }
+
+  // 校验必填字段值为空时显示错误信息
+  @autobind
+  requiredDataValidate() {
+    const {
+      currentSelectedLevel1Indicator, // 指标目标 value(用于展示)
+      checked, // 是否选择结果跟踪
+      currentSelectedProduct, // 所选中的产品
+      inputValue, // 指标值
+      level1Indicator, // 一级指标list
+      operationType,
+      isProdBound,
+    } = this.state;
+
+    const indicatorLevel1 = _.find(level1Indicator, item =>
+    item.value === currentSelectedLevel1Indicator) || {};
+
+    // 当前所选中的指标目标
+    const indicatorLevel1Key = indicatorLevel1.key;
+    if (checked) { // 如果是选择结果跟踪
+      if (_.isEmpty(indicatorLevel1Key)) { // 如果当前所选的指标目标为空 显示报错信息
+        this.setState({
+          isShowIndicatorLevel1KeyError: true,
+        });
+      } else {
+        if (!((!_.isEmpty(operationType)
+              && !_.isEmpty(operationType[0])
+              && _.isArray(operationType)
+              && _.size(operationType) === 1
+              && (operationType[0].key === 'TRUE'
+                || operationType[0].key === 'OPEN'
+                || operationType[0].key === 'COMPLETE'))
+                || (_.isEmpty(operationType[0]))) && !_.isNumber(inputValue)) {
+                // 如果已经选择指标目标
+                // 并且当前显示指标值输入框
+          this.showInputValueError('请输入指标目标值');
+        }
+        if (isProdBound && _.isEmpty(currentSelectedProduct)) {
+          this.autoCompleteComponent.showErrorMsg('请选择一个产品');
+        }
+      }
+      // if (currentSelectedLevel1Indicator !== defaultIndicatorValue) {
+
+      // }
     }
   }
 
@@ -300,7 +361,7 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   setLevel2IndicatorProperty(indicator) {
-    let traceOpList = indicator.traceOpList;
+    let traceOpList = indicator.traceOpList || EMPTY_LIST;
     if (_.isArray(traceOpList) && _.isEmpty(traceOpList[0])) {
       traceOpList = [{}];
     }
@@ -503,13 +564,14 @@ export default class ResultTrack extends PureComponent {
       traceOpList: item.traceOpList,
       indexRemark: item.indexRemark,
     }));
-    const currentLevel2Indicator = children[0];
+    const currentLevel2Indicator = (children[0] || EMPTY_OBJECT);
 
     // 当前二级指标
     this.setState({
       currentSelectedLevel1Indicator: value,
       level2Indicator: children,
       currentSelectedLevel2Indicator: currentLevel2Indicator.value,
+      isShowIndicatorLevel1KeyError: false, // 选择指标目标时去掉错误提示
     });
     this.setLevel2IndicatorProperty(currentLevel2Indicator);
   }
@@ -542,14 +604,36 @@ export default class ResultTrack extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '结果跟踪' } })
   handleCheckChange() {
-    const { checked, currentSelectedLevel1Indicator } = this.state;
+    const {
+      checked,
+      currentSelectedLevel1Indicator,
+    } = this.state;
 
-    this.setState({
+    const commonState = {
       checked: !checked,
-    });
+      isShowIndicatorLevel1KeyError: false, // 隐藏指标目标错误信息
+      isShowCurrentSelectedProductError: false, // 隐藏选择产品错误信息
+      isShowInputValueError: false, // 隐藏指标值错误信息
+    };
 
     if (checked && currentSelectedLevel1Indicator !== defaultIndicatorValue) {
-      message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
+      // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
+      confirm({
+        title: '提示',
+        content: '您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪',
+        onOk: () => {
+          this.setState({
+            ...commonState,
+            inputValue: '',
+          }, () => {
+            this.handleIndicator1Change(defaultIndicatorValue);
+          });
+        },
+      });
+    } else {
+      this.setState({
+        ...commonState,
+      });
     }
   }
 
@@ -565,18 +649,23 @@ export default class ResultTrack extends PureComponent {
     }
     if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
       if (Number(value) < Number(currentMin)) {
-        message.error('不能小于指标最小值');
+        this.showInputValueError('不能小于指标最小值');
         return;
       }
 
       if (Number(value) > Number(currentMax)) {
-        message.error('不能大于指标最大值');
+        this.showInputValueError('不能大于指标最大值');
         return;
       }
+    }
+    if (!_.isNumber(value)) {
+      this.showInputValueError('只能输入数字');
+      return;
     }
 
     this.setState({
       inputValue: value || '',
+      isShowInputValueError: false,
     });
   }
 
@@ -623,14 +712,16 @@ export default class ResultTrack extends PureComponent {
   handleSelectProductItem(value) {
     this.setState({
       currentSelectedProduct: value,
-    });
+    }, this.autoCompleteComponent.hiddenErrorMsg);
   }
 
   @autobind
   handleQueryProduct(value) {
-    this.props.queryProduct({
-      keyword: value,
-    });
+    if (!_.isEmpty(value)) {
+      this.props.queryProduct({
+        keyword: value,
+      });
+    }
   }
 
   @autobind
@@ -671,7 +762,20 @@ export default class ResultTrack extends PureComponent {
       isProdBound,
       currentSelectedProduct,
       currentSelectedTrackDate,
-     } = this.state;
+      isShowIndicatorLevel1KeyError,
+      isShowInputValueError,
+      inputValueErrorMsg,
+    } = this.state;
+
+    const indicatorLevel1KeyErrorProps = isShowIndicatorLevel1KeyError ? {
+      validateStatus: 'error',
+      help: '请设置结果跟踪任务指标',
+    } : null;
+
+    const inputValueErrorProps = isShowInputValueError ? {
+      validateStatus: 'error',
+      help: inputValueErrorMsg,
+    } : null;
 
     const stateText = this.renderStateText();
 
@@ -681,154 +785,168 @@ export default class ResultTrack extends PureComponent {
     }
 
     return (
-      <div className={styles.resultTrackContainer}>
-        <div className={styles.title}>
-          <Checkbox checked={checked} onChange={this.handleCheckChange}>结果跟踪</Checkbox>
-        </div>
-        <div className={styles.divider} />
-        <div className={styles.container}>
-          <div className={styles.resultTrackWindow}>
-            <div className={styles.title}>
-              跟踪截止日期（跟踪自任务实施日开始）
-            </div>
-            <div className={styles.content}>
-              <DatePicker
-                allowClear={false}
-                value={currentSelectedTrackDate}
-                disabledDate={this.disabledDate}
-                onChange={this.handleTrackDateChange}
-                disabled={!checked}
-              />
-            </div>
+      <Form>
+        <div className={styles.resultTrackContainer}>
+          <div className={styles.title}>
+            <Checkbox checked={checked} onChange={this.handleCheckChange}>结果跟踪</Checkbox>
           </div>
-          <div className={styles.indicatorTargetData}>
-            <div className={styles.title}>
-              指标目标
-            </div>
-            <div className={styles.content}>
-              <div className={styles.indicatorLevel1}>
-                <Select
-                  disabled={!checked}
-                  className={styles.level1Select}
-                  onChange={this.handleIndicator1Change}
-                  value={currentSelectedLevel1Indicator}
-                >
-                  {_.map(level1Indicator, item =>
-                    <Option key={item.value} value={item.value}>{item.value}</Option>)}
-                </Select>
+          <div className={styles.divider} />
+          <div className={styles.container}>
+            <div className={styles.resultTrackWindow}>
+              <div className={styles.title}>
+                跟踪截止日期（跟踪自任务实施日开始）
               </div>
-              {
-                currentSelectedLevel1Indicator !== defaultIndicatorValue ?
-                  <div className={styles.remainingContent}>
-                    <div className={styles.indicatorLevel2}>
-                      <Select
-                        disabled={!checked}
-                        className={classnames({
-                          [styles.level2Select]: true,
-                          [styles.hideSelectArrow]: _.size(level2Indicator) <= 1,
-                        })}
-                        value={currentSelectedLevel2Indicator}
-                        onChange={this.handleIndicator2Change}
-                      >
-                        {_.map(level2Indicator, item =>
-                          <Option key={item.value} value={item.value}>{item.value}</Option>)}
-                      </Select>
-                    </div>
-                    {/**
-                     * 当isProdBound为true时，代表有搜索产品功能
-                     */}
-                    {
-                      isProdBound ? (
-                        <div className={styles.indicatorLevel3}>
-                          <span>产品：</span>
-                          <AutoComplete
-                            theme="theme2"
-                            defaultSearchValue={currentSelectProductValue}
-                            showObjKey="aliasName"
-                            objId="name"
-                            placeholder="产品编码/产品名称"
-                            name="产品"
-                            disable={!checked}
-                            isImmediatelySearch
-                            searchList={searchedProductList || EMPTY_LIST}
-                            onSelect={this.handleSelectProductItem}
-                            onSearch={this.handleQueryProduct}
-                            width={220}
-                          />
-                        </div>
-                      ) : null
-                    }
-
-                    {/**
-                     * 如果operation是TRUE或者OPEN或者COMPLETE,不需要输入框，也不需要单位，
-                     * 只需要显示一个状态：完善/开通/是
-                     */}
-                    {
-                      ((!_.isEmpty(operationType)
-                        && !_.isEmpty(operationType[0])
-                        && _.isArray(operationType)
-                        && _.size(operationType) === 1
-                        && (operationType[0].key === 'TRUE'
-                          || operationType[0].key === 'OPEN'
-                          || operationType[0].key === 'COMPLETE')) || (_.isEmpty(operationType[0])))
-                        ? <div className={styles.hasStateIndicator}>
-                          <span>{stateText}</span>
-                        </div> :
-                        <div className={styles.noStateIndicator}>
-                          <div className={styles.condition}>
-                            {
-                              (_.isArray(operationType) && _.size(operationType) > 1) ?
-                                <Select
-                                  disabled={!checked}
-                                  value={currentSelectedOperationValue}
-                                  onChange={this.handleOperationChange}
-                                  className={classnames({
-                                    [styles.operationSelect]: true,
-                                    [styles.hideSelectArrow]: _.size(operationType) <= 1,
-                                  })}
-                                >
-                                  {
-                                    _.map(operationType, item =>
-                                      <Option key={item.value} value={item.value}>
-                                        {item.value}
-                                      </Option>)
-                                  }
-                                </Select> :
-                                <span>{operationType[0].value}</span>
-                            }
-                          </div>
-                          <div className={styles.text}>
-                            <InputNumber
-                              disabled={!checked}
-                              placeholder={''}
-                              value={inputValue}
-                              min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
-                              max={!_.isEmpty(currentMax) ? Number(currentMax) : Number.MAX_VALUE}
-                              onChange={this.handleInputChange}
+              <div className={styles.content}>
+                <DatePicker
+                  allowClear={false}
+                  value={currentSelectedTrackDate}
+                  disabledDate={this.disabledDate}
+                  onChange={this.handleTrackDateChange}
+                  disabled={!checked}
+                />
+              </div>
+            </div>
+            <div className={styles.indicatorTargetData}>
+              <div className={styles.title}>
+                指标目标
+              </div>
+              <div className={styles.content}>
+                <div className={styles.indicatorLevel1}>
+                  <FormItem
+                    {...indicatorLevel1KeyErrorProps}
+                  >
+                    <Select
+                      disabled={!checked}
+                      className={styles.level1Select}
+                      onChange={this.handleIndicator1Change}
+                      value={currentSelectedLevel1Indicator}
+                      size="default"
+                    >
+                      {_.map(level1Indicator, item =>
+                        <Option key={item.value} value={item.value}>{item.value}</Option>)}
+                    </Select>
+                  </FormItem>
+                </div>
+                {
+                  currentSelectedLevel1Indicator !== defaultIndicatorValue ?
+                    <div className={`${styles.remainingContent} ${styles.remainingContentBaseline}`}>
+                      <div className={styles.indicatorLevel2}>
+                        <Select
+                          disabled={!checked}
+                          className={classnames({
+                            [styles.level2Select]: true,
+                            [styles.hideSelectArrow]: _.size(level2Indicator) <= 1,
+                          })}
+                          value={currentSelectedLevel2Indicator}
+                          onChange={this.handleIndicator2Change}
+                        >
+                          {_.map(level2Indicator, item =>
+                            <Option key={item.value} value={item.value}>{item.value}</Option>)}
+                        </Select>
+                      </div>
+                      {/**
+                      * 当isProdBound为true时，代表有搜索产品功能
+                      */}
+                      {
+                        isProdBound ? (
+                          <div className={styles.indicatorLevel3}>
+                            <span>产品：</span>
+                            <AutoComplete
+                              theme="theme2"
+                              defaultSearchValue={currentSelectProductValue}
+                              showObjKey="aliasName"
+                              objId="name"
+                              placeholder="产品编码/产品名称"
+                              name="产品"
+                              disable={!checked}
+                              isImmediatelySearch
+                              searchList={searchedProductList || EMPTY_LIST}
+                              onSelect={this.handleSelectProductItem}
+                              onSearch={this.handleQueryProduct}
+                              width={220}
+                              ref={ref => this.autoCompleteComponent = ref}
                             />
                           </div>
-                          {
-                            !_.isEmpty(currentUnit) ?
-                              <div className={styles.unit}>
-                                <span>{currentUnit}</span>
-                              </div> : null
-                          }
-                        </div>
-                    }
-                  </div>
-                  : null
-              }
+                        ) : null
+                      }
+
+                      {/**
+                      * 如果operation是TRUE或者OPEN或者COMPLETE,不需要输入框，也不需要单位，
+                      * 只需要显示一个状态：完善/开通/是
+                      */}
+                      {
+                        ((!_.isEmpty(operationType)
+                          && !_.isEmpty(operationType[0])
+                          && _.isArray(operationType)
+                          && _.size(operationType) === 1
+                          && (operationType[0].key === 'TRUE'
+                            || operationType[0].key === 'OPEN'
+                            || operationType[0].key === 'COMPLETE')) || (_.isEmpty(operationType[0])))
+                          ? <div className={styles.hasStateIndicator}>
+                            <span>{stateText}</span>
+                          </div> :
+                          <div className={styles.noStateIndicator}>
+                            <div className={styles.condition}>
+                              {
+                                (_.isArray(operationType) && _.size(operationType) > 1) ?
+                                  <Select
+                                    disabled={!checked}
+                                    value={currentSelectedOperationValue}
+                                    onChange={this.handleOperationChange}
+                                    className={classnames({
+                                      [styles.operationSelect]: true,
+                                      [styles.hideSelectArrow]: _.size(operationType) <= 1,
+                                    })}
+                                  >
+                                    {
+                                      _.map(operationType, item =>
+                                        <Option key={item.value} value={item.value}>
+                                          {item.value}
+                                        </Option>)
+                                    }
+                                  </Select> :
+                                  <span>{operationType[0].value}</span>
+                              }
+                            </div>
+                            <div className={styles.text}>
+                              <FormItem
+                                {...inputValueErrorProps}
+                              >
+                                <InputNumber
+                                  disabled={!checked}
+                                  placeholder={''}
+                                  value={inputValue}
+                                  min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
+                                  max={!_.isEmpty(currentMax) ?
+                                        Number(currentMax) : Number.MAX_VALUE}
+                                  onChange={this.handleInputChange}
+                                  size="default"
+                                />
+                              </FormItem>
+                            </div>
+                            {
+                              !_.isEmpty(currentUnit) ?
+                                <div className={styles.unit}>
+                                  <span>{currentUnit}</span>
+                                </div> : null
+                            }
+                          </div>
+                      }
+                    </div>
+                    : null
+                }
+              </div>
             </div>
           </div>
+          {
+            currentSelectedLevel1Indicator !== defaultIndicatorValue ?
+              <div className={styles.indicatorDescription}>
+                <span>{currentSelectedLevel2Indicator || ''}：</span>
+                <span>{currentIndicatorDescription}</span>
+              </div> : null
+          }
         </div>
-        {
-          currentSelectedLevel1Indicator !== defaultIndicatorValue ?
-            <div className={styles.indicatorDescription}>
-              <span>{currentSelectedLevel2Indicator || ''}：</span>
-              <span>{currentIndicatorDescription}</span>
-            </div> : null
-        }
-      </div>
+      </Form>
     );
   }
 }
