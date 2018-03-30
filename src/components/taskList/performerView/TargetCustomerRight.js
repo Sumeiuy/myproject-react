@@ -56,7 +56,6 @@ export default class TargetCustomerRight extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    push: PropTypes.func.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -64,6 +63,10 @@ export default class TargetCustomerRight extends PureComponent {
     executeTypes: {},
     serviceRecordData: {},
     filesList: [],
+  };
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
   };
 
   getPopupContainer() {
@@ -78,7 +81,7 @@ export default class TargetCustomerRight extends PureComponent {
    * @param {*boolean} forceRefresh 是否需要强制刷新
    */
   @autobind
-  getTabConfig(id, title, activeSubTab = [], forceRefresh = false) {
+  getTabConfig(id, title, forceRefresh = false, activeSubTab = []) {
     return {
       id,
       title,
@@ -94,7 +97,7 @@ export default class TargetCustomerRight extends PureComponent {
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     const pathname = '/customerCenter/fspcustomerDetail';
     openFspTab({
-      routerAction: this.props.push,
+      routerAction: this.context.push,
       url,
       pathname,
       param,
@@ -109,11 +112,11 @@ export default class TargetCustomerRight extends PureComponent {
     const param = this.getTabConfig(
       'FSP_360VIEW_M_TAB',
       '客户360视图-客户信息',
-      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
-      ['服务记录'],
       // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，
       // 360视图不会刷新，且React界面如果有弹框存在，不会消失
       true,
+      // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
+      ['服务记录'],
     );
     this.openFsp360TabAction({ itemData, param });
   }
