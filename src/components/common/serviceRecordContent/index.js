@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-30 09:26:38
+ * @Last Modified time: 2018-03-30 10:04:18
  */
 
 
@@ -150,9 +150,17 @@ export default class ServiceRecordContent extends PureComponent {
         originFormData: formObject,
       });
     }
-    // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
-    if (custUuid !== nextCustUuid && !isReadOnly) {
-      this.clearUploadedFileList();
+
+    // 切换客户，错误信息重置
+    if (custUuid !== nextCustUuid) {
+      this.setState({
+        isShowServeStatusError: false,
+        isShowServiceContentError: false,
+      });
+          // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+      if (!isReadOnly) {
+        this.clearUploadedFileList();
+      }
     }
   }
 
