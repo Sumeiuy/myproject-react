@@ -16,6 +16,7 @@ import styles from './BoardItem.less';
 import ImgTGJX from './img/bg_tgjx.png';
 import ImgJYYJ from './img/bg_jyyj.png';
 import { optionsMap } from '../../config';
+import logable from '../../decorators/logable';
 
 const boardTypeMap = optionsMap.boardTypeMap;
 
@@ -39,6 +40,7 @@ export default class BoardItem extends PureComponent {
   }
   // 发布按钮点击事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '发布' } })
   publishHandle() {
     const { publish, boardData: { boardStatus, id, ownerOrgId, isPublishable } } = this.props;
     if ((isPublishable === 'Y') && (boardStatus === 'UNRELEASE')) {
@@ -50,11 +52,13 @@ export default class BoardItem extends PureComponent {
   }
   // 进入编辑页面
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑' } })
   editBoardHandle() {
     const { id, ownerOrgId, boardType } = this.props.boardData;
     this.props.push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除' } })
   deleteBoardHandle() {
     const { id, ownerOrgId, name } = this.props.boardData;
     this.props.delete({

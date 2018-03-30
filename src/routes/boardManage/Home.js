@@ -21,7 +21,7 @@ import ImgAdd from './img/bg_add.png';
 import ImgTGJX from './img/bg_tgjx.png';
 import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
-
+import { logPV } from '../../decorators/logable';
 import styles from './Home.less';
 
 
@@ -221,6 +221,7 @@ export default class BoardManageHome extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/createBoard', title: '创建看板' })
   createBoardHandle() {
     this.openModal('createBoardModal');
   }

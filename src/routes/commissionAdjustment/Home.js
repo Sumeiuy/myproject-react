@@ -23,6 +23,7 @@ import SingleCreatBoard from '../../components/commissionAdjustment/SingleCreatB
 import DisabledSelect from '../../components/commissionChange/DisabledSelect';
 import withRouter from '../../decorators/withRouter';
 import Barable from '../../decorators/selfBar';
+import logable from '../../decorators/logable';
 
 import styles from './home.less';
 
@@ -271,6 +272,7 @@ export default class CommissionAdjustmentHome extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmitApprovals() {
     this.singleSubmit();
   }

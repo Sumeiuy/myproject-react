@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import BoardSelectTree from '../Edit/BoardSelectTree';
 import styles from './modalCommon.less';
+import logable from '../../decorators/logable';
 
 export default class SelectTreeModal extends PureComponent {
   static propTypes = {
@@ -51,12 +52,14 @@ export default class SelectTreeModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeSelectTreeModal() {
     const { modalKey, closeModal } = this.props;
     closeModal(modalKey);
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   saveSelectTreeModal() {
     const { summuryIndicator } = this.state;
     const { saveIndcatorToHome } = this.props;

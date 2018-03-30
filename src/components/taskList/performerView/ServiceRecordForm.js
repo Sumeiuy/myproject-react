@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
+import logable from '../../../decorators/logable';
 
 export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
@@ -38,6 +39,7 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (!data) {
@@ -84,6 +86,7 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     if (this.serviceRecordContentRef) {
       this.serviceRecordContentRef.resetField();

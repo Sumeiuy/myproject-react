@@ -904,6 +904,12 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '',
+    },
+  })
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
     const { saveTaskFlowData, storedTaskFlowData } = this.props;

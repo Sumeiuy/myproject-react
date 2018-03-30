@@ -16,7 +16,7 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
@@ -134,7 +134,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择审批人：$props.currentSelectRecord.empName' } })
+  @logPV({ pathname: '/modal/selectApprover', title: '选择审批人弹框' })
   handleClick() {
     const { getApprovalList } = this.props;
     const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;
@@ -186,7 +186,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择审批人员' } })
+  @logable({ type: 'Click', payload: { name: '$props.inputRef.refs.input.value关键字选择审批人员' } })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);

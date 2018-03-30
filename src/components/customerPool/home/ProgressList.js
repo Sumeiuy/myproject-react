@@ -12,7 +12,7 @@ import { Progress, Popover } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-
+import logable from '../../../decorators/logable';
 import styles from './progressList.less';
 
 /* 新增客户传给列表页的参数
@@ -84,6 +84,7 @@ export default class ProgressList extends PureComponent {
   /*
   */
   @autobind
+  @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
   handleClick(index, item) {
     const { cycle, push, location, authority } = this.props;
     const bname = this.transformName(item.cust);

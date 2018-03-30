@@ -7,12 +7,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
 import CommonTable from '../common/biz/CommonTable';
 import styles from './detail.less';
+import logable from '../../decorators/logable';
 
 // 表头
 const tableHeader = [
@@ -53,6 +55,17 @@ export default class Commissiondetail extends PureComponent {
 
   static defaultProps = {
     data: {},
+  }
+
+  @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '客户信息表的审批记录',
+    },
+  })
+  handleCheckApproval() {
+    this.props.checkApproval();
   }
 
   render() {
@@ -99,7 +112,7 @@ export default class Commissiondetail extends PureComponent {
         key: 'view', // 'check'\'delete'\'view'
         title: '审批记录',
       },
-      operate: this.props.checkApproval,
+      operate: this.handleCheckApproval,
     };
 
     return (

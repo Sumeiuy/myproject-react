@@ -8,6 +8,7 @@ import Button from '../common/Button';
 import TableList from '../common/TableList';
 import style from './serverpersonel.less';
 import AutoComplete from '../common/similarAutoComplete';
+import logable from '../../decorators/logable';
 
 // 私密客户取消
 const PERMISSION_CUST_CANCLE = '0102';
@@ -124,18 +125,32 @@ export default class ServerPersonel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '新增服务人员',
+      value: '$args[0]',
+    },
+  })
   dropdownSelectedItem(item) {
     // 下拉菜单添加选中对象
     this.setState({ addSelectedValue: { ...item, isMain: 'false' } });
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0]关键字查询服务人员' } })
   dropdownToSearchInfo(value) {
     // 下拉菜单搜错查询关键字
     this.context.getSearchServerPersonList(value);
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '删除$args[0]',
+    },
+  })
   updateDeleteValue(item) {
     // 更新table列表的选中值
     this.setState({ removeSelectedValue: item }, () => {
@@ -144,6 +159,7 @@ export default class ServerPersonel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   addServerPerson() {
     // 添加服务人员按钮
     // 不能重复添加

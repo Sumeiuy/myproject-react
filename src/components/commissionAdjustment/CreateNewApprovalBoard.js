@@ -25,6 +25,7 @@ import SingleCreatBoard from './SingleCreatBoard';
 import SubscribeCreateBoard from './SubscribeCreateBoard';
 import UnSubscribeCreateBoard from './UnSubscribeCreateBoard';
 import styles from './createNewApprovalBoard.less';
+import logable from '../../decorators/logable';
 
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
@@ -499,6 +500,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 选择申请子类型
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[0]',
+    },
+  })
   choiceApprovalSubType(name, key) {
     if (key === '') return;
     this.setState({
@@ -528,6 +536,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询单佣金客户列表
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '查询单佣金客户',
+      value: '$args[0]',
+    },
+  })
   handleChangeSingleAssembly(keywords) {
     if (_.isEmpty(keywords)) {
       confirm({
@@ -545,6 +560,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询资讯订阅、资讯退订客户列表
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '查询资讯订阅/资讯退订客户',
+      value: '$args[0]',
+    },
+  })
   handleChangeSubscribeAssembly(keyword) {
     if (_.isEmpty(keyword)) {
       confirm({
@@ -573,6 +595,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0]',
+    },
+  })
   handleSelectAssembly(customer) {
     const { id, custType } = customer;
     this.setState({

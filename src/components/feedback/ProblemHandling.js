@@ -15,6 +15,7 @@ import Icon from '../common/Icon';
 import uploadRequest from '../../utils/uploadRequest';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
+import logable from '../../decorators/logable';
 
 let COUNT = 0;
 const FormItem = Form.Item;
@@ -60,18 +61,7 @@ export default class ProblemHandling extends PureComponent {
           empId: emp.getId(),
         },
         action: `${request.prefix}/file/feedbackFileUpload`,
-        onChange(info) {
-          const file = info.file;
-          const status = file.status;
-          const response = file.response || {};
-          if (status === 'done') {
-            message.success(`${info.file.name} 文件上传成功.`);
-          } else if (status === 'error') {
-            const msg = _.isEmpty(response.msg) ? '文件上传失败' : response.msg;
-            message.error(`${msg}.`);
-          }
-          return true;
-        },
+        onChange: this.handleUploadFile,
         customRequest: this.fileCustomRequest,
       },
     };
@@ -87,21 +77,43 @@ export default class ProblemHandling extends PureComponent {
     }
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
+  handleUploadFile(info) {
+    const file = info.file;
+    const status = file.status;
+    const response = file.response || {};
+    if (status === 'done') {
+      message.success(`${info.file.name} 文件上传成功.`);
+    } else if (status === 'error') {
+      const msg = _.isEmpty(response.msg) ? '文件上传失败' : response.msg;
+      message.error(`${msg}.`);
+    }
+    return true;
+  }
+
   // 数据提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭弹框' } })
+  handleCancel() {
+    this.props.onCancel();
+  }
+
+  @autobind
   fileCustomRequest(option) {
     return uploadRequest(option);
   }
+
   render() {
     const {
       inforTxt,
-      onCancel,
       visible,
       title,
       width,
@@ -129,7 +141,7 @@ export default class ProblemHandling extends PureComponent {
         title={title}
         visible={visible}
         onOk={this.handleSubChange}
-        onCancel={onCancel}
+        onCancel={this.handleCancel}
         width={width}
         className="problemwrap"
         key={uploadKey}

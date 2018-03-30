@@ -13,6 +13,7 @@ import { AutoComplete, Button } from 'antd';
 
 import SimilarAutoComplete from '../similarAutoComplete';
 import styles from './searchSelect.less';
+import logable from '../../../decorators/logable';
 
 const Option = AutoComplete.Option;
 
@@ -41,6 +42,7 @@ export default class SearchSelect extends PureComponent {
 
   // 把对应的数组值传入外部接口
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   handleAddBtnClick() {
     this.props.onAddCustomer(this.state.selectItem);
     this.setState({ selectItem: {} });
@@ -48,12 +50,20 @@ export default class SearchSelect extends PureComponent {
 
   // 搜索客户列表
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchCustList(value) {
     this.props.onChangeValue(value);
   }
 
   // 选择某个客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$props.labelName',
+      value: '$args[0]',
+    },
+  })
   handleSelectCust(cust) {
     this.setState({ selectItem: cust });
   }

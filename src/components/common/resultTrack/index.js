@@ -16,6 +16,7 @@ import { autobind } from 'core-decorators';
 import AutoComplete from '../similarAutoComplete';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
@@ -537,6 +538,13 @@ export default class ResultTrack extends PureComponent {
    * @param {*string} value 当前选中一级指标值
    */
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '指标目标',
+      value: '$args[0]',
+    },
+  })
   handleIndicator1Change(value) {
     const { indicatorTargetData } = this.props;
     // 找到当前一级指标对应的二级指标列表数据
@@ -573,6 +581,13 @@ export default class ResultTrack extends PureComponent {
    * @param {*string} value 当前选中二级指标值
    */
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '二级指标',
+      value: '$args[0]',
+    },
+  })
   handleIndicator2Change(value) {
     const { level2Indicator } = this.state;
     // 找到当前二级指标对应的具体数据
@@ -587,6 +602,7 @@ export default class ResultTrack extends PureComponent {
    * checkbox切换handler
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '结果跟踪' } })
   handleCheckChange() {
     const {
       checked,
@@ -654,6 +670,13 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '',
+      value: '$args[0]',
+    },
+  })
   handleOperationChange(value) {
     const { operationType } = this.state;
     const currentOperation = _.find(operationType, item =>
@@ -665,6 +688,13 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '跟踪截止日期（跟踪自任务实施日开始）',
+      value: '$args[0]',
+    },
+  })
   handleTrackDateChange(value) {
     this.setState({
       currentSelectedTrackDate: value,
@@ -672,6 +702,13 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '产品',
+      value: '$args[0]',
+    },
+  })
   handleSelectProductItem(value) {
     this.setState({
       currentSelectedProduct: value,
@@ -679,6 +716,7 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询产品' } })
   handleQueryProduct(value) {
     if (!_.isEmpty(value)) {
       this.props.queryProduct({

@@ -13,7 +13,6 @@ import { stateToHTML } from 'draft-js-export-html';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
-import logable from '../../../decorators/logable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
@@ -24,6 +23,7 @@ import {
   returnTaskEntrySource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
+import logable from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
@@ -670,6 +670,12 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '',
+    },
+  })
   handleSingleRowSelectionChange(record) {
     const { login } = record;
     const { saveCreateTaskData, storedCreateTaskData } = this.props;

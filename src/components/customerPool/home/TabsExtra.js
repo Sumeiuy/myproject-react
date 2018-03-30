@@ -15,6 +15,7 @@ import { optionsMap, request } from '../../../config';
 import Icon from '../../common/Icon';
 import CustRange from '../common/CustRange';
 import styles from './tabsExtra.less';
+import logable from '../../../decorators/logable';
 
 const Option = Select.Option;
 const noop = _.noop;
@@ -88,6 +89,13 @@ export default class TabsExtra extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '',
+      value: '$args[0]',
+    },
+  })
   handleChange(value) {
     const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
@@ -104,12 +112,23 @@ export default class TabsExtra extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '',
+      value: '$args[0]',
+    },
+  })
+  handleCustRange(obj) {
+    this.props.updateQueryState(obj);
+  }
+
 
   render() {
     const {
       custRange,
       replace,
-      updateQueryState,
       collectCustRange,
       cycle = [],
       expandAll,
@@ -136,7 +155,7 @@ export default class TabsExtra extends PureComponent {
                 custRange={custRange}
                 location={location}
                 replace={replace}
-                updateQueryState={updateQueryState}
+                updateQueryState={this.handleCustRange}
                 beginTime={begin}
                 endTime={end}
                 collectData={collectCustRange}

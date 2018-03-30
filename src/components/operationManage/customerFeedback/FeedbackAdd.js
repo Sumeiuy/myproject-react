@@ -13,6 +13,7 @@ import { Input } from 'antd';
 
 import CommonTable from '../../../components/common/biz/CommonTable';
 import { seibelConfig } from '../../../config';
+import logable from '../../../decorators/logable';
 
 import styles from './feedbackAdd.less';
 
@@ -54,6 +55,7 @@ export default class MissionBind extends PureComponent {
 
   // 查询客户反馈
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户反馈' } })
   handleSearchFeedback(keyword) {
     const { queryFeedbackList } = this.props;
     this.setState({
@@ -75,6 +77,12 @@ export default class MissionBind extends PureComponent {
 
   // 选中一级客户反馈
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '选中一级客户反馈',
+    },
+  })
   handleSelectRow(currentFeedback) {
     console.log(currentFeedback);
     this.setState({
@@ -83,6 +91,7 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(value) {
     console.log(value);
     const { keyword } = this.state;

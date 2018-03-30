@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
 import styles from './createCollapse.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
@@ -47,6 +48,7 @@ export default class CreateCollapse extends PureComponent {
    * @param {*} currentKey 当前key
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   handleCollapseChange(currentKey) {
     const { handleCollapseClick, data, getCeFileList } = this.props;
     if (!_.isEmpty(currentKey)) {

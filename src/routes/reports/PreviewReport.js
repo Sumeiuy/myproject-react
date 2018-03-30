@@ -16,6 +16,7 @@ import { dom } from '../../helper';
 import { PublishConfirmModal } from '../../components/modals';
 import withRouter from '../../decorators/withRouter';
 import styles from './PreviewReport.less';
+import logable from '../../decorators/logable';
 
 // 首先判断wrap存在与否
 const contentWrapper = document.getElementById('workspace-content');
@@ -108,11 +109,13 @@ export default class PreviewReport extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回' } })
   handleBackClick() {
     this.props.goBack();
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发布' } })
   handlePubClick() {
     this.openPublishConfirmModal();
   }

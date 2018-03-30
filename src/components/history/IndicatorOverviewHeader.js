@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { Prompt } from 'dva/router';
 import Icon from '../common/Icon';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
+import logable from '../../decorators/logable';
 
 // 选择项字典
 import styles from './indicatorOverviewHeader.less';
@@ -82,17 +83,20 @@ export default class IndicatorOverviewHeader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '另存为' } })
   createHistoryBoardHandle() {
     this.openModal('createHistoryBoardModal');
   }
 
   // 删除历史对比看板
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '删除' } })
   deleteHistoryBoardHandle() {
     this.openModal('deleteHistoryBoardModal');
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   saveHistoryBoardHandle() {
     const {
       location: { query: { boardId, boardType } },

@@ -12,6 +12,7 @@ import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import logable from '../../../decorators/logable';
 import styles from './index.less';
 
 const Option = AutoComplete.Option;
@@ -353,6 +354,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   handleAddClick() {
     // 当前输入或者联想到输入框里的value
     const { selectedItem } = this.state;

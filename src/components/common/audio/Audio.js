@@ -12,6 +12,7 @@ import moment from 'moment';
 import { autobind } from 'core-decorators';
 import ControlButton from './component/ControlButton';
 import styles from './audio.less';
+import logable from '../../../decorators/logable';
 
 // currentTime 是否交给滚动条控制
 let IS_PROGRESS = false;
@@ -44,25 +45,17 @@ export default class Audio extends PureComponent {
     });
   }
 
-  // 播放/暂停
+  // 拖动滚动条结束后重新设置音频currentTime -- 兼容问题，暂不支持
   @autobind
-  handlePlay() {
+  onAfterChange(value) {
     const { canPlay } = this.state;
+    IS_PROGRESS = false;
     if (canPlay) {
-      const { paused } = this.audio;
-      if (paused) {
-        this.audio.play();
-        this.setState({
-          playing: true,
-        });
-      } else {
-        this.audio.pause();
-        this.setState({
-          playing: false,
-        });
-      }
+      const { duration } = this.audio;
+      this.audio.currentTime = (value / 100) * duration;
     }
   }
+
   // 拖动进度条 -- 兼容问题，暂不支持
   @autobind
   progressChange(value) {
@@ -75,15 +68,38 @@ export default class Audio extends PureComponent {
     }
   }
 
-  // 拖动滚动条结束后重新设置音频currentTime -- 兼容问题，暂不支持
+  // 播放/暂停
   @autobind
-  onAfterChange(value) {
+  handlePlay() {
     const { canPlay } = this.state;
-    IS_PROGRESS = false;
     if (canPlay) {
-      const { duration } = this.audio;
-      this.audio.currentTime = (value / 100) * duration;
+      const { paused } = this.audio;
+      if (paused) {
+        this.handleAudioPlay();
+      } else {
+        this.handleAudioPause();
+      }
     }
+  }
+
+  // 播放
+  @autobind
+  @logable({ type: 'Click', payload: { name: '播放音频$props.volume' } })
+  handleAudioPlay() {
+    this.audio.play();
+    this.setState({
+      playing: true,
+    });
+  }
+
+  // 暂停
+  @autobind
+  @logable({ type: 'Click', payload: { name: '暂停音频$props.volume' } })
+  handleAudioPause() {
+    this.audio.pause();
+    this.setState({
+      playing: false,
+    });
   }
 
   get audio() {

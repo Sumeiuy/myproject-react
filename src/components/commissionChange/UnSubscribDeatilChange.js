@@ -21,6 +21,7 @@ import {
   pagination,
   subScribeProColumns,
 } from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from './change.less';
 
@@ -159,6 +160,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,
@@ -289,6 +291,12 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   }
   // 资讯退订调整穿梭变化的时候处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '资讯退订产品 $args[1] args[0]',
+    },
+  })
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
       unSubProList: array,
@@ -315,6 +323,12 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 资讯订阅选择子产品的时候的处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '资讯退订通过check选择子产品$args[0]',
+    },
+  })
   handleUnSubscribelTransferSubProductCheck(item, array) {
     this.setState({
       unSubProList: array,
@@ -451,6 +465,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 点击页面的按钮事件处理
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   handleRejctBtnClick(btn) {
     const { operate } = btn;
     if (operate === 'commit' || operate === 'trueOver') {

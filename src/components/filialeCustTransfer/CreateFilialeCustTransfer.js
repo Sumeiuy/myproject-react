@@ -25,6 +25,7 @@ import config from './config';
 import commonConfirm from '../common/Confirm';
 import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -109,6 +110,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 上传事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '导入' } })
   onChange(info) {
     this.setState({
       importVisible: false,
@@ -140,6 +142,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 导入数据
   @autobind
+  @logPV({ pathname: '/modal/importData', title: '导入数据' })
   onImportHandle() {
     this.setState({
       importVisible: true,
@@ -148,6 +151,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0]',
+    },
+  })
   handleSelectClient(v) {
     this.setState({
       client: v,
@@ -164,6 +174,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 查询客户
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
   handleSearchClient(v) {
     if (!v) {
       return;
@@ -176,6 +187,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 选择新服务经理
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择新服务经理',
+      value: '$args[0]',
+    },
+  })
   handleSelectNewManager(v) {
     this.setState({
       newManager: v,
@@ -190,6 +208,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 查询新服务经理
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询服务经理' } })
   handleSearchNewManager(v) {
     if (!v) {
       return;
@@ -202,6 +221,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     const { client, newManager, isDefaultType, attachment } = this.state;
     const { managerData } = this.props;
@@ -314,6 +334,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 划转方式的 select 事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '划转方式',
+      value: '$args[1]',
+    },
+  })
   handleSelectChange(key, value) {
     const isDefaultType = value === defaultType;
     this.setState({
@@ -330,6 +357,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转申请弹框' } })
   closeModal() {
     // 关闭模态框
     commonConfirm({
@@ -347,6 +375,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '否' } })
   importHandleCancel() {
     this.setState({
       importVisible: false,
@@ -367,6 +396,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 发送单客户修改请求,先走修改接口，再走走流程接口
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   sendModifyRequest(value) {
     const { isDefaultType, attachment } = this.state;
     const {

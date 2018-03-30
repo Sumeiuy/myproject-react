@@ -223,7 +223,7 @@ export default class DropdownSelect extends PureComponent {
               placeholder={this.props.placeholder}
               onSearch={this.toSearch}
               defaultValue={defaultSearchValue}
-              handleChange={this.onChange}
+              onChange={this.onChange}
               ref={ref => this.hackSearchComonent = ref}
             />
           </div>

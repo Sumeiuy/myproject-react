@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { env } from '../../helper';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
+import logable from '../../decorators/logable';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -41,6 +42,13 @@ export default class PageHeader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '反馈时间',
+      value: '$args[0]',
+    },
+  })
   handleDateChange(dateStrings) {
     const { replace, location: { pathname, query } } = this.props;
     const feedbackCreateTimeFrom = dateStrings[0];
@@ -77,6 +85,13 @@ export default class PageHeader extends PureComponent {
 
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '模块',
+      value: '$args[0]',
+    },
+  })
   handleCascaderSelectChange(name, funcName, key) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
@@ -88,6 +103,54 @@ export default class PageHeader extends PureComponent {
         isResetPageNum: 'Y',
       },
     });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[1]',
+    },
+  })
+  handleTypeClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '问题标签',
+      value: '$args[1]',
+    },
+  })
+  handleProblemClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleStatusClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '经办人',
+      value: '$args[1]',
+    },
+  })
+  handleProcesserClick(name, key) {
+    this.handleSelectChange(name, key);
   }
 
   @autobind

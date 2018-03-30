@@ -18,6 +18,7 @@ import { openFspTab } from '../../../utils';
 import TipsInfo from './TipsInfo';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
+import logable from '../../../decorators/logable';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -108,6 +109,7 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '查看更多' } })
   handleSeeMoreClick(itemData) {
     const param = this.getTabConfig(
       'FSP_360VIEW_M_TAB',
@@ -145,6 +147,7 @@ export default class TargetCustomerRight extends PureComponent {
    * @param {*object} itemData 每一个客户的数据
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].custName' } })
   handleCustNameClick(itemData) {
     const param = this.getTabConfig(
       'FSP_360VIEW_M_TAB',

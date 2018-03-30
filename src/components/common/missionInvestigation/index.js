@@ -17,11 +17,11 @@ import Icon from '../Icon';
 import { data } from '../../../helper';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import logable from '../../../decorators/logable';
 import Button from '../Button';
 // import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
@@ -215,6 +215,7 @@ export default class MissionInvestigation extends PureComponent {
    * @param {*string} currentDeleteId 当前删除的问题id
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除问题$args[0]' } })
   handleDeleteQuestion(currentDeleteId, quesId) {
     const {
       newQuestionAndAnswerGroup,
@@ -248,6 +249,7 @@ export default class MissionInvestigation extends PureComponent {
    * 添加问题
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '+新增问题' } })
   addQuestion() {
     const { checked, currentSelectRowKeys } = this.state;
     if (!checked) {
@@ -263,6 +265,7 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '任务调查' } })
   handleCheckChange() {
     const {
       checked,
@@ -292,6 +295,12 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '问题列表',
+    },
+  })
   handleRowSelectionChange(selectedRowKeys) {
     this.setState({
       // 当前已经选中的问题列，就是已经展示在页面上的列表

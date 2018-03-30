@@ -23,6 +23,7 @@ import { time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import config from './config';
 import styles from './home.less';
+import logable from '../../decorators/logable';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -89,6 +90,7 @@ export default class Demote extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   onSubmit() {
     const { location: { query: { notifiId } }, updateCust } = this.props;
     const { data } = this.state;
@@ -109,8 +111,26 @@ export default class Demote extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  handlePageChange(page, pageSize) {
+    this.onChange(page, pageSize);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  handlePageSizeChange(page, pageSize) {
+    this.onChange(page, pageSize);
+  }
+
   // 切换表格的 switch 事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '降级客户处理是否划转',
+    },
+  })
   checkTableData(checked, record, index) {
     const { data, currentPage, pageSize } = this.state;
     const newData = [...data];
@@ -158,8 +178,8 @@ export default class Demote extends PureComponent {
             total: data.length,
             defaultPageSize: 10,
             current: this.state.currentPage,
-            onChange: this.onChange,
-            onShowSizeChange: this.onChange,
+            onChange: this.handlePageChange,
+            onShowSizeChange: this.handlePageSizeChange,
             showSizeChanger: true,
           }}
         />

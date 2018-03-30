@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Modal, Button, Radio, Checkbox, Input, Form } from 'antd';
 import _ from 'lodash';
 
+import logable from '../../../decorators/logable';
 import styles from './questionnaireSurvey.less';
 
 const RadioGroup = Radio.Group;
@@ -46,15 +47,25 @@ export default class QuestionnaireSurvey extends PureComponent {
     isShowErrorCheckbox: {},
   };
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
+  handleRidoChange() {
+    this.props.onRadioChange();
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
+  handleCheckChange(keyIndex, quesId) {
+    this.props.onCheckChange(keyIndex, quesId);
+  }
+
 
   // 根据返回的问题列表，判断不同类型显示
   @autobind
   renderOption() {
     const {
       form,
-      onCheckChange,
       answersList,
-      onRadioChange,
       onAreaText,
       isShowErrorCheckbox } = this.props;
     const { quesInfoList = EMPTY_ARRAY, answerVOList = EMPTY_ARRAY } = answersList;
@@ -87,7 +98,7 @@ export default class QuestionnaireSurvey extends PureComponent {
               <RadioGroup
                 name={item.quesTypeCode}
                 className={styles.radioGroup}
-                onChange={onRadioChange}
+                onChange={this.handleRidoChange}
                 defaultValue={defaultData[0] || ''}
               >
                 {
@@ -123,7 +134,7 @@ export default class QuestionnaireSurvey extends PureComponent {
               <CheckboxGroup
                 style={{ width: '100%' }}
                 className={styles.radioGroup}
-                onChange={keyIndex => onCheckChange(keyIndex, quesId)}
+                onChange={keyIndex => this.handleCheckChange(keyIndex, quesId)}
                 defaultValue={defaultData}
               >
                 {
@@ -172,20 +183,30 @@ export default class QuestionnaireSurvey extends PureComponent {
     return itemForm;
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
+  handleOk() {
+    this.props.onOk();
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancel() {
+    this.props.onCancel();
+  }
+
   render() {
     const {
       visible,
-      onOk,
-      onCancel,
       answersList,
     } = this.props;
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
     const showBtn = _.isEmpty(answerVOList) ?
-      (<Button key="submit" type="primary" onClick={_.debounce(onOk, 300, { leading: true })}>
+      (<Button key="submit" type="primary" onClick={_.debounce(this.handleOk, 300, { leading: true })}>
         提交
       </Button>) :
-      (<Button key="ok" type="primary" onClick={onCancel}>
+      (<Button key="ok" type="primary" onClick={this.handleCancel}>
         确定
       </Button>);
     return (
@@ -193,7 +214,7 @@ export default class QuestionnaireSurvey extends PureComponent {
         <Modal
           title="问卷调查"
           visible={visible}
-          onCancel={onCancel}
+          onCancel={this.handleCancel}
           width={650}
           className={styles.question}
           footer={[showBtn]}

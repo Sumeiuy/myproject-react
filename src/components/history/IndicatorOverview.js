@@ -15,6 +15,7 @@ import ChartRadar from '../chartRealTime/ChartRadar';
 import IndexItem from './IndexItem';
 import styles from './indicatorOverview.less';
 import { SelectTreeModal } from '../modals';
+import logable, { logPV } from '../../decorators/logable';
 
 export default class IndicatorOverview extends PureComponent {
   static propTypes = {
@@ -64,12 +65,14 @@ export default class IndicatorOverview extends PureComponent {
    * 弹窗处理（开启）
   */
   @autobind
+  @logPV({ pathname: '/modal/adjustmentPointer', title: '指标调整' })
   showModal() {
     this.setState({ selectTreeModal: true });
   }
 
   // 选中Core指标
   @autobind
+  @logable({ type: 'Click', payload: { name: '选中Core指标' } })
   handleCoreClick(index, key) {
     return () => {
       const { changeCore } = this.props;
@@ -92,6 +95,7 @@ export default class IndicatorOverview extends PureComponent {
     });
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标进入Core指标$args[0]' } })
   mouseEnter(index) {
     return () => {
       this.setState({
@@ -100,6 +104,7 @@ export default class IndicatorOverview extends PureComponent {
     };
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标离开Core指标' } })
   mouseLeave() {
     const { clickItemIndex } = this.state;
     this.setState({

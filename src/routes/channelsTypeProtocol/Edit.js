@@ -28,6 +28,7 @@ import {
   isInvolvePermission,
 } from '../../components/channelsTypeProtocol/auth';
 import styles from './edit.less';
+import logable from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 
@@ -399,6 +400,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
 
   // 弹窗底部按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
     // 对formData校验

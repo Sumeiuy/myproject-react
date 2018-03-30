@@ -6,6 +6,7 @@ import { Input } from 'antd';
 import TaskSearchRow from './TaskSearchRow';
 import { emp, fsp } from '../../../helper';
 import styles from './selectLabelCust.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const Search = Input.Search;
@@ -146,6 +147,7 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索标签名称' } })
   handleSearchClick(value) {
     const { getLabelInfo, isAuthorize, orgId } = this.props;
     const param = {
