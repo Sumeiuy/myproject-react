@@ -1081,6 +1081,7 @@ export default class PerformerView extends PureComponent {
 
   // 头部新建按钮，跳转到新建表单
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '跳转到新建自建任务' } })
   handleCreateBtnClick() {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData, push } = this.props;
