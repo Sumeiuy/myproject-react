@@ -525,7 +525,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 const {
                   batchCustList,
                   batchCustList: { custList, page },
-                  onAddCustomerToGroup
+                  onAddCustomerToGroup,
                 } = this.props;
                 const { groupId, name, description } = this.state;
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
