@@ -9,11 +9,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './index.less';
 
 const EMPTY_OBJECT = {};
 
 export default function StaticRecordContent(props) {
-  const { styles, data } = props;
+  const { data } = props;
   const {
     serviceContent,
     serviceWay,
@@ -98,10 +99,8 @@ export default function StaticRecordContent(props) {
 
 StaticRecordContent.propTypes = {
   data: PropTypes.object,
-  styles: PropTypes.object,
 };
 
 StaticRecordContent.defaultProps = {
   data: EMPTY_OBJECT,
-  styles: EMPTY_OBJECT,
 };

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 17:46:57
+ * @Last Modified time: 2018-03-30 09:26:38
  */
 
 
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { Select, DatePicker, TimePicker, Input, Radio, Form } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
-import StaticRecordContent from './staticRecordContent';
+import StaticRecordContent from './StaticRecordContent_';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
@@ -663,7 +663,6 @@ export default class ServiceRecordContent extends PureComponent {
 
       return (
         <StaticRecordContent
-          styles={styles}
           data={{
             serviceContent,
             serviceWay,

@@ -108,7 +108,7 @@ export default class TargetCustomerRight extends PureComponent {
   handleSeeMoreClick(itemData) {
     const param = this.getTabConfig(
       'FSP_360VIEW_M_TAB',
-      '客户360视图-服务记录',
+      '客户360视图-客户信息',
       // 能够跳转到FSP 客户360视图界面中的指定的局部tab项
       ['服务记录'],
       // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，
