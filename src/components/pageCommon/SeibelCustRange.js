@@ -96,7 +96,7 @@ export default class CustRange extends PureComponent {
       formatCustRange = [];
       initValue = {
         label: '全部',
-        value: '',
+        value: 'all',
       };
     }
 
