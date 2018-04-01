@@ -536,13 +536,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询单佣金客户列表
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询单佣金客户',
-      value: '$args[0]',
-    },
-  })
   handleChangeSingleAssembly(keywords) {
     if (_.isEmpty(keywords)) {
       confirm({
@@ -560,13 +553,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询资讯订阅、资讯退订客户列表
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询资讯订阅/资讯退订客户',
-      value: '$args[0]',
-    },
-  })
   handleChangeSubscribeAssembly(keyword) {
     if (_.isEmpty(keyword)) {
       confirm({
@@ -599,7 +585,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectAssembly(customer) {
@@ -647,6 +633,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       } else if (value === commadj.unsubscribe) {
         newItem.show = permission.hasCommissionADUnSubscribeAuthority();
       }
+      newItem.show = true;
       return {
         ...item,
         ...newItem,

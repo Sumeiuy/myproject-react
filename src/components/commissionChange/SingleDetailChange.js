@@ -475,7 +475,7 @@ export default class SingleDetailChange extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金产品 $args[1] args[0]',
+      name: '单佣金产品穿梭',
     },
   })
   handleSingleTransferChange(flag, item, array, dValue) {
@@ -500,7 +500,7 @@ export default class SingleDetailChange extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金通过check选择子产品$args[0]',
+      name: '单佣金通过check选择子产品',
     },
   })
   handleSingleTransferSubProductCheck(item, array) {

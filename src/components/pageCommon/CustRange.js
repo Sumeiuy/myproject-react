@@ -84,7 +84,7 @@ export default class CustRange extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '客户范围',
       value: '$args[0]',
     },
   })

@@ -196,7 +196,7 @@ export default class EditForm extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '合作部门',
-      value: '$args[0]',
+      value: '$args[0].name',
     },
   })
   handleSelectDepartment(v) {

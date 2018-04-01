@@ -227,6 +227,7 @@ export default class SingleCreateBoard extends PureComponent {
     },
   })
   selectTargetGJCommission(v) {
+    console.log('#####目标股基佣金率########', v);
     this.setState({
       newCommission: v.codeValue,
     });
@@ -268,7 +269,7 @@ export default class SingleCreateBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金调整产品 args[1] args[0]',
+      name: '单佣金调整产品穿梭',
     },
   })
   handleParentProductAction(flag, item, array, dValue) {

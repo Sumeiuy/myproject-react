@@ -60,7 +60,7 @@ export default class SearchSelect extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '$props.labelName',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectCust(cust) {

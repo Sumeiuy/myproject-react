@@ -155,7 +155,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '选择客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectClient(v) {
@@ -190,7 +190,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '选择新服务经理',
-      value: '$args[0]',
+      value: '$args[0].newEmpName',
     },
   })
   handleSelectNewManager(v) {

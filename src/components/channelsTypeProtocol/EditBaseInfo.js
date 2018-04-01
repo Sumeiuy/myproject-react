@@ -453,7 +453,7 @@ export default class EditBaseInfo extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectClient(value) {
@@ -600,7 +600,7 @@ export default class EditBaseInfo extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '协议模板',
-      value: '$args[0]',
+      value: '$args[0].prodName',
     },
   })
   handleSelectTemplate(value) {

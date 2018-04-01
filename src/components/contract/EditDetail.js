@@ -159,6 +159,7 @@ export default class EditDetail extends PureComponent {
     },
   })
   handleSelectCust(value) {
+    console.log('######客户#######', value);
     this.setState({
       ...this.state,
       cust: value,
@@ -189,6 +190,7 @@ export default class EditDetail extends PureComponent {
     },
   })
   handleSelectContractNum(value) {
+    console.log('#####合约编号#######', value);
     this.setState({
       ...this.state,
       contractNum: value,

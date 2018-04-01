@@ -44,13 +44,6 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '选择类型',
-      value: '$args[0]',
-    },
-  })
   onChange = (value) => {
     console.log(arguments);
     this.setState({ value });

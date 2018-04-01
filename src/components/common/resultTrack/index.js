@@ -706,7 +706,7 @@ export default class ResultTrack extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '产品',
-      value: '$args[0]',
+      value: '$args[0].aliasName',
     },
   })
   handleSelectProductItem(value) {

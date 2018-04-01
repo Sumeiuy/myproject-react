@@ -132,7 +132,7 @@ export default class EditModal extends Component {
     type: 'DropdownSelect',
     payload: {
       name: '负责人',
-      value: '$args[0]',
+      value: '$args[0].ptyMngName',
     },
   })
   handleSelect(obj) {

@@ -160,7 +160,7 @@ export default class BaseInfoEdit extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectClient(value) {
@@ -214,6 +214,7 @@ export default class BaseInfoEdit extends PureComponent {
     },
   })
   handleSelectContractNum(value) {
+    console.log('#####合约编号###########', value);
     this.setState({
       ...this.state,
       contractNum: value,
