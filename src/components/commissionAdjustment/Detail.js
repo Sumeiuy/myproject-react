@@ -61,11 +61,11 @@ export default class Commissiondetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '客户信息表的审批记录',
+      name: '客户信息表审批记录列',
     },
   })
-  handleCheckApproval() {
-    this.props.checkApproval();
+  handleCheckApproval(record, index) {
+    this.props.checkApproval(record, index);
   }
 
   render() {

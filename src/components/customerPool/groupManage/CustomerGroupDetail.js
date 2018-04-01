@@ -378,8 +378,7 @@ export default class CustomerGroupDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分组管理客户详情',
-      type: '操作',
+      name: '分组管理客户详情删除',
     },
   })
   handleDeleteBtnClick(record) {

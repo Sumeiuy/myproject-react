@@ -242,7 +242,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '创建者',
-      value: '$args[1]',
+      value: '$args[1].ptyMngName',
     },
   })
   selectItem(name, item) {
