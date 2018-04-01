@@ -147,7 +147,7 @@ export default class ServerPersonel extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '删除$args[0]',
+      name: '$props.head表的删除',
     },
   })
   updateDeleteValue(item) {

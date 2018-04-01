@@ -349,7 +349,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '通道类型协议左侧列表项$args[0]',
+      name: '通道类型协议左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },

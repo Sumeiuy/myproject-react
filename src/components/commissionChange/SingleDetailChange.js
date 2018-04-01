@@ -475,7 +475,7 @@ export default class SingleDetailChange extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金产品穿梭',
+      name: '单佣金产品',
     },
   })
   handleSingleTransferChange(flag, item, array, dValue) {

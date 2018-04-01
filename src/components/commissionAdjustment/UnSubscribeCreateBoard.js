@@ -193,7 +193,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '资讯退订产品 $args[1] args[0]',
+      name: '资讯退订产品',
     },
   })
   handleUnSubscribelTransferChange(flag, item, array) {
@@ -228,7 +228,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '资讯退订通过check选择子产品$args[0]',
+      name: '资讯退订通过check选择子产品',
     },
   })
   handleUnSubscribelTransferSubProductCheck(item, array) {

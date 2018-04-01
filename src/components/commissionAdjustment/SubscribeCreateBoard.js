@@ -219,7 +219,7 @@ export default class SubscribeCreateBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '资讯订阅产品 $args[1] args[0]',
+      name: '资讯订阅产品',
     },
   })
   handleSubscribelTransferChange(flag, item, array) {
@@ -264,7 +264,7 @@ export default class SubscribeCreateBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '资讯订阅通过check选择子产品$args[0]',
+      name: '资讯订阅通过check选择子产品',
     },
   })
   handleSubscribelTransferSubProductCheck(item, array) {
