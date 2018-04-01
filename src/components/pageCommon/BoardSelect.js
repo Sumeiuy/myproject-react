@@ -174,7 +174,6 @@ export default class BoardSelect extends PureComponent {
 
   // 二级菜单鼠标进入
   @autobind
-  @logable({ type: 'Click', payload: { name: '自定义看板鼠标进入' } })
   subMouseEnter() {
     // 清除定时器
     if (this.timer) {
@@ -185,6 +184,12 @@ export default class BoardSelect extends PureComponent {
       showMenu: true,
       showSubMenu: true,
     }, this.registerScrollEvent);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '自定义看板鼠标进入' } })
+  handleMouseEnter() {
+    this.subMouseEnter();
   }
 
   @autobind
@@ -209,9 +214,9 @@ export default class BoardSelect extends PureComponent {
     }, 500);
   }
 
-  // 原始看板菜单点击事件
+  // 普通看板菜单点击事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '原始看板菜单点击事件' } })
+  @logable({ type: 'Click', payload: { name: '普通看板菜单点击事件' } })
   handleOrdinaryBoardMenuClick(e) {
     this.menuClick(e);
   }
@@ -229,7 +234,7 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '可见看板数组最后一个对象中的普通看板菜单点击事件' } })
+  @logable({ type: 'Click', payload: { name: '自定义看板菜单点击事件' } })
   handleCustomerBorderMenuClick(e) {
     this.menuClick(e);
   }
@@ -242,7 +247,6 @@ export default class BoardSelect extends PureComponent {
 
   // 菜单点击事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '菜单点击事件' } })
   menuClick(e) {
     const target = e.target;
     const { push, collectData, visibleBoards } = this.props;
@@ -338,7 +342,7 @@ export default class BoardSelect extends PureComponent {
     const lastVisibleBoardsOrdinaryHtml = (
       lastVisibleBoards.ordinary.map(item => (
         <li
-          onClick={this.handleVisibleBoardBoardMenuClick}
+          onClick={this.handleVisibleOrdinaryBoardMenuClick}
           data-key={item.id}
           data-type={visibleBoardType.ordinary.key}
           title={item.name}
@@ -397,7 +401,7 @@ export default class BoardSelect extends PureComponent {
         >
           <ul>
             <li
-              onMouseEnter={this.subMouseEnter}
+              onMouseEnter={this.handleMouseEnter}
               onMouseLeave={this.subMouseLeave}
             >
               自定义看板<Icon type="right" />

@@ -617,7 +617,7 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   // 空方法，用于日志上传
-  @logable({ type: 'Click', payload: { name: '下载' } })
+  @logable({ type: 'Click', payload: { name: '附件下载' } })
   handleDownloadClick() {}
 
   @autobind
