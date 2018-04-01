@@ -214,7 +214,6 @@ export default class BaseInfoEdit extends PureComponent {
     },
   })
   handleSelectContractNum(value) {
-    console.log('#####合约编号###########', value);
     this.setState({
       ...this.state,
       contractNum: value,

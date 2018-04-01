@@ -633,7 +633,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       } else if (value === commadj.unsubscribe) {
         newItem.show = permission.hasCommissionADUnSubscribeAuthority();
       }
-      newItem.show = true;
       return {
         ...item,
         ...newItem,
