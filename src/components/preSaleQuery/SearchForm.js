@@ -31,7 +31,7 @@ export default class SearchForm extends Component {
     type: 'DropdownSelect',
     payload: {
       name: '选择客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectCustItem(obj) {
@@ -43,7 +43,7 @@ export default class SearchForm extends Component {
     type: 'DropdownSelect',
     payload: {
       name: '选择产品',
-      value: '$args[0]',
+      value: '$args[0].productName',
     },
   })
   handleSelectProductItem(obj) {

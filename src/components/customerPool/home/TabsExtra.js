@@ -117,7 +117,7 @@ export default class TabsExtra extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '',
-      value: '$args[0]',
+      value: '$args[0].orgId',
     },
   })
   handleCustRange(obj) {

@@ -89,7 +89,7 @@ export default class PageHeader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '模块',
-      value: '$args[0]',
+      value: '$args[2]',
     },
   })
   handleCascaderSelectChange(name, funcName, key) {

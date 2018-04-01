@@ -176,7 +176,7 @@ export default class BoardHeader extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '排序方式',
       value: '$args[0]',
     },
   })
@@ -201,7 +201,7 @@ export default class BoardHeader extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '排序方式',
       value: '$args[0]',
     },
   })
