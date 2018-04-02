@@ -226,6 +226,7 @@ export default class TaskFlow extends PureComponent {
       needApproval = false,
       canGoNextStep = false,
       needMissionInvestigation = false,
+      nextStepBtnIsDisabled = true,
     } = props.storedTaskFlowData || {};
 
     this.state = {
@@ -252,7 +253,7 @@ export default class TaskFlow extends PureComponent {
       clearFromSearch: _.isEmpty(props.storedTaskFlowData),
       currentSelectLabelName: null,
       currentFilterNum: 0,
-      nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
+      nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -327,9 +328,14 @@ export default class TaskFlow extends PureComponent {
   // 设置下一步按钮的是否可点击状态
   @autobind
   setNextStepBtnDisabled(disabled) {
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      nextStepBtnIsDisabled: disabled,
+    })
     this.setState({
       nextStepBtnIsDisabled: disabled,
-    });
+    })
   }
 
   /**
