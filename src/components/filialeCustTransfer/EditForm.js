@@ -138,7 +138,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '选择客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectClient(v) {
@@ -173,7 +173,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 查询客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchClient(v) {
     if (!v) {
       return;
@@ -190,7 +189,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '选择新服务经理',
-      value: '$args[0]',
+      value: '$args[0].newEmpName',
     },
   })
   handleSelectNewManager(v) {
@@ -216,7 +215,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
 
   // 查询新服务经理
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
   handleSearchNewManager(v) {
     if (!v) {
       return;

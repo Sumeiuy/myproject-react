@@ -97,7 +97,6 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   searchCanApplyCustList(value) {
     // 按照 关键字 查询 客户 列表
     this.context.getCanApplyCustList(value);

@@ -33,7 +33,7 @@ export default class SaleDepartmentFilter extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务营业部：',
-      value: '$args[0]',
+      value: '$args[0].orgId',
     },
   })
   handleCustRange(obj) {

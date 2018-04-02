@@ -12,7 +12,6 @@ import getScroll from 'antd/lib/_util/getScroll';
 import getRequestAnimationFrame from 'antd/lib/_util/getRequestAnimationFrame';
 import { fspContainer } from '../../../config';
 import './index.less';
-import { autobind } from 'core-decorators';
 import logable from '../../../decorators/logable';
 
 const fsp = document.querySelector(fspContainer.container);
@@ -174,7 +173,6 @@ export default class Anchor extends PureComponent {
     this.updateInk();
   }
 
-  @autobind
   @logable({ type: 'Click', payload: { name: '监听scroll事件' } })
   handleScroll = () => {
     if (this.animating) {

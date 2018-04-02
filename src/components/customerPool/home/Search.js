@@ -135,7 +135,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字目标客户池首页搜索' } })
   handleSearch(value) {
     if (_.isEmpty(value)) {
       this.setState({

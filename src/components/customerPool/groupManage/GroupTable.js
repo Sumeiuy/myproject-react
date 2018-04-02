@@ -227,7 +227,6 @@ export default class GroupTable extends PureComponent {
               <span
                 title={record[item.key]}
                 className={styles.link}
-                // 多传一个参数，用于logable的name
                 onClick={() => firstColumnHandler(record, item.value)}
               >
                 {this.renderColumnValue(record, item)}
@@ -248,7 +247,6 @@ export default class GroupTable extends PureComponent {
                 <span
                   className={styles.link}
                   key={itemData.type}
-                  // 多增加一个参数，用于logable的name
                   onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}

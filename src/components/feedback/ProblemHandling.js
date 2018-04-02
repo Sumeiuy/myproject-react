@@ -101,7 +101,7 @@ export default class ProblemHandling extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭弹框' } })
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     this.props.onCancel();
   }

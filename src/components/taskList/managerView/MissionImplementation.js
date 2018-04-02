@@ -297,6 +297,12 @@ export default class MissionImplementation extends PureComponent {
     onPreviewCustDetail(params);
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
+  @logable({ type: 'Click', payload: { name: '报告' } })
+  handleDownload() {}
 
   @autobind
   renderTabsExtra() {
@@ -355,10 +361,16 @@ export default class MissionImplementation extends PureComponent {
       return (
         <div className={styles.downLoading}>
           <span className={styles.line}>|</span>
-          <a href={this.getSourceSrc(currentMissionReport)}>
+          <a
+            onClick={this.handleDownloadClick}
+            href={this.getSourceSrc(currentMissionReport)}
+          >
             <Icon type="xiazai" className={`icon ${styles.icon_mr}`} />
           </a>
-          <a href={this.getSourceSrc(currentMissionReport)}>
+          <a
+            onClick={this.handleDownload}
+            href={this.getSourceSrc(currentMissionReport)}
+          >
             <span>{createTime}报告</span>
           </a>
         </div>

@@ -50,7 +50,6 @@ export default class SearchSelect extends PureComponent {
 
   // 搜索客户列表
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchCustList(value) {
     this.props.onChangeValue(value);
   }
@@ -61,7 +60,7 @@ export default class SearchSelect extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '$props.labelName',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectCust(cust) {

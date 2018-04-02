@@ -177,6 +177,10 @@ export default class CommonUpload extends PureComponent {
     deleteAttachment(deleteObj);
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
   @autobind
   findFileListNode() {
     return document.querySelectorAll('.fileListMain')[0];
@@ -260,6 +264,7 @@ export default class CommonUpload extends PureComponent {
                         <em>
                           <a
                             href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                            onClick={this.handleDownloadClick}
                           >
                             <Icon type="xiazai1" />
                           </a>

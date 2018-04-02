@@ -58,7 +58,7 @@ export default class Remark extends PureComponent {
   }
 
   render() {
-    const { onCancel, onCreate, form } = this.props;
+    const { form } = this.props;
     const { isShow } = this.state;
     const { getFieldDecorator } = form;
     const remarkVisible = classnames({
@@ -76,8 +76,8 @@ export default class Remark extends PureComponent {
               )}
             </FormItem>
             <div className="remarkbtn_dv">
-              <Button type="primary" onClick={onCancel}>取消</Button>
-              <Button onClick={onCreate}>提交</Button>
+              <Button type="primary" onClick={this.handleCancel}>取消</Button>
+              <Button onClick={this.handleSubmit}>提交</Button>
             </div>
           </Form>
         </div>

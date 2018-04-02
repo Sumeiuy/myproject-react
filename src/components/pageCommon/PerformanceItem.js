@@ -62,13 +62,13 @@ export default class PerformanceItem extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '向前' } })
   hanldePreClick(preOrNext) {
     this.clickHandle(preOrNext);
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '向后' } })
   handleNextClick(preOrNext) {
     this.clickHandle(preOrNext);
   }

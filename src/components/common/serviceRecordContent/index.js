@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-02 14:08:44
+ * @Last Modified time: 2018-04-02 14:17:12
  */
 
 
@@ -419,7 +419,7 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
-  // 保存服务类型的值
+  // logable 只能修饰组件的onclick事件，不能被外部调用，若外部需要调用同样方法，需要重写一个
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -616,6 +616,10 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '附件下载' } })
+  handleDownloadClick() {}
+
   @autobind
   renderServiceStatusChoice() {
     const {
@@ -648,6 +652,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Icon className={styles.excelIcon} type={getIconType(item.name)} />
               <span>
                 <a
+                  onClick={this.handleDownloadClick}
                   href={
                     _.isEmpty(item.attachId) && _.isEmpty(item.name)
                       ? NO_HREF :

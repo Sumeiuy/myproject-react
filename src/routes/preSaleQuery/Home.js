@@ -102,7 +102,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
   handleQueryCustList(value) {
     if (!value) {
       message.warning('请输入经纪客户号/客户名称');
@@ -112,7 +111,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询产品' } })
   handleQueryProductList(value) {
     if (!value) {
       message.warning('请输入产品代码/产品名称');
@@ -122,13 +120,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '选择客户',
-      value: '$args[0]',
-    },
-  })
   handleSelectCustItem(obj) {
     this.setState({
       selectedCustItem: obj,
@@ -136,13 +127,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '选择产品',
-      value: '$args[0]',
-    },
-  })
   handleSelectProductItem(obj) {
     this.setState({
       selectedProductItem: obj,
@@ -150,7 +134,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '查询' } })
   handleSearch(e) {
     e.preventDefault();
     if (!this.state.selectedCustItem.custNumber) {
@@ -166,7 +149,6 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   handleReset() {
     this.setState({
       selectedCustItem: {},

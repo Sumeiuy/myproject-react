@@ -6,6 +6,7 @@ import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
@@ -35,6 +36,10 @@ export default class ServiceRecordItem extends PureComponent {
     };
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
       const type = getIconType(item.name);
@@ -49,6 +54,7 @@ export default class ServiceRecordItem extends PureComponent {
           <a
             className={styles.seeCust}
             ref={ref => this.sendEmail = ref}
+            onClick={this.handleDownloadClick}
             href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
               `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
           >{item.name}</a>

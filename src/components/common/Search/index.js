@@ -305,6 +305,7 @@ export default class Search extends PureComponent {
    * 搜索按钮事件
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '$state.inputVal关键字搜索' } })
   handleSearchBtn() {
     const { inputVal, selectedItem } = this.state;
     const { onSearchClick } = this.props;

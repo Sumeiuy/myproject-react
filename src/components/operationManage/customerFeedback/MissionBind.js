@@ -258,8 +258,8 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '切换Tab：MOT任务/自建任务' } })
-  handleSwitchTabClick() {
-    this.props.missionBindChangeTab();
+  handleSwitchTabClick(key) {
+    this.props.missionBindChangeTab(key);
   }
 
   render() {

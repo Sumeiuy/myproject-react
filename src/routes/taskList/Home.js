@@ -110,6 +110,8 @@ const effects = {
   queryMOTServeAndFeedBackExcel: 'managerView/queryMOTServeAndFeedBackExcel',
   // 修改左侧列表的任务状态
   modifyLocalTaskList: 'performerView/modifyLocalTaskList',
+  // 查询去重后的客户数量
+  queryDistinctCustomerCount: 'managerView/queryDistinctCustomerCount',
 };
 
 const mapStateToProps = state => ({
@@ -160,6 +162,8 @@ const mapStateToProps = state => ({
   // 是否包含非本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
   missionReport: state.managerView.missionReport,
+  // 去重后的客户数量
+  distinctCustomerCount: state.managerView.distinctCustomerCount,
 });
 
 const mapDispatchToProps = {
@@ -220,6 +224,8 @@ const mapDispatchToProps = {
   createMotReport: fetchDataFunction(true, effects.createMotReport),
   queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
   modifyLocalTaskList: fetchDataFunction(false, effects.modifyLocalTaskList),
+  // 查询去重后的客户数量
+  queryDistinctCustomerCount: fetchDataFunction(true, effects.queryDistinctCustomerCount),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -291,6 +297,8 @@ export default class PerformerView extends PureComponent {
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
     modifyLocalTaskList: PropTypes.func.isRequired,
+    queryDistinctCustomerCount: PropTypes.func.isRequired,
+    distinctCustomerCount: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -581,6 +589,8 @@ export default class PerformerView extends PureComponent {
       list = {},
       modifyLocalTaskList,
       getTaskDetailBasicInfo,
+      queryDistinctCustomerCount,
+      distinctCustomerCount,
     } = this.props;
     const [firstItem = {}] = list.resultData;
     const {
@@ -598,40 +608,44 @@ export default class PerformerView extends PureComponent {
     } = this.state;
     let detailComponent = null;
     const { missionType = [], missionProgressStatus = [] } = dict || {};
-
+    const managerViewDetailProps = {
+      dict,
+      empInfo,
+      location,
+      replace,
+      push,
+      previewCustDetail,
+      custDetailResult,
+      onGetCustFeedback: countFlowFeedBack,
+      custFeedback,
+      custRange,
+      countFlowStatus: this.getFlowStatus,
+      countFlowFeedBack: this.getFlowFeedback,
+      missionImplementationDetail: missionImplementationDetail || EMPTY_OBJECT,
+      mngrMissionDetailInfo: mngrMissionDetailInfo || EMPTY_OBJECT,
+      launchNewTask: this.handleCreateBtnClick,
+      clearCreateTaskData,
+      missionType: typeCode,
+      missionTypeDict: missionType,
+      exportExcel: this.handleExportExecl,
+      missionProgressStatusDic: missionProgressStatus,
+      missionFeedbackData,
+      missionFeedbackCount,
+      serveManagerCount: empNum,
+      custServedByPostnResult,
+      missionReport,
+      createMotReport,
+      queryMOTServeAndFeedBackExcel,
+      queryDistinctCustomerCount,
+      distinctCustomerCount,
+    };
     switch (st) {
       case INITIATOR:
         // 如果当前视图是创建者视图，并且状态是执行中，就展示管理者视图
         if (isSourceFromCreatorView) {
           detailComponent = (<ManagerViewDetail
             currentId={currentId || firstItem.mssnId}
-            dict={dict}
-            previewCustDetail={previewCustDetail}
-            custDetailResult={custDetailResult}
-            onGetCustFeedback={countFlowFeedBack}
-            custFeedback={custFeedback}
-            custRange={custRange}
-            empInfo={empInfo}
-            location={location}
-            replace={replace}
-            countFlowStatus={this.getFlowStatus}
-            countFlowFeedBack={this.getFlowFeedback}
-            missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
-            mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
-            launchNewTask={this.handleCreateBtnClick}
-            clearCreateTaskData={clearCreateTaskData}
-            push={push}
-            missionType={typeCode}
-            missionTypeDict={missionType}
-            exportExcel={this.handleExportExecl}
-            missionProgressStatusDic={missionProgressStatus}
-            missionFeedbackData={missionFeedbackData}
-            missionFeedbackCount={missionFeedbackCount}
-            serveManagerCount={empNum}
-            custServedByPostnResult={custServedByPostnResult}
-            missionReport={missionReport}
-            createMotReport={createMotReport}
-            queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+            {...managerViewDetailProps}
           />);
         } else {
           detailComponent = (
@@ -691,33 +705,7 @@ export default class PerformerView extends PureComponent {
       case CONTROLLER:
         detailComponent = (<ManagerViewDetail
           currentId={currentId || firstItem.id}
-          dict={dict}
-          previewCustDetail={previewCustDetail}
-          custDetailResult={custDetailResult}
-          onGetCustFeedback={countFlowFeedBack}
-          custFeedback={custFeedback}
-          custRange={custRange}
-          empInfo={empInfo}
-          location={location}
-          replace={replace}
-          countFlowStatus={this.getFlowStatus}
-          countFlowFeedBack={this.getFlowFeedback}
-          missionImplementationDetail={missionImplementationDetail || EMPTY_OBJECT}
-          mngrMissionDetailInfo={mngrMissionDetailInfo || EMPTY_OBJECT}
-          launchNewTask={this.handleCreateBtnClick}
-          clearCreateTaskData={clearCreateTaskData}
-          push={push}
-          missionType={typeCode}
-          missionTypeDict={missionType}
-          exportExcel={this.handleExportExecl}
-          missionProgressStatusDic={missionProgressStatus}
-          missionFeedbackData={missionFeedbackData}
-          missionFeedbackCount={missionFeedbackCount}
-          serveManagerCount={empNum}
-          custServedByPostnResult={custServedByPostnResult}
-          missionReport={missionReport}
-          createMotReport={createMotReport}
-          queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+          {...managerViewDetailProps}
         />);
         break;
       default:

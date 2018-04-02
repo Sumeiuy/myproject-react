@@ -141,7 +141,6 @@ export default class SingleDetailChange extends PureComponent {
 
   // 客户修改的目标估计佣金率来查询码值列表
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索目标股基佣金率' } })
   changeTargetGJCommission(v) {
     const { customer } = this.props.detail;
     this.props.onQueryGJ({
@@ -476,7 +475,7 @@ export default class SingleDetailChange extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金产品 $args[1] args[0]',
+      name: '单佣金产品',
     },
   })
   handleSingleTransferChange(flag, item, array, dValue) {
@@ -501,7 +500,7 @@ export default class SingleDetailChange extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '单佣金通过check选择子产品$args[0]',
+      name: '单佣金通过check选择子产品',
     },
   })
   handleSingleTransferSubProductCheck(item, array) {

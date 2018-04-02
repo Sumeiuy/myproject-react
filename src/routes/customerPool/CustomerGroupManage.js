@@ -191,6 +191,12 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 编辑客户分组
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '编辑客户分组',
+    },
+  })
   editCustomerGroup(record) {
     console.log('edit customer group list');
     const { groupId } = record;
@@ -227,6 +233,12 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 发起任务
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '发起任务',
+    },
+  })
   lanuchTask(record) {
     console.log('launch task');
     const { groupId, relatCust } = record;
@@ -313,6 +325,12 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '删除客户分组',
+    },
+  })
   handleDeleteBtnClick(record) {
     // 当前删除行记录数据
     this.setState({ record });

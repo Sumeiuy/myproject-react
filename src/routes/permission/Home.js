@@ -273,7 +273,7 @@ export default class Permission extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '权限申请左侧列表项$args[0]',
+      name: '权限申请左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },
