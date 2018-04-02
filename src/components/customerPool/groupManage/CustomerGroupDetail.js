@@ -577,6 +577,14 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
+  // Alert关闭时回调，将multiErrmsg置空
+  @autobind
+  alertAfterClose() {
+    this.setState({
+      multiErrmsg: '',
+    })
+  }
+
   /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
@@ -656,6 +664,7 @@ export default class CustomerGroupDetail extends PureComponent {
     const actionSource = this.renderActionSource();
     // 上传批量客户，不符合要求的报错信息
     const newMultiErrmsg = `注:${multiErrmsg}`;
+    console.warn('multiErrmsg', multiErrmsg);
     // 单客户添加列表数据
     let newDataSource = EMPTY_LIST;
     // 批量导入客户添加数据
@@ -825,6 +834,7 @@ export default class CustomerGroupDetail extends PureComponent {
               <Alert
                 message={newMultiErrmsg}
                 type="error"
+                onClose={this.alertAfterClose}
                 closable
               />
             </div>
