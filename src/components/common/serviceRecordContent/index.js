@@ -419,7 +419,7 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
-  // 保存服务类型的值
+  // logable 只能修饰组件的onclick事件，不能被外部调用，若外部需要调用同样方法，需要重写一个
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -428,6 +428,12 @@ export default class ServiceRecordContent extends PureComponent {
       value: '$args[0]',
     },
   })
+  handleServiceTypeClick(value, shouldSetState = true) {
+    this.handleServiceType(value, shouldSetState);
+  }
+
+  // 保存服务类型的值
+  @autobind
   handleServiceType(value, shouldSetState = true) {
     if (_.isEmpty(value)) {
       return {};
@@ -851,7 +857,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleServiceType}
+                onChange={this.handleServiceTypeClick}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {
