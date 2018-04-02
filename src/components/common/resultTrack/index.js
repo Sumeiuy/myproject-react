@@ -622,9 +622,9 @@ export default class ResultTrack extends PureComponent {
     };
 
     if (
-        checked &&
-        (currentSelectedLevel1Indicator !== defaultIndicatorValue
-          || dateStr !== initialDateStr)
+        checked
+        && (currentSelectedLevel1Indicator !== defaultIndicatorValue
+        || dateStr !== initialDateStr)
       ) {
       // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
       confirm({
