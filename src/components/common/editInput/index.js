@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input } from 'antd';
 import _ from 'lodash';
+import logable from '../../../decorators/logable';
 
 import Icon from '../Icon';
 // import Button from '../Button';
@@ -87,6 +88,7 @@ export default class EditInput extends PureComponent {
 
   // 编辑按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑' } })
   onEdit(e) {
     e.stopPropagation();
     const { edit } = this.state;
@@ -97,6 +99,7 @@ export default class EditInput extends PureComponent {
 
   // 提交按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '确定' } })
   onSubmit(e) {
     e.stopPropagation();
     const { value, oldValue } = this.state;
@@ -119,6 +122,7 @@ export default class EditInput extends PureComponent {
 
   // 取消按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '取消' } })
   onCancel(e) {
     e.stopPropagation();
     const { oldValue } = this.state;

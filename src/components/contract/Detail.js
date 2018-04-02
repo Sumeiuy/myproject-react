@@ -19,6 +19,7 @@ import CommonUpload from '../common/biz/CommonUpload';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
+import { logPV } from '../../decorators/logable';
 
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
@@ -83,12 +84,17 @@ export default class Detail extends PureComponent {
     return EMPTY_PARAM;
   }
 
+  @autobind
+  @logPV({ pathname: '/modal/editContract', title: '打开修改合作合约弹框' })
+  handleShowEditModal() {
+    this.props.showEditModal();
+  }
+
   render() {
     const {
       baseInfo,
       attachmentList,
       uploadAttachment,
-      showEditModal,
       flowHistory,
       hasEditPermission,
     } = this.props;
@@ -130,7 +136,7 @@ export default class Detail extends PureComponent {
           {
             hasEditPermission ?
               <span
-                onClick={showEditModal}
+                onClick={this.handleShowEditModal}
                 className={modifyBtnClass}
               >修改</span>
             :

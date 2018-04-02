@@ -246,6 +246,7 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].value关键字搜索客户' } })
   handleSearchClick({ value, selectedItem }) {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
@@ -377,8 +378,7 @@ export default class CustomerGroupDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分组管理客户详情',
-      type: '操作',
+      name: '分组管理客户详情删除',
     },
   })
   handleDeleteBtnClick(record) {

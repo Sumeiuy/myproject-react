@@ -37,6 +37,11 @@ export default class CustomerSegment extends PureComponent {
     priviewCustFileData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    // 设置下一步按钮可点击状态
+    setNextStepBtnDisabled: PropTypes.func.isRequired,
+    nextStepBtnIsDisabled: PropTypes.bool.isRequired,
+    // 是否显示导入客户组件
+    visible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -70,12 +75,16 @@ export default class CustomerSegment extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       priviewCustFileData: nextData = EMPTY_LIST,
+      setNextStepBtnDisabled,
+      nextStepBtnIsDisabled,
+      visible,
      } = nextProps;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
     const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
 
     // 展示预览数据
     const columns = _.head(nextInfos);
+    const { uploadedFileKey } = this.state;
     this.setState({
       totalRecordNum: nextTotalCount,
       curPageNum: pageNum,
@@ -84,6 +93,17 @@ export default class CustomerSegment extends PureComponent {
       dataSource: this.renderDataSource(columns, _.drop(nextInfos)),
       columnSize: _.size(columns),
     });
+    // 从瞄准镜圈人切换到导入客户时
+    if (visible) {
+      // 如果当前上传文件不为空，并且“下一步”按钮状态是不可点击状态，将按钮状态修改为可点击
+      if (!_.isEmpty(uploadedFileKey) && nextStepBtnIsDisabled) {
+        setNextStepBtnDisabled(false);
+      }
+      // 如果当前上传文件为空，并且“下一步”按钮状态是可点击状态，将按钮状态修改为不可点击
+      if (_.isEmpty(uploadedFileKey) && !nextStepBtnIsDisabled) {
+        setNextStepBtnDisabled(true);
+      }
+    }
   }
 
 
@@ -159,9 +179,12 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   handleDeleteFile() {
+    const { setNextStepBtnDisabled } = this.props;
     this.setState({
       isShowTable: false,
       uploadedFileKey: '',
+    }, () => {
+      setNextStepBtnDisabled(true);
     });
   }
 
@@ -172,11 +195,14 @@ export default class CustomerSegment extends PureComponent {
   handleFileUpload(lastFile) {
     // 当前上传的file
     const { currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0 } = lastFile;
+    const { setNextStepBtnDisabled } = this.props;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
       custTotal,
+    }, () => {
+      setNextStepBtnDisabled(false);
     });
   }
 
@@ -223,6 +249,9 @@ export default class CustomerSegment extends PureComponent {
     });
     return dataSource;
   }
+
+  @logable({ type: 'Click', payload: { name: '导入模板' } })
+  handleDownloadClick() {}
 
   renderColumnTitle(columns) {
     // 随着导入表格列的变化而变化
@@ -294,7 +323,10 @@ export default class CustomerSegment extends PureComponent {
         </div>
         <div className={styles.tipSection}>
           注：支持从客户细分导出的excel格式文件。文件中必须包含”经纪客户号“字段，excel导入格式参见：
-          <a href={selfBuiltTemplate}>导入模板</a>。
+          <a
+            onClick={this.handleDownloadClick}
+            href={selfBuiltTemplate}
+          >导入模板</a>。
         </div>
         {
           isShowTable ?

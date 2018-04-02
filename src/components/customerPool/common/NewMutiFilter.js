@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
 import { Menu, Dropdown, Checkbox, Button } from 'antd';
 
+import logable from '../../../decorators/logable';
 import styles from './newMutiFilter.less';
 
 const generateCheckStatus = (v, k, valueArray) => {
@@ -53,6 +53,7 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$props.filterLabel' } })
   handleClick({ key, value, filterLabel }) {
     const { keyArr } = this.state;
     const { separator, filter, onChange, valueArray } = this.props;

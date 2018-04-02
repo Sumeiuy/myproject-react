@@ -11,6 +11,7 @@ import _ from 'lodash';
 
 import Select from '../common/Select';
 import styles from './otherCommissionSelect.less';
+import logable from '../../decorators/logable';
 
 export default class OtherCommissionSelect extends PureComponent {
   static propTypes = {
@@ -50,6 +51,13 @@ export default class OtherCommissionSelect extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$props.label',
+      value: '$args[1]',
+    },
+  })
   onChange(name, value) {
     this.setState({
       value,

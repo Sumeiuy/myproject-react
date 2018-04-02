@@ -13,6 +13,7 @@ import CommonModal from '../common/biz/CommonModal';
 import Icon from '../common/Icon';
 import Button from '../common/Button';
 import { permissionOptions } from '../../config';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from '../../components/style/jiraLayout.less';
 
@@ -42,9 +43,46 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
   onChange = (value) => {
     console.log(arguments);
     this.setState({ value });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '合约名称',
+      value: '$args[0]',
+    },
+  })
+  handleContractChange(value) {
+    this.onChange(value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '拟稿人',
+      value: '$args[0]',
+    },
+  })
+  handleDrafterChange(value) {
+    this.onChange(value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '部门',
+      value: '$args[0]',
+    },
+  })
+  handleDepartmentChange(value) {
+    this.onChange(value);
   }
 
   @autobind
@@ -58,7 +96,33 @@ export default class Pageheader extends PureComponent {
       },
     });
   }
+
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelectSubtype(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleSelectStatus(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logPV({ pathname: '/modal/createModal', title: '' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,
@@ -102,7 +166,7 @@ export default class Pageheader extends PureComponent {
           placeholder="合约名称"
           allowClear
           treeDefaultExpandAll
-          onChange={this.onChange}
+          onChange={this.handleContractChange}
           searchPlaceholder="合约编号/合约名称/客户号/客户名称"
         />
 
@@ -111,7 +175,7 @@ export default class Pageheader extends PureComponent {
           style={{ width: '12%' }}
           placeholder="全部"
           value={subType}
-          onChange={key => this.handleSelectChange('subType', key)}
+          onChange={key => this.handleSelectSubtype('subType', key)}
           allowClear
         >
           {getSelectOption(typeOptions)}
@@ -122,7 +186,7 @@ export default class Pageheader extends PureComponent {
           style={{ width: '8%' }}
           placeholder="全部"
           value={status}
-          onChange={key => this.handleSelectChange('status', key)}
+          onChange={key => this.handleSelectStatus('status', key)}
           allowClear
         >
           {getSelectOption(stateOptions)}
@@ -137,7 +201,7 @@ export default class Pageheader extends PureComponent {
           placeholder="全部"
           allowClear
           treeDefaultExpandAll
-          onChange={this.onChange}
+          onChange={this.handleDrafterChange}
         >
           <TreeNode value="parent 1" title="parent 1" key="0-1">
             <TreeNode value="parent 1-0" title="parent 1-0" key="0-1-1">
@@ -159,7 +223,7 @@ export default class Pageheader extends PureComponent {
           placeholder="全部"
           allowClear
           treeDefaultExpandAll
-          onChange={this.onChange}
+          onChange={this.handleDepartmentChange}
         >
           <TreeNode value="parent 1" title="parent 1" key="0-1">
             <TreeNode value="parent 1-0" title="parent 1-0" key="0-1-1">

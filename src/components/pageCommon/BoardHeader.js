@@ -15,6 +15,7 @@ import { fspContainer, optionsMap, constants } from '../../config';
 import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './BoardHeader.less';
+import logable from '../../decorators/logable';
 
 const reactApp = fspContainer.reactApp;
 // Select的选项组件
@@ -100,6 +101,7 @@ export default class BoardHeader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '导出到文件' } })
   handleDataExportClick() {
     const { postExcelInfo, indexID } = this.props;
     const { scope } = this.state;
@@ -171,6 +173,13 @@ export default class BoardHeader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '排序方式（按范围）',
+      value: '$args[0]',
+    },
+  })
   handleScopeChange(v) {
     this.setState({
       scopeSelectValue: v,
@@ -187,7 +196,15 @@ export default class BoardHeader extends PureComponent {
     });
     this.handleSortChange('scope', v);
   }
+
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '排序方式(按高低)',
+      value: '$args[0]',
+    },
+  })
   handleOrderTypeChange(v) {
     const { collectOrderTypeSelect } = this.props;
     const orderText = _.find(sortByOrder, { key: String(v) }).name;
@@ -198,11 +215,13 @@ export default class BoardHeader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '表格视图' } })
   handleTablesIconClick() {
     this.handleIconClick('tables');
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '柱状视图' } })
   handleBarIconClick() {
     this.handleIconClick('zhuzhuangtu');
   }

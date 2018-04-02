@@ -29,15 +29,16 @@ export default class SightingTelescope extends PureComponent {
     storedTaskFlowData: PropTypes.object.isRequired,
     orgId: PropTypes.string.isRequired,
     isAuthorize: PropTypes.bool,
-    filterModalvisible: PropTypes.bool,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
+    // 设置下一步按钮可点击状态
+    setNextStepBtnDisabled: PropTypes.func.isRequired,
+    nextStepBtnIsDisabled: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
     visible: false,
     isAuthorize: false,
-    filterModalvisible: false,
   }
 
   componentDidMount() {
@@ -65,9 +66,10 @@ export default class SightingTelescope extends PureComponent {
       storedTaskFlowData,
       orgId,
       isAuthorize,
-      filterModalvisible,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      setNextStepBtnDisabled,
+      nextStepBtnIsDisabled,
     } = this.props;
     const cls = classnames({
       [styles.hide]: !visible,
@@ -82,7 +84,7 @@ export default class SightingTelescope extends PureComponent {
             switchBottomFromSearch={switchBottomFromSearch}
             isLoadingEnd={isLoadingEnd}
             isSightTelescopeLoadingEnd={isSightTelescopeLoadingEnd}
-            visible={filterModalvisible}
+            visible={visible}
             circlePeopleData={circlePeopleData}
             getLabelInfo={getLabelInfo}
             peopleOfLabelData={peopleOfLabelData}
@@ -93,6 +95,8 @@ export default class SightingTelescope extends PureComponent {
             isAuthorize={isAuthorize}
             getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
             sightingTelescopeFilters={sightingTelescopeFilters}
+            setNextStepBtnDisabled={setNextStepBtnDisabled}
+            nextStepBtnIsDisabled={nextStepBtnIsDisabled}
           />
         </div>
       </div>

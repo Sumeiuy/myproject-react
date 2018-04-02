@@ -22,6 +22,7 @@ import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
 import { emp, permission, env as envHelper } from '../../helper';
+import logable from '../../decorators/logable';
 import {
   EXECUTOR,
   INITIATOR,
@@ -1034,6 +1035,14 @@ export default class PerformerView extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '执行者视图左侧列表',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
     const {
@@ -1072,6 +1081,7 @@ export default class PerformerView extends PureComponent {
 
   // 头部新建按钮，跳转到新建表单
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '跳转到新建自建任务' } })
   handleCreateBtnClick() {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData, push } = this.props;

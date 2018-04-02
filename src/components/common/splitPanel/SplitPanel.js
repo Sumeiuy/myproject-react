@@ -16,6 +16,7 @@ import { env } from '../../../helper';
 import '../../../css/react-split-pane-master.less';
 import styles from './SplitPanel.less';
 import nodatapng from './nodata.png';
+import logable from '../../../decorators/logable';
 
 export default class SplitPanel extends PureComponent {
 
@@ -305,6 +306,7 @@ export default class SplitPanel extends PureComponent {
 
   // splitPan onChange回调函数
   @autobind
+  @logable({ type: 'Click', payload: { name: '' } })
   panchange(size) {
     this.panMov(size);
     this.initPane();

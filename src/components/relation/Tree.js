@@ -15,6 +15,8 @@ import { Menu } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import styles from './tree.less';
+import logable from '../../decorators/logable';
+
 // detailTable 组件的表格类型
 const CENTER_TABLE = '3';
 const TEAM_TABLE = '4';
@@ -108,6 +110,7 @@ export default class Tree extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击分公司树菜单' } })
   handleSubmenuClick(submenu) {
     const { key } = submenu;
     const { selectKey } = this.state;
@@ -153,6 +156,7 @@ export default class Tree extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击分公司' } })
   handleLogoClick(logoKey) {
     const { selectKey } = this.state;
     // 去重

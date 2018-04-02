@@ -19,6 +19,7 @@ import classnames from 'classnames';
 import Icon from '../Icon';
 import { dom } from '../../../helper';
 import { fspContainer } from '../../../config';
+import logable from '../../../decorators/logable';
 
 import styles from './filter.less';
 
@@ -85,6 +86,7 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '单选filter为$args[0]' } })
   handleClick(value) {
     const { filter, onChange } = this.props;
     this.setState({
@@ -98,6 +100,7 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '展开/收起' } })
   handleMore() {
     const { fold } = this.state;
     this.domNode.style.height = fold ? 'auto' : this.domNodeLineHeight;

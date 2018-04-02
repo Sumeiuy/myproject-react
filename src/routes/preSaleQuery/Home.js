@@ -18,6 +18,7 @@ import QualifiedCustModal from '../../components/preSaleQuery/QualifiedCustModal
 import SearchForm from '../../components/preSaleQuery/SearchForm';
 import emp from '../../helper/emp';
 import Icon from '../../components/common/Icon';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from './home.less';
 
@@ -159,6 +160,7 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '合格投资者Modal' } })
   handleQualifiedCustModalHide() {
     this.setState({
       isQualifiedCustModalVisible: false,
@@ -166,6 +168,7 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/qualifiedCust', title: '' })
   handleQualifiedCustModalShow() {
     this.setState({
       isQualifiedCustModalVisible: true,

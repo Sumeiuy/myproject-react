@@ -18,6 +18,7 @@ import Button from '../common/Button';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
+import logable from '../../decorators/logable';
 import {
   EXECUTOR,
   INITIATOR,
@@ -210,6 +211,16 @@ export default class Pageheader extends PureComponent {
   filterMoreRef(input) {
     this.filterMore = input;
   }
+  @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
+  handleMore() {
+    this.handleMoreChange();
+  }
+  @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
+  handleShrik() {
+    this.handleMoreChange();
+  }
 
   @autobind
   handleMoreChange() {
@@ -227,6 +238,13 @@ export default class Pageheader extends PureComponent {
 
   // 选中创建者下拉对象中对应的某个对象s
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '创建者',
+      value: '$args[1].ptyMngName',
+    },
+  })
   selectItem(name, item) {
     this.props.filterCallback({
       [name]: item.ptyMngId,
@@ -235,11 +253,54 @@ export default class Pageheader extends PureComponent {
 
   // 选中客户下拉对象中对应的某个对象
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].name',
+    },
+  })
   selectCustomerItem(item) {
     this.props.filterCallback({
       custId: item.custId,
       custName: encodeURIComponent(item.name),
     });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '视图选择',
+      value: '$args[1]',
+    },
+  })
+  handleSelctView(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelctType(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleSelctStatus(key, value) {
+    this.handleSelectChange(key, value);
   }
 
   // select改变
@@ -327,6 +388,7 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
   handleSearch(value) {
     this.props.filterCallback({
       missionName: value,
@@ -335,6 +397,7 @@ export default class Pageheader extends PureComponent {
 
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[1]关键字搜索创建者' } })
   toSearch(method, value) {
     method({
       keyword: value,
@@ -342,6 +405,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '创建时间',
+      value: '$args[0]',
+    },
+  })
   handleCreateDateChange(date) {
     const createTimeStart = moment(date[0]).format(dateFormat);
     const createTimeEnd = moment(date[1]).format(dateFormat);
@@ -352,6 +422,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '结束时间',
+      value: '$args[0]',
+    },
+  })
   handleEndDateChange(date) {
     const endTimeStart = moment(date[0]).format(dateFormat);
     const endTimeEnd = moment(date[1]).format(dateFormat);
@@ -396,12 +473,18 @@ export default class Pageheader extends PureComponent {
    * @param {*} value 输入的关键词
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   searchCustomer(value) {
     const { queryCustomer } = this.props;
     // pageSize传1000000，使能够查到足够的数据
     queryCustomer({
       keyWord: value,
     });
+  }
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
+  handleCreateTask() {
+    this.props.creatSeibelModal();
   }
 
   // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
@@ -554,7 +637,6 @@ export default class Pageheader extends PureComponent {
   render() {
     const {
       getDrafterList,
-      creatSeibelModal,
       drafterList,
       page,
       chooseMissionViewOptions,
@@ -610,7 +692,7 @@ export default class Pageheader extends PureComponent {
               name="missionViewType"
               value={missionViewTypeValue}
               data={chooseMissionViewOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctView}
             />
           </div>
 
@@ -629,7 +711,7 @@ export default class Pageheader extends PureComponent {
               name="type"
               value={typeValue}
               data={typeAllOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctType}
             />
           </div>
 
@@ -638,7 +720,7 @@ export default class Pageheader extends PureComponent {
               name="status"
               value={statusValue}
               data={stateAllOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctStatus}
             />
           </div>
           {missionViewTypeValue === INITIATOR ? null :
@@ -681,7 +763,7 @@ export default class Pageheader extends PureComponent {
             this.state.showMore ?
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleMore}
                 ref={this.filterMoreRef}
               >
                 <span>更多</span>
@@ -689,7 +771,7 @@ export default class Pageheader extends PureComponent {
               :
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleShrik}
                 ref={this.filterMoreRef}
               >
                 <span>收起</span>
@@ -700,7 +782,7 @@ export default class Pageheader extends PureComponent {
           type="primary"
           icon="plus"
           size="small"
-          onClick={creatSeibelModal}
+          onClick={this.handleCreateTask}
         >
           新建
         </Button>

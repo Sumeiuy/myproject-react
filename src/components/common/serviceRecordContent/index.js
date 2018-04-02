@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-30 10:04:18
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 14:49:55
  */
 
 
@@ -19,6 +19,7 @@ import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -168,7 +169,6 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getData() {
     const { serviceStatus, serviceContent } = this.state;
-
     const isShowServiceContentError = !serviceContent || serviceContent.length > 1000;
     const isShowServeStatusError = !serviceStatus;
 
@@ -207,6 +207,7 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 服务状态change事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '服务状态' } })
   handleRadioChange(e) {
     this.setState({
       serviceStatus: e.target.value,
@@ -405,10 +406,30 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存选中的服务方式的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务方式',
+      value: '$args[0]',
+    },
+  })
   handleServiceWay(value) {
     this.setState({
       serviceWay: value,
     });
+  }
+
+  // logable 只能修饰组件的onclick事件，不能被外部调用，若外部需要调用同样方法，需要重写一个
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务类型',
+      value: '$args[0]',
+    },
+  })
+  handleServiceTypeClick(value, shouldSetState = true) {
+    this.handleServiceType(value, shouldSetState);
   }
 
   // 保存服务类型的值
@@ -443,6 +464,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存服务日期的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务日期',
+      value: '$args[0]',
+    },
+  })
   handleServiceDate(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
@@ -452,6 +480,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存服务时间时分的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务时间',
+      value: '$args[1]',
+    },
+  })
   handleServiceTime(time, timeString) {
     const d = new Date();
     const h = d.getHours();
@@ -463,6 +498,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈时间的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '反馈时间',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackDate(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
@@ -472,6 +514,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈类型的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackType(value) {
     const { feedbackTypeList } = this.state;
     this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
@@ -485,6 +534,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈子类型的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈子类型',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackTypeChild(value) {
     this.setState({
       feedbackTypeChild: value,
@@ -566,6 +622,10 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '附件下载' } })
+  handleDownloadClick() {}
+
   @autobind
   renderServiceStatusChoice() {
     const {
@@ -598,6 +658,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Icon className={styles.excelIcon} type={getIconType(item.name)} />
               <span>
                 <a
+                  onClick={this.handleDownloadClick}
                   href={
                     _.isEmpty(item.attachId) && _.isEmpty(item.name)
                       ? NO_HREF :
@@ -796,7 +857,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleServiceType}
+                onChange={this.handleServiceTypeClick}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {

@@ -23,6 +23,7 @@ import Detail from '../../components/filialeCustTransfer/Detail';
 import { seibelConfig } from '../../config';
 import { emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
@@ -257,6 +258,7 @@ export default class FilialeCustTransfer extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
+  @logPV({ pathname: '/modal/createProtocol', title: '新建分公司客户人工划转' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,
@@ -297,6 +299,14 @@ export default class FilialeCustTransfer extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '分公司客户人工划转左侧列表项',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const {

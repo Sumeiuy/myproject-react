@@ -16,6 +16,7 @@ import Button from '../../../components/common/Button';
 import EditInput from '../../../components/common/editInput';
 import Pagination from '../../common/Pagination';
 import styles from './optionsMaintain.less';
+import logable from '../../../decorators/logable';
 
 const Panel = Collapse.Panel;
 const EMPTY_LIST = [];
@@ -112,6 +113,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 删除客户反馈
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除$args[0]' } })
   deleteConfirm(parentId = '', childId = '', e) {
     const {
       feedbackData,
@@ -147,6 +149,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 显示对应的添加子类输入框
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '+新增' } })
   showAddChildBox(id) {
     this.setState({
       beAddedParentId: id,
@@ -186,6 +189,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 点击添加父类按钮
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '+反馈类型' } })
   parentAddHandle() {
     this.setState({
       addParentClass: true,
@@ -202,6 +206,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 切换折叠面板
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '切换折叠面板' } })
   handleChangeCollapse(collapseActiveKey) {
     this.setState({
       collapseActiveKey,

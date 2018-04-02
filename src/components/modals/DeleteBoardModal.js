@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './modalCommon.less';
+import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -67,6 +68,7 @@ export default class DeleteBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeCreateModal() {
     const { modalKey, closeModal } = this.props;
     // 此处需要将form重置
@@ -77,6 +79,7 @@ export default class DeleteBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '删除' } })
   confirmCreateModal() {
     const { form, confirm } = this.props;
     const { boardName } = this.state;

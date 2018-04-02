@@ -9,10 +9,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import { autobind } from 'core-decorators';
-import logable from '../../../decorators/logable';
 import { checkSpecialCharacter } from '../../../decorators/checkSpecialCharacter';
 import Button from '../../common/Button';
 import styles from './addNewGroup.less';
+import logable from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -71,9 +71,15 @@ export default class AddNewGroup extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleGoBack() {
+    this.props.goBack();
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { goBack, count } = this.props;
+    const { count } = this.props;
     return (
       <Form onSubmit={this.addNewGroupSubmit}>
         <FormItem
@@ -99,7 +105,7 @@ export default class AddNewGroup extends PureComponent {
             <span className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</span>
           </div>
           <div className={styles.rightSection}>
-            <Button onClick={goBack}>取消</Button>
+            <Button onClick={this.handleGoBack}>取消</Button>
             <Button type="primary" htmlType="submit">保存</Button>
           </div>
         </FormItem>

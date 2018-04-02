@@ -6,7 +6,6 @@
  * 校验表单内容
  */
 
-import { message } from 'antd';
 import _ from 'lodash';
 import { regxp } from '../helper';
 
@@ -75,7 +74,6 @@ export const validateFormContent = (target, name, descriptor) => {
         || isShowErrorTaskName
         || isShowErrorExcuteType
         || isShowErrorTaskType) {
-        message.error('请填写任务基本信息');
         return false;
       }
       // 校验通过，去掉错误提示

@@ -18,11 +18,11 @@ import Icon from '../../common/Icon';
 import Button from '../../common/Button';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import logable, { logPV } from '../../../decorators/logable';
 import { linkTo } from '../../../utils';
 import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 import pageConfig from '../pageConfig';
 import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
+import logable, { logPV } from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -169,6 +169,7 @@ export default class RightPanel extends PureComponent {
 
   // 发起任务
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑' } })
   handleModifyTask() {
     const { push, taskBasicInfo, flowId, clearCreateTaskData } = this.props;
     if (!_.isEmpty(taskBasicInfo) || !_.isEmpty(flowId)) {
