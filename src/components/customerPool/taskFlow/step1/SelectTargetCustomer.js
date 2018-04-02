@@ -14,6 +14,7 @@ import SightingTelescope from './SightingTelescope';
 import Header from './Header';
 import RestoreScrollTop from '../../../../decorators/restoreScrollTop';
 import { fsp, emp } from '../../../../helper';
+import logable from '../../../../decorators/logable';
 
 import styles from './selectTargetCustomer.less';
 
@@ -41,6 +42,9 @@ export default class SelectTargetCustomer extends PureComponent {
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
+    // 设置下一步按钮可点击状态
+    setNextStepBtnDisabled: PropTypes.func.isRequired,
+    nextStepBtnIsDisabled: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -61,6 +65,7 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: currentEntry === 0,
       // 展示入口2，瞄准镜标签
       showSightingTelescope: currentEntry === 1,
+      isFirstTimeChange: true, // 是否是第一次点击切换视图
     };
   }
 
@@ -76,6 +81,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '导入客户' } })
   importCustomers() {
     this.setState({
       showEntry: false,
@@ -88,6 +94,7 @@ export default class SelectTargetCustomer extends PureComponent {
 
   // 选中瞄准镜圈人入口时，拉取瞄准镜圈人默认标签列表进行展示
   @autobind
+  @logable({ type: 'Click', payload: { name: '瞄准镜圈人' } })
   findPeople() {
     this.setState({
       showEntry: false,
@@ -115,6 +122,7 @@ export default class SelectTargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换至 瞄准镜圈人/导入客户' } })
   changeView() {
     const showImportCustomers = !this.state.showImportCustomers;
     const showSightingTelescope = !this.state.showSightingTelescope;
@@ -122,8 +130,27 @@ export default class SelectTargetCustomer extends PureComponent {
       showEntry: false,
       showImportCustomers,
       showSightingTelescope,
+      isFirstTimeChange: false,
     });
     this.props.switchBottomFromHeader(showImportCustomers);
+    if (showSightingTelescope && this.state.isFirstTimeChange) {
+      const { getLabelInfo, isAuthorize, orgId } = this.props;
+      const param = {
+        condition: '',
+      };
+      if (isAuthorize) {
+        // 有首页绩效指标查看权限
+        getLabelInfo({
+          ...param,
+          orgId,
+        });
+      } else {
+        getLabelInfo({
+          ...param,
+          ptyMngId: emp.getId(),
+        });
+      }
+    }
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
@@ -149,6 +176,8 @@ export default class SelectTargetCustomer extends PureComponent {
       filterModalvisible,
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
+      setNextStepBtnDisabled,
+      nextStepBtnIsDisabled,
     } = this.props;
     const {
       showEntry,
@@ -182,6 +211,8 @@ export default class SelectTargetCustomer extends PureComponent {
           onPreview={onPreview}
           priviewCustFileData={priviewCustFileData}
           storedTaskFlowData={storedTaskFlowData}
+          setNextStepBtnDisabled={setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
         <SightingTelescope
           ref={r => this.sightingTelescopeRef = r}
@@ -202,6 +233,8 @@ export default class SelectTargetCustomer extends PureComponent {
           filterModalvisible={filterModalvisible}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
+          setNextStepBtnDisabled={setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
       </div>
     );

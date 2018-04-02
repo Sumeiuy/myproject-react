@@ -18,7 +18,7 @@ import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
 import Pagination from '../../common/Pagination';
 import InfoArea from '../managerView/InfoArea';
-
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 10;
@@ -46,6 +46,7 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
+    modifyLocalTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -104,7 +105,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -120,6 +121,13 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
   handleStateChange(key, v) {
     const {
       changeParameter,
@@ -145,7 +153,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustId,
-        targetMissionFlowId,
+      targetMissionFlowId,
       },
     } = this.props;
     this.requeryTargetCustDetail({
@@ -156,6 +164,7 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/questionnaireSurvey', title: '任务问卷调查' })
   showModal() {
     const { getTempQuesAndAnswer, basicInfo: { templateId } } = this.props;
     getTempQuesAndAnswer({

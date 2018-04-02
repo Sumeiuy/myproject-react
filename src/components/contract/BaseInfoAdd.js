@@ -22,6 +22,7 @@ import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
 import styles from './baseInfoAdd.less';
+import logable from '../../decorators/logable';
 
 const { TextArea } = Input;
 
@@ -100,6 +101,30 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '操作类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelectOperationType(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelectSubtype(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
@@ -131,6 +156,13 @@ export default class BaseInfoEdit extends PureComponent {
 
   // 选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].custName',
+    },
+  })
   handleSelectClient(value) {
     this.setState({
       ...this.state,
@@ -174,6 +206,13 @@ export default class BaseInfoEdit extends PureComponent {
 
   // 选择合约编号
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '合约编号',
+      value: '$args[0]',
+    },
+  })
   handleSelectContractNum(value) {
     this.setState({
       ...this.state,
@@ -201,6 +240,30 @@ export default class BaseInfoEdit extends PureComponent {
       ...this.state,
       [obj.name]: obj.value,
     }, this.transferDataToHome);
+  }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约开始日期',
+      value: '$args[0]',
+    },
+  })
+  handleSeletStartTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约有效期',
+      value: '$args[0]',
+    },
+  })
+  handleSelectValidityTime(obj) {
+    this.handleChangeDate(obj);
   }
 
   // 修改备注
@@ -276,7 +339,7 @@ export default class BaseInfoEdit extends PureComponent {
                 :
                 ''
               }
-          onChange={this.handleChangeDate}
+          onChange={this.handleSeletStartTime}
           boxStyle={datePickerBoxStyle}
         />
       </InfoForm>)
@@ -292,7 +355,7 @@ export default class BaseInfoEdit extends PureComponent {
               :
               ''
             }
-          onChange={this.handleChangeDate}
+          onChange={this.handleSelectValidityTime}
           boxStyle={datePickerBoxStyle}
         />
       </InfoForm>)
@@ -314,7 +377,7 @@ export default class BaseInfoEdit extends PureComponent {
             name="operation"
             data={operateType}
             value={this.state.operation}
-            onChange={this.handleSelectChange}
+            onChange={this.handleSelectOperationType}
           />
         </InfoForm>
         <InfoForm label="子类型" required>
@@ -322,7 +385,7 @@ export default class BaseInfoEdit extends PureComponent {
             name="subType"
             data={childTypeList}
             value={this.state.subType}
-            onChange={this.handleSelectChange}
+            onChange={this.handleSelectSubtype}
           />
         </InfoForm>
         <InfoForm label="客户" required>

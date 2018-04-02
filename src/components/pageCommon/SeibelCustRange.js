@@ -12,7 +12,6 @@ import _ from 'lodash';
 
 import { constants } from '../../config';
 import { event } from '../../helper';
-
 import styles from './seibelCustRange.less';
 
 function transformCustRangeData(list, parent = '') {

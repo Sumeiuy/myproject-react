@@ -17,6 +17,7 @@ import Icon from '../common/Icon';
 import HistoryRankChart from '../chartRealTime/HistoryRankChart';
 import imgStr from '../chartRealTime/noChart.png';
 import styles from './HistoryCompareRankChart.less';
+import logable from '../../decorators/logable';
 
 // Select的选项组件
 const Option = Select.Option;
@@ -130,6 +131,13 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   // 切换维度
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '切换维度',
+      value: '$args[0]',
+    },
+  })
   handleScopeChange(v) {
     // 如果切换维度，则需要页面设置为初始值
     this.setState({
@@ -144,6 +152,13 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   // 切换排序
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '切换排序',
+      value: '$args[0]',
+    },
+  })
   handleOrderTypeChange(v) {
     // 如果切换维度，则需要将页面设置为初始值
     this.setState({
@@ -158,6 +173,7 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   // 上一页
   @autobind
+  @logable({ type: 'Click', payload: { name: '上一页' } })
   handleLastClick() {
     let { rankPage } = this.state;
     if (rankPage > 1) {
@@ -167,6 +183,7 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   // 下一页
   @autobind
+  @logable({ type: 'Click', payload: { name: '上一页' } })
   handleNextClick() {
     const { totalPage } = this.state;
     let { rankPage } = this.state;

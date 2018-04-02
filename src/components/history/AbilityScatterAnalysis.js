@@ -22,6 +22,7 @@ import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
 import { checkTooltipStatus } from '../../decorators/checkTooltipStatus';
+import logable from '../../decorators/logable';
 
 const Option = Select.Option;
 const EMPTY_LIST = [];
@@ -393,6 +394,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   */
   @autobind
   @checkTooltipStatus
+  @logable({ type: 'Click', payload: { name: '鼠标悬浮$state.finalData.yAxisName($state.finalData.yAxisUnit)' } })
   handleScatterHover(params) {
     const { isShowTooltip,
       finalData: {
@@ -435,6 +437,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$props.contrastType',
+      value: '$args[0]',
+    },
+  })
   handleChange(value) {
     this.setState({
       selectValue: value,
@@ -450,6 +459,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   // 切换维度
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '切换维度',
+      value: '$args[0]',
+    },
+  })
   handleScopeChange(v) {
     this.setState({
       scopeSelectValue: v,
@@ -467,6 +483,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * 处理鼠标离开事件
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '鼠标离开$state.finalData.yAxisName($state.finalData.yAxisUnit)' } })
   handleScatterLeave() {
     const { isShowTooltip } = this.state;
     if (isShowTooltip) {

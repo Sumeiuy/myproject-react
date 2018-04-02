@@ -21,6 +21,7 @@ import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/Confirm';
 import styles from './createMainPostion.less';
+import logable from '../../decorators/logable';
 
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
@@ -129,6 +130,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 点击具体的员工
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务经理',
+      value: '$args[0].name',
+    },
+  })
   selectHandle(value) {
     // 当前选择的员工不为空时，请求接口
     if (!_.isEmpty(value)) {
@@ -150,6 +158,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 选择某个职位
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '服务经理主职位设置',
+    },
+  })
   checkTableData(record, index) {
     const { defaultChecked } = this.state;
     const disabled = defaultChecked === index;
@@ -162,6 +176,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     const { employeeId, disabled } = this.state;
     if (_.isEmpty(employeeId)) {
@@ -183,6 +198,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 发送修改请求,先走修改接口，再走走流程接口
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   sendModifyRequest(value) {
     const { updateApplication } = this.props;
     const { checkedEmployee, employeeId } = this.state;

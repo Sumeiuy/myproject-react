@@ -13,6 +13,7 @@ import { request } from '../../config';
 import { emp } from '../../helper';
 import uploadRequest from '../../utils/uploadRequest';
 import './uploadFiles.less';
+import logable from '../../decorators/logable';
 
 let COUNT = 0;
 const EMPTY_LIST = [];
@@ -95,6 +96,7 @@ export default class UploadFiles extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '移除附件' } })
   fileOnRemove(file) {
     const { onCreate } = this.props;
     const nowUserId = emp.getId();

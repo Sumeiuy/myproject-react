@@ -11,6 +11,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import { Pagination } from 'antd';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const PAGE_SENVEN = 7;
 const PAGE_EIGHT = 8;
@@ -155,6 +156,7 @@ export default class PaginationComponent extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(page, pageSize) {
     const { total, onChange, isHideLastButton } = this.props;
     if (isHideLastButton) {
@@ -172,6 +174,7 @@ export default class PaginationComponent extends PureComponent {
 
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
   handlePageSizeChange(current, size) {
     const { total, onShowSizeChange, isHideLastButton } = this.props;
     if (isHideLastButton) {

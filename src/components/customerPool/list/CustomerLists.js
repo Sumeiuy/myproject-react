@@ -21,7 +21,7 @@ import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
-
+import logable from '../../../decorators/logable';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
@@ -116,7 +116,6 @@ export default class CustomerLists extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     hasTkMampPermission: PropTypes.bool.isRequired,
     hasIndexViewPermission: PropTypes.bool.isRequired,
@@ -270,6 +269,7 @@ export default class CustomerLists extends PureComponent {
 
   // 点击全选，获取按钮的状态赋值url中的selectAll,并且将selectedIds置空
   @autobind
+  @logable({ type: 'Click', payload: { name: '全选' } })
   selectAll(e) {
     const status = e.target.checked;
     const {
@@ -517,7 +517,6 @@ export default class CustomerLists extends PureComponent {
       entertype,
       clearCreateTaskData,
       queryCustUuid,
-      isCustServedByPostn,
       custServedByPostnResult,
       hasTkMampPermission,
       sendCustsServedByPostnResult,
@@ -666,7 +665,6 @@ export default class CustomerLists extends PureComponent {
                     entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
-                    isCustServedByPostn={isCustServedByPostn}
                     custServedByPostnResult={custServedByPostnResult}
                   />,
                 )

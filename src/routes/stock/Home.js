@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-30 10:33:07
+ * @Last Modified time: 2018-04-02 09:53:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,6 +20,7 @@ import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import config from './config';
 import styles from './home.less';
+import logable from '../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
@@ -93,6 +94,14 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   rowClickHandle(record) {
     const { id, code, eventType } = record;
     const { push } = this.props;
@@ -121,6 +130,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
@@ -152,6 +162,18 @@ export default class Stock extends PureComponent {
       page: 1,
       pageSize: 10,
     });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$state.keyword关键字搜索' } })
+  handlerEnterSearch() {
+    this.searchHandle();
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$state.keyword关键字查询' } })
+  handleClickSearch() {
+    this.searchHandle();
   }
 
   // 翻页事件
@@ -242,7 +264,7 @@ export default class Stock extends PureComponent {
           搜索：
           <Input
             placeholder="股票名称/股票代码/股票简称"
-            onPressEnter={this.searchHandle}
+            onPressEnter={this.handlerEnterSearch}
             onChange={this.searchChangeHandle}
             style={{ width: '34.7%' }}
             value={keyword}
@@ -250,7 +272,7 @@ export default class Stock extends PureComponent {
           <Button
             type="primary"
             size="small"
-            onClick={this.searchHandle}
+            onClick={this.handleClickSearch}
           >
             查询
           </Button>

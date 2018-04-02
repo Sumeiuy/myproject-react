@@ -20,6 +20,7 @@ import { request, seibelConfig } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
 import styles from './detail.less';
+import logable from '../../decorators/logable';
 
 // 表头
 const { titleList } = seibelConfig.filialeCustTransfer;
@@ -73,6 +74,10 @@ export default class Detail extends PureComponent {
       });
     });
   }
+
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载报错信息' } })
+  handleDownloadClick() {}
 
   render() {
     const {
@@ -142,7 +147,11 @@ export default class Detail extends PureComponent {
                   errorDesc === config.errorArray[0]
                   ?
                     <p>
-                      <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`} download>
+                      <a
+                        onClick={this.handleDownloadClick}
+                        href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`}
+                        download
+                      >
                         下载报错信息
                       </a>
                     </p>

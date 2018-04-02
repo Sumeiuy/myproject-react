@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
 import styles from './productsDropBox1.less';
+import logable from '../../decorators/logable';
 
 const Option = AutoComplete.Option;
 
@@ -74,12 +75,18 @@ export default class ProductsDropdownBox extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '清除输入内容' } })
+  handleClearInput() {
+    this.setState({
+      value: '',
+      iconType: 'search',
+    });
+  }
+
+  @autobind
   clearValue() {
     if (this.state.iconType === 'close') {
-      this.setState({
-        value: '',
-        iconType: 'search',
-      });
+      this.handleClearInput();
     }
   }
   render() {

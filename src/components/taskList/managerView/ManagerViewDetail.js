@@ -21,9 +21,9 @@ import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { PIE_ENTRY, PROGRESS_ENTRY } from '../../../config/createTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
-import logable from '../../../decorators/logable';
 import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -84,7 +84,6 @@ export default class ManagerViewDetail extends PureComponent {
     missionFeedbackData: PropTypes.array.isRequired,
     missionFeedbackCount: PropTypes.number.isRequired,
     serveManagerCount: PropTypes.number.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
@@ -159,7 +158,7 @@ export default class ManagerViewDetail extends PureComponent {
   @logable({
     type: 'ButtonClick',
     payload: {
-      name: '关闭客户详情modal',
+      name: '取消',
     },
   })
   handleCloseModal() {
@@ -403,6 +402,10 @@ export default class ManagerViewDetail extends PureComponent {
     }
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '导出' } })
+  handleDownloadClick() {}
+
   @autobind
   renderTotalCust() {
     const { mngrMissionDetailInfo = {}, custFeedback } = this.props;
@@ -464,7 +467,6 @@ export default class ManagerViewDetail extends PureComponent {
       missionFeedbackCount,
       serveManagerCount,
       push,
-      isCustServedByPostn,
       custServedByPostnResult,
       currentId,
       missionReport,
@@ -602,6 +604,7 @@ export default class ManagerViewDetail extends PureComponent {
                         falseValue ? (
                           <Button className={styles.export}>
                             <a
+                              onClick={this.handleDownloadClick}
                               href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                             >导出</a>
                           </Button>
@@ -629,7 +632,6 @@ export default class ManagerViewDetail extends PureComponent {
                       onClose={this.handleCloseModal}
                       hideCustDetailModal={this.hideCustDetailModal}
                       push={push}
-                      isCustServedByPostn={isCustServedByPostn}
                       custServedByPostnResult={custServedByPostnResult}
                       // 代表是否是从进度条点击的
                       isEntryFromProgressDetail={isEntryFromProgressDetail}

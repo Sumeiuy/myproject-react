@@ -20,6 +20,7 @@ import InfoForm from '../common/infoForm';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
+import logable from '../../decorators/logable';
 
 import styles from './baseInfoEdit.less';
 
@@ -93,6 +94,30 @@ export default class BaseInfoEdit extends PureComponent {
     }, this.transferDataToHome);
   }
 
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约开始日期',
+      value: '$args[0].value',
+    },
+  })
+  handleSelectStartTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '合约有效期',
+      value: '$args[0].value',
+    },
+  })
+  handleSelectValidityTime(obj) {
+    this.handleChangeDate(obj);
+  }
+
   // 更改备注
   @autobind
   handleChangeRemark(e) {
@@ -162,7 +187,7 @@ export default class BaseInfoEdit extends PureComponent {
               <DatePicker
                 name="contractStarDate"
                 value={moment(contractStarDate, 'YYYY-MM-DD')}
-                onChange={this.handleChangeDate}
+                onChange={this.handleSelectStartTime}
                 boxStyle={datePickerBoxStyle}
               />
             </InfoForm>
@@ -175,7 +200,7 @@ export default class BaseInfoEdit extends PureComponent {
               <DatePicker
                 name="contractPalidity"
                 value={moment(contractPalidity, 'YYYY-MM-DD')}
-                onChange={this.handleChangeDate}
+                onChange={this.handleSelectValidityTime}
                 boxStyle={datePickerBoxStyle}
               />
             </InfoForm>

@@ -29,6 +29,7 @@ import PropTypes from 'prop-types';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import logable from '../../../decorators/logable';
 
 import styles from './tableDialog.less';
 
@@ -78,6 +79,12 @@ export default class TableDialog extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '',
+    },
+  })
   onSelectChange(selectedRowKeys, selectedRows) {
     this.setState({
       selectedRowKeys,
@@ -100,6 +107,7 @@ export default class TableDialog extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
   handleOk() {
     const { selectedRows } = this.state;
     const selected = selectedRows.length > 0 ? selectedRows[0] : {};
@@ -112,6 +120,7 @@ export default class TableDialog extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
   handleCancel() {
     const { onCancel, dataSource, modalKey } = this.props;
     // 重置默认值
@@ -122,6 +131,7 @@ export default class TableDialog extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索' } })
   handleSearch(value) {
     const { onSearch } = this.props;
     onSearch(value);

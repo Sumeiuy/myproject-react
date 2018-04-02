@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './modalCommon.less';
+import logable from '../../decorators/logable';
 
 export default class PublishConfirmModal extends PureComponent {
   static propTypes = {
@@ -43,12 +44,14 @@ export default class PublishConfirmModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeCreateModal() {
     const { modalKey, closeModal } = this.props;
     closeModal(modalKey);
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmCreateModal() {
     this.props.confirm();
     // 隐藏Modal

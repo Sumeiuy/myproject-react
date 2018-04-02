@@ -19,11 +19,12 @@ export default class Test extends PureComponent {
   static propTypes = {
     // 默认搜索框值
     defaultValue: PropTypes.string,
-    handleChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
   }
 
   static defaultProps = {
     defaultValue: '',
+    onChange: () => {},
   }
 
   constructor(props) {
@@ -44,7 +45,7 @@ export default class Test extends PureComponent {
     this.setState({
       value: _.trim(e.target.value),
     });
-    this.props.handleChange(e.target.value);
+    this.props.onChange(e.target.value);
   }
 
   @autobind

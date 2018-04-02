@@ -22,21 +22,21 @@ import logable, { logPV } from '../../decorators/logable';
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
 // 新建晨报时标记晨报id为-1
-const createNewsId = -1;
+// const createNewsId = -1;
 
-function getOpenModalLog(ctx) {
-  const newsId = ctx.state.newsId;
-  if (newsId === createNewsId) {
-    return {
-      pathname: '/modal/createBoradcastList',
-      title: '新建晨报',
-    };
-  }
-  return {
-    pathname: '/modal/modifyBoradcastList',
-    title: '修改晨报详情',
-  };
-}
+// function getOpenModalLog(ctx) {
+//   const newsId = ctx.state.newsId;
+//   if (newsId === createNewsId) {
+//     return {
+//       pathname: '/modal/createBoradcastList',
+//       title: '新建晨报',
+//     };
+//   }
+//   return {
+//     pathname: '/modal/modifyBoradcastList',
+//     title: '修改晨报详情',
+//   };
+// }
 
 const effects = {
   getBoradcastList: 'morningBoradcast/getBoradcastList',
@@ -193,6 +193,7 @@ export default class BroadcastList extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
+  @logable({ type: 'Click', payload: { name: '晨报标题$args[0]' } })
   onHandleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -209,11 +210,7 @@ export default class BroadcastList extends PureComponent {
 
   // Model(晨报新增、修改) --> start
   @autobind()
-  @logPV({
-    payload: {
-      payload: getOpenModalLog,
-    },
-  })
+  @logPV({ pathname: '/modal/createModal', title: '' })
   showModal(newsId = -1) {
     this.setState({
       visible: true,
@@ -345,6 +342,18 @@ export default class BroadcastList extends PureComponent {
       pageNum: 1,
     });
   }
+
+  @autobind()
+  @logable({ type: 'Click', payload: { name: '搜索作者' } })
+  handleSearchAuthority() {
+    this.onHandleSearch();
+  }
+
+  @autobind()
+  @logable({ type: 'Click', payload: { name: '搜索标题' } })
+  handleSearchHeadline() {
+    this.onHandleSearch();
+  }
   // Search -->end
 
   // 日期选择组件-->start
@@ -414,7 +423,7 @@ export default class BroadcastList extends PureComponent {
                   <Search
                     placeholder="作者"
                     style={{ width: 200 }}
-                    onSearch={this.onHandleSearch}
+                    onSearch={this.handleSearchAuthority}
                   />,
                 )}
               </div>
@@ -443,7 +452,7 @@ export default class BroadcastList extends PureComponent {
                 <Search
                   placeholder="标题关键词"
                   style={{ width: 200 }}
-                  onSearch={this.onHandleSearch}
+                  onSearch={this.handleSearchHeadline}
                 />,
               )}
               {

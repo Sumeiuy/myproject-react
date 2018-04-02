@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './modalCommon.less';
+import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -88,6 +89,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeCreateModal() {
     const { closeModal, modalKey } = this.props;
     // 此处需要将form重置
@@ -98,6 +100,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmCreateModal() {
     const { form, createBoardConfirm, ownerOrgId, boardType, selectKeys } = this.props;
     // TODO 添加确认按钮处理程序

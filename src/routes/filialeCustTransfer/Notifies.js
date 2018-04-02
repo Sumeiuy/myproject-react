@@ -20,6 +20,7 @@ import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
 import Icon from '../../components/common/Icon';
 import styles from './notifies.less';
+import logable from '../../decorators/logable';
 
 const titleList = [
   {
@@ -116,6 +117,10 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     getNotifiesInfo(payload);
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '点击下载文件，在报错信息列查看报错信息' } })
+  handleDownloadClick() {}
+
   render() {
     const {
       // 清空批量划转的数据
@@ -150,7 +155,10 @@ export default class FilialeCustTransferNotifies extends PureComponent {
                 有 {totalCount - successCount} 行客户校验不通过！
               </p>
               <p>
-                <a href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId}&empId=${emp.getId()}`}>
+                <a
+                  onClick={this.handleDownloadClick}
+                  href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId}&empId=${emp.getId()}`}
+                >
                   <Icon type="xiazai1" />点击下载文件，在报错信息列查看报错信息
                 </a>
               </p>
