@@ -30,6 +30,7 @@ export default {
     exportExcel: {},
     // 生成任务报告相关信息
     missionReport: EMPTY_OBJ,
+    distinctCustomerCount: 0,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -93,6 +94,10 @@ export default {
           [missionId]: payload,
         },
       };
+    },
+    queryDistinctCustomerCountSuccess(state, action) {
+      const { payload } = action;
+      return { ...state, distinctCustomerCount: payload };
     },
   },
   effects: {
@@ -179,6 +184,16 @@ export default {
         type: 'queryMOTServeAndFeedBackExcelSuccess',
         payload: createInfo,
       });
+    },
+    // 查询去重后的客户数量
+    * queryDistinctCustomerCount({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryDistinctCustomerCount, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryDistinctCustomerCountSuccess',
+          payload: resultData.totalRecordNum,
+        });
+      }
     },
   },
   subscriptions: {
