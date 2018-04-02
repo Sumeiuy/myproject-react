@@ -582,7 +582,7 @@ export default class CustomerGroupDetail extends PureComponent {
   alertAfterClose() {
     this.setState({
       multiErrmsg: '',
-    })
+    });
   }
 
   /**
@@ -664,7 +664,6 @@ export default class CustomerGroupDetail extends PureComponent {
     const actionSource = this.renderActionSource();
     // 上传批量客户，不符合要求的报错信息
     const newMultiErrmsg = `注:${multiErrmsg}`;
-    console.warn('multiErrmsg', multiErrmsg);
     // 单客户添加列表数据
     let newDataSource = EMPTY_LIST;
     // 批量导入客户添加数据
