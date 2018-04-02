@@ -503,6 +503,11 @@ export default class ChartTable extends PureComponent {
           className={chartTableInfo.curPageNum === 1 ? styles.firstPage : ''}
           onChange={this.handleChange}
           scroll={{ x: this.state.allWidth }}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
         <Pagination
           {...paginationOption}

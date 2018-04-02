@@ -294,6 +294,11 @@ export default class PreSaleQuery extends PureComponent {
                       columns={columns}
                       dataSource={matchTable.fact.result}
                       pagination={false}
+                      // 默认文案配置
+                      locale={{
+                        // 空数据时的文案
+                        emptyText: '暂无数据',
+                      }}
                     />)
                 }
                 {

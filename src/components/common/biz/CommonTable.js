@@ -131,6 +131,11 @@ export default class CommonTable extends PureComponent {
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={newData}
           columns={newTitleList}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
       </div>
     );
