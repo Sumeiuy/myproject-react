@@ -533,6 +533,7 @@ export default class TaskFlow extends PureComponent {
             ...values,
             isFormError,
             serviceStrategySuggestion: serviceStrategyHtml,
+            serviceStrategyString,
           });
 
         if (formDataValidation) {
