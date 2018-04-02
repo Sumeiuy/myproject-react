@@ -106,7 +106,7 @@ export default class LeftPanel extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '问题反馈左侧列表',
     },
   })
   handleRowClick(record, index) {

@@ -82,7 +82,7 @@ export default class TableDialog extends Component {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '$props.title',
     },
   })
   onSelectChange(selectedRowKeys, selectedRows) {
