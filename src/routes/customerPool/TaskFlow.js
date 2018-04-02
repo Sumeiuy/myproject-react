@@ -228,6 +228,7 @@ export default class TaskFlow extends PureComponent {
       needMissionInvestigation = false,
       nextStepBtnIsDisabled = true,
       labelCust = EMPTY_OBJECT,
+      currentEntry = -1,
     } = props.storedTaskFlowData || {};
 
     const {
@@ -255,10 +256,10 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep,
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
-      shouldclearBottomLabel: false,
-      clearFromSearch: _.isEmpty(props.storedTaskFlowData),
+      clearFromSearch: _.isEmpty(currentSelectLabelName),
       currentSelectLabelName,
       currentFilterNum,
+      currentEntry,
       nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
     };
 
@@ -979,21 +980,32 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  changeCurrentEntry(currentEntry) {
+    this.setState({
+      currentEntry,
+    });
+  }
+
+  @autobind
   renderBottomLabel() {
     const {
       current,
+      currentEntry,
       currentFilterNum,
       currentSelectLabelName,
-      shouldclearBottomLabel,
       clearFromSearch,
     } = this.state;
 
-    // 是否应该隐藏底部的标签显示取决于三个条件
-    // 1. 选中标签,clearFromSearch控制
-    // 2. 使用头部的切换导入客户按钮，shouldclearBottomLabel控制
-    // 3. 是否处于第一步 current !== 0
-    // 条件1的优先级最高，条件3的优先级最低
-    const shouldHideBottom = clearFromSearch || shouldclearBottomLabel || current !== 0;
+    let shouldHideBottom = false;
+
+    if (current !== 0) {
+      shouldHideBottom = true;
+    } else if (currentEntry !== 1) {
+      shouldHideBottom = true;
+    } else if (currentEntry === 1) {
+      shouldHideBottom = clearFromSearch;
+    }
+
     const cls = classnames({
       [styles.hide]: shouldHideBottom,
       [styles.bottomLabel]: true,
@@ -1065,6 +1077,7 @@ export default class TaskFlow extends PureComponent {
       content: <div className={styles.taskInner}>
         <SelectTargetCustomer
           currentEntry={currentEntry}
+          changeCurrentEntry={this.changeCurrentEntry}
           wrappedComponentRef={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}
