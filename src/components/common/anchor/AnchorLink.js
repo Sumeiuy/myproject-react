@@ -3,6 +3,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { autobind } from 'core-decorators';
+import logable from '../../../decorators/logable';
 
 export default class AnchorLink extends PureComponent {
   static proptypes = {
@@ -44,6 +46,8 @@ export default class AnchorLink extends PureComponent {
     this.context.antAnchor.unregisterLink(this.props.href);
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$props.title' } })
   handleClick = (e) => {
     e.preventDefault();
     this.context.antAnchor.scrollTo(this.props.href);

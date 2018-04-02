@@ -23,6 +23,7 @@ import {
   subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
 import createCommon from './commissionCreateCommon/common';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
 
@@ -189,6 +190,12 @@ export default class UnSubscribeCreateBoard extends PureComponent {
 
   // 资讯退订调整穿梭变化的时候处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '资讯退订产品',
+    },
+  })
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
       unSubProList: array,
@@ -218,6 +225,12 @@ export default class UnSubscribeCreateBoard extends PureComponent {
 
   // 资讯选择子产品的时候的处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '资讯退订通过check选择子产品',
+    },
+  })
   handleUnSubscribelTransferSubProductCheck(item, array) {
     this.setState({
       unSubProList: array,
@@ -226,6 +239,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,

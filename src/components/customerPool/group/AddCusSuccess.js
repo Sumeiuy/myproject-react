@@ -92,6 +92,7 @@ export default class AddCusSuccess extends PureComponent {
 
   // 返回首页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回首页' } })
   goToHome() {
     this.clearTimeInterval();
     const { closeTab, push } = this.props;

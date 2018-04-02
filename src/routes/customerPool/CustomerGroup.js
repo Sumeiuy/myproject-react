@@ -14,7 +14,6 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Tabs, Input, Row, Col, message } from 'antd';
 
-import logable from '../../decorators/logable';
 import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
@@ -23,6 +22,7 @@ import { removeTab, linkTo } from '../../utils';
 import { emp, url } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 
 import styles from './customerGroup_.less';
 
@@ -121,6 +121,7 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   @checkSpecialCharacter
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索分组名称' } })
   handleSearch(value) {
     const { replace, location: { query, pathname } } = this.props;
     replace({
@@ -299,6 +300,12 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '添加到已有分组',
+    },
+  })
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
     const { handleRadio } = this.props;
@@ -315,6 +322,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：添加到已有分组/添加到新建分组' } })
   handleTabClick(param) {
     const { switchTab } = this.props;
     // 发送日志

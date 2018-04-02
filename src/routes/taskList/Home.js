@@ -22,6 +22,7 @@ import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { openRctTab } from '../../utils';
 import { emp, permission, env as envHelper } from '../../helper';
+import logable from '../../decorators/logable';
 import {
   EXECUTOR,
   INITIATOR,
@@ -102,8 +103,6 @@ const effects = {
   countAnswersByType: 'performerView/countAnswersByType',
   // 任务反馈已反馈总数
   countExamineeByType: 'performerView/countExamineeByType',
-  // 查看是否是自己名下的客户
-  isCustServedByPostn: 'customerPool/isCustServedByPostn',
   exportCustListExcel: 'managerView/exportCustListExcel',
   // 生成mot任务实施简报
   createMotReport: 'managerView/createMotReport',
@@ -217,8 +216,6 @@ const mapDispatchToProps = {
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
   countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
-  // 查询是否包含本人名下客户
-  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),
   createMotReport: fetchDataFunction(true, effects.createMotReport),
   queryMOTServeAndFeedBackExcel: fetchDataFunction(true, effects.queryMOTServeAndFeedBackExcel),
@@ -288,7 +285,6 @@ export default class PerformerView extends PureComponent {
     missionFeedbackCount: PropTypes.number.isRequired,
     countExamineeByType: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     exportCustListExcel: PropTypes.func.isRequired,
     missionReport: PropTypes.object.isRequired,
@@ -578,7 +574,6 @@ export default class PerformerView extends PureComponent {
       missionFeedbackData,
       missionFeedbackCount,
       attachmentList,
-      isCustServedByPostn,
       custServedByPostnResult,
       missionReport,
       createMotReport,
@@ -633,7 +628,6 @@ export default class PerformerView extends PureComponent {
             missionFeedbackData={missionFeedbackData}
             missionFeedbackCount={missionFeedbackCount}
             serveManagerCount={empNum}
-            isCustServedByPostn={isCustServedByPostn}
             custServedByPostnResult={custServedByPostnResult}
             missionReport={missionReport}
             createMotReport={createMotReport}
@@ -720,7 +714,6 @@ export default class PerformerView extends PureComponent {
           missionFeedbackData={missionFeedbackData}
           missionFeedbackCount={missionFeedbackCount}
           serveManagerCount={empNum}
-          isCustServedByPostn={isCustServedByPostn}
           custServedByPostnResult={custServedByPostnResult}
           missionReport={missionReport}
           createMotReport={createMotReport}
@@ -1034,6 +1027,14 @@ export default class PerformerView extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '执行者视图左侧列表',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
     const {
@@ -1072,6 +1073,7 @@ export default class PerformerView extends PureComponent {
 
   // 头部新建按钮，跳转到新建表单
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '跳转到新建自建任务' } })
   handleCreateBtnClick() {
     const url = '/customerPool/taskFlow';
     const { clearTaskFlowData, push } = this.props;

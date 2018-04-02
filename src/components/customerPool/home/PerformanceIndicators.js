@@ -19,6 +19,7 @@ import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList';
 import styles from './performanceIndicators.less';
+import logable from '../../../decorators/logable';
 import {
   getHSRate,
   getProductSale,
@@ -88,12 +89,48 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  handleBusinessOpenClick(instance) {
+  @logable({ type: 'Click', payload: { name: '业务开通区域下钻' } })
+  handleClick(labelList, arg) {
     const {
       push,
       cycle,
-      indicators,
       authority,
+      location,
+    } = this.props;
+    const param = {
+      source: 'numOfCustOpened',
+      cycle,
+      push,
+      location,
+      bname: arg.name || arg.value,
+      authority,
+    };
+    // 点击柱子，arg.name，arg.value都有值
+    // 点击x轴， arg.value有值，不存在arg.name
+    // 数组的顺序不能变
+    const arr = [arg.name, arg.value];
+    if (_.includes(arr, labelList[0])) {
+      param.value = 'ttfCust';
+    } else if (_.includes(arr, labelList[1])) {
+      param.value = 'shHkCust';
+    } else if (_.includes(arr, labelList[2])) {
+      param.value = 'szHkCust';
+    } else if (_.includes(arr, labelList[3])) {
+      param.value = 'rzrqCust';
+    } else if (_.includes(arr, labelList[4])) {
+      param.value = 'xsb';
+    } else if (_.includes(arr, labelList[5])) {
+      param.value = 'optCust';
+    } else if (_.includes(arr, labelList[6])) {
+      param.value = 'cyb';
+    }
+    linkTo(param);
+  }
+
+  @autobind
+  handleBusinessOpenClick(instance) {
+    const {
+      indicators,
     } = this.props;
     let formatIndicator = [];
     const tempArr = this.formatIndicators(indicators || {});
@@ -102,35 +139,9 @@ export default class PerformanceIndicators extends PureComponent {
     }
     const labelList = getLabelList(formatIndicator);
     instance.on('click', (arg) => {
-      const param = {
-        source: 'numOfCustOpened',
-        cycle,
-        push,
-        location: this.props.location,
-        bname: arg.name || arg.value,
-        authority,
-      };
-      // 点击柱子，arg.name，arg.value都有值
-      // 点击x轴， arg.value有值，不存在arg.name
-      // 数组的顺序不能变
-      const arr = [arg.name, arg.value];
-      if (_.includes(arr, labelList[0])) {
-        param.value = 'ttfCust';
-      } else if (_.includes(arr, labelList[1])) {
-        param.value = 'shHkCust';
-      } else if (_.includes(arr, labelList[2])) {
-        param.value = 'szHkCust';
-      } else if (_.includes(arr, labelList[3])) {
-        param.value = 'rzrqCust';
-      } else if (_.includes(arr, labelList[4])) {
-        param.value = 'xsb';
-      } else if (_.includes(arr, labelList[5])) {
-        param.value = 'optCust';
-      } else if (_.includes(arr, labelList[6])) {
-        param.value = 'cyb';
-      }
-      linkTo(param);
+      this.handleClick(labelList, arg);
     });
+
     // timeout变量用于鼠标移出label时，取消显示Popover
     let timeout;
     instance.on('mouseover', (arg) => {

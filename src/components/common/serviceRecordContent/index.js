@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 13:14:09
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 14:49:55
  */
 
 
@@ -10,18 +10,22 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Select, DatePicker, TimePicker, Input, Radio } from 'antd';
+import { Select, DatePicker, TimePicker, Input, Radio, Form } from 'antd';
 import moment from 'moment';
 import classnames from 'classnames';
+import StaticRecordContent from './StaticRecordContent_';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
 import Icon from '../../common/Icon';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const { Option } = Select;
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
+
+const FormItem = Form.Item;
 
 // 日期组件的格式
 const dateFormat = 'YYYY/MM/DD';
@@ -34,6 +38,7 @@ const CURRENT_DATE = moment(new Date(), dateFormat);
 const width = { width: 142 };
 
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 
 const NO_HREF = 'javascript:void(0);'; // eslint-disable-line
 
@@ -114,6 +119,8 @@ export default class ServiceRecordContent extends PureComponent {
     beforeUpload: () => { },
     isUploadFileManually: true,
     custUuid: '',
+    isShowServeStatusError: false,
+    isShowServiceContentError: false,
   }
 
   constructor(props) {
@@ -125,6 +132,8 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey: '',
       originFileName: '',
       originFormData: formData,
+      isShowServeStatusError: false,
+      isShowServiceContentError: false,
     };
     // 代表是否是删除操作
     this.isDeletingFile = false;
@@ -142,23 +151,36 @@ export default class ServiceRecordContent extends PureComponent {
         originFormData: formObject,
       });
     }
-    // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
-    if (custUuid !== nextCustUuid && !isReadOnly) {
-      this.clearUploadedFileList();
-    }
-  }
 
-  // 服务状态change事件
-  @autobind
-  onRadioChange(e) {
-    this.setState({
-      serviceStatus: e.target.value,
-    });
+    // 切换客户，错误信息重置
+    if (custUuid !== nextCustUuid) {
+      this.setState({
+        isShowServeStatusError: false,
+        isShowServiceContentError: false,
+      });
+          // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+      if (!isReadOnly) {
+        this.clearUploadedFileList();
+      }
+    }
   }
 
   // 向组件外部提供所有数据
   @autobind
   getData() {
+    const { serviceStatus, serviceContent } = this.state;
+    const isShowServiceContentError = !serviceContent || serviceContent.length > 1000;
+    const isShowServeStatusError = !serviceStatus;
+
+    this.setState({
+      isShowServeStatusError,
+      isShowServiceContentError,
+    });
+
+    if (isShowServiceContentError || isShowServeStatusError) {
+      return false;
+    }
+
     return _.pick(this.state,
       // 服务方式
       'serviceWay',
@@ -181,6 +203,17 @@ export default class ServiceRecordContent extends PureComponent {
       // 当前上传的附件
       'currentFile',
     );
+  }
+
+  // 服务状态change事件
+  @autobind
+  @logable({ type: 'Click', payload: { name: '服务状态' } })
+  handleRadioChange(e) {
+    this.setState({
+      serviceStatus: e.target.value,
+      // 不显示错误信息
+      isShowServeStatusError: false,
+    });
   }
 
   @autobind
@@ -305,7 +338,8 @@ export default class ServiceRecordContent extends PureComponent {
           // 反馈时间
           feedbackDate: moment(currentDate).format(dateFormat),
           // 服务状态
-          serviceStatus: serviceStateMap[formData.serviceStatusCode],
+          // 新需求，不管来的是什么状态，只要能编辑，就没有默认选中的状态，
+          serviceStatus: '',
           // 服务方式
           serviceWay: (serveWay[0] || {}).key,
           serviceContent: '',
@@ -372,10 +406,30 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存选中的服务方式的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务方式',
+      value: '$args[0]',
+    },
+  })
   handleServiceWay(value) {
     this.setState({
       serviceWay: value,
     });
+  }
+
+  // logable 只能修饰组件的onclick事件，不能被外部调用，若外部需要调用同样方法，需要重写一个
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务类型',
+      value: '$args[0]',
+    },
+  })
+  handleServiceTypeClick(value, shouldSetState = true) {
+    this.handleServiceType(value, shouldSetState);
   }
 
   // 保存服务类型的值
@@ -410,6 +464,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存服务日期的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务日期',
+      value: '$args[0]',
+    },
+  })
   handleServiceDate(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
@@ -419,6 +480,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存服务时间时分的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务时间',
+      value: '$args[1]',
+    },
+  })
   handleServiceTime(time, timeString) {
     const d = new Date();
     const h = d.getHours();
@@ -430,6 +498,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈时间的值
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '反馈时间',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackDate(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
@@ -439,6 +514,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈类型的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackType(value) {
     const { feedbackTypeList } = this.state;
     this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
@@ -452,6 +534,13 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 保存反馈子类型的值
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈子类型',
+      value: '$args[0]',
+    },
+  })
   handleFeedbackTypeChild(value) {
     this.setState({
       feedbackTypeChild: value,
@@ -517,11 +606,9 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   handleServiceRecordInputChange(e) {
     const value = e.target.value;
-    if (!_.isEmpty(value) && value.length > 1000) {
-      return;
-    }
     this.setState({
       serviceContent: value,
+      isShowServiceContentError: _.isEmpty(value) || value.length > 1000,
     });
   }
 
@@ -534,6 +621,10 @@ export default class ServiceRecordContent extends PureComponent {
       this.isDeletingFile = false;
     });
   }
+
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '附件下载' } })
+  handleDownloadClick() {}
 
   @autobind
   renderServiceStatusChoice() {
@@ -567,6 +658,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Icon className={styles.excelIcon} type={getIconType(item.name)} />
               <span>
                 <a
+                  onClick={this.handleDownloadClick}
                   href={
                     _.isEmpty(item.attachId) && _.isEmpty(item.name)
                       ? NO_HREF :
@@ -592,6 +684,9 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
       deleteFileResult,
       formData: { motCustfeedBackDict },
+      dict: {
+        serveStatus = [],
+      },
     } = this.props;
     const {
       serviceWay,
@@ -608,13 +703,48 @@ export default class ServiceRecordContent extends PureComponent {
       uploadedFileKey,
       originFileName,
       serviceContent,
+      isShowServeStatusError,
+      isShowServiceContentError,
       // attachmentRecord,
     } = this.state;
     if (!dict) {
       return null;
     }
-    // const firstCol = isFold ? 8 : 24;
-    // const secondCol = isFold ? { first: 16, second: 8 } : { first: 24, second: 24 };
+
+    if (isReadOnly) {
+      // 服务状态文本
+      const serviceStatusText = (_.find(serveStatus, item =>
+        item.key === serviceStatus) || EMPTY_OBJECT).value;
+
+      // 客户反馈一级value
+      const feedbackTypeL1Text = (_.find(feedbackTypeList, item =>
+        item.key === feedbackType) || EMPTY_OBJECT).value;
+
+      // 客户反馈二级value
+      const feedbackTypeL2Text = (_.find(feedbackTypeChildList, item =>
+        item.key === feedbackTypeChild) || EMPTY_OBJECT).value;
+
+      // 反馈时间,格式化
+      const feedbackDateTime = moment(CURRENT_DATE, showDateFormat).format(showDateFormat);
+
+      // 服务时间，格式化
+      const serviceDateTime = moment(CURRENT_DATE, showDateFormat).format(showDateFormat);
+
+      return (
+        <StaticRecordContent
+          data={{
+            serviceContent,
+            serviceWay,
+            serviceStatusText,
+            feedbackTypeL1Text,
+            feedbackTypeL2Text,
+            feedbackDateTime,
+            serviceDateTime,
+            renderFileList: this.renderFileList,
+          }}
+        />
+      );
+    }
 
     const serviceDateProps = {
       allowClear: false,
@@ -640,6 +770,19 @@ export default class ServiceRecordContent extends PureComponent {
       onChange: this.handleFeedbackDate,
       disabledDate: this.disabledDate,
     };
+
+    const serviceStatusErrorProps = isShowServeStatusError ? {
+      hasFeedback: false,
+      validateStatus: 'error',
+      help: '请选择服务状态',
+    } : null;
+
+    const serviceContentErrorProps = isShowServiceContentError ? {
+      hasFeedback: false,
+      validateStatus: 'error',
+      help: '服务内容不能为空，最多输入1000汉字',
+    } : null;
+
     const serveType = classnames({
       [styles.serveType]: true,
       [styles.hidden]: isEntranceFromPerformerView,
@@ -665,7 +808,6 @@ export default class ServiceRecordContent extends PureComponent {
                 value={serviceWay}
                 style={width}
                 onChange={this.handleServiceWay}
-                disabled={isReadOnly}
                 getPopupContainer={() => this.serviceWayRef}
               >
                 {
@@ -679,19 +821,31 @@ export default class ServiceRecordContent extends PureComponent {
           {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
           {
             isEntranceFromPerformerView ?
-              <div className={styles.serveStatus}>
+              <div
+                className={
+                  classnames({
+                    [styles.serveStatus]: true,
+                  })}
+              >
                 <div className={styles.title}>
                   服务状态:
                 </div>
-                <div className={styles.content}>
-                  <RadioGroup
-                    onChange={this.onRadioChange}
-                    value={serviceStatus}
-                    disabled={isReadOnly}
+                <FormItem
+                  {...serviceStatusErrorProps}
+                >
+                  <div
+                    className={classnames({
+                      [styles.content]: true,
+                    })}
                   >
-                    {this.renderServiceStatusChoice()}
-                  </RadioGroup>
-                </div>
+                    <RadioGroup
+                      onChange={this.handleRadioChange}
+                      value={serviceStatus}
+                    >
+                      {this.renderServiceStatusChoice()}
+                    </RadioGroup>
+                  </div>
+                </FormItem>
               </div> : null
           }
           {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
@@ -703,7 +857,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleServiceType}
+                onChange={this.handleServiceTypeClick}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {
@@ -722,9 +876,6 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.content} ref={r => this.serviceTimeRef = r}>
               <DatePicker
                 style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
                 {...serviceDateProps}
                 defaultValue={moment(CURRENT_DATE, showDateFormat)}
                 getCalendarContainer={() => this.serviceTimeRef}
@@ -737,19 +888,21 @@ export default class ServiceRecordContent extends PureComponent {
               />
             </div>
           </div>
-
         </div>
 
         <div className={styles.serveRecord}>
           <div className={styles.title}>服务记录:</div>
-          <div className={styles.content}>
-            <TextArea
-              rows={5}
-              disabled={isReadOnly}
-              value={serviceContent}
-              onChange={this.handleServiceRecordInputChange}
-            />
-          </div>
+          <FormItem
+            {...serviceContentErrorProps}
+          >
+            <div className={styles.content}>
+              <TextArea
+                rows={5}
+                value={serviceContent}
+                onChange={this.handleServiceRecordInputChange}
+              />
+            </div>
+          </FormItem>
         </div>
 
         <div className={styles.divider} />
@@ -764,7 +917,6 @@ export default class ServiceRecordContent extends PureComponent {
                 value={feedbackType}
                 style={width}
                 onChange={this.handleFeedbackType}
-                disabled={isReadOnly}
                 getPopupContainer={() => this.customerFeedbackRef}
               >
                 {
@@ -774,20 +926,19 @@ export default class ServiceRecordContent extends PureComponent {
                 }
               </Select>
               {
-                isShowSubCustomerFeedback ? null :
-                <Select
-                  value={feedbackTypeChild}
-                  style={width}
-                  onChange={this.handleFeedbackTypeChild}
-                  disabled={isReadOnly}
-                  getPopupContainer={() => this.customerFeedbackRef}
-                >
-                  {
+                !isShowSubCustomerFeedback ?
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    onChange={this.handleFeedbackTypeChild}
+                    getPopupContainer={() => this.customerFeedbackRef}
+                  >
+                    {
                       (feedbackTypeChildList).map(obj => (
                         <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                       ))
                     }
-                </Select>
+                  </Select> : null
               }
             </div>
           </div>
@@ -796,9 +947,6 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
               <DatePicker
                 style={width}
-                className={classnames({
-                  [styles.disabledDate]: isReadOnly,
-                })}
                 {...feedbackTimeProps}
                 defaultValue={moment(CURRENT_DATE, showDateFormat)}
                 getCalendarContainer={() => this.feedbackTimeRef}
@@ -808,27 +956,25 @@ export default class ServiceRecordContent extends PureComponent {
         </div>
 
         <div className={styles.uploadSection}>
-          {
-            !isReadOnly ? <Uploader
-              ref={ref => (this.uploadElem = ref)}
-              onOperateFile={this.handleFileUpload}
-              attachModel={currentFile}
-              fileKey={uploadedFileKey}
-              originFileName={originFileName}
-              uploadTitle={'上传附件'}
-              upData={{
-                empId: emp.getId(),
-                // 第一次上传没有，如果曾经返回过，则必须传
-                attachment: '',
-              }}
-              beforeUpload={beforeUpload}
-              custUuid={custUuid}
-              uploadTarget={`${request.prefix}/file/ceFileUpload`}
-              isSupportUploadMultiple
-              onDeleteFile={this.handleDeleteFile}
-              deleteFileResult={deleteFileResult}
-            /> : this.renderFileList()
-          }
+          <Uploader
+            ref={ref => (this.uploadElem = ref)}
+            onOperateFile={this.handleFileUpload}
+            attachModel={currentFile}
+            fileKey={uploadedFileKey}
+            originFileName={originFileName}
+            uploadTitle={'上传附件'}
+            upData={{
+              empId: emp.getId(),
+              // 第一次上传没有，如果曾经返回过，则必须传
+              attachment: '',
+            }}
+            beforeUpload={beforeUpload}
+            custUuid={custUuid}
+            uploadTarget={`${request.prefix}/file/ceFileUpload`}
+            isSupportUploadMultiple
+            onDeleteFile={this.handleDeleteFile}
+            deleteFileResult={deleteFileResult}
+          />
         </div>
       </div>
     );

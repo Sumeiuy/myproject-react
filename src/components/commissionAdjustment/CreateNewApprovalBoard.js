@@ -25,6 +25,7 @@ import SingleCreatBoard from './SingleCreatBoard';
 import SubscribeCreateBoard from './SubscribeCreateBoard';
 import UnSubscribeCreateBoard from './UnSubscribeCreateBoard';
 import styles from './createNewApprovalBoard.less';
+import logable from '../../decorators/logable';
 
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
@@ -499,6 +500,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 选择申请子类型
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[0]',
+    },
+  })
   choiceApprovalSubType(name, key) {
     if (key === '') return;
     this.setState({
@@ -573,6 +581,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].custName',
+    },
+  })
   handleSelectAssembly(customer) {
     const { id, custType } = customer;
     this.setState({
@@ -696,7 +711,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
         openFspTab({
           routerAction: push,
-          pathname: '/fsp/customerCenter/customerDetail',
+          pathname: '/customerCenter/customerDetail',
           url,
           param,
         });

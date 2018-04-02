@@ -7,6 +7,7 @@ import _ from 'lodash';
 import './feedbackList.less';
 import Icon from '../common/Icon';
 import { feedbackOptions } from '../../config';
+import logable from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -95,6 +96,14 @@ export default class FeedbackList extends PureComponent {
    * @param {*} index 当前行index
    */
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '反馈列表',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleRowClick(record, index) {
     const {
       location: { pathname, query },
@@ -123,6 +132,7 @@ export default class FeedbackList extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为：$args[0]' } })
   handlePageChange(nextPage, currentPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -219,6 +229,7 @@ export default class FeedbackList extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为：$args[1]' } })
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目

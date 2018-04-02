@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { env } from '../../helper';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
+import logable from '../../decorators/logable';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -41,6 +42,13 @@ export default class PageHeader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '反馈时间',
+      value: '$args[0]',
+    },
+  })
   handleDateChange(dateStrings) {
     const { replace, location: { pathname, query } } = this.props;
     const feedbackCreateTimeFrom = dateStrings[0];
@@ -77,6 +85,13 @@ export default class PageHeader extends PureComponent {
 
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '模块',
+      value: '$args[2]',
+    },
+  })
   handleCascaderSelectChange(name, funcName, key) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
@@ -88,6 +103,54 @@ export default class PageHeader extends PureComponent {
         isResetPageNum: 'Y',
       },
     });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[1]',
+    },
+  })
+  handleTypeClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '问题标签',
+      value: '$args[1]',
+    },
+  })
+  handleProblemClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleStatusClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '经办人',
+      value: '$args[1]',
+    },
+  })
+  handleProcesserClick(name, key) {
+    this.handleSelectChange(name, key);
   }
 
   @autobind
@@ -172,7 +235,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={issueType}
-          onChange={key => this.handleSelectChange('issueType', key)}
+          onChange={key => this.handleTypeClick('issueType', key)}
           allowClear
         >
           {getSelectOption(typeOptions)}
@@ -181,7 +244,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
-          onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
+          onChange={key => this.handleProblemClick('feedbackTagEnum', key)}
           allowClear
         >
           {getSelectOption(questionTagOptions)}
@@ -190,7 +253,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
-          onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
+          onChange={key => this.handleStatusClick('feedbackStatusEnum', key)}
           allowClear
         >
           {getSelectOption(stateOptions)}
@@ -205,7 +268,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={processer}
-          onChange={key => this.handleSelectChange('processer', key)}
+          onChange={key => this.handleProcesserClick('processer', key)}
           allowClear
         >
           {getSelectOption(operatorOptions)}

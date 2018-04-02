@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import { responseCode } from '../../config';
 import styles from './SimpleEditor.less';
+import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -135,6 +136,7 @@ export default class SimpleEditor extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '确认图标' } })
   editorConfirm(e) {
     // TODO 判断是否进行了修改
     const { controller, confirm, editorName, form, editorValue } = this.props;
@@ -180,6 +182,7 @@ export default class SimpleEditor extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '修改图标' } })
   editorCancel(e) {
     const { controller, editorName, form } = this.props;
     this.setTooltipVisible(false);

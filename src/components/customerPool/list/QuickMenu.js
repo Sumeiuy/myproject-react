@@ -147,16 +147,21 @@ export default class QuickMenu extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '电话联系$args[0]' } })
+  handleTelephoneClick(listItem) {
+    this.props.createModal(listItem);
+  }
+
   render() {
     const {
       listItem,
-      createModal,
     } = this.props;
 
     return (
       <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
-          <li onClick={() => createModal(listItem)}>
+          <li onClick={() => this.handleTelephoneClick(listItem)}>
             <Icon type="dianhua" />
             <span>电话联系</span>
           </li>

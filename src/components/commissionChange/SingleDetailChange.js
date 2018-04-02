@@ -30,6 +30,7 @@ import {
   singleColumns,
 } from '../commissionAdjustment/commissionTransferHelper/transferPropsHelper';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from './change.less';
 
@@ -150,6 +151,13 @@ export default class SingleDetailChange extends PureComponent {
 
   // 切换目标产品股基佣金率
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标股基佣金率',
+      value: '$args[0]',
+    },
+  })
   selectTargetGJCommission(v) {
     this.setState({
       newCommission: v.codeValue,
@@ -171,6 +179,7 @@ export default class SingleDetailChange extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,
@@ -429,6 +438,7 @@ export default class SingleDetailChange extends PureComponent {
 
   // 点击页面的按钮事件处理
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   handleRejctBtnClick(btn) {
     const { operate } = btn;
     if (operate === 'commit' || operate === 'trueOver') {
@@ -462,6 +472,12 @@ export default class SingleDetailChange extends PureComponent {
 
   // 单佣金调整穿梭变化的时候处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '单佣金产品',
+    },
+  })
   handleSingleTransferChange(flag, item, array, dValue) {
     this.setState({
       singleProductList: array,
@@ -481,6 +497,12 @@ export default class SingleDetailChange extends PureComponent {
 
   // 单佣金调整选择子产品的时候的处理程序
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '单佣金通过check选择子产品',
+    },
+  })
   handleSingleTransferSubProductCheck(item, array) {
     this.setState({
       singleProductList: array,

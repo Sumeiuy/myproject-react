@@ -39,6 +39,7 @@ import { request } from '../../../config';
 import { emp } from '../../../helper';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
+import logable from '../../../decorators/logable';
 
 // const EMPTY_OBJECT = {};
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -129,6 +130,7 @@ export default class CommonUpload extends PureComponent {
 
   // 上传事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
     const { uploadAttachment } = this.props;
     const uploadFile = info.file;
@@ -163,6 +165,7 @@ export default class CommonUpload extends PureComponent {
 
   // 删除事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]删除附件' } })
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;
@@ -173,6 +176,10 @@ export default class CommonUpload extends PureComponent {
     };
     deleteAttachment(deleteObj);
   }
+
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
 
   @autobind
   findFileListNode() {
@@ -257,6 +264,7 @@ export default class CommonUpload extends PureComponent {
                         <em>
                           <a
                             href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                            onClick={this.handleDownloadClick}
                           >
                             <Icon type="xiazai1" />
                           </a>

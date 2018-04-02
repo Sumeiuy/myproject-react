@@ -56,7 +56,6 @@ export default class Order extends PureComponent {
 
   // 处理点击排序按钮
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]' } })
   toggleOrder(st) {
     const { onChange, value: { sortType, sortDirection } } = this.props;
     let sd = DESC;
@@ -69,12 +68,30 @@ export default class Order extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '总资产' } })
+  handleAssetClick(st) {
+    this.toggleOrder(st);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '开户时间' } })
+  handleOpenTiemClick(st) {
+    this.toggleOrder(st);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '佣金率' } })
+  handleRateClick(st) {
+    this.toggleOrder(st);
+  }
+
   render() {
     return (
       <ul className={styles.reorder}>
         <li
           className={this.getItemCls(ASET)}
-          onClick={() => this.toggleOrder(ASET)}
+          onClick={() => this.handleAssetClick(ASET)}
         >
           总资产
           <div className={styles.btn}>
@@ -90,7 +107,7 @@ export default class Order extends PureComponent {
         </li>
         <li
           className={this.getItemCls(OPENDT)}
-          onClick={() => this.toggleOrder(OPENDT)}
+          onClick={() => this.handleOpenTiemClick(OPENDT)}
         >
           开户时间
           <div className={styles.btn}>
@@ -106,7 +123,7 @@ export default class Order extends PureComponent {
         </li>
         <li
           className={this.getItemCls(FEE)}
-          onClick={() => this.toggleOrder(FEE)}
+          onClick={() => this.handleRateClick(FEE)}
         >
           佣金率
           <div className={styles.btn}>

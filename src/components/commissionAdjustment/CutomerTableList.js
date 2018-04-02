@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { Table } from 'antd';
 
 import styles from './customerTableList.less';
+import logable from '../../decorators/logable';
 
 // 表格的表头
 const columns = [
@@ -61,6 +62,12 @@ export default class CutomerTableList extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '批量佣金添加客户',
+    },
+  })
   onSelectChange(selectedRowKeys) {
     this.setState({ selectedRowKeys });
     this.props.onSelectCustomerList(selectedRowKeys);

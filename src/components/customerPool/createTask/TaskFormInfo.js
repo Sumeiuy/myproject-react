@@ -13,7 +13,7 @@ import { stateToHTML } from 'draft-js-export-html';
 import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
-
+import logable from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -181,7 +181,12 @@ export default class TaskFormInfo extends PureComponent {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
       const content = stateToHTML(contentState);
-      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
+      // content即使是空字符串经过stateToHTML方法也会变成带有标签的字符串，所以得用转成字符串之后的值来进行非空判断
+      const contentString = toString(contentState);
+      // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+      if (_.isEmpty(contentString)
+          || content.length < MIN_LENGTH
+          || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -193,6 +198,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '任务类型:',
+      value: '$args[0]',
+    },
+  })
   handleTaskTypeChange(value) {
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       const currentTaskSubTypeCollection = this.getCurrentTaskSubTypes(value);
@@ -212,6 +224,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '执行方式',
+      value: '$args[0]',
+    },
+  })
   handleExcuteTypeChange(value) {
     this.setState({
       isShowErrorExcuteType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
@@ -226,6 +245,7 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '任务提示' } })
   handleSearchChange(value, trigger) {
     const { users } = this.props;
     const searchValue = value.toLowerCase();
@@ -361,13 +381,11 @@ export default class TaskFormInfo extends PureComponent {
     const { getFieldDecorator } = form;
 
     const errorProps = isShowErrorInfo ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '请选择任务类型',
     } : null;
@@ -379,25 +397,21 @@ export default class TaskFormInfo extends PureComponent {
     // } : null;
 
     const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '请选择执行方式',
     } : null;
 
     const taskNameErrorProps = isShowErrorTaskName ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '任务名称不能为空，最多30个字符',
     } : null;
 
     const timelyIntervalValueErrorProps = isShowErrorIntervalValue ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: '有效期只能为正整数，不能超过365天',
     } : null;
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
-      hasFeedback: true,
       validateStatus: 'error',
       help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
 

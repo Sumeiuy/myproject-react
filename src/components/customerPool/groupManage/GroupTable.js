@@ -15,6 +15,7 @@ import _ from 'lodash';
 import Table from '../../common/commonTable';
 // import Pagination from '../../common/Pagination';
 import styles from './groupTable.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -225,7 +226,6 @@ export default class GroupTable extends PureComponent {
               <span
                 title={record[item.key]}
                 className={styles.link}
-                // 多传一个参数，用于logable的name
                 onClick={() => firstColumnHandler(record, item.value)}
               >
                 {this.renderColumnValue(record, item)}
@@ -246,7 +246,6 @@ export default class GroupTable extends PureComponent {
                 <span
                   className={styles.link}
                   key={itemData.type}
-                  // 多增加一个参数，用于logable的name
                   onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}
@@ -305,6 +304,18 @@ export default class GroupTable extends PureComponent {
     };
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  handlePageChange(page, pageSize) {
+    this.props.onPageChange(page, pageSize);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  handlePageSizeChange(current, size) {
+    this.props.onSizeChange(current, size);
+  }
+
   render() {
     const {
       listData = EMPTY_LIST,
@@ -322,8 +333,6 @@ export default class GroupTable extends PureComponent {
       scrollX,
       scrollY,
       isFixedTitle,
-      onPageChange,
-      onSizeChange,
       isNeedRowSelection,
       needPagination,
       tableStyle,
@@ -343,9 +352,9 @@ export default class GroupTable extends PureComponent {
         this.setState({
           curSelectedRow: -1,
         });
-        onPageChange(page, pageSize);
+        this.handlePageChange(page, pageSize);
       },
-      onShowSizeChange: onSizeChange,
+      onShowSizeChange: this.handlePageSizeChange,
     };
     const columns = this.renderColumns();
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};

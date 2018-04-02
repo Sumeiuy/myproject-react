@@ -125,7 +125,6 @@ export default class CustomerRow extends PureComponent {
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
   }
 
@@ -165,7 +164,7 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/fsp/customerCenter/customerDetail',
+      pathname: '/customerCenter/customerDetail',
       param,
       state: {
         url,
@@ -174,6 +173,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户列表行的check框' } })
   handleSelect() {
     const { onChange, listItem: { custId, name }, handleCheck } = this.props;
     // 手动发送日志

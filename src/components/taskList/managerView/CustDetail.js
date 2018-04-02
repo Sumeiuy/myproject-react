@@ -71,7 +71,6 @@ export default class CustDetail extends PureComponent {
     onClose: PropTypes.func,
     push: PropTypes.func.isRequired,
     hideCustDetailModal: PropTypes.func.isRequired,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     isEntryFromProgressDetail: PropTypes.bool,
     isEntryFromPie: PropTypes.bool,
@@ -323,8 +322,7 @@ export default class CustDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '客户名称',
-      type: '管理者视图客户反馈',
+      name: '管理者视图客户反馈',
     },
   })
   handleCustNameClick(record) {
