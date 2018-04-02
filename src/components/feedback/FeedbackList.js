@@ -297,6 +297,11 @@ export default class FeedbackList extends PureComponent {
             }
             return '';
           }}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
       </div >
     );

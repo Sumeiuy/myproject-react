@@ -419,6 +419,11 @@ export default class CreateContactModal extends PureComponent {
                 columns={columns}
                 dataSource={newDataSource}
                 pagination={false}
+                // 默认文案配置
+                locale={{
+                  // 空数据时的文案
+                  emptyText: '暂无数据',
+                }}
               />
             </div> : null
         }

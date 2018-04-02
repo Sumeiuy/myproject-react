@@ -384,6 +384,11 @@ export default class GroupTable extends PureComponent {
           pagination={(needPagination && totalRecordNum > 0) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
       </div>
     );
