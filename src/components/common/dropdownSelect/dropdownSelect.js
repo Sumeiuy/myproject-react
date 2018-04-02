@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-30 18:04:35
+ * @Last Modified time: 2018-04-02 14:39:54
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
@@ -11,8 +11,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
 import _ from 'lodash';
-import { Popover, Input, Button } from 'antd';
+import { Popover, Input, Icon } from 'antd';
 
+import { dom } from '../../../helper';
 import styles from './dropdownSelect.less';
 
 const Search = Input.Search;
@@ -99,8 +100,6 @@ export default class DropdownSelect extends PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // const { visible: prevVisible } = this.state;
-    // const { visible: nextVisible } = nextState;
     const { searchList: prevList, value: preValue } = this.props;
     const { searchList: nextList, value: nextValue } = nextProps;
     return prevList !== nextList || preValue !== nextValue || this.state !== nextState;
@@ -108,13 +107,14 @@ export default class DropdownSelect extends PureComponent {
 
   // 控制弹出层的隐藏和显示
   @autobind
-  handlePopverVisibleChane(visible) {
-    this.setState({ visible });
+  handlePopverVisibleChange(visible) {
+      // 隐藏需要将数据清空下
+    this.setState({ visible, optionList: [], searchValue: '' });
   }
 
   @autobind
-  handleSearchChange(searchValue) {
-    this.setState({ searchValue });
+  handleSearchChange(e) {
+    this.setState({ searchValue: e.target.value });
   }
 
   @autobind
@@ -127,8 +127,34 @@ export default class DropdownSelect extends PureComponent {
   // 选择某个项
   @autobind
   handleSelect(e) {
-    console.warn('dropdownSelect: e', e);
-    this.handlePopverVisibleChane(false);
+    const index = dom.getAttribute(e.target, 'data-index');
+    const { optionList } = this.state;
+    // 需要将选中的传递出去
+    this.props.emitSelectItem(optionList[index]);
+    this.handlePopverVisibleChange(false);
+  }
+
+  @autobind
+  rednderDropdownSelect() {
+    const { optionList } = this.state;
+    if (_.isEmpty(optionList)) {
+      return this.renderEmptyList();
+    }
+    return this.renderSelectList();
+  }
+
+  @autobind
+  renderDropdownSearch() {
+    const { searchValue } = this.state;
+    const { placeholder } = this.props;
+    return (
+      <Search
+        value={searchValue}
+        placeholder={placeholder}
+        onSearch={this.handleSearch}
+        onChange={this.handleSearchChange}
+      />
+    );
   }
 
   @autobind
@@ -165,41 +191,18 @@ export default class DropdownSelect extends PureComponent {
     );
   }
 
-  @autobind
-  rednderDropdownSelect() {
-    const { optionList } = this.state;
-    if (_.isEmpty(optionList)) {
-      return this.renderEmptyList();
-    }
-    return this.renderSelectList();
-  }
-
-  @autobind
-  renderDropdownSearch() {
-    const { searchValue } = this.state;
-    const { placeholder } = this.props;
-    return (
-      <Search
-        placeholder={placeholder}
-        onSearch={this.handleSearch}
-        onChange={this.handleSearchChange}
-        value={searchValue}
-      />
-    );
-  }
-
   render() {
     const { value, disable, placement } = this.props;
     const { visible } = this.state;
     const dropdownToggleCls = cx({
       [styles.dropdownToggle]: true,
-      [styles.dropdownToggle_disabled]: disable,
+      [styles.dropdownDisabled]: disable,
+      [styles.dropdownActive]: visible,
     });
 
     const searchNode = this.renderDropdownSearch();
 
     const selectNodeList = this.rednderDropdownSelect();
-    console.warn('selectNodeList: ', selectNodeList);
 
     return (
       <Popover
@@ -208,10 +211,13 @@ export default class DropdownSelect extends PureComponent {
         title={searchNode}
         content={selectNodeList}
         visible={visible}
-        onVisibleChange={this.handlePopverVisibleChane}
+        onVisibleChange={this.handlePopverVisibleChange}
         placement={placement}
       >
-        <Button disabled={disable} className={dropdownToggleCls} icon="caret-down">{value}</Button>
+        <div className={dropdownToggleCls}>
+          <span className={styles.popoverTitle}>{value}</span>
+          <span className={styles.popoverIcon}><Icon type="caret-down" /></span>
+        </div>
       </Popover>
     );
   }
