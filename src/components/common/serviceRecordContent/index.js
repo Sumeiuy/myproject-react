@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-02 09:51:24
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-02 14:17:12
  */
 
 
@@ -158,7 +158,7 @@ export default class ServiceRecordContent extends PureComponent {
         isShowServeStatusError: false,
         isShowServiceContentError: false,
       });
-          // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+      // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
       if (!isReadOnly) {
         this.clearUploadedFileList();
       }
@@ -462,7 +462,7 @@ export default class ServiceRecordContent extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '服务日期',
-      value: '$args[0]',
+      value: (instance, args) => moment(args[0]).format(dateFormat),
     },
   })
   handleServiceDate(date) {
@@ -496,7 +496,7 @@ export default class ServiceRecordContent extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '反馈时间',
-      value: '$args[0]',
+      value: (instance, args) => moment(args[0]).format(dateFormat),
     },
   })
   handleFeedbackDate(date) {
@@ -719,10 +719,10 @@ export default class ServiceRecordContent extends PureComponent {
         item.key === feedbackTypeChild) || EMPTY_OBJECT).value;
 
       // 反馈时间,格式化
-      const feedbackDateTime = moment(CURRENT_DATE, showDateFormat).format(showDateFormat);
+      const feedbackDateTime = moment(feedbackDate, showDateFormat).format(showDateFormat);
 
       // 服务时间，格式化
-      const serviceDateTime = moment(CURRENT_DATE, showDateFormat).format(showDateFormat);
+      const serviceDateTime = moment(serviceDate, showDateFormat).format(showDateFormat);
 
       return (
         <StaticRecordContent

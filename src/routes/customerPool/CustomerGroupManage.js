@@ -365,7 +365,7 @@ export default class CustomerGroupManage extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '客户分组管理',
     },
   })
   handleShowGroupDetail(record) {

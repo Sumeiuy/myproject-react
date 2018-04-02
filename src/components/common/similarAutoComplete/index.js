@@ -63,7 +63,7 @@ export default class SimilarAutoComplete extends PureComponent {
     renderOption: null,
     isImmediatelySearch: false,
     display: 'inline-block',
-    onChange: () => {},
+    onChange: _.noop,
   }
 
   constructor(props) {

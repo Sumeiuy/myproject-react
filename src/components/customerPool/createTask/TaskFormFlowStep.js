@@ -331,6 +331,7 @@ export default class TaskFormFlowStep extends PureComponent {
         const formDataValidation = this.saveFormContent({
           ...values,
           serviceStrategySuggestion: serviceStrategyHtml,
+          serviceStrategyString,
           isFormError,
         });
         if (formDataValidation) {
@@ -350,7 +351,7 @@ export default class TaskFormFlowStep extends PureComponent {
       const templetDesc = formComponent.getData();
       const templeteDescHtml = stateToHTML(formComponent.getData(true));
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      if (_.isEmpty(templetDesc) || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -660,12 +661,6 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '',
-    },
-  })
   handleSingleRowSelectionChange(record) {
     const { login } = record;
     const { saveCreateTaskData, storedCreateTaskData } = this.props;
@@ -747,13 +742,13 @@ export default class TaskFormFlowStep extends PureComponent {
       isDisabled,
     } = this.state;
 
-    let finalSubmitBtnIsDisabled;
+    let isSubmitBtnDisabled;
     if (isDisabled) {
       // 如果全局状态是true “确认提交”按钮状态就是true
-      finalSubmitBtnIsDisabled = isDisabled;
+      isSubmitBtnDisabled = isDisabled;
     } else {
       // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-      finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+      isSubmitBtnDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
     }
 
     const {
@@ -928,7 +923,7 @@ export default class TaskFormFlowStep extends PureComponent {
             <Button
               className={styles.confirmBtn}
               type="primary"
-              disabled={finalSubmitBtnIsDisabled}
+              disabled={isSubmitBtnDisabled}
               onClick={this.handleSubmit}
             >
               确认无误，提交

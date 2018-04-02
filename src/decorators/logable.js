@@ -23,7 +23,7 @@ function replaceValue(data, context, args) {
     data,
     (value) => {
       if (_.isFunction(value)) {
-        return value(context);
+        return value(context, args);
       }
       return value.replace(/\$([^\b\s]+)/g, (expression, variableName) => {
         if (variableName === 'args') {

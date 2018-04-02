@@ -504,7 +504,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '子类型',
-      value: '$args[0]',
+      value: '$args[1]',
     },
   })
   choiceApprovalSubType(name, key) {
