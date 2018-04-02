@@ -332,10 +332,10 @@ export default class TaskFlow extends PureComponent {
     saveTaskFlowData({
       ...storedTaskFlowData,
       nextStepBtnIsDisabled: disabled,
-    })
+    });
     this.setState({
       nextStepBtnIsDisabled: disabled,
-    })
+    });
   }
 
   /**
