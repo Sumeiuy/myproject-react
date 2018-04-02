@@ -88,6 +88,8 @@ export default class ManagerViewDetail extends PureComponent {
     missionReport: PropTypes.object.isRequired,
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
+    queryDistinctCustomerCount: PropTypes.func.isRequired,
+    distinctCustomerCount: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -192,7 +194,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 当前入口是从进度条的结果达标过来的
       isEntryFromResultStatisfy = false,
     } = params;
-    const { previewCustDetail, currentId } = this.props;
+    const { previewCustDetail, currentId, queryDistinctCustomerCount } = this.props;
 
     let postBody = {
       pageNum,
@@ -261,6 +263,9 @@ export default class ManagerViewDetail extends PureComponent {
       currentFeedback,
     });
 
+    // 查询去重后的客户数量
+    queryDistinctCustomerCount(postBody);
+
     previewCustDetail({
       ...postBody,
     }).then(() => {
@@ -306,8 +311,8 @@ export default class ManagerViewDetail extends PureComponent {
       currentId,
       push,
       missionType,
-      custDetailResult,
       missionTypeDict,
+      distinctCustomerCount,
     } = this.props;
     const {
       missionProgressStatus,
@@ -317,8 +322,6 @@ export default class ManagerViewDetail extends PureComponent {
       feedbackIdL1,
       feedbackIdL2,
     } = this.state;
-    const { page = {} } = custDetailResult || EMPTY_OBJECT;
-    const totalCustNumber = page.totalCount || 0;
     const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
     let missionTypeObject = {};
     // 只有自建任务才需要传给自建任务流程
@@ -363,7 +366,7 @@ export default class ManagerViewDetail extends PureComponent {
     const urlParam = {
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
-      count: totalCustNumber,
+      count: distinctCustomerCount,
       // 任务类型
       ...missionTypeObject,
       // 进度条入参
@@ -401,6 +404,10 @@ export default class ManagerViewDetail extends PureComponent {
       custDetailContainer.scrollTop = 0;
     }
   }
+
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '导出' } })
+  handleDownloadClick() {}
 
   @autobind
   renderTotalCust() {
@@ -600,6 +607,7 @@ export default class ManagerViewDetail extends PureComponent {
                         falseValue ? (
                           <Button className={styles.export}>
                             <a
+                              onClick={this.handleDownloadClick}
                               href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                             >导出</a>
                           </Button>

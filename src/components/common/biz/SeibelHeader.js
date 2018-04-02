@@ -181,7 +181,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   selectCustItem(item) {
@@ -205,7 +205,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[1]',
+      value: '$args[1].ptyMngName',
     },
   })
   handleManagerSelect(name, item) {
@@ -217,7 +217,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '拟稿人',
-      value: '$args[1]',
+      value: '$args[1].ptyMngName',
     },
   })
   handleDrafterSelect(name, item) {
@@ -229,7 +229,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '审批人',
-      value: '$args[1]',
+      value: '$args[1].ptyMngName',
     },
   })
   handleApproverSelect(name, item) {
@@ -242,7 +242,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '部门',
-      value: '$args[0]',
+      value: '$args[0].orgId',
     },
   })
   selectCustRange(obj) {
@@ -578,7 +578,7 @@ export default class Pageheader extends PureComponent {
               type="primary"
               icon="plus"
               size="small"
-              onClick={() => { this.creatSeibelModal(); }}
+              onClick={() => { this.handleCreate(); }}
             >
               新建
             </Button>

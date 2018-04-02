@@ -49,7 +49,6 @@ export default class AddNewGroup extends PureComponent {
     count: PropTypes.string.isRequired,
   };
 
-  @autobind
   @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   addNewGroupSubmit = (e) => {
     e.preventDefault();

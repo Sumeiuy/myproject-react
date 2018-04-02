@@ -87,6 +87,10 @@ export default class BroadcastDetail extends PureComponent {
     return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
   }
 
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
   render() {
     const { newItemDetail } = this.getItemDetail();
     const { audioFileList = [], otherFileList = [] } = newItemDetail;
@@ -124,7 +128,10 @@ export default class BroadcastDetail extends PureComponent {
                 </div>
                 {
                   audioSource ?
-                    <a href={this.getSourceSrc(audioSource)}>
+                    <a
+                      onClick={this.handleDownloadClick}
+                      href={this.getSourceSrc(audioSource)}
+                    >
                       <Icon className="icon" type="xiazai" />
                     </a> :
                     null

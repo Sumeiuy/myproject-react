@@ -196,7 +196,7 @@ export default class EditForm extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '合作部门',
-      value: '$args[0]',
+      value: '$args[0].name',
     },
   })
   handleSelectDepartment(v) {
@@ -208,7 +208,6 @@ export default class EditForm extends PureComponent {
 
   // 筛选部门
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索合作部门' } })
   handleSearchDepartment(v) {
     this.props.searchDepartment(v);
   }

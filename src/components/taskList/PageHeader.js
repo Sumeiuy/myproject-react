@@ -242,7 +242,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '创建者',
-      value: '$args[1]',
+      value: '$args[1].ptyMngName',
     },
   })
   selectItem(name, item) {
@@ -257,7 +257,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].name',
     },
   })
   selectCustomerItem(item) {
@@ -382,13 +382,6 @@ export default class Pageheader extends PureComponent {
 
   // 任务名称搜索
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '任务名称',
-      value: '$args[0].target.value',
-    },
-  })
   handleSearchChange(e) {
     const value = e.target.value;
     this.setState({ missionName: value });

@@ -46,5 +46,7 @@ export default function performerView(api) {
     createMotReport: query => api.post('/groovynoauth/fsp/campaign/mot/createMOTFeedBackExcelFile', query),
     // 获取生成报告信息
     queryMOTServeAndFeedBackExcel: query => api.post('/groovynoauth/fsp/campaign/mot/queryMOTFeedBackExcel', query),
+    // 获取去重后的客户数量
+    queryDistinctCustomerCount: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListOfMission', query),
   };
 }
