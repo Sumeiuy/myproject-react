@@ -661,12 +661,6 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '',
-    },
-  })
   handleSingleRowSelectionChange(record) {
     const { login } = record;
     const { saveCreateTaskData, storedCreateTaskData } = this.props;

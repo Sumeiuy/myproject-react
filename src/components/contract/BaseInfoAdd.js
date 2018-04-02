@@ -247,7 +247,7 @@ export default class BaseInfoEdit extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '合约开始日期',
-      value: '$args[0]',
+      value: '$args[0].value',
     },
   })
   handleSeletStartTime(obj) {
@@ -259,7 +259,7 @@ export default class BaseInfoEdit extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '合约有效期',
-      value: '$args[0]',
+      value: '$args[0].value',
     },
   })
   handleSelectValidityTime(obj) {
