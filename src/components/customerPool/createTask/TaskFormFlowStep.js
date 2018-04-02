@@ -747,13 +747,13 @@ export default class TaskFormFlowStep extends PureComponent {
       isDisabled,
     } = this.state;
 
-    let finalSubmitBtnIsDisabled;
+    let isSubmitBtnIsDisabled;
     if (isDisabled) {
       // 如果全局状态是true “确认提交”按钮状态就是true
-      finalSubmitBtnIsDisabled = isDisabled;
+      isSubmitBtnIsDisabled = isDisabled;
     } else {
       // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-      finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+      isSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
     }
 
     const {
@@ -928,7 +928,7 @@ export default class TaskFormFlowStep extends PureComponent {
             <Button
               className={styles.confirmBtn}
               type="primary"
-              disabled={finalSubmitBtnIsDisabled}
+              disabled={isSubmitBtnIsDisabled}
               onClick={this.handleSubmit}
             >
               确认无误，提交

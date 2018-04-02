@@ -1025,7 +1025,7 @@ export default class TaskFlow extends PureComponent {
     } = this.state;
 
     // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-    const finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+    const isSubmitBtnDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
     // 只有在第一步是需要判断下一步是否可点击
     const finalNextStepBtnIsDisabled = current > 0 ? false : nextStepBtnIsDisabled;
     const {
@@ -1210,7 +1210,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.confirmBtn}
                 type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                disabled={finalSubmitBtnIsDisabled}
+                disabled={isSubmitBtnDisabled}
               >
                 确认无误，提交
               </Button>
