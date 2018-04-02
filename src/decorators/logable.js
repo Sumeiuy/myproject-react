@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-03-30 14:13:28
+ * @Last Modified time: 2018-04-02 10:12:50
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -54,11 +54,10 @@ function makeLogger({ type, payload = {} }) {
   return (target, name, descriptor) => {
     const originalFn = descriptor.value;
     function log(...args) {
-      originalFn.apply(this, args);
-      if (!_.isString(type) || _.isEmpty(type)) {
-        return;
+      if (_.isString(type) && !_.isEmpty(type)) {
+        dva.dispatch({ type, payload: replaceValue(payload, this, args) });
       }
-      dva.dispatch({ type, payload: replaceValue(payload, this, args) });
+      return originalFn.apply(this, args);
     }
     return {
       ...descriptor,
