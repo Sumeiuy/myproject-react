@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 14:49:55
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-02 09:51:24
  */
 
 
@@ -428,12 +428,6 @@ export default class ServiceRecordContent extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleServiceTypeClick(value, shouldSetState = true) {
-    this.handleServiceType(value, shouldSetState);
-  }
-
-  // 保存服务类型的值
-  @autobind
   handleServiceType(value, shouldSetState = true) {
     if (_.isEmpty(value)) {
       return {};
@@ -857,7 +851,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Select
                 value={serviceType}
                 style={width}
-                onChange={this.handleServiceTypeClick}
+                onChange={this.handleServiceType}
                 getPopupContainer={() => this.serviceTypeRef}
               >
                 {
