@@ -692,7 +692,7 @@ export default class ResultTrack extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '跟踪截止日期（跟踪自任务实施日开始）',
-      value: '$args[0]',
+      value: (instance, args) => moment(args[0]).format('YYYY-MM-DD'),
     },
   })
   handleTrackDateChange(value) {

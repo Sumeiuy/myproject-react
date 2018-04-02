@@ -236,6 +236,7 @@ export default class SelfDatePicker extends PureComponent {
     },
   })
   rangePickerChange(dates, dateStrings) {
+    console.log('########选的时间段事件#############', dates, dateStrings);
     const { compare } = this.state;
     const beginMoment = dates[0];
     const endMoment = dates[1];
