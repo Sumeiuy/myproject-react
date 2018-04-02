@@ -132,7 +132,7 @@ export default class EditModal extends Component {
     type: 'DropdownSelect',
     payload: {
       name: '负责人',
-      value: '$args[0]',
+      value: '$args[0].ptyMngName',
     },
   })
   handleSelect(obj) {
@@ -148,7 +148,6 @@ export default class EditModal extends Component {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$args[0]关键字搜索负责人' } })
   handleSearch(keyword) {
     this.props.onSearch(keyword);
   }

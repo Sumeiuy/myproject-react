@@ -89,7 +89,7 @@ export default class PageHeader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '模块',
-      value: '$args[0]',
+      value: '$args[2]',
     },
   })
   handleCascaderSelectChange(name, funcName, key) {
@@ -235,7 +235,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={issueType}
-          onChange={key => this.handleSelectChange('issueType', key)}
+          onChange={key => this.handleTypeClick('issueType', key)}
           allowClear
         >
           {getSelectOption(typeOptions)}
@@ -244,7 +244,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
-          onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
+          onChange={key => this.handleProblemClick('feedbackTagEnum', key)}
           allowClear
         >
           {getSelectOption(questionTagOptions)}
@@ -253,7 +253,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
-          onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
+          onChange={key => this.handleStatusClick('feedbackStatusEnum', key)}
           allowClear
         >
           {getSelectOption(stateOptions)}
@@ -268,7 +268,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={processer}
-          onChange={key => this.handleSelectChange('processer', key)}
+          onChange={key => this.handleProcesserClick('processer', key)}
           allowClear
         >
           {getSelectOption(operatorOptions)}

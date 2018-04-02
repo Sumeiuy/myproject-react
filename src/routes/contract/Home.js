@@ -810,7 +810,7 @@ export default class Contract extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '合作合约左侧列表项$args[0]',
+      name: '合作合约左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },

@@ -94,7 +94,7 @@ export default class ChoiceApproverBoard extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '选择审批人员$args[0]',
+      name: '选择审批人员',
     },
   })
   handleApproverRadio(record, index) {

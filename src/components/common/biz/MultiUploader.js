@@ -198,6 +198,10 @@ export default class MultiUpload extends PureComponent {
     return true;
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
   render() {
     const {
       empId,
@@ -270,7 +274,10 @@ export default class MultiUpload extends PureComponent {
                           null
                       }
                       <em>
-                        <a href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}>
+                        <a
+                          href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
+                          onClick={this.handleDownloadClick}
+                        >
                           <Icon type="xiazai1" />
                         </a>
                       </em>

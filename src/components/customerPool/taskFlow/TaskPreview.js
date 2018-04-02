@@ -193,6 +193,17 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '选择审批人员',
+    },
+  })
+  handleRowSelect(record, selected, selectedRows) {
+    this.props.onSingleRowSelectionChange(record, selected, selectedRows);
+  }
+
+  @autobind
   renderOption(optionInfoList = []) {
     return _.map(optionInfoList, (item, index) =>
       <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}`}</span>);
@@ -257,7 +268,6 @@ export default class TaskPreview extends PureComponent {
       taskTypes,
       currentSelectRowKeys,
       currentSelectRecord,
-      onSingleRowSelectionChange,
       onRowSelectionChange,
       isApprovalListLoadingEnd,
       creator,
@@ -585,7 +595,7 @@ export default class TaskPreview extends PureComponent {
                         columnWidth={COLUMN_WIDTH}
                         bordered={false}
                         isNeedRowSelection
-                        onSingleRowSelectionChange={onSingleRowSelectionChange}
+                        onSingleRowSelectionChange={this.handleRowSelect}
                         onRowSelectionChange={onRowSelectionChange}
                         currentSelectRowKeys={currentSelectRowKeys}
                       />

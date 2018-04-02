@@ -706,7 +706,7 @@ export default class ResultTrack extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '产品',
-      value: '$args[0]',
+      value: '$args[0].aliasName',
     },
   })
   handleSelectProductItem(value) {
@@ -716,7 +716,6 @@ export default class ResultTrack extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询产品' } })
   handleQueryProduct(value) {
     if (!_.isEmpty(value)) {
       this.props.queryProduct({

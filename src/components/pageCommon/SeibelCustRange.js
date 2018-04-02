@@ -12,7 +12,6 @@ import _ from 'lodash';
 
 import { constants } from '../../config';
 import { event } from '../../helper';
-import logable from '../../decorators/logable';
 import styles from './seibelCustRange.less';
 
 function transformCustRangeData(list, parent = '') {
@@ -132,13 +131,6 @@ export default class CustRange extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '',
-      value: '$args[0]',
-    },
-  })
   onChange(value) {
     if (!value) {
       return;

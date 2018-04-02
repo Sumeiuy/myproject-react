@@ -302,7 +302,7 @@ export default class FilialeCustTransfer extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分公司客户人工划转左侧列表项$args[0]',
+      name: '分公司客户人工划转左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },

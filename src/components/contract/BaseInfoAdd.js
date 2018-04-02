@@ -160,7 +160,7 @@ export default class BaseInfoEdit extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   handleSelectClient(value) {
@@ -200,7 +200,6 @@ export default class BaseInfoEdit extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchClient(v = '') {
     this.props.onSearchClient(v);
   }
@@ -230,20 +229,12 @@ export default class BaseInfoEdit extends PureComponent {
 
   // 根据填入关键词筛选合约编号
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索合约编号' } })
   handleSearchContractNum(value) {
     console.log('筛选合约编号', value);
   }
 
   // 通用 Date组件更新方法
   @autobind
-  @logable({
-    type: 'CalendarSelect',
-    payload: {
-      name: '合约开始日期',
-      value: '$args[0]',
-    },
-  })
   handleChangeDate(obj) {
     this.setState({
       ...this.state,

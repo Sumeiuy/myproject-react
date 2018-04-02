@@ -49,8 +49,8 @@ export default class QuestionnaireSurvey extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '' } })
-  handleRidoChange() {
-    this.props.onRadioChange();
+  handleRidoChange(event) {
+    this.props.onRadioChange(event);
   }
 
   @autobind
@@ -190,7 +190,7 @@ export default class QuestionnaireSurvey extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleCancel() {
     this.props.onCancel();
   }

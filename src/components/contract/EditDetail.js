@@ -175,7 +175,6 @@ export default class EditDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchCust(value) {
     this.props.getCanApplyCustList(value);
   }
@@ -198,7 +197,6 @@ export default class EditDetail extends PureComponent {
     // this.props.onSearchContractDetail(value);
   }
 
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   handleSearchContractNum(value) {
     this.props.getContractNumList(value);
   }

@@ -616,6 +616,10 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '附件下载' } })
+  handleDownloadClick() {}
+
   @autobind
   renderServiceStatusChoice() {
     const {
@@ -648,6 +652,7 @@ export default class ServiceRecordContent extends PureComponent {
               <Icon className={styles.excelIcon} type={getIconType(item.name)} />
               <span>
                 <a
+                  onClick={this.handleDownloadClick}
                   href={
                     _.isEmpty(item.attachId) && _.isEmpty(item.name)
                       ? NO_HREF :

@@ -158,7 +158,7 @@ export default class PageHeader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '营业地址选择项：',
-      value: '$args[0]',
+      value: '$args[0].orgId',
     },
   })
   handleCustRange(obj) {
