@@ -226,6 +226,7 @@ export default class TaskFlow extends PureComponent {
       needApproval = false,
       canGoNextStep = false,
       needMissionInvestigation = false,
+      nextStepBtnIsDisabled = true,
     } = props.storedTaskFlowData || {};
 
     this.state = {
@@ -252,7 +253,7 @@ export default class TaskFlow extends PureComponent {
       clearFromSearch: _.isEmpty(props.storedTaskFlowData),
       currentSelectLabelName: null,
       currentFilterNum: 0,
-      nextStepBtnIsDisabled: true, // 用来控制下一步按钮的是否可点击状态
+      nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -327,6 +328,11 @@ export default class TaskFlow extends PureComponent {
   // 设置下一步按钮的是否可点击状态
   @autobind
   setNextStepBtnDisabled(disabled) {
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      nextStepBtnIsDisabled: disabled,
+    });
     this.setState({
       nextStepBtnIsDisabled: disabled,
     });
@@ -1026,7 +1032,7 @@ export default class TaskFlow extends PureComponent {
     } = this.state;
 
     // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
-    const finalSubmitBtnIsDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+    const isSubmitBtnDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
     // 只有在第一步是需要判断下一步是否可点击
     const finalNextStepBtnIsDisabled = current > 0 ? false : nextStepBtnIsDisabled;
     const {
@@ -1211,7 +1217,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.confirmBtn}
                 type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
-                disabled={finalSubmitBtnIsDisabled}
+                disabled={isSubmitBtnDisabled}
               >
                 确认无误，提交
               </Button>

@@ -206,11 +206,7 @@ export default class SelectLabelCust extends PureComponent {
       ...state,
     }, () => {
       // 如果选择的客户数量大于0 将下一步按钮状态修改为可点击
-      if (state.currentFilterNum > 0) {
-        setNextStepBtnDisabled(false);
-      } else {
-        setNextStepBtnDisabled(true);
-      }
+      setNextStepBtnDisabled(!state.currentFilterNum > 0);
     });
     // 将标签列表项的全部状态信息暴露出去
     this.props.onChange({
