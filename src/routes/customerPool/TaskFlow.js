@@ -227,7 +227,13 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep = false,
       needMissionInvestigation = false,
       nextStepBtnIsDisabled = true,
+      labelCust = EMPTY_OBJECT,
     } = props.storedTaskFlowData || {};
+
+    const {
+      currentSelectLabelName = null,
+      currentFilterNum = 0,
+    } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: current || 0,
@@ -251,8 +257,8 @@ export default class TaskFlow extends PureComponent {
       isSightTelescopeLoadingEnd: true,
       shouldclearBottomLabel: false,
       clearFromSearch: _.isEmpty(props.storedTaskFlowData),
-      currentSelectLabelName: null,
-      currentFilterNum: 0,
+      currentSelectLabelName,
+      currentFilterNum,
       nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
     };
 
