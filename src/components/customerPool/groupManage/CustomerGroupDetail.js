@@ -87,12 +87,6 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustIdList: [],
       needDeleteCustId: '',
       curPageCustList: EMPTY_LIST,
-      // 编辑页面上传批量客户的初始数据
-      multiDataSource: EMPTY_LIST,
-      // 批量导入新建页面的pageData
-      multiPageData: EMPTY_OBJECT,
-      // 上传后解析文件的批量客户
-      multiCustList: EMPTY_LIST,
       // 客户添加方式默认值--单客户添加
       customerAddType: defaultType,
       // 是否是初始客户添加方式
@@ -131,7 +125,6 @@ export default class CustomerGroupDetail extends PureComponent {
     if (prevData !== nextData) {
       this.setState({
         dataSource: nextData,
-        multiDataSource: nextData,
         // 总条目与当前新增cust条目相加
         totalRecordNum,
       });
@@ -311,8 +304,6 @@ export default class CustomerGroupDetail extends PureComponent {
             curPageCustList: [],
             includeCustList: [],
             totalRecordNum: 0,
-            multiCustList: [],
-            multiPageData: {},
             attachmentId: '',
           });
         },
