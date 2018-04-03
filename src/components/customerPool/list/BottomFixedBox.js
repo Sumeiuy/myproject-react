@@ -209,7 +209,8 @@ export default class BottomFixedBox extends PureComponent {
         // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
           this.toggleModal();
-          this.setState({ modalContent: '你没有HTSC 任务管理职责，不可发起任务' });
+          this.setState({
+            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务' });
         } else {
           this.toCreateTaskPage();
         }

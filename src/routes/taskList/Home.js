@@ -33,6 +33,8 @@ import {
   dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
+  STATE_EXECUTE_CODE,
+  STATE_ALL_CODE,
 } from './config';
 import {
   getViewInfo,
@@ -809,11 +811,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   constructViewPostBody(query, newPageNum, newPageSize) {
+    const { missionViewType, status } = query;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-
     const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName']);
     finalPostData = _.merge(
       finalPostData,
@@ -821,10 +823,25 @@ export default class PerformerView extends PureComponent {
       // { orgId: 'ZZ001041' },
       { orgId: emp.getOrgId() },
     );
-
-    const { missionViewType } = query;
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
+    // 执行者视图中，状态默认选中‘执行中’, status传50
+    // url中status为‘all’时传空字符串或者不传，其余传对应的code码
+    if (currentViewType === EXECUTOR) {
+      if (status) {
+        finalPostData.status = status === STATE_ALL_CODE ? '' : status;
+      } else {
+        finalPostData.status = STATE_EXECUTE_CODE;
+      }
+    } else if (_.includes([INITIATOR, CONTROLLER], currentViewType)) {
+      // 创建者视图和管理者视图中，状态默认选中‘所有状态’， status传空字符串或者不传
+      // url中status为‘all’时传空字符串或者不传，其余传对应的code码
+      if (!status || status === STATE_ALL_CODE) {
+        finalPostData.status = '';
+      } else {
+        finalPostData.status = status;
+      }
+    }
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     if (currentViewType === INITIATOR) {
       const { createTimeEnd, createTimeStart } = finalPostData;
