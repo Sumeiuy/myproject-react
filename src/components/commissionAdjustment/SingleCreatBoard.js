@@ -223,7 +223,7 @@ export default class SingleCreateBoard extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '目标股基佣金率',
-      value: '$args[0]',
+      value: '$args[0].codeValue',
     },
   })
   selectTargetGJCommission(v) {

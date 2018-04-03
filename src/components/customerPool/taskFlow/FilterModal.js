@@ -333,13 +333,13 @@ export default class FilterModal extends PureComponent {
     return (<div>
       <Button
         className={styles.modalButton}
-        key="back"
+        key="cancle"
         size="large"
         onClick={this.handleCancel}
       >取消</Button>
       <Button
         className={styles.modalButton}
-        key="back"
+        key="confirm"
         size="large"
         type="primary"
         onClick={this.handleAccept}

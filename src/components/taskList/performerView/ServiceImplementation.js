@@ -93,8 +93,8 @@ export default class ServiceImplementation extends PureComponent {
             this.updateList(postBody, callback);
             // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
             if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息
-              getTaskDetailBasicInfo({ taskId: currentId });
+              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
               // 更新新左侧列表
               modifyLocalTaskList({ missionId: currentId });
             }

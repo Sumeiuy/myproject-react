@@ -97,9 +97,8 @@ export default class Stock extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '',
+      name: '个股资讯',
       type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
     },
   })
   rowClickHandle(record) {

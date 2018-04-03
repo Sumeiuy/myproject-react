@@ -73,7 +73,7 @@ export default class BaseInfoModify extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0]',
+      value: '$args[0].custName',
     },
   })
   selectCustomer(item) {
