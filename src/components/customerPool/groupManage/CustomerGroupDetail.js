@@ -579,7 +579,7 @@ export default class CustomerGroupDetail extends PureComponent {
 
   // Alert关闭时回调，将multiErrmsg置空
   @autobind
-  alertAfterClose() {
+  handleCloseAlert() {
     this.setState({
       multiErrmsg: '',
     });
@@ -833,7 +833,7 @@ export default class CustomerGroupDetail extends PureComponent {
               <Alert
                 message={newMultiErrmsg}
                 type="error"
-                onClose={this.alertAfterClose}
+                onClose={this.handleCloseAlert}
                 closable
               />
             </div>
