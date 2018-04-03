@@ -76,9 +76,7 @@ export default class CreateTaskSuccess extends PureComponent {
       saveTabUrl({
         routerAction: push,
         url: '/taskList',
-        param: {},
         pathname: '/taskList',
-        query: {},
         tabId: 'FSP_MOT_SELFBUILT_TASK',
       });
     }

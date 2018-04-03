@@ -53,8 +53,7 @@ function removeTabMenu(tabId) {
 // { tabId: 'FSP_MOT_SELFBUILT_TASK', url: '/customerPool'});
 function saveTabUrlAction(options) {
   try {
-    const smartTab = window.$('#UTB').EBSmartTab;
-    smartTab('saveTabUrl', options);
+    window.$('#UTB').EBSmartTab('saveTabUrl', options);
   } catch (e) {
     warning(false, `saveTabUrl方法执行出错 ${e}`);
   }
