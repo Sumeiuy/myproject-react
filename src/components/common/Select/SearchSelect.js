@@ -45,7 +45,6 @@ export default class SearchSelect extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   handleAddBtnClick() {
     this.props.onAddCustomer(this.state.selectItem);
-    this.setState({ selectItem: {} });
   }
 
   // 搜索客户列表
