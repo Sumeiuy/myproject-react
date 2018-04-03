@@ -589,10 +589,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     },
   })
   handleSelectAssembly(customer) {
-    const { id, custType } = customer;
     this.setState({
       customer,
     });
+    if (_.isEmpty(customer)) return;
+    const { id, custType } = customer;
     const typeNow = this.judgeSubtypeNow;
     if (typeNow(commadj.subscribe)) {
       this.querySubscribelProList({
@@ -609,12 +610,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
         custRowId: id,
       });
     }
-  }
-
-  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
-  @autobind
-  clearSelectCust() {
-    this.singleBoard.clearSelectCustCurComValue();
   }
 
   // 根据职责权限进行子类型选项
@@ -786,7 +781,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
-                      clearSelectCust={this.clearSelectCust}
                       unfinishRoute={this.orderFlowRoute}
                     />
                   </CommissionLine>
