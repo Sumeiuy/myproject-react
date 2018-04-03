@@ -498,7 +498,7 @@ export default class CustomerGroupDetail extends PureComponent {
               const payload = {
                 attachmentId,
                 pageNum: 1,
-                pageSize: 10,
+                pageSize: 1000,
               };
               // 文件上传成功拿对应的attachmentId调接口解析客户列表请求
               queryBatchCustList(payload).then(() => {
