@@ -35,11 +35,6 @@ export default class CreateTaskSuccess extends PureComponent {
     clearSubmitTaskFlowResult: NOOP,
   }
 
-  static contextTypes = {
-    replace: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +60,6 @@ export default class CreateTaskSuccess extends PureComponent {
       clearSubmitTaskFlowResult,
       location: { query = EMPTY_OBJECT },
     } = this.props;
-    const { push } = this.context;
     const { source } = query;
     clearSubmitTaskFlowResult();
 
@@ -74,9 +68,7 @@ export default class CreateTaskSuccess extends PureComponent {
     // 就手动切换tab，需要将任务管理tab绑定的url替换成taskList
     if (source === RETURN_TASK_FROM_TASKLIST) {
       saveTabUrl({
-        routerAction: push,
         url: '/taskList',
-        pathname: '/taskList',
         tabId: 'FSP_MOT_SELFBUILT_TASK',
       });
     }

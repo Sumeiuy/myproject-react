@@ -49,9 +49,11 @@ function removeTabMenu(tabId) {
   }
 }
 
+// 处理函数，绑定tab对应的url
+// // 更改指定target、指定tab的url
 // options形式
 // { tabId: 'FSP_MOT_SELFBUILT_TASK', url: '/customerPool'});
-function saveTabUrlAction(options) {
+function saveTabUrl(options) {
   try {
     window.$('#UTB').EBSmartTab('saveTabUrl', options);
   } catch (e) {
@@ -128,10 +130,6 @@ const fspGlobal = {
   navtoOtherAndClose({ id, url, param }) {
     fspGlobal.openRctTab({ url, param });
     fspGlobal.closeRctTabById({ id });
-  },
-
-  saveTabUrl(options) {
-    saveTabUrlAction(options);
   },
 };
 
@@ -317,16 +315,6 @@ function openInTab(options) {
     ...options,
   });
 }
-
-// 处理函数，绑定tab对应的url
-// // 更改指定target、指定tab的url
-function saveTabUrl(options) {
-  dispatchTabPane({
-    fspAction: 'saveTabUrl',
-    ...options,
-  });
-}
-
 
 export default {
   dispatchTabPane,
