@@ -8,6 +8,7 @@ const CONTROLLER = 'controller'; // 管理者视图
 
 const SYSTEMCODE = '102330'; // 理财平台系统编号
 
+const STATE_ALL_CODE = 'all'; // 任务状态 为所有状态时的对应的code
 const STATE_PROCESSING_CODE = '10'; // 审批中编号
 const STATE_REJECT_CODE = '20'; // 驳回编号
 const STATE_CLOSE_CODE = '30'; // 终止编号
@@ -76,4 +77,5 @@ export default {
   STATUS_EXECUTOR_VIEW,
   SYSTEMCODE,
   POSTCOMPLETED_CODE,
+  STATE_ALL_CODE,
 };
