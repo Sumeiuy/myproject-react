@@ -160,15 +160,6 @@ export default class CustomerGroupDetail extends PureComponent {
     }
   }
 
-  @autobind
-  getData() {
-    const { groupId, includeCustIdList } = this.state;
-    return {
-      groupId,
-      includeCustIdList,
-    };
-  }
-
   // 导入数据
   @autobind
   onImportHandle() {
@@ -182,6 +173,15 @@ export default class CustomerGroupDetail extends PureComponent {
     this.setState({
       importVisible: false,
     });
+  }
+
+  @autobind
+  getData() {
+    const { groupId, includeCustIdList } = this.state;
+    return {
+      groupId,
+      includeCustIdList,
+    };
   }
 
   /**
@@ -480,33 +480,13 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
-  // 上传批量客户的分页切换
-  @autobind
-  multiPageChangeHandle(page, pageSize) {
-    const { queryBatchCustList, getGroupCustomerList } = this.props;
-    const { groupId = '', attachmentId } = this.state;
-    // groupId为空，新建页面，取得是上传解析后的客户列表
-    if (_.isEmpty(groupId)) {
-      queryBatchCustList({
-        attachmentId,
-        pageNum: page,
-        pageSize,
-      });
-    } else {
-      // groupId不为空，为编辑页面，取得是客户分组成功后的新的客户列表
-      getGroupCustomerList({
-        groupId,
-        pageNum: page,
-        pageSize,
-      });
-    }
-  }
-
   // 上传事件
   @autobind
   onChange(info) {
     this.setState({
       importVisible: false,
+      includeCustList: [],
+      totalRecordNum: 0,
     }, () => {
       const uploadFile = info.file;
       this.setState({
@@ -533,20 +513,45 @@ export default class CustomerGroupDetail extends PureComponent {
               queryBatchCustList(payload).then(() => {
                 const {
                   batchCustList,
-                  batchCustList: { custList, page },
+                  batchCustList: { custList },
                   onAddCustomerToGroup,
                 } = this.props;
-                const { groupId, name, description } = this.state;
+                const {
+                  includeCustIdList,
+                  totalRecordNum,
+                  includeCustList,
+                  groupId,
+                  // curPageNum,
+                  curPageSize,
+                  name,
+                  description,
+                } = this.state;
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
-                const newCustIdList = _.map(multiBatchCustList, 'brokerNumber');
-                // 若没有groupId,是客户分组的新建页面
-                // 数据来源则是上传解析后的批量用户，分页则是接口请求分页
+                const custIdList = _.map(multiBatchCustList, 'brokerNumber');
+                const custIdListSize = _.size(custIdList);
+                const newCustIdList = _.concat(includeCustIdList, custIdList);
+
+                // 如果groupId不为空，则添加直接调用接口，添加
                 if (_.isEmpty(groupId)) {
+                  // 数据添加进表格
+                  // 新添加的数据放在表格的前面
+                  const newIncludeCustList = _.concat(multiBatchCustList, includeCustList);
+
+                  const {
+                    curPageCustList,
+                    includeCustListSize,
+                    curPage,
+                  } = this.generateLocalPageAndDataSource(newIncludeCustList, curPageSize);
+
                   this.setState({
-                    multiCustList: multiBatchCustList,
-                    multiPageData: page,
+                    // 手动新增的所有数据集合
                     includeCustIdList: newCustIdList,
+                    includeCustList: newIncludeCustList,
+                    includeCustListSize,
+                    totalRecordNum: totalRecordNum + custIdListSize,
+                    curPageCustList,
+                    curPageNum: curPage,
                   });
                 } else {
                   // groupId不为空，编辑页面直接调用add接口
@@ -638,17 +643,14 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageNum,
       curPageSize,
       dataSource = EMPTY_LIST,
-      multiDataSource = EMPTY_LIST,
       totalRecordNum,
       curPageCustList,
-      multiCustList,
       groupId,
       customerAddType,
       isDefaultType,
       attachmentId,
       multiErrmsg,
       importVisible,
-      multiPageData,
       file,
     } = this.state;
     const {
@@ -666,29 +668,12 @@ export default class CustomerGroupDetail extends PureComponent {
     const newMultiErrmsg = `注:${multiErrmsg}`;
     // 单客户添加列表数据
     let newDataSource = EMPTY_LIST;
-    // 批量导入客户添加数据
-    let newMultiCustList = EMPTY_LIST;
-    // 批量导入客户的分页
-    let newPageData = EMPTY_OBJECT;
-
     // 如果存在groupId，是编辑页面，则用dataSource
     // 不存在groupId则是新建页面，用includeCustList
     if (_.isEmpty(groupId)) {
       newDataSource = curPageCustList;
-      newMultiCustList = multiCustList;
-      newPageData = {
-        curPageNum: multiPageData && multiPageData.pageNum,
-        totalRecordNum: multiPageData && multiPageData.totalCount,
-        curPageSize: (multiPageData && multiPageData.pageSize) || 10,
-      };
     } else {
       newDataSource = dataSource;
-      newMultiCustList = multiDataSource;
-      newPageData = {
-        curPageNum,
-        curPageSize,
-        totalRecordNum,
-      };
     }
 
     // 添加id到dataSource
@@ -839,52 +824,30 @@ export default class CustomerGroupDetail extends PureComponent {
             </div>
         }
         <div className={styles.customerListTable}>
-          {
-            isDefaultType ?
-              <GroupTable
-                pageData={{
-                  curPageNum,
-                  curPageSize,
-                  totalRecordNum,
-                }}
-                listData={newDataSource}
-                onSizeChange={this.handleShowSizeChange}
-                onPageChange={this.handlePageChange}
-                tableClass={
-                classnames({
-                  [tableStyles.groupTable]: true,
-                  [styles.custListTable]: true,
-                })
-              }
-                titleColumn={titleColumn}
-                actionSource={actionSource}
-                isFirstColumnLink={false}
-              // 固定标题，内容滚动
-                scrollY={186}
-                isFixedTitle
-              // 当listData数据源为空的时候是否需要填充空白行
-                emptyListDataNeedEmptyRow
-              />
-            :
-              <GroupTable
-                pageData={newPageData}
-                listData={newMultiCustList}
-                onPageChange={this.multiPageChangeHandle}
-                tableClass={
-                classnames({
-                  [tableStyles.groupTable]: true,
-                  [styles.custListTable]: true,
-                })
-              }
-                titleColumn={titleColumn}
-                isFirstColumnLink={false}
-              // 固定标题，内容滚动
-                scrollY={186}
-                isFixedTitle
-              // 当listData数据源为空的时候是否需要填充空白行
-                emptyListDataNeedEmptyRow
-              />
+          <GroupTable
+            pageData={{
+              curPageNum,
+              curPageSize,
+              totalRecordNum,
+            }}
+            listData={newDataSource}
+            onSizeChange={this.handleShowSizeChange}
+            onPageChange={this.handlePageChange}
+            tableClass={
+            classnames({
+              [tableStyles.groupTable]: true,
+              [styles.custListTable]: true,
+            })
           }
+            titleColumn={titleColumn}
+            actionSource={actionSource}
+            isFirstColumnLink={false}
+          // 固定标题，内容滚动
+            scrollY={186}
+            isFixedTitle
+          // 当listData数据源为空的时候是否需要填充空白行
+            emptyListDataNeedEmptyRow
+          />
         </div>
         <Modal
           visible={importVisible}
