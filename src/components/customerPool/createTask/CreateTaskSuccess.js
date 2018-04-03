@@ -7,16 +7,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
-import { navTo, openRctTab } from '../../../utils';
+import { navTo, openRctTab, saveTabUrl } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import logable from '../../../decorators/logable';
 import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 
 const EMPTY_OBJECT = {};
+const NOOP = _.noop;
 
 @RestoreScrollTop
 export default class CreateTaskSuccess extends PureComponent {
@@ -30,8 +32,13 @@ export default class CreateTaskSuccess extends PureComponent {
 
   static defaultProps = {
     successType: false,
-    clearSubmitTaskFlowResult: () => { },
+    clearSubmitTaskFlowResult: NOOP,
   }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+  };
 
   constructor(props) {
     super(props);
@@ -51,9 +58,30 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   componentWillUnmount() {
-    const { clearSubmitTaskFlowResult } = this.props;
-    clearSubmitTaskFlowResult();
+    // 清除倒计时
     this.clearTimeInterval();
+
+    const {
+      clearSubmitTaskFlowResult,
+      location: { query = EMPTY_OBJECT },
+    } = this.props;
+    const { push } = this.context;
+    const { source } = query;
+    clearSubmitTaskFlowResult();
+
+    // 替换当前绑定的url
+    // 因为从任务管理的创建者视图，进行驳回修改的时候，是在当前tab下打开的操作，倒计时还没结束之后，
+    // 就手动切换tab，需要将任务管理tab绑定的url替换成taskList
+    if (source === RETURN_TASK_FROM_TASKLIST) {
+      saveTabUrl({
+        routerAction: push,
+        url: '/taskList',
+        param: {},
+        pathname: '/taskList',
+        query: {},
+        tabId: 'FSP_MOT_SELFBUILT_TASK',
+      });
+    }
   }
 
   @autobind
@@ -77,7 +105,7 @@ export default class CreateTaskSuccess extends PureComponent {
     const { location: { query = EMPTY_OBJECT } } = this.props;
     const { source } = query;
     if (source === RETURN_TASK_FROM_TASKLIST) {
-      // 如果是驳回修改的任务，并且来自创建者视图快捷入口，则成功之后，自动返回taskList的创建者视图
+      // 如果是驳回修改的任务，并且来自创建者视图快捷入口，则成功之后，自动返回taskList
       this.goToTaskList();
     } else {
       this.goToHome();

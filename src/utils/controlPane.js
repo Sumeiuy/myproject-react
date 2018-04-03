@@ -49,6 +49,17 @@ function removeTabMenu(tabId) {
   }
 }
 
+// options形式
+// { tabId: 'FSP_MOT_SELFBUILT_TASK', url: '/customerPool'});
+function saveTabUrlAction(options) {
+  try {
+    const smartTab = window.$('#UTB').EBSmartTab;
+    smartTab('saveTabUrl', options);
+  } catch (e) {
+    warning(false, `saveTabUrl方法执行出错 ${e}`);
+  }
+}
+
 const fspGlobal = {
   /* // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -118,6 +129,10 @@ const fspGlobal = {
   navtoOtherAndClose({ id, url, param }) {
     fspGlobal.openRctTab({ url, param });
     fspGlobal.closeRctTabById({ id });
+  },
+
+  saveTabUrl(options) {
+    saveTabUrlAction(options);
   },
 };
 
@@ -304,6 +319,15 @@ function openInTab(options) {
   });
 }
 
+// 处理函数，绑定tab对应的url
+// // 更改指定target、指定tab的url
+function saveTabUrl(options) {
+  dispatchTabPane({
+    fspAction: 'saveTabUrl',
+    ...options,
+  });
+}
+
 
 export default {
   dispatchTabPane,
@@ -316,5 +340,6 @@ export default {
   linkTo,
   navTo,
   removeTab,
+  saveTabUrl,
 };
 
