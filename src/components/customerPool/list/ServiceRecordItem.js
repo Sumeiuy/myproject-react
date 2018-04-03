@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
+import { stateFromHTML } from 'draft-js-import-html';
+import { Mention, Tooltip } from 'antd';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
@@ -10,6 +12,7 @@ import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
+const { toString } = Mention;
 
 export default class ServiceRecordItem extends PureComponent {
   static propTypes = {
@@ -19,6 +22,7 @@ export default class ServiceRecordItem extends PureComponent {
     executeTypes: PropTypes.array,
     isShowChild: PropTypes.bool,
     filesList: PropTypes.array,
+    panelContent: PropTypes.bool,
   }
   static defaultProps = {
     content: '--',
@@ -26,6 +30,7 @@ export default class ServiceRecordItem extends PureComponent {
     type: 'left',
     executeTypes: [],
     isShowChild: false,
+    panelContent: false,
     filesList: [],
   }
 
@@ -64,6 +69,28 @@ export default class ServiceRecordItem extends PureComponent {
     return renderSpan;
   }
 
+  renderContent(newContent) {
+    const { panelContent } = this.props;
+    if (!panelContent) {
+      return (
+        <span title={newContent}>{newContent || '--'}</span>
+      );
+    }
+    const htmlToState = stateFromHTML(newContent);
+    const htmlString = toString(htmlToState);
+    const title = () => <div dangerouslySetInnerHTML={{ __html: newContent }} />;
+    return (
+      <Tooltip
+        title={title}
+        overlayClassName={classnames({
+          [styles.globalTips]: true,
+        })}
+      >
+        <span>{htmlString || '--'}</span>
+      </Tooltip>
+    );
+  }
+
   render() {
     const { title, type, content, executeTypes, isShowChild, filesList } = this.props;
     let newContent = content;
@@ -86,7 +113,7 @@ export default class ServiceRecordItem extends PureComponent {
           isShowChild ?
             <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
             :
-            <span title={newContent}>{newContent || '--'}</span>
+            this.renderContent(newContent)
         }
 
       </div>

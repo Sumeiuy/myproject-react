@@ -607,16 +607,25 @@ export default class ResultTrack extends PureComponent {
     const {
       checked,
       currentSelectedLevel1Indicator,
+      currentSelectedTrackDate,
     } = this.state;
+
+    const dateStr = currentSelectedTrackDate.format('YYYY-MM-DD');
+    const initialDateStr = this.getfirstAllowedDate().format('YYYY-MM-DD');
 
     const commonState = {
       checked: !checked,
       isShowIndicatorLevel1KeyError: false, // 隐藏指标目标错误信息
       isShowCurrentSelectedProductError: false, // 隐藏选择产品错误信息
       isShowInputValueError: false, // 隐藏指标值错误信息
+      currentSelectedTrackDate: this.getfirstAllowedDate(),
     };
 
-    if (checked && currentSelectedLevel1Indicator !== defaultIndicatorValue) {
+    if (
+        checked
+        && (currentSelectedLevel1Indicator !== defaultIndicatorValue
+        || dateStr !== initialDateStr)
+      ) {
       // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
       confirm({
         title: '提示',

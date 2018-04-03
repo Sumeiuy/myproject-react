@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
 import Entry from './Entry';
 import ImportCustomers from './ImportCustomers';
 import SightingTelescope from './SightingTelescope';
@@ -44,6 +45,7 @@ export default class SelectTargetCustomer extends PureComponent {
     isSightTelescopeLoadingEnd: PropTypes.bool.isRequired,
     // 设置下一步按钮可点击状态
     setNextStepBtnDisabled: PropTypes.func.isRequired,
+    changeCurrentEntry: PropTypes.func.isRequired,
     nextStepBtnIsDisabled: PropTypes.bool.isRequired,
   }
 
@@ -88,6 +90,8 @@ export default class SelectTargetCustomer extends PureComponent {
       showImportCustomers: true,
       showSightingTelescope: false,
     });
+    const currentEntry = 0;
+    this.props.changeCurrentEntry(currentEntry);
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
@@ -117,6 +121,8 @@ export default class SelectTargetCustomer extends PureComponent {
         ptyMngId: emp.getId(),
       });
     }
+    const currentEntry = 1;
+    this.props.changeCurrentEntry(currentEntry);
     // 恢复Fsp滚动条
     fsp.scrollToTop();
   }
@@ -132,8 +138,19 @@ export default class SelectTargetCustomer extends PureComponent {
       showSightingTelescope,
       isFirstTimeChange: false,
     });
-    this.props.switchBottomFromHeader(showImportCustomers);
-    if (showSightingTelescope && this.state.isFirstTimeChange) {
+    /* this.props.switchBottomFromHeader(showImportCustomers); */
+    let currentEntry = -1;
+    if (showImportCustomers) {
+      currentEntry = 0;
+    }
+
+    if (showSightingTelescope) {
+      currentEntry = 1;
+    }
+    this.props.changeCurrentEntry(currentEntry);
+
+    if (showSightingTelescope && this.state.isFirstTimeChange &&
+      _.isEmpty(this.props.circlePeopleData)) {
       const { getLabelInfo, isAuthorize, orgId } = this.props;
       const param = {
         condition: '',

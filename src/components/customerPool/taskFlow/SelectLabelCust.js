@@ -49,7 +49,6 @@ export default class SelectLabelCust extends PureComponent {
     const {
       condition = '',
       labelId = '',
-      tipsSize = 0,
       shouldclearBottomLabel = true,
       currentSelectLabelName = null,
       currentFilterNum = 0,
@@ -61,7 +60,7 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       currentSelectLabel: labelId,
       labelId,
-      tipsSize,
+      tipsSize: this.props.circlePeopleData.length,
       shouldclearBottomLabel,
       currentFilterNum,
       currentSelectLabelName,
@@ -165,6 +164,7 @@ export default class SelectLabelCust extends PureComponent {
       labelDesc: '',
       custNum: 0,
       currentSelectLabel: '',
+      currentSelectLabelName: '',
     }, () => {
       // 点击搜索时会清空当前选择的客户，所以将下一步按钮设置不可点
       setNextStepBtnDisabled(true);
@@ -202,15 +202,12 @@ export default class SelectLabelCust extends PureComponent {
         currentFilterNum !== undefined ? currentFilterNum : this.state.currentFilterNum,
       clearFromSearch: false,
     };
+
     this.setState({
       ...state,
     }, () => {
       // 如果选择的客户数量大于0 将下一步按钮状态修改为可点击
-      if (state.currentFilterNum > 0) {
-        setNextStepBtnDisabled(false);
-      } else {
-        setNextStepBtnDisabled(true);
-      }
+      setNextStepBtnDisabled(!state.currentFilterNum > 0);
     });
     // 将标签列表项的全部状态信息暴露出去
     this.props.onChange({
