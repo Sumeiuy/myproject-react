@@ -533,10 +533,10 @@ export default class Pageheader extends PureComponent {
     let stateAllOptions = stateOptions || [];
     let statusValue = status;
     if (filterControl === CONTROLLER) {
-      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
-      // 判断当前在url上的status不存在时，取所有状态的value值
+      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
       if (_.isEmpty(status)) {
         statusValue = STATE_ALL_CODE;
       }
@@ -547,7 +547,7 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
-      // 判断当前在url上的status不存在时，取执行中的value值
+      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
       if (_.isEmpty(status)) {
         statusValue = STATE_EXECUTE_CODE;
       }
@@ -556,7 +556,7 @@ export default class Pageheader extends PureComponent {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-      // 判断当前在url上的status不存在时，取所有状态的value值
+      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
       if (_.isEmpty(status)) {
         statusValue = STATE_ALL_CODE;
       }
