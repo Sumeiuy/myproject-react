@@ -230,7 +230,13 @@ export default {
 
     // 执行者视图的详情基本信息
     * getTaskDetailBasicInfo({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryTaskDetailBasicInfo, payload);
+      const { isClear = true, ...otherPayload } = payload;
+      // 左侧列表项被点击时，清除执行者视图服务实施客户列表的当前选中客户状态信息和筛选值、页码
+      if (isClear) {
+        // 清除查询上次目标客户列表的条件
+        yield put({ type: 'clearParameter' });
+      }
+      const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {
         yield put({
           type: 'getTaskDetailBasicInfoSuccess',
@@ -241,8 +247,6 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      // 清除查询上次目标客户列表的条件
-      yield put({ type: 'clearParameter' });
       const { resultData } = yield call(api.queryTargetCust, payload);
       if (resultData) {
         yield put({

@@ -462,7 +462,7 @@ export default class ServiceRecordContent extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '服务日期',
-      value: '$args[0]',
+      value: (instance, args) => moment(args[0]).format(dateFormat),
     },
   })
   handleServiceDate(date) {
@@ -496,7 +496,7 @@ export default class ServiceRecordContent extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '反馈时间',
-      value: '$args[0]',
+      value: (instance, args) => moment(args[0]).format(dateFormat),
     },
   })
   handleFeedbackDate(date) {

@@ -46,7 +46,13 @@ export default class PageHeader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '反馈时间',
-      value: '$args[0]',
+      value: (instance, args) => {
+        const dateArr = _.map(
+          args[0],
+          item => moment(item).format('YYYY-MM-DD'),
+        );
+        return _.join(dateArr, '~');
+      },
     },
   })
   handleDateChange(dateStrings) {
@@ -89,7 +95,7 @@ export default class PageHeader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '模块',
-      value: '$args[2]',
+      value: (instance, args) => args[2].join('/'),
     },
   })
   handleCascaderSelectChange(name, funcName, key) {

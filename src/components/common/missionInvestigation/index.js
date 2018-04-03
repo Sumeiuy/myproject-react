@@ -118,7 +118,7 @@ export default class MissionInvestigation extends PureComponent {
       currentSelectRowKeys,
       isShowTable: false,
       page,
-      isShowErr: false, // 是否显示错误信息
+      isShowError: false, // 是否显示错误信息
     };
   }
 
@@ -151,7 +151,7 @@ export default class MissionInvestigation extends PureComponent {
     } = this.state;
     if (checked && _.isEmpty(currentSelectRowKeys)) {
       this.setState({
-        isShowErr: true,
+        isShowError: true,
       });
     }
   }
@@ -281,15 +281,13 @@ export default class MissionInvestigation extends PureComponent {
           this.setState({
             checked: !checked,
             currentSelectRowKeys: EMPTY_LIST,
-          }, () => {
-            this.renderNextQuestion();
-          });
+          }, this.renderNextQuestion);
         },
       });
     } else {
       this.setState({
         checked: !checked,
-        isShowErr: false,
+        isShowError: false,
       });
     }
   }
@@ -351,7 +349,7 @@ export default class MissionInvestigation extends PureComponent {
     this.renderNextQuestion();
     if (!_.isEmpty(currentSelectRowKeys)) {
       this.setState({
-        isShowErr: false,
+        isShowError: false,
       });
     }
   }
@@ -552,7 +550,7 @@ export default class MissionInvestigation extends PureComponent {
       isShowTable,
       page,
       questionList,
-      isShowErr,
+      isShowError,
     } = this.state;
 
     const {
@@ -650,7 +648,7 @@ export default class MissionInvestigation extends PureComponent {
           }
         />
         {
-          isShowErr ?
+          isShowError ?
             <div className={styles.errBox}>请至少选择一个问题</div> : null
         }
         <div
