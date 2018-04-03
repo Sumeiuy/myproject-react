@@ -119,7 +119,7 @@ export default class ServiceRecordForm extends PureComponent {
             任务提示:
           </div>
           <div className={styles.content}>
-            {serviceTips || '--'}
+            <div dangerouslySetInnerHTML={{ __html: serviceTips || '--' }} />
           </div>
         </div>
 

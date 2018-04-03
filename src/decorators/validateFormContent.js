@@ -27,6 +27,7 @@ export const validateFormContent = (target, name, descriptor) => {
         taskName,
         timelyIntervalValue,
         serviceStrategySuggestion,
+        serviceStrategyString,
       } = args[0];
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
@@ -60,8 +61,7 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskName = true;
       }
-      if (_.isEmpty(serviceStrategySuggestion)
-        || serviceStrategySuggestion.length < 10
+      if (_.isEmpty(serviceStrategyString)
         || serviceStrategySuggestion.length > 1000) {
         this.setState({
           isShowErrorStrategySuggestion: true,
