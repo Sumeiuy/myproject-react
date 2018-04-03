@@ -422,7 +422,7 @@ export default class SingleCreateBoard extends PureComponent {
       ref: this.uploadRef,
     };
 
-    const newCurrentCom = `${newCurrentCommission}‰`;
+    const newCurrentCom = _.isEmpty(customer) ? '--' : `${newCurrentCommission}‰`;
 
     return (
       <div className={styles.contentBox}>

@@ -175,10 +175,13 @@ export default class BatchCreatBoard extends PureComponent {
   // 客户输入目标股基佣金率调用方法
   @autobind
   changeTargetGJCommission(v) {
-    // 批量
-    this.props.queryGj({
-      codeValue: v,
-    });
+    // codeValue 为空，接口报错
+    if (!_.isEmpty(v)) {
+      // 批量
+      this.props.queryGj({
+        codeValue: v,
+      });
+    }
   }
 
   // 切换目标产品股基佣金率
