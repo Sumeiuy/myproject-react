@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-26 17:29:09
+ * @Last Modified time: 2018-04-03 10:45:24
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -16,7 +16,7 @@ import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 
-// import { dom } from '../../../helper';
+import { dom } from '../../../helper';
 // import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from './utils';
 
 import styles from './index.less';
@@ -66,19 +66,31 @@ export default class CommonDateRangePicker extends PureComponent {
   // 计算日历下拉框的位置
   @autobind
   calcCalendarPosition() {
-    // const { width: viewWidth } = dom.getRect(document.body);
-    // const { left, width: drpWidth } = dom.getRect(this.drp);
-    // const picker = this.drp.querySelector('.DateRangePicker_picker');
-    // if (picker) {
-    //   const { width } = dom.getRect(picker);
-    //   const leftPlusWidth = left + width;
-    //   if (leftPlusWidth > viewWidth) {
-    //     const realLeft = left - (width - drpWidth);
-    //     dom.setStyle(picker, 'left', `${realLeft}px`);
-    //   } else {
-    //     dom.setStyle(picker, 'left', `${left}px`);
-    //   }
-    // }
+    const { width: viewWidth } = dom.getRect(document.body);
+    const { left, width: drpWidth } = dom.getRect(this.drp);
+    const picker = this.drp.querySelector('.DateRangePicker_picker');
+    if (picker) {
+      const { width } = dom.getRect(picker);
+      const leftPlusWidth = left + width;
+      if (leftPlusWidth > viewWidth) {
+        const realLeft = left - (width - drpWidth);
+        dom.setStyle(picker, 'left', `${realLeft}px`);
+      } else {
+        dom.setStyle(picker, 'left', `${left}px`);
+      }
+    }
+  }
+
+  @autobind
+  showCalendar() {
+    const picker = this.drp.querySelector('.DateRangePicker_picker');
+    if (picker) {
+      // 弹出层出来了
+      this.calcCalendarPosition();
+    } else {
+      // 还没出来
+      setTimeout(this.showCalendar, 20);
+    }
   }
 
   // 切换了日期
@@ -95,13 +107,18 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   handleFoucusChange(focusedInput) {
-    this.setState({ focusedInput });
-    if (focusedInput !== null) {
-      // focusedInput为null时候,就是隐藏
-      // 不为null则就是显示日历
-      // 此处需要对弹出框的位置进行重新计算
-      setTimeout(() => { this.calcCalendarPosition(); }, 200);
+    const { focusedInput: prevFocusedInput } = this.state;
+    if (prevFocusedInput === null && focusedInput !== null) {
+      // 打开日历组件
+      this.showCalendar();
     }
+    if (focusedInput === 'startDateID' && prevFocusedInput === null) {
+      // 这个是焦点落在了 起始时间 上
+    }
+    if (focusedInput === 'endDateID' && prevFocusedInput === null) {
+      // 这个是焦点落在了 结束时间 上
+    }
+    this.setState({ focusedInput });
   }
 
   @autobind
@@ -142,6 +159,7 @@ export default class CommonDateRangePicker extends PureComponent {
         <DateRangePicker
           showDefaultInputIcon
           small
+          withPortal
           hideKeyboardShortcutsPanel
           customArrowIcon="~"
           startDate={startDate}

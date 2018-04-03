@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
-// import DateRangePicker from '../common/dateRangePicker';
+import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -603,24 +603,24 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            ref={ref => this.timers = ref}
-            value={[startTime, endTime]}
-            onChange={this.handleCreateDateChange}
-            placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateStart}
-            key={`${missionViewType}创建时间`}
-            format={dateFormat}
-          />
           { /*
-            <DateRangePicker
-              initialDate={[startTime, endTime]}
+            <RangePicker
+              ref={ref => this.timers = ref}
+              value={[startTime, endTime]}
               onChange={this.handleCreateDateChange}
-              isOutsideRange={this.disabledDateStart}
-              selectStart={this.handleSelectStart}
-              selectEnd={this.handleSelectEnd}
+              placeholder={['开始时间', '结束时间']}
+              disabledDate={this.disabledDateStart}
+              key={`${missionViewType}创建时间`}
+              format={dateFormat}
             />
           */ }
+          <DateRangePicker
+            initialDate={[startTime, endTime]}
+            onChange={this.handleCreateDateChange}
+            isOutsideRange={this.disabledDateStart}
+            selectStart={this.handleSelectStart}
+            selectEnd={this.handleSelectEnd}
+          />
         </div>
       </div>);
     } else {
