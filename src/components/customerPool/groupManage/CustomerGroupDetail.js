@@ -577,6 +577,14 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
+  // Alert关闭时回调，将multiErrmsg置空
+  @autobind
+  handleCloseAlert() {
+    this.setState({
+      multiErrmsg: '',
+    });
+  }
+
   /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
@@ -825,6 +833,7 @@ export default class CustomerGroupDetail extends PureComponent {
               <Alert
                 message={newMultiErrmsg}
                 type="error"
+                onClose={this.handleCloseAlert}
                 closable
               />
             </div>
