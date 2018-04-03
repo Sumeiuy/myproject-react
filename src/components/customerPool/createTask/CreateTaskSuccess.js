@@ -59,6 +59,7 @@ export default class CreateTaskSuccess extends PureComponent {
     const {
       clearSubmitTaskFlowResult,
       location: { query = EMPTY_OBJECT },
+      onCloseTab,
     } = this.props;
     const { source } = query;
     clearSubmitTaskFlowResult();
@@ -71,6 +72,10 @@ export default class CreateTaskSuccess extends PureComponent {
         url: '/taskList',
         tabId: 'FSP_MOT_SELFBUILT_TASK',
       });
+    } else {
+      // 其它入口
+      // 倒计时还没结束，手动切换tab，则直接关闭当前tab
+      onCloseTab();
     }
   }
 
