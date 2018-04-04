@@ -127,64 +127,6 @@ export default class AddMorningBoradcast extends PureComponent {
     }
   }
 
-  //  初始化state
-  @autobind
-  resetState() {
-    this.setState({
-      audioFileList: [],
-      audioError: true, // audioFile 校验
-      otherFileList: [],
-      finalNewUuid: [],
-    });
-  }
-  setSourceValue(itemDetail) {
-    const { resourceToUpload } = this;
-    const { audioFileList, audioFileId, otherFileList, otherFileId } = itemDetail;
-    if (itemDetail) {
-      this.setState({
-        audioFileList: resourceToUpload(audioFileList, audioFileId),
-        otherFileList: resourceToUpload(otherFileList, otherFileId),
-        finalNewUuid: [audioFileId, otherFileId],
-      });
-    }
-  }
-
-  @autobind()
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '提交',
-    },
-  })
-  handleSubmit() {
-    const { saveBoradcast, newsId } = this.props;
-    const { audioFileList, finalNewUuid } = this.state;
-    this.props.form.validateFields((err, values) => {
-      if (!audioFileList.length) {
-        this.setState({ audioError: false });
-        return;
-      }
-      this.setState({ audioError: true });
-      let query = values;
-      if (!err) {
-        query = {
-          ...query,
-          audioFileId: finalNewUuid[0],
-          otherFileId: finalNewUuid[1],
-        };
-        if (newsId !== createNewsId) {
-          query = {
-            ...query,
-            newsId,
-            updatedBy: values.createdBy,
-            createdBy: null,
-          };
-        }
-        saveBoradcast(query);
-      }
-    });
-  }
-
   @autobind()
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   onHandleCancel() {
@@ -202,16 +144,6 @@ export default class AddMorningBoradcast extends PureComponent {
     handleCancel();
   }
 
-  @autobind()
-  getInitDate(type) {
-    const { newsId, boradcastDetail } = this.props;
-    const itemDetail = boradcastDetail[newsId];
-    if (!itemDetail) return '';
-    const { updatedBy } = itemDetail;
-    if (type === 'createdBy') return updatedBy || itemDetail[type];
-    return itemDetail[type];
-  }
-
   // audio upload --> start
   onAudioUploading(fileList) {
     const audioFileList = fileList.filter((fileItem) => {
@@ -223,6 +155,7 @@ export default class AddMorningBoradcast extends PureComponent {
     this.setState({ audioFileList });
   }
 
+  @autobind
   onOtherUploading(fileList) {
     const otherFileList = fileList.filter((fileItem) => {
       if (fileItem.response) {
@@ -232,6 +165,7 @@ export default class AddMorningBoradcast extends PureComponent {
     });
     this.setState({ otherFileList });
   }
+
   @autobind
   onDone(file) {
     const { finalNewUuid } = this.state;
@@ -337,6 +271,7 @@ export default class AddMorningBoradcast extends PureComponent {
     }
     return false;
   }
+
   @autobind
   onBeforeUpload(file) {
     const audioType = this.getInitDate('newsTypeCode');
@@ -363,6 +298,30 @@ export default class AddMorningBoradcast extends PureComponent {
     }
     return true;
   }
+  // audio upload --> end
+
+  setSourceValue(itemDetail) {
+    const { resourceToUpload } = this;
+    const { audioFileList, audioFileId, otherFileList, otherFileId } = itemDetail;
+    if (itemDetail) {
+      this.setState({
+        audioFileList: resourceToUpload(audioFileList, audioFileId),
+        otherFileList: resourceToUpload(otherFileList, otherFileId),
+        finalNewUuid: [audioFileId, otherFileId],
+      });
+    }
+  }
+
+  @autobind()
+  getInitDate(type) {
+    const { newsId, boradcastDetail } = this.props;
+    const itemDetail = boradcastDetail[newsId];
+    if (!itemDetail) return '';
+    const { updatedBy } = itemDetail;
+    if (type === 'createdBy') return updatedBy || itemDetail[type];
+    return itemDetail[type];
+  }
+
   @autobind
   resourceToUpload(resource, attachment) {
     if (Array.isArray(resource)) {
@@ -379,7 +338,53 @@ export default class AddMorningBoradcast extends PureComponent {
     }
     return [];
   }
-  // audio upload --> end
+
+  @autobind()
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '提交',
+    },
+  })
+  handleSubmit() {
+    const { saveBoradcast, newsId } = this.props;
+    const { audioFileList, finalNewUuid } = this.state;
+    this.props.form.validateFields((err, values) => {
+      if (!audioFileList.length) {
+        this.setState({ audioError: false });
+        return;
+      }
+      this.setState({ audioError: true });
+      let query = values;
+      if (!err) {
+        query = {
+          ...query,
+          audioFileId: finalNewUuid[0],
+          otherFileId: finalNewUuid[1],
+        };
+        if (newsId !== createNewsId) {
+          query = {
+            ...query,
+            newsId,
+            updatedBy: values.createdBy,
+            createdBy: null,
+          };
+        }
+        saveBoradcast(query);
+      }
+    });
+  }
+
+  //  初始化state
+  @autobind
+  resetState() {
+    this.setState({
+      audioFileList: [],
+      audioError: true, // audioFile 校验
+      otherFileList: [],
+      finalNewUuid: [],
+    });
+  }
 
   render() {
     const {
@@ -435,6 +440,8 @@ export default class AddMorningBoradcast extends PureComponent {
         visible={this.props.visible}
         onOk={this.handleSubmit}
         onCancel={this.onHandleCancel}
+        cancelText="取消"
+        okText="确定"
       >
         <div
           ref={(c) => { this.formWrapRef = c; }}

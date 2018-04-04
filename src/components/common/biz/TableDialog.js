@@ -177,6 +177,7 @@ export default class TableDialog extends Component {
             <Search
               placeholder={placeholder}
               onSearch={(value) => { this.handleSearch(value); }}
+              enterButton
             />
             :
             null

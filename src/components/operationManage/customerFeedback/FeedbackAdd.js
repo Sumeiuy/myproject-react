@@ -126,6 +126,7 @@ export default class MissionBind extends PureComponent {
             onChange={this.handleChangeKeyword}
             style={{ width: 320 }}
             value={keyword}
+            enterButton
           />
         </div>
         <div className={styles.tableBox}>

@@ -321,6 +321,7 @@ export default class MissionBind extends PureComponent {
                   placeholder="事件ID/事件名称"
                   style={{ width: 186 }}
                   onSearch={this.searchMotMission}
+                  enterButton
                 /> :
                 null
             }

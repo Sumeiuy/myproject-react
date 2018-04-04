@@ -127,6 +127,7 @@ export default class ToDo extends PureComponent {
                 placeholder="请输入任务名称"
                 defaultValue={keyword}
                 onSearch={this.onSearch}
+                enterButton
               />
             </div>
           </Col>
