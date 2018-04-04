@@ -221,7 +221,8 @@ const mapDispatchToProps = {
   // 查询问卷调查题目
   // 展示loading
   getTempQuesAndAnswer: fetchDataFunction(true, effects.getTempQuesAndAnswer),
-  saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
+  // 展示全局的loading
+  saveAnswersByType: fetchDataFunction(true, effects.saveAnswersByType, true),
   countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),
   exportCustListExcel: fetchDataFunction(true, effects.exportCustListExcel),

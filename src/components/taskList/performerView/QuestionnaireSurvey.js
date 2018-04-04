@@ -17,7 +17,6 @@ const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 const { TextArea } = Input;
 const FormItem = Form.Item;
-const create = Form.create;
 
 // 后台返回题目类型
 const TYPE = {
@@ -28,7 +27,6 @@ const TYPE = {
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
-@create()
 export default class QuestionnaireSurvey extends PureComponent {
 
   static propTypes = {
@@ -63,15 +61,13 @@ export default class QuestionnaireSurvey extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleOk() {
-    const { form, onOk } = this.props;
-    onOk(form);
+    this.props.onOk();
   }
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleCancel() {
-    const { form, onCancel } = this.props;
-    onCancel(form);
+    this.props.onCancel();
   }
 
   // 根据返回的问题列表，判断不同类型显示

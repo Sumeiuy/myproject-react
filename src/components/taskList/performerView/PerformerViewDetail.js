@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { message } from 'antd';
+import { message, Form } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -24,6 +24,9 @@ import styles from './performerViewDetail.less';
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
 
+const create = Form.create;
+
+@create()
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -45,6 +48,7 @@ export default class PerformerViewDetail extends PureComponent {
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
     modifyLocalTaskList: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -193,8 +197,8 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
-  handleOk(form) {
-    const { saveAnswersByType, basicInfo: { templateId } } = this.props;
+  handleOk() {
+    const { saveAnswersByType, basicInfo: { templateId }, form } = this.props;
     const {
       checkboxData: stv,
       radioData,
@@ -260,7 +264,7 @@ export default class PerformerViewDetail extends PureComponent {
 
   // 关闭modal
   @autobind
-  handleCancel(form) {
+  handleCancel() {
     this.setState({
       visible: false,
       keyIndex: this.state.keyIndex + 1,
@@ -268,7 +272,7 @@ export default class PerformerViewDetail extends PureComponent {
       isShowErrorCheckbox: {},
     });
     // 重置组件表单值
-    form.resetFields();
+    this.props.form.resetFields();
   }
 
   // 处理选中答案数据
@@ -357,6 +361,7 @@ export default class PerformerViewDetail extends PureComponent {
       },
       answersList,
       currentId,
+      form,
     } = this.props;
     const {
       visible,
@@ -471,6 +476,7 @@ export default class PerformerViewDetail extends PureComponent {
               key={keyIndex}
               isDisabled={isDisabled}
               isShowErrorCheckbox={isShowErrorCheckbox}
+              form={form}
             /> : null
         }
       </div>
