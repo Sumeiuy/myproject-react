@@ -623,8 +623,6 @@ export default class Pageheader extends PureComponent {
             onChange={this.handleCreateDateChange}
             disabledRange={this.disabledRange}
             isInsideOffSet={this.isInsideOffSet}
-            // selectStart={this.handleSelectStart}
-            // selectEnd={this.handleSelectEnd}
           />
         </div>
       </div>);

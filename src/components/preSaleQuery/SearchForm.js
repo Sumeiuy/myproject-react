@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-19 17:19:08
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 19:19:42
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-04 14:54:11
  * @description 售前适当性查询查询组件
  */
 import React, { Component } from 'react';
@@ -80,7 +80,6 @@ export default class SearchForm extends Component {
             onSelect={this.handleSelectCustItem}
             onSearch={onQueryCustList}
             name="custList"
-            isImmediatelySearch
             width={276}
           />
         </FormItem>
@@ -97,7 +96,6 @@ export default class SearchForm extends Component {
             onSelect={this.handleSelectProductItem}
             onSearch={onQueryProductList}
             name="productList"
-            isImmediatelySearch
             width={276}
           />
         </FormItem>
