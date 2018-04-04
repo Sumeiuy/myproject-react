@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-02 14:17:12
+ * @Last Modified time: 2018-04-04 09:33:43
  */
 
 
@@ -119,8 +119,6 @@ export default class ServiceRecordContent extends PureComponent {
     beforeUpload: () => { },
     isUploadFileManually: true,
     custUuid: '',
-    isShowServeStatusError: false,
-    isShowServiceContentError: false,
   }
 
   constructor(props) {
@@ -169,11 +167,19 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getData() {
     const { serviceStatus, serviceContent } = this.state;
+    const { isEntranceFromPerformerView } = this.props;
     const isShowServiceContentError = !serviceContent || serviceContent.length > 1000;
-    const isShowServeStatusError = !serviceStatus;
+    let isShowServeStatusError = false;
+    // 来自执行者视图，需要校验服务状态
+    if (isEntranceFromPerformerView) {
+      isShowServeStatusError = !serviceStatus;
+      this.setState({
+        isShowServeStatusError,
+      });
+    }
 
+    // 默认都校验服务记录文本
     this.setState({
-      isShowServeStatusError,
       isShowServiceContentError,
     });
 
@@ -618,7 +624,7 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 空方法，用于日志上传
   @logable({ type: 'Click', payload: { name: '附件下载' } })
-  handleDownloadClick() {}
+  handleDownloadClick() { }
 
   @autobind
   renderServiceStatusChoice() {
