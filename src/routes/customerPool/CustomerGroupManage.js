@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-29 10:02:52
+ * @Last Modified time: 2018-04-04 17:08:38
  */
 
 import React, { PureComponent } from 'react';
@@ -461,11 +461,10 @@ export default class CustomerGroupManage extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit(e) {
     if (this.detailRef) {
-      const { groupId, includeCustIdList } = this.detailRef.refs
-        .wrappedComponent.refs.formWrappedComponent.getData();
+      const { groupId, includeCustIdList } = this.detailRef.getData();
 
-      e.preventDefault();
-      this.detailRef.validateFields((err, values) => {
+      e.persist();
+      this.detailRef.getForm().validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
           const { name = '', description } = values;

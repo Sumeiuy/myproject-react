@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-29 10:03:27
+ * @Last Modified time: 2018-04-04 17:03:02
  */
 
 import React, { PureComponent } from 'react';
@@ -137,6 +137,11 @@ export default class CustomerGroupDetail extends PureComponent {
       groupId,
       includeCustIdList,
     };
+  }
+
+  @autobind
+  getForm() {
+    return this.props.form;
   }
 
   /**
