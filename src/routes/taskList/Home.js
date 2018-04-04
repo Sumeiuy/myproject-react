@@ -218,7 +218,9 @@ const mapDispatchToProps = {
   countFlowStatus: fetchDataFunction(true, effects.countFlowStatus),
   // 获取添加服务记录中的任务反馈
   getServiceType: fetchDataFunction(true, effects.getServiceType),
-  getTempQuesAndAnswer: fetchDataFunction(false, effects.getTempQuesAndAnswer),
+  // 查询问卷调查题目
+  // 展示loading
+  getTempQuesAndAnswer: fetchDataFunction(true, effects.getTempQuesAndAnswer),
   saveAnswersByType: fetchDataFunction(false, effects.saveAnswersByType),
   countAnswersByType: fetchDataFunction(false, effects.countAnswersByType),
   countExamineeByType: fetchDataFunction(false, effects.countExamineeByType),

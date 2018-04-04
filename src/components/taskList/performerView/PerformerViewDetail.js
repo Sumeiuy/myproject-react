@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Form, message } from 'antd';
+import { message } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -23,8 +23,7 @@ import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
-const create = Form.create;
-@create()
+
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -38,7 +37,6 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    form: PropTypes.object.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
@@ -195,14 +193,15 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
-  handleOk() {
-    const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
+  handleOk(form) {
+    const { saveAnswersByType, basicInfo: { templateId } } = this.props;
     const {
       checkboxData: stv,
       radioData,
       areaTextData,
       isShowErrorCheckbox,
-      checkBoxQuesId } = this.state;
+      checkBoxQuesId,
+    } = this.state;
     const checkboxData = _.flatten(_.map(stv, item => item));
     let allCheckbox = null;
     checkBoxQuesId.forEach((item) => {
@@ -261,13 +260,15 @@ export default class PerformerViewDetail extends PureComponent {
 
   // 关闭modal
   @autobind
-  handleCancel() {
+  handleCancel(form) {
     this.setState({
       visible: false,
       keyIndex: this.state.keyIndex + 1,
       // 清除状态
       isShowErrorCheckbox: {},
     });
+    // 重置组件表单值
+    form.resetFields();
   }
 
   // 处理选中答案数据
@@ -354,7 +355,6 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageSize,
         targetCustomerState = '',
       },
-      form,
       answersList,
       currentId,
     } = this.props;
@@ -457,20 +457,22 @@ export default class PerformerViewDetail extends PureComponent {
               />
           }
         </div>
-        <QuestionnaireSurvey
-          ref={ref => this.questionForm = ref}
-          form={form}
-          visible={visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          onCheckChange={this.handleCheckboxChange}
-          onRadioChange={this.handleRadioChange}
-          onAreaText={this.handleAreaText}
-          answersList={answersList}
-          key={keyIndex}
-          isDisabled={isDisabled}
-          isShowErrorCheckbox={isShowErrorCheckbox}
-        />
+        {
+          visible ?
+            <QuestionnaireSurvey
+              ref={ref => this.questionForm = ref}
+              visible={visible}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+              onCheckChange={this.handleCheckboxChange}
+              onRadioChange={this.handleRadioChange}
+              onAreaText={this.handleAreaText}
+              answersList={answersList}
+              key={keyIndex}
+              isDisabled={isDisabled}
+              isShowErrorCheckbox={isShowErrorCheckbox}
+            /> : null
+        }
       </div>
     );
   }
