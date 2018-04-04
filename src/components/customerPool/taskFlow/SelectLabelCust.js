@@ -242,6 +242,7 @@ export default class SelectLabelCust extends PureComponent {
             width: '186px',
           }}
           defaultValue={condition}
+          enterButton
         />
         <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
         <TaskSearchRow

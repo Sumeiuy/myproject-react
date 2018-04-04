@@ -153,6 +153,7 @@ export default class DropdownSelect extends PureComponent {
         placeholder={placeholder}
         onSearch={this.handleSearch}
         onChange={this.handleSearchChange}
+        enterButton
       />
     );
   }

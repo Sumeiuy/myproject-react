@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-04 15:12:58
+ * @Last Modified time: 2018-04-04 15:30:40
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -29,8 +29,10 @@ const END_DATE = 'endDate';
 export default class CommonDateRangePicker extends PureComponent {
   static propTypes = {
     displayFormat: PropTypes.string,
-    placeholderText: PropTypes.arrayOf(PropTypes.string),
-    initialDate: PropTypes.arrayOf(PropTypes.object).isRequired,
+    startDatePlaceholderText: PropTypes.string,
+    endDatePlaceholderText: PropTypes.string,
+    initialEndDate: PropTypes.object,
+    initialStartDate: PropTypes.object,
     onChange: PropTypes.func,
     disabledRange: PropTypes.func,
     isInsideOffSet: PropTypes.func,
@@ -38,8 +40,10 @@ export default class CommonDateRangePicker extends PureComponent {
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
-    placeholderText: ['开始时间', '结束时间'],
-    initialDate: [null, null],
+    startDatePlaceholderText: '开始时间',
+    endDatePlaceholderText: '结束时间',
+    initialEndDate: null,
+    initialStartDate: null,
     onChange: _.noop,
     // 是否使用用户自定义的时间段区间
     hasCustomerOffset: false,
@@ -52,11 +56,11 @@ export default class CommonDateRangePicker extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { initialDate } = props;
+    const { initialEndDate, initialStartDate } = props;
     this.state = {
       focusedInput: null,
-      startDate: initialDate[0],
-      endDate: initialDate[1],
+      startDate: initialStartDate,
+      endDate: initialEndDate,
       // 判断起始和结束日期有无变化
       dateHasChanged: false,
       // 判断是否用户选择了第一个日期
@@ -284,24 +288,19 @@ export default class CommonDateRangePicker extends PureComponent {
 
   render() {
     const {
-      placeholderText,
-      displayFormat,
-    } = this.props;
-    const {
       focusedInput,
       endDate,
       startDate,
     } = this.state;
     // 挑选出airbnb的props
     const airbnbDrpProps = _.omit(this.props, [
-      'displayFormat',
-      'placeholderText',
-      'initialDate',
       'onChange',
       'isOutsideRange',
       'hasCustomerOffset',
       'disabledRange',
       'isInsideOffSet',
+      'initialEndDate',
+      'initialStartDate',
     ]);
 
     return (
@@ -313,8 +312,6 @@ export default class CommonDateRangePicker extends PureComponent {
           customArrowIcon="~"
           startDate={startDate}
           endDate={endDate}
-          startDatePlaceholderText={placeholderText[0]}
-          endDatePlaceholderText={placeholderText[1]}
           onDatesChange={this.handleDatesChange}
           isOutsideRange={this.isOutsideRange}
           monthFormat="YYYY[年]MMMM"
@@ -322,7 +319,6 @@ export default class CommonDateRangePicker extends PureComponent {
           startDateId="startDateID"
           endDateId="endDateID"
           focusedInput={focusedInput}
-          displayFormat={displayFormat}
           navPrev={<Icon type="left" />}
           navNext={<Icon type="right" />}
           onClose={this.handleCalenderClose}

@@ -392,6 +392,7 @@ export default class Pageheader extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
   handleSearch(value) {
+    console.warn('点击了搜索', value);
     this.props.filterCallback({
       missionName: value,
     });
@@ -619,7 +620,8 @@ export default class Pageheader extends PureComponent {
           */ }
           <DateRangePicker
             hasCustomerOffset
-            initialDate={[startTime, endTime]}
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleCreateDateChange}
             disabledRange={this.disabledRange}
             isInsideOffSet={this.isInsideOffSet}
@@ -742,6 +744,7 @@ export default class Pageheader extends PureComponent {
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
+              enterButton
             />
           </div>
 

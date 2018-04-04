@@ -3,6 +3,21 @@
 .broadcastListWrap {
   width: 100%;
   background: @head_background;
+  .header {
+    :global {
+      .ant-input-suffix {
+        button {
+          background-color: transparent;
+          border-color: transparent;
+          color: #333;
+          &:visited, &:active {
+            background-color: transparent;
+            border-color: transparent;
+          }
+        }
+      }
+    }
+  }
   .body {
     background: white;
     margin: 0 15px;

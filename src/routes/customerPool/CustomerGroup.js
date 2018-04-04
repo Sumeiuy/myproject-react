@@ -24,7 +24,7 @@ import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
 
-import styles from './customerGroup_.less';
+import styles from './customerGroup.less';
 
 const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
 const CUR_PAGESIZE = 10; // 默认页大小
@@ -385,6 +385,7 @@ export default class CustomerGroup extends PureComponent {
                             placeholder="请输入分组名称"
                             onSearch={this.handleSearch}
                             width={200}
+                            enterButton
                           />
                         </div>
                       </Col>

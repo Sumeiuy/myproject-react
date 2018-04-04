@@ -79,9 +79,11 @@ export default class AddNewGroup extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    console.warn('this.props', this.props);
+    console.warn('this.props.form', this.props.form);
     const { count } = this.props;
     return (
-      <Form onSubmit={this.addNewGroupSubmit}>
+      <Form onSubmit={this.addNewGroupSubmit} className={styles.formFix}>
         <FormItem
           {...formItemLayout}
           label="分组名称"
