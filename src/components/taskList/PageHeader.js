@@ -620,12 +620,11 @@ export default class Pageheader extends PureComponent {
           */ }
           <DateRangePicker
             hasCustomerOffset
-            initialDate={[startTime, endTime]}
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleCreateDateChange}
             disabledRange={this.disabledRange}
             isInsideOffSet={this.isInsideOffSet}
-            // selectStart={this.handleSelectStart}
-            // selectEnd={this.handleSelectEnd}
           />
         </div>
       </div>);
