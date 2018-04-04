@@ -143,7 +143,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
 
   @autobind
   resetData() {
-    this.cleanRedux();
+    this.clearRedux();
     this.uploadComponent.resetUpload();
     this.setState({
       unSubProList: [],
