@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:43
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-04 16:27:05
  */
 
 import React, { PureComponent } from 'react';
@@ -269,6 +269,13 @@ export default class CustomerGroupDetail extends PureComponent {
         curPageCustList,
         includeCustListSize: newCustListSize,
         curPageNum: curPage,
+      }, () => {
+        const { totalRecordNum: deleteAfterTotalRecordNum } = this.state;
+        if (deleteAfterTotalRecordNum < 1) {
+          this.setState({
+            attachmentId: '',
+          });
+        }
       });
     } else {
       // 直接提示删除确认框，然后删除
@@ -288,6 +295,13 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   handleSelectChange(key, value) {
     const { includeCustIdList, groupId } = this.state;
+    // 新建页面切换客户添加方式，需要将之前已经存在的附件、报错信息置空
+    this.setState({
+      attachmentId: '',
+      multiErrmsg: '',
+      importVisible: false,
+      file: {},
+    });
     // groupId为空，为新建页面
     // includeCustIdList不为空，说明已经添加了客户，此时若切换需要弹出提示信息
     if (!_.isEmpty(includeCustIdList) && _.isEmpty(groupId)) {
@@ -296,7 +310,7 @@ export default class CustomerGroupDetail extends PureComponent {
         content: '在新增模式下，新添加的客户需要提交才能生效，如果切换添加客户方式将会覆盖之前的数据，是否切换?',
         onOk: () => {
           const isDefaultType = value === defaultType;
-          // 新建页面切换客户添加方式，需要将之前已经存在的东西置空
+          // 新建页面切换客户添加方式，需要将之前已经存在的数据置空
           this.setState({
             [key]: value,
             isDefaultType,
@@ -304,7 +318,6 @@ export default class CustomerGroupDetail extends PureComponent {
             curPageCustList: [],
             includeCustList: [],
             totalRecordNum: 0,
-            attachmentId: '',
           });
         },
       });
