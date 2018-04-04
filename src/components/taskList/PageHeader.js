@@ -502,9 +502,9 @@ export default class Pageheader extends PureComponent {
     this.props.creatSeibelModal();
   }
 
-  // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
+  // 创建者视图 只能选择今天往前的日期，其余时间不可选
   @autobind
-  disabledDateStart(value) {
+  disabledRange(value) {
     if (!value) {
       return false;
     }
@@ -512,16 +512,13 @@ export default class Pageheader extends PureComponent {
     return time > moment().subtract(0, 'days');
   }
 
+  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
+  // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
-  handleSelectStart(day) {
-    console.warn('handleSelectStart');
-    console.warn(day);
-  }
-
-  @autobind
-  handleSelectEnd(day) {
-    console.warn('handleSelectEnd');
-    console.warn(day);
+  isInsideOffSet({ day, firstDay }) {
+    if (firstDay === null) return true;
+    return day >= firstDay.clone().subtract(10, 'days')
+      && day <= firstDay.clone().add(10, 'days');
   }
 
   // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
@@ -615,11 +612,13 @@ export default class Pageheader extends PureComponent {
             />
           */ }
           <DateRangePicker
+            hasCustomerOffset
             initialDate={[startTime, endTime]}
             onChange={this.handleCreateDateChange}
-            isOutsideRange={this.disabledDateStart}
-            selectStart={this.handleSelectStart}
-            selectEnd={this.handleSelectEnd}
+            disabledRange={this.disabledRange}
+            isInsideOffSet={this.isInsideOffSet}
+            // selectStart={this.handleSelectStart}
+            // selectEnd={this.handleSelectEnd}
           />
         </div>
       </div>);
