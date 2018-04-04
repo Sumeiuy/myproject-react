@@ -1,16 +1,19 @@
 import apiCreator from './apiCreator';
 import request from './request';
 import sagaEffects from './sagaEffects';
-import { dispatchTabPane,
-          openRctTab,
-          openFspTab,
-          openInTab,
-          closeRctTab,
-          closeFspTab,
-          removeTab,
-          navToTab,
-          navTo,
-          linkTo } from './controlPane';
+import {
+  dispatchTabPane,
+  openRctTab,
+  openFspTab,
+  openInTab,
+  closeRctTab,
+  closeFspTab,
+  removeTab,
+  navToTab,
+  navTo,
+  linkTo,
+  saveTabUrl,
+} from './controlPane';
 
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
@@ -31,4 +34,5 @@ export default {
   navToTab,
   navTo,
   linkTo,
+  saveTabUrl,
 };

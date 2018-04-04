@@ -32,7 +32,6 @@ export default class SelectAssembly extends PureComponent {
     subType: PropTypes.string,
     validResult: PropTypes.object,
     shouldeCheck: PropTypes.bool,
-    clearSelectCust: PropTypes.func,
   }
 
   static defaultProps = {
@@ -44,7 +43,6 @@ export default class SelectAssembly extends PureComponent {
     onValidateCust: _.noop,
     unfinishRoute: () => {},
     dataSource: [],
-    clearSelectCust: _.noop,
   }
 
   constructor(props) {
@@ -173,7 +171,6 @@ export default class SelectAssembly extends PureComponent {
       // 删除客户
       // 向父组件传递一个空对象
       this.props.onSelectValue(null);
-      this.props.clearSelectCust();
     }
   }
 

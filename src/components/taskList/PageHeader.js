@@ -30,6 +30,8 @@ import {
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
+  STATE_EXECUTE_CODE,
+  STATE_ALL_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -45,7 +47,7 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: '', show: true };
+const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
@@ -541,11 +543,15 @@ export default class Pageheader extends PureComponent {
     const stateOptions = this.constructorDataType(this.missionStatus);
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
-
+    let statusValue = status;
     if (filterControl === CONTROLLER) {
-      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
+      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
@@ -553,19 +559,19 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
+      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_EXECUTE_CODE;
+      }
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-    }
-
-    let statusValue = status;
-    // 判断当前在url上的status
-    if (_.isEmpty(status) || _.isEmpty(_.find(stateAllOptions, item => item.value === status))) {
-      // 在所提供的列表中找不到
-      // 则将status置为默认的，所有
-      statusValue = '所有状态';
+      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
     }
 
     return {

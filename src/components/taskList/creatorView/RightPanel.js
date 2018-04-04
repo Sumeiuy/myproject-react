@@ -54,7 +54,7 @@ export default class RightPanel extends PureComponent {
     priviewCustFileData: PropTypes.object,
     taskBasicInfo: PropTypes.object,
     location: PropTypes.object.isRequired,
-    push: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
     flowId: PropTypes.string,
     clearCreateTaskData: PropTypes.func,
   }
