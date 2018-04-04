@@ -15,9 +15,6 @@ import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
-const MAX_LENGTH = 1000;
-
-
 /**
  * 将数组对象中的id和name转成对应的key和value
  * @param {*} arr 原数组
@@ -99,6 +96,11 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
+    const data = this.serviceRecordContentRef.getData();
+    if (!data) {
+      return;
+    }
+
     const {
       serviceWay,
       serviceType,
@@ -107,20 +109,9 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackDate,
       feedbackType,
       feedbackTypeChild,
-      // serviceStatus,
-      // uploadedFileKey,
       serviceContent,
       custUuid,
-    } = this.serviceRecordContentRef.getData();
-
-    if (!serviceContent) {
-      message.error('请输入此次服务的内容');
-      return;
-    }
-    if (serviceContent.length > MAX_LENGTH) {
-      message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
-      return;
-    }
+    } = data;
 
     const {
       id,

@@ -379,7 +379,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const errorProps = isShowErrorInfo ? {
       validateStatus: 'error',
-      help: `任务提示不能为空，最多${MAX_LENGTH}个字符`,
+      help: `任务提示不能为空，最多${MAX_LENGTH}个汉字`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -410,7 +410,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
       validateStatus: 'error',
-      help: `服务策略不能为空，最多${MAX_LENGTH}个字符`,
+      help: `服务策略不能为空，最多${MAX_LENGTH}个汉字`,
 
     } : null;
 
