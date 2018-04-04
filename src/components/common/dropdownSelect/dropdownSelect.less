@@ -12,11 +12,12 @@
   .popoverTitle {
 		flex: 1 1 auto;
 		padding-right: 8px;
-		color: rgba(0, 0, 0, .25);
+		color: #000;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		line-height: 28px;
+		font-size: 14px;
 	}
 	.popoverIcon {
 		flex: 0 0 auto;
@@ -69,5 +70,16 @@
     .ant-popover-inner-content {
       padding: 0 10px 10px;
     }
+		.ant-input-suffix {
+			button {
+				background-color: transparent;
+				border-color: transparent;
+				color: #333;
+				&:visited, &:active {
+					background-color: transparent;
+					border-color: transparent;
+				}
+			}
+		}
   }
 }

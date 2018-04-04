@@ -228,6 +228,26 @@ export default class TableTransfer extends Component {
     return int2Float(totalRate);
   }
 
+  // firfox浏览器上，table设置scroll的y属性时，无论是否上下滑动，竖向滚动条的位置始终存在。
+  // 选择性的设置scroll的y属性，只有在数据有children时，设置，其他，不设置。
+  @autobind
+  getTableScroll(data) {
+    const { scrollX } = this.props;
+    const hasChildren = this.isHasChildren(data);
+    let x = 0;
+    let y = 0;
+    if (scrollX === '' && hasChildren) {
+      y = 248; // 245 groogle
+    }
+    if (scrollX !== '') {
+      x = scrollX;
+      if (hasChildren) {
+        y = 248;
+      }
+    }
+    return { y, x };
+  }
+
   @autobind
   handleSortClick(which, key) {
     return () => {
@@ -374,26 +394,6 @@ export default class TableTransfer extends Component {
       item => item.children,
     );
     return !_.isEmpty(newData);
-  }
-
-  // firfox浏览器上，table设置scroll的y属性时，无论是否上下滑动，竖向滚动条的位置始终存在。
-  // 选择性的设置scroll的y属性，只有在数据有children时，设置，其他，不设置。
-  @autobind
-  getTableScroll(data) {
-    const { scrollX } = this.props;
-    const hasChildren = this.isHasChildren(data);
-    let x = 0;
-    let y = 0;
-    if (scrollX === '' && hasChildren) {
-      y = 248; // 245 groogle
-    }
-    if (scrollX !== '') {
-      x = scrollX;
-      if (hasChildren) {
-        y = 248;
-      }
-    }
-    return { y, x };
   }
 
   // 为child行，第一列增加check框
@@ -814,6 +814,7 @@ export default class TableTransfer extends Component {
                   <Search
                     placeholder={placeholder}
                     onSearch={(value) => { this.handleSearch(value); }}
+                    enterButton
                   />
                 </div>
               ) : (null)

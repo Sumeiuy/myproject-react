@@ -11,7 +11,6 @@ import CreateBoardModal from '../../components/modals/CreateBoardModal';
 import BackConfirmModal from '../../components/modals/BackConfirmModal';
 import PublishConfirmModal from '../../components/modals/PublishConfirmModal';
 import DeleteBoardModal from '../../components/modals/DeleteBoardModal';
-import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
 import Transfer from '../../components/common/biz/TableTransfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
@@ -25,8 +24,6 @@ import EditModal from '../../components/relation/EditModal';
 
 import {
   confirmData,
-  employeeData,
-  employeeColumns,
   subscribelData,
   unsubcribeData,
   // data,
@@ -224,17 +221,6 @@ export default class TemplModal extends PureComponent {
       confirm: this.openDeleteBoardModal,
     };
 
-    const searchProps = {
-      onOk: this.handleOk,
-      dataSource: employeeData,
-      columns: employeeColumns,
-      title: '选择下一审批人员',
-      placeholder: '员工号/员工姓名',
-      onSearch: this.handleSearch,
-      renderSelected: this.renderSelectedElem,
-      rowKey: 'id',
-    };
-
     const confirmProps = {
       visible: confirmModal,
       content: confirmData,
@@ -357,8 +343,6 @@ export default class TemplModal extends PureComponent {
         <Button onClick={this.openDeleteBoardModal}>删除</Button>
         <DeleteBoardModal {...deleteBoardMProps} />
         <br />
-        <br />
-        <SearchModal {...searchProps} />
         <br />
         <EditModal {...eidtModalProps} />
         <br />

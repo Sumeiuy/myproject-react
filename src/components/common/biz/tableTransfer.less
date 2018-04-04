@@ -30,6 +30,19 @@
     height: 32px;
     line-height: 32px;
     margin-bottom: 13px;
+    :global {
+      .ant-input-suffix {
+        button {
+          background-color: transparent;
+          border-color: transparent;
+          color: #333;
+          &:visited, &:active {
+            background-color: transparent;
+            border-color: transparent;
+          }
+        }
+      }
+    }
   }
   .leftHeader {
     justify-content: space-between;

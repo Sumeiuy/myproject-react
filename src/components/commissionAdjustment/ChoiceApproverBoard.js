@@ -155,6 +155,7 @@ export default class ChoiceApproverBoard extends PureComponent {
                 width: '300px',
               }}
               onSearch={this.filterApprovalUser}
+              enterButton
             />
           </div>
           <div className={styles.approverListBox}>
