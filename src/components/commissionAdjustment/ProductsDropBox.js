@@ -80,6 +80,9 @@ export default class ProductsDropdownBox extends PureComponent {
     this.setState({
       value: '',
       iconType: 'search',
+    }, () => {
+      // 此时需将外层目标产品值置空
+      this.selectProduct('');
     });
   }
 

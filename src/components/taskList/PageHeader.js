@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
-// import DateRangePicker from '../common/dateRangePicker';
+import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -30,6 +30,8 @@ import {
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
+  STATE_EXECUTE_CODE,
+  STATE_ALL_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -45,7 +47,7 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: '', show: true };
+const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
@@ -502,9 +504,9 @@ export default class Pageheader extends PureComponent {
     this.props.creatSeibelModal();
   }
 
-  // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
+  // 创建者视图 只能选择今天往前的日期，其余时间不可选
   @autobind
-  disabledDateStart(value) {
+  disabledRange(value) {
     if (!value) {
       return false;
     }
@@ -512,16 +514,13 @@ export default class Pageheader extends PureComponent {
     return time > moment().subtract(0, 'days');
   }
 
+  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
+  // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
-  handleSelectStart(day) {
-    console.warn('handleSelectStart');
-    console.warn(day);
-  }
-
-  @autobind
-  handleSelectEnd(day) {
-    console.warn('handleSelectEnd');
-    console.warn(day);
+  isInsideOffSet({ day, firstDay }) {
+    if (firstDay === null) return true;
+    return day >= firstDay.clone().subtract(10, 'days')
+      && day <= firstDay.clone().add(10, 'days');
   }
 
   // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
@@ -544,11 +543,15 @@ export default class Pageheader extends PureComponent {
     const stateOptions = this.constructorDataType(this.missionStatus);
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
-
+    let statusValue = status;
     if (filterControl === CONTROLLER) {
-      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
+      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
@@ -556,19 +559,19 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
+      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_EXECUTE_CODE;
+      }
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-    }
-
-    let statusValue = status;
-    // 判断当前在url上的status
-    if (_.isEmpty(status) || _.isEmpty(_.find(stateAllOptions, item => item.value === status))) {
-      // 在所提供的列表中找不到
-      // 则将status置为默认的，所有
-      statusValue = '所有状态';
+      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
     }
 
     return {
@@ -603,24 +606,26 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            ref={ref => this.timers = ref}
-            value={[startTime, endTime]}
-            onChange={this.handleCreateDateChange}
-            placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateStart}
-            key={`${missionViewType}创建时间`}
-            format={dateFormat}
-          />
           { /*
-            <DateRangePicker
-              initialDate={[startTime, endTime]}
+            <RangePicker
+              ref={ref => this.timers = ref}
+              value={[startTime, endTime]}
               onChange={this.handleCreateDateChange}
-              isOutsideRange={this.disabledDateStart}
-              selectStart={this.handleSelectStart}
-              selectEnd={this.handleSelectEnd}
+              placeholder={['开始时间', '结束时间']}
+              disabledDate={this.disabledDateStart}
+              key={`${missionViewType}创建时间`}
+              format={dateFormat}
             />
           */ }
+          <DateRangePicker
+            hasCustomerOffset
+            initialDate={[startTime, endTime]}
+            onChange={this.handleCreateDateChange}
+            disabledRange={this.disabledRange}
+            isInsideOffSet={this.isInsideOffSet}
+            // selectStart={this.handleSelectStart}
+            // selectEnd={this.handleSelectEnd}
+          />
         </div>
       </div>);
     } else {
