@@ -146,7 +146,7 @@ export default class SubscribeCreateBoard extends PureComponent {
 
   @autobind
   resetData() {
-    this.cleanRedux();
+    this.clearRedux();
     this.uploadComponent.resetUpload();
     this.setState({
       subProList: [],
