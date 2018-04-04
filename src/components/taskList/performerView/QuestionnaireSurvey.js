@@ -27,7 +27,6 @@ const TYPE = {
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
-
 export default class QuestionnaireSurvey extends PureComponent {
 
   static propTypes = {
@@ -59,6 +58,17 @@ export default class QuestionnaireSurvey extends PureComponent {
     this.props.onCheckChange(keyIndex, quesId);
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
+  handleOk() {
+    this.props.onOk();
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
+  handleCancel() {
+    this.props.onCancel();
+  }
 
   // 根据返回的问题列表，判断不同类型显示
   @autobind
@@ -67,7 +77,8 @@ export default class QuestionnaireSurvey extends PureComponent {
       form,
       answersList,
       onAreaText,
-      isShowErrorCheckbox } = this.props;
+      isShowErrorCheckbox,
+    } = this.props;
     const { quesInfoList = EMPTY_ARRAY, answerVOList = EMPTY_ARRAY } = answersList;
     const isDisabled = !_.isEmpty(answerVOList);
     const { getFieldDecorator } = form;
@@ -181,18 +192,6 @@ export default class QuestionnaireSurvey extends PureComponent {
       return content;
     });
     return itemForm;
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
-  handleOk() {
-    this.props.onOk();
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
-  handleCancel() {
-    this.props.onCancel();
   }
 
   render() {
