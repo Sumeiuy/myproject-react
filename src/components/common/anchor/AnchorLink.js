@@ -46,7 +46,6 @@ export default class AnchorLink extends PureComponent {
     this.context.antAnchor.unregisterLink(this.props.href);
   }
 
-  @autobind
   @logable({ type: 'Click', payload: { name: '$props.title' } })
   handleClick = (e) => {
     e.preventDefault();
