@@ -501,27 +501,6 @@ export default class Pageheader extends PureComponent {
     this.props.creatSeibelModal();
   }
 
-  // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
-  @autobind
-  disabledDateStart(value) {
-    if (!value) {
-      return false;
-    }
-    const time = value.valueOf();
-    return time > moment().subtract(0, 'days');
-  }
-
-  // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
-  @autobind
-  disabledDateEnd(value) {
-    if (!value) {
-      return false;
-    }
-    const time = value.valueOf();
-    return time > moment(currentDate).add(60, 'days');
-  }
-
-
   /**
    * 构造任务状态
    * @param {*string} filterControl 当前页面类型
@@ -599,7 +578,6 @@ export default class Pageheader extends PureComponent {
             value={[startTime, endTime]}
             onChange={this.handleCreateDateChange}
             placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateStart}
             key={`${missionViewType}创建时间`}
             format={dateFormat}
           />
@@ -619,7 +597,6 @@ export default class Pageheader extends PureComponent {
             value={[startTime, endTime]}
             onChange={this.handleEndDateChange}
             placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateEnd}
             key={`${missionViewType}结束时间`}
             ref={ref => this.date = ref}
             format={dateFormat}
