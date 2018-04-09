@@ -270,8 +270,8 @@ export default class CustomerGroupDetail extends PureComponent {
         includeCustListSize: newCustListSize,
         curPageNum: curPage,
       }, () => {
-        const { totalRecordNum: deleteAfterTotalRecordNum } = this.state;
-        if (deleteAfterTotalRecordNum < 1) {
+        const { totalRecordNum: numAfterDelete } = this.state;
+        if (numAfterDelete < 1) {
           this.setState({
             attachmentId: '',
           });
