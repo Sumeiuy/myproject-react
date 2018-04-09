@@ -114,6 +114,7 @@ export default class PerformerViewDetail extends PureComponent {
     changeParameter({
       targetCustomerPageNo: pageNo,
       targetCustId: '',
+      targetMissionFlowId: '',
     });
     this.queryTargetCustInfo({
       state: targetCustomerState,
@@ -139,6 +140,7 @@ export default class PerformerViewDetail extends PureComponent {
       targetCustomerPageSize: PAGE_SIZE,
       targetCustomerPageNo: PAGE_NO,
       targetCustId: '',
+      targetMissionFlowId: '',
     });
     this.queryTargetCustInfo({
       state: v,
@@ -155,7 +157,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustId,
-      targetMissionFlowId,
+        targetMissionFlowId,
       },
     } = this.props;
     this.requeryTargetCustDetail({
