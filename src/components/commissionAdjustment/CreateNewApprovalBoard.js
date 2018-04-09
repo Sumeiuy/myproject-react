@@ -534,6 +534,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 清除咨询订阅的数据
+  @autobind
+  clearSubBoardSelect() {
+    this.subBoard.resetData();
+    this.setState({
+      remark: '',
+    });
+  }
+
+  // 清除咨询退订的数据
+  @autobind
+  clearUnSubBoardSelect() {
+    this.unSubBoard.resetData();
+    this.setState({
+      remark: '',
+    });
+  }
+
   // 根据用户输入查询单佣金客户列表
   @autobind
   handleChangeSingleAssembly(keywords) {
@@ -592,9 +610,18 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       customer,
     });
-    if (_.isEmpty(customer)) return;
-    const { id, custType } = customer;
+    if (!_.isEmpty(customer)) {
+      this.queryAfterSelectAssembly(customer);
+    } else {
+      this.clearBoardWhetherEmptyCustome();
+    }
+  }
+
+  // 客户不为空时，各个子类型新建页面做对应处理
+  @autobind
+  queryAfterSelectAssembly(customer) {
     const typeNow = this.judgeSubtypeNow;
+    const { id, custType } = customer;
     if (typeNow(commadj.subscribe)) {
       this.querySubscribelProList({
         custId: id,
@@ -605,10 +632,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
         custRowId: id,
       });
     } else if (typeNow(commadj.single)) {
-      this.clearSingleSelect();
       this.props.getSingleOtherRates({
         custRowId: id,
       });
+    }
+  }
+
+  // 客户为空时，各个子类型新建页面清空数据
+  @autobind
+  clearBoardWhetherEmptyCustome() {
+    const typeNow = this.judgeSubtypeNow;
+    if (typeNow(commadj.subscribe)) {
+      this.clearSubBoardSelect();
+    } else if (typeNow(commadj.unsubscribe)) {
+      this.clearUnSubBoardSelect();
+    } else if (typeNow(commadj.single)) {
+      this.clearSingleSelect();
     }
   }
 
