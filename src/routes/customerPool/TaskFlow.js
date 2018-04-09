@@ -568,8 +568,7 @@ export default class TaskFlow extends PureComponent {
 
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc)
-          || templeteDescHtml.length < 10
-          || templeteDescHtml.length > 1000) {
+        || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
