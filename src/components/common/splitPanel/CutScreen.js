@@ -24,6 +24,7 @@ import { env, dom } from '../../../helper';
 
 import styles from './cutScreen.less';
 import nodatapng from './nodata.png';
+import logable from '../../../decorators/logable';
 
 export default class CutScreen extends PureComponent {
   static propTypes = {
@@ -182,6 +183,7 @@ export default class CutScreen extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
   shrinkList() {
     this.setState({
       stretchIcon: 'caret-right',
@@ -191,6 +193,7 @@ export default class CutScreen extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '展开' } })
   growList() {
     this.setState({
       stretchIcon: 'caret-left',

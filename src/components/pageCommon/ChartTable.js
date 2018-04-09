@@ -223,11 +223,12 @@ export default class ChartTable extends PureComponent {
     const childrenArr = [];
     if (item.children) {
       item.children.map((child) => {
+        const stamp = new Date().getTime();
         const childObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
-          key: `key${child.key}`,
+          key: `key${child.key}${stamp}`,
         };
         const hasThreeEle = child.children;
         if (hasThreeEle) {
@@ -246,11 +247,12 @@ export default class ChartTable extends PureComponent {
     const threeEleArr = [];
     if (item.children) {
       item.children.map((child) => {
+        const stamp = new Date().getTime();
         const threeEleObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
-          key: `key${child.key}`,
+          key: `key${child.key}${stamp}`,
         };
         return threeEleArr.push(threeEleObj);
       });
@@ -501,6 +503,11 @@ export default class ChartTable extends PureComponent {
           className={chartTableInfo.curPageNum === 1 ? styles.firstPage : ''}
           onChange={this.handleChange}
           scroll={{ x: this.state.allWidth }}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
         <Pagination
           {...paginationOption}

@@ -16,6 +16,7 @@ import { url as urlHelper } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import styles from './viewpointList.less';
+import logable from '../../decorators/logable';
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
@@ -141,6 +142,7 @@ export default class ViewpointList extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '咨询列表项$args[0].texttitle' } })
   handleTitleClick(item) {
     const { curPageSize, curPageNum } = this.state;
     const { push } = this.props;
@@ -214,6 +216,11 @@ export default class ViewpointList extends PureComponent {
             dataSource={newInfoVOList}
             pagination={false}
             scroll={{ x: 1100 }}
+            // 默认文案配置
+            locale={{
+              // 空数据时的文案
+              emptyText: '暂无数据',
+            }}
           />
           <Pagination {...paganationOption} />
         </div>

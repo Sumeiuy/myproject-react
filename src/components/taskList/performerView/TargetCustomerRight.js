@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Modal, Affix } from 'antd';
+import { Row, Col, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -14,10 +14,11 @@ import contains from 'rc-util/lib/Dom/contains';
 
 import styles from './targetCustomerRight.less';
 import { fspContainer } from '../../../config';
+import { openFspTab } from '../../../utils';
 import TipsInfo from './TipsInfo';
-import Collapse from '../../customerPool/list/CreateCollapse';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
+import logable from '../../../decorators/logable';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -26,7 +27,8 @@ const NOTCOMPLETION = '不完备';
 // 个人对应的code码
 const PER_CODE = 'per';
 // 一般机构对应的code码
-// const ORG_CODE = 'org';
+const ORG_CODE = 'org';
+
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
 
@@ -63,40 +65,54 @@ export default class TargetCustomerRight extends PureComponent {
     serviceRecordData: {},
     filesList: [],
   };
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-  }
 
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  };
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
+  /**
+   * 获取tab的配置
+   * @param {*string} id tab的id
+   * @param {*string} title tab的标题
+   * @param {*array} activeSubTab 子级tab
+   * @param {*boolean} forceRefresh 是否需要强制刷新
+   */
   @autobind
-  showModal() {
-    const { itemData = {}, getServiceRecord } = this.props;
-    getServiceRecord({ custId: itemData.custId }).then(() => {
-      this.setState({
-        visible: true,
-      });
-    }); // 应传 custId
+  get360FspTabConfig(activeSubTab = []) {
+    return {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+      activeSubTab,
+    };
   }
 
   @autobind
-  handleOk() {
-    this.setState({
-      visible: false,
+  openFsp360TabAction({ param, itemData }) {
+    const { custNature, custId, rowId, ptyId } = itemData;
+    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
+    const pathname = '/customerCenter/fspcustomerDetail';
+    openFspTab({
+      routerAction: this.context.push,
+      url,
+      pathname,
+      param,
+      state: {
+        url,
+      },
     });
   }
 
   @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
+  @logable({ type: 'Click', payload: { name: '查看更多' } })
+  handleSeeMoreClick(itemData) {
+    const param = this.get360FspTabConfig(['服务记录']);
+    this.openFsp360TabAction({ itemData, param });
   }
 
   handleEmpty(value) {
@@ -116,6 +132,17 @@ export default class TargetCustomerRight extends PureComponent {
       unit = obj.unit;
     }
     return `${newValue}${unit}`;
+  }
+
+  /**
+   * 跳转到客户360
+   * @param {*object} itemData 每一个客户的数据
+   */
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].custName' } })
+  handleCustNameClick(itemData) {
+    const param = this.get360FspTabConfig();
+    this.openFsp360TabAction({ itemData, param });
   }
 
   // 联系电话的浮层信息
@@ -170,17 +197,11 @@ export default class TargetCustomerRight extends PureComponent {
     const {
       isFold,
       itemData,
-      handleCollapseClick,
-      executeTypes,
-      serveWay,
-      serviceRecordData,
       getCustIncome,
       monthlyProfits,
       custIncomeReqState,
-      getCeFileList,
-      filesList,
     } = this.props;
-    const { visible } = this.state;
+
     const sendSpan = isFold ? 15 : 24;
     const thrSpan = isFold ? 9 : 24;
     const suspendedLayer = (
@@ -269,7 +290,11 @@ export default class TargetCustomerRight extends PureComponent {
           <div className={styles.titles}>
             <Row>
               <Col span={7}>
-                <h3 className={styles.custNames} title={itemData.custName}>
+                <h3
+                  className={styles.custNames}
+                  title={itemData.custName}
+                  onClick={() => this.handleCustNameClick(itemData)}
+                >
                   {itemData.custName}
                 </h3>
               </Col>
@@ -426,30 +451,13 @@ export default class TargetCustomerRight extends PureComponent {
                 </h5>
               </Col>
               <Col span={isFold ? 10 : 24}>
-                <h5 className={styles.seeMore}><a onClick={this.showModal}>查看更多</a></h5>
+                <h5 className={styles.seeMore}>
+                  <a onClick={() => this.handleSeeMoreClick(itemData)}> 查看更多</a>
+                </h5>
               </Col>
             </Row>
           </div>
         </div>
-        <Modal
-          title="最近服务记录"
-          visible={visible}
-          width={900}
-          mask={false}
-          footer={null}
-          maskClosable={false}
-          onCancel={this.handleCancel}
-          className={styles.moreServices}
-        >
-          <Collapse
-            data={serviceRecordData[itemData.custId]}
-            executeTypes={executeTypes}
-            serveWay={serveWay}
-            handleCollapseClick={handleCollapseClick}
-            getCeFileList={getCeFileList}
-            filesList={filesList}
-          />
-        </Modal>
       </div>
     );
   }

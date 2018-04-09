@@ -188,6 +188,13 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '渠道',
+      value: '$args[0]',
+    },
+  })
   serveAllSourceChange(value) {
     const { location: { query, pathname }, replace } = this.props;
     replace({
@@ -214,6 +221,13 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[0]',
+    },
+  })
   serveAllTypeChange(value) {
     let type = '';
     const { location: { query, pathname }, replace } = this.props;

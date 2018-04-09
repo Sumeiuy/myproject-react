@@ -23,6 +23,7 @@ import AutoComplete from '../common/AutoComplete';
 import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import createCommon from './commissionCreateCommon/common';
+import logable, { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
 import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
@@ -174,14 +175,24 @@ export default class BatchCreatBoard extends PureComponent {
   // 客户输入目标股基佣金率调用方法
   @autobind
   changeTargetGJCommission(v) {
-    // 批量
-    this.props.queryGj({
-      codeValue: v,
-    });
+    // codeValue 为空，接口报错
+    if (!_.isEmpty(v)) {
+      // 批量
+      this.props.queryGj({
+        codeValue: v,
+      });
+    }
   }
 
   // 切换目标产品股基佣金率
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标股基佣金率',
+      value: '$args[0].codeDesc',
+    },
+  })
   selectTargetGJCommission(v) {
     this.setState({
       newCommission: v.codeValue,
@@ -191,6 +202,13 @@ export default class BatchCreatBoard extends PureComponent {
 
   // 切换选择某个产品
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标产品',
+      value: '$args[0]',
+    },
+  })
   handleSelectProduct(targetProduct) {
     this.setState({
       targetProduct,
@@ -258,6 +276,7 @@ export default class BatchCreatBoard extends PureComponent {
 
   // 打开选择审批人弹窗
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   openApproverBoard() {
     this.setState({
       choiceApprover: true,

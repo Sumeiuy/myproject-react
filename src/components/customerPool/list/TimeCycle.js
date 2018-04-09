@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { Select } from 'antd';
 
 import Icon from '../../common/Icon';
-
+import logable from '../../../decorators/logable';
 import styles from './timeCycle.less';
 
 export default class TimeCycle extends PureComponent {
@@ -28,6 +28,13 @@ export default class TimeCycle extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '时间周期',
+      value: '$args[0]',
+    },
+  })
   handleChange(value) {
     const { updateQueryState } = this.props;
     updateQueryState({

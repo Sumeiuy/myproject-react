@@ -212,6 +212,12 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '最近服务记录展开/折叠' } })
+  handleCollapseClick() {
+    this.props.handleCollapseClick();
+  }
+
   render() {
     const {
       visible,
@@ -224,7 +230,6 @@ export default class CreateContactModal extends PureComponent {
       currentCustId,
       executeTypes,
       serveWay,
-      handleCollapseClick,
       getCeFileList,
       filesList,
     } = this.props;
@@ -414,6 +419,11 @@ export default class CreateContactModal extends PureComponent {
                 columns={columns}
                 dataSource={newDataSource}
                 pagination={false}
+                // 默认文案配置
+                locale={{
+                  // 空数据时的文案
+                  emptyText: '暂无数据',
+                }}
               />
             </div> : null
         }
@@ -428,7 +438,7 @@ export default class CreateContactModal extends PureComponent {
           data={serviceRecordData}
           executeTypes={executeTypes}
           serveWay={serveWay}
-          handleCollapseClick={handleCollapseClick}
+          handleCollapseClick={this.handleCollapseClick}
           getCeFileList={getCeFileList}
           filesList={filesList}
         />

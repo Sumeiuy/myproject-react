@@ -56,7 +56,6 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
-  isCustServedByPostn: 'customerPool/isCustServedByPostn',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
 };
@@ -136,8 +135,6 @@ const mapDispatchToProps = {
   }),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  // 查询单个客户是否本人名下
-  isCustServedByPostn: fetchDataFunction(true, effects.isCustServedByPostn),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
@@ -192,7 +189,6 @@ export default class CustomerList extends PureComponent {
     queryCustUuid: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
-    isCustServedByPostn: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
     getFiltersOfSightingTelescope: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
@@ -590,7 +586,6 @@ export default class CustomerList extends PureComponent {
       queryCustUuid,
       getCeFileList,
       filesList,
-      isCustServedByPostn,
       custServedByPostnResult,
       sightingTelescopeFilters,
       isSendCustsServedByPostn,
@@ -690,7 +685,6 @@ export default class CustomerList extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
           custServedByPostnResult={custServedByPostnResult}
-          isCustServedByPostn={isCustServedByPostn}
           hasTkMampPermission={this.hasTkMampPermission}
           hasIndexViewPermission={this.hasIndexViewPermission}
           isSendCustsServedByPostn={isSendCustsServedByPostn}

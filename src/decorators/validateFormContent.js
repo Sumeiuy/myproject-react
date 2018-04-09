@@ -6,7 +6,6 @@
  * 校验表单内容
  */
 
-import { message } from 'antd';
 import _ from 'lodash';
 import { regxp } from '../helper';
 
@@ -28,6 +27,7 @@ export const validateFormContent = (target, name, descriptor) => {
         taskName,
         timelyIntervalValue,
         serviceStrategySuggestion,
+        serviceStrategyString,
       } = args[0];
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
@@ -61,8 +61,7 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskName = true;
       }
-      if (_.isEmpty(serviceStrategySuggestion)
-        || serviceStrategySuggestion.length < 10
+      if (_.isEmpty(serviceStrategyString)
         || serviceStrategySuggestion.length > 1000) {
         this.setState({
           isShowErrorStrategySuggestion: true,
@@ -75,7 +74,6 @@ export const validateFormContent = (target, name, descriptor) => {
         || isShowErrorTaskName
         || isShowErrorExcuteType
         || isShowErrorTaskType) {
-        message.error('请填写任务基本信息');
         return false;
       }
       // 校验通过，去掉错误提示

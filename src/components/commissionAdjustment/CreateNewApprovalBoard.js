@@ -25,6 +25,7 @@ import SingleCreatBoard from './SingleCreatBoard';
 import SubscribeCreateBoard from './SubscribeCreateBoard';
 import UnSubscribeCreateBoard from './UnSubscribeCreateBoard';
 import styles from './createNewApprovalBoard.less';
+import logable from '../../decorators/logable';
 
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
@@ -499,6 +500,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 选择申请子类型
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[1]',
+    },
+  })
   choiceApprovalSubType(name, key) {
     if (key === '') return;
     this.setState({
@@ -521,6 +529,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   clearSingleSelect() {
     this.singleBoard.resetData();
+    this.setState({
+      remark: '',
+    });
+  }
+
+  // 清除咨询订阅的数据
+  @autobind
+  clearSubBoardSelect() {
+    this.subBoard.resetData();
+    this.setState({
+      remark: '',
+    });
+  }
+
+  // 清除咨询退订的数据
+  @autobind
+  clearUnSubBoardSelect() {
+    this.unSubBoard.resetData();
     this.setState({
       remark: '',
     });
@@ -573,12 +599,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].custName',
+    },
+  })
   handleSelectAssembly(customer) {
-    const { id, custType } = customer;
     this.setState({
       customer,
     });
+    if (!_.isEmpty(customer)) {
+      this.queryAfterSelectAssembly(customer);
+    } else {
+      this.clearBoardWhetherEmptyCustome();
+    }
+  }
+
+  // 客户不为空时，各个子类型新建页面做对应处理
+  @autobind
+  queryAfterSelectAssembly(customer) {
     const typeNow = this.judgeSubtypeNow;
+    const { id, custType } = customer;
     if (typeNow(commadj.subscribe)) {
       this.querySubscribelProList({
         custId: id,
@@ -589,17 +632,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
         custRowId: id,
       });
     } else if (typeNow(commadj.single)) {
-      this.clearSingleSelect();
       this.props.getSingleOtherRates({
         custRowId: id,
       });
     }
   }
 
-  // 清空选中客户时，调子组件的方法，需要将该客户当前股基佣金率变为空
+  // 客户为空时，各个子类型新建页面清空数据
   @autobind
-  clearSelectCust() {
-    this.singleBoard.clearSelectCustCurComValue();
+  clearBoardWhetherEmptyCustome() {
+    const typeNow = this.judgeSubtypeNow;
+    if (typeNow(commadj.subscribe)) {
+      this.clearSubBoardSelect();
+    } else if (typeNow(commadj.unsubscribe)) {
+      this.clearUnSubBoardSelect();
+    } else if (typeNow(commadj.single)) {
+      this.clearSingleSelect();
+    }
   }
 
   // 根据职责权限进行子类型选项
@@ -696,7 +745,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
         openFspTab({
           routerAction: push,
-          pathname: '/fsp/customerCenter/customerDetail',
+          pathname: '/customerCenter/customerDetail',
           url,
           param,
         });
@@ -771,7 +820,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
-                      clearSelectCust={this.clearSelectCust}
                       unfinishRoute={this.orderFlowRoute}
                     />
                   </CommissionLine>

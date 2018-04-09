@@ -14,6 +14,7 @@ import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import CustomerSegment from './CustomerSegment';
 import SelectLabelCust from './SelectLabelCust';
 import styles from './pickTargetCustomer.less';
+import logable from '../../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 
@@ -66,6 +67,7 @@ export default class PickTargetCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab:客户细分/标签圈人' } })
   handleTabChange(key) {
     const { saveCurrentTab } = this.props;
     this.setState({

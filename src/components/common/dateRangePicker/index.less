@@ -32,6 +32,7 @@
     .DateRangePicker_picker {
       position: fixed;
       z-index: 30;
+      left: -10000px;
     }
     .DayPickerNavigation_button {
       border: none;
@@ -50,11 +51,22 @@
       color: #333;
     }
     .CalendarDay__selected,
+    .CalendarDay__selected:hover, {
+      color: #fff;
+    }
+    .CalendarDay__selected,
     .CalendarDay__selected:active,
     .CalendarDay__selected:hover {
       background: #1890ff;
       border: 1px solid transparent;
     }
+    .CalendarDay__blocked_out_of_range,
+    .CalendarDay__blocked_out_of_range:active,
+    .CalendarDay__blocked_out_of_range:hover {
+      background: #fff;
+      border: 1px solid #e4e7e7;
+      color: #cacccd;
+      cursor: not-allowed;
+    }
   }
 }
-

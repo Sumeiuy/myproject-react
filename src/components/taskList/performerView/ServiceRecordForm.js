@@ -1,19 +1,19 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-09 12:37:50
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 14:50:57
  * 服务记录表单
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { message } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
+import logable from '../../../decorators/logable';
 
 export default class ServiceRecordForm extends PureComponent {
   static propTypes = {
@@ -29,7 +29,6 @@ export default class ServiceRecordForm extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    reloadTargetCustInfo: PropTypes.func.isRequired,
     getCeFileList: PropTypes.func.isRequired,
   }
 
@@ -40,7 +39,13 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit() {
+    const data = this.serviceRecordContentRef.getData();
+    if (!data) {
+      return;
+    }
+
     const {
       serviceWay,
       serviceType,
@@ -52,22 +57,13 @@ export default class ServiceRecordForm extends PureComponent {
       serviceStatus,
       serviceContent,
       currentFile,
-    } = this.serviceRecordContentRef.getData();
+    } = data;
 
     const {
       formData: { custId = '', missionFlowId = '' },
       addServeRecord,
       custUuid,
     } = this.props;
-    if (!serviceContent) {
-      message.error('请输入此次服务的内容');
-      return;
-    }
-
-    if (serviceContent.length > 1000) {
-      message.error('服务的内容字数不能超过1000');
-      return;
-    }
     const postBody = {
       // 经纪客户号
       custId,
@@ -90,6 +86,7 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     if (this.serviceRecordContentRef) {
       this.serviceRecordContentRef.resetField();
@@ -122,7 +119,7 @@ export default class ServiceRecordForm extends PureComponent {
             任务提示:
           </div>
           <div className={styles.content}>
-            {serviceTips || '--'}
+            <div dangerouslySetInnerHTML={{ __html: serviceTips || '--' }} />
           </div>
         </div>
 
@@ -145,7 +142,7 @@ export default class ServiceRecordForm extends PureComponent {
             <div className={styles.operationSection}>
               <Button
                 className={styles.submitBtn}
-                onClick={this.handleSubmit}
+                onClick={_.debounce(this.handleSubmit, 300)}
                 type="primary"
               >
                 提交</Button>

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { Form, Input, Select, Button, Icon } from 'antd';
 
 import { questionType } from './config';
-
+import logable from '../../../decorators/logable';
 import styles from './addQuestionForm.less';
 
 const FormItem = Form.Item;
@@ -84,6 +84,7 @@ export default class AddQuestionForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加答案' } })
   add() {
     const { form } = this.props;
     // can use data-binding to get
@@ -118,6 +119,13 @@ export default class AddQuestionForm extends PureComponent {
    * quesTypeCode = 3 时主观题描述， 1、 2显示选择题答案
    */
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '问题类型',
+      value: '$args[0]',
+    },
+  })
   handleSelectChange(v) {
     this.setState({
       quesDescVisible: v === subjectiveType,

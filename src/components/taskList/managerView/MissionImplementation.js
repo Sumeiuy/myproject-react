@@ -22,6 +22,7 @@ import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
 import loadingImg from './img/loading.png';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -158,9 +159,34 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  handlePreview(title) {
-    const { onPreviewCustDetail } = this.props;
-    onPreviewCustDetail(title);
+  getSourceSrc(source) {
+    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&fileName=${window.encodeURIComponent(source.fileName)}`;
+  }
+
+  @autobind
+  getPayload() {
+    const {
+      urlParams,
+    } = this.props;
+    const orgId = this.getCurrentOrgId();
+    const {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+    } = urlParams;
+    return {
+      missionName,
+      missionId,
+      serviceTips,
+      servicePolicy,
+      orgId,
+    };
+  }
+
+  @autobind
+  getCurrentOrgId() {
+    return this.state.currentOrgId || emp.getOrgId();
   }
 
   /**
@@ -180,19 +206,12 @@ export default class MissionImplementation extends PureComponent {
    */
   @autobind
   handleCreateCustRange({
-        custRange,
-        posOrgId,
-        empPostnList,
-      }) {
-    // const myCustomer = {
-    //   id: MAIN_MAGEGER_ID,
-    //   name: '我的客户',
-    // };
+    custRange,
+    posOrgId,
+    empPostnList,
+  }) {
     // 职责的普通用户，取值 '我的客户'
     if (!this.isAuthorize) {
-      //   this.setState({
-      //     createCustRange: [myCustomer],
-      //   });
       return;
     }
 
@@ -255,9 +274,35 @@ export default class MissionImplementation extends PureComponent {
   }
 
   @autobind
-  getCurrentOrgId() {
-    return this.state.currentOrgId || emp.getOrgId();
+  @logable({ type: 'Click', payload: { name: '生成最新报告' } })
+  createMissionReport() {
+    const {
+      createMotReport,
+    } = this.props;
+    const payload = this.getPayload();
+    createMotReport(payload);
   }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '正在生成最新报告' } })
+  queryMOTServeAndFeedBackExcel() {
+    const { queryMOTServeAndFeedBackExcel } = this.props;
+    const payload = this.getPayload();
+    queryMOTServeAndFeedBackExcel(payload);
+  }
+
+  @autobind
+  handlePreview(params) {
+    const { onPreviewCustDetail } = this.props;
+    onPreviewCustDetail(params);
+  }
+
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
+  @logable({ type: 'Click', payload: { name: '报告' } })
+  handleDownload() {}
 
   @autobind
   renderTabsExtra() {
@@ -295,47 +340,6 @@ export default class MissionImplementation extends PureComponent {
     };
     return (<TabsExtra {...extraProps} />);
   }
-  @autobind
-  getPayload() {
-    const {
-      urlParams,
-    } = this.props;
-    const orgId = this.getCurrentOrgId();
-    const {
-      missionName,
-      missionId,
-      serviceTips,
-      servicePolicy,
-    } = urlParams;
-    return {
-      missionName,
-      missionId,
-      serviceTips,
-      servicePolicy,
-      orgId,
-    };
-  }
-
-  @autobind
-  createMissionReport() {
-    const {
-      createMotReport,
-    } = this.props;
-    const payload = this.getPayload();
-    createMotReport(payload);
-  }
-
-  @autobind
-  queryMOTServeAndFeedBackExcel() {
-    const { queryMOTServeAndFeedBackExcel } = this.props;
-    const payload = this.getPayload();
-    queryMOTServeAndFeedBackExcel(payload);
-  }
-
-  @autobind
-  getSourceSrc(source) {
-    return source && source.fileName && `${request.prefix}/excel/custlist/excelExport?orgId=${source.orgId}&empId=${emp.getId()}&fileName=${window.encodeURIComponent(source.fileName)}`;
-  }
 
   @autobind
   renderCreateFileInfo(currentMissionReport) {
@@ -357,10 +361,16 @@ export default class MissionImplementation extends PureComponent {
       return (
         <div className={styles.downLoading}>
           <span className={styles.line}>|</span>
-          <a href={this.getSourceSrc(currentMissionReport)}>
+          <a
+            onClick={this.handleDownloadClick}
+            href={this.getSourceSrc(currentMissionReport)}
+          >
             <Icon type="xiazai" className={`icon ${styles.icon_mr}`} />
           </a>
-          <a href={this.getSourceSrc(currentMissionReport)}>
+          <a
+            onClick={this.handleDownload}
+            href={this.getSourceSrc(currentMissionReport)}
+          >
             <span>{createTime}报告</span>
           </a>
         </div>

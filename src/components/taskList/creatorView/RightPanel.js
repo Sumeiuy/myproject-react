@@ -1,14 +1,15 @@
-/**
- * @file customerPool/tasklist/RightPanel.js
- *  目标客户池 任务列表右侧
- * @author wangjunjun
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-12-04 19:35:23
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-03-28 19:33:18
+ * 创建者视图右侧详情信息
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
 import InfoTitle from '../../common/InfoTitle';
 import ApproveList from '../../common/approveList';
 import TaskListDetailInfo from './TaskListDetailInfo';
@@ -17,8 +18,11 @@ import Icon from '../../common/Icon';
 import Button from '../../common/Button';
 import GroupTable from '../../customerPool/groupManage/GroupTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import logable, { logPV } from '../../../decorators/logable';
+import { linkTo } from '../../../utils';
+import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 import pageConfig from '../pageConfig';
+import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
+import logable, { logPV } from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -42,19 +46,24 @@ const emptyData = (value) => {
   return '';
 };
 const { taskList: { status } } = pageConfig;
-
+const NOOP = _.noop;
 export default class RightPanel extends PureComponent {
 
   static propTypes = {
-    // location: PropTypes.object.isRequired,
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object,
     taskBasicInfo: PropTypes.object,
+    location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    flowId: PropTypes.string,
+    clearCreateTaskData: PropTypes.func,
   }
 
   static defaultProps = {
-    priviewCustFileData: {},
-    taskBasicInfo: {},
+    priviewCustFileData: EMPTY_OBJECT,
+    taskBasicInfo: EMPTY_OBJECT,
+    flowId: '',
+    clearCreateTaskData: NOOP,
   }
 
   constructor(props) {
@@ -79,7 +88,6 @@ export default class RightPanel extends PureComponent {
   @logPV({ pathname: '/modal/createPreview', title: '查看预览' })
   handleSeeCust() {
     const { onPreview, taskBasicInfo } = this.props;
-    // const { curPageNum, curPageSize } = this.state;
     const { tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
     const filename = tagetCustModel.dataName || '';
     this.setState({
@@ -159,6 +167,41 @@ export default class RightPanel extends PureComponent {
     return [];
   }
 
+  // 发起任务
+  @autobind
+  @logable({ type: 'Click', payload: { name: '编辑' } })
+  handleModifyTask() {
+    const { push, taskBasicInfo, flowId, clearCreateTaskData } = this.props;
+    if (!_.isEmpty(taskBasicInfo) || !_.isEmpty(flowId)) {
+      // 发起任务之前
+      clearCreateTaskData(RETURN_TASK_FROM_TASKLIST);
+      const param = {
+        id: 'FSP_MOT_SELFBUILT_TASK',
+        title: '任务管理',
+      };
+      linkTo({
+        routerAction: push,
+        url: `/customerPool/createTaskFromTaskRejection2?source=${RETURN_TASK_FROM_TASKLIST}&flowId=${flowId}`,
+        param,
+        pathname: '/customerPool/createTaskFromTaskRejection2',
+        query: {
+          source: RETURN_TASK_FROM_TASKLIST,
+          flowId,
+        },
+      });
+    }
+  }
+
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  // statusCode代表状态
+  changeDisplay(statusCode, options) {
+    if (statusCode && !_.isEmpty(statusCode)) {
+      const nowStatus = _.find(options, o => o.value === statusCode) || {};
+      return nowStatus.label || '--';
+    }
+    return '--';
+  }
+
   @autobind
   renderDataSource(column, datas) {
     const dataSource = _.map(datas, (item) => {
@@ -175,41 +218,6 @@ export default class RightPanel extends PureComponent {
       key: item,
       value: item,
     }));
-  }
-
-  renderMention() {
-    const { taskBasicInfo } = this.props;
-    const { tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
-    if (tagetCustModel.custSource === '导入客户') {
-      return (
-        <div className={styles.wrap}>
-          <span>客户连接&nbsp;:</span>
-          {
-            tagetCustModel.dataName ?
-              <span className={styles.value}>
-                <Icon type="excel" className={styles.excel} />
-                客户列表
-                  <a
-                    onClick={this.handleSeeCust}
-                    className={styles.seeCust}
-                  >
-                    查看预览
-                  </a>
-              </span>
-              :
-              <span className={styles.value}>--</span>
-          }
-        </div>
-      );
-    } else if (tagetCustModel.custSource === '标签圈人') {
-      return (
-        <div>
-          <h4>标签描述&nbsp;:</h4>
-          <h4>{tagetCustModel.custLabelDesc || '--'}</h4>
-        </div>
-      );
-    }
-    return null;
   }
 
   // 拼接结果跟踪数据
@@ -263,13 +271,36 @@ export default class RightPanel extends PureComponent {
     return quesData;
   }
 
-  // 后台返回的子类型字段、状态字段转化为对应的中文显示
-  changeDisplay(st, options) {
-    if (st && !_.isEmpty(st)) {
-      const nowStatus = _.find(options, o => o.value === st) || {};
-      return nowStatus.label || '--';
+  renderMention() {
+    const { taskBasicInfo } = this.props;
+    const { tagetCustModel = EMPTY_OBJECT } = taskBasicInfo;
+    if (tagetCustModel.custSource === '导入客户') {
+      return (
+        <div className={styles.wrap}>
+          <span>客户连接&nbsp;:</span>
+          {
+            tagetCustModel.dataName ?
+              <span className={styles.value}>
+                <Icon type="excel" className={styles.excel} />
+                客户列表
+                  <a onClick={this.handleSeeCust} className={styles.seeCust}>
+                  查看预览
+                  </a>
+              </span>
+              :
+              <span className={styles.value}>--</span>
+          }
+        </div>
+      );
+    } else if (tagetCustModel.custSource === '标签圈人') {
+      return (
+        <div>
+          <h4>标签描述&nbsp;:</h4>
+          <h4>{tagetCustModel.custLabelDesc || '--'}</h4>
+        </div>
+      );
     }
-    return '--';
+    return null;
   }
 
   render() {
@@ -306,9 +337,22 @@ export default class RightPanel extends PureComponent {
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.bugTitle}>
-              {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status)}`}
-            </h1>
+            <div className={styles.header}>
+              <div className={styles.bugTitle}>
+                {`${motDetailModel.eventName || '--'}: ${this.changeDisplay(motDetailModel.status, status)}`}
+              </div>
+              {/**
+              * 驳回修改的任务增加快捷入口
+              */}
+              {
+                motDetailModel.status === STATE_REJECT_CODE ?
+                  <div
+                    className={styles.editTask}
+                    onClick={this.handleModifyTask}
+                  >编辑</div>
+                  : null
+              }
+            </div>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <TaskListDetailInfo

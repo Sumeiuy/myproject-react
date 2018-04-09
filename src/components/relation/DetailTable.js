@@ -18,6 +18,7 @@ import _ from 'lodash';
 import Icon from '../common/Icon';
 import Button from '../common/Button';
 import styles from './detailTable.less';
+import logable from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 // detailTable 组件的表格类型
@@ -177,6 +178,7 @@ export default class DetailTable extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除$args[1]' } })
   handleDeleteClick(category, item) {
     const { onDelete } = this.props;
     confirm({
@@ -188,11 +190,13 @@ export default class DetailTable extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑$args[1]' } })
   handleUpdateClick(item) {
     this.props.onUpdate(item);
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   handleAddClick(category) {
     this.props.onAdd(category);
   }
@@ -248,6 +252,11 @@ export default class DetailTable extends Component {
             dataSource={tableData}
             pagination={false}
             scroll={{ y }}
+            // 默认文案配置
+            locale={{
+              // 空数据时的文案
+              emptyText: '暂无数据',
+            }}
           />
         </div>
       </div>

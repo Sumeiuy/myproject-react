@@ -5,9 +5,11 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 
 import DropdownSelect from '../../common/dropdownSelect';
 import { emp } from '../../../helper';
+import logable from '../../../decorators/logable';
 
 import styles from './saleDepartmentFilter.less';
 
@@ -21,12 +23,28 @@ export default class ServiceManagerFilter extends PureComponent {
     disable: PropTypes.bool.isRequired,
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务经理',
+      value: '$args[0].ptyMngName',
+    },
+  })
+  handleSelct(value) {
+    this.props.dropdownSelectedItem(value);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
+  handleSearch(value) {
+    this.props.dropdownToSearchInfo(value);
+  }
+
   render() {
     const {
       searchServerPersonList,
       serviceManagerDefaultValue,
-      dropdownSelectedItem,
-      dropdownToSearchInfo,
       disable,
     } = this.props;
     // 预置下拉框数据列表
@@ -46,8 +64,8 @@ export default class ServiceManagerFilter extends PureComponent {
           disable={disable}
           value={serviceManagerDefaultValue}
           searchList={searchServerPersonList}
-          emitSelectItem={dropdownSelectedItem}
-          emitToSearch={dropdownToSearchInfo}
+          emitSelectItem={this.handleSelct}
+          emitToSearch={this.handleSearch}
           presetOptionList={presetList}
         />
       </div>

@@ -1,27 +1,34 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-23 23:01:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 19:28:28
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, message, Steps } from 'antd';
+import { Button, message, Steps, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { stateToHTML } from 'draft-js-export-html';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
-import logable from '../../../decorators/logable';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
-import { entrySource } from '../../../config/managerViewCustFeedbackEntry';
+import {
+  PIE_ENTRY,
+  PROGRESS_ENTRY,
+  CUST_GROUP_LIST,
+  returnTaskEntrySource,
+} from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
+import logable from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const { toString } = Mention;
 
 // 标签来源，热点标签，普通标签，搜索标签
 const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
@@ -78,11 +85,11 @@ export default class TaskFormFlowStep extends PureComponent {
         needApproval = false,
         canGoNextStep = false,
         needMissionInvestigation = false,
-     },
+      },
     } = props;
 
     // 代表是否是来自驳回修改
-    const isEntryFromReturnTask = source === 'returnTask';
+    const isEntryFromReturnTask = _.includes(returnTaskEntrySource, source);
     let canGoNextStepFlow = canGoNextStep;
     let newNeedMissionInvestigation = needMissionInvestigation;
     if (!_.isEmpty(flowId)) {
@@ -113,13 +120,12 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
-   } = this.props;
+    } = this.props;
     const postBody = {
       ...this.parseParam(),
-      postnId: emp.getPstnId(),
     };
 
-    if (source !== 'returnTask') {
+    if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -167,13 +173,13 @@ export default class TaskFormFlowStep extends PureComponent {
     } = parseQuery();
 
     let req = {};
-    if (entrance === entrySource.progress) {
+    if (entrance === PROGRESS_ENTRY) {
       // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === entrySource.pie) {
+    } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (source === 'custGroupList') {
+    } else if (source === CUST_GROUP_LIST) {
       req = {
         enterType,
         groupId,
@@ -240,13 +246,13 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
-      case entrySource.progress:
+      case PROGRESS_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case entrySource.pie:
+      case PIE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
-      case 'custGroupList':
+      case CUST_GROUP_LIST:
         custSources = '客户分组';
         break;
       case 'sightingTelescope':
@@ -315,21 +321,37 @@ export default class TaskFormFlowStep extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-        const formDataValidation = this.saveFormContent({ ...values, isFormError });
+
+        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
+        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
+        const serviceStrategyString = toString(serviceStateData);
+        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
+        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
+        const formDataValidation = this.saveFormContent({
+          ...values,
+          serviceStrategySuggestion: serviceStrategyHtml,
+          serviceStrategyString,
+          isFormError,
+        });
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
+            serviceStrategySuggestion: serviceStrategyString,
+            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
           isFormValidate = false;
         }
       });
+
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
+      if (_.isEmpty(templetDesc) || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -375,6 +397,7 @@ export default class TaskFormFlowStep extends PureComponent {
       //   message.error('请勾选结果跟踪');
       // } else
       if (isResultTrackChecked) {
+        resultTrackComponent.requiredDataValidate();
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
           errMsg = '请设置结果跟踪任务指标';
@@ -389,7 +412,7 @@ export default class TaskFormFlowStep extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          message.error(errMsg);
+          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -414,8 +437,9 @@ export default class TaskFormFlowStep extends PureComponent {
         const originQuestionSize = _.size(currentSelectedQuestionIdList);
         const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
+          missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择
@@ -471,6 +495,19 @@ export default class TaskFormFlowStep extends PureComponent {
     console.log(values);
   }
 
+  // 校验审批人是否为空
+  @autobind
+  checkApproverIsEmpty() {
+    const {
+      storedCreateTaskData: { currentSelectRecord = {} },
+    } = this.props;
+    const {
+      needApproval,
+    } = this.state;
+    const { login: flowAuditorId = null } = currentSelectRecord || {};
+    return _.isEmpty(flowAuditorId) && needApproval;
+  }
+
   // 自建任务提交
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
@@ -517,11 +554,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       // taskSubType,
-      templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -553,10 +590,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategySuggestion: serviceStrategyHtml,
       taskName,
       taskType,
-      templetDesc,
+      templetDesc: templeteDescHtml,
       timelyIntervalValue,
       // // 任务子类型
       // taskSubType,
@@ -705,6 +742,15 @@ export default class TaskFormFlowStep extends PureComponent {
       isDisabled,
     } = this.state;
 
+    let isSubmitBtnDisabled;
+    if (isDisabled) {
+      // 如果全局状态是true “确认提交”按钮状态就是true
+      isSubmitBtnDisabled = isDisabled;
+    } else {
+      // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
+      isSubmitBtnDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+    }
+
     const {
       dict,
       location,
@@ -783,10 +829,11 @@ export default class TaskFormFlowStep extends PureComponent {
         onCancel={onCancel}
         creator={creator}
         currentEntry={currentEntry}
+        checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
 
-    const cancleBtn = source === 'returnTask' ?
+    const cancleBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.cancelBtn}
@@ -808,7 +855,7 @@ export default class TaskFormFlowStep extends PureComponent {
       );
 
     // 根据来源判断按钮类型
-    const stopBtn = source === 'returnTask' ?
+    const stopBtn = _.includes(returnTaskEntrySource, source) ?
       (
         <Button
           className={styles.stopBtn}
@@ -876,7 +923,7 @@ export default class TaskFormFlowStep extends PureComponent {
             <Button
               className={styles.confirmBtn}
               type="primary"
-              disabled={isDisabled}
+              disabled={isSubmitBtnDisabled}
               onClick={this.handleSubmit}
             >
               确认无误，提交

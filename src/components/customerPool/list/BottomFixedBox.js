@@ -11,7 +11,7 @@ import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { fspContainer } from '../../../config';
-import { emp } from '../../../helper';
+// import { emp } from '../../../helper';
 import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
@@ -198,7 +198,6 @@ export default class BottomFixedBox extends PureComponent {
       // 没有任务管理权限，发请求判断是否超过1000条数据和是否包含非本人名下客户
       isSendCustsServedByPostn({
         ...payload,
-        postnId: emp.getPstnId(),
       }).then(() => {
         const {
           sendCustsServedByPostnResult = {},
@@ -210,7 +209,8 @@ export default class BottomFixedBox extends PureComponent {
         // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
           this.toggleModal();
-          this.setState({ modalContent: '你没有HTSC 任务管理职责，不可发起任务' });
+          this.setState({
+            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务' });
         } else {
           this.toCreateTaskPage();
         }
@@ -283,6 +283,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   toggleModal() {
     this.setState({
       visible: !this.state.visible,

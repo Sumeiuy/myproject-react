@@ -25,6 +25,7 @@ import HistoryCompareRankChart from '../../components/history/HistoryCompareRank
 import PageHeader from '../../components/pageCommon/PageHeader';
 import { constants } from '../../config';
 import styles from './Home.less';
+import logable from '../../decorators/logable';
 
 // 投顾绩效历史对比的borderId
 const TYPE_LSDB_TGJX = '3';
@@ -494,6 +495,7 @@ export default class HistoryHome extends PureComponent {
 
   // 切换时间段和组织机构
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换时间段和组织机构' } })
   updateQueryState(query) {
     let durationOrg = query;
     if (query.orgId) {

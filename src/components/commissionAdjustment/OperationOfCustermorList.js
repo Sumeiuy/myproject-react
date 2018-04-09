@@ -10,6 +10,7 @@ import { Button } from 'antd';
 
 import SearchSelect from '../common/Select/SearchSelect';
 import styles from './operationOfCustermorList.less';
+import logable from '../../decorators/logable';
 
 export default class ProductsDropdownBox extends PureComponent {
 
@@ -27,12 +28,17 @@ export default class ProductsDropdownBox extends PureComponent {
     this.props.validate(customer);
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '移除' } })
+  handleDelete() {
+    this.props.onDelectCustomer();
+  }
+
   render() {
     const {
       labelName,
       dataSource,
       onChangeValue,
-      onDelectCustomer,
     } = this.props;
     return (
       <div className={styles.operationOfCustList}>
@@ -46,7 +52,10 @@ export default class ProductsDropdownBox extends PureComponent {
             defaultInput="经纪客户号/客户名称"
           />
         </div>
-        <Button className={styles.delectCustomerButton} onClick={onDelectCustomer}>移除</Button>
+        <Button
+          className={styles.delectCustomerButton}
+          onClick={() => { this.handleDelete(); }}
+        >移除</Button>
       </div>
     );
   }

@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import confirm from '../Confirm';
 import styles from './index.less';
+import logable from '../../../decorators/logable';
 
 const Option = AutoComplete.Option;
 
@@ -57,6 +58,7 @@ export default class autoComplete extends PureComponent {
   inputTimeout = 0;
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '清除输入框内容' } })
   clearInput() {
     this.setState({
       inputValue: '',
@@ -93,8 +95,8 @@ export default class autoComplete extends PureComponent {
     const { dataSource, width, defaultInput } = this.props;
     const { inputValue } = this.state;
     const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
-    const options = newDataSource.map(opt => (
-      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
+    const options = newDataSource.map((opt, index) => (
+      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue} index={index}>
         <span className={styles.prodValue}>{opt.codeValue}</span>
       </Option>
     ));

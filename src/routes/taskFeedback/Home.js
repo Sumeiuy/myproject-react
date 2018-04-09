@@ -16,7 +16,7 @@ import withRouter from '../../decorators/withRouter';
 import choosePage from '../../components/operationManage/choosePage';
 import QuestionList from '../../components/operationManage/taskFeedback/QuestionList';
 import AddQuestionModal from '../../components/operationManage/taskFeedback/AddQuestionModal';
-
+import logable from '../../decorators/logable';
 import styles from './home.less';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -81,6 +81,7 @@ export default class TaskFeedback extends PureComponent {
 
   // 显示隐藏添加问题的对话框
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭弹框' } })
   setModalVisible(bool) {
     this.setState({
       modalVisible: bool,
@@ -89,6 +90,7 @@ export default class TaskFeedback extends PureComponent {
 
   // 显示添加问题的对话框
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '+添加问题' } })
   addQuestion() {
     this.setModalVisible(true);
   }
