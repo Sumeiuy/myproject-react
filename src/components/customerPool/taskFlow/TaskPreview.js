@@ -475,8 +475,8 @@ export default class TaskPreview extends PureComponent {
               <div className={styles.divider} />
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
-                <div>跟踪截止日期：</div>
-                <div>{`${currentSelectedTrackDate}` || '--'}</div>
+                  <div>跟踪截止日期：</div>
+                  <div>{`${currentSelectedTrackDate}` || '--'}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   {<div>{`${indicatorLevel1Value}：` || ''}</div>}

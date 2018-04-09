@@ -331,7 +331,7 @@ export default class ResultTrack extends PureComponent {
       // 跟踪窗口期
       trackWindowDate: this.transformDateToDay(currentSelectedTrackDate),
              // 跟踪截止日期，显示年月日
-             currentSelectedTrackDate: moment(dateFormat).format(dateFormat),
+      currentSelectedTrackDate: moment(dateFormat).format(dateFormat),
       // 一级指标key
       indicatorLevel1Key: indicatorLevel1.key || '',
       // 一级指标value
