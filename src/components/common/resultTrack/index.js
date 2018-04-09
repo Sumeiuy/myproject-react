@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-29 13:57:15
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-09 19:31:59
  * 结果跟踪
  */
 
@@ -27,6 +27,8 @@ const defaultIndicatorValue = '请选择指标';
 
 // 跟踪窗口期默认0天
 const defaultTrackWindowDate = 0;
+
+const dateFormat = 'YYYY年MM月DD日';
 
 @RestoreScrollTop
 export default class ResultTrack extends PureComponent {
@@ -328,6 +330,8 @@ export default class ResultTrack extends PureComponent {
     return {
       // 跟踪窗口期
       trackWindowDate: this.transformDateToDay(currentSelectedTrackDate),
+             // 跟踪截止日期，显示年月日
+             currentSelectedTrackDate: moment(dateFormat).format(dateFormat),
       // 一级指标key
       indicatorLevel1Key: indicatorLevel1.key || '',
       // 一级指标value

@@ -316,7 +316,7 @@ export default class TaskPreview extends PureComponent {
       templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
-      trackWindowDate,
+      // trackWindowDate,
       // 一级指标
       indicatorLevel1Value,
       // 二级指标
@@ -350,6 +350,8 @@ export default class TaskPreview extends PureComponent {
       // stateText,
       custSource: custSourceEntry,
       custTotal: totalCount,
+             // 跟踪截止日期
+             currentSelectedTrackDate,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -473,8 +475,8 @@ export default class TaskPreview extends PureComponent {
               <div className={styles.divider} />
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
-                  <div>跟踪窗口期：</div>
-                  <div>{`${trackWindowDate}天` || '--'}</div>
+                <div>跟踪截止日期：</div>
+                <div>{`${currentSelectedTrackDate}` || '--'}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   {<div>{`${indicatorLevel1Value}：` || ''}</div>}
