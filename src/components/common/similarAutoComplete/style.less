@@ -2,64 +2,29 @@
 @import '../../../css/icon.less';
 
 .drapDowmSelect, .drapDowmSelect2 {
-	position: relative;
-	.complete {
-		font-size: 14px;
-	}
-	.editContent {
-		margin-left: 10px;
-		margin-right: 26px;
-		height: 30px;
-		line-height: 30px;
-		width: auto;
-		min-width: 54px;
-		display: flex;
-		display: -webkit-flex; /* Safari */
-		align-items: center;
-		justify-content: space-between;
-		.content {
-			color: #33393c;
-    	font-size: 14px;
-			max-width: 200px;
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-		}
-		.downIcon {
-			margin-top: 3px;
-			margin-left: 2px;
-			border: none;
-			border-top: 8px solid #c2c2c2;
-			border-left: 4px solid transparent;
-			border-right: 4px solid transparent;
-		}
-	}
-	:global {
-		.ant-select-auto-complete.ant-select-lg .ant-input {
-			padding: 6px 24px 6px 7px;
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-		}
-	}
+  position: relative;
+  :global {
+    .ant-select-auto-complete.ant-select-lg .ant-input {
+      padding: 6px 24px 6px 7px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
 }
 .drapDowmSelect {
-	width: 100%;
-	height: 32px;
-	:global {
-		.ant-input-affix-wrapper .ant-input-suffix {
-			top: 55%;
-		}
-	}
+  width: 100%;
+  height: 32px;
+  :global {
+    .ant-input-affix-wrapper .ant-input-suffix {
+      top: 55%;
+    }
+  }
 }
 .drapDowmSelect2 {
-	display: inline-block;
-	height: 28px;
-	.editContent {
-    height: 24px;
-    line-height: 24px;
-	}
-	:global {
+  display: inline-block;
+  height: 28px;
+  :global {
     .ant-select-lg .ant-select-selection--single {
       height: 28px;
     }
@@ -72,85 +37,79 @@
 	}
 }
 
-.searchDropDown {
-  color: #666;
-  font-weight: bold;
-  border-bottom: 1px solid #f6f6f6;
-  text-align: center;
-  cursor: pointer;
-  max-height: 343px;
-  :global {
-    .ant-select-dropdown-menu-item {
-      cursor: pointer;
-      height: 40px;
-      font-size: 14px;
-      text-align: left;
+.drapDowmSelect, .drapDowmSelect2 {
+  .error {
+    :global {
+      .ant-input {
+        border-color: #f04134;
       }
+    }
+  }
+  .showError {
+    font-size: 12px;
+    color: #f04134;
+    position: absolute;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 400px;
   }
 }
 
 .ddsShowBox, .ddsShowBox2 {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	text-indent: 6px;
-	font-size: 14px;
-	color: #333;
-	border-radius: 4px;
-	padding-right: 25px;
-	box-sizing: border-box;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	cursor: pointer;
-	user-select: none;
-	&:after {
-		content: '';
-		position: absolute;
-		top: 12px;
-		right: 10px;
-		width: 0;
-		height: 0;
-		border: none;
-		border-top: 7px solid #c2c2c2;
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-	}
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-indent: 6px;
+  font-size: 14px;
+  color: #333;
+  border-radius: 4px;
+  padding-right: 25px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  user-select: none;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: none;
+    border-top: 7px solid #c2c2c2;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
 }
 .ddsShowBox {
-	line-height: 30px;
+  line-height: 30px;
 }
 .ddsShowBox2 {
-	line-height: 24px;
-	font-size: 12px;
-	color: #666;
-	&.disable:after {
-		display: none;
-	}
+  line-height: 24px;
+  font-size: 12px;
+  color: #666;
+  &.disable:after {
+    display: none;
+  }
 }
 
-.ddsDrapMenuCon {
-	width: 100%;
-	height: auto;
-	margin-top: 4px;
-	list-style: none;
-	max-height: 125px;
-	overflow: auto;
-}
 .ddsDrapMenuConItem {
-	width: 100%;
-	height: 40px;
-	line-height: 40px;
-	text-indent: 10px;
-	font-size: 14px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-family: @font-family;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-indent: 10px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: @font-family;
   padding: 0;
-	&:hover {
-		background: rgba(52, 140, 240, .2);
-	}
+  &:hover {
+    background: rgba(52, 140, 240, .2);
+  }
 }
 
 ::-webkit-input-placeholder {
@@ -170,11 +129,11 @@
   line-height: normal;
 }
 .notFound {
-	display: block;
-	width: 100%;
-	margin-top: 6px;
-	line-height: 32px;
-	text-indent: 15px;
-	color: #c2c2c2;
-	font-size: 13px;
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  line-height: 32px;
+  text-indent: 15px;
+  color: #c2c2c2;
+  font-size: 13px;
 }

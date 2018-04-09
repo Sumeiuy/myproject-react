@@ -20,6 +20,7 @@ import Icon from '../../components/common/Icon';
 
 import config from './config';
 import styles from './detail.less';
+import logable from '../../decorators/logable';
 
 const { typeList } = config;
 const { Header, Footer, Content } = Layout;
@@ -80,10 +81,23 @@ export default class StockDetail extends PureComponent {
   }
 
   componentDidMount() {
-    const { getStockDetail } = this.props;
+    const {
+      getStockDetail,
+      location: {
+        query: {
+          eventType,
+          type,
+        },
+      },
+    } = this.props;
     const { id, detail } = this.state;
     if (_.isEmpty(detail[id])) {
-      getStockDetail({ id }).then(() => {
+      const payload = {
+        id,
+        type,
+        eventType,
+      };
+      getStockDetail(payload).then(() => {
         const { detail: newDetail } = this.props;
         this.setState({
           detail: newDetail,
@@ -94,6 +108,7 @@ export default class StockDetail extends PureComponent {
 
   // a 链接事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '相关' } })
   hrefHandle(item) {
     const {
       location: {
@@ -125,6 +140,7 @@ export default class StockDetail extends PureComponent {
 
   // 返回按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '返回' } })
   goBackHandle() {
     const {
       location: {
@@ -152,6 +168,13 @@ export default class StockDetail extends PureComponent {
       query: urlQuery,
     });
   }
+
+  // 空方法，用于日志上报
+  @logable({ type: 'Click', payload: { name: '下载PDF 全文' } })
+  handleDownloadClick() {}
+
+  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
+  handleDownload() {}
 
   render() {
     const { id, detail: dataDetail = {}, filterTypeList } = this.state;
@@ -202,7 +225,11 @@ export default class StockDetail extends PureComponent {
             {
               pdfDownloadUrl
               ?
-                <a href={pdfDownloadUrl} download>
+                <a
+                  onClick={this.handleDownloadClick}
+                  href={pdfDownloadUrl}
+                  download
+                >
                   <Icon type="pdf1" />PDF 全文
                 </a>
               :
@@ -211,7 +238,11 @@ export default class StockDetail extends PureComponent {
             {
               wordDownloadUrl
               ?
-                <a href={wordDownloadUrl} download>
+                <a
+                  onClick={this.handleDownload}
+                  href={wordDownloadUrl}
+                  download
+                >
                   <Icon type="word1" />WORD 全文
                 </a>
               :

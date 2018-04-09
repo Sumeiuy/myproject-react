@@ -20,6 +20,15 @@
       .taskNameSearch {
         margin-right: 30px;
       }
+      :global {
+        .ant-input-suffix {
+          button {
+            background-color: transparent;
+            border-color: transparent;
+            color: #333;
+          }
+        }
+      }
     }
     .filterMore {
       display: none;
@@ -36,6 +45,7 @@
       }
     }
     .dateWidget {
+      margin-right: 70px;
       :global {
         .ant-calendar-picker {
           height: 30px;
@@ -68,7 +78,7 @@
   .dropDownSelectBox {
     display: inline-block;
     min-width: 70px;
-    margin-right: 20px;
+    // margin-right: 20px;
     vertical-align: middle;
   }
   :global {

@@ -590,7 +590,7 @@ export default class MissionFeedback extends PureComponent {
       }
 
       return (
-        <div className={styles.subjective}>
+        <div className={styles.subjective} key={item.quesId}>
           <div
             className={classnames({
               [styles.problemsInfo]: !isFold,

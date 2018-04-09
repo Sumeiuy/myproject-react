@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerGroupUpdateModal.less';
+import logable from '../../../decorators/logable';
 
 const NOOP = _.noop;
 const EMPTY_OBJECT = {};
@@ -70,6 +71,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
   handleCancel() {
     const { visible } = this.state;
     const { onCancelHandler } = this.props;
@@ -79,6 +81,12 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     onCancelHandler();
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
+  handleOk() {
+    this.props.onOkHandler();
+  }
+
   render() {
     const {
       wrapperClass,
@@ -86,7 +94,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       okText,
       cancelText,
       okType,
-      onOkHandler,
       modalContent,
       modalStyle,
       modalWidth,
@@ -101,7 +108,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
         wrapClassName={wrapperClass}
         visible={visible}
         title={title}
-        onOk={onOkHandler}
+        onOk={this.handleOk}
         okText={okText}
         okType={okType}
         cancelText={cancelText}

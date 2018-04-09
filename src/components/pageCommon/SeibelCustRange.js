@@ -12,7 +12,6 @@ import _ from 'lodash';
 
 import { constants } from '../../config';
 import { event } from '../../helper';
-
 import styles from './seibelCustRange.less';
 
 function transformCustRangeData(list, parent = '') {
@@ -96,7 +95,7 @@ export default class CustRange extends PureComponent {
       formatCustRange = [];
       initValue = {
         label: '全部',
-        value: '',
+        value: 'all',
       };
     }
 
@@ -195,6 +194,9 @@ export default class CustRange extends PureComponent {
     const { custRange } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
+    if (_.isEmpty(value)) {
+      return null;
+    }
     return (
       <TreeSelect
         notFoundContent="没有结果"

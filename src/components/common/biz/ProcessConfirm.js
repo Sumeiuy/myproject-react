@@ -23,6 +23,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './processConfirm.less';
+import logable from '../../../decorators/logable';
 
 export default class ProcessConfirm extends Component {
   static propTypes = {
@@ -42,6 +43,7 @@ export default class ProcessConfirm extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
   handleOk() {
     const { onOk, modalKey } = this.props;
     onOk(modalKey);

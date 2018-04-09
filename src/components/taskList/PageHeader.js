@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
-// import DateRangePicker from '../common/dateRangePicker';
+import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -18,6 +18,7 @@ import Button from '../common/Button';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
+import logable from '../../decorators/logable';
 import {
   EXECUTOR,
   INITIATOR,
@@ -26,7 +27,11 @@ import {
   beforeCurrentDate60Days,
   afterCurrentDate60Days,
   dateFormat,
-  MANAGER_VIEW_STATUS,
+  STATUS_MANAGER_VIEW,
+  STATUS_EXECUTOR_VIEW,
+  STATE_COMPLETED_CODE,
+  STATE_EXECUTE_CODE,
+  STATE_ALL_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -42,8 +47,9 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: '', show: true };
+const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
+const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
 const NOOP = _.noop;
 
@@ -207,6 +213,16 @@ export default class Pageheader extends PureComponent {
   filterMoreRef(input) {
     this.filterMore = input;
   }
+  @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
+  handleMore() {
+    this.handleMoreChange();
+  }
+  @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
+  handleShrik() {
+    this.handleMoreChange();
+  }
 
   @autobind
   handleMoreChange() {
@@ -224,6 +240,13 @@ export default class Pageheader extends PureComponent {
 
   // 选中创建者下拉对象中对应的某个对象s
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '创建者',
+      value: '$args[1].ptyMngName',
+    },
+  })
   selectItem(name, item) {
     this.props.filterCallback({
       [name]: item.ptyMngId,
@@ -232,11 +255,54 @@ export default class Pageheader extends PureComponent {
 
   // 选中客户下拉对象中对应的某个对象
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].name',
+    },
+  })
   selectCustomerItem(item) {
     this.props.filterCallback({
       custId: item.custId,
       custName: encodeURIComponent(item.name),
     });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '视图选择',
+      value: '$args[1]',
+    },
+  })
+  handleSelctView(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[1]',
+    },
+  })
+  handleSelctType(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
+  handleSelctStatus(key, value) {
+    this.handleSelectChange(key, value);
   }
 
   // select改变
@@ -286,11 +352,6 @@ export default class Pageheader extends PureComponent {
         createTimeStart,
         createTimeEnd,
       });
-      // this.setState({
-      //   startTime: before,
-      //   endTime: todays,
-      //   disabledEndTime: todays,
-      // });
     } else {
       const {
         endTimeStart,
@@ -307,11 +368,6 @@ export default class Pageheader extends PureComponent {
         endTimeStart,
         endTimeEnd,
       });
-      // this.setState({
-      //   startTime: todays,
-      //   endTime: after,
-      //   disabledEndTime: after,
-      // });
     }
   }
 
@@ -334,7 +390,9 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
   handleSearch(value) {
+    console.warn('点击了搜索', value);
     this.props.filterCallback({
       missionName: value,
     });
@@ -342,6 +400,7 @@ export default class Pageheader extends PureComponent {
 
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[1]关键字搜索创建者' } })
   toSearch(method, value) {
     method({
       keyword: value,
@@ -349,9 +408,25 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '创建时间',
+      value: (instance, args) => {
+        const dateArr = _.map(
+          args[0],
+          item => moment(item).format(dateFormat),
+        );
+        return _.join(dateArr, '~');
+      },
+    },
+  })
   handleCreateDateChange(date) {
-    const createTimeStart = moment(date[0]).format(dateFormat);
-    const createTimeEnd = moment(date[1]).format(dateFormat);
+    const { startDate, endDate } = date;
+    const createTimeStart = startDate.format(dateFormat);
+    const createTimeEnd = endDate.format(dateFormat);
+    // const createTimeStart = moment(date[0]).format(dateFormat);
+    // const createTimeEnd = moment(date[1]).format(dateFormat);
     this.props.filterCallback({
       createTimeStart,
       createTimeEnd,
@@ -359,6 +434,19 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '结束时间',
+      value: (instance, args) => {
+        const dateArr = _.map(
+          args[0],
+          item => moment(item).format(dateFormat),
+        );
+        return _.join(dateArr, '~');
+      },
+    },
+  })
   handleEndDateChange(date) {
     const endTimeStart = moment(date[0]).format(dateFormat);
     const endTimeEnd = moment(date[1]).format(dateFormat);
@@ -403,6 +491,7 @@ export default class Pageheader extends PureComponent {
    * @param {*} value 输入的关键词
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
   searchCustomer(value) {
     const { queryCustomer } = this.props;
     // pageSize传1000000，使能够查到足够的数据
@@ -410,15 +499,29 @@ export default class Pageheader extends PureComponent {
       keyWord: value,
     });
   }
-
-  // 创建者视图 只能选择今天往前推60天的日期，其余时间不可选
   @autobind
-  disabledDateStart(value) {
+  @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
+  handleCreateTask() {
+    this.props.creatSeibelModal();
+  }
+
+  // 创建者视图 只能选择今天往前的日期，其余时间不可选
+  @autobind
+  disabledRange(value) {
     if (!value) {
       return false;
     }
     const time = value.valueOf();
     return time > moment().subtract(0, 'days');
+  }
+
+  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
+  // 本需求在选择的两个日期的区间范围在60天之内
+  @autobind
+  isInsideOffSet({ day, firstDay }) {
+    if (firstDay === null) return true;
+    return day >= firstDay.clone().subtract(10, 'days')
+      && day <= firstDay.clone().add(10, 'days');
   }
 
   // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
@@ -441,19 +544,35 @@ export default class Pageheader extends PureComponent {
     const stateOptions = this.constructorDataType(this.missionStatus);
     // 状态增加全部
     let stateAllOptions = stateOptions || [];
-
-    if (filterControl === CONTROLLER || filterControl === EXECUTOR) {
-      // 管理者视图或者执行者视图只有保留三种状态和所有状态
-      stateAllOptions = _.filter(stateAllOptions,
-        item => _.includes(MANAGER_VIEW_STATUS, item.value));
-    }
-
     let statusValue = status;
-    // 判断当前在url上的status
-    if (_.isEmpty(status) || _.isEmpty(_.find(stateAllOptions, item => item.value === status))) {
-      // 在所提供的列表中找不到
-      // 则将status置为默认的，所有
-      statusValue = '所有状态';
+    if (filterControl === CONTROLLER) {
+      // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      stateAllOptions = _.filter(stateAllOptions,
+        item => _.includes(STATUS_MANAGER_VIEW, item.value));
+      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
+    }
+    if (filterControl === EXECUTOR) {
+      // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
+      stateAllOptions = _.filter(
+        stateAllOptions,
+        item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
+      );
+      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_EXECUTE_CODE;
+      }
+    }
+    if (filterControl === INITIATOR) {
+      // 我创建的任务没有'已完成' 筛选项
+      stateAllOptions = _.filter(stateAllOptions,
+        item => STATE_COMPLETED_CODE !== item.value);
+      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
+      if (_.isEmpty(status)) {
+        statusValue = STATE_ALL_CODE;
+      }
     }
 
     return {
@@ -488,14 +607,24 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            ref={ref => this.timers = ref}
-            value={[startTime, endTime]}
+          { /*
+            <RangePicker
+              ref={ref => this.timers = ref}
+              value={[startTime, endTime]}
+              onChange={this.handleCreateDateChange}
+              placeholder={['开始时间', '结束时间']}
+              disabledDate={this.disabledDateStart}
+              key={`${missionViewType}创建时间`}
+              format={dateFormat}
+            />
+          */ }
+          <DateRangePicker
+            hasCustomerOffset
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleCreateDateChange}
-            placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateStart}
-            key={`${missionViewType}创建时间`}
-            format={dateFormat}
+            disabledRange={this.disabledRange}
+            isInsideOffSet={this.isInsideOffSet}
           />
         </div>
       </div>);
@@ -525,27 +654,30 @@ export default class Pageheader extends PureComponent {
   }
 
   /**
-   * 将字典里面的状态数据前面加一个 ‘所有状态’
-   * 根据不同的视图渲染构造不同的页面状态数据
+   * 渲染'执行方式'筛选组件
+   * 默认显示'所有方式'
    */
   @autobind
-  getStateAllOptions(missionStatus) {
-    const { location: { query: { missionViewType } } } = this.props;
-    const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 管理者视图或者执行者视图只有保留三种状态和所有状态
-    const newMissionStatus = this.constructorDataType(missionStatus);
-    if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-      const stateAllOptions = _.filter(newMissionStatus,
-        item => _.includes(MANAGER_VIEW_STATUS, item.value));
-      return [stateAll, ...stateAllOptions];
-    }
-    return [stateAll, ...newMissionStatus];
+  renderExecuteType() {
+    const { dict: { executeTypes } } = this.props;
+    const list = _.isEmpty(executeTypes) ? [] :
+      this.constructorDataType(executeTypes);
+    const { location: { query: { executeType } } } = this.props;
+    return (
+      <div className={styles.filterFl}>
+        <Select
+          name="executeType"
+          value={executeType || executeTypeAll.value}
+          data={[executeTypeAll, ...list]}
+          onChange={this.handleSelectChange}
+        />
+      </div>
+    );
   }
 
   render() {
     const {
       getDrafterList,
-      creatSeibelModal,
       drafterList,
       page,
       chooseMissionViewOptions,
@@ -562,9 +694,8 @@ export default class Pageheader extends PureComponent {
       customerList,
     } = this.props;
 
-    const { missionName, statusValue } = this.state;
-    const { missionType, missionStatus } = dict;
-    const stateAllOptions = this.getStateAllOptions(missionStatus);
+    const { missionName, statusValue, stateAllOptions } = this.state;
+    const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?
@@ -602,7 +733,7 @@ export default class Pageheader extends PureComponent {
               name="missionViewType"
               value={missionViewTypeValue}
               data={chooseMissionViewOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctView}
             />
           </div>
 
@@ -613,6 +744,7 @@ export default class Pageheader extends PureComponent {
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
+              enterButton
             />
           </div>
 
@@ -621,7 +753,7 @@ export default class Pageheader extends PureComponent {
               name="type"
               value={typeValue}
               data={typeAllOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctType}
             />
           </div>
 
@@ -630,7 +762,7 @@ export default class Pageheader extends PureComponent {
               name="status"
               value={statusValue}
               data={stateAllOptions}
-              onChange={this.handleSelectChange}
+              onChange={this.handleSelctStatus}
             />
           </div>
           {missionViewTypeValue === INITIATOR ? null :
@@ -667,13 +799,13 @@ export default class Pageheader extends PureComponent {
                 </div>
               </div> : null
           }
-
+          {this.renderExecuteType()}
           {this.renderTime()}
           {
             this.state.showMore ?
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleMore}
                 ref={this.filterMoreRef}
               >
                 <span>更多</span>
@@ -681,7 +813,7 @@ export default class Pageheader extends PureComponent {
               :
               <div
                 className={styles.filterMore}
-                onClick={this.handleMoreChange}
+                onClick={this.handleShrik}
                 ref={this.filterMoreRef}
               >
                 <span>收起</span>
@@ -692,7 +824,7 @@ export default class Pageheader extends PureComponent {
           type="primary"
           icon="plus"
           size="small"
-          onClick={creatSeibelModal}
+          onClick={this.handleCreateTask}
         >
           新建
         </Button>

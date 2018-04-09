@@ -24,6 +24,7 @@ import AddClause from './AddClause';
 import { seibelConfig } from '../../config';
 import { time } from '../../helper';
 import styles from './editForm.less';
+import logable, { logPV } from '../../decorators/logable';
 
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
@@ -161,6 +162,12 @@ export default class EditForm extends PureComponent {
   }
   // 表格编辑事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '合约条款编辑',
+    },
+  })
   editTableData(record, index) {
     // 更新数据，打开合约条款弹窗
     this.setState({
@@ -173,6 +180,12 @@ export default class EditForm extends PureComponent {
   }
   // 表格删除事件
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '合约条款删除',
+    },
+  })
   deleteTableData(record, index) {
     const { formData: { terms } } = this.state;
     const testArr = _.cloneDeep(terms);
@@ -188,6 +201,7 @@ export default class EditForm extends PureComponent {
   }
   // 打开弹窗
   @autobind
+  @logPV({ pathname: '/modal/addClauseModal', title: '合约条款弹窗' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,

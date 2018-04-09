@@ -9,6 +9,9 @@ import PropTypes from 'prop-types';
 import { Input, Form, Button } from 'antd';
 import { createForm } from 'rc-form';
 import classnames from 'classnames';
+import { autobind } from 'core-decorators';
+
+import logable from '../../decorators/logable';
 import './remark.less';
 
 const FormItem = Form.Item;
@@ -41,8 +44,21 @@ export default class Remark extends PureComponent {
       });
     }
   }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancel() {
+    this.props.onCancel();
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
+  handleSubmit() {
+    this.props.onCreate();
+  }
+
   render() {
-    const { onCancel, onCreate, form } = this.props;
+    const { form } = this.props;
     const { isShow } = this.state;
     const { getFieldDecorator } = form;
     const remarkVisible = classnames({
@@ -60,8 +76,8 @@ export default class Remark extends PureComponent {
               )}
             </FormItem>
             <div className="remarkbtn_dv">
-              <Button type="primary" onClick={onCancel}>取消</Button>
-              <Button onClick={onCreate}>提交</Button>
+              <Button type="primary" onClick={this.handleCancel}>取消</Button>
+              <Button onClick={this.handleSubmit}>提交</Button>
             </div>
           </Form>
         </div>

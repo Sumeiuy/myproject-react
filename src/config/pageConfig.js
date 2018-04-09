@@ -358,7 +358,7 @@ const pageConfig = {
         dataIndex: 'paraVal',
         key: 'paraVal',
         title: '值',
-        width: 40,
+        width: 90,
       },
       {
         dataIndex: 'divName',

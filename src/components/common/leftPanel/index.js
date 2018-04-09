@@ -14,6 +14,7 @@ import _ from 'lodash';
 import './index.less';
 import Icon from '../Icon';
 import { feedbackOptions } from '../../../config';
+import logable from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -102,6 +103,12 @@ export default class LeftPanel extends PureComponent {
    * @param {*} index 当前行index
    */
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '问题反馈左侧列表',
+    },
+  })
   handleRowClick(record, index) {
     const {
       location: { pathname, query },
@@ -130,6 +137,7 @@ export default class LeftPanel extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(nextPage, currentPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -226,6 +234,7 @@ export default class LeftPanel extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -281,7 +290,9 @@ export default class LeftPanel extends PureComponent {
           className="leftPanelTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}
@@ -290,6 +301,11 @@ export default class LeftPanel extends PureComponent {
               return 'active';
             }
             return '';
+          }}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
           }}
         />
       </div >

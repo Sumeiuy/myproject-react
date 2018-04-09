@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-27 17:45:25
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-30 19:27:54
  */
 
 import React, { PureComponent } from 'react';
@@ -10,9 +10,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button } from 'antd';
+import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -31,6 +32,7 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const { toString } = Mention;
 
 const effects = {
   // 预览客户细分数据
@@ -62,8 +64,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-    timelyIntervalValue,
-    taskName,
+      timelyIntervalValue,
+      taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -224,7 +226,15 @@ export default class TaskFlow extends PureComponent {
       needApproval = false,
       canGoNextStep = false,
       needMissionInvestigation = false,
+      nextStepBtnIsDisabled = true,
+      labelCust = EMPTY_OBJECT,
+      currentEntry = -1,
     } = props.storedTaskFlowData || {};
+
+    const {
+      currentSelectLabelName = null,
+      currentFilterNum = 0,
+    } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: current || 0,
@@ -246,10 +256,11 @@ export default class TaskFlow extends PureComponent {
       canGoNextStep,
       needMissionInvestigation,
       isSightTelescopeLoadingEnd: true,
-      shouldclearBottomLabel: false,
-      clearFromSearch: true,
-      currentSelectLabelName: null,
-      currentFilterNum: 0,
+      clearFromSearch: _.isEmpty(currentSelectLabelName),
+      currentSelectLabelName,
+      currentFilterNum,
+      currentEntry,
+      nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -262,7 +273,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
       getFiltersOfSightingTelescopeLoading,
-     } = this.props;
+    } = this.props;
     const {
       submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
@@ -319,6 +330,19 @@ export default class TaskFlow extends PureComponent {
         isShowApprovalModal: true,
       });
     }
+  }
+
+  // 设置下一步按钮的是否可点击状态
+  @autobind
+  setNextStepBtnDisabled(disabled) {
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      nextStepBtnIsDisabled: disabled,
+    });
+    this.setState({
+      nextStepBtnIsDisabled: disabled,
+    });
   }
 
   /**
@@ -420,20 +444,18 @@ export default class TaskFlow extends PureComponent {
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
-          message.error('请导入Excel文件');
+          // message.error('请导入Excel文件');
           return;
         }
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
-          message.error('请利用标签圈出目标客户');
+          // message.error('请利用标签圈出目标客户');
           return;
         }
       }
 
-      let postBody = {
-        postnId: emp.getPstnId(),
-      };
+      let postBody = {};
 
       // 当前tab是第一个，则代表导入客户
       if (currentEntry === 0) {
@@ -443,11 +465,11 @@ export default class TaskFlow extends PureComponent {
         };
       } else {
         if (customNum === 0) {
-          message.error('此标签下无客户，不可发起任务，请选择其他标签');
+          // message.error('此标签下无客户，不可发起任务，请选择其他标签');
           return;
         }
         if (custNum === 0) {
-          message.error('此标签下未筛选出客户，请重新筛选');
+          // message.error('此标签下未筛选出客户，请重新筛选');
           return;
         }
 
@@ -512,13 +534,27 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
+        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
+        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
+        const serviceStrategyString = toString(serviceStateData);
+        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
+        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
+        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
 
-        const formDataValidation = this.checkFormField({ ...values, isFormError });
+        const formDataValidation =
+          this.checkFormField({
+            ...values,
+            isFormError,
+            serviceStrategySuggestion: serviceStrategyHtml,
+            serviceStrategyString,
+          });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
+            serviceStrategySuggestion: serviceStrategyString,
+            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
@@ -528,8 +564,12 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+
+      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
+      if (_.isEmpty(templetDesc)
+          || templeteDescHtml.length < 10
+          || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -565,6 +605,7 @@ export default class TaskFlow extends PureComponent {
       } = resultTrackData;
 
       if (isResultTrackChecked) {
+        resultTrackComponent.requiredDataValidate();
         let errMsg = '';
         if (_.isEmpty(indicatorLevel1Key)) {
           errMsg = '请设置结果跟踪任务指标';
@@ -579,7 +620,7 @@ export default class TaskFlow extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          message.error(errMsg);
+          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -604,8 +645,9 @@ export default class TaskFlow extends PureComponent {
         const originQuestionSize = _.size(currentSelectedQuestionIdList);
         const uniqQuestionSize = _.size(_.uniqBy(currentSelectedQuestionIdList, 'value'));
         if (isMissionInvestigationChecked) {
+          missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择
@@ -722,11 +764,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       labelId,
-      templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -755,10 +797,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
       taskName,
       taskType,
-      templetDesc,
+      templetDesc: templeteDescHtml, // 转换成html提交
       timelyIntervalValue,
     };
 
@@ -825,6 +867,16 @@ export default class TaskFlow extends PureComponent {
     this.decoratorSubmitTaskFlow(postBody);
   }
 
+  // 校验审批人是否为空
+  @autobind
+  checkApproverIsEmpty() {
+    const {
+      currentSelectRecord: { login: flowAuditorId = null },
+      needApproval,
+    } = this.state;
+    return _.isEmpty(flowAuditorId) && needApproval;
+  }
+
   @autobind
   handleRowSelectionChange(selectedRowKeys, selectedRows) {
     console.log(selectedRowKeys, selectedRows);
@@ -845,6 +897,8 @@ export default class TaskFlow extends PureComponent {
     this.setState({
       currentSelectRowKeys: originSelectRowKeys,
       currentSelectRecord: originSelectRecord,
+    }, () => {
+      this.checkApproverIsEmpty();
     });
     saveTaskFlowData({
       ...storedTaskFlowData,
@@ -926,21 +980,32 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  changeCurrentEntry(currentEntry) {
+    this.setState({
+      currentEntry,
+    });
+  }
+
+  @autobind
   renderBottomLabel() {
     const {
       current,
+      currentEntry,
       currentFilterNum,
       currentSelectLabelName,
-      shouldclearBottomLabel,
       clearFromSearch,
     } = this.state;
 
-    // 是否应该隐藏底部的标签显示取决于三个条件
-    // 1. 选中标签,clearFromSearch控制
-    // 2. 使用头部的切换导入客户按钮，shouldclearBottomLabel控制
-    // 3. 是否处于第一步 current !== 0
-    // 条件1的优先级最高，条件3的优先级最低
-    const shouldHideBottom = clearFromSearch || shouldclearBottomLabel || current !== 0;
+    let shouldHideBottom = false;
+
+    if (current !== 0) {
+      shouldHideBottom = true;
+    } else if (currentEntry !== 1) {
+      shouldHideBottom = true;
+    } else if (currentEntry === 1) {
+      shouldHideBottom = clearFromSearch;
+    }
+
     const cls = classnames({
       [styles.hide]: shouldHideBottom,
       [styles.bottomLabel]: true,
@@ -975,8 +1040,13 @@ export default class TaskFlow extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
+      nextStepBtnIsDisabled,
     } = this.state;
 
+    // 如果不需要选择审批人时“确认提交”按钮就不对审批人是否为空做校验
+    const isSubmitBtnDisabled = needApproval ? this.checkApproverIsEmpty() : needApproval;
+    // 只有在第一步是需要判断下一步是否可点击
+    const finalNextStepBtnIsDisabled = current > 0 ? false : nextStepBtnIsDisabled;
     const {
       dict,
       dict: { executeTypes, missionType },
@@ -1007,6 +1077,7 @@ export default class TaskFlow extends PureComponent {
       content: <div className={styles.taskInner}>
         <SelectTargetCustomer
           currentEntry={currentEntry}
+          changeCurrentEntry={this.changeCurrentEntry}
           wrappedComponentRef={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}
@@ -1031,6 +1102,8 @@ export default class TaskFlow extends PureComponent {
           orgId={orgId}
           getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
           sightingTelescopeFilters={sightingTelescopeFilters}
+          setNextStepBtnDisabled={this.setNextStepBtnDisabled}
+          nextStepBtnIsDisabled={nextStepBtnIsDisabled}
         />
       </div>,
     }, {
@@ -1087,6 +1160,7 @@ export default class TaskFlow extends PureComponent {
         onCancel={this.resetLoading}
         creator={creator}
         onCancelSelectedRowKeys={this.handleCancelSelectedRowKeys}
+        checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
 
@@ -1144,6 +1218,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.nextStepBtn}
                 type="primary"
                 onClick={_.debounce(this.handleNextStep, 250)}
+                disabled={finalNextStepBtnIsDisabled}
               >
                 下一步
               </Button>
@@ -1155,6 +1230,7 @@ export default class TaskFlow extends PureComponent {
                 className={styles.confirmBtn}
                 type="primary"
                 onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
+                disabled={isSubmitBtnDisabled}
               >
                 确认无误，提交
               </Button>

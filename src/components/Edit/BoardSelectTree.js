@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { fspContainer, optionsMap } from '../../config';
 import MoveContainer from './MoveContainer';
 import styles from './BoardSelectTree.less';
+import logable from '../../decorators/logable';
 
 const boardTypeMap = optionsMap.boardTypeMap;
 const boardKeyName = optionsMap.boardKeyName;
@@ -214,6 +215,7 @@ export default class BoardSelectTree extends PureComponent {
 
   // 展开子选项的事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '指标树的展开/收起事件' } })
   onExpand(expandedKeys) {
     this.setState({
       expandedKeys,
@@ -223,6 +225,7 @@ export default class BoardSelectTree extends PureComponent {
 
   // 点击 checkbox 的事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '指标树的check事件' } })
   onCheck(checkedKeys, { checked, event, node: { props: { eventKey } } }) {
     const obj = {
       keyArr: checkedKeys,
@@ -235,6 +238,13 @@ export default class BoardSelectTree extends PureComponent {
 
   // 点击选择的事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '指标树的选中事件',
+      value: '$args[0]',
+    },
+  })
   onSelect(selectedKeys, { selected, event, node: { props, props: { eventKey } } }) {
     // 一级指标不可以点
     if (props.unSelectable && props.unSelectable) {
@@ -251,6 +261,7 @@ export default class BoardSelectTree extends PureComponent {
 
   // 右边删除按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除指标$agrs[0]' } })
   onRemove(item) {
     const {
       checkTreeArr,
@@ -280,6 +291,7 @@ export default class BoardSelectTree extends PureComponent {
 
   // 拖拽事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '拖拽指标$agrs[0]' } })
   onDnd(data) {
     const {
       isSummury,

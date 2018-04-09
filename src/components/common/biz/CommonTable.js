@@ -4,8 +4,8 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-20 16:59:42
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-09 13:48:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -115,10 +115,13 @@ export default class CommonTable extends PureComponent {
     }
     const newData = _.map(
       data,
-      (item, index) => ({
-        ...item,
-        tableRowKey: `${index}`,
-      }),
+      (item, index) => {
+        const newRowKey = rowKey || index;
+        return {
+          ...item,
+          key: item.key || newRowKey,
+        };
+      },
     );
     return (
       <div className={styles.commonTable}>
@@ -128,7 +131,9 @@ export default class CommonTable extends PureComponent {
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={newData}
           columns={newTitleList}
-          rowKey={_.isEmpty(rowKey) ? 'tableRowKey' : rowKey}
+          locale={{
+            emptyText: '暂无数据',
+          }}
         />
       </div>
     );

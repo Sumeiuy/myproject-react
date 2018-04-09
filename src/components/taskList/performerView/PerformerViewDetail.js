@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Form, message } from 'antd';
+import { message, Form } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -18,12 +18,14 @@ import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
 import Pagination from '../../common/Pagination';
 import InfoArea from '../managerView/InfoArea';
-
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './performerViewDetail.less';
 
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
+
 const create = Form.create;
+
 @create()
 export default class PerformerViewDetail extends PureComponent {
 
@@ -38,7 +40,6 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    form: PropTypes.object.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
@@ -46,6 +47,8 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
+    modifyLocalTaskList: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -86,7 +89,7 @@ export default class PerformerViewDetail extends PureComponent {
    * 重新查询目标客户的详情信息
    */
   @autobind
-  requeryTargetCustDetail({ custId, callback }) {
+  requeryTargetCustDetail({ custId, missionFlowId, callback }) {
     const {
       currentId,
       getCustDetail,
@@ -94,6 +97,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail({
       missionId: currentId,
       custId,
+      missionFlowId,
       callback,
     });
   }
@@ -103,7 +107,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState,
+      targetCustomerState,
       },
       changeParameter,
     } = this.props;
@@ -119,6 +123,13 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '状态',
+      value: '$args[1]',
+    },
+  })
   handleStateChange(key, v) {
     const {
       changeParameter,
@@ -137,22 +148,25 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   /**
-   * 添加服务记录成功后重新加载目标客户的列表信息
+   * 添加服务记录成功后重新加载当前目标客户的详细信息
    */
   @autobind
   reloadTargetCustInfo(callback) {
     const {
       parameter: {
         targetCustId,
+      targetMissionFlowId,
       },
     } = this.props;
     this.requeryTargetCustDetail({
       custId: targetCustId,
+      missionFlowId: targetMissionFlowId,
       callback,
     });
   }
 
   @autobind
+  @logPV({ pathname: '/modal/questionnaireSurvey', title: '任务问卷调查' })
   showModal() {
     const { getTempQuesAndAnswer, basicInfo: { templateId } } = this.props;
     getTempQuesAndAnswer({
@@ -184,13 +198,14 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   handleOk() {
-    const { saveAnswersByType, form, basicInfo: { templateId } } = this.props;
+    const { saveAnswersByType, basicInfo: { templateId }, form } = this.props;
     const {
       checkboxData: stv,
       radioData,
       areaTextData,
       isShowErrorCheckbox,
-      checkBoxQuesId } = this.state;
+      checkBoxQuesId,
+    } = this.state;
     const checkboxData = _.flatten(_.map(stv, item => item));
     let allCheckbox = null;
     checkBoxQuesId.forEach((item) => {
@@ -256,6 +271,8 @@ export default class PerformerViewDetail extends PureComponent {
       // 清除状态
       isShowErrorCheckbox: {},
     });
+    // 重置组件表单值
+    this.props.form.resetFields();
   }
 
   // 处理选中答案数据
@@ -342,9 +359,9 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageSize,
         targetCustomerState = '',
       },
-      form,
       answersList,
       currentId,
+      form,
     } = this.props;
     const {
       visible,
@@ -445,20 +462,23 @@ export default class PerformerViewDetail extends PureComponent {
               />
           }
         </div>
-        <QuestionnaireSurvey
-          ref={ref => this.questionForm = ref}
-          form={form}
-          visible={visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          onCheckChange={this.handleCheckboxChange}
-          onRadioChange={this.handleRadioChange}
-          onAreaText={this.handleAreaText}
-          answersList={answersList}
-          key={keyIndex}
-          isDisabled={isDisabled}
-          isShowErrorCheckbox={isShowErrorCheckbox}
-        />
+        {
+          visible ?
+            <QuestionnaireSurvey
+              ref={ref => this.questionForm = ref}
+              visible={visible}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+              onCheckChange={this.handleCheckboxChange}
+              onRadioChange={this.handleRadioChange}
+              onAreaText={this.handleAreaText}
+              answersList={answersList}
+              key={keyIndex}
+              isDisabled={isDisabled}
+              isShowErrorCheckbox={isShowErrorCheckbox}
+              form={form}
+            /> : null
+        }
       </div>
     );
   }

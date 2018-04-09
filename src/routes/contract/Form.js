@@ -17,6 +17,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import EditForm from '../../components/contract/EditForm';
 import styles from './form.less';
+import logable from '../../decorators/logable';
 
 // 退订的类型
 const unsubscribe = '2';
@@ -350,6 +351,7 @@ export default class Form extends PureComponent {
 
   // 弹窗底部按钮事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   footerBtnHandle(btnItem) {
     const { contractFormData } = this.state;
     if (!this.checkRequireFileds(contractFormData)) {

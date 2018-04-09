@@ -40,9 +40,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import ModalLoading from './ModalLoading';
 import styles from './commonModal.less';
+import logable from '../../../decorators/logable';
 
 export default class CommonModal extends PureComponent {
   static propTypes = {
@@ -89,14 +91,24 @@ export default class CommonModal extends PureComponent {
     onOk: () => {},
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
+  handleOk(modalKey) {
+    this.props.onOk(modalKey);
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
+  handleCancel(modalKey) {
+    this.props.closeModal(modalKey);
+  }
+
   render() {
     const {
       size,
       children,
       modalKey,
-      closeModal,
       cancelText,
-      onOk,
       okText,
       btnStatus,
       needBtn,
@@ -111,7 +123,7 @@ export default class CommonModal extends PureComponent {
       type="primary"
       size="large"
       disabled={btnStatus}
-      onClick={() => onOk(modalKey)}
+      onClick={() => this.handleOk(modalKey)}
     >
       {okText}
     </Button>);
@@ -119,7 +131,7 @@ export default class CommonModal extends PureComponent {
     : (<Button
       key="back"
       size="large"
-      onClick={() => closeModal(modalKey)}
+      onClick={() => this.handleCancel(modalKey)}
     >
       {cancelText}
     </Button>);
@@ -131,7 +143,7 @@ export default class CommonModal extends PureComponent {
     return (
       <Modal
         {...this.props}
-        onCancel={() => closeModal(modalKey)}
+        onCancel={() => this.handleCancel(modalKey)}
         wrapClassName={`${styles.commonModal} ${styles[modalSize]} ${this.props.wrapClassName}`}
         footer={footerContent}
       >

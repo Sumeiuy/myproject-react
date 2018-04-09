@@ -12,7 +12,7 @@ import { connect } from 'dva';
 import { Input, Row, Col } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
-
+import logable from '../../decorators/logable';
 import styles from './todo.less';
 
 const curPageNum = 1;
@@ -63,6 +63,7 @@ export default class ToDo extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务' } })
   onSearch(value) {
     // this.props.search(value);
     const { replace, location: { pathname, query } } = this.props;
@@ -126,6 +127,7 @@ export default class ToDo extends PureComponent {
                 placeholder="请输入任务名称"
                 defaultValue={keyword}
                 onSearch={this.onSearch}
+                enterButton
               />
             </div>
           </Col>

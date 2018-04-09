@@ -31,6 +31,7 @@ import Icon from '../common/Icon';
 import Button from '../common/Button';
 import AutoComplete from '../common/similarAutoComplete';
 import styles from './editModal.less';
+import logable from '../../decorators/logable';
 
 const titleArray = {
   manager: ['编辑负责人', '负责人:'],
@@ -96,6 +97,7 @@ export default class EditModal extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
   handleOk() {
     // 校验必填数据
     if (!this.vetifyData()) {
@@ -120,11 +122,19 @@ export default class EditModal extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
   handleClose() {
     this.props.onCancel();
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '负责人',
+      value: '$args[0].ptyMngName',
+    },
+  })
   handleSelect(obj) {
     if (_.isEmpty(obj)) {
       this.setState({ select: {}, teamName: '' });
@@ -148,6 +158,7 @@ export default class EditModal extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '清除输入框中的内容' } })
   handleClear() {
     this.setState({ teamName: '' });
   }

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-04 16:27:05
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-09 15:19:15
  */
 
 import React, { PureComponent } from 'react';
@@ -32,8 +32,8 @@ const EMPTY_OBJECT = {};
 // 添加客户方式默认值
 const defaultType = config.customerAddType[0].value;
 const FormItem = Form.Item;
-// withRef 拿到被包裹的wrappedComponent
-@Form.create({ withRef: true })
+
+@Form.create()
 export default class CustomerGroupDetail extends PureComponent {
   static propTypes = {
     detailData: PropTypes.object,
@@ -175,6 +175,11 @@ export default class CustomerGroupDetail extends PureComponent {
       groupId,
       includeCustIdList,
     };
+  }
+
+  @autobind
+  getForm() {
+    return this.props.form;
   }
 
   /**
@@ -331,6 +336,7 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].value关键字搜索客户' } })
   handleSearchClick({ value, selectedItem }) {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
@@ -462,8 +468,7 @@ export default class CustomerGroupDetail extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分组管理客户详情',
-      type: '操作',
+      name: '分组管理客户详情删除',
     },
   })
   handleDeleteBtnClick(record) {

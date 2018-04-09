@@ -11,6 +11,7 @@ import { Form, Input } from 'antd';
 import _ from 'lodash';
 
 import styles from '../Edit/SimpleEditor.less';
+import logable from '../../decorators/logable';
 // import styles from './textEditor.less';
 
 const FormItem = Form.Item;
@@ -178,6 +179,7 @@ export default class TextEditor extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$props.labelName' } })
   handleEditWrapperClick(e) {
     const { form, editorName, editable } = this.props;
     if (!editable) {

@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 import TargetCustomerRight from './TargetCustomerRight';
 import TargetCustomerRow from './TargetCustomerRow';
-
+import logable from '../../../decorators/logable';
 import styles from './targetCustomer.less';
 
 // // 当前分页条目
@@ -61,6 +61,14 @@ export default class TargetCustomer extends PureComponent {
 
   // 查询客户列表项对应的详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '客户列表项',
+      type: '$props.location.query.type',
+      subType: '$props.location.query.subType',
+    },
+  })
   handleRowClick({ id, missionFlowId }) {
     const {
       currentId,
@@ -75,6 +83,7 @@ export default class TargetCustomer extends PureComponent {
     getCustDetail({
       custId: id,
       missionId: currentId,
+      missionFlowId,
     });
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid

@@ -19,6 +19,7 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import config from './config';
 import styles from './editForm.less';
+import logable from '../../decorators/logable';
 
 // 表头
 const { mainPosition: { titleList, approvalColumns } } = config;
@@ -82,6 +83,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 选择某个职位
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '服务经理主职位设置',
+    },
+  })
   checkTableData(record, index) {
     const { defaultChecked } = this.state;
     const disabled = defaultChecked === index;
@@ -94,6 +101,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     this.setState({
       operate: item.operate,

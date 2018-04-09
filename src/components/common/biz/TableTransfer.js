@@ -228,6 +228,26 @@ export default class TableTransfer extends Component {
     return int2Float(totalRate);
   }
 
+  // firfox浏览器上，table设置scroll的y属性时，无论是否上下滑动，竖向滚动条的位置始终存在。
+  // 选择性的设置scroll的y属性，只有在数据有children时，设置，其他，不设置。
+  @autobind
+  getTableScroll(data) {
+    const { scrollX } = this.props;
+    const hasChildren = this.isHasChildren(data);
+    let x = 0;
+    let y = 0;
+    if (scrollX === '' && hasChildren) {
+      y = 248; // 245 groogle
+    }
+    if (scrollX !== '') {
+      x = scrollX;
+      if (hasChildren) {
+        y = 248;
+      }
+    }
+    return { y, x };
+  }
+
   @autobind
   handleSortClick(which, key) {
     return () => {
@@ -374,26 +394,6 @@ export default class TableTransfer extends Component {
       item => item.children,
     );
     return !_.isEmpty(newData);
-  }
-
-  // firfox浏览器上，table设置scroll的y属性时，无论是否上下滑动，竖向滚动条的位置始终存在。
-  // 选择性的设置scroll的y属性，只有在数据有children时，设置，其他，不设置。
-  @autobind
-  getTableScroll(data) {
-    const { scrollX } = this.props;
-    const hasChildren = this.isHasChildren(data);
-    let x = 0;
-    let y = 0;
-    if (scrollX === '' && hasChildren) {
-      y = 248; // 245 groogle
-    }
-    if (scrollX !== '') {
-      x = scrollX;
-      if (hasChildren) {
-        y = 248;
-      }
-    }
-    return { y, x };
   }
 
   // 为child行，第一列增加check框
@@ -797,6 +797,12 @@ export default class TableTransfer extends Component {
 
     const firstScroll = this.getTableScroll(firstArray);
     const secondScroll = this.getTableScroll(secondArray);
+
+    // 默认文案配置
+    const locale = {
+      // 空数据时的文案
+      emptyText: '暂无数据',
+    };
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -808,6 +814,7 @@ export default class TableTransfer extends Component {
                   <Search
                     placeholder={placeholder}
                     onSearch={(value) => { this.handleSearch(value); }}
+                    enterButton
                   />
                 </div>
               ) : (null)
@@ -819,6 +826,7 @@ export default class TableTransfer extends Component {
             dataSource={firstArray}
             pagination={pagination}
             scroll={firstScroll}
+            locale={locale}
           />
         </div>
         <div className={styles.rightContent}>
@@ -834,6 +842,7 @@ export default class TableTransfer extends Component {
             dataSource={secondArray}
             pagination={pagination}
             scroll={secondScroll}
+            locale={locale}
           />
         </div>
       </div>

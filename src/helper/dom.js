@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:45:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-15 15:04:45
+ * @Last Modified time: 2018-04-02 13:33:12
  * @description 此处存放与DOM相关(除事件绑定)的公用方法
  */
 import _ from 'lodash';
@@ -92,6 +92,13 @@ const dom = {
    */
   setAttribute(ele, key, value) {
     ele.setAttribute(key, value);
+  },
+
+  /**
+   * 获取DOM元素的自定义属性
+   */
+  getAttribute(ele, key) {
+    return ele.getAttribute(key);
   },
 
   /**

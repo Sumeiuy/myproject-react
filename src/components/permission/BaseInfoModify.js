@@ -8,6 +8,7 @@ import TextareaComponent from '../common/textareacomponent';
 import AutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import { seibelConfig } from '../../config';
+import logable from '../../decorators/logable';
 
 const { permission: { subType, pageType } } = seibelConfig;
 
@@ -68,6 +69,13 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0].custName',
+    },
+  })
   selectCustomer(item) {
     // 选中客户
     this.props.onEmitEvent('customer', item);
@@ -95,6 +103,13 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '子类型',
+      value: '$args[0]',
+    },
+  })
   updateSubTypeValue(name, value) {
     const result = subType.filter(item => (item.value === value))[0].label;
     this.setState({ subTypeTxt: result });

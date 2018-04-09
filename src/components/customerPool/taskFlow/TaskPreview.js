@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 17:02:30
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-03-28 16:06:01
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
 const EMPTY_LIST = [];
@@ -64,6 +64,7 @@ export default class TaskPreview extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     creator: PropTypes.string.isRequired,
     onCancelSelectedRowKeys: PropTypes.func,
+    checkApproverIsEmpty: PropTypes.func,
   };
 
   static defaultProps = {
@@ -71,6 +72,7 @@ export default class TaskPreview extends PureComponent {
     needApproval: false,
     currentEntry: 0,
     onCancelSelectedRowKeys: NOOP,
+    checkApproverIsEmpty: NOOP,
   };
 
   constructor(props) {
@@ -91,13 +93,13 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList = EMPTY_LIST,
       isShowApprovalModal,
-     } = this.props;
+    } = this.props;
     const {
       approvalList: nextData = EMPTY_LIST,
       isShowApprovalModal: nextApprovalModal,
       currentSelectRecord,
       currentSelectRowKeys,
-     } = nextProps;
+    } = nextProps;
 
     if (approvalList !== nextData) {
       // 审批人数据
@@ -132,7 +134,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择审批人：$props.currentSelectRecord.empName' } })
+  @logPV({ pathname: '/modal/selectApprover', title: '选择审批人弹框' })
   handleClick() {
     const { getApprovalList } = this.props;
     const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;
@@ -164,6 +166,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable: false,
     });
     onCancel();
+    this.props.checkApproverIsEmpty();
   }
 
   @autobind
@@ -183,10 +186,21 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择审批人员' } })
+  @logable({ type: 'Click', payload: { name: '$props.inputRef.refs.input.value关键字选择审批人员' } })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);
+  }
+
+  @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '选择审批人员',
+    },
+  })
+  handleRowSelect(record, selected, selectedRows) {
+    this.props.onSingleRowSelectionChange(record, selected, selectedRows);
   }
 
   @autobind
@@ -254,7 +268,6 @@ export default class TaskPreview extends PureComponent {
       taskTypes,
       currentSelectRowKeys,
       currentSelectRecord,
-      onSingleRowSelectionChange,
       onRowSelectionChange,
       isApprovalListLoadingEnd,
       creator,
@@ -296,10 +309,11 @@ export default class TaskPreview extends PureComponent {
       custNum,
       // originFileName,
       executionType,
-      serviceStrategySuggestion,
+      serviceStrategyHtml,
       taskName,
       taskType,
       templetDesc,
+      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -355,7 +369,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable,
       titleColumn,
       dataSize,
-     } = this.state;
+    } = this.state;
 
     const { empName = '' } = currentSelectRecord;
 
@@ -436,11 +450,19 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div>{serviceStrategySuggestion || '--'}</div>
+              <div
+                dangerouslySetInnerHTML={{ __html: serviceStrategyHtml || '--' }}
+              />
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
+              {
+                !_.isEmpty(templetDesc) ?
+                  <div
+                    dangerouslySetInnerHTML={{ __html: templeteDescHtml }}
+                  /> :
+                  <div>--</div>
+              }
             </div>
           </div>
         </div>
@@ -573,7 +595,7 @@ export default class TaskPreview extends PureComponent {
                         columnWidth={COLUMN_WIDTH}
                         bordered={false}
                         isNeedRowSelection
-                        onSingleRowSelectionChange={onSingleRowSelectionChange}
+                        onSingleRowSelectionChange={this.handleRowSelect}
                         onRowSelectionChange={onRowSelectionChange}
                         currentSelectRowKeys={currentSelectRowKeys}
                       />
