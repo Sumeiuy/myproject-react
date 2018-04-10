@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-04 15:30:40
+ * @Last Modified time: 2018-04-10 10:05:18
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -12,14 +12,10 @@ import { DateRangePicker } from 'react-dates';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Icon } from 'antd';
-// import moment from 'moment';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 
 import { dom } from '../../../helper';
-// import {
-//   isSameDay,
-// } from './utils';
 
 import styles from './index.less';
 
