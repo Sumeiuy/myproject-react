@@ -16,7 +16,7 @@
     align-items: center;
     :global {
       .ant-steps-status-process {
-        & > .ant-steps-step {
+        & > .ant-steps-item {
           & > .ant-steps-main {
             & > .ant-steps-title {
               color: #108ee9;
@@ -24,16 +24,16 @@
           }
         }
       }
-      .ant-steps-step {
+      .ant-steps-item {
         display: flex;
         justify-content: center;
         align-items: flex-start;
         flex-direction: column;
       }
-      .ant-steps-tail {
+      .ant-steps-item-tail {
         top: 20px;
       }
-      .ant-steps-title {
+      .ant-steps-item-title {
         font-size: 12px;
         color: #108ee9;
         letter-spacing: -0.07px;
@@ -47,13 +47,13 @@
         height: 40px;
         border-radius: 100%;
       }
-      .ant-steps-tail > i:after {
+      .ant-steps-item-tail > i:after {
         height: 2px;
       }
       .ant-steps-item.ant-steps-status-finish .ant-steps-tail > i:after {
         background: #e9e9e9;
       }
-      .ant-steps-tail > i {
+      .ant-steps-item-tail > i {
         height: 2px;
       }
       .ant-steps-item:not(:first-child) .ant-steps-head {
