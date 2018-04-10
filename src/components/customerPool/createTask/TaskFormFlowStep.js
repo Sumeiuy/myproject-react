@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 19:28:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-10 16:40:14
  */
 
 import React, { PureComponent } from 'react';
@@ -776,7 +776,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const { custNum } = tagetCustModel;
 
     const steps = [{
-      title: '基本信息',
+      title: '任务信息',
       content: <CreateTaskForm
         location={location}
         dict={dict}
@@ -794,7 +794,7 @@ export default class TaskFormFlowStep extends PureComponent {
         taskBasicInfo={taskBasicInfo}
       />,
     }, {
-      title: '结果跟踪&任务调查',
+      title: '任务评估',
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
@@ -811,7 +811,7 @@ export default class TaskFormFlowStep extends PureComponent {
         }
       </div>,
     }, {
-      title: '确认&提交',
+      title: '确认提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
         storedData={storedCreateTaskData}
@@ -867,7 +867,7 @@ export default class TaskFormFlowStep extends PureComponent {
         </Button>
       ) : null;
 
-    // 灰度发布展示结果跟踪和任务调查，默认不展示
+    // 灰度发布展示结果任务评估，默认不展示
     if (!envHelper.isGrayFlag()) {
       steps.splice(1, 1);
     }

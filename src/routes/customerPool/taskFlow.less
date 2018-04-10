@@ -16,101 +16,101 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    :global {
-      .ant-steps-status-process {
-        & > .ant-steps-step {
-          & > .ant-steps-main {
-            & > .ant-steps-title {
-              color: #000;
-              font-weight: bold;
-            }
-          }
-        }
-      }
-      .ant-steps-status-finish {
-        & > .ant-steps-step {
-        & > .ant-steps-main {
-          & > .ant-steps-title {
-            color: #000;
-          }
-        }
-      }
-      }
-      .ant-steps-step {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-      .ant-steps-tail {
-        top: 20px;
-      }
-      .ant-steps-title {
-        font-size: 12px;
-        color: #108ee9;
-        letter-spacing: -0.07px;
-        text-align: center;
-        padding-right: 0;
-        font-weight: normal;
-        margin-right: 8px;
-      }
-      .ant-steps-item.ant-steps-status-finish .ant-steps-head-inner {
-        background: #fff;
-        width: 40px;
-        height: 40px;
-        border-radius: 100%;
-      }
-      .ant-steps-tail > i:after {
-        height: 2px;
-      }
-      .ant-steps-item.ant-steps-status-finish .ant-steps-tail > i:after {
-        background: #e9e9e9;
-      }
-      .ant-steps-tail > i {
-        height: 2px;
-      }
-      .ant-steps-item:not(:first-child) .ant-steps-head {
-        padding-left: 0;
-        margin-left: 0;
-        z-index: 10;
-      }
-      .ant-steps-item .ant-steps-head-inner {
-        margin-right: 0;
-      }
-      .ant-steps-item.ant-steps-status-finish .ant-steps-head-inner > .ant-steps-icon {
-        width: 18px;
-        height: 16px;
-        font-size: 23px;
-        font-weight: 600;
-        color: #108ee9;
-        top: 4px;
-        left: -2px;
-      }
-      .ant-steps-item.ant-steps-status-wait .ant-steps-head-inner > .ant-steps-icon {
-        font-size: 16px;
-      }
-      .ant-steps-item.ant-steps-status-process .ant-steps-head-inner > .ant-steps-icon {
-        font-size: 16px;
-      }
-      .ant-steps-item.ant-steps-status-finish .ant-steps-title {
-        color: #108ee9;
-      }
-      .ant-steps-main {
-        margin-top: 10px;
-        margin-left: -38px;
-        width: 126px;
-        text-align: center;
-      }
-      .ant-input-number-input-wrap {
-        line-height: 30px;
-      }
-      .ant-steps-head-inner {
-        width: 40px;
-        height: 40px;
-        line-height: 38px;
-        border-radius: 40px;
-      }
-    }
+    // :global {
+    //   .ant-steps-status-process {
+    //     & > .ant-steps-step {
+    //       & > .ant-steps-main {
+    //         & > .ant-steps-title {
+    //           color: #000;
+    //           font-weight: bold;
+    //         }
+    //       }
+    //     }
+    //   }
+    //   .ant-steps-status-finish {
+    //     & > .ant-steps-step {
+    //     & > .ant-steps-main {
+    //       & > .ant-steps-title {
+    //         color: #000;
+    //       }
+    //     }
+    //   }
+    //   }
+    //   .ant-steps-step {
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: flex-start;
+    //     flex-direction: column;
+    //   }
+    //   .ant-steps-tail {
+    //     top: 20px;
+    //   }
+    //   .ant-steps-title {
+    //     font-size: 12px;
+    //     color: #108ee9;
+    //     letter-spacing: -0.07px;
+    //     text-align: center;
+    //     padding-right: 0;
+    //     font-weight: normal;
+    //     margin-right: 8px;
+    //   }
+    //   .ant-steps-item.ant-steps-status-finish .ant-steps-head-inner {
+    //     background: #fff;
+    //     width: 40px;
+    //     height: 40px;
+    //     border-radius: 100%;
+    //   }
+    //   .ant-steps-tail > i:after {
+    //     height: 2px;
+    //   }
+    //   .ant-steps-item.ant-steps-status-finish .ant-steps-tail > i:after {
+    //     background: #e9e9e9;
+    //   }
+    //   .ant-steps-tail > i {
+    //     height: 2px;
+    //   }
+    //   .ant-steps-item:not(:first-child) .ant-steps-head {
+    //     padding-left: 0;
+    //     margin-left: 0;
+    //     z-index: 10;
+    //   }
+    //   .ant-steps-item .ant-steps-head-inner {
+    //     margin-right: 0;
+    //   }
+    //   .ant-steps-item.ant-steps-status-finish .ant-steps-head-inner > .ant-steps-icon {
+    //     width: 18px;
+    //     height: 16px;
+    //     font-size: 23px;
+    //     font-weight: 600;
+    //     color: #108ee9;
+    //     top: 4px;
+    //     left: -2px;
+    //   }
+    //   .ant-steps-item.ant-steps-status-wait .ant-steps-head-inner > .ant-steps-icon {
+    //     font-size: 16px;
+    //   }
+    //   .ant-steps-item.ant-steps-status-process .ant-steps-head-inner > .ant-steps-icon {
+    //     font-size: 16px;
+    //   }
+    //   .ant-steps-item.ant-steps-status-finish .ant-steps-title {
+    //     color: #108ee9;
+    //   }
+    //   .ant-steps-main {
+    //     margin-top: 10px;
+    //     margin-left: -38px;
+    //     width: 126px;
+    //     text-align: center;
+    //   }
+    //   .ant-input-number-input-wrap {
+    //     line-height: 30px;
+    //   }
+    //   .ant-steps-head-inner {
+    //     width: 40px;
+    //     height: 40px;
+    //     line-height: 38px;
+    //     border-radius: 40px;
+    //   }
+    // }
   }
   & > .stepsContent {
     position: relative;
@@ -151,6 +151,7 @@
     padding-top: 20px;
     padding-bottom: 20px;
     margin-right: 40px;
+    margin-bottom: 30px;
     & > .cancelBtn, & > .prevStepBtn {
       margin-right: 10px;
     }
