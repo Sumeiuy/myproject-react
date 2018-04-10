@@ -325,6 +325,8 @@ export default class CustomerGroupDetail extends PureComponent {
             totalRecordNum: 0,
           });
         },
+        okText: '确认',
+        cancelText: '取消',
       });
     } else {
       const isDefaultType = value === defaultType;
