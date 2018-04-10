@@ -40,10 +40,11 @@ const effects = {
   queryBatchCustList: 'customerPool/queryBatchCustList',
 };
 
-const fetchData = (type, loading) => query => ({
+const fetchData = (type, loading, forceFull) => query => ({
   type,
   payload: query || EMPTY_OBJECT,
   loading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -76,8 +77,8 @@ const mapDispatchToProps = {
   deleteGroup: fetchData(effects.deleteGroup, true),
   // 删除分组下客户
   deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
-  // 删除分组下客户
-  queryBatchCustList: fetchData(effects.queryBatchCustList, true),
+  // 获取上传excel文件解析后的客户
+  queryBatchCustList: fetchData(effects.queryBatchCustList, true, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
   // 清除数据
