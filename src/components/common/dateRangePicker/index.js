@@ -163,22 +163,28 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   fixEndDate({ startDate, endDate }) {
-    let date = endDate.clone();
+    let date = endDate;
     // 如果endDate不在用户自定义的范围内，则修补
-    if (endDate !== null && !this.isInCustomerDateRangeOffset(endDate)) {
-      // TODO 修改时间
-      date = this.fixDate(endDate, this.subtractMomentDay);
+    if (endDate !== null) {
+      date = endDate.clone();
+      if (!this.isInCustomerDateRangeOffset(endDate)) {
+        // TODO 修改时间
+        date = this.fixDate(endDate, this.subtractMomentDay);
+      }
     }
     this.setState({ startDate, endDate: date, dateHasChanged: true });
   }
 
   @autobind
   fixStartDate({ startDate, endDate }) {
-    let date = startDate.clone();
+    let date = startDate;
     // 如果startDate不在用户自定义的范围内，则修补
-    if (startDate !== null && !this.isInCustomerDateRangeOffset(startDate)) {
-      // TODO 修改时间
-      date = this.fixDate(startDate, this.addMomentDay);
+    if (startDate !== null) {
+      date = startDate.clone();
+      if (!this.isInCustomerDateRangeOffset(startDate)) {
+        // TODO 修改时间
+        date = this.fixDate(startDate, this.addMomentDay);
+      }
     }
     this.setState({ startDate: date, endDate, dateHasChanged: true });
   }
@@ -280,6 +286,16 @@ export default class CommonDateRangePicker extends PureComponent {
       return true;
     }
     return false;
+  }
+
+  // 组件外部，通过 ref ，清空起止时间
+  @autobind
+  clearAllDate() {
+    this.setState({
+      focusedInput: null,
+      endDate: null,
+      startDate: null,
+    });
   }
 
   render() {
