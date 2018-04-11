@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-11 18:36:47
+ * @Last Modified time: 2018-04-11 23:32:10
  */
 
 import React, { PureComponent } from 'react';
@@ -652,6 +652,7 @@ export default class ServiceRecordContent extends PureComponent {
   /**
    * 设置非涨乐财富通服务方式下的客户反馈的ref
    */
+  @autobind
   setCustFeedbackRef(input) {
     this.customerFeedbackRef = input;
   }
