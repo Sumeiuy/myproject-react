@@ -6,17 +6,18 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Form, Input, Button, Row, Col, DatePicker, Table } from 'antd';
+import { Form, Input, Button, Row, Col, Table } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
-// import DateRangePicker from '../../components/common/dateRangePicker';
+import DateRangePicker from '../../components/common/dateRangePicker';
 import Pagination from '../../components/common/Pagination';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
 
 const FormItem = Form.Item;
 const create = Form.create;
-const RangePicker = DatePicker.RangePicker;
+const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
@@ -114,8 +115,8 @@ export default class Home extends Component {
       pageNum: 1,
       productCode: '',
       brokerNumber: '',
-      startTime: '',
-      endTime: '',
+      startDateStr: '',
+      endDateStr: '',
     };
   }
 
@@ -123,6 +124,21 @@ export default class Home extends Component {
   componentDidMount() {
     const param = { pageNum: 1 };
     this.props.getExchangeList(param);
+  }
+
+  @autobind
+  setDisableRange(date) {
+    return date <= moment().subtract(3, 'months')
+   || date >= moment();
+  }
+
+  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
+  // 本需求在选择的两个日期的区间范围在3个月之内
+  @autobind
+  isInsideOffSet({ day, firstDay }) {
+    if (firstDay === null) return true;
+    return day > moment().subtract(3, 'months')
+      && day <= moment();
   }
 
   @autobind
@@ -145,11 +161,14 @@ export default class Home extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        const { productCode = '', brokerNumber = '', rangeTimePicker: { startDate = moment(), endDate = null } = {} } = values;
+        const startDateStr = startDate === null ? '' : startDate.format(dateFormat);
+        const endDateStr = endDate === null ? '' : endDate.format(dateFormat);
         const fieldValue = {
-          productCode: '',
-          brokerNumber: '',
-          startTime: '',
-          endTime: '',
+          productCode,
+          brokerNumber,
+          startDateStr,
+          endDateStr,
         };
         // 过滤请求的条件相同的情况
         if (this.state !== { ...fieldValue, pageNum }) {
@@ -196,14 +215,19 @@ export default class Home extends Component {
               </Col>
               <Col span={7} style={{ textAlign: 'center' }}>
                 <FormItem label={'经纪客户号'}>
-                  {getFieldDecorator('brokenNumber')(<Input />)}
+                  {getFieldDecorator('brokerNumber')(<Input />)}
                 </FormItem>
               </Col>
               <Col style={{ textAlign: 'right' }}>
                 <FormItem
                   label={'兑换时间'}
                 >
-                  {getFieldDecorator('range-time-picker')(<RangePicker format="YYYY-MM-DD" />)}
+                  {getFieldDecorator('rangeTimePicker')(
+                    <DateRangePicker
+                      hasCustomerOffset
+                      isInsideOffSet={this.isInsideOffSet}
+                      disabledRange={this.setDisableRange}
+                    />)}
                 </FormItem>
               </Col>
             </Row>
