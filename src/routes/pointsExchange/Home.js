@@ -88,11 +88,11 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  exchangeData: state.exchange.exchangeData,
+  exchangeData: state.pointsExchange.exchangeData,
 });
 
 const mapDispatchToProps = {
-  getExchangeList: fetchDataFunction(true, 'exchange/getExchangeHistory'),
+  getExchangeList: fetchDataFunction(true, 'pointsExchange/getExchangeHistory'),
 };
 
 @create()
@@ -125,19 +125,11 @@ export default class Home extends Component {
     this.props.getExchangeList({ pageNum: 1 });
   }
 
+  // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
     return date <= moment().subtract(3, 'months')
    || date >= moment();
-  }
-
-  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
-  // 本需求在选择的两个日期的区间范围在3个月之内
-  @autobind
-  isInsideOffSet({ day, firstDay }) {
-    if (firstDay === null) return true;
-    return day > moment().subtract(3, 'months')
-      && day <= moment();
   }
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
@@ -237,15 +229,9 @@ export default class Home extends Component {
                 </FormItem>
               </Col>
               <Col style={{ textAlign: 'right' }}>
-                <FormItem
-                  label={'兑换时间'}
-                >
+                <FormItem label="兑换时间">
                   <DateRangePicker
                     ref={this.drpWraperRef}
-                    hasCustomerOffset
-                    initialEndDate={null}
-                    initialStartDate={null}
-                    isInsideOffSet={this.isInsideOffSet}
                     disabledRange={this.setDisableRange}
                     onChange={this.handleCreateDateChange}
                   />

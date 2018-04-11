@@ -12,13 +12,13 @@ import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
 import relation from './relation';
-import customerFeedback from './customerFeedback';
+import customerFeedback from './customerFeedback'; 
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
 import preSaleQuery from './preSaleQuery';
 import stock from './stock';
-import exchange from './exchange';
+import pointsExchange from './pointsExchange';
 
 const api = apiCreator();
 
@@ -64,6 +64,6 @@ export default {
   // 个股资讯
   stock: stock(api),
   // 积分兑换历史查询
-  exchange: exchange(api),
+  pointsExchange: pointsExchange(api),
 };
 

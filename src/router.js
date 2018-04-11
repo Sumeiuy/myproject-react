@@ -57,7 +57,7 @@ import PreSaleQuery from './routes/preSaleQuery/Home';
 // 个股
 import Stock from './routes/stock/Home';
 import StockDetail from './routes/stock/Detail';
-import Exchange from './routes/exchange/Home';
+import Exchange from './routes/pointsExchange/Home';
 
 const { ConnectedRouter } = routerRedux;
 
