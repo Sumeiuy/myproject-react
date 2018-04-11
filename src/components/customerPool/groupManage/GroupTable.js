@@ -24,13 +24,13 @@ const NOOP = _.noop;
 
 // 给数据源添加空数据
 // 譬如分页需要一页12条，总数据有45条，那么添加45%12条空白行
-const padDataSource = (dataSource, pageSize) => {
-  if (_.isEmpty(dataSource)) {
+const padDataSource = (dataSource, pageSize, emptyListDataNeedEmptyRow) => {
+  if (_.isEmpty(dataSource) && !emptyListDataNeedEmptyRow) {
     return EMPTY_LIST;
   }
-
   const dataSize = _.size(dataSource);
-  const emptyRowCount = (Math.ceil(dataSize / pageSize) * pageSize) - dataSize;
+  const emptyRowCount = _.isEmpty(dataSource) ?
+    pageSize : (Math.ceil(dataSize / pageSize) * pageSize) - dataSize;
   let newDataSource = dataSource;
   // 填充空白行
   for (let i = 1; i <= emptyRowCount; i++) {
@@ -108,6 +108,8 @@ export default class GroupTable extends PureComponent {
     needShowEmptyRow: PropTypes.bool,
     // 分页器class
     paginationClass: PropTypes.string,
+    // 当listData数据源为空的时候是否需要填充空白行
+    emptyListDataNeedEmptyRow: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -138,6 +140,7 @@ export default class GroupTable extends PureComponent {
     paginationInTable: false,
     needShowEmptyRow: true,
     paginationClass: '',
+    emptyListDataNeedEmptyRow: false,
   };
 
   constructor(props) {
@@ -148,8 +151,7 @@ export default class GroupTable extends PureComponent {
   }
 
   @autobind
-  handleRowClick(record, index, event) {
-    console.log(record, index, event);
+  handleRowClick(record, index) {
     this.setState({
       curSelectedRow: index,
     });
@@ -201,9 +203,10 @@ export default class GroupTable extends PureComponent {
       fixedColumn,
       columnWidth,
       operationColumnClass,
+      emptyListDataNeedEmptyRow,
     } = this.props;
     const len = titleColumn.length - 1;
-    if (_.isEmpty(listData)) {
+    if (_.isEmpty(listData) && !emptyListDataNeedEmptyRow) {
       return [];
     }
 
@@ -270,17 +273,17 @@ export default class GroupTable extends PureComponent {
    * 构造数据源
    */
   renderTableDatas(dataSource) {
-    if (_.isEmpty(dataSource)) {
+    const { needShowEmptyRow, emptyListDataNeedEmptyRow, pageData: { curPageSize } } = this.props;
+    if (_.isEmpty(dataSource) && !emptyListDataNeedEmptyRow) {
       return [];
     }
 
-    const { needShowEmptyRow, pageData: { curPageSize } } = this.props;
     let newDataSource = [];
     newDataSource = _.map(dataSource,
       item => _.merge(item, { key: item.id })); // 在外部传入数据时，统一加入一个id
 
     if (needShowEmptyRow) {
-      return padDataSource(newDataSource, Number(curPageSize));
+      return padDataSource(newDataSource, Number(curPageSize), emptyListDataNeedEmptyRow);
     }
     return newDataSource;
   }
@@ -370,7 +373,9 @@ export default class GroupTable extends PureComponent {
           dataSource={this.renderTableDatas(listData)}
           bordered={bordered}
           scroll={_.merge(scrollXArea, scrollYArea)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
           rowClassName={(record, index) =>
             classnames({
@@ -383,6 +388,11 @@ export default class GroupTable extends PureComponent {
           pagination={(needPagination && totalRecordNum > 0) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
+          }}
         />
       </div>
     );

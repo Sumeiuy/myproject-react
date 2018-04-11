@@ -213,10 +213,16 @@ export default class DurationSelect extends PureComponent {
       open: true,
     });
   }
+
+  @autobind
+  durationSelectRef(input) {
+    this.durationSelect = input;
+  }
+
   // 给 DatePicker 添加 wrapper
   @autobind
   findContainer() {
-    return document.querySelectorAll('.durationSelect')[0];
+    return this.durationSelect;
   }
   @autobind
   disabledDate(current) {
@@ -341,7 +347,7 @@ export default class DurationSelect extends PureComponent {
       hide: !open,
     });
     return (
-      <div className="durationSelect">
+      <div className="durationSelect" ref={this.durationSelectRef}>
         <div className="duration">
           <Icon type="rili" />
           <div className="text" onClick={this.handleDurationClick}>
@@ -406,11 +412,11 @@ export default class DurationSelect extends PureComponent {
           allowClear={false}
           disabledDate={this.disabledDate}
           value={[beginMoment, endMoment]}
-          getCalendarContainer={this.findContainer}
           format="YYYY/MM/DD"
           onChange={this.rangePickerChange}
           open={selfDatePickerOpen}
           onOpenChange={this.openChange}
+          getCalendarContainer={this.findContainer}
         />
       </div>
     );

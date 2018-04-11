@@ -76,6 +76,11 @@ export default class RemarkList extends PureComponent {
         showHeader={false}
         pagination={false}
         bordered={false}
+        // 默认文案配置
+        locale={{
+          // 空数据时的文案
+          emptyText: '暂无数据',
+        }}
       />
     );
   }

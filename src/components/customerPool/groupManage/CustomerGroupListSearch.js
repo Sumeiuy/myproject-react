@@ -7,7 +7,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Icon, Button } from 'antd';
+import { Input } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerGroupListSearch.less';
 import logable from '../../../decorators/logable';
@@ -80,29 +80,21 @@ export default class CustomerGroupListSearch extends PureComponent {
         }
         {
           isNeedBtn ?
-            <Input
-              placeholder={placeholder}
-              value={curSearchValue}
-              onChange={this.handleInputChange}
-              style={searchStyle}
-              onPressEnter={this.handleSearchEnter}
-              suffix={(
-                <Button
-                  className="search-btn"
-                  size="large"
-                  type="primary"
-                  onClick={this.handleSearchEnter}
-                >
-                  <Icon type="search" />
-                </Button>
-              )}
-            /> :
             <Search
               placeholder={placeholder}
               value={curSearchValue}
               onChange={this.handleInputChange}
               onSearch={this.handleSearch}
               style={searchStyle}
+              enterButton
+            />
+          :
+            <Input
+              placeholder={placeholder}
+              value={curSearchValue}
+              onChange={this.handleInputChange}
+              style={searchStyle}
+              onPressEnter={this.handleSearchEnter}
             />
         }
       </div>

@@ -1,15 +1,14 @@
 /*
  * @Author: xuwenkang
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 14:32:33
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-03-30 15:14:21
  * 由于antd-Dropdown组件中直接放输入类组件，setState时会导致在ie下输入框失去焦点，所以单独提出来；
  */
 
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 import { Input } from 'antd';
-// import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 // import styles from './index.less';
@@ -57,10 +56,11 @@ export default class Test extends PureComponent {
   }
 
   render() {
+    const props = _.omit(this.props, ['handleChange']);
     return (
       <div>
         <Search
-          {...this.props}
+          {...props}
           value={this.state.value}
           onChange={this.handleChangeSearchValue}
         />

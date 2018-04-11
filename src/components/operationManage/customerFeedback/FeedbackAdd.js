@@ -126,6 +126,7 @@ export default class MissionBind extends PureComponent {
             onChange={this.handleChangeKeyword}
             style={{ width: 320 }}
             value={keyword}
+            enterButton
           />
         </div>
         <div className={styles.tableBox}>
@@ -135,7 +136,9 @@ export default class MissionBind extends PureComponent {
               data={feedbackList}
               pagination={pagination}
               scroll={{ y: 240 }}
-              onRowClick={this.handleSelectRow}
+              onRow={record => ({
+                onClick: () => this.handleSelectRow(record),       // 点击行
+              })}
               rowClassName={record => (record.id === currentFeedback.id ? 'current' : '')}
             />
           </div>

@@ -252,6 +252,11 @@ export default class DetailTable extends Component {
             dataSource={tableData}
             pagination={false}
             scroll={{ y }}
+            // 默认文案配置
+            locale={{
+              // 空数据时的文案
+              emptyText: '暂无数据',
+            }}
           />
         </div>
       </div>

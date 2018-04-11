@@ -93,6 +93,11 @@ export default class CutomerTableList extends PureComponent {
         pagination={{
           pageSize: 10,
         }}
+        // 默认文案配置
+        locale={{
+          // 空数据时的文案
+          emptyText: '暂无数据',
+        }}
       />
     );
   }

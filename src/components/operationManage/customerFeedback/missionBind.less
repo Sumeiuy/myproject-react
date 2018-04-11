@@ -6,6 +6,21 @@
     color: #4a4a4a;
   }
 }
+.tabBox {
+  :global {
+    .ant-input-suffix {
+      button {
+        background-color: transparent;
+        border-color: transparent;
+        color: #333;
+        &:visited, &:active {
+          background-color: transparent;
+          border-color: transparent;
+        }
+      }
+    }
+  }
+}
 
 .collapseBox {
   border: 1px solid #ddd;

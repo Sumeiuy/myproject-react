@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { DatePicker, Input } from 'antd';
-// import DateRangePicker from '../common/dateRangePicker';
+import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
@@ -392,6 +392,7 @@ export default class Pageheader extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
   handleSearch(value) {
+    console.warn('点击了搜索', value);
     this.props.filterCallback({
       missionName: value,
     });
@@ -421,8 +422,11 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleCreateDateChange(date) {
-    const createTimeStart = moment(date[0]).format(dateFormat);
-    const createTimeEnd = moment(date[1]).format(dateFormat);
+    const { startDate, endDate } = date;
+    const createTimeStart = startDate.format(dateFormat);
+    const createTimeEnd = endDate.format(dateFormat);
+    // const createTimeStart = moment(date[0]).format(dateFormat);
+    // const createTimeEnd = moment(date[1]).format(dateFormat);
     this.props.filterCallback({
       createTimeStart,
       createTimeEnd,
@@ -501,6 +505,15 @@ export default class Pageheader extends PureComponent {
     this.props.creatSeibelModal();
   }
 
+  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
+  // 本需求在选择的两个日期的区间范围在60天之内
+  @autobind
+  isInsideOffSet({ day, firstDay }) {
+    if (firstDay === null) return true;
+    return day >= firstDay.clone().subtract(60, 'days')
+      && day <= firstDay.clone().add(60, 'days');
+  }
+
   /**
    * 构造任务状态
    * @param {*string} filterControl 当前页面类型
@@ -573,13 +586,14 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            ref={ref => this.timers = ref}
-            value={[startTime, endTime]}
+          {/* 新的日历范围组件 */}
+          <DateRangePicker
+            hasCustomerOffset
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleCreateDateChange}
-            placeholder={['开始时间', '结束时间']}
+            isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}创建时间`}
-            format={dateFormat}
           />
         </div>
       </div>);
@@ -698,6 +712,7 @@ export default class Pageheader extends PureComponent {
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
+              enterButton
             />
           </div>
 

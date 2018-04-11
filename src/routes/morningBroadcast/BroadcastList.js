@@ -208,42 +208,6 @@ export default class BroadcastList extends PureComponent {
     });
   }
 
-  // Model(晨报新增、修改) --> start
-  @autobind()
-  @logPV({ pathname: '/modal/createModal', title: '' })
-  showModal(newsId = -1) {
-    this.setState({
-      visible: true,
-      newsId,
-    });
-  }
-
-  @autobind()
-  handleOk(callback) {
-    this.setState({
-      visible: false,
-    }, callback);
-  }
-
-  @autobind()
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
-  }
-  // Model(晨报新增、修改) --> end
-  @autobind
-  formQuery() {
-    const { getFieldsValue } = this.props.form;
-    const values = getFieldsValue();
-    return {
-      createdBy: values.createdBy,
-      title: values.title,
-      createdFrom: values.createdTime[0].format('YYYY-MM-DD'),
-      createdTo: values.createdTime[1].format('YYYY-MM-DD'),
-    };
-  }
-
   // table -->start
   @autobind
   onHandleTablecolumns() {
@@ -294,7 +258,12 @@ export default class BroadcastList extends PureComponent {
         render: newsId => (
           <span>
             <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
-            <Popconfirm title="确定删除?" onConfirm={() => this.onDelItem(newsId)}>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={() => this.onDelItem(newsId)}
+              cancelText="取消"
+              okText="确定"
+            >
               <i className="icon iconfont icon-shanchu remove" />
             </Popconfirm>
           </span>
@@ -343,26 +312,6 @@ export default class BroadcastList extends PureComponent {
     });
   }
 
-  @autobind()
-  @logable({ type: 'Click', payload: { name: '搜索作者' } })
-  handleSearchAuthority() {
-    this.onHandleSearch();
-  }
-
-  @autobind()
-  @logable({ type: 'Click', payload: { name: '搜索标题' } })
-  handleSearchHeadline() {
-    this.onHandleSearch();
-  }
-  // Search -->end
-
-  // 日期选择组件-->start
-  @autobind()
-  disabledDate(startValue) {
-    const { TO_DATE } = BroadcastList.initNewsListQuery();
-    return startValue &&
-      startValue.valueOf() > moment(TO_DATE).valueOf();
-  }
   @autobind
   onChange(dates, dateStrings) {
     const { onHandleGetList } = this;
@@ -380,6 +329,64 @@ export default class BroadcastList extends PureComponent {
     });
   }
   // 日期选择组件-->end
+
+  // 日期选择组件-->start
+  @autobind()
+  disabledDate(startValue) {
+    const { TO_DATE } = BroadcastList.initNewsListQuery();
+    return startValue &&
+      startValue.valueOf() > moment(TO_DATE).valueOf();
+  }
+
+  @autobind()
+  @logable({ type: 'Click', payload: { name: '搜索作者' } })
+  handleSearchAuthority() {
+    this.onHandleSearch();
+  }
+
+  @autobind()
+  @logable({ type: 'Click', payload: { name: '搜索标题' } })
+  handleSearchHeadline() {
+    this.onHandleSearch();
+  }
+  // Search -->end
+
+  // Model(晨报新增、修改) --> start
+  @autobind()
+  @logPV({ pathname: '/modal/createModal', title: '' })
+  showModal(newsId = -1) {
+    this.setState({
+      visible: true,
+      newsId,
+    });
+  }
+
+  @autobind()
+  handleOk(callback) {
+    this.setState({
+      visible: false,
+    }, callback);
+  }
+
+  @autobind()
+  handleCancel() {
+    this.setState({
+      visible: false,
+    });
+  }
+  // Model(晨报新增、修改) --> end
+  @autobind
+  formQuery() {
+    const { getFieldsValue } = this.props.form;
+    const values = getFieldsValue();
+    return {
+      createdBy: values.createdBy,
+      title: values.title,
+      createdFrom: values.createdTime[0].format('YYYY-MM-DD'),
+      createdTo: values.createdTime[1].format('YYYY-MM-DD'),
+    };
+  }
+
   render() {
     const {
       morningBoradcast: {
@@ -424,6 +431,7 @@ export default class BroadcastList extends PureComponent {
                     placeholder="作者"
                     style={{ width: 200 }}
                     onSearch={this.handleSearchAuthority}
+                    enterButton
                   />,
                 )}
               </div>
@@ -453,6 +461,7 @@ export default class BroadcastList extends PureComponent {
                   placeholder="标题关键词"
                   style={{ width: 200 }}
                   onSearch={this.handleSearchHeadline}
+                  enterButton
                 />,
               )}
               {
@@ -493,6 +502,11 @@ export default class BroadcastList extends PureComponent {
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
               pagination={false}
+              // 默认文案配置
+              locale={{
+                // 空数据时的文案
+                emptyText: '暂无数据',
+              }}
             />
             <Pagination {...paginationOption} />
           </div>

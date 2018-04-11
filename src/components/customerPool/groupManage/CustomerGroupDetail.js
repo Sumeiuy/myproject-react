@@ -2,12 +2,12 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-13 13:23:43
+ * @Last Modified time: 2018-04-09 15:19:15
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message } from 'antd';
+import { Input, Form, message, Modal, Upload, Alert } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -15,17 +15,25 @@ import _ from 'lodash';
 import confirm from '../../common/Confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
+import Select from '../../common/Select';
+import Button from '../../common/Button';
 
 import tableStyles from './groupTable.less';
 import styles from './customerGroupDetail.less';
 import logable from '../../../decorators/logable';
+import { request } from '../../../config';
+import { emp } from '../../../helper';
+import config from './config';
+import customerTemplet from './customerTemplet.xlsx';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
+// 添加客户方式默认值
+const defaultType = config.customerAddType[0].value;
 const FormItem = Form.Item;
-// withRef 拿到被包裹的wrappedComponent
-@Form.create({ withRef: true })
+
+@Form.create()
 export default class CustomerGroupDetail extends PureComponent {
   static propTypes = {
     detailData: PropTypes.object,
@@ -50,6 +58,9 @@ export default class CustomerGroupDetail extends PureComponent {
     onAddCustomerToGroup: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    // 批量导入客户信息
+    queryBatchCustList: PropTypes.func.isRequired,
+    batchCustList: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -65,7 +76,7 @@ export default class CustomerGroupDetail extends PureComponent {
       name,
       description,
       curPageNum: 1,
-      curPageSize: 5,
+      curPageSize: 10,
       groupId,
       record: {},
       totalRecordNum: 0,
@@ -76,6 +87,18 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustIdList: [],
       needDeleteCustId: '',
       curPageCustList: EMPTY_LIST,
+      // 客户添加方式默认值--单客户添加
+      customerAddType: defaultType,
+      // 是否是初始客户添加方式
+      isDefaultType: true,
+      // 上传后的返回附件Id值
+      attachmentId: '',
+      // 附件上传报错信息
+      multiErrmsg: '',
+      // 再次导入提醒的弹窗
+      importVisible: false,
+      // 当前上传的文件
+      file: {},
     };
   }
 
@@ -123,11 +146,26 @@ export default class CustomerGroupDetail extends PureComponent {
           getGroupCustomerList({
             groupId,
             pageNum: 1,
-            pageSize: 5,
+            pageSize: 10,
           });
         }
       });
     }
+  }
+
+  // 导入数据
+  @autobind
+  onImportHandle() {
+    this.setState({
+      importVisible: true,
+    });
+  }
+
+  @autobind
+  importHandleCancel() {
+    this.setState({
+      importVisible: false,
+    });
   }
 
   @autobind
@@ -137,6 +175,11 @@ export default class CustomerGroupDetail extends PureComponent {
       groupId,
       includeCustIdList,
     };
+  }
+
+  @autobind
+  getForm() {
+    return this.props.form;
   }
 
   /**
@@ -231,6 +274,13 @@ export default class CustomerGroupDetail extends PureComponent {
         curPageCustList,
         includeCustListSize: newCustListSize,
         curPageNum: curPage,
+      }, () => {
+        const { totalRecordNum: numAfterDelete } = this.state;
+        if (numAfterDelete < 1) {
+          this.setState({
+            attachmentId: '',
+          });
+        }
       });
     } else {
       // 直接提示删除确认框，然后删除
@@ -243,6 +293,48 @@ export default class CustomerGroupDetail extends PureComponent {
     this.setState({
       needDeleteCustId: custId,
     });
+  }
+
+
+  // 客户添加方式的 select 切换事件
+  @autobind
+  handleSelectChange(key, value) {
+    const { includeCustIdList, groupId } = this.state;
+    // 新建页面切换客户添加方式，需要将之前已经存在的附件、报错信息置空
+    this.setState({
+      attachmentId: '',
+      multiErrmsg: '',
+      importVisible: false,
+      file: {},
+    });
+    // groupId为空，为新建页面
+    // includeCustIdList不为空，说明已经添加了客户，此时若切换需要弹出提示信息
+    if (!_.isEmpty(includeCustIdList) && _.isEmpty(groupId)) {
+      Modal.confirm({
+        title: '确认切换客户添加方式吗?',
+        content: '在新增模式下，新添加的客户需要提交才能生效，如果切换添加客户方式将会覆盖之前的数据，是否切换?',
+        onOk: () => {
+          const isDefaultType = value === defaultType;
+          // 新建页面切换客户添加方式，需要将之前已经存在的数据置空
+          this.setState({
+            [key]: value,
+            isDefaultType,
+            includeCustIdList: [],
+            curPageCustList: [],
+            includeCustList: [],
+            totalRecordNum: 0,
+          });
+        },
+        okText: '确认',
+        cancelText: '取消',
+      });
+    } else {
+      const isDefaultType = value === defaultType;
+      this.setState({
+        [key]: value,
+        isDefaultType,
+      });
+    }
   }
 
   @autobind
@@ -399,6 +491,116 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
+  // 上传事件
+  @autobind
+  onChange(info) {
+    this.setState({
+      importVisible: false,
+      includeCustList: [],
+      totalRecordNum: 0,
+    }, () => {
+      const uploadFile = info.file;
+      this.setState({
+        file: uploadFile,
+      });
+      if (uploadFile.response && uploadFile.response.code) {
+        if (uploadFile.response.code === '0') {
+          // 上传成功
+          const data = uploadFile.response.resultData;
+          // 上传的文件符合要求
+          if (data.isValid) {
+            this.setState({
+              multiErrmsg: '',
+              attachmentId: data.attachmentId,
+            }, () => {
+              const { attachmentId } = this.state;
+              const { queryBatchCustList } = this.props;
+              const payload = {
+                attachmentId,
+                pageNum: 1,
+                pageSize: 1000,
+              };
+              // 文件上传成功拿对应的attachmentId调接口解析客户列表请求
+              queryBatchCustList(payload).then(() => {
+                const {
+                  batchCustList,
+                  batchCustList: { custList },
+                  onAddCustomerToGroup,
+                } = this.props;
+                const {
+                  includeCustIdList,
+                  totalRecordNum,
+                  includeCustList,
+                  groupId,
+                  // curPageNum,
+                  curPageSize,
+                  name,
+                  description,
+                } = this.state;
+                const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
+                // 取出数组对象中所有brokerNumber组成一个新的数组
+                const custIdList = _.map(multiBatchCustList, 'brokerNumber');
+                const custIdListSize = _.size(custIdList);
+                const newCustIdList = _.concat(includeCustIdList, custIdList);
+
+                // 如果groupId不为空，则添加直接调用接口，添加
+                if (_.isEmpty(groupId)) {
+                  // 数据添加进表格
+                  // 新添加的数据放在表格的前面
+                  const newIncludeCustList = _.concat(multiBatchCustList, includeCustList);
+
+                  const {
+                    curPageCustList,
+                    includeCustListSize,
+                    curPage,
+                  } = this.generateLocalPageAndDataSource(newIncludeCustList, curPageSize);
+
+                  this.setState({
+                    // 手动新增的所有数据集合
+                    includeCustIdList: newCustIdList,
+                    includeCustList: newIncludeCustList,
+                    includeCustListSize,
+                    totalRecordNum: totalRecordNum + custIdListSize,
+                    curPageCustList,
+                    curPageNum: curPage,
+                  });
+                } else {
+                  // groupId不为空，编辑页面直接调用add接口
+                  onAddCustomerToGroup({
+                    includeCustIdList: newCustIdList,
+                    name,
+                    description,
+                  });
+                  // 编辑页面调完add接口客户已经分组成功
+                  // 此时将attachmentId置为空，为再次点击上传按钮上传做准备
+                  this.setState({
+                    attachmentId: '',
+                  });
+                }
+              });
+            });
+          } else {
+            // 上传的文件不符合要求，在页面显示做错信息
+            this.setState({
+              multiErrmsg: data.msg,
+            });
+          }
+        } else {
+          // 上传失败
+          message.error(uploadFile.response.msg);
+        }
+      }
+    });
+  }
+
+  // Alert关闭时回调，将multiErrmsg置空
+  @autobind
+  handleCloseAlert() {
+    this.setState({
+      multiErrmsg: '',
+    });
+  }
+
   /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
@@ -455,6 +657,12 @@ export default class CustomerGroupDetail extends PureComponent {
       totalRecordNum,
       curPageCustList,
       groupId,
+      customerAddType,
+      isDefaultType,
+      attachmentId,
+      multiErrmsg,
+      importVisible,
+      file,
     } = this.state;
     const {
       form: { getFieldDecorator },
@@ -467,12 +675,13 @@ export default class CustomerGroupDetail extends PureComponent {
     const titleColumn = this.renderColumnTitle();
     // 构造operation
     const actionSource = this.renderActionSource();
-
+    // 上传批量客户，不符合要求的报错信息
+    const newMultiErrmsg = `注:${multiErrmsg}`;
+    // 单客户添加列表数据
     let newDataSource = EMPTY_LIST;
-
+    // 如果存在groupId，是编辑页面，则用dataSource
+    // 不存在groupId则是新建页面，用includeCustList
     if (_.isEmpty(groupId)) {
-      // 如果存在groupId，则用dataSource
-      // 不然用includeCustList
       newDataSource = curPageCustList;
     } else {
       newDataSource = dataSource;
@@ -480,6 +689,28 @@ export default class CustomerGroupDetail extends PureComponent {
 
     // 添加id到dataSource
     newDataSource = this.addIdToDataSource(newDataSource);
+    const uploadProps = {
+      data: {
+        empId: emp.getId(),
+        file,
+        groupId,
+        groupName: name,
+        groupDesc: description,
+      },
+      action: `${request.prefix}/file/custgroupUpload`,
+      headers: {
+        accept: '*/*',
+      },
+      onChange: this.onChange,
+      showUploadList: false,
+    };
+
+    const uploadElement = _.isEmpty(attachmentId) ?
+    (<Upload {...uploadProps} {...this.props}>
+      <a>客户导入</a>
+    </Upload>)
+  :
+    (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
 
     return (
       <Form className={styles.groupDetail}>
@@ -536,61 +767,116 @@ export default class CustomerGroupDetail extends PureComponent {
             </FormItem>
           </div>
         </div>
-        <div className={styles.searchSection}>
-          <div className={styles.searchTitle}>
-            客户
+        <div className={styles.addCustSection}>
+          <div className={styles.addCustLeft}>
+            <div className={styles.addType}>
+              添加方式
+            </div>
+            <div className={styles.addTypeContent}>
+              <Select
+                width="220px"
+                name="customerAddType"
+                data={config.customerAddType}
+                value={customerAddType}
+                onChange={this.handleSelectChange}
+              />
+            </div>
           </div>
-          <Search
-            // 请求联想关键词
-            queryPossibleWords={getHotPossibleWds}
-            // 联想出来的数据
-            possibleWordsData={customerHotPossibleWordsList}
-            // 搜索className
-            searchWrapperClass={styles.groupCustomerSearch}
-            // 搜索按钮功能
-            onSearchClick={this.handleSearchClick}
-            // placeholder
-            placeholder={'客户号/姓名'}
-            // 搜索框style
-            searchStyle={{
-              height: '30px',
-              width: '190px',
-            }}
-            // 是否需要搜索图标
-            isNeedSearchIcon={false}
-            // 是否需要添加按钮
-            isNeedAddBtn
-            // 添加按钮事件
-            addBtnCallback={this.handleAddCustomerFromSearch}
-          />
+          <div className={styles.addCustRight}>
+            {
+              isDefaultType ?
+                <div className={styles.singleCust}>
+                  <div className={styles.searchTitle}>
+                    客户
+                  </div>
+                  <Search
+                    // 请求联想关键词
+                    queryPossibleWords={getHotPossibleWds}
+                    // 联想出来的数据
+                    possibleWordsData={customerHotPossibleWordsList}
+                    // 搜索className
+                    searchWrapperClass={styles.groupCustomerSearch}
+                    // 搜索按钮功能
+                    onSearchClick={this.handleSearchClick}
+                    // placeholder
+                    placeholder={'客户号/姓名'}
+                    // 搜索框style
+                    searchStyle={{
+                      height: '30px',
+                      width: '190px',
+                    }}
+                    // 是否需要搜索图标
+                    isNeedSearchIcon={false}
+                    // 是否需要添加按钮
+                    isNeedAddBtn
+                    // 添加按钮事件
+                    addBtnCallback={this.handleAddCustomerFromSearch}
+                  />
+                </div>
+                :
+                <div className={styles.multiCust}>
+                  {uploadElement}
+                  <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                </div>
+            }
+          </div>
         </div>
         {
-          !_.isEmpty(newDataSource) ?
-            <div className={styles.customerListTable}>
-              <GroupTable
-                pageData={{
-                  curPageNum,
-                  curPageSize,
-                  totalRecordNum,
-                }}
-                listData={newDataSource}
-                onSizeChange={this.handleShowSizeChange}
-                onPageChange={this.handlePageChange}
-                tableClass={
-                  classnames({
-                    [tableStyles.groupTable]: true,
-                    [styles.custListTable]: true,
-                  })
-                }
-                titleColumn={titleColumn}
-                actionSource={actionSource}
-                isFirstColumnLink={false}
-                // 固定标题，内容滚动
-                scrollY={175}
-                isFixedTitle
+          _.isEmpty(multiErrmsg) ?
+            null
+            :
+            <div className={styles.multiErrmsg}>
+              <Alert
+                message={newMultiErrmsg}
+                type="error"
+                onClose={this.handleCloseAlert}
+                closable
               />
-            </div> : <div className={styles.emptyTable} />
+            </div>
         }
+        <div className={styles.customerListTable}>
+          <GroupTable
+            pageData={{
+              curPageNum,
+              curPageSize,
+              totalRecordNum,
+            }}
+            listData={newDataSource}
+            onSizeChange={this.handleShowSizeChange}
+            onPageChange={this.handlePageChange}
+            tableClass={
+            classnames({
+              [tableStyles.groupTable]: true,
+              [styles.custListTable]: true,
+            })
+          }
+            titleColumn={titleColumn}
+            actionSource={actionSource}
+            isFirstColumnLink={false}
+          // 固定标题，内容滚动
+            scrollY={186}
+            isFixedTitle
+          // 当listData数据源为空的时候是否需要填充空白行
+            emptyListDataNeedEmptyRow
+          />
+        </div>
+        <Modal
+          visible={importVisible}
+          title="提示"
+          onCancel={this.importHandleCancel}
+          footer={[
+            <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+              否
+            </Button>,
+            <Upload {...uploadProps} {...this.props}>
+              <Button key="submit" type="primary">
+                是
+              </Button>
+            </Upload>,
+          ]}
+        >
+          <p>已有导入的数据，继续导入将会覆盖之前导入的数据，是否继续？</p>
+        </Modal>
       </Form>
     );
   }

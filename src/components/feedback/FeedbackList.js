@@ -285,7 +285,9 @@ export default class FeedbackList extends PureComponent {
           className="feedbackTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
-          onRowClick={this.handleRowClick}
+          onRow={(record, index) => ({
+            onClick: () => this.handleRowClick(record, index),       // 点击行
+          })}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}
@@ -294,6 +296,11 @@ export default class FeedbackList extends PureComponent {
               return 'active';
             }
             return '';
+          }}
+          // 默认文案配置
+          locale={{
+            // 空数据时的文案
+            emptyText: '暂无数据',
           }}
         />
       </div >

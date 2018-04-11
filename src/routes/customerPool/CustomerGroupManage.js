@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 11:37:39
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-09 15:12:05
  */
 
 import React, { PureComponent } from 'react';
@@ -37,12 +37,14 @@ const effects = {
   operateGroup: 'customerPool/operateGroup',
   deleteGroup: 'customerPool/deleteGroup',
   deleteCustomerFromGroup: 'customerPool/deleteCustomerFromGroup',
+  queryBatchCustList: 'customerPool/queryBatchCustList',
 };
 
-const fetchData = (type, loading) => query => ({
+const fetchData = (type, loading, forceFull) => query => ({
   type,
   payload: query || EMPTY_OBJECT,
   loading,
+  forceFull,
 });
 
 const mapStateToProps = state => ({
@@ -60,6 +62,8 @@ const mapStateToProps = state => ({
   deleteGroupResult: state.customerPool.deleteGroupResult,
   // 删除分组下客户结果
   deleteCustomerFromGroupResult: state.customerPool.deleteCustomerFromGroupResult,
+  // 批量导入客户信息
+  batchCustList: state.customerPool.batchCustList,
 });
 
 const mapDispatchToProps = {
@@ -73,6 +77,8 @@ const mapDispatchToProps = {
   deleteGroup: fetchData(effects.deleteGroup, true),
   // 删除分组下客户
   deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
+  // 获取上传excel文件解析后的客户
+  queryBatchCustList: fetchData(effects.queryBatchCustList, true, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
   // 清除数据
@@ -104,6 +110,9 @@ export default class CustomerGroupManage extends PureComponent {
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
     deleteCustomerFromGroup: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    // 批量导入客户信息
+    queryBatchCustList: PropTypes.func.isRequired,
+    batchCustList: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -210,7 +219,7 @@ export default class CustomerGroupManage extends PureComponent {
     getGroupCustomerList({
       groupId,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -381,7 +390,7 @@ export default class CustomerGroupManage extends PureComponent {
     getGroupCustomerList({
       groupId,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -393,8 +402,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCloseModal() {
-    const { groupId, includeCustIdList } = this.detailRef.refs
-      .wrappedComponent.refs.formWrappedComponent.getData();
+    const { groupId, includeCustIdList } = this.detailRef.getData();
     if (groupId) {
       // 编辑模式下
       if (!_.isEmpty(includeCustIdList)) {
@@ -462,11 +470,10 @@ export default class CustomerGroupManage extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit(e) {
     if (this.detailRef) {
-      const { groupId, includeCustIdList } = this.detailRef.refs
-        .wrappedComponent.refs.formWrappedComponent.getData();
+      const { groupId, includeCustIdList } = this.detailRef.getData();
 
-      e.preventDefault();
-      this.detailRef.validateFields((err, values) => {
+      e.persist();
+      this.detailRef.getForm().validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
           const { name = '', description } = values;
@@ -528,6 +535,11 @@ export default class CustomerGroupManage extends PureComponent {
       },
       keyWord,
     });
+  }
+
+  @autobind
+  customerGroupDetailRef(ref) {
+    this.detailRef = ref;
   }
 
   @autobind
@@ -613,6 +625,8 @@ export default class CustomerGroupManage extends PureComponent {
       deleteCustomerFromGroupResult,
       location,
       replace,
+      queryBatchCustList,
+      batchCustList,
      } = this.props;
 
     const {
@@ -728,7 +742,7 @@ export default class CustomerGroupManage extends PureComponent {
               </div>}
               modalContent={
                 <CustomerGroupDetail
-                  ref={ref => (this.detailRef = ref)}
+                  wrappedComponentRef={this.customerGroupDetailRef}
                   deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
                   deleteCustomerFromGroup={this.deleteCustomerFromGroup}
                   custRiskBearing={custRiskBearing}
@@ -747,6 +761,8 @@ export default class CustomerGroupManage extends PureComponent {
                   location={location}
                   replace={replace}
                   onAddCustomerToGroup={this.addCustomerToExistedGroup}
+                  queryBatchCustList={queryBatchCustList}
+                  batchCustList={batchCustList}
                 />
               }
               onOkHandler={this.handleUpdateGroup}

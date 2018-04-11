@@ -103,6 +103,7 @@ const routes = [
     children: [
       { path: '/viewpointDetail', component: ViewpointDetail },
       { path: '/viewpointList', component: ViewpointList },
+      // todo
       { path: '/todo', component: ToDo },
       { path: '/list', component: CustomerList },
       { path: '/customerGroup', component: CustomerGroup },

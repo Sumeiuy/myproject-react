@@ -95,8 +95,8 @@ export default class autoComplete extends PureComponent {
     const { dataSource, width, defaultInput } = this.props;
     const { inputValue } = this.state;
     const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
-    const options = newDataSource.map(opt => (
-      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
+    const options = newDataSource.map((opt, index) => (
+      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue} index={index}>
         <span className={styles.prodValue}>{opt.codeValue}</span>
       </Option>
     ));

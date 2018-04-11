@@ -1,7 +1,9 @@
 /**
- * @file components/customerPool/Search.js
- *  客户池-搜索
- * @author yangquanjian
+ * @Author: sunweibin
+ * @Date: 2018-04-09 15:38:19
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-09 15:38:48
+ * @description 客户池头部搜索组件
  */
 
 import React, { PureComponent } from 'react';

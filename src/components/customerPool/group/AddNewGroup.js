@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-23 16:50:28
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-03-06 13:20:10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-09 15:22:39
  */
 
 import React, { PureComponent } from 'react';
@@ -81,7 +81,7 @@ export default class AddNewGroup extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const { count } = this.props;
     return (
-      <Form onSubmit={this.addNewGroupSubmit}>
+      <Form onSubmit={this.addNewGroupSubmit} className={styles.formFix}>
         <FormItem
           {...formItemLayout}
           label="分组名称"
