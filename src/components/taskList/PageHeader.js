@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import { DatePicker, Input } from 'antd';
+// import { DatePicker, Input } from 'antd';
+import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
@@ -36,7 +37,7 @@ import {
 
 import styles from './pageHeader.less';
 
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 const Search = Input.Search;
 
 // 头部筛选filterBox的高度
@@ -607,13 +608,13 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         结束时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            value={[startTime, endTime]}
+          <DateRangePicker
+            hasCustomerOffset
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleEndDateChange}
-            placeholder={['开始时间', '结束时间']}
+            isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}结束时间`}
-            ref={ref => this.date = ref}
-            format={dateFormat}
           />
         </div>
       </div>);
