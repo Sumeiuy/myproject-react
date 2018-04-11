@@ -288,6 +288,16 @@ export default class CommonDateRangePicker extends PureComponent {
     return false;
   }
 
+  // 组件外部，通过 ref ，清空起止时间
+  @autobind
+  clearAllDate() {
+    this.setState({
+      focusedInput: null,
+      endDate: null,
+      startDate: null,
+    });
+  }
+
   render() {
     const {
       focusedInput,

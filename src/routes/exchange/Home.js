@@ -17,7 +17,7 @@ import styles from './home.less';
 
 const FormItem = Form.Item;
 const create = Form.create;
-const dateFormat = 'YYYY-MM-DD HH:mm:ss';
+const dateFormat = 'YYYY/MM/DD';
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
@@ -122,8 +122,7 @@ export default class Home extends Component {
 
   // 发送请求
   componentDidMount() {
-    const param = { pageNum: 1 };
-    this.props.getExchangeList(param);
+    this.props.getExchangeList({ pageNum: 1 });
   }
 
   @autobind
@@ -141,14 +140,28 @@ export default class Home extends Component {
       && day <= moment();
   }
 
+  // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
   @autobind
-  handlePageClick(page) {
+  handleCreateDateChange(date) {
+    const { startDate, endDate } = date;
+    const startDateStr = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
+    const endDateStr = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
+    this.setState({
+      startDateStr,
+      endDateStr,
+    });
+  }
+
+  @autobind
+  handlePageChange(page) {
     const { getExchangeList } = this.props;
     this.setState(
       { pageNum: page },
       () => {
-        const param = { ...this.state, pageNum: page };
-        getExchangeList(param);
+        getExchangeList({
+          ...this.state,
+          pageNum: page,
+        });
       },
     );
   }
@@ -157,13 +170,10 @@ export default class Home extends Component {
   handleSearch(e) {
     e.preventDefault();
     const { getExchangeList } = this.props;
-    const { pageNum } = this.state;
+    const { pageNum, startDateStr, endDateStr } = this.state;
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        const { productCode = '', brokerNumber = '', rangeTimePicker: { startDate = moment(), endDate = null } = {} } = values;
-        const startDateStr = startDate === null ? '' : startDate.format(dateFormat);
-        const endDateStr = endDate === null ? '' : endDate.format(dateFormat);
+        const { productCode = '', brokerNumber = '' } = values;
         const fieldValue = {
           productCode,
           brokerNumber,
@@ -173,10 +183,12 @@ export default class Home extends Component {
         // 过滤请求的条件相同的情况
         if (this.state !== { ...fieldValue, pageNum }) {
           this.setState(
-            { ...fieldValue },
+            { productCode, brokerNumber },
             () => {
-              const param = { ...fieldValue, pageNum };
-              getExchangeList(param);
+              getExchangeList({
+                ...fieldValue,
+                pageNum,
+              });
             },
           );
         }
@@ -185,8 +197,14 @@ export default class Home extends Component {
   }
 
   @autobind
+  drpWraperRef(input) {
+    this.datePickRef = input;
+  }
+
+  @autobind
   handleReset() {
     this.props.form.resetFields();
+    this.datePickRef.clearAllDate();
   }
 
   render() {
@@ -198,7 +216,7 @@ export default class Home extends Component {
       current: curPageNum,
       pageSize: 10,
       total: _.toNumber(totalRecordNum),
-      onChange: this.handlePageClick,
+      onChange: this.handlePageChange,
     };
     return (
       <div className={styles.exchangeContainer}>
@@ -222,12 +240,15 @@ export default class Home extends Component {
                 <FormItem
                   label={'兑换时间'}
                 >
-                  {getFieldDecorator('rangeTimePicker')(
-                    <DateRangePicker
-                      hasCustomerOffset
-                      isInsideOffSet={this.isInsideOffSet}
-                      disabledRange={this.setDisableRange}
-                    />)}
+                  <DateRangePicker
+                    ref={this.drpWraperRef}
+                    hasCustomerOffset
+                    initialEndDate={null}
+                    initialStartDate={null}
+                    isInsideOffSet={this.isInsideOffSet}
+                    disabledRange={this.setDisableRange}
+                    onChange={this.handleCreateDateChange}
+                  />
                 </FormItem>
               </Col>
             </Row>
