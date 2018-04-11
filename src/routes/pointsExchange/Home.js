@@ -18,6 +18,13 @@ import styles from './home.less';
 const FormItem = Form.Item;
 const create = Form.create;
 const dateFormat = 'YYYY/MM/DD';
+const defaultParam = {
+  pageNum: 1,
+  productCode: '',
+  brokerNumber: '',
+  startDateStr: '',
+  endDateStr: '',
+};
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
@@ -111,18 +118,12 @@ export default class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      pageNum: 1,
-      productCode: '',
-      brokerNumber: '',
-      startDateStr: '',
-      endDateStr: '',
-    };
+    this.state = defaultParam;
   }
 
   // 发送请求
   componentDidMount() {
-    this.props.getExchangeList({ pageNum: 1 });
+    this.props.getExchangeList(defaultParam);
   }
 
   // 只能选择最近3个月的

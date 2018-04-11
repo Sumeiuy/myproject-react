@@ -12,7 +12,7 @@ import performerView from './performerView';
 import demote from './demote';
 import filialeCustTransfer from './filialeCustTransfer';
 import relation from './relation';
-import customerFeedback from './customerFeedback'; 
+import customerFeedback from './customerFeedback';
 import taskFeedback from './taskFeedback';
 import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
