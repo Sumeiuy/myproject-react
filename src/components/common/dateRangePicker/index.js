@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-10 10:05:18
+ * @Last Modified time: 2018-04-11 23:16:10
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -57,15 +57,13 @@ export default class CommonDateRangePicker extends PureComponent {
       focusedInput: null,
       startDate: initialStartDate,
       endDate: initialEndDate,
-      // 判断起始和结束日期有无变化
-      dateHasChanged: false,
-      // 判断是否用户选择了第一个日期
-      hasSelectFirstDate: false,
-      // 判断用户第一次选择的是开始日期还是结束日期
-      whichDateInputUserSelect: null,
-      // 用户选择的第一个日期
-      firstDateUserSelect: null,
     };
+    // 判断起始和结束日期有无变化
+    this.dateChanged = false;
+    // 判断是否用户选择了第一个日期
+    this.hasSelectFirstDate = false;
+    // 用户选择的第一个日期
+    this.firstDateUserSelect = null;
   }
 
   @autobind
@@ -110,36 +108,47 @@ export default class CommonDateRangePicker extends PureComponent {
     }
   }
 
+  /**
+   * 设置了第一次日期为起始时间
+   */
   @autobind
   setFirstDateSelectOnStart({ startDate, endDate }) {
-    this.setState({
-      whichDateInputUserSelect: START_DATE,
-      hasSelectFirstDate: true,
-      firstDateUserSelect: startDate,
-    }, () => {
-      this.fixEndDate({ startDate, endDate });
-    });
+    this.fixEndDate({ startDate, endDate });
+    // this.setState({
+    //   whichDateInputUserSelect: START_DATE,
+    //   hasSelectFirstDate: true,
+    //   firstDateUserSelect: startDate,
+    // }, () => {
+    //   this.fixEndDate({ startDate, endDate });
+    // });
   }
 
+  /**
+   * 设置了第一次日期为结束时间
+   */
   @autobind
   setFirstDateSelectOnEnd({ startDate, endDate }) {
-    this.setState({
-      whichDateInputUserSelect: END_DATE,
-      hasSelectFirstDate: true,
-      firstDateUserSelect: endDate,
-    }, () => {
-      this.fixStartDate({ startDate, endDate });
-    });
+    this.fixStartDate({ startDate, endDate });
+    // this.setState({
+    //   whichDateInputUserSelect: END_DATE,
+    //   hasSelectFirstDate: true,
+    //   firstDateUserSelect: endDate,
+    // }, () => {
+    //   this.fixStartDate({ startDate, endDate });
+    // });
   }
 
+  /**
+   * 恢复默认值
+   */
   @autobind
   restoreDefault() {
-    this.setState({
-      dateHasChanged: false,
-      hasSelectFirstDate: false,
-      whichDateInputUserSelect: null,
-      firstDateUserSelect: null,
-    });
+    // 判断起始和结束日期有无变化
+    this.dateChanged = false;
+    // 判断是否用户选择了第一个日期
+    this.hasSelectFirstDate = false;
+    // 用户选择的第一个日期
+    this.firstDateUserSelect = null;
   }
 
   @autobind
@@ -161,6 +170,19 @@ export default class CommonDateRangePicker extends PureComponent {
     return date;
   }
 
+  /**
+   * 用户选择了第一个日期
+   */
+  @autobind
+  selectFirstDate(date) {
+    this.dateChanged = true;
+    this.hasSelectFirstDate = true;
+    this.firstDateUserSelect = date;
+  }
+
+  /**
+   * 修补结束日期
+   */
   @autobind
   fixEndDate({ startDate, endDate }) {
     let date = endDate.clone();
@@ -169,9 +191,13 @@ export default class CommonDateRangePicker extends PureComponent {
       // TODO 修改时间
       date = this.fixDate(endDate, this.subtractMomentDay);
     }
-    this.setState({ startDate, endDate: date, dateHasChanged: true });
+    this.selectFirstDate(startDate);
+    this.setState({ startDate, endDate: date });
   }
 
+  /**
+   * 修补起始日期
+   */
   @autobind
   fixStartDate({ startDate, endDate }) {
     let date = startDate.clone();
@@ -180,7 +206,8 @@ export default class CommonDateRangePicker extends PureComponent {
       // TODO 修改时间
       date = this.fixDate(startDate, this.addMomentDay);
     }
-    this.setState({ startDate: date, endDate, dateHasChanged: true });
+    this.selectFirstDate(endDate);
+    this.setState({ startDate: date, endDate });
   }
 
   // 切换了日期
@@ -188,28 +215,27 @@ export default class CommonDateRangePicker extends PureComponent {
   handleDatesChange({ startDate, endDate }) {
     // 如果修改了 起始时间 或者 结束时间段， 则必须同步修改相应的时间
     // 来确保所选则的时间段在可选择的范围内
-    const {
-      focusedInput,
-      hasSelectFirstDate,
-    } = this.state;
+    const { focusedInput } = this.state;
     if (focusedInput === START_DATE) {
       // 点击的时间段在起始时间段上，
       // 此时哪些disabled的时间不能点击的
       // 此处表示修改的是起始时间
       // TODO 判断用户有没有进行过第一次选择时间
-      if (!hasSelectFirstDate) {
+      if (!this.hasSelectFirstDate) {
         // TODO 此处增加判断，如果结束时间此时不在用户选择的范围内，则将其修改为最后的日期
         this.setFirstDateSelectOnStart({ startDate, endDate });
       } else {
-        this.setState({ startDate, endDate, dateHasChanged: true });
+        this.dateChanged = true;
+        this.setState({ startDate, endDate });
       }
     } else if (focusedInput === END_DATE) {
       // 点击的时间段在结束时间段上
-      if (!hasSelectFirstDate) {
+      if (!this.hasSelectFirstDate) {
         // TODO 此处增加判断，如果开始时间不在用户选择的范围内，则将其修改为开始的时间
         this.setFirstDateSelectOnEnd({ startDate, endDate });
       } else {
-        this.setState({ startDate, endDate, dateHasChanged: true });
+        this.dateChanged = true;
+        this.setState({ startDate, endDate });
       }
     }
   }
@@ -221,31 +247,26 @@ export default class CommonDateRangePicker extends PureComponent {
       // 打开日历组件, 此处需要进行第一次打开的时间段进行设置
       this.showCalendar();
     }
-    // TODO 此处增加判断，如果用户直接手动切换选择结束日期或者开始日期
-    // if (prevFocusedInput !== null && hasSelectFirstDate) {
-    //   // this.restoreDefault();
-    // }
     this.setState({ focusedInput });
   }
 
   @autobind
   handleCalenderClose(obj) {
     // 判断时间是否改变了
-    const { startDate, endDate } = obj;
-    if (this.state.dateHasChanged) {
+    // const { startDate, endDate } = obj;
+    if (this.dateChanged) {
       this.restoreDefault();
       // 将用户选择起始和结束时间的moment对象传递出去
-      this.props.onChange({ startDate, endDate });
+      this.props.onChange(obj);
     }
   }
 
 
   @autobind
   isInOffSet(day) {
-    const { firstDateUserSelect } = this.state;
     return this.props.isInsideOffSet({
       day,
-      firstDay: firstDateUserSelect,
+      firstDay: this.firstDateUserSelect,
     });
   }
 
@@ -255,8 +276,7 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   isInCustomerDateRangeOffset(day) {
     const { hasCustomerOffset } = this.props;
-    const { hasSelectFirstDate } = this.state;
-    if (hasCustomerOffset && hasSelectFirstDate) {
+    if (hasCustomerOffset && this.hasSelectFirstDate) {
       return this.isInOffSet(day);
     }
     return true;
