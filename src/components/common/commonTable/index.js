@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 10:44:47
+ * @Last Modified time: 2018-04-12 13:41:39
  */
 
 import React, { PureComponent } from 'react';
@@ -140,7 +140,7 @@ export default class CommonTable extends PureComponent {
     needShowEmptyRow: true,
     paginationClass: '',
     emptyListDataNeedEmptyRow: false,
-    title: NOOP,
+    title: null,
   };
 
   constructor(props) {
