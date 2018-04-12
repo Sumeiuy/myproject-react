@@ -223,7 +223,7 @@ export default class BottomFixedBox extends PureComponent {
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
           this.toggleModal();
           this.setState({
-            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务'
+            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务',
           });
         } else {
           this.toCreateTaskPage();
