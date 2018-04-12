@@ -236,13 +236,15 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   handleCalenderClose(obj) {
-    // 判断时间是否改变了
-    const { startDate, endDate } = obj;
-    if (this.state.dateHasChanged) {
-      this.restoreDefault();
-      // 将用户选择起始和结束时间的moment对象传递出去
-      this.props.onChange({ startDate, endDate });
-    }
+    setTimeout(() => {
+      // 判断时间是否改变了
+      const { startDate, endDate } = obj;
+      if (this.state.dateHasChanged) {
+        this.restoreDefault();
+        // 将用户选择起始和结束时间的moment对象传递出去
+        this.props.onChange({ startDate, endDate });
+      }
+    }, 10);
   }
 
 

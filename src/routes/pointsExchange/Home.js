@@ -22,8 +22,8 @@ const defaultParam = {
   pageNum: 1,
   productCode: '',
   brokerNumber: '',
-  startDateStr: '',
-  endDateStr: '',
+  startTime: '',
+  endTime: '',
 };
 
 function formatString(str) {
@@ -65,7 +65,7 @@ function columns() {
     dataIndex: 'exchangeDate',
     key: 'exchangeDate',
     width: '10%',
-    render: item => (<span>{formatString(item)}</span>),
+    render: item => (<span>{moment(item).format('YYYY-MM-DD') || '--'}</span>),
   }, {
     title: '手机号',
     dataIndex: 'phone',
@@ -137,11 +137,11 @@ export default class Home extends Component {
   @autobind
   handleCreateDateChange(date) {
     const { startDate, endDate } = date;
-    const startDateStr = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
-    const endDateStr = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
+    const startTime = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
+    const endTime = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
     this.setState({
-      startDateStr,
-      endDateStr,
+      startTime,
+      endTime,
     });
   }
 
@@ -163,25 +163,24 @@ export default class Home extends Component {
   handleSearch(e) {
     e.preventDefault();
     const { getExchangeList } = this.props;
-    const { pageNum, startDateStr, endDateStr } = this.state;
+    const { startTime, endTime } = this.state;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { productCode = '', brokerNumber = '' } = values;
         const fieldValue = {
-          productCode,
-          brokerNumber,
-          startDateStr,
-          endDateStr,
+          productCode: _.isEmpty(productCode) ? '' : productCode,
+          brokerNumber: _.isEmpty(brokerNumber) ? '' : brokerNumber,
+          pageNum: 1,
+          startTime,
+          endTime,
         };
+        const lastValue = { ...this.state, pageNum: 1 };
         // 过滤请求的条件相同的情况
-        if (this.state !== { ...fieldValue, pageNum }) {
+        if (lastValue !== fieldValue) {
           this.setState(
             { productCode, brokerNumber },
             () => {
-              getExchangeList({
-                ...fieldValue,
-                pageNum,
-              });
+              getExchangeList({ ...fieldValue });
             },
           );
         }
@@ -198,6 +197,8 @@ export default class Home extends Component {
   handleReset() {
     this.props.form.resetFields();
     this.datePickRef.clearAllDate();
+    const resetValue = _.omit(defaultParam, 'pageNum');
+    this.setState({ ...resetValue });
   }
 
   render() {
@@ -208,7 +209,7 @@ export default class Home extends Component {
     const paganationOption = {
       current: curPageNum,
       pageSize: 10,
-      total: _.toNumber(totalRecordNum),
+      total: _.toNumber(totalRecordNum) || 1,
       onChange: this.handlePageChange,
     };
     return (
@@ -254,7 +255,7 @@ export default class Home extends Component {
             </Row>
           </Form>
           <Table
-            rowKey={'brokerNumber'}
+            rowKey={'rowId'}
             columns={columns()}
             dataSource={exchangeList}
             pagination={false}
