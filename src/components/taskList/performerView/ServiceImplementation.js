@@ -17,8 +17,10 @@ import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 // 客户任务所处未开始和处理中时服务记录可编辑
 // 处理中 20
 // 未开始  10
-// 此处code码待修改
 const EDITABLE = ['10', '20'];
+
+// 创建服务记录中服务方式中的涨乐财富通的code
+const HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE = '';
 
 // 目标客户的任务状态
 // 处理中 20
@@ -136,6 +138,16 @@ export default class ServiceImplementation extends PureComponent {
     return !_.isEmpty(_.find(missionStatusForServiceRecord, item => item.id === typeCode));
   }
 
+  // 判断服务记录是否是只读状态
+  @autobind
+  judgeIsReadyOnly({ serveWayCode, statusCode, serviceStatusCode }) {
+    if (serveWayCode === HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE) {
+      // 如果是涨乐财富通的服务方式
+      return false;
+    }
+    return this.judgeMissionStatus(statusCode) || !_.includes(EDITABLE, serviceStatusCode);
+  }
+
   render() {
     const {
       list,
@@ -143,9 +155,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       currentId,
       dict,
-      // addServeRecord,
       isFold,
-      // list,
       handleCollapseClick,
       getServiceRecord,
       serviceRecordData,
@@ -174,9 +184,7 @@ export default class ServiceImplementation extends PureComponent {
     } = this.props;
     // 获取当前选中的数据的custId
     const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
-    // if (targetCustomerState) {
 
-    // }
     const currentCustomer = _.find(list, o => o.missionFlowId === currentMissionFlowId);
     let serviceStatusName = '';
     let serviceStatusCode = '';
@@ -187,11 +195,6 @@ export default class ServiceImplementation extends PureComponent {
       missionFlowId = currentCustomer.missionFlowId;
     }
 
-    // 先判断如果当前任务状态是结果跟踪或者结束状态，那么不要从客户的流水里面取任务状态，直接
-    // 将当前添加服务记录变成只读状态，不然再判断任务流水客户状态
-    // 处理中 和 未开始 时表单可编辑
-    const isReadOnly = this.judgeMissionStatus(statusCode)
-      || !_.includes(EDITABLE, serviceStatusCode);
     const {
       serviceTips,
       serviceWayName,
@@ -200,9 +203,9 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecord,
       customerFeedback,
       feedbackDate,
-      // attachmentRecord,
       custId,
     } = targetCustDetail;
+
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
     const motCustfeedBackDict = [{
       key: String(serviceTypeCode),
@@ -229,6 +232,12 @@ export default class ServiceImplementation extends PureComponent {
       attachmentList,
       isTaskFeedbackListOfNone,
     };
+
+    // 判断当前任务状态是结果跟踪或者完成状态，则为只读
+    // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
+    // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
+    const isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
+
     return (
       <div>
         <TargetCustomer
