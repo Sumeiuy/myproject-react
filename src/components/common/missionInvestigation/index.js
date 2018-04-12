@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-29 13:57:27
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-04-11 19:42:51
  * 任务调查
  */
 
@@ -275,6 +275,8 @@ export default class MissionInvestigation extends PureComponent {
     if (checked && !_.isEmpty(currentSelectRowKeys)) {
       // message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
       confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '提示',
         content: '您已设置任务调查问题，如果取消选择将不对此任务进行任务调查',
         onOk: () => {
