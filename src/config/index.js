@@ -18,6 +18,7 @@ import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
 import fspRoutes from './fspRoutes';
+import orgTreeLevel from './orgTreeLevel';
 
 export default {
   constants,
@@ -41,4 +42,5 @@ export default {
   seibelConfig,
   contract,
   fspRoutes,
+  orgTreeLevel,
 };

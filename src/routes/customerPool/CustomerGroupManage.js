@@ -15,7 +15,7 @@ import { message } from 'antd';
 import _ from 'lodash';
 
 import Button from '../../components/common/Button';
-import GroupTable from '../../components/customerPool/groupManage/GroupTable';
+import Table from '../../components/common/commonTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
@@ -25,7 +25,7 @@ import { url as urlHelper } from '../../helper';
 import confirm from '../../components/common/Confirm';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
-import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
+import tableStyles from '../../components/common/commonTable/index.less';
 import logable, { logPV } from '../../decorators/logable';
 
 const EMPTY_LIST = [];
@@ -685,7 +685,7 @@ export default class CustomerGroupManage extends PureComponent {
           </div>
         </div>
         <div className={styles.groupTableContainer}>
-          <GroupTable
+          <Table
             pageData={{
               curPageNum,
               curPageSize,

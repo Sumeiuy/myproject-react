@@ -12,11 +12,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Icon, message } from 'antd';
 import classnames from 'classnames';
-import GroupTable from '../../customerPool/groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import { openFspTab } from '../../../utils';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
-import tableStyles from '../../customerPool/groupManage/groupTable.less';
+import tableStyles from '../../common/commonTable/index.less';
 import iconMoney from './img/icon-money.png';
 import iconDiamond from './img/icon-diamond-card.png';
 import iconGold from './img/icon-gold-card.png';
@@ -330,7 +330,7 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
-  renderCustTypeIcon(custType) {
+  renderCustTypeIcon({ custType }) {
     return rankImgSrcConfig[custType] ?
       <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
       : null;
@@ -537,7 +537,7 @@ export default class CustDetail extends PureComponent {
         }
         <div className={styles.custDetailTableSection}>
           {!_.isEmpty(dataSource) ?
-            <GroupTable
+            <Table
               pageData={{
                 curPageNum: pageNum,
                 curPageSize: INITIAL_PAGE_SIZE,

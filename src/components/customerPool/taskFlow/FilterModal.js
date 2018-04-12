@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { emp } from '../../../helper';
-import GroupTable from '../groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import styles from './filterModal.less';
 import FilterCustomers from './step1/FilterCustomers';
 import { getCustomerListFilters } from '../../../helper/page/customerPool';
@@ -404,7 +404,7 @@ export default class FilterModal extends PureComponent {
                 暂无数据
                 </span>
             </div> :
-            <GroupTable
+            <Table
               pageData={{
                 curPageNum,
                 curPageSize: INITIAL_PAGE_SIZE,

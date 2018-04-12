@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-28 16:06:01
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-09 20:39:54
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Input, Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import GroupTable from '../groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -350,8 +350,8 @@ export default class TaskPreview extends PureComponent {
       // stateText,
       custSource: custSourceEntry,
       custTotal: totalCount,
-             // 跟踪截止日期
-             currentSelectedTrackDate,
+      // 跟踪截止日期
+      currentSelectedTrackDate,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -585,7 +585,7 @@ export default class TaskPreview extends PureComponent {
                   </div>
                   {
                     !_.isEmpty(newDataSource) ?
-                      <GroupTable
+                      <Table
                         pageData={{
                           curPageNum: 1,
                           curPageSize: 8,

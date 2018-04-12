@@ -10,15 +10,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox, Tooltip, message, Modal } from 'antd';
 import _ from 'lodash';
-// import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
 import { data } from '../../../helper';
-import GroupTable from '../../customerPool/groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import Button from '../Button';
-// import tableStyles from '../../customerPool/groupManage/groupTable.less';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
@@ -609,7 +607,7 @@ export default class MissionInvestigation extends PureComponent {
             <div className={styles.modalContainer}>
               {
                 !_.isEmpty(dataSource) ?
-                  <GroupTable
+                  <Table
                     pageData={{
                       curPageNum: pageNum,
                       curPageSize: INITIAL_PAGE_SIZE,

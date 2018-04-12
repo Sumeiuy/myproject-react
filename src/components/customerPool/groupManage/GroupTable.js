@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-22 15:06:50
+ * @Last Modified time: 2018-04-11 18:58:51
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Table from '../../common/commonTable';
-// import Pagination from '../../common/Pagination';
+import Pagination from '../../common/Pagination';
 import styles from './groupTable.less';
 import logable from '../../../decorators/logable';
 
@@ -45,8 +45,7 @@ const padDataSource = (dataSource, pageSize, emptyListDataNeedEmptyRow) => {
   return newDataSource;
 };
 
-
-export default class GroupTable extends PureComponent {
+export default class CommonTable extends PureComponent {
   static propTypes = {
     pageData: PropTypes.object,
     listData: PropTypes.array,
@@ -110,6 +109,8 @@ export default class GroupTable extends PureComponent {
     paginationClass: PropTypes.string,
     // 当listData数据源为空的时候是否需要填充空白行
     emptyListDataNeedEmptyRow: PropTypes.bool,
+    // 表格头部
+    title: PropTypes.func,
   };
 
   static defaultProps = {
@@ -141,6 +142,7 @@ export default class GroupTable extends PureComponent {
     needShowEmptyRow: true,
     paginationClass: '',
     emptyListDataNeedEmptyRow: false,
+    title: NOOP,
   };
 
   constructor(props) {
@@ -155,6 +157,18 @@ export default class GroupTable extends PureComponent {
     this.setState({
       curSelectedRow: index,
     });
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  handlePageChange(page, pageSize) {
+    this.props.onPageChange(page, pageSize);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  handlePageSizeChange(current, size) {
+    this.props.onSizeChange(current, size);
   }
 
   /**
@@ -184,9 +198,26 @@ export default class GroupTable extends PureComponent {
       return '--';
     }
     if (item.render) {
-      return item.render(record[item.key]);
+      return item.render(record, item.key);
     }
     return record[item.key];
+  }
+
+  /**
+   * 合并单元格
+   * @param {*string} value 当前值
+   * @param {*object} row 当前行记录
+   * @param {*number} index 当前行索引
+   */
+  renderContent(value, row, index, needMergeRowIndex) {
+    const obj = {
+      children: value,
+      props: {},
+    };
+    if (index === needMergeRowIndex) {
+      obj.props.colSpan = 0;
+    }
+    return obj;
   }
 
   /**
@@ -206,6 +237,7 @@ export default class GroupTable extends PureComponent {
       emptyListDataNeedEmptyRow,
     } = this.props;
     const len = titleColumn.length - 1;
+
     if (_.isEmpty(listData) && !emptyListDataNeedEmptyRow) {
       return [];
     }
@@ -273,18 +305,33 @@ export default class GroupTable extends PureComponent {
    * 构造数据源
    */
   renderTableDatas(dataSource) {
-    const { needShowEmptyRow, emptyListDataNeedEmptyRow, pageData: { curPageSize } } = this.props;
+    const {
+      needShowEmptyRow,
+      emptyListDataNeedEmptyRow,
+      pageData: { curPageSize },
+      paginationInTable,
+    } = this.props;
     if (_.isEmpty(dataSource) && !emptyListDataNeedEmptyRow) {
       return [];
     }
 
     let newDataSource = [];
+    // 在外部传入数据时，统一加入一个id
     newDataSource = _.map(dataSource,
-      item => _.merge(item, { key: item.id })); // 在外部传入数据时，统一加入一个id
+      item => ({
+        ...item,
+        key: item.id,
+      }));
 
     if (needShowEmptyRow) {
-      return padDataSource(newDataSource, Number(curPageSize), emptyListDataNeedEmptyRow);
+      return padDataSource(
+        newDataSource,
+        Number(curPageSize),
+        emptyListDataNeedEmptyRow,
+        paginationInTable,
+      );
     }
+
     return newDataSource;
   }
 
@@ -309,15 +356,13 @@ export default class GroupTable extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
-  handlePageChange(page, pageSize) {
-    this.props.onPageChange(page, pageSize);
-  }
-
-  @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
-  handlePageSizeChange(current, size) {
-    this.props.onSizeChange(current, size);
+  renderFooter(paganationOption) {
+    return (
+      <Pagination
+        paginationKey={'pagination'}
+        {...paganationOption}
+      />
+    );
   }
 
   render() {
@@ -342,6 +387,8 @@ export default class GroupTable extends PureComponent {
       tableStyle,
       showHeader,
       paginationClass,
+      title: tableTitle,
+      paginationInTable,
     } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
@@ -360,17 +407,23 @@ export default class GroupTable extends PureComponent {
       },
       onShowSizeChange: this.handlePageSizeChange,
     };
-    const columns = this.renderColumns();
+    const dataSource = this.renderTableDatas(listData);
+    const columns = this.renderColumns(paganationOption);
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
+    const titleProp = tableTitle ? { title: tableTitle } : {};
+    const footerProp = paginationInTable ? {
+      footer: () =>
+        this.renderFooter(paganationOption),
+    } : {};
 
     return (
       <div className={styles.groupTable}>
         <Table
           className={tableClass}
           columns={columns}
-          dataSource={this.renderTableDatas(listData)}
+          dataSource={dataSource}
           bordered={bordered}
           scroll={_.merge(scrollXArea, scrollYArea)}
           onRow={(record, index) => ({
@@ -385,7 +438,7 @@ export default class GroupTable extends PureComponent {
             })}
           showHeader={showHeader}
           {...tableStyleProp}
-          pagination={(needPagination && totalRecordNum > 0) ?
+          pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
           // 默认文案配置
@@ -393,6 +446,8 @@ export default class GroupTable extends PureComponent {
             // 空数据时的文案
             emptyText: '暂无数据',
           }}
+          {...titleProp}
+          {...footerProp}
         />
       </div>
     );
