@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-11 14:52:19
+ * @Last Modified time: 2018-04-12 09:25:24
  * 服务经理维度任务统计
  */
 
@@ -39,7 +39,6 @@ export default class CustManagerDetailScope extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-
     };
   }
 
@@ -80,6 +79,9 @@ export default class CustManagerDetailScope extends PureComponent {
     );
   }
 
+  /**
+   * 渲染表头
+   */
   @autobind
   renderTableTitle() {
     return (
@@ -87,6 +89,9 @@ export default class CustManagerDetailScope extends PureComponent {
     );
   }
 
+  /**
+   * 渲染每一列数据
+   */
   @autobind
   renderColumn() {
     const { currentOrgLevel } = this.props;
@@ -137,6 +142,9 @@ export default class CustManagerDetailScope extends PureComponent {
     return columnTitle;
   }
 
+  /**
+   * 渲染每一列的宽度
+   */
   @autobind
   renderColumnWidth() {
     const { isFold, currentOrgLevel } = this.props;
