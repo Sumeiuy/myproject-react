@@ -11,6 +11,8 @@ import logable from '../../../decorators/logable';
 const EMPTY_OBJECT = {};
 const Search = Input.Search;
 
+// 是否是瞄准镜标签
+const isSightLabel = source => source === 'jzyx';
 
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
@@ -118,7 +120,7 @@ export default class SelectLabelCust extends PureComponent {
     const { circlePeopleData } = this.props;
     const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', labelMapping, labelName = '', customNum = 0 } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', labelMapping, labelName = '', customNum = 0, source } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
@@ -138,6 +140,10 @@ export default class SelectLabelCust extends PureComponent {
       shouldclearBottomLabel,
       currentFilterNum,
       currentSelectLabelName,
+      // 任务提示
+      // 来自瞄准镜标签，则展示变量任务提示
+      // 来自普通标签，则展示普通任务提示
+      missionDesc: isSightLabel(source) ? `该客户筛选自$瞄准镜标签#${labelId}#` : `该客户筛选自${labelName},`,
     };
 
     return {
@@ -199,7 +205,7 @@ export default class SelectLabelCust extends PureComponent {
       currentSelectLabel: currentLabelId || this.state.labelId,
       currentSelectLabelName: currentSelectLabelName || this.state.currentSelectLabelName,
       currentFilterNum:
-        currentFilterNum !== undefined ? currentFilterNum : this.state.currentFilterNum,
+      currentFilterNum !== undefined ? currentFilterNum : this.state.currentFilterNum,
       clearFromSearch: false,
     };
 

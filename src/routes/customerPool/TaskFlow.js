@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 09:27:00
+ * @Last Modified time: 2018-04-12 18:13:13
  */
 
 import React, { PureComponent } from 'react';
@@ -23,6 +23,7 @@ import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
+import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
@@ -64,8 +65,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-      timelyIntervalValue,
-      taskName,
+    timelyIntervalValue,
+    taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -437,6 +438,7 @@ export default class TaskFlow extends PureComponent {
           argsOfQueryCustomer = {},
           custNum,
           customNum,
+          missionDesc,
         },
       } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
@@ -509,6 +511,7 @@ export default class TaskFlow extends PureComponent {
               canGoNextStep,
               needMissionInvestigation,
               isIncludeNotMineCust,
+              missionDesc,
             });
             this.setState({
               needApproval,
@@ -1069,7 +1072,19 @@ export default class TaskFlow extends PureComponent {
     // descText为1
     const motMissionType = _.filter(missionType, item => item.descText === '1') || [];
 
-    const { taskFormData = EMPTY_OBJECT, currentEntry } = storedTaskFlowData;
+    const {
+      taskFormData = EMPTY_OBJECT,
+      currentEntry,
+      missionDesc,
+    } = storedTaskFlowData;
+    const { templetDesc } = taskFormData;
+    let newMissionDesc = templetDesc;
+    // 将选择的标签信息塞入任务提示，如果任务提示之前存在某一个标签的信息，那么只替换这个标签的位置，
+    // 否则，则直接insert
+    if (newMissionDesc && currentEntry === 1) {
+      newMissionDesc = replaceMissionDesc(templetDesc, missionDesc);
+    }
+
     const isShowTitle = true;
     const steps = [{
       title: '目标客户',
@@ -1080,7 +1095,7 @@ export default class TaskFlow extends PureComponent {
           wrappedComponentRef={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}
-          previousData={{ ...taskFormData }}
+          previousData={{ ...taskFormData, templetDesc: newMissionDesc }}
           isShowTitle={isShowTitle}
           onChange={this.onChange}
           switchBottomFromHeader={this.switchBottomFromHeader}
@@ -1112,7 +1127,9 @@ export default class TaskFlow extends PureComponent {
           wrappedComponentRef={inst => (this.formRef = inst)}
           dict={dict}
           location={location}
+          // 将任务提示回填
           previousData={{ ...taskFormData }}
+          templetDesc={newMissionDesc}
           isShowTitle={isShowTitle}
           isShowErrorInfo={isShowErrorInfo}
           isShowErrorExcuteType={isShowErrorExcuteType}

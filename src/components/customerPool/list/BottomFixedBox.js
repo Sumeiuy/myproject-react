@@ -89,7 +89,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, labelDesc }) {
+  handleClick({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
     const {
       page,
       condition,
@@ -97,8 +97,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -120,10 +120,23 @@ export default class BottomFixedBox extends PureComponent {
         shouldStay,
         editPane,
         labelDesc,
+        missionDesc,
       );
     } else if (selectAll) {
-      this.openByAllSelect(url,
-        condition, page.total, title, id, entertype, source, fr, shouldStay, editPane, labelDesc);
+      this.openByAllSelect(
+        url,
+        condition,
+        page.total,
+        title,
+        id,
+        entertype,
+        source,
+        fr,
+        shouldStay,
+        editPane,
+        labelDesc,
+        missionDesc,
+      );
     }
   }
 
@@ -154,14 +167,14 @@ export default class BottomFixedBox extends PureComponent {
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: { labelDesc } } } = this.props;
+    const { location: { query: { labelDesc, missionDesc } } } = this.props;
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc) });
+    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc), missionDesc });
   }
 
   // 验证通过后跳转到创建任务
@@ -175,7 +188,7 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectAll,
-          selectedIds,
+        selectedIds,
         },
       },
     } = this.props;
@@ -210,7 +223,8 @@ export default class BottomFixedBox extends PureComponent {
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
           this.toggleModal();
           this.setState({
-            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务' });
+            modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务'
+          });
         } else {
           this.toCreateTaskPage();
         }
@@ -232,6 +246,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     labelDesc,
+    missionDesc,
   ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -247,6 +262,7 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       labelDesc,
+      missionDesc,
       condition: condt,
       fr,
     };
@@ -266,6 +282,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     labelDesc,
+    missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -278,6 +295,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
       labelDesc,
+      missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
