@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-12 14:31:39
+ * @Last Modified time: 2018-04-12 16:29:47
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,13 @@ export default class Phone extends PureComponent {
     phoneNum: PropTypes.string.isRequired,
     // 客户类型（per代表个人客户，org代表机构客户，prod代表产品客户）
     custType: PropTypes.string.isRequired,
+    // 页面自定义样式
+    style: PropTypes.object,
   }
+
+  static defaultProps = {
+    style: {},
+  };
 
   constructor(props) {
     super(props);
@@ -45,11 +51,17 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { phoneNum, custType } = this.props;
+    const { phoneNum, custType, style } = this.props;
     const { isShowPhoneDialog } = this.state;
     return (
       <div className={styles.wrap}>
-        <div className={styles.phoneNum} onClick={this.handleClickPhoneNum}>{phoneNum}</div>
+        <div
+          className={styles.phoneNum}
+          onClick={this.handleClickPhoneNum}
+          style={style}
+        >
+          {phoneNum}
+        </div>
         {
           isShowPhoneDialog ?
             <PhoneDialog
