@@ -1,13 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:19:15
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-12 16:13:49
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message, Modal, Upload, Alert } from 'antd';
+import { Input, Form, message, Modal, Upload, Alert, Spin } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -99,6 +99,8 @@ export default class CustomerGroupDetail extends PureComponent {
       importVisible: false,
       // 当前上传的文件
       file: {},
+      // 上传文件的loading
+      uploadLoading: false,
     };
   }
 
@@ -497,7 +499,9 @@ export default class CustomerGroupDetail extends PureComponent {
     this.setState({
       importVisible: false,
       includeCustList: [],
+      includeCustIdList: [],
       totalRecordNum: 0,
+      uploadLoading: true,
     }, () => {
       const uploadFile = info.file;
       this.setState({
@@ -512,6 +516,7 @@ export default class CustomerGroupDetail extends PureComponent {
             this.setState({
               multiErrmsg: '',
               attachmentId: data.attachmentId,
+              uploadLoading: false,
             }, () => {
               const { attachmentId } = this.state;
               const { queryBatchCustList } = this.props;
@@ -583,11 +588,15 @@ export default class CustomerGroupDetail extends PureComponent {
             // 上传的文件不符合要求，在页面显示做错信息
             this.setState({
               multiErrmsg: data.msg,
+              uploadLoading: false,
             });
           }
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
+          this.setState({
+            uploadLoading: false,
+          });
         }
       }
     });
@@ -663,6 +672,7 @@ export default class CustomerGroupDetail extends PureComponent {
       multiErrmsg,
       importVisible,
       file,
+      uploadLoading,
     } = this.state;
     const {
       form: { getFieldDecorator },
@@ -815,6 +825,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 </div>
                 :
                 <div className={styles.multiCust}>
+                  <Spin className={styles.uploadLoading} spinning={uploadLoading} />
                   {uploadElement}
                   <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
                 </div>
