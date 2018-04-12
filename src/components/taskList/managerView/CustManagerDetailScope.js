@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 09:25:24
+ * @Last Modified time: 2018-04-12 09:34:21
  * 服务经理维度任务统计
  */
 
@@ -48,7 +48,10 @@ export default class CustManagerDetailScope extends PureComponent {
   */
   addIdToDataSource(listData) {
     if (!_.isEmpty(listData)) {
-      return _.map(listData, item => _.merge(item, { id: item.serviceManagerId }));
+      return _.map(listData, item => ({
+        ...item,
+        id: item.serviceManagerId,
+      }));
     }
 
     return [];

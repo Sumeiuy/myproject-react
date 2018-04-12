@@ -43,10 +43,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      // 自己mock
-      '/fspa/mcrm/api/groovynoauth/fsp/campaign/mot/getCustManagerScope', {
-        target: 'http://168.61.8.81:5090',
-      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
