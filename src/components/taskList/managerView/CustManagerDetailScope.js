@@ -47,14 +47,10 @@ export default class CustManagerDetailScope extends PureComponent {
   * @param {*} listData 数据源
   */
   addIdToDataSource(listData) {
-    if (!_.isEmpty(listData)) {
-      return _.map(listData, item => ({
-        ...item,
-        id: item.serviceManagerId,
-      }));
-    }
-
-    return [];
+    return _.map(listData, item => ({
+      ...item,
+      id: item.serviceManagerId,
+    }));
   }
 
   /**
@@ -126,20 +122,27 @@ export default class CustManagerDetailScope extends PureComponent {
     if (currentOrgLevel === ORG_LEVEL1) {
       // 经纪及财富管理部层级
       // 增加分公司和营业部展示
-      columnTitle = _.concat(columnTitle, [{
-        key: 'company',
-        value: '所属分公司',
-      }, {
-        key: 'department',
-        value: '所属营业部',
-      }]);
+      columnTitle = [
+        ...columnTitle,
+        {
+          key: 'company',
+          value: '所属分公司',
+        },
+        {
+          key: 'department',
+          value: '所属营业部',
+        },
+      ];
     } else if (currentOrgLevel === ORG_LEVEL2) {
       // 分公司层级
       // 增加营业部列展示
-      columnTitle = _.concat(columnTitle, [{
-        key: 'department',
-        value: '所属营业部',
-      }]);
+      columnTitle = [
+        ...columnTitle,
+        {
+          key: 'department',
+          value: '所属营业部',
+        },
+      ];
     }
 
     return columnTitle;
@@ -161,11 +164,11 @@ export default class CustManagerDetailScope extends PureComponent {
       columnWidth = ['310px', '160px', '160px', '160px', '160px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = _.concat(columnWidth, ['160px', '160px']);
+        columnWidth = [...columnWidth, '160px', '160px'];
         columnWidthTotal = 1270;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = _.concat(columnWidth, ['160px']);
+        columnWidth = [...columnWidth, '160px'];
         columnWidthTotal = 1110;
       }
     } else {
@@ -175,11 +178,11 @@ export default class CustManagerDetailScope extends PureComponent {
       columnWidth = ['170px', '100px', '100px', '100px', '100px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = _.concat(columnWidth, ['100px', '150px']);
+        columnWidth = [...columnWidth, '100px', '150px'];
         columnWidthTotal = 820;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = _.concat(columnWidth, ['150px']);
+        columnWidth = [...columnWidth, '150px'];
         columnWidthTotal = 720;
       }
     }

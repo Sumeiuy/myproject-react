@@ -11,7 +11,7 @@ import { Table } from 'antd';
 import classNames from 'classnames';
 import Pagination from '../Pagination';
 
-export default class ExtendAntdTable extends Table {
+export default class ExtendedTable extends Table {
 
   renderPagination() {
     // 强制不需要分页

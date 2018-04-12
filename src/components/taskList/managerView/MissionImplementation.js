@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-11 11:00:51
+ * @Last Modified time: 2018-04-12 10:37:49
  * 任务实施简报
  */
 
@@ -80,16 +80,14 @@ export default class MissionImplementation extends PureComponent {
   constructor(props) {
     super(props);
     const currentOrgId = emp.getOrgId();
-    let level = '';
+    // 来自营业部
+    let level = ORG_LEVEL3;
     // 判断是否是经纪总部
     if (emp.isManagementHeadquarters(currentOrgId)) {
       level = ORG_LEVEL1;
     } else if (emp.isFiliale(props.custRange, currentOrgId)) {
       // 判断是否是分公司
       level = ORG_LEVEL2;
-    } else {
-      // 来自营业部
-      level = ORG_LEVEL3;
     }
 
     this.state = {
@@ -450,9 +448,11 @@ export default class MissionImplementation extends PureComponent {
           <div className={styles.rightSection}>
             <div className={styles.report}>
               <span
-                className={canCreateReport ?
-                  styles.noCreateBtn :
-                  styles.createBtn
+                className={
+                  classNames({
+                    [styles.noCreateBtn]: canCreateReport,
+                    [styles.createBtn]: !canCreateReport,
+                  })
                 }
                 onClick={canCreateReport ? null : this.createMissionReport}
               >

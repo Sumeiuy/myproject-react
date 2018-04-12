@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-11 18:49:03
+ * @Last Modified time: 2018-04-12 10:44:47
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Table from './ExtendAntdTable';
+import Table from './Table';
 import Pagination from '../Pagination';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
