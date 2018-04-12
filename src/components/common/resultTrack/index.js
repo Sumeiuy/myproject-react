@@ -841,7 +841,7 @@ export default class ResultTrack extends PureComponent {
             </div>
             <div className={styles.indicatorTargetData}>
               <div className={styles.title}>
-                指标目标
+                跟踪指标
               </div>
               <div className={styles.content}>
                 <div className={styles.indicatorLevel1}>
