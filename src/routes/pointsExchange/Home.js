@@ -220,17 +220,17 @@ export default class Home extends Component {
           </div>
           <Form className={styles.form} layout="inline" onSubmit={this.handleSearch}>
             <Row>
-              <Col span={7}>
+              <Col span={8}>
                 <FormItem label={'产品代码'}>
-                  {getFieldDecorator('productCode')(<Input />)}
+                  {getFieldDecorator('productCode')(<Input className={styles.input} />)}
                 </FormItem>
               </Col>
-              <Col span={7} style={{ textAlign: 'center' }}>
+              <Col span={8} style={{ textAlign: 'center' }}>
                 <FormItem label={'经纪客户号'}>
-                  {getFieldDecorator('brokerNumber')(<Input />)}
+                  {getFieldDecorator('brokerNumber')(<Input className={styles.input} />)}
                 </FormItem>
               </Col>
-              <Col style={{ textAlign: 'right' }}>
+              <Col span={8} className={styles.datePick} style={{ textAlign: 'right' }}>
                 <FormItem label="兑换时间">
                   <DateRangePicker
                     ref={this.drpWraperRef}
