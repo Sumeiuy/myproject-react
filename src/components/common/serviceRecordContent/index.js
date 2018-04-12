@@ -1,10 +1,9 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-04 09:33:43
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-11 23:32:10
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select, DatePicker, TimePicker, Input, Radio, Form } from 'antd';
 import moment from 'moment';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import StaticRecordContent from './StaticRecordContent_';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
@@ -626,6 +625,54 @@ export default class ServiceRecordContent extends PureComponent {
   @logable({ type: 'Click', payload: { name: '附件下载' } })
   handleDownloadClick() { }
 
+  /**
+   * 设置服务方式的Ref
+   */
+  @autobind
+  setServiceWrapRef(input) {
+    this.serviceWayRef = input;
+  }
+
+  /**
+   * 设置服务类型的Ref
+   */
+  @autobind
+  setServiceTypeRef(input) {
+    this.serviceTypeRef = input;
+  }
+
+  /**
+   * 设置服务时间的Ref
+   */
+  @autobind
+  setServeTimeRef(input) {
+    this.serviceTimeRef = input;
+  }
+
+  /**
+   * 设置非涨乐财富通服务方式下的客户反馈的ref
+   */
+  @autobind
+  setCustFeedbackRef(input) {
+    this.customerFeedbackRef = input;
+  }
+
+  /**
+   * 设置非涨乐财富通服务方式下的客户反馈时间的ref
+   */
+  @autobind
+  setFeedbackTimeRef(input) {
+    this.feedbackTimeRef = input;
+  }
+
+  /**
+   * 设置非涨乐财富通服务方式下的文件上传的Ref
+   */
+  @autobind
+  setUploaderRef(input) {
+    this.uploadElem = input;
+  }
+
   @autobind
   renderServiceStatusChoice() {
     const {
@@ -672,6 +719,14 @@ export default class ServiceRecordContent extends PureComponent {
         }
       </div>
     );
+  }
+
+  /**
+   * 渲染服务方式 | 的下拉选项,
+   */
+  @autobind
+  renderServiceSelectOptions(list = []) {
+    return list.map(obj => (<Option key={obj.key} value={obj.key}>{obj.value}</Option>));
   }
 
   render() {
@@ -783,10 +838,10 @@ export default class ServiceRecordContent extends PureComponent {
       help: '服务内容不能为空，最多输入1000汉字',
     } : null;
 
-    const serveType = classnames({
-      [styles.serveType]: true,
-      [styles.hidden]: isEntranceFromPerformerView,
-    });
+    // const serveType = classnames({
+    //   [styles.serveType]: true,
+    //   [styles.hidden]: isEntranceFromPerformerView,
+    // });
     // feedbackTypeChildList为空或者客户反馈一级和二级的选项文字相同时不显示二级反馈选项
     let isShowSubCustomerFeedback = false;
     if (!_.isEmpty(feedbackTypeChildList)) {
@@ -800,80 +855,53 @@ export default class ServiceRecordContent extends PureComponent {
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
           <div className={styles.serveWay}>
-            <div className={styles.title}>
-              服务方式:
-            </div>
-            <div className={styles.content} ref={r => this.serviceWayRef = r} >
+            <div className={styles.title}>服务方式:</div>
+            <div className={styles.content} ref={this.setServiceWrapRef} >
               <Select
                 value={serviceWay}
                 style={width}
                 onChange={this.handleServiceWay}
                 getPopupContainer={() => this.serviceWayRef}
               >
-                {
-                  (dict.serveWay || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-          </div>
-          {/* 服务状态，执行者试图下显示，客户列表下隐藏 */}
-          {
-            isEntranceFromPerformerView ?
-              <div
-                className={
-                  classnames({
-                    [styles.serveStatus]: true,
-                  })}
-              >
-                <div className={styles.title}>
-                  服务状态:
-                </div>
-                <FormItem
-                  {...serviceStatusErrorProps}
-                >
-                  <div
-                    className={classnames({
-                      [styles.content]: true,
-                    })}
-                  >
-                    <RadioGroup
-                      onChange={this.handleRadioChange}
-                      value={serviceStatus}
-                    >
-                      {this.renderServiceStatusChoice()}
-                    </RadioGroup>
-                  </div>
-                </FormItem>
-              </div> : null
-          }
-          {/* 服务类型，执行者试图下隐藏，客户列表下显示 */}
-          <div className={serveType}>
-            <div className={styles.title}>
-              服务类型:
-            </div>
-            <div className={styles.content} ref={r => this.serviceTypeRef = r}>
-              <Select
-                value={serviceType}
-                style={width}
-                onChange={this.handleServiceType}
-                getPopupContainer={() => this.serviceTypeRef}
-              >
-                {
-                  (motCustfeedBackDict || EMPTY_LIST).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
+                { this.renderServiceSelectOptions(dict.serveWay) }
               </Select>
             </div>
           </div>
 
+          {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
+          {
+            isEntranceFromPerformerView ?
+              (<div className={styles.serveStatus}>
+                <div className={styles.title}>服务状态:</div>
+                <FormItem {...serviceStatusErrorProps}>
+                  <div className={styles.content}>
+                    <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
+                      {this.renderServiceStatusChoice()}
+                    </RadioGroup>
+                  </div>
+                </FormItem>
+              </div>)
+              :
+              (
+                <div className={styles.serveType}>
+                  <div className={styles.title}>服务类型:</div>
+                  <div className={styles.content} ref={this.setServiceTypeRef}>
+                    <Select
+                      value={serviceType}
+                      style={width}
+                      onChange={this.handleServiceType}
+                      getPopupContainer={() => this.serviceTypeRef}
+                    >
+                      { this.renderServiceSelectOptions(motCustfeedBackDict) }
+                    </Select>
+                  </div>
+                </div>
+              )
+          }
+
           <div className={styles.serveTime}>
-            <div className={styles.title}>
-              服务时间:
-            </div>
-            <div className={styles.content} ref={r => this.serviceTimeRef = r}>
+            <div className={styles.title}>服务时间:</div>
+            <div className={styles.content} ref={this.setServeTimeRef}>
               <DatePicker
                 style={width}
                 {...serviceDateProps}
@@ -892,9 +920,7 @@ export default class ServiceRecordContent extends PureComponent {
 
         <div className={styles.serveRecord}>
           <div className={styles.title}>服务记录:</div>
-          <FormItem
-            {...serviceContentErrorProps}
-          >
+          <FormItem {...serviceContentErrorProps}>
             <div className={styles.content}>
               <TextArea
                 rows={5}
@@ -909,42 +935,32 @@ export default class ServiceRecordContent extends PureComponent {
 
         <div className={styles.custFeedbackSection}>
           <div className={styles.feedbackType}>
-            <div className={styles.title}>
-              客户反馈:
-            </div>
-            <div className={styles.content} ref={r => this.customerFeedbackRef = r}>
+            <div className={styles.title}>客户反馈:</div>
+            <div className={styles.content} ref={this.setCustFeedbackRef}>
               <Select
                 value={feedbackType}
                 style={width}
                 onChange={this.handleFeedbackType}
                 getPopupContainer={() => this.customerFeedbackRef}
               >
-                {
-                  (feedbackTypeList).map(obj => (
-                    <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                  ))
-                }
+                { this.renderServiceSelectOptions(feedbackTypeList) }
               </Select>
               {
-                !isShowSubCustomerFeedback ?
-                  <Select
+                isShowSubCustomerFeedback ? null :
+                  (<Select
                     value={feedbackTypeChild}
                     style={width}
                     onChange={this.handleFeedbackTypeChild}
                     getPopupContainer={() => this.customerFeedbackRef}
                   >
-                    {
-                      (feedbackTypeChildList).map(obj => (
-                        <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                      ))
-                    }
-                  </Select> : null
+                    { this.renderServiceSelectOptions(feedbackTypeChildList) }
+                  </Select>)
               }
             </div>
           </div>
           <div className={styles.feedbackTime}>
             <div className={styles.title}>反馈时间:</div>
-            <div className={styles.content} ref={r => this.feedbackTimeRef = r}>
+            <div className={styles.content} ref={this.setFeedbackTimeRef}>
               <DatePicker
                 style={width}
                 {...feedbackTimeProps}
@@ -957,7 +973,7 @@ export default class ServiceRecordContent extends PureComponent {
 
         <div className={styles.uploadSection}>
           <Uploader
-            ref={ref => (this.uploadElem = ref)}
+            ref={this.setUploaderRef}
             onOperateFile={this.handleFileUpload}
             attachModel={currentFile}
             fileKey={uploadedFileKey}

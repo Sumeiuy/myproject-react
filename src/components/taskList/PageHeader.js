@@ -424,14 +424,16 @@ export default class Pageheader extends PureComponent {
   })
   handleCreateDateChange(date) {
     const { startDate, endDate } = date;
-    const createTimeStart = startDate.format(dateFormat);
-    const createTimeEnd = endDate.format(dateFormat);
-    // const createTimeStart = moment(date[0]).format(dateFormat);
-    // const createTimeEnd = moment(date[1]).format(dateFormat);
-    this.props.filterCallback({
-      createTimeStart,
-      createTimeEnd,
-    });
+    if (startDate !== null && endDate !== null) {
+      const createTimeStart = startDate.format(dateFormat);
+      const createTimeEnd = endDate.format(dateFormat);
+      // const createTimeStart = moment(date[0]).format(dateFormat);
+      // const createTimeEnd = moment(date[1]).format(dateFormat);
+      this.props.filterCallback({
+        createTimeStart,
+        createTimeEnd,
+      });
+    }
   }
 
   @autobind
@@ -449,12 +451,17 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleEndDateChange(date) {
-    const endTimeStart = moment(date[0]).format(dateFormat);
-    const endTimeEnd = moment(date[1]).format(dateFormat);
-    this.props.filterCallback({
-      endTimeStart,
-      endTimeEnd,
-    });
+    const { startDate, endDate } = date;
+    if (startDate !== null && endDate !== null) {
+      const endTimeStart = startDate.format(dateFormat);
+      const endTimeEnd = endDate.format(dateFormat);
+      // const endTimeStart = moment(date[0]).format(dateFormat);
+      // const endTimeEnd = moment(date[1]).format(dateFormat);
+      this.props.filterCallback({
+        endTimeStart,
+        endTimeEnd,
+      });
+    }
   }
 
   // 视图不变下，判断视图是否为创建视图，修改时间入参
