@@ -57,6 +57,8 @@ import PreSaleQuery from './routes/preSaleQuery/Home';
 // 个股
 import Stock from './routes/stock/Home';
 import StockDetail from './routes/stock/Detail';
+// 用户中心
+import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -166,6 +168,10 @@ const routes = [
     children: [
       { path: '/detail', component: StockDetail },
     ],
+  },
+  {
+    path: '/userCenter',
+    component: UserBasicInfo,
   },
 ];
 
