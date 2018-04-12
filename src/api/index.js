@@ -18,6 +18,7 @@ import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
 import preSaleQuery from './preSaleQuery';
 import stock from './stock';
+import exchange from './exchange';
 
 const api = apiCreator();
 
@@ -62,5 +63,7 @@ export default {
   preSaleQuery: preSaleQuery(api),
   // 个股资讯
   stock: stock(api),
+  // 积分兑换历史查询
+  exchange: exchange(api),
 };
 
