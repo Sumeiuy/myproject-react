@@ -104,9 +104,10 @@ app.model(require('./models/morningBoradcast'));
 app.model(require('./models/preSaleQuery'));
 // 个股资讯
 app.model(require('./models/stock'));
+// 积分兑换历史查询
+app.model(require('./models/exchange'));
 // 用户中心
 app.model(require('./models/userCenter'));
-
 // 4. Router
 app.router(routerConfig);
 

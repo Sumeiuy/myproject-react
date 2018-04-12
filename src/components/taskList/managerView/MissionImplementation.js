@@ -10,8 +10,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Tooltip } from 'antd';
+import { Tooltip, Mention } from 'antd';
 import classNames from 'classnames';
+import { stateFromHTML } from 'draft-js-import-html';
 import Icon from '../../common/Icon';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
@@ -30,6 +31,7 @@ const EMPTY_CONTENT = '本机构无服务客户';
 const MAIN_MAGEGER_ID = 'msm';
 const COLLAPSE_WIDTH = 672;
 const MARGIN_LEFT = 16;
+const { toString } = Mention;
 
 export default class MissionImplementation extends PureComponent {
 
@@ -175,11 +177,16 @@ export default class MissionImplementation extends PureComponent {
       serviceTips,
       servicePolicy,
     } = urlParams;
+
+    // 转换服务策略和任务提示格式
+    const serviceTipsString = toString(stateFromHTML(serviceTips));
+    const servicePolicyString = toString(stateFromHTML(servicePolicy));
+
     return {
       missionName,
       missionId,
-      serviceTips,
-      servicePolicy,
+      serviceTips: serviceTipsString,
+      servicePolicy: servicePolicyString,
       orgId,
     };
   }

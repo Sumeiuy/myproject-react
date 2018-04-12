@@ -57,6 +57,7 @@ import PreSaleQuery from './routes/preSaleQuery/Home';
 // 个股
 import Stock from './routes/stock/Home';
 import StockDetail from './routes/stock/Detail';
+import Exchange from './routes/exchange/Home';
 // 用户中心
 import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 
@@ -78,6 +79,7 @@ const routes = [
   { path: '/modal', component: TemplModal },
   { path: '/relation', component: RelationHome },
   { path: '/taskList', component: TaskListHome },
+  { path: '/exchange', component: Exchange },
   {
     path: '/permission',
     component: PermissonHome,

@@ -9,7 +9,7 @@
   "description": "华泰证券",
   "scripts": {
     "dll": "webpack --progress --colors --config ./build/webpack.dll.conf.js",
-    "dev": "node build/dev-server.js",
+    "dev": "node --max_old_space_size=5012 build/dev-server.js",
     "start": "npm run dll && npm run dev",
     "build": "node build/build.js",
     "unit": "karma start test/unit/karma.conf.js --single-run",

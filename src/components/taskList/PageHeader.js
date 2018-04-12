@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import { DatePicker, Input } from 'antd';
+// import { DatePicker, Input } from 'antd';
+import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
@@ -36,7 +37,7 @@ import {
 
 import styles from './pageHeader.less';
 
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 const Search = Input.Search;
 
 // 头部筛选filterBox的高度
@@ -505,35 +506,14 @@ export default class Pageheader extends PureComponent {
     this.props.creatSeibelModal();
   }
 
-  // 创建者视图 只能选择今天往前的日期，其余时间不可选
-  @autobind
-  disabledRange(value) {
-    if (!value) {
-      return false;
-    }
-    const time = value.valueOf();
-    return time > moment().subtract(0, 'days');
-  }
-
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
   isInsideOffSet({ day, firstDay }) {
     if (firstDay === null) return true;
-    return day >= firstDay.clone().subtract(10, 'days')
-      && day <= firstDay.clone().add(10, 'days');
+    return day >= firstDay.clone().subtract(60, 'days')
+      && day <= firstDay.clone().add(60, 'days');
   }
-
-  // 我部门的任务和执行者视图 只能选择今天往后推60天的日期，其余时间不可选
-  @autobind
-  disabledDateEnd(value) {
-    if (!value) {
-      return false;
-    }
-    const time = value.valueOf();
-    return time > moment(currentDate).add(60, 'days');
-  }
-
 
   /**
    * 构造任务状态
@@ -607,24 +587,14 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         创建时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          { /*
-            <RangePicker
-              ref={ref => this.timers = ref}
-              value={[startTime, endTime]}
-              onChange={this.handleCreateDateChange}
-              placeholder={['开始时间', '结束时间']}
-              disabledDate={this.disabledDateStart}
-              key={`${missionViewType}创建时间`}
-              format={dateFormat}
-            />
-          */ }
+          {/* 新的日历范围组件 */}
           <DateRangePicker
             hasCustomerOffset
             initialEndDate={endTime}
             initialStartDate={startTime}
             onChange={this.handleCreateDateChange}
-            disabledRange={this.disabledRange}
             isInsideOffSet={this.isInsideOffSet}
+            key={`${missionViewType}创建时间`}
           />
         </div>
       </div>);
@@ -638,14 +608,13 @@ export default class Pageheader extends PureComponent {
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         结束时间&nbsp;:&nbsp;
         <div className={styles.dropDownSelectBox}>
-          <RangePicker
-            value={[startTime, endTime]}
+          <DateRangePicker
+            hasCustomerOffset
+            initialEndDate={endTime}
+            initialStartDate={startTime}
             onChange={this.handleEndDateChange}
-            placeholder={['开始时间', '结束时间']}
-            disabledDate={this.disabledDateEnd}
+            isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}结束时间`}
-            ref={ref => this.date = ref}
-            format={dateFormat}
           />
         </div>
       </div>);

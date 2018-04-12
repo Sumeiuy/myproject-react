@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 19:27:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-10 16:40:05
  */
 
 import React, { PureComponent } from 'react';
@@ -568,8 +568,7 @@ export default class TaskFlow extends PureComponent {
 
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc)
-          || templeteDescHtml.length < 10
-          || templeteDescHtml.length > 1000) {
+        || templeteDescHtml.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -1073,7 +1072,7 @@ export default class TaskFlow extends PureComponent {
     const { taskFormData = EMPTY_OBJECT, currentEntry } = storedTaskFlowData;
     const isShowTitle = true;
     const steps = [{
-      title: '选择目标客户',
+      title: '目标客户',
       content: <div className={styles.taskInner}>
         <SelectTargetCustomer
           currentEntry={currentEntry}
@@ -1107,7 +1106,7 @@ export default class TaskFlow extends PureComponent {
         />
       </div>,
     }, {
-      title: '基本信息',
+      title: '任务信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
           wrappedComponentRef={inst => (this.formRef = inst)}
@@ -1125,7 +1124,7 @@ export default class TaskFlow extends PureComponent {
         />
       </div>,
     }, {
-      title: '结果跟踪&任务调查',
+      title: '任务评估',
       content: <div>
         <ResultTrack
           wrappedComponentRef={ref => (this.resultTrackRef = ref)}
@@ -1141,7 +1140,7 @@ export default class TaskFlow extends PureComponent {
         }
       </div>,
     }, {
-      title: '确认&提交',
+      title: '确认提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
         storedData={storedTaskFlowData}
