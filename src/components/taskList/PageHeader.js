@@ -33,6 +33,7 @@ import {
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
   STATE_ALL_CODE,
+  STATE_FINISHED_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
@@ -536,10 +537,6 @@ export default class Pageheader extends PureComponent {
       // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
-      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
@@ -547,23 +544,18 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
-      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_EXECUTE_CODE;
-      }
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
-
+    // 判断当前在url上的status不存在时，取执行中的value值
+    if (_.isEmpty(status)) {
+      statusValue = STATE_EXECUTE_CODE;
+    }
     return {
-      stateAllOptions: [stateAll, ...stateAllOptions],
+      stateAllOptions: [...stateAllOptions],
       statusValue,
     };
   }
@@ -580,9 +572,14 @@ export default class Pageheader extends PureComponent {
           endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
+          status,
         },
       },
     } = this.props;
+    // 当头部的筛选状态不是‘结束’时，不显示时间组件
+    if (status !== STATE_FINISHED_CODE) {
+      return null;
+    }
     let node;
     if (missionViewType === INITIATOR || !isGrayFlag) {
       const startTime = createTimeStart ?
