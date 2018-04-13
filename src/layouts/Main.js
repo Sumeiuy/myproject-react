@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
+import { LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
@@ -142,44 +144,46 @@ export default class Main extends Component {
       motSelfBuiltFeedbackList,
     } = this.props;
     return (
-      <div>
-        <div className={styles.layout}>
-          <div className={styles.main}>
-            <div className={styles.container} id="container">
-              <div className={styles.content} id="content">
-                <Loading loading={loading} forceFull={loadingForceFull} />
-                {
-                  (!_.isEmpty(interfaceState) &&
-                    !interfaceState[effects.dictionary] &&
-                    !interfaceState[effects.customerScope] &&
-                    !interfaceState[effects.empInfo]) ?
-                      <div>
-                        {children}
-                        <ConnectedCreateServiceRecord
-                          handleCloseClick={handleCloseClick}
-                          loading={interfaceState[effects.addServeRecord]}
-                          key={serviceRecordModalVisibleOfId}
-                          id={serviceRecordModalVisibleOfId}
-                          name={serviceRecordModalVisibleOfName}
-                          dict={dict}
-                          empInfo={empInfo}
-                          isShow={serviceRecordModalVisible}
-                          addServeRecord={addServeRecord}
-                          addServeRecordSuccess={addServeRecordSuccess}
-                          onToggleServiceRecordModal={toggleServiceRecordModal}
-                          custUuid={custUuid}
-                          ceFileDelete={ceFileDelete}
-                          taskFeedbackList={motSelfBuiltFeedbackList}
-                        />
-                      </div>
-                      :
-                      null
-                }
+      <LocaleProvider locale={zhCN}>
+        <div>
+          <div className={styles.layout}>
+            <div className={styles.main}>
+              <div className={styles.container} id="container">
+                <div className={styles.content} id="content">
+                  <Loading loading={loading} forceFull={loadingForceFull} />
+                  {
+                    (!_.isEmpty(interfaceState) &&
+                      !interfaceState[effects.dictionary] &&
+                      !interfaceState[effects.customerScope] &&
+                      !interfaceState[effects.empInfo]) ?
+                        <div>
+                          {children}
+                          <ConnectedCreateServiceRecord
+                            handleCloseClick={handleCloseClick}
+                            loading={interfaceState[effects.addServeRecord]}
+                            key={serviceRecordModalVisibleOfId}
+                            id={serviceRecordModalVisibleOfId}
+                            name={serviceRecordModalVisibleOfName}
+                            dict={dict}
+                            empInfo={empInfo}
+                            isShow={serviceRecordModalVisible}
+                            addServeRecord={addServeRecord}
+                            addServeRecordSuccess={addServeRecordSuccess}
+                            onToggleServiceRecordModal={toggleServiceRecordModal}
+                            custUuid={custUuid}
+                            ceFileDelete={ceFileDelete}
+                            taskFeedbackList={motSelfBuiltFeedbackList}
+                          />
+                        </div>
+                        :
+                        null
+                  }
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </LocaleProvider>
     );
   }
 }

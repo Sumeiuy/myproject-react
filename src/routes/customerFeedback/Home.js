@@ -168,12 +168,14 @@ export default class CustomerFeedback extends PureComponent {
 
   // 查询客户反馈列表
   @autobind
-  queryFeedbackList(keyword = '', pageNum = 1, pageSize = 20) {
+  queryFeedbackList(payload) {
+    const { keyword = '', pageNum = 1, pageSize = 20, roleType = 0 } = payload;
     const { getFeedbackList } = this.props;
     const params = {
       keyword,
       pageNum,
       pageSize,
+      roleType,
     };
     return getFeedbackList(params);
   }

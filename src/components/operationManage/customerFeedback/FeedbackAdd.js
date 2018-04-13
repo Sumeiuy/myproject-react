@@ -28,6 +28,8 @@ export default class MissionBind extends PureComponent {
     queryFeedbackList: PropTypes.func.isRequired,
     // 客户反馈列表
     feedbackData: PropTypes.object.isRequired,
+    // 可选项角色类型
+    roleType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -42,8 +44,8 @@ export default class MissionBind extends PureComponent {
   }
 
   componentDidMount() {
-    const { queryFeedbackList } = this.props;
-    queryFeedbackList();
+    const { queryFeedbackList, roleType } = this.props;
+    queryFeedbackList({ roleType });
   }
 
   // 向父组件提供数据
@@ -57,11 +59,11 @@ export default class MissionBind extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户反馈' } })
   handleSearchFeedback(keyword) {
-    const { queryFeedbackList } = this.props;
+    const { queryFeedbackList, roleType } = this.props;
     this.setState({
       currentFeedback: EMPTY_OBJECT,
     }, () => {
-      queryFeedbackList(keyword);
+      queryFeedbackList({ keyword, roleType });
     });
   }
 
@@ -93,10 +95,10 @@ export default class MissionBind extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(value) {
-    console.log(value);
+    console.warn(value);
     const { keyword } = this.state;
-    const { queryFeedbackList } = this.props;
-    queryFeedbackList(keyword, value);
+    const { queryFeedbackList, roleType } = this.props;
+    queryFeedbackList({ keyword, pageNum: value, roleType });
   }
 
   render() {
