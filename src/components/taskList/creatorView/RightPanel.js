@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-28 19:33:18
+ * @Last Modified time: 2018-04-11 15:05:06
  * 创建者视图右侧详情信息
  */
 
@@ -10,13 +10,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import InfoTitle from '../../common/InfoTitle';
 import ApproveList from '../../common/approveList';
 import TaskListDetailInfo from './TaskListDetailInfo';
 import styles from './rightPanel.less';
 import Icon from '../../common/Icon';
 import Button from '../../common/Button';
-import GroupTable from '../../customerPool/groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import { linkTo } from '../../../utils';
 import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
@@ -47,6 +48,8 @@ const emptyData = (value) => {
 };
 const { taskList: { status } } = pageConfig;
 const NOOP = _.noop;
+const dateFormat = 'YYYY年MM月DD日';
+
 export default class RightPanel extends PureComponent {
 
   static propTypes = {
@@ -313,7 +316,7 @@ export default class RightPanel extends PureComponent {
     } = taskBasicInfo;
     const { resultTraceVO: resultTraceVOList = {}, quesVO = [] } = motDetailModel;
     const resultTraceVO = _.isEmpty(resultTraceVOList) ? {} : resultTraceVOList;
-    const { trackDay } = resultTraceVO;
+    const { trackDeadline } = resultTraceVO;
     const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
@@ -378,8 +381,8 @@ export default class RightPanel extends PureComponent {
               <InfoTitle head="结果跟踪" />
               <div className={styles.modContent}>
                 <div className={styles.rowWidth}>
-                  <span>跟踪窗口期&nbsp;:</span>
-                  <span>{trackDay || '--'}天</span>
+                  <span>跟踪截止日期&nbsp;:</span>
+                  <span>{trackDeadline ? moment(trackDeadline).format(dateFormat) : '--'}</span>
                 </div>
                 <div>
                   <span>{resultTraceVO.indexName}&nbsp;:</span>
@@ -427,7 +430,7 @@ export default class RightPanel extends PureComponent {
             }
             width={700}
             modalContent={
-              <GroupTable
+              <Table
                 pageData={{
                   curPageNum,
                   curPageSize,

@@ -90,6 +90,9 @@ export default class ManagerViewDetail extends PureComponent {
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
     queryDistinctCustomerCount: PropTypes.func.isRequired,
     distinctCustomerCount: PropTypes.number.isRequired,
+    // 服务经理维度任务数据
+    custManagerScopeData: PropTypes.object.isRequired,
+    getCustManagerScope: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -407,7 +410,7 @@ export default class ManagerViewDetail extends PureComponent {
 
   // 空方法，用于日志上报
   @logable({ type: 'Click', payload: { name: '导出' } })
-  handleDownloadClick() {}
+  handleDownloadClick() { }
 
   @autobind
   renderTotalCust() {
@@ -475,6 +478,8 @@ export default class ManagerViewDetail extends PureComponent {
       missionReport,
       createMotReport,
       queryMOTServeAndFeedBackExcel,
+      getCustManagerScope,
+      custManagerScopeData,
     } = this.props;
 
     const {
@@ -689,6 +694,8 @@ export default class ManagerViewDetail extends PureComponent {
               missionReport={missionReport}
               createMotReport={createMotReport}
               queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
+              custManagerScopeData={custManagerScopeData}
+              getCustManagerScope={getCustManagerScope}
             />
           </div>
           <div className={styles.missionFeedbackSection}>

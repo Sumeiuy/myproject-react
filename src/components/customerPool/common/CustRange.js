@@ -125,6 +125,8 @@ export default class CustRange extends PureComponent {
     collectData({
       text: custRangeName,
       orgId,
+      // 将当前层级传出来
+      level: custRangeLevel,
     });
     updateQueryState({
       orgId,

@@ -5,22 +5,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    .leftSection {
-      // width: 50%;
-    }
-    .rightSection {
-      // width: 50%;
-      float: right;
-      padding-right: 16px;
-      & > div {
-        // width: 270px;
-        float: right;
-      }
-      :global .custRangeForCust {
-        padding-left: 11px;
-        transform: translateX(-11px);
-      }
-    }
+    align-items: center;
   }
   .emptyContent {
     width: 100%;
@@ -56,11 +41,29 @@
       min-width: 328px;
     }
   }
+  .custManagerDetailSection {
+    padding-top: 10px;
+    display: flex;
+    margin-right: 16px;
+  }
+  .orgTreeSection {
+    padding-right: 16px;
+    width: 100%;
+    text-align: right;
+    height: 30px;
+    margin-top: 12px;
+    & > div {
+      float: right;
+    }
+    :global .custRangeForCust {
+      padding-left: 11px;
+      transform: translateX(-11px);
+    }
+  }
   .report {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin: 12px 0;
     font-size: 12px;
     line-height: 12px;
     margin-right: 16px;
