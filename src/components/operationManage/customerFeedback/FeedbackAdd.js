@@ -86,7 +86,6 @@ export default class MissionBind extends PureComponent {
     },
   })
   handleSelectRow(currentFeedback) {
-    console.log(currentFeedback);
     this.setState({
       currentFeedback,
     });
@@ -95,7 +94,6 @@ export default class MissionBind extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
   handlePageChange(value) {
-    console.warn(value);
     const { keyword } = this.state;
     const { queryFeedbackList, roleType } = this.props;
     queryFeedbackList({ keyword, pageNum: value, roleType });
