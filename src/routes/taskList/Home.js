@@ -34,7 +34,7 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
+  STATE_FINISHED_CODE,
 } from './config';
 import {
   getViewInfo,
@@ -855,40 +855,52 @@ export default class PerformerView extends PureComponent {
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 执行者视图中，状态默认选中‘执行中’, status传50
+    // 状态默认选中‘执行中’, status传50
     // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-    if (currentViewType === EXECUTOR) {
-      if (status) {
-        finalPostData.status = status === STATE_ALL_CODE ? '' : status;
-      } else {
-        finalPostData.status = STATE_EXECUTE_CODE;
-      }
-    } else if (_.includes([INITIATOR, CONTROLLER], currentViewType)) {
-      // 创建者视图和管理者视图中，状态默认选中‘所有状态’， status传空字符串或者不传
-      // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-      if (!status || status === STATE_ALL_CODE) {
-        finalPostData.status = '';
-      } else {
-        finalPostData.status = status;
-      }
+    if (status) {
+      finalPostData.status = status;
+    } else {
+      finalPostData.status = STATE_EXECUTE_CODE;
     }
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
+    // 当前筛选的状态不为‘结束’时，默认情况createTimeEnd、createTimeStart、endTimeEnd、endTimeStart传空或者不传
     if (currentViewType === INITIATOR) {
       const { createTimeEnd, createTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        createTimeEnd: createTimeEnd || moment(currentDate).format(dateFormat),
-        createTimeStart: createTimeStart || moment(beforeCurrentDate60Days).format(dateFormat),
+        createTimeEnd: this.getFinishedStateDate({
+          status,
+          currentDate,
+          createTimeEnd,
+        }),
+        createTimeStart: this.getFinishedStateDate({
+          status,
+          beforeCurrentDate60Days,
+          createTimeStart,
+        }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: endTimeEnd || moment(afterCurrentDate60Days).format(dateFormat),
-        endTimeStart: endTimeStart || moment(currentDate).format(dateFormat),
+        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
+        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
       };
     }
     return finalPostData;
+  }
+
+  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
+  @autobind
+  getFinishedStateDate({
+    status = STATE_EXECUTE_CODE,
+    value,
+    urlDate,
+  }) {
+    if (status === STATE_FINISHED_CODE) {
+      return urlDate || moment(value).format(dateFormat);
+    }
+    return '';
   }
 
   // 加载右侧panel中的详情内容
