@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:30:34
- * @Last Modified by: zhushengnan
- * @Last Modified time: 2018-01-18 15:49:48
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-10 15:40:20
  * 管理者视图model层
  */
 
@@ -31,6 +31,8 @@ export default {
     // 生成任务报告相关信息
     missionReport: EMPTY_OBJ,
     distinctCustomerCount: 0,
+    // 服务经理维度任务下的客户数据
+    custManagerScopeData: EMPTY_OBJ,
   },
   reducers: {
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -98,6 +100,13 @@ export default {
     queryDistinctCustomerCountSuccess(state, action) {
       const { payload } = action;
       return { ...state, distinctCustomerCount: payload };
+    },
+    getCustManagerScopeDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custManagerScopeData: payload,
+      };
     },
   },
   effects: {
@@ -192,6 +201,15 @@ export default {
         yield put({
           type: 'queryDistinctCustomerCountSuccess',
           payload: resultData.totalRecordNum,
+        });
+      }
+    },
+    * getCustManagerScope({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getCustManagerScope, payload);
+      if (resultData) {
+        yield put({
+          type: 'getCustManagerScopeDataSuccess',
+          payload: resultData,
         });
       }
     },

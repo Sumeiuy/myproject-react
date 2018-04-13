@@ -182,6 +182,8 @@ export default class DetailTable extends Component {
   handleDeleteClick(category, item) {
     const { onDelete } = this.props;
     confirm({
+      okText: '确定',
+      cancelText: '取消',
       title: '请确认是否删除?',
       onOk() {
         onDelete(category, item);

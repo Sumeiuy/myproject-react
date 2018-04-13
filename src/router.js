@@ -57,13 +57,15 @@ import PreSaleQuery from './routes/preSaleQuery/Home';
 // 个股
 import Stock from './routes/stock/Home';
 import StockDetail from './routes/stock/Detail';
-import Exchange from './routes/exchange/Home';
+import Exchange from './routes/pointsExchange/Home';
+import Phone from './routes/phone/Home';
 
 const { ConnectedRouter } = routerRedux;
 
 // 路由Collection
 const routes = [
   { path: '/empty', component: Empty },
+  { path: '/phone', component: Phone },
   { path: '/report', component: ReportHome },
   { path: '/boardManage', component: BoardManageHome },
   { path: '/boardEdit', component: BoardEditHome },

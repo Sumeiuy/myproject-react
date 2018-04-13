@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { message } from 'antd';
-import GroupTable from '../groupManage/GroupTable';
+import Table from '../../common/commonTable';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
 import Button from '../../common/Button';
@@ -258,9 +258,9 @@ export default class CustomerSegment extends PureComponent {
     return _.map(columns, item => ({
       key: item,
       value: item,
-      render(data) {
+      render(data, key) {
         return (
-          <div className={styles.textOverflowEllipsis}>{data}</div>
+          <div className={styles.textOverflowEllipsis}>{data[key]}</div>
         );
       },
     }));
@@ -354,7 +354,7 @@ export default class CustomerSegment extends PureComponent {
               }}
               modalWidth={'auto'}
               modalContent={
-                <GroupTable
+                <Table
                   pageData={{
                     curPageNum,
                     curPageSize,
