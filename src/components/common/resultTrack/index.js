@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-11 19:43:20
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-12 21:28:06
  * 结果跟踪
  */
 
@@ -27,6 +27,21 @@ const defaultIndicatorValue = '请选择指标';
 
 // 跟踪窗口期默认0天
 const defaultTrackWindowDate = 0;
+
+const dateFormat = 'YYYY年MM月DD日';
+
+// 产品大类，需要将productCategroy传给后台
+// 前端处理一下，如果是大类104，前端传1给后端
+// 如果是大类105，前端传2给后端
+const productCategroyCollection = [{
+  indexId: '104',
+  productCategory: '1',
+  value: '交易持仓',
+}, {
+  indexId: '105',
+  productCategory: '2',
+  value: '金融产品',
+}];
 
 @RestoreScrollTop
 export default class ResultTrack extends PureComponent {
@@ -128,7 +143,7 @@ export default class ResultTrack extends PureComponent {
     } = this.state;
 
     const indicatorLevel1 = _.find(level1Indicator, item =>
-    item.value === currentSelectedLevel1Indicator) || {};
+      item.value === currentSelectedLevel1Indicator) || {};
 
     // 当前所选中的指标目标
     const indicatorLevel1Key = indicatorLevel1.key;
@@ -139,15 +154,15 @@ export default class ResultTrack extends PureComponent {
         });
       } else {
         if (!((!_.isEmpty(operationType)
-              && !_.isEmpty(operationType[0])
-              && _.isArray(operationType)
-              && _.size(operationType) === 1
-              && (operationType[0].key === 'TRUE'
-                || operationType[0].key === 'OPEN'
-                || operationType[0].key === 'COMPLETE'))
-                || (_.isEmpty(operationType[0]))) && !_.isNumber(inputValue)) {
-                // 如果已经选择指标目标
-                // 并且当前显示指标值输入框
+          && !_.isEmpty(operationType[0])
+          && _.isArray(operationType)
+          && _.size(operationType) === 1
+          && (operationType[0].key === 'TRUE'
+            || operationType[0].key === 'OPEN'
+            || operationType[0].key === 'COMPLETE'))
+          || (_.isEmpty(operationType[0]))) && !_.isNumber(inputValue)) {
+          // 如果已经选择指标目标
+          // 并且当前显示指标值输入框
           this.showInputValueError('请输入指标目标值');
         }
         if (isProdBound && _.isEmpty(currentSelectedProduct)) {
@@ -328,6 +343,8 @@ export default class ResultTrack extends PureComponent {
     return {
       // 跟踪窗口期
       trackWindowDate: this.transformDateToDay(currentSelectedTrackDate),
+      // 跟踪截止日期，显示年月日
+      currentSelectedTrackDate: moment(currentSelectedTrackDate).format(dateFormat),
       // 一级指标key
       indicatorLevel1Key: indicatorLevel1.key || '',
       // 一级指标value
@@ -622,10 +639,10 @@ export default class ResultTrack extends PureComponent {
     };
 
     if (
-        checked
-        && (currentSelectedLevel1Indicator !== defaultIndicatorValue
+      checked
+      && (currentSelectedLevel1Indicator !== defaultIndicatorValue
         || dateStr !== initialDateStr)
-      ) {
+    ) {
       // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
       confirm({
         okText: '确定',
@@ -728,9 +745,16 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   handleQueryProduct(value) {
+    const { currentSelectedLevel1Indicator } = this.state;
+    const productCategoryObject = _.find(productCategroyCollection, item =>
+      item.value === currentSelectedLevel1Indicator) || EMPTY_OBJECT;
+
+    // 需要将产品大类传给后台
+    // 来自需求-自建任务结果指标包含累计“认购”产品金额
     if (!_.isEmpty(value)) {
       this.props.queryProduct({
         keyword: value,
+        productCategory: productCategoryObject.productCategory,
       });
     }
   }
@@ -819,7 +843,7 @@ export default class ResultTrack extends PureComponent {
             </div>
             <div className={styles.indicatorTargetData}>
               <div className={styles.title}>
-                指标目标
+                跟踪指标
               </div>
               <div className={styles.content}>
                 <div className={styles.indicatorLevel1}>
@@ -929,7 +953,7 @@ export default class ResultTrack extends PureComponent {
                                   value={inputValue}
                                   min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
                                   max={!_.isEmpty(currentMax) ?
-                                        Number(currentMax) : Number.MAX_VALUE}
+                                    Number(currentMax) : Number.MAX_VALUE}
                                   onChange={this.handleInputChange}
                                   size="default"
                                 />

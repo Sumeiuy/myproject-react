@@ -41,6 +41,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorIntervalValue: PropTypes.bool.isRequired,
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
+    templetDesc: PropTypes.string,
   }
 
   static defaultProps = {
@@ -53,6 +54,7 @@ export default class CreateTaskForm extends PureComponent {
     custCount: 0,
     missionType: '',
     taskBasicInfo: {},
+    templetDesc: '',
   }
 
   constructor(props) {
@@ -70,6 +72,7 @@ export default class CreateTaskForm extends PureComponent {
       location: { query },
       dict: { custIndexPlaceHolders },
       previousData,
+      templetDesc,
     } = this.props;
     const arr = _.map(custIndexPlaceHolders, item => ({
       name: item.value.slice(1),
@@ -87,7 +90,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType: previousData.taskType, // 'Mission'
         defaultTaskSubType: previousData.taskSubType, // ''
         defaultExecutionType: previousData.executionType,
-        defaultMissionDesc: previousData.templetDesc,
+        defaultMissionDesc: templetDesc || previousData.templetDesc,
         defaultInitialValue: previousData.timelyIntervalValue,
         defaultServiceStrategySuggestion: previousData.serviceStrategySuggestion,
       });
@@ -125,13 +128,8 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleInit(query = {}) {
-    let source = '';
-    let count = '0';
-    if (!_.isEmpty(query)) {
-      source = query.source;
-      count = query.count;
-    }
-    const { dict: { custIndexPlaceHolders }, missionType, taskBasicInfo } = this.props;
+    const { source = '', count = '0', missionDesc = '' } = query;
+    const { dict: { custIndexPlaceHolders }, missionType, taskBasicInfo, templetDesc } = this.props;
     const { motDetailModel = {} } = taskBasicInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
@@ -229,6 +227,14 @@ export default class CreateTaskForm extends PureComponent {
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
+    }
+    // 如果url上存在missionDesc，那么将任务提示填值
+    if (missionDesc) {
+      defaultMissionDesc = missionDesc;
+    }
+    // 如果props上存在任务提示，则作为默认值
+    if (templetDesc) {
+      defaultMissionDesc = templetDesc;
     }
     this.setState({
       defaultMissionName,

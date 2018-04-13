@@ -13,12 +13,12 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import confirm from '../../common/Confirm';
-import GroupTable from './GroupTable';
+import Table from '../../common/commonTable';
 import Search from '../../common/Search';
 import Select from '../../common/Select';
 import Button from '../../common/Button';
 
-import tableStyles from './groupTable.less';
+import tableStyles from '../../common/commonTable/index.less';
 import styles from './customerGroupDetail.less';
 import logable from '../../../decorators/logable';
 import { request } from '../../../config';
@@ -716,11 +716,11 @@ export default class CustomerGroupDetail extends PureComponent {
     };
 
     const uploadElement = _.isEmpty(attachmentId) ?
-    (<Upload {...uploadProps} {...this.props}>
-      <a>客户导入</a>
-    </Upload>)
-  :
-    (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
+      (<Upload {...uploadProps} {...this.props}>
+        <a>客户导入</a>
+      </Upload>)
+      :
+      (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
 
     return (
       <Form className={styles.groupDetail}>
@@ -846,7 +846,7 @@ export default class CustomerGroupDetail extends PureComponent {
             </div>
         }
         <div className={styles.customerListTable}>
-          <GroupTable
+          <Table
             pageData={{
               curPageNum,
               curPageSize,
@@ -856,18 +856,18 @@ export default class CustomerGroupDetail extends PureComponent {
             onSizeChange={this.handleShowSizeChange}
             onPageChange={this.handlePageChange}
             tableClass={
-            classnames({
-              [tableStyles.groupTable]: true,
-              [styles.custListTable]: true,
-            })
-          }
+              classnames({
+                [tableStyles.groupTable]: true,
+                [styles.custListTable]: true,
+              })
+            }
             titleColumn={titleColumn}
             actionSource={actionSource}
             isFirstColumnLink={false}
-          // 固定标题，内容滚动
+            // 固定标题，内容滚动
             scrollY={186}
             isFixedTitle
-          // 当listData数据源为空的时候是否需要填充空白行
+            // 当listData数据源为空的时候是否需要填充空白行
             emptyListDataNeedEmptyRow
           />
         </div>
