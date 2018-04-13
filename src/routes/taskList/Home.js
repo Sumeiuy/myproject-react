@@ -855,13 +855,8 @@ export default class PerformerView extends PureComponent {
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 状态默认选中‘执行中’, status传50
-    // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-    if (status) {
-      finalPostData.status = status;
-    } else {
-      finalPostData.status = STATE_EXECUTE_CODE;
-    }
+    // 状态默认选中‘执行中’, status传50，其余传对应的code码
+    finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     // 当前筛选的状态不为‘结束’时，默认情况createTimeEnd、createTimeStart、endTimeEnd、endTimeStart传空或者不传
     if (currentViewType === INITIATOR) {
