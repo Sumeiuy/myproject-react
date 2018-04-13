@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-12 16:29:47
+ * @Last Modified time: 2018-04-13 10:50:47
  */
 
 import React, { PureComponent } from 'react';
@@ -31,6 +31,9 @@ export default class Phone extends PureComponent {
     this.state = {
       // 默认状态下打电话弹窗不可见 false 不可见  true 可见
       isShowPhoneDialog: false,
+      // 默认状态下auto为false，此时不能自动拨号
+      // 点击电话号码拨号弹框弹出来auto置为true，此时自动拨号
+      auto: false,
     };
   }
 
@@ -39,6 +42,7 @@ export default class Phone extends PureComponent {
   handleClickPhoneNum() {
     this.setState({
       isShowPhoneDialog: true,
+      auto: true,
     });
   }
 
@@ -47,12 +51,13 @@ export default class Phone extends PureComponent {
   handleCloseDialog() {
     this.setState({
       isShowPhoneDialog: false,
+      auto: false,
     });
   }
 
   render() {
     const { phoneNum, custType, style } = this.props;
-    const { isShowPhoneDialog } = this.state;
+    const { isShowPhoneDialog, auto } = this.state;
     return (
       <div className={styles.wrap}>
         <div
@@ -67,6 +72,7 @@ export default class Phone extends PureComponent {
             <PhoneDialog
               phoneNum={phoneNum}
               custType={custType}
+              auto={auto}
               handleCloseDialog={this.handleCloseDialog}
             />
             :
