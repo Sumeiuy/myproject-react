@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-12 14:54:50
+ * @Last Modified time: 2018-04-13 10:44:01
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ export default class PhoneDialog extends PureComponent {
   static propTypes = {
     phoneNum: PropTypes.string.isRequired,
     custType: PropTypes.string.isRequired,
+    auto: PropTypes.bool.isRequired,
     handleCloseDialog: PropTypes.func.isRequired,
   }
 
@@ -25,8 +26,8 @@ export default class PhoneDialog extends PureComponent {
   }
 
   render() {
-    const { phoneNum, custType } = this.props;
-    const srcUrl = `http://168.61.8.82:9086/phone/?phoneNum=${phoneNum}&custType=${custType}`;
+    const { phoneNum, custType, auto } = this.props;
+    const srcUrl = `http://168.61.8.82:9086/phone/?phoneNum=${phoneNum}&custType=${custType}&auto=${auto}`;
     return (
       <div className={styles.phoneDialogBox}>
         <iframe
