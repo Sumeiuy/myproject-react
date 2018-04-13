@@ -368,7 +368,9 @@ export default class CustomerList extends PureComponent {
         labels,
       } = getCustomerListFilters(filtersArray, query.labelMapping, filtersReq);
       param.filtersReq = filters;
-      param.labels = labels;
+      if (query.source === 'sightingTelescope') {
+        param.labels = labels;
+      }
     }
     if (query.sortType || query.sortDirection) {
       sortsReqList.push({
