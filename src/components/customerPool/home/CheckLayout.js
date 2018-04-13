@@ -24,7 +24,12 @@ function renderItem(data = {}, itemStyle = null) {
           <span>{data.unit || ''}</span>
         </span>
       </div>
-      <Popover content={data.description} placement="bottom" overlayStyle={{ maxWidth: '320px' }}>
+      <Popover
+        title={data.title || ''}
+        content={data.description}
+        placement="bottom"
+        overlayStyle={{ maxWidth: '320px' }}
+      >
         <div className={styles.title}>{data.title || ''}</div>
       </Popover>
     </div>
