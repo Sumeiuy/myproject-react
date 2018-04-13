@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-30 14:50:57
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-12 20:35:03
  * 服务记录表单
  */
 
@@ -26,6 +26,8 @@ export default class ServiceRecordForm extends PureComponent {
     isFold: PropTypes.bool.isRequired,
     custUuid: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
+    // 是否驳回，只有在涨乐财富通的服务方式并且是自由编辑下才有
+    isReject: PropTypes.bool.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
     addMotServeRecordSuccess: PropTypes.bool.isRequired,
@@ -102,6 +104,7 @@ export default class ServiceRecordForm extends PureComponent {
       formData: { serviceTips },
       custUuid,
       isReadOnly,
+      isReject,
       deleteFileResult,
       ceFileDelete,
     } = this.props;
@@ -126,6 +129,7 @@ export default class ServiceRecordForm extends PureComponent {
         <ServiceRecordContent
           ref={ref => (this.serviceRecordContentRef = ref)}
           isReadOnly={isReadOnly}
+          isReject={isReject}
           dict={dict}
           // 是否是执行者视图页面
           isEntranceFromPerformerView={isEntranceFromPerformerView}

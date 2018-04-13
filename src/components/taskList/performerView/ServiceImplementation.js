@@ -20,7 +20,23 @@ import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 const EDITABLE = ['10', '20'];
 
 // 创建服务记录中服务方式中的涨乐财富通的code
-const HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE = '';
+const HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE = 'ZLFins';
+
+// 创建服务记录中如果选择的是涨乐财富通
+// const ZHANGLE_CAIFUTONG_STATUS = [
+//   { id: 50, name: '审批中' },
+//   { id: 60, name: '被驳回' },
+// ];
+// 涨乐财富通审批中状态
+const ZHANGLE_CAIFUTONG_APPROVAL_STATUS = {
+  id: 50,
+  name: '审批中',
+};
+// 涨乐财富通审批中状态
+const ZHANGLE_CAIFUTONG_REJECT_STATUS = {
+  id: 60,
+  name: '被驳回',
+};
 
 // 目标客户的任务状态
 // 处理中 20
@@ -138,14 +154,32 @@ export default class ServiceImplementation extends PureComponent {
     return !_.isEmpty(_.find(missionStatusForServiceRecord, item => item.id === typeCode));
   }
 
+  // 涨乐财富通只读状态
+  @autobind
+  judgeZhangeLeStatus(statusCode) {
+    // 已完成 || 审批中
+    return this.judgeMissionStatus(statusCode)
+      || statusCode === ZHANGLE_CAIFUTONG_APPROVAL_STATUS.id;
+  }
+
   // 判断服务记录是否是只读状态
   @autobind
   judgeIsReadyOnly({ serveWayCode, statusCode, serviceStatusCode }) {
     if (serveWayCode === HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE) {
       // 如果是涨乐财富通的服务方式
-      return false;
+      // 判断是否 审批中 或者 已完成
+      return this.judgeZhangeLeStatus(statusCode);
     }
     return this.judgeMissionStatus(statusCode) || !_.includes(EDITABLE, serviceStatusCode);
+  }
+
+  // 涨乐财富通中的驳回状态
+  @autobind
+  isRejct({ serveWayCode, statusCode }) {
+    if (serveWayCode === HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE) {
+      return statusCode === ZHANGLE_CAIFUTONG_REJECT_STATUS.id;
+    }
+    return false;
   }
 
   render() {
@@ -238,6 +272,9 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     const isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
 
+    // 涨乐财富通中才有审批和驳回状态
+    const isReject = this.isRejct({ statusCode, serviceWayCode });
+
     return (
       <div>
         <TargetCustomer
@@ -266,6 +303,7 @@ export default class ServiceImplementation extends PureComponent {
               dict={dict}
               addServeRecord={this.addServiceRecord}
               isReadOnly={isReadOnly}
+              isReject={isReject}
               isEntranceFromPerformerView
               isFold={isFold}
               queryCustUuid={queryCustUuid}

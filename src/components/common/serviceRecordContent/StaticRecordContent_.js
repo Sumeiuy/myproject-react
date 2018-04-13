@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 14:32:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-12 22:56:21
  * 只读状态下，显示静态服务记录
  */
 
@@ -30,12 +30,8 @@ export default function StaticRecordContent(props) {
     <div className={styles.serviceRecordContent}>
       <div className={styles.gridWrapper}>
         <div className={styles.serveWay}>
-          <div className={styles.title}>
-            服务方式:
-            </div>
-          <div className={styles.readOnlyText}>
-            {serviceWay}
-          </div>
+          <div className={styles.title}>服务方式:</div>
+          <div className={styles.readOnlyText}>{serviceWay}</div>
         </div>
 
         <div className={styles.serveStatus}>
