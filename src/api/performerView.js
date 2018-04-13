@@ -49,6 +49,6 @@ export default function performerView(api) {
     // 获取去重后的客户数量
     queryDistinctCustomerCount: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListOfMission', query),
     // 获取服务经理维度任务数据
-    getCustManagerScope: query => api.post('/groovynoauth/fsp/campaign/mot/getCustManagerScope', query),
+    getCustManagerScope: query => api.post('/groovynoauth/fsp/campaign/mot/queryEmpListOfMission', query),
   };
 }
