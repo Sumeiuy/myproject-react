@@ -1,24 +1,24 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:19:15
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-12 16:13:49
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message, Modal, Upload, Alert } from 'antd';
+import { Input, Form, message, Modal, Upload, Alert, Spin } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
 import confirm from '../../common/Confirm';
-import GroupTable from './GroupTable';
+import Table from '../../common/commonTable';
 import Search from '../../common/Search';
 import Select from '../../common/Select';
 import Button from '../../common/Button';
 
-import tableStyles from './groupTable.less';
+import tableStyles from '../../common/commonTable/index.less';
 import styles from './customerGroupDetail.less';
 import logable from '../../../decorators/logable';
 import { request } from '../../../config';
@@ -99,6 +99,8 @@ export default class CustomerGroupDetail extends PureComponent {
       importVisible: false,
       // 当前上传的文件
       file: {},
+      // 上传文件的loading
+      uploadLoading: false,
     };
   }
 
@@ -497,7 +499,9 @@ export default class CustomerGroupDetail extends PureComponent {
     this.setState({
       importVisible: false,
       includeCustList: [],
+      includeCustIdList: [],
       totalRecordNum: 0,
+      uploadLoading: true,
     }, () => {
       const uploadFile = info.file;
       this.setState({
@@ -512,6 +516,7 @@ export default class CustomerGroupDetail extends PureComponent {
             this.setState({
               multiErrmsg: '',
               attachmentId: data.attachmentId,
+              uploadLoading: false,
             }, () => {
               const { attachmentId } = this.state;
               const { queryBatchCustList } = this.props;
@@ -583,11 +588,15 @@ export default class CustomerGroupDetail extends PureComponent {
             // 上传的文件不符合要求，在页面显示做错信息
             this.setState({
               multiErrmsg: data.msg,
+              uploadLoading: false,
             });
           }
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
+          this.setState({
+            uploadLoading: false,
+          });
         }
       }
     });
@@ -663,6 +672,7 @@ export default class CustomerGroupDetail extends PureComponent {
       multiErrmsg,
       importVisible,
       file,
+      uploadLoading,
     } = this.state;
     const {
       form: { getFieldDecorator },
@@ -706,11 +716,11 @@ export default class CustomerGroupDetail extends PureComponent {
     };
 
     const uploadElement = _.isEmpty(attachmentId) ?
-    (<Upload {...uploadProps} {...this.props}>
-      <a>客户导入</a>
-    </Upload>)
-  :
-    (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
+      (<Upload {...uploadProps} {...this.props}>
+        <a>客户导入</a>
+      </Upload>)
+      :
+      (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
 
     return (
       <Form className={styles.groupDetail}>
@@ -815,6 +825,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 </div>
                 :
                 <div className={styles.multiCust}>
+                  <Spin className={styles.uploadLoading} spinning={uploadLoading} />
                   {uploadElement}
                   <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
                 </div>
@@ -835,7 +846,7 @@ export default class CustomerGroupDetail extends PureComponent {
             </div>
         }
         <div className={styles.customerListTable}>
-          <GroupTable
+          <Table
             pageData={{
               curPageNum,
               curPageSize,
@@ -845,18 +856,18 @@ export default class CustomerGroupDetail extends PureComponent {
             onSizeChange={this.handleShowSizeChange}
             onPageChange={this.handlePageChange}
             tableClass={
-            classnames({
-              [tableStyles.groupTable]: true,
-              [styles.custListTable]: true,
-            })
-          }
+              classnames({
+                [tableStyles.groupTable]: true,
+                [styles.custListTable]: true,
+              })
+            }
             titleColumn={titleColumn}
             actionSource={actionSource}
             isFirstColumnLink={false}
-          // 固定标题，内容滚动
+            // 固定标题，内容滚动
             scrollY={186}
             isFixedTitle
-          // 当listData数据源为空的时候是否需要填充空白行
+            // 当listData数据源为空的时候是否需要填充空白行
             emptyListDataNeedEmptyRow
           />
         </div>

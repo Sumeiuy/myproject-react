@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-02 15:37:43
+ * @Last Modified time: 2018-04-12 10:37:49
  * 任务实施简报
  */
 
@@ -17,8 +17,10 @@ import Icon from '../../common/Icon';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
 import CustFeedback from './CustFeedback';
+import CustManagerDetailScope from './CustManagerDetailScope';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import { env, permission, emp } from '../../../helper';
+import { ORG_LEVEL1, ORG_LEVEL2, ORG_LEVEL3 } from '../../../config/orgTreeLevel';
 import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
@@ -60,6 +62,9 @@ export default class MissionImplementation extends PureComponent {
     createMotReport: PropTypes.func.isRequired,
     queryMOTServeAndFeedBackExcel: PropTypes.func.isRequired,
     urlParams: PropTypes.object.isRequired,
+    // 服务经理维度任务数据
+    custManagerScopeData: PropTypes.object.isRequired,
+    getCustManagerScope: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -69,16 +74,30 @@ export default class MissionImplementation extends PureComponent {
     custRange: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
     currentId: '',
+    custManagerDetailScopeData: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
+    const currentOrgId = emp.getOrgId();
+    // 来自营业部
+    let level = ORG_LEVEL3;
+    // 判断是否是经纪总部
+    if (emp.isManagementHeadquarters(currentOrgId)) {
+      level = ORG_LEVEL1;
+    } else if (emp.isFiliale(props.custRange, currentOrgId)) {
+      // 判断是否是分公司
+      level = ORG_LEVEL2;
+    }
+
     this.state = {
       expandAll: false,
       currentOrgId: '',
       createCustRange: [],
       isDown: true,
       forceRender: true,
+      // 当前组织机构树层级
+      level,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.isAuthorize = permission.hasCustomerPoolPermission();
@@ -201,9 +220,15 @@ export default class MissionImplementation extends PureComponent {
    */
   @autobind
   collectCustRange(value) {
-    const { countFlowStatus, countFlowFeedBack } = this.props;
+    const { countFlowStatus, countFlowFeedBack, getCustManagerScope } = this.props;
+    const { level } = value;
+    this.setState({
+      // 当前层级
+      level,
+    });
     countFlowStatus(value);
     countFlowFeedBack(value);
+    getCustManagerScope(value);
     this.orgId = value;
   }
 
@@ -306,10 +331,10 @@ export default class MissionImplementation extends PureComponent {
 
   // 空方法，用于日志上报
   @logable({ type: 'Click', payload: { name: '下载' } })
-  handleDownloadClick() {}
+  handleDownloadClick() { }
 
   @logable({ type: 'Click', payload: { name: '报告' } })
-  handleDownload() {}
+  handleDownload() { }
 
   @autobind
   renderTabsExtra() {
@@ -389,12 +414,14 @@ export default class MissionImplementation extends PureComponent {
   render() {
     const {
       missionImplementationProgress = EMPTY_OBJECT,
-      // isFold,
+      isFold,
       custFeedback = EMPTY_LIST,
       missionProgressStatusDic = EMPTY_LIST,
       missionReport,
       currentId,
+      custManagerScopeData,
     } = this.props;
+    const { level } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
     const {
       isCreatingMotReport,
@@ -419,28 +446,28 @@ export default class MissionImplementation extends PureComponent {
             <LabelInfo value={'任务实施简报'} />
           </div>
           <div className={styles.rightSection}>
-            <div>
-              {this.renderTabsExtra()}
+            <div className={styles.report}>
+              <span
+                className={
+                  classNames({
+                    [styles.noCreateBtn]: canCreateReport,
+                    [styles.createBtn]: !canCreateReport,
+                  })
+                }
+                onClick={canCreateReport ? null : this.createMissionReport}
+              >
+                <Icon type="wenben" className={`icon ${styles.icon_mr}`} />
+                生成最新报告
+              </span>
+              {
+                this.renderCreateFileInfo(currentMissionReport)
+              }
             </div>
           </div>
         </div>
-        {
-          <div className={styles.report}>
-            <span
-              className={canCreateReport ?
-                styles.noCreateBtn :
-                styles.createBtn
-              }
-              onClick={canCreateReport ? null : this.createMissionReport}
-            >
-              <Icon type="wenben" className={`icon ${styles.icon_mr}`} />
-              生成最新报告
-            </span>
-            {
-              this.renderCreateFileInfo(currentMissionReport)
-            }
-          </div>
-        }
+        <div className={styles.orgTreeSection}>
+          {this.renderTabsExtra()}
+        </div>
         {
           notMissionCust ?
             <div className={styles.emptyContent}>
@@ -468,6 +495,16 @@ export default class MissionImplementation extends PureComponent {
                 />
               </div>
             </div>
+        }
+        {
+          !notMissionCust ?
+            <div className={styles.custManagerDetailSection}>
+              <CustManagerDetailScope
+                detailData={custManagerScopeData}
+                currentOrgLevel={level}
+                isFold={isFold}
+              />
+            </div> : null
         }
       </div>
     );

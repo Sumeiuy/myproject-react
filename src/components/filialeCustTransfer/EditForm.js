@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 10:42:05
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-04-11 19:47:05
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -264,6 +264,8 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     }
     if (origiManagerList.hasContract) {
       confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '确认要划转吗?',
         content: '该客户名下有生效中的合作合约，请确认是否划转?',
         onOk: () => {

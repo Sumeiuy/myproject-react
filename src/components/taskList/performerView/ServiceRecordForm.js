@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-12 20:35:03
+ * @Last Modified time: 2018-04-13 09:09:23
  * 服务记录表单
  */
 
@@ -121,6 +121,10 @@ export default class ServiceRecordForm extends PureComponent {
           <div className={styles.title}>
             任务提示:
           </div>
+          {/**
+           * 不要去掉dangerouslySetInnerHTML，瞄准镜标签作为变量塞入任务提示，返回时可能带有<br/>
+           * 标签，需要格式化展示出来
+           */}
           <div className={styles.content}>
             <div dangerouslySetInnerHTML={{ __html: serviceTips || '--' }} />
           </div>
