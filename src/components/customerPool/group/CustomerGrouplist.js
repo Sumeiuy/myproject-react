@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import GroupTable from '../groupManage/GroupTable';
-import tableStyles from '../groupManage/groupTable.less';
+import Table from '../../common/commonTable';
+import tableStyles from '../../common/commonTable/index.less';
 import './customerGrouplist.less';
 
 const renderColumnTitle = [
@@ -68,7 +68,7 @@ export default class CustomerGrouplist extends PureComponent {
 
     return (
       <div className={'customerGrouplistTable'}>
-        <GroupTable
+        <Table
           pageData={pageData}
           listData={dataSource}
           onSizeChange={onSizeChange}
