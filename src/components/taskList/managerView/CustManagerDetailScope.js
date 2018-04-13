@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 09:34:21
+ * @Last Modified time: 2018-04-13 09:10:06
  * 服务经理维度任务统计
  */
 
@@ -49,7 +49,8 @@ export default class CustManagerDetailScope extends PureComponent {
   addIdToDataSource(listData) {
     return _.map(listData, item => ({
       ...item,
-      id: item.serviceManagerId,
+      // 三个字段组合作为唯一
+      id: `${item.mssnId}-${item.login}-${item.custDepartmentCode}`,
     }));
   }
 
@@ -59,9 +60,9 @@ export default class CustManagerDetailScope extends PureComponent {
    */
   @autobind
   renderManagerNameId(record = EMPTY_OBJECT) {
-    const { serviceManagerName, serviceManagerId } = record;
+    const { empName, login } = record;
     return (
-      <span>{serviceManagerName}（{serviceManagerId}）</span>
+      <span>{empName}（{login}）</span>
     );
   }
 
@@ -96,27 +97,27 @@ export default class CustManagerDetailScope extends PureComponent {
     const { currentOrgLevel } = this.props;
     // 如果是营业部层级，则只展示基本的5列数据
     let columnTitle = [{
-      key: 'serviceManagerName',
+      key: 'login',
       value: '服务经理姓名工号',
       render: this.renderManagerNameId,
     }, {
-      key: 'custTotal',
+      key: 'flowNum',
       value: '客户总数',
     }, {
-      key: 'servedCust',
+      key: 'servFlowNum',
       value: '已服务客户',
-      render: ({ custTotal, servedCust: everyCust }) =>
-        this.renderEveryCust(custTotal, everyCust),
+      render: ({ flowNum, servFlowNum: everyCust }) =>
+        this.renderEveryCust(flowNum, everyCust),
     }, {
-      key: 'completedCust',
+      key: 'doneFlowNum',
       value: '已完成客户',
-      render: ({ custTotal, completedCust: everyCust }) =>
-        this.renderEveryCust(custTotal, everyCust),
+      render: ({ flowNum, doneFlowNum: everyCust }) =>
+        this.renderEveryCust(flowNum, everyCust),
     }, {
-      key: 'standardedCust',
+      key: 'traceFlowNum',
       value: '结果达标客户',
-      render: ({ custTotal, standardedCust: everyCust }) =>
-        this.renderEveryCust(custTotal, everyCust),
+      render: ({ flowNum, traceFlowNum: everyCust }) =>
+        this.renderEveryCust(flowNum, everyCust),
     }];
 
     if (currentOrgLevel === ORG_LEVEL1) {
@@ -125,11 +126,11 @@ export default class CustManagerDetailScope extends PureComponent {
       columnTitle = [
         ...columnTitle,
         {
-          key: 'company',
+          key: 'empCompanyName',
           value: '所属分公司',
         },
         {
-          key: 'department',
+          key: 'empDepartmentName',
           value: '所属营业部',
         },
       ];
@@ -139,7 +140,7 @@ export default class CustManagerDetailScope extends PureComponent {
       columnTitle = [
         ...columnTitle,
         {
-          key: 'department',
+          key: 'empDepartmentName',
           value: '所属营业部',
         },
       ];
