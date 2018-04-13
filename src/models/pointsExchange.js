@@ -3,13 +3,13 @@
  * @Author: zhangjunli
  * @Date: 2018-4-10 16:41:30
  */
-import { exchange as api } from '../api';
+import { pointsExchange as api } from '../api';
 import { emp } from '../helper';
 
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default {
-  namespace: 'exchange',
+  namespace: 'pointsExchange',
   state: {
     exchangeData: EMPTY_OBJECT, // 积分兑换历史查询
   },
