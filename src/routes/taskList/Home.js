@@ -34,7 +34,6 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
   STATE_FINISHED_CODE,
 } from './config';
 import {

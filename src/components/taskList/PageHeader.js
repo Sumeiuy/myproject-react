@@ -32,7 +32,7 @@ import {
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
+  // STATE_ALL_CODE,
   STATE_FINISHED_CODE,
 } from '../../routes/taskList/config';
 
@@ -49,7 +49,7 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
+// const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
