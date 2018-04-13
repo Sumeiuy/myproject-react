@@ -26,11 +26,13 @@
   border: 1px solid #ddd;
   .titleBox {
     margin: 0 auto;
-    width: 98%;
-    height: 32px;
-    line-height: 32px;
+    height: 38px;
+    line-height: 38px;
     font-size: 14px;
     color: #4a4a4a;
+    border-bottom: 1px solid #d9d9d9;
+    font-weight: bold;
+    background: #f7f7f7;
     span {
       display: inline-block;
     }
@@ -71,11 +73,11 @@
     .ant-collapse {
       border: none;
       .ant-collapse-item {
-        border: none;
         .ant-collapse-header {
           margin: 0 auto;
-          width: 98%;
-          padding: 4px 0;
+          padding: 0;
+          height: 37px;
+          line-height: 37px;
           font-size: 14px;
           color: #4a4a4a;
           i.arrow {
@@ -87,21 +89,15 @@
         }
         .ant-collapse-content {
           background: none;
+          border-top: 0;
           .ant-collapse-content-box {
+            display: flex;
             padding-top: 4px;
             padding-bottom: 4px;
+            border-top: 1px solid #d9d9d9;
           }
-        }
-        &:nth-of-type(odd) {
-          background-color: #f3f7ff;
-        }
-        &:nth-of-type(even) {
-          background-color: #fff;
         }
         &.ant-collapse-item-active {
-          .ant-collapse-header {
-            border-bottom: 1px solid #ccc;
-          }
           .anticon-up {
             display: inline-block;
           }
@@ -116,9 +112,20 @@
     }
   }
   .feedbackListBox {
-    padding-left: 30px;
+    padding: 0 0 4px 30px;
     font-size: 14px;
     color: #4a4a4a;
+    width: 50%;
+    box-sizing: border-box;
+    border-right: 1px solid #d9d9d9;
+    &:last-child {
+      border-right: 0;
+    }
+    h2 {
+      color: #4a4a4a;
+      font-size: 14px;
+      font-weight: bold;
+    }
     .feedbackItem {
       line-height: 32px;
       :global {
@@ -162,20 +169,13 @@
 }
 .opcityPopover {
   :global {
-    .ant-popover-inner {
-      background: none;
-    }
-    .ant-popover-content > .ant-popover-arrow {
-      border-right-color: rgba(0, 0, 0, 0.7);
-      &:after {
-        border-right-color: rgba(0, 0, 0, 0.7);
-      }
+    .ant-popover-arrow {
+      background: #fff;
     }
     .ant-popover-inner-content {
-      padding: 12px 20px;
+      padding: 4px 20px;
       line-height: 24px;
-      color: #fff;
-      background: rgba(0, 0, 0, 0.70);
+      color: #4a4a4a;
       border-radius: 3px;
     }
   }
@@ -183,6 +183,3 @@
 .clear {
   clear: both;
 }
-// .feedbackAddModalWarp {
-
-// }
