@@ -592,7 +592,9 @@ export default class Pageheader extends PureComponent {
         moment(createTimeEnd, dateFormat) :
         moment(moment(currentDate).format(dateFormat), dateFormat);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        创建时间&nbsp;:&nbsp;
+        <span className={styles.dateLable}>
+          创建时间&nbsp;:&nbsp;
+        </span>
         <div className={styles.dropDownSelectBox}>
           {/* 新的日历范围组件 */}
           <DateRangePicker
@@ -613,7 +615,9 @@ export default class Pageheader extends PureComponent {
         moment(endTimeEnd, dateFormat) :
         moment(moment(afterCurrentDate60Days).format(dateFormat), dateFormat);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间&nbsp;:&nbsp;
+        <span className={styles.dateLable}>
+          结束时间&nbsp;:&nbsp;
+        </span>
         <div className={styles.dropDownSelectBox}>
           <DateRangePicker
             hasCustomerOffset
