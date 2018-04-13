@@ -236,8 +236,13 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   handleCalenderClose(selectDate) {
     this.restoreDefault();
-    // 选 endDate 结束，检测 startDate 是否需要修正
-    const newSelectDate = this.fixStartOrEndTime(selectDate);
+    const { focusedInput } = this.state;
+    let newSelectDate = selectDate;
+    // 有且只有 选 endDate 结束，检测 startDate 是否需要修正
+    // 选 startDate 值时，会先执行 onDatesChange 方法，会执行检测是否修复，故此处不再检测
+    if (focusedInput === END_DATE) {
+      newSelectDate = this.fixStartOrEndTime(selectDate);
+    }
     // 将用户选择起始和结束时间的moment对象传递出去
     this.props.onChange(newSelectDate);
   }
