@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-13 10:09:54
+ * @Last Modified time: 2018-04-13 10:50:47
  */
 
 import React, { PureComponent } from 'react';
@@ -56,8 +56,8 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { phoneNum, custType, auto, style } = this.props;
-    const { isShowPhoneDialog } = this.state;
+    const { phoneNum, custType, style } = this.props;
+    const { isShowPhoneDialog, auto } = this.state;
     return (
       <div className={styles.wrap}>
         <div
