@@ -93,7 +93,7 @@ function getExtraData(action) {
           }
           const propertyValue = _.get(payload, value);
           if (_.isObject(propertyValue)) {
-            return { ...mergedData, ...propertyValue };
+            return { ...mergedData, [value]: JSON.stringify(propertyValue) };
           }
           return { ...mergedData, [value]: propertyValue };
         },

@@ -4,10 +4,11 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class ChartBase extends Component {
   static propTypes = {
-    hasChart: React.PropTypes.bool,
+    hasChart: PropTypes.bool,
   };
 
   static defaultProps = {

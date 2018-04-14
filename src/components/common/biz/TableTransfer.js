@@ -123,7 +123,7 @@ export default class TableTransfer extends Component {
     checkChange: PropTypes.func,
     placeholder: PropTypes.string,
     showSearch: PropTypes.bool,
-    pagination: React.PropTypes.oneOfType([
+    pagination: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.bool,
     ]),
@@ -134,7 +134,7 @@ export default class TableTransfer extends Component {
     disableCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
-    scrollX: React.PropTypes.oneOfType([
+    scrollX: PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.string,
     ]),

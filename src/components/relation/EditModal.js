@@ -21,7 +21,8 @@
  * okText：有默认值：确定，按钮的title
  * cancelText: 有默认值：取消，按钮的title
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input, Modal, message } from 'antd';
 import classnames from 'classnames';

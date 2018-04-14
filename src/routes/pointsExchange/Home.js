@@ -3,7 +3,8 @@
  * @Author: zhangjunli
  * @Date: 2018-4-10 13:47:16
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Form, Input, Button, Row, Col, Table } from 'antd';

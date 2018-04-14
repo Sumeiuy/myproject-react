@@ -1,13 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-06 16:49:25
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-14 20:08:37
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
 import React, { PureComponent } from 'react';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';

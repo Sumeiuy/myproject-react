@@ -48,7 +48,7 @@ const config = {
     '@@router/LOCATION_CHANGE': {
       values: [
         'pathname',
-        'query',
+        'search',
       ],
     },
   },
