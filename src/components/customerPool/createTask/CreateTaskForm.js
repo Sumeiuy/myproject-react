@@ -20,6 +20,8 @@ import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 const NOOP = _.noop;
+// 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
+const sightLabelPattern = '该客户筛选自 $';
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
@@ -251,9 +253,13 @@ export default class CreateTaskForm extends PureComponent {
     });
   }
 
+  /**
+   * 瞄准镜发起任务时，构造的mention suggestion
+   * @param {*string} templetDesc 构造好的任务提示
+   */
   @autobind
   renderMissionDescSuggestion(templetDesc) {
-    const type = _.replace(templetDesc, '该客户筛选自 $', '');
+    const type = _.replace(templetDesc, sightLabelPattern, '');
     return {
       type,
       name: type,
