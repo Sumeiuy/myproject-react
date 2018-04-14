@@ -67,6 +67,18 @@ export default {
         });
       }
     },
+    // 修改标签
+    * updateLabel({ payload }, { call }) {
+      yield call(api.updateLabel, payload);
+    },
+    // 删除标签
+    * delLabel({ payload }, { call }) {
+      yield call(api.deleteLabel, payload);
+    },
+    // 添加标签
+    * addLabel({ payload }, { call }) {
+      yield call(api.addLabel, payload);
+    },
   },
   subscriptions: {
   },
