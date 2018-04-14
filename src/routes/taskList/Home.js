@@ -55,6 +55,9 @@ const TASKFEEDBACK_QUERY = {
   pageSize: 10000,
 };
 
+const GET_CUST_SCOPE_PAGE_NUM = 1;
+const GET_CUST_SCOPE_PAGE_SIZE = 5;
+
 // 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
 const feedbackListOfNone = [{
   id: 99999,
@@ -550,7 +553,12 @@ export default class PerformerView extends PureComponent {
    * 获取服务经理维度任务数据详细
    * @param {*string} param0 orgId集合
    */
-  getCustManagerScope({ orgId }) {
+  @autobind
+  getCustManagerScope({
+    orgId,
+    pageNum = GET_CUST_SCOPE_PAGE_NUM,
+    pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+  }) {
     const {
       getCustManagerScope,
     } = this.props;
@@ -559,6 +567,8 @@ export default class PerformerView extends PureComponent {
     getCustManagerScope({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      pageNum,
+      pageSize,
     });
   }
 
@@ -973,6 +983,8 @@ export default class PerformerView extends PureComponent {
     });
     // 管理者视图服务经理维度任务详细数据
     getCustManagerScope({
+      pageNum: GET_CUST_SCOPE_PAGE_NUM,
+      pageSize: GET_CUST_SCOPE_PAGE_SIZE,
       missionId,
       orgId: emp.getOrgId(),
     });

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 09:10:06
+ * @Last Modified time: 2018-04-13 18:28:32
  * 服务经理维度任务统计
  */
 
@@ -20,6 +20,7 @@ const EMPTY_OBJECT = {};
 
 const INITIAL_PAGE_SIZE = 5;
 const INITIAL_PAGE_NUM = 1;
+const NOOP = _.noop;
 
 export default class CustManagerDetailScope extends PureComponent {
 
@@ -28,12 +29,14 @@ export default class CustManagerDetailScope extends PureComponent {
     currentOrgLevel: PropTypes.string,
     // 是否处于折叠状态
     isFold: PropTypes.bool,
+    getCustManagerScope: PropTypes.func,
   }
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     currentOrgLevel: '',
     isFold: false,
+    getCustManagerScope: NOOP,
   }
 
   constructor(props) {
@@ -52,6 +55,20 @@ export default class CustManagerDetailScope extends PureComponent {
       // 三个字段组合作为唯一
       id: `${item.mssnId}-${item.login}-${item.custDepartmentCode}`,
     }));
+  }
+
+  /**
+   * 切换分页
+   * @param {*number} pageNum 当前分页
+   * @param {*number} pageSize 当前页码
+   */
+  @autobind
+  handlePageChange(pageNum, pageSize) {
+    const { getCustManagerScope } = this.props;
+    getCustManagerScope({
+      pageNum,
+      pageSize,
+    });
   }
 
   /**
@@ -212,7 +229,6 @@ export default class CustManagerDetailScope extends PureComponent {
             totalRecordNum: totalCount,
           }}
           listData={this.addIdToDataSource(list)}
-          onSizeChange={this.handleShowSizeChange}
           onPageChange={this.handlePageChange}
           tableClass={
             classnames({
