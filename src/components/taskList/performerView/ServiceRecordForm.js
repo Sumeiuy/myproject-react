@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 12:55:51
+ * @Last Modified time: 2018-04-14 20:01:54
  * 服务记录表单
  */
 
@@ -18,6 +18,7 @@ import logable from '../../../decorators/logable';
 export default class ServiceRecordForm extends PureComponent {
   static defaultProps = {
     dict: {},
+    empInfo: {},
     formData: {},
     isEntranceFromPerformerView: false,
   }
@@ -98,9 +99,10 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       eventId,
       taskTypeCode,
+      empInfo,
     } = this.props;
 
-    if (_.isEmpty(dict)) return null;
+    if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
 
     return (
       <div className={styles.serviceRecordWrapper}>
@@ -121,6 +123,7 @@ export default class ServiceRecordForm extends PureComponent {
           isReadOnly={isReadOnly}
           isReject={isReject}
           dict={dict}
+          empInfo={empInfo}
           // 是否是执行者视图页面
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
@@ -152,6 +155,7 @@ export default class ServiceRecordForm extends PureComponent {
 ServiceRecordForm.propTypes = {
   addServeRecord: PropTypes.func.isRequired,
   dict: PropTypes.object,
+  empInfo: PropTypes.object,
   // 是否是执行者视图页面
   isEntranceFromPerformerView: PropTypes.bool,
   // 表单数据

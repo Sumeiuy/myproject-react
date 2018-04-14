@@ -7,21 +7,9 @@
     font-size: 14px;
     color: #4a4a4a;
     overflow-x: hidden;
-    // max-height: 105px;
+    // max-height: auto;
     .feedbackTypeL1 {
       margin-right: 10px;
-    }
-    .zhangleTitle {
-      font-weight: bold;
-      font-size: 14px;
-      color: #4a4a4a;
-      padding-right: 10px;
-      line-height: 20px;
-    }
-    .zhangleType {
-      font-size: 14px;
-      color: #4a4a4a;
-      line-height: 20px;
     }
   }
   .gridWrapper {
@@ -32,10 +20,8 @@
     flex-wrap: wrap;
     padding-bottom: 15px;
     width: 100%;
-    .serveWay, .serveType, .serveStatus, .serveTime {
+    .serveWay, .serveStatus, .serveType, .serveTime, .serveRecord {
       width: 310px;
-    }
-    .serveWay {
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -46,7 +32,7 @@
         letter-spacing: -0.09px;
         text-align: left;
         color: #a1a1a1;
-        width: 70px;
+        width: 85px;
         margin-left: -10px;
       }
       .title::before {
@@ -69,125 +55,24 @@
         }
       }
     }
-    .serveType {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      line-height: 40px;
-      vertical-align: middle;
-      // padding-right: 100px;
-      .title {
-        font-size: 14px;
-        letter-spacing: -0.09px;
-        text-align: left;
-        color: #a1a1a1;
-        width: 70px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
-      .content {
-        position: relative;
-        border-radius: 3px;
-        padding-left: 15px;
-      }
-      :global {
-        .ant-select-dropdown-menu-item {
-          line-height: 18px;
-          padding: 7px 8px !important;
-        }
-      }
-    }
-    .serveStatus {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      line-height: 35px;
-      .title {
-        font-size: 14px;
-        letter-spacing: -0.09px;
-        text-align: left;
-        color: #a1a1a1;
-        width: 70px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
+    .serveRecord {
+      width: 100%;
+      padding-bottom: 10px;
+      line-height: 1.5;
       :global {
         .ant-form-item {
-          margin-bottom: 0;
-        }
-        .ant-form-item-with-help {
-          margin-bottom: 0;
+          width: 88%;
         }
         .ant-form-explain {
-          margin-top: 3px;
-        }
-        .has-error {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
+          padding-left: 15px;
         }
       }
       .content {
-        border-radius: 3px;
+        width: 88%;
         padding-left: 15px;
-        span {
-          font-weight: normal;
-        }
-        :global {
-          label {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-    .serveTime {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      line-height: 40px;
-      .title {
-        font-size: 14px;
-        letter-spacing: -0.09px;
-        text-align: left;
-        color: #a1a1a1;
-        width: 70px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
-      .content {
-        position: relative;
-        border-radius: 3px;
-        padding-left: 15px;
-        :global {
-          .ant-calendar-picker {
-            vertical-align: middle;
-          }
-        }
       }
     }
   }
-
   .divider {
     border-bottom: 1px solid #ddd;
     padding-top: 10px;

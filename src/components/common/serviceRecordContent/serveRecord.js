@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-12 12:20:33
+ * @Last Modified time: 2018-04-14 22:16:45
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -10,7 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Form } from 'antd';
 
-import styles from './serveRecord.less';
+import styles from './index.less';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;

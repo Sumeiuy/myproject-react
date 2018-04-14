@@ -33,6 +33,7 @@ export default class PerformerViewDetail extends PureComponent {
     basicInfo: PropTypes.object.isRequired,
     isFold: PropTypes.bool,
     dict: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     parameter: PropTypes.object.isRequired,
     currentId: PropTypes.string.isRequired,
     changeParameter: PropTypes.func.isRequired,

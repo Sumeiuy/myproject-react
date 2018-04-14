@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-13 17:48:54
+ * @Last Modified time: 2018-04-14 15:46:31
  * @desc 服务方式的Select
  */
 
@@ -22,11 +22,24 @@ export default class ServiceWaySelect extends PureComponent {
     width: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
+    empInfo: PropTypes.object.isRequired,
   }
+
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     value: props.value,
+  //   };
+  // }
 
   @autobind
   setServiceWrapRef(input) {
     this.serviceWayRef = input;
+  }
+
+  @autobind
+  handleSelectChange(value) {
+    this.props.onChange(value);
   }
 
   /**
@@ -34,20 +47,28 @@ export default class ServiceWaySelect extends PureComponent {
    */
   @autobind
   renderServiceSelectOptions(list = []) {
-    return list.map(obj => (<Option key={obj.key} value={obj.key}>{obj.value}</Option>));
+    const { empInfo } = this.props;
+    return list.map((obj) => {
+      if (false && !empInfo.tgFlag && obj.key === 'ZLFins') {
+        // 只有投顾入岗才能看到 涨乐财富通
+        return null;
+      }
+      return (<Option key={obj.key} value={obj.key}>{obj.value}</Option>);
+    });
   }
 
   render() {
-    const { value, width, onChange, options } = this.props;
+    const { value, width, options } = this.props;
+    console.warn('ServiceWaySelect: value', value);
     const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (
       <div className={containerCls}>
         <div className={styles.title}>服务方式:</div>
-        <div className={styles.content} ref={this.setServiceWrapRef} >
+        <div className={styles.content} ref={this.setServiceWrapRef}>
           <Select
             value={value}
             style={width}
-            onChange={onChange}
+            onChange={this.handleSelectChange}
             getPopupContainer={() => this.serviceWayRef}
           >
             { this.renderServiceSelectOptions(options) }

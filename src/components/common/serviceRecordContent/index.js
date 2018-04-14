@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 14:38:20
+ * @Last Modified time: 2018-04-14 22:07:44
  */
 
 import React, { PureComponent } from 'react';
@@ -11,19 +11,18 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select, DatePicker, Radio, Form } from 'antd';
 import moment from 'moment';
-// import classnames from 'classnames';
-import StaticRecordContent from './StaticRecordContent_';
 import Uploader from '../../common/uploader';
 import { request } from '../../../config';
-import { emp, getIconType } from '../../../helper';
-import Icon from '../../common/Icon';
+import { emp } from '../../../helper';
 import ServeRecord from './serveRecord';
 import ServeContent from './serveContent';
 import ZLFeedback from './zhanglecaifutongFeedback';
-import ReadOnlyServeRecord from './readOnlyServeRecord';
 import ServiceWaySelect from './serviceWaySelect';
 import logable from '../../../decorators/logable';
 import { serveWay as serveWayUtil } from '../../taskList/performerView/config/code';
+import { serveWaySelectMap, errorFeedback, getServeWayCode } from './utils';
+import ServeRecordReadOnly from './ServeRecordReadonly';
+import CascadeFeedbackSelect from './CascadeFeedbackSelect';
 
 import styles from './index.less';
 
@@ -36,91 +35,8 @@ const FormItem = Form.Item;
 const dateFormat = 'YYYY/MM/DD';
 // 界面上显示的日期格式
 const showDateFormat = 'YYYY年MM月DD日';
-
+// 时间格式
 const timeFormat = 'HH:mm';
-// 当天时间
-const CURRENT_DATE = moment(new Date(), dateFormat);
-const width = { width: 142 };
-
-const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
-
-const NO_HREF = 'javascript:void(0);'; // eslint-disable-line
-
-// TODO 需要删除
-const serveWayTemp = [
-  {
-    key: 'HTSC Phone',
-    value: '电话',
-    children: null,
-    descText: null,
-  },
-  {
-    key: 'HTSC Email',
-    value: '邮件',
-    children: null,
-    descText: null,
-  },
-  {
-    key: 'HTSC SMS',
-    value: '短信',
-    children: null,
-    descText: null,
-  },
-  {
-    key: 'wx',
-    value: '微信',
-    children: null,
-    descText: null,
-  },
-  {
-    key: 'Interview',
-    value: '面谈',
-    children: null,
-    descText: null,
-  },
-  {
-    value: '涨乐财富通',
-    children: null,
-    key: 'ZLFins',
-    descText: null,
-  },
-  {
-    value: '其他',
-    children: null,
-    key: 'HTSC Other',
-    descText: null,
-  },
-];
-
-/**
- * 服务状态转化map
- * 字典中服务状态有4中，分别是：
- * {key: "10", value: "未开始"}
- * {key: "20", value: "处理中"}
- * {key: "30", value: "完成"}
- * {key: "40", value: "结果达标"}
- * 页面中展示'处理中'和'完成'
- * 任务状态 未开始 ，页面展示处理中，传给后端的key为 '20'
- * 任务状态 结果达标 ，页面展示完成，传给后端的key为 '30'
- */
-const serviceStateMap = {
-  10: '20',
-  20: '20',
-  30: '30',
-  40: '30',
-};
-
-// 其它类型的客户反馈，容错处理，在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
-// 需要前端容错一下
-const otherFeedback2Key = '99999';
-const otherFeedback3Key = '100000';
-const otherFeedbackValue = '其它';
-
-// 一级其它反馈
-const otherFeedback2List = [{ key: otherFeedback2Key, value: otherFeedbackValue }];
-// 二级其它反馈
-const otherFeedback3List = [{ key: otherFeedback3Key, value: otherFeedbackValue }];
 
 // {key:1, children: [{key: 11}]} 转成 {1: [{key: 11}]}
 function generateObjOfKey(list) {
@@ -132,90 +48,129 @@ function generateObjOfKey(list) {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.key] = obj.children;
     } else {
-      subObj[obj.key] = EMPTY_LIST;
+      subObj[obj.key] = [];
     }
   });
   return subObj;
 }
 
 export default class ServiceRecordContent extends PureComponent {
-  static propTypes = {
-    dict: PropTypes.object,
-    // 是否是执行者视图页面
-    isEntranceFromPerformerView: PropTypes.bool,
-    // 表单数据
-    formData: PropTypes.object,
-    isFold: PropTypes.bool,
-    isReadOnly: PropTypes.bool,
-    isReject: PropTypes.bool,
-    beforeUpload: PropTypes.func,
-    custUuid: PropTypes.string,
-    onDeleteFile: PropTypes.func.isRequired,
-    deleteFileResult: PropTypes.array.isRequired,
-    // 涨乐财富通服务方式下的客户反馈列表以及查询方法
-    queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
-    custFeedbackList: PropTypes.array.isRequired,
-    queryApprovalList: PropTypes.func.isRequired,
-    zhangleApprovalList: PropTypes.array.isRequired,
-    taskTypeCode: PropTypes.string,
-    eventId: PropTypes.string,
-  }
-
-  static defaultProps = {
-    dict: {},
-    formData: {},
-    isEntranceFromPerformerView: false,
-    isFold: false,
-    isReadOnly: false,
-    isReject: false,
-    beforeUpload: () => { },
-    isUploadFileManually: true,
-    custUuid: '',
-    taskTypeCode: '',
-    eventId: '',
-  }
-
   constructor(props) {
     super(props);
-    const formData = this.handleInitOrUpdate(props);
     this.state = {
-      ...formData,
+      // 非涨乐财富通服务方式下 是否展示表单中的服务状态的校验错误信息提示
+      isShowServeStatusError: false,
+      // 非涨乐财富通服务方式下 是否展示表单中的服务记录的检验错误信息提示
+      isShowServiceContentError: false,
+      // 任务类型MOT任务或者自建任务的类型
+      serviceType: '',
+      // 服务方式Code
+      serviceWayCode: '',
+      // 服务方式文本
+      serviceWayText: '',
+      // 服务状态
+      serviceStatus: '',
+      // 服务状态文本
+      serviceStatusText: '',
+      // 服务时间 年月日,
+      serviceTime: '',
+      // 服务时间 完整时间 2018-04-14 17:03 'YYYY-MM-DD HH:mm'
+      serviceFullTime: '',
+      // 服务记录, 非涨乐财富通的服务方式下的服务记录，纯文本
+      serviceRecord: '',
+      // 客户反馈, 非涨乐财富通下，存在二级客户反馈的情况
+      custFeedback: '',
+      custFeedback2: '',
+      custFeedbackText: '',
+      custFeedbackText2: '',
+      // 客户反馈时间, 年月日
+      custFeedbackTime: '',
+      // 涨乐财富通服务方式下的客户反馈
+      ZLCustFeedback: '暂无反馈',
+      // 涨乐财富通服务方式下的客户反馈时间
+      ZLCustFeedbackTime: '',
+      // 附件上传相关
       currentFile: {},
       uploadedFileKey: '',
       originFileName: '',
-      originFormData: formData,
-      isShowServeStatusError: false,
-      isShowServiceContentError: false,
-      isSelectZhangleFins: false, // 在可编辑状态下，选择的是服务方式是否涨乐财富通
+      custUuid: '',
+      attachment: '',
+      // 在可编辑状态下，选择的是服务方式是否涨乐财富通
+      isSelectZhangleFins: false,
+      // 涨乐财富通服务方式下的服务内容的标题,类型，具体内容
+      ZLServiceContentTitle: '',
+      ZLServiceContentType: '',
+      ZLServiceContentDesc: '',
+      // 涨乐财富通服务方式下选择自由话术需要的审批人
+      ZLServiceApproval: '',
+      // 涨乐财富通服务方式下的投资建议模式 free|tmpl 是自由话术还是固定话术
+      ZLInvestAdiceMode: 'free',
     };
     // 代表是否是删除操作
     this.isDeletingFile = false;
   }
 
   componentWillReceiveProps(nextProps) {
-    const { formData, custUuid = '' } = this.props;
-    const { formData: nextData, custUuid: nextCustUuid = '', isReadOnly } = nextProps;
-    // 在删除文件的时候，不设置originFormData，不然会恢复原始数据
-    if (formData !== nextData && !this.isDeletingFile) {
-      const formObject = this.handleInitOrUpdate(nextProps);
+    // 1.切换客户需要将state重新设置，
+    // 2.修改上传附件，不需要修改state
+    // formData 是服务记录信息
+    const { formData: prevData } = this.props;
+    const { formData: nextData } = nextProps;
+    if (prevData !== nextData) {
+      const newState = this.initialState(nextProps);
       this.setState({
-        ...this.state,
-        ...formObject,
-        originFormData: formObject,
+        ...newState,
       });
     }
 
-    // 切换客户，错误信息重置
-    if (custUuid !== nextCustUuid) {
-      this.setState({
-        isShowServeStatusError: false,
-        isShowServiceContentError: false,
-      });
-      // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
-      if (!isReadOnly) {
-        this.clearUploadedFileList();
-      }
-    }
+    // 在删除文件的时候，不设置originFormData，不然会恢复原始数据
+    // if (formData !== nextData && !this.isDeletingFile) {
+    //   const formObject = this.handleInitOrUpdate(nextProps);
+    //   this.setState({
+    //     // ...this.state,
+    //     ...formObject,
+    //     originFormData: formObject,
+    //   });
+    // }
+
+    // // 切换客户，错误信息重置
+    // if (custUuid !== nextCustUuid) {
+    //   this.setState({
+    //     isShowServeStatusError: false,
+    //     isShowServiceContentError: false,
+    //   });
+    //   // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+    //   if (!isReadOnly) {
+    //     this.clearUploadedFileList();
+    //   }
+    // }
+  }
+
+  // 初始化state,因为需要更新所以所有的值全部传递过来
+  @autobind
+  initialState(props) {
+    const { formData: fd, taskTypeCode } = props;
+    // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2
+    const serviceType = `${+taskTypeCode + 1}`;
+    // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
+    const serviceWayCode = getServeWayCode(fd.serviceWayName);
+    // isTaskFeedbackListOfNone如果为True表示没有返回客户反馈列表
+    const customerFeedback = fd.customerFeedback;
+    return {
+      serviceType,
+      serviceWayCode,
+      serviceWayText: fd.serviceWayName,
+      serviceStatus: fd.serviceStatusCode,
+      serviceStatusText: fd.serviceStatusName,
+      serviceTime: fd.serviceDate,
+      serviceRecord: fd.serviceRecord,
+      custFeedback: customerFeedback.code,
+      custFeedback2: customerFeedback.children.code,
+      custFeedbackText: customerFeedback.name,
+      custFeedbackText2: customerFeedback.children.name,
+      custFeedbackTime: fd.feedbackDate,
+      // serviceFullTime: fd.
+    };
   }
 
   // 向组件外部提供所有数据
@@ -298,19 +253,18 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
     } = props;
     const [{ key: serviceTypeCode = '', value: serviceTypeName = '' }] = motCustfeedBackDict;
-
     // 服务类型value对应服务类型数组
     this.serviceTypeObj = generateObjOfKey(motCustfeedBackDict);
     let formObject = {};
 
     if (isEntranceFromPerformerView) {
+      // 执行者视图
       const {
         feedbackType = '',
         feedbackTypeList = [],
         feedbackTypeChild = '',
         feedbackTypeChildList = [],
       } = this.getFeedbackDataByServiceType(serviceTypeCode);
-
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
       // 当前日期的时间戳
@@ -359,7 +313,7 @@ export default class ServiceRecordContent extends PureComponent {
           feedbackDate: _.isEmpty(feedbackDate) ?
             moment(currentDate).format(dateFormat) : feedbackDate,
           // 服务状态
-          serviceStatus: serviceStateMap[serviceStatusCode],
+          serviceStatus: `${serviceStatusCode}`,
           // 服务方式
           serviceWay,
           serviceContent,
@@ -369,10 +323,7 @@ export default class ServiceRecordContent extends PureComponent {
         // 如果找不到反馈一二级，则前端默认指定两个其它类型，类型取和后端定义的一样，
         // 不然提交接口报错
         if (isTaskFeedbackListOfNone) {
-          formObject.feedbackType = otherFeedback2Key;
-          formObject.feedbackTypeList = otherFeedback2List;
-          formObject.feedbackTypeChild = otherFeedback3Key;
-          formObject.feedbackTypeChildList = otherFeedback3List;
+          formObject = { ...formObject, ...errorFeedback };
         } else if (!_.isEmpty(customerFeedback)) {
           const {
             code,
@@ -414,11 +365,11 @@ export default class ServiceRecordContent extends PureComponent {
     } else {
       // 客户列表添加服务记录
       // 反馈类型数组
-      const feedbackTypeList = (motCustfeedBackDict[0] || {}).children || EMPTY_LIST;
+      const feedbackTypeList = (motCustfeedBackDict[0] || {}).children || [];
       // 反馈类型value对应反馈类型数组
       this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
       // 反馈子类型数组
-      const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || EMPTY_LIST;
+      const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || [];
       // 当前日期的时间戳
       const currentDate = new Date().getTime();
       const serveType = (motCustfeedBackDict[0] || {}).key || '';
@@ -450,7 +401,7 @@ export default class ServiceRecordContent extends PureComponent {
     this.clearUploadedFileList();
 
     this.setState({
-      ...this.state,
+      // ...this.state,
       ...originFormData,
       currentFile: {},
       uploadedFileKey: '',
@@ -470,6 +421,7 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '服务方式', value: '$args[0]' } })
   handleServiceWay(value) {
+    console.warn('handleServiceWay: ', value);
     this.setState({
       isSelectZhangleFins: serveWayUtil.isZhangle(value),
       serviceWay: value,
@@ -569,26 +521,12 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
-  // 保存反馈类型的值
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '客户反馈', value: '$args[0]' } })
-  handleFeedbackType(value) {
-    const { feedbackTypeList } = this.state;
-    this.feedbackTypeObj = generateObjOfKey(feedbackTypeList);
-    const curFeedbackTypeList = this.feedbackTypeObj[value];
+  @logable({ type: 'DropdownSelect', payload: { name: '客户反馈级联', value: '$args[0]' } })
+  handleCascadeSelectChange({ first, second }) {
     this.setState({
-      feedbackType: value,
-      feedbackTypeChild: _.isEmpty(curFeedbackTypeList) ? '' : curFeedbackTypeList[0].key,
-      feedbackTypeChildList: curFeedbackTypeList,
-    });
-  }
-
-  // 保存反馈子类型的值
-  @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '客户反馈子类型', value: '$args[0]' } })
-  handleFeedbackTypeChild(value) {
-    this.setState({
-      feedbackTypeChild: value,
+      custFeedback: first,
+      custFeedback2: second,
     });
   }
 
@@ -702,40 +640,6 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   /**
-   * 只读的状态下，渲染附件信息
-   */
-  @autobind
-  renderFileList() {
-    const { attachmentList } = this.state;
-    if (_.isEmpty(attachmentList)) {
-      return null;
-    }
-    return (
-      <div className={styles.uploadList}>
-        {
-          attachmentList.map(item => (
-            <div key={item.attachId}>
-              <span>附件:</span>
-              <Icon className={styles.excelIcon} type={getIconType(item.name)} />
-              <span>
-                <a
-                  onClick={this.handleDownloadClick}
-                  href={
-                    _.isEmpty(item.attachId) && _.isEmpty(item.name)
-                      ? NO_HREF :
-                      `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
-                >
-                  {item.name}
-                </a>
-              </span>
-            </div>
-          ))
-        }
-      </div>
-    );
-  }
-
-  /**
    * 渲染服务方式 | 的下拉选项,
    */
   @autobind
@@ -743,44 +647,54 @@ export default class ServiceRecordContent extends PureComponent {
     return list.map(obj => (<Option key={obj.key} value={obj.key}>{obj.value}</Option>));
   }
 
+  // 渲染完成状态的只读信息
   @autobind
-  renderZhangLeReadOnly() {
-    const { dict: { serveStatus = [] } } = this.props;
+  renderServeRecordReadOnly() {
     const {
-      serviceWay,
-      serviceStatus,
-      feedbackDate,
-      serviceDate,
-      serviceTime,
-      feedbackText,
-    } = this.state;
-    // 服务状态文本
-    const serviceStatusText = (_.find(serveStatus, item =>
-    item.key === serviceStatus) || EMPTY_OBJECT).value;
-    // 反馈时间,格式化
-    const feedbackDateTime = moment(feedbackDate, showDateFormat).format(showDateFormat);
-    // 服务时间，格式化
-    const serviceDateTime = moment(serviceDate, showDateFormat).format(showDateFormat);
-    // 服务时间时分秒
-    const serviceTimeText = moment(serviceTime, timeFormat).format(timeFormat);
-    const data = {
-      serviceWay,
+      serviceWayCode,
+      serviceWayText,
       serviceStatusText,
-      serviceDateTime,
-      serviceTimeText,
-      feedbackDateTime,
-      feedbackText,
-      // hasFeedback,
-      // serviceContent,
+      serviceTime,
+      serviceFullTime,
+      serviceRecord,
+      ZLServiceContentTitle,
+      ZLServiceContentType,
+      ZLServiceContentDesc,
+      custFeedbackText,
+      custFeedback2Text,
+      custFeedbackTime,
+      ZLCustFeedback,
+      ZLCustFeedbackTime,
+    } = this.state;
+    const { formData: { attachmentList } } = this.props;
+    const zlServiceRecord = {
+      title: ZLServiceContentTitle,
+      type: ZLServiceContentType,
+      content: ZLServiceContentDesc,
     };
     return (
-      <ReadOnlyServeRecord data={data} isCompleted />
+      <ServeRecordReadOnly
+        isZL={serveWayUtil.isZhangle(serviceWayCode)}
+        attachmentList={attachmentList}
+        serviceWay={serviceWayText}
+        serviceStatus={serviceStatusText}
+        serviceTime={serviceTime}
+        serviceFullTime={serviceFullTime}
+        serviceRecord={serviceRecord}
+        zlServiceRecord={zlServiceRecord}
+        feedbackDateTime={custFeedbackTime}
+        custFeedback={custFeedbackText}
+        custFeedback2={custFeedback2Text}
+        ZLCustFeedback={ZLCustFeedback}
+        ZLCustFeedbackTime={ZLCustFeedbackTime}
+      />
     );
   }
 
   render() {
     const {
       dict,
+      empInfo,
       isEntranceFromPerformerView,
       isReadOnly,
       isReject,
@@ -788,70 +702,27 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
       deleteFileResult,
       formData: { motCustfeedBackDict },
-      dict: {
-        serveStatus = [],
-      },
       custFeedbackList,
     } = this.props;
+    console.warn('formData: ', this.props.formData);
     const {
       serviceWay,
-      serviceWayCode,
       serviceStatus,
       serviceType,
       serviceDate,
       feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      feedbackTypeList,
-      feedbackTypeChildList,
       currentFile,
       uploadedFileKey,
       originFileName,
       serviceContent,
       isShowServeStatusError,
       isShowServiceContentError,
-      // attachmentRecord,
     } = this.state;
     if (_.isEmpty(dict)) return null;
 
-    // 显示只读的信息
+    // 渲染只读信息
     if (isReadOnly) {
-      if (serveWayUtil.isZhangle(serviceWayCode)) {
-        // 涨乐财富通
-        return this.renderZhangLeReadOnly();
-      }
-      // 服务状态文本
-      const serviceStatusText = (_.find(serveStatus, item =>
-        item.key === serviceStatus) || {}).value;
-
-      // 客户反馈一级value
-      const feedbackTypeL1Text = (_.find(feedbackTypeList, item =>
-        item.key === feedbackType) || {}).value;
-
-      // 客户反馈二级value
-      const feedbackTypeL2Text = (_.find(feedbackTypeChildList, item =>
-        item.key === feedbackTypeChild) || {}).value;
-
-      // 反馈时间,格式化
-      const feedbackDateTime = moment(feedbackDate, showDateFormat).format(showDateFormat);
-
-      // 服务时间，格式化
-      const serviceDateTime = moment(serviceDate, showDateFormat).format(showDateFormat);
-
-      return (
-        <StaticRecordContent
-          data={{
-            serviceContent,
-            serviceWay,
-            serviceStatusText,
-            feedbackTypeL1Text,
-            feedbackTypeL2Text,
-            feedbackDateTime,
-            serviceDateTime,
-            renderFileList: this.renderFileList,
-          }}
-        />
-      );
+      return this.renderServeRecordReadOnly();
     }
 
     // 服务时间的DatePicker组件的配置项
@@ -877,25 +748,16 @@ export default class ServiceRecordContent extends PureComponent {
       help: '请选择服务状态',
     } : null;
 
-    // feedbackTypeChildList为空或者客户反馈一级和二级的选项文字相同时不显示二级反馈选项
-    let isShowSubCustomerFeedback = false;
-    if (!_.isEmpty(feedbackTypeChildList)) {
-      const currentCustomerFeedback = _.find(feedbackTypeList, { key: feedbackType });
-      const currentSubCustomerFeedback = _.find(feedbackTypeChildList, { key: feedbackTypeChild });
-      isShowSubCustomerFeedback =
-        currentCustomerFeedback.value === currentSubCustomerFeedback.value;
-    }
-
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
           <ServiceWaySelect
             value={serviceWay}
-            width={width}
+            width={{ width: 142 }}
             onChange={this.handleServiceWay}
             // options={dict.serveWay}
-            options={serveWayTemp}
-            // TODO 需要添加一个当前用户是否入岗投顾
+            options={serveWaySelectMap}
+            empInfo={empInfo}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
@@ -917,7 +779,7 @@ export default class ServiceRecordContent extends PureComponent {
                   <div className={styles.content} ref={this.setServiceTypeRef}>
                     <Select
                       value={serviceType}
-                      style={width}
+                      style={{ width: 142 }}
                       onChange={this.handleServiceTypeSelectChange}
                       getPopupContainer={() => this.serviceTypeRef}
                     >
@@ -932,9 +794,9 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
               <DatePicker
-                style={width}
+                style={{ width: 142 }}
                 {...serviceDateProps}
-                defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                defaultValue={moment()}
                 getCalendarContainer={() => this.serviceTimeRef}
                 disabled={this.state.isSelectZhangleFins}
               />
@@ -967,37 +829,17 @@ export default class ServiceRecordContent extends PureComponent {
           !this.state.isSelectZhangleFins
           ? (
             <div className={styles.custFeedbackSection}>
-              <div className={styles.feedbackType}>
-                <div className={styles.title}>客户反馈:</div>
-                <div className={styles.content} ref={this.setCustFeedbackRef}>
-                  <Select
-                    value={feedbackType}
-                    style={width}
-                    onChange={this.handleFeedbackType}
-                    getPopupContainer={() => this.customerFeedbackRef}
-                  >
-                    { this.renderServiceSelectOptions(feedbackTypeList) }
-                  </Select>
-                  {
-                    isShowSubCustomerFeedback ? null :
-                      (<Select
-                        value={feedbackTypeChild}
-                        style={width}
-                        onChange={this.handleFeedbackTypeChild}
-                        getPopupContainer={() => this.customerFeedbackRef}
-                      >
-                        { this.renderServiceSelectOptions(feedbackTypeChildList) }
-                      </Select>)
-                  }
-                </div>
-              </div>
+              <CascadeFeedbackSelect
+                onChange={this.handleCascadeSelectChange}
+                feedbackList={motCustfeedBackDict}
+              />
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>
                 <div className={styles.content} ref={this.setFeedbackTimeRef}>
                   <DatePicker
-                    style={width}
+                    style={{ width: 142 }}
                     {...feedbackTimeProps}
-                    defaultValue={moment(CURRENT_DATE, showDateFormat)}
+                    defaultValue={moment()}
                     getCalendarContainer={() => this.feedbackTimeRef}
                   />
                 </div>
@@ -1045,3 +887,49 @@ export default class ServiceRecordContent extends PureComponent {
     );
   }
 }
+
+ServiceRecordContent.propTypes = {
+  // 用户基本信息
+  empInfo: PropTypes.object,
+  dict: PropTypes.object,
+  // 是否是执行者视图页面
+  isEntranceFromPerformerView: PropTypes.bool,
+  // 服务记录数据（包含服务记录，以及涨乐财富通下的服务内容）
+  formData: PropTypes.object,
+  // 左侧列表是否展开
+  isFold: PropTypes.bool,
+  // 只读模式
+  isReadOnly: PropTypes.bool,
+  // 是否 涨乐财富通 被驳回状态
+  isReject: PropTypes.bool,
+  beforeUpload: PropTypes.func,
+  // 用于上传附件的客户唯一ID，每次切换客户，需要重写获取
+  custUuid: PropTypes.string,
+  onDeleteFile: PropTypes.func.isRequired,
+  deleteFileResult: PropTypes.array.isRequired,
+  // 查询涨乐财富通服务方式下的客户反馈列表以及查询方法
+  queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+  custFeedbackList: PropTypes.array.isRequired,
+  // 查询涨乐财富通服务方式下的审批人列表以及查询方法
+  queryApprovalList: PropTypes.func.isRequired,
+  zhangleApprovalList: PropTypes.array.isRequired,
+  // 自建任务|MOT任务 ： 1|0
+  taskTypeCode: PropTypes.string,
+  // 客户反馈类型ID
+  eventId: PropTypes.string,
+};
+
+ServiceRecordContent.defaultProps = {
+  dict: {},
+  empInfo: {},
+  formData: {},
+  isEntranceFromPerformerView: false,
+  isFold: false,
+  isReadOnly: false,
+  isReject: false,
+  beforeUpload: () => { },
+  isUploadFileManually: true,
+  custUuid: '',
+  taskTypeCode: '',
+  eventId: '',
+};

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 11:25:01
+ * @Last Modified time: 2018-04-14 15:18:48
  * @description 任务管理首页
  */
 
@@ -428,6 +428,7 @@ export default class PerformerView extends PureComponent {
       list,
       parameter,
       dict,
+      empInfo,
       addServeRecord,
       taskDetailBasicInfo,
       targetCustList,
@@ -475,6 +476,7 @@ export default class PerformerView extends PureComponent {
         currentId={currentId || firstItem.id}
         parameter={parameter}
         dict={dict}
+        empInfo={empInfo}
         addServeRecord={addServeRecord}
         basicInfo={taskDetailBasicInfo}
         targetCustList={targetCustList}

@@ -304,6 +304,7 @@ ServiceImplementation.propTypes = {
   currentId: PropTypes.string.isRequired,
   addServeRecord: PropTypes.func.isRequired,
   dict: PropTypes.object,
+  empInfo: PropTypes.object,
   isFold: PropTypes.bool,
   list: PropTypes.array.isRequired,
   handleCollapseClick: PropTypes.func.isRequired,
@@ -346,6 +347,7 @@ ServiceImplementation.propTypes = {
 
 ServiceImplementation.defaultProps = {
   dict: {},
+  empInfo: {},
   isFold: false,
   serviceRecordData: {},
   custIncomeReqState: false,

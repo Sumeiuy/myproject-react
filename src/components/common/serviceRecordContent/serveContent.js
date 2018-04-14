@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 11:48:18
+ * @Last Modified time: 2018-04-14 22:46:56
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -16,7 +16,7 @@ import _ from 'lodash';
 import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard';
 import ChoiceInvestAdviceModal from './choiceInvestAdviceModal';
 
-import styles from './serveRecord.less';
+import styles from './index.less';
 
 export default class ServeContent extends PureComponent {
 
