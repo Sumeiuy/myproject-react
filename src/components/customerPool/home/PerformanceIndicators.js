@@ -65,6 +65,7 @@ export default class PerformanceIndicators extends PureComponent {
       posX: 0, // 鼠标距离浏览器可视区域左上角的水平距离clientX
       posY: 0, // toolTip距离浏览器可视区域左上角的垂直距离clientY
       desc: '', // 指标说明
+      title: '', // 指标title
     };
   }
 
@@ -155,6 +156,7 @@ export default class PerformanceIndicators extends PureComponent {
           posX,
           posY,
           desc: indicators[descKey].description,
+          title: indicators[descKey].name,
         });
       }, 200);
     });
@@ -164,6 +166,7 @@ export default class PerformanceIndicators extends PureComponent {
       this.setState({
         isToolTipVisible: false,
         desc: '',
+        title: '',
       });
     });
   }
@@ -494,7 +497,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   render() {
     const { indicators, category } = this.props;
-    const { posX, posY, isToolTipVisible, desc } = this.state;
+    const { posX, posY, isToolTipVisible, desc, title } = this.state;
     let formatIndicator = this.formatIndicators((indicators || {}), category);
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
@@ -525,7 +528,7 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <Popover
           visible={isToolTipVisible}
-          title={null}
+          title={title}
           content={desc}
           placement="bottom"
         >

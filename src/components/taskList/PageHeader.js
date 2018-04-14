@@ -9,13 +9,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-// import { DatePicker, Input } from 'antd';
 import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
-// import Icon from '../common/Icon';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
@@ -32,12 +30,11 @@ import {
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
+  STATE_FINISHED_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
 
-// const { RangePicker } = DatePicker;
 const Search = Input.Search;
 
 // 头部筛选filterBox的高度
@@ -48,7 +45,6 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
@@ -536,10 +532,6 @@ export default class Pageheader extends PureComponent {
       // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
-      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
@@ -547,23 +539,18 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
-      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_EXECUTE_CODE;
-      }
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
-
+    // 判断当前在url上的status不存在时，取执行中的value值
+    if (_.isEmpty(status)) {
+      statusValue = STATE_EXECUTE_CODE;
+    }
     return {
-      stateAllOptions: [stateAll, ...stateAllOptions],
+      stateAllOptions: [...stateAllOptions],
       statusValue,
     };
   }
@@ -580,9 +567,14 @@ export default class Pageheader extends PureComponent {
           endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
+          status,
         },
       },
     } = this.props;
+    // 当头部的筛选状态不是‘结束’时，不显示时间组件
+    if (status !== STATE_FINISHED_CODE) {
+      return null;
+    }
     let node;
     if (missionViewType === INITIATOR || !isGrayFlag) {
       const startTime = createTimeStart ?
