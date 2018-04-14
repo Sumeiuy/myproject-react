@@ -188,14 +188,16 @@ const routes = [
 
 // 递归创建路由
 function recursiveRouter(routeArray, parentPath = '') {
-  return routeArray.map(({ path, component, children }) => {
+  return routeArray.map(({ path, component, children, exact = true }) => {
     const recursivePath = parentPath + path;
     if (!children) {
-      return (<Route exact key={recursivePath} path={recursivePath} component={component} />);
+      return (
+        <Route exact={exact} key={recursivePath} path={recursivePath} component={component} />
+      );
     }
     return (
       <Switch key={recursivePath}>
-        <Route exact path={recursivePath} component={component} />
+        <Route exact={exact} path={recursivePath} component={component} />
         {recursiveRouter(children, recursivePath)}
       </Switch>
     );
