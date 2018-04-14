@@ -251,6 +251,14 @@ export default class CreateTaskForm extends PureComponent {
     });
   }
 
+  @autobind
+  renderMissionDescSuggestion(templetDesc) {
+    const type = _.replace(templetDesc, '该客户筛选自 $', '');
+    return {
+      type,
+      name: type,
+    };
+  }
 
   render() {
     const {
@@ -264,6 +272,8 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       custCount,
+      templetDesc,
+      location: { query },
     } = this.props;
     const { executeTypes, missionType = [] } = dict || {};
     // 拿到自建任务需要的missionType
@@ -281,6 +291,17 @@ export default class CreateTaskForm extends PureComponent {
       count,
       statusData,
     } = this.state;
+    const { missionDesc } = query || {};
+    // 构造suggestion给mention
+    let templetDescSuggestion = {};
+
+    // 来自taskFlow标签圈人
+    if (templetDesc) {
+      templetDescSuggestion = this.renderMissionDescSuggestion(templetDesc);
+    } else if (missionDesc && missionDesc.indexOf('瞄准镜') !== -1) {
+      // 来自搜索瞄准镜标签
+      templetDescSuggestion = this.renderMissionDescSuggestion(missionDesc);
+    }
 
     return (
       <div>
@@ -310,6 +331,7 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorTaskName={isShowErrorTaskName}
             defaultTaskSubType={defaultTaskSubType}
             isShowErrorTaskSubType={isShowErrorTaskSubType}
+            templetDescSuggestion={templetDescSuggestion}
             wrappedComponentRef={ref => this.taskFormInfoRef = ref}
           />
         </div>

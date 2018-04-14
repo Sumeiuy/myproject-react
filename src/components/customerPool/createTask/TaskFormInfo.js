@@ -51,6 +51,7 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorIntervalValue: PropTypes.bool,
     isShowErrorStrategySuggestion: PropTypes.bool,
     isShowErrorTaskName: PropTypes.bool,
+    templetDescSuggestion: PropTypes.object,
   }
 
   static defaultProps = {
@@ -67,6 +68,7 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorIntervalValue: false,
     isShowErrorStrategySuggestion: false,
     isShowErrorTaskName: false,
+    templetDescSuggestion: {},
   }
 
   constructor(props) {
@@ -84,9 +86,20 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
+      templetDescSuggestion,
      } = props;
+
     this.state = {
-      suggestions: [],
+      // 初始化的时候，如果外部有标签任务提示带入mention，
+      // 那么将suggestion填充默认值，为了让标签任务提示高亮显示
+      suggestions: !_.isEmpty(templetDescSuggestion) ? [
+        <Nav
+          value={templetDescSuggestion.type}
+          data={'sightLabel'}
+        >
+          <span>{templetDescSuggestion.name}</span>
+        </Nav>,
+      ] : [],
       inputValue: '',
       isShowErrorInfo,
       isShowErrorTaskType,
@@ -184,7 +197,7 @@ export default class TaskFormInfo extends PureComponent {
       const contentString = toString(contentState);
       // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
       if (_.isEmpty(contentString)
-          || content.length > MAX_LENGTH) {
+        || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -245,16 +258,16 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '任务提示' } })
   handleSearchChange(value, trigger) {
-    const { users } = this.props;
+    const { users, templetDescSuggestion } = this.props;
     const searchValue = value.toLowerCase();
-    const dataSource = _.includes(PREFIX, trigger) ? users : {};
+    const dataSource = _.includes(PREFIX, trigger) ? [...users, templetDescSuggestion] : [];
     const filtered = dataSource.filter(item =>
-      item.name.toLowerCase().indexOf(searchValue) !== -1,
+      item.name && item.name.toLowerCase().indexOf(searchValue) !== -1,
     );
     const suggestions = filtered.map(suggestion => (
       <Nav
         value={suggestion.type}
-        data={suggestion}
+        data={suggestion.type.indexOf('瞄准镜') !== -1 ? 'sightLabel' : suggestion}
       >
         <span>{suggestion.name}</span>
       </Nav>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 18:28:32
+ * @Last Modified time: 2018-04-14 11:07:52
  * 服务经理维度任务统计
  */
 
@@ -107,6 +107,17 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * 渲染列的数据，在省略打点的时候，悬浮的title内容，因为有可能一列展示两列内容
+   * 所以需要自定义，不需要自定义的时候，Table的column直接展示当前内容
+   * @param {*object} record 当前行记录
+   */
+  @autobind
+  renderCoulmnTitleTooltip(record = EMPTY_OBJECT) {
+    const { empName, login } = record;
+    return `${empName}（${login}）`;
+  }
+
+  /**
    * 渲染每一列数据
    */
   @autobind
@@ -117,6 +128,7 @@ export default class CustManagerDetailScope extends PureComponent {
       key: 'login',
       value: '服务经理姓名工号',
       render: this.renderManagerNameId,
+      renderTitle: this.renderCoulmnTitleTooltip,
     }, {
       key: 'flowNum',
       value: '客户总数',
@@ -182,26 +194,26 @@ export default class CustManagerDetailScope extends PureComponent {
       columnWidth = ['310px', '160px', '160px', '160px', '160px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '160px', '160px'];
-        columnWidthTotal = 1270;
+        columnWidth = [...columnWidth, '160px', '200px'];
+        columnWidthTotal = 1310;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '160px'];
-        columnWidthTotal = 1110;
+        columnWidth = [...columnWidth, '200px'];
+        columnWidthTotal = 1150;
       }
     } else {
-      columnWidthTotal = 570;
+      columnWidthTotal = 600;
       // 处于展开状态,
-      // 列的总宽度570px
-      columnWidth = ['170px', '100px', '100px', '100px', '100px'];
+      // 列的总宽度600px
+      columnWidth = ['200px', '100px', '100px', '100px', '100px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '100px', '150px'];
-        columnWidthTotal = 820;
+        columnWidth = [...columnWidth, '100px', '200px'];
+        columnWidthTotal = 900;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '150px'];
-        columnWidthTotal = 720;
+        columnWidth = [...columnWidth, '200px'];
+        columnWidthTotal = 800;
       }
     }
 

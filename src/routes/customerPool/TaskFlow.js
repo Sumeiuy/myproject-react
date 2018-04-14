@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 15:56:44
+ * @Last Modified time: 2018-04-14 14:03:35
  */
 
 import React, { PureComponent } from 'react';
@@ -1108,8 +1108,16 @@ export default class TaskFlow extends PureComponent {
     const { templetDesc } = taskFormData;
     let newMissionDesc = templetDesc;
     // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
+    // 变量文字全部高亮显示
     if (missionDesc && currentEntry === 1) {
       newMissionDesc = missionDesc;
+      // newMissionDesc = (
+      //   <span className={styles.definedMention}>
+      //     <span>
+      //       <span>{missionDesc}</span>
+      //     </span>
+      //   </span>
+      // );
     }
 
     const isShowTitle = true;

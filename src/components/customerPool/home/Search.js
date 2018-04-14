@@ -183,7 +183,7 @@ export default class Search extends PureComponent {
     let missionDesc = `该客户筛选自${labelName},`;
     // 来自瞄准镜标签
     if (sightingScopeBool) {
-      missionDesc = `该客户筛选自$瞄准镜标签#${labelId}#`;
+      missionDesc = `该客户筛选自 $瞄准镜标签#${labelId}#`;
     }
 
     return missionDesc;
