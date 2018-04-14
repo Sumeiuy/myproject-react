@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 22:49:05
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-13 08:49:26
+ * @Last Modified time: 2018-04-13 19:43:25
  * @description 展示只读信息的组件
  */
 
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import styles from './index.less';
 
 export default function ReadOnlyServeRecord(props) {
-  const { data = {} } = props;
+  const { data = {}, isCompleted } = props;
   if (_.isEmpty(data)) {
     return null;
   }
@@ -26,6 +26,7 @@ export default function ReadOnlyServeRecord(props) {
     hasFeedback,
     serviceContent,
   } = data;
+  const completedText = isCompleted ? `${serviceDateTime} 给客户发送了以下投资建议` : '';
   return (
     <div className={styles.serviceRecordContent}>
       <div className={styles.gridWrapper}>
@@ -43,6 +44,9 @@ export default function ReadOnlyServeRecord(props) {
         </div>
         <div className={styles.serveRecord}>
           <div className={styles.title}>服务内容:</div>
+          {
+            isCompleted ? (<div className={styles.readOnlyText}>{completedText}</div>) : null
+          }
           <div className={styles.readOnlyText}>
             <span className={styles.zhangleTitle}>{serviceContent.title}</span>
             <span className={styles.zhangleType}>{serviceContent.type}</span>
@@ -70,4 +74,5 @@ export default function ReadOnlyServeRecord(props) {
 
 ReadOnlyServeRecord.propTypes = {
   data: PropTypes.object.isRequired,
+  isCompleted: PropTypes.bool.isRequired,
 };

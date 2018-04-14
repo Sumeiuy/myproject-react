@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-12 22:18:15
+ * @Last Modified time: 2018-04-14 11:48:18
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -47,15 +47,20 @@ export default class ServeContent extends PureComponent {
     };
   }
 
+  @autobind
+  getData() {
+    const { serveContentDesc, serveContentTitle, serveContentType, approverId } = this.state;
+    return {
+      title: serveContentTitle,
+      content: serveContentDesc,
+      taskType: serveContentType,
+      approval: approverId,
+    };
+  }
+
   /** 点击添加内容按钮 | 编辑修改按钮 */
   @autobind
   handleBtnClick() {
-    // const { hasEditContent } = this.state;
-    // if (!hasEditContent) {
-    //   // 添加内容
-    // } else {
-    //   // 编辑修改
-    // }
     this.setState({
       serveContentModal: true,
     });
@@ -63,7 +68,6 @@ export default class ServeContent extends PureComponent {
 
   @autobind
   handleCloseServeContentModal() {
-    console.warn('关闭服务内容添加');
     this.setState({ serveContentModal: false });
   }
 
@@ -145,6 +149,12 @@ export default class ServeContent extends PureComponent {
       hasEditContent,
     } = this.state;
 
+    const { approvalList } = this.props;
+    const newApprovalList = approvalList.map(item => ({
+      empNo: item.login,
+      empName: item.empName,
+      belowDept: item.occupation,
+    }));
     // 选择审批人的CSS class类名
     const approvalCls = cx([styles.approval, styles.title]);
     const rightAreaApprovalCls = cx([styles.rightArea, styles.rightAreaApproval]);
@@ -194,7 +204,7 @@ export default class ServeContent extends PureComponent {
           (
             <ChoiceApproverBoard
               visible={approvalModal}
-              approverList={[]}
+              approverList={newApprovalList}
               onClose={this.handleCloseApprovalModal}
               onOk={this.handleApproverModalOK}
             />
@@ -221,8 +231,10 @@ export default class ServeContent extends PureComponent {
 ServeContent.propTypes = {
   isReject: PropTypes.bool.isRequired,
   serveContent: PropTypes.object,
+  approvalList: PropTypes.array,
 };
 
 ServeContent.defaultProps = {
   serveContent: {},
+  approvalList: [],
 };

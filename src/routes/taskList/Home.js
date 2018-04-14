@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-13 14:42:34
+ * @Last Modified time: 2018-04-14 11:25:01
  * @description 任务管理首页
  */
 
@@ -86,6 +86,7 @@ export default class PerformerView extends PureComponent {
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
+      taskTypeCode: '',  // 自建任务，mot任务
       typeName: '',
       eventId: '',
       statusCode: '',
@@ -453,6 +454,10 @@ export default class PerformerView extends PureComponent {
       attachmentList,
       getTaskDetailBasicInfo,
       modifyLocalTaskList,
+      custFeedbackList,
+      queryCustFeedbackList4ZLFins,
+      queryApprovalList,
+      zhangleApprovalList,
     } = this.props;
     const {
       typeCode,
@@ -460,6 +465,8 @@ export default class PerformerView extends PureComponent {
       taskFeedbackList,
       statusCode,
       isTaskFeedbackListOfNone,
+      eventId,
+      taskTypeCode,
     } = this.state;
     const [firstItem = {}] = list.resultData;
     const { query: { currentId } } = location;
@@ -484,6 +491,8 @@ export default class PerformerView extends PureComponent {
         custUuid={custUuid}
         getCustDetail={this.getCustDetail}
         serviceTypeCode={typeCode}
+        eventId={eventId}
+        taskTypeCode={taskTypeCode}
         serviceTypeName={typeName}
         statusCode={statusCode}
         ceFileDelete={ceFileDelete}
@@ -500,6 +509,10 @@ export default class PerformerView extends PureComponent {
         isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
+        custFeedbackList={custFeedbackList}
+        queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+        queryApprovalList={queryApprovalList}
+        zhangleApprovalList={zhangleApprovalList}
       />
     );
   }
@@ -842,12 +855,18 @@ export default class PerformerView extends PureComponent {
     },
   })
   handleListRowClick(record, index) {
+    // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
-    const { queryCustUuid, replace, location: { pathname, query } } = this.props;
+    const { queryCustUuid, replace, location: { pathname, query }, dict } = this.props;
     const isSourceFromCreatorView = this.isInitiatorView(st)
       && this.judgeTaskInApproval(statusCode);
     const ci = isSourceFromCreatorView ? mssnId : id;
     if (this.getCurrentId() === ci) return;
+
+    // 查出任务类型是MOT还是自荐
+    const currentMissionTypeObject = _.find(dict.missionType, item =>
+      item.key === typeCode) || {};
+    const { descText } = currentMissionTypeObject;
 
     replace({
       pathname,
@@ -871,6 +890,7 @@ export default class PerformerView extends PureComponent {
       eventId,
       statusCode,
       isSourceFromCreatorView,
+      taskTypeCode: descText,
     }, () => {
       this.getDetailByView(record);
     });

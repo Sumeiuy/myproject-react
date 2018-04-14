@@ -47,7 +47,15 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
+    eventId: PropTypes.string,
+    taskTypeCode: PropTypes.string,
     modifyLocalTaskList: PropTypes.func.isRequired,
+    // 涨乐财富通服务方式下的客户反馈列表以及查询方法
+    queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+    custFeedbackList: PropTypes.array.isRequired,
+    // 涨乐财富通服务方式下的审批人列表以及查询方法
+    queryApprovalList: PropTypes.func.isRequired,
+    zhangleApprovalList: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
   }
 
@@ -56,6 +64,8 @@ export default class PerformerViewDetail extends PureComponent {
     answersList: {},
     saveAnswersSucce: false,
     statusCode: '',
+    eventId: '',
+    taskTypeCode: '',
   }
 
   constructor(props) {
@@ -347,8 +357,8 @@ export default class PerformerViewDetail extends PureComponent {
       value: o.key,
       label: o.value,
       show: true,
-    })).unshift(allCustOption);
-
+    }));
+    stateData.unshift(allCustOption);
     return stateData;
   }
 

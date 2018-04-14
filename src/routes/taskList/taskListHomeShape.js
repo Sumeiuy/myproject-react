@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-13 11:09:21
+ * @Last Modified time: 2018-04-14 11:20:26
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -77,4 +77,8 @@ export default {
   distinctCustomerCount: PropTypes.number.isRequired,
   custManagerScopeData: PropTypes.object.isRequired,
   getCustManagerScope: PropTypes.func.isRequired,
+  queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+  custFeedbackList: PropTypes.array.isRequired,
+  queryApprovalList: PropTypes.func.isRequired,
+  zhangleApprovalList: PropTypes.array.isRequired,
 };

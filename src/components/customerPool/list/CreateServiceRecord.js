@@ -53,6 +53,10 @@ export default class CreateServiceRecord extends PureComponent {
     deleteFileResult: PropTypes.array.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
+    queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+    queryApprovalList: PropTypes.func.isRequired,
+    custFeedbackList: PropTypes.array.isRequired,
+    zhangleApprovalList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -173,6 +177,10 @@ export default class CreateServiceRecord extends PureComponent {
       custUuid,
       deleteFileResult,
       taskFeedbackList,
+      queryCustFeedbackList4ZLFins,
+      queryApprovalList,
+      custFeedbackList,
+      zhangleApprovalList,
     } = this.props;
     const title = (
       <p className={styles.title}>
@@ -211,6 +219,10 @@ export default class CreateServiceRecord extends PureComponent {
                 onDeleteFile={this.handleDeleteFile}
                 deleteFileResult={deleteFileResult}
                 formData={serviceReocrd}
+                queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+                queryApprovalList={queryApprovalList}
+                custFeedbackList={custFeedbackList}
+                zhangleApprovalList={zhangleApprovalList}
               />
             </div>
             :
