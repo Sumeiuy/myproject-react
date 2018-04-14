@@ -45,6 +45,8 @@ export default class DigitalTrimmer extends PureComponent {
     }
     if (isNaN(value)) {
       confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '错误',
         content: '请输入数字',
         onOk() {
@@ -55,6 +57,8 @@ export default class DigitalTrimmer extends PureComponent {
       });
     } else if (!isNaN(value) && (inputLength > 2)) {
       confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '错误',
         content: '小数点后不超过两位',
         onOk() {

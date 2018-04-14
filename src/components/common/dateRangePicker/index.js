@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-10 10:05:18
+ * @Last Modified time: 2018-04-12 10:59:30
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -57,8 +57,6 @@ export default class CommonDateRangePicker extends PureComponent {
       focusedInput: null,
       startDate: initialStartDate,
       endDate: initialEndDate,
-      // 判断起始和结束日期有无变化
-      dateHasChanged: false,
       // 判断是否用户选择了第一个日期
       hasSelectFirstDate: false,
       // 判断用户第一次选择的是开始日期还是结束日期
@@ -117,7 +115,7 @@ export default class CommonDateRangePicker extends PureComponent {
       hasSelectFirstDate: true,
       firstDateUserSelect: startDate,
     }, () => {
-      this.fixEndDate({ startDate, endDate });
+      this.fixSelectDate({ startDate, endDate });
     });
   }
 
@@ -128,14 +126,13 @@ export default class CommonDateRangePicker extends PureComponent {
       hasSelectFirstDate: true,
       firstDateUserSelect: endDate,
     }, () => {
-      this.fixStartDate({ startDate, endDate });
+      this.fixSelectDate({ startDate, endDate });
     });
   }
 
   @autobind
   restoreDefault() {
     this.setState({
-      dateHasChanged: false,
       hasSelectFirstDate: false,
       whichDateInputUserSelect: null,
       firstDateUserSelect: null,
@@ -162,31 +159,28 @@ export default class CommonDateRangePicker extends PureComponent {
   }
 
   @autobind
-  fixEndDate({ startDate, endDate }) {
-    let date = endDate;
-    // 如果endDate不在用户自定义的范围内，则修补
-    if (endDate !== null) {
-      date = endDate.clone();
-      if (!this.isInCustomerDateRangeOffset(endDate)) {
+  fixStartOrEndTime(selectTime) {
+    const { focusedInput } = this.state;
+    const { startDate, endDate } = selectTime;
+    const isSeletStartDate = focusedInput === START_DATE;
+    const fixFunc = isSeletStartDate ? this.subtractMomentDay : this.addMomentDay;
+    const needFixDate = isSeletStartDate ? endDate : startDate;
+    let newDate = needFixDate;
+    if (needFixDate !== null) {
+      newDate = needFixDate.clone();
+      // 如果endDate不在用户自定义的范围内，则修补
+      if (!this.isInCustomerDateRangeOffset(needFixDate)) {
         // TODO 修改时间
-        date = this.fixDate(endDate, this.subtractMomentDay);
+        newDate = this.fixDate(needFixDate, fixFunc);
       }
     }
-    this.setState({ startDate, endDate: date, dateHasChanged: true });
+    return isSeletStartDate ? { startDate, endDate: newDate } : { startDate: newDate, endDate };
   }
 
   @autobind
-  fixStartDate({ startDate, endDate }) {
-    let date = startDate;
-    // 如果startDate不在用户自定义的范围内，则修补
-    if (startDate !== null) {
-      date = startDate.clone();
-      if (!this.isInCustomerDateRangeOffset(startDate)) {
-        // TODO 修改时间
-        date = this.fixDate(startDate, this.addMomentDay);
-      }
-    }
-    this.setState({ startDate: date, endDate, dateHasChanged: true });
+  fixSelectDate(selectDate) {
+    const newSelectDate = this.fixStartOrEndTime(selectDate);
+    this.setState(newSelectDate);
   }
 
   // 切换了日期
@@ -207,7 +201,7 @@ export default class CommonDateRangePicker extends PureComponent {
         // TODO 此处增加判断，如果结束时间此时不在用户选择的范围内，则将其修改为最后的日期
         this.setFirstDateSelectOnStart({ startDate, endDate });
       } else {
-        this.setState({ startDate, endDate, dateHasChanged: true });
+        this.setState({ startDate, endDate });
       }
     } else if (focusedInput === END_DATE) {
       // 点击的时间段在结束时间段上
@@ -215,7 +209,7 @@ export default class CommonDateRangePicker extends PureComponent {
         // TODO 此处增加判断，如果开始时间不在用户选择的范围内，则将其修改为开始的时间
         this.setFirstDateSelectOnEnd({ startDate, endDate });
       } else {
-        this.setState({ startDate, endDate, dateHasChanged: true });
+        this.setState({ startDate, endDate });
       }
     }
   }
@@ -234,15 +228,23 @@ export default class CommonDateRangePicker extends PureComponent {
     this.setState({ focusedInput });
   }
 
+  // 1.选 起止时间 结束，具体说是，在浮层中，选 endDate 结束，调用的方法 2.用户主动 失焦，即点击其他区域，调用的方法
+  // 选中 endDate 时：
+  // 1.若 startDate 有值，会先触发 组件的 onClose 方法，再触发 onDatesChange 方法，后 填 endDate 值，浮层消失
+  // 2.若 startDate 无值，会先触发 onDatesChange 方法，后 填 endDate值，光标移动到 startDate 处,
+  //   选填 startDate 后，光标会再次移动到 endDate 处。
   @autobind
-  handleCalenderClose(obj) {
-    // 判断时间是否改变了
-    const { startDate, endDate } = obj;
-    if (this.state.dateHasChanged) {
-      this.restoreDefault();
-      // 将用户选择起始和结束时间的moment对象传递出去
-      this.props.onChange({ startDate, endDate });
+  handleCalenderClose(selectDate) {
+    this.restoreDefault();
+    const { focusedInput } = this.state;
+    let newSelectDate = selectDate;
+    // 有且只有 选 endDate 结束，检测 startDate 是否需要修正
+    // 选 startDate 值时，会先执行 onDatesChange 方法，会执行检测是否修复，故此处不再检测
+    if (focusedInput === END_DATE) {
+      newSelectDate = this.fixStartOrEndTime(selectDate);
     }
+    // 将用户选择起始和结束时间的moment对象传递出去
+    this.props.onChange(newSelectDate);
   }
 
 

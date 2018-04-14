@@ -97,7 +97,7 @@ export default {
           pathname,
           search: newSearch,
         } = location;
-        if (pathname === '/customerFeedback') {
+        if (pathname === '/customerFeedback' || pathname === '/platformParameterSetting/customerFeedback') {
           const {
             search: oldSearch,
           } = dvaHelper.getLastLocation() || EMPTY_OBJECT;

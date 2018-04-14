@@ -57,7 +57,8 @@ import PreSaleQuery from './routes/preSaleQuery/Home';
 // 个股
 import Stock from './routes/stock/Home';
 import StockDetail from './routes/stock/Detail';
-import Exchange from './routes/exchange/Home';
+import Exchange from './routes/pointsExchange/Home';
+import Phone from './routes/phone/Home';
 // 用户中心
 import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 // 平台参数设置
@@ -68,6 +69,7 @@ const { ConnectedRouter } = routerRedux;
 // 路由Collection
 const routes = [
   { path: '/empty', component: Empty },
+  { path: '/phone', component: Phone },
   { path: '/report', component: ReportHome },
   { path: '/boardManage', component: BoardManageHome },
   { path: '/boardEdit', component: BoardEditHome },
@@ -186,16 +188,14 @@ const routes = [
 
 // 递归创建路由
 function recursiveRouter(routeArray, parentPath = '') {
-  return routeArray.map(({ path, component, children, exact = true }) => {
+  return routeArray.map(({ path, component, children }) => {
     const recursivePath = parentPath + path;
     if (!children) {
-      return (
-        <Route exact={exact} key={recursivePath} path={recursivePath} component={component} />
-      );
+      return (<Route exact key={recursivePath} path={recursivePath} component={component} />);
     }
     return (
       <Switch key={recursivePath}>
-        <Route exact={exact} path={recursivePath} component={component} />
+        <Route exact path={recursivePath} component={component} />
         {recursiveRouter(children, recursivePath)}
       </Switch>
     );

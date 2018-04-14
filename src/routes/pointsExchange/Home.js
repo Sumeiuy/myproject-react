@@ -18,6 +18,13 @@ import styles from './home.less';
 const FormItem = Form.Item;
 const create = Form.create;
 const dateFormat = 'YYYY/MM/DD';
+const defaultParam = {
+  pageNum: 1,
+  productCode: '',
+  brokerNumber: '',
+  startTime: '',
+  endTime: '',
+};
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
@@ -58,7 +65,7 @@ function columns() {
     dataIndex: 'exchangeDate',
     key: 'exchangeDate',
     width: '10%',
-    render: item => (<span>{formatString(item)}</span>),
+    render: item => (<span>{moment(item).format('YYYY-MM-DD') || '--'}</span>),
   }, {
     title: '手机号',
     dataIndex: 'phone',
@@ -88,11 +95,11 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  exchangeData: state.exchange.exchangeData,
+  exchangeData: state.pointsExchange.exchangeData,
 });
 
 const mapDispatchToProps = {
-  getExchangeList: fetchDataFunction(true, 'exchange/getExchangeHistory'),
+  getExchangeList: fetchDataFunction(true, 'pointsExchange/getExchangeHistory'),
 };
 
 @create()
@@ -111,44 +118,30 @@ export default class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      pageNum: 1,
-      productCode: '',
-      brokerNumber: '',
-      startDateStr: '',
-      endDateStr: '',
-    };
+    this.state = defaultParam;
   }
 
   // 发送请求
   componentDidMount() {
-    this.props.getExchangeList({ pageNum: 1 });
+    this.props.getExchangeList(defaultParam);
   }
 
+  // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
     return date <= moment().subtract(3, 'months')
    || date >= moment();
   }
 
-  // 判断当用户选择了第一次日期之后，需要disabled掉的日期
-  // 本需求在选择的两个日期的区间范围在3个月之内
-  @autobind
-  isInsideOffSet({ day, firstDay }) {
-    if (firstDay === null) return true;
-    return day > moment().subtract(3, 'months')
-      && day <= moment();
-  }
-
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
   @autobind
   handleCreateDateChange(date) {
     const { startDate, endDate } = date;
-    const startDateStr = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
-    const endDateStr = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
+    const startTime = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
+    const endTime = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
     this.setState({
-      startDateStr,
-      endDateStr,
+      startTime,
+      endTime,
     });
   }
 
@@ -170,25 +163,24 @@ export default class Home extends Component {
   handleSearch(e) {
     e.preventDefault();
     const { getExchangeList } = this.props;
-    const { pageNum, startDateStr, endDateStr } = this.state;
+    const { startTime, endTime } = this.state;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { productCode = '', brokerNumber = '' } = values;
         const fieldValue = {
-          productCode,
-          brokerNumber,
-          startDateStr,
-          endDateStr,
+          productCode: _.isEmpty(productCode) ? '' : productCode,
+          brokerNumber: _.isEmpty(brokerNumber) ? '' : brokerNumber,
+          pageNum: 1,
+          startTime,
+          endTime,
         };
+        const lastValue = { ...this.state, pageNum: 1 };
         // 过滤请求的条件相同的情况
-        if (this.state !== { ...fieldValue, pageNum }) {
+        if (lastValue !== fieldValue) {
           this.setState(
             { productCode, brokerNumber },
             () => {
-              getExchangeList({
-                ...fieldValue,
-                pageNum,
-              });
+              getExchangeList({ ...fieldValue });
             },
           );
         }
@@ -205,6 +197,8 @@ export default class Home extends Component {
   handleReset() {
     this.props.form.resetFields();
     this.datePickRef.clearAllDate();
+    const resetValue = _.omit(defaultParam, 'pageNum');
+    this.setState({ ...resetValue });
   }
 
   render() {
@@ -215,7 +209,7 @@ export default class Home extends Component {
     const paganationOption = {
       current: curPageNum,
       pageSize: 10,
-      total: _.toNumber(totalRecordNum),
+      total: _.toNumber(totalRecordNum) || 1,
       onChange: this.handlePageChange,
     };
     return (
@@ -226,26 +220,20 @@ export default class Home extends Component {
           </div>
           <Form className={styles.form} layout="inline" onSubmit={this.handleSearch}>
             <Row>
-              <Col span={7}>
+              <Col span={8}>
                 <FormItem label={'产品代码'}>
-                  {getFieldDecorator('productCode')(<Input />)}
+                  {getFieldDecorator('productCode')(<Input className={styles.input} />)}
                 </FormItem>
               </Col>
-              <Col span={7} style={{ textAlign: 'center' }}>
+              <Col span={8} style={{ textAlign: 'center' }}>
                 <FormItem label={'经纪客户号'}>
-                  {getFieldDecorator('brokerNumber')(<Input />)}
+                  {getFieldDecorator('brokerNumber')(<Input className={styles.input} />)}
                 </FormItem>
               </Col>
-              <Col style={{ textAlign: 'right' }}>
-                <FormItem
-                  label={'兑换时间'}
-                >
+              <Col span={8} className={styles.datePick} style={{ textAlign: 'right' }}>
+                <FormItem label="兑换时间">
                   <DateRangePicker
                     ref={this.drpWraperRef}
-                    hasCustomerOffset
-                    initialEndDate={null}
-                    initialStartDate={null}
-                    isInsideOffSet={this.isInsideOffSet}
                     disabledRange={this.setDisableRange}
                     onChange={this.handleCreateDateChange}
                   />
@@ -267,7 +255,7 @@ export default class Home extends Component {
             </Row>
           </Form>
           <Table
-            rowKey={'brokerNumber'}
+            rowKey={'rowId'}
             columns={columns()}
             dataSource={exchangeList}
             pagination={false}

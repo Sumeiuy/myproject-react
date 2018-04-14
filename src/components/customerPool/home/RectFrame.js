@@ -32,7 +32,12 @@ function RectFrame(props) {
         {
           desc ?
             (
-              <Popover content={desc} placement="bottom" mouseEnterDelay={0.2}>
+              <Popover
+                title={title}
+                content={desc}
+                placement="bottom"
+                mouseEnterDelay={0.2}
+              >
                 <div className={styles.title}>{title}</div>
               </Popover>
             ) :

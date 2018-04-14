@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 14:09:55
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-04-11 20:03:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,6 +33,16 @@ const TAB_LIST = [
   {
     tabName: '自建任务',
     key: '2',
+  },
+];
+const ROLE_TYPE = [
+  {
+    name: '服务经理可选项',
+    key: '0',
+  },
+  {
+    name: '客户可选项',
+    key: '1',
   },
 ];
 // 第一个tab的状态
@@ -67,12 +77,14 @@ export default class MissionBind extends PureComponent {
       collapseActiveKey: '',
       // 被添加客户反馈的任务id
       beAddMissionId: '',
+      // 服务经理或客户可选项
+      roleType: ROLE_TYPE[0].key,
     };
   }
 
   // 获取客户反馈气泡
   @autobind
-  getFeedbackItem(list, missionId) {
+  getFeedbackItem(list, missionId, obj) {
     return (list || EMPTY_LIST).map((item) => {
       const content = (<ul className={styles.popoverCentent}>
         {
@@ -82,10 +94,16 @@ export default class MissionBind extends PureComponent {
         }
       </ul>);
       return (<div className={styles.feedbackItem} key={item.id}>
-        <Popover placement="rightTop" content={content} overlayClassName={styles.opcityPopover}>
-          <span>{item.name}</span>
-        </Popover>
-        <Icon type="delete" onClick={() => this.handleDelCustomerFeedback(missionId, item.id)} />
+        {
+          obj.needPopover
+          ?
+            <Popover placement="bottomLeft" content={content} overlayClassName={styles.opcityPopover}>
+              <span>{item.name}</span>
+            </Popover>
+          :
+            <span>{item.name}</span>
+        }
+        <Icon type="delete" onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)} />
       </div>);
     });
   }
@@ -116,14 +134,28 @@ export default class MissionBind extends PureComponent {
             null
         }
         <span className={styles.childClass}>{item.childClassName}</span>
-        <span className={styles.optionClass}>{`${item.length}项`}<Icon type="up" /><Icon type="down" /></span>
+        <span className={styles.optionClass}>{`${item.length || 0}项`}<Icon type="up" /><Icon type="down" /></span>
       </div>);
       return (<Panel header={header} key={item.id}>
         <div className={styles.feedbackListBox}>
+          <h2>{ROLE_TYPE[0].name}</h2>
           {
-            this.getFeedbackItem(item.feedbackList, item.id)
+            this.getFeedbackItem(item.feedbackList, item.id, {
+              needPopover: true,
+              roleType: ROLE_TYPE[0].key,
+            })
           }
-          <Button onClick={() => this.handleShowAddFeedbackModal(item.id)}>+新增</Button>
+          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[0].key)}>+新增</Button>
+        </div>
+        <div className={styles.feedbackListBox}>
+          <h2>{ROLE_TYPE[1].name}</h2>
+          {
+            this.getFeedbackItem(item.customerList, item.id, {
+              needPopover: false,
+              roleType: ROLE_TYPE[1].key,
+            })
+          }
+          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[1].key)}>+新增</Button>
         </div>
       </Panel>);
     });
@@ -159,7 +191,7 @@ export default class MissionBind extends PureComponent {
 
   // 删除任务下所关联客户反馈选项
   @autobind
-  handleDelCustomerFeedback(missionId, feedbackId) {
+  handleDelCustomerFeedback(missionId, feedbackId, roleType) {
     const {
       missionData,
       delCustomerFeedback,
@@ -180,6 +212,8 @@ export default class MissionBind extends PureComponent {
       return;
     }
     confirm({
+      okText: '确定',
+      cancelText: '取消',
       title: '提示',
       content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk() {
@@ -187,6 +221,7 @@ export default class MissionBind extends PureComponent {
           missionId,
           feedbackId,
           type: childActiveKey,
+          roleType,
         }).then(() => {
           // 删除成功之后更新任务列表
           queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
@@ -197,10 +232,11 @@ export default class MissionBind extends PureComponent {
 
   // 显示添加客户反馈弹层
   @autobind
-  handleShowAddFeedbackModal(missionId) {
+  showAddFeedbackModal(missionId, roleType) {
     this.setState({
       showModal: true,
       beAddMissionId: missionId,
+      roleType,
     });
   }
 
@@ -267,6 +303,7 @@ export default class MissionBind extends PureComponent {
       showModal,
       collapseActiveKey,
       beAddMissionId,
+      roleType,
     } = this.state;
     const {
       missionData,
@@ -372,6 +409,7 @@ export default class MissionBind extends PureComponent {
                 missionId={beAddMissionId}
                 queryFeedbackList={queryFeedbackList}
                 feedbackData={feedbackData}
+                roleType={roleType}
                 ref={ref => this.feedbackAddComponent = ref}
               />
             </Modal>

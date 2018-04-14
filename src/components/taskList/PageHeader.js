@@ -9,13 +9,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-// import { DatePicker, Input } from 'antd';
 import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
-// import Icon from '../common/Icon';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
@@ -32,12 +30,11 @@ import {
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
+  STATE_FINISHED_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
 
-// const { RangePicker } = DatePicker;
 const Search = Input.Search;
 
 // 头部筛选filterBox的高度
@@ -48,7 +45,6 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
@@ -424,14 +420,16 @@ export default class Pageheader extends PureComponent {
   })
   handleCreateDateChange(date) {
     const { startDate, endDate } = date;
-    const createTimeStart = startDate.format(dateFormat);
-    const createTimeEnd = endDate.format(dateFormat);
-    // const createTimeStart = moment(date[0]).format(dateFormat);
-    // const createTimeEnd = moment(date[1]).format(dateFormat);
-    this.props.filterCallback({
-      createTimeStart,
-      createTimeEnd,
-    });
+    if (startDate !== null && endDate !== null) {
+      const createTimeStart = startDate.format(dateFormat);
+      const createTimeEnd = endDate.format(dateFormat);
+      // const createTimeStart = moment(date[0]).format(dateFormat);
+      // const createTimeEnd = moment(date[1]).format(dateFormat);
+      this.props.filterCallback({
+        createTimeStart,
+        createTimeEnd,
+      });
+    }
   }
 
   @autobind
@@ -449,12 +447,17 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleEndDateChange(date) {
-    const endTimeStart = moment(date[0]).format(dateFormat);
-    const endTimeEnd = moment(date[1]).format(dateFormat);
-    this.props.filterCallback({
-      endTimeStart,
-      endTimeEnd,
-    });
+    const { startDate, endDate } = date;
+    if (startDate !== null && endDate !== null) {
+      const endTimeStart = startDate.format(dateFormat);
+      const endTimeEnd = endDate.format(dateFormat);
+      // const endTimeStart = moment(date[0]).format(dateFormat);
+      // const endTimeEnd = moment(date[1]).format(dateFormat);
+      this.props.filterCallback({
+        endTimeStart,
+        endTimeEnd,
+      });
+    }
   }
 
   // 视图不变下，判断视图是否为创建视图，修改时间入参
@@ -529,10 +532,6 @@ export default class Pageheader extends PureComponent {
       // 我部门的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => _.includes(STATUS_MANAGER_VIEW, item.value));
-      // 管理者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
     if (filterControl === EXECUTOR) {
       // 我执行的任务有 所有状态 执行中 、结果跟踪、结束、已完成 筛选项
@@ -540,23 +539,18 @@ export default class Pageheader extends PureComponent {
         stateAllOptions,
         item => _.includes(STATUS_EXECUTOR_VIEW, item.value),
       );
-      // 执行者视图中 判断当前在url上的status不存在时，取执行中的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_EXECUTE_CODE;
-      }
     }
     if (filterControl === INITIATOR) {
       // 我创建的任务没有'已完成' 筛选项
       stateAllOptions = _.filter(stateAllOptions,
         item => STATE_COMPLETED_CODE !== item.value);
-      // 创建者视图中 判断当前在url上的status不存在时，取所有状态的value值
-      if (_.isEmpty(status)) {
-        statusValue = STATE_ALL_CODE;
-      }
     }
-
+    // 判断当前在url上的status不存在时，取执行中的value值
+    if (_.isEmpty(status)) {
+      statusValue = STATE_EXECUTE_CODE;
+    }
     return {
-      stateAllOptions: [stateAll, ...stateAllOptions],
+      stateAllOptions: [...stateAllOptions],
       statusValue,
     };
   }
@@ -573,9 +567,14 @@ export default class Pageheader extends PureComponent {
           endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
+          status,
         },
       },
     } = this.props;
+    // 当头部的筛选状态不是‘结束’时，不显示时间组件
+    if (status !== STATE_FINISHED_CODE) {
+      return null;
+    }
     let node;
     if (missionViewType === INITIATOR || !isGrayFlag) {
       const startTime = createTimeStart ?
@@ -585,7 +584,9 @@ export default class Pageheader extends PureComponent {
         moment(createTimeEnd, dateFormat) :
         moment(moment(currentDate).format(dateFormat), dateFormat);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        创建时间&nbsp;:&nbsp;
+        <span className={styles.dateLable}>
+          创建时间&nbsp;:&nbsp;
+        </span>
         <div className={styles.dropDownSelectBox}>
           {/* 新的日历范围组件 */}
           <DateRangePicker
@@ -606,7 +607,9 @@ export default class Pageheader extends PureComponent {
         moment(endTimeEnd, dateFormat) :
         moment(moment(afterCurrentDate60Days).format(dateFormat), dateFormat);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        结束时间&nbsp;:&nbsp;
+        <span className={styles.dateLable}>
+          结束时间&nbsp;:&nbsp;
+        </span>
         <div className={styles.dropDownSelectBox}>
           <DateRangePicker
             hasCustomerOffset

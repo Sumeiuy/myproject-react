@@ -34,7 +34,7 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
+  STATE_FINISHED_CODE,
 } from './config';
 import {
   getViewInfo,
@@ -114,6 +114,8 @@ const effects = {
   modifyLocalTaskList: 'performerView/modifyLocalTaskList',
   // 查询去重后的客户数量
   queryDistinctCustomerCount: 'managerView/queryDistinctCustomerCount',
+  // 查询服务经理维度任务的详细客户信息
+  getCustManagerScope: 'managerView/getCustManagerScope',
 };
 
 const mapStateToProps = state => ({
@@ -166,6 +168,8 @@ const mapStateToProps = state => ({
   missionReport: state.managerView.missionReport,
   // 去重后的客户数量
   distinctCustomerCount: state.managerView.distinctCustomerCount,
+  // 服务经理维度任务下的客户数据
+  custManagerScopeData: state.managerView.custManagerScopeData,
 });
 
 const mapDispatchToProps = {
@@ -231,6 +235,8 @@ const mapDispatchToProps = {
   modifyLocalTaskList: fetchDataFunction(false, effects.modifyLocalTaskList),
   // 查询去重后的客户数量
   queryDistinctCustomerCount: fetchDataFunction(true, effects.queryDistinctCustomerCount),
+  // 服务经理维度任务数据
+  getCustManagerScope: fetchDataFunction(true, effects.getCustManagerScope),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -304,6 +310,8 @@ export default class PerformerView extends PureComponent {
     modifyLocalTaskList: PropTypes.func.isRequired,
     queryDistinctCustomerCount: PropTypes.func.isRequired,
     distinctCustomerCount: PropTypes.number.isRequired,
+    custManagerScopeData: PropTypes.object.isRequired,
+    getCustManagerScope: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -539,6 +547,22 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
+   * 获取服务经理维度任务数据详细
+   * @param {*string} param0 orgId集合
+   */
+  getCustManagerScope({ orgId }) {
+    const {
+      getCustManagerScope,
+    } = this.props;
+    const newOrgId = orgId === 'msm' ? '' : orgId;
+    // 获取服务经理维度任务数据
+    getCustManagerScope({
+      missionId: this.getCurrentId(),
+      orgId: newOrgId || emp.getOrgId(),
+    });
+  }
+
+  /**
    * 根据不同的视图获取不同的Detail组件
    * @param  {string} st 视图类型
    */
@@ -596,6 +620,7 @@ export default class PerformerView extends PureComponent {
       getTaskDetailBasicInfo,
       queryDistinctCustomerCount,
       distinctCustomerCount,
+      custManagerScopeData,
     } = this.props;
     const [firstItem = {}] = list.resultData;
     const {
@@ -643,6 +668,8 @@ export default class PerformerView extends PureComponent {
       queryMOTServeAndFeedBackExcel,
       queryDistinctCustomerCount,
       distinctCustomerCount,
+      getCustManagerScope: this.getCustManagerScope,
+      custManagerScopeData,
     };
     switch (st) {
       case INITIATOR:
@@ -828,40 +855,47 @@ export default class PerformerView extends PureComponent {
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 执行者视图中，状态默认选中‘执行中’, status传50
-    // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-    if (currentViewType === EXECUTOR) {
-      if (status) {
-        finalPostData.status = status === STATE_ALL_CODE ? '' : status;
-      } else {
-        finalPostData.status = STATE_EXECUTE_CODE;
-      }
-    } else if (_.includes([INITIATOR, CONTROLLER], currentViewType)) {
-      // 创建者视图和管理者视图中，状态默认选中‘所有状态’， status传空字符串或者不传
-      // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-      if (!status || status === STATE_ALL_CODE) {
-        finalPostData.status = '';
-      } else {
-        finalPostData.status = status;
-      }
-    }
+    // 状态默认选中‘执行中’, status传50，其余传对应的code码
+    finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
+    // 当前筛选的状态不为‘结束’时，默认情况createTimeEnd、createTimeStart、endTimeEnd、endTimeStart传空或者不传
     if (currentViewType === INITIATOR) {
       const { createTimeEnd, createTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        createTimeEnd: createTimeEnd || moment(currentDate).format(dateFormat),
-        createTimeStart: createTimeStart || moment(beforeCurrentDate60Days).format(dateFormat),
+        createTimeEnd: this.getFinishedStateDate({
+          status,
+          currentDate,
+          createTimeEnd,
+        }),
+        createTimeStart: this.getFinishedStateDate({
+          status,
+          beforeCurrentDate60Days,
+          createTimeStart,
+        }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: endTimeEnd || moment(afterCurrentDate60Days).format(dateFormat),
-        endTimeStart: endTimeStart || moment(currentDate).format(dateFormat),
+        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
+        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
       };
     }
     return finalPostData;
+  }
+
+  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
+  @autobind
+  getFinishedStateDate({
+    status = STATE_EXECUTE_CODE,
+    value,
+    urlDate,
+  }) {
+    if (status === STATE_FINISHED_CODE) {
+      return urlDate || moment(value).format(dateFormat);
+    }
+    return '';
   }
 
   // 加载右侧panel中的详情内容
@@ -893,6 +927,7 @@ export default class PerformerView extends PureComponent {
       countFlowStatus,
       countAnswersByType,
       countExamineeByType,
+      getCustManagerScope,
     } = this.props;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     // 取id作为eventId
@@ -940,6 +975,11 @@ export default class PerformerView extends PureComponent {
     });
     // 管理者视图任务实施进度
     countFlowStatus({
+      missionId,
+      orgId: emp.getOrgId(),
+    });
+    // 管理者视图服务经理维度任务详细数据
+    getCustManagerScope({
       missionId,
       orgId: emp.getOrgId(),
     });

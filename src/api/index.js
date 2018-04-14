@@ -18,9 +18,8 @@ import mainPosition from './mainPosition';
 import morningBoradcast from './morningBoradcast';
 import preSaleQuery from './preSaleQuery';
 import stock from './stock';
-import exchange from './exchange';
+import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
-
 const api = apiCreator();
 
 export default {
@@ -65,7 +64,7 @@ export default {
   // 个股资讯
   stock: stock(api),
   // 积分兑换历史查询
-  exchange: exchange(api),
+  pointsExchange: pointsExchange(api),
   // 用户中心
   userCenter: userCenter(api),
 };

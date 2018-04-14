@@ -1,24 +1,24 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:19:15
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-12 16:13:49
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message, Modal, Upload, Alert } from 'antd';
+import { Input, Form, message, Modal, Upload, Alert, Spin } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
 import confirm from '../../common/Confirm';
-import GroupTable from './GroupTable';
+import Table from '../../common/commonTable';
 import Search from '../../common/Search';
 import Select from '../../common/Select';
 import Button from '../../common/Button';
 
-import tableStyles from './groupTable.less';
+import tableStyles from '../../common/commonTable/index.less';
 import styles from './customerGroupDetail.less';
 import logable from '../../../decorators/logable';
 import { request } from '../../../config';
@@ -85,7 +85,7 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustListSize: 0,
       dataSource: EMPTY_LIST,
       includeCustIdList: [],
-      needDeleteCustId: '',
+      needDeleteBrokerNumber: '',
       curPageCustList: EMPTY_LIST,
       // 客户添加方式默认值--单客户添加
       customerAddType: defaultType,
@@ -99,6 +99,8 @@ export default class CustomerGroupDetail extends PureComponent {
       importVisible: false,
       // 当前上传的文件
       file: {},
+      // 上传文件的loading
+      uploadLoading: false,
     };
   }
 
@@ -115,12 +117,12 @@ export default class CustomerGroupDetail extends PureComponent {
     const {
       dataSource,
       groupId,
-      needDeleteCustId,
+      needDeleteBrokerNumber,
       totalRecordNum: newRecordNum,
     } = this.state;
 
-    const prevResult = deleteResult[`${groupId}_${needDeleteCustId}`];
-    const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
+    const prevResult = deleteResult[`${groupId}_${needDeleteBrokerNumber}`];
+    const nextResult = nextDeleteResult[`${groupId}_${needDeleteBrokerNumber}`];
 
     if (prevData !== nextData) {
       this.setState({
@@ -132,7 +134,9 @@ export default class CustomerGroupDetail extends PureComponent {
 
     // 判断删除是否成功
     if (prevResult !== nextResult) {
-      const newDataSource = _.filter(dataSource, item => item.custId !== needDeleteCustId);
+      const newDataSource = _.filter(dataSource,
+        item => item.brokerNumber !== needDeleteBrokerNumber
+      );
       // 数据从表格删除
       this.setState({
         dataSource: newDataSource,
@@ -248,12 +252,13 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageSize,
       includeCustListSize,
     } = this.state;
-    const { custId } = record;
+    const { custId, brokerNumber } = record;
     // 新增下删除客户从includeCustIdList删除
     const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
-    const newIncludeCustIdList = _.filter(includeCustIdList, item => item !== custId);
+    const newIncludeCustIdList = _.filter(includeCustIdList, item => item.id !== custId);
 
-    if (_.includes(includeCustIdList, custId)) {
+    const custIdArray = _.map(includeCustIdList, 'id');
+    if (_.includes(custIdArray, custId)) {
       this.setState({
         includeCustIdList: newIncludeCustIdList,
         includeCustList: newIncludeCustList,
@@ -291,7 +296,7 @@ export default class CustomerGroupDetail extends PureComponent {
     }
 
     this.setState({
-      needDeleteCustId: custId,
+      needDeleteBrokerNumber: brokerNumber,
     });
   }
 
@@ -369,7 +374,7 @@ export default class CustomerGroupDetail extends PureComponent {
       return;
     }
     console.log('receive value, add customer to table', selectedItem);
-    const { custName, cusId, custLevelName, riskLevel, brokerNumber } = selectedItem;
+    const { custName, cusId, custLevelName, riskLevel, brokerNumber, custType } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
     const {
       includeCustIdList,
@@ -383,14 +388,15 @@ export default class CustomerGroupDetail extends PureComponent {
     } = this.state;
     const { custRiskBearing, onAddCustomerToGroup } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
-
-    // 判断includeCustIdList是否存在custId
-    if (_.includes(includeCustIdList, brokerNumber)) {
+    // 从includeCustIdList中取出id组成数组
+    const custIdArray = _.map(includeCustIdList, 'id');
+    // 判断custIdArray是否存在custId
+    if (_.includes(custIdArray, cusId)) {
       message.error('此客户已经添加过');
       return;
     }
-
-    const newCustIdList = _.concat(includeCustIdList, brokerNumber);
+    // 入参改变，后端要求传包含custId，custType的对象数组
+    const newCustIdList = _.concat(includeCustIdList, [{ id: cusId, custType }]);
 
     // 如果groupId不为空，则添加直接调用接口，添加
     if (_.isEmpty(groupId)) {
@@ -398,13 +404,12 @@ export default class CustomerGroupDetail extends PureComponent {
       // 新添加的数据放在表格的前面
       const newIncludeCustList = _.concat([{
         custName,
-        custId: brokerNumber,
+        custId: cusId,
         levelName: custLevelName,
         riskLevelName: riskLevelObject.value,
         id: brokerNumber,
         brokerNumber,
       }], includeCustList);
-
       const {
         curPageCustList,
         includeCustListSize,
@@ -484,10 +489,10 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   deleteCustomerFromGroupForever() {
     const { deleteCustomerFromGroup } = this.props;
-    const { groupId, needDeleteCustId } = this.state;
+    const { groupId, needDeleteBrokerNumber } = this.state;
     deleteCustomerFromGroup({
       groupId,
-      custId: needDeleteCustId,
+      brokerNumber: needDeleteBrokerNumber,
     });
   }
 
@@ -497,7 +502,9 @@ export default class CustomerGroupDetail extends PureComponent {
     this.setState({
       importVisible: false,
       includeCustList: [],
+      includeCustIdList: [],
       totalRecordNum: 0,
+      uploadLoading: true,
     }, () => {
       const uploadFile = info.file;
       this.setState({
@@ -512,6 +519,7 @@ export default class CustomerGroupDetail extends PureComponent {
             this.setState({
               multiErrmsg: '',
               attachmentId: data.attachmentId,
+              uploadLoading: false,
             }, () => {
               const { attachmentId } = this.state;
               const { queryBatchCustList } = this.props;
@@ -539,7 +547,9 @@ export default class CustomerGroupDetail extends PureComponent {
                 } = this.state;
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
-                const custIdList = _.map(multiBatchCustList, 'brokerNumber');
+                const custIdList = _.map(multiBatchCustList,
+                  item => ({ id: item.custId, custType: item.custType })
+                );
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(includeCustIdList, custIdList);
 
@@ -583,11 +593,15 @@ export default class CustomerGroupDetail extends PureComponent {
             // 上传的文件不符合要求，在页面显示做错信息
             this.setState({
               multiErrmsg: data.msg,
+              uploadLoading: false,
             });
           }
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
+          this.setState({
+            uploadLoading: false,
+          });
         }
       }
     });
@@ -630,7 +644,7 @@ export default class CustomerGroupDetail extends PureComponent {
       value: '姓名',
     },
     {
-      key: 'custId',
+      key: 'brokerNumber',
       value: '经济客户号',
     },
     {
@@ -663,6 +677,7 @@ export default class CustomerGroupDetail extends PureComponent {
       multiErrmsg,
       importVisible,
       file,
+      uploadLoading,
     } = this.state;
     const {
       form: { getFieldDecorator },
@@ -706,11 +721,11 @@ export default class CustomerGroupDetail extends PureComponent {
     };
 
     const uploadElement = _.isEmpty(attachmentId) ?
-    (<Upload {...uploadProps} {...this.props}>
-      <a>客户导入</a>
-    </Upload>)
-  :
-    (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
+      (<Upload {...uploadProps} {...this.props}>
+        <a>客户导入</a>
+      </Upload>)
+      :
+      (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
 
     return (
       <Form className={styles.groupDetail}>
@@ -815,6 +830,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 </div>
                 :
                 <div className={styles.multiCust}>
+                  <Spin className={styles.uploadLoading} spinning={uploadLoading} />
                   {uploadElement}
                   <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
                 </div>
@@ -835,7 +851,7 @@ export default class CustomerGroupDetail extends PureComponent {
             </div>
         }
         <div className={styles.customerListTable}>
-          <GroupTable
+          <Table
             pageData={{
               curPageNum,
               curPageSize,
@@ -845,18 +861,18 @@ export default class CustomerGroupDetail extends PureComponent {
             onSizeChange={this.handleShowSizeChange}
             onPageChange={this.handlePageChange}
             tableClass={
-            classnames({
-              [tableStyles.groupTable]: true,
-              [styles.custListTable]: true,
-            })
-          }
+              classnames({
+                [tableStyles.groupTable]: true,
+                [styles.custListTable]: true,
+              })
+            }
             titleColumn={titleColumn}
             actionSource={actionSource}
             isFirstColumnLink={false}
-          // 固定标题，内容滚动
+            // 固定标题，内容滚动
             scrollY={186}
             isFixedTitle
-          // 当listData数据源为空的时候是否需要填充空白行
+            // 当listData数据源为空的时候是否需要填充空白行
             emptyListDataNeedEmptyRow
           />
         </div>
