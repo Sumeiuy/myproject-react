@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-14 14:03:35
+ * @Last Modified time: 2018-04-14 16:46:27
  */
 
 import React, { PureComponent } from 'react';
@@ -1111,13 +1111,6 @@ export default class TaskFlow extends PureComponent {
     // 变量文字全部高亮显示
     if (missionDesc && currentEntry === 1) {
       newMissionDesc = missionDesc;
-      // newMissionDesc = (
-      //   <span className={styles.definedMention}>
-      //     <span>
-      //       <span>{missionDesc}</span>
-      //     </span>
-      //   </span>
-      // );
     }
 
     const isShowTitle = true;
