@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 22:46:56
+ * @Last Modified time: 2018-04-15 18:15:07
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -157,7 +157,6 @@ export default class ServeContent extends PureComponent {
     }));
     // 选择审批人的CSS class类名
     const approvalCls = cx([styles.approval, styles.title]);
-    const rightAreaApprovalCls = cx([styles.rightArea, styles.rightAreaApproval]);
 
     // 自由编辑下的serveContent
     const serveContent = {
@@ -189,7 +188,7 @@ export default class ServeContent extends PureComponent {
           (
             <div className={styles.serveRecord}>
               <div className={approvalCls}>选择审批人:</div>
-              <div className={rightAreaApprovalCls}>
+              <div className={styles.rightArea}>
                 <div className={styles.checkApprover} onClick={this.openApproverBoard}>
                   {approverName === '' ? '' : `${approverName}(${approverId})`}
                   <div className={styles.searchIcon}><Icon type="search" /></div>

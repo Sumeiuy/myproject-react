@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
+import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
 import logable from '../../../decorators/logable';
@@ -46,6 +47,7 @@ export default class CreateServiceRecord extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     loading: PropTypes.bool,
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string,
@@ -101,39 +103,11 @@ export default class CreateServiceRecord extends PureComponent {
   @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
-    if (!data) {
-      return;
-    }
+    if (_.isEmpty(data)) return;
 
-    const {
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceContent,
-      custUuid,
-    } = data;
+    const { id, addServeRecord } = this.props;
 
-    const {
-      id,
-      addServeRecord,
-    } = this.props;
-
-    addServeRecord({
-      custId: id,
-      serveWay: serviceWay,
-      serveType: serviceType,
-      type: serviceType,
-      serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
-      serveContentDesc: serviceContent,
-      feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveCustFeedBack: feedbackType,
-      serveCustFeedBack2: feedbackTypeChild || '',
-      uuid: custUuid,
-    });
+    addServeRecord({ ...data, custId: id });
   }
 
   // 关闭弹窗
@@ -171,6 +145,7 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       isShow,
       dict,
+      empInfo,
       loading,
       name,
       id,
@@ -215,6 +190,7 @@ export default class CreateServiceRecord extends PureComponent {
               <ServiceRecordContent
                 ref={ref => (this.serviceRecordContentRef = ref)}
                 dict={dict}
+                empInfo={empInfo}
                 custUuid={custUuid}
                 onDeleteFile={this.handleDeleteFile}
                 deleteFileResult={deleteFileResult}

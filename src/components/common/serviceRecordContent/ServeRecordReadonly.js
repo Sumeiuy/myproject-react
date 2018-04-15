@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 22:59:33
+ * @Last Modified time: 2018-04-15 15:00:07
  * @description 只读服务记录
  */
 
@@ -52,13 +52,13 @@ export default function ServiceRecordReadOnly(props) {
           !isZL
           ? (
             <div className={styles.serveRecord}>
-              <div className={styles.title}>服务记录人:</div>
+              <div className={styles.title}>服务记录:</div>
               <div className={styles.readOnlyText}>{serviceRecord}</div>
             </div>
           )
           : (
             <div className={styles.serveRecord}>
-              <div className={styles.title}>服务内容人:</div>
+              <div className={styles.title}>服务内容:</div>
               <div className={styles.readOnlyText}>
                 <div>{investAdviceTip}</div>
                 <div><span>{zlServiceRecord.title}</span><span>{zlServiceRecord.type}</span></div>

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 21:47:12
+ * @Last Modified time: 2018-04-15 09:55:48
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -64,9 +64,9 @@ export default class CascadeFeedbackSelect extends PureComponent {
     const firstOptions = feedbackList.map(this.renderOption);
     // 二级客户反馈选项
     let showSecondSelect = false;
-    const secondFeedbackList = _.find(feedbackList, item => item.key === first).children;
+    const secondFeedbackList = _.find(feedbackList, item => item.key === first).children || [];
     const isEmptySecondList = _.isEmpty(secondFeedbackList);
-    const secondOptions = isEmptySecondList.map(this.renderOption);
+    const secondOptions = secondFeedbackList.map(this.renderOption);
     // 判断如果一级反馈的文字与二级反馈的文字一样，则不显示二级反馈
     if (!isEmptySecondList) {
       const firstFeedback = _.find(feedbackList, { key: first });

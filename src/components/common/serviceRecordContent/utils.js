@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 20:20:42
+ * @Last Modified time: 2018-04-15 15:18:58
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -63,14 +63,26 @@ function getServeWayCode(value) {
 // 在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
 // 需要前端容错一下
 const errorFeedback = {
-  feedbackType: '99999',
-  feedbackTypeList: [{ key: '99999', value: '其它' }],
-  feedbackTypeChild: '100000',
-  feedbackTypeChildList: [{ key: '100000', value: '100000' }],
+  key: '99999',
+  value: '其他',
+  children: { key: '100000', value: '100000' },
 };
+
+// 服务状态单选按钮组配置,目前只需要配置这两种状态类型
+const serveStatusRadioGroupMap = [
+  {
+    key: '20',
+    value: '处理中',
+  },
+  {
+    key: '30',
+    value: '完成',
+  },
+];
 
 export default {
   serveWaySelectMap,
   errorFeedback,
   getServeWayCode,
+  serveStatusRadioGroupMap,
 };

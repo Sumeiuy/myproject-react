@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 20:01:54
+ * @Last Modified time: 2018-04-15 18:38:13
  * 服务记录表单
  */
 
@@ -34,43 +34,8 @@ export default class ServiceRecordForm extends PureComponent {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
 
-    const {
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      serviceContent,
-      currentFile,
-    } = data;
-
-    const {
-      formData: { custId = '', missionFlowId = '' },
-      addServeRecord,
-      custUuid,
-    } = this.props;
-    const postBody = {
-      // 经纪客户号
-      custId,
-      serveWay: serviceWay,
-      serveType: serviceType,
-      type: serviceType,
-      serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
-      serveContentDesc: serviceContent,
-      feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveCustFeedBack: feedbackType,
-      serveCustFeedBack2: feedbackTypeChild || '',
-      missionFlowId,
-      flowStatus: serviceStatus,
-      // 只有上传了附件才需要将custUuid传给后台，不然传空字符串
-      uuid: (custUuid && !_.isEmpty(currentFile)) ? custUuid : '',
-    };
-
     // 添加服务记录
-    addServeRecord(postBody, this.handleCancel);
+    this.props.addServeRecord(data, this.handleCancel);
   }
 
   @autobind
@@ -100,6 +65,8 @@ export default class ServiceRecordForm extends PureComponent {
       eventId,
       taskTypeCode,
       empInfo,
+      serviceTypeCode,
+      statusCode,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -138,6 +105,8 @@ export default class ServiceRecordForm extends PureComponent {
           queryApprovalList={queryApprovalList}
           taskTypeCode={taskTypeCode}
           eventId={eventId}
+          serviceTypeCode={serviceTypeCode}
+          flowStatusCode={statusCode}
         />
 
         {
@@ -176,4 +145,6 @@ ServiceRecordForm.propTypes = {
   zhangleApprovalList: PropTypes.array.isRequired,
   taskTypeCode: PropTypes.string.isRequired,
   eventId: PropTypes.string.isRequired,
+  serviceTypeCode: PropTypes.string.isRequired,
+  statusCode: PropTypes.string.isRequired,
 };

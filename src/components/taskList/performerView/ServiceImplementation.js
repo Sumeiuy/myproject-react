@@ -94,7 +94,7 @@ export default class ServiceImplementation extends PureComponent {
     const { list } = this.state;
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
-        if (flow.isCompleted(flowStatus) || flow.isProcess(flowStatus)) {
+        if (flow.isComplete(flowStatus) || flow.isProcess(flowStatus)) {
           const { name } = flow.getFlowStatus(flowStatus);
           return {
             ...item,
@@ -158,6 +158,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       currentId,
       dict,
+      empInfo,
       isFold,
       handleCollapseClick,
       getServiceRecord,
@@ -275,9 +276,11 @@ export default class ServiceImplementation extends PureComponent {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
           ? <ServiceRecordForm
             dict={dict}
+            empInfo={empInfo}
             addServeRecord={this.addServiceRecord}
             isReadOnly={isReadOnly}
             isReject={isReject}
+            statusCode={statusCode}
             isEntranceFromPerformerView
             isFold={isFold}
             queryCustUuid={queryCustUuid}
@@ -291,6 +294,7 @@ export default class ServiceImplementation extends PureComponent {
             custFeedbackList={custFeedbackList}
             eventId={eventId}
             taskTypeCode={taskTypeCode}
+            serviceTypeCode={serviceTypeCode}
             queryApprovalList={queryApprovalList}
             zhangleApprovalList={zhangleApprovalList}
           /> : null

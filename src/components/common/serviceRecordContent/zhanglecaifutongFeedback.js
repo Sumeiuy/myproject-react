@@ -2,29 +2,31 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 17:00:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 10:15:22
+ * @Last Modified time: 2018-04-15 19:58:53
  * @description 涨乐财富通服务方式先显示的客户反馈
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { flow } from '../../taskList/performerView/config';
 
 import styles from './zhanglecaifutongFeedback.less';
 
 export default function ZLFeedback(props) {
-  const { showListMode, feedbackList, feedback, feedbackTime } = props;
+  const { flowStatusCode, feedbackList, feedback, feedbackTime } = props;
+  const isCompleted = flow.isComplete(flowStatusCode);
   const feedbackListText = _.isEmpty(feedbackList) ? '无'
     : feedbackList.map((item, index) => `${index}、${item.label}`).join('，');
   const feedbackText = _.isEmpty(feedback) ? '暂无反馈' : feedback;
   return (
     <div className={styles.custFeedbackSection}>
       <div className={styles.feedbackType}>
-        <div className={styles.title}>{ showListMode ? '客户可选反馈：' : '客户反馈：'}</div>
-        <div className={styles.content}>{showListMode ? feedbackListText : feedbackText}</div>
+        <div className={styles.title}>{isCompleted ? '客户反馈：' : '客户可选反馈：'}</div>
+        <div className={styles.content}>{isCompleted ? feedbackText : feedbackListText}</div>
       </div>
       {
-        showListMode ? null
+        !isCompleted ? null
         : (
           <div className={styles.feedbackTime}>
             <div className={styles.title}>反馈时间:</div>
@@ -37,8 +39,8 @@ export default function ZLFeedback(props) {
 }
 
 ZLFeedback.propTypes = {
-  // 判断是展示可选的列表，还是展示用户已经选择的反馈
-  showListMode: PropTypes.bool,
+  // 流程状态Code
+  flowStatusCode: PropTypes.string,
   // 可选列表
   feedbackList: PropTypes.array,
   // 客户反馈时间
@@ -48,7 +50,7 @@ ZLFeedback.propTypes = {
 };
 
 ZLFeedback.defaultProps = {
-  showListMode: false,
+  flowStatusCode: '',
   feedbackList: [],
   feedbackTime: '',
   feedback: '暂无反馈',
