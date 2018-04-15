@@ -90,8 +90,8 @@ export default class LabelManager extends PureComponent {
       title: 'age',
       dataIndex: 'age',
       width: '25%',
-      render: () => (<div
-        onClick={() => { this.confirmDelLabel(); }}
+      render: (text, record) => (<div
+        onClick={() => { this.confirmDelLabel(record.id); }}
         className={styles.labelDel}
       >
         <Icon type="shanchu" />

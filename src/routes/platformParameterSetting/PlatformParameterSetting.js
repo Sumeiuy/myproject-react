@@ -17,7 +17,7 @@ export default class PlatformParameterSetting extends PureComponent {
       <Main>
         <Switch>
           <Route exact path="/platformParameterSetting/customerFeedback" component={CustomerFeedback} />
-          <Route exact path="/platformParameterSetting/userCenter" component={LabelManager} />
+          <Route exact path="/platformParameterSetting/labelManager" component={LabelManager} />
         </Switch>
       </Main>
     );

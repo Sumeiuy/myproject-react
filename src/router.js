@@ -63,6 +63,8 @@ import Phone from './routes/phone/Home';
 import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 // 平台参数设置
 import PlatformParameterSetting from './routes/platformParameterSetting/PlatformParameterSetting';
+// 用户信息审核
+import userInfoApproval from './routes/userCenter/userInfoApproval';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -178,6 +180,12 @@ const routes = [
   {
     path: '/userCenter',
     component: UserBasicInfo,
+    children: [
+      {
+        path: '/personalInfoApproval',
+        component: userInfoApproval,
+      },
+    ],
   },
   {
     path: '/platformParameterSetting',

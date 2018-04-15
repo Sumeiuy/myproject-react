@@ -15,6 +15,7 @@ export default {
     userBaseInfo: EMPTY_OBJECT,
     allLabels: EMPTY_LIST,
     LabelAndDescApprover: EMPTY_LIST,
+    approvalInfo: EMPTY_OBJECT,
   },
   reducers: {
     queryUserBaseInfoSuccess(state, action) {
@@ -33,6 +34,12 @@ export default {
       return {
         ...state,
         LabelAndDescApprover: action.payload,
+      };
+    },
+    queryApprovalInfoSuccess(state, action) {
+      return {
+        ...state,
+        approvalInfo: action.payload,
       };
     },
   },
@@ -78,6 +85,20 @@ export default {
     // 添加标签
     * addLabel({ payload }, { call }) {
       yield call(api.addLabel, payload);
+    },
+    // 查询审批信息
+    * queryApprovalInfo({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryApprovalInfo, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryApprovalInfoSuccess',
+          payload: resultData,
+        });
+      }
+    },
+    // 审批信息
+    * approvalEmpInfo({ payload }, { call }) {
+      yield call(api.approvalEmpInfo, payload);
     },
   },
   subscriptions: {

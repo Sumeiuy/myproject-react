@@ -15,14 +15,14 @@ export default function taskFeedback(api) {
     // 添加标签
     addLabel: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/addLabel', query),
     // 修改标签
-    updateLabel: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/updateLabel', query),
+    updateLabel: query => api.post('/groovynoauth/fsp/emp/label/updateLabel', query),
     // 删除标签
-    deleteLabel: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/deleteLabel', query),
+    deleteLabel: query => api.post('/groovynoauth/fsp/emp/label/deleteLabel', query),
     // 提交审批
     sentEmpInfoApproval: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/sentEmpInfoApproval', query),
     // 查询审批流程及员工信息
     queryApprovalInfo: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/queryApprovalInfo', query),
-    // 审批信息
+    // 审批信息(通过or拒绝)
     approvalEmpInfo: query => api.post('/groovynoauth/fsp/emp/labelAndDesc/approvalEmpInfo', query),
   };
 }
