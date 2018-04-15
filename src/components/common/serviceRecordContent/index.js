@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 20:16:53
+ * @Last Modified time: 2018-04-15 20:30:11
  */
 
 import React, { PureComponent } from 'react';
@@ -122,7 +122,7 @@ export default class ServiceRecordContent extends PureComponent {
     return childFeedback;
   }
 
-  // 将客户反馈的实际值转化数据结构，使用key和value
+  // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
   @autobind
   convertFeedback(feedback) {
     let tempChildFeedback = {};
@@ -131,7 +131,6 @@ export default class ServiceRecordContent extends PureComponent {
     } else if (!_.isEmpty(feedback.children) && _.isObject(feedback.children)) {
       tempChildFeedback = this.fixDefaultChildFeedback(feedback.children);
     }
-    console.warn('tempChildFeedback: ', tempChildFeedback);
     return {
       ...this.fixDefaultChildFeedback(feedback),
       children: tempChildFeedback,
@@ -389,7 +388,6 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '服务方式', value: '$args[0]' } })
   handleServiceWayChange(value) {
-    console.warn('handleServiceWayChange: ', value);
     this.setState({
       isSelectZhangleFins: serveWayUtil.isZhangle(value),
       serviceWayCode: value,
@@ -467,7 +465,6 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '客户反馈级联', value: '$args[0]' } })
   handleCascadeSelectChange({ first, second }) {
-    console.warn('handleCascadeSelectChange: ', { first, second });
     this.setState({
       custFeedback: first,
       custFeedback2: second,
@@ -589,7 +586,6 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackList,
       flowStatusCode,
     } = this.props;
-    console.warn('formData: ', this.props.formData);
     const {
       serviceWayCode,
       serviceStatus,
