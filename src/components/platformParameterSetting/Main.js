@@ -12,13 +12,19 @@ import Header from './Header';
 export default class Main extends PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
-  }
+    menu: PropTypes.array.isRequired,
+    matchPath: PropTypes.string.isRequired,
+  };
 
   render() {
-    const { children } = this.props;
+    const {
+      children,
+      menu,
+      matchPath,
+    } = this.props;
     return (
       <div>
-        <Header />
+        <Header menu={menu} matchPath={matchPath} />
         {children}
       </div>
     );
