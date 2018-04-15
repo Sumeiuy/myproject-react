@@ -24,8 +24,8 @@ export default class ExtendedTable extends Table {
     } else if (this.props.size === 'middle' || this.props.size === 'small') {
       size = 'small';
     }
-    let position = pagination.position || 'bottom';
-    let total = pagination.total || this.getLocalData().length;
+    const position = pagination.position || 'bottom';
+    const total = pagination.total || this.getLocalData().length;
     return (total > 0 && (position === paginationPosition || position === 'both')) ? (
       <Pagination
         key={`pagination-${paginationPosition}`}

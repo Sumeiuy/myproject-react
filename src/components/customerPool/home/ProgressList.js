@@ -146,6 +146,7 @@ export default class ProgressList extends PureComponent {
                 接口未传description字段，则用页面中定义的指标说明
               */}
               <Popover
+                title={item.cust}
                 content={item.description || description[item.cust]}
                 placement="bottom"
                 overlayStyle={{ maxWidth: '320px' }}

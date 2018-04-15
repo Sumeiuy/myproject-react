@@ -61,7 +61,6 @@ function renderIntro(data, push) {
           </Popover>
         </div>
         <div className={styles.count2}>
-          <span>/</span>
           <Popover
             title={`${item.property}${item.unit}`}
             content={item.propertyDesc}
@@ -69,8 +68,8 @@ function renderIntro(data, push) {
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
           >
-            <span>{item.property}</span>
-            <span>{item.unit}</span>
+            <span className={styles.properyValue}>{`/ ${item.property}`}</span>
+            <span className={styles.unit}>{item.unit}</span>
           </Popover>
         </div>
       </div>

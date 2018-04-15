@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 15:18:48
+ * @Last Modified time: 2018-04-15 09:10:05
  * @description 任务管理首页
  */
 
@@ -36,6 +36,7 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
+  STATE_FINISHED_CODE,
   STATE_ALL_CODE,
 } from './config';
 
@@ -689,23 +690,46 @@ export default class PerformerView extends PureComponent {
         finalPostData.status = status;
       }
     }
+    // 状态默认选中‘执行中’, status传50，其余传对应的code码
+    finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     if (this.isInitiatorView(currentViewType)) {
       const { createTimeEnd, createTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        createTimeEnd: createTimeEnd || moment(currentDate).format(dateFormat),
-        createTimeStart: createTimeStart || moment(beforeCurrentDate60Days).format(dateFormat),
+        createTimeEnd: this.getFinishedStateDate({
+          status,
+          currentDate,
+          createTimeEnd,
+        }),
+        createTimeStart: this.getFinishedStateDate({
+          status,
+          beforeCurrentDate60Days,
+          createTimeStart,
+        }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: endTimeEnd || moment(afterCurrentDate60Days).format(dateFormat),
-        endTimeStart: endTimeStart || moment(currentDate).format(dateFormat),
+        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
+        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
       };
     }
     return finalPostData;
+  }
+
+  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
+  @autobind
+  getFinishedStateDate({
+    status = STATE_EXECUTE_CODE,
+    value,
+    urlDate,
+  }) {
+    if (status === STATE_FINISHED_CODE) {
+      return urlDate || moment(value).format(dateFormat);
+    }
+    return '';
   }
 
   // 加载右侧panel中的详情内容
