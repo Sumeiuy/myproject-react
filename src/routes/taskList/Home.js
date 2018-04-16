@@ -709,21 +709,29 @@ export default class PerformerView extends PureComponent {
         ...finalPostData,
         createTimeEnd: this.getFinishedStateDate({
           status,
-          currentDate,
-          createTimeEnd,
+          value: currentDate,
+          urlDate: createTimeEnd,
         }),
         createTimeStart: this.getFinishedStateDate({
           status,
-          beforeCurrentDate60Days,
-          createTimeStart,
+          value: beforeCurrentDate60Days,
+          urlDate: createTimeStart,
         }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
-        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
+        endTimeEnd: this.getFinishedStateDate({
+          status,
+          value: afterCurrentDate60Days,
+          urlDate: endTimeEnd,
+        }),
+        endTimeStart: this.getFinishedStateDate({
+          status,
+          value: currentDate,
+          urlDate: endTimeStart,
+        }),
       };
     }
     return finalPostData;
