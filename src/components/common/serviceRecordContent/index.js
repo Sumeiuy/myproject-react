@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 10:04:58
+ * @Last Modified time: 2018-04-16 11:48:18
  */
 
 import React, { PureComponent } from 'react';
@@ -123,7 +123,7 @@ export default class ServiceRecordContent extends PureComponent {
     };
   }
 
-  // 根据服务类型serviceTypeCode找到相关的额feedbackList
+  // 根据服务类型serviceTypeCode找到相关的feedbackList
   @autobind
   findFeedbackListByServiceTypeCode(code) {
     const { formData: { motCustfeedBackDict } } = this.props;

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 09:55:48
+ * @Last Modified time: 2018-04-16 11:06:39
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -19,11 +19,22 @@ export default class CascadeFeedbackSelect extends PureComponent {
   constructor(props) {
     super(props);
     const { feedbackList } = this.props;
-    const secondList = _.find(feedbackList, item => item.key === feedbackList[0].key).children;
+    const first = _.get(feedbackList, '[0].key') || '';
+    const second = _.get(feedbackList, '[0].children[0].key') || '';
     this.state = {
-      first: feedbackList[0].key,
-      second: secondList[0].key,
+      first,
+      second,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { feedbackList: prevList } = this.props;
+    const { feedbackList: nextList } = nextProps;
+    if (!_.isEqual(prevList, nextList)) {
+      const first = _.get(nextList, '[0].key') || '';
+      const second = _.get(nextList, '[0].children[0].key') || '';
+      this.setState({ first, second });
+    }
   }
 
   @autobind
@@ -31,12 +42,18 @@ export default class CascadeFeedbackSelect extends PureComponent {
     this.customerFeedbackRef = input;
   }
 
+  // 根据选中的一级客户反馈，获取二级客户反馈列表
+  @autobind
+  findChildrenByFirstSelect(value) {
+    const { feedbackList } = this.props;
+    return _.find(feedbackList, item => item.key === value).children || [];
+  }
+
   // 改变一级客户反馈
   @autobind
   handleFirstFeedbakSelectChange(value) {
     // 切换一级，需要同时将二级修改
-    const { feedbackList } = this.props;
-    const secondList = _.find(feedbackList, item => item.key === value).children;
+    const secondList = this.findChildrenByFirstSelect(value);
     const secondFeedback = secondList[0] || {};
     this.setState({
       first: value,
@@ -64,7 +81,7 @@ export default class CascadeFeedbackSelect extends PureComponent {
     const firstOptions = feedbackList.map(this.renderOption);
     // 二级客户反馈选项
     let showSecondSelect = false;
-    const secondFeedbackList = _.find(feedbackList, item => item.key === first).children || [];
+    const secondFeedbackList = this.findChildrenByFirstSelect(first);
     const isEmptySecondList = _.isEmpty(secondFeedbackList);
     const secondOptions = secondFeedbackList.map(this.renderOption);
     // 判断如果一级反馈的文字与二级反馈的文字一样，则不显示二级反馈
