@@ -1,0 +1,111 @@
+.basicInfo {
+  color: #4a4a4a;
+  .userInfo {
+    overflow: hidden;
+    .label {
+      flex: 0 0;
+    }
+  }
+  .personalDesc {
+    padding-top: 15px;
+    .label {
+      flex: 0 0 65px;
+      div:first-child {
+        font-weight: bold;
+      }
+      div:nth-child(2) {
+        color: #ff3c54;
+      }
+    }
+    .inputWrap {
+      width: 100%;
+      .hideInput {
+        width: 0;
+        height: 0;
+      }
+      .errorInfo {
+        color: red;
+      }
+    }
+    .selectLabel {
+      margin: 8px 0 8px 65px;
+      button {
+        color: #108ee9;
+        border: 1px solid #108ee9;
+      }
+    }
+    .selectApprover {
+      margin-top: 12px;
+      :global {
+        label {
+          color: #4a4a4a;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  .headerImg {
+    float: left;
+    padding: 0 15px 10px 0;
+    .desc {
+      font-size: 14px;
+      text-align: center;
+      :global {
+        .ant-card-meta-description {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  .userInfoDesc {
+    font-size: 14px;
+    overflow: hidden;
+  }
+  .userImg {
+    width: 138px;
+    height: 138px;
+    padding: 5px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .editorInfoSubmit {
+    margin-top: 55px;
+    padding: 0 15px;
+    display: flex;
+    justify-content: flex-end;
+    button {
+      margin-left: 12px;
+    }
+  }
+  :global {
+    .ant-spin-container {
+      .ant-list-item {
+        border-bottom: none;
+        font-size: 14px;
+        &:first-child {
+          padding-top: 5px;
+        }
+        &:last-child {
+          padding-bottom: 5px;
+        }
+        b {
+          margin-right: 7px;
+        }
+      }
+    }
+  }
+}
+
+.labelContent {
+  width: 100%;
+  max-width: 180px;
+  min-height: 150px;
+  max-height: 230px;
+  overflow: auto;
+}
+
+.labelPopover {
+  padding-right: 5px;
+}

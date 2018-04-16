@@ -162,7 +162,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       operate,
     }).then(() => {
       if (operate === COMMITOPERATE) {
-        message.success('该服务经理主职位修改成功');
+        message.success('提交成功');
       } else {
         message.success('该服务经理主职位设置已被终止');
       }

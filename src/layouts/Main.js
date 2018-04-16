@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
+import { LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
@@ -142,7 +144,7 @@ export default class Main extends Component {
       motSelfBuiltFeedbackList,
     } = this.props;
     return (
-      <div>
+      <LocaleProvider locale={zhCN}>
         <div className={styles.layout}>
           <div className={styles.main}>
             <div className={styles.container} id="container">
@@ -179,7 +181,7 @@ export default class Main extends Component {
             </div>
           </div>
         </div>
-      </div>
+      </LocaleProvider>
     );
   }
 }
