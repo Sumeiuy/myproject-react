@@ -3,46 +3,100 @@
 .container {
   display: block;
   width: 100%;
-  // ['170px', '100px', '100px', '100px', '100px', '100px' , '150px']
+  // ['200px', '100px', '100px', '100px', '100px', '100px' , '200px']
   .notFoldedScope {
-    table {
-      tbody > tr > td:nth-child(1) {
-        :global {
-          .column {
-            max-width: 150px;
+    // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，内容文本宽度其实不长，但是为了自适应
+    // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
+    // 主要是因为用了左右滚动加上左边是一个fixed的table
+    :global {
+      .ant-table-scroll {
+        colgroup {
+          col:first-child {
+            max-width: 200px;
+          }
+        }
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 170px;
+              }
+            }
+          }
+          tbody > tr > td:last-child {
+            :global {
+              .column {
+                max-width: 190px;
+              }
+            }
+          }
+          tbody > tr > td:not(:first-child):not(:last-child) {
+            :global {
+              .column {
+                max-width: 90px;
+              }
+            }
           }
         }
       }
-      tbody > tr > td:last-child {
-        :global {
-          .column {
-            max-width: 130px;
-          }
-        }
-      }
-      tbody > tr > td:not(:first-child):not(:last-child) {
-        :global {
-          .column {
-            max-width: 90px;
+      .ant-table-fixed-left {
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 170px;
+              }
+            }
           }
         }
       }
     }
   }
-  // ['310px', '160px', '160px', '160px', '160px', '160px', '160px']
+  // ['310px', '160px', '160px', '160px', '160px', '160px', '200px']
   .foldedScope {
-    table {
-      tbody > tr > td:nth-child(1) {
-        :global {
-          .column {
-            max-width: 280px;
+    // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，
+    // 内容文本宽度其实不长，但是为了自适应
+    // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
+    // 主要是因为用了左右滚动加上左边是一个fixed的table
+    :global {
+      .ant-table-scroll {
+        colgroup {
+          col:first-child {
+            max-width: 310px;
+          }
+        }
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 280px;
+              }
+            }
+          }
+          tbody > tr > td:not(:first-child):not(:last-child) {
+            :global {
+              .column {
+                max-width: 150px;
+              }
+            }
+          }
+          tbody > tr > td:last-child {
+            :global {
+              .column {
+                max-width: 190px;
+              }
+            }
           }
         }
       }
-      tbody > tr > td:not(:first-child) {
-        :global {
-          .column {
-            max-width: 140px;
+      .ant-table-fixed-left {
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 280px;
+              }
+            }
           }
         }
       }
@@ -79,7 +133,7 @@
     }
     table > thead > tr > th:first-child {
       span {
-        margin-left: 36px;
+        margin-left: 20px;
       }
     }
     table > thead > tr > th:nth-child(2) {
@@ -95,11 +149,18 @@
     table > tbody > tr > td:first-child {
       :global {
         .column {
-          margin-left: 36px;
+          margin-left: 20px;
         }
       }
     }
     :global {
+      .ant-table-fixed-left.ant-table-body-inner {
+        margin-right: 0;
+        padding-right: 0;
+      }
+      .ant-table {
+        box-shadow: 0 2px 2px 0p #efefef;
+      }
       .ant-table-header {
         background-color: #fff;
         table {

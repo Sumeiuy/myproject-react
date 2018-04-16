@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 18:13:13
+ * @Last Modified time: 2018-04-16 15:45:05
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Mention } from 'antd';
+import { Steps, message, Button, Mention, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { stateToHTML } from 'draft-js-export-html';
@@ -23,7 +23,7 @@ import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
+// import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
@@ -34,6 +34,8 @@ const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const { toString } = Mention;
+// 瞄准镜标签入口
+const SIGHT_LABEL_ENTRY = 1;
 
 const effects = {
   // 预览客户细分数据
@@ -210,7 +212,7 @@ export default class TaskFlow extends PureComponent {
   };
 
   static defaultProps = {
-    dict: {},
+    dict: EMPTY_OBJECT,
     getLabelPeopleLoading: false,
     getApprovalListLoading: false,
     getFiltersOfSightingTelescopeLoading: false,
@@ -230,7 +232,7 @@ export default class TaskFlow extends PureComponent {
       nextStepBtnIsDisabled = true,
       labelCust = EMPTY_OBJECT,
       currentEntry = -1,
-    } = props.storedTaskFlowData || {};
+    } = props.storedTaskFlowData || EMPTY_OBJECT;
 
     const {
       currentSelectLabelName = null,
@@ -446,13 +448,11 @@ export default class TaskFlow extends PureComponent {
       if (currentEntry === 0) {
         if (!uploadedFileKey) {
           isSelectCust = false;
-          // message.error('请导入Excel文件');
           return;
         }
       } else if (currentEntry === 1) {
         if (!labelId) {
           isSelectCust = false;
-          // message.error('请利用标签圈出目标客户');
           return;
         }
       }
@@ -466,12 +466,7 @@ export default class TaskFlow extends PureComponent {
           fileId: uploadedFileKey,
         };
       } else {
-        if (customNum === 0) {
-          // message.error('此标签下无客户，不可发起任务，请选择其他标签');
-          return;
-        }
-        if (custNum === 0) {
-          // message.error('此标签下未筛选出客户，请重新筛选');
+        if (customNum === 0 || custNum === 0) {
           return;
         }
 
@@ -497,13 +492,41 @@ export default class TaskFlow extends PureComponent {
             isSelectCust = false;
             message.error('客户包含非本人名下客户，请重新选择');
           } else {
+            // 切换了标签，需要添加提示
+            // 确定之后，进入下一步，将任务提示替换成新的标签变量提示，不然进不了下一步
+            const { labelCust: originLabelCust = EMPTY_OBJECT } = storedTaskFlowData;
+            const { labelId: originLabelId } = originLabelCust;
+            // 只有是标签圈人才需要判断一下任务提示
+            let currentStep = currentEntry === 0 ? current + 1 : current;
+            if (originLabelId && labelId !== originLabelId) {
+              Modal.confirm({
+                title: '提示',
+                content: '变更了标签后，已输入的任务提示将清空，确认变更吗？',
+                onCancel: () => {
+                },
+                onOk: () => {
+                  currentStep = this.state.current + 1;
+                  // 保存上一步数据
+                  this.saveTaskFlowFinalData({
+                    ...this.props.storedTaskFlowData,
+                    current: currentStep,
+                  });
+                  this.setState({
+                    current: currentStep,
+                  });
+                },
+              });
+            } else {
+              currentStep = current + 1;
+            }
+
+            // 保存上一步数据
             this.saveTaskFlowFinalData({
               ...storedTaskFlowData,
               taskFormData,
               ...pickTargetCustomerData,
               resultTrackData,
               missionInvestigationData,
-              current: current + 1,
               // 选择客户当前入口
               currentEntry,
               // 将审批权限存到redux上，不然切换tab时，权限会丢失
@@ -511,13 +534,15 @@ export default class TaskFlow extends PureComponent {
               canGoNextStep,
               needMissionInvestigation,
               isIncludeNotMineCust,
-              missionDesc,
+              missionDesc: decodeURIComponent(missionDesc),
+              current: currentStep,
             });
+
             this.setState({
+              current: currentStep,
               needApproval,
               canGoNextStep,
               needMissionInvestigation,
-              current: current + 1,
             });
           }
         }
@@ -688,6 +713,8 @@ export default class TaskFlow extends PureComponent {
         current: current + 1,
         // 选择客户当前入口
         currentEntry,
+        // 除非在第一步标签圈人的时候，填充任务提示，其它步骤都置为空
+        missionDesc: '',
       });
       this.setState({
         current: current + 1,
@@ -1076,13 +1103,15 @@ export default class TaskFlow extends PureComponent {
       taskFormData = EMPTY_OBJECT,
       currentEntry,
       missionDesc,
+      labelCust,
     } = storedTaskFlowData;
-    const { templetDesc } = taskFormData;
+    const { templetDesc } = taskFormData || EMPTY_OBJECT;
+    const { isSightLabel } = labelCust || EMPTY_OBJECT;
     let newMissionDesc = templetDesc;
-    // 将选择的标签信息塞入任务提示，如果任务提示之前存在某一个标签的信息，那么只替换这个标签的位置，
-    // 否则，则直接insert
-    if (newMissionDesc && currentEntry === 1) {
-      newMissionDesc = replaceMissionDesc(templetDesc, missionDesc);
+    // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
+    // 变量文字全部高亮显示
+    if (missionDesc && currentEntry === 1) {
+      newMissionDesc = missionDesc;
     }
 
     const isShowTitle = true;
@@ -1095,7 +1124,6 @@ export default class TaskFlow extends PureComponent {
           wrappedComponentRef={inst => (this.SelectTargetCustomerRef = inst)}
           dict={dict}
           location={location}
-          previousData={{ ...taskFormData, templetDesc: newMissionDesc }}
           isShowTitle={isShowTitle}
           onChange={this.onChange}
           switchBottomFromHeader={this.switchBottomFromHeader}
@@ -1130,6 +1158,8 @@ export default class TaskFlow extends PureComponent {
           // 将任务提示回填
           previousData={{ ...taskFormData }}
           templetDesc={newMissionDesc}
+          // 是不是瞄准镜标签入口，并且标签是瞄准镜标签
+          isSightLabel={currentEntry === SIGHT_LABEL_ENTRY && isSightLabel}
           isShowTitle={isShowTitle}
           isShowErrorInfo={isShowErrorInfo}
           isShowErrorExcuteType={isShowErrorExcuteType}
