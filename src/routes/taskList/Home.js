@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:57:06
+ * @Last Modified time: 2018-04-16 16:33:49
  * @description 任务管理首页
  */
 
@@ -349,7 +349,7 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
     } = this.state;
-    const { empNum = 0 } = missionImplementationDetail;
+    const { empNum = 0 } = missionImplementationDetail || {};
 
     return {
       dict,
