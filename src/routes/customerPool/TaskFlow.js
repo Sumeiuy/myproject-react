@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-14 16:46:27
+ * @Last Modified time: 2018-04-16 15:45:05
  */
 
 import React, { PureComponent } from 'react';
@@ -34,7 +34,8 @@ const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const { toString } = Mention;
-// const NOOP = _.noop;
+// 瞄准镜标签入口
+const SIGHT_LABEL_ENTRY = 1;
 
 const effects = {
   // 预览客户细分数据
@@ -514,8 +515,6 @@ export default class TaskFlow extends PureComponent {
                     current: currentStep,
                   });
                 },
-                cancelText: '取消',
-                okText: '确定',
               });
             } else {
               currentStep = current + 1;
@@ -535,7 +534,7 @@ export default class TaskFlow extends PureComponent {
               canGoNextStep,
               needMissionInvestigation,
               isIncludeNotMineCust,
-              missionDesc,
+              missionDesc: decodeURIComponent(missionDesc),
               current: currentStep,
             });
 
@@ -1104,8 +1103,10 @@ export default class TaskFlow extends PureComponent {
       taskFormData = EMPTY_OBJECT,
       currentEntry,
       missionDesc,
+      labelCust,
     } = storedTaskFlowData;
-    const { templetDesc } = taskFormData;
+    const { templetDesc } = taskFormData || EMPTY_OBJECT;
+    const { isSightLabel } = labelCust || EMPTY_OBJECT;
     let newMissionDesc = templetDesc;
     // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
     // 变量文字全部高亮显示
@@ -1157,6 +1158,8 @@ export default class TaskFlow extends PureComponent {
           // 将任务提示回填
           previousData={{ ...taskFormData }}
           templetDesc={newMissionDesc}
+          // 是不是瞄准镜标签入口，并且标签是瞄准镜标签
+          isSightLabel={currentEntry === SIGHT_LABEL_ENTRY && isSightLabel}
           isShowTitle={isShowTitle}
           isShowErrorInfo={isShowErrorInfo}
           isShowErrorExcuteType={isShowErrorExcuteType}

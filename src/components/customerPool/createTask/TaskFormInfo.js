@@ -267,7 +267,8 @@ export default class TaskFormInfo extends PureComponent {
     const suggestions = filtered.map(suggestion => (
       <Nav
         value={suggestion.type}
-        data={suggestion.type.indexOf('瞄准镜') !== -1 ? 'sightLabel' : suggestion}
+        // 来自瞄准镜，则添加一个sightLabel标记
+        data={suggestion.isSightingScope ? 'sightLabel' : suggestion}
       >
         <span>{suggestion.name}</span>
       </Nav>

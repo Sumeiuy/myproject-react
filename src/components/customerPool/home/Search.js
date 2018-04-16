@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 16:24:39
+ * @Last Modified time: 2018-04-16 15:05:16
  * @description 客户池头部搜索组件
  */
 
@@ -15,6 +15,7 @@ import _ from 'lodash';
 import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
+import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
 import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
@@ -165,28 +166,11 @@ export default class Search extends PureComponent {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
       labelMapping: sightingScopeBool ? item.id : item.type,
       // 任务提示
-      missionDesc: this.padMissionDesc(sightingScopeBool, item.id, item.name),
+      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.name),
       labelName: encodeURIComponent(item.name),
       labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.name),
     });
-  }
-
-  /**
-   * 根据标签类型，获取任务提示的内容，瞄准镜用变量替换，不是瞄准镜用普通任务提示
-   * @param {*bool} sightingScopeBool 是否来自瞄准镜
-   * @param {*string} labelId 标签id
-   * @param {*string} labelName 标签名字
-   */
-  padMissionDesc(sightingScopeBool, labelId, labelName) {
-    // 来自普通标签
-    let missionDesc = `该客户筛选自${labelName}`;
-    // 来自瞄准镜标签
-    if (sightingScopeBool) {
-      missionDesc = `该客户筛选自 $瞄准镜标签#${labelId}#`;
-    }
-
-    return missionDesc;
   }
 
   @autobind
@@ -282,7 +266,7 @@ export default class Search extends PureComponent {
           labelName: encodeURIComponent(item.name),
           labelDesc: encodeURIComponent(item.description),
           // 任务提示
-          missionDesc: this.padMissionDesc(isSightingScope(item.source), item.id, item.name),
+          missionDesc: padSightLabelDesc(isSightingScope(item.source), item.id, item.name),
           q: encodeURIComponent(item.name),
         })}
         key={item.id}

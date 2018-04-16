@@ -173,12 +173,14 @@
   background-color: rgb(235, 243, 251);
   border-color: rgb(235, 243, 251);
 }
-// 如果任务提示框的mention下拉建议框里面包含瞄准镜的输入提示，则禁用
-:global {
-  .ant-mention-dropdown.ant-mention-dropdown-placement-bottom {
-    div:last-child[data='sightLabel'] {
-      display: none;
-      pointer-events: none;
+.task_textArea {
+  // 如果任务提示框的mention下拉建议框里面包含瞄准镜的输入提示，则禁用
+  :global {
+    .ant-mention-dropdown.ant-mention-dropdown-placement-bottom {
+      div:last-child[data='sightLabel'] {
+        display: none;
+        pointer-events: none;
+      }
     }
   }
 }
