@@ -21,7 +21,8 @@ import TaskFormInfo from './TaskFormInfo';
 
 const NOOP = _.noop;
 // 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
-const sightLabelPattern = '该客户筛选自 $';
+// \s*匹配0个或多个空格，尽量可能匹配多个空格
+const sightLabelPattern = /该客户筛选自\s*$/;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
