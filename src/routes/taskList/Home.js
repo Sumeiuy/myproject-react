@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 17:42:03
+ * @Last Modified time: 2018-04-16 19:14:28
  * @description 任务管理首页
  */
 
@@ -46,6 +46,10 @@ const NOOP = _.noop;
 const LEFT_PANEL_WIDTH = 400;
 // 视图配置项
 const { taskList } = pageConfig;
+
+// 服务经理维度任务统计分页初始化
+const GET_CUST_SCOPE_PAGE_NUM = 1;
+const GET_CUST_SCOPE_PAGE_SIZE = 5;
 
 // 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
 const feedbackListOfNone = [{
@@ -298,7 +302,11 @@ export default class PerformerView extends PureComponent {
    * @param {*string} param0 orgId集合
    */
   @autobind
-  getCustManagerScope({ orgId }) {
+  getCustManagerScope({
+    orgId,
+    pageNum = GET_CUST_SCOPE_PAGE_NUM,
+    pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+  }) {
     const {
       getCustManagerScope,
     } = this.props;
@@ -307,6 +315,8 @@ export default class PerformerView extends PureComponent {
     getCustManagerScope({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      pageNum,
+      pageSize,
     });
   }
 
@@ -341,7 +351,7 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
     } = this.state;
-    const { empNum = 0 } = missionImplementationDetail;
+    const { empNum = 0 } = missionImplementationDetail || {};
 
     return {
       dict,
@@ -701,21 +711,29 @@ export default class PerformerView extends PureComponent {
         ...finalPostData,
         createTimeEnd: this.getFinishedStateDate({
           status,
-          currentDate,
-          createTimeEnd,
+          value: currentDate,
+          urlDate: createTimeEnd,
         }),
         createTimeStart: this.getFinishedStateDate({
           status,
-          beforeCurrentDate60Days,
-          createTimeStart,
+          value: beforeCurrentDate60Days,
+          urlDate: createTimeStart,
         }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
-        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
+        endTimeEnd: this.getFinishedStateDate({
+          status,
+          value: afterCurrentDate60Days,
+          urlDate: endTimeEnd,
+        }),
+        endTimeStart: this.getFinishedStateDate({
+          status,
+          value: currentDate,
+          urlDate: endTimeStart,
+        }),
       };
     }
     return finalPostData;
@@ -798,7 +816,12 @@ export default class PerformerView extends PureComponent {
     // 管理者视图任务实施进度
     countFlowStatus({ missionId, orgId });
     // 管理者视图服务经理维度任务详细数据
-    getCustManagerScope({ missionId, orgId });
+    getCustManagerScope({
+      pageNum: GET_CUST_SCOPE_PAGE_NUM,
+      pageSize: GET_CUST_SCOPE_PAGE_SIZE,
+      missionId,
+      orgId: emp.getOrgId(),
+    });
   }
 
   // 查看附件客户列表

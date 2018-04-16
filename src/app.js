@@ -106,7 +106,8 @@ app.model(require('./models/preSaleQuery'));
 app.model(require('./models/stock'));
 // 积分兑换历史查询
 app.model(require('./models/pointsExchange'));
-
+// 用户中心
+app.model(require('./models/userCenter'));
 // 4. Router
 app.router(routerConfig);
 

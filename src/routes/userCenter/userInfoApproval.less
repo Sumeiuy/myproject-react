@@ -1,0 +1,97 @@
+.infoApprovalWrap {
+  font-size: 14px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: white;
+  min-height: calc(~"100vh - 184px");
+  .titleDivider {
+    height: 2px;
+    margin: 16px 0;
+  }
+  .header {
+    font-size: 15px;
+    font-weight: bold;
+    color: #4a4a4a;
+  }
+  .body {
+    font-size: 14px;
+    color: #333;
+    .item {
+      .title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        .itemDivider {
+          width: 4px;
+          height: 1.4em;
+          background: #108ee9;
+          margin-left: 0;
+        }
+      }
+      .info {
+        padding-left: 12px;
+        :global {
+          .ant-list-item {
+            padding-left: 12px;
+            border: none;
+          }
+        }
+      }
+      .approvalDesc {
+        padding-left: 12px;
+      }
+      .approvalRecord {
+        padding-left: 12px;
+        .recordItem {
+          font-size: 14px;
+          margin-bottom: 18px;
+          .approverResult {
+            float: left;
+          }
+          .approverDesc {
+            overflow: hidden;
+          }
+          & > div:first-child {
+            color: #a1a1a1;
+          }
+        }
+      }
+      :global {
+        .ant-form-item-label {
+         // width: 79px;
+          label {
+            float: left;
+            color: #a1a1a1;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .btnGroup {
+      text-align: right;
+      button {
+        margin-left: 8px;
+      }
+    }
+    .infoItem {
+      margin: 8px 0;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    .infoLabel {
+      float: left;
+      color: #a1a1a1;
+      margin-right: 8px;
+    }
+    .infoDesc {
+      color: #333;
+      overflow: hidden;
+    }
+    :global {
+      .ant-list {
+        font-size: 14px;
+      }
+    }
+  }
+}
