@@ -142,9 +142,9 @@ export default class UserBasicInfo extends PureComponent {
             />
           </TabPane>
           <TabPane
-            tab="我的审批"
+            tab=""
             key={SECOND_TAB}
-            // disabled
+            disabled
           >
             我的审批
           </TabPane>

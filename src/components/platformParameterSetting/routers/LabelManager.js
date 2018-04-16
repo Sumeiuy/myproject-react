@@ -60,12 +60,12 @@ export default class LabelManager extends PureComponent {
     this.columns = [{
       title: 'labelName',
       dataIndex: 'name',
-      width: '35%',
+      width: '40%',
       render: (text, record) => this.EditableCell(text, record, 'name'),
     }, {
       title: 'operation',
       dataIndex: 'operation',
-      width: '40%',
+      width: '35%',
       render: (text, record) => {
         const { editorCell } = this.state;
         return (
@@ -225,6 +225,7 @@ export default class LabelManager extends PureComponent {
         this.setState({
           addLabelState: false,
         });
+        this.paginationChange(1);
       });
   }
   // --添加标签--end
