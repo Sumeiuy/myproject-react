@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 21:28:06
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-04-16 10:10:13
  * 结果跟踪
  */
 
@@ -645,8 +645,6 @@ export default class ResultTrack extends PureComponent {
     ) {
       // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
       confirm({
-        okText: '确定',
-        cancelText: '取消',
         title: '提示',
         content: '您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪',
         onOk: () => {
