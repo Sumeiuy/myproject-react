@@ -36,7 +36,13 @@ export default class ServiceManagerFilter extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索服务经理',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     this.props.dropdownToSearchInfo(value);
   }

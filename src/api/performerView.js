@@ -50,5 +50,9 @@ export default function performerView(api) {
     queryDistinctCustomerCount: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListOfMission', query),
     // 获取服务经理维度任务数据
     getCustManagerScope: query => api.post('/groovynoauth/fsp/campaign/mot/queryEmpListOfMission', query),
+    // 查询涨乐财富通服务方式下给予客户选择的客户反馈选项
+    queryCustFeedbackList: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustOptionsByTaskType', query),
+    // 查询涨乐财富通服务方式下的审批人
+    queryApproval: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryNextApproval', query),
   };
 }

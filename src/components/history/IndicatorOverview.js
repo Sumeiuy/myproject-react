@@ -95,7 +95,13 @@ export default class IndicatorOverview extends PureComponent {
     });
   }
   @autobind
-  @logable({ type: 'Click', payload: { name: '鼠标进入Core指标$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '鼠标进入Core指标',
+      value: '$args[0]',
+    },
+  })
   mouseEnter(index) {
     return () => {
       this.setState({

@@ -61,7 +61,13 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '目标客户池首页资讯列表',
+      value: 'args[0]',
+    },
+  })
   handleListClick(title, index) {
     if (!_.isEmpty(title)) {
       this.handleDetailClick(index);

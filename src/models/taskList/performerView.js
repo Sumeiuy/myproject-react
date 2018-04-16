@@ -51,6 +51,10 @@ export default {
     attachmentList: [],
     // 执行者视图头部查询到的客户列表
     customerList: [],
+    // 涨乐财富通服务方式下的客户反馈列表
+    custFeedbackList: [],
+    // 涨乐财富通服务方式下的审批人列表
+    zhangleApprovalList: [],
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -169,6 +173,20 @@ export default {
       return {
         ...state,
         customerList: custBriefInfoDTOList || [],
+      };
+    },
+    queryCustFeedbackList4ZLFinsSuccess(state, action) {
+      const { payload: { custFeedbackOptions } } = action;
+      return {
+        ...state,
+        custFeedbackList: custFeedbackOptions,
+      };
+    },
+    queryApprovalList4ZLFinsSuccess(state, action) {
+      const { payload = [] } = action;
+      return {
+        ...state,
+        zhangleApprovalList: payload,
       };
     },
     modifyLocalTaskList(state, action) {
@@ -364,6 +382,24 @@ export default {
           payload: resultData,
         });
       }
+    },
+
+    // 查询涨乐财富通服务方式下的客户反馈列表
+    * queryCustFeedbackList4ZLFins({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustFeedbackList, payload);
+      yield put({
+        type: 'queryCustFeedbackList4ZLFinsSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 查询涨乐财富通服务方式下的审批人列表
+    * queryApprovalList4ZLFins({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryApproval, payload);
+      yield put({
+        type: 'queryApprovalList4ZLFinsSuccess',
+        payload: resultData,
+      });
     },
   },
   subscriptions: {

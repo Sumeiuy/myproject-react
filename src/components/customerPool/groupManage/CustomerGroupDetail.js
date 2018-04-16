@@ -343,7 +343,13 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0].value关键字搜索客户' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户',
+      value: '$args[0].value',
+    },
+  })
   handleSearchClick({ value, selectedItem }) {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({

@@ -141,7 +141,30 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '客户列表头像/$props.listItem.name' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '客户列表名称',
+      value: '$props.listItem.name',
+    },
+  })
+  handleNameClick() {
+    this.toDetail();
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '客户列表头像',
+      value: '$props.listItem.name',
+    },
+  })
+  handleAvatarClick() {
+    this.toDetail();
+  }
+
+  @autobind
   toDetail() {
     const { push } = this.props;
     const {
@@ -243,7 +266,7 @@ export default class CustomerRow extends PureComponent {
     if (this.isMainService()) {
       return (
         <img
-          onClick={this.toDetail}
+          onClick={this.handleAvatarClick}
           className={`${styles.avatorImage} ${styles.clickable}`}
           src={imgSrc}
           alt=""
@@ -300,7 +323,7 @@ export default class CustomerRow extends PureComponent {
     } = this.props;
     if (this.isMainService()) {
       return name ? (
-        <span className="name clickable" onClick={this.toDetail}>{name}</span>
+        <span className="name clickable" onClick={this.handleNameClick}>{name}</span>
       ) : null;
     }
     return <span className="name">{name}</span>;

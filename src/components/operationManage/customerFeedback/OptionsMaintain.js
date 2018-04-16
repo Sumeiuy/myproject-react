@@ -113,7 +113,13 @@ export default class OptionsMaintain extends PureComponent {
 
   // 删除客户反馈
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除',
+      value: '$args[0]',
+    },
+  })
   deleteConfirm(parentId = '', childId = '', e) {
     const {
       feedbackData,

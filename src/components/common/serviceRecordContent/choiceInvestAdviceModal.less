@@ -1,0 +1,84 @@
+.serveContentContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 24px;
+}
+.modalHeader {
+  flex: 0 0 auto;
+  display: none;
+  height: 58px;
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+  }
+}
+
+.modeName {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  line-height: 22px;
+  float: left;
+  width: 140px;
+  text-align: left;
+}
+
+.modeSwitch {
+  font-size: 16px;
+  color: #4897f1;
+  font-weight: bold;
+  line-height: 22px;
+  float: right;
+  width: 140px;
+  text-align: right;
+}
+
+.editLine {
+  margin-bottom: 10px;
+  display: flex;
+  flex: 0 0 auto;
+
+  &.editLineTextArea {
+    flex: 1 1 auto;
+  }
+
+  .editCaption {
+    position: relative;
+    flex: 0 0 auto;
+    width: 70px;
+    height: 30px;
+    padding-left: 15px;
+    font-size: 14px;
+    color: #000;
+    line-height: 30px;
+    &:after {
+      display: inline-block;
+      position: absolute;
+      content: "*";
+      color: #f04134;
+      font-size: 14px;
+      height: 30px;
+      line-height: 30px;
+      top: 0;
+      left: 2px;
+    }
+  }
+
+  .editInput {
+    width: 100%;
+  }
+}
+
+.tips {
+  flex: 0 0 auto;
+  padding-left: 70px;
+  font-size: 12px;
+  color: #e33c39;
+  line-height: 20px;
+}
+
+.serveContent {
+  height: 100% !important;
+}

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 20:21:53
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-16 15:42:11
  * 服务记录表单
  */
 
@@ -16,73 +16,26 @@ import styles from './serviceRecordForm.less';
 import logable from '../../../decorators/logable';
 
 export default class ServiceRecordForm extends PureComponent {
-  static propTypes = {
-    addServeRecord: PropTypes.func.isRequired,
-    dict: PropTypes.object,
-    // 是否是执行者视图页面
-    isEntranceFromPerformerView: PropTypes.bool,
-    // 表单数据
-    formData: PropTypes.object,
-    isFold: PropTypes.bool.isRequired,
-    custUuid: PropTypes.string.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
-    ceFileDelete: PropTypes.func.isRequired,
-    deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
-    getCeFileList: PropTypes.func.isRequired,
-  }
-
   static defaultProps = {
     dict: {},
+    empInfo: {},
     formData: {},
     isEntranceFromPerformerView: false,
+  }
+
+  @autobind
+  setServiceRecordContentRef(input) {
+    this.serviceRecordContentRef = input;
   }
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
-    if (!data) {
-      return;
-    }
-
-    const {
-      serviceWay,
-      serviceType,
-      serviceDate,
-      serviceTime,
-      feedbackDate,
-      feedbackType,
-      feedbackTypeChild,
-      serviceStatus,
-      serviceContent,
-      currentFile,
-    } = data;
-
-    const {
-      formData: { custId = '', missionFlowId = '' },
-      addServeRecord,
-      custUuid,
-    } = this.props;
-    const postBody = {
-      // 经纪客户号
-      custId,
-      serveWay: serviceWay,
-      serveType: serviceType,
-      type: serviceType,
-      serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
-      serveContentDesc: serviceContent,
-      feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveCustFeedBack: feedbackType,
-      serveCustFeedBack2: feedbackTypeChild || '',
-      missionFlowId,
-      flowStatus: serviceStatus,
-      // 只有上传了附件才需要将custUuid传给后台，不然传空字符串
-      uuid: (custUuid && !_.isEmpty(currentFile)) ? custUuid : '',
-    };
+    if (_.isEmpty(data)) return;
 
     // 添加服务记录
-    addServeRecord(postBody, this.handleCancel);
+    this.props.addServeRecord(data, this.handleCancel);
   }
 
   @autobind
@@ -102,22 +55,27 @@ export default class ServiceRecordForm extends PureComponent {
       formData: { serviceTips },
       custUuid,
       isReadOnly,
+      isReject,
       deleteFileResult,
       ceFileDelete,
+      queryCustFeedbackList4ZLFins,
+      custFeedbackList,
+      queryApprovalList,
+      zhangleApprovalList,
+      eventId,
+      taskTypeCode,
+      empInfo: { empInfo },
+      serviceTypeCode,
+      statusCode,
     } = this.props;
 
-    if (!dict) {
-      return null;
-    }
+    if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
+
     return (
       <div className={styles.serviceRecordWrapper}>
-        <div className={styles.title}>
-          服务记录
-        </div>
+        <div className={styles.title}>服务记录</div>
         <div className={styles.serveTip}>
-          <div className={styles.title}>
-            任务提示:
-          </div>
+          <div className={styles.title}>任务提示:</div>
           {/**
            * 不要去掉dangerouslySetInnerHTML，瞄准镜标签作为变量塞入任务提示，返回时可能带有<br/>
            * 标签，需要格式化展示出来
@@ -128,9 +86,11 @@ export default class ServiceRecordForm extends PureComponent {
         </div>
 
         <ServiceRecordContent
-          ref={ref => (this.serviceRecordContentRef = ref)}
+          ref={this.setServiceRecordContentRef}
           isReadOnly={isReadOnly}
+          isReject={isReject}
           dict={dict}
+          empInfo={empInfo}
           // 是否是执行者视图页面
           isEntranceFromPerformerView={isEntranceFromPerformerView}
           // 表单数据
@@ -139,24 +99,52 @@ export default class ServiceRecordForm extends PureComponent {
           custUuid={custUuid}
           onDeleteFile={ceFileDelete}
           deleteFileResult={deleteFileResult}
+          queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+          custFeedbackList={custFeedbackList}
+          zhangleApprovalList={zhangleApprovalList}
+          queryApprovalList={queryApprovalList}
+          taskTypeCode={taskTypeCode}
+          eventId={eventId}
+          serviceTypeCode={serviceTypeCode}
+          flowStatusCode={statusCode}
         />
 
         {
           !isReadOnly ?
             <div className={styles.operationSection}>
-              <Button
-                className={styles.submitBtn}
-                onClick={_.debounce(this.handleSubmit, 300)}
-                type="primary"
-              >
-                提交</Button>
-              <Button
-                className={styles.cancelBtn}
-                onClick={this.handleCancel}
-              >取消</Button>
+              <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+              <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
             </div> : null
         }
       </div>
     );
   }
 }
+
+ServiceRecordForm.propTypes = {
+  addServeRecord: PropTypes.func.isRequired,
+  dict: PropTypes.object,
+  empInfo: PropTypes.object,
+  // 是否是执行者视图页面
+  isEntranceFromPerformerView: PropTypes.bool,
+  // 表单数据
+  formData: PropTypes.object,
+  isFold: PropTypes.bool.isRequired,
+  custUuid: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
+  // 是否驳回，只有在涨乐财富通的服务方式并且是自由编辑下才有
+  isReject: PropTypes.bool.isRequired,
+  ceFileDelete: PropTypes.func.isRequired,
+  deleteFileResult: PropTypes.array.isRequired,
+  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  getCeFileList: PropTypes.func.isRequired,
+  // 涨乐财富通服务方式下的客户反馈列表以及查询方法
+  queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+  custFeedbackList: PropTypes.array.isRequired,
+  queryApprovalList: PropTypes.func.isRequired,
+  zhangleApprovalList: PropTypes.array.isRequired,
+  taskTypeCode: PropTypes.string.isRequired,
+  eventId: PropTypes.string.isRequired,
+  serviceTypeCode: PropTypes.string.isRequired,
+  statusCode: PropTypes.string.isRequired,
+};

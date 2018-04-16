@@ -315,7 +315,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询客户' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查询客户',
+      value: '$args[0]',
+    },
+  })
   handleCustSearch(value) {
     this.props.getCustomerList({
       keyword: value,
@@ -324,7 +330,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询服务经理' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查询服务经理',
+      value: '$args[0]',
+    },
+  })
   handleManagerSearch(value) {
     this.props.getPtyMngList({
       keyword: value,
@@ -333,7 +345,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询拟稿人' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查询拟稿人',
+      value: '$args[0]',
+    },
+  })
   handleDrafterSearch(value) {
     this.props.getDrafterList({
       keyword: value,
@@ -342,7 +360,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字查询审批人' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查询审批人',
+      value: '$args[0]',
+    },
+  })
   handleApproverSearch(value) {
     this.props.getApprovePersonList({
       keyword: value,
