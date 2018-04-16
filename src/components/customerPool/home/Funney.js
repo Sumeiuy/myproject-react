@@ -56,6 +56,7 @@ function renderIntro(data, push) {
             placement="bottom"
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
+            overlayClassName={styles.popoverClass}
           >
             {item.value}
           </Popover>
@@ -67,6 +68,7 @@ function renderIntro(data, push) {
             placement="bottom"
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
+            overlayClassName={styles.popoverClass}
           >
             <span className={styles.properyValue}>{`/ ${item.property}`}</span>
             <span className={styles.unit}>{item.unit}</span>

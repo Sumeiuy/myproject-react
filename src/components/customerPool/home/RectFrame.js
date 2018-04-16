@@ -37,6 +37,7 @@ function RectFrame(props) {
                 content={desc}
                 placement="bottom"
                 mouseEnterDelay={0.2}
+                overlayClassName={styles.popoverClass}
               >
                 <div className={styles.title}>{title}</div>
               </Popover>

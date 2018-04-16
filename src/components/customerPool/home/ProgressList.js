@@ -151,6 +151,7 @@ export default class ProgressList extends PureComponent {
                 placement="bottom"
                 overlayStyle={{ maxWidth: '320px' }}
                 mouseEnterDelay={0.2}
+                overlayClassName={styles.popoverClass}
               >
                 <div className={styles.title}>{item.cust}</div>
               </Popover>

@@ -96,6 +96,7 @@ export default class CustomerService extends PureComponent {
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
+            overlayClassName={styles.popoverClass}
           >
             <div className={styles.text}>{_.head(data).name || '--'}</div>
           </Popover>
@@ -114,6 +115,7 @@ export default class CustomerService extends PureComponent {
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
+            overlayClassName={styles.popoverClass}
           >
             <div className={styles.text}>{_.last(data).name || '--'}</div>
           </Popover>

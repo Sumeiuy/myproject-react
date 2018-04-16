@@ -29,6 +29,7 @@ function renderItem(data = {}, itemStyle = null) {
         content={data.description}
         placement="bottom"
         overlayStyle={{ maxWidth: '320px' }}
+        overlayClassName={styles.popoverClass}
       >
         <div className={styles.title}>{data.title || ''}</div>
       </Popover>
