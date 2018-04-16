@@ -40,7 +40,7 @@ import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
-import TaskListHome from './routes/taskList/Home';
+import TaskListHome from './routes/taskList/connectedHome';
 import Demote from './routes/demote/Home';
 import RelationHome from './routes/relation/Home';
 import CustomerFeedback from './routes/customerFeedback/Home';

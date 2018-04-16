@@ -168,7 +168,7 @@ export default class Main extends PureComponent {
       interfaceState,
       dict,
       empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
-      navs: { secondaryMenu = [], majorMenu = [] },
+      navs: { secondaryMenu = [] },
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
