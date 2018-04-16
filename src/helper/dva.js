@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-18 17:32:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-23 10:31:05
+ * @Last Modified time: 2018-04-13 10:07:55
  * @description 统一整理的将dva以及redux需要暴露使用的方法
  */
 import initFspMethod from '../utils/initFspMethod';
@@ -68,6 +68,22 @@ const dva = {
     }
     return null;
   },
+
+ /**
+  * 生成dva的effects，用于接口数据调用
+  * @param {Boolean} globalLoading 是否需要全局loading状态的显示
+  * @param {String} type 定义的modal层的effects方法名称字符串: namespace/effects
+  * @param {Boolean} forceFull 是否强制全屏Loading
+  */
+  generateEffect(globalLoading, type, forceFull = false) {
+    return query => ({
+      type,
+      payload: query || {},
+      loading: globalLoading,
+      forceFull,
+    });
+  },
+
 };
 
 export default dva;
