@@ -34,7 +34,9 @@ export default class BasicInfo extends PureComponent {
     form: PropTypes.object.isRequired,
     changeEditorState: PropTypes.func.isRequired,
     queryAllLabels: PropTypes.func.isRequired,
-    queryEmpLabelAndDescApprover: PropTypes.func.isRequired,
+    queryApprovers: PropTypes.func.isRequired,
+    updateEmpInfo: PropTypes.func.isRequired,
+    queryEmpInfo: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -43,6 +45,7 @@ export default class BasicInfo extends PureComponent {
       newLabel: [],
       // 选择审批人弹窗状态
       approverModal: false,
+      approver: {},
     };
   }
 
@@ -71,7 +74,7 @@ export default class BasicInfo extends PureComponent {
           },
           {
             name: '个人标签',
-            key: 'label',
+            key: 'labels',
           },
         ];
       default:
@@ -186,9 +189,9 @@ export default class BasicInfo extends PureComponent {
   // 打开审批人选择审批人model
   @autobind
   openApproverBoard() {
-    const { queryEmpLabelAndDescApprover, LabelAndDescApprover } = this.props;
+    const { queryApprovers, LabelAndDescApprover } = this.props;
     if (!LabelAndDescApprover.length) {
-      queryEmpLabelAndDescApprover();
+      queryApprovers();
     }
     this.setState({
       approverModal: true,
@@ -201,13 +204,53 @@ export default class BasicInfo extends PureComponent {
       approverModal: false,
     });
   }
-
+  // 当前状态是否有标签
+  hasLabel(preventLabels = []) {
+    const { editorState } = this.props;
+    const { newLabel = [] } = this.state;
+    if (editorState && !newLabel.length) {
+      return true;
+    } else if (!editorState && !preventLabels.length) {
+      return true;
+    }
+    return false;
+  }
   // 取消编辑状态
   @autobind
   cancelEditor() {
     const { changeEditorState } = this.props;
     changeEditorState();
   }
+  // 选择审批人
+  @autobind
+  selectApprover(approver) {
+    this.setState({
+      approver,
+    });
+  }
+
+  // 提交审批
+  startApproval() {
+    const {
+      updateEmpInfo,
+      changeEditorState,
+      queryEmpInfo,
+    } = this.props;
+    const { newLabel, approver } = this.state;
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        updateEmpInfo({
+          applyingDescription: values.applyingDescription,
+          labels: newLabel,
+          approver: approver.empNo,
+        }).then(() => {
+          changeEditorState();
+          queryEmpInfo();
+        });
+      }
+    });
+  }
+
   render() {
     const {
       userBaseInfo,
@@ -215,12 +258,13 @@ export default class BasicInfo extends PureComponent {
       LabelAndDescApprover,
       form: {
         getFieldDecorator,
+        getFieldError,
       },
     } = this.props;
-    const { newLabel, approverModal } = this.state;
+    const { newLabel, approverModal, approver } = this.state;
     // 当前
     const isApproving = APPROVING === userBaseInfo.flowState;
-
+    const { empName = '' } = approver;
     return (
       <div className={styles.basicInfo}>
         <div className={styles.userInfo}>
@@ -282,6 +326,13 @@ export default class BasicInfo extends PureComponent {
                                   />) :
                                 userBaseInfo[item.key] || '--'
                             }
+                            <span className={styles.errorInfo}>
+                              {
+                                editorState ?
+                                  getFieldError('applyingDescription') || '' :
+                                  null
+                              }
+                            </span>
                           </div> :
                           // 个人标签
                           <div className={styles.inputWrap}>
@@ -303,7 +354,7 @@ export default class BasicInfo extends PureComponent {
                                   .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
                             }
                             {
-                              !newLabel.length ?
+                              this.hasLabel(userBaseInfo[item.key]) ?
                                 '暂未设置标签' :
                                 null
                             }
@@ -337,6 +388,7 @@ export default class BasicInfo extends PureComponent {
                       rules: [{
                         required: true, message: '请选择审批人',
                       }],
+                      initialValue: empName,
                     })(
                       <Search
                         placeholder="搜索内容"
@@ -355,7 +407,7 @@ export default class BasicInfo extends PureComponent {
           editorState ?
             <div className={styles.editorInfoSubmit}>
               <Button onClick={this.cancelEditor}>取消</Button>
-              <Button type="primary">提交审批</Button>
+              <Button onClick={this.startApproval} disabled={_.isEmpty(approver)} type="primary">提交审批</Button>
             </div> :
             null
         }
@@ -364,7 +416,7 @@ export default class BasicInfo extends PureComponent {
             visible={approverModal}
             approverList={LabelAndDescApprover}
             onClose={() => this.closeApproverBoard('approverModal')}
-            // onOk={this.handleApproverModalOK}
+            onOk={this.selectApprover}
           />
         }
       </div>

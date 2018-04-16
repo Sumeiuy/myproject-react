@@ -16,9 +16,10 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const effects = {
-  queryUserBaseInfo: 'userCenter/queryUserBaseInfo',
+  queryEmpInfo: 'userCenter/queryEmpInfo',
   queryAllLabels: 'userCenter/queryAllLabels',
-  queryEmpLabelAndDescApprover: 'userCenter/queryEmpLabelAndDescApprover',
+  queryApprovers: 'userCenter/queryApprovers',
+  updateEmpInfo: 'userCenter/updateEmpInfo',
 };
 
 const mapStateToProps = state => ({
@@ -28,9 +29,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  queryUserBaseInfo: fetchDataFunction(true, effects.queryUserBaseInfo),
+  queryEmpInfo: fetchDataFunction(true, effects.queryEmpInfo),
   queryAllLabels: fetchDataFunction(true, effects.queryAllLabels),
-  queryEmpLabelAndDescApprover: fetchDataFunction(true, effects.queryEmpLabelAndDescApprover),
+  queryApprovers: fetchDataFunction(true, effects.queryApprovers),
+  updateEmpInfo: fetchDataFunction(true, effects.updateEmpInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -39,9 +41,10 @@ export default class UserBasicInfo extends PureComponent {
     userBaseInfo: PropTypes.object.isRequired,
     allLabels: PropTypes.array.isRequired,
     LabelAndDescApprover: PropTypes.array.isRequired,
-    queryUserBaseInfo: PropTypes.func.isRequired,
+    queryEmpInfo: PropTypes.func.isRequired,
     queryAllLabels: PropTypes.func.isRequired,
-    queryEmpLabelAndDescApprover: PropTypes.func.isRequired,
+    queryApprovers: PropTypes.func.isRequired,
+    updateEmpInfo: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -57,8 +60,8 @@ export default class UserBasicInfo extends PureComponent {
   }
 
   componentDidMount() {
-    const { queryUserBaseInfo } = this.props;
-    queryUserBaseInfo();
+    const { queryEmpInfo } = this.props;
+    queryEmpInfo();
   }
 
   // 切换编辑状态
@@ -102,8 +105,10 @@ export default class UserBasicInfo extends PureComponent {
       userBaseInfo,
       queryAllLabels,
       allLabels,
-      queryEmpLabelAndDescApprover,
+      queryApprovers,
       LabelAndDescApprover,
+      updateEmpInfo,
+      queryEmpInfo,
     } = this.props;
 
     const { editorState } = this.state;
@@ -126,9 +131,11 @@ export default class UserBasicInfo extends PureComponent {
               userBaseInfo={userBaseInfo}
               editorState={editorState}
               queryAllLabels={queryAllLabels}
-              queryEmpLabelAndDescApprover={queryEmpLabelAndDescApprover}
+              queryEmpInfo={queryEmpInfo}
+              queryApprovers={queryApprovers}
               allLabels={allLabels}
               LabelAndDescApprover={LabelAndDescApprover}
+              updateEmpInfo={updateEmpInfo}
               changeEditorState={this.changeEditorState}
             />
           </TabPane>

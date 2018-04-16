@@ -18,7 +18,7 @@ export default {
     approvalInfo: EMPTY_OBJECT,
   },
   reducers: {
-    queryUserBaseInfoSuccess(state, action) {
+    queryEmpInfoSuccess(state, action) {
       return {
         ...state,
         userBaseInfo: action.payload,
@@ -30,13 +30,13 @@ export default {
         allLabels: action.payload,
       };
     },
-    queryEmpLabelAndDescApproverSuccess(state, action) {
+    queryApproversSuccess(state, action) {
       return {
         ...state,
         LabelAndDescApprover: action.payload,
       };
     },
-    queryApprovalInfoSuccess(state, action) {
+    queryApprovingEmpInfoSuccess(state, action) {
       return {
         ...state,
         approvalInfo: action.payload,
@@ -44,12 +44,12 @@ export default {
     },
   },
   effects: {
-    // 获取问题列表
-    * queryUserBaseInfo({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryUserBaseInfo);
+    // 获取用户基本信息
+    * queryEmpInfo({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryEmpInfo);
       if (resultData) {
         yield put({
-          type: 'queryUserBaseInfoSuccess',
+          type: 'queryEmpInfoSuccess',
           payload: resultData,
         });
       }
@@ -65,14 +65,18 @@ export default {
       }
     },
     // 获取审批人
-    * queryEmpLabelAndDescApprover({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryEmpLabelAndDescApprover);
+    * queryApprovers({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryApprovers);
       if (resultData) {
         yield put({
-          type: 'queryEmpLabelAndDescApproverSuccess',
+          type: 'queryApproversSuccess',
           payload: resultData,
         });
       }
+    },
+    // 提交审批
+    * updateEmpInfo({ payload }, { call }) {
+      yield call(api.updateEmpInfo, payload);
     },
     // 修改标签
     * updateLabel({ payload }, { call }) {
@@ -87,18 +91,18 @@ export default {
       yield call(api.addLabel, payload);
     },
     // 查询审批信息
-    * queryApprovalInfo({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryApprovalInfo, payload);
+    * queryApprovingEmpInfo({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryApprovingEmpInfo, payload);
       if (resultData) {
         yield put({
-          type: 'queryApprovalInfoSuccess',
+          type: 'queryApprovingEmpInfoSuccess',
           payload: resultData,
         });
       }
     },
     // 审批信息
-    * approvalEmpInfo({ payload }, { call }) {
-      yield call(api.approvalEmpInfo, payload);
+    * approveEmpInfo({ payload }, { call }) {
+      yield call(api.approveEmpInfo, payload);
     },
   },
   subscriptions: {

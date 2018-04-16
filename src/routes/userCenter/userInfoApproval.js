@@ -26,8 +26,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const effects = {
-  queryApprovalInfo: 'userCenter/queryApprovalInfo',
-  approvalEmpInfo: 'userCenter/approvalEmpInfo',
+  queryApprovingEmpInfo: 'userCenter/queryApprovingEmpInfo',
+  approveEmpInfo: 'userCenter/approveEmpInfo',
 };
 
 const mapStateToProps = state => ({
@@ -35,8 +35,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  queryApprovalInfo: fetchDataFunction(true, effects.queryApprovalInfo),
-  approvalEmpInfo: fetchDataFunction(true, effects.approvalEmpInfo),
+  queryApprovingEmpInfo: fetchDataFunction(true, effects.queryApprovingEmpInfo),
+  approveEmpInfo: fetchDataFunction(true, effects.approveEmpInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -47,13 +47,13 @@ export default class PersonalInfoApproval extends PureComponent {
     approvalInfo: PropTypes.object.isRequired,
     form: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    queryApprovalInfo: PropTypes.func.isRequired,
-    approvalEmpInfo: PropTypes.func.isRequired,
+    queryApprovingEmpInfo: PropTypes.func.isRequired,
+    approveEmpInfo: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
-    const { queryApprovalInfo } = this.props;
-    queryApprovalInfo();
+    const { queryApprovingEmpInfo } = this.props;
+    queryApprovingEmpInfo();
   }
 
   @autobind
@@ -64,11 +64,11 @@ export default class PersonalInfoApproval extends PureComponent {
           flowId,
         },
       },
-      approvalEmpInfo,
+      approveEmpInfo,
     } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        approvalEmpInfo({
+        approveEmpInfo({
           ...values,
           operate,
           flowId,
@@ -117,7 +117,7 @@ export default class PersonalInfoApproval extends PureComponent {
     return (
       <div className={styles.infoApprovalWrap}>
         <div className={styles.header}>
-          张三丰的审批
+          {approvalInfo.name}的审批
         </div>
         <Divider className={styles.titleDivider} />
         <div className={styles.body}>

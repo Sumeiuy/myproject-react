@@ -232,7 +232,7 @@ export default class LabelManager extends PureComponent {
     const {
       location: {
         query: {
-          pageSize = 10,
+          pageSize = 20,
           pageNum = 1,
         },
       },
