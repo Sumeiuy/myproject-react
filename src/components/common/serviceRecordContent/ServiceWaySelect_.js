@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 13:39:06
+ * @Last Modified time: 2018-04-16 17:42:10
  * @desc 服务方式的Select
  */
 
@@ -23,6 +23,17 @@ export default class ServiceWaySelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    const value = _.get(props.options, '[0].key') || '';
+    this.state = { value };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { value } = nextProps;
+    this.setState({ value });
   }
 
   @autobind
@@ -51,15 +62,16 @@ export default class ServiceWaySelect extends PureComponent {
   }
 
   render() {
-    const { value, width, options } = this.props;
-    const selectValue = !_.isEmpty(value) ? value : options[0].key;
+    const { value } = this.state;
+    const { width, options } = this.props;
+    // const selectValue = !_.isEmpty(value) ? value : options[0].key;
     // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (
       <div className={styles.serveWay}>
         <div className={styles.title}>服务方式:</div>
         <div className={styles.content} ref={this.setServiceWrapRef}>
           <Select
-            value={selectValue}
+            value={value}
             style={width}
             onChange={this.handleSelectChange}
             getPopupContainer={() => this.serviceWayRef}
