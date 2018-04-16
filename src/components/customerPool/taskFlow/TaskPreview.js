@@ -186,7 +186,13 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$props.inputRef.refs.input.value关键字选择审批人员' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '选择审批人员',
+      value: '$props.inputRef.refs.input.value',
+    },
+  })
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
     this.filterDataSource(value);

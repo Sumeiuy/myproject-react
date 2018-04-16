@@ -438,7 +438,7 @@ export default class Detail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '关闭缩略图预览' } })
   handlePreviewCancel() {
     this.setState({
       previewVisible: false,

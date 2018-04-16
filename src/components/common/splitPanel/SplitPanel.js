@@ -306,7 +306,7 @@ export default class SplitPanel extends PureComponent {
 
   // splitPan onChange回调函数
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '容器拖拽' } })
   panchange(size) {
     this.panMov(size);
     this.initPane();

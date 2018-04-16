@@ -213,7 +213,13 @@ export default class MissionInvestigation extends PureComponent {
    * @param {*string} currentDeleteId 当前删除的问题id
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除问题$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除问题',
+      value: '$args[0]',
+    },
+  })
   handleDeleteQuestion(currentDeleteId, quesId) {
     const {
       newQuestionAndAnswerGroup,

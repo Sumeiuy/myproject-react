@@ -92,7 +92,7 @@ export default class TabsExtra extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '时间周期',
       value: '$args[0]',
     },
   })
@@ -116,7 +116,7 @@ export default class TabsExtra extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '机构树',
       value: '$args[0].orgId',
     },
   })

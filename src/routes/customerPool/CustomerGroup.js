@@ -121,7 +121,13 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   @checkSpecialCharacter
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索分组名称' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索分组名称',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     const { replace, location: { query, pathname } } = this.props;
     replace({
