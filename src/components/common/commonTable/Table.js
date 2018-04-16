@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-10 19:07:52
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-16 14:13:30
  * 公用的Table,继承antd的Table组件，重写Pagination组件引用
  */
 
@@ -12,7 +12,8 @@ import classNames from 'classnames';
 import Pagination from '../Pagination';
 
 export default class ExtendedTable extends Table {
-  renderPagination(paginationPosition) {
+
+  renderPagination() {
     // 强制不需要分页
     if (!this.hasPagination()) {
       return null;
@@ -24,11 +25,12 @@ export default class ExtendedTable extends Table {
     } else if (this.props.size === 'middle' || this.props.size === 'small') {
       size = 'small';
     }
-    const position = pagination.position || 'bottom';
+
     const total = pagination.total || this.getLocalData().length;
-    return (total > 0 && (position === paginationPosition || position === 'both')) ? (
+
+    return (total > 0) ? (
       <Pagination
-        key={`pagination-${paginationPosition}`}
+        paginationKey={'pagination'}
         {...pagination}
         className={classNames(pagination.className, `${this.props.prefixCls}-pagination`)}
         onChange={this.handlePageChange}
