@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 18:15:07
+ * @Last Modified time: 2018-04-16 10:05:00
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -14,7 +14,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard';
-import ChoiceInvestAdviceModal from './choiceInvestAdviceModal';
+import ChoiceInvestAdviceModal from './ChoiceInvestAdviceModal_';
 
 import styles from './index.less';
 

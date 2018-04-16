@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 20:30:11
+ * @Last Modified time: 2018-04-16 10:04:58
  */
 
 import React, { PureComponent } from 'react';
@@ -12,10 +12,10 @@ import _ from 'lodash';
 import { Select, DatePicker, Radio, Form } from 'antd';
 import moment from 'moment';
 import Uploader from '../../common/uploader';
-import ServeRecord from './serveRecord';
-import ServeContent from './serveContent';
-import ZLFeedback from './zhanglecaifutongFeedback';
-import ServiceWaySelect from './serviceWaySelect';
+import ServeRecord from './ServeRecord_';
+import ServeContent from './ServeContent_';
+import ZLFeedback from './ZhanglecaifutongFeedback_';
+import ServiceWaySelect from './ServiceWaySelect_';
 import ServeRecordReadOnly from './ServeRecordReadonly';
 import CascadeFeedbackSelect from './CascadeFeedbackSelect';
 
@@ -108,20 +108,6 @@ export default class ServiceRecordContent extends PureComponent {
     this.feedbackTimeRef = input;
   }
 
-  // 修正默认二级反馈
-  @autobind
-  fixDefaultChildFeedback(childFeedback) {
-    const hasCode = _.has(childFeedback, 'code');
-    const hasKey = _.has(childFeedback, 'key');
-    if (hasCode && !hasKey) {
-      return {
-        key: `${childFeedback.code}`,
-        value: childFeedback.name,
-      };
-    }
-    return childFeedback;
-  }
-
   // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
   @autobind
   convertFeedback(feedback) {
@@ -135,6 +121,29 @@ export default class ServiceRecordContent extends PureComponent {
       ...this.fixDefaultChildFeedback(feedback),
       children: tempChildFeedback,
     };
+  }
+
+  // 根据服务类型serviceTypeCode找到相关的额feedbackList
+  @autobind
+  findFeedbackListByServiceTypeCode(code) {
+    const { formData: { motCustfeedBackDict } } = this.props;
+    const feedbackMatch = _.find(motCustfeedBackDict, o => o.key === code) || {};
+    const feedbackList = feedbackMatch.children || [];
+    return feedbackList;
+  }
+
+  // 修正默认二级反馈
+  @autobind
+  fixDefaultChildFeedback(childFeedback) {
+    const hasCode = _.has(childFeedback, 'code');
+    const hasKey = _.has(childFeedback, 'key');
+    if (hasCode && !hasKey) {
+      return {
+        key: `${childFeedback.code}`,
+        value: childFeedback.name,
+      };
+    }
+    return childFeedback;
   }
 
   // 1.在原先的代码逻辑中，
@@ -161,8 +170,7 @@ export default class ServiceRecordContent extends PureComponent {
       serviceTypeCode = motCustfeedBackDict[0].key;
     }
     if (!isTaskFeedbackListOfNone) {
-      const feedbackMatch = _.find(motCustfeedBackDict, o => o.key === serviceTypeCode) || {};
-      const feedbackList = feedbackMatch.children || [];
+      const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode);
       feedback = feedbackList[0];
     }
     return this.fixCustomerFeedback(feedback);
@@ -263,6 +271,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackText: customerFeedback.value,
       custFeedbackText2: customerFeedback.children.value,
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
+      isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
       // serviceFullTime: fd.
     };
   }
@@ -616,6 +625,13 @@ export default class ServiceRecordContent extends PureComponent {
       help: '请选择服务状态',
     } : null;
 
+    // 根据serviceTypeCode获取级联的客户反馈列表
+    let cascadeFeedbackList = motCustfeedBackDict[0].children;
+    if (!isEntranceFromPerformerView) {
+      // 如果是从360视图|客户列表页面进入
+      cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType);
+    }
+
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
@@ -704,11 +720,7 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.custFeedbackSection}>
               <CascadeFeedbackSelect
                 onChange={this.handleCascadeSelectChange}
-                feedbackList={
-                  isEntranceFromPerformerView
-                  ? motCustfeedBackDict[0].children
-                  : motCustfeedBackDict
-                }
+                feedbackList={cascadeFeedbackList}
               />
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>
