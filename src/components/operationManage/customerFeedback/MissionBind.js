@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 20:09:34
+ * @Last Modified time: 2018-04-16 20:13:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -154,7 +154,12 @@ export default class MissionBind extends PureComponent {
 
   // 切换折叠面板
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换折叠面板' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换折叠面板',
+    },
+  })
   handleChangeCollapse(collapseActiveKey) {
     this.setState({
       collapseActiveKey,
@@ -196,8 +201,6 @@ export default class MissionBind extends PureComponent {
       return;
     }
     confirm({
-      okText: '确定',
-      cancelText: '取消',
       title: '提示',
       content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk() {
@@ -266,7 +269,13 @@ export default class MissionBind extends PureComponent {
    * @param pageSize 列表页容量，默认为20
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索Mot任务列表' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索Mot任务列表',
+      value: '$args[0]',
+    },
+  })
   searchMotMission(value, pageNum = 1, pageSize = 20) {
     const { queryMissionList } = this.props;
     queryMissionList(FIRST_TAB, pageNum, pageSize, value);

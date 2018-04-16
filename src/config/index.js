@@ -19,6 +19,7 @@ import seibelConfig from './pageConfig';
 import contract from './contract';
 import fspRoutes from './fspRoutes';
 import orgTreeLevel from './orgTreeLevel';
+import padSightLabelDesc from './constructSightLabelDesc';
 
 export default {
   constants,
@@ -43,4 +44,5 @@ export default {
   contract,
   fspRoutes,
   orgTreeLevel,
+  padSightLabelDesc,
 };

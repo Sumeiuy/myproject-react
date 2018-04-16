@@ -89,7 +89,7 @@ export default class CustFeedback extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '点击饼状图' } })
   handlePieClick(params) {
     const { data: { children, parent, key } } = params;
     const { level1Data } = this.state;

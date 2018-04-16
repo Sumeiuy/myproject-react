@@ -443,7 +443,13 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   @checkSpecialCharacter
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索我的客户分组' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索我的客户分组',
+      value: '$args[0]',
+    },
+  })
   handleSearchGroup(value) {
     console.log('search value', value);
 

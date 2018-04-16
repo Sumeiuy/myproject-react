@@ -85,7 +85,7 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustListSize: 0,
       dataSource: EMPTY_LIST,
       includeCustIdList: [],
-      needDeleteCustId: '',
+      needDeleteBrokerNumber: '',
       curPageCustList: EMPTY_LIST,
       // 客户添加方式默认值--单客户添加
       customerAddType: defaultType,
@@ -117,12 +117,12 @@ export default class CustomerGroupDetail extends PureComponent {
     const {
       dataSource,
       groupId,
-      needDeleteCustId,
+      needDeleteBrokerNumber,
       totalRecordNum: newRecordNum,
     } = this.state;
 
-    const prevResult = deleteResult[`${groupId}_${needDeleteCustId}`];
-    const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
+    const prevResult = deleteResult[`${groupId}_${needDeleteBrokerNumber}`];
+    const nextResult = nextDeleteResult[`${groupId}_${needDeleteBrokerNumber}`];
 
     if (prevData !== nextData) {
       this.setState({
@@ -134,7 +134,9 @@ export default class CustomerGroupDetail extends PureComponent {
 
     // 判断删除是否成功
     if (prevResult !== nextResult) {
-      const newDataSource = _.filter(dataSource, item => item.custId !== needDeleteCustId);
+      const newDataSource = _.filter(dataSource,
+        item => item.brokerNumber !== needDeleteBrokerNumber,
+      );
       // 数据从表格删除
       this.setState({
         dataSource: newDataSource,
@@ -250,12 +252,13 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageSize,
       includeCustListSize,
     } = this.state;
-    const { custId } = record;
+    const { custId, brokerNumber } = record;
     // 新增下删除客户从includeCustIdList删除
     const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
-    const newIncludeCustIdList = _.filter(includeCustIdList, item => item !== custId);
+    const newIncludeCustIdList = _.filter(includeCustIdList, item => item.id !== custId);
 
-    if (_.includes(includeCustIdList, custId)) {
+    const custIdArray = _.map(includeCustIdList, 'id');
+    if (_.includes(custIdArray, custId)) {
       this.setState({
         includeCustIdList: newIncludeCustIdList,
         includeCustList: newIncludeCustList,
@@ -293,7 +296,7 @@ export default class CustomerGroupDetail extends PureComponent {
     }
 
     this.setState({
-      needDeleteCustId: custId,
+      needDeleteBrokerNumber: brokerNumber,
     });
   }
 
@@ -340,7 +343,13 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0].value关键字搜索客户' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户',
+      value: '$args[0].value',
+    },
+  })
   handleSearchClick({ value, selectedItem }) {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
@@ -371,7 +380,7 @@ export default class CustomerGroupDetail extends PureComponent {
       return;
     }
     console.log('receive value, add customer to table', selectedItem);
-    const { custName, cusId, custLevelName, riskLevel, brokerNumber } = selectedItem;
+    const { custName, cusId, custLevelName, riskLevel, brokerNumber, custType } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
     const {
       includeCustIdList,
@@ -385,14 +394,15 @@ export default class CustomerGroupDetail extends PureComponent {
     } = this.state;
     const { custRiskBearing, onAddCustomerToGroup } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
-
-    // 判断includeCustIdList是否存在custId
-    if (_.includes(includeCustIdList, brokerNumber)) {
+    // 从includeCustIdList中取出id组成数组
+    const custIdArray = _.map(includeCustIdList, 'id');
+    // 判断custIdArray是否存在custId
+    if (_.includes(custIdArray, cusId)) {
       message.error('此客户已经添加过');
       return;
     }
-
-    const newCustIdList = _.concat(includeCustIdList, brokerNumber);
+    // 入参改变，后端要求传包含custId，custType的对象数组
+    const newCustIdList = _.concat(includeCustIdList, [{ id: cusId, custType }]);
 
     // 如果groupId不为空，则添加直接调用接口，添加
     if (_.isEmpty(groupId)) {
@@ -400,13 +410,12 @@ export default class CustomerGroupDetail extends PureComponent {
       // 新添加的数据放在表格的前面
       const newIncludeCustList = _.concat([{
         custName,
-        custId: brokerNumber,
+        custId: cusId,
         levelName: custLevelName,
         riskLevelName: riskLevelObject.value,
         id: brokerNumber,
         brokerNumber,
       }], includeCustList);
-
       const {
         curPageCustList,
         includeCustListSize,
@@ -486,10 +495,10 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   deleteCustomerFromGroupForever() {
     const { deleteCustomerFromGroup } = this.props;
-    const { groupId, needDeleteCustId } = this.state;
+    const { groupId, needDeleteBrokerNumber } = this.state;
     deleteCustomerFromGroup({
       groupId,
-      custId: needDeleteCustId,
+      brokerNumber: needDeleteBrokerNumber,
     });
   }
 
@@ -544,7 +553,9 @@ export default class CustomerGroupDetail extends PureComponent {
                 } = this.state;
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
-                const custIdList = _.map(multiBatchCustList, 'brokerNumber');
+                const custIdList = _.map(multiBatchCustList,
+                  item => ({ id: item.custId, custType: item.custType }),
+                );
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(includeCustIdList, custIdList);
 
@@ -639,7 +650,7 @@ export default class CustomerGroupDetail extends PureComponent {
       value: '姓名',
     },
     {
-      key: 'custId',
+      key: 'brokerNumber',
       value: '经济客户号',
     },
     {

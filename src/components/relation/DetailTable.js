@@ -178,12 +178,16 @@ export default class DetailTable extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除',
+      value: '$args[1]',
+    },
+  })
   handleDeleteClick(category, item) {
     const { onDelete } = this.props;
     confirm({
-      okText: '确定',
-      cancelText: '取消',
       title: '请确认是否删除?',
       onOk() {
         onDelete(category, item);
@@ -192,7 +196,13 @@ export default class DetailTable extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '编辑$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '编辑',
+      value: '$args[1]',
+    },
+  })
   handleUpdateClick(item) {
     this.props.onUpdate(item);
   }

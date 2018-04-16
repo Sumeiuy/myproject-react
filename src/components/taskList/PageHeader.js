@@ -9,13 +9,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-// import { DatePicker, Input } from 'antd';
 import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
 import Button from '../common/Button';
-// import Icon from '../common/Icon';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
@@ -32,13 +30,11 @@ import {
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
-  // STATE_ALL_CODE,
   STATE_FINISHED_CODE,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
 
-// const { RangePicker } = DatePicker;
 const Search = Input.Search;
 
 // 头部筛选filterBox的高度
@@ -49,7 +45,6 @@ const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-// const stateAll = { label: '所有状态', value: STATE_ALL_CODE, show: true };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
 const unlimitedCustomers = { name: allCustomers, custId: '' };
@@ -392,7 +387,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索任务名称',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     console.warn('点击了搜索', value);
     this.props.filterCallback({
@@ -402,7 +403,13 @@ export default class Pageheader extends PureComponent {
 
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[1]关键字搜索创建者' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索创建者',
+      value: '$args[1]',
+    },
+  })
   toSearch(method, value) {
     method({
       keyword: value,
@@ -500,7 +507,13 @@ export default class Pageheader extends PureComponent {
    * @param {*} value 输入的关键词
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户',
+      value: '$args[0]',
+    },
+  })
   searchCustomer(value) {
     const { queryCustomer } = this.props;
     // pageSize传1000000，使能够查到足够的数据

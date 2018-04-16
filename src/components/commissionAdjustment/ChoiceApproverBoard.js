@@ -105,7 +105,13 @@ export default class ChoiceApproverBoard extends PureComponent {
 
   // 过滤审批人员列表
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索审批人员' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索审批人员',
+      value: '$args[0]',
+    },
+  })
   filterApprovalUser(v) {
     const list = this.props.approverList;
     const listAfterFilter = _.filter(list, (user) => {

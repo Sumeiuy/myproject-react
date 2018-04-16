@@ -1,0 +1,91 @@
+.labelManager {
+  padding: 20px;
+  min-height: calc(~"100vh - 184px");
+  background: #fff;
+  font-size: 14px;
+  .labelHeader {
+    display: flex;
+    justify-content: space-between;
+  }
+  .labelBody {
+    width: 530px;
+    margin: 12px 0;
+    // border: 1px solid #ddd;
+    .labelName {
+      padding-left: 18px;
+      .labelError {
+        color: red;
+        margin-top: 3px;
+      }
+    }
+    .editableWrap {
+      color: #108ee9;
+      line-height: 22px;
+    }
+    .addLabelWrap {
+      margin-bottom: 10px;
+      input {
+        margin-right: 20px;
+      }
+    }
+    .labelDel {
+      padding-right: 18px;
+      font-size: 13px;
+      color: #108ee9;
+      cursor: pointer;
+      .del {
+        font-size: 14px;
+      }
+    }
+    .confirm {
+      font-size: 12px;
+      font-weight: bold;
+      color: #62ca57;
+      margin-right: 20px;
+      vertical-align: top;
+      cursor: pointer;
+    }
+    .cancel {
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .editable {
+      display: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    :global {
+      .ant-table {
+       // border: none;
+        .ant-table-tbody > tr {
+          &:nth-child(2n + 1) {
+            background: #f3f7ff;
+          }
+          td {
+            border: none;
+            text-align: left;
+            &:first-child {
+              padding-left: 10px;
+            }
+            &:last-child {
+              text-align: right;
+              padding-right: 10px;
+            }
+          }
+          &:hover {
+            .showEdit {
+              display: block;
+            }
+          }
+        }
+      }
+    }
+  }
+  :global {
+    button {
+      border: 1px solid #108ee9;
+      color: #108ee9;
+    }
+  }
+}

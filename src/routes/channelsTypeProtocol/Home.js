@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-11 19:36:22
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-04-16 10:26:05
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -486,8 +486,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       && !this.isArbirageSoftware(formData.subType)
     ) {
       confirm({
-        okText: '确定',
-        cancelText: '取消',
         title: '提示',
         content: tipsMap[formData.operationType],
         onOk: () => {

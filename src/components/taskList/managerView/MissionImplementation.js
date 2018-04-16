@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 10:37:49
+ * @Last Modified time: 2018-04-13 17:54:42
  * 任务实施简报
  */
 
@@ -213,6 +213,18 @@ export default class MissionImplementation extends PureComponent {
   @autobind
   getCurrentOrgId() {
     return this.state.currentOrgId || emp.getOrgId();
+  }
+
+  /**
+   * 获取服务经理维度任务统计
+   */
+  @autobind
+  getCustManagerScope({ pageNum, pageSize, orgId }) {
+    this.props.getCustManagerScope({
+      orgId: orgId || this.getCurrentOrgId(),
+      pageNum,
+      pageSize,
+    });
   }
 
   /**
@@ -503,6 +515,7 @@ export default class MissionImplementation extends PureComponent {
                 detailData={custManagerScopeData}
                 currentOrgLevel={level}
                 isFold={isFold}
+                getCustManagerScope={this.getCustManagerScope}
               />
             </div> : null
         }

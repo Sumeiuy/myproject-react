@@ -17,12 +17,16 @@ const STATE_EXECUTE_CODE = '50'; // 执行中编号
 const STATE_RESULTTRACK_CODE = '60'; // 结果跟踪编号
 const STATE_FINISHED_CODE = '70'; // 结束编号
 const STATE_COMPLETED_CODE = '80'; // 已完成编号
+
 const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
+
+// 管理者视图
 const STATUS_MANAGER_VIEW = [
   STATE_EXECUTE_CODE,
   STATE_RESULTTRACK_CODE,
   STATE_FINISHED_CODE,
 ];
+// 执行者视图
 const STATUS_EXECUTOR_VIEW = [
   STATE_EXECUTE_CODE,
   STATE_RESULTTRACK_CODE,
@@ -30,6 +34,7 @@ const STATUS_EXECUTOR_VIEW = [
   STATE_COMPLETED_CODE,
 ];
 
+// 视图之间的切换
 const chooseMissionView = [
   {
     show: true,
@@ -51,7 +56,7 @@ const chooseMissionView = [
 // 添加服务记录时，入参服务状态完成的编号,
 const POSTCOMPLETED_CODE = '30';
 
-const currentDate = moment(new Date());
+const currentDate = moment();
 const beforeCurrentDate60Days = moment(currentDate).subtract(60, 'days');
 const afterCurrentDate60Days = moment(currentDate).add(60, 'days');
 

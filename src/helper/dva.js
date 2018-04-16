@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-18 17:32:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-23 10:31:05
+ * @Last Modified time: 2018-04-16 17:46:48
  * @description 统一整理的将dva以及redux需要暴露使用的方法
  */
 import initFspMethod from '../utils/initFspMethod';
@@ -67,6 +67,29 @@ const dva = {
       return state.routing.location;
     }
     return null;
+  },
+
+  /**
+   * 生成dva的effects，用于接口数据调用
+   * 用于取代 以前 fectchDataFunction函数
+   * @param {String} type - dva的dispatch action的type值
+   *  格式： '${namespace}/${effectsGeneratorFunctionName}' ,例子 'app/querEmpInfo'
+   * @param {Object} [options={}] - 接口调用时候的配置对象 可选
+   * @param {Boolean} [options.loading=true] - 是否全局显示Loading遮罩，默认为true, 可选
+   * @param {Boolean} [options.forceFull=false] - 是否将Loading遮罩全屏显示，默认为 false, 可选
+   * @return {Function} dispatch function
+   *
+   * @example
+   *  generateEffect('app/getEmpInfo', { loading: true, forceFull: false });
+   */
+  generateEffect(type, options = {}) {
+    const action = { loading: true, forceFull: false };
+    return query => ({
+      payload: query || {},
+      type,
+      ...action,
+      ...options,
+    });
   },
 };
 

@@ -407,8 +407,6 @@ export default class Form extends PureComponent {
       if (btnItem.btnName === '终止') {
         const that = this;
         confirm({
-          okText: '确定',
-          cancelText: '取消',
           title: '确认要终止此任务吗?',
           content: '确认后，操作将不可取消。',
           onOk() {
