@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-11 19:51:41
+ * @Last Modified time: 2018-04-16 10:29:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -735,8 +735,6 @@ export default class Contract extends PureComponent {
       if (btnItem.btnName === '终止') {
         const that = this;
         confirm({
-          okText: '确定',
-          cancelText: '取消',
           title: '确认要终止此任务吗?',
           content: '确认后，操作将不可取消。',
           onOk() {
