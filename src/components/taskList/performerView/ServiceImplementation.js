@@ -13,29 +13,8 @@ import { message } from 'antd';
 import TargetCustomer from './TargetCustomer';
 import ServiceRecordForm from './ServiceRecordForm';
 import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
-
-// 客户任务所处未开始和处理中时服务记录可编辑
-// 处理中 20
-// 未开始  10
-const EDITABLE = ['10', '20'];
-
-// 创建服务记录中服务方式中的涨乐财富通的code
-const HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE = '';
-
-// 目标客户的任务状态
-// 处理中 20
-// 完成   30
-const missionStatusList = [
-  { id: 20, name: '处理中' },
-  { id: 30, name: '完成' },
-];
-
-// 特殊处理的任务状态，和展不展示添加服务记录有关
-const missionStatusForServiceRecord = [
-  { id: '60', name: '结果跟踪' },
-  { id: '70', name: '结束' },
-];
-
+import { flow, task } from './config';
+import { serveWay } from './config/code';
 
 /**
  * 将数组对象中的id和name转成对应的key和value
@@ -115,16 +94,18 @@ export default class ServiceImplementation extends PureComponent {
     const { list } = this.state;
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
-        const { name } = _.find(missionStatusList, o => o.id === +flowStatus);
-        return {
-          ...item,
-          missionStatusCode: flowStatus,
-          missionStatusValue: name,
-        };
+        if (flow.isComplete(flowStatus) || flow.isProcess(flowStatus)) {
+          const { name } = flow.getFlowStatus(flowStatus);
+          return {
+            ...item,
+            missionStatusCode: flowStatus,
+            missionStatusValue: name,
+          };
+        }
       }
       return item;
     });
-    if (+flowStatus === missionStatusList[0].id) {
+    if (flow.isProcess(flowStatus)) {
       // 如果是处理中，需要将upload list清除
       callback();
     }
@@ -135,26 +116,49 @@ export default class ServiceImplementation extends PureComponent {
 
   @autobind
   judgeMissionStatus(typeCode) {
-    return !_.isEmpty(_.find(missionStatusForServiceRecord, item => item.id === typeCode));
+    return task.isResultTrack(typeCode) || task.isFinished(typeCode);
+  }
+
+  // 涨乐财富通只读状态
+  @autobind
+  judgeZhangeLeStatus(statusCode) {
+    // 已完成 || 审批中
+    return this.judgeMissionStatus(statusCode) || flow.isApproval(statusCode);
+  }
+
+  // 当前流程是可编辑流程
+  @autobind
+  isEditableStatus(code) {
+    return flow.isUnStart(code) || flow.isProcess(code);
   }
 
   // 判断服务记录是否是只读状态
   @autobind
   judgeIsReadyOnly({ serveWayCode, statusCode, serviceStatusCode }) {
-    if (serveWayCode === HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE) {
+    if (serveWay.isZhangle(serveWayCode)) {
       // 如果是涨乐财富通的服务方式
-      return false;
+      // 判断是否 审批中 或者 已完成
+      return this.judgeZhangeLeStatus(statusCode);
     }
-    return this.judgeMissionStatus(statusCode) || !_.includes(EDITABLE, serviceStatusCode);
+    return this.judgeMissionStatus(statusCode)
+    || !this.isEditableStatus(serviceStatusCode);
+  }
+
+  // 涨乐财富通中的驳回状态
+  @autobind
+  isRejct({ serveWayCode, statusCode }) {
+    if (serveWay.isZhangle(serveWayCode)) {
+      return flow.isReject(statusCode);
+    }
+    return false;
   }
 
   render() {
-    const {
-      list,
-    } = this.state;
+    const { list } = this.state;
     const {
       currentId,
       dict,
+      empInfo,
       isFold,
       handleCollapseClick,
       getServiceRecord,
@@ -181,6 +185,12 @@ export default class ServiceImplementation extends PureComponent {
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
+      custFeedbackList,
+      queryCustFeedbackList4ZLFins,
+      taskTypeCode,
+      eventId,
+      zhangleApprovalList,
+      queryApprovalList,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
@@ -238,6 +248,9 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     const isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
 
+    // 涨乐财富通中才有审批和驳回状态
+    const isReject = this.isRejct({ statusCode, serviceWayCode });
+
     return (
       <div>
         <TargetCustomer
@@ -260,22 +273,31 @@ export default class ServiceImplementation extends PureComponent {
           filesList={filesList}
         />
         {
-          !_.isEmpty(taskFeedbackList)
-            && !_.isEmpty(motCustfeedBackDict)
-            ? <ServiceRecordForm
-              dict={dict}
-              addServeRecord={this.addServiceRecord}
-              isReadOnly={isReadOnly}
-              isEntranceFromPerformerView
-              isFold={isFold}
-              queryCustUuid={queryCustUuid}
-              custUuid={custUuid}
-              formData={serviceReocrd}
-              ceFileDelete={ceFileDelete}
-              deleteFileResult={deleteFileResult}
-              addMotServeRecordSuccess={addMotServeRecordSuccess}
-              getCeFileList={getCeFileList}
-            /> : null
+          (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
+          ? <ServiceRecordForm
+            dict={dict}
+            empInfo={empInfo}
+            addServeRecord={this.addServiceRecord}
+            isReadOnly={isReadOnly}
+            isReject={isReject}
+            statusCode={statusCode}
+            isEntranceFromPerformerView
+            isFold={isFold}
+            queryCustUuid={queryCustUuid}
+            custUuid={custUuid}
+            formData={serviceReocrd}
+            ceFileDelete={ceFileDelete}
+            deleteFileResult={deleteFileResult}
+            addMotServeRecordSuccess={addMotServeRecordSuccess}
+            getCeFileList={getCeFileList}
+            queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+            custFeedbackList={custFeedbackList}
+            eventId={eventId}
+            taskTypeCode={taskTypeCode}
+            serviceTypeCode={serviceTypeCode}
+            queryApprovalList={queryApprovalList}
+            zhangleApprovalList={zhangleApprovalList}
+          /> : null
         }
       </div>
     );
@@ -286,6 +308,7 @@ ServiceImplementation.propTypes = {
   currentId: PropTypes.string.isRequired,
   addServeRecord: PropTypes.func.isRequired,
   dict: PropTypes.object,
+  empInfo: PropTypes.object,
   isFold: PropTypes.bool,
   list: PropTypes.array.isRequired,
   handleCollapseClick: PropTypes.func.isRequired,
@@ -314,10 +337,21 @@ ServiceImplementation.propTypes = {
   isTaskFeedbackListOfNone: PropTypes.bool,
   modifyLocalTaskList: PropTypes.func.isRequired,
   getTaskDetailBasicInfo: PropTypes.func.isRequired,
+  // 涨乐财富通服务方式下的客户反馈列表以及查询方法
+  queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+  custFeedbackList: PropTypes.array.isRequired,
+  // 事件ID
+  eventId: PropTypes.string.isRequired,
+  // 任务类型：自建还是MOT
+  taskTypeCode: PropTypes.string.isRequired,
+  // 涨乐财富通服务方式下的审批人列表以及查询方法
+  queryApprovalList: PropTypes.func.isRequired,
+  zhangleApprovalList: PropTypes.array.isRequired,
 };
 
 ServiceImplementation.defaultProps = {
   dict: {},
+  empInfo: {},
   isFold: false,
   serviceRecordData: {},
   custIncomeReqState: false,

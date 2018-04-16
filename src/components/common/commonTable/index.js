@@ -270,7 +270,7 @@ export default class CommonTable extends PureComponent {
                 })}
             >
               <span
-                title={record[item.key]}
+                title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
                 className={styles.link}
                 onClick={() => firstColumnHandler(record, item.value)}
               >
@@ -303,7 +303,7 @@ export default class CommonTable extends PureComponent {
         }
 
         return (
-          <span title={record[item.key]} className={'column'}>
+          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className={'column'}>
             {this.renderColumnValue(record, item)}
           </span>
         );

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 11:18:05
+ * @Last Modified time: 2018-04-16 09:57:17
  * 客户明细数据
  */
 
@@ -121,8 +121,6 @@ export default class CustDetail extends PureComponent {
       feedbackL1List: this.renderFeedbackL1Option(),
       feedbackL2List: this.renderFeedbackL2Option(feedbackIdL1, feedbackIdL2),
     };
-    // 代表当前feedback详情是否是多选形式
-    this.isFeedbackDetailMore = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -257,28 +255,11 @@ export default class CustDetail extends PureComponent {
    */
   @autobind
   addIdToDataSource(listData = []) {
-    let newDataSource = listData;
-    if (!_.isEmpty(listData)) {
-      newDataSource = _.map(listData, (item) => {
-        if (_.isArray(item.custFeedBack2)) {
-          if (!this.isFeedbackDetailMore) {
-            this.isFeedbackDetailMore = true;
-          }
-        }
-
-        if (this.isFeedbackDetailMore) {
-          this.isFeedbackDetailMore = false;
-        }
-
-        return {
-          ...item,
-          // 用流水id，流水id不可能一样
-          id: item.missionFlowId,
-        };
-      });
-    }
-
-    return newDataSource;
+    return _.map(listData, item => ({
+      ...item,
+      // 用流水id，流水id不可能一样
+      id: item.missionFlowId,
+    }));
   }
 
   /**
@@ -330,24 +311,10 @@ export default class CustDetail extends PureComponent {
   }
 
   @autobind
-  renderCustTypeIcon({ custType }) {
-    return rankImgSrcConfig[custType] ?
-      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[custType]} alt="" />
+  renderCustTypeIcon({ levelCode }) {
+    return rankImgSrcConfig[levelCode] ?
+      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[levelCode]} alt="" />
       : null;
-  }
-
-  @autobind
-  renderFeedbackDetail(feedbackDetail) {
-    if (this.isFeedbackDetailMore) {
-      return (
-        <div className={styles.detailColumn}>
-          {_.map(feedbackDetail, itemData =>
-            <div key={itemData}><span>{itemData}</span></div>)
-          }
-        </div>
-      );
-    }
-    return feedbackDetail;
   }
 
   @autobind
@@ -386,7 +353,6 @@ export default class CustDetail extends PureComponent {
     {
       key: 'custFeedBack2',
       value: '反馈详情',
-      render: this.renderFeedbackDetail,
     }];
 
     if (isEntryFromPie || isEntryFromCustTotal) {

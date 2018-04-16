@@ -19,6 +19,7 @@ import morningBoradcast from './morningBoradcast';
 import preSaleQuery from './preSaleQuery';
 import stock from './stock';
 import pointsExchange from './pointsExchange';
+import userCenter from './userCenter';
 
 const api = apiCreator();
 
@@ -65,5 +66,7 @@ export default {
   stock: stock(api),
   // 积分兑换历史查询
   pointsExchange: pointsExchange(api),
+  // 用户中心
+  userCenter: userCenter(api),
 };
 
