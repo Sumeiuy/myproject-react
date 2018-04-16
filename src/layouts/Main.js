@@ -7,10 +7,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
+import {
+  Route,
+  Switch,
+  routerRedux,
+} from 'dva/router';
+
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
+import { getRoutes } from '../utils/router';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 import withRouter from '../decorators/withRouter';
@@ -93,6 +99,7 @@ export default class Main extends Component {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    routerData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -126,7 +133,6 @@ export default class Main extends Component {
 
   render() {
     const {
-      children,
       loading,
       interfaceState,
       dict,
@@ -142,6 +148,7 @@ export default class Main extends Component {
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
+      routerData,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
@@ -156,7 +163,20 @@ export default class Main extends Component {
                     !interfaceState[effects.customerScope] &&
                     !interfaceState[effects.empInfo]) ?
                       <div>
-                        {children}
+                        <Switch>
+                          {
+                            getRoutes('/', routerData).map(
+                              item => (
+                                <Route
+                                  key={item.key}
+                                  path={item.path}
+                                  exact={item.exact}
+                                  render={props => <item.component {...props} />}
+                                />
+                              ),
+                            )
+                          }
+                        </Switch>
                         <ConnectedCreateServiceRecord
                           handleCloseClick={handleCloseClick}
                           loading={interfaceState[effects.addServeRecord]}
