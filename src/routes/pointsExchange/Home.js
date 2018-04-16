@@ -175,7 +175,7 @@ export default class Home extends Component {
           endTime,
         };
         this.setState(
-          { productCode, brokerNumber },
+          { productCode, brokerNumber, pageNum: 1 },
           () => {
             getExchangeList({ ...fieldValue });
           },
@@ -193,8 +193,7 @@ export default class Home extends Component {
   handleReset() {
     this.props.form.resetFields();
     this.datePickRef.clearAllDate();
-    const resetValue = _.omit(defaultParam, 'pageNum');
-    this.setState({ ...resetValue });
+    this.setState({ ...defaultParam });
     // 发送请求，重置表格数据
     this.props.getExchangeList(defaultParam);
   }
@@ -203,9 +202,9 @@ export default class Home extends Component {
     const { exchangeList, page = {} } = this.props.exchangeData || {};
     const { totalRecordNum = 1 } = page;
     const { getFieldDecorator } = this.props.form;
-    const { curPageNum = 1 } = this.state;
+    const { pageNum = 1 } = this.state;
     const paganationOption = {
-      current: curPageNum,
+      current: pageNum,
       pageSize: 10,
       total: _.toNumber(totalRecordNum) || 1,
       onChange: this.handlePageChange,
