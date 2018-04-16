@@ -174,16 +174,12 @@ export default class Home extends Component {
           startTime,
           endTime,
         };
-        const lastValue = { ...this.state, pageNum: 1 };
-        // 过滤请求的条件相同的情况
-        if (lastValue !== fieldValue) {
-          this.setState(
-            { productCode, brokerNumber },
-            () => {
-              getExchangeList({ ...fieldValue });
-            },
-          );
-        }
+        this.setState(
+          { productCode, brokerNumber },
+          () => {
+            getExchangeList({ ...fieldValue });
+          },
+        );
       }
     });
   }
@@ -199,6 +195,8 @@ export default class Home extends Component {
     this.datePickRef.clearAllDate();
     const resetValue = _.omit(defaultParam, 'pageNum');
     this.setState({ ...resetValue });
+    // 发送请求，重置表格数据
+    this.props.getExchangeList(defaultParam);
   }
 
   render() {
