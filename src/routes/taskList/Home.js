@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 09:10:05
+ * @Last Modified time: 2018-04-16 17:42:03
  * @description 任务管理首页
  */
 
@@ -175,9 +175,11 @@ export default class PerformerView extends PureComponent {
         statusCode,
         typeName,
         eventId,
+        descText,
       } = item;
 
       this.setState({
+        taskTypeCode: descText,
         currentView: st,
         activeRowIndex: itemIndex,
         typeCode,
@@ -893,7 +895,6 @@ export default class PerformerView extends PureComponent {
     const currentMissionTypeObject = _.find(dict.missionType, item =>
       item.key === typeCode) || {};
     const { descText } = currentMissionTypeObject;
-
     replace({
       pathname,
       query: {

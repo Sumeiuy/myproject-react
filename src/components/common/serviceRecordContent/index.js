@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 11:48:18
+ * @Last Modified time: 2018-04-16 15:33:44
  */
 
 import React, { PureComponent } from 'react';
@@ -373,7 +373,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 清除上传文件列表
     this.clearUploadedFileList();
     this.setState({
-      ...this.getDefaultState(),
+      ...this.getDefaultState(this.props),
     });
   }
 
@@ -610,6 +610,8 @@ export default class ServiceRecordContent extends PureComponent {
       isSelectZhangleFins,
       ZLCustFeedback,
       ZLCustFeedbackTime,
+      custFeedback,
+      custFeedback2,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 
@@ -631,6 +633,12 @@ export default class ServiceRecordContent extends PureComponent {
       // 如果是从360视图|客户列表页面进入
       cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType);
     }
+
+    // 级联客户反馈列表选项的value
+    const cascadeSelectValue = {
+      first: custFeedback,
+      second: custFeedback2,
+    };
 
     return (
       <div className={styles.serviceRecordContent}>
@@ -719,6 +727,7 @@ export default class ServiceRecordContent extends PureComponent {
           ? (
             <div className={styles.custFeedbackSection}>
               <CascadeFeedbackSelect
+                value={cascadeSelectValue}
                 onChange={this.handleCascadeSelectChange}
                 feedbackList={cascadeFeedbackList}
               />

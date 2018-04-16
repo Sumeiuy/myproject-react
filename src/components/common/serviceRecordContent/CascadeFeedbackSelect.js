@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 11:06:39
+ * @Last Modified time: 2018-04-16 15:26:04
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -18,23 +18,24 @@ const { Option } = Select;
 export default class CascadeFeedbackSelect extends PureComponent {
   constructor(props) {
     super(props);
-    const { feedbackList } = this.props;
+    const { feedbackList, value } = this.props;
     const first = _.get(feedbackList, '[0].key') || '';
     const second = _.get(feedbackList, '[0].children[0].key') || '';
-    this.state = {
-      first,
-      second,
-    };
+
+    this.state = _.isEmpty(value) ? { first, second } : value;
   }
 
   componentWillReceiveProps(nextProps) {
-    const { feedbackList: prevList } = this.props;
-    const { feedbackList: nextList } = nextProps;
-    if (!_.isEqual(prevList, nextList)) {
-      const first = _.get(nextList, '[0].key') || '';
-      const second = _.get(nextList, '[0].children[0].key') || '';
-      this.setState({ first, second });
-    }
+    // const { feedbackList: prevList } = this.props;
+    // const { feedbackList: nextList } = nextProps;
+    // if (!_.isEqual(prevList, nextList)) {
+    //   const first = _.get(nextList, '[0].key') || '';
+    //   const second = _.get(nextList, '[0].children[0].key') || '';
+    //   this.setState({ first, second });
+    // }
+
+    const { value } = nextProps;
+    this.setState(value);
   }
 
   @autobind
@@ -123,6 +124,7 @@ export default class CascadeFeedbackSelect extends PureComponent {
 CascadeFeedbackSelect.propTypes = {
   onChange: PropTypes.func.isRequired,
   feedbackList: PropTypes.array.isRequired,
+  value: PropTypes.object.isRequired,
 };
 
 CascadeFeedbackSelect.defaultProps = {};
