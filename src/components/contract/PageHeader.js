@@ -122,7 +122,7 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/createModal', title: '' })
+  @logPV({ pathname: '/modal/createModal', title: '新建公共弹框' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,

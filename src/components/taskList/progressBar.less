@@ -13,14 +13,17 @@
     height: 3px;
     background-color: #fff;
     transform: translateY(3px);
-    z-index: 10;
+    // z-index 大于等于10时，当日期组件的日历浮层出现在进度条上面时，进度条会出现在日期段组件的日历浮层上面。
+    z-index: 7;
     position: relative;
   }
   .overlayDefault {
     height: 3px;
     background-color: #756fb8;
     transform: translateY(3px);
-    z-index: 10;
+    // z-index 大于等于10时，当日期组件的日历浮层出现在进度条上面时，进度条会出现在日期段组件的日历浮层上面。
+    // z-index 小于10，不显示
+    z-index: 7;
     position: relative;
   }
   .block {

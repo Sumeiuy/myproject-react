@@ -57,7 +57,13 @@ export default class MissionBind extends PureComponent {
 
   // 查询客户反馈
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户反馈' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户反馈',
+      value: '$args[0]',
+    },
+  })
   handleSearchFeedback(keyword) {
     const { queryFeedbackList, roleType } = this.props;
     this.setState({
@@ -92,7 +98,13 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(value) {
     const { keyword } = this.state;
     const { queryFeedbackList, roleType } = this.props;

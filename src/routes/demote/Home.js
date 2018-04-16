@@ -112,13 +112,25 @@ export default class Demote extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(page, pageSize) {
     this.onChange(page, pageSize);
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handlePageSizeChange(page, pageSize) {
     this.onChange(page, pageSize);
   }

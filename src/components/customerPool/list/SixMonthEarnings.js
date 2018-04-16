@@ -51,7 +51,13 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '鼠标进入$props.displayText' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '鼠标进入',
+      value: '$props.displayText',
+    },
+  })
   getCustIncome() {
     const { getCustIncome, listItem, monthlyProfits, custIncomeReqState } = this.props;
     const thisProfits = monthlyProfits[listItem.custId];
@@ -69,7 +75,13 @@ export default class SixMonthEarnings extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '鼠标离开$props.displayText' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '鼠标离开',
+      value: '$props.displayText',
+    },
+  })
   handleMouseLeave() {
     this.debounced.cancel();
     this.setState({

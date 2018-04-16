@@ -283,7 +283,7 @@ export default class TaskSearchRow extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '改变radio状态' } })
   change(e) {
     const { onChange, circlePeopleData } = this.props;
     const { filterNumObject } = this.state;

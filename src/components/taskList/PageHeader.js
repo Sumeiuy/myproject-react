@@ -387,7 +387,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务名称' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索任务名称',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     console.warn('点击了搜索', value);
     this.props.filterCallback({
@@ -397,7 +403,13 @@ export default class Pageheader extends PureComponent {
 
   // 查询客户、拟稿人、审批人公共调接口方法
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[1]关键字搜索创建者' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索创建者',
+      value: '$args[1]',
+    },
+  })
   toSearch(method, value) {
     method({
       keyword: value,
@@ -495,7 +507,13 @@ export default class Pageheader extends PureComponent {
    * @param {*} value 输入的关键词
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户',
+      value: '$args[0]',
+    },
+  })
   searchCustomer(value) {
     const { queryCustomer } = this.props;
     // pageSize传1000000，使能够查到足够的数据
