@@ -8,6 +8,8 @@ import styles from './userBasicInfo.less';
 import BasicInfo from '../../components/userCenter/BasicInfo';
 
 const TabPane = Tabs.TabPane;
+const FIRST_TAB = '1';
+const SECOND_TAB = '2';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -54,7 +56,7 @@ export default class UserBasicInfo extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: '1',
+      activeTab: FIRST_TAB,
       editorState: false,
     };
   }
@@ -87,7 +89,7 @@ export default class UserBasicInfo extends PureComponent {
     const { empInfo = {} } = this.context;
     const { tgFlag } = empInfo.empInfo || {};
     // 当在第一个tab页的时候有编辑按钮
-    if (activeTab === '1' && tgFlag && !editorState) {
+    if (activeTab === FIRST_TAB && tgFlag && !editorState) {
       return (<div className={styles.tabsExtraBtn}>
         <Button
           type="primary"
@@ -116,7 +118,7 @@ export default class UserBasicInfo extends PureComponent {
     return (
       <div className={styles.userInfoWrap}>
         <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey={FIRST_TAB}
           tabBarExtraContent={this.getEditorBtn()}
           onChange={this.handleChangeTab}
           tabBarStyle={{
@@ -125,7 +127,7 @@ export default class UserBasicInfo extends PureComponent {
         >
           <TabPane
             tab="基本信息"
-            key="1"
+            key={FIRST_TAB}
           >
             <BasicInfo
               userBaseInfo={userBaseInfo}
@@ -141,7 +143,7 @@ export default class UserBasicInfo extends PureComponent {
           </TabPane>
           <TabPane
             tab="我的审批"
-            key="2"
+            key={SECOND_TAB}
             // disabled
           >
             我的审批

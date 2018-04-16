@@ -102,6 +102,12 @@ export default class Header extends PureComponent {
   };
   render() {
     const { location: { pathname }, matchPath, menu, push } = this.props;
+    /**
+     * desc: 获取菜单匹配的pathItem列表
+     * @param pathname: '/a/b/c'
+     * @param matchPath: '/a'
+     * @return ['/b', '/c']
+     */
     const pathList = pathname.substring(matchPath.length).match(/\/([^/]*)(?=(\/|$))/g) || [];
     const navItemList = getNavItemList(menu, pathList);
     let parentPath = matchPath;
@@ -124,7 +130,7 @@ export default class Header extends PureComponent {
                 parentPath += preventItem.path;
                 return dropDownMenu;
               }
-              return typeof option === 'string' ?
+              return _.isString(option) ?
                 (<div key={index} className={styles.navItem}>{option}</div>) :
                 null;
             })

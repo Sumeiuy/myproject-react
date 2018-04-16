@@ -62,7 +62,7 @@ import Phone from './routes/phone/Home';
 // 用户中心
 import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 // 平台参数设置
-import PlatformParameterSetting from './routes/platformParameterSetting/PlatformParameterSetting';
+import PlatformParameterSetting from './routes/platformParameterSetting/Home';
 // 用户信息审核
 import userInfoApproval from './routes/userCenter/userInfoApproval';
 
