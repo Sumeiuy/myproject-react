@@ -6,23 +6,23 @@
 
 const menu = [
   {
-    name: '用户中心',
-    path: '/labelManager',
-    children: '个人标签',
-  },
-  {
-    name: '任务运维',
+    name: '任务管理',
     path: '/taskOperation',
     children: [
       {
-        name: '任务反馈',
-        path: '/taskFeedback',
-      },
-      {
-        name: '客户反馈',
+        name: '客户反馈选项',
         path: '/customerFeedback',
       },
+      {
+        name: '任务问卷调查',
+        path: '/taskFeedback',
+      },
     ],
+  },
+  {
+    name: '用户中心',
+    path: '/labelManager',
+    children: '个人标签',
   },
 ];
 

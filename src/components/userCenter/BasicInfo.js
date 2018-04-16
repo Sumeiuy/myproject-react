@@ -54,12 +54,10 @@ export default class BasicInfo extends PureComponent {
     const { userBaseInfo: newUserBaseInfo } = nextProps;
     if (userBaseInfo !== newUserBaseInfo) {
       const {
-        applyingDescription,
-        label,
+        labels,
       } = newUserBaseInfo;
       this.setState({
-        newApplyingDescription: applyingDescription,
-        newLabel: label || [],
+        newLabel: labels || [],
       });
     }
   }
@@ -218,7 +216,13 @@ export default class BasicInfo extends PureComponent {
   // 取消编辑状态
   @autobind
   cancelEditor() {
-    const { changeEditorState } = this.props;
+    const { changeEditorState, userBaseInfo } = this.props;
+    const {
+      labels = [],
+    } = userBaseInfo;
+    this.setState({
+      newLabel: labels,
+    });
     changeEditorState();
   }
   // 选择审批人

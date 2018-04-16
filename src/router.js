@@ -182,7 +182,7 @@ const routes = [
     component: UserBasicInfo,
     children: [
       {
-        path: '/personalInfoApproval',
+        path: '/userInfoApproval',
         component: userInfoApproval,
       },
     ],
