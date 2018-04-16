@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-11-09 16:37:27
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-11 19:50:14
+ * @Last Modified time: 2018-04-16 10:25:10
  */
 
 import React, { PureComponent } from 'react';
@@ -354,8 +354,6 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       confirmContent = '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！';
     }
     confirm({
-      okText: '确定',
-      cancelText: '取消',
       title: '提示',
       content: confirmContent,
       onOk: () => {

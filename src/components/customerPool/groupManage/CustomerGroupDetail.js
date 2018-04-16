@@ -135,7 +135,7 @@ export default class CustomerGroupDetail extends PureComponent {
     // 判断删除是否成功
     if (prevResult !== nextResult) {
       const newDataSource = _.filter(dataSource,
-        item => item.brokerNumber !== needDeleteBrokerNumber
+        item => item.brokerNumber !== needDeleteBrokerNumber,
       );
       // 数据从表格删除
       this.setState({
@@ -548,7 +548,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
                 const custIdList = _.map(multiBatchCustList,
-                  item => ({ id: item.custId, custType: item.custType })
+                  item => ({ id: item.custId, custType: item.custType }),
                 );
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(includeCustIdList, custIdList);

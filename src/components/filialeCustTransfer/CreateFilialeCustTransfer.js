@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-11 19:45:19
+ * @Last Modified time: 2018-04-16 10:14:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -251,8 +251,6 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       }
       if (managerDataItem.hasContract) {
         Modal.confirm({
-          okText: '确定',
-          cancelText: '取消',
           title: '确认要划转吗?',
           content: '该客户名下有生效中的合作合约，请确认是否划转?',
           onOk: () => {
