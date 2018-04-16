@@ -174,16 +174,12 @@ export default class Home extends Component {
           startTime,
           endTime,
         };
-        const lastValue = { ...this.state, pageNum: 1 };
-        // 过滤请求的条件相同的情况
-        if (lastValue !== fieldValue) {
-          this.setState(
-            { productCode, brokerNumber },
-            () => {
-              getExchangeList({ ...fieldValue });
-            },
-          );
-        }
+        this.setState(
+          { productCode, brokerNumber, pageNum: 1 },
+          () => {
+            getExchangeList({ ...fieldValue });
+          },
+        );
       }
     });
   }
@@ -197,17 +193,18 @@ export default class Home extends Component {
   handleReset() {
     this.props.form.resetFields();
     this.datePickRef.clearAllDate();
-    const resetValue = _.omit(defaultParam, 'pageNum');
-    this.setState({ ...resetValue });
+    this.setState({ ...defaultParam });
+    // 发送请求，重置表格数据
+    this.props.getExchangeList(defaultParam);
   }
 
   render() {
     const { exchangeList, page = {} } = this.props.exchangeData || {};
     const { totalRecordNum = 1 } = page;
     const { getFieldDecorator } = this.props.form;
-    const { curPageNum = 1 } = this.state;
+    const { pageNum = 1 } = this.state;
     const paganationOption = {
-      current: curPageNum,
+      current: pageNum,
       pageSize: 10,
       total: _.toNumber(totalRecordNum) || 1,
       onChange: this.handlePageChange,

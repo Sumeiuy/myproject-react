@@ -115,8 +115,6 @@ export default class QuestionList extends PureComponent {
     Modal.confirm({
       title: '确认',
       content: `删除 ‘${obj.quesValue}’ 问题吗？`,
-      okText: '确认',
-      cancelText: '取消',
       onOk: () => this.confirmDelete(obj),
     });
   }
