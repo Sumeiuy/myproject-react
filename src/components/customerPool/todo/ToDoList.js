@@ -18,6 +18,7 @@ import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
 
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
 
 export default class ToDoList extends PureComponent {
 
@@ -155,12 +156,30 @@ export default class ToDoList extends PureComponent {
         flowId: flowData.flowId,
         systemCode,
       }).then(this.handleSuccess);
+    } else if (flowData.flowClass === USER_INFO_APPROVE) {
+      this.toApproveUserInfo(flowData.flowId);
     } else {
       // 跳转到审批页面
       window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
     }
   }
 
+  // 跳转到基本信息审核页面
+  @autobind
+  toApproveUserInfo(flowId) {
+    const { push, location: { query } } = this.props;
+    const param = {
+      id: 'USER_CENTER_BACKLOG_FLOW',
+      title: '待办流程',
+    };
+    openRctTab({
+      routerAction: push,
+      url: `/userCenter/userInfoApproval?flowId=${flowId}`,
+      param,
+      pathname: '/userCenter/userInfoApproval',
+      query,
+    });
+  }
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
