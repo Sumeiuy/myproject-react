@@ -60,12 +60,12 @@ export default class LabelManager extends PureComponent {
     this.columns = [{
       title: 'labelName',
       dataIndex: 'name',
-      width: '35%',
+      width: '40%',
       render: (text, record) => this.EditableCell(text, record, 'name'),
     }, {
       title: 'operation',
       dataIndex: 'operation',
-      width: '40%',
+      width: '35%',
       render: (text, record) => {
         const { editorCell } = this.state;
         return (
@@ -116,17 +116,29 @@ export default class LabelManager extends PureComponent {
   @autobind
   EditableCell(text, record, column) {
     const { editorCell } = this.state;
-    return (
-      <div className={styles.labelName}>
-        {editorCell.id === record.id
-          ? <Input
+    if (editorCell.id === record.id) {
+      return (
+        <div className={styles.labelName}>
+          <Input
             maxLength={15}
-            style={{ margin: '-5px 0' }}
             value={editorCell.name}
             onChange={e => this.handleChange(e.target.value, record.id, column)}
           />
-          : text
-        }
+          {
+            editorCell.error ?
+              (
+                <div className={styles.labelError}>{editorCell.error }</div>
+              ) :
+              null
+          }
+        </div>
+      );
+    }
+    return (
+      <div className={styles.labelName}>
+        <div>
+          {text}
+        </div>
       </div>
     );
   }
@@ -135,6 +147,7 @@ export default class LabelManager extends PureComponent {
       editorCell: {
         name: value,
         id,
+        error: value ? '' : '名称不能为空', // 当输入为空时的错误提示
       },
     });
   }
@@ -149,6 +162,9 @@ export default class LabelManager extends PureComponent {
     const { allLabels } = this.props;
     const { editorCell } = this.state;
     const oldLabelItem = _.filter(allLabels, item => item.id === editorCell.id)[0];
+    if (editorCell.error) {
+      return;
+    }
     if (oldLabelItem.name === editorCell.name) {
       this.setState({
         editorCell: EMPTY_OBJ,
@@ -219,13 +235,20 @@ export default class LabelManager extends PureComponent {
     const { addLabel } = this.props;
     const { getFieldValue } = this.props.form;
     const name = getFieldValue('labelValue');
-    addLabel({ name })
-      .then(() => {
-        this.props.queryAllLabels();
-        this.setState({
-          addLabelState: false,
-        });
+    if (!name) {
+      this.setState({
+        addLabelState: false,
       });
+    } else {
+      addLabel({ name })
+        .then(() => {
+          this.props.queryAllLabels();
+          this.setState({
+            addLabelState: false,
+          });
+          this.paginationChange(1);
+        });
+    }
   }
   // --添加标签--end
   // 分页(当前页，当前页数据)
