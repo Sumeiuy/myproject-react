@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 20:25:38
+ * @Last Modified time: 2018-04-16 13:39:06
  * @desc 服务方式的Select
  */
 
@@ -42,9 +42,8 @@ export default class ServiceWaySelect extends PureComponent {
   renderServiceSelectOptions(list = []) {
     const { empInfo } = this.props;
     return list.map((obj) => {
-      if (false && !empInfo.tgFlag && obj.key === 'ZLFins') {
+      if (!empInfo.tgQyFlag && obj.key === 'ZLFins') {
         // 只有投顾入岗才能看到 涨乐财富通
-        // TODO 接口联调的时候再修改
         return null;
       }
       return (<Option key={obj.key} value={obj.key}>{obj.value}</Option>);
