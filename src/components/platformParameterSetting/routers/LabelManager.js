@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import fsp from '../../../helper/fsp';
 import Icon from '../../common/Icon';
 import Pagination from '../../common/Pagination';
 
@@ -276,6 +277,7 @@ export default class LabelManager extends PureComponent {
         pageNum,
       },
     });
+    fsp.scrollToTop();
   }
 
   render() {
