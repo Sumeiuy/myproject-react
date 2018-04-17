@@ -682,7 +682,7 @@ export default {
     },
     // 提交任务流程
     * submitTaskFlow({ payload }, { call, put }) {
-      const response = yield call(api.submitTaskFlow, payload);
+      const response = yield call(api.createTask, payload);
       const { resultData } = response;
       yield put({
         type: 'submitTaskFlowSuccess',
