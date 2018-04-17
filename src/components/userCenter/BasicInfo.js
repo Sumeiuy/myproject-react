@@ -344,7 +344,7 @@ export default class BasicInfo extends PureComponent {
                                       />) :
                                     userBaseInfo[item.key] || '--'
                                 }
-                                <span className={styles.errorInfo}>
+                                <span className={styles.errorInfoItem}>
                                   {
                                     editorState ?
                                       getFieldError('applyingDescription') || '' :
@@ -358,6 +358,7 @@ export default class BasicInfo extends PureComponent {
                                   newLabel
                                     .map(label =>
                                       <Tag
+                                        className={styles}
                                         closable
                                         onClose={(e) => {
                                           this.deleteUserLabel(e, label.id);
@@ -399,23 +400,24 @@ export default class BasicInfo extends PureComponent {
                   {
                     editorState ?
                       <div className={styles.selectApprover}>
-                        <FormItem
-                          label="选择审批人"
-                        >
-                          {getFieldDecorator('approver', {
-                            rules: [{
-                              required: true, message: '请选择审批人',
-                            }],
-                            initialValue: empName,
-                          })(
-                            <Search
-                              placeholder="搜索内容"
-                              style={{ width: 200 }}
-                              readOnly
-                              onClick={this.openApproverBoard}
-                            />,
-                          )}
-                        </FormItem>
+                        <span onClick={this.openApproverBoard}>
+                          <FormItem
+                            label="选择审批人"
+                          >
+                            {getFieldDecorator('approver', {
+                              rules: [{
+                                required: true, message: '请选择审批人',
+                              }],
+                              initialValue: empName,
+                            })(
+                              <Search
+                                placeholder="搜索内容"
+                                style={{ width: 200 }}
+                                readOnly
+                              />,
+                            )}
+                          </FormItem>
+                        </span>
                       </div> :
                       null
                   }

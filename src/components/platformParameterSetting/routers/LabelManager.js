@@ -60,12 +60,12 @@ export default class LabelManager extends PureComponent {
     this.columns = [{
       title: 'labelName',
       dataIndex: 'name',
-      width: '40%',
+      width: '43%',
       render: (text, record) => this.EditableCell(text, record, 'name'),
     }, {
       title: 'operation',
       dataIndex: 'operation',
-      width: '35%',
+      width: '32%',
       render: (text, record) => {
         const { editorCell } = this.state;
         return (
