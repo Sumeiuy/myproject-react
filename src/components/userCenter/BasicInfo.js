@@ -39,6 +39,10 @@ export default class BasicInfo extends PureComponent {
     queryEmpInfo: PropTypes.func.isRequired,
   };
 
+  static contextTypes = {
+    empInfo: PropTypes.object,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -101,7 +105,7 @@ export default class BasicInfo extends PureComponent {
   headerImg(headerImgUrl = defaultHeader) {
     return (
       <div className={styles.userImg}>
-        <img src={headerImgUrl} alt="默认头像" />
+        <img src={headerImgUrl} alt="用户照片" />
       </div>
     );
   }
@@ -272,6 +276,8 @@ export default class BasicInfo extends PureComponent {
     const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
     const { empName = '' } = approver;
+    const { empInfo = {} } = this.context;
+    const { tgFlag } = empInfo.empInfo || {};
     return (
       <div className={styles.basicInfo}>
         <div className={styles.userInfo}>
@@ -301,115 +307,121 @@ export default class BasicInfo extends PureComponent {
             />
           </div>
         </div>
-        <Divider />
-        <Form layout="inline">
-          <div className={styles.personalDesc}>
-            <List
-              dataSource={this.getBaseInfoMapping(ADVISER_INFO)}
-              renderItem={
-                (item, index) => (
-                    // 个人介绍
-                    (<List.Item>
-                      <div className={styles.label}>
-                        <div>{item.name}:</div>
-                        {
-                          isApproving ?
-                            <div>(审批中)</div> :
-                            null
-                        }
-                      </div>
-                      {
-                        index === 0 ?
-                          // 个人介绍
-                          <div className={styles.inputWrap}>
+        {
+          tgFlag ?
+            (
+              <Form layout="inline">
+                <Divider />
+                <div className={styles.personalDesc}>
+                  <List
+                    dataSource={this.getBaseInfoMapping(ADVISER_INFO)}
+                    renderItem={
+                      (item, index) => (
+                        // 个人介绍
+                        (<List.Item>
+                          <div className={styles.label}>
+                            <div>{item.name}:</div>
                             {
-                              editorState ?
-                                getFieldDecorator('applyingDescription', {
-                                  rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
-                                  initialValue: userBaseInfo[item.key],
-                                })(
-                                  <TextArea
-                                    autosize={{ minRows: 4, maxRows: 6 }}
-                                  />) :
-                                userBaseInfo[item.key] || '--'
-                            }
-                            <span className={styles.errorInfo}>
-                              {
-                                editorState ?
-                                  getFieldError('applyingDescription') || '' :
-                                  null
-                              }
-                            </span>
-                          </div> :
-                          // 个人标签
-                          <div className={styles.inputWrap}>
-                            {editorState ?
-                              newLabel
-                                .map(label =>
-                                  <Tag
-                                    closable
-                                    onClose={(e) => {
-                                      this.deleteUserLabel(e, label.id);
-                                    }}
-                                    color="gold"
-                                    key={label.id}
-                                  >
-                                    {label.name}
-                                  </Tag>,
-                                ) :
-                              (userBaseInfo[item.key] || [])
-                                  .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
-                            }
-                            {
-                              this.hasLabel(userBaseInfo[item.key]) ?
-                                '暂未设置标签' :
+                              isApproving ?
+                                <div>(审批中)</div> :
                                 null
                             }
                           </div>
-                      }
-                    </List.Item>)
-                )
-              }
-            />
-            {
-              editorState ?
-                <div className={styles.selectLabel}>
-                  <Popover
-                    placement="rightTop"
-                    content={this.selectLabelContent()}
-                    trigger="click"
-                    overlayClassName={styles.labelPopover}
-                  >
-                    <Button onClick={this.moreLabel} icon="plus">更多</Button>
-                  </Popover>
-                </div> :
-                null
-            }
-            {
-              editorState ?
-                <div className={styles.selectApprover}>
-                  <FormItem
-                    label="选择审批人"
-                  >
-                    {getFieldDecorator('approver', {
-                      rules: [{
-                        required: true, message: '请选择审批人',
-                      }],
-                      initialValue: empName,
-                    })(
-                      <Search
-                        placeholder="搜索内容"
-                        style={{ width: 200 }}
-                        readOnly
-                        onClick={this.openApproverBoard}
-                      />,
-                    )}
-                  </FormItem>
-                </div> :
-                null
-            }
-          </div>
-        </Form>
+                          {
+                            index === 0 ?
+                              // 个人介绍
+                              <div className={styles.inputWrap}>
+                                {
+                                  editorState ?
+                                    getFieldDecorator('applyingDescription', {
+                                      rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
+                                      initialValue: userBaseInfo[item.key],
+                                    })(
+                                      <TextArea
+                                        autosize={{ minRows: 4, maxRows: 6 }}
+                                      />) :
+                                    userBaseInfo[item.key] || '--'
+                                }
+                                <span className={styles.errorInfo}>
+                                  {
+                                    editorState ?
+                                      getFieldError('applyingDescription') || '' :
+                                      null
+                                  }
+                                </span>
+                              </div> :
+                              // 个人标签
+                              <div className={styles.inputWrap}>
+                                {editorState ?
+                                  newLabel
+                                    .map(label =>
+                                      <Tag
+                                        closable
+                                        onClose={(e) => {
+                                          this.deleteUserLabel(e, label.id);
+                                        }}
+                                        color="gold"
+                                        key={label.id}
+                                      >
+                                        {label.name}
+                                      </Tag>,
+                                    ) :
+                                  (userBaseInfo[item.key] || [])
+                                    .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
+                                }
+                                {
+                                  this.hasLabel(userBaseInfo[item.key]) ?
+                                    '暂未设置标签' :
+                                    null
+                                }
+                              </div>
+                          }
+                        </List.Item>)
+                      )
+                    }
+                  />
+                  {
+                    editorState ?
+                      <div className={styles.selectLabel}>
+                        <Popover
+                          placement="rightTop"
+                          content={this.selectLabelContent()}
+                          trigger="click"
+                          overlayClassName={styles.labelPopover}
+                        >
+                          <Button onClick={this.moreLabel} icon="plus">更多</Button>
+                        </Popover>
+                      </div> :
+                      null
+                  }
+                  {
+                    editorState ?
+                      <div className={styles.selectApprover}>
+                        <FormItem
+                          label="选择审批人"
+                        >
+                          {getFieldDecorator('approver', {
+                            rules: [{
+                              required: true, message: '请选择审批人',
+                            }],
+                            initialValue: empName,
+                          })(
+                            <Search
+                              placeholder="搜索内容"
+                              style={{ width: 200 }}
+                              readOnly
+                              onClick={this.openApproverBoard}
+                            />,
+                          )}
+                        </FormItem>
+                      </div> :
+                      null
+                  }
+                </div>
+              </Form>
+            ) :
+            null
+        }
         {
           editorState ?
             <div className={styles.editorInfoSubmit}>

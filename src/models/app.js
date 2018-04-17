@@ -22,6 +22,12 @@ export default {
     serviceRecordModalVisibleOfId: '',
     // 服务弹窗对应的客户的经纪客户名
     serviceRecordModalVisibleOfName: '',
+    // 显示隐藏拨打电话弹窗，默认隐藏
+    phoneDialogOfVisible: false,
+    // 拨打电话弹框对应的电话号码
+    phoneDialogOfPhoneNum: '',
+    // 拨打电话弹框对应的客户类型
+    phoneDialogOfCustType: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -129,6 +135,16 @@ export default {
         serviceRecordModalVisibleOfName: payload.custName,
       };
     },
+    // 显示与隐藏拨打电话弹框
+    togglePhoneDialogSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        phoneDialogOfVisible: payload.flag,
+        phoneDialogOfPhoneNum: payload.phoneNum,
+        phoneDialogOfCustType: payload.custType,
+      };
+    },
     getDictionarySuccess(state, action) {
       const { payload: { response } } = action;
       const dict = response.resultData;
@@ -197,6 +213,13 @@ export default {
     * toggleServiceRecordModal({ payload }, { put }) {
       yield put({
         type: 'toggleServiceRecordModalSuccess',
+        payload,
+      });
+    },
+    // 显示与隐藏拨打电话弹框
+    * togglePhoneDialog({ payload }, { put }) {
+      yield put({
+        type: 'togglePhoneDialogSuccess',
         payload,
       });
     },

@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-16 10:17:59
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:13:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,9 +11,9 @@ import { autobind } from 'core-decorators';
 import { Tabs, Modal, Collapse, Icon, Popover, Button, message, Input } from 'antd';
 import _ from 'lodash';
 
+import config from './config';
 import FeedbackAdd from './FeedbackAdd';
 import Pagination from '../../common/Pagination';
-
 import styles from './missionBind.less';
 import logable from '../../../decorators/logable';
 
@@ -25,28 +25,11 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 // tab切换选项
-const TAB_LIST = [
-  {
-    tabName: 'MOT任务',
-    key: '1',
-  },
-  {
-    tabName: '自建任务',
-    key: '2',
-  },
-];
-const ROLE_TYPE = [
-  {
-    name: '服务经理可选项',
-    key: '0',
-  },
-  {
-    name: '客户可选项',
-    key: '1',
-  },
-];
-// 第一个tab的状态
-const FIRST_TAB = '1';
+const TAB_LIST = config.tabList;
+// 角色可选项配置
+const ROLE_TYPE = config.roleType;
+// 第一个tab的状态, MOT 任务
+const FIRST_TAB = config.tabList[0].key;
 
 export default class MissionBind extends PureComponent {
   static propTypes = {
@@ -95,7 +78,7 @@ export default class MissionBind extends PureComponent {
       </ul>);
       return (<div className={styles.feedbackItem} key={item.id}>
         {
-          obj.needPopover
+          obj.needPopover && item.childList && item.childList.length
           ?
             <Popover placement="bottomLeft" content={content} overlayClassName={styles.opcityPopover}>
               <span>{item.name}</span>
@@ -212,7 +195,8 @@ export default class MissionBind extends PureComponent {
     } = this.props;
     const { missionList } = missionData;
     const missionItem = _.find(missionList, v => v.id === missionId);
-    if (missionItem.feedbackList.length < 2) {
+    // 任务绑定的反馈不能少于一条并且 roleType 为服务经理可选项
+    if (missionItem.feedbackList.length < 2 && roleType === ROLE_TYPE[0].key) {
       message.error('每条任务绑定的客户反馈不能少于一条');
       return;
     }
@@ -246,7 +230,7 @@ export default class MissionBind extends PureComponent {
   // 添加客户反馈弹框点击确认
   @autobind
   handleAddFeedback() {
-    const { beAddMissionId } = this.state;
+    const { beAddMissionId, roleType } = this.state;
     const {
       addCustomerFeedback,
       queryMissionList,
@@ -269,6 +253,7 @@ export default class MissionBind extends PureComponent {
         missionId: beAddMissionId,
         feedbackId: feedback.id,
         type: childActiveKey,
+        roleType,
       }).then(() => {
         this.handleCloseModal();
         // 添加成功之后更新任务列表
