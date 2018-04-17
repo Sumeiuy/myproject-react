@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 15:33:44
+ * @Last Modified time: 2018-04-16 21:54:05
  */
 
 import React, { PureComponent } from 'react';
@@ -232,6 +232,7 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle: '',
       ZLServiceContentType: '',
       ZLServiceContentDesc: '',
+      ZLServiceContentTime: moment(),
       // 涨乐财富通服务方式下选择自由话术需要的审批人
       ZLServiceApproval: '',
       // 涨乐财富通服务方式下的投资建议模式 free|tmpl 是自由话术还是固定话术
@@ -243,21 +244,31 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   initialState(props) {
     const { formData: fd, isReadOnly, isReject, serviceTypeCode } = props;
+    // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2这个是大类
+    // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
+    const serviceWayCode = getServeWayCode(fd.serviceWayName);
+    // 提取涨乐财富通服务方式下的服务内容
+    const zlSC = {};
+    if (serveWayUtil.isZhangle(serviceWayCode)) {
+      // 只有涨乐财富通下才需要提取
+      const { time, title, taskType, content } = fd.serviceContent;
+      zlSC.ZLServiceContentTitle = title;
+      zlSC.ZLServiceContentType = taskType;
+      zlSC.ZLServiceContentDesc = content;
+      zlSC.ZLServiceContentTime = moment(time, DATE_FORMAT_FULL_END).format(DATE_FORMAT_FULL);
+    }
     // 如果非只读并且不是驳回状态，返回默认的State
     if (!isReadOnly && !isReject) {
       return this.getDefaultState(props);
     } else if (!isReadOnly && isReject) {
       // 如果是涨乐财富通服务方式下的驳回状态
       // TODO 目前先返回默认state, 后面需要将涨乐有关的值写进初始state中
-      return this.getDefaultState(props);
+      return { ...this.getDefaultState(props), ... zlSC };
     }
-    // 此处为只读状态下的state
-    // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2这个是大类
-    // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
-    const serviceWayCode = getServeWayCode(fd.serviceWayName);
+    // 以下为只读状态下的state
     // 获取用户选择的反馈信息
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
-    //
+
     return {
       serviceType: serviceTypeCode,
       serviceWayCode,
@@ -272,7 +283,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackText2: customerFeedback.children.value,
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
-      // serviceFullTime: fd.
+      ...zlSC,
     };
   }
 
@@ -545,11 +556,11 @@ export default class ServiceRecordContent extends PureComponent {
       serviceWayText,
       serviceStatusText,
       serviceTime,
-      serviceFullTime,
       serviceRecord,
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
+      ZLServiceContentTime,
       custFeedbackText,
       custFeedback2Text,
       custFeedbackTime,
@@ -561,6 +572,7 @@ export default class ServiceRecordContent extends PureComponent {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
       content: ZLServiceContentDesc,
+      time: ZLServiceContentTime,
     };
     return (
       <ServeRecordReadOnly
@@ -569,7 +581,6 @@ export default class ServiceRecordContent extends PureComponent {
         serviceWay={serviceWayText}
         serviceStatus={serviceStatusText}
         serviceTime={serviceTime.format(DATE_FORMAT_SHOW)}
-        serviceFullTime={serviceFullTime.format(DATE_FORMAT_FULL)}
         serviceRecord={serviceRecord}
         zlServiceRecord={zlServiceRecord}
         feedbackDateTime={custFeedbackTime.format(DATE_FORMAT_SHOW)}

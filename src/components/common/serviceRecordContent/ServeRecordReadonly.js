@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 15:00:07
+ * @Last Modified time: 2018-04-16 21:45:46
  * @description 只读服务记录
  */
 
@@ -21,7 +21,6 @@ export default function ServiceRecordReadOnly(props) {
     serviceWay,
     serviceStatus,
     serviceTime,
-    serviceFullTime,
     serviceRecord,
     zlServiceRecord,
     feedbackDateTime,
@@ -29,9 +28,10 @@ export default function ServiceRecordReadOnly(props) {
     custFeedback2,
     ZLCustFeedback,
     ZLCustFeedbackTime,
+    ZLServiceContentTime,
   } = props;
 
-  const investAdviceTip = isZL ? `${serviceFullTime} 给客户发送了以下投资建议` : '';
+  const investAdviceTip = isZL ? `${ZLServiceContentTime} 给客户发送了以下投资建议` : '';
 
   return (
     <div className={styles.serviceRecordContent}>
@@ -60,9 +60,12 @@ export default function ServiceRecordReadOnly(props) {
             <div className={styles.serveRecord}>
               <div className={styles.title}>服务内容:</div>
               <div className={styles.readOnlyText}>
-                <div>{investAdviceTip}</div>
-                <div><span>{zlServiceRecord.title}</span><span>{zlServiceRecord.type}</span></div>
-                <div>{zlServiceRecord.content}</div>
+                <div className={styles.adviceTips}>{investAdviceTip}</div>
+                <div>
+                  <span className={styles.caption}>{zlServiceRecord.title}</span>
+                  <span className={styles.type}>{zlServiceRecord.type}</span>
+                </div>
+                <div className={styles.rightCT}>{zlServiceRecord.content}</div>
               </div>
             </div>
           )
@@ -113,7 +116,6 @@ ServiceRecordReadOnly.propTypes = {
   serviceWay: PropTypes.string,
   serviceStatus: PropTypes.string,
   serviceTime: PropTypes.string,
-  serviceFullTime: PropTypes.string,
   serviceRecord: PropTypes.string,
   zlServiceRecord: PropTypes.object,
   feedbackDateTime: PropTypes.string,
@@ -121,6 +123,7 @@ ServiceRecordReadOnly.propTypes = {
   custFeedback2: PropTypes.string,
   ZLCustFeedback: PropTypes.string,
   ZLCustFeedbackTime: PropTypes.string,
+  ZLServiceContentTime: PropTypes.string,
 };
 ServiceRecordReadOnly.defaultProps = {
   attachmentList: [],
@@ -136,4 +139,5 @@ ServiceRecordReadOnly.defaultProps = {
   custFeedback2: '',
   ZLCustFeedback: '',
   ZLCustFeedbackTime: '',
+  ZLServiceContentTime: '',
 };
