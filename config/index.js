@@ -45,9 +45,9 @@ module.exports = {
     proxyTable: generateProxy([
       prefix,
       {
-        target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://168.61.8.82:5086', // uat
         // target: 'http://168.61.8.81:5087', // SIT
-        // target: 'http://168.61.8.81:5090', // DOClever
+        target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.145:8082/', // Java开发接口访问地址
       },
       '/fspa/log',
@@ -58,8 +58,9 @@ module.exports = {
       },
       '/fsp',
       {
+        target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.82:5086', // UAT
+        // target: 'http://168.61.8.82:5086', // UAT
       },
       '/htsc-product-base',
       {
