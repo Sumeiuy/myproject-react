@@ -10,7 +10,7 @@ import { Popover } from 'antd';
 import IECharts from '../../IECharts';
 import { openFspTab } from '../../../utils';
 
-import popoverStyles from '../../../css/antd.less';
+import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
 
 // 服务客户数的 key
@@ -58,7 +58,7 @@ function renderIntro(data, push) {
             placement="bottom"
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
-            overlayClassName={popoverStyles.popoverClass}
+            overlayClassName={antdStyles.popoverClass}
           >
             {item.value}
           </Popover>
@@ -70,7 +70,7 @@ function renderIntro(data, push) {
             placement="bottom"
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
-            overlayClassName={popoverStyles.popoverClass}
+            overlayClassName={antdStyles.popoverClass}
           >
             <span className={styles.properyValue}>{`/ ${item.property}`}</span>
             <span className={styles.unit}>{item.unit}</span>

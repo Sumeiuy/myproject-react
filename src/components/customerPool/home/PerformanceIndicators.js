@@ -32,7 +32,7 @@ import {
   getTradingVolume,
 } from './homeIndicators_';
 
-import popoverStyles from '../../../css/antd.less';
+import antdStyles from '../../../css/antd.less';
 import styles from './performanceIndicators.less';
 
 // [{name: 1}, {name: 2}] 转成 [1,2]
@@ -413,7 +413,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={popoverStyles.popoverClass}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[0].name}</span>
                 </Popover>
@@ -423,7 +423,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={popoverStyles.popoverClass}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[1].name}</span>
                 </Popover>
@@ -433,7 +433,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={popoverStyles.popoverClass}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[2].name}</span>
                 </Popover>
@@ -443,7 +443,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={popoverStyles.popoverClass}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[3].name}</span>
                 </Popover>
@@ -537,7 +537,7 @@ export default class PerformanceIndicators extends PureComponent {
           title={title}
           content={desc}
           placement="bottom"
-          overlayClassName={popoverStyles.popoverClass}
+          overlayClassName={antdStyles.popoverClass}
         >
           <span style={{ position: 'fixed', left: posX, top: posY }} />
         </Popover>

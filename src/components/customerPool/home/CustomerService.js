@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { Popover } from 'antd';
 import IECharts from '../../IECharts';
 
-import popoverStyles from '../../../css/antd.less';
+import antdStyles from '../../../css/antd.less';
 import styles from './customerService.less';
 
 export default class CustomerService extends PureComponent {
@@ -98,7 +98,7 @@ export default class CustomerService extends PureComponent {
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
-            overlayClassName={popoverStyles.popoverClass}
+            overlayClassName={antdStyles.popoverClass}
           >
             <div className={styles.text}>{_.head(data).name || '--'}</div>
           </Popover>
@@ -117,7 +117,7 @@ export default class CustomerService extends PureComponent {
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
-            overlayClassName={popoverStyles.popoverClass}
+            overlayClassName={antdStyles.popoverClass}
           >
             <div className={styles.text}>{_.last(data).name || '--'}</div>
           </Popover>
