@@ -13,6 +13,8 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
 import logable from '../../../decorators/logable';
+
+import popoverStyles from '../../../css/antd.less';
 import styles from './progressList.less';
 
 /* 新增客户传给列表页的参数
@@ -151,7 +153,7 @@ export default class ProgressList extends PureComponent {
                 placement="bottom"
                 overlayStyle={{ maxWidth: '320px' }}
                 mouseEnterDelay={0.2}
-                overlayClassName={styles.popoverClass}
+                overlayClassName={popoverStyles.popoverClass}
               >
                 <div className={styles.title}>{item.cust}</div>
               </Popover>

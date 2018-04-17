@@ -15,6 +15,8 @@ import _ from 'lodash';
 import { Popover } from 'antd';
 
 import Icon from '../../common/Icon';
+
+import popoverStyles from '../../../css/antd.less';
 import styles from './rectFrame.less';
 
 function RectFrame(props) {
@@ -37,7 +39,7 @@ function RectFrame(props) {
                 content={desc}
                 placement="bottom"
                 mouseEnterDelay={0.2}
-                overlayClassName={styles.popoverClass}
+                overlayClassName={popoverStyles.popoverClass}
               >
                 <div className={styles.title}>{title}</div>
               </Popover>
