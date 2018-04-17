@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-02 18:19:50
+ * @Last Modified time: 2018-04-17 17:11:54
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -26,10 +26,11 @@ function replaceValue(data, context, args) {
         return value(context, args);
       }
       return value.replace(/\$([^\b\s]+)/g, (expression, variableName) => {
-        if (variableName === 'args') {
-          return _.get({ args }, variableName) || expression;
+        let object = context;
+        if (_.startsWith(variableName, 'args')) {
+          object = { args };
         }
-        return _.get(context, variableName) || expression;
+        return _.get(object, variableName, expression);
       });
     },
   );
