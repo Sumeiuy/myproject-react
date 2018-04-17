@@ -103,9 +103,11 @@ export default class BasicInfo extends PureComponent {
 
   // 头像
   headerImg(headerImgUrl = defaultHeader) {
+    const { empInfo = {} } = this.context;
+    const { tgFlag } = empInfo.empInfo || {};
     return (
       <div className={styles.userImg}>
-        <img src={headerImgUrl} alt="用户照片" />
+        <img src={tgFlag ? headerImgUrl : defaultHeader} alt="用户照片" />
       </div>
     );
   }
