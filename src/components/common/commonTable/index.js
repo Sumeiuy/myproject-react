@@ -158,13 +158,25 @@ export default class CommonTable extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(page, pageSize) {
     this.props.onPageChange(page, pageSize);
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handlePageSizeChange(current, size) {
     this.props.onSizeChange(current, size);
   }

@@ -103,7 +103,13 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '多选filter为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '多选',
+      value: '$args[0]',
+    },
+  })
   handleClick(value) {
     const { keyArr } = this.state;
     const { separator, filter, onChange } = this.props;

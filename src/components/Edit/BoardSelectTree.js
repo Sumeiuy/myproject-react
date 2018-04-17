@@ -261,7 +261,13 @@ export default class BoardSelectTree extends PureComponent {
 
   // 右边删除按钮事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除指标$agrs[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除指标',
+      value: '$agrs[0]',
+    },
+  })
   onRemove(item) {
     const {
       checkTreeArr,
@@ -291,7 +297,13 @@ export default class BoardSelectTree extends PureComponent {
 
   // 拖拽事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '拖拽指标$agrs[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '拖拽指标',
+      value: '$agrs[0]',
+    },
+  })
   onDnd(data) {
     const {
       isSummury,

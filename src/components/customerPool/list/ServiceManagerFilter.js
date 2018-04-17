@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import DropdownSelect from '../../common/dropdownSelect';
 import { emp } from '../../../helper';
 import logable from '../../../decorators/logable';
-
+import { fspContainer } from '../../../config';
 import styles from './saleDepartmentFilter.less';
 
 export default class ServiceManagerFilter extends PureComponent {
@@ -36,9 +36,19 @@ export default class ServiceManagerFilter extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索服务经理' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索服务经理',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     this.props.dropdownToSearchInfo(value);
+  }
+
+  getPopupContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
   }
 
   render() {
@@ -53,7 +63,7 @@ export default class ServiceManagerFilter extends PureComponent {
       { ptyMngName: '我的', ptyMngId: emp.getId() },
     ];
     return (
-      <div>
+      <div className={styles.managerContainer}>
         <span className={styles.selectLabel}>服务经理：</span>
         <DropdownSelect
           theme="theme2"
@@ -67,6 +77,7 @@ export default class ServiceManagerFilter extends PureComponent {
           emitSelectItem={this.handleSelct}
           emitToSearch={this.handleSearch}
           presetOptionList={presetList}
+          getPopupContainer={this.getPopupContainer}
         />
       </div>
     );

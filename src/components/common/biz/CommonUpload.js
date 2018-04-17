@@ -165,7 +165,13 @@ export default class CommonUpload extends PureComponent {
 
   // 删除事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]删除附件' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除附件',
+      value: '$args[0]',
+    },
+  })
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;

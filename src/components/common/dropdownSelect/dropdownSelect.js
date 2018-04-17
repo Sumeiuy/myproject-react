@@ -48,6 +48,7 @@ export default class DropdownSelect extends PureComponent {
     presetOptionList: PropTypes.array,
     // 弹出层的位置,默认下左
     placement: PropTypes.string,
+    getPopupContainer: PropTypes.func,
   }
 
   static defaultProps = {
@@ -62,6 +63,7 @@ export default class DropdownSelect extends PureComponent {
     defaultSearchValue: '',
     presetOptionList: [],
     placement: 'bottomLeft',
+    getPopupContainer: () => document.body,
   }
 
   constructor(props) {
@@ -196,7 +198,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    const { value, disable, placement } = this.props;
+    const { value, disable, placement, getPopupContainer } = this.props;
     const { visible } = this.state;
     const dropdownToggleCls = cx({
       [styles.dropdownToggle]: true,
@@ -217,6 +219,7 @@ export default class DropdownSelect extends PureComponent {
         visible={visible}
         onVisibleChange={this.handlePopverVisibleChange}
         placement={placement}
+        getPopupContainer={getPopupContainer}
       >
         <div className={dropdownToggleCls}>
           <span className={styles.popoverTitle}>{value}</span>

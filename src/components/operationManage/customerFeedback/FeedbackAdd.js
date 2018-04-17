@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-08 14:07:28
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 13:31:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,12 +11,15 @@ import { autobind } from 'core-decorators';
 import { Input } from 'antd';
 // import _ from 'lodash';
 
+import config from './config';
 import CommonTable from '../../../components/common/biz/CommonTable';
 import { seibelConfig } from '../../../config';
 import logable from '../../../decorators/logable';
 
 import styles from './feedbackAdd.less';
 
+// 角色可选项配置
+const ROLE_TYPE = config.roleType;
 const Search = Input.Search;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -57,7 +60,13 @@ export default class MissionBind extends PureComponent {
 
   // 查询客户反馈
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索客户反馈' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索客户反馈',
+      value: '$args[0]',
+    },
+  })
   handleSearchFeedback(keyword) {
     const { queryFeedbackList, roleType } = this.props;
     this.setState({
@@ -92,7 +101,13 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(value) {
     const { keyword } = this.state;
     const { queryFeedbackList, roleType } = this.props;
@@ -106,7 +121,10 @@ export default class MissionBind extends PureComponent {
     } = this.state;
     const {
       feedbackData,
+      roleType,
     } = this.props;
+    // 是否是服务经理可选项
+    const isCustomer = roleType === ROLE_TYPE[0].key;
     const feedbackDataPage = feedbackData.page || EMPTY_OBJECT;
     const feedbackList = feedbackData.feedbackList || EMPTY_LIST;
     const childList = currentFeedback.childList || EMPTY_LIST;
@@ -130,7 +148,7 @@ export default class MissionBind extends PureComponent {
           />
         </div>
         <div className={styles.tableBox}>
-          <div className={styles.leftTable}>
+          <div className={styles.leftTable} style={{ width: isCustomer ? '338px' : '580px' }}>
             <CommonTable
               titleList={parentTitleList}
               data={feedbackList}
@@ -142,13 +160,19 @@ export default class MissionBind extends PureComponent {
               rowClassName={record => (record.id === currentFeedback.id ? 'current' : '')}
             />
           </div>
-          <div className={styles.rightTable}>
-            <CommonTable
-              titleList={childTitleList}
-              data={childList}
-              scroll={{ y: 240 }}
-            />
-          </div>
+          {
+            isCustomer
+            ?
+              <div className={styles.rightTable}>
+                <CommonTable
+                  titleList={childTitleList}
+                  data={childList}
+                  scroll={{ y: 240 }}
+                />
+              </div>
+            :
+              null
+          }
         </div>
       </div>
     );

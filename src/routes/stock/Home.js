@@ -129,7 +129,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab：' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
@@ -164,13 +164,25 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$state.keyword关键字搜索' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索',
+      value: '$state.keyword',
+    },
+  })
   handlerEnterSearch() {
     this.searchHandle();
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$state.keyword关键字查询' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '关键字查询',
+      value: '$state.keyword',
+    },
+  })
   handleClickSearch() {
     this.searchHandle();
   }

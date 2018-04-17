@@ -131,7 +131,13 @@ export default class TableDialog extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     const { onSearch } = this.props;
     onSearch(value);

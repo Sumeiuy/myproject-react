@@ -63,7 +63,13 @@ export default class ViewpointDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '下载$args[0].format' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '下载',
+      value: '$args[0].format',
+    },
+  })
   handleDownloadClick({ format }) {
     const { downloadFile } = this.props;
     downloadFile({ module: 'viewpointDetail', param: `${format}_download` });

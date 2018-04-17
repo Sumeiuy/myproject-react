@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './userInfoApproval.less';
 import withRouter from '../../decorators/withRouter';
+import { closeRctTab } from '../../../src/utils';
 
 // 标签项的标识
 const LABELS = 'labels';
@@ -52,8 +53,15 @@ export default class PersonalInfoApproval extends PureComponent {
   };
 
   componentDidMount() {
-    const { queryApprovingEmpInfo } = this.props;
-    queryApprovingEmpInfo();
+    const {
+      queryApprovingEmpInfo,
+      location: {
+        query: {
+          flowId,
+        },
+      },
+    } = this.props;
+    queryApprovingEmpInfo({ flowId });
   }
 
   @autobind
@@ -65,13 +73,22 @@ export default class PersonalInfoApproval extends PureComponent {
         },
       },
       approveEmpInfo,
+      approvalInfo: {
+        flowInfos = [],
+      },
     } = this.props;
+    const approver = flowInfos[0].approver;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         approveEmpInfo({
           ...values,
-          operate,
+          btn: operate,
           flowId,
+          approver,
+        }).then(() => {
+          closeRctTab({
+            id: 'USER_CENTER_BACKLOG_FLOW',
+          });
         });
       }
     });
@@ -93,7 +110,7 @@ export default class PersonalInfoApproval extends PureComponent {
       },
       {
         id: 'occupationCertificateNo',
-        desc: '职业证书编号',
+        desc: '执业证书编号',
       },
       {
         id: 'applyingDescription',
@@ -117,7 +134,7 @@ export default class PersonalInfoApproval extends PureComponent {
     return (
       <div className={styles.infoApprovalWrap}>
         <div className={styles.header}>
-          {approvalInfo.name}的审批
+          {approvalInfo.name || '--'}的审批
         </div>
         <Divider className={styles.titleDivider} />
         <div className={styles.body}>
@@ -167,7 +184,7 @@ export default class PersonalInfoApproval extends PureComponent {
                   {...formItemLayout}
                   label="审批意见"
                 >
-                  {getFieldDecorator('applyingDescription', {
+                  {getFieldDecorator('approveDesc', {
                     rules: [{ required: true, message: '请填写审批意见' }],
                   })(
                     <TextArea placeholder="请填写审批意见" autosize={{ minRows: 4, maxRows: 6 }} />,
@@ -190,7 +207,6 @@ export default class PersonalInfoApproval extends PureComponent {
                     <div key={uniqueId} className={styles.recordItem}>
                       <div>审批人： {item.approver || '--'}于{item.date || '--'}，步骤名称：{item.flowName || '--'}</div>
                       <div>
-                        <div className={styles.approverResult}>{item.approverResult || '--'}：</div>
                         <div className={styles.approverDesc}>{item.approverDesc || '--'}</div>
                       </div>
                     </div>
@@ -203,6 +219,7 @@ export default class PersonalInfoApproval extends PureComponent {
             {
               flowButtons.map(item => (
                 <Button
+                  key={item.flowBtnId}
                   size="large"
                   type={item.operate === BTN_ADOPT_STATE ? 'primary' : ''}
                   onClick={() => { this.handleApproval(item.operate); }}

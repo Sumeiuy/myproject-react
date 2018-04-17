@@ -142,7 +142,13 @@ export default class ViewpointList extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '咨询列表项$args[0].texttitle' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '咨询列表项',
+      value: '$args[0].texttitle',
+    },
+  })
   handleTitleClick(item) {
     const { curPageSize, curPageNum } = this.state;
     const { push } = this.props;
