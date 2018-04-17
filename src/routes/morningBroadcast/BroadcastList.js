@@ -193,7 +193,13 @@ export default class BroadcastList extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: 'Click', payload: { name: '晨报标题$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '晨报标题',
+      value: '$args[0]',
+    },
+  })
   onHandleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -353,7 +359,7 @@ export default class BroadcastList extends PureComponent {
 
   // Model(晨报新增、修改) --> start
   @autobind()
-  @logPV({ pathname: '/modal/createModal', title: '' })
+  @logPV({ pathname: '/modal/createModal', title: '晨报新增或修改' })
   showModal(newsId = -1) {
     this.setState({
       visible: true,

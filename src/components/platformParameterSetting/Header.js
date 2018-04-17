@@ -121,7 +121,7 @@ export default class Header extends PureComponent {
                 const dropDownMenu = (
                   <div key={index} className={styles.navItem}>
                     <Dropdown overlay={getMenus(preventMenu, parentPath, push, preventItem)} trigger={['click']}>
-                      <div>
+                      <div className={styles.navItemCtn}>
                         {preventItem.name || '未知'} <Icon type="xiangxia" />
                       </div>
                     </Dropdown>

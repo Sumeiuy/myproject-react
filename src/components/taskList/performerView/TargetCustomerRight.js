@@ -139,7 +139,13 @@ export default class TargetCustomerRight extends PureComponent {
    * @param {*object} itemData 每一个客户的数据
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0].custName' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '客户名',
+      value: '$args[0].custName',
+    },
+  })
   handleCustNameClick(itemData) {
     const param = this.get360FspTabConfig();
     this.openFsp360TabAction({ itemData, param });

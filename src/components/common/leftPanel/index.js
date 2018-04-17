@@ -137,7 +137,13 @@ export default class LeftPanel extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(nextPage, currentPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -234,7 +240,13 @@ export default class LeftPanel extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目

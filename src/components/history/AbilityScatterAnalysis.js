@@ -394,7 +394,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
   */
   @autobind
   @checkTooltipStatus
-  @logable({ type: 'Click', payload: { name: '鼠标悬浮$state.finalData.yAxisName($state.finalData.yAxisUnit)' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '鼠标悬浮',
+      value: '$state.finalData.yAxisName($state.finalData.yAxisUnit)',
+    },
+  })
   handleScatterHover(params) {
     const { isShowTooltip,
       finalData: {
@@ -483,7 +489,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * 处理鼠标离开事件
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '鼠标离开$state.finalData.yAxisName($state.finalData.yAxisUnit)' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '鼠标离开',
+      value: '$state.finalData.yAxisName($state.finalData.yAxisUnit)',
+    },
+  })
   handleScatterLeave() {
     const { isShowTooltip } = this.state;
     if (isShowTooltip) {

@@ -155,7 +155,13 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索标签名称' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索标签名称',
+      value: '$args[0]',
+    },
+  })
   handleSearchClick(value) {
     const {
       getLabelInfo,

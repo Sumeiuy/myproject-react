@@ -54,12 +54,10 @@ export default class BasicInfo extends PureComponent {
     const { userBaseInfo: newUserBaseInfo } = nextProps;
     if (userBaseInfo !== newUserBaseInfo) {
       const {
-        applyingDescription,
-        label,
+        labels,
       } = newUserBaseInfo;
       this.setState({
-        newApplyingDescription: applyingDescription,
-        newLabel: label || [],
+        newLabel: labels || [],
       });
     }
   }
@@ -218,7 +216,13 @@ export default class BasicInfo extends PureComponent {
   // 取消编辑状态
   @autobind
   cancelEditor() {
-    const { changeEditorState } = this.props;
+    const { changeEditorState, userBaseInfo } = this.props;
+    const {
+      labels = [],
+    } = userBaseInfo;
+    this.setState({
+      newLabel: labels,
+    });
     changeEditorState();
   }
   // 选择审批人
@@ -230,6 +234,7 @@ export default class BasicInfo extends PureComponent {
   }
 
   // 提交审批
+  @autobind
   startApproval() {
     const {
       updateEmpInfo,
@@ -237,11 +242,12 @@ export default class BasicInfo extends PureComponent {
       queryEmpInfo,
     } = this.props;
     const { newLabel, approver } = this.state;
+    const finalLabels = _.map(newLabel, item => item.id);
     this.props.form.validateFields((err, values) => {
       if (!err) {
         updateEmpInfo({
           applyingDescription: values.applyingDescription,
-          labels: newLabel,
+          labels: finalLabels,
           approver: approver.empNo,
         }).then(() => {
           changeEditorState();
@@ -263,6 +269,7 @@ export default class BasicInfo extends PureComponent {
     } = this.props;
     const { newLabel, approverModal, approver } = this.state;
     // 当前
+    const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
     const { empName = '' } = approver;
     return (
@@ -319,7 +326,7 @@ export default class BasicInfo extends PureComponent {
                               editorState ?
                                 getFieldDecorator('applyingDescription', {
                                   rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
-                                  initialValue: userBaseInfo[item.key] || '--',
+                                  initialValue: userBaseInfo[item.key],
                                 })(
                                   <TextArea
                                     autosize={{ minRows: 4, maxRows: 6 }}
@@ -414,7 +421,7 @@ export default class BasicInfo extends PureComponent {
         {
           <ChoiceApproverBoard
             visible={approverModal}
-            approverList={LabelAndDescApprover}
+            approverList={approveSelectData}
             onClose={() => this.closeApproverBoard('approverModal')}
             onOk={this.selectApprover}
           />

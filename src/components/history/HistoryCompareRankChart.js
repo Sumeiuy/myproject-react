@@ -183,7 +183,7 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   // 下一页
   @autobind
-  @logable({ type: 'Click', payload: { name: '上一页' } })
+  @logable({ type: 'Click', payload: { name: '下一页' } })
   handleNextClick() {
     const { totalPage } = this.state;
     let { rankPage } = this.state;

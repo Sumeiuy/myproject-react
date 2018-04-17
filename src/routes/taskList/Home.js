@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-17 09:20:28
+ * @Last Modified time: 2018-04-17 10:36:48
  * @description 任务管理首页
  */
 
@@ -179,9 +179,11 @@ export default class PerformerView extends PureComponent {
         statusCode,
         typeName,
         eventId,
+        descText,
       } = item;
 
       this.setState({
+        taskTypeCode: descText,
         currentView: st,
         activeRowIndex: itemIndex,
         typeCode,
@@ -706,21 +708,29 @@ export default class PerformerView extends PureComponent {
         ...finalPostData,
         createTimeEnd: this.getFinishedStateDate({
           status,
-          currentDate,
-          createTimeEnd,
+          value: currentDate,
+          urlDate: createTimeEnd,
         }),
         createTimeStart: this.getFinishedStateDate({
           status,
-          beforeCurrentDate60Days,
-          createTimeStart,
+          value: beforeCurrentDate60Days,
+          urlDate: createTimeStart,
         }),
       };
     } else {
       const { endTimeEnd, endTimeStart } = finalPostData;
       finalPostData = {
         ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({ status, afterCurrentDate60Days, endTimeEnd }),
-        endTimeStart: this.getFinishedStateDate({ status, currentDate, endTimeStart }),
+        endTimeEnd: this.getFinishedStateDate({
+          status,
+          value: afterCurrentDate60Days,
+          urlDate: endTimeEnd,
+        }),
+        endTimeStart: this.getFinishedStateDate({
+          status,
+          value: currentDate,
+          urlDate: endTimeStart,
+        }),
       };
     }
     return finalPostData;
@@ -905,7 +915,6 @@ export default class PerformerView extends PureComponent {
     const currentMissionTypeObject = _.find(dict.missionType, item =>
       item.key === typeCode) || {};
     const { descText } = currentMissionTypeObject;
-
     replace({
       pathname,
       query: {

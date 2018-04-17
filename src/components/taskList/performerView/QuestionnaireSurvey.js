@@ -47,13 +47,13 @@ export default class QuestionnaireSurvey extends PureComponent {
   };
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '问卷调查radios事件' } })
   handleRidoChange(event) {
     this.props.onRadioChange(event);
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({ type: 'Click', payload: { name: '问卷调查check事件' } })
   handleCheckChange(keyIndex, quesId) {
     this.props.onCheckChange(keyIndex, quesId);
   }

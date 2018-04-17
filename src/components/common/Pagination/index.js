@@ -156,7 +156,13 @@ export default class PaginationComponent extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(page, pageSize) {
     const { total, onChange, isHideLastButton } = this.props;
     if (isHideLastButton) {
@@ -174,7 +180,13 @@ export default class PaginationComponent extends PureComponent {
 
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handlePageSizeChange(current, size) {
     const { total, onShowSizeChange, isHideLastButton } = this.props;
     if (isHideLastButton) {

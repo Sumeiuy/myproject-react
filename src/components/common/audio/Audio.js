@@ -84,7 +84,13 @@ export default class Audio extends PureComponent {
 
   // 播放
   @autobind
-  @logable({ type: 'Click', payload: { name: '播放音频$props.volume' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '播放音频',
+      value: '$props.volume',
+    },
+  })
   handleAudioPlay() {
     this.audio.play();
     this.setState({
@@ -94,7 +100,13 @@ export default class Audio extends PureComponent {
 
   // 暂停
   @autobind
-  @logable({ type: 'Click', payload: { name: '暂停音频$props.volume' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '暂停音频',
+      value: '$props.volume',
+    },
+  })
   handleAudioPause() {
     this.audio.pause();
     this.setState({
