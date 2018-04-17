@@ -24,7 +24,6 @@ import {
   CONTROLLER,
   currentDate,
   beforeCurrentDate60Days,
-  afterCurrentDate60Days,
   dateFormat,
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
@@ -355,8 +354,8 @@ export default class Pageheader extends PureComponent {
         endTimeEnd,
       } = this.handleDefaultTime(
         {
-          todays: currentDate,
-          after: afterCurrentDate60Days,
+          todays: beforeCurrentDate60Days,
+          after: currentDate,
         },
       );
       filterCallback({
@@ -620,10 +619,10 @@ export default class Pageheader extends PureComponent {
     } else {
       const startTime = endTimeStart ?
         moment(endTimeStart, dateFormat) :
-        moment(moment(currentDate).format(dateFormat), dateFormat);
+        moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);
       const endTime = endTimeEnd ?
         moment(endTimeEnd, dateFormat) :
-        moment(moment(afterCurrentDate60Days).format(dateFormat), dateFormat);
+        moment(moment(currentDate).format(dateFormat), dateFormat);
       node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
         <span className={styles.dateLable}>
           结束时间&nbsp;:&nbsp;
