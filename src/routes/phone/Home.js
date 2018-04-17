@@ -3,22 +3,41 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-12 16:31:46
+ * @Last Modified time: 2018-04-16 21:32:31
  */
 
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'dva';
 import Phone from '../../components/common/phone';
 import withRouter from '../../decorators/withRouter';
 
+const mapStateToProps = () => ({
+
+});
+
+const mapDispatchToProps = {
+  togglePhoneDialog: query => ({
+    type: 'app/togglePhoneDialog',
+    payload: query || false,
+  }),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class PhoneHome extends PureComponent {
+  static propTypes = {
+    togglePhoneDialog: PropTypes.func.isRequired,
+  }
+
   render() {
+    const { togglePhoneDialog } = this.props;
     return (
       <div>
         <Phone
+          onTogglePhoneDialog={togglePhoneDialog}
           phoneNum="17766097715"
           custType="per"
-          style={{ fontSize: '40px', color: 'red' }}
         />
       </div>
     );
