@@ -108,6 +108,8 @@ app.model(require('./models/stock'));
 app.model(require('./models/pointsExchange'));
 // 用户中心
 app.model(require('./models/userCenter'));
+// 精选组合
+app.model(require('./models/choicenessCombination'));
 // 4. Router
 app.router(routerConfig);
 

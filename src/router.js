@@ -65,6 +65,8 @@ import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 import PlatformParameterSetting from './routes/platformParameterSetting/Home';
 // 用户信息审核
 import userInfoApproval from './routes/userCenter/userInfoApproval';
+// 精选组合
+import ChoicenessCombination from './routes/choicenessCombination/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -192,6 +194,8 @@ const routes = [
     component: PlatformParameterSetting,
     exact: false,
   },
+  // 精选组合
+  { path: '/choicenessCombination', component: ChoicenessCombination },
 ];
 
 // 递归创建路由
