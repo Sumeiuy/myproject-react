@@ -31,7 +31,6 @@ import {
   CONTROLLER,
   currentDate,
   beforeCurrentDate60Days,
-  afterCurrentDate60Days,
   dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
@@ -726,12 +725,12 @@ export default class PerformerView extends PureComponent {
         ...finalPostData,
         endTimeEnd: this.getFinishedStateDate({
           status,
-          value: afterCurrentDate60Days,
+          value: currentDate,
           urlDate: endTimeEnd,
         }),
         endTimeStart: this.getFinishedStateDate({
           status,
-          value: currentDate,
+          value: beforeCurrentDate60Days,
           urlDate: endTimeStart,
         }),
       };
