@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 21:54:05
+ * @Last Modified time: 2018-04-17 11:27:33
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import CascadeFeedbackSelect from './CascadeFeedbackSelect';
 import { request } from '../../../config';
 import { emp } from '../../../helper';
 import { serveWay as serveWayUtil } from '../../taskList/performerView/config/code';
+import { flow } from '../../taskList/performerView/config';
 import logable from '../../../decorators/logable';
 import {
   serveWaySelectMap,
@@ -249,7 +250,11 @@ export default class ServiceRecordContent extends PureComponent {
     const serviceWayCode = getServeWayCode(fd.serviceWayName);
     // 提取涨乐财富通服务方式下的服务内容
     const zlSC = {};
-    if (serveWayUtil.isZhangle(serviceWayCode)) {
+    if (
+      serveWayUtil.isZhangle(serviceWayCode)
+      && flow.isApproval(fd.serviceStatusCode)
+      && flow.isReject(fd.serviceStatusCode)
+    ) {
       // 只有涨乐财富通下才需要提取
       const { time, title, taskType, content } = fd.serviceContent;
       zlSC.ZLServiceContentTitle = title;
@@ -263,7 +268,7 @@ export default class ServiceRecordContent extends PureComponent {
     } else if (!isReadOnly && isReject) {
       // 如果是涨乐财富通服务方式下的驳回状态
       // TODO 目前先返回默认state, 后面需要将涨乐有关的值写进初始state中
-      return { ...this.getDefaultState(props), ... zlSC };
+      return { ...this.getDefaultState(props), ...zlSC };
     }
     // 以下为只读状态下的state
     // 获取用户选择的反馈信息
@@ -340,10 +345,15 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackTime,
       // 附件
       currentFile,
+      // 是否选择涨乐财富通
       isSelectZhangleFins,
     } = this.state;
 
-    const { formData: { custId = '', missionFlowId = '' }, custUuid } = this.props;
+    const {
+      formData: { custId = '', missionFlowId = '', missionId = '' },
+      custUuid,
+      taskTypeCode,
+    } = this.props;
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -357,6 +367,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveCustFeedBack2: custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
+      missionId,
+      taskType: `${taskTypeCode + 1}`,
       uuid: (!_.isEmpty(custUuid) && !_.isEmpty(currentFile)) ? custUuid : '',
     };
 
