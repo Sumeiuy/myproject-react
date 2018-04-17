@@ -285,7 +285,6 @@ export default class BasicInfo extends PureComponent {
         <div className={styles.userInfo}>
           <div className={styles.headerImg}>
             <Card
-              hoverable
               style={{ width: 140 }}
               cover={this.headerImg(userBaseInfo.photograph)}
             >
@@ -358,7 +357,6 @@ export default class BasicInfo extends PureComponent {
                                   newLabel
                                     .map(label =>
                                       <Tag
-                                        className={styles}
                                         closable
                                         onClose={(e) => {
                                           this.deleteUserLabel(e, label.id);
