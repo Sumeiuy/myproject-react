@@ -63,7 +63,7 @@ export default class ServiceManagerFilter extends PureComponent {
       { ptyMngName: '我的', ptyMngId: emp.getId() },
     ];
     return (
-      <div>
+      <div className={styles.managerContainer}>
         <span className={styles.selectLabel}>服务经理：</span>
         <DropdownSelect
           theme="theme2"
