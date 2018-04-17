@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 19:14:28
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-17 10:36:48
  * @description 任务管理首页
  */
 
@@ -391,13 +391,10 @@ export default class PerformerView extends PureComponent {
   // 获取管理者视图
   @autobind
   getManagerDetailComponent() {
-    const { location, list } = this.props;
-    const { query: { currentId } } = location;
-    const [firstItem = {}] = list.resultData;
     const managerViewDetailProps = this.getManagerDetailComponentPorps();
     return (
       <ManagerViewDetail
-        currentId={currentId || firstItem.mssnId}
+        currentId={this.getCurrentId()}
         {...managerViewDetailProps}
       />
     );
