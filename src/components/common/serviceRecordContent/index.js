@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-17 21:48:45
+ * @Last Modified time: 2018-04-18 19:07:14
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,6 @@ import {
   serveWaySelectMap,
   errorFeedback,
   serveStatusRadioGroupMap,
-  // getServeWayCode,
   getServeWayByCodeOrName,
  } from './utils';
 
@@ -66,9 +65,13 @@ export default class ServiceRecordContent extends PureComponent {
     // 则需要查询下 可选列表
     const { isEntranceFromPerformerView, isReadOnly } = this.props;
     if (isEntranceFromPerformerView && isReadOnly) {
-      const { eventId, taskTypeCode } = this.props;
+      const { eventId, taskTypeCode, serviceType } = this.state;
       const type = `${+taskTypeCode + 1}`;
-      this.props.queryCustFeedbackList4ZLFins({ eventId, type });
+       // TODO 如果是mot任务 eventId参数需要使用 eventId
+      // 如果是自建任务 需要使用serviceTypeCode
+      // type 值为2的时候，该任务是自建任务
+      const eventIdParam = type === '2' ? serviceType : eventId;
+      this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
     }
   }
 
@@ -83,18 +86,6 @@ export default class ServiceRecordContent extends PureComponent {
       const newState = this.initialState(nextProps);
       this.setState({ ...newState });
     }
-
-    // // 切换客户，错误信息重置
-    // if (custUuid !== nextCustUuid) {
-    //   this.setState({
-    //     isShowServeStatusError: false,
-    //     isShowServiceContentError: false,
-    //   });
-    //   // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
-    //   if (!isReadOnly) {
-    //     this.clearUploadedFileList();
-    //   }
-    // }
   }
 
   // 设置非涨乐财富通服务方式下的文件上传的Ref
@@ -177,7 +168,7 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
     } = this.props;
     let feedback = null;
-    let { serviceTypeCode } = this.props;
+    let { serviceTypeCode } = this.props.formData;
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = motCustfeedBackDict[0].key;
@@ -189,12 +180,11 @@ export default class ServiceRecordContent extends PureComponent {
     return this.fixCustomerFeedback(feedback);
   }
 
-
   // 获取默认的state
   @autobind
   getDefaultState(props) {
-    const { formData: fd, isEntranceFromPerformerView } = props;
-    let { serviceTypeCode } = props;
+    const { formData: fd, isEntranceFromPerformerView, isReject } = props;
+    let { serviceTypeCode } = fd;
     // 默认取第一个客户反馈
     const defaultFeedback = this.getDefaultFeedback();
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
@@ -202,6 +192,12 @@ export default class ServiceRecordContent extends PureComponent {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
     }
     return {
+      // 涨乐财富通服务方式下，是否被驳回状态
+      isReject,
+      // 事件ID，客户反馈中mot任务的事件ID
+      eventId: fd.eventId,
+      // 任务类型Code,
+      taskTypeCode: fd.taskTypeCode,
       // 非涨乐财富通服务方式下 是否展示表单中的服务状态的校验错误信息提示
       isShowServeStatusError: false,
       // 非涨乐财富通服务方式下 是否展示表单中的服务记录的检验错误信息提示
@@ -256,7 +252,7 @@ export default class ServiceRecordContent extends PureComponent {
   // 初始化state,因为需要更新所以所有的值全部传递过来
   @autobind
   initialState(props) {
-    const { formData: fd, isReadOnly, isReject, serviceTypeCode } = props;
+    const { formData: fd, isReadOnly, isReject } = props;
     // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2这个是大类
     // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
     // 针对后端传值 有可能是 serviceWayName 也有可能是serviceWayCode
@@ -283,15 +279,19 @@ export default class ServiceRecordContent extends PureComponent {
       return this.getDefaultState(props);
     } else if (!isReadOnly && isReject) {
       // 如果是涨乐财富通服务方式下的驳回状态
-      // TODO 目前先返回默认state, 后面需要将涨乐有关的值写进初始state中
-      return { ...this.getDefaultState(props), ...zlSC };
+      // 目前先返回默认state, 后面需要将涨乐有关的值写进初始state中
+      const rejectState = {
+        serviceWayCode,
+        isSelectZhangleFins: true,
+      };
+      return { ...this.getDefaultState(props), ...rejectState, ...zlSC };
     }
     // 以下为只读状态下的state
     // 获取用户选择的反馈信息
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
 
     return {
-      serviceType: serviceTypeCode,
+      serviceType: fd.serviceTypeCode,
       serviceWayCode,
       serviceWayText: serviceWay.value,
       serviceStatus: fd.serviceStatusCode,
@@ -322,19 +322,22 @@ export default class ServiceRecordContent extends PureComponent {
     // 1.校验服务状态，只有执行者视图页面下才需要
     let isShowServeStatusError = false;
     let isShowServiceContentError = false;
-    if (isEntranceFromPerformerView) {
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
-      return !isShowServeStatusError;
-    }
+    let resultFlag = true;
     if (!isSelectZhangleFins) {
       // 2. 在非涨乐财富通服务方式下 校验服务记录
       isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
       this.setState({ isShowServiceContentError });
-      return !isShowServiceContentError;
+      resultFlag = !isShowServiceContentError;
+    } else {
+      // 涨乐财富通下的校验
+      resultFlag = !_.isEmpty(this.serveContentRef.getData());
     }
-    // 涨乐财富通下的校验
-    return !_.isEmpty(this.serveContentRef.getData());
+    if (isEntranceFromPerformerView) {
+      isShowServeStatusError = _.isEmpty(serviceStatus);
+      this.setState({ isShowServeStatusError });
+      resultFlag = !isShowServeStatusError;
+    }
+    return resultFlag;
   }
 
   // 向组件外部提供所有数据
@@ -390,7 +393,15 @@ export default class ServiceRecordContent extends PureComponent {
 
     if (isSelectZhangleFins) {
       // 如果选择涨乐财富通
-      data.zhangleServiceContentData = this.serveContentRef.getData();
+      const zlData = this.serveContentRef.getData();
+      // 此处需要针对涨乐财富通服务方式下的服务状态进行优化
+      // 如果是自由编辑模式，则需要将flowStatus传递为 审核中
+      // 如果当前的状态为 处理中，则需要将 审核中的状态 传递过去
+      // 如果当前的状态为 被驳回
+      if (zlData.mode === 'free') {
+        data.flowStatus = flow.getFlowCodeByName('审核中');
+      }
+      data.zhangleServiceContentData = _.omit(zlData, ['mode']);
     }
     return data;
   }
@@ -424,10 +435,22 @@ export default class ServiceRecordContent extends PureComponent {
     }
   }
 
+  // 查询自建任务或者MOT任务下的用于展示给涨乐财富通服务方式的客户反馈列表
+  @autobind
+  getZLCustFeedbackList() {
+    const { eventId, taskTypeCode, serviceType } = this.state;
+    const type = `${+taskTypeCode + 1}`;
+     // TODO 如果是mot任务 eventId参数需要使用 eventId
+    // 如果是自建任务 需要使用serviceTypeCode
+    // type 值为2的时候，该任务是自建任务
+    const eventIdParam = type === '2' ? serviceType : eventId;
+    this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
+  }
+
   // 如果服务方式是涨乐财富通，则需要优先查一把客户反馈列表，以及审批人列表
   @autobind
-  preQueryDateForZLFins({ eventId, type }) {
-    this.props.queryCustFeedbackList4ZLFins({ eventId, type });
+  preQueryDateForZLFins() {
+    this.getZLCustFeedbackList();
     // 涨乐财富通服务方式下的审批人列表查询接口后端的固定值
     this.props.queryApprovalList({ btnId: '200000' });
   }
@@ -436,14 +459,27 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '服务方式', value: '$args[0]' } })
   handleServiceWayChange(value) {
-    this.setState({
-      isSelectZhangleFins: serveWayUtil.isZhangle(value),
-      serviceWayCode: value,
-    });
-    const { eventId, taskTypeCode } = this.props;
+    // TODO 此处需要新增在 驳回后 修改的状态下，切换下需要将之前的驳回后的内容清空
+    const { isReject } = this.state;
+    // 判断之前的流水状态是否是  被驳回
+    if (isReject) {
+      this.setState({
+        isSelectZhangleFins: serveWayUtil.isZhangle(value),
+        serviceWayCode: value,
+        isReject: false,
+        ZLServiceContentTitle: '',
+        ZLServiceContentType: '',
+        ZLServiceContentDesc: '',
+        ZLServiceContentTime: moment(),
+      });
+    } else {
+      this.setState({
+        isSelectZhangleFins: serveWayUtil.isZhangle(value),
+        serviceWayCode: value,
+      });
+    }
     if (serveWayUtil.isZhangle(value)) {
-      const type = `${+taskTypeCode + 1}`;
-      this.preQueryDateForZLFins({ eventId, type });
+      this.preQueryDateForZLFins();
     }
   }
 
@@ -629,7 +665,6 @@ export default class ServiceRecordContent extends PureComponent {
       empInfo,
       isEntranceFromPerformerView,
       isReadOnly,
-      isReject,
       beforeUpload,
       custUuid,
       deleteFileResult,
@@ -638,6 +673,7 @@ export default class ServiceRecordContent extends PureComponent {
       flowStatusCode,
     } = this.props;
     const {
+      isReject,
       serviceWayCode,
       serviceStatus,
       serviceType,
@@ -654,6 +690,10 @@ export default class ServiceRecordContent extends PureComponent {
       ZLCustFeedbackTime,
       custFeedback,
       custFeedback2,
+      ZLServiceContentTitle,
+      ZLServiceContentType,
+      ZLServiceContentDesc,
+      ZLServiceContentTime,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 
@@ -680,6 +720,13 @@ export default class ServiceRecordContent extends PureComponent {
     const cascadeSelectValue = {
       first: custFeedback,
       second: custFeedback2,
+    };
+    // 用于在被驳回后，需要展示的数据
+    const zlRejectRecord = {
+      title: ZLServiceContentTitle,
+      type: ZLServiceContentType,
+      desc: ZLServiceContentDesc,
+      time: ZLServiceContentTime,
     };
 
     return (
@@ -750,6 +797,7 @@ export default class ServiceRecordContent extends PureComponent {
               ref={this.setServeContentRef}
               approvalList={this.props.zhangleApprovalList}
               isReject={isReject}
+              serveContent={zlRejectRecord}
             />
           )
           : (

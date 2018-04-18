@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-18 11:20:26
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-18 19:17:51
  * @description 任务管理首页
  */
 
@@ -90,7 +90,7 @@ export default class PerformerView extends PureComponent {
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
-      taskTypeCode: '',  // 自建任务，mot任务
+      taskTypeCode: '',  // 自建任务，mot任务1
       typeName: '',
       eventId: '',
       statusCode: '',
@@ -135,6 +135,7 @@ export default class PerformerView extends PureComponent {
     const {
       list,
       location: { query: { currentId, missionViewType } },
+      dict: { missionType },
     } = this.props;
     const viewInfo = getViewInfo(missionViewType);
     const resultData = list && list.resultData;
@@ -183,8 +184,9 @@ export default class PerformerView extends PureComponent {
         statusCode,
         typeName,
         eventId,
-        descText,
       } = item;
+      // 根据typeCode找出那个任务的descText的值
+      const { descText } = _.find(missionType, obj => +obj.key === +typeCode) || {};
 
       this.setState({
         taskTypeCode: descText,
@@ -571,14 +573,15 @@ export default class PerformerView extends PureComponent {
   }
 
   // 获取服务经理使用的客户反馈列表，
-  // 以及涨乐财富通给予客户的可选反馈列表
   @autobind
   getFeedbackList({ typeCode, eventId, currentItem }) {
     let currentType = {};
     let taskFeedbackList = [];
+    // descText值为1，是自建任务
     if (+currentItem.descText === 1) {
       currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
     } else {
+      // 此处为MOT任务
       currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
     }
     if (_.isEmpty(currentType)) {
