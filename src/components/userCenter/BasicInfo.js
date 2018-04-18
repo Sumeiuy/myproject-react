@@ -98,7 +98,7 @@ export default class BasicInfo extends PureComponent {
         labels = [],
       } = newUserBaseInfo;
       this.setState({
-        newLabel: newLabel || labels,
+        newLabel: _.isEmpty(newLabel) ? labels : newLabel,
       });
     }
   }
