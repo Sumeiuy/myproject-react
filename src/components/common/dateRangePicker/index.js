@@ -50,9 +50,6 @@ export default class CommonDateRangePicker extends PureComponent {
     isInsideOffSet: () => true,
   }
 
-  focusedInput = null;
-  firstDateUserSelect = null; // 用户选择的第一个日期
-
   constructor(props) {
     super(props);
     const { initialEndDate, initialStartDate } = props;
@@ -63,6 +60,10 @@ export default class CommonDateRangePicker extends PureComponent {
       endDate: initialEndDate,
     };
   }
+
+  // 组件内全局对象，不能写到组件外，组件外全局对象，会被多个组件共用，相互干扰
+  focusedInput = null;
+  firstDateUserSelect = null; // 用户选择的第一个日期
 
   @autobind
   drpWraperRef(input) {
@@ -147,8 +148,8 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   handleDatesChange({ startDate, endDate }) {
     // 此方法内：focusedInput 为 END_DATE 的情况：赋值 startDate 后，光标在 endDate 处
-    // 此方法内firstDateUserSelect 为 null，是首次触发 赋值 的标志
-    if (this.focusedInput === END_DATE && this.firstDateUserSelect === null) {
+    // 每次对开始日期做更改，都要重新圈定日历浮层中的可选范围
+    if (this.focusedInput === END_DATE) {
       // 记录当前选中的值
       this.firstDateUserSelect = startDate;
     }
