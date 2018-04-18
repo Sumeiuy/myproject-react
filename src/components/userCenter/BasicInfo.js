@@ -98,7 +98,7 @@ export default class BasicInfo extends PureComponent {
         labels = [],
       } = newUserBaseInfo;
       this.setState({
-        newLabel: newLabel || labels,
+        newLabel: _.isEmpty(newLabel) ? labels : newLabel,
       });
     }
   }
@@ -172,6 +172,7 @@ export default class BasicInfo extends PureComponent {
       if (newLabel.length >= 4) {
         warning({
           title: '标签可选数目不超过4条',
+          okText: '确认',
         });
         return;
       }

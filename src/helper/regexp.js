@@ -36,6 +36,12 @@ const regexp = {
    * 正整数
    */
   positiveInteger: /^\+?[1-9][0-9]*$/,
+  /**
+   * desc: 将pathname分割成集合
+   * pathname: '/a/b/c'
+   * ['/a', '/b', '/c']
+   */
+  matchPathList: /\/([^/]*)(?=(\/|$))/g,
 };
 
 export default regexp;

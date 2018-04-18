@@ -226,9 +226,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.addClass(this.pageCommonHeader, styles.HeaderOverflow);
     } else {
-      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.removeClass(this.pageCommonHeader, styles.HeaderOverflow);
     }
     this.onWindowResize();
   }
@@ -505,10 +505,12 @@ export default class Pageheader extends PureComponent {
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
-  isInsideOffSet({ day, firstDay }) {
-    if (firstDay === null) return true;
-    return day >= firstDay.clone().subtract(60, 'days')
-      && day <= firstDay.clone().add(60, 'days');
+  isInsideOffSet({ day, firstDay, focusedInput }) {
+    // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
+    if (focusedInput === 'endDate') {
+      return day <= firstDay.clone().add(59, 'days') && day > firstDay.clone().subtract(1, 'days');
+    }
+    return day > firstDay.clone().subtract(60, 'days');
   }
 
   /**
