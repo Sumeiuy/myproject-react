@@ -304,24 +304,40 @@ export default class Pageheader extends PureComponent {
   // select改变
   @autobind
   handleSelectChange(key, v) {
-    const { location: { query: {
-      createTimeStart,
-      createTimeEnd,
-      endTimeStart,
-      endTimeEnd } } } = this.props;
+    const {
+      filterCallback,
+      location: {
+        query: {
+          createTimeStart,
+          createTimeEnd,
+          endTimeStart,
+          endTimeEnd,
+          missionViewType,
+        },
+      },
+    } = this.props;
 
     // 判断是否改变的是视图选择
     if (key === 'missionViewType') {
       this.handleViewTypeTime(key, v);
     } else {
-      // 不是视图选择时发送请求
-      this.props.filterCallback({
-        [key]: v,
-        createTimeStart,
-        createTimeEnd,
-        endTimeStart,
-        endTimeEnd,
-      });
+      // 获取当前的视图类型
+      const { currentViewType } = getViewInfo(missionViewType);
+      // 当状态选择的不是 结束 的时候需要清除url中的日期
+      const isClearUrlDate = key === 'status' && v !== STATE_FINISHED_CODE;
+      if (currentViewType === INITIATOR) {
+        filterCallback({
+          [key]: v,
+          createTimeStart: !isClearUrlDate ? createTimeStart : '',
+          createTimeEnd: !isClearUrlDate ? createTimeEnd : '',
+        });
+      } else {
+        filterCallback({
+          [key]: v,
+          endTimeStart: !isClearUrlDate ? endTimeStart : '',
+          endTimeEnd: !isClearUrlDate ? endTimeEnd : '',
+        });
+      }
     }
     this.setState({
       [key]: v,
@@ -332,50 +348,10 @@ export default class Pageheader extends PureComponent {
   @autobind
   handleViewTypeTime(key, v) {
     const { filterCallback } = this.props;
-    if (v === INITIATOR) {
-      const {
-        createTimeStart,
-        createTimeEnd,
-      } = this.handleDefaultTime(
-        {
-          before: beforeCurrentDate60Days,
-          todays: currentDate,
-        },
-      );
-      filterCallback({
-        name: 'switchView',
-        [key]: v,
-        createTimeStart,
-        createTimeEnd,
-      });
-    } else {
-      const {
-        endTimeStart,
-        endTimeEnd,
-      } = this.handleDefaultTime(
-        {
-          todays: beforeCurrentDate60Days,
-          after: currentDate,
-        },
-      );
-      filterCallback({
-        name: 'switchView',
-        [key]: v,
-        endTimeStart,
-        endTimeEnd,
-      });
-    }
-  }
-
-  // 切换视图设置默认时间设置
-  @autobind
-  handleDefaultTime({ before, todays, after }) {
-    const createTimeStart = _.isEmpty(before) ? null :
-      moment(before).format('YYYY-MM-DD');
-    const createTimeEnd = _.isEmpty(before) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeStart = _.isEmpty(after) ? null : moment(todays).format('YYYY-MM-DD');
-    const endTimeEnd = _.isEmpty(after) ? null : moment(after).format('YYYY-MM-DD');
-    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+    filterCallback({
+      name: 'switchView',
+      [key]: v,
+    });
   }
 
   // 任务名称搜索
