@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 15:20:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-13 16:22:05
+ * @Last Modified time: 2018-04-18 19:07:38
  * @description 服务实施中需要用到的配置项
  */
 import _ from 'lodash';
@@ -13,8 +13,8 @@ const flowStatus = [
   { id: 20, name: '处理中' },
   { id: 30, name: '完成' },
   { id: 40, name: '结果达标' },
-  { id: 50, name: '审批中' }, // 目前只有涨乐财富通的服务方式下才有
-  { id: 60, name: '被驳回' }, // 目前只有涨乐财富通的服务方式下才有
+  { id: 50, name: '审核中' }, // 目前只有涨乐财富通的服务方式下才有
+  { id: 60, name: '驳回' }, // 目前只有涨乐财富通的服务方式下才有
 ];
 
 // 流程状态为未开始
@@ -42,7 +42,7 @@ function flowIsApproval(code) {
   return flowStatus[4].id === Number(code);
 }
 
-// 流程状态是否完成
+// 流程状态是否被驳回
 function flowIsReject(code) {
   return flowStatus[5].id === Number(code);
 }
@@ -50,6 +50,11 @@ function flowIsReject(code) {
 // 根据code获取流程状态
 function getFlowStatus(code) {
   return _.find(flowStatus, o => o.id === Number(code));
+}
+
+// 根据name获取流程状态Code
+function getFlowCodeByName(name) {
+  return _.find(flowStatus, o => o.name === name);
 }
 
 // 任务状态
@@ -109,6 +114,7 @@ export default {
     isApproval: flowIsApproval,
     isReject: flowIsReject,
     getFlowStatus,
+    getFlowCodeByName,
   },
   // 任务状态
   taskStatusList: taskStatus,
