@@ -4,8 +4,8 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 13:48:18
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-17 09:47:34
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ export default class CommonTable extends PureComponent {
       PropTypes.string,
       PropTypes.func,
     ]),
+    align: PropTypes.string,
   }
 
   static defaultProps = {
@@ -33,10 +34,11 @@ export default class CommonTable extends PureComponent {
     pagination: {},
     scroll: {},
     rowKey: '',
+    align: 'center',
   }
 
   render() {
-    const { scroll, data, operation, titleList, rowKey, ...resetProps } = this.props;
+    const { scroll, data, operation, titleList, rowKey, align, ...resetProps } = this.props;
     let newTitleList = [...titleList];
     if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
@@ -123,6 +125,8 @@ export default class CommonTable extends PureComponent {
         };
       },
     );
+    // 给每列数据加上对齐方式，默认居中
+    const columns = newTitleList.map(item => ({ ...item, align }));
     return (
       <div className={styles.commonTable}>
         <Table
@@ -130,10 +134,7 @@ export default class CommonTable extends PureComponent {
           scroll={scroll}
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={newData}
-          columns={newTitleList}
-          locale={{
-            emptyText: '暂无数据',
-          }}
+          columns={columns}
         />
       </div>
     );

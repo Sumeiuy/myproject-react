@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 20:13:33
+ * @Last Modified time: 2018-04-17 21:36:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -86,7 +86,7 @@ export default class MissionBind extends PureComponent {
           :
             <span>{item.name}</span>
         }
-        <Icon type="delete" onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)} />
+        <Icon type="close-circle" onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)} />
       </div>);
     });
   }
@@ -117,7 +117,7 @@ export default class MissionBind extends PureComponent {
             null
         }
         <span className={styles.childClass}>{item.childClassName}</span>
-        <span className={styles.optionClass}>{`${item.length || 0}项`}<Icon type="up" /><Icon type="down" /></span>
+        <span className={styles.optionClass}>查看<Icon type="up" /><Icon type="down" /></span>
       </div>);
       return (<Panel header={header} key={item.id}>
         <div className={styles.feedbackListBox}>
@@ -129,6 +129,7 @@ export default class MissionBind extends PureComponent {
             })
           }
           <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[0].key)}>+新增</Button>
+          <div className={styles.borderRight} />
         </div>
         <div className={styles.feedbackListBox}>
           <h2>{ROLE_TYPE[1].name}</h2>

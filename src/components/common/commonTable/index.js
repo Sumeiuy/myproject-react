@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 13:41:39
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:27:26
  */
 
 import React, { PureComponent } from 'react';
@@ -451,11 +451,6 @@ export default class CommonTable extends PureComponent {
           pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
-          }}
           {...titleProp}
           {...footerProp}
         />

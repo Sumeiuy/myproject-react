@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-07 20:27:01
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-17 16:18:07
  * @description 售前适当性查询
  */
 
@@ -199,20 +199,24 @@ export default class PreSaleQuery extends PureComponent {
       {
         title: '类别',
         dataIndex: 'type',
+        align: 'center',
       },
       {
         title: '客户信息',
         dataIndex: 'custInfo',
         render: this.formatText,
         width: '40%',
+        align: 'center',
       },
       {
         title: '产品信息',
         dataIndex: 'productInfo',
+        align: 'center',
       },
       {
         title: '匹配结果',
         dataIndex: 'result',
+        align: 'center',
       },
     ];
     return (
@@ -294,11 +298,6 @@ export default class PreSaleQuery extends PureComponent {
                       columns={columns}
                       dataSource={matchTable.fact.result}
                       pagination={false}
-                      // 默认文案配置
-                      locale={{
-                        // 空数据时的文案
-                        emptyText: '暂无数据',
-                      }}
                     />)
                 }
                 {
