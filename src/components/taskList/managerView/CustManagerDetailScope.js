@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-14 11:07:52
+ * @Last Modified time: 2018-04-18 09:23:50
  * 服务经理维度任务统计
  */
 
@@ -79,7 +79,7 @@ export default class CustManagerDetailScope extends PureComponent {
   renderManagerNameId(record = EMPTY_OBJECT) {
     const { empName, login } = record;
     return (
-      <span>{empName}（{login}）</span>
+      <span>{empName || '--'}（{login || '--'}）</span>
     );
   }
 
