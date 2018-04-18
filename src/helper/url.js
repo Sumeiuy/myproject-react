@@ -6,6 +6,7 @@
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
+import regexp from './regexp';
 
 const url = {
   /**
@@ -48,6 +49,15 @@ const url = {
    */
   matchRoute(route, pathname) {
     return RegExp(route).test(pathname);
+  },
+  /**
+   * desc: 获取菜单匹配的pathItem列表
+   * @param pathname: '/a/b/c'
+   * @param matchPath: '/a'
+   * @return ['/b', '/c']
+   */
+  backRoutePathList(pathname, matchPath = '') {
+    return pathname.substring(matchPath.length).match(regexp.matchPathList) || [];
   },
 };
 
