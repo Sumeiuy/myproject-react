@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-17 10:36:48
+ * @Last Modified time: 2018-04-18 11:20:26
  * @description 任务管理首页
  */
 
@@ -879,6 +879,8 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
     // 切换页码，将页面的scrollToTop
@@ -902,6 +904,8 @@ export default class PerformerView extends PureComponent {
         ...query,
         pageNum: 1,
         pageSize: changedPageSize,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
   }
