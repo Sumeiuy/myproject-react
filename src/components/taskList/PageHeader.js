@@ -226,9 +226,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.addClass(this.pageCommonHeader, styles.HeaderOverflow);
     } else {
-      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
+      dom.removeClass(this.pageCommonHeader, styles.HeaderOverflow);
     }
     this.onWindowResize();
   }
