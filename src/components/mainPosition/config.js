@@ -1,8 +1,8 @@
 /**
  * @Author: hongguangqing
  * @Date: 2018-03-01 14:25:34
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-02 10:11:14
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-17 15:00:04
  */
 /*
  * @Description: 服务经理主职位设置的配置文件
@@ -71,14 +71,17 @@ const config = {
         title: '工号',
         dataIndex: 'login',
         key: 'login',
+        align: 'center',
       }, {
         title: '姓名',
         dataIndex: 'empName',
         key: 'empName',
+        align: 'center',
       }, {
         title: '所属营业部',
         dataIndex: 'occupation',
         key: 'occupation',
+        align: 'center',
       },
     ],
   },

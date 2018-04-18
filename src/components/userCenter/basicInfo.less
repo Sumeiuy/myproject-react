@@ -19,11 +19,14 @@
     }
     .inputWrap {
       width: 100%;
+      & >div {
+        cursor: auto;
+      }
       .hideInput {
         width: 0;
         height: 0;
       }
-      .errorInfo {
+      .errorInfoItem {
         color: red;
       }
     }
@@ -100,7 +103,6 @@
 
 .labelContent {
   width: 100%;
-  max-width: 180px;
   min-height: 150px;
   max-height: 230px;
   overflow: auto;

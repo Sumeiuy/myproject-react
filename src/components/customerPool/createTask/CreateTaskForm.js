@@ -241,7 +241,7 @@ export default class CreateTaskForm extends PureComponent {
     }
     // 如果props上存在任务提示，则作为默认值
     if (templetDesc) {
-      defaultMissionDesc = decodeURIComponent(templetDesc);
+      defaultMissionDesc = templetDesc;
     }
     this.setState({
       defaultMissionName,
@@ -264,7 +264,7 @@ export default class CreateTaskForm extends PureComponent {
    */
   @autobind
   renderMissionDescSuggestion(templetDesc) {
-    const type = _.replace(decodeURIComponent(templetDesc), sightLabelPattern, '');
+    const type = _.replace(templetDesc, sightLabelPattern, '');
 
     return {
       type,
@@ -314,7 +314,7 @@ export default class CreateTaskForm extends PureComponent {
       templetDescSuggestion = this.renderMissionDescSuggestion(templetDesc);
     } else if (missionDesc && isSightingScope(source)) {
       // 来自搜索瞄准镜标签
-      templetDescSuggestion = this.renderMissionDescSuggestion(missionDesc);
+      templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
     }
 
     return (

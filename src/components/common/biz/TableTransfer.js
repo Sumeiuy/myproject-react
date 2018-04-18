@@ -769,40 +769,37 @@ export default class TableTransfer extends Component {
     } = this.state;
     // 修改firstColumns
     const newFirstColumn = firstColumns.map((column) => {
+      const newColumn = { ...column, align: column.align || 'center' };
       const { sorter, key } = column;
       if (sorter) {
         return {
-          ...column,
+          ...newColumn,
           sortOrder: !_.isEmpty(sortInfo)
             && sortInfo.which === 'first'
             && sortInfo.key === key
             && sortInfo.order,
         };
       }
-      return column;
+      return newColumn;
     });
     const newSecondColumn = secondColumns.map((column) => {
+      const newColumn = { ...column, align: column.align || 'center' };
       const { sorter, key } = column;
       if (sorter) {
         return {
-          ...column,
+          ...newColumn,
           sortOrder: !_.isEmpty(sortInfo)
             && sortInfo.which === 'second'
             && sortInfo.key === key
             && sortInfo.order,
         };
       }
-      return column;
+      return newColumn;
     });
 
     const firstScroll = this.getTableScroll(firstArray);
     const secondScroll = this.getTableScroll(secondArray);
 
-    // 默认文案配置
-    const locale = {
-      // 空数据时的文案
-      emptyText: '暂无数据',
-    };
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -826,7 +823,6 @@ export default class TableTransfer extends Component {
             dataSource={firstArray}
             pagination={pagination}
             scroll={firstScroll}
-            locale={locale}
           />
         </div>
         <div className={styles.rightContent}>
@@ -842,7 +838,6 @@ export default class TableTransfer extends Component {
             dataSource={secondArray}
             pagination={pagination}
             scroll={secondScroll}
-            locale={locale}
           />
         </div>
       </div>
