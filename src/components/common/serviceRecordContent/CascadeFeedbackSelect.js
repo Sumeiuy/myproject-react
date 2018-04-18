@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 15:26:04
+ * @Last Modified time: 2018-04-18 16:50:37
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -77,6 +77,7 @@ export default class CascadeFeedbackSelect extends PureComponent {
 
   render() {
     const { feedbackList } = this.props;
+    if (_.isEmpty(feedbackList)) return null;
     const { first, second } = this.state;
     // 一级客户反馈选项
     const firstOptions = feedbackList.map(this.renderOption);

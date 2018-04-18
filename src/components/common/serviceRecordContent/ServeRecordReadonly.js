@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-17 21:48:13
+ * @Last Modified time: 2018-04-18 19:04:06
  * @description 只读服务记录
  */
 
@@ -30,11 +30,10 @@ export default function ServiceRecordReadOnly(props) {
     custFeedback2,
     ZLCustFeedback,
     ZLCustFeedbackTime,
-    ZLServiceContentTime,
     ZLCustFeedbackList,
   } = props;
 
-  const investAdviceTip = isZL ? `${ZLServiceContentTime} 给客户发送了以下投资建议` : '';
+  const investAdviceTip = isZL ? '给客户发送了以下投资建议:' : '';
   // 判断当前的流水状态是否审批中
   const flowIsApproval = flow.isApproval(serviceStatusCode);
   // 暂时客户可选反馈选项
@@ -51,10 +50,15 @@ export default function ServiceRecordReadOnly(props) {
           <div className={styles.title}>服务状态:</div>
           <div className={styles.readOnlyText}>{serviceStatus}</div>
         </div>
-        <div className={styles.serveTime}>
-          <div className={styles.title}>服务时间:</div>
-          <div className={styles.readOnlyText}>{serviceTime}</div>
-        </div>
+        {
+          flowIsApproval ? null :
+          (
+            <div className={styles.serveTime}>
+              <div className={styles.title}>服务时间:</div>
+              <div className={styles.readOnlyText}>{serviceTime}</div>
+            </div>
+          )
+        }
         {
           !isZL
           ? (
