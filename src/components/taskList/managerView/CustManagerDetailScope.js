@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-14 11:07:52
+ * @Last Modified time: 2018-04-18 10:31:12
  * 服务经理维度任务统计
  */
 
@@ -12,8 +12,10 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Table from '../../common/commonTable';
+import antdStyles from '../../../css/antd.less';
 import styles from './custManagerDetailScope.less';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
+
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -79,7 +81,7 @@ export default class CustManagerDetailScope extends PureComponent {
   renderManagerNameId(record = EMPTY_OBJECT) {
     const { empName, login } = record;
     return (
-      <span>{empName}（{login}）</span>
+      <span>{empName || '--'}（{login || '--'}）</span>
     );
   }
 
@@ -249,6 +251,7 @@ export default class CustManagerDetailScope extends PureComponent {
               [styles.notFoldedScope]: !isFold,
               // 折叠的样式
               [styles.foldedScope]: isFold,
+              [antdStyles.tableHasBetweenSpace]: true,
             })
           }
           columnWidth={columnWidth}

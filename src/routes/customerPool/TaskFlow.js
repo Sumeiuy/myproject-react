@@ -1111,7 +1111,7 @@ export default class TaskFlow extends PureComponent {
     // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
     // 变量文字全部高亮显示
     if (missionDesc && currentEntry === 1) {
-      newMissionDesc = missionDesc;
+      newMissionDesc = decodeURIComponent(missionDesc);
     }
 
     const isShowTitle = true;

@@ -12,7 +12,7 @@ export default function padMissionDesc(sightingScopeBool, labelId, labelName) {
   let missionDesc = encodeURIComponent(`该客户筛选自${labelName}`);
   // 来自瞄准镜标签
   if (sightingScopeBool) {
-    missionDesc = encodeURIComponent(`该客户筛选自 $瞄准镜标签#${labelId}#`);
+    missionDesc = encodeURIComponent(`该客户筛选自 $瞄准镜标签#${labelId}# `);
   }
 
   return missionDesc;
