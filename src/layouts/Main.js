@@ -81,7 +81,6 @@ const mapDispatchToProps = {
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class Main extends Component {
 
   static propTypes = {
