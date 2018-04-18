@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 17:00:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 19:58:53
+ * @Last Modified time: 2018-04-16 22:24:18
  * @description 涨乐财富通服务方式先显示的客户反馈
  */
 
@@ -17,7 +17,7 @@ export default function ZLFeedback(props) {
   const { flowStatusCode, feedbackList, feedback, feedbackTime } = props;
   const isCompleted = flow.isComplete(flowStatusCode);
   const feedbackListText = _.isEmpty(feedbackList) ? '无'
-    : feedbackList.map((item, index) => `${index}、${item.label}`).join('，');
+    : feedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
   const feedbackText = _.isEmpty(feedback) ? '暂无反馈' : feedback;
   return (
     <div className={styles.custFeedbackSection}>

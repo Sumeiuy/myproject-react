@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 15:33:44
+ * @Last Modified time: 2018-04-17 21:48:45
  */
 
 import React, { PureComponent } from 'react';
@@ -22,12 +22,14 @@ import CascadeFeedbackSelect from './CascadeFeedbackSelect';
 import { request } from '../../../config';
 import { emp } from '../../../helper';
 import { serveWay as serveWayUtil } from '../../taskList/performerView/config/code';
+import { flow } from '../../taskList/performerView/config';
 import logable from '../../../decorators/logable';
 import {
   serveWaySelectMap,
   errorFeedback,
   serveStatusRadioGroupMap,
-  getServeWayCode,
+  // getServeWayCode,
+  getServeWayByCodeOrName,
  } from './utils';
 
 import styles from './index.less';
@@ -57,6 +59,17 @@ export default class ServiceRecordContent extends PureComponent {
     this.state = this.getDefaultState(props);
     // 代表是否是删除操作
     this.isDeletingFile = false;
+  }
+
+  componentDidMount() {
+    // 判断如果是 涨乐财富通服务方式下的只读模式，并且页面在执行者视图下，
+    // 则需要查询下 可选列表
+    const { isEntranceFromPerformerView, isReadOnly } = this.props;
+    if (isEntranceFromPerformerView && isReadOnly) {
+      const { eventId, taskTypeCode } = this.props;
+      const type = `${+taskTypeCode + 1}`;
+      this.props.queryCustFeedbackList4ZLFins({ eventId, type });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -232,6 +245,7 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle: '',
       ZLServiceContentType: '',
       ZLServiceContentDesc: '',
+      ZLServiceContentTime: moment(),
       // 涨乐财富通服务方式下选择自由话术需要的审批人
       ZLServiceApproval: '',
       // 涨乐财富通服务方式下的投资建议模式 free|tmpl 是自由话术还是固定话术
@@ -243,25 +257,43 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   initialState(props) {
     const { formData: fd, isReadOnly, isReject, serviceTypeCode } = props;
+    // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2这个是大类
+    // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
+    // 针对后端传值 有可能是 serviceWayName 也有可能是serviceWayCode
+    const serviceWay = getServeWayByCodeOrName(fd.serviceWayName || fd.serviceWayCode);
+    const serviceWayCode = serviceWay.key;
+    // 提取涨乐财富通服务方式下的服务内容
+    const zlSC = {};
+    if (
+      serveWayUtil.isZhangle(serviceWayCode)
+      &&
+      (flow.isApproval(fd.serviceStatusCode) || flow.isReject(fd.serviceStatusCode))
+    ) {
+      // 只有涨乐财富通下才需要提取
+      const { time, title, taskType, content } = fd.serviceContent;
+      zlSC.ZLServiceContentTitle = title;
+      zlSC.ZLServiceContentType = taskType;
+      zlSC.ZLServiceContentDesc = content;
+      // 因为 涨乐财富通服务方式在自由话术下，需要等到通过审批之后
+      // 才会有serviceTime，所以此处需要对time进行空字符串的容错处理
+      zlSC.ZLServiceContentTime = _.isEmpty(time) ? '' : moment(time, DATE_FORMAT_FULL_END).format(DATE_FORMAT_FULL);
+    }
     // 如果非只读并且不是驳回状态，返回默认的State
     if (!isReadOnly && !isReject) {
       return this.getDefaultState(props);
     } else if (!isReadOnly && isReject) {
       // 如果是涨乐财富通服务方式下的驳回状态
       // TODO 目前先返回默认state, 后面需要将涨乐有关的值写进初始state中
-      return this.getDefaultState(props);
+      return { ...this.getDefaultState(props), ...zlSC };
     }
-    // 此处为只读状态下的state
-    // 服务类型使用taskTypeCode+1的值，MOT任务为1，自建任务值为2这个是大类
-    // 由于formData里面没有服务方式的code值,所以只能通过名称匹配来获取
-    const serviceWayCode = getServeWayCode(fd.serviceWayName);
+    // 以下为只读状态下的state
     // 获取用户选择的反馈信息
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
-    //
+
     return {
       serviceType: serviceTypeCode,
       serviceWayCode,
-      serviceWayText: fd.serviceWayName,
+      serviceWayText: serviceWay.value,
       serviceStatus: fd.serviceStatusCode,
       serviceStatusText: fd.serviceStatusName,
       serviceTime: moment(fd.serviceDate, DATE_FORMAT_END),
@@ -272,7 +304,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackText2: customerFeedback.children.value,
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
-      // serviceFullTime: fd.
+      ...zlSC,
     };
   }
 
@@ -329,10 +361,15 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackTime,
       // 附件
       currentFile,
+      // 是否选择涨乐财富通
       isSelectZhangleFins,
     } = this.state;
 
-    const { formData: { custId = '', missionFlowId = '' }, custUuid } = this.props;
+    const {
+      formData: { custId = '', missionFlowId = '', missionId = '' },
+      custUuid,
+      taskTypeCode,
+    } = this.props;
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -346,6 +383,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveCustFeedBack2: custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
+      missionId,
+      taskType: `${taskTypeCode + 1}`,
       uuid: (!_.isEmpty(custUuid) && !_.isEmpty(currentFile)) ? custUuid : '',
     };
 
@@ -401,8 +440,8 @@ export default class ServiceRecordContent extends PureComponent {
       isSelectZhangleFins: serveWayUtil.isZhangle(value),
       serviceWayCode: value,
     });
-    const { eventId, taskTypeCode, isEntranceFromPerformerView } = this.props;
-    if (serveWayUtil.isZhangle(value) && isEntranceFromPerformerView) {
+    const { eventId, taskTypeCode } = this.props;
+    if (serveWayUtil.isZhangle(value)) {
       const type = `${+taskTypeCode + 1}`;
       this.preQueryDateForZLFins({ eventId, type });
     }
@@ -543,24 +582,26 @@ export default class ServiceRecordContent extends PureComponent {
     const {
       serviceWayCode,
       serviceWayText,
+      serviceStatus,
       serviceStatusText,
       serviceTime,
-      serviceFullTime,
       serviceRecord,
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
+      ZLServiceContentTime,
       custFeedbackText,
       custFeedback2Text,
       custFeedbackTime,
       ZLCustFeedback,
       ZLCustFeedbackTime,
     } = this.state;
-    const { formData: { attachmentList } } = this.props;
+    const { formData: { attachmentList }, custFeedbackList } = this.props;
     const zlServiceRecord = {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
       content: ZLServiceContentDesc,
+      time: ZLServiceContentTime,
     };
     return (
       <ServeRecordReadOnly
@@ -568,8 +609,8 @@ export default class ServiceRecordContent extends PureComponent {
         attachmentList={attachmentList}
         serviceWay={serviceWayText}
         serviceStatus={serviceStatusText}
+        serviceStatusCode={serviceStatus}
         serviceTime={serviceTime.format(DATE_FORMAT_SHOW)}
-        serviceFullTime={serviceFullTime.format(DATE_FORMAT_FULL)}
         serviceRecord={serviceRecord}
         zlServiceRecord={zlServiceRecord}
         feedbackDateTime={custFeedbackTime.format(DATE_FORMAT_SHOW)}
@@ -577,6 +618,7 @@ export default class ServiceRecordContent extends PureComponent {
         custFeedback2={custFeedback2Text}
         ZLCustFeedback={ZLCustFeedback}
         ZLCustFeedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
+        ZLCustFeedbackList={custFeedbackList}
       />
     );
   }
