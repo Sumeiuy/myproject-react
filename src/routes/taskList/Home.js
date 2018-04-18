@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-17 10:36:48
+ * @Last Modified time: 2018-04-18 11:20:26
  * @description 任务管理首页
  */
 
@@ -116,6 +116,10 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { list: { resultData } } = this.props;
+    if (_.isEmpty(resultData)) {
+      return;
+    }
     const { typeCode, eventId, currentView } = this.state;
     // 当前视图是执行者视图
     if (
@@ -132,6 +136,7 @@ export default class PerformerView extends PureComponent {
       list,
       location: { query: { currentId, missionViewType } },
     } = this.props;
+    const viewInfo = getViewInfo(missionViewType);
     const resultData = list && list.resultData;
     if (!_.isEmpty(resultData)) {
       // 表示左侧列表获取完毕
@@ -147,7 +152,7 @@ export default class PerformerView extends PureComponent {
         // currentId与id比较，在listData里面找不到
         if (itemIndex === -1) {
           // 如果是创建者视图，先比较id是否与currentId一样
-          if (this.isInitiatorView(missionViewType)) {
+          if (this.isInitiatorView(viewInfo.currentViewType)) {
             // 则用currentId与mssnId比较
             const mssnObjectIndex = _.findIndex(resultData, o => String(o.mssnId) === currentId);
             itemIndex = mssnObjectIndex;
@@ -192,6 +197,18 @@ export default class PerformerView extends PureComponent {
         isSourceFromCreatorView: this.isInitiatorView(st) &&
         this.judgeTaskInApproval(item.statusCode),
       }, () => { this.getDetailByView(item); });
+    } else {
+      // 没有查到数据时，保存当前的视图状态
+      this.setState({
+        taskTypeCode: '',
+        currentView: viewInfo.currentViewType,
+        activeRowIndex: '',
+        typeCode: '',
+        typeName: '',
+        statusCode: '',
+        eventId: '',
+        isSourceFromCreatorView: false,
+      });
     }
   }
 
@@ -639,7 +656,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
+    const { pageNum = 1, pageSize = 20 } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
@@ -648,12 +665,10 @@ export default class PerformerView extends PureComponent {
       const { resultData = [] } = list;
       // const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      if (this.isExecutorView(missionViewType)) {
-        if (!_.isEmpty(resultData)) {
-          // 初始化取第一条任务来获取反馈列表数据
-          const { typeCode, eventId } = resultData[0];
-          this.queryMissionList(typeCode, eventId);
-        }
+      if (!_.isEmpty(resultData) && this.isExecutorView(resultData[0].missionViewType)) {
+        // 初始化取第一条任务来获取反馈列表数据
+        const { typeCode, eventId } = resultData[0];
+        this.queryMissionList(typeCode, eventId);
       }
       this.getRightDetail();
     });
@@ -864,6 +879,8 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
     // 切换页码，将页面的scrollToTop
@@ -887,6 +904,8 @@ export default class PerformerView extends PureComponent {
         ...query,
         pageNum: 1,
         pageSize: changedPageSize,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
   }
