@@ -21,8 +21,6 @@ import styles from './index.less';
 
 // const START_DATE = 'startDate';
 const END_DATE = 'endDate';
-let focusedInput = null;
-let firstDateUserSelect = null; // 用户选择的第一个日期
 
 export default class CommonDateRangePicker extends PureComponent {
   static propTypes = {
@@ -51,6 +49,9 @@ export default class CommonDateRangePicker extends PureComponent {
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
   }
+
+  focusedInput = null;
+  firstDateUserSelect = null; // 用户选择的第一个日期
 
   constructor(props) {
     super(props);
@@ -107,8 +108,8 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   restoreDefault() {
-    firstDateUserSelect = null;
-    focusedInput = null;
+    this.firstDateUserSelect = null;
+    this.focusedInput = null;
   }
 
   @autobind
@@ -133,7 +134,7 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   fixStartOrEndTime({ startDate, endDate }) {
-    const isFocuseEndDate = focusedInput === END_DATE;
+    const isFocuseEndDate = this.focusedInput === END_DATE;
     const fixFunc = isFocuseEndDate ? this.subtractDay : this.addDay;
     const needFixDate = isFocuseEndDate ? endDate : startDate;
     const newDate = this.fixDate(needFixDate, fixFunc);
@@ -147,9 +148,9 @@ export default class CommonDateRangePicker extends PureComponent {
   handleDatesChange({ startDate, endDate }) {
     // 此方法内：focusedInput 为 END_DATE 的情况：赋值 startDate 后，光标在 endDate 处
     // 此方法内firstDateUserSelect 为 null，是首次触发 赋值 的标志
-    if (focusedInput === END_DATE && firstDateUserSelect === null) {
+    if (this.focusedInput === END_DATE && this.firstDateUserSelect === null) {
       // 记录当前选中的值
-      firstDateUserSelect = startDate;
+      this.firstDateUserSelect = startDate;
     }
     // 修正 另一个值 的显示
     const changeDate = this.fixStartOrEndTime({ startDate, endDate });
@@ -159,13 +160,13 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   handleFoucusChange(curFocusedInput) {
-    if (focusedInput === null && curFocusedInput !== null) {
+    if (this.focusedInput === null && curFocusedInput !== null) {
       // 日历浮层出现前，重置状态
       this.restoreDefault();
       // 打开日历组件, 此处需要进行第一次打开的时间段进行设置
       this.showCalendar();
     }
-    focusedInput = curFocusedInput;
+    this.focusedInput = curFocusedInput;
     // 用于 render 显示 日历浮层
     this.setState({ curFocusedInput });
   }
@@ -178,9 +179,9 @@ export default class CommonDateRangePicker extends PureComponent {
     let newSelectDate = { startDate, endDate };
     // 此方法内 firstDateUserSelect 为 null，是首次触发 赋值 的标志
     // 首次 触发赋值，需要 修正 startDate 值
-    if (firstDateUserSelect === null) {
+    if (this.firstDateUserSelect === null) {
       // 更新当前选中的值
-      firstDateUserSelect = endDate;
+      this.firstDateUserSelect = endDate;
       // 修正 startDate 值
       newSelectDate = this.fixStartOrEndTime({ startDate, endDate });
       // 更新 state，用于 render 时显示
@@ -194,8 +195,8 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   isInOffSet(day) {
     return this.props.isInsideOffSet({
-      firstDay: firstDateUserSelect,
-      focusedInput,
+      firstDay: this.firstDateUserSelect,
+      focusedInput: this.focusedInput,
       day,
     });
   }
@@ -206,7 +207,7 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   isInCustomerDateRangeOffset(day) {
     const { hasCustomerOffset } = this.props;
-    if (hasCustomerOffset && firstDateUserSelect && day) {
+    if (hasCustomerOffset && this.firstDateUserSelect && day) {
       return this.isInOffSet(day);
     }
     return true;
