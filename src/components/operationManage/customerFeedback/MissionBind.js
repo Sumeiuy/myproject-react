@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 21:36:42
+ * @Last Modified time: 2018-04-18 14:19:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -116,7 +116,7 @@ export default class MissionBind extends PureComponent {
             <span className={styles.missionId}>{item.id}</span> :
             null
         }
-        <span className={styles.childClass}>{item.childClassName}</span>
+        <span className={styles.childClass} title={item.childClassName}>{item.childClassName}</span>
         <span className={styles.optionClass}>查看<Icon type="up" /><Icon type="down" /></span>
       </div>);
       return (<Panel header={header} key={item.id}>
