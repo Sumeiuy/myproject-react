@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
 import defaultHeader from './img/defaultHeader.jpg';
 import styles from './basicInfo.less';
+import withRouter from '../../decorators/withRouter';
 
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -25,6 +26,7 @@ const ADVISER_INFO = 'ADVISER_INFO';
 const APPROVING = 'approving';
 
 @Form.create()
+@withRouter
 export default class BasicInfo extends PureComponent {
   static propTypes = {
     userBaseInfo: PropTypes.object.isRequired,
@@ -32,11 +34,15 @@ export default class BasicInfo extends PureComponent {
     allLabels: PropTypes.array.isRequired,
     LabelAndDescApprover: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
+    userInfoForm: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     changeEditorState: PropTypes.func.isRequired,
     queryAllLabels: PropTypes.func.isRequired,
     queryApprovers: PropTypes.func.isRequired,
     updateEmpInfo: PropTypes.func.isRequired,
     queryEmpInfo: PropTypes.func.isRequired,
+    cacheUserInfoForm: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -50,18 +56,64 @@ export default class BasicInfo extends PureComponent {
       // 选择审批人弹窗状态
       approverModal: false,
       approver: {},
+      applyingDescription: '',
     };
+  }
+
+  componentWillMount() {
+    const { userInfoForm, location: { query } } = this.props;
+    const { cache } = query;
+    const { newLabel = [], approver = {}, editorState, applyingDescription } = userInfoForm;
+    if (editorState && cache) {
+      this.setState({
+        newLabel,
+        approver,
+        applyingDescription,
+      });
+    }
+  }
+
+  componentDidMount() {
+    const { cacheUserInfoForm,
+      replace,
+      location: { pathname },
+    } = this.props;
+    // 不改动以前的逻辑，保证缓存的数据的生命周期从Unmount到DidMount
+    cacheUserInfoForm({});
+    // 记录入口，判断是通过标签进入还是通过FSP菜单进入
+    replace({
+      pathname,
+      query: {
+        cache: true,
+      },
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     const { userBaseInfo } = this.props;
+    const { newLabel } = this.state;
     const { userBaseInfo: newUserBaseInfo } = nextProps;
     if (userBaseInfo !== newUserBaseInfo) {
       const {
-        labels,
+        labels = [],
       } = newUserBaseInfo;
       this.setState({
-        newLabel: labels || [],
+        newLabel: newLabel || labels,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    const { cacheUserInfoForm, editorState } = this.props;
+    const { newLabel, approver } = this.state;
+    const { getFieldValue } = this.props.form;
+    const applyingDescription = getFieldValue('applyingDescription');
+    if (editorState) {
+      cacheUserInfoForm({
+        newLabel,
+        applyingDescription,
+        approver,
+        editorState,
       });
     }
   }
@@ -103,9 +155,11 @@ export default class BasicInfo extends PureComponent {
 
   // 头像
   headerImg(headerImgUrl = defaultHeader) {
+    const { empInfo = {} } = this.context;
+    const { tgFlag } = empInfo.empInfo || {};
     return (
       <div className={styles.userImg}>
-        <img src={headerImgUrl} alt="用户照片" />
+        <img src={tgFlag ? headerImgUrl : defaultHeader} alt="用户照片" />
       </div>
     );
   }
@@ -226,6 +280,8 @@ export default class BasicInfo extends PureComponent {
     } = userBaseInfo;
     this.setState({
       newLabel: labels,
+      applyingDescription: '',
+      approver: {},
     });
     changeEditorState();
   }
@@ -242,7 +298,6 @@ export default class BasicInfo extends PureComponent {
   startApproval() {
     const {
       updateEmpInfo,
-      changeEditorState,
       queryEmpInfo,
     } = this.props;
     const { newLabel, approver } = this.state;
@@ -254,7 +309,7 @@ export default class BasicInfo extends PureComponent {
           labels: finalLabels,
           approver: approver.empNo,
         }).then(() => {
-          changeEditorState();
+          this.cancelEditor();
           queryEmpInfo();
         });
       }
@@ -271,7 +326,7 @@ export default class BasicInfo extends PureComponent {
         getFieldError,
       },
     } = this.props;
-    const { newLabel, approverModal, approver } = this.state;
+    const { newLabel, approverModal, approver, applyingDescription } = this.state;
     // 当前
     const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
@@ -283,7 +338,6 @@ export default class BasicInfo extends PureComponent {
         <div className={styles.userInfo}>
           <div className={styles.headerImg}>
             <Card
-              hoverable
               style={{ width: 140 }}
               cover={this.headerImg(userBaseInfo.photograph)}
             >
@@ -335,14 +389,14 @@ export default class BasicInfo extends PureComponent {
                                   editorState ?
                                     getFieldDecorator('applyingDescription', {
                                       rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
-                                      initialValue: userBaseInfo[item.key],
+                                      initialValue: applyingDescription || userBaseInfo[item.key],
                                     })(
                                       <TextArea
                                         autosize={{ minRows: 4, maxRows: 6 }}
                                       />) :
                                     userBaseInfo[item.key] || '--'
                                 }
-                                <span className={styles.errorInfo}>
+                                <span className={styles.errorInfoItem}>
                                   {
                                     editorState ?
                                       getFieldError('applyingDescription') || '' :
@@ -397,23 +451,24 @@ export default class BasicInfo extends PureComponent {
                   {
                     editorState ?
                       <div className={styles.selectApprover}>
-                        <FormItem
-                          label="选择审批人"
-                        >
-                          {getFieldDecorator('approver', {
-                            rules: [{
-                              required: true, message: '请选择审批人',
-                            }],
-                            initialValue: empName,
-                          })(
-                            <Search
-                              placeholder="搜索内容"
-                              style={{ width: 200 }}
-                              readOnly
-                              onClick={this.openApproverBoard}
-                            />,
-                          )}
-                        </FormItem>
+                        <span onClick={this.openApproverBoard}>
+                          <FormItem
+                            label="选择审批人"
+                          >
+                            {getFieldDecorator('approver', {
+                              rules: [{
+                                required: true, message: '请选择审批人',
+                              }],
+                              initialValue: empName,
+                            })(
+                              <Search
+                                placeholder="搜索内容"
+                                style={{ width: 200 }}
+                                readOnly
+                              />,
+                            )}
+                          </FormItem>
+                        </span>
                       </div> :
                       null
                   }
