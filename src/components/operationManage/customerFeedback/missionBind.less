@@ -63,10 +63,16 @@
       width: 15%;
     }
     &.childClass {
-      width: 40%;
+      box-sizing: border-box;
+      width: 60%;
+      padding: 0 20px 0 0;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &.optionClass {
-      width: 30%;
+      width: 10%;
     }
   }
   :global {
