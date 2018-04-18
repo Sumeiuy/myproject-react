@@ -60,12 +60,12 @@ export default class LabelManager extends PureComponent {
     this.columns = [{
       title: 'labelName',
       dataIndex: 'name',
-      width: '40%',
+      width: '43%',
       render: (text, record) => this.EditableCell(text, record, 'name'),
     }, {
       title: 'operation',
       dataIndex: 'operation',
-      width: '35%',
+      width: '32%',
       render: (text, record) => {
         const { editorCell } = this.state;
         return (
@@ -91,6 +91,7 @@ export default class LabelManager extends PureComponent {
       title: 'age',
       dataIndex: 'age',
       width: '25%',
+      align: 'right',
       render: (text, record) => (<div
         onClick={() => { this.confirmDelLabel(record.id); }}
         className={styles.labelDel}
@@ -109,6 +110,40 @@ export default class LabelManager extends PureComponent {
     if (!allLabels.length) {
       queryAllLabels();
     }
+  }
+
+  // --添加标签--end
+  // 分页(当前页，当前页数据)
+  getPaginationAndData() {
+    const {
+      location: {
+        query: {
+          pageSize = 20,
+          pageNum = 1,
+        },
+      },
+      allLabels = [],
+    } = this.props;
+
+    let finalCurrent = Number(pageNum) || 1;
+    const total = allLabels.length;
+
+    if (finalCurrent > 1 && total <= pageSize * (finalCurrent - 1)) {
+      finalCurrent = _.ceil(total / pageSize, 0);
+    }
+
+    const allLabelsToTable = allLabels.map(item => ({ ...item, key: item.id }));
+    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) =>
+      index + 1 > (finalCurrent - 1) * pageSize &&
+      index + 1 <= finalCurrent * pageSize);
+    return {
+      pagination: {
+        total: allLabels.length,
+        current: finalCurrent,
+        pageSize,
+      },
+      currentLabels,
+    };
   }
 
   // --修改标签--start
@@ -250,39 +285,7 @@ export default class LabelManager extends PureComponent {
         });
     }
   }
-  // --添加标签--end
-  // 分页(当前页，当前页数据)
-  getPaginationAndData() {
-    const {
-      location: {
-        query: {
-          pageSize = 20,
-          pageNum = 1,
-        },
-      },
-      allLabels = [],
-    } = this.props;
 
-    let finalCurrent = Number(pageNum) || 1;
-    const total = allLabels.length;
-
-    if (finalCurrent > 1 && total <= pageSize * (finalCurrent - 1)) {
-      finalCurrent = _.ceil(total / pageSize, 0);
-    }
-
-    const allLabelsToTable = allLabels.map(item => ({ ...item, key: item.id }));
-    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) =>
-      index + 1 > (finalCurrent - 1) * pageSize &&
-      index + 1 <= finalCurrent * pageSize);
-    return {
-      pagination: {
-        total: allLabels.length,
-        current: finalCurrent,
-        pageSize,
-      },
-      currentLabels,
-    };
-  }
   // 分页变化
   @autobind
   paginationChange(pageNum) {

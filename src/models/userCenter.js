@@ -16,6 +16,7 @@ export default {
     allLabels: EMPTY_LIST,
     LabelAndDescApprover: EMPTY_LIST,
     approvalInfo: EMPTY_OBJECT,
+    userInfoForm: EMPTY_OBJECT,
   },
   reducers: {
     queryEmpInfoSuccess(state, action) {
@@ -40,6 +41,12 @@ export default {
       return {
         ...state,
         approvalInfo: action.payload,
+      };
+    },
+    cacheUserInfoForm(state, action) {
+      return {
+        ...state,
+        userInfoForm: action.payload,
       };
     },
   },

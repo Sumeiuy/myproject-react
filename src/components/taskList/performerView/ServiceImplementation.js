@@ -214,6 +214,7 @@ export default class ServiceImplementation extends PureComponent {
       customerFeedback,
       feedbackDate,
       custId,
+      serviceContent, // 涨乐财富通的服务内容
     } = targetCustDetail;
 
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
@@ -222,7 +223,6 @@ export default class ServiceImplementation extends PureComponent {
       value: serviceTypeName,
       children: transformCustFeecbackData(taskFeedbackList),
     }];
-
     // 服务记录的props
     const serviceReocrd = {
       serviceTips,
@@ -241,6 +241,9 @@ export default class ServiceImplementation extends PureComponent {
       motCustfeedBackDict,
       attachmentList,
       isTaskFeedbackListOfNone,
+      serviceContent,
+      // 当前用户选择的左侧列表的任务编号ID
+      missionId: currentId,
     };
 
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
