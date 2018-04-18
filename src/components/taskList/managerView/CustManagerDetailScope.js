@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-18 10:31:12
+ * @Last Modified time: 2018-04-18 15:13:10
  * 服务经理维度任务统计
  */
 
@@ -128,7 +128,7 @@ export default class CustManagerDetailScope extends PureComponent {
     // 如果是营业部层级，则只展示基本的5列数据
     let columnTitle = [{
       key: 'login',
-      value: '服务经理姓名工号',
+      value: '服务经理',
       render: this.renderManagerNameId,
       renderTitle: this.renderCoulmnTitleTooltip,
     }, {
