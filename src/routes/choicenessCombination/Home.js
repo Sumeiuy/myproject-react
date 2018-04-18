@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-17 18:52:14
+ * @Last Modified time: 2018-04-18 14:57:12
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import styles from './index.less';
 import dva from '../../helper/dva';
 import CombinationAdjustHistory from '../../components/choicenessCombination/CombinationAdjustHistory';
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
+import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
 
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
@@ -59,10 +60,11 @@ export default class ChoicenessCombination extends PureComponent {
   render() {
     return (
       <div className={styles.choicenessCombinationBox}>
-        <div className="clearfix">
+        <div className={`${styles.topContainer} clearfix`}>
           <CombinationAdjustHistory />
           <WeeklySecurityTopTen />
         </div>
+        <CombinationRank />
       </div>
     );
   }

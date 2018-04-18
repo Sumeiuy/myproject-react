@@ -5,4 +5,78 @@
   height: 404px;
   background-color: #fff;
   box-shadow: 2px 1px 5px #bdbcbc;
+  .weeklySecurityTopTenContainer {
+    padding-left: 14px;
+    ul {
+      padding-top: 8px;
+      height: 276px;
+      box-sizing: border-box;
+      overflow: auto;
+      li {
+        margin-bottom: 4px;
+        height: 50px;
+        font-size: 12px;
+        .summary {
+          line-height: 23px;
+          span {
+            float: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          i {
+            font-style: normal;
+          }
+          .securityName {
+            color: #2782d7;
+          }
+          .client {
+            text-align: right;
+          }
+          .up {
+            color: #e33c39;
+          }
+          .down {
+            color: #499d37;
+          }
+        }
+        .reason {
+          width: 470px;
+          line-height: 22px;
+          color: #828282;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        &:nth-child(even) {
+          background-color: #f2f2f2;
+        }
+      }
+    }
+  }
+}
+.titleBox {
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+  color: #4a4a4a;
+  border-bottom: 1px solid #ccc;
+  span {
+    float: left;
+  }
+}
+.securityName {
+  width: 118px;
+}
+.adjustTime {
+  width: 110px;
+}
+.upAndDown {
+  width: 62px;
+}
+.combinationName {
+  width: 128px;
+}
+.client {
+  width: 50px;
 }
