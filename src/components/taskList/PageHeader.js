@@ -515,13 +515,13 @@ export default class Pageheader extends PureComponent {
       // 赋值 START_DATE后，圈定 END_DATE 的可选范围 startEnd 向后推 59 天
       return day <= firstDay.clone().add(59, 'days') && day >= firstDay.clone().subtract(1, 'days');
     }
-    return day > firstDay.clone().subtract(60, 'days');
+    return true;
   }
 
   // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
-    return date >= moment();
+    return date > currentDate && date.format('YY-MM-DD') !== currentDate.format('YY-MM-DD');
   }
 
   /**
