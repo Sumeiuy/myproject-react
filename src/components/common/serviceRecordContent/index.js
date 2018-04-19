@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 17:31:01
+ * @Last Modified time: 2018-04-19 18:17:22
  */
 
 import React, { PureComponent } from 'react';
@@ -44,13 +44,16 @@ const DATE_FORMAT_FULL_END = 'YYYY-MM-DD HH:mm';
 // 界面上显示的日期格式
 const DATE_FORMAT_SHOW = 'YYYY年MM月DD日';
 // 界面显示的完整时间格式
-const DATE_FORMAT_FULL = `${DATE_FORMAT_SHOW} HH:mm`;
+// const DATE_FORMAT_FULL = `${DATE_FORMAT_SHOW} HH:mm`;
 // 日期组件使用的通用配置
 const dateCommonProps = {
   allowClear: false,
   format: DATE_FORMAT_SHOW,
   defaultValue: moment(),
 };
+
+// 查询涨乐财富通的审批人需要的btnId固定值
+const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
@@ -72,7 +75,7 @@ export default class ServiceRecordContent extends PureComponent {
       // type 值为2的时候，该任务是自建任务
       const eventIdParam = type === '2' ? serviceType : eventId;
       this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
-      this.props.queryApprovalList({ btnId: '200000' });
+      this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
     }
   }
 
@@ -267,14 +270,14 @@ export default class ServiceRecordContent extends PureComponent {
       (flow.isApproval(fd.serviceStatusCode) || flow.isReject(fd.serviceStatusCode))
     ) {
       // 只有涨乐财富通下才需要提取
-      const { time, title, taskType, content } = fd.serviceContent;
+      const { title, taskType, content } = fd.serviceContent;
       zlSC.ZLServiceContentTitle = title;
       zlSC.ZLServiceContentType = taskType;
       zlSC.ZLServiceContentDesc = content;
       // 因为 涨乐财富通服务方式在自由话术下，需要等到通过审批之后
       // 才会有serviceTime，所以此处需要对time进行空字符串的容错处理
       // 目前审核与驳回都不会有时间这个字段了
-      zlSC.ZLServiceContentTime = _.isEmpty(time) ? '' : moment(time, DATE_FORMAT_FULL_END).format(DATE_FORMAT_FULL);
+      zlSC.ZLServiceContentTime = '';
     }
 
     // 如果是涨乐财富通服务方式下的完成状态，提取服务内容
@@ -282,20 +285,10 @@ export default class ServiceRecordContent extends PureComponent {
       serveWayUtil.isZhangle(serviceWayCode)
       && flow.isComplete(fd.serviceStatusCode)
     ) {
-      // 此处与后端开发确认使用 '\r\n'方式来拆分标题，类型，内容
-      // 数组第一个为 标题，第二项为类型，第三项为内容
-      // 第三项到最后想需要使用\r\n来拼接
-      const zlCompleteContentArray = fd.serviceRecord.split('\r\n');
-      // 此处这个操作，是为了防止用户输入的内容也有\r\n
-      let zlServiceContent = '';
-      _.forEach(zlCompleteContentArray, (v, index) => {
-        if (index > 1) {
-          zlServiceContent += `${zlCompleteContentArray[index]}\r\n`;
-        }
-      });
-      zlSC.ZLServiceContentTitle = zlCompleteContentArray[0];
-      zlSC.ZLServiceContentType = zlCompleteContentArray[1];
-      zlSC.ZLServiceContentDesc = zlServiceContent;
+      // 此处确认后，在完成状态，不单独显示标题，类型，所有的东西显示到内容
+      zlSC.ZLServiceContentTitle = '';
+      zlSC.ZLServiceContentType = '';
+      zlSC.ZLServiceContentDesc = fd.serviceRecord;
     }
 
     // 如果非只读并且不是驳回状态，返回默认的State
@@ -489,7 +482,7 @@ export default class ServiceRecordContent extends PureComponent {
   preQueryDateForZLFins() {
     this.getZLCustFeedbackList();
     // 涨乐财富通服务方式下的审批人列表查询接口后端的固定值
-    this.props.queryApprovalList({ btnId: '200000' });
+    this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
   }
 
   // 保存选中的服务方式的值
@@ -530,7 +523,7 @@ export default class ServiceRecordContent extends PureComponent {
     const { isSelectZhangleFins } = this.state;
     if (isSelectZhangleFins) {
       // 查询涨乐财富通服务方式下的审批人列表
-      this.props.queryApprovalList({ btnId: '200000' });
+      this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
       // 查询涨乐财富通服务方式下的客户反馈列表
       this.props.queryCustFeedbackList4ZLFins({
         eventId: value,
