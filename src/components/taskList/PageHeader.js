@@ -23,7 +23,6 @@ import {
   INITIATOR,
   CONTROLLER,
   currentDate,
-  beforeCurrentDate60Days,
   dateFormat,
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
@@ -35,6 +34,7 @@ import {
 import styles from './pageHeader.less';
 
 const Search = Input.Search;
+const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -100,7 +100,7 @@ export default class Pageheader extends PureComponent {
     this.state = {
       stateAllOptions,
       statusValue,
-      showMore: true,
+      showMore: false,
       startTime: '',
       endTime: '',
       disabledEndTime: '',
@@ -181,11 +181,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      dom.removeClass(this.filterMore, 'filterMoreIcon');
-      dom.addClass(this.filterMore, 'filterNoneIcon');
+      dom.removeClass(this.filterMore, styles.filterMoreIcon);
+      dom.addClass(this.filterMore, styles.filterNoneIcon);
     } else {
-      dom.removeClass(this.filterMore, 'filterNoneIcon');
-      dom.addClass(this.filterMore, 'filterMoreIcon');
+      dom.removeClass(this.filterMore, styles.filterNoneIcon);
+      dom.addClass(this.filterMore, styles.filterMoreIcon);
     }
   }
 
@@ -216,7 +216,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   @logable({ type: 'Click', payload: { name: '收起' } })
-  handleShrik() {
+  handleShrink() {
     this.handleMoreChange();
   }
 
@@ -505,12 +505,23 @@ export default class Pageheader extends PureComponent {
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
-  isInsideOffSet({ day, firstDay, focusedInput }) {
+  isInsideOffSet({ day, firstDay, focusedInput, flag }) {
     // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
     if (focusedInput === 'endDate') {
-      return day <= firstDay.clone().add(59, 'days') && day > firstDay.clone().subtract(1, 'days');
+      // 首次聚焦日历组件为 END_DATE时，需要圈定可选范围： startEnd 向后推 60 天
+      if (flag) {
+        return day <= firstDay.clone().add(60, 'days') && day >= firstDay.clone();
+      }
+      // 赋值 START_DATE后，圈定 END_DATE 的可选范围 startEnd 向后推 59 天
+      return day <= firstDay.clone().add(59, 'days') && day >= firstDay.clone().subtract(1, 'days');
     }
-    return day > firstDay.clone().subtract(60, 'days');
+    return true;
+  }
+
+  // 只能选择最近3个月的
+  @autobind
+  setDisableRange(date) {
+    return date > currentDate && date.format('YY-MM-DD') !== currentDate.format('YY-MM-DD');
   }
 
   /**
@@ -588,6 +599,7 @@ export default class Pageheader extends PureComponent {
             hasCustomerOffset
             initialEndDate={endTime}
             initialStartDate={startTime}
+            disabledRange={this.setDisableRange}
             onChange={this.handleCreateDateChange}
             isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}创建时间`}
@@ -610,6 +622,7 @@ export default class Pageheader extends PureComponent {
             hasCustomerOffset
             initialEndDate={endTime}
             initialStartDate={startTime}
+            disabledRange={this.setDisableRange}
             onChange={this.handleEndDateChange}
             isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}结束时间`}
@@ -661,7 +674,7 @@ export default class Pageheader extends PureComponent {
       customerList,
     } = this.props;
 
-    const { missionName, statusValue, stateAllOptions } = this.state;
+    const { missionName, statusValue, stateAllOptions, showMore } = this.state;
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
@@ -692,22 +705,41 @@ export default class Pageheader extends PureComponent {
     const missionViewTypeValue = !_.isEmpty(missionViewType) ?
       missionViewType : getViewInfo().currentViewType;
     return (
-      <div className={`${styles.pageCommonHeader}`} ref={this.pageCommonHeaderRef}>
+      <div className={`${styles.pageCommonHeader} ${styles.HeaderOverflow}`} ref={this.pageCommonHeaderRef}>
+        <div className={`${styles.missionViewType} ${styles.view}`}>
+          <Select
+            name="missionViewType"
+            value={missionViewTypeValue}
+            data={chooseMissionViewOptions}
+            onChange={this.handleSelctView}
+          />
+        </div>
+
+        <div className={styles.headerRight}>
+          {
+            <div
+              className={styles.filterMore}
+              onClick={showMore ? this.handleMore : this.handleShrink}
+              ref={this.filterMoreRef}
+            >
+              <span>{showMore ? '更多' : '收起'}</span>
+            </div>
+          }
+          <Button
+            type="primary"
+            icon="plus"
+            size="small"
+            onClick={this.handleCreateTask}
+          >
+            新建
+          </Button>
+        </div>
+
         <div className={styles.filterBox} ref={this.filterBoxRef}>
-
-          <div className={`${styles.filterFl} ${styles.mr30} ${styles.view}`}>
-            <Select
-              name="missionViewType"
-              value={missionViewTypeValue}
-              data={chooseMissionViewOptions}
-              onChange={this.handleSelctView}
-            />
-          </div>
-
-          <div className={`${styles.filterFl} ${styles.mr15}`}>
+          <div className={`${styles.filterFl}`}>
             <Search
               placeholder="任务名称"
-              style={{ width: 186 }}
+              style={{ width: 110 }}
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
@@ -724,7 +756,7 @@ export default class Pageheader extends PureComponent {
             />
           </div>
 
-          <div className={styles.filterFl}>
+          <div className={`${styles.filterFl} ${styles.mlMinux15}`}>
             <Select
               name="status"
               value={statusValue}
@@ -768,33 +800,7 @@ export default class Pageheader extends PureComponent {
           }
           {this.renderExecuteType()}
           {this.renderTime()}
-          {
-            this.state.showMore ?
-              <div
-                className={styles.filterMore}
-                onClick={this.handleMore}
-                ref={this.filterMoreRef}
-              >
-                <span>更多</span>
-              </div>
-              :
-              <div
-                className={styles.filterMore}
-                onClick={this.handleShrik}
-                ref={this.filterMoreRef}
-              >
-                <span>收起</span>
-              </div>
-          }
         </div>
-        <Button
-          type="primary"
-          icon="plus"
-          size="small"
-          onClick={this.handleCreateTask}
-        >
-          新建
-        </Button>
       </div>
     );
   }

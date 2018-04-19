@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 15:20:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:07:38
+ * @Last Modified time: 2018-04-19 14:12:22
  * @description 服务实施中需要用到的配置项
  */
 import _ from 'lodash';
@@ -54,7 +54,7 @@ function getFlowStatus(code) {
 
 // 根据name获取流程状态Code
 function getFlowCodeByName(name) {
-  return _.find(flowStatus, o => o.name === name);
+  return _.find(flowStatus, o => o.name === name).id;
 }
 
 // 任务状态

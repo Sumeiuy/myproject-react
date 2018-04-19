@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:07:14
+ * @Last Modified time: 2018-04-19 14:12:41
  */
 
 import React, { PureComponent } from 'react';
@@ -399,7 +399,7 @@ export default class ServiceRecordContent extends PureComponent {
       // 如果当前的状态为 处理中，则需要将 审核中的状态 传递过去
       // 如果当前的状态为 被驳回
       if (zlData.mode === 'free') {
-        data.flowStatus = flow.getFlowCodeByName('审核中');
+        data.flowStatus = `${flow.getFlowCodeByName('审核中')}`;
       }
       data.zhangleServiceContentData = _.omit(zlData, ['mode']);
     }

@@ -2,37 +2,35 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-12 22:21:43
+ * @Last Modified time: 2018-04-19 11:14:26
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Icon, message } from 'antd';
-import _ from 'lodash';
-import cx from 'classnames';
 
 import CommonModal from '../biz/CommonModal';
+import ChoiceInvestAdviceFreeMode from './ChoiceInvestAdviceFreeMode';
 
 import styles from './choiceInvestAdviceModal.less';
-
-const { TextArea } = Input;
 
 export default class ChoiceInvestAdviceModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { isUpdate, serveContent } = props;
     this.state = {
-      // 投资建议标题
-      title: isUpdate ? serveContent.title : '',
-      // 投资建议类型
-      type: '',
-      // 投资建议内容
-      desc: isUpdate ? serveContent.desc : '',
       // 投资建议内容获取方式， free为自由编辑，tmpl为投资建议模板
       mode: 'free',
+      // 自由话术模式下，需要验证标题是否符合要求,如果为true则显示提示信息
+      validateTitle: false,
+      // 自由话术模式下，需要验证内容是否符合要求,如果为true则显示提示信息
+      validateContent: false,
     };
+  }
+
+  @autobind
+  setChoiceInvestAdviceFreeModeRef(input) {
+    this.freeModeRef = input;
   }
 
   // 关闭弹出层
@@ -42,48 +40,14 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     onClose(modalKey);
   }
 
-  // 检测自由编辑状态下，标题和内容是否为空
-  @autobind
-  checkFreeEdit() {
-    const { title, desc } = this.state;
-    if (_.isEmpty(title)) {
-      message.error('标题不能为空');
-      return false;
-    }
-    if (title.length > 15) {
-      message.error('标题字符长度不超过15字');
-      return false;
-    }
-    if (_.isEmpty(desc)) {
-      message.error('投资建议内容不能为空');
-      return false;
-    }
-    if (desc.length > 150) {
-      message.error('标题字符长度不超过150字');
-      return false;
-    }
-    return true;
-  }
-
   // 点击服务内容弹出层确认按钮
   @autobind
   handleOK() {
-    if (this.checkFreeEdit()) {
-      const { title, desc, mode } = this.state;
+    const { mode } = this.state;
+    if (mode === 'free' && this.freeModeRef.checkData()) {
+      const { title, desc } = this.freeModeRef.getData();
       this.props.onOK({ title, desc, mode });
     }
-  }
-
-  @autobind
-  handleFreeEditTitleChange(e) {
-    const title = e.target.value;
-    this.setState({ title });
-  }
-
-  @autobind
-  handleFreeEditDescChange(e) {
-    const desc = e.target.value;
-    this.setState({ desc });
   }
 
   render() {
@@ -91,14 +55,11 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       modalKey,
       visible,
       wrapClassName,
+      serveContent,
+      isUpdate,
     } = this.props;
 
-    const {
-      title,
-      desc,
-    } = this.state;
-
-    const ctCls = cx([styles.editLine, styles.editLineTextArea]);
+    const { validateContent, validateTitle } = this.state;
 
     return (
       <CommonModal
@@ -120,23 +81,13 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
             <div className={styles.modeName}>手动输入</div>
             <div className={styles.modeSwitch}>模板添加</div>
           </div>
-          <div className={styles.editLine}>
-            <div className={styles.editCaption}>标题:</div>
-            <div className={styles.editInput}>
-              <Input value={title} onInput={this.handleFreeEditTitleChange} />
-            </div>
-          </div>
-          <div className={ctCls}>
-            <div className={styles.editCaption}>内容:</div>
-            <div className={styles.editInput}>
-              <TextArea
-                className={styles.serveContent}
-                value={desc}
-                onInput={this.handleFreeEditDescChange}
-              />
-            </div>
-          </div>
-          <div className={styles.tips}><Icon type="exclamation-circle" /> 注：手动输入的服务内容需要经过审批才能发送到客户手机上</div>
+          <ChoiceInvestAdviceFreeMode
+            ref={this.setChoiceInvestAdviceFreeModeRef}
+            isUpdate={isUpdate}
+            serveContent={serveContent}
+            validateContent={validateContent}
+            validateTitle={validateTitle}
+          />
         </div>
       </CommonModal>
     );
