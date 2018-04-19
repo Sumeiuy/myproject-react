@@ -16,9 +16,9 @@ export default {
     // 投顾手机分配页面筛选-部门组织机构树
     custRange: EMPTY_LIST,
     // 投顾手机分配页面表格列表数据
-    tgBindTableList: EMPTY_OBJECT,
+    advisorBindListData: EMPTY_OBJECT,
     // 新建页面-投顾查询列表
-    tgList: EMPTY_OBJECT,
+    advisorListData: EMPTY_OBJECT,
   },
   reducers: {
     // 投顾手机分配页面筛选-服务经理列表
@@ -26,7 +26,7 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       // 当 resultData 为null时，不会启用 resultData 的默认值的。此处要在用使用时写成 resultData || EMPTY_LIST
       const { servicePeopleList = EMPTY_LIST } = resultData || EMPTY_LIST;
-      console.warn('servicePeopleList', servicePeopleList);
+      console.warn('resultData', resultData);
       return {
         ...state,
         empList: servicePeopleList,
@@ -50,20 +50,19 @@ export default {
       };
     },
     // 投顾手机分配页面表格列表数据
-    queryTgBindTableListSuccess(state, action) {
+    queryAdvisorBindListSuccess(state, action) {
       const { payload } = action;
-      console.warn('payload', payload);
       return {
         ...state,
-        tgBindTableList: payload,
+        advisorBindListData: payload,
       };
     },
     // 新建页面-投顾查询列表
-    queryTgListSuccess(state, action) {
+    queryAdvisorListSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
-        tgList: payload,
+        advisorListData: payload,
       };
     },
   },
@@ -85,18 +84,18 @@ export default {
       });
     },
     // 投顾手机分配页面表格列表数据
-    * queryTgBindTableList({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryTgBindTableList, payload);
+    * queryAdvisorBindList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryAdvisorBindList, payload);
       yield put({
-        type: 'queryTgBindTableListSuccess',
+        type: 'queryAdvisorBindListSuccess',
         payload: resultData,
       });
     },
     // 获取新建页面-投顾查询列表
-    * queryTgList({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryTgList, payload);
+    * queryAdvisorList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryAdvisorList, payload);
       yield put({
-        type: 'queryTgListSuccess',
+        type: 'queryAdvisorListSuccess',
         payload: resultData,
       });
     },

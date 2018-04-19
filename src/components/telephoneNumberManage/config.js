@@ -5,6 +5,7 @@
  */
 
 const config = {
+  type: '09', // 公务手机和电话卡号管理type类型值
   statusOptions: [
     {
       show: true,

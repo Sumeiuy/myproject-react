@@ -43,7 +43,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      prefix + '/groovynoauth/fsp/emp/phonebinding',
+      prefix + '/groovynoauth/fsp/emp/mobilebinding',
       {
         // target: 'http://168.61.8.82:5086', // uat
         // target: 'http://168.61.8.81:5087', // SIT

@@ -9,10 +9,10 @@ export default function telephoneNumberManage(api) {
     // 服务经理列表
     queryEmpList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
     // 获取部门
-    getCustRange: query => api.post('/groovynoauth/fsp/biz/queryOrgInfo', query),
+    getCustRange: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryEmpOrgTree', query),
     // 投顾手机分配页面表格列表数据
-    queryTgBindTableList: query => api.post('/groovynoauth/fsp/emp/phonebinding/queryTgBindList', query),
+    queryAdvisorBindList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAdvisorBindList', query),
     // 获取新建页面投顾列表
-    queryTgList: query => api.post('/groovynoauth/fsp/emp/phonebinding/queryTgList', query),
+    queryAdvisorList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAdvisorList', query),
   };
 }

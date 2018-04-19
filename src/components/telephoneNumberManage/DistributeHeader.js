@@ -14,7 +14,7 @@ import AutoComplete from '../common/similarAutoComplete';
 import config from './config';
 import styles from './distributeHeader.less';
 
-const { statusOptions } = config;
+const { statusOptions, type } = config;
 // 状态默认值为已分配
 const DISTRIBUT_EDEFAULT_VALUE = 'Y';
 export default class DistributeHeader extends PureComponent {
@@ -37,7 +37,7 @@ export default class DistributeHeader extends PureComponent {
 
   componentWillMount() {
     this.props.getCustRange({
-      type: '01',
+      type,
     });
   }
 
@@ -47,7 +47,7 @@ export default class DistributeHeader extends PureComponent {
   handleManagerSearch(value) {
     this.props.queryEmpList({
       keyword: value,
-      type: '01',
+      type,
     });
   }
 

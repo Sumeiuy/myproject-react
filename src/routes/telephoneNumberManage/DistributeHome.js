@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-// import { Icon } from 'antd';
 import _ from 'lodash';
 import Table from '../../components/common/commonTable';
 import DistributeHeader from '../../components/telephoneNumberManage/DistributeHeader';
+import config from '../../components/telephoneNumberManage/config';
 import withRouter from '../../decorators/withRouter';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
@@ -22,25 +22,26 @@ import styles from './distributeHome.less';
 
 const EMPTY_OBJECT = {};
 const dispatch = dva.generateEffect;
+const { type } = config;
 const effects = {
   // 服务经理列表
   queryEmpList: 'telephoneNumberManage/queryEmpList',
   // 部门机构树
   getCustRange: 'telephoneNumberManage/getCustRange',
   // 获取投顾手机分配页面表格数据
-  queryTgBindTableList: 'telephoneNumberManage/queryTgBindTableList',
+  queryAdvisorBindList: 'telephoneNumberManage/queryAdvisorBindList',
 };
 const mapStateToProps = state => ({
   empList: state.telephoneNumberManage.empList,
   custRange: state.telephoneNumberManage.custRange,
-  tgBindTableList: state.telephoneNumberManage.tgBindTableList,
+  advisorBindListData: state.telephoneNumberManage.advisorBindListData,
 });
 
 const mapDisPatchToProps = {
   replace: routerRedux.replace,
   queryEmpList: dispatch(effects.queryEmpList, { loading: false }),
   getCustRange: dispatch(effects.getCustRange, { loading: false }),
-  queryTgBindTableList: dispatch(effects.queryTgBindTableList, { loading: false }),
+  queryAdvisorBindList: dispatch(effects.queryAdvisorBindList, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDisPatchToProps)
@@ -56,8 +57,8 @@ export default class DistributeHome extends PureComponent {
     custRange: PropTypes.array.isRequired,
     getCustRange: PropTypes.func.isRequired,
     // 获取投顾手机分配页面表格数据
-    tgBindTableList: PropTypes.object.isRequired,
-    queryTgBindTableList: PropTypes.func.isRequired,
+    advisorBindListData: PropTypes.object.isRequired,
+    queryAdvisorBindList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -69,7 +70,7 @@ export default class DistributeHome extends PureComponent {
 
   componentWillMount() {
     const { location: { query, query: { pageNum } } } = this.props;
-    this.getTgBindTableList(query, pageNum, 10);
+    this.getAdvisorBindList(query, pageNum, 10);
   }
 
   // 头部筛选后调用方法
@@ -78,25 +79,28 @@ export default class DistributeHome extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    // 清空掉消息提醒页面带过来的 id
     replace({
       pathname,
       query: {
         ...query,
+        pageNum: 1,
         ...obj,
       },
     });
     // 2.调用queryTgBindList接口
-    this.getTgBindTableList({ ...query, ...obj }, 1, 10);
+    this.getAdvisorBindList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 请求表格数据
   @autobind
-  getTgBindTableList(query, pageNum = 1, pageSize = 10) {
-    const { queryTgBindTableList } = this.props;
+  getAdvisorBindList(query, pageNum = 1, pageSize = 10) {
+    const { queryAdvisorBindList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    queryTgBindTableList({ ...params, type: '01' });
+    queryAdvisorBindList({
+      ...params,
+      type,
+    });
   }
 
    // 切换页码
@@ -112,7 +116,7 @@ export default class DistributeHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.getTgBindTableList(query, nextPage, currentPageSize);
+    this.getAdvisorBindList(query, nextPage, currentPageSize);
   }
 
     /**
@@ -125,7 +129,6 @@ export default class DistributeHome extends PureComponent {
       return _.map(listData, (item, index) => _.merge(item, { id: index }),
       );
     }
-
     return [];
   }
 
@@ -185,13 +188,11 @@ export default class DistributeHome extends PureComponent {
       queryEmpList,
       custRange,
       getCustRange,
-      tgBindTableList,
+      advisorBindListData,
     } = this.props;
-    const { tgBindList, page } = tgBindTableList;
+    const { advisorBindList, page } = advisorBindListData;
     // 添加id到dataSource
-    const newTgBindList = this.addIdToDataSource(tgBindList);
-    console.warn('tgBindTableList', tgBindTableList);
-    console.warn('newTgBindList', newTgBindList);
+    const newAdvisorBindList = this.addIdToDataSource(advisorBindList);
     return (
       <div className={styles.distributeHomeBox}>
         <DistributeHeader
@@ -209,9 +210,9 @@ export default class DistributeHome extends PureComponent {
             curPageSize: pageSize,
             totalRecordNum: !_.isEmpty(page) ? page.totalRecordNum : 0,
           }}
-          listData={newTgBindList}
-          onSizeChange={this.handlePageSizeChange}
-          tableClass={styles.tbBindListTable}
+          listData={newAdvisorBindList}
+          onPageChange={this.handlePageNumberChange}
+          tableClass={styles.advisorBindListTable}
           titleColumn={this.renderColumn()}
           columnWidth={['15%', '12%', '16%', '16%', '16%', '25%']}
           emptyListDataNeedEmptyRow
