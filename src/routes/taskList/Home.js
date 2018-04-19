@@ -882,6 +882,8 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
     // 切换页码，将页面的scrollToTop
@@ -905,6 +907,8 @@ export default class PerformerView extends PureComponent {
         ...query,
         pageNum: 1,
         pageSize: changedPageSize,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
   }

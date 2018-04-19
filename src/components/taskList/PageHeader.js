@@ -674,7 +674,7 @@ export default class Pageheader extends PureComponent {
       customerList,
     } = this.props;
 
-    const { missionName, statusValue, stateAllOptions } = this.state;
+    const { missionName, statusValue, stateAllOptions, showMore } = this.state;
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
@@ -717,22 +717,13 @@ export default class Pageheader extends PureComponent {
 
         <div className={styles.headerRight}>
           {
-            this.state.showMore ?
-              <div
-                className={styles.filterMore}
-                onClick={this.handleMore}
-                ref={this.filterMoreRef}
-              >
-                <span>更多</span>
-              </div>
-              :
-              <div
-                className={styles.filterMore}
-                onClick={this.handleShrik}
-                ref={this.filterMoreRef}
-              >
-                <span>收起</span>
-              </div>
+            <div
+              className={styles.filterMore}
+              onClick={showMore ? this.handleMore : this.handleShrik}
+              ref={this.filterMoreRef}
+            >
+              <span>{showMore ? '更多' : '收起'}</span>
+            </div>
           }
           <Button
             type="primary"
