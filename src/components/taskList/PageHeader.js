@@ -216,7 +216,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   @logable({ type: 'Click', payload: { name: '收起' } })
-  handleShrik() {
+  handleShrink() {
     this.handleMoreChange();
   }
 
@@ -719,7 +719,7 @@ export default class Pageheader extends PureComponent {
           {
             <div
               className={styles.filterMore}
-              onClick={showMore ? this.handleMore : this.handleShrik}
+              onClick={showMore ? this.handleMore : this.handleShrink}
               ref={this.filterMoreRef}
             >
               <span>{showMore ? '更多' : '收起'}</span>
