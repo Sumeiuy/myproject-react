@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 18:17:22
+ * @Last Modified time: 2018-04-19 18:45:13
  */
 
 import React, { PureComponent } from 'react';
@@ -195,6 +195,7 @@ export default class ServiceRecordContent extends PureComponent {
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
     }
+    console.warn('getDefaultState: ', fd);
     return {
       // 涨乐财富通服务方式下，是否被驳回状态
       isReject,
@@ -469,8 +470,9 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getZLCustFeedbackList() {
     const { eventId, taskTypeCode, serviceType } = this.state;
+    console.warn('taskTypeCode: ', taskTypeCode);
     const type = `${+taskTypeCode + 1}`;
-     // TODO 如果是mot任务 eventId参数需要使用 eventId
+    // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceTypeCode
     // type 值为2的时候，该任务是自建任务
     const eventIdParam = type === '2' ? serviceType : eventId;
