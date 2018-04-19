@@ -115,7 +115,7 @@ export default class SimilarAutoComplete extends PureComponent {
 
   // 根据用户选中的option的value值获取对应的数组值
   // 第一个参数是 AutoComplete 组件的optionLabelProp指定的key对应的值
-  // 第二个参数是 改节点信息
+  // 第二个参数是 该节点信息
   @autobind
   handleSelect(value, selectItem) {
     if (value) {

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-18 15:13:10
+ * @Last Modified time: 2018-04-19 09:41:43
  * 服务经理维度任务统计
  */
 
@@ -104,7 +104,7 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   renderTableTitle() {
     return (
-      <span className={`${styles.tableTitle} tableTitle`}>服务经理</span>
+      <span className={`${styles.tableTitle} tableTitle`}>服务经理维度</span>
     );
   }
 
@@ -190,32 +190,32 @@ export default class CustManagerDetailScope extends PureComponent {
     let columnWidthTotal = 0;
 
     if (isFold) {
-      columnWidthTotal = 950;
-      // 列的总宽度950px
+      columnWidthTotal = 870;
+      // 列的总宽度870px
       // 处于折叠状态，每一列的宽度需要增加
-      columnWidth = ['310px', '160px', '160px', '160px', '160px'];
+      columnWidth = ['150px', '180px', '180px', '180px', '180px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '160px', '200px'];
-        columnWidthTotal = 1310;
+        columnWidth = [...columnWidth, '180px', '180px'];
+        columnWidthTotal = 1230;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '200px'];
-        columnWidthTotal = 1150;
+        columnWidth = [...columnWidth, '180px'];
+        columnWidthTotal = 1050;
       }
     } else {
-      columnWidthTotal = 600;
+      columnWidthTotal = 630;
       // 处于展开状态,
-      // 列的总宽度600px
-      columnWidth = ['200px', '100px', '100px', '100px', '100px'];
+      // 列的总宽度630px
+      columnWidth = ['150px', '120px', '120px', '120px', '120px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '100px', '200px'];
-        columnWidthTotal = 900;
+        columnWidth = [...columnWidth, '120px', '180px'];
+        columnWidthTotal = 930;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '200px'];
-        columnWidthTotal = 800;
+        columnWidth = [...columnWidth, '180px'];
+        columnWidthTotal = 810;
       }
     }
 

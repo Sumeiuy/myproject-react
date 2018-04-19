@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-16 10:09:51
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-19 09:39:35
  * 任务调查
  */
 
@@ -140,20 +140,6 @@ export default class MissionInvestigation extends PureComponent {
     }
   }
 
-  // 数据校验
-  @autobind
-  requiredDataValidate() {
-    const {
-      checked,
-      currentSelectRowKeys,
-    } = this.state;
-    if (checked && _.isEmpty(currentSelectRowKeys)) {
-      this.setState({
-        isShowError: true,
-      });
-    }
-  }
-
   /**
    * 浮层渲染到父节点
    */
@@ -198,6 +184,20 @@ export default class MissionInvestigation extends PureComponent {
       // 当前选择的问题row
       currentSelectRowKeys,
     };
+  }
+
+  // 数据校验
+  @autobind
+  requiredDataValidate() {
+    const {
+        checked,
+      currentSelectRowKeys,
+      } = this.state;
+    if (checked && _.isEmpty(currentSelectRowKeys)) {
+      this.setState({
+        isShowError: true,
+      });
+    }
   }
 
   /**
