@@ -35,10 +35,17 @@
   text-align: right;
 }
 
-.editLine {
+.freeModeContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   margin-bottom: 10px;
+}
+
+.editLine {
   display: flex;
   flex: 0 0 auto;
+  margin-bottom: 10px;
 
   &.editLineTextArea {
     flex: 1 1 auto;
@@ -71,6 +78,14 @@
   }
 }
 
+.validateTips {
+  color: #f5222d;
+  padding-left: 70px;
+  font-size: 14px;
+  line-height: 30px;
+  height: 30px;
+}
+
 .tips {
   flex: 0 0 auto;
   padding-left: 70px;
@@ -81,4 +96,7 @@
 
 .serveContent {
   height: 100% !important;
+}
+.validateError {
+  border-color: #f5222d;
 }
