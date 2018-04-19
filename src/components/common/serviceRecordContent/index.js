@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 20:31:31
+ * @Last Modified time: 2018-04-19 20:39:59
  */
 
 import React, { PureComponent } from 'react';
@@ -408,7 +408,6 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
     } = this.props;
     // 按照DOClever定义的入参
-    console.warn('taskTypeCode: ', taskTypeCode);
     const data = {
       custId,
       serveWay: serviceWayCode,
