@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:04:06
+ * @Last Modified time: 2018-04-19 17:46:52
  * @description 只读服务记录
  */
 
@@ -112,7 +112,8 @@ export default function ServiceRecordReadOnly(props) {
             }
           </div>
           {
-            (isZL && flowIsApproval) ? null
+            (isZL && flowIsApproval) || (isZL && custFeedbackText === '暂无反馈')
+            ? null
             : (
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>

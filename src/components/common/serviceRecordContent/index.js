@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 14:12:41
+ * @Last Modified time: 2018-04-19 17:31:01
  */
 
 import React, { PureComponent } from 'react';
@@ -72,6 +72,7 @@ export default class ServiceRecordContent extends PureComponent {
       // type 值为2的时候，该任务是自建任务
       const eventIdParam = type === '2' ? serviceType : eventId;
       this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
+      this.props.queryApprovalList({ btnId: '200000' });
     }
   }
 
@@ -258,7 +259,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 针对后端传值 有可能是 serviceWayName 也有可能是serviceWayCode
     const serviceWay = getServeWayByCodeOrName(fd.serviceWayName || fd.serviceWayCode);
     const serviceWayCode = serviceWay.key;
-    // 提取涨乐财富通服务方式下的服务内容
+    // 如果是涨乐财富通服务方式下的驳回和审核中的状态 提取服务内容
     const zlSC = {};
     if (
       serveWayUtil.isZhangle(serviceWayCode)
@@ -272,8 +273,31 @@ export default class ServiceRecordContent extends PureComponent {
       zlSC.ZLServiceContentDesc = content;
       // 因为 涨乐财富通服务方式在自由话术下，需要等到通过审批之后
       // 才会有serviceTime，所以此处需要对time进行空字符串的容错处理
+      // 目前审核与驳回都不会有时间这个字段了
       zlSC.ZLServiceContentTime = _.isEmpty(time) ? '' : moment(time, DATE_FORMAT_FULL_END).format(DATE_FORMAT_FULL);
     }
+
+    // 如果是涨乐财富通服务方式下的完成状态，提取服务内容
+    if (
+      serveWayUtil.isZhangle(serviceWayCode)
+      && flow.isComplete(fd.serviceStatusCode)
+    ) {
+      // 此处与后端开发确认使用 '\r\n'方式来拆分标题，类型，内容
+      // 数组第一个为 标题，第二项为类型，第三项为内容
+      // 第三项到最后想需要使用\r\n来拼接
+      const zlCompleteContentArray = fd.serviceRecord.split('\r\n');
+      // 此处这个操作，是为了防止用户输入的内容也有\r\n
+      let zlServiceContent = '';
+      _.forEach(zlCompleteContentArray, (v, index) => {
+        if (index > 1) {
+          zlServiceContent += `${zlCompleteContentArray[index]}\r\n`;
+        }
+      });
+      zlSC.ZLServiceContentTitle = zlCompleteContentArray[0];
+      zlSC.ZLServiceContentType = zlCompleteContentArray[1];
+      zlSC.ZLServiceContentDesc = zlServiceContent;
+    }
+
     // 如果非只读并且不是驳回状态，返回默认的State
     if (!isReadOnly && !isReject) {
       return this.getDefaultState(props);
@@ -314,30 +338,46 @@ export default class ServiceRecordContent extends PureComponent {
     this.serveContentRef = ref;
   }
 
+  // 针对选择的服务方式，非涨乐财富通下的检测
+  @autobind
+  checkNotZLFins() {
+    const { isEntranceFromPerformerView } = this.props;
+    const { serviceStatus, serviceRecord } = this.state;
+    let isShowServeStatusError = false;
+    let isShowServiceContentError = false;
+    if (isEntranceFromPerformerView) {
+      // 在执行者视图中校验 服务状态 是否已经选择
+      isShowServeStatusError = _.isEmpty(serviceStatus);
+      this.setState({ isShowServeStatusError });
+    }
+    // 校验服务记录
+    isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
+    this.setState({ isShowServiceContentError });
+    return !isShowServeStatusError && !isShowServiceContentError;
+  }
+
+  // 针对选的服务方式，是涨乐财富通的检测
+  @autobind
+  checkZLFins() {
+    const { isEntranceFromPerformerView } = this.props;
+    const { serviceStatus } = this.state;
+    let isShowServeStatusError = false;
+    if (isEntranceFromPerformerView) {
+      // 在执行者视图中校验 服务状态 是否已经选择
+      isShowServeStatusError = _.isEmpty(serviceStatus);
+      this.setState({ isShowServeStatusError });
+    }
+    return !isShowServeStatusError && this.serveContentRef.checkData();
+  }
+
   // 提交时候，进行数据校验
   @autobind
   checkForSubmit() {
-    const { isEntranceFromPerformerView } = this.props;
-    const { serviceStatus, serviceRecord, isSelectZhangleFins } = this.state;
-    // 1.校验服务状态，只有执行者视图页面下才需要
-    let isShowServeStatusError = false;
-    let isShowServiceContentError = false;
-    let resultFlag = true;
-    if (!isSelectZhangleFins) {
-      // 2. 在非涨乐财富通服务方式下 校验服务记录
-      isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
-      this.setState({ isShowServiceContentError });
-      resultFlag = !isShowServiceContentError;
-    } else {
-      // 涨乐财富通下的校验
-      resultFlag = !_.isEmpty(this.serveContentRef.getData());
+    const { isSelectZhangleFins } = this.state;
+    if (isSelectZhangleFins) {
+      return this.checkZLFins();
     }
-    if (isEntranceFromPerformerView) {
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
-      resultFlag = !isShowServeStatusError;
-    }
-    return resultFlag;
+    return this.checkNotZLFins();
   }
 
   // 向组件外部提供所有数据
@@ -394,13 +434,10 @@ export default class ServiceRecordContent extends PureComponent {
     if (isSelectZhangleFins) {
       // 如果选择涨乐财富通
       const zlData = this.serveContentRef.getData();
-      // 此处需要针对涨乐财富通服务方式下的服务状态进行优化
-      // 如果是自由编辑模式，则需要将flowStatus传递为 审核中
-      // 如果当前的状态为 处理中，则需要将 审核中的状态 传递过去
-      // 如果当前的状态为 被驳回
-      if (zlData.mode === 'free') {
-        data.flowStatus = `${flow.getFlowCodeByName('审核中')}`;
-      }
+      // 由于之前的非涨乐财富通的服务方式在变更流水状态是由前端来修改文字达到的效果
+      // 然而，目前的需求中，针对涨乐财富通的服务方式，新增了 审核中 以及 驳回 两个状态，、
+      // 需要针对涨乐财富通的服务方式进行特殊处理
+      data.zlApprovalCode = flow.getFlowCodeByName('审核中');
       data.zhangleServiceContentData = _.omit(zlData, ['mode']);
     }
     return data;

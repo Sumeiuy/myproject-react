@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 17:51:37
+ * @Last Modified time: 2018-04-19 15:25:14
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -62,6 +62,34 @@ export default class ServeContent extends PureComponent {
     }
   }
 
+  // 校验必要的数据是否填写选择
+  @autobind
+  checkData() {
+    let checkResult = true;
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      approverId,
+      contentMode,
+    } = this.state;
+    if (contentMode === '') {
+      message.error('请添加服务内容');
+      checkResult = false;
+    }
+    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
+      message.error('请填写服务内容中的标题和内容');
+      checkResult = false;
+    }
+    if (contentMode === 'free') {
+      // 自由话术模式，下需要审批
+      if (_.isEmpty(approverId)) {
+        message.error('自由编辑状态下，需要审批，请选择审批人');
+        checkResult = false;
+      }
+    }
+    return checkResult;
+  }
+
   @autobind
   getData() {
     const {
@@ -71,21 +99,6 @@ export default class ServeContent extends PureComponent {
       approverId,
       contentMode,
     } = this.state;
-    if (contentMode === '') {
-      message.error('请添加服务内容');
-      return null;
-    }
-    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
-      message.error('请填写服务内容中的标题和内容');
-      return null;
-    }
-    if (contentMode === 'free') {
-      // 自由话术模式，下需要审批
-      if (_.isEmpty(approverId)) {
-        message.error('自由编辑状态下，需要审批，请选择审批人');
-        return null;
-      }
-    }
     return {
       title: serveContentTitle,
       content: serveContentDesc,

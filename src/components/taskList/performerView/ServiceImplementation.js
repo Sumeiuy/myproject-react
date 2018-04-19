@@ -14,7 +14,7 @@ import TargetCustomer from './TargetCustomer';
 import ServiceRecordForm from './ServiceRecordForm';
 import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 import { flow, task } from './config';
-import { serveWay } from './config/code';
+import { serveWay as serveWayUtil } from './config/code';
 
 /**
  * 将数组对象中的id和name转成对应的key和value
@@ -65,8 +65,10 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       getTaskDetailBasicInfo,
     } = this.props;
+    // 此处需要针对涨乐财富通服务方式特殊处理
+    // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServeRecord(postBody)
+    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
           // 服务记录添加成功后重新加载当前目标客户的详细信息
@@ -90,22 +92,20 @@ export default class ServiceImplementation extends PureComponent {
 
   // 更新组件state的list信息
   @autobind
-  updateList({ missionFlowId, flowStatus }, callback = _.noop) {
+  updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
     const { list } = this.state;
-    console.warn('updateList: list', list);
-    console.warn('updateList: missionFlowId', missionFlowId);
-    console.warn('updateList: flowStatus', flowStatus);
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
         if (
           flow.isComplete(flowStatus)
           || flow.isProcess(flowStatus)
-          || flow.isApproval(flowStatus)
         ) {
-          const { name } = flow.getFlowStatus(flowStatus);
+          // 此处因为涨乐财富通的服务方式的状态Code与以前普通的服务方式不一样
+          const statusCodeTemp = serveWayUtil.isZhangle(serveWay) ? zlApprovalCode : flowStatus;
+          const { name, id } = flow.getFlowStatus(statusCodeTemp);
           return {
             ...item,
-            missionStatusCode: flowStatus,
+            missionStatusCode: `${id}`,
             missionStatusValue: name,
           };
         }
@@ -142,7 +142,7 @@ export default class ServiceImplementation extends PureComponent {
   // 判断服务记录是否是只读状态
   @autobind
   judgeIsReadyOnly({ serviceWayCode, statusCode, serviceStatusCode }) {
-    if (serveWay.isZhangle(serviceWayCode)) {
+    if (serveWayUtil.isZhangle(serviceWayCode)) {
       // 如果是涨乐财富通的服务方式
       // 判断是否 审批中 或者 已完成
       return this.judgeZhangeLeStatus(serviceStatusCode);
@@ -154,7 +154,7 @@ export default class ServiceImplementation extends PureComponent {
   // 涨乐财富通中的驳回状态
   @autobind
   isRejct({ serviceWayCode, serviceStatusCode }) {
-    if (serveWay.isZhangle(serviceWayCode)) {
+    if (serveWayUtil.isZhangle(serviceWayCode)) {
       return flow.isReject(serviceStatusCode);
     }
     return false;
