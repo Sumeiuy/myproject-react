@@ -37,6 +37,12 @@ function transformCustFeecbackData(arr = []) {
   });
 }
 
+// 任务类型配置项，因为
+const TASK_TYPE_CODES = {
+  MOT_TASK: '0', // 表示MOT任务
+  SELF_TASK: '1', // 表示自建任务
+};
+
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
@@ -171,7 +177,9 @@ export default class CreateServiceRecord extends PureComponent {
       </div>
     );
 
+    // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
+      taskTypeCode: TASK_TYPE_CODES.SELF_TASK,
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };
     return (
