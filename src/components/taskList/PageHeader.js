@@ -100,7 +100,7 @@ export default class Pageheader extends PureComponent {
     this.state = {
       stateAllOptions,
       statusValue,
-      showMore: true,
+      showMore: false,
       startTime: '',
       endTime: '',
       disabledEndTime: '',
@@ -181,11 +181,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      dom.removeClass(this.filterMore, 'filterMoreIcon');
-      dom.addClass(this.filterMore, 'filterNoneIcon');
+      dom.removeClass(this.filterMore, styles.filterMoreIcon);
+      dom.addClass(this.filterMore, styles.filterNoneIcon);
     } else {
-      dom.removeClass(this.filterMore, 'filterNoneIcon');
-      dom.addClass(this.filterMore, 'filterMoreIcon');
+      dom.removeClass(this.filterMore, styles.filterNoneIcon);
+      dom.addClass(this.filterMore, styles.filterMoreIcon);
     }
   }
 
@@ -216,7 +216,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   @logable({ type: 'Click', payload: { name: '收起' } })
-  handleShrik() {
+  handleShrink() {
     this.handleMoreChange();
   }
 
@@ -674,7 +674,7 @@ export default class Pageheader extends PureComponent {
       customerList,
     } = this.props;
 
-    const { missionName, statusValue, stateAllOptions } = this.state;
+    const { missionName, statusValue, stateAllOptions, showMore } = this.state;
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
@@ -705,22 +705,41 @@ export default class Pageheader extends PureComponent {
     const missionViewTypeValue = !_.isEmpty(missionViewType) ?
       missionViewType : getViewInfo().currentViewType;
     return (
-      <div className={`${styles.pageCommonHeader}`} ref={this.pageCommonHeaderRef}>
+      <div className={`${styles.pageCommonHeader} ${styles.HeaderOverflow}`} ref={this.pageCommonHeaderRef}>
+        <div className={`${styles.missionViewType} ${styles.view}`}>
+          <Select
+            name="missionViewType"
+            value={missionViewTypeValue}
+            data={chooseMissionViewOptions}
+            onChange={this.handleSelctView}
+          />
+        </div>
+
+        <div className={styles.headerRight}>
+          {
+            <div
+              className={styles.filterMore}
+              onClick={showMore ? this.handleMore : this.handleShrink}
+              ref={this.filterMoreRef}
+            >
+              <span>{showMore ? '更多' : '收起'}</span>
+            </div>
+          }
+          <Button
+            type="primary"
+            icon="plus"
+            size="small"
+            onClick={this.handleCreateTask}
+          >
+            新建
+          </Button>
+        </div>
+
         <div className={styles.filterBox} ref={this.filterBoxRef}>
-
-          <div className={`${styles.filterFl} ${styles.mr30} ${styles.view}`}>
-            <Select
-              name="missionViewType"
-              value={missionViewTypeValue}
-              data={chooseMissionViewOptions}
-              onChange={this.handleSelctView}
-            />
-          </div>
-
-          <div className={`${styles.filterFl} ${styles.mr15}`}>
+          <div className={`${styles.filterFl}`}>
             <Search
               placeholder="任务名称"
-              style={{ width: 186 }}
+              style={{ width: 110 }}
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
@@ -737,7 +756,7 @@ export default class Pageheader extends PureComponent {
             />
           </div>
 
-          <div className={styles.filterFl}>
+          <div className={`${styles.filterFl} ${styles.mlMinux15}`}>
             <Select
               name="status"
               value={statusValue}
@@ -781,33 +800,7 @@ export default class Pageheader extends PureComponent {
           }
           {this.renderExecuteType()}
           {this.renderTime()}
-          {
-            this.state.showMore ?
-              <div
-                className={styles.filterMore}
-                onClick={this.handleMore}
-                ref={this.filterMoreRef}
-              >
-                <span>更多</span>
-              </div>
-              :
-              <div
-                className={styles.filterMore}
-                onClick={this.handleShrik}
-                ref={this.filterMoreRef}
-              >
-                <span>收起</span>
-              </div>
-          }
         </div>
-        <Button
-          type="primary"
-          icon="plus"
-          size="small"
-          onClick={this.handleCreateTask}
-        >
-          新建
-        </Button>
       </div>
     );
   }
