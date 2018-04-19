@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 17:00:08
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-19 13:48:32
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -286,6 +286,7 @@ export default class EditForm extends PureComponent {
               <AutoComplete
                 placeholder="合作部门"
                 showObjKey="name"
+                objId="value"
                 defaultSearchValue={department.name || ''}
                 searchList={departmentList}
                 onSelect={this.handleSelectDepartment}
