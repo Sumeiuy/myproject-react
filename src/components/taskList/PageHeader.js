@@ -23,7 +23,6 @@ import {
   INITIATOR,
   CONTROLLER,
   currentDate,
-  beforeCurrentDate60Days,
   dateFormat,
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
@@ -35,6 +34,7 @@ import {
 import styles from './pageHeader.less';
 
 const Search = Input.Search;
+const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -505,12 +505,23 @@ export default class Pageheader extends PureComponent {
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 本需求在选择的两个日期的区间范围在60天之内
   @autobind
-  isInsideOffSet({ day, firstDay, focusedInput }) {
+  isInsideOffSet({ day, firstDay, focusedInput, flag }) {
     // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
     if (focusedInput === 'endDate') {
-      return day <= firstDay.clone().add(59, 'days') && day > firstDay.clone().subtract(1, 'days');
+      // 首次聚焦日历组件为 END_DATE时，需要圈定可选范围： startEnd 向后推 60 天
+      if (flag) {
+        return day <= firstDay.clone().add(60, 'days') && day >= firstDay.clone();
+      }
+      // 赋值 START_DATE后，圈定 END_DATE 的可选范围 startEnd 向后推 59 天
+      return day <= firstDay.clone().add(59, 'days') && day >= firstDay.clone().subtract(1, 'days');
     }
     return day > firstDay.clone().subtract(60, 'days');
+  }
+
+  // 只能选择最近3个月的
+  @autobind
+  setDisableRange(date) {
+    return date >= moment();
   }
 
   /**
@@ -588,6 +599,7 @@ export default class Pageheader extends PureComponent {
             hasCustomerOffset
             initialEndDate={endTime}
             initialStartDate={startTime}
+            disabledRange={this.setDisableRange}
             onChange={this.handleCreateDateChange}
             isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}创建时间`}
@@ -610,6 +622,7 @@ export default class Pageheader extends PureComponent {
             hasCustomerOffset
             initialEndDate={endTime}
             initialStartDate={startTime}
+            disabledRange={this.setDisableRange}
             onChange={this.handleEndDateChange}
             isInsideOffSet={this.isInsideOffSet}
             key={`${missionViewType}结束时间`}
