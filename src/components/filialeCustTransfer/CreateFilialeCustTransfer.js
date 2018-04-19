@@ -525,9 +525,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
                   <AutoComplete
                     placeholder="选择客户"
-                    showObjKey="custName"
-                    objId="brokerNumber"
-                    searchList={custList}
+                    showNameKey="custName"
+                    showIdKey="brokerNumber"
+                    optionList={custList}
                     onSelect={this.handleSelectClient}
                     onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
@@ -536,8 +536,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
                   <AutoComplete
                     placeholder="选择新服务经理"
-                    showObjKey="showSelectName"
-                    searchList={newManagerList}
+                    showNameKey="showSelectName"
+                    optionKey="newLogin"
+                    optionList={newManagerList}
                     onSelect={this.handleSelectNewManager}
                     onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}

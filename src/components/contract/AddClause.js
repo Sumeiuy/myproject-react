@@ -285,9 +285,10 @@ export default class EditForm extends PureComponent {
             <InfoForm label="合作部门" required>
               <AutoComplete
                 placeholder="合作部门"
-                showObjKey="name"
-                defaultSearchValue={department.name || ''}
-                searchList={departmentList}
+                showNameKey="name"
+                optionKey="value"
+                defaultValue={department.name || ''}
+                optionList={departmentList}
                 onSelect={this.handleSelectDepartment}
                 onSearch={this.handleSearchDepartment}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}

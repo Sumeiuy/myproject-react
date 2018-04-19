@@ -311,9 +311,9 @@ export default class EditDetail extends PureComponent {
       <InfoForm label="客户" required>
         <AutoComplete
           placeholder="经纪客户号/客户名称"
-          showObjKey="custName"
-          objId="cusId"
-          searchList={canApplyCustList}
+          showNameKey="custName"
+          showIdKey="cusId"
+          optionList={canApplyCustList}
           onSelect={this.handleSelectCust}
           onSearch={this.handleSearchCust}
           isImmediatelySearch
@@ -373,9 +373,9 @@ export default class EditDetail extends PureComponent {
       <InfoForm label="合约编号" required>
         <AutoComplete
           placeholder="合约编号"
-          showObjKey="contractName"
-          objId="id"
-          searchList={contractNumList}
+          showNameKey="contractName"
+          showIdKey="id"
+          optionList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={this.handleSearchContractNum}
           isImmediatelySearch

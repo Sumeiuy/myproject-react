@@ -108,8 +108,12 @@
             font-size: 14px;
           }
         }
-        & > .indicatorLevel3 {
-          display: flex;
+        .indicatorLevel3 {
+          :global {
+            .ant-select-auto-complete.ant-select-lg .ant-input {
+              height: 28px;
+            }
+          }
         }
         .hideSelectArrow {
           display: block;

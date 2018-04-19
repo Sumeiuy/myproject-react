@@ -77,11 +77,11 @@ export default class ServerPersonel extends PureComponent {
           <div className={style.spAddDropdownSelect}>
             <AutoComplete
               placeholder="请输入姓名或工号"
-              searchList={this.props.searchServerPersonList}
-              showObjKey="ptyMngName"
-              objId="ptyMngId"
+              optionList={this.props.searchServerPersonList}
+              showNameKey="ptyMngName"
+              showIdKey="ptyMngId"
               isImmediatelySearch
-              width={200}
+              style={{ width: 200 }}
               onSelect={this.dropdownSelectedItem}
               onSearch={this.dropdownToSearchInfo}
             />
