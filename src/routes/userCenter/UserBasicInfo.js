@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Tabs, Button } from 'antd';
+import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
@@ -102,27 +102,6 @@ export default class UserBasicInfo extends PureComponent {
       activeTab: activeKey,
     });
   }
-  // 编辑按钮
-  @autobind
-  getEditorBtn() {
-    const APPROVING = 'approving'; // 审批中的状态标识
-    const { userBaseInfo: { flowState = APPROVING } } = this.props;
-    const { activeTab, editorState } = this.state;
-    const { empInfo = {} } = this.context;
-    const { tgFlag } = empInfo.empInfo || {};
-    // 当在第一个tab页的时候有编辑按钮
-    if (activeTab === FIRST_TAB && tgFlag && !editorState) {
-      return (<div className={styles.tabsExtraBtn}>
-        <Button
-          type="primary"
-          size="large"
-          disabled={flowState === APPROVING}
-          onClick={this.changeEditorState}
-        >编辑</Button>
-      </div>);
-    }
-    return null;
-  }
 
   render() {
     const {
@@ -144,7 +123,6 @@ export default class UserBasicInfo extends PureComponent {
       <div className={styles.userInfoWrap}>
         <Tabs
           defaultActiveKey={FIRST_TAB}
-          tabBarExtraContent={this.getEditorBtn()}
           onChange={this.handleChangeTab}
           tabBarStyle={{
             borderBottom: 'none',

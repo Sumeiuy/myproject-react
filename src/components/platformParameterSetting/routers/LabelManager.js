@@ -65,7 +65,7 @@ export default class LabelManager extends PureComponent {
     }, {
       title: 'operation',
       dataIndex: 'operation',
-      width: '32%',
+      width: '57%',
       render: (text, record) => {
         const { editorCell } = this.state;
         return (
@@ -87,17 +87,20 @@ export default class LabelManager extends PureComponent {
           </div>
         );
       },
-    }, {
-      title: 'age',
-      dataIndex: 'age',
-      width: '25%',
-      render: (text, record) => (<div
-        onClick={() => { this.confirmDelLabel(record.id); }}
-        className={styles.labelDel}
-      >
-        <Icon type="shanchu" />
-      </div>),
-    }];
+    },
+      // 删除按钮暂时屏蔽
+    //   {
+    //   title: 'age',
+    //   dataIndex: 'age',
+    //   width: '0%',
+    //   render: (text, record) => (<div
+    //     onClick={() => { this.confirmDelLabel(record.id); }}
+    //     className={styles.labelDel}
+    //   >
+    //     <Icon type="shanchu" />
+    //   </div>),
+    // }
+    ];
     this.state = {
       editorCell: EMPTY_OBJ,
       addLabelState: false,
