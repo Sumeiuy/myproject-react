@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:45:05
+ * @Last Modified time: 2018-04-17 10:17:42
  */
 
 import React, { PureComponent } from 'react';
@@ -1111,7 +1111,7 @@ export default class TaskFlow extends PureComponent {
     // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
     // 变量文字全部高亮显示
     if (missionDesc && currentEntry === 1) {
-      newMissionDesc = missionDesc;
+      newMissionDesc = decodeURIComponent(missionDesc);
     }
 
     const isShowTitle = true;

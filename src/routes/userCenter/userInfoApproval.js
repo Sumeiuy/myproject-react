@@ -157,7 +157,7 @@ export default class PersonalInfoApproval extends PureComponent {
                           labelDesc.length ?
                           labelDesc
                             .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>) :
-                            (<div className={styles.infoDesc}>--</div>)
+                            (<div className={styles.infoDesc}>暂未设置标签</div>)
                         }
                       </div>
                     );

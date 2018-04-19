@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 15:42:11
+ * @Last Modified time: 2018-04-18 15:25:54
  * 服务记录表单
  */
 
@@ -62,10 +62,7 @@ export default class ServiceRecordForm extends PureComponent {
       custFeedbackList,
       queryApprovalList,
       zhangleApprovalList,
-      eventId,
-      taskTypeCode,
       empInfo: { empInfo },
-      serviceTypeCode,
       statusCode,
     } = this.props;
 
@@ -103,9 +100,6 @@ export default class ServiceRecordForm extends PureComponent {
           custFeedbackList={custFeedbackList}
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
-          taskTypeCode={taskTypeCode}
-          eventId={eventId}
-          serviceTypeCode={serviceTypeCode}
           flowStatusCode={statusCode}
         />
 
@@ -143,8 +137,5 @@ ServiceRecordForm.propTypes = {
   custFeedbackList: PropTypes.array.isRequired,
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
-  taskTypeCode: PropTypes.string.isRequired,
-  eventId: PropTypes.string.isRequired,
-  serviceTypeCode: PropTypes.string.isRequired,
   statusCode: PropTypes.string.isRequired,
 };

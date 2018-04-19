@@ -7,14 +7,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
 import PhoneDialog from '../components/common/phoneDialog';
+import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
-import withRouter from '../decorators/withRouter';
+import ContextProvider from './ContextProvider';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -63,8 +63,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
-  replace: routerRedux.replace,
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
@@ -102,8 +100,6 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     // 显示拨打电话弹窗
     phoneDialogOfVisible: PropTypes.bool,
     // 电话弹窗对应的电话号码
@@ -121,23 +117,6 @@ export default class Main extends Component {
     phoneDialogOfVisible: false,
     phoneDialogOfPhoneNum: '',
     phoneDialogOfCustType: '',
-  }
-
-  static childContextTypes = {
-    empInfo: PropTypes.object,
-    location: PropTypes.object,
-    push: PropTypes.func,
-    replace: PropTypes.func,
-  };
-
-  getChildContext() {
-    const { location, empInfo, push, replace } = this.props;
-    return {
-      location,
-      empInfo,
-      push,
-      replace,
-    };
   }
 
   componentDidMount() {
@@ -170,53 +149,54 @@ export default class Main extends Component {
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
-        <div className={styles.layout}>
-          <div className={styles.main}>
-            <div className={styles.container} id="container">
-              <div className={styles.content} id="content">
-                <Loading loading={loading} forceFull={loadingForceFull} />
-                {
-                  (!_.isEmpty(interfaceState) &&
-                    !interfaceState[effects.dictionary] &&
-                    !interfaceState[effects.customerScope] &&
-                    !interfaceState[effects.empInfo]) ?
-                      <div>
-                        {children}
-                        <ConnectedCreateServiceRecord
-                          handleCloseClick={handleCloseClick}
-                          loading={interfaceState[effects.addServeRecord]}
-                          key={serviceRecordModalVisibleOfId}
-                          id={serviceRecordModalVisibleOfId}
-                          name={serviceRecordModalVisibleOfName}
-                          dict={dict}
-                          empInfo={empInfo}
-                          isShow={serviceRecordModalVisible}
-                          addServeRecord={addServeRecord}
-                          addServeRecordSuccess={addServeRecordSuccess}
-                          onToggleServiceRecordModal={toggleServiceRecordModal}
-                          custUuid={custUuid}
-                          ceFileDelete={ceFileDelete}
-                          taskFeedbackList={motSelfBuiltFeedbackList}
-                        />
-                      </div>
+        <ContextProvider {...this.props} >
+          <div className={styles.layout}>
+            <div className={styles.main}>
+              <div className={styles.container} id="container">
+                <div className={styles.content} id="content">
+                  <Loading loading={loading} forceFull={loadingForceFull} />
+                  {
+                    (!_.isEmpty(interfaceState) &&
+                      !interfaceState[effects.dictionary] &&
+                      !interfaceState[effects.customerScope] &&
+                      !interfaceState[effects.empInfo]) ?
+                        <div>
+                          {children}
+                          <ConnectedCreateServiceRecord
+                            handleCloseClick={handleCloseClick}
+                            loading={interfaceState[effects.addServeRecord]}
+                            key={serviceRecordModalVisibleOfId}
+                            id={serviceRecordModalVisibleOfId}
+                            name={serviceRecordModalVisibleOfName}
+                            dict={dict}
+                            empInfo={empInfo}
+                            isShow={serviceRecordModalVisible}
+                            addServeRecord={addServeRecord}
+                            addServeRecordSuccess={addServeRecordSuccess}
+                            onToggleServiceRecordModal={toggleServiceRecordModal}
+                            custUuid={custUuid}
+                            ceFileDelete={ceFileDelete}
+                            taskFeedbackList={motSelfBuiltFeedbackList}
+                          />
+                        </div>
+                      : null
+                  }
+                  {
+                    phoneDialogOfVisible ?
+                      <PhoneDialog
+                        visible={phoneDialogOfVisible}
+                        phoneNum={phoneDialogOfPhoneNum}
+                        custType={phoneDialogOfCustType}
+                        onTogglePhoneDialog={togglePhoneDialog}
+                      />
                       :
                       null
-                }
-                {
-                  phoneDialogOfVisible ?
-                    <PhoneDialog
-                      visible={phoneDialogOfVisible}
-                      phoneNum={phoneDialogOfPhoneNum}
-                      custType={phoneDialogOfCustType}
-                      onTogglePhoneDialog={togglePhoneDialog}
-                    />
-                  :
-                  null
-                }
+                  }
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ContextProvider>
       </LocaleProvider>
     );
   }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 19:14:28
+ * @Last Modified time: 2018-04-18 19:17:51
  * @description 任务管理首页
  */
 
@@ -31,7 +31,6 @@ import {
   CONTROLLER,
   currentDate,
   beforeCurrentDate60Days,
-  afterCurrentDate60Days,
   dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
@@ -91,7 +90,7 @@ export default class PerformerView extends PureComponent {
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
-      taskTypeCode: '',  // 自建任务，mot任务
+      taskTypeCode: '',  // 自建任务，mot任务1
       typeName: '',
       eventId: '',
       statusCode: '',
@@ -117,6 +116,10 @@ export default class PerformerView extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { list: { resultData } } = this.props;
+    if (_.isEmpty(resultData)) {
+      return;
+    }
     const { typeCode, eventId, currentView } = this.state;
     // 当前视图是执行者视图
     if (
@@ -132,7 +135,9 @@ export default class PerformerView extends PureComponent {
     const {
       list,
       location: { query: { currentId, missionViewType } },
+      dict: { missionType },
     } = this.props;
+    const viewInfo = getViewInfo(missionViewType);
     const resultData = list && list.resultData;
     if (!_.isEmpty(resultData)) {
       // 表示左侧列表获取完毕
@@ -148,7 +153,7 @@ export default class PerformerView extends PureComponent {
         // currentId与id比较，在listData里面找不到
         if (itemIndex === -1) {
           // 如果是创建者视图，先比较id是否与currentId一样
-          if (this.isInitiatorView(missionViewType)) {
+          if (this.isInitiatorView(viewInfo.currentViewType)) {
             // 则用currentId与mssnId比较
             const mssnObjectIndex = _.findIndex(resultData, o => String(o.mssnId) === currentId);
             itemIndex = mssnObjectIndex;
@@ -179,8 +184,9 @@ export default class PerformerView extends PureComponent {
         statusCode,
         typeName,
         eventId,
-        descText,
       } = item;
+      // 根据typeCode找出那个任务的descText的值
+      const { descText } = _.find(missionType, obj => +obj.key === +typeCode) || {};
 
       this.setState({
         taskTypeCode: descText,
@@ -193,6 +199,18 @@ export default class PerformerView extends PureComponent {
         isSourceFromCreatorView: this.isInitiatorView(st) &&
         this.judgeTaskInApproval(item.statusCode),
       }, () => { this.getDetailByView(item); });
+    } else {
+      // 没有查到数据时，保存当前的视图状态
+      this.setState({
+        taskTypeCode: '',
+        currentView: viewInfo.currentViewType,
+        activeRowIndex: '',
+        typeCode: '',
+        typeName: '',
+        statusCode: '',
+        eventId: '',
+        isSourceFromCreatorView: false,
+      });
     }
   }
 
@@ -391,13 +409,10 @@ export default class PerformerView extends PureComponent {
   // 获取管理者视图
   @autobind
   getManagerDetailComponent() {
-    const { location, list } = this.props;
-    const { query: { currentId } } = location;
-    const [firstItem = {}] = list.resultData;
     const managerViewDetailProps = this.getManagerDetailComponentPorps();
     return (
       <ManagerViewDetail
-        currentId={currentId || firstItem.mssnId}
+        currentId={this.getCurrentId()}
         {...managerViewDetailProps}
       />
     );
@@ -558,14 +573,15 @@ export default class PerformerView extends PureComponent {
   }
 
   // 获取服务经理使用的客户反馈列表，
-  // 以及涨乐财富通给予客户的可选反馈列表
   @autobind
   getFeedbackList({ typeCode, eventId, currentItem }) {
     let currentType = {};
     let taskFeedbackList = [];
+    // descText值为1，是自建任务
     if (+currentItem.descText === 1) {
       currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
     } else {
+      // 此处为MOT任务
       currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
     }
     if (_.isEmpty(currentType)) {
@@ -643,7 +659,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
+    const { pageNum = 1, pageSize = 20 } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
@@ -652,12 +668,10 @@ export default class PerformerView extends PureComponent {
       const { resultData = [] } = list;
       // const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      if (this.isExecutorView(missionViewType)) {
-        if (!_.isEmpty(resultData)) {
-          // 初始化取第一条任务来获取反馈列表数据
-          const { typeCode, eventId } = resultData[0];
-          this.queryMissionList(typeCode, eventId);
-        }
+      if (!_.isEmpty(resultData) && this.isExecutorView(resultData[0].missionViewType)) {
+        // 初始化取第一条任务来获取反馈列表数据
+        const { typeCode, eventId } = resultData[0];
+        this.queryMissionList(typeCode, eventId);
       }
       this.getRightDetail();
     });
@@ -726,12 +740,12 @@ export default class PerformerView extends PureComponent {
         ...finalPostData,
         endTimeEnd: this.getFinishedStateDate({
           status,
-          value: afterCurrentDate60Days,
+          value: currentDate,
           urlDate: endTimeEnd,
         }),
         endTimeStart: this.getFinishedStateDate({
           status,
-          value: currentDate,
+          value: beforeCurrentDate60Days,
           urlDate: endTimeStart,
         }),
       };
@@ -868,6 +882,8 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
     // 切换页码，将页面的scrollToTop
@@ -891,6 +907,8 @@ export default class PerformerView extends PureComponent {
         ...query,
         pageNum: 1,
         pageSize: changedPageSize,
+        // 翻页将当前任务id从url上清空
+        currentId: '',
       },
     });
   }

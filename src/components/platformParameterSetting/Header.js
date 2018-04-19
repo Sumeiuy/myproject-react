@@ -10,6 +10,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { backRoutePathList } from '../../helper/url';
 import { linkTo } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './header.less';
@@ -102,13 +103,7 @@ export default class Header extends PureComponent {
   };
   render() {
     const { location: { pathname }, matchPath, menu, push } = this.props;
-    /**
-     * desc: 获取菜单匹配的pathItem列表
-     * @param pathname: '/a/b/c'
-     * @param matchPath: '/a'
-     * @return ['/b', '/c']
-     */
-    const pathList = pathname.substring(matchPath.length).match(/\/([^/]*)(?=(\/|$))/g) || [];
+    const pathList = backRoutePathList(pathname, matchPath);
     const navItemList = getNavItemList(menu, pathList);
     let parentPath = matchPath;
     return (

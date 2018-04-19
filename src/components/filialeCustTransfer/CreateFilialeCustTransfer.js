@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-16 10:14:39
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-17 17:20:27
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

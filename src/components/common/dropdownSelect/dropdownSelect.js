@@ -48,6 +48,7 @@ export default class DropdownSelect extends PureComponent {
     presetOptionList: PropTypes.array,
     // 弹出层的位置,默认下左
     placement: PropTypes.string,
+    getPopupContainer: PropTypes.func,
   }
 
   static defaultProps = {
@@ -62,6 +63,7 @@ export default class DropdownSelect extends PureComponent {
     defaultSearchValue: '',
     presetOptionList: [],
     placement: 'bottomLeft',
+    getPopupContainer: () => document.body,
   }
 
   constructor(props) {
@@ -108,16 +110,24 @@ export default class DropdownSelect extends PureComponent {
   // 控制弹出层的隐藏和显示
   @autobind
   handlePopverVisibleChange(visible) {
-    const { disable } = this.props;
+    const { disable, presetOptionList } = this.props;
     if (!disable) {
       // 隐藏需要将数据清空下
-      this.setState({ visible, optionList: [], searchValue: '' });
+      this.setState({ visible, optionList: presetOptionList, searchValue: '' });
     }
   }
 
   @autobind
   handleSearchChange(e) {
-    this.setState({ searchValue: e.target.value });
+    let dataSource = {};
+    // 清空input时，展示搜索项
+    if (_.isEmpty(e.target.value)) {
+      dataSource = { optionList: this.propTypes.presetOptionList };
+    }
+    this.setState({
+      searchValue: e.target.value,
+      ...dataSource,
+    });
   }
 
   @autobind
@@ -196,7 +206,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    const { value, disable, placement } = this.props;
+    const { value, disable, placement, getPopupContainer } = this.props;
     const { visible } = this.state;
     const dropdownToggleCls = cx({
       [styles.dropdownToggle]: true,
@@ -217,6 +227,7 @@ export default class DropdownSelect extends PureComponent {
         visible={visible}
         onVisibleChange={this.handlePopverVisibleChange}
         placement={placement}
+        getPopupContainer={getPopupContainer}
       >
         <div className={dropdownToggleCls}>
           <span className={styles.popoverTitle}>{value}</span>

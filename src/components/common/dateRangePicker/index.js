@@ -19,7 +19,7 @@ import { dom } from '../../../helper';
 
 import styles from './index.less';
 
-const START_DATE = 'startDate';
+// const START_DATE = 'startDate';
 const END_DATE = 'endDate';
 
 export default class CommonDateRangePicker extends PureComponent {
@@ -54,17 +54,18 @@ export default class CommonDateRangePicker extends PureComponent {
     super(props);
     const { initialEndDate, initialStartDate } = props;
     this.state = {
-      focusedInput: null,
+      // 渲染日历浮层出现在 startDate or endDate 下面
+      curFocusedInput: null,
       startDate: initialStartDate,
       endDate: initialEndDate,
-      // 判断是否用户选择了第一个日期
-      hasSelectFirstDate: false,
-      // 判断用户第一次选择的是开始日期还是结束日期
-      whichDateInputUserSelect: null,
-      // 用户选择的第一个日期
-      firstDateUserSelect: null,
     };
   }
+
+  // 组件内全局对象，不能写到组件外，组件外全局对象，会被多个组件共用，相互干扰
+  focusedInput = null;
+  firstDateUserSelect = null; // 用户选择的第一个日期
+  isSetRangeOfEndDate = false; // 首次聚焦组件在 endDate 处的标志，用于圈定日历浮层范围用
+  lastDate = null; // 记录上次选中的 startDate 和 endDate，用于回滚数据用
 
   @autobind
   drpWraperRef(input) {
@@ -109,139 +110,110 @@ export default class CommonDateRangePicker extends PureComponent {
   }
 
   @autobind
-  setFirstDateSelectOnStart({ startDate, endDate }) {
-    this.setState({
-      whichDateInputUserSelect: START_DATE,
-      hasSelectFirstDate: true,
-      firstDateUserSelect: startDate,
-    }, () => {
-      this.fixSelectDate({ startDate, endDate });
-    });
-  }
-
-  @autobind
-  setFirstDateSelectOnEnd({ startDate, endDate }) {
-    this.setState({
-      whichDateInputUserSelect: END_DATE,
-      hasSelectFirstDate: true,
-      firstDateUserSelect: endDate,
-    }, () => {
-      this.fixSelectDate({ startDate, endDate });
-    });
-  }
-
-  @autobind
   restoreDefault() {
-    this.setState({
-      hasSelectFirstDate: false,
-      whichDateInputUserSelect: null,
-      firstDateUserSelect: null,
-    });
+    this.firstDateUserSelect = null;
+    this.focusedInput = null;
+    this.isSetRangeOfEndDate = false;
+    this.lastDate = null;
   }
 
   @autobind
-  addMomentDay(day) {
+  addDay(day) {
     return day.clone().add(1, 'day');
   }
 
   @autobind
-  subtractMomentDay(day) {
+  subtractDay(day) {
     return day.clone().subtract(1, 'day');
   }
 
   @autobind
-  fixDate(day, nextDay) {
-    let date = nextDay(day);
+  fixDate(day, iterationFunc) {
+    let date = day;
+    // 是否在 圈定的时间范围 内
     while (!this.isInCustomerDateRangeOffset(date)) {
-      date = nextDay(date);
+      date = iterationFunc(date);
     }
     return date;
   }
 
   @autobind
-  fixStartOrEndTime(selectTime) {
-    const { focusedInput } = this.state;
-    const { startDate, endDate } = selectTime;
-    const isSeletStartDate = focusedInput === START_DATE;
-    const fixFunc = isSeletStartDate ? this.subtractMomentDay : this.addMomentDay;
-    const needFixDate = isSeletStartDate ? endDate : startDate;
-    let newDate = needFixDate;
-    if (needFixDate !== null) {
-      newDate = needFixDate.clone();
-      // 如果endDate不在用户自定义的范围内，则修补
-      if (!this.isInCustomerDateRangeOffset(needFixDate)) {
-        // TODO 修改时间
-        newDate = this.fixDate(needFixDate, fixFunc);
-      }
-    }
-    return isSeletStartDate ? { startDate, endDate: newDate } : { startDate: newDate, endDate };
-  }
-
-  @autobind
-  fixSelectDate(selectDate) {
-    const newSelectDate = this.fixStartOrEndTime(selectDate);
-    this.setState(newSelectDate);
+  fixStartOrEndTime({ startDate, endDate }) {
+    const isFocuseEndDate = this.focusedInput === END_DATE;
+    const fixFunc = isFocuseEndDate ? this.subtractDay : this.addDay;
+    const needFixDate = isFocuseEndDate ? endDate : startDate;
+    const newDate = this.fixDate(needFixDate, fixFunc);
+    return isFocuseEndDate ? { startDate, endDate: newDate } : { startDate: newDate, endDate };
   }
 
   // 切换了日期
+  // 如果修改了 起始时间 或者 结束时间段， 则必须同步修改相应的时间
+  // 来确保所选则的时间段在可选择的范围内
   @autobind
   handleDatesChange({ startDate, endDate }) {
-    // 如果修改了 起始时间 或者 结束时间段， 则必须同步修改相应的时间
-    // 来确保所选则的时间段在可选择的范围内
-    const {
-      focusedInput,
-      hasSelectFirstDate,
-    } = this.state;
-    if (focusedInput === START_DATE) {
-      // 点击的时间段在起始时间段上，
-      // 此时哪些disabled的时间不能点击的
-      // 此处表示修改的是起始时间
-      // TODO 判断用户有没有进行过第一次选择时间
-      if (!hasSelectFirstDate) {
-        // TODO 此处增加判断，如果结束时间此时不在用户选择的范围内，则将其修改为最后的日期
-        this.setFirstDateSelectOnStart({ startDate, endDate });
-      } else {
-        this.setState({ startDate, endDate });
-      }
-    } else if (focusedInput === END_DATE) {
-      // 点击的时间段在结束时间段上
-      if (!hasSelectFirstDate) {
-        // TODO 此处增加判断，如果开始时间不在用户选择的范围内，则将其修改为开始的时间
-        this.setFirstDateSelectOnEnd({ startDate, endDate });
-      } else {
-        this.setState({ startDate, endDate });
-      }
+    // 日历浮层已展示，重置状态
+    this.isSetRangeOfEndDate = false;
+    const { initialEndDate, initialStartDate, hasCustomerOffset } = this.props;
+    // 当且仅当，endDate 有初始值 且 自定义时间范围，赋值startDate时，startDate > endDate 时，会清空 endDate
+    if (endDate === null && initialEndDate && hasCustomerOffset) {
+      this.lastDate = { startDate: initialStartDate, endDate: initialEndDate };
+    } else {
+      this.lastDate = null;
     }
+    // 此方法内：focusedInput 为 END_DATE 的情况：赋值 startDate 后，光标在 endDate 处
+    // 每次对开始日期做更改，都要重新圈定日历浮层中的可选范围
+    if (this.focusedInput === END_DATE) {
+      // 记录当前选中的值
+      this.firstDateUserSelect = startDate;
+    }
+    // 修正 另一个值 的显示
+    const changeDate = this.fixStartOrEndTime({ startDate, endDate });
+    // 更新到 state 中，用于 render 时显示
+    this.setState(changeDate);
   }
 
   @autobind
-  handleFoucusChange(focusedInput) {
-    const { focusedInput: prevFocusedInput } = this.state;
-    if (prevFocusedInput === null && focusedInput !== null) {
+  handleFoucusChange(curFocusedInput) {
+    if (this.focusedInput === null && curFocusedInput !== null) {
+      // 日历浮层出现前，重置状态
+      this.restoreDefault();
       // 打开日历组件, 此处需要进行第一次打开的时间段进行设置
       this.showCalendar();
     }
-    // TODO 此处增加判断，如果用户直接手动切换选择结束日期或者开始日期
-    // if (prevFocusedInput !== null && hasSelectFirstDate) {
-    //   // this.restoreDefault();
-    // }
-    this.setState({ focusedInput });
+    this.focusedInput = curFocusedInput;
+    // 用于 render 显示 日历浮层
+    this.setState({ curFocusedInput });
+    // 首次聚焦日历组件为 END_DATE时，需要圈定可选范围： startEnd 向后推 59 天
+    if (curFocusedInput === END_DATE && this.firstDateUserSelect === null) {
+      // 更新当前选中的值
+      this.firstDateUserSelect = this.props.initialStartDate;
+      // 日历浮层未展示，设置状态
+      this.isSetRangeOfEndDate = true;
+    }
   }
 
-  // 1.选 起止时间 结束，具体说是，在浮层中，选 endDate 结束，调用的方法 2.用户主动 失焦，即点击其他区域，调用的方法
-  // 选中 endDate 时：
-  // 1.若 startDate 有值，会先触发 组件的 onClose 方法，再触发 onDatesChange 方法，后 填 endDate 值，浮层消失
-  // 2.若 startDate 无值，会先触发 onDatesChange 方法，后 填 endDate值，光标移动到 startDate 处,
-  //   选填 startDate 后，光标会再次移动到 endDate 处。
+  // 触发该方法时刻：
+  // 1.startDate 有值，且首次 触发 赋值 endDate。(此刻组件的onClose事件（浮层消失）会先于 onDatesChange 方法执行)
+  // 2.用户点击组件之外的区域
   @autobind
-  handleCalenderClose(selectDate) {
-    this.restoreDefault();
-    const { focusedInput } = this.state;
-    let newSelectDate = selectDate;
-    // 有且只有 选 endDate 结束，检测 startDate 是否需要修正
-    // 选 startDate 值时，会先执行 onDatesChange 方法，会执行检测是否修复，故此处不再检测
-    if (focusedInput === END_DATE) {
-      newSelectDate = this.fixStartOrEndTime(selectDate);
+  handleCalenderClose({ startDate, endDate }) {
+    // 关闭日历浮层，重置状态
+    this.isSetRangeOfEndDate = false;
+    if (this.lastDate && endDate === null) {
+      // 时间段不完整，回滚到上一个 时间段
+      this.setState(this.lastDate);
+      return;
+    }
+    let newSelectDate = { startDate, endDate };
+    // 此方法内 firstDateUserSelect 为 null，是首次触发 赋值 的标志
+    // 首次 触发赋值，需要 修正 startDate 值
+    if (this.firstDateUserSelect === null) {
+      // 更新当前选中的值
+      this.firstDateUserSelect = endDate;
+      // 修正 startDate 值
+      newSelectDate = this.fixStartOrEndTime({ startDate, endDate });
+      // 更新 state，用于 render 时显示
+      this.setState(newSelectDate);
     }
     // 将用户选择起始和结束时间的moment对象传递出去
     this.props.onChange(newSelectDate);
@@ -250,10 +222,11 @@ export default class CommonDateRangePicker extends PureComponent {
 
   @autobind
   isInOffSet(day) {
-    const { firstDateUserSelect } = this.state;
     return this.props.isInsideOffSet({
+      firstDay: this.firstDateUserSelect,
+      focusedInput: this.focusedInput,
+      flag: this.isSetRangeOfEndDate,
       day,
-      firstDay: firstDateUserSelect,
     });
   }
 
@@ -263,8 +236,7 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   isInCustomerDateRangeOffset(day) {
     const { hasCustomerOffset } = this.props;
-    const { hasSelectFirstDate } = this.state;
-    if (hasCustomerOffset && hasSelectFirstDate) {
+    if (hasCustomerOffset && this.firstDateUserSelect && day) {
       return this.isInOffSet(day);
     }
     return true;
@@ -294,7 +266,6 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   clearAllDate() {
     this.setState({
-      focusedInput: null,
       endDate: null,
       startDate: null,
     });
@@ -302,7 +273,7 @@ export default class CommonDateRangePicker extends PureComponent {
 
   render() {
     const {
-      focusedInput,
+      curFocusedInput,
       endDate,
       startDate,
     } = this.state;
@@ -332,7 +303,7 @@ export default class CommonDateRangePicker extends PureComponent {
           onFocusChange={this.handleFoucusChange}
           startDateId="startDateID"
           endDateId="endDateID"
-          focusedInput={focusedInput}
+          focusedInput={curFocusedInput}
           navPrev={<Icon type="left" />}
           navNext={<Icon type="right" />}
           onClose={this.handleCalenderClose}

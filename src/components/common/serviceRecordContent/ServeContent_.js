@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 10:05:00
+ * @Last Modified time: 2018-04-18 17:51:37
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Icon } from 'antd';
+import { Button, Icon, message } from 'antd';
 import cx from 'classnames';
 import _ from 'lodash';
 
@@ -42,19 +42,56 @@ export default class ServeContent extends PureComponent {
       // 服务内容
       serveContentDesc: isReject ? serveContent.desc : '',
       // 判断是否用户已经修改了内容,在只读|驳回下才会已经存在内容,
-      // 先判断是否驳回，在判断是否只读
-      hasEditContent: isReject || false,
+      hasEditContent: isReject,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { serveContent: nextSC } = nextProps;
+    const { serveContent: prevSC } = this.props;
+    if (!_.isEqual(nextSC, prevSC)) {
+      this.setState({
+        // 服务内容标题
+        serveContentTitle: nextSC.title || '',
+        // 服务内容类型
+        serveContentType: nextSC.type || '',
+        // 服务内容
+        serveContentDesc: nextSC.desc || '',
+        hasEditContent: true,
+      });
+    }
   }
 
   @autobind
   getData() {
-    const { serveContentDesc, serveContentTitle, serveContentType, approverId } = this.state;
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      serveContentType,
+      approverId,
+      contentMode,
+    } = this.state;
+    if (contentMode === '') {
+      message.error('请添加服务内容');
+      return null;
+    }
+    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
+      message.error('请填写服务内容中的标题和内容');
+      return null;
+    }
+    if (contentMode === 'free') {
+      // 自由话术模式，下需要审批
+      if (_.isEmpty(approverId)) {
+        message.error('自由编辑状态下，需要审批，请选择审批人');
+        return null;
+      }
+    }
     return {
       title: serveContentTitle,
       content: serveContentDesc,
       taskType: serveContentType,
       approval: approverId,
+      mode: contentMode,
     };
   }
 
