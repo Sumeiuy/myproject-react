@@ -64,6 +64,8 @@ export default class CommonDateRangePicker extends PureComponent {
   // 组件内全局对象，不能写到组件外，组件外全局对象，会被多个组件共用，相互干扰
   focusedInput = null;
   firstDateUserSelect = null; // 用户选择的第一个日期
+  isSetRangeOfEndDate = false; // 首次聚焦组件在 endDate 处的标志，用于圈定日历浮层范围用
+  lastDate = null; // 记录上次选中的 startDate 和 endDate，用于回滚数据用
 
   @autobind
   drpWraperRef(input) {
@@ -111,6 +113,8 @@ export default class CommonDateRangePicker extends PureComponent {
   restoreDefault() {
     this.firstDateUserSelect = null;
     this.focusedInput = null;
+    this.isSetRangeOfEndDate = false;
+    this.lastDate = null;
   }
 
   @autobind
@@ -147,6 +151,15 @@ export default class CommonDateRangePicker extends PureComponent {
   // 来确保所选则的时间段在可选择的范围内
   @autobind
   handleDatesChange({ startDate, endDate }) {
+    // 日历浮层已展示，重置状态
+    this.isSetRangeOfEndDate = false;
+    const { initialEndDate, initialStartDate, hasCustomerOffset } = this.props;
+    // 当且仅当，endDate 有初始值 且 自定义时间范围，赋值startDate时，startDate > endDate 时，会清空 endDate
+    if (endDate === null && initialEndDate && hasCustomerOffset) {
+      this.lastDate = { startDate: initialStartDate, endDate: initialEndDate };
+    } else {
+      this.lastDate = null;
+    }
     // 此方法内：focusedInput 为 END_DATE 的情况：赋值 startDate 后，光标在 endDate 处
     // 每次对开始日期做更改，都要重新圈定日历浮层中的可选范围
     if (this.focusedInput === END_DATE) {
@@ -170,6 +183,13 @@ export default class CommonDateRangePicker extends PureComponent {
     this.focusedInput = curFocusedInput;
     // 用于 render 显示 日历浮层
     this.setState({ curFocusedInput });
+    // 首次聚焦日历组件为 END_DATE时，需要圈定可选范围： startEnd 向后推 59 天
+    if (curFocusedInput === END_DATE && this.firstDateUserSelect === null) {
+      // 更新当前选中的值
+      this.firstDateUserSelect = this.props.initialStartDate;
+      // 日历浮层未展示，设置状态
+      this.isSetRangeOfEndDate = true;
+    }
   }
 
   // 触发该方法时刻：
@@ -177,6 +197,13 @@ export default class CommonDateRangePicker extends PureComponent {
   // 2.用户点击组件之外的区域
   @autobind
   handleCalenderClose({ startDate, endDate }) {
+    // 关闭日历浮层，重置状态
+    this.isSetRangeOfEndDate = false;
+    if (this.lastDate && endDate === null) {
+      // 时间段不完整，回滚到上一个 时间段
+      this.setState(this.lastDate);
+      return;
+    }
     let newSelectDate = { startDate, endDate };
     // 此方法内 firstDateUserSelect 为 null，是首次触发 赋值 的标志
     // 首次 触发赋值，需要 修正 startDate 值
@@ -198,6 +225,7 @@ export default class CommonDateRangePicker extends PureComponent {
     return this.props.isInsideOffSet({
       firstDay: this.firstDateUserSelect,
       focusedInput: this.focusedInput,
+      flag: this.isSetRangeOfEndDate,
       day,
     });
   }
