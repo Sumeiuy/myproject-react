@@ -92,7 +92,7 @@ export default class SimilarAutoComplete extends PureComponent {
       // 默认的option样式
       return (
         <Option
-          key={item[showObjKey]}
+          key={item[objId || showObjKey]}
           className={style.ddsDrapMenuConItem}
           value={optionValue}
           title={optionValue}
@@ -120,10 +120,10 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleSelectedValue(value, item) {
     if (value) {
-      const { onSelect, searchList, showObjKey } = this.props;
+      const { onSelect, searchList, objId, showObjKey } = this.props;
       const selectedKey = item.key;
       // 当前的选中值
-      currentSelect = _.find(searchList, listItem => listItem[showObjKey] === selectedKey);
+      currentSelect = _.find(searchList, listItem => listItem[objId || showObjKey] === selectedKey);
       onSelect({
         ...currentSelect,
       });
