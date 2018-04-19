@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 17:46:52
+ * @Last Modified time: 2018-04-19 19:40:20
  * @description 只读服务记录
  */
 
@@ -96,7 +96,7 @@ export default function ServiceRecordReadOnly(props) {
               isZL
               ? (
                 <div className={styles.readOnlyText}>
-                  <span className={styles.feedbackTypeL1}>{flowIsApproval ? '无' : custFeedbackText}</span>
+                  <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
                 </div>
               )
               : (

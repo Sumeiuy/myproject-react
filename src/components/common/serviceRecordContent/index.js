@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 18:45:13
+ * @Last Modified time: 2018-04-19 19:40:11
  */
 
 import React, { PureComponent } from 'react';
@@ -195,7 +195,6 @@ export default class ServiceRecordContent extends PureComponent {
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
     }
-    console.warn('getDefaultState: ', fd);
     return {
       // 涨乐财富通服务方式下，是否被驳回状态
       isReject,
