@@ -136,8 +136,8 @@ export default class Home extends Component {
   // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
-    return date <= moment().subtract(3, 'months')
-   || date >= moment();
+    return (date <= moment().subtract(3, 'months')
+   || date > moment()) && date.format('YY-MM-DD') !== moment().format('YY-MM-DD');
   }
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
