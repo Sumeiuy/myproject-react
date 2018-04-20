@@ -756,7 +756,7 @@ export default class Pageheader extends PureComponent {
             />
           </div>
 
-          <div className={`${styles.filterFl} ${styles.mlMinux15}`}>
+          <div className={`${styles.filterFl} ${styles.mlMinux10}`}>
             <Select
               name="status"
               value={statusValue}
