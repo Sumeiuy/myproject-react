@@ -5,11 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Card, List, Divider, Tag, Form, Input, Button, Popover, Checkbox, Modal } from 'antd';
+import { Card, List, Divider, Tag, Form, Input, Button, Popover, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
+import Icon from '../common/Icon';
 import defaultHeader from './img/defaultHeader.jpg';
 import styles from './basicInfo.less';
 import withRouter from '../../decorators/withRouter';
@@ -55,6 +56,8 @@ export default class BasicInfo extends PureComponent {
       newLabel: [],
       // 选择审批人弹窗状态
       approverModal: false,
+      // 选择标签弹窗状态
+      selectLabelState: false,
       approver: {},
       applyingDescription: '',
     };
@@ -71,6 +74,7 @@ export default class BasicInfo extends PureComponent {
         applyingDescription,
       });
     }
+    this.moreLabel();
   }
 
   componentDidMount() {
@@ -166,25 +170,26 @@ export default class BasicInfo extends PureComponent {
 
   // 选择标签事件
   @autobind
-  handleLabelCheckBox(e, labelItem) {
-    if (e.target.checked) {
-      const { newLabel } = this.state;
-      if (newLabel.length >= 4) {
-        warning({
-          title: '标签可选数目不超过4条',
-          okText: '确认',
-        });
-        return;
-      }
-      this.setState((preState) => {
-        const nextNewLabel = _.concat(preState.newLabel, labelItem);
-        return { newLabel: nextNewLabel };
+  handleLabelCheckBox(labelItem) {
+    const { newLabel } = this.state;
+    const hasSelected = _.filter(newLabel, item => item.id === labelItem.id);
+    this.setState({
+      selectLabelState: false,
+    });
+    if (hasSelected.length) {
+      return;
+    }
+    if (newLabel.length >= 4) {
+      warning({
+        title: '标签可选数目不超过4条',
+        okText: '确认',
       });
     } else {
       this.setState((preState) => {
-        const nextNewLabel = _.filter(preState.newLabel,
-            removeItem => removeItem.id !== labelItem.id);
-        return { newLabel: nextNewLabel };
+        const nextNewLabel = _.concat(preState.newLabel, labelItem);
+        return {
+          newLabel: nextNewLabel,
+        };
       });
     }
   }
@@ -201,17 +206,16 @@ export default class BasicInfo extends PureComponent {
         {
           <List
             size="small"
+            split={false}
             dataSource={allLabels}
             renderItem={item => (
               <List.Item>
-                <Checkbox
-                  checked={labelsId.includes(item.id)}
-                  onChange={(e) => {
-                    this.handleLabelCheckBox(e, item);
-                  }}
+                <div
+                  onClick={() => this.handleLabelCheckBox(item)}
+                  className={`${labelsId.includes(item.id) ? 'selected' : ''}`}
                 >
                   {item.name}
-                </Checkbox>
+                </div>
               </List.Item>
             )}
           />
@@ -231,7 +235,7 @@ export default class BasicInfo extends PureComponent {
     });
   }
 
-  // 点击更多加载标签并展示
+  // 加载标签
   @autobind
   moreLabel() {
     const {
@@ -242,7 +246,13 @@ export default class BasicInfo extends PureComponent {
       queryAllLabels();
     }
   }
-
+  // 打开标签Popover
+  @autobind
+  openPopover() {
+    this.setState(preState => ({
+      selectLabelState: !preState.selectLabelState,
+    }));
+  }
   // 打开审批人选择审批人model
   @autobind
   openApproverBoard() {
@@ -317,6 +327,14 @@ export default class BasicInfo extends PureComponent {
     });
   }
 
+  // 判断是否可以提交
+  canSubmit() {
+    const { approver, newLabel } = this.state;
+    const { getFieldValue } = this.props.form;
+    const applyingDescription = getFieldValue('applyingDescription');
+    return applyingDescription && !_.isEmpty(newLabel) && !_.isEmpty(approver);
+  }
+
   render() {
     const {
       userBaseInfo,
@@ -326,8 +344,9 @@ export default class BasicInfo extends PureComponent {
         getFieldDecorator,
         getFieldError,
       },
+      changeEditorState,
     } = this.props;
-    const { newLabel, approverModal, approver, applyingDescription } = this.state;
+    const { newLabel, approverModal, approver, applyingDescription, selectLabelState } = this.state;
     // 当前
     const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
@@ -335,7 +354,9 @@ export default class BasicInfo extends PureComponent {
     const { empInfo = {} } = this.context;
     const { tgFlag } = empInfo.empInfo || {};
     return (
-      <div className={styles.basicInfo}>
+      <div
+        className={styles.basicInfo}
+      >
         <div className={styles.userInfo}>
           <div className={styles.headerImg}>
             <Card
@@ -367,6 +388,19 @@ export default class BasicInfo extends PureComponent {
             (
               <Form layout="inline">
                 <Divider />
+                <div className={styles.title}>
+                  <Divider type="vertical" className={styles.itemDivider} />
+                  <span>基本信息</span>
+                  {
+                    !editorState ?
+                      <Icon
+                        onClick={changeEditorState}
+                        className={styles.editor}
+                        type="bianji"
+                      /> :
+                      null
+                  }
+                </div>
                 <div className={styles.personalDesc}>
                   <List
                     dataSource={this.getBaseInfoMapping(ADVISER_INFO)}
@@ -375,7 +409,7 @@ export default class BasicInfo extends PureComponent {
                         // 个人介绍
                         (<List.Item>
                           <div className={styles.label}>
-                            <div>{item.name}:</div>
+                            <div className={editorState ? styles.required : ''}>{item.name}:</div>
                             {
                               isApproving ?
                                 <div>(审批中)</div> :
@@ -425,7 +459,33 @@ export default class BasicInfo extends PureComponent {
                                     .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
                                 }
                                 {
-                                  this.hasLabel(userBaseInfo[item.key]) ?
+                                  editorState ?
+                                    <Popover
+                                      placement="topLeft"
+                                      content={this.selectLabelContent()}
+                                      trigger="click"
+                                      overlayClassName={styles.labelPopover}
+                                      visible={selectLabelState}
+                                      onVisibleChange={this.openPopover}
+                                    >
+                                      <Tag
+                                        color="gold"
+                                      >
+                                        <div
+                                          className={styles.addLabel}
+                                        >
+                                          {
+                                            selectLabelState ?
+                                              (<span>请选择标签<Icon type="xiangxia" /></span>) :
+                                              (<span><Icon type="jia" /> 添加标签</span>)
+                                          }
+                                        </div>
+                                      </Tag>
+                                    </Popover> :
+                                    null
+                                }
+                                {
+                                  !editorState && !this.hasLabel() ?
                                     '暂未设置标签' :
                                     null
                                 }
@@ -437,21 +497,8 @@ export default class BasicInfo extends PureComponent {
                   />
                   {
                     editorState ?
-                      <div className={styles.selectLabel}>
-                        <Popover
-                          placement="rightTop"
-                          content={this.selectLabelContent()}
-                          trigger="click"
-                          overlayClassName={styles.labelPopover}
-                        >
-                          <Button onClick={this.moreLabel} icon="plus">更多</Button>
-                        </Popover>
-                      </div> :
-                      null
-                  }
-                  {
-                    editorState ?
                       <div className={styles.selectApprover}>
+                        <Divider />
                         <span onClick={this.openApproverBoard}>
                           <FormItem
                             label="选择审批人"
@@ -482,7 +529,7 @@ export default class BasicInfo extends PureComponent {
           editorState ?
             <div className={styles.editorInfoSubmit}>
               <Button onClick={this.cancelEditor}>取消</Button>
-              <Button onClick={this.startApproval} disabled={_.isEmpty(approver)} type="primary">提交审批</Button>
+              <Button onClick={this.startApproval} disabled={!this.canSubmit()} type="primary">提交审批</Button>
             </div> :
             null
         }

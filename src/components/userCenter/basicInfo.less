@@ -6,10 +6,35 @@
       flex: 0 0;
     }
   }
+  .title {
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: #333;
+    .itemDivider {
+      width: 4px;
+      height: 1.4em;
+      background: #108ee9;
+      margin-left: 0;
+    }
+    .editor {
+      color: #108ee9;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+  }
   .personalDesc {
     padding-top: 15px;
     .label {
-      flex: 0 0 65px;
+      flex: 0 0 80px;
+      .required:before {
+        display: inline-block;
+        margin-right: 4px;
+        content: "*";
+        font-family: 'SimSun';
+        line-height: 1;
+        font-size: 12px;
+        color: #f5222d;
+      }
       div:first-child {
         font-weight: bold;
       }
@@ -19,6 +44,9 @@
     }
     .inputWrap {
       width: 100%;
+      .addLabel {
+        cursor: pointer;
+      }
       & >div {
         cursor: auto;
       }
@@ -106,8 +134,34 @@
   min-height: 150px;
   max-height: 230px;
   overflow: auto;
+  :global {
+    .ant-list-item {
+     // border-bottom: none;
+      font-size: 13px;
+      padding: 0;
+      cursor: pointer;
+      & >div {
+        padding: 0;
+        & >div {
+          padding: 5px 0 5px 16px;
+          flex: 1;
+        }
+        .selected {
+          color: #108ee9;
+        }
+      }
+      &:hover {
+        background: #e6f7ff;
+      }
+    }
+  }
 }
 
 .labelPopover {
   padding-right: 5px;
+  :global {
+    .ant-popover-inner-content {
+      padding: 12px 0;
+    }
+  }
 }
