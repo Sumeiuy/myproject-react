@@ -303,9 +303,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             <InfoForm label="服务经理" style={{ width: 'auto' }}>
               <AutoComplete
                 placeholder="工号/姓名"
-                showObjKey="name"
-                objId="login"
-                searchList={employeeList}
+                showNameKey="name"
+                showIdKey="login"
+                optionList={employeeList}
                 onSelect={this.selectHandle}
                 onSearch={this.searchHandle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}

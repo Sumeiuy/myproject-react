@@ -846,10 +846,10 @@ export default class EditBaseInfo extends PureComponent {
               <InfoForm label="客户" required>
                 <AutoComplete
                   placeholder="经纪客户号/客户名称"
-                  showObjKey="custName"
-                  objId="brokerNumber"
-                  defaultSearchValue={`${custName} ${brokerNumber}`}
-                  searchList={custList}
+                  showNameKey="custName"
+                  showIdKey="brokerNumber"
+                  defaultValue={`${custName} ${brokerNumber}`}
+                  optionList={custList}
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}
                   ref={ref => this.selectCustComponent = ref}
@@ -862,10 +862,10 @@ export default class EditBaseInfo extends PureComponent {
             <InfoForm label="协议模板" required>
               <AutoComplete
                 placeholder="协议模板"
-                showObjKey="prodName"
-                objId="rowId"
-                defaultSearchValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
-                searchList={templateList}
+                showNameKey="prodName"
+                showIdKey="rowId"
+                defaultValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
+                optionList={templateList}
                 onSelect={this.handleSelectTemplate}
                 onSearch={this.handleSearchTemplate}
                 ref={ref => this.selectTemplateComponent = ref}

@@ -128,11 +128,11 @@ export default class BaseInfoModify extends PureComponent {
           <div className={style.inputComponentContent}>
             <AutoComplete
               placeholder="经纪客户号/客户名称"
-              searchList={this.props.canApplyCustList}
-              showObjKey="custName"
-              objId="cusId"
+              optionList={this.props.canApplyCustList}
+              showNameKey="custName"
+              showIdKey="cusId"
               isImmediatelySearch
-              width={200}
+              style={{ width: 200 }}
               onSelect={this.selectCustomer}
               onSearch={this.searchCanApplyCustList}
             />

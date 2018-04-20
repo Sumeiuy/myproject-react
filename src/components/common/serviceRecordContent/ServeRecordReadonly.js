@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:04:06
+ * @Last Modified time: 2018-04-19 20:35:37
  * @description 只读服务记录
  */
 
@@ -75,10 +75,15 @@ export default function ServiceRecordReadOnly(props) {
                   flowIsApproval ? null
                   : (<div className={styles.adviceTips}>{investAdviceTip}</div>)
                 }
-                <div>
-                  <span className={styles.caption}>{zlServiceRecord.title}</span>
-                  <span className={styles.type}>{zlServiceRecord.type}</span>
-                </div>
+                {
+                  _.isEmpty(zlServiceRecord.title) ? null
+                  : (
+                    <div>
+                      <span className={styles.caption}>{zlServiceRecord.title}</span>
+                      <span className={styles.type}>{zlServiceRecord.type}</span>
+                    </div>
+                  )
+                }
                 <div className={styles.rightCT}>{zlServiceRecord.content}</div>
               </div>
             </div>
@@ -96,7 +101,7 @@ export default function ServiceRecordReadOnly(props) {
               isZL
               ? (
                 <div className={styles.readOnlyText}>
-                  <span className={styles.feedbackTypeL1}>{flowIsApproval ? '无' : custFeedbackText}</span>
+                  <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
                 </div>
               )
               : (
@@ -112,7 +117,8 @@ export default function ServiceRecordReadOnly(props) {
             }
           </div>
           {
-            (isZL && flowIsApproval) ? null
+            (isZL && flowIsApproval) || (isZL && custFeedbackText === '暂无反馈')
+            ? null
             : (
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>

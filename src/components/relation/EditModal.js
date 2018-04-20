@@ -176,10 +176,10 @@ export default class EditModal extends Component {
           <div className={styles.inputColumn}>
             <AutoComplete
               placeholder="工号/姓名"
-              showObjKey="ptyMngName"
-              objId="ptyMngId"
-              defaultSearchValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
-              searchList={list}
+              showNameKey="ptyMngName"
+              showIdKey="ptyMngId"
+              defaultValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
+              optionList={list}
               onSelect={this.handleSelect}
               onSearch={this.handleSearch}
             />

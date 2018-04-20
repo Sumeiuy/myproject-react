@@ -399,10 +399,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择客户" required>
                           <AutoComplete
                             placeholder="选择客户"
-                            showObjKey="custName"
-                            objId="brokerNumber"
-                            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
-                            searchList={custList}
+                            showNameKey="custName"
+                            showIdKey="brokerNumber"
+                            defaultValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                            optionList={custList}
                             onSelect={this.handleSelectClient}
                             onSearch={this.handleSearchClient}
                             isImmediatelySearch
@@ -414,9 +414,10 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <AutoComplete
                             placeholder="选择新服务经理"
-                            showObjKey="showSelectName"
-                            defaultSearchValue={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
-                            searchList={newManagerList}
+                            showNameKey="showSelectName"
+                            optionKey="newLogin"
+                            defaultValue={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
+                            optionList={newManagerList}
                             onSelect={this.handleSelectNewManager}
                             onSearch={this.handleSearchNewManager}
                             isImmediatelySearch
