@@ -15,7 +15,6 @@ import defaultHeader from './img/defaultHeader.jpg';
 import styles from './basicInfo.less';
 import withRouter from '../../decorators/withRouter';
 
-const { Meta } = Card;
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -137,6 +136,10 @@ export default class BasicInfo extends PureComponent {
         ];
       default:
         return [
+          {
+            name: '姓名',
+            key: 'name',
+          },
           {
             name: '工号',
             key: 'empId',
@@ -271,17 +274,6 @@ export default class BasicInfo extends PureComponent {
       approverModal: false,
     });
   }
-  // 当前状态是否有标签
-  hasLabel(preventLabels = []) {
-    const { editorState } = this.props;
-    const { newLabel = [] } = this.state;
-    if (editorState && !newLabel.length) {
-      return true;
-    } else if (!editorState && !preventLabels.length) {
-      return true;
-    }
-    return false;
-  }
   // 取消编辑状态
   @autobind
   cancelEditor() {
@@ -345,6 +337,9 @@ export default class BasicInfo extends PureComponent {
         getFieldError,
       },
       changeEditorState,
+      userBaseInfo: {
+        labels = [],
+      },
     } = this.props;
     const { newLabel, approverModal, approver, applyingDescription, selectLabelState } = this.state;
     // 当前
@@ -360,14 +355,8 @@ export default class BasicInfo extends PureComponent {
         <div className={styles.userInfo}>
           <div className={styles.headerImg}>
             <Card
-              style={{ width: 140 }}
               cover={this.headerImg(userBaseInfo.photograph)}
-            >
-              <Meta
-                className={styles.desc}
-                description={userBaseInfo.name}
-              />
-            </Card>
+            />
           </div>
           <div className={styles.userInfoDesc}>
             <List
@@ -375,7 +364,7 @@ export default class BasicInfo extends PureComponent {
               renderItem={
                 item => (
                   <List.Item>
-                    <b>{item.name}:</b>
+                    <b className={styles.infoLabel}>{item.name}:</b>
                     {userBaseInfo[item.key] || '--'}
                   </List.Item>
                 )
@@ -394,8 +383,8 @@ export default class BasicInfo extends PureComponent {
                   {
                     !editorState ?
                       <Icon
-                        onClick={changeEditorState}
-                        className={styles.editor}
+                        onClick={isApproving ? null : changeEditorState}
+                        className={`${styles.editor} ${isApproving ? styles.isApprove : ''}`}
                         type="bianji"
                       /> :
                       null
@@ -485,7 +474,7 @@ export default class BasicInfo extends PureComponent {
                                     null
                                 }
                                 {
-                                  !editorState && !this.hasLabel() ?
+                                  !editorState && !labels.length ?
                                     '暂未设置标签' :
                                     null
                                 }
