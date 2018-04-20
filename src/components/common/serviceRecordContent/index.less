@@ -5,9 +5,10 @@
     font-size: 14px;
     color: #4a4a4a;
     overflow-x: hidden;
-    word-spacing: break-all;
+    word-break: break-all;
     .feedbackTypeL1 {
       margin-right: 10px;
+      line-height: 1.5;
     }
     .caption, .type, .rightCT, .adviceTips {
       font-size: 14px;
@@ -203,10 +204,10 @@
       }
     }
     .feedbackType {
+      flex: 1 1 atuo;
       display: flex;
       justify-content: flex-start;
-      align-items: center;
-      width: 470px;
+      // width: 470px;
       line-height: 40px;
       flex-wrap: nowrap;
       .title {
@@ -216,6 +217,9 @@
         text-align: left;
         width: 100px;
         margin-left: -10px;
+        &.flowIsApproval {
+          width: 120px;
+        }
       }
       .title::before {
         display: inline-block;
@@ -237,10 +241,11 @@
       }
     }
     .feedbackTime {
+      flex: 1 1 auto;
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      width: 310px;
+      // width: 310px;
       line-height: 40px;
       .title {
         font-size: 14px;
