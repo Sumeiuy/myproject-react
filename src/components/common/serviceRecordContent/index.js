@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 21:02:02
+ * @Last Modified time: 2018-04-20 23:47:39
  */
 
 import React, { PureComponent } from 'react';
@@ -89,6 +89,18 @@ export default class ServiceRecordContent extends PureComponent {
       const newState = this.initialState(nextProps);
       this.setState({ ...newState });
     }
+
+    // 切换客户，错误信息重置
+    // if (prevUUID !== nextUUID) {
+    //   this.setState({
+    //     isShowServeStatusError: false,
+    //     isShowServiceContentError: false,
+    //   });
+    //   // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+    //   if (!isReadOnly) {
+    //     this.clearUploadedFileList();
+    //   }
+    // }
   }
 
   // 设置非涨乐财富通服务方式下的文件上传的Ref
@@ -522,8 +534,15 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '服务类型', value: '$args[0]' } })
   handleServiceTypeSelectChange(value) {
+    // 此处需要将相关的客户反馈列表
+    const feedbackList = this.findFeedbackListByServiceTypeCode(value, this.props);
+    const feedback = this.fixCustomerFeedback(feedbackList[0]);
     this.setState({
       serviceType: value,
+      custFeedback: feedback.key,
+      custFeedback2: feedback.children.key,
+      custFeedbackText: feedback.value,
+      custFeedbackText2: feedback.children.value,
     });
     const { isSelectZhangleFins } = this.state;
     if (isSelectZhangleFins) {
@@ -635,10 +654,6 @@ export default class ServiceRecordContent extends PureComponent {
     });
   }
 
-  // 空方法，用于日志上传
-  @logable({ type: 'Click', payload: { name: '附件下载' } })
-  handleDownloadClick() { }
-
   /**
    * 渲染服务方式 | 的下拉选项,
    */
@@ -662,7 +677,7 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentDesc,
       ZLServiceContentTime,
       custFeedbackText,
-      custFeedback2Text,
+      custFeedbackText2,
       custFeedbackTime,
       ZLCustFeedback,
       ZLCustFeedbackTime,
@@ -686,7 +701,7 @@ export default class ServiceRecordContent extends PureComponent {
         zlServiceRecord={zlServiceRecord}
         feedbackDateTime={custFeedbackTime.format(DATE_FORMAT_SHOW)}
         custFeedback={custFeedbackText}
-        custFeedback2={custFeedback2Text}
+        custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
         ZLCustFeedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
         ZLCustFeedbackList={custFeedbackList}
@@ -750,12 +765,12 @@ export default class ServiceRecordContent extends PureComponent {
       // 如果是从360视图|客户列表页面进入
       cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType, this.props);
     }
-
     // 级联客户反馈列表选项的value
     const cascadeSelectValue = {
       first: custFeedback,
       second: custFeedback2,
     };
+
     // 用于在被驳回后，需要展示的数据
     const zlRejectRecord = {
       title: ZLServiceContentTitle,
