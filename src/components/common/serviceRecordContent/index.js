@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 23:47:39
+ * @Last Modified time: 2018-04-21 00:20:35
  */
 
 import React, { PureComponent } from 'react';
@@ -82,8 +82,8 @@ export default class ServiceRecordContent extends PureComponent {
     // 1.切换客户需要将state重新设置，
     // 2.修改上传附件，不需要修改state
     // formData 是服务记录信息
-    const { formData: prevData } = this.props;
-    const { formData: nextData } = nextProps;
+    const { formData: prevData, custUuid: prevUUID } = this.props;
+    const { formData: nextData, custUuid: nextUUID, isReadOnly } = nextProps;
     // 此处由于前面组件都是新建的数据，所以需要深度比对
     if (!_.isEqual(prevData, nextData)) {
       const newState = this.initialState(nextProps);
@@ -91,16 +91,16 @@ export default class ServiceRecordContent extends PureComponent {
     }
 
     // 切换客户，错误信息重置
-    // if (prevUUID !== nextUUID) {
-    //   this.setState({
-    //     isShowServeStatusError: false,
-    //     isShowServiceContentError: false,
-    //   });
-    //   // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
-    //   if (!isReadOnly) {
-    //     this.clearUploadedFileList();
-    //   }
-    // }
+    if (prevUUID !== nextUUID) {
+      this.setState({
+        isShowServeStatusError: false,
+        isShowServiceContentError: false,
+      });
+      // 当custUuid不一样的时候，并且是新增服务记录时，清除刚才上传的附件记录
+      if (!isReadOnly) {
+        this.clearUploadedFileList();
+      }
+    }
   }
 
   // 设置非涨乐财富通服务方式下的文件上传的Ref
