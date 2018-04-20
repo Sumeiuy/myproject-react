@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 19:40:11
+ * @Last Modified time: 2018-04-19 20:39:59
  */
 
 import React, { PureComponent } from 'react';
@@ -399,12 +399,13 @@ export default class ServiceRecordContent extends PureComponent {
       currentFile,
       // 是否选择涨乐财富通
       isSelectZhangleFins,
+      // MOT任务，自建任务
+      taskTypeCode,
     } = this.state;
 
     const {
       formData: { custId = '', missionFlowId = '', missionId = '' },
       custUuid,
-      taskTypeCode,
     } = this.props;
     // 按照DOClever定义的入参
     const data = {
@@ -420,7 +421,7 @@ export default class ServiceRecordContent extends PureComponent {
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,
-      taskType: `${taskTypeCode + 1}`,
+      taskType: `${+taskTypeCode + 1}`,
       uuid: (!_.isEmpty(custUuid) && !_.isEmpty(currentFile)) ? custUuid : '',
     };
 

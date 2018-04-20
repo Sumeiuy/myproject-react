@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 19:40:20
+ * @Last Modified time: 2018-04-19 20:35:37
  * @description 只读服务记录
  */
 
@@ -75,10 +75,15 @@ export default function ServiceRecordReadOnly(props) {
                   flowIsApproval ? null
                   : (<div className={styles.adviceTips}>{investAdviceTip}</div>)
                 }
-                <div>
-                  <span className={styles.caption}>{zlServiceRecord.title}</span>
-                  <span className={styles.type}>{zlServiceRecord.type}</span>
-                </div>
+                {
+                  _.isEmpty(zlServiceRecord.title) ? null
+                  : (
+                    <div>
+                      <span className={styles.caption}>{zlServiceRecord.title}</span>
+                      <span className={styles.type}>{zlServiceRecord.type}</span>
+                    </div>
+                  )
+                }
                 <div className={styles.rightCT}>{zlServiceRecord.content}</div>
               </div>
             </div>
