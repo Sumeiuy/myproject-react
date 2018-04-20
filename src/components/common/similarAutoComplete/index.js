@@ -254,7 +254,7 @@ export default class SimilarAutoComplete extends PureComponent {
         // 当输入框变化时，AutoComplete 组件会先调用 onSearch 方法，在调用 onChange 方法
         // 添加 onSearch 属性，可实现即时搜索
         onSearch={this.handleImmediatelySearch}
-        ref={ref => this.AutoCompleteComponent = ref}
+        ref={ref => this.autoCompleteComponent = ref}
       >
         <Input
           suffix={
