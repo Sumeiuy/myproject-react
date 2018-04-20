@@ -3,7 +3,7 @@
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-20 17:22:19
+ * @Last Modified time: 2018-04-20 18:32:32
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -405,6 +405,12 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       pageSize: page.pageSize,
       onChange: this.handlePageNumberChange,
     };
+    const {
+      newEmpName: defaultNewEmpName = '',
+      newLogin: defaultNewLogin = '',
+      newOrgName: defaultNewOrgName = '',
+      newPostnName: defaultNewPostnName = '',
+    } = newManager;
     return (
       <div className={styles.editFormBox}>
         <div className={styles.inner}>
@@ -443,7 +449,7 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             placeholder="选择新服务经理"
                             showNameKey="showSelectName"
                             optionKey="showSelectName"
-                            defaultValue={`${newManager.newEmpName || ''}  ${newManager.newLogin || ''} ${newManager.newOrgName || ''} ${newManager.newPostnName || ''}` || ''}
+                            defaultValue={`${defaultNewEmpName} ${defaultNewLogin} ${defaultNewOrgName} ${defaultNewPostnName} ` || ''}
                             optionList={newManagerList}
                             onSelect={this.handleSelectNewManager}
                             onSearch={this.handleSearchNewManager}
