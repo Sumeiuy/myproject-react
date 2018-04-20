@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-20 13:40:33
+ * @Last Modified time: 2018-04-20 17:01:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -223,7 +223,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       if (!_.isEmpty(newManagerList) && newManagerList.length === 1) {
         this.queryManagerComponent.handleSelect(inputValue, { key: item.showSelectName });
         // 数据回填之后触发Autocomplete组件的blur事件，使搜索结果隐藏;
-        this.queryManagerComponent.AutoCompleteComponent.blur();
+        this.queryManagerComponent.autoCompleteComponent.blur();
       }
     });
   }
