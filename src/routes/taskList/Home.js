@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:17:51
+ * @Last Modified time: 2018-04-20 18:58:12
  * @description 任务管理首页
  */
 
@@ -659,7 +659,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { pageNum = 1, pageSize = 20 } = query;
+    const { pageNum = 1, pageSize = 20, currentId } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
@@ -669,8 +669,13 @@ export default class PerformerView extends PureComponent {
       // const firstData = resultData[0] || {};
       // 当前视图是执行者视图
       if (!_.isEmpty(resultData) && this.isExecutorView(resultData[0].missionViewType)) {
+        // 如果currentId不为空的时候，去列表里面取到相应的任务
+        let currentItem = resultData[0];
+        if (!_.isEmpty(currentId)) {
+          currentItem = _.find(resultData, item => item.id === currentId);
+        }
         // 初始化取第一条任务来获取反馈列表数据
-        const { typeCode, eventId } = resultData[0];
+        const { typeCode, eventId } = currentItem;
         this.queryMissionList(typeCode, eventId);
       }
       this.getRightDetail();
