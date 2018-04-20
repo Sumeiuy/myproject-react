@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-20 21:19:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-21 00:13:12
  * @description 任务管理首页
  */
 
@@ -597,10 +597,10 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
- * 发送获取任务反馈字典的请求
- * @param {*} typeCode 当前左侧列表的选中项的typeCode
- * @param {*} eventId 当前左侧列表的选中项的eventId
- */
+   * 发送获取任务反馈字典的请求
+   * @param {*} typeCode 当前左侧列表的选中项的typeCode
+   * @param {*} eventId 当前左侧列表的选中项的eventId
+   */
   @autobind
   queryMissionList(typeCode, eventId) {
     const {
@@ -659,24 +659,20 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { pageNum = 1, pageSize = 20, currentId } = query;
+    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
       const { list = {} } = this.props;
       const { resultData = [] } = list;
-      // const firstData = resultData[0] || {};
+      const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      if (!_.isEmpty(resultData) && this.isExecutorView(resultData[0].missionViewType)) {
-        // 如果currentId不为空的时候，去列表里面取到相应的任务
-        let currentItem = resultData[0];
-        if (!_.isEmpty(currentId)) {
-          currentItem = _.find(resultData, item => item.id === currentId);
+      if (missionViewType === EXECUTOR) {
+        if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
+          const { typeCode, eventId } = firstData;
+          this.queryMissionList(typeCode, eventId);
         }
-        // 初始化取第一条任务来获取反馈列表数据
-        const { typeCode, eventId } = currentItem;
-        this.queryMissionList(typeCode, eventId);
       }
       this.getRightDetail();
     });
