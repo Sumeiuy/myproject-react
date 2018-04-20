@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 20:35:37
+ * @Last Modified time: 2018-04-20 11:53:01
  * @description 只读服务记录
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import ServeRecordAttachment from './ServeRecordAttachment';
 import { flow } from '../../taskList/performerView/config';
@@ -37,7 +38,7 @@ export default function ServiceRecordReadOnly(props) {
   // 判断当前的流水状态是否审批中
   const flowIsApproval = flow.isApproval(serviceStatusCode);
   // 暂时客户可选反馈选项
-  const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`);
+  const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
   const custFeedbackText = flowIsApproval ? listText : ZLCustFeedback;
   return (
     <div className={styles.serviceRecordContent}>
@@ -94,7 +95,7 @@ export default function ServiceRecordReadOnly(props) {
           <div className={styles.feedbackType}>
             {
               (isZL && flowIsApproval)
-              ? (<div className={styles.title}>客户可选反馈:</div>)
+              ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
               : (<div className={styles.title}>客户反馈:</div>)
             }
             {
