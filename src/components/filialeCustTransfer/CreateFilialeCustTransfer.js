@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-19 17:49:52
+ * @Last Modified time: 2018-04-20 09:48:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -215,6 +215,16 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     const { getNewManagerList } = this.props;
     getNewManagerList({
       login: v,
+    }).then(() => {
+      const { newManagerList } = this.props;
+      const item = newManagerList[0];
+      const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
+      // 查询的新服务经理不为空并且只有一条时，直接回填到AutoComplete组件中去
+      if (!_.isEmpty(newManagerList) && newManagerList.length === 1) {
+        this.queryManagerComponent.handleSelectedValue(inputValue, { key: item.showSelectName });
+        // 数据回填之后触发Autocomplete组件的blur事件，使搜索结果隐藏;
+        this.queryManagerComponent.AutoCompleteComponent.blur();
+      }
     });
   }
 
