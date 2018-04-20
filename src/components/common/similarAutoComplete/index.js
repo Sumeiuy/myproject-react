@@ -119,18 +119,18 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleSelect(value, selectItem) {
     if (value) {
-      const { onSelect, optionList, showIdKey, optionKey } = this.props;
-      // 当前的选中值
-      this.currentSelect = _.find(
-        optionList,
-        item => item[optionKey || showIdKey] === selectItem.key,
-      );
-      onSelect(this.currentSelect);
-
       // 更新state中的值
       this.setState({
         value,
         typeStyle: 'clear',
+      }, () => {
+        const { onSelect, optionList, showIdKey, optionKey } = this.props;
+        // 当前的选中值
+        this.currentSelect = _.find(
+          optionList,
+          item => item[optionKey || showIdKey] === selectItem.key,
+        );
+        onSelect(this.currentSelect);
       });
     }
   }

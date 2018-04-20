@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-20 09:48:07
+ * @Last Modified time: 2018-04-20 13:40:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -217,11 +217,11 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       login: v,
     }).then(() => {
       const { newManagerList } = this.props;
-      const item = newManagerList[0];
+      const item = newManagerList[0] || EMPTY_OBJECT;
       const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
       // 查询的新服务经理不为空并且只有一条时，直接回填到AutoComplete组件中去
       if (!_.isEmpty(newManagerList) && newManagerList.length === 1) {
-        this.queryManagerComponent.handleSelectedValue(inputValue, { key: item.showSelectName });
+        this.queryManagerComponent.handleSelect(inputValue, { key: item.showSelectName });
         // 数据回填之后触发Autocomplete组件的blur事件，使搜索结果隐藏;
         this.queryManagerComponent.AutoCompleteComponent.blur();
       }
@@ -565,13 +565,13 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                   <AutoComplete
                     placeholder="选择新服务经理"
                     showNameKey="showSelectName"
-                    optionKey="newLogin"
+                    optionKey="showSelectName"
                     optionList={newManagerList}
                     onSelect={this.handleSelectNewManager}
                     onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
                     dropdownMatchSelectWidth={false}
-                    renderOption={this.renderOption}
+                    renderOptionNode={this.renderOption}
                   />
                 </InfoForm>
               </div>
