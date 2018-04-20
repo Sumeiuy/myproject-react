@@ -72,31 +72,29 @@ export default class SearchForm extends Component {
         <FormItem label="选择客户" required className={styles.formItem}>
           <AutoComplete
             ref={ref => this.cust = ref}
-            defaultSearchValue={selectedCustItem.custName ? `${selectedCustItem.custName}（${selectedCustItem.custNumber}）` : ''}
+            defaultValue={selectedCustItem.custName ? `${selectedCustItem.custName}（${selectedCustItem.custNumber}）` : ''}
             placeholder="经纪客户号/客户名称"
-            searchList={custList}
-            showObjKey="custName"
-            objId="custNumber"
+            optionList={custList}
+            showNameKey="custName"
+            showIdKey="custNumber"
             onSelect={this.handleSelectCustItem}
             onSearch={onQueryCustList}
-            name="custList"
-            width={276}
+            style={{ width: 276 }}
           />
         </FormItem>
         <FormItem label="选择产品" required className={styles.formItem}>
           <AutoComplete
-            defaultSearchValue={
+            defaultValue={
               selectedProductItem.productName ? `${selectedProductItem.productName}（${selectedProductItem.productCode}）` : ''
             }
             ref={ref => this.product = ref}
             placeholder="产品代码/产品名称"
-            searchList={productList}
-            showObjKey="productName"
-            objId="productCode"
+            optionList={productList}
+            showNameKey="productName"
+            showIdKey="productCode"
             onSelect={this.handleSelectProductItem}
             onSearch={onQueryProductList}
-            name="productList"
-            width={276}
+            style={{ width: 276 }}
           />
         </FormItem>
         <FormItem className={styles.formItem} colon={false} label=" ">

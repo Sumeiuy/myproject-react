@@ -8,107 +8,106 @@ import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-import style from './style.less';
+import styles from './style.less';
 
 const Option = AutoComplete.Option;
-let currentSelect = null; // 当前选中的对象
  // 下拉搜索组件样式
 const defaultStyle = {
   width: '220px',
   height: '32px',
+  display: 'inline-block',
 };
+// 下拉列表的默认展示为：1. 名字（id号）2. 名字
+// 该组件仅定制了ant的AutoComplete的一小部分，对于原本拥有属性和方法，均能用
+
+//  通过ref，调用的方法
+// 1. clearValue(): 清空组件value
+// 2. showErrorMsg(): 显示错误信息
+// 3. hiddenErrorMsg(): 隐藏错误信息
 export default class SimilarAutoComplete extends PureComponent {
   static propTypes = {
-    // 组件名称，用于设置下拉选项id使用
-    name: PropTypes.string,
-    // 查询框中的placeholder
-    placeholder: PropTypes.string,
-    // 查询得到的数据里表
-    searchList: PropTypes.array,
-    // 列表展示的数据 多对应的Object中的key
-    showObjKey: PropTypes.string.isRequired,
-    // 数据中的key 作为react中辅助标识key
-    objId: PropTypes.string,
-    // 选中对象 并触发选中方法 向父组件传递一个obj（必填）
+    // 原有属性（没列举的原有属性，都能用）
     onSelect: PropTypes.func.isRequired,
-    // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
     onSearch: PropTypes.func.isRequired,
-    // 输入框输入内容变化事件
     onChange: PropTypes.func,
-    // 样式主题
-    theme: PropTypes.string,
-    // 是否可操作
-    disable: PropTypes.bool,
-    // 默认搜索框值
-    defaultSearchValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // 定制下拉选项框(用AutoComplete.Option来实现，一定要有value属性值)
-    renderOption: PropTypes.func,
-    // 是否即时搜索（默认为true，用于模糊匹配；精准匹配时，置为false），
+    renderOptionNode: PropTypes.func,
     isImmediatelySearch: PropTypes.bool,
-    // 样式
-    display: PropTypes.string,
-    // 控件宽度
-    width: PropTypes.number,
+    optionList: PropTypes.array,
+    showNameKey: PropTypes.string,
+    showIdKey: PropTypes.string,
+    optionKey: PropTypes.string,
+    style: PropTypes.object,
   }
 
   static defaultProps = {
-    name: 'customerDrop',
-    placeholder: '',
-    searchList: [],
-    objId: '',
-    theme: 'theme1',
-    disable: false,
-    defaultSearchValue: '',
-    width: 0,
-    renderOption: null,
-    isImmediatelySearch: false,
-    display: 'inline-block',
-    onChange: _.noop,
+    optionList: [],   // 下拉列表数据源
+    showNameKey: '', // 用于下拉列表的默认展示
+    showIdKey: '',
+    optionKey: '',    // 相当于table的rowkey,唯一标识符
+    defaultValue: '', // 初始值
+    renderOptionNode: null, // 空方法
+    isImmediatelySearch: false, // 是否开启即时搜索
+    onChange: () => {},
+    style: defaultStyle,
   }
 
   constructor(props) {
     super(props);
-    const { defaultSearchValue } = props;
-    const isEmptyValue = _.isEmpty(_.trim(defaultSearchValue));
+    const { defaultValue } = props;
+    const isEmptyValue = _.isEmpty(_.trim(defaultValue));
     this.state = {
-      // 搜索框的类型
+      // 输入框 右侧图标
       typeStyle: isEmptyValue ? 'search' : 'clear',
-      // 选中的值
-      value: defaultSearchValue, // 输入框中的值
+      value: defaultValue, // 初始值
       showError: '', // 显示的报错信息
     };
   }
 
-  getSearchListDom(dataList) {
-    const { showObjKey, objId, renderOption } = this.props;
-    const result = _.map(dataList, (item, index, array) => {
-      if (item.isHidden) {
-        return null;
-      }
-      const optionValue = item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`;
-      if (renderOption) {
-        return renderOption(item, index, array);
-      }
-      // 默认的option样式
-      return (
-        <Option
-          key={item[objId || showObjKey]}
-          className={style.ddsDrapMenuConItem}
-          value={optionValue}
-          title={optionValue}
-        >
-          {optionValue}
-        </Option>
-      );
-    });
+  getOptionListDom(dataList) {
+    const {
+      showNameKey,
+      optionKey,
+      showIdKey,
+      renderOptionNode,
+    } = this.props;
+    const result = _.map(
+      dataList,
+      (item, index, array) => {
+        if (item.isHidden) {
+          return null;
+        }
+        // 组件外部定制的下拉列表
+        if (renderOptionNode !== null) {
+          return renderOptionNode(item, index, array);
+        }
+        // 默认的下拉列表
+        const optionValue = item[showIdKey] ? `${item[showNameKey]}（${item[showIdKey]}）` : `${item[showNameKey]}`;
+        // 说明 option中 key 的取值：一般 showIdKey 对应值，也是唯一标识，故 key有两个值可选 optionKey 和 item[showIdKey]
+        // 优先用 optionKey 做唯一标识
+        return (
+          <Option
+            key={item[optionKey] || item[showIdKey]}
+            value={optionValue}
+            title={optionValue}
+            className={styles.ddsDrapMenuConItem}
+          >
+            {optionValue}
+          </Option>
+        );
+      });
     return result;
   }
 
+  // 组件内全局变量
+  currentSelect = null; // 当前选中的对象
+
   @autobind
-  handleInputValue(value) {
-    if (!_.isEmpty(currentSelect)) {
-      // 下拉框中值选中时，会触发onchange方法, 即handleInputValue方法，故在此处重置选中项为null
-      currentSelect = null;
+  handleChange(value) {
+    if (!_.isEmpty(this.currentSelect)) {
+      // 下拉框中值选中时，会触发onchange方法, 即handleChange方法，故在此处重置选中项为null
+      this.currentSelect = null;
     } else {
       this.props.onChange(value);
     }
@@ -116,17 +115,17 @@ export default class SimilarAutoComplete extends PureComponent {
 
   // 根据用户选中的option的value值获取对应的数组值
   // 第一个参数是 AutoComplete 组件的optionLabelProp指定的key对应的值
-  // 第二个参数是当前选中元素的的Dom项（可以打印出来看下）
+  // 第二个参数是 该节点信息
   @autobind
-  handleSelectedValue(value, item) {
+  handleSelect(value, selectItem) {
     if (value) {
-      const { onSelect, searchList, objId, showObjKey } = this.props;
-      const selectedKey = item.key;
+      const { onSelect, optionList, showIdKey, optionKey } = this.props;
       // 当前的选中值
-      currentSelect = _.find(searchList, listItem => listItem[objId || showObjKey] === selectedKey);
-      onSelect({
-        ...currentSelect,
-      });
+      this.currentSelect = _.find(
+        optionList,
+        item => item[optionKey || showIdKey] === selectItem.key,
+      );
+      onSelect(this.currentSelect);
 
       // 更新state中的值
       this.setState({
@@ -142,6 +141,7 @@ export default class SimilarAutoComplete extends PureComponent {
     const { onSelect, isImmediatelySearch } = this.props;
     const { typeStyle } = this.state;
     let value = searchValue;
+    // 当输入框状态为 clear，删除输入框的内容时，要清空 value
     if (typeStyle === 'clear') {
       value = '';
       onSelect({});
@@ -186,10 +186,7 @@ export default class SimilarAutoComplete extends PureComponent {
     }
   }
 
-  // 目前发现，清空输入框有两种行为：1，直接修改组件的属性value；2，通过调用clearValue方法
-  // 直接修改组件的属性value，存在隐患，search事件的触发，有赖于搜索框的图标（放大镜是搜索，x图标是清除）
-  // 清空输入框的数据，并设置为搜索状态
-  // 组件外部使用，场景是，部分使用该组件时，需要对选中的值做验证（组件外部验证），验证不通过，需要清空
+  // 组件外部使用，通过ref 调用，清空 value
   @autobind
   clearValue() {
     this.setState({
@@ -198,6 +195,7 @@ export default class SimilarAutoComplete extends PureComponent {
     });
   }
 
+  // 组件外部使用，通过ref 调用，显示错误信息
   @autobind
   showErrorMsg(msg) {
     this.setState({
@@ -205,6 +203,7 @@ export default class SimilarAutoComplete extends PureComponent {
     });
   }
 
+  // 组件外部使用，通过ref 调用，隐藏错误信息
   @autobind
   hiddenErrorMsg() {
     this.setState({
@@ -215,73 +214,43 @@ export default class SimilarAutoComplete extends PureComponent {
   // 检查数据源是否为空
   @autobind
   checkListIsEmpty() {
-    const { searchList } = this.props;
-    const hiddenSearchList = searchList.filter(item => item.isHidden);
-    return _.isEmpty(searchList)
-      || (hiddenSearchList.length === searchList.length);
-  }
-
-  // 渲染 disable 状态下的标签显示
-  @autobind
-  renderDisableContent() {
-    const { disable, defaultSearchValue, theme, width } = this.props;
-    const ddsShowBoxClass = classnames([style.ddsShowBox]);
-    const ddsShowBoxClass2 = classnames([
-      style.ddsShowBox2,
-      { [style.disable]: disable },
-    ]);
-    const drapDownSelectCls = classnames({
-      [style.drapDowmSelect]: theme === 'theme1',
-      [style.drapDowmSelect2]: theme !== 'theme1',
-    });
-    const domWidth = width > 0 ? { width: `${width}px` } : {};
-    const boxStyle = { ...defaultStyle, ...domWidth };
-    return (
-      <div className={drapDownSelectCls}>
-        <div
-          className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-          style={boxStyle}
-        >
-          {defaultSearchValue}
-        </div>
-      </div>
-    );
+    const { optionList } = this.props;
+    const hiddenSearchList = optionList.filter(item => item.isHidden);
+    return _.isEmpty(optionList)
+      || (hiddenSearchList.length === optionList.length);
   }
 
   renderAutoComplete() {
-    const { placeholder, width, searchList, ...otherPorps } = this.props;
+    const { style, optionList, ...otherPorps } = this.props;
     const { typeStyle, value, showError } = this.state;
     const empty = [(
       <Option
         key={'empty'}
         disabled
-        className={style.ddsDrapMenuConItem}
+        className={styles.ddsDrapMenuConItem}
       >
-        <span className={style.notFound}>没有发现与之匹配的结果</span>
+        <span className={styles.notFound}>没有发现与之匹配的结果</span>
       </Option>
     )];
-    const options = this.checkListIsEmpty() ? empty : this.getSearchListDom(searchList);
+    const optionNode = this.checkListIsEmpty() ? empty : this.getOptionListDom(optionList);
     const inputValue = _.isString(value) ? value : `${value}`;
     const iconType = typeStyle === 'search' ? 'search' : 'close';
-    const domWidth = width > 0 ? { width: `${width}px` } : {};
-    const autoStyle = { ...defaultStyle, ...domWidth };
     const completeClassName = classnames(
-      { [style.error]: !_.isEmpty(showError) },
+      { [styles.error]: !_.isEmpty(showError) },
     );
     return (
       <AutoComplete
         {...otherPorps}
         className={completeClassName}
-        placeholder={placeholder}
         defaultActiveFirstOption={false}
         size="large"
-        style={autoStyle}
-        dataSource={options}
+        style={{ ...defaultStyle, ...style }}
+        dataSource={optionNode}
         optionLabelProp="value"
         value={inputValue}
         // 选中下拉列表框中的某项，会触发onChange方法，不触发onSearch方法
-        onChange={this.handleInputValue}
-        onSelect={this.handleSelectedValue}
+        onChange={this.handleChange}
+        onSelect={this.handleSelect}
         // 当输入框变化时，AutoComplete 组件会先调用 onSearch 方法，在调用 onChange 方法
         // 添加 onSearch 属性，可实现即时搜索
         onSearch={this.handleImmediatelySearch}
@@ -291,7 +260,7 @@ export default class SimilarAutoComplete extends PureComponent {
             <Icon
               type={iconType}
               onClick={this.handleSearch}
-              className={style.searchIcon}
+              className={styles.searchIcon}
             />
           }
           onPressEnter={this.handleSearch}
@@ -301,22 +270,13 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   render() {
-    const { theme, disable, width, display } = this.props;
+    const { style } = this.props;
     const { showError } = this.state;
-    const drapDownSelectCls = classnames({
-      [style.drapDowmSelect]: theme === 'theme1',
-      [style.drapDowmSelect2]: theme !== 'theme1',
-    });
-    const domWidth = width > 0 ? { width: `${width}px` } : {};
-    const autoStyle = { ...defaultStyle, ...domWidth, display };
 
-    if (disable) {
-      return this.renderDisableContent();
-    }
     return (
-      <div className={drapDownSelectCls} style={autoStyle}>
+      <div className={styles.drapDowmSelect} style={{ ...defaultStyle, ...style }}>
         {this.renderAutoComplete()}
-        <div className={style.showError} title={showError}>{showError}</div>
+        <div className={styles.showError} title={showError}>{showError}</div>
       </div>
     );
   }

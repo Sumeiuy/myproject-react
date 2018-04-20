@@ -192,19 +192,17 @@ export default class SelectAssembly extends PureComponent {
   }
 
   render() {
-    const { width, name, dataSource } = this.props;
+    const { width, dataSource } = this.props;
     return (
       <SimilarAutoComplete
         ref={this.custSearchRef}
-        name={name}
         placeholder="经纪客户号/客户名称"
-        searchList={dataSource}
-        width={width}
-        showObjKey="custEcom"
-        objId="id"
+        optionList={dataSource}
+        style={{ width }}
+        optionKey="custEcom"
         onSelect={this.handleSelectCust}
         onSearch={this.handleSearchCustList}
-        renderOption={this.renderOption}
+        renderOptionNode={this.renderOption}
       />
     );
   }
