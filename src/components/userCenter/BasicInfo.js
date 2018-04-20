@@ -457,16 +457,20 @@ export default class BasicInfo extends PureComponent {
                                       visible={selectLabelState}
                                       onVisibleChange={this.openPopover}
                                     >
-                                      <Tag
-                                        color="gold"
-                                        className={styles.addLabel}
-                                      >
-                                        {
-                                          selectLabelState ?
-                                            (<span>请选择标签<Icon type="xiangxia" /></span>) :
-                                            (<span><Icon type="jia" /> 添加标签</span>)
-                                        }
-                                      </Tag>
+                                      {
+                                        selectLabelState ?
+                                          <Tag
+                                            className={styles.selectLabelBtn}
+                                          >
+                                            <span>请选择标签<Icon type="xiangxia" /></span>
+                                          </Tag> :
+                                          <Tag
+                                            color="gold"
+                                            className={styles.addLabel}
+                                          >
+                                            <span><Icon type="jia" /> 添加标签</span>
+                                          </Tag>
+                                      }
                                     </Popover> :
                                     null
                                 }
