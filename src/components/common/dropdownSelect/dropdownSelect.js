@@ -122,7 +122,7 @@ export default class DropdownSelect extends PureComponent {
     let dataSource = {};
     // 清空input时，展示搜索项
     if (_.isEmpty(e.target.value)) {
-      dataSource = { optionList: this.propTypes.presetOptionList };
+      dataSource = { optionList: this.props.presetOptionList };
     }
     this.setState({
       searchValue: e.target.value,

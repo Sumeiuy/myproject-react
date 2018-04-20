@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 00:07:21
+ * @Last Modified time: 2018-04-21 00:13:12
  * @description 任务管理首页
  */
 
@@ -686,17 +686,19 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   constructViewPostBody(query, newPageNum, newPageSize) {
-    const { missionViewType, status } = query;
+    const { missionViewType, status, creatorId } = query;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName']);
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName']);
     finalPostData = _.merge(
       finalPostData,
       omitData,
       // { orgId: 'ZZ001041' },
       { orgId: emp.getOrgId() },
+      // 传过来的名字叫creatorId，传给后台需要改成creator
+      { creator: creatorId },
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
