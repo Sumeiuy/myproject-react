@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 20:39:59
+ * @Last Modified time: 2018-04-20 15:25:36
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,7 @@ import { serveWay as serveWayUtil } from '../../taskList/performerView/config/co
 import { flow } from '../../taskList/performerView/config';
 import logable from '../../../decorators/logable';
 import {
-  serveWaySelectMap,
+  // serveWaySelectMap,
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
@@ -187,7 +187,12 @@ export default class ServiceRecordContent extends PureComponent {
   // 获取默认的state
   @autobind
   getDefaultState(props) {
-    const { formData: fd, isEntranceFromPerformerView, isReject } = props;
+    const {
+      formData: fd,
+      isEntranceFromPerformerView,
+      isReject,
+      dict: { serveWay },
+    } = props;
     let { serviceTypeCode } = fd;
     // 默认取第一个客户反馈
     const defaultFeedback = this.getDefaultFeedback();
@@ -209,9 +214,9 @@ export default class ServiceRecordContent extends PureComponent {
       // 任务类型MOT任务或者自建任务的事件类型
       serviceType: serviceTypeCode,
       // 服务方式Code, 默认取map值中的第一个服务方式
-      serviceWayCode: serveWaySelectMap[0].key,
+      serviceWayCode: serveWay[0].key,
       // 服务方式文本
-      serviceWayText: serveWaySelectMap[0].value,
+      serviceWayText: serveWay[0].value,
       // 服务状态
       serviceStatus: '',
       // 服务状态文本
@@ -694,6 +699,7 @@ export default class ServiceRecordContent extends PureComponent {
   render() {
     const {
       dict,
+      dict: { serveWay },
       empInfo,
       isEntranceFromPerformerView,
       isReadOnly,
@@ -725,7 +731,6 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
-      ZLServiceContentTime,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 
@@ -758,7 +763,6 @@ export default class ServiceRecordContent extends PureComponent {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
       desc: ZLServiceContentDesc,
-      time: ZLServiceContentTime,
     };
 
     return (
@@ -768,7 +772,7 @@ export default class ServiceRecordContent extends PureComponent {
             value={serviceWayCode}
             width={{ width: 142 }}
             onChange={this.handleServiceWayChange}
-            options={serveWaySelectMap}
+            options={serveWay}
             empInfo={empInfo}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
