@@ -63,7 +63,13 @@ export default class ToDo extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索任务' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索任务',
+      value: '$args[0]',
+    },
+  })
   onSearch(value) {
     // this.props.search(value);
     const { replace, location: { pathname, query } } = this.props;

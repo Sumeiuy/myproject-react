@@ -20,6 +20,7 @@ import preSaleQuery from './preSaleQuery';
 import stock from './stock';
 import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
+
 const api = apiCreator();
 
 export default {

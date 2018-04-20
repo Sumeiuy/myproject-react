@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 21:28:06
+ * @Last Modified time: 2018-04-16 14:25:18
  * 结果跟踪
  */
 
@@ -29,19 +29,6 @@ const defaultIndicatorValue = '请选择指标';
 const defaultTrackWindowDate = 0;
 
 const dateFormat = 'YYYY年MM月DD日';
-
-// 产品大类，需要将productCategroy传给后台
-// 前端处理一下，如果是大类104，前端传1给后端
-// 如果是大类105，前端传2给后端
-const productCategroyCollection = [{
-  indexId: '104',
-  productCategory: '1',
-  value: '交易持仓',
-}, {
-  indexId: '105',
-  productCategory: '2',
-  value: '金融产品',
-}];
 
 @RestoreScrollTop
 export default class ResultTrack extends PureComponent {
@@ -169,9 +156,6 @@ export default class ResultTrack extends PureComponent {
           this.autoCompleteComponent.showErrorMsg('请选择一个产品');
         }
       }
-      // if (currentSelectedLevel1Indicator !== defaultIndicatorValue) {
-
-      // }
     }
   }
 
@@ -613,6 +597,10 @@ export default class ResultTrack extends PureComponent {
       currentSelectedLevel2Indicator: value,
     });
     this.setLevel2IndicatorProperty(currentIndicator);
+    // 在切换二级指标的时候清空搜索的产品
+    if (this.autoCompleteComponent) {
+      this.autoCompleteComponent.clearValue();
+    }
   }
 
   /**
@@ -645,8 +633,6 @@ export default class ResultTrack extends PureComponent {
     ) {
       // message.error('您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪');
       confirm({
-        okText: '确定',
-        cancelText: '取消',
         title: '提示',
         content: '您已设置结果跟踪指标，如果取消选择将不对此任务进行结果跟踪',
         onOk: () => {
@@ -745,16 +731,9 @@ export default class ResultTrack extends PureComponent {
 
   @autobind
   handleQueryProduct(value) {
-    const { currentSelectedLevel1Indicator } = this.state;
-    const productCategoryObject = _.find(productCategroyCollection, item =>
-      item.value === currentSelectedLevel1Indicator) || EMPTY_OBJECT;
-
-    // 需要将产品大类传给后台
-    // 来自需求-自建任务结果指标包含累计“认购”产品金额
     if (!_.isEmpty(value)) {
       this.props.queryProduct({
         keyword: value,
-        productCategory: productCategoryObject.productCategory,
       });
     }
   }

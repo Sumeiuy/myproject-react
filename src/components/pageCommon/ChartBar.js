@@ -28,7 +28,12 @@ export default class ChartBar extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '绩效视图下钻',
+    },
+  })
   handleUpdateQueryState() {
     this.props.updateQueryState();
   }

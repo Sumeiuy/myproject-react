@@ -36,18 +36,21 @@ function columns() {
     key: 'brokerNumber',
     dataIndex: 'brokerNumber',
     width: '10%',
+    align: 'center',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '产品代码',
     dataIndex: 'productCode',
     key: 'productCode',
     width: '10%',
+    align: 'center',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     width: '15%',
+    align: 'center',
     render: item => (
       <div
         title={formatString(item)}
@@ -59,24 +62,28 @@ function columns() {
     dataIndex: 'exchangeNum',
     key: 'exchangeNum',
     width: '10%',
+    align: 'center',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '兑换日期',
     dataIndex: 'exchangeDate',
     key: 'exchangeDate',
     width: '10%',
+    align: 'center',
     render: item => (<span>{moment(item).format('YYYY-MM-DD') || '--'}</span>),
   }, {
     title: '手机号',
     dataIndex: 'phone',
     key: 'phone',
     width: '10%',
+    align: 'center',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '服务营业部',
     dataIndex: 'orgName',
     key: 'orgName',
     width: '15%',
+    align: 'center',
     render: item => (
       <div
         className={styles.nameColum}
@@ -129,8 +136,8 @@ export default class Home extends Component {
   // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
-    return date <= moment().subtract(3, 'months')
-   || date >= moment();
+    return (date <= moment().subtract(3, 'months')
+   || date > moment()) && date.format('YY-MM-DD') !== moment().format('YY-MM-DD');
   }
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
@@ -257,11 +264,6 @@ export default class Home extends Component {
             dataSource={exchangeList}
             pagination={false}
             className={styles.table}
-            // 默认文案配置
-            locale={{
-              // 空数据时的文案
-              emptyText: '暂无数据',
-            }}
           />
           <Pagination {...paganationOption} />
         </div>

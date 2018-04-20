@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
 
 import { time } from '../../../helper';
 import { optionsMap, request } from '../../../config';
@@ -92,7 +91,7 @@ export default class TabsExtra extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '时间周期',
       value: '$args[0]',
     },
   })
@@ -116,7 +115,7 @@ export default class TabsExtra extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '机构树',
       value: '$args[0].orgId',
     },
   })
@@ -146,10 +145,10 @@ export default class TabsExtra extends PureComponent {
     const urlParams = exportExcel();
     return (
       <div className={styles.timeBox}>
-        <div className={classnames(styles.icon, styles.kehuIcon)}>
+        <div className={styles.icon}>
           <Icon type={iconType || 'kehu'} />
         </div>
-        <div className="custRangeForCust">
+        <div className={styles.custRangeForCust}>
           {
             !_.isEmpty(custRange) ?
               <CustRange
@@ -179,13 +178,12 @@ export default class TabsExtra extends PureComponent {
           falseValue ? <div className={styles.separateLine} /> : null
         }
         {!isDown ?
-          <div>
+          <div className={styles.timeCycle}>
             <div className={styles.icon}>
               <Icon type="rili" />
             </div>
             <div className={styles.select}>
               <Select
-                style={{ width: 60 }}
                 value={selectValue}
                 onChange={this.handleChange}
               >

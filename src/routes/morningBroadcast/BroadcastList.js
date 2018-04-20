@@ -193,7 +193,13 @@ export default class BroadcastList extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: 'Click', payload: { name: '晨报标题$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '晨报标题',
+      value: '$args[0]',
+    },
+  })
   onHandleToDetail(newsId) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
@@ -217,6 +223,7 @@ export default class BroadcastList extends PureComponent {
       key: 'title',
       className: 'tableTitle',
       width: '35%',
+      align: 'left',
       render: (text, record) => {
         const newId = record.newsId;
         return (
@@ -235,17 +242,20 @@ export default class BroadcastList extends PureComponent {
       dataIndex: 'newsTypValue',
       width: '15%',
       key: 'type',
+      align: 'left',
     }, {
       title: '创建日期',
       dataIndex: 'created',
       width: '15%',
       key: 'date',
+      align: 'left',
     }, {
       title: '作者',
       dataIndex: 'createdBy',
       width: '15%',
       className: 'tableAuthor',
       key: 'author',
+      align: 'left',
       render: (text, record) => record.updatedBy || record.createdBy,
     }];
     if (permission.hasZXMampPermission()) {
@@ -255,6 +265,7 @@ export default class BroadcastList extends PureComponent {
         dataIndex: 'newsId',
         width: '6%',
         className: 'tableAction',
+        align: 'left',
         render: newsId => (
           <span>
             <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
@@ -353,7 +364,7 @@ export default class BroadcastList extends PureComponent {
 
   // Model(晨报新增、修改) --> start
   @autobind()
-  @logPV({ pathname: '/modal/createModal', title: '' })
+  @logPV({ pathname: '/modal/createModal', title: '晨报新增或修改' })
   showModal(newsId = -1) {
     this.setState({
       visible: true,
@@ -502,11 +513,6 @@ export default class BroadcastList extends PureComponent {
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
               pagination={false}
-              // 默认文案配置
-              locale={{
-                // 空数据时的文案
-                emptyText: '暂无数据',
-              }}
             />
             <Pagination {...paginationOption} />
           </div>

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-11 19:42:51
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-19 09:39:35
  * 任务调查
  */
 
@@ -140,20 +140,6 @@ export default class MissionInvestigation extends PureComponent {
     }
   }
 
-  // 数据校验
-  @autobind
-  requiredDataValidate() {
-    const {
-      checked,
-      currentSelectRowKeys,
-    } = this.state;
-    if (checked && _.isEmpty(currentSelectRowKeys)) {
-      this.setState({
-        isShowError: true,
-      });
-    }
-  }
-
   /**
    * 浮层渲染到父节点
    */
@@ -200,6 +186,20 @@ export default class MissionInvestigation extends PureComponent {
     };
   }
 
+  // 数据校验
+  @autobind
+  requiredDataValidate() {
+    const {
+        checked,
+      currentSelectRowKeys,
+      } = this.state;
+    if (checked && _.isEmpty(currentSelectRowKeys)) {
+      this.setState({
+        isShowError: true,
+      });
+    }
+  }
+
   /**
  * 获取modalContainer引用
  */
@@ -213,7 +213,13 @@ export default class MissionInvestigation extends PureComponent {
    * @param {*string} currentDeleteId 当前删除的问题id
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除问题$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除问题',
+      value: '$args[0]',
+    },
+  })
   handleDeleteQuestion(currentDeleteId, quesId) {
     const {
       newQuestionAndAnswerGroup,
@@ -273,8 +279,6 @@ export default class MissionInvestigation extends PureComponent {
     if (checked && !_.isEmpty(currentSelectRowKeys)) {
       // message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
       confirm({
-        okText: '确定',
-        cancelText: '取消',
         title: '提示',
         content: '您已设置任务调查问题，如果取消选择将不对此任务进行任务调查',
         onOk: () => {

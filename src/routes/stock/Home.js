@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-02 09:53:10
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:29:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -129,7 +129,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab：' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
@@ -164,13 +164,25 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$state.keyword关键字搜索' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索',
+      value: '$state.keyword',
+    },
+  })
   handlerEnterSearch() {
     this.searchHandle();
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$state.keyword关键字查询' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '关键字查询',
+      value: '$state.keyword',
+    },
+  })
   handleClickSearch() {
     this.searchHandle();
   }
@@ -287,11 +299,6 @@ export default class Stock extends PureComponent {
                   onClick: () => this.rowClickHandle(record),       // 点击行
                 })}
                 rowKey="id"
-                // 默认文案配置
-                locale={{
-                  // 空数据时的文案
-                  emptyText: '暂无数据',
-                }}
               />
               <Pagination {...paginationOption} />
             </TabPane>))

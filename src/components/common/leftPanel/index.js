@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-12 10:39:48
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:17:56
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:27:35
  */
 
 import React, { PureComponent } from 'react';
@@ -137,7 +137,13 @@ export default class LeftPanel extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(nextPage, currentPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -234,7 +240,13 @@ export default class LeftPanel extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { location: { query, pathname }, replace } = this.props;
     // 替换当前页码和分页条目
@@ -301,11 +313,6 @@ export default class LeftPanel extends PureComponent {
               return 'active';
             }
             return '';
-          }}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
           }}
         />
       </div >

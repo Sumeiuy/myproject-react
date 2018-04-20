@@ -86,7 +86,13 @@ export default class SingleFilter extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '单选filter为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '单选',
+      value: '$args[0]',
+    },
+  })
   handleClick(value) {
     const { filter, onChange } = this.props;
     this.setState({

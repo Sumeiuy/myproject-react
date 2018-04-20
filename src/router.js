@@ -40,7 +40,7 @@ import PermissonEdit from './routes/permission/Edit';
 import Contract from './routes/contract/Home';
 import Form from './routes/contract/Form';
 import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
-import TaskListHome from './routes/taskList/Home';
+import TaskListHome from './routes/taskList/connectedHome';
 import Demote from './routes/demote/Home';
 import RelationHome from './routes/relation/Home';
 import CustomerFeedback from './routes/customerFeedback/Home';
@@ -72,52 +72,91 @@ const { ConnectedRouter } = routerRedux;
 const routes = [
   { path: '/empty', component: Empty },
   { path: '/phone', component: Phone },
+  // 直接进入
   { path: '/report', component: ReportHome },
+  // 直接进入
   { path: '/boardManage', component: BoardManageHome },
+  // 从 boardManage 页面点击看板进入
   { path: '/boardEdit', component: BoardEditHome },
+  // 在 boardEdit 页面右下角点击预览进入
   { path: '/preview', component: PreviewReport },
+  // 再 report 页面左上角下拉列表-自定义看板-选择一个点击进入
   { path: '/history', component: HistoryHome },
+  // 直接进入
   { path: '/feedback', component: FeedBack },
+  // 直接进入
   { path: '/commission', component: CommissionHome },
+  // ['佣金调整', '资讯订阅', '资讯退订']
+  // const arr = ['SINGLE', 'SUBSCRIBE', 'UNSUBSCRIBE']
+  // 从 commission 页面左侧列表中选择一条类型在 arr 中的数据，找到返回数据中的 flowCode 或 flowId
+  // localhost:9088/#/commissionChange?flowId=xxxxxx&type=SINGLE
+  // type 为对应的类型值
   { path: '/commissionChange', component: CommissionChangeHome },
+  // 直接进入没有数据，需要一个 custid，不知道是什么
   { path: '/commissionAdjustment', component: CommissionAdjustmentHome },
+  // 可直接进入看页面，所需数据未知
   { path: '/preSaleQuery', component: PreSaleQuery },
+  // 可直接进入，部分公用组件的展示路由
   { path: '/modal', component: TemplModal },
+  // 需要有权限的角色进入
   { path: '/relation', component: RelationHome },
+  // 直接进入，拼接 url 为 localhost:9088/?empId=002332&grayFlag=true#/tasklist 打开所有下拉选项
   { path: '/taskList', component: TaskListHome },
+  // 直接进入
   { path: '/exchange', component: Exchange },
+  // 直接进入
   {
     path: '/permission',
     component: PermissonHome,
     children: [
+      // 从 permission 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+      // 拼接路由 /permission/edit?flowId=xxxxxxxx&empId=xxxx，
+      // empId 需要设置为 edit 获取到的详情里的审批人
+      // 由此进入为有数据页面
       { path: '/edit', component: PermissonEdit },
     ],
   },
+  // 直接进入
   {
     path: '/contract',
     component: Contract,
     children: [
+      // 从 contract 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+      // 拼接路由 /contract/form?flowId=xxxxxxxx&empId=xxxx,
+      // empId 需要设置为 edit 获取到的详情里的审批人
+      // 由此进入为有数据页面
       { path: '/form', component: Form },
     ],
   },
+  // 直接进入
   {
     path: '/channelsTypeProtocol',
     component: ChannelsTypeProtocol,
     children: [
+      // 从 channelsTypeProtocol 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+      // 拼接路由 /channelsTypeProtocol/edit?flowId=xxxxxxxx&empId=xxxx,
+      // empId 需要设置为 edit 获取到的详情里的审批人
+      // 由此进入为有数据页面
       { path: '/edit', component: ChannelsTypeProtocolEdit },
     ],
   },
+  // 直接进入
   {
     path: '/customerPool',
     component: CustomerPoolHome,
     children: [
+      // 从 customerPool 页面右下角资讯列表任意标题进入
       { path: '/viewpointDetail', component: ViewpointDetail },
+      // 从 customerPool 页面右下角资讯列表--更多进入
       { path: '/viewpointList', component: ViewpointList },
-      // todo
+      // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
       { path: '/todo', component: ToDo },
+      // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
       { path: '/list', component: CustomerList },
+      // customerPool/customerGroup 直接进入，所需数据未知
       { path: '/customerGroup', component: CustomerGroup },
       // 分组管理发起任务
+      // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
       { path: '/createTaskFromCustGroup', component: CreateTask },
       // 管理者视图进度条发起任务
       { path: '/createTaskFromProgress', component: CreateTask },
@@ -132,55 +171,77 @@ const routes = [
       // 客户分组管理
       { path: '/customerGroupManage', component: CustomerGroupManage },
       { path: '/serviceLog', component: ServiceLog },
+      // 从 /taskList 页面，点击右上角新建进入
       { path: '/taskFlow', component: TaskFlow },
     ],
   },
+  // 从 FSP 消息提醒进入，亦可直接进入，需要数据需后台配置
   {
     path: '/demote',
     component: Demote,
   },
+  // 直接进入
   {
     path: '/filialeCustTransfer',
     component: FilialeCustTransfer,
     children: [
+      // 从 filialeCustTransfer 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+      // 拼接路由 /filialeCustTransfer/edit?flowId=xxxxxxxx&empId=xxxx,
+      // empId 需要设置为 edit 获取到的详情里的审批人
+      // 由此进入为有数据页面
       { path: '/edit', component: FilialeCustTransferEdit },
+      // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
       { path: '/notifies', component: FilialeCustTransferNotifies },
     ],
   },
+  // 直接进入
   {
     path: '/customerFeedback',
     component: CustomerFeedback,
   },
+  // 直接进入
   {
     path: '/taskFeedback',
     component: TaskFeedback,
   },
+  // 直接进入
   {
     path: '/mainPosition',
     component: MainPosition,
     children: [
+      // 从 mainPosition 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+      // 拼接路由 /mainPosition/edit?flowId=xxxxxxxx&empId=xxxx,
+      // empId 需要设置为 edit 获取到的详情里的审批人
+      // 由此进入为有数据页面
       { path: '/edit', component: MainPositionEdit },
+      // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId
       { path: '/notifies', component: MainPositionNotifies },
     ],
   },
   // 晨间播报
+  // 直接进入，或从 customerPool 页面右侧-晨间播报-更多进入
   {
     path: '/broadcastList',
     component: BroadcastList,
   },
+  // 从 broadcastList 点击任意记录进入
   { path: '/broadcastDetail', component: BroadcastDetail },
   // 个股点评
+  // 直接进入
   {
     path: '/stock',
     component: Stock,
     children: [
+      // 在 stock 页面的列表中点击任意记录进入
       { path: '/detail', component: StockDetail },
     ],
   },
+  // 直接进入
   {
     path: '/userCenter',
     component: UserBasicInfo,
     children: [
+      // userCenter/userInfoApproval 直接进入，需要参数未知
       {
         path: '/userInfoApproval',
         component: userInfoApproval,

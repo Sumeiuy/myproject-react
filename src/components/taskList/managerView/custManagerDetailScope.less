@@ -3,46 +3,93 @@
 .container {
   display: block;
   width: 100%;
-  // ['170px', '100px', '100px', '100px', '100px', '100px' , '150px']
+  // ['150px', '120px', '120px', '120px', '120px', '120px', '180px'];
   .notFoldedScope {
-    table {
-      tbody > tr > td:nth-child(1) {
-        :global {
-          .column {
+    // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，内容文本宽度其实不长，但是为了自适应
+    // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
+    // 主要是因为用了左右滚动加上左边是一个fixed的table
+    :global {
+      .ant-table-scroll {
+        colgroup {
+          col:first-child {
             max-width: 150px;
           }
         }
-      }
-      tbody > tr > td:last-child {
-        :global {
-          .column {
-            max-width: 130px;
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 120px;
+              }
+            }
+          }
+          tbody > tr > td:last-child {
+            :global {
+              .column {
+                max-width: 170px;
+              }
+            }
+          }
+          tbody > tr > td:not(:first-child):not(:last-child) {
+            :global {
+              .column {
+                max-width: 110px;
+              }
+            }
           }
         }
       }
-      tbody > tr > td:not(:first-child):not(:last-child) {
-        :global {
-          .column {
-            max-width: 90px;
+      .ant-table-fixed-left {
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 120px;
+              }
+            }
           }
         }
       }
     }
   }
-  // ['310px', '160px', '160px', '160px', '160px', '160px', '160px']
+  // ['150px', '180px', '180px', '180px', '180px', '180px', '180px'];
   .foldedScope {
-    table {
-      tbody > tr > td:nth-child(1) {
-        :global {
-          .column {
-            max-width: 280px;
+    // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，
+    // 内容文本宽度其实不长，但是为了自适应
+    // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
+    // 主要是因为用了左右滚动加上左边是一个fixed的table
+    :global {
+      .ant-table-scroll {
+        colgroup {
+          col:first-child {
+            max-width: 150px;
+          }
+        }
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 120px;
+              }
+            }
+          }
+          tbody > tr > td:not(:first-child) {
+            :global {
+              .column {
+                max-width: 170px;
+              }
+            }
           }
         }
       }
-      tbody > tr > td:not(:first-child) {
-        :global {
-          .column {
-            max-width: 140px;
+      .ant-table-fixed-left {
+        table {
+          tbody > tr > td:nth-child(1) {
+            :global {
+              .column {
+                max-width: 120px;
+              }
+            }
           }
         }
       }
@@ -79,7 +126,7 @@
     }
     table > thead > tr > th:first-child {
       span {
-        margin-left: 36px;
+        margin-left: 20px;
       }
     }
     table > thead > tr > th:nth-child(2) {
@@ -95,11 +142,21 @@
     table > tbody > tr > td:first-child {
       :global {
         .column {
-          margin-left: 36px;
+          margin-left: 40px;
         }
       }
     }
     :global {
+      .commonPage {
+        margin-right: 10px;
+      }
+      .ant-table-fixed-left.ant-table-body-inner {
+        margin-right: 0;
+        padding-right: 0;
+      }
+      .ant-table {
+        box-shadow: 0 2px 2px 0p #efefef;
+      }
       .ant-table-header {
         background-color: #fff;
         table {
@@ -114,6 +171,7 @@
         width: 100%;
         justify-content: flex-start;
         align-items: center;
+        border-bottom: 0;
       }
       .ant-table-footer {
         border: 1px solid #e9e9e9;
@@ -124,24 +182,6 @@
         align-items: center;
         background: #fff;
         height: 54px;
-      }
-      .ant-table-scroll {
-        border-right: 1px solid #e9e9e9;
-        .ant-table-body {
-          border-left: 1px solid #e9e9e9;
-        }
-        table {
-          border-right: 0;
-        }
-      }
-      .ant-table-fixed-left {
-        table {
-          border-right: 1px solid #e9e9e9;
-        }
-      }
-      .commonPage {
-        // margin-top: 0;
-        // padding-top: 0;
       }
       .selfPagination {
         margin-right: 0;
@@ -154,6 +194,41 @@
             margin-top: 10px;
             margin-bottom: 10px;
           }
+        }
+      }
+      // 去除表头的上下不顶头的border
+      .ant-table-scroll {
+        table > thead > tr > th:after,
+        table > thead > tr > th:before {
+          border: 0;
+        }
+        table > thead > tr > th {
+          background-color: #f7f7f7;
+        }
+        table > thead > tr > th:last-child {
+          background-clip: content-box;
+          padding-right: 20px;
+          line-height: 38px;
+          padding-top: 0;
+          padding-bottom: 0;
+          margin: 0;
+        }
+      }
+      // 利用background-clip属性将背景色置为容器内的背景
+      .ant-table-fixed-left {
+        .ant-table-fixed {
+          & > thead > tr > th:after, & > thead > tr > th:last-child:before {
+            border: 0;
+          }
+        }
+        table > thead > tr > th:first-child {
+          background-color: #f7f7f7;
+          background-clip: content-box;
+          padding-left: 20px;
+          line-height: 38px;
+          padding-top: 0;
+          padding-bottom: 0;
+          margin: 0;
         }
       }
     }

@@ -131,7 +131,13 @@ export default class TableDialog extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索',
+      value: '$args[0]',
+    },
+  })
   handleSearch(value) {
     const { onSearch } = this.props;
     onSearch(value);
@@ -157,6 +163,12 @@ export default class TableDialog extends Component {
       return null;
     }
 
+    const newColumns = columns.map(item => (
+      {
+        ...item,
+        align: item.align || 'center',
+      }
+    ));
     const rowSelection = {
       type: 'radio',
       onChange: this.onSelectChange,
@@ -185,14 +197,9 @@ export default class TableDialog extends Component {
         <Table
           rowKey={record => record[rowKey]}
           rowSelection={rowSelection}
-          columns={columns}
+          columns={newColumns}
           dataSource={dataSource}
           pagination={false}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
-          }}
         />
       </Modal>
     );

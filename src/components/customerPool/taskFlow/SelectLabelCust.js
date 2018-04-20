@@ -4,6 +4,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Input } from 'antd';
 import TaskSearchRow from './TaskSearchRow';
+import { padSightLabelDesc } from '../../../config';
 import { emp, fsp } from '../../../helper';
 import styles from './selectLabelCust.less';
 import logable from '../../../decorators/logable';
@@ -143,7 +144,9 @@ export default class SelectLabelCust extends PureComponent {
       // 任务提示
       // 来自瞄准镜标签，则展示变量任务提示
       // 来自普通标签，则展示普通任务提示
-      missionDesc: isSightLabel(source) ? `该客户筛选自$瞄准镜标签#${labelId}#` : `该客户筛选自${labelName},`,
+      missionDesc: padSightLabelDesc(isSightLabel(source), labelId, labelName),
+      // 是不是瞄准镜标签
+      isSightLabel: isSightLabel(source),
     };
 
     return {
@@ -152,7 +155,13 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0]关键字搜索标签名称' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索标签名称',
+      value: '$args[0]',
+    },
+  })
   handleSearchClick(value) {
     const {
       getLabelInfo,

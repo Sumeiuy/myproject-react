@@ -148,7 +148,13 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '电话联系$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '电话联系',
+      value: '$args[0]',
+    },
+  })
   handleTelephoneClick(listItem) {
     this.props.createModal(listItem);
   }

@@ -21,8 +21,8 @@ import InfoArea from '../managerView/InfoArea';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './performerViewDetail.less';
 
+// 每页条数
 const PAGE_SIZE = 10;
-const PAGE_NO = 1;
 
 const create = Form.create;
 
@@ -33,6 +33,7 @@ export default class PerformerViewDetail extends PureComponent {
     basicInfo: PropTypes.object.isRequired,
     isFold: PropTypes.bool,
     dict: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     parameter: PropTypes.object.isRequired,
     currentId: PropTypes.string.isRequired,
     changeParameter: PropTypes.func.isRequired,
@@ -47,7 +48,15 @@ export default class PerformerViewDetail extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
+    eventId: PropTypes.string,
+    taskTypeCode: PropTypes.string,
     modifyLocalTaskList: PropTypes.func.isRequired,
+    // 涨乐财富通服务方式下的客户反馈列表以及查询方法
+    queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
+    custFeedbackList: PropTypes.array.isRequired,
+    // 涨乐财富通服务方式下的审批人列表以及查询方法
+    queryApprovalList: PropTypes.func.isRequired,
+    zhangleApprovalList: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
   }
 
@@ -56,6 +65,8 @@ export default class PerformerViewDetail extends PureComponent {
     answersList: {},
     saveAnswersSucce: false,
     statusCode: '',
+    eventId: '',
+    taskTypeCode: '',
   }
 
   constructor(props) {
@@ -124,28 +135,21 @@ export default class PerformerViewDetail extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '状态',
-      value: '$args[1]',
-    },
-  })
+  @logable({ type: 'DropdownSelect', payload: { name: '状态', value: '$args[1]' } })
   handleStateChange(key, v) {
-    const {
-      changeParameter,
-    } = this.props;
+    const { changeParameter } = this.props;
+
     changeParameter({
       [key]: v,
-      targetCustomerPageSize: PAGE_SIZE,
-      targetCustomerPageNo: PAGE_NO,
+      targetCustomerPageSize: 10,
+      targetCustomerPageNo: 1,
       targetCustId: '',
       targetMissionFlowId: '',
     });
     this.queryTargetCustInfo({
       state: v,
-      pageSize: PAGE_SIZE,
-      pageNum: PAGE_NO,
+      pageSize: 10,
+      pageNum: 1,
     });
   }
 
@@ -154,12 +158,7 @@ export default class PerformerViewDetail extends PureComponent {
    */
   @autobind
   reloadTargetCustInfo(callback) {
-    const {
-      parameter: {
-        targetCustId,
-        targetMissionFlowId,
-      },
-    } = this.props;
+    const { parameter: { targetCustId, targetMissionFlowId } } = this.props;
     this.requeryTargetCustDetail({
       custId: targetCustId,
       missionFlowId: targetMissionFlowId,
@@ -192,9 +191,7 @@ export default class PerformerViewDetail extends PureComponent {
       checkBoxQuesId: _.map(checkBoxQuesId, item => item.quesId),
     });
     if (!_.isEmpty(answersList)) {
-      this.setState({
-        visible: true,
-      });
+      this.setState({ visible: true });
     }
   }
 
@@ -229,9 +226,7 @@ export default class PerformerViewDetail extends PureComponent {
       }
 
       if (!_.isEmpty(err)) {
-        this.setState({
-          visible: true,
-        });
+        this.setState({ visible: true });
         // 判断单个单选题是否勾选
       } else if (!allCheckbox) {
         const params = {
@@ -351,6 +346,23 @@ export default class PerformerViewDetail extends PureComponent {
     this.handleRepeatData(initAreaText, params, 'areaTextData');
   }
 
+  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+  @autobind
+  getServeStatusSelectOptionsData(serveStatus) {
+    const allCustOption = {
+      value: '',
+      label: '所有客户',
+      show: true,
+    };
+    const stateData = serveStatus.map(o => ({
+      value: o.key,
+      label: o.value,
+      show: true,
+    }));
+    stateData.unshift(allCustOption);
+    return stateData;
+  }
+
   render() {
     const {
       basicInfo,
@@ -365,25 +377,12 @@ export default class PerformerViewDetail extends PureComponent {
       currentId,
       form,
     } = this.props;
-    const {
-      visible,
-      keyIndex,
-      isDisabled,
-      isShowErrorCheckbox,
-     } = this.state;
+    const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
-    const { serveStatus = [] } = dict || {};
+    const { serveStatus = [] } = dict;
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = (serveStatus || []).map(o => ({
-      value: o.key,
-      label: o.value,
-      show: true,
-    }));
-    stateData.unshift({
-      value: '',
-      label: '所有客户',
-      show: true,
-    });
+    const stateData = this.getServeStatusSelectOptionsData(serveStatus);
+    // 分页器配置
     const curPageNo = targetCustomerPageNo || page.pageNum;
     const curPageSize = targetCustomerPageSize || page.pageSize;
     const paginationOption = {
@@ -431,10 +430,7 @@ export default class PerformerViewDetail extends PureComponent {
           {`${missionName || '--'}: ${missionStatusName || '--'}`}
           {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
         </p>
-        <InfoArea
-          data={basicInfoData}
-          headLine={'基本信息'}
-        />
+        <InfoArea data={basicInfoData} headLine={'基本信息'} />
         <div className={styles.serviceImplementation}>
           <LabelInfo value="服务实施" />
           <div className={styles.listControl}>
@@ -448,11 +444,8 @@ export default class PerformerViewDetail extends PureComponent {
               />
             </div>
             <div className={styles.pagination}>
-              <Pagination
-                {...paginationOption}
-              />
+              <Pagination {...paginationOption} />
             </div>
-            {/* <div className={styles.total}>共 <span>{page.totalCount}</span> 位客户</div> */}
           </div>
           {
             _.isEmpty(list) ?

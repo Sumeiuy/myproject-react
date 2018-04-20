@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 09:10:06
+ * @Last Modified time: 2018-04-19 09:41:43
  * 服务经理维度任务统计
  */
 
@@ -12,14 +12,17 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Table from '../../common/commonTable';
+import antdStyles from '../../../css/antd.less';
 import styles from './custManagerDetailScope.less';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
+
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const INITIAL_PAGE_SIZE = 5;
 const INITIAL_PAGE_NUM = 1;
+const NOOP = _.noop;
 
 export default class CustManagerDetailScope extends PureComponent {
 
@@ -28,12 +31,14 @@ export default class CustManagerDetailScope extends PureComponent {
     currentOrgLevel: PropTypes.string,
     // 是否处于折叠状态
     isFold: PropTypes.bool,
+    getCustManagerScope: PropTypes.func,
   }
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     currentOrgLevel: '',
     isFold: false,
+    getCustManagerScope: NOOP,
   }
 
   constructor(props) {
@@ -55,6 +60,20 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * 切换分页
+   * @param {*number} pageNum 当前分页
+   * @param {*number} pageSize 当前页码
+   */
+  @autobind
+  handlePageChange(pageNum, pageSize) {
+    const { getCustManagerScope } = this.props;
+    getCustManagerScope({
+      pageNum,
+      pageSize,
+    });
+  }
+
+  /**
    * 渲染服务经理的姓名和工号在一列
    * @param {*object} record 当前行记录
    */
@@ -62,7 +81,7 @@ export default class CustManagerDetailScope extends PureComponent {
   renderManagerNameId(record = EMPTY_OBJECT) {
     const { empName, login } = record;
     return (
-      <span>{empName}（{login}）</span>
+      <span>{empName || '--'}（{login || '--'}）</span>
     );
   }
 
@@ -85,8 +104,19 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   renderTableTitle() {
     return (
-      <span className={`${styles.tableTitle} tableTitle`}>服务经理</span>
+      <span className={`${styles.tableTitle} tableTitle`}>服务经理维度</span>
     );
+  }
+
+  /**
+   * 渲染列的数据，在省略打点的时候，悬浮的title内容，因为有可能一列展示两列内容
+   * 所以需要自定义，不需要自定义的时候，Table的column直接展示当前内容
+   * @param {*object} record 当前行记录
+   */
+  @autobind
+  renderCoulmnTitleTooltip(record = EMPTY_OBJECT) {
+    const { empName, login } = record;
+    return `${empName}（${login}）`;
   }
 
   /**
@@ -98,8 +128,9 @@ export default class CustManagerDetailScope extends PureComponent {
     // 如果是营业部层级，则只展示基本的5列数据
     let columnTitle = [{
       key: 'login',
-      value: '服务经理姓名工号',
+      value: '服务经理',
       render: this.renderManagerNameId,
+      renderTitle: this.renderCoulmnTitleTooltip,
     }, {
       key: 'flowNum',
       value: '客户总数',
@@ -159,32 +190,32 @@ export default class CustManagerDetailScope extends PureComponent {
     let columnWidthTotal = 0;
 
     if (isFold) {
-      columnWidthTotal = 950;
-      // 列的总宽度950px
+      columnWidthTotal = 870;
+      // 列的总宽度870px
       // 处于折叠状态，每一列的宽度需要增加
-      columnWidth = ['310px', '160px', '160px', '160px', '160px'];
+      columnWidth = ['150px', '180px', '180px', '180px', '180px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '160px', '160px'];
-        columnWidthTotal = 1270;
+        columnWidth = [...columnWidth, '180px', '180px'];
+        columnWidthTotal = 1230;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '160px'];
-        columnWidthTotal = 1110;
+        columnWidth = [...columnWidth, '180px'];
+        columnWidthTotal = 1050;
       }
     } else {
-      columnWidthTotal = 570;
+      columnWidthTotal = 630;
       // 处于展开状态,
-      // 列的总宽度570px
-      columnWidth = ['170px', '100px', '100px', '100px', '100px'];
+      // 列的总宽度630px
+      columnWidth = ['150px', '120px', '120px', '120px', '120px'];
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
-        columnWidth = [...columnWidth, '100px', '150px'];
-        columnWidthTotal = 820;
+        columnWidth = [...columnWidth, '120px', '180px'];
+        columnWidthTotal = 930;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
-        columnWidth = [...columnWidth, '150px'];
-        columnWidthTotal = 720;
+        columnWidth = [...columnWidth, '180px'];
+        columnWidthTotal = 810;
       }
     }
 
@@ -212,7 +243,6 @@ export default class CustManagerDetailScope extends PureComponent {
             totalRecordNum: totalCount,
           }}
           listData={this.addIdToDataSource(list)}
-          onSizeChange={this.handleShowSizeChange}
           onPageChange={this.handlePageChange}
           tableClass={
             classnames({
@@ -221,6 +251,7 @@ export default class CustManagerDetailScope extends PureComponent {
               [styles.notFoldedScope]: !isFold,
               // 折叠的样式
               [styles.foldedScope]: isFold,
+              [antdStyles.tableHasBetweenSpace]: true,
             })
           }
           columnWidth={columnWidth}

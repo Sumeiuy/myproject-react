@@ -57,8 +57,6 @@ export default class TreeDetail extends Component {
   handleDelete(param) {
     const that = this;
     confirm({
-      okText: '确定',
-      cancelText: '取消',
       title: '确认要删除吗?',
       content: '确认后，操作将不可取消。',
       onOk() { that.props.onDelete(param); },

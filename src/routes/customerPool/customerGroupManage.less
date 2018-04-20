@@ -8,6 +8,14 @@
   min-height: e("calc(100vh - 186px)");
   .groupTableContainer {
     padding: 15px 20px 15px 15px;
+    :global {
+      table > thead > tr > th, tbody > tr > td {
+        text-align: center;
+      }
+      table > thead > tr > th {
+        text-align: center;
+      }
+    }
   }
   :global {
     .column {

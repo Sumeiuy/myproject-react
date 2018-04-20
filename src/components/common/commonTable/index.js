@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 13:41:39
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:27:26
  */
 
 import React, { PureComponent } from 'react';
@@ -158,13 +158,25 @@ export default class CommonTable extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'Page为$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'Page',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(page, pageSize) {
     this.props.onPageChange(page, pageSize);
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: 'PageSize为$args[1]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: 'PageSize',
+      value: '$args[1]',
+    },
+  })
   handlePageSizeChange(current, size) {
     this.props.onSizeChange(current, size);
   }
@@ -258,7 +270,7 @@ export default class CommonTable extends PureComponent {
                 })}
             >
               <span
-                title={record[item.key]}
+                title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
                 className={styles.link}
                 onClick={() => firstColumnHandler(record, item.value)}
               >
@@ -291,7 +303,7 @@ export default class CommonTable extends PureComponent {
         }
 
         return (
-          <span title={record[item.key]} className={'column'}>
+          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className={'column'}>
             {this.renderColumnValue(record, item)}
           </span>
         );
@@ -439,11 +451,6 @@ export default class CommonTable extends PureComponent {
           pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
-          }}
           {...titleProp}
           {...footerProp}
         />

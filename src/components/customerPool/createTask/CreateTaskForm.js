@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
+import { isSightingScope } from '../helper';
 import {
   RETURN_TASK_FROM_TODOLIST,
   RETURN_TASK_FROM_TASKLIST,
@@ -20,6 +21,11 @@ import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 const NOOP = _.noop;
+// const EMPTY_OBJECT = {};
+
+// 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
+// \s*匹配0个或多个空格，尽量可能匹配多个空格
+const sightLabelPattern = /该客户筛选自\s*$/;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
@@ -42,6 +48,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
     templetDesc: PropTypes.string,
+    isSightLabel: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -230,7 +237,7 @@ export default class CreateTaskForm extends PureComponent {
     }
     // 如果url上存在missionDesc，那么将任务提示填值
     if (missionDesc) {
-      defaultMissionDesc = missionDesc;
+      defaultMissionDesc = decodeURIComponent(missionDesc);
     }
     // 如果props上存在任务提示，则作为默认值
     if (templetDesc) {
@@ -251,6 +258,20 @@ export default class CreateTaskForm extends PureComponent {
     });
   }
 
+  /**
+   * 瞄准镜发起任务时，构造的mention suggestion
+   * @param {*string} templetDesc 构造好的任务提示
+   */
+  @autobind
+  renderMissionDescSuggestion(templetDesc) {
+    const type = _.replace(templetDesc, sightLabelPattern, '');
+
+    return {
+      type,
+      name: type,
+      isSightingScope: true,
+    };
+  }
 
   render() {
     const {
@@ -264,6 +285,9 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
       custCount,
+      templetDesc,
+      location: { query },
+      isSightLabel,
     } = this.props;
     const { executeTypes, missionType = [] } = dict || {};
     // 拿到自建任务需要的missionType
@@ -281,6 +305,17 @@ export default class CreateTaskForm extends PureComponent {
       count,
       statusData,
     } = this.state;
+    const { missionDesc, source } = query || {};
+    // 构造suggestion给mention
+    let templetDescSuggestion = {};
+
+    // 来自taskFlow标签圈人的瞄准镜标签
+    if (templetDesc && isSightLabel) {
+      templetDescSuggestion = this.renderMissionDescSuggestion(templetDesc);
+    } else if (missionDesc && isSightingScope(source)) {
+      // 来自搜索瞄准镜标签
+      templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
+    }
 
     return (
       <div>
@@ -310,6 +345,7 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorTaskName={isShowErrorTaskName}
             defaultTaskSubType={defaultTaskSubType}
             isShowErrorTaskSubType={isShowErrorTaskSubType}
+            templetDescSuggestion={templetDescSuggestion}
             wrappedComponentRef={ref => this.taskFormInfoRef = ref}
           />
         </div>
