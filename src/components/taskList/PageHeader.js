@@ -24,6 +24,7 @@ import {
   CONTROLLER,
   currentDate,
   dateFormat,
+  beforeCurrentDate60Days,
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
@@ -34,7 +35,6 @@ import {
 import styles from './pageHeader.less';
 
 const Search = Input.Search;
-const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;

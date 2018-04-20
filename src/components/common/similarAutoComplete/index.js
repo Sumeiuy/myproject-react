@@ -119,18 +119,18 @@ export default class SimilarAutoComplete extends PureComponent {
   @autobind
   handleSelect(value, selectItem) {
     if (value) {
-      const { onSelect, optionList, showIdKey, optionKey } = this.props;
-      // 当前的选中值
-      this.currentSelect = _.find(
-        optionList,
-        item => item[optionKey || showIdKey] === selectItem.key,
-      );
-      onSelect(this.currentSelect);
-
       // 更新state中的值
       this.setState({
         value,
         typeStyle: 'clear',
+      }, () => {
+        const { onSelect, optionList, showIdKey, optionKey } = this.props;
+        // 当前的选中值
+        this.currentSelect = _.find(
+          optionList,
+          item => item[optionKey || showIdKey] === selectItem.key,
+        );
+        onSelect(this.currentSelect);
       });
     }
   }
@@ -254,6 +254,7 @@ export default class SimilarAutoComplete extends PureComponent {
         // 当输入框变化时，AutoComplete 组件会先调用 onSearch 方法，在调用 onChange 方法
         // 添加 onSearch 属性，可实现即时搜索
         onSearch={this.handleImmediatelySearch}
+        ref={ref => this.autoCompleteComponent = ref}
       >
         <Input
           suffix={
