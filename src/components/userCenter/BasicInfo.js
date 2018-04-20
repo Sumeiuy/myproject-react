@@ -459,16 +459,13 @@ export default class BasicInfo extends PureComponent {
                                     >
                                       <Tag
                                         color="gold"
+                                        className={styles.addLabel}
                                       >
-                                        <div
-                                          className={styles.addLabel}
-                                        >
-                                          {
-                                            selectLabelState ?
-                                              (<span>请选择标签<Icon type="xiangxia" /></span>) :
-                                              (<span><Icon type="jia" /> 添加标签</span>)
-                                          }
-                                        </div>
+                                        {
+                                          selectLabelState ?
+                                            (<span>请选择标签<Icon type="xiangxia" /></span>) :
+                                            (<span><Icon type="jia" /> 添加标签</span>)
+                                        }
                                       </Tag>
                                     </Popover> :
                                     null

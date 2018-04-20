@@ -46,8 +46,14 @@
     .inputWrap {
       width: 100%;
       color: #4a4a4a;
+      textarea {
+        font-size: 14px;
+      }
       .addLabel {
         cursor: pointer;
+        background: #fff;
+        border: 1px solid #fcd2a6;
+        border-style: dashed;
       }
       & >div {
         cursor: auto;
@@ -72,6 +78,7 @@
       :global {
         label {
           color: #aaa;
+          font-size: 14px;
         }
       }
     }
@@ -133,6 +140,22 @@
         }
         b {
           margin-right: 7px;
+        }
+      }
+    }
+    .ant-tag {
+      .anticon-cross {
+        color: #d67c1e;
+      }
+    }
+    .ant-tag-gold {
+      background: #fef7f0;
+      border: 1px solid #fcd2a6;
+      color: #d67c1e;
+      &:hover {
+        color: #faad14;
+        .anticon-cross {
+          color: #faad14;
         }
       }
     }
