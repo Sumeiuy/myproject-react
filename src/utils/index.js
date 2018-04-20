@@ -17,7 +17,6 @@ import {
 
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
-import globalCaptureDialog from './globalCaptureDialog';
 
 export default {
   apiCreator,
@@ -36,5 +35,4 @@ export default {
   navTo,
   linkTo,
   saveTabUrl,
-  globalCaptureDialog,
 };

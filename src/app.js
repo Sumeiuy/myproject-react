@@ -20,7 +20,7 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
-import { globalCaptureDialog as errorDialog } from './utils';
+import showErrorDialog from '../src/components/common/globalCaptureDialog';
 import { dva as dvaHelper, dom } from './helper';
 
 // 尝试通过给body添加class来达到覆盖antd v3的样式
@@ -41,12 +41,12 @@ const onError = (e) => {
   // 都走门户的验证，门户返回的html，JSON parse报错即认为超时
   if (msg.indexOf(ERROR_SEPARATOR) > -1) {
     const [errorMessage, messageType] = msg.split(ERROR_SEPARATOR);
-    if (messageType === '0') {
+    if (+messageType === 0) {
       // 错误类型是0，用message.error
       message.error(errorMessage);
-    } else if (messageType === '1') {
+    } else if (+messageType === 1) {
       // 错误类型是1，用dialog
-      errorDialog(errorMessage);
+      showErrorDialog(errorMessage);
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
