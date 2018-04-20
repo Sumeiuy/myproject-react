@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 15:25:36
+ * @Last Modified time: 2018-04-20 21:02:02
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,6 @@ import { serveWay as serveWayUtil } from '../../taskList/performerView/config/co
 import { flow } from '../../taskList/performerView/config';
 import logable from '../../../decorators/logable';
 import {
-  // serveWaySelectMap,
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
@@ -64,13 +63,13 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   componentDidMount() {
-    // 判断如果是 涨乐财富通服务方式下的只读模式，并且页面在执行者视图下，
+    // 判断如果是 涨乐财富通服务方式下的只读|驳回模式，并且页面在执行者视图下，
     // 则需要查询下 可选列表
-    const { isEntranceFromPerformerView, isReadOnly } = this.props;
-    if (isEntranceFromPerformerView && isReadOnly) {
+    const { isEntranceFromPerformerView, isReadOnly, isReject } = this.props;
+    if (isEntranceFromPerformerView && (isReadOnly || isReject)) {
       const { eventId, taskTypeCode, serviceType } = this.state;
       const type = `${+taskTypeCode + 1}`;
-       // TODO 如果是mot任务 eventId参数需要使用 eventId
+      // TODO 如果是mot任务 eventId参数需要使用 eventId
       // 如果是自建任务 需要使用serviceTypeCode
       // type 值为2的时候，该任务是自建任务
       const eventIdParam = type === '2' ? serviceType : eventId;
@@ -133,8 +132,8 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 根据服务类型serviceTypeCode找到相关的feedbackList
   @autobind
-  findFeedbackListByServiceTypeCode(code) {
-    const { formData: { motCustfeedBackDict } } = this.props;
+  findFeedbackListByServiceTypeCode(code, props) {
+    const { formData: { motCustfeedBackDict } } = props;
     const feedbackMatch = _.find(motCustfeedBackDict, o => o.key === code) || {};
     const feedbackList = feedbackMatch.children || [];
     return feedbackList;
@@ -166,19 +165,19 @@ export default class ServiceRecordContent extends PureComponent {
 
   // 在非涨乐财富通服务方式下 获取默认的客户反馈
   @autobind
-  getDefaultFeedback() {
+  getDefaultFeedback(props) {
     const {
       isEntranceFromPerformerView,
       formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
-    } = this.props;
+    } = props;
     let feedback = null;
-    let { serviceTypeCode } = this.props.formData;
+    let { serviceTypeCode } = props.formData;
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = motCustfeedBackDict[0].key;
     }
     if (!isTaskFeedbackListOfNone) {
-      const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode);
+      const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
       feedback = feedbackList[0];
     }
     return this.fixCustomerFeedback(feedback);
@@ -195,7 +194,7 @@ export default class ServiceRecordContent extends PureComponent {
     } = props;
     let { serviceTypeCode } = fd;
     // 默认取第一个客户反馈
-    const defaultFeedback = this.getDefaultFeedback();
+    const defaultFeedback = this.getDefaultFeedback(props);
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
@@ -475,7 +474,6 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getZLCustFeedbackList() {
     const { eventId, taskTypeCode, serviceType } = this.state;
-    console.warn('taskTypeCode: ', taskTypeCode);
     const type = `${+taskTypeCode + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceTypeCode
@@ -750,7 +748,7 @@ export default class ServiceRecordContent extends PureComponent {
     let cascadeFeedbackList = motCustfeedBackDict[0].children;
     if (!isEntranceFromPerformerView) {
       // 如果是从360视图|客户列表页面进入
-      cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType);
+      cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType, this.props);
     }
 
     // 级联客户反馈列表选项的value

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 15:20:14
+ * @Last Modified time: 2018-04-20 19:03:11
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -45,22 +45,6 @@ export default class ServeContent extends PureComponent {
       hasEditContent: isReject,
     };
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   const { serveContent: nextSC } = nextProps;
-  //   const { serveContent: prevSC } = this.props;
-  //   if (!_.isEqual(nextSC, prevSC)) {
-  //     this.setState({
-  //       // 服务内容标题
-  //       serveContentTitle: nextSC.title || '',
-  //       // 服务内容类型
-  //       serveContentType: nextSC.type || '',
-  //       // 服务内容
-  //       serveContentDesc: nextSC.desc || '',
-  //       hasEditContent: true,
-  //     });
-  //   }
-  // }
 
   // 校验必要的数据是否填写选择
   @autobind
