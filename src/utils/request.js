@@ -23,10 +23,13 @@ function parseJSON(response, options) {
   return response.json().then(
     (res) => {
       // 神策的响应是succeed: true
-      const { code, msg, succeed } = res;
+      // messageType代表错误类型，默认是0，如果后端不传，默认也是0，前端用message提示
+      // 如果是1，则用自定义的dialog弹出错误信息
+      const { code, msg, succeed, messageType = 0 } = res;
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
       if (!existExclude && !succeed && !ignoreCatch) {
-        throw new Error(`${code}${config.ERROR_SEPARATOR}${msg}`);
+        // 抛出以分隔符为分隔的错误字符串信息
+        throw new Error([msg, messageType, code].join(config.ERROR_SEPARATOR));
       }
       return res;
     },
