@@ -57,8 +57,8 @@ const chooseMissionView = [
 const POSTCOMPLETED_CODE = '30';
 
 const currentDate = moment();
-const beforeCurrentDate60Days = moment(currentDate).subtract(60, 'days');
-const afterCurrentDate60Days = moment(currentDate).add(60, 'days');
+const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
+const afterCurrentDate60Days = moment(currentDate).add(59, 'days');
 
 export default {
   EXECUTOR,
