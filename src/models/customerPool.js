@@ -757,13 +757,14 @@ export default {
       });
     },
     // 搜索产品列表
-    * queryProduct({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryProduct, payload);
-      yield put({
-        type: 'queryProductDataSuccess',
-        payload: resultData,
-      });
-    },
+    queryProduct: [
+      function* queryProduct({ payload }, { call, put }) {
+        const { resultData } = yield call(api.queryProduct, payload);
+        yield put({
+          type: 'queryProductDataSuccess',
+          payload: resultData,
+        });
+      }, { type: 'takeLatest' }],
     // 审批流程获取按钮
     * getApprovalBtn({ payload }, { call, put }) {
       const response = yield call(api.queryApprovalBtn, payload);

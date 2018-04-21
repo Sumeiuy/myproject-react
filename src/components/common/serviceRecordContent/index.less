@@ -337,6 +337,19 @@
       }
     }
   }
+  .serveStatus {
+    width: 340px;
+    :global {
+      .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
+        display: flex;
+        align-items: center;
+
+        & > .ant-form-explain {
+          line-height: 40px;
+        }
+      }
+    }
+  }
   .feedbackType {
     width: auto;
     margin-right: 24px;
