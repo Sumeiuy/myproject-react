@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:30:40
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-21 21:34:34
 */
 
 import React, { PureComponent } from 'react';
@@ -319,7 +319,8 @@ export default class BaseInfoEdit extends PureComponent {
       (<InfoForm label="合约编号" required>
         <AutoComplete
           placeholder="合约编号"
-          showIdKey="id"
+          showNameKey="id"
+          optionKey="id"
           defaultValue={this.state.contractNum.id || ''}
           optionList={contractNumList}
           onSelect={this.handleSelectContractNum}
