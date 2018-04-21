@@ -41,6 +41,10 @@ export default class ServiceRecordItem extends PureComponent {
     };
   }
 
+  /**
+   * 判断是否是空或者字符串null
+   * @param {*string} content 内容
+   */
   isNullOrNullString(content) {
     return _.isEmpty(content) || content === 'null';
   }
@@ -74,7 +78,7 @@ export default class ServiceRecordItem extends PureComponent {
   }
 
   /**
-   * 渲染字符串null
+   * 渲染字符串
    * @param {*string} content 内容
    */
   renderContentString(content) {
