@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-17 21:51:58
+ * @Last Modified time: 2018-04-21 13:54:38
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -72,7 +72,7 @@ function getServeWayCode(value) {
 const errorFeedback = {
   key: '99999',
   value: '其他',
-  children: { key: '100000', value: '100000' },
+  children: { key: '100000', value: '其他' },
 };
 
 // 服务状态单选按钮组配置,目前只需要配置这两种状态类型

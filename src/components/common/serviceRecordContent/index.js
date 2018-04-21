@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 00:20:35
+ * @Last Modified time: 2018-04-21 14:20:39
  */
 
 import React, { PureComponent } from 'react';
@@ -689,6 +689,11 @@ export default class ServiceRecordContent extends PureComponent {
       content: ZLServiceContentDesc,
       time: ZLServiceContentTime,
     };
+    // 存在一种情况就是MOT任务已经完结，但是流水还没有开始，导致Seibel那边没有返回相应的服务时间
+    // 所以需要针对无反馈时间和服务时间的情况下，做特殊显示处理，显示成空字符
+    const serviceTimeText = _.isEmpty(serviceTime) ? '' : serviceTime.format(DATE_FORMAT_SHOW);
+    const feedbackTimeText = _.isEmpty(custFeedbackTime) ? '' : custFeedbackTime.format(DATE_FORMAT_SHOW);
+    const ZLCustFeedbackTimeText = _.isEmpty(ZLCustFeedbackTime) ? '' : ZLCustFeedbackTime.format(DATE_FORMAT_SHOW);
     return (
       <ServeRecordReadOnly
         isZL={serveWayUtil.isZhangle(serviceWayCode)}
@@ -696,14 +701,14 @@ export default class ServiceRecordContent extends PureComponent {
         serviceWay={serviceWayText}
         serviceStatus={serviceStatusText}
         serviceStatusCode={serviceStatus}
-        serviceTime={serviceTime.format(DATE_FORMAT_SHOW)}
+        serviceTime={serviceTimeText}
         serviceRecord={serviceRecord}
         zlServiceRecord={zlServiceRecord}
-        feedbackDateTime={custFeedbackTime.format(DATE_FORMAT_SHOW)}
+        feedbackDateTime={feedbackTimeText}
         custFeedback={custFeedbackText}
         custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
-        ZLCustFeedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
+        ZLCustFeedbackTime={ZLCustFeedbackTimeText}
         ZLCustFeedbackList={custFeedbackList}
       />
     );

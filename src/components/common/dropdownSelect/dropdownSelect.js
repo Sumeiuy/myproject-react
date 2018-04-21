@@ -110,10 +110,10 @@ export default class DropdownSelect extends PureComponent {
   // 控制弹出层的隐藏和显示
   @autobind
   handlePopverVisibleChange(visible) {
-    const { disable, presetOptionList } = this.props;
+    const { disable } = this.props;
     if (!disable) {
       // 隐藏需要将数据清空下
-      this.setState({ visible, optionList: presetOptionList, searchValue: '' });
+      this.setState({ visible });
     }
   }
 
@@ -132,9 +132,7 @@ export default class DropdownSelect extends PureComponent {
 
   @autobind
   handleSearch(inputValue) {
-    if (!_.isEmpty(inputValue)) {
-      this.props.emitToSearch(inputValue);
-    }
+    this.props.emitToSearch(inputValue);
   }
 
   // 选择某个项

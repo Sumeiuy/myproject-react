@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 11:53:01
+ * @Last Modified time: 2018-04-21 14:26:53
  * @description 只读服务记录
  */
 
@@ -40,6 +40,7 @@ export default function ServiceRecordReadOnly(props) {
   // 暂时客户可选反馈选项
   const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
   const custFeedbackText = flowIsApproval ? listText : ZLCustFeedback;
+
   return (
     <div className={styles.serviceRecordContent}>
       <div className={styles.gridWrapper}>
