@@ -438,7 +438,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             optionList={custList}
                             onSelect={this.handleSelectClient}
                             onSearch={this.handleSearchClient}
-                            isImmediatelySearch
                             ref={ref => this.queryCustComponent = ref}
                           />
                         </InfoForm>
@@ -453,7 +452,6 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                             optionList={newManagerList}
                             onSelect={this.handleSelectNewManager}
                             onSearch={this.handleSearchNewManager}
-                            isImmediatelySearch
                             dropdownMatchSelectWidth={false}
                             ref={ref => this.queryManagerComponent = ref}
                             renderOptionNode={this.renderOption}
