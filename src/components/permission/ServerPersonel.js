@@ -80,7 +80,6 @@ export default class ServerPersonel extends PureComponent {
               optionList={this.props.searchServerPersonList}
               showNameKey="ptyMngName"
               showIdKey="ptyMngId"
-              isImmediatelySearch
               style={{ width: 200 }}
               onSelect={this.dropdownSelectedItem}
               onSearch={this.dropdownToSearchInfo}
