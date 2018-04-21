@@ -163,6 +163,9 @@ export default class CreateServiceRecord extends PureComponent {
       custFeedbackList,
       zhangleApprovalList,
     } = this.props;
+    // 此处需要新增一个对 taskFeedbackList为空的判断
+    if (_.isEmpty(taskFeedbackList)) return null;
+
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -182,6 +185,7 @@ export default class CreateServiceRecord extends PureComponent {
       taskTypeCode: TASK_TYPE_CODES.SELF_TASK,
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };
+
     return (
       <Modal
         width={688}

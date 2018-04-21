@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 22:16:45
+ * @Last Modified time: 2018-04-20 22:42:39
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -21,7 +21,7 @@ export default function ServeRecord(props) {
   const serviceContentErrorProps = showError ? {
     hasFeedback: false,
     validateStatus: 'error',
-    help: '服务内容不能为空，最多输入1000汉字',
+    help: '服务记录不能为空，最多输入1000汉字',
   } : null;
 
   return (
