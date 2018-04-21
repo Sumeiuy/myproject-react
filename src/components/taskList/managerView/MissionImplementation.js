@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 17:54:42
+ * @Last Modified time: 2018-04-21 18:06:00
  * 任务实施简报
  */
 
@@ -142,6 +142,10 @@ export default class MissionImplementation extends PureComponent {
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
+      // 恢复当前orgId
+      this.setState({
+        currentOrgId: this.originOrgId,
+      });
       // 根据岗位orgId生成对应的组织机构树
       this.handleCreateCustRange({
         custRange,
@@ -307,7 +311,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   handleExportExcel() {
-    return this.props.exportExcel(this.state.currentOrgId || emp.getOrgId());
+    return this.props.exportExcel(this.getCurrentOrgId());
   }
 
   @autobind
