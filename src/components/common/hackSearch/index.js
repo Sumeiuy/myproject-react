@@ -1,13 +1,13 @@
 /*
  * @Author: xuwenkang
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-03-30 15:14:21
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-14 20:15:15
  * 由于antd-Dropdown组件中直接放输入类组件，setState时会导致在ie下输入框失去焦点，所以单独提出来；
  */
 
 import React, { PureComponent } from 'react';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { Input } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-16 17:34:10
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-14 20:06:14
  */
 
 import React, { PureComponent } from 'react';
@@ -118,7 +118,7 @@ export default class Home extends PureComponent {
     performanceIndicators: PropTypes.object,
     getPerformanceIndicators: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
-    custCount: React.PropTypes.oneOfType([
+    custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
