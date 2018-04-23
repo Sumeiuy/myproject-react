@@ -24,6 +24,7 @@ const duty = {
   HTSC_TK_MAMPID: '1-4UU25GY', // HTSC 任务管理岗
   HTSC_ZX_MAMPID: '1-4VP1BIC', // HTSC 资讯管理岗
   HTSC_KHFPG: '1-21K11HX', // HTSC 客户分配岗
+  HTSC_FGSTGGLG: '1-56Y041G', // HTSC 分公司投顾管理岗
 };
 
 export default duty;

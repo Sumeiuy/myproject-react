@@ -5,19 +5,58 @@
  */
 
 const config = {
-  type: '09', // 公务手机和电话卡号管理type类型值
-  statusOptions: [
-    {
-      show: true,
-      label: '已分配',
-      value: 'Y',
-    },
-    {
-      show: true,
-      label: '未分配',
-      value: 'N',
-    },
-  ],
+  telephoneNumDistribute: {
+    pageName: '公务手机分配',
+    pageType: '09', // 查询列表接口中的type值
+    statusOptions: [
+      {
+        show: true,
+        label: '已分配',
+        value: 'Y',
+      },
+      {
+        show: true,
+        label: '未分配',
+        value: 'N',
+      },
+    ],
+  },
+  telephoneNumApply: {
+    pageName: '公务手机申请',
+    pageType: '09', // 查询列表接口中的type值
+    statusOptions: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+      {
+        show: true,
+        label: '失败',
+        value: '05',
+      },
+    ],
+  },
 };
 
 export default config;

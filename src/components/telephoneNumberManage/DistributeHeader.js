@@ -14,7 +14,7 @@ import AutoComplete from '../common/similarAutoComplete';
 import config from './config';
 import styles from './distributeHeader.less';
 
-const { statusOptions, type } = config;
+const { telephoneNumDistribute: { pageType, statusOptions } } = config;
 // 状态默认值为已分配
 const DISTRIBUT_EDEFAULT_VALUE = 'Y';
 export default class DistributeHeader extends PureComponent {
@@ -35,11 +35,11 @@ export default class DistributeHeader extends PureComponent {
     filterCallback: _.noop,
   }
 
-  componentWillMount() {
-    this.props.getCustRange({
-      type,
-    });
-  }
+  // componentWillMount() {
+  //   this.props.getCustRange({
+  //     type: pageType,
+  //   });
+  // }
 
 
   // 查询服务经理接口
@@ -47,7 +47,7 @@ export default class DistributeHeader extends PureComponent {
   handleManagerSearch(value) {
     this.props.queryEmpList({
       keyword: value,
-      type,
+      type: pageType,
     });
   }
 
@@ -72,7 +72,7 @@ export default class DistributeHeader extends PureComponent {
   @autobind
   handleStatusChange(key, value) {
     this.props.filterCallback({
-      status: value,
+      isBinding: value,
     });
   }
 
@@ -81,13 +81,13 @@ export default class DistributeHeader extends PureComponent {
       empList,
       custRange,
       replace,
-      location: { query: { orgId, status } },
+      location: { query: { orgId, isBinding } },
     } = this.props;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
     // 增加已申请服务经理的全部
     const ptyMngAllList = !_.isEmpty(empList) ? [ptyMngAll, ...empList] : empList;
     // 若初始没选状态，默认状态为已分配状态
-    const newStatus = _.isEmpty(status) ? DISTRIBUT_EDEFAULT_VALUE : status;
+    const newIsBinding = _.isEmpty(isBinding) ? DISTRIBUT_EDEFAULT_VALUE : isBinding;
     return (
       <div className={styles.distributeHeader}>
         <div className={styles.filterBox}>
@@ -106,8 +106,8 @@ export default class DistributeHeader extends PureComponent {
           <div className={styles.filterFl}>
             <span className={styles.filterTitle}>状态:</span>
             <Select
-              name="status"
-              value={newStatus}
+              name="isBinding"
+              value={newIsBinding}
               data={statusOptions}
               onChange={this.handleStatusChange}
             />

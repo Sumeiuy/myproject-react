@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-18 09:27:31
+ * @Last Modified time: 2018-04-20 16:23:33
  */
 
 import React, { PureComponent } from 'react';
@@ -17,12 +17,13 @@ import DistributeHeader from '../../components/telephoneNumberManage/DistributeH
 import config from '../../components/telephoneNumberManage/config';
 import withRouter from '../../decorators/withRouter';
 import { dva } from '../../helper';
-import seibelHelper from '../../helper/page/seibel';
 import styles from './distributeHome.less';
 
 const EMPTY_OBJECT = {};
 const dispatch = dva.generateEffect;
-const { type } = config;
+const { telephoneNumDistribute: { pageType } } = config;
+// 状态默认值为已分配
+const DISTRIBUT_EDEFAULT_VALUE = 'Y';
 const effects = {
   // 服务经理列表
   queryEmpList: 'telephoneNumberManage/queryEmpList',
@@ -40,8 +41,8 @@ const mapStateToProps = state => ({
 const mapDisPatchToProps = {
   replace: routerRedux.replace,
   queryEmpList: dispatch(effects.queryEmpList, { loading: false }),
-  getCustRange: dispatch(effects.getCustRange, { loading: false }),
-  queryAdvisorBindList: dispatch(effects.queryAdvisorBindList, { loading: false }),
+  getCustRange: dispatch(effects.getCustRange, { forceFull: true }),
+  queryAdvisorBindList: dispatch(effects.queryAdvisorBindList, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDisPatchToProps)
@@ -61,22 +62,31 @@ export default class DistributeHome extends PureComponent {
     queryAdvisorBindList: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      curPageNum: 1,
-    };
-  }
-
   componentWillMount() {
-    const { location: { query, query: { pageNum } } } = this.props;
-    this.getAdvisorBindList(query, pageNum, 10);
+    // 先获取部门，然后根据部门数据数组中的第一个部门id去获取表格数据
+    // 此时是获取该登录人所有岗位最大权限的列表数据
+    this.props.getCustRange({
+      type: pageType,
+    }).then(() => {
+      const { location, replace, custRange } = this.props;
+      const { pathname, query, query: { pageNum = 1, pageSize = 10 } } = location;
+      console.warn('custRange', custRange);
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isBinding: DISTRIBUT_EDEFAULT_VALUE,
+          orgId: custRange[0].id,
+        },
+      });
+      this.getAdvisorBindList(query, pageNum, pageSize);
+    });
   }
 
   // 头部筛选后调用方法
   @autobind
   handleHeaderFilter(obj) {
-    // 1.将值写入Url
+    // 1.将筛选的值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
     replace({
@@ -95,11 +105,11 @@ export default class DistributeHome extends PureComponent {
   @autobind
   getAdvisorBindList(query, pageNum = 1, pageSize = 10) {
     const { queryAdvisorBindList } = this.props;
-    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
     queryAdvisorBindList({
-      ...params,
-      type,
+      ...query,
+      pageNum,
+      pageSize,
     });
   }
 
@@ -113,16 +123,15 @@ export default class DistributeHome extends PureComponent {
       query: {
         ...query,
         pageNum: nextPage,
-        pageSize: currentPageSize,
       },
     });
     this.getAdvisorBindList(query, nextPage, currentPageSize);
   }
 
-    /**
-   * 为数据源的每一项添加一个id属性
-   * @param {*} listData 数据源
-   */
+  /**
+ * 为数据源的每一项添加一个id属性
+ * @param {*} listData 数据源
+ */
   @autobind
   addIdToDataSource(listData) {
     if (!_.isEmpty(listData)) {
