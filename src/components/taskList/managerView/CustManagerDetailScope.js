@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-19 09:41:43
+ * @Last Modified time: 2018-04-23 14:14:34
  * 服务经理维度任务统计
  */
 
@@ -19,19 +19,24 @@ import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const NOOP = _.noop;
 
 const INITIAL_PAGE_SIZE = 5;
 const INITIAL_PAGE_NUM = 1;
-const NOOP = _.noop;
+const MANAGER_SCOPE = 1;
+
 
 export default class CustManagerDetailScope extends PureComponent {
 
   static propTypes = {
     detailData: PropTypes.object,
+    // 当前组织机构层级
     currentOrgLevel: PropTypes.string,
     // 是否处于折叠状态
     isFold: PropTypes.bool,
     getCustManagerScope: PropTypes.func,
+    // 当前可供筛选的维度
+    currentScopeList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -39,11 +44,14 @@ export default class CustManagerDetailScope extends PureComponent {
     currentOrgLevel: '',
     isFold: false,
     getCustManagerScope: NOOP,
+    currentScopeList: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      // 当前选择的维度，默认进来是服务经理维度，可以切换
+      currentSelectScope: MANAGER_SCOPE,
     };
   }
 

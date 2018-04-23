@@ -35,6 +35,21 @@ const COLLAPSE_WIDTH = 672;
 const MARGIN_LEFT = 16;
 const { toString } = Mention;
 
+const MANAGER_SCOPE_ITEM = {
+  key: 'manager',
+  value: '按服务经理',
+};
+
+const EMP_COMPANY_ITEM = {
+  key: 'empCompany',
+  value: '按分公司',
+};
+
+const EMP_DEPARTMENT_ITEM = {
+  key: 'empDepartment',
+  value: '按分公司',
+};
+
 export default class MissionImplementation extends PureComponent {
 
   static propTypes = {
@@ -80,6 +95,7 @@ export default class MissionImplementation extends PureComponent {
   constructor(props) {
     super(props);
     const { custRange } = props;
+    const { level, currentScopeList } = this.judgeCurrentOrgLevel(custRange);
 
     this.state = {
       expandAll: false,
@@ -88,7 +104,8 @@ export default class MissionImplementation extends PureComponent {
       isDown: true,
       forceRender: true,
       // 当前组织机构树层级
-      level: this.judgeCurrentOrgLevel(custRange),
+      level,
+      currentScopeList,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.isAuthorize = permission.hasCustomerPoolPermission();
@@ -133,11 +150,13 @@ export default class MissionImplementation extends PureComponent {
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
+      const { level, currentScopeList } = this.judgeCurrentOrgLevel(custRange, this.orgId);
       // 恢复当前orgId
       this.setState({
         currentOrgId: this.orgId,
         // org level改变
-        level: this.judgeCurrentOrgLevel(custRange, this.orgId),
+        level,
+        currentScopeList,
       });
       // 根据岗位orgId生成对应的组织机构树
       this.handleCreateCustRange({
@@ -231,14 +250,27 @@ export default class MissionImplementation extends PureComponent {
   judgeCurrentOrgLevel(custRange, currentOrgId = emp.getOrgId()) {
     // 来自营业部
     let level = ORG_LEVEL3;
+    let currentScopeList = [MANAGER_SCOPE_ITEM];
     // 判断是否是经纪总部
     if (emp.isManagementHeadquarters(currentOrgId)) {
       level = ORG_LEVEL1;
+      currentScopeList = [
+        ...currentScopeList,
+        EMP_COMPANY_ITEM,
+        EMP_DEPARTMENT_ITEM,
+      ];
     } else if (emp.isFiliale(custRange, currentOrgId)) {
       // 判断是否是分公司
       level = ORG_LEVEL2;
+      currentScopeList = [
+        ...currentScopeList,
+        EMP_DEPARTMENT_ITEM,
+      ];
     }
-    return level;
+    return {
+      currentScopeList,
+      level,
+    };
   }
 
   /**
@@ -447,7 +479,7 @@ export default class MissionImplementation extends PureComponent {
       currentId,
       custManagerScopeData,
     } = this.props;
-    const { level } = this.state;
+    const { level, currentScopeList } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
     const {
       isCreatingMotReport,
@@ -530,6 +562,7 @@ export default class MissionImplementation extends PureComponent {
                 currentOrgLevel={level}
                 isFold={isFold}
                 getCustManagerScope={this.getCustManagerScope}
+                currentScopeList={currentScopeList}
               />
             </div> : null
         }
