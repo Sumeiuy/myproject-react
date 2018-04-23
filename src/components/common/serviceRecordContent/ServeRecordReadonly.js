@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:04:06
+ * @Last Modified time: 2018-04-21 14:26:53
  * @description 只读服务记录
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import ServeRecordAttachment from './ServeRecordAttachment';
 import { flow } from '../../taskList/performerView/config';
@@ -37,8 +38,9 @@ export default function ServiceRecordReadOnly(props) {
   // 判断当前的流水状态是否审批中
   const flowIsApproval = flow.isApproval(serviceStatusCode);
   // 暂时客户可选反馈选项
-  const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`);
+  const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
   const custFeedbackText = flowIsApproval ? listText : ZLCustFeedback;
+
   return (
     <div className={styles.serviceRecordContent}>
       <div className={styles.gridWrapper}>
@@ -75,10 +77,15 @@ export default function ServiceRecordReadOnly(props) {
                   flowIsApproval ? null
                   : (<div className={styles.adviceTips}>{investAdviceTip}</div>)
                 }
-                <div>
-                  <span className={styles.caption}>{zlServiceRecord.title}</span>
-                  <span className={styles.type}>{zlServiceRecord.type}</span>
-                </div>
+                {
+                  _.isEmpty(zlServiceRecord.title) ? null
+                  : (
+                    <div>
+                      <span className={styles.caption}>{zlServiceRecord.title}</span>
+                      <span className={styles.type}>{zlServiceRecord.type}</span>
+                    </div>
+                  )
+                }
                 <div className={styles.rightCT}>{zlServiceRecord.content}</div>
               </div>
             </div>
@@ -89,14 +96,14 @@ export default function ServiceRecordReadOnly(props) {
           <div className={styles.feedbackType}>
             {
               (isZL && flowIsApproval)
-              ? (<div className={styles.title}>客户可选反馈:</div>)
+              ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
               : (<div className={styles.title}>客户反馈:</div>)
             }
             {
               isZL
               ? (
                 <div className={styles.readOnlyText}>
-                  <span className={styles.feedbackTypeL1}>{flowIsApproval ? '无' : custFeedbackText}</span>
+                  <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
                 </div>
               )
               : (
@@ -112,7 +119,8 @@ export default function ServiceRecordReadOnly(props) {
             }
           </div>
           {
-            (isZL && flowIsApproval) ? null
+            (isZL && flowIsApproval) || (isZL && custFeedbackText === '暂无反馈')
+            ? null
             : (
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>

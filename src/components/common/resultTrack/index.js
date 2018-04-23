@@ -866,18 +866,16 @@ export default class ResultTrack extends PureComponent {
                           <div className={styles.indicatorLevel3}>
                             <span>产品：</span>
                             <AutoComplete
-                              theme="theme2"
-                              defaultSearchValue={currentSelectProductValue}
-                              showObjKey="aliasName"
-                              objId="name"
+                              defaultValue={currentSelectProductValue}
+                              showNameKey="aliasName"
+                              showIdKey="name"
                               placeholder="产品编码/产品名称"
-                              name="产品"
                               disable={!checked}
                               isImmediatelySearch
-                              searchList={searchedProductList || EMPTY_LIST}
+                              optionList={searchedProductList || EMPTY_LIST}
                               onSelect={this.handleSelectProductItem}
                               onSearch={this.handleQueryProduct}
-                              width={220}
+                              style={{ height: 28 }}
                               ref={ref => this.autoCompleteComponent = ref}
                             />
                           </div>

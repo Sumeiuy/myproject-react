@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 17:19:44
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-21 15:08:30
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -19,7 +19,7 @@ export default ({ routerRedux, dispatch }) => ({
   // 最近五次服务记录
   getServiceRecord: dispatch(effects.getServiceRecord),
   // 获取最近6个月收益
-  getCustIncome: dispatch(effects.getCustIncome),
+  getCustIncome: dispatch(effects.getCustIncome, { loading: false }),
   // 改变详情中的用来查询的参数
   changeParameter: dispatch(effects.changeParameter),
   // 查询详情中目标客户信息（列表和列表第一条客户的详情）

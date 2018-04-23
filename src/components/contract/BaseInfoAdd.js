@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-28 13:30:40
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-21 21:34:34
 */
 
 import React, { PureComponent } from 'react';
@@ -319,9 +319,10 @@ export default class BaseInfoEdit extends PureComponent {
       (<InfoForm label="合约编号" required>
         <AutoComplete
           placeholder="合约编号"
-          showObjKey="id"
-          defaultSearchValue={this.state.contractNum.id || ''}
-          searchList={contractNumList}
+          showNameKey="id"
+          optionKey="id"
+          defaultValue={this.state.contractNum.id || ''}
+          optionList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={this.handleSearchContractNum}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
@@ -391,10 +392,10 @@ export default class BaseInfoEdit extends PureComponent {
         <InfoForm label="客户" required>
           <AutoComplete
             placeholder="经纪客户号/客户名称"
-            showObjKey="custName"
-            objId="brokerNumber"
-            defaultSearchValue={`${custName} ${brokerNumber}`}
-            searchList={custList}
+            showNameKey="custName"
+            showIdKey="brokerNumber"
+            defaultValue={`${custName} ${brokerNumber}`}
+            optionList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}

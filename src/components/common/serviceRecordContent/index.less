@@ -2,14 +2,13 @@
   .readOnlyText {
     position: relative;
     border-radius: 3px;
-    // padding-left: 15px;
-    word-break: break-all;
     font-size: 14px;
     color: #4a4a4a;
     overflow-x: hidden;
-    // max-height: auto;
+    word-break: break-all;
     .feedbackTypeL1 {
       margin-right: 10px;
+      line-height: 1.5;
     }
     .caption, .type, .rightCT, .adviceTips {
       font-size: 14px;
@@ -41,44 +40,6 @@
     flex-wrap: wrap;
     padding-bottom: 15px;
     width: 100%;
-    .serveWay, .serveStatus, .serveType, .serveTime {
-      width: 310px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      line-height: 40px;
-      vertical-align: middle;
-      .title {
-        font-size: 14px;
-        letter-spacing: -0.09px;
-        text-align: left;
-        color: #a1a1a1;
-        width: 100px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
-      .content {
-        position: relative;
-        border-radius: 3px;
-        // padding-left: 15px;
-      }
-      :global {
-        .ant-select-dropdown-menu-item {
-          line-height: 18px;
-          padding: 7px 8px !important;
-        }
-        .ant-form-item {
-          margin-bottom: 0;
-        }
-      }
-    }
   }
   .serveRecord {
     width: 100%;
@@ -87,6 +48,7 @@
     display: flex;
     justify-content: flex-start;
     .title {
+      flex: 0 0 auto;
       font-size: 14px;
       letter-spacing: -0.09px;
       text-align: left;
@@ -201,71 +163,6 @@
       .ant-select-dropdown-menu-item {
         line-height: 18px;
         padding: 7px 8px !important;
-      }
-    }
-    .feedbackType {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 470px;
-      line-height: 40px;
-      flex-wrap: nowrap;
-      .title {
-        font-size: 14px;
-        color: #a1a1a1;
-        letter-spacing: -0.09px;
-        text-align: left;
-        width: 100px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
-      .content {
-        position: relative;
-        border-radius: 3px;
-        // padding-left: 15px;
-        display: flex;
-        flex-wrap: nowrap;
-        div:nth-child(2) {
-          margin-left: 20px;
-        }
-      }
-    }
-    .feedbackTime {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 310px;
-      line-height: 40px;
-      .title {
-        font-size: 14px;
-        color: #a1a1a1;
-        letter-spacing: -0.09px;
-        text-align: left;
-        width: 100px;
-        margin-left: -10px;
-      }
-      .title::before {
-        display: inline-block;
-        margin-right: 4px;
-        content: "*";
-        line-height: 1;
-        font-size: 12px;
-        color: #f04134;
-      }
-      .content {
-        position: relative;
-        border-radius: 3px;
-        // padding-left: 15px;
-        :global .ant-calendar-picker {
-          vertical-align: middle;
-        }
       }
     }
   }
@@ -392,6 +289,74 @@
       background-color: #f7f7f7;
       opacity: 1;
       color: rgba(0, 0, 0, 0.25);
+    }
+  }
+  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType {
+    width: 310px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    line-height: 40px;
+    vertical-align: middle;
+    .title {
+      font-size: 14px;
+      letter-spacing: -0.09px;
+      text-align: left;
+      color: #a1a1a1;
+      width: 100px;
+      margin-left: -10px;
+    }
+    .title::before {
+      display: inline-block;
+      margin-right: 4px;
+      content: "*";
+      line-height: 1;
+      font-size: 12px;
+      color: #f04134;
+    }
+    .content {
+      position: relative;
+      border-radius: 3px;
+      // padding-left: 15px;
+      :global {
+        .ant-calendar-picker {
+          float: left;
+        }
+      }
+    }
+    :global {
+      .ant-radio-wrapper {
+        font-weight: normal;
+      }
+      .ant-select-dropdown-menu-item {
+        line-height: 18px;
+        padding: 7px 8px !important;
+      }
+      .ant-form-item {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .serveStatus {
+    width: 340px;
+    :global {
+      .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
+        display: flex;
+        align-items: center;
+
+        & > .ant-form-explain {
+          line-height: 40px;
+        }
+      }
+    }
+  }
+  .feedbackType {
+    width: auto;
+    margin-right: 24px;
+    .content {
+      div:nth-child(2) {
+        margin-left: 20px;
+      }
     }
   }
 }

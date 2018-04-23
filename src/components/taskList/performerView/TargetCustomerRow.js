@@ -178,6 +178,10 @@ export default class TargetCustomerRow extends PureComponent {
       [styles.name]: true,
       [styles.noAllocate]: isAllocate === '1',
     });
+
+    const iconListCls = classnames([styles.iconList], {
+      [styles.hasAllocate]: isAllocate === '0',
+    });
     return (
       <div className={`${rowItemCls} ${lastItemStyle || ''}`} onClick={this.handleClick}>
         <div className={styles.status}>{missionStatusValue}</div>
@@ -188,7 +192,7 @@ export default class TargetCustomerRow extends PureComponent {
             {this.renderAllocate(isAllocate)}
           </div>
         </div>
-        <div className={styles.iconList}>
+        <div className={iconListCls}>
           {this.renderRankIcon(levelCode)}
           {this.renderRiskLevelIcon(riskLevelCode)}
           <span className={signCls}>签约</span>

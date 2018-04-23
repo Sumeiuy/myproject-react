@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 17:51:37
+ * @Last Modified time: 2018-04-20 19:03:11
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -46,20 +46,41 @@ export default class ServeContent extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { serveContent: nextSC } = nextProps;
-    const { serveContent: prevSC } = this.props;
-    if (!_.isEqual(nextSC, prevSC)) {
-      this.setState({
-        // 服务内容标题
-        serveContentTitle: nextSC.title || '',
-        // 服务内容类型
-        serveContentType: nextSC.type || '',
-        // 服务内容
-        serveContentDesc: nextSC.desc || '',
-        hasEditContent: true,
-      });
+  // 校验必要的数据是否填写选择
+  @autobind
+  checkData() {
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      approverId,
+      contentMode,
+    } = this.state;
+    // 这个是初始值
+    const { serveContent, isReject } = this.props;
+    // 判断在驳回状态，初始值与state里面的值是否变化了，
+    // 如果修改了，则可以给用户提交，如果没有则不让用户提交
+    if (isReject) {
+      // 原始值
+      const { title, desc } = serveContent;
+      if (title === serveContentTitle && desc === serveContentDesc) {
+        // 如果相同代表，用户并没有修改
+        message.error('服务内容已被驳回，请修改服务内容后再提交');
+        return false;
+      }
     }
+
+    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
+      message.error('请填写服务内容中的标题和内容');
+      return false;
+    }
+    if (contentMode === 'free') {
+      // 自由话术模式，下需要审批
+      if (_.isEmpty(approverId)) {
+        message.error('自由编辑状态下，需要审批，请选择审批人');
+        return false;
+      }
+    }
+    return true;
   }
 
   @autobind
@@ -71,21 +92,6 @@ export default class ServeContent extends PureComponent {
       approverId,
       contentMode,
     } = this.state;
-    if (contentMode === '') {
-      message.error('请添加服务内容');
-      return null;
-    }
-    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
-      message.error('请填写服务内容中的标题和内容');
-      return null;
-    }
-    if (contentMode === 'free') {
-      // 自由话术模式，下需要审批
-      if (_.isEmpty(approverId)) {
-        message.error('自由编辑状态下，需要审批，请选择审批人');
-        return null;
-      }
-    }
     return {
       title: serveContentTitle,
       content: serveContentDesc,

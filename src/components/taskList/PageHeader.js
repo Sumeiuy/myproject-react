@@ -24,6 +24,7 @@ import {
   CONTROLLER,
   currentDate,
   dateFormat,
+  beforeCurrentDate60Days,
   STATUS_MANAGER_VIEW,
   STATUS_EXECUTOR_VIEW,
   STATE_COMPLETED_CODE,
@@ -34,7 +35,6 @@ import {
 import styles from './pageHeader.less';
 
 const Search = Input.Search;
-const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -43,6 +43,7 @@ const today = moment(new Date());
 const beforeToday = moment(today).subtract(60, 'days');
 const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
+const allCreators = '所有创建者';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
 const typeAll = { label: '所有类型', value: '', show: true };
 const executeTypeAll = { label: '所有方式', value: '', show: true };
@@ -243,9 +244,10 @@ export default class Pageheader extends PureComponent {
       value: '$args[1].ptyMngName',
     },
   })
-  selectItem(name, item) {
+  selectItem(item) {
     this.props.filterCallback({
-      [name]: item.ptyMngId,
+      creatorId: item.ptyMngId,
+      creatorName: encodeURIComponent(item.ptyMngName),
     });
   }
 
@@ -569,11 +571,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          endTimeStart = '',
-          endTimeEnd = '',
-          createTimeEnd = '',
-          createTimeStart = '',
-          status,
+        endTimeStart = '',
+        endTimeEnd = '',
+        createTimeEnd = '',
+        createTimeStart = '',
+        status,
         },
       },
     } = this.props;
@@ -666,7 +668,8 @@ export default class Pageheader extends PureComponent {
         query: {
           missionViewType,
           type,
-          creator,
+          creatorId,
+          creatorName,
           custId = '',
           custName = '',
         },
@@ -684,12 +687,10 @@ export default class Pageheader extends PureComponent {
     // 创建者增加全部
     const drafterAllList = !_.isEmpty(drafterList) ?
       [ptyMngAll, ...drafterList] : [];
+
     // 创建者回填
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === creator);
-    let curDrafter = '所有创建者';
-    if (curDrafterInfo && curDrafterInfo.ptyMngId) {
-      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
-    }
+    const curDrafter = check.isNull(creatorId) ?
+      allCreators : `${decodeURIComponent(creatorName)}(${creatorId})`;
 
     // 执行者视图按客户搜索
     const allCustomerList = !_.isEmpty(customerList) ?
@@ -756,7 +757,7 @@ export default class Pageheader extends PureComponent {
             />
           </div>
 
-          <div className={`${styles.filterFl} ${styles.mlMinux15}`}>
+          <div className={`${styles.filterFl} ${styles.mlMinux10}`}>
             <Select
               name="status"
               value={statusValue}
@@ -773,7 +774,7 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={item => this.selectItem('creator', item)}
+                emitSelectItem={item => this.selectItem(item)}
                 emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />

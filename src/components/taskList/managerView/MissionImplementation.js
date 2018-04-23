@@ -79,16 +79,7 @@ export default class MissionImplementation extends PureComponent {
 
   constructor(props) {
     super(props);
-    const currentOrgId = emp.getOrgId();
-    // 来自营业部
-    let level = ORG_LEVEL3;
-    // 判断是否是经纪总部
-    if (emp.isManagementHeadquarters(currentOrgId)) {
-      level = ORG_LEVEL1;
-    } else if (emp.isFiliale(props.custRange, currentOrgId)) {
-      // 判断是否是分公司
-      level = ORG_LEVEL2;
-    }
+    const { custRange } = props;
 
     this.state = {
       expandAll: false,
@@ -97,7 +88,7 @@ export default class MissionImplementation extends PureComponent {
       isDown: true,
       forceRender: true,
       // 当前组织机构树层级
-      level,
+      level: this.judgeCurrentOrgLevel(custRange),
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.isAuthorize = permission.hasCustomerPoolPermission();
@@ -142,6 +133,12 @@ export default class MissionImplementation extends PureComponent {
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
+      // 恢复当前orgId
+      this.setState({
+        currentOrgId: this.orgId,
+        // org level改变
+        level: this.judgeCurrentOrgLevel(custRange, this.orgId),
+      });
       // 根据岗位orgId生成对应的组织机构树
       this.handleCreateCustRange({
         custRange,
@@ -228,6 +225,23 @@ export default class MissionImplementation extends PureComponent {
   }
 
   /**
+   * 判断当前机构level
+   */
+  @autobind
+  judgeCurrentOrgLevel(custRange, currentOrgId = emp.getOrgId()) {
+    // 来自营业部
+    let level = ORG_LEVEL3;
+    // 判断是否是经纪总部
+    if (emp.isManagementHeadquarters(currentOrgId)) {
+      level = ORG_LEVEL1;
+    } else if (emp.isFiliale(custRange, currentOrgId)) {
+      // 判断是否是分公司
+      level = ORG_LEVEL2;
+    }
+    return level;
+  }
+
+  /**
    * 机构树的change回调
    */
   @autobind
@@ -307,7 +321,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   handleExportExcel() {
-    return this.props.exportExcel(this.state.currentOrgId || emp.getOrgId());
+    return this.props.exportExcel(this.getCurrentOrgId());
   }
 
   @autobind

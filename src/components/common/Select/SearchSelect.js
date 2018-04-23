@@ -84,15 +84,13 @@ export default class SearchSelect extends PureComponent {
       <div className={styles.selectSearchBox}>
         <span className={styles.labelName}>{`${labelName}：`}</span>
         <SimilarAutoComplete
-          name="batchCustSelect"
           placeholder="经纪客户号/客户名称"
-          searchList={newDataSource}
-          width={184}
-          showObjKey="key"
-          objId="key"
+          optionList={newDataSource}
+          style={{ width: 184 }}
+          optionKey="key"
           onSelect={this.handleSelectCust}
           onSearch={this.handleSearchCustList}
-          renderOption={this.renderOption}
+          renderOptionNode={this.renderOption}
         />
         <Button className={styles.addButton} onClick={this.handleAddBtnClick}>添加</Button>
       </div>

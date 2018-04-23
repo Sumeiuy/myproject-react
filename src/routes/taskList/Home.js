@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 19:17:51
+ * @Last Modified time: 2018-04-21 00:13:12
  * @description 任务管理首页
  */
 
@@ -597,10 +597,10 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
- * 发送获取任务反馈字典的请求
- * @param {*} typeCode 当前左侧列表的选中项的typeCode
- * @param {*} eventId 当前左侧列表的选中项的eventId
- */
+   * 发送获取任务反馈字典的请求
+   * @param {*} typeCode 当前左侧列表的选中项的typeCode
+   * @param {*} eventId 当前左侧列表的选中项的eventId
+   */
   @autobind
   queryMissionList(typeCode, eventId) {
     const {
@@ -659,19 +659,20 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { pageNum = 1, pageSize = 20 } = query;
+    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
     const params = this.constructViewPostBody(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
       const { list = {} } = this.props;
       const { resultData = [] } = list;
-      // const firstData = resultData[0] || {};
+      const firstData = resultData[0] || {};
       // 当前视图是执行者视图
-      if (!_.isEmpty(resultData) && this.isExecutorView(resultData[0].missionViewType)) {
-        // 初始化取第一条任务来获取反馈列表数据
-        const { typeCode, eventId } = resultData[0];
-        this.queryMissionList(typeCode, eventId);
+      if (missionViewType === EXECUTOR) {
+        if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
+          const { typeCode, eventId } = firstData;
+          this.queryMissionList(typeCode, eventId);
+        }
       }
       this.getRightDetail();
     });
@@ -685,17 +686,19 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   constructViewPostBody(query, newPageNum, newPageSize) {
-    const { missionViewType, status } = query;
+    const { missionViewType, status, creatorId } = query;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName']);
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName']);
     finalPostData = _.merge(
       finalPostData,
       omitData,
       // { orgId: 'ZZ001041' },
       { orgId: emp.getOrgId() },
+      // 传过来的名字叫creatorId，传给后台需要改成creator
+      { creator: creatorId },
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;

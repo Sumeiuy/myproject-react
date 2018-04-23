@@ -3,7 +3,7 @@
  * @Description: 分公司客户划转modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-14 14:59:17
+ * @Last Modified time: 2018-04-19 16:24:24
  */
 
 import { filialeCustTransfer as api } from '../api';
@@ -19,7 +19,7 @@ const PLACEHOLDER_OBJECT = {
   empName: '', // 原服务经理
   postnName: '', // 原职位
   newOrgName: '', // 新服务营业部
-  newEmpName: '', // 新服务经理
+  newEmpId: '', // 新服务经理
   newPostnName: '', // 新职位
 };
 
@@ -75,8 +75,8 @@ export default {
           newOrgName: v.orgName,
           newPostnId: v.postnId,
           newPostnName: v.postnName,
-          // showSelectName: `${v.empName} ${v.postnName} ${v.login}`,
-          showSelectName: `${v.empName} ${v.login}`,
+          newEmpId: v.login,
+          showSelectName: `${v.postnName} ${v.orgName} ${v.login} ${v.empName}`,
         }
       ));
       return {

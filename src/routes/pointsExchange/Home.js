@@ -175,8 +175,8 @@ export default class Home extends Component {
       if (!err) {
         const { productCode = '', brokerNumber = '' } = values;
         const fieldValue = {
-          productCode: _.isEmpty(productCode) ? '' : productCode,
-          brokerNumber: _.isEmpty(brokerNumber) ? '' : brokerNumber,
+          productCode: _.isEmpty(productCode) ? '' : _.trim(productCode),
+          brokerNumber: _.isEmpty(brokerNumber) ? '' : _.trim(brokerNumber),
           pageNum: 1,
           startTime,
           endTime,

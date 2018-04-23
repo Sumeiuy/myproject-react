@@ -2,13 +2,13 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 17:20:27
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-04-20 17:01:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload } from 'antd';
+import { message, Modal, Upload, AutoComplete as AntdAutoComplete } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../../components/common/infoForm';
@@ -27,6 +27,7 @@ import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 import logable, { logPV } from '../../decorators/logable';
 
+const Option = AntdAutoComplete.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -214,6 +215,16 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     const { getNewManagerList } = this.props;
     getNewManagerList({
       login: v,
+    }).then(() => {
+      const { newManagerList } = this.props;
+      const item = newManagerList[0] || EMPTY_OBJECT;
+      const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
+      // 查询的新服务经理不为空并且只有一条时，直接回填到AutoComplete组件中去
+      if (!_.isEmpty(newManagerList) && newManagerList.length === 1) {
+        this.queryManagerComponent.handleSelect(inputValue, { key: item.showSelectName });
+        // 数据回填之后触发Autocomplete组件的blur事件，使搜索结果隐藏;
+        this.queryManagerComponent.autoCompleteComponent.blur();
+      }
     });
   }
 
@@ -440,6 +451,22 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     }
   }
 
+  @autobind
+  renderOption(item) {
+    const optionValue = item.showSelectName;
+    const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
+    return (
+      <Option
+        key={item.showSelectName}
+        className={styles.ddsDrapMenuConItem}
+        value={inputValue}
+        title={optionValue}
+      >
+        {optionValue}
+      </Option>
+    );
+  }
+
   render() {
     const {
       custList,
@@ -525,22 +552,26 @@ export default class CreateFilialeCustTransfer extends PureComponent {
                 <InfoForm style={{ width: '120px' }} label="选择客户" required>
                   <AutoComplete
                     placeholder="选择客户"
-                    showObjKey="custName"
-                    objId="brokerNumber"
-                    searchList={custList}
+                    showNameKey="custName"
+                    showIdKey="brokerNumber"
+                    optionList={custList}
                     onSelect={this.handleSelectClient}
                     onSearch={this.handleSearchClient}
                     ref={ref => this.queryCustComponent = ref}
+                    dropdownMatchSelectWidth={false}
                   />
                 </InfoForm>
                 <InfoForm style={{ width: '120px' }} label="选择新服务经理" required>
                   <AutoComplete
                     placeholder="选择新服务经理"
-                    showObjKey="showSelectName"
-                    searchList={newManagerList}
+                    showNameKey="showSelectName"
+                    optionKey="showSelectName"
+                    optionList={newManagerList}
                     onSelect={this.handleSelectNewManager}
                     onSearch={this.handleSearchNewManager}
                     ref={ref => this.queryManagerComponent = ref}
+                    dropdownMatchSelectWidth={false}
+                    renderOptionNode={this.renderOption}
                   />
                 </InfoForm>
               </div>
