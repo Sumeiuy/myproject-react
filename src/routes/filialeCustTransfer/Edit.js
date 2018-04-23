@@ -2,11 +2,12 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-07 09:05:01
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-14 20:13:46
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

@@ -2,11 +2,12 @@
  * @Author: hongguangqing
  * @Description: 服务经理主职位设置修改页面
  * @Date: 2018-02-28 14:43:26
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 16:09:39
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-14 20:14:02
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import _ from 'lodash';
 import withRouter from '../../decorators/withRouter';

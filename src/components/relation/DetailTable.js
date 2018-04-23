@@ -9,7 +9,8 @@
  * treeData: 不必须，数据源
  * onSelect：不必须，选中事件
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Modal } from 'antd';
 import classnames from 'classnames';
