@@ -35,13 +35,6 @@ export default class DistributeHeader extends PureComponent {
     filterCallback: _.noop,
   }
 
-  // componentWillMount() {
-  //   this.props.getCustRange({
-  //     type: pageType,
-  //   });
-  // }
-
-
   // 查询服务经理接口
   @autobind
   handleManagerSearch(value) {
