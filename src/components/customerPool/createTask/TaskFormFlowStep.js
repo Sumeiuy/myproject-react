@@ -331,7 +331,6 @@ export default class TaskFormFlowStep extends PureComponent {
         const formDataValidation = this.saveFormContent({
           ...values,
           serviceStrategySuggestion: serviceStrategyHtml,
-          serviceStrategyString,
           isFormError,
         });
         if (formDataValidation) {
@@ -351,7 +350,7 @@ export default class TaskFormFlowStep extends PureComponent {
       const templetDesc = formComponent.getData();
       const templeteDescHtml = stateToHTML(formComponent.getData(true));
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc) || templeteDescHtml.length > 1000) {
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
