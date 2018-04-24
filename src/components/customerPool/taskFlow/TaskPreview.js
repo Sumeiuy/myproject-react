@@ -93,13 +93,13 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList = EMPTY_LIST,
       isShowApprovalModal,
-     } = this.props;
+    } = this.props;
     const {
       approvalList: nextData = EMPTY_LIST,
       isShowApprovalModal: nextApprovalModal,
       currentSelectRecord,
       currentSelectRowKeys,
-     } = nextProps;
+    } = nextProps;
 
     if (approvalList !== nextData) {
       // 审批人数据
@@ -376,7 +376,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable,
       titleColumn,
       dataSize,
-     } = this.state;
+    } = this.state;
 
     const { empName = '' } = currentSelectRecord;
 

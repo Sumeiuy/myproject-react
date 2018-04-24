@@ -83,7 +83,7 @@ export default class TaskFormFlowStep extends PureComponent {
         needApproval = false,
         canGoNextStep = false,
         needMissionInvestigation = false,
-     },
+      },
     } = props;
 
     // 代表是否是来自驳回修改
@@ -118,7 +118,7 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
-   } = this.props;
+    } = this.props;
     const postBody = {
       ...this.parseParam(),
     };
@@ -421,7 +421,7 @@ export default class TaskFormFlowStep extends PureComponent {
         if (isMissionInvestigationChecked) {
           missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-           // message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择

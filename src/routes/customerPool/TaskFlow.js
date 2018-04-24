@@ -64,8 +64,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-      timelyIntervalValue,
-      taskName,
+    timelyIntervalValue,
+    taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -236,7 +236,6 @@ export default class TaskFlow extends PureComponent {
       currentFilterNum = 0,
     } = labelCust || EMPTY_OBJECT;
 
-
     this.state = {
       current: current || 0,
       currentSelectRecord: currentSelectRecord || {},
@@ -274,7 +273,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
       getFiltersOfSightingTelescopeLoading,
-     } = this.props;
+    } = this.props;
     const {
       submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
@@ -537,6 +536,7 @@ export default class TaskFlow extends PureComponent {
             });
 
             this.setState({
+              current: currentStep,
               needApproval,
               canGoNextStep,
               needMissionInvestigation,
@@ -654,7 +654,7 @@ export default class TaskFlow extends PureComponent {
         if (isMissionInvestigationChecked) {
           missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-           // message.error('请至少选择一个问题');
+            // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择
