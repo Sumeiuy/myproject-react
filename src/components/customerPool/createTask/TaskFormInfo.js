@@ -343,7 +343,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           mentionStyle={mentionTextStyle}
           style={{ width: '100%', height: 100 }}
-          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。"
+          placeholder={`请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：${MIN_LENGTH}-${MAX_LENGTH}字）`}
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -576,7 +576,7 @@ export default class TaskFormInfo extends PureComponent {
               <Mention
                 mentionStyle={mentionTextStyle}
                 style={{ width: '100%', height: 100 }}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。"
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
                 multiLines
                 onChange={this.handleStrategySuggestionChange}
                 onBlur={this.handleServiceMentionBlur}  // 处理首次进入触发onChange
