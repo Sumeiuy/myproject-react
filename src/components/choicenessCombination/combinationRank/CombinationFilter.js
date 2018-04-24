@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 16:09:39
+ * @Last Modified time: 2018-04-24 15:55:27
 */
 
 import React, { PureComponent } from 'react';
@@ -77,6 +77,7 @@ export default class CombinationRank extends PureComponent {
               data={[]}
               value={''}
               onChange={this.handleYieldSelect}
+              width={'178px'}
             />
           </InfoForm>
         </div>
