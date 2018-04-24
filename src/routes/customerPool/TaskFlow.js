@@ -576,7 +576,7 @@ export default class TaskFlow extends PureComponent {
           this.checkFormField({
             ...values,
             isFormError,
-            serviceStrategySuggestion: serviceStrategyHtml,
+            serviceStrategySuggestion: serviceStrategyString,
           });
 
         if (formDataValidation) {
