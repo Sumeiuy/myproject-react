@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 15:55:31
+ * @Last Modified time: 2018-04-24 14:26:55
  */
 
 import React, { PureComponent } from 'react';
@@ -57,7 +57,7 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = this.getDefaultState(props);
+    this.state = this.initialState(props);
     // 代表是否是删除操作
     this.isDeletingFile = false;
   }
