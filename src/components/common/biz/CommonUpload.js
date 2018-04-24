@@ -143,7 +143,6 @@ export default class CommonUpload extends PureComponent {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
         const data = uploadFile.response.resultData;
-         console.log('#####上传成功########', uploadFile, data.attachment);
         this.setState({
           status: 'success',
           statusText: '上传完成',
@@ -217,7 +216,6 @@ export default class CommonUpload extends PureComponent {
       statusText,
     } = this.state;
     const { edit, needDefaultText, title } = this.props;
-    console.log('#######render#########', file, attachment);
     const uploadProps = {
       data: {
         empId,
