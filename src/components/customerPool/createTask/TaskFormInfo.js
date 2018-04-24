@@ -16,6 +16,7 @@ import logable from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const { TextArea } = Input;
 const { toContentState, toString } = Mention;
 const Nav = Mention.Nav;
 
@@ -73,7 +74,6 @@ export default class TaskFormInfo extends PureComponent {
     super(props);
     // 用来处理页面一进来会触发mentionChange事件
     this.isFirstLoad = true;
-    this.isServiceFirstLoad = true;
     // 找到默认任务类型的子类型集合
     const currentTaskSubTypeCollection = this.getCurrentTaskSubTypes(props.defaultMissionType);
     const {
@@ -168,10 +168,7 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  getData(isStateData) {
-    if (isStateData) {
-      return this.state.currentMention;
-    }
+  getData() {
     return toString(this.state.currentMention);
   }
 
@@ -264,11 +261,6 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  handleServiceMentionBlur() {
-    this.isServiceFirstLoad = false;
-  }
-
-  @autobind
   handleIntervalValueChange(value) {
     const isShowErrorIntervalValue = !regxp.positiveInteger.test(value)
       || Number(value) <= 0
@@ -287,16 +279,12 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  handleStrategySuggestionChange() {
-    if (!this.isServiceFirstLoad) {
-      const { getFieldValue } = this.props.form;
-      const StrategySuggestion = getFieldValue('serviceStrategySuggestion');
-      const value = toString(StrategySuggestion);
-      this.setState({
-        isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
+  handleStrategySuggestionChange(e) {
+    const value = e.target.value;
+    this.setState({
+      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
         || value.length > MAX_LENGTH,
-      });
-    }
+    });
   }
 
   handleCreatOptions(data) {
@@ -320,7 +308,6 @@ export default class TaskFormInfo extends PureComponent {
   renderMention() {
     const { defaultMissionDesc } = this.props;
     const { suggestions } = this.state;
-
     return (
       <div className={styles.wrapper}>
         <Mention
@@ -553,16 +540,16 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem
             {...serviceStrategySuggestionErrorProps}
           >
-            {getFieldDecorator('serviceStrategySuggestion', {
-              initialValue: toContentState(defaultServiceStrategySuggestion),
-            })(
-              <Mention
-                mentionStyle={mentionTextStyle}
-                style={{ width: '100%', height: 100 }}
+            {getFieldDecorator('serviceStrategySuggestion',
+              {
+                initialValue: defaultServiceStrategySuggestion,
+              })(<TextArea
+                id="desc"
+                rows={5}
                 placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
-                multiLines
+                style={{ width: '100%' }}
+                maxLength={MAX_LENGTH}
                 onChange={this.handleStrategySuggestionChange}
-                onBlur={this.handleServiceMentionBlur}  // 处理首次进入触发onChange
               />,
             )}
           </FormItem>

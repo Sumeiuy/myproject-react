@@ -6,10 +6,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, message, Steps, Mention } from 'antd';
+import { Button, message, Steps } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { convertToHTML } from 'draft-convert';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
@@ -28,7 +27,6 @@ import logable from '../../../decorators/logable';
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-const { toString } = Mention;
 
 // 标签来源，热点标签，普通标签，搜索标签
 const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
@@ -85,7 +83,7 @@ export default class TaskFormFlowStep extends PureComponent {
         needApproval = false,
         canGoNextStep = false,
         needMissionInvestigation = false,
-      },
+     },
     } = props;
 
     // 代表是否是来自驳回修改
@@ -120,7 +118,7 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
-    } = this.props;
+   } = this.props;
     const postBody = {
       ...this.parseParam(),
     };
@@ -321,48 +319,20 @@ export default class TaskFormFlowStep extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-
-        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
-        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
-        const serviceStrategyString = toString(serviceStateData);
-        const serviceStrategyHtml = convertToHTML({
-          blockToHTML: (block) => {
-            if (block.text) {
-              return <p />;
-            }
-            return <br />;
-          },
-        })(serviceStateData);
-        const formDataValidation =
-          this.saveFormContent({
-            ...values,
-            serviceStrategySuggestion: serviceStrategyString,
-            isFormError,
-          });
+        const formDataValidation = this.saveFormContent({ ...values, isFormError });
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
-            serviceStrategySuggestion: serviceStrategyString,
-            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
           isFormValidate = false;
         }
       });
-
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = convertToHTML({
-        blockToHTML: (block) => {
-          if (block.text) {
-            return <p />;
-          }
-          return <br />;
-        },
-      })(formComponent.getData(true));
-      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
+      taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
@@ -566,11 +536,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const {
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       // taskSubType,
-      templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -602,10 +572,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion: serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // // 任务子类型
       // taskSubType,

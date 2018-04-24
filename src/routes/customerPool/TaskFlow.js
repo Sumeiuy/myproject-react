@@ -10,10 +10,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Mention, Modal } from 'antd';
+import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { convertToHTML } from 'draft-convert';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -32,7 +31,6 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-const { toString } = Mention;
 // 瞄准镜标签入口
 const SIGHT_LABEL_ENTRY = 1;
 
@@ -238,6 +236,7 @@ export default class TaskFlow extends PureComponent {
       currentFilterNum = 0,
     } = labelCust || EMPTY_OBJECT;
 
+
     this.state = {
       current: current || 0,
       currentSelectRecord: currentSelectRecord || {},
@@ -275,7 +274,7 @@ export default class TaskFlow extends PureComponent {
       getApprovalListLoading,
       approvalList = EMPTY_ARRAY,
       getFiltersOfSightingTelescopeLoading,
-    } = this.props;
+     } = this.props;
     const {
       submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
@@ -538,7 +537,6 @@ export default class TaskFlow extends PureComponent {
             });
 
             this.setState({
-              current: currentStep,
               needApproval,
               canGoNextStep,
               needMissionInvestigation,
@@ -561,30 +559,13 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
-        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
-        const serviceStrategyString = toString(serviceStateData);
-        const serviceStrategyHtml = convertToHTML({
-          blockToHTML: (block) => {
-            if (block.text) {
-              return <p />;
-            }
-            return <br />;
-          },
-        })(serviceStateData);
-        const formDataValidation =
-          this.checkFormField({
-            ...values,
-            isFormError,
-            serviceStrategySuggestion: serviceStrategyString,
-          });
+
+        const formDataValidation = this.checkFormField({ ...values, isFormError });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
-            serviceStrategySuggestion: serviceStrategyString,
-            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
@@ -594,16 +575,7 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = convertToHTML({
-        blockToHTML: (block) => {
-          if (block.text) {
-            return <p />;
-          }
-          return <br />;
-        },
-      })(formComponent.getData(true));
-
-      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
+      taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
@@ -801,11 +773,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       labelId,
-      templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -834,10 +806,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
+      serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: templeteDescHtml, // 转换成html提交
+      templetDesc,
       timelyIntervalValue,
     };
 

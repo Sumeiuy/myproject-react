@@ -22,34 +22,17 @@ function InfoArea(props) {
         {
           _.map(
             data,
-            (item) => {
-              const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
-              return (
+            item => (
+              <div className={styles.coloumn} key={item.id}>
                 <div
-                  className={styles.coloumn}
-                  key={item.id}
-                  style={isPoliceOrTip ? { width: '100%' } : {}}
-                >
-                  <div
-                    className={classnames(
-                      styles.infoKey,
-                      { [styles.keyNone]: _.isEmpty(item.key) },
-                    )}
-                  >{item.key}</div>
-                  <div className={styles.infoValue}>
-                    {
-                      // policy or tip 是 服务策略 和 任务提示项设置的ID
-                      isPoliceOrTip ?
-                        <div
-                          style={{ width: '100%' }}
-                          dangerouslySetInnerHTML={{ __html: item.value || '--' }}
-                        /> :
-                        item.value
-                    }
-                  </div>
-                </div>
-              );
-            },
+                  className={classnames(
+                    styles.infoKey,
+                    { [styles.keyNone]: _.isEmpty(item.key) },
+                  )}
+                >{item.key}</div>
+                <div className={styles.infoValue}>{item.value}</div>
+              </div>
+            ),
           )
         }
       </div>
