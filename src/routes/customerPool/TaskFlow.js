@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-17 10:17:42
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import { routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { stateToHTML } from 'draft-js-export-html';
+import { convertToHTML } from 'draft-convert';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -23,7 +23,6 @@ import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-// import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
@@ -67,8 +66,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-    timelyIntervalValue,
-    taskName,
+      timelyIntervalValue,
+      taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -565,10 +564,14 @@ export default class TaskFlow extends PureComponent {
         // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
         const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
         const serviceStrategyString = toString(serviceStateData);
-        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
-        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
-
+        const serviceStrategyHtml = convertToHTML({
+          blockToHTML: (block) => {
+            if (block.text) {
+              return <p />;
+            }
+            return <br />;
+          },
+        })(serviceStateData);
         const formDataValidation =
           this.checkFormField({
             ...values,
@@ -591,11 +594,17 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+      const templeteDescHtml = convertToHTML({
+        blockToHTML: (block) => {
+          if (block.text) {
+            return <p />;
+          }
+          return <br />;
+        },
+      })(formComponent.getData(true));
 
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc)
-        || templeteDescHtml.length > 1000) {
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -673,7 +682,7 @@ export default class TaskFlow extends PureComponent {
         if (isMissionInvestigationChecked) {
           missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            // message.error('请至少选择一个问题');
+           // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择

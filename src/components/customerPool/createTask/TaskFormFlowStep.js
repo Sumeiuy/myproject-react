@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 16:48:26
+ * @Last Modified time: 2018-03-23 23:01:41
  */
 
 import React, { PureComponent } from 'react';
@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Button, message, Steps, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { stateToHTML } from 'draft-js-export-html';
+import { convertToHTML } from 'draft-convert';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
@@ -325,9 +325,14 @@ export default class TaskFormFlowStep extends PureComponent {
         // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
         const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
         const serviceStrategyString = toString(serviceStateData);
-        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
-        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
+        const serviceStrategyHtml = convertToHTML({
+          blockToHTML: (block) => {
+            if (block.text) {
+              return <p />;
+            }
+            return <br />;
+          },
+        })(serviceStateData);
         const formDataValidation = this.saveFormContent({
           ...values,
           serviceStrategySuggestion: serviceStrategyHtml,
@@ -348,7 +353,14 @@ export default class TaskFormFlowStep extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = stateToHTML(formComponent.getData(true));
+      const templeteDescHtml = convertToHTML({
+        blockToHTML: (block) => {
+          if (block.text) {
+            return <p />;
+          }
+          return <br />;
+        },
+      })(formComponent.getData(true));
       taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
       if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
@@ -438,7 +450,7 @@ export default class TaskFormFlowStep extends PureComponent {
         if (isMissionInvestigationChecked) {
           missionInvestigationComponent.requiredDataValidate();
           if (_.isEmpty(questionList)) {
-            // message.error('请至少选择一个问题');
+           // message.error('请至少选择一个问题');
             isMissionInvestigationValidate = false;
           } else if (originQuestionSize !== uniqQuestionSize) {
             // 查找是否有相同的question被选择

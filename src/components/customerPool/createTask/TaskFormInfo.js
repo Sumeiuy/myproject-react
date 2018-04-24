@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Form, Select, Input, Mention, InputNumber } from 'antd';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
-import { stateToHTML } from 'draft-js-export-html';
+import { convertToHTML } from 'draft-convert';
 import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
@@ -180,13 +180,15 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = stateToHTML(contentState);
-      // content即使是空字符串经过stateToHTML方法也会变成带有标签的字符串，所以得用转成字符串之后的值来进行非空判断
-      const contentString = toString(contentState);
-      // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-      if (_.isEmpty(contentString)
-        || content.length < MIN_LENGTH
-        || content.length > MAX_LENGTH) {
+      const content = convertToHTML({
+        blockToHTML: (block) => {
+          if (block.text) {
+            return <p />;
+          }
+          return <br />;
+        },
+      })(contentState);
+      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -293,12 +295,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  handleStrategySuggestionChange(contentState) {
+  handleStrategySuggestionChange() {
     if (!this.isServiceFirstLoad) {
-      const content = toString(contentState);
-      const value = stateToHTML(contentState);
+      const { getFieldValue } = this.props.form;
+      const StrategySuggestion = getFieldValue('serviceStrategySuggestion');
+      const value = toString(StrategySuggestion);
       this.setState({
-        isShowErrorStrategySuggestion: _.isEmpty(content)
+        isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
         || value.length > MAX_LENGTH,
       });
     }
@@ -381,7 +384,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const errorProps = isShowErrorInfo ? {
       validateStatus: 'error',
-      help: `任务提示不能为空，最多${MAX_LENGTH}个字符`,
+      help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -412,7 +415,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
       validateStatus: 'error',
-      help: `服务策略不能为空，最多${MAX_LENGTH}个字符`,
+      help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
 
     } : null;
 

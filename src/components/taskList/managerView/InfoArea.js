@@ -26,8 +26,9 @@ function InfoArea(props) {
               const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
               return (
                 <div
-                  className={`${styles.coloumn} ${isPoliceOrTip ? styles.row : ''}`}
+                  className={styles.coloumn}
                   key={item.id}
+                  style={isPoliceOrTip ? { width: '100%' } : {}}
                 >
                   <div
                     className={classnames(
@@ -40,7 +41,7 @@ function InfoArea(props) {
                       // policy or tip 是 服务策略 和 任务提示项设置的ID
                       isPoliceOrTip ?
                         <div
-                          className={styles.row}
+                          style={{ width: '100%' }}
                           dangerouslySetInnerHTML={{ __html: item.value || '--' }}
                         /> :
                         item.value
