@@ -116,25 +116,17 @@ export default class Search extends PureComponent {
         id: NONE_INFO,
       }];
     }
-    return _.map(hotList, (item, index) => {
-      if (item.type === 'label') {
-        return {
-          query,
-          category: `${item.name}${index}`,
-          name: item.name,
-          description: item.description,
-          id: item.id,
-          type: item.source,
-        };
-      }
-      return {
+    return _.map(hotList, (item, index) => (
+      {
         query,
         category: `${item.value}${index}`,
         name: item.value,
         description: item.description,
+        id: item.primaryKey,
         type: item.type,
-      };
-    });
+        source: item.source,
+      }
+    ));
   }
 
   @autobind
@@ -161,15 +153,16 @@ export default class Search extends PureComponent {
   })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.name === value);
-    const sightingScopeBool = isSightingScope(item.type);
+    const sightingScopeBool = isSightingScope(item.source);
     this.handleOpenTab({
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
-      labelMapping: sightingScopeBool ? item.id : item.type,
+      labelMapping: encodeURIComponent(item.id),
       // 任务提示
       missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.name),
       labelName: encodeURIComponent(item.name),
       labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.name),
+      type: item.type,
     });
   }
 
@@ -226,7 +219,7 @@ export default class Search extends PureComponent {
   renderOption(item) {
     const { value } = this.state;
     const newContent = item.name.replace(value, `<em>${value}</em>`);
-    const sightingScopeBool = isSightingScope(item.type);
+    const sightingScopeBool = isSightingScope(item.source);
     // 联想 association
     // 搜索 search
     // 标签 tag
@@ -262,12 +255,13 @@ export default class Search extends PureComponent {
         rel="noopener noreferrer"
         onClick={() => this.handleOpenTab({
           source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
-          labelMapping: item.id || '',
+          labelMapping: encodeURIComponent(item.id) || '',
           labelName: encodeURIComponent(item.name),
           labelDesc: encodeURIComponent(item.description),
           // 任务提示
           missionDesc: padSightLabelDesc(isSightingScope(item.source), item.id, item.name),
           q: encodeURIComponent(item.name),
+          type: 'LABEL',
         })}
         key={item.id}
       >

@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { isSightingScope } from '../helper';
+import HoldingProductDetail from './HoldingProductDetail';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -36,7 +37,17 @@ export default class MatchArea extends PureComponent {
     location: PropTypes.object.isRequired,
     listItem: PropTypes.object.isRequired,
     q: PropTypes.string.isRequired,
+    hasNPCTIQPermission: PropTypes.bool.isRequired,
+    hasPCTIQPermission: PropTypes.bool.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
+    queryHoldingProductReqState: PropTypes.bool.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
+
+  static contextTypes = {
+    empInfo: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
@@ -289,6 +300,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 瞄准镜
   renderSightingTelescope() {
     const {
       q = '',
@@ -335,6 +347,105 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 持仓产品
+  renderHoldingProduct() {
+    const {
+      q = '',
+      listItem: { holdingProducts },
+      location: { query: { source } },
+    } = this.props;
+    if (_.includes(['search', 'association'], source) && !_.isEmpty(holdingProducts)) {
+      // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
+      const filteredProducts = this.getFilteredProducts(holdingProducts, q);
+      if (filteredProducts.length > 1) {
+        return this.getMultipleHoldingProductNode(filteredProducts, q);
+      }
+      // 匹配到的持仓产品大于1个，显示 产品的名称/产品代码(持仓详情)
+      return this.getSingleHoldingProductNode(holdingProducts, q);
+    }
+    return null;
+  }
+
+  // 关键词匹配到的持仓产品
+  getFilteredProducts(list, keyword) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.id, keyword) || _.includes(item.name, keyword)),
+    );
+  }
+
+  /**
+   * 根据持仓产品的字段返回多个持仓产品的html
+   * @param {*} list [{name: '12345', id:'0008'},{name: '29999', id:'0002'}]
+   * @param {*} keyword '2'
+   */
+  getMultipleHoldingProductNode(list, keyword) {
+    if (!_.isEmpty(list)) {
+      const htmlStringList = _.map(
+        list,
+        item => `${replaceWord({ value: item.name, q: keyword })}/${replaceWord({ value: item.code, q: keyword })}`,
+      );
+      const htmlString = htmlStringList.join(',');
+      return (
+        <li title={htmlString.replace(/<\/?[^>]*>/g, '')}>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 根据持仓产品的字段返回单个持仓产品的html
+  getSingleHoldingProductNode(list, keyword) {
+    const {
+      listItem: { isPrivateCustomer, empId, custId },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
+      formatAsset,
+    } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    const filteredProducts = this.getFilteredProducts(list, keyword);
+    // 是否显示’持仓详情‘，默认不显示
+    let isShowDetailBtn = true;
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
+    }
+    if (!_.isEmpty(filteredProducts)) {
+      const { name, code } = filteredProducts[0] || {};
+      const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
+      const props = {
+        custId,
+        data: filteredProducts[0] || {},
+        queryHoldingProduct,
+        holdingProducts,
+        queryHoldingProductReqState,
+        formatAsset,
+      };
+      return (
+        <li>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+            {isShowDetailBtn && <HoldingProductDetail {...props} />}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
       <div className={styles.relatedInfo}>
@@ -349,6 +460,7 @@ export default class MatchArea extends PureComponent {
           {this.renderStatus()}
           {this.renderServiceRecord()}
           {this.renderSightingTelescope()}
+          {this.renderHoldingProduct()}
         </ul>
       </div>
     );
