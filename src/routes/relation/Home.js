@@ -3,7 +3,8 @@
  * @Author: zhangjunli
  * @Date: 2017-12-5 15:02:16
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

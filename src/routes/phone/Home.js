@@ -36,7 +36,7 @@ export default class PhoneHome extends PureComponent {
       <div>
         <Phone
           onTogglePhoneDialog={togglePhoneDialog}
-          phoneNum="17766097715"
+          phoneNum="18905163020"
           custType="per"
         />
       </div>

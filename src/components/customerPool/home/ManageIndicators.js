@@ -40,7 +40,7 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
-    custCount: React.PropTypes.oneOfType([
+    custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组

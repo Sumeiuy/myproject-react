@@ -6,7 +6,8 @@
  * @Last Modified time: 2018-04-20 18:32:32
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message, Modal, AutoComplete as AntdAutoComplete } from 'antd';
 import _ from 'lodash';
