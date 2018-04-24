@@ -1,7 +1,7 @@
 /**
- * @Description: 用户中心模块相关接口
- * @Author: xiaZhiQiang
- * @Date: 2018-04-11 14:47:50
+ * @Description: 手机分配和申请模块相关接口
+ * @Author: hongguangqing
+ * @Date: 2018-04-24 14:47:50
  */
 
 export default function telephoneNumberManage(api) {

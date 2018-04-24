@@ -1,7 +1,7 @@
 /**
- * @file models/taskFeedback.js
- *  任务反馈 store
- * @author Wangjunjun
+ * @file models/telephoneNumberManage.js
+ *   手机分配和申请模块store
+ * @author hongguangqing
  */
 
 import { telephoneNumberManage as api } from '../api';
