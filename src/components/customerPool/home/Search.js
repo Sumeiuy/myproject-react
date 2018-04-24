@@ -111,7 +111,7 @@ export default class Search extends PureComponent {
       return [{
         query,
         category: NONE_INFO,
-        name: NONE_INFO,
+        value: NONE_INFO,
         description: NONE_INFO,
         id: NONE_INFO,
       }];
@@ -120,7 +120,7 @@ export default class Search extends PureComponent {
       {
         query,
         category: `${item.value}${index}`,
-        name: item.value,
+        value: item.value,
         description: item.description,
         id: item.primaryKey,
         type: item.type,
@@ -152,16 +152,16 @@ export default class Search extends PureComponent {
     },
   })
   handleSelect(value) {
-    const item = _.find(this.state.dataSource, child => child.name === value);
+    const item = _.find(this.state.dataSource, child => child.value === value);
     const sightingScopeBool = isSightingScope(item.source);
     this.handleOpenTab({
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
-      labelMapping: encodeURIComponent(item.id),
+      labelMapping: item.id,
       // 任务提示
-      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.name),
-      labelName: encodeURIComponent(item.name),
+      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.value),
+      labelName: encodeURIComponent(item.value),
       labelDesc: encodeURIComponent(item.description),
-      q: encodeURIComponent(item.name),
+      q: encodeURIComponent(item.value),
       type: item.type,
     });
   }
@@ -218,13 +218,14 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { value } = this.state;
-    const newContent = item.name.replace(value, `<em>${value}</em>`);
+    const newContent = item.value.replace(value, `<em>${value}</em>`);
     const sightingScopeBool = isSightingScope(item.source);
+    console.log('ddddd: ', item);
     // 联想 association
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.name} text={item.name}>
+      <Option key={item.value} text={item.value}>
         <a
           dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"
@@ -237,7 +238,7 @@ export default class Search extends PureComponent {
   @autobind
   renderNoneSearchResult(item) {
     return (
-      <Option key={item.name} text={item.name} disabled>
+      <Option key={item.value} text={item.value} disabled>
         {item.description}
       </Option>
     );
@@ -255,7 +256,7 @@ export default class Search extends PureComponent {
         rel="noopener noreferrer"
         onClick={() => this.handleOpenTab({
           source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
-          labelMapping: encodeURIComponent(item.id) || '',
+          labelMapping: item.id || '',
           labelName: encodeURIComponent(item.name),
           labelDesc: encodeURIComponent(item.description),
           // 任务提示
