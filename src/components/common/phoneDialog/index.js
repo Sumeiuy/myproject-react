@@ -9,7 +9,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import bowser from 'bowser';
 import styles from './index.less';
+
+const url = bowser.msie
+  ? '/fspa/phone/'
+  : 'https://crm.htsc.com.cn:2443/phone/';
 
 export default class PhoneDialog extends PureComponent {
   static propTypes = {
@@ -27,16 +32,20 @@ export default class PhoneDialog extends PureComponent {
 
   render() {
     const { visible, phoneNum, custType } = this.props;
-    const srcUrl = `https://crm.htsc.com.cn:2443/phone/index.html?phoneNum=${phoneNum}&custType=${custType}&auto=${visible}`;
-    const rawHTML = {
-      __html: `<iframe src=${srcUrl} width="300" height="400" scrolling="no" frameBorder="0" allow="microphone" />`,
-    };
+    const srcUrl = `${url}?number=${phoneNum}&custType=${custType}&auto=true`;
     return (
       <div>
         {
           visible ?
             <div className={styles.phoneDialogBox} >
-              <div dangerouslySetInnerHTML={rawHTML} />
+              <iframe
+                src={srcUrl}
+                width="300"
+                height="400"
+                scrolling="no"
+                frameBorder="0"
+                allow="microphone"
+              />
               <div className={styles.closeIcon} onClick={this.closePhoneDialog}>×</div>
             </div>
             :

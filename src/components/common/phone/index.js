@@ -9,7 +9,24 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import bowser from 'bowser';
+import _ from 'lodash';
+
 import styles from './index.less';
+
+const URL = bowser.msie
+  ? '/fspa/phone/'
+  : 'https://crm.htsc.com.cn:2443/phone/';
+
+const OPEN_FEATURES = `
+  width=300,
+  height=400,
+  location=no,
+  menubar=no,
+  resizable=no,
+  scrollbars=no,
+  status=no
+`;
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -17,25 +34,33 @@ export default class Phone extends PureComponent {
     phoneNum: PropTypes.string.isRequired,
     // 客户类型
     custType: PropTypes.string.isRequired,
-    // 切换拨打电话弹框是否显示方法
-    onTogglePhoneDialog: PropTypes.func.isRequired,
+    // 点击号码回调
+    onClick: PropTypes.func,
     // 页面自定义样式
     style: PropTypes.object,
   }
 
   static defaultProps = {
     style: {},
+    onClick: _.noop,
   };
 
   // 点击号码弹出拨打电话的弹框
   @autobind
   handleClickPhoneNum() {
-    const { phoneNum, custType, onTogglePhoneDialog } = this.props;
-    onTogglePhoneDialog({
+    const { phoneNum, custType, onClick } = this.props;
+    onClick({
       flag: true,
       phoneNum,
       custType,
     });
+
+    const srcUrl = `${URL}?number=${phoneNum}&custType=${custType}&auto=true`;
+    window.open(
+      srcUrl,
+      'phoneDialog',
+      OPEN_FEATURES,
+    );
   }
 
   render() {
