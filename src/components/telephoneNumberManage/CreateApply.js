@@ -1,17 +1,15 @@
-/*
- * @Description: 分公司客户划转 home 页面
- * @Author: XuWenKang
- * @Date: 2017-09-22 14:49:16
+/**
+ * @Author: hongguangqing
+ * @Description 业务手机申请新建页面
+ * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-24 13:09:48
+ * @Last Modified time: 2018-04-24 13:10:43
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { Button, message, Table } from 'antd';
 import _ from 'lodash';
-// import confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
 import AddEmpList from './AddEmpList';

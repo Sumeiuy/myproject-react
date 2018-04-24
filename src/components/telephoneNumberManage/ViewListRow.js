@@ -1,6 +1,6 @@
 /**
  * @Author: hongguangqing
- * @Description: 分公司人工划转ViewListRow
+ * @Description: 业务手机申请页面ViewListRow
  * @Date: 2018-01-29 14:25:26
  * @Last Modified by: hongguangqing
  * @Last Modified time: 2018-04-19 16:46:12

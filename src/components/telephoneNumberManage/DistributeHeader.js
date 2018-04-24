@@ -1,6 +1,6 @@
 /**
- * @file Pageheader.js
- * 权限申请，合约管理，佣金调整头部筛选
+ * @file DistributeHeader.js
+ * 业务手机分配页面头部筛选
  * @author honggaunqging
  */
 
