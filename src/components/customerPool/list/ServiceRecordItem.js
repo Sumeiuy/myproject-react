@@ -41,17 +41,9 @@ export default class ServiceRecordItem extends PureComponent {
     };
   }
 
-  /**
-   * 判断是否是空或者字符串null
-   * @param {*string} content 内容
-   */
-  isNullOrNullString(content) {
-    return _.isEmpty(content) || content === 'null';
-  }
-
   // 空方法，用于日志上传
   @logable({ type: 'Click', payload: { name: '下载' } })
-  handleDownloadClick() { }
+  handleDownloadClick() {}
 
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
@@ -77,35 +69,16 @@ export default class ServiceRecordItem extends PureComponent {
     return renderSpan;
   }
 
-  /**
-   * 渲染字符串
-   * @param {*string} content 内容
-   */
-  renderContentString(content) {
-    if (this.isNullOrNullString(content)) {
-      return '--';
-    }
-    return content;
-  }
-
-  renderContent(content) {
+  renderContent(newContent) {
     const { panelContent } = this.props;
-    const newContent = this.renderContentString(content);
     if (!panelContent) {
       return (
-        <span title={newContent}>
-          {newContent}
-        </span>
+        <span title={newContent}>{newContent || '--'}</span>
       );
     }
-
-    let htmlString = newContent;
-    if (!this.isNullOrNullString(content)) {
-      const htmlToState = stateFromHTML(content);
-      htmlString = toString(htmlToState);
-    }
+    const htmlToState = stateFromHTML(newContent);
+    const htmlString = toString(htmlToState);
     const title = () => <div dangerouslySetInnerHTML={{ __html: newContent }} />;
-
     return (
       <Tooltip
         title={title}
@@ -113,7 +86,7 @@ export default class ServiceRecordItem extends PureComponent {
           [styles.globalTips]: true,
         })}
       >
-        <span>{htmlString}</span>
+        <span>{htmlString || '--'}</span>
       </Tooltip>
     );
   }
