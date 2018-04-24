@@ -23,7 +23,6 @@ function InfoArea(props) {
           _.map(
             data,
             (item) => {
-              // policy or tip 是 服务策略 和 任务提示项设置的ID
               const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
               return (
                 <div
@@ -38,6 +37,7 @@ function InfoArea(props) {
                   >{item.key}</div>
                   <div className={styles.infoValue}>
                     {
+                      // policy or tip 是 服务策略 和 任务提示项设置的ID
                       isPoliceOrTip ?
                         <div
                           className={styles.row}
