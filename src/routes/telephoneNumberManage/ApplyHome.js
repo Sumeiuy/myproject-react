@@ -39,6 +39,8 @@ const effects = {
   queryAdvisorList: 'telephoneNumberManage/queryAdvisorList',
   // 新建页面获取下一步审批人
   queryNextApproval: 'telephoneNumberManage/queryNextApproval',
+  // 获取批量投顾
+  queryBatchAdvisorList: 'telephoneNumberManage/queryBatchAdvisorList',
 };
 const mapStateToProps = state => ({
   // 左侧列表数据
@@ -53,8 +55,10 @@ const mapStateToProps = state => ({
   attachmentList: state.telephoneNumberManage.attachmentList,
   // 获取新建页面的投顾
   advisorListData: state.telephoneNumberManage.advisorListData,
-  // 获取新建页面的投顾
+  // 新建页面获取下一步审批人
   nextApprovalData: state.telephoneNumberManage.nextApprovalData,
+  // 获取批量投顾
+  batchAdvisorListData: state.telephoneNumberManage.batchAdvisorListData,
 });
 
 const mapDispatchToProps = {
@@ -71,6 +75,8 @@ const mapDispatchToProps = {
   queryAdvisorList: dispatch(effects.queryAdvisorList, { loading: false }),
   // 获取新建下一步审批人
   queryNextApproval: dispatch(effects.queryNextApproval, { forceFull: true }),
+  // 获取批量投顾
+  queryBatchAdvisorList: dispatch(effects.queryBatchAdvisorList, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -100,6 +106,9 @@ export default class ApplyHome extends PureComponent {
     // 新建页面获取下一步审批人
     nextApprovalData: PropTypes.array.isRequired,
     queryNextApproval: PropTypes.func.isRequired,
+    // 获取批量投顾
+    batchAdvisorListData: PropTypes.object.isRequired,
+    queryBatchAdvisorList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -308,6 +317,8 @@ export default class ApplyHome extends PureComponent {
       queryAdvisorList,
       nextApprovalData,
       queryNextApproval,
+      batchAdvisorListData,
+      queryBatchAdvisorList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -374,6 +385,8 @@ export default class ApplyHome extends PureComponent {
               queryNextApproval={queryNextApproval}
               empAppBindingList={empAppBindingList}
               queryEmpAppBindingList={queryEmpAppBindingList}
+              batchAdvisorListData={batchAdvisorListData}
+              queryBatchAdvisorList={queryBatchAdvisorList}
             />
             :
             null

@@ -27,6 +27,8 @@ export default {
     nextApprovalData: EMPTY_LIST,
     // 附件列表
     attachmentList: EMPTY_LIST,
+    // 批量投顾查询列表
+    batchAdvisorListData: EMPTY_OBJECT,
   },
   reducers: {
     // 投顾手机分配页面筛选-服务经理列表
@@ -105,6 +107,15 @@ export default {
         attachmentList: resultData,
       };
     },
+    // 批量投顾查询列表
+    queryBatchAdvisorListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      console.warn('resultData', resultData);
+      return {
+        ...state,
+        batchAdvisorListData: resultData,
+      };
+    },
   },
   effects: {
     // 获取服务经理
@@ -168,6 +179,14 @@ export default {
       const response = yield call(api.getAttachmentList, payload);
       yield put({
         type: 'getAttachmentListSuccess',
+        payload: response,
+      });
+    },
+    // 批量投顾查询列表
+    * queryBatchAdvisorList({ payload }, { call, put }) {
+      const response = yield call(api.queryAdvisorList, payload);
+      yield put({
+        type: 'queryBatchAdvisorListSuccess',
         payload: response,
       });
     },
