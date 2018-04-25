@@ -17,6 +17,10 @@ const menu = [
         name: '任务问卷调查',
         path: '/taskFeedback',
       },
+      {
+        name: '投资建议模板',
+        path: '/investmentAdvice',
+      },
     ],
   },
   {
