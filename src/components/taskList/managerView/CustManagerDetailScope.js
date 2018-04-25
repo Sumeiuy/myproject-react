@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-23 14:14:34
+ * @Last Modified time: 2018-04-25 09:12:50
  * 服务经理维度任务统计
  */
 
@@ -11,20 +11,34 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+
+import { Dropdown, Menu } from 'antd';
 import Table from '../../common/commonTable';
 import antdStyles from '../../../css/antd.less';
 import styles from './custManagerDetailScope.less';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
+import {
+  EMP_MANAGER_SCOPE,
+  EMP_DEPARTMENT_SCOPE,
+  EMP_COMPANY_SCOPE,
+  ALL_EMP_SCOPE_ITEM,
+  EMP_COMPANY_COLUMN_FOR_FIRST,
+  EMP_COMPANY_COLUMN_FOR_LAST,
+  EMP_DEPARTMENT_COLUMN_FOR_FIRST,
+  EMP_DEPARTMENT_COLUMN_FOR_LAST,
+} from '../../../config/managerViewCustManagerScope';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const NOOP = _.noop;
 
+// 初始化分页条目
 const INITIAL_PAGE_SIZE = 5;
+// 初始化页码
 const INITIAL_PAGE_NUM = 1;
-const MANAGER_SCOPE = 1;
 
+const Item = Menu.Item;
 
 export default class CustManagerDetailScope extends PureComponent {
 
@@ -37,6 +51,8 @@ export default class CustManagerDetailScope extends PureComponent {
     getCustManagerScope: PropTypes.func,
     // 当前可供筛选的维度
     currentScopeList: PropTypes.array,
+    // 当前任务id
+    currentId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -45,14 +61,32 @@ export default class CustManagerDetailScope extends PureComponent {
     isFold: false,
     getCustManagerScope: NOOP,
     currentScopeList: EMPTY_LIST,
+    currentId: '',
   }
 
   constructor(props) {
     super(props);
     this.state = {
       // 当前选择的维度，默认进来是服务经理维度，可以切换
-      currentSelectScope: MANAGER_SCOPE,
+      currentSelectScope: EMP_MANAGER_SCOPE,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentOrgLevel, currentId } = this.props;
+    const { currentOrgLevel: nextOrgLevel, currentId: nextMssnId } = nextProps;
+    // 当任务切换时，
+    // 当组织机构树发生变化的时候，将默认维度置为服务经理
+    if (currentOrgLevel !== nextOrgLevel || currentId !== nextMssnId) {
+      this.setState({
+        currentSelectScope: EMP_MANAGER_SCOPE,
+      });
+    }
+  }
+
+  @autobind
+  getFilterPopupContainer() {
+    return this.filterElem;
   }
 
   /**
@@ -75,10 +109,35 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   handlePageChange(pageNum, pageSize) {
     const { getCustManagerScope } = this.props;
+    const { currentSelectScope } = this.state;
     getCustManagerScope({
       pageNum,
       pageSize,
+      enterType: currentSelectScope,
     });
+  }
+
+  /**
+   * 选中一个维度，触发回调，请求当前维度的信息
+   */
+  @autobind
+  handleSelectMenuItem({ key }) {
+    this.setState({
+      currentSelectScope: key,
+    });
+    this.props.getCustManagerScope({
+      // 当前维度
+      enterType: key,
+    });
+  }
+
+  /**
+   * 设置当前filter对应的element
+   * @param {*node} input 当前element
+   */
+  @autobind
+  saveFilterRef(input) {
+    this.filterElem = input;
   }
 
   /**
@@ -107,12 +166,58 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * Menu的子选项
+   */
+  @autobind
+  renderFilterOption() {
+    const { currentScopeList } = this.props;
+    return _.map(currentScopeList, item => <Item key={item.key}>{item.value}</Item>);
+  }
+
+  /**
    * 渲染表头
    */
   @autobind
   renderTableTitle() {
+    const { currentSelectScope } = this.state;
+
     return (
-      <span className={`${styles.tableTitle} tableTitle`}>服务经理维度</span>
+      <div className={styles.titleSection}>
+        <div className={`${styles.tableTitle} tableTitle`}>服务经理维度</div>
+        <div
+          className={styles.scopeSelect}
+          ref={this.saveFilterRef}
+        >
+          <Dropdown
+            // dropdown的trigger需要数组
+            trigger={['click']}
+            overlay={
+              <Menu
+                onClick={this.handleSelectMenuItem}
+                selectedKeys={[currentSelectScope || EMP_MANAGER_SCOPE]}
+              >
+                {this.renderFilterOption()}
+              </Menu>
+            }
+            placement="bottomRight"
+            getPopupContainer={this.getFilterPopupContainer}
+          >
+            <div>
+              <span className={styles.title}>查看维度：</span>
+              <span className={styles.currentSelectScope}>
+                {_.filter(ALL_EMP_SCOPE_ITEM, item =>
+                  item.key === (currentSelectScope || EMP_MANAGER_SCOPE))[0].value}
+              </span>
+              <span
+                className={'ant-select-arrow'}
+                unselectable={'unselectable'}
+              >
+                <b />
+              </span>
+            </div>
+          </Dropdown>
+        </div>
+      </div>
     );
   }
 
@@ -128,62 +233,79 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
-   * 渲染每一列数据
+   * 渲染第一列
+   * 如果选择了服务经理，第一列展示服务经理，
+   * 如果选择了分公司，第一列展示分公司
+   * 如果选择了营业部，第一列展示营业部
    */
-  @autobind
-  renderColumn() {
-    const { currentOrgLevel } = this.props;
-    // 如果是营业部层级，则只展示基本的5列数据
-    let columnTitle = [{
+  renderFirstCoulmn() {
+    const { currentSelectScope } = this.state;
+    if (currentSelectScope === EMP_COMPANY_SCOPE) {
+      return [EMP_COMPANY_COLUMN_FOR_FIRST];
+    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+      return [EMP_DEPARTMENT_COLUMN_FOR_FIRST];
+    }
+
+    // 默认展示服务经理列
+    return [{
       key: 'login',
       value: '服务经理',
       render: this.renderManagerNameId,
       renderTitle: this.renderCoulmnTitleTooltip,
-    }, {
-      key: 'flowNum',
-      value: '客户总数',
-    }, {
-      key: 'servFlowNum',
-      value: '已服务客户',
-      render: ({ flowNum, servFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
-    }, {
-      key: 'doneFlowNum',
-      value: '已完成客户',
-      render: ({ flowNum, doneFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
-    }, {
-      key: 'traceFlowNum',
-      value: '结果达标客户',
-      render: ({ flowNum, traceFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
     }];
+  }
 
-    if (currentOrgLevel === ORG_LEVEL1) {
-      // 经纪及财富管理部层级
-      // 增加分公司和营业部展示
-      columnTitle = [
-        ...columnTitle,
-        {
-          key: 'empCompanyName',
-          value: '所属分公司',
-        },
-        {
-          key: 'empDepartmentName',
-          value: '所属营业部',
-        },
-      ];
-    } else if (currentOrgLevel === ORG_LEVEL2) {
-      // 分公司层级
-      // 增加营业部列展示
-      columnTitle = [
-        ...columnTitle,
-        {
-          key: 'empDepartmentName',
-          value: '所属营业部',
-        },
-      ];
+  /**
+   * 渲染表格最后两列
+   */
+  renderLastTwoColumn() {
+    const { currentSelectScope } = this.state;
+    const { currentOrgLevel } = this.props;
+    if (currentSelectScope === EMP_MANAGER_SCOPE) {
+      // 服务经理维度，最后两列，根据层级，展示分公司或营业部
+      if (currentOrgLevel === ORG_LEVEL1) {
+        return [EMP_COMPANY_COLUMN_FOR_LAST, EMP_DEPARTMENT_COLUMN_FOR_LAST];
+      } else if (currentOrgLevel === ORG_LEVEL2) {
+        return [EMP_DEPARTMENT_COLUMN_FOR_LAST];
+      }
     }
+
+    // 分公司维度，
+    // 营业部维度
+    return EMPTY_LIST;
+  }
+
+  /**
+   * 渲染每一列数据
+   */
+  @autobind
+  renderColumn() {
+    const columnTitle = [
+      ...this.renderFirstCoulmn(),
+      {
+        key: 'flowNum',
+        value: '客户总数',
+      },
+      {
+        key: 'servFlowNum',
+        value: '已服务客户',
+        render: ({ flowNum, servFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      {
+        key: 'doneFlowNum',
+        value: '已完成客户',
+        render: ({ flowNum, doneFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      {
+        key: 'traceFlowNum',
+        value: '结果达标客户',
+        render: ({ flowNum, traceFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      ...this.renderLastTwoColumn(),
+    ];
 
     return columnTitle;
   }

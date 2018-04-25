@@ -146,6 +146,97 @@
         }
       }
     }
+    .titleSection {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      .tableTitle {
+        width: 50%;
+      }
+      .scopeSelect {
+        width: 50%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-right: 15px;
+        .title, .currentSelectScope {
+          font-size: 14px;
+          max-width: 70px;
+        }
+        .title {
+          color: #999;
+        }
+        .currentSelectScope {
+          margin-right: 15px;
+          color: #333;
+        }
+        & > div:first-child {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          :global {
+            .ant-select {
+              max-width: 120px !important;
+            }
+          }
+        }
+        :global {
+          .ant-dropdown-trigger {
+            cursor: pointer;
+          }
+          .ant-dropdown {
+            background: rgb(255, 255, 255);
+            border: 1px solid rgb(217, 217, 217);
+            box-shadow: rgba(0, 0, 0, 0.2) 0 1px 4px 0;
+            border-radius: 3px;
+            width: 168px;
+          }
+          .ant-select-arrow {
+            transform: scale(0.7);
+            display: inline-block;
+            font-style: normal;
+            vertical-align: baseline;
+            text-align: center;
+            text-transform: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            line-height: 1;
+            margin-top: -6px;
+            transform-origin: 50% 50%;
+            color: rgba(0, 0, 0, 0.25);
+            font-size: 12px;
+            user-select: none;
+          }
+          .ant-select-arrow::before {
+            display: block;
+            font-family: "anticon" !important;
+            content: "";
+            height: 0;
+            position: absolute;
+            right: -5px;
+            top: 4px;
+            width: 0;
+            border: none;
+            border-top: 8px solid #c2c2c2;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+          }
+          .ant-dropdown-menu-item {
+            height: 42px;
+            line-height: 42px;
+            padding-bottom: 0;
+            padding-top: 0;
+            font-size: 14px;
+            color: #313131;
+          }
+        }
+      }
+    }
     :global {
       .commonPage {
         margin-right: 10px;

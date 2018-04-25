@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 00:13:12
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-24 14:14:36
  * @description 任务管理首页
  */
 
@@ -38,6 +38,10 @@ import {
   STATE_FINISHED_CODE,
   STATE_ALL_CODE,
 } from './config';
+
+import {
+  EMP_MANAGER_SCOPE,
+} from '../../config/managerViewCustManagerScope';
 
 // 空函数
 const NOOP = _.noop;
@@ -324,6 +328,7 @@ export default class PerformerView extends PureComponent {
     orgId,
     pageNum = GET_CUST_SCOPE_PAGE_NUM,
     pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+    enterType = EMP_MANAGER_SCOPE,
   }) {
     const {
       getCustManagerScope,
@@ -335,6 +340,8 @@ export default class PerformerView extends PureComponent {
       orgId: newOrgId || emp.getOrgId(),
       pageNum,
       pageSize,
+      // 维度
+      enterType,
     });
   }
 
@@ -838,6 +845,7 @@ export default class PerformerView extends PureComponent {
       pageSize: GET_CUST_SCOPE_PAGE_SIZE,
       missionId,
       orgId: emp.getOrgId(),
+      enterType: EMP_MANAGER_SCOPE,
     });
   }
 
