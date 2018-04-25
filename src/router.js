@@ -180,6 +180,8 @@ const routes = [
     path: '/demote',
     component: Demote,
   },
+  // 从 FSP 消息提醒进入
+  { path: '/userInfoRemind', component: userInfoApproval },
   // 直接进入
   {
     path: '/filialeCustTransfer',
