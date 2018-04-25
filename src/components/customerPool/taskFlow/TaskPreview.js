@@ -315,11 +315,10 @@ export default class TaskPreview extends PureComponent {
       custNum,
       // originFileName,
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc,
-      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       // trackWindowDate,
@@ -458,19 +457,11 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div
-                dangerouslySetInnerHTML={{ __html: serviceStrategyHtml || '--' }}
-              />
+              <div>{serviceStrategySuggestion || '--'}</div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              {
-                !_.isEmpty(templetDesc) ?
-                  <div
-                    dangerouslySetInnerHTML={{ __html: templeteDescHtml }}
-                  /> :
-                  <div>--</div>
-              }
+              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
             </div>
           </div>
         </div>
