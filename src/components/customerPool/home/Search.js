@@ -220,7 +220,6 @@ export default class Search extends PureComponent {
     const { value } = this.state;
     const newContent = item.value.replace(value, `<em>${value}</em>`);
     const sightingScopeBool = isSightingScope(item.source);
-    console.log('ddddd: ', item);
     // 联想 association
     // 搜索 search
     // 标签 tag
