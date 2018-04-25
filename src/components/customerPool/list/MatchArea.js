@@ -6,7 +6,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
+import { openFspTab } from '../../../utils';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -24,6 +26,11 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
 
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
+
 // const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
 
 // 匹配标签区域超过两条显示 展开/收起 按钮
@@ -37,6 +44,10 @@ export default class MatchArea extends PureComponent {
     listItem: PropTypes.object.isRequired,
     q: PropTypes.string.isRequired,
   }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  };
 
   constructor(props) {
     super(props);
@@ -52,6 +63,39 @@ export default class MatchArea extends PureComponent {
     this.businessConfig = new Map();
     custBusinessType.forEach((item) => {
       this.businessConfig.set(item.key, item.value);
+    });
+  }
+
+  /**
+   * 跳转到360服务记录页面
+   * @param {*object} itemData 当前列表item数据
+   * @param {*} keyword 当前输入关键字
+   */
+  @autobind
+  handleOpenFsp360TabAction(itemData, keyword) {
+    const { custNature, custId, rowId, ptyId } = itemData;
+    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const pathname = '/customerCenter/fspcustomerDetail';
+    openFspTab({
+      routerAction: this.context.push,
+      url,
+      query: {
+        custId,
+        rowId,
+        ptyId,
+        keyword,
+      },
+      pathname,
+      param: {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+        activeSubTab: ['服务记录'],
+      },
+      state: {
+        url,
+      },
     });
   }
 
@@ -269,7 +313,7 @@ export default class MatchArea extends PureComponent {
     const {
       q = '',
       listItem,
-      location: { query: { source } },
+      location: { query: { source, q: keyword } },
     } = this.props;
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
@@ -283,6 +327,10 @@ export default class MatchArea extends PureComponent {
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
             <i>...</i>
           </span>
+          <span
+            className={styles.more}
+            onClick={() => this.handleOpenFsp360TabAction(listItem, keyword)}
+          >详情</span>
         </li>
       );
     }
