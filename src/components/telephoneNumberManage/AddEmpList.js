@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 12:35:30
+ * @Last Modified time: 2018-04-25 19:32:58
  */
 
 
@@ -19,26 +19,32 @@ import styles from './addEmpList.less';
 
 export default class AddEmpList extends PureComponent {
   static propTypes = {
+    pageType: PropTypes.string,
     queryAdvisorList: PropTypes.func.isRequired,
     advisorList: PropTypes.array,
     saveSelectedEmpList: PropTypes.func.isRequired,
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
+    // 修改页面初始表格数据
+    advisorBindList: PropTypes.array,
   }
 
   static defaultProps = {
     advisorList: [],
+    pageType: '',
+    advisorBindList: [],
   }
 
   constructor(props) {
     super(props);
+    const { pageType, advisorBindList } = this.props;
     this.state = {
       selectList: [],
       // 点击选择的服务经理
       chooseEmp: {},
       // 所有单个选择添加的服务经理列表
-      empLists: [],
+      empLists: pageType === 'edit' ? advisorBindList : [],
       // 批量添加弹框是否显示，默认false为不显示
       isShowBatchAddModal: false,
     };
@@ -49,14 +55,6 @@ export default class AddEmpList extends PureComponent {
       pageNum: 1,
       pageSize: 200,
     });
-  }
-
-  @autobind
-  clearCustList() {
-    this.setState({
-      empLists: [],
-    });
-    this.passData2Create([]);
   }
 
   // 从添加服务经理页面传递数据给新建页面
@@ -85,17 +83,30 @@ export default class AddEmpList extends PureComponent {
   @autobind
   handleAddBtnClick() {
     const { empLists, chooseEmp } = this.state;
-    // 判断是否已经存在改用户
-    const exist = _.findIndex(empLists, o => o.empId === chooseEmp.empId) > -1;
-    if (exist) {
-      message.error('此用户已经添加过');
-      return;
+    // 选中客户才能添加，不选不能添加
+    if (!_.isEmpty(chooseEmp)) {
+      // 判断是否已经存在用该户
+      const exist = _.findIndex(empLists, o => o.empId === chooseEmp.empId) > -1;
+      if (exist) {
+        message.error('此用户已经添加过');
+        return;
+      }
+      // 将单客户添加的数据合并到newList中
+      const newList = _.concat([chooseEmp], empLists);
+      // 对合并后的数据进行去重
+      const finalEmplist = _.uniqBy(newList, 'empId');
+      // 添加的服务经理数量最多不能多于200条
+      if (_.size(finalEmplist) > 200) {
+        message.error('服务经理最多只能添加200条');
+        return;
+      }
+      this.setState({
+        empLists: finalEmplist,
+      });
+      this.passData2Create(finalEmplist);
+    } else {
+      message.error('请先选择服务经理');
     }
-    const newList = _.concat([chooseEmp], empLists);
-    this.setState({
-      empLists: newList,
-    });
-    this.passData2Create(newList);
   }
 
   // 删除选择的用户
@@ -113,12 +124,20 @@ export default class AddEmpList extends PureComponent {
   @autobind
   saveSelectedBatchEmpList(batchList) {
     const { empLists } = this.state;
+    // 批量客户添加与单客户添加进行合并
     const newList = _.concat(empLists, batchList);
+    // 对合并后的数据进行去重
+    const finalEmplist = _.uniqBy(newList, 'empId');
+    // 去重后的数据不能多于200条
+    if (_.size(finalEmplist) > 200) {
+      message.error('服务经理最多只能添加200条');
+      return;
+    }
     this.setState({
-      empLists: newList,
+      empLists: finalEmplist,
       isShowBatchAddModal: false,
     });
-    this.passData2Create(newList);
+    this.passData2Create(finalEmplist);
   }
 
   // 分页显示总条数和选中总条数
@@ -183,6 +202,7 @@ export default class AddEmpList extends PureComponent {
     const empListsSize = _.size(finalEmplist);
     // 渲染标题
     const columnTitle = this.renderColumnTitle();
+    console.warn('finalEmplist', finalEmplist);
     return (
       <div className={styles.addEmpListBox}>
         <div className={styles.selectSearchBox}>

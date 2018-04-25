@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 12:08:29
+ * @Last Modified time: 2018-04-25 18:58:44
  */
 
 import React, { PureComponent } from 'react';
@@ -95,7 +95,7 @@ export default class BatchAddEmpList extends PureComponent {
   render() {
     const { selectedRowKeys, visible } = this.state;
     const { batchAdvisorListData } = this.props;
-    const { advisorList, page } = batchAdvisorListData;
+    const { advisorList } = batchAdvisorListData;
     // 处理数据，为每个增加key
     const advisorListWithKey = advisorList.map(item => ({ ...item, key: item.empId }));
     // 表头
@@ -103,7 +103,7 @@ export default class BatchAddEmpList extends PureComponent {
     // 选中个数
     const selectedRowKeysSize = _.size(selectedRowKeys);
     // 数据总个数
-    const advisorListTotalNum = Number(page.totalRecordNum);
+    const advisorListTotalNum = _.size(advisorList);
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,

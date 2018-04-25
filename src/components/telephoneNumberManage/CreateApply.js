@@ -3,7 +3,7 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 12:05:10
+ * @Last Modified time: 2018-04-25 19:17:12
  */
 
 import React, { PureComponent } from 'react';
@@ -123,15 +123,21 @@ export default class CreateApply extends PureComponent {
   sendCreateRequest() {
     const { empLists, approval } = this.state;
     const { updateBindingFlow } = this.props;
-    if (_.isEmpty(empLists)) {
+    // 用empId去重
+    const finalEmplists = _.uniqBy(empLists, 'empId');
+    const finalEmplistsSize = _.size(finalEmplists);
+    if (_.isEmpty(finalEmplists)) {
       message.error('请添加服务经理');
       return;
     } else if (_.isEmpty(approval)) {
       message.error('请选择审批人');
       return;
+    } else if (finalEmplistsSize > 200) {
+      message.error('服务经理最多只能添加200条');
+      return;
     }
     updateBindingFlow({
-      advisorBindingList: empLists,
+      advisorBindingList: finalEmplists,
     }).then(() => {
       this.sendDoApproveRequest();
     });
@@ -156,7 +162,7 @@ export default class CreateApply extends PureComponent {
     doApprove({
       itemId: updateBindingFlowAppId,
       groupName: 'fgsfzr_group',
-      approverIdea: approval,
+      auditors: approval,
       operate: 'commit',
     }).then(() => {
       message.success('公务手机申请新建成功');

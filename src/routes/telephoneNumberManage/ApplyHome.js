@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 12:34:57
+ * @Last Modified time: 2018-04-25 19:49:43
  */
 
 import React, { PureComponent } from 'react';
@@ -193,13 +193,18 @@ export default class ApplyHome extends PureComponent {
         activeRowIndex: itemIndex,
       });
       this.props.getDetailInfo({ flowId: item.flowId }).then(() => {
-        const { appId, attachmnet } = this.props.detailInfo;
-        this.props.queryEmpAppBindingList({
+        const { detailInfo, queryEmpAppBindingList, getAttachmentList } = this.props;
+        const { appId, attachmnet } = detailInfo;
+        // 拿详情接口返回的appId去调详情表格数据
+        queryEmpAppBindingList({
           appId,
           pageNum: 1,
           pageSize: 10,
         });
-        this.props.getAttachmentList({ attachmnet });
+        // 若详情接口返回的attachmnet不为null，调详情附件信息
+        if (!_.isEmpty(attachmnet)) {
+          getAttachmentList({ attachmnet });
+        }
       });
     }
   }
@@ -295,7 +300,20 @@ export default class ApplyHome extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    this.props.getDetailInfo({ flowId });
+    this.props.getDetailInfo({ flowId }).then(() => {
+      const { detailInfo, queryEmpAppBindingList, getAttachmentList } = this.props;
+      const { appId, attachmnet } = detailInfo;
+      // 拿详情接口返回的appId去调详情表格数据
+      queryEmpAppBindingList({
+        appId,
+        pageNum: 1,
+        pageSize: 10,
+      });
+      // 若详情接口返回的attachmnet不为null，调详情附件信息
+      if (!_.isEmpty(attachmnet)) {
+        getAttachmentList({ attachmnet });
+      }
+    });
   }
 
   // 渲染列表项里面的每一项
