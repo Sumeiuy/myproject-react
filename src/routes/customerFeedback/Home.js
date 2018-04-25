@@ -2,8 +2,8 @@
  * @Description: 客户反馈 home 页面
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-23 20:28:01
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-24 15:20:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,7 @@ import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
 import _ from 'lodash';
 
-import choosePage from '../../components/operationManage/choosePage';
+// import choosePage from '../../components/operationManage/choosePage';
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
 import withRouter from '../../decorators/withRouter';
@@ -74,7 +74,6 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-@choosePage
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,

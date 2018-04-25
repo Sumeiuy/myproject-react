@@ -48,7 +48,6 @@ export default function ServiceRecordContent(props) {
           </div>
           <div className={styles.rightSection}>
             <ServiceRecordItem
-              panelContent
               content={item.taskDesc}
               title={'任务提示'}
               type={'right'}

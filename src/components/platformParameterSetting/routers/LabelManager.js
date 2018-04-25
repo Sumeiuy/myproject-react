@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import fsp from '../../../helper/fsp';
+import { fsp, dva } from '../../../helper';
 import Icon from '../../common/Icon';
 import Pagination from '../../common/Pagination';
 
@@ -21,11 +21,8 @@ import withRouter from '../../../decorators/withRouter';
 const confirm = Modal.confirm;
 const EMPTY_OBJ = {};
 
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
+// dva的dispatch方式
+const fetchDataFunction = dva.generateEffect;
 
 const mapStateToProps = state => ({
   // 标签列表
@@ -34,10 +31,10 @@ const mapStateToProps = state => ({
 
 const mapDisPatchToProps = {
   replace: routerRedux.replace,
-  queryAllLabels: fetchDataFunction(true, 'userCenter/queryAllLabels'),
-  updateLabel: fetchDataFunction(true, 'userCenter/updateLabel'),
-  delLabel: fetchDataFunction(true, 'userCenter/delLabel'),
-  addLabel: fetchDataFunction(true, 'userCenter/addLabel'),
+  queryAllLabels: fetchDataFunction('userCenter/queryAllLabels'),
+  updateLabel: fetchDataFunction('userCenter/updateLabel'),
+  delLabel: fetchDataFunction('userCenter/delLabel'),
+  addLabel: fetchDataFunction('userCenter/addLabel'),
 };
 
 @connect(mapStateToProps, mapDisPatchToProps)

@@ -78,7 +78,7 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            <div dangerouslySetInnerHTML={{ __html: serviceTips || '--' }} />
+            {serviceTips || '--'}
           </div>
         </div>
 

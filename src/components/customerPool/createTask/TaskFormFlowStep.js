@@ -1,15 +1,14 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 16:48:26
+ * @Last Modified time: 2018-03-23 23:01:41
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, message, Steps, Mention } from 'antd';
+import { Button, message, Steps } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { stateToHTML } from 'draft-js-export-html';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, env as envHelper } from '../../../helper';
@@ -28,7 +27,6 @@ import logable from '../../../decorators/logable';
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-const { toString } = Mention;
 
 // 标签来源，热点标签，普通标签，搜索标签
 const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
@@ -321,37 +319,21 @@ export default class TaskFormFlowStep extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-
-        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
-        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
-        const serviceStrategyString = toString(serviceStateData);
-        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
-        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
-        const formDataValidation = this.saveFormContent({
-          ...values,
-          serviceStrategySuggestion: serviceStrategyHtml,
-          serviceStrategyString,
-          isFormError,
-        });
+        const formDataValidation = this.saveFormContent({ ...values, isFormError });
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
-            serviceStrategySuggestion: serviceStrategyString,
-            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
           isFormValidate = false;
         }
       });
-
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = stateToHTML(formComponent.getData(true));
-      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc) || templeteDescHtml.length > 1000) {
+      taskFormData = { ...taskFormData, templetDesc };
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -554,11 +536,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
     const {
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       // taskSubType,
-      templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -590,10 +572,10 @@ export default class TaskFormFlowStep extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion: serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // // 任务子类型
       // taskSubType,
