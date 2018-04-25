@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
 import logable from '../../../decorators/logable';
+import { fspContainer } from '../../../config';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -183,6 +184,10 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
+  getSuggestionContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
+  }
+
   getCurrentTaskSubTypes(currentMissionType) {
     const { taskTypes } = this.props;
     const currentTaskTypeCollection = _.find(taskTypes, item =>
@@ -347,7 +352,7 @@ export default class TaskFormInfo extends PureComponent {
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          getSuggestionContainer={() => this.fatherMention}
+          getSuggestionContainer={this.getSuggestionContainer}
           multiLines
           defaultValue={toContentState(defaultMissionDesc)}
           onChange={this.handleMentionChange}
@@ -586,14 +591,6 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div
           className={styles.task_textArea}
-          ref={
-            (ref) => {
-              // ref多次重绘可能是null, 这里要判断一下
-              if (!this.fatherMention && ref) {
-                this.fatherMention = ref;
-              }
-            }
-          }
         >
           <p>
             <label htmlFor="desc"><i>*</i>任务提示:</label>
