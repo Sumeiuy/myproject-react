@@ -111,7 +111,6 @@ export default {
     // 批量投顾查询列表
     queryBatchAdvisorListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('batchAdvisorListData_resultData', resultData);
       return {
         ...state,
         batchAdvisorListData: resultData,
@@ -120,7 +119,6 @@ export default {
     // 新建修改的更新接口
     updateBindingFlowSuccess(state, action) {
       const { payload: { resultData = '' } } = action;
-      console.warn('updateBindingFlowAppId_resultData', resultData);
       return {
         ...state,
         updateBindingFlowAppId: resultData,

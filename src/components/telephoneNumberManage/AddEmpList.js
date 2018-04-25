@@ -174,7 +174,6 @@ export default class AddEmpList extends PureComponent {
       advisorList,
       batchAdvisorListData,
     } = this.props;
-    console.warn('batchAdvisorListData', batchAdvisorListData);
     const { empLists, isShowBatchAddModal } = this.state;
     // 处理选中的服务经理数组，给每个数组中对象加一个key
     const empListWithKey = empLists.map(item => ({ ...item, key: item.empId }));
