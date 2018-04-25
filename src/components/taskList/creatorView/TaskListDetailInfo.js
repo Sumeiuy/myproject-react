@@ -56,19 +56,11 @@ export default class TaskListDetailInfo extends PureComponent {
             </div>
             <div>
               <span>服务策略&nbsp;:</span>
-              <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.strategyDescHtml || '--' }}
-                />
-              </span>
+              <span>{infoData.strategyDesc || '--'}</span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
-              <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.infoContentHtml || '--' }}
-                />
-              </span>
+              <span>{infoData.infoContent || '--'}</span>
             </div>
           </div> :
           <div className={styles.modContent}>
@@ -90,19 +82,11 @@ export default class TaskListDetailInfo extends PureComponent {
             </div>
             <div>
               <span>服务策略&nbsp;:</span>
-              <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.strategyDesc || '--' }}
-                />
-              </span>
+              <span>{infoData.strategyDesc || '--'}</span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
-              <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.infoContent || '--' }}
-                />
-              </span>
+              <span>{infoData.infoContent || '--'}</span>
             </div>
           </div>
         }
