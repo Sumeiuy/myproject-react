@@ -142,6 +142,8 @@ export default {
     sightingTelescopeFilters: {},
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
+    // 持仓产品的详情
+    holdingProducts: {},
   },
 
   subscriptions: {
@@ -806,6 +808,14 @@ export default {
         payload: resultData,
       });
     },
+    // 根据持仓产品的id查询对应的详情
+    * queryHoldingProduct({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryHoldingProduct, payload);
+      yield put({
+        type: 'queryHoldingProductSuccess',
+        payload: { ...payload, resultData },
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -909,16 +919,10 @@ export default {
     // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
-      const { labelInfoList, matchedWdsList } = response.resultData;
-      const newLabelInfoList = labelInfoList === null ? []
-        : _.map(labelInfoList, item => ({ ...item, type: 'label' }));
-      const newMatchedWdsList = matchedWdsList === null ? [] : matchedWdsList;
+      const { possibleWdsList } = response.resultData;
       return {
         ...state,
-        hotPossibleWdsList: [
-          ...newLabelInfoList,
-          ...newMatchedWdsList,
-        ],
+        hotPossibleWdsList: possibleWdsList,
       };
     },
     getCustomerListSuccess(state, action) {
@@ -1415,6 +1419,16 @@ export default {
         ...state,
         todolist,
         todolistRecord,
+      };
+    },
+    queryHoldingProductSuccess(state, action) {
+      const { payload: { prdtHold, resultData } } = action;
+      return {
+        ...state,
+        holdingProducts: {
+          ...state.holdingProducts,
+          [prdtHold]: resultData,
+        },
       };
     },
   },

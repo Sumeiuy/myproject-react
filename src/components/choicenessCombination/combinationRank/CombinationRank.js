@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 16:54:47
+ * @Last Modified time: 2018-04-24 15:21:28
 */
 
 import React, { PureComponent } from 'react';
@@ -52,10 +52,12 @@ export default class CombinationRank extends PureComponent {
           head="组合排名"
           titleStyle={titleStyle}
         />
-        <CombinationTab tabChange={this.handleTabChange} />
-        <CombinationFilter filter={this.handleFilter} />
-        <div className={styles.combinationListBox}>
-          <CombinationListItem />
+        <div className={styles.containerBox}>
+          <CombinationTab tabChange={this.handleTabChange} />
+          <CombinationFilter filter={this.handleFilter} />
+          <div className={styles.combinationListBox}>
+            <CombinationListItem />
+          </div>
         </div>
       </div>
     );

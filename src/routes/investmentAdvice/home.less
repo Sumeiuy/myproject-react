@@ -1,0 +1,138 @@
+.investmentAdviceWrapper {
+  background: #fff;
+  padding: 20px;
+
+  .tipsBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+
+    button {
+      font-size: 14px;
+    }
+  }
+
+  .collapseBox {
+    margin-top: 10px;
+    border: 1px solid #ddd;
+
+    .head {
+      margin: 0 auto;
+      height: 38px;
+      line-height: 38px;
+      font-size: 14px;
+      color: #4a4a4a;
+      border-bottom: 1px solid #d9d9d9;
+      font-weight: bold;
+      background: #f7f7f7;
+    }
+
+    span {
+      display: inline-block;
+
+      &.type {
+        padding-left: 30px;
+        width: 15%;
+      }
+
+      &.title {
+        width: 35%;
+      }
+
+      &.content {
+        width: 35%;
+      }
+
+      &.operate {
+        width: 15%;
+      }
+    }
+
+    :global {
+      .ant-collapse {
+        border: none;
+        .ant-collapse-item {
+          .ant-collapse-header {
+            margin: 0 auto;
+            padding: 0;
+            height: 37px;
+            line-height: 37px;
+            font-size: 14px;
+            color: #4a4a4a;
+            i.arrow {
+              display: none;
+            }
+            &:active {
+              background: none;
+            }
+          }
+          .ant-collapse-content {
+            background: none;
+            border-top: 0;
+            .ant-collapse-content-box {
+              display: flex;
+              padding-top: 4px;
+              padding-bottom: 4px;
+              border-top: 1px solid #d9d9d9;
+            }
+          }
+          &.ant-collapse-item-active {
+            .anticon-up {
+              display: inline-block;
+            }
+            .anticon-down {
+              display: none;
+            }
+          }
+          .anticon-up {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .collapseHead {
+      span {
+        font-size: 14px;
+        color: #4a4a4a;
+
+        &.content {
+          i {
+            color: #108ee9;
+            display: inline-block;
+            margin-left: 5px;
+          }
+        }
+
+        &.operate {
+          i {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            color: #108ee9;
+          }
+        }
+      }
+    }
+
+    .collapsePanel {
+      p {
+        font-size: 14px;
+        padding: 0 15px;
+        color: #4a4a4a;
+      }
+      button {
+        margin: 10px 0 0 15px;
+        width: 80px;
+        height: 30px;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-24 15:43:30
+ * @Last Modified time: 2018-04-25 19:45:22
  */
 
 import React, { PureComponent } from 'react';
@@ -24,8 +24,8 @@ const dispatch = dva.generateEffect;
 const effects = {
   // 获取调仓历史
   getAdjustWarehouseHistory: 'choicenessCombination/getAdjustWarehouseHistory',
-  // 获取近一周表现前十的证券
-  getWeeklySecurityTopTen: 'choicenessCombination/getWeeklySecurityTopTen',
+  // 获取组合证券构成数据/获取近一周表现前十的证券
+  getCombinationSecurityList: 'choicenessCombination/getCombinationSecurityList',
 };
 
 const mapStateToProps = state => ({
@@ -38,7 +38,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: false }),
-  getWeeklySecurityTopTen: dispatch(effects.getWeeklySecurityTopTen, { loading: false }),
+  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)

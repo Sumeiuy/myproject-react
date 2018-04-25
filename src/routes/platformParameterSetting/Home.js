@@ -12,6 +12,7 @@ import Main from '../../components/platformParameterSetting/Main';
 import CustomerFeedback from '../../routes/customerFeedback/Home';
 import LabelManager from '../../components/platformParameterSetting/routers/LabelManager';
 import TaskFeedback from '../taskFeedback/Home';
+import InvestmentAdvice from '../investmentAdvice/Home';
 
 export default class PlatformParameterSetting extends PureComponent {
   static propTypes = {
@@ -28,6 +29,7 @@ export default class PlatformParameterSetting extends PureComponent {
         <Switch>
           <Route exact path="/platformParameterSetting/taskOperation/customerFeedback" component={CustomerFeedback} />
           <Route exact path="/platformParameterSetting/taskOperation/taskFeedback" component={TaskFeedback} />
+          <Route exact path="/platformParameterSetting/taskOperation/investmentAdvice" component={InvestmentAdvice} />
           <Route exact path="/platformParameterSetting/labelManager" component={LabelManager} />
           <Route path="*" render={() => (<Redirect to="/empty" />)} />
         </Switch>

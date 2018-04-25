@@ -379,7 +379,7 @@ export default class BasicInfo extends PureComponent {
                 <Divider />
                 <div className={styles.title}>
                   <Divider type="vertical" className={styles.itemDivider} />
-                  <span>基本信息</span>
+                  <span>个性化信息</span>
                   {
                     !editorState ?
                       <Icon
