@@ -3,12 +3,12 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-24 16:23:44
+ * @Last Modified time: 2018-04-25 20:12:17
  */
 
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
+import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 // import _ from 'lodash';
 import styles from './index.less';
@@ -57,6 +57,24 @@ export default class ChoicenessCombination extends PureComponent {
     };
   }
 
+  // 组合排名列表筛选排序
+  @autobind
+  handleFilterChange(data) {
+    console.log('组合排名列表筛选排序', data);
+  }
+
+  // tab切换
+  @autobind
+  handleTabChange(id) {
+    console.log('tabId', id);
+  }
+
+  // 图表tab切换
+  @autobind
+  handleChartTabChange(value) {
+    console.log('图表tab切换', value);
+  }
+
   render() {
     return (
       <div className={styles.choicenessCombinationBox}>
@@ -64,7 +82,11 @@ export default class ChoicenessCombination extends PureComponent {
           <CombinationAdjustHistory />
           <WeeklySecurityTopTen />
         </div>
-        <CombinationRank />
+        <CombinationRank
+          filterChange={this.handleFilterChange}
+          tabChange={this.handleTabChange}
+          chartTabChange={this.handleChartTabChange}
+        />
       </div>
     );
   }

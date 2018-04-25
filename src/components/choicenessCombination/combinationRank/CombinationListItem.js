@@ -3,18 +3,20 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-24 16:58:23
+ * @Last Modified time: 2018-04-25 20:17:31
 */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import Icon from '../../common/Icon';
+import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
-
+    // 图表tab切换
+    chartTabChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -26,6 +28,7 @@ export default class CombinationListItem extends PureComponent {
   // }
 
   render() {
+    const { chartTabChange } = this.props;
     return (
       <div className={`${styles.itemBox} clearfix`}>
         <div className={styles.left}>
@@ -79,7 +82,7 @@ export default class CombinationListItem extends PureComponent {
           </div>
         </div>
         <div className={styles.right}>
-          图表
+          <CombinationYieldChart tabChange={chartTabChange} />
         </div>
       </div>
     );

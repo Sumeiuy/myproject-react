@@ -3,12 +3,12 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-24 15:55:27
+ * @Last Modified time: 2018-04-25 20:05:55
 */
 
 import React, { PureComponent } from 'react';
 import { TreeSelect } from 'antd';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
@@ -32,7 +32,8 @@ const treeData = [{
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
-
+    // 筛选
+    filterChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,12 +50,22 @@ export default class CombinationRank extends PureComponent {
 
   @autobind
   handleRiskChange(value) {
+    const { filterChange } = this.props;
     console.log('risk', value);
+    filterChange({
+      key: 'risk',
+      value,
+    });
   }
 
   @autobind
   handleYieldSelect(value) {
+    const { filterChange } = this.props;
     console.log('yield', value);
+    filterChange({
+      key: 'yield',
+      value,
+    });
   }
 
   render() {

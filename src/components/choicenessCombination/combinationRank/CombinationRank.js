@@ -3,12 +3,12 @@
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-24 15:21:28
+ * @Last Modified time: 2018-04-25 20:11:09
 */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
+import PropTypes from 'prop-types';
+// import { autobind } from 'core-decorators';
 import InfoTitle from '../../common/InfoTitle';
 // import Icon from '../common/Icon';
 import CombinationTab from './CombinationTab';
@@ -22,7 +22,12 @@ const titleStyle = {
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
-
+    // tab切换
+    tabChange: PropTypes.func.isRequired,
+    // 筛选
+    filterChange: PropTypes.func.isRequired,
+    // 图表tab切换
+    chartTabChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -33,19 +38,12 @@ export default class CombinationRank extends PureComponent {
   //   super(props);
   // }
 
-  // tab切换
-  @autobind
-  handleTabChange(id) {
-    console.log('tabId', id);
-  }
-
-  // 筛选
-  @autobind
-  handleFilter(data) {
-    console.log('filter', data);
-  }
-
   render() {
+    const {
+      tabChange,
+      filterChange,
+      chartTabChange,
+    } = this.props;
     return (
       <div className={styles.combinationRankBox}>
         <InfoTitle
@@ -53,10 +51,10 @@ export default class CombinationRank extends PureComponent {
           titleStyle={titleStyle}
         />
         <div className={styles.containerBox}>
-          <CombinationTab tabChange={this.handleTabChange} />
-          <CombinationFilter filter={this.handleFilter} />
+          <CombinationTab tabChange={tabChange} />
+          <CombinationFilter filterChange={filterChange} />
           <div className={styles.combinationListBox}>
-            <CombinationListItem />
+            <CombinationListItem chartTabChange={chartTabChange} />
           </div>
         </div>
       </div>
