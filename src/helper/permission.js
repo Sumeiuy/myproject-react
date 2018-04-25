@@ -204,6 +204,36 @@ const permission = {
     const hasPermission = filterRespKHFPG.length > 0;
     return hasPermission;
   },
+
+  // HTSC 交易信息查询权限（非私密客户）
+  hasNPCTIQPermission() {
+    return hasDuty(dutyList, duty.HTSC_TIQ_NPC);
+  },
+
+  // HTSC 交易信息查询权限（含私密客户）
+  hasPCTIQPermission() {
+    return hasDuty(dutyList, duty.HTSC_TIQ_PC);
+  },
+
+  // HTSC 客户资料-总部管理岗
+  hasCIHMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_CI_HMP);
+  },
+
+  // HTSC 客户资料-分中心管理岗
+  hasCIBMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_CI_BMP);
+  },
+
+  // HTSC 客户资料（无隐私）-总部管理岗
+  hasNPCIHMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_NPCI_HMP);
+  },
+
+  // HTSC 客户资料（无隐私）-分中心管理岗
+  hasNPCIBMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
+  },
 };
 
 export default permission;
