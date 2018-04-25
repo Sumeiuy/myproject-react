@@ -43,6 +43,7 @@ export default class MatchArea extends PureComponent {
     const {
       dict: {
         custBusinessType = [],
+        custUnrightBusinessType = [],
       },
     } = props;
 
@@ -52,6 +53,11 @@ export default class MatchArea extends PureComponent {
     this.businessConfig = new Map();
     custBusinessType.forEach((item) => {
       this.businessConfig.set(item.key, item.value);
+    });
+    // 可开通业务的匹配
+    this.custUnrightBusinessType = {};
+    custUnrightBusinessType.forEach((item) => {
+      this.custUnrightBusinessType[item.key] = item.value;
     });
   }
 
@@ -203,7 +209,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (_.includes(['numOfCustOpened', 'business'], source) && listItem.unrightType) {
       const unrightTypeList = listItem.unrightType.split(' ');
-      const tmpList = _.filter(_.map(unrightTypeList, item => this.businessConfig.get(item)));
+      const tmpList = _.map(unrightTypeList, item => this.custUnrightBusinessType[item]);
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
