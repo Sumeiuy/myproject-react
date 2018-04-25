@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-17 10:17:42
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-03-09 10:53:32
  */
 
 import React, { PureComponent } from 'react';
@@ -10,10 +10,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Mention, Modal } from 'antd';
+import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
 import { emp, permission, env as envHelper, number } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
@@ -23,7 +22,6 @@ import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-// import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
 import styles from './taskFlow.less';
@@ -33,7 +31,6 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-const { toString } = Mention;
 // 瞄准镜标签入口
 const SIGHT_LABEL_ENTRY = 1;
 
@@ -562,27 +559,13 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
-        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
-        const serviceStrategyString = toString(serviceStateData);
-        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
-        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
 
-        const formDataValidation =
-          this.checkFormField({
-            ...values,
-            isFormError,
-            serviceStrategySuggestion: serviceStrategyHtml,
-            serviceStrategyString,
-          });
+        const formDataValidation = this.checkFormField({ ...values, isFormError });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
-            serviceStrategySuggestion: serviceStrategyString,
-            serviceStrategyHtml,
           };
           isFormValidate = true;
         } else {
@@ -592,11 +575,8 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = stateToHTML(formComponent.getData(true));
-
-      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc)
-        || templeteDescHtml.length > 1000) {
+      taskFormData = { ...taskFormData, templetDesc };
+      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -793,11 +773,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       labelId,
-      templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -826,10 +806,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
+      serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: templeteDescHtml, // 转换成html提交
+      templetDesc,
       timelyIntervalValue,
     };
 

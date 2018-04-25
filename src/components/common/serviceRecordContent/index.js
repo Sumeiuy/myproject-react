@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-24 14:26:55
+ * @Last Modified time: 2018-04-24 15:33:38
  */
 
 import React, { PureComponent } from 'react';
@@ -324,6 +324,13 @@ export default class ServiceRecordContent extends PureComponent {
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
 
     return {
+      // 涨乐财富通服务方式下，是否被驳回状态
+      isReject,
+      // 事件ID，客户反馈中mot任务的事件ID
+      eventId: fd.eventId,
+      // 任务类型Code,
+      taskTypeCode: fd.taskTypeCode,
+      // 任务类型MOT任务或者自建任务的事件类型
       serviceType: fd.serviceTypeCode,
       serviceWayCode,
       serviceWayText: serviceWay.value,
