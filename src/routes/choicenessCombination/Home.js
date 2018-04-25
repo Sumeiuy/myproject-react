@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 14:57:12
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-24 15:43:30
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import dva from '../../helper/dva';
 import CombinationAdjustHistory from '../../components/choicenessCombination/CombinationAdjustHistory';
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
+import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
@@ -65,6 +66,7 @@ export default class ChoicenessCombination extends PureComponent {
           <WeeklySecurityTopTen />
         </div>
         <CombinationRank />
+        <CombinationModal />
       </div>
     );
   }
