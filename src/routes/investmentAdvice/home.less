@@ -34,6 +34,8 @@
 
     span {
       display: inline-block;
+      box-sizing: border-box;
+      vertical-align: middle;
 
       &.type {
         padding-left: 30px;
@@ -44,12 +46,50 @@
         width: 35%;
       }
 
-      &.content {
+      &.headcontent {
         width: 35%;
+      }
+
+      &.content {
+        width: 80%;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       &.operate {
         width: 15%;
+      }
+    }
+
+    .collapseHead {
+      .contentwapper {
+        display: inline-block;
+        width: 35%;
+        padding-right: 80px;
+        box-sizing: border-box;
+        vertical-align: middle;
+
+        .icon {
+          color: #108ee9;
+          display: inline-block;
+          margin-left: 5px;
+        }
+      }
+
+      span {
+        font-size: 14px;
+        color: #4a4a4a;
+
+        &.operate {
+          i {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            color: #108ee9;
+          }
+        }
       }
     }
 
@@ -96,30 +136,6 @@
       }
     }
 
-    .collapseHead {
-      span {
-        font-size: 14px;
-        color: #4a4a4a;
-
-        &.content {
-          i {
-            color: #108ee9;
-            display: inline-block;
-            margin-left: 5px;
-          }
-        }
-
-        &.operate {
-          i {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            color: #108ee9;
-          }
-        }
-      }
-    }
-
     .collapsePanel {
       p {
         font-size: 14px;
@@ -132,6 +148,17 @@
         height: 30px;
         font-size: 14px;
         margin-bottom: 5px;
+      }
+    }
+  }
+
+  .pageBox {
+    float: right;
+    margin: 20px;
+    margin-right: 40px;
+    :global {
+      .ant-pagination-item {
+        margin-bottom: 0;
       }
     }
   }
