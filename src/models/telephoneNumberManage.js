@@ -29,6 +29,8 @@ export default {
     attachmentList: EMPTY_LIST,
     // 批量投顾查询列表
     batchAdvisorListData: EMPTY_OBJECT,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: '',
   },
   reducers: {
     // 投顾手机分配页面筛选-服务经理列表
@@ -84,8 +86,7 @@ export default {
     },
     // 新建页面-投顾查询列表
     queryAdvisorListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      console.warn('resultData', resultData);
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
         advisorListData: resultData,
@@ -109,11 +110,28 @@ export default {
     },
     // 批量投顾查询列表
     queryBatchAdvisorListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      console.warn('resultData', resultData);
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      console.warn('batchAdvisorListData_resultData', resultData);
       return {
         ...state,
         batchAdvisorListData: resultData,
+      };
+    },
+    // 新建修改的更新接口
+    updateBindingFlowSuccess(state, action) {
+      const { payload: { resultData = '' } } = action;
+      console.warn('updateBindingFlowAppId_resultData', resultData);
+      return {
+        ...state,
+        updateBindingFlowAppId: resultData,
+      };
+    },
+    clearPropsSuccess(state) {
+      return {
+        ...state,
+        advisorListData: EMPTY_OBJECT,
+        nextApprovalData: EMPTY_LIST,
+        batchAdvisorListData: EMPTY_OBJECT,
       };
     },
   },
@@ -188,6 +206,25 @@ export default {
       yield put({
         type: 'queryBatchAdvisorListSuccess',
         payload: response,
+      });
+    },
+    // 更新接口
+    * updateBindingFlow({ payload }, { call, put }) {
+      const response = yield call(api.updateBindingFlow, payload);
+      yield put({
+        type: 'updateBindingFlowSuccess',
+        payload: response,
+      });
+    },
+    // 走流程接口
+    * doApprove({ payload }, { call }) {
+      yield call(api.doApprove, payload);
+    },
+    // 清除数据
+    * clearProps({ payload }, { put }) {
+      yield put({
+        type: 'clearPropsSuccess',
+        payload: [],
       });
     },
   },

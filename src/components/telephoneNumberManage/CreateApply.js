@@ -3,23 +3,24 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-24 13:10:43
+ * @Last Modified time: 2018-04-25 12:05:10
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
 import AddEmpList from './AddEmpList';
 import Select from '../common/Select';
+import commonConfirm from '../common/Confirm';
 import styles from './createApply.less';
 
-export default class CreateFilialeCustTransfer extends PureComponent {
+export default class CreateApply extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    closeCreateModalBoard: PropTypes.func.isRequired,
     // 新建页面获取投顾
     advisorListData: PropTypes.object,
     queryAdvisorList: PropTypes.func.isRequired,
@@ -29,6 +30,16 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: PropTypes.string.isRequired,
+    updateBindingFlow: PropTypes.func.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+    // 更新申请列表
+    queryAppList: PropTypes.func.isRequired,
+    // 清除数据
+    clearProps: PropTypes.func.isRequired,
+    onEmitClearModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -56,7 +67,24 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   // 关闭新建弹框
   @autobind
   closeModal() {
-    this.props.closeCreateModalBoard();
+    // 关闭模态框
+    commonConfirm({
+      shortCut: 'close',
+      onOk: this.clearBoardAllData,
+    });
+  }
+
+  @autobind
+  afterClose() {
+    this.props.onEmitClearModal('isShowCreateModal');
+  }
+
+  // 清空弹出层数据
+  @autobind
+  clearBoardAllData() {
+    this.setState({ isShowModal: false }, () => {
+      this.props.clearProps();
+    });
   }
 
   // 将用户选择添加的服务经理列表返回到弹出层用于提交
@@ -91,6 +119,57 @@ export default class CreateFilialeCustTransfer extends PureComponent {
     return options;
   }
 
+  @autobind
+  sendCreateRequest() {
+    const { empLists, approval } = this.state;
+    const { updateBindingFlow } = this.props;
+    if (_.isEmpty(empLists)) {
+      message.error('请添加服务经理');
+      return;
+    } else if (_.isEmpty(approval)) {
+      message.error('请选择审批人');
+      return;
+    }
+    updateBindingFlow({
+      advisorBindingList: empLists,
+    }).then(() => {
+      this.sendDoApproveRequest();
+    });
+  }
+
+  // 发送请求，先走新建（修改）接口，再走走流程接口
+  @autobind
+  sendDoApproveRequest() {
+    const {
+      doApprove,
+      updateBindingFlowAppId,
+      queryAppList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    const { approval } = this.state;
+    doApprove({
+      itemId: updateBindingFlowAppId,
+      groupName: 'fgsfzr_group',
+      approverIdea: approval,
+      operate: 'commit',
+    }).then(() => {
+      message.success('公务手机申请新建成功');
+      this.setState({
+        isShowModal: false,
+      }, () => {
+        // 服务经理新建成功，清楚新建弹框的数据
+      //  this.props.clearProps();
+        queryAppList(query, pageNum, pageSize);
+      });
+    });
+  }
+
   render() {
     const {
       isShowModal,
@@ -110,7 +189,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       <CommonModal
         title="新建公务手机申请"
         visible={isShowModal}
+        onOk={this.sendCreateRequest}
         closeModal={this.closeModal}
+        afterClose={this.afterClose}
         size="large"
         modalKey="myModal"
       >

@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-24 13:10:43
+ * @Last Modified time: 2018-04-25 12:35:30
  */
 
 
@@ -42,6 +42,13 @@ export default class AddEmpList extends PureComponent {
       // 批量添加弹框是否显示，默认false为不显示
       isShowBatchAddModal: false,
     };
+  }
+
+  componentWillMount() {
+    this.props.queryBatchAdvisorList({
+      pageNum: 1,
+      pageSize: 200,
+    });
   }
 
   @autobind
@@ -120,6 +127,22 @@ export default class AddEmpList extends PureComponent {
     return `共${total} 条`;
   }
 
+  // 点击批量添加按钮，批量添加弹框出现
+  @autobind
+  handleBatchAddBtnClick() {
+    this.setState({
+      isShowBatchAddModal: true,
+    });
+  }
+
+  // 关闭批量添加弹框
+  @autobind
+  closeBatchAddModal() {
+    this.setState({
+      isShowBatchAddModal: false,
+    });
+  }
+
   // 头部标题
   @autobind
   renderColumnTitle() {
@@ -146,28 +169,12 @@ export default class AddEmpList extends PureComponent {
     }];
   }
 
-  // 点击批量添加按钮，批量添加弹框出现
-  @autobind
-  handleBatchAddBtnClick() {
-    this.setState({
-      isShowBatchAddModal: true,
-    });
-  }
-
-  // 关闭批量添加弹框
-  @autobind
-  closeBatchAddModal() {
-    this.setState({
-      isShowBatchAddModal: false,
-    });
-  }
-
   render() {
     const {
       advisorList,
       batchAdvisorListData,
-      queryBatchAdvisorList,
     } = this.props;
+    console.warn('batchAdvisorListData', batchAdvisorListData);
     const { empLists, isShowBatchAddModal } = this.state;
     // 处理选中的服务经理数组，给每个数组中对象加一个key
     const empListWithKey = empLists.map(item => ({ ...item, key: item.empId }));
@@ -214,7 +221,6 @@ export default class AddEmpList extends PureComponent {
               visible={isShowBatchAddModal}
               closeBatchAddModal={this.closeBatchAddModal}
               batchAdvisorListData={batchAdvisorListData}
-              queryBatchAdvisorList={queryBatchAdvisorList}
               saveSelectedBatchEmpList={this.saveSelectedBatchEmpList}
             />
             :

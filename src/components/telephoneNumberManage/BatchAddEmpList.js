@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-24 14:17:08
+ * @Last Modified time: 2018-04-25 12:08:29
  */
 
 import React, { PureComponent } from 'react';
@@ -12,16 +12,13 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
-
 import styles from './batchAddEmpList.less';
 
 export default class BatchAddEmpList extends PureComponent {
   static propTypes = {
-    visible: PropTypes.bool.isRequired,
     closeBatchAddModal: PropTypes.func.isRequired,
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object,
-    queryBatchAdvisorList: PropTypes.func.isRequired,
     // 保存批量选中服务经理的数据，用于最终的提交
     saveSelectedBatchEmpList: PropTypes.func.isRequired,
   }
@@ -33,16 +30,10 @@ export default class BatchAddEmpList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      visible: true,
       // 选中的行key
       selectedRowKeys: [],
     };
-  }
-
-  componentWillMount() {
-    this.props.queryBatchAdvisorList({
-      pageNum: 1,
-      pageSize: 200,
-    });
   }
 
   // 手动点击每行选中或取消
@@ -71,6 +62,18 @@ export default class BatchAddEmpList extends PureComponent {
     const selectedRowKeysSize = _.size(selectedRowKeys);
     return `已选中 ${selectedRowKeysSize} 条 /共${total} 条`;
   }
+  // 关闭新建弹框
+  @autobind
+  closeModal() {
+    this.setState({
+      visible: false,
+    });
+  }
+
+  @autobind
+  afterClose() {
+    this.props.closeBatchAddModal();
+  }
 
   // 渲染表头
   @autobind
@@ -90,8 +93,8 @@ export default class BatchAddEmpList extends PureComponent {
   }
 
   render() {
-    const { selectedRowKeys } = this.state;
-    const { closeBatchAddModal, batchAdvisorListData, visible } = this.props;
+    const { selectedRowKeys, visible } = this.state;
+    const { batchAdvisorListData } = this.props;
     const { advisorList, page } = batchAdvisorListData;
     // 处理数据，为每个增加key
     const advisorListWithKey = advisorList.map(item => ({ ...item, key: item.empId }));
@@ -128,7 +131,8 @@ export default class BatchAddEmpList extends PureComponent {
         title="批量添加服务经理"
         visible={visible}
         onOk={this.submitBatchEmplistData}
-        closeModal={closeBatchAddModal}
+        closeModal={this.closeModal}
+        afterClose={this.afterClose}
         modalKey="myBatchAddEmpListModal"
         wrapClassName="batchAddEmpListModal"
       >

@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-21 13:39:15
+ * @Last Modified time: 2018-04-25 12:34:57
  */
 
 import React, { PureComponent } from 'react';
@@ -41,6 +41,12 @@ const effects = {
   queryNextApproval: 'telephoneNumberManage/queryNextApproval',
   // 获取批量投顾
   queryBatchAdvisorList: 'telephoneNumberManage/queryBatchAdvisorList',
+  // 新建修改的更新接口
+  updateBindingFlow: 'telephoneNumberManage/updateBindingFlow',
+  // 走流程接口
+  doApprove: 'telephoneNumberManage/doApprove',
+  // 清除数据
+  clearProps: 'telephoneNumberManage/clearProps',
 };
 const mapStateToProps = state => ({
   // 左侧列表数据
@@ -59,6 +65,8 @@ const mapStateToProps = state => ({
   nextApprovalData: state.telephoneNumberManage.nextApprovalData,
   // 获取批量投顾
   batchAdvisorListData: state.telephoneNumberManage.batchAdvisorListData,
+  // 新建修改的更新接口
+  updateBindingFlowAppId: state.telephoneNumberManage.updateBindingFlowAppId,
 });
 
 const mapDispatchToProps = {
@@ -77,6 +85,12 @@ const mapDispatchToProps = {
   queryNextApproval: dispatch(effects.queryNextApproval, { forceFull: true }),
   // 获取批量投顾
   queryBatchAdvisorList: dispatch(effects.queryBatchAdvisorList, { forceFull: true }),
+  // 新建修改的更新接口
+  updateBindingFlow: dispatch(effects.updateBindingFlow, { forceFull: true }),
+  // 走流程接口
+  doApprove: dispatch(effects.doApprove, { forceFull: true }),
+  // 清除数据
+  clearProps: dispatch(effects.clearProps, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -109,6 +123,13 @@ export default class ApplyHome extends PureComponent {
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: PropTypes.string.isRequired,
+    updateBindingFlow: PropTypes.func.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+    // 清除数据
+    clearProps: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -225,14 +246,6 @@ export default class ApplyHome extends PureComponent {
     });
   }
 
-  // 关闭新建申请的弹出框
-  @autobind
-  closeCreateModalBoard() {
-    this.setState({
-      isShowCreateModal: false,
-    });
-  }
-
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
@@ -319,6 +332,10 @@ export default class ApplyHome extends PureComponent {
       queryNextApproval,
       batchAdvisorListData,
       queryBatchAdvisorList,
+      updateBindingFlowAppId,
+      updateBindingFlow,
+      doApprove,
+      clearProps,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -378,7 +395,6 @@ export default class ApplyHome extends PureComponent {
           isShowCreateModal ?
             <CreateApply
               location={location}
-              closeCreateModalBoard={this.closeCreateModalBoard}
               advisorListData={advisorListData}
               queryAdvisorList={queryAdvisorList}
               nextApprovalData={nextApprovalData}
@@ -387,6 +403,12 @@ export default class ApplyHome extends PureComponent {
               queryEmpAppBindingList={queryEmpAppBindingList}
               batchAdvisorListData={batchAdvisorListData}
               queryBatchAdvisorList={queryBatchAdvisorList}
+              updateBindingFlowAppId={updateBindingFlowAppId}
+              updateBindingFlow={updateBindingFlow}
+              doApprove={doApprove}
+              queryAppList={this.queryAppList}
+              clearProps={clearProps}
+              onEmitClearModal={this.clearModal}
             />
             :
             null

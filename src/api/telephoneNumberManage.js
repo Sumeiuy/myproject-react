@@ -22,5 +22,9 @@ export default function telephoneNumberManage(api) {
     queryAdvisorList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAdvisorList', query),
     // 获取新建页面获取下一步审批人
     queryNextApproval: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryNextApproval', query),
+    // 更新接口（新建和修改）
+    updateBindingFlow: query => api.post('/groovynoauth/fsp/emp/mobilebinding/updateBindingFlow', query),
+    // 走流程接口
+    doApprove: query => api.post('/groovynoauth/fsp/emp/mobilebinding/doApprove', query),
   };
 }
