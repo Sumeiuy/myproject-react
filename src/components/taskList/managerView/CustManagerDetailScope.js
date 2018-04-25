@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-25 09:12:50
+ * @Last Modified time: 2018-04-25 20:41:21
  * 服务经理维度任务统计
  */
 
@@ -209,8 +209,8 @@ export default class CustManagerDetailScope extends PureComponent {
                   item.key === (currentSelectScope || EMP_MANAGER_SCOPE))[0].value}
               </span>
               <span
-                className={'ant-select-arrow'}
-                unselectable={'unselectable'}
+                className="ant-select-arrow"
+                unselectable="unselectable"
               >
                 <b />
               </span>
@@ -387,7 +387,7 @@ export default class CustManagerDetailScope extends PureComponent {
           columnWidth={columnWidth}
           titleColumn={this.renderColumn()}
           // 分页器样式
-          paginationClass={'selfPagination'}
+          paginationClass="selfPagination"
           needPagination
           isFixedColumn
           // 横向滚动，固定服务经理列
