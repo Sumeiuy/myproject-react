@@ -17,6 +17,9 @@ const preDefine = {
   custInvestTerm: '该客户投资期限信息缺失，先请客户补齐信息！',
   custPass: '该客户通过检验，可以创建申请！',
   unfinish: '当前客户存在未完成订单，请点击确认前往360视图订单流水中进行处理！',
+  feedbackMaintainNotEmpty: '服务经理一级可选项名称不能为空',
+  feedbackMaintainUpdate: '修改的反馈信息实时生效，会影响到已反馈的服务记录，是否确认修改？',
+  feedbackMaintainDelete: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
 };
 
 export default preDefine;
