@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-23 20:54:31
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-24 15:15:27
  */
 
 import { customerFeedback as api } from '../api';
@@ -97,7 +97,7 @@ export default {
           pathname,
           search: newSearch,
         } = location;
-        if (pathname === '/customerFeedback') {
+        if (pathname === '/platformParameterSetting/taskOperation/customerFeedback') {
           const {
             search: oldSearch,
           } = dvaHelper.getLastLocation() || EMPTY_OBJECT;

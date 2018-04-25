@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 16:18:07
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-24 08:55:17
  * @description 售前适当性查询
  */
 
@@ -106,7 +106,7 @@ export default class PreSaleQuery extends PureComponent {
     if (!value) {
       message.warning('请输入经纪客户号/客户名称');
     } else {
-      this.props.getCustList({ keywords: value, pstnId: emp.getPstnId() });
+      this.props.getCustList({ keywords: value, pstnId: emp.getPstnId(), orgId: emp.getOrgId() });
     }
   }
 
