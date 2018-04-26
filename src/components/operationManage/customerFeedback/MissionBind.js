@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 17:20:01
+ * @Last Modified time: 2018-04-26 19:56:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -120,8 +120,14 @@ export default class MissionBind extends PureComponent {
               roleType: ROLE_TYPE[0].key,
             })
           }
-          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[0].key)}>+新增</Button>
-          <div className={styles.borderRight} />
+          <Button
+            ghost
+            icon="plus"
+            type="primary"
+            onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[0].key)}
+          >
+            新增
+          </Button>
         </div>
         <div className={styles.feedbackListBox}>
           <h2>{ROLE_TYPE[1].name}</h2>

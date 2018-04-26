@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 10:07:50
+ * @Last Modified time: 2018-04-26 20:48:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -73,13 +73,12 @@ export default class OptionsMaintain extends PureComponent {
   }
 
   // 修改反馈选项的文字后的弹出层的OK建处理程序,
-  // 新需求中，接口要求必须传custFeedbackName即涨乐客户可选项一级菜单的文字，
-  // 此处为修改服务经理反馈可选项
+  // 此处为修改服务经理反馈可选项,custFeedbackName传空字符串
   @autobind
   handleEditSMFeedbackTextConfirmOK(name, item) {
-    const { id, custFeedbackName = '' } = item;
+    const { id } = item;
     const { location: { query: { pageNum } } } = this.context;
-    this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
+    this.props.modifyFeedback({ id, name, custFeedbackName: '' }).then(() => {
       this.queryFeedbackList(pageNum);
     });
   }
@@ -357,7 +356,14 @@ export default class OptionsMaintain extends PureComponent {
             {this.renderChildAddClassInput(`${id}`)}
             {/* 添加二级反馈可选项的按钮 */}
             <li>
-              <Button onClick={this.showAddSecondFeedbackInput} icon="plus">新增</Button>
+              <Button
+                type="primary"
+                onClick={this.showAddSecondFeedbackInput}
+                icon="plus"
+                ghost
+              >
+                新增二级
+              </Button>
             </li>
           </ul>
         </Panel>
