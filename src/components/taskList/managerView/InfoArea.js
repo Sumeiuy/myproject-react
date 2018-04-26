@@ -28,7 +28,10 @@ function InfoArea(props) {
               const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
               return (
                 <div
-                  className={`${styles.coloumn} ${isPoliceOrTip ? styles.row : ''}`}
+                  className={classnames(
+                    styles.coloumn,
+                    { [styles.row]: isPoliceOrTip },
+                  )}
                   key={item.id}
                 >
                   <div

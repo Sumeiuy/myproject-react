@@ -10,31 +10,29 @@ import { regxp } from '../../helper';
 
 export default class ForgeryRichText extends PureComponent {
   static propTypes = {
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string,
+  }
+
+  static defaultProps = {
+    text: '',
   }
 
   replaceUrl(text) {
-    const containATagText = text.replace(regxp.url, (match) => {
+    return text.replace(regxp.url, (match) => {
       const isWWW = /^www\./.test(match);
       const finalUrl = isWWW ? `http://${match}` : match;
       return `<a href="${finalUrl}" target="_blank" rel="noopener noreferrer" >${match}</a>`;
     });
-    return <div key={containATagText} dangerouslySetInnerHTML={{ __html: containATagText }} />;
   }
 
   replaceText(text) {
     if (text) {
-      const textList = text.split(regxp.returnLine);
-      return _(textList)
-        .reduce((accumulator, currentValue) => {
-          let finalValue = currentValue;
-          if (regxp.url.test(currentValue)) {
-            finalValue = this.replaceUrl(currentValue);
-            return accumulator.concat(finalValue);
-          }
-          return accumulator.concat(finalValue,
-            <br key={finalValue} />);
-        }, []);
+      const textContent = this.replaceUrl(text);
+      const textList = textContent.split(regxp.returnLine);
+      return _.map(textList, item => <div
+        key={item}
+        dangerouslySetInnerHTML={{ __html: item }}
+      />);
     }
     return '--';
   }
