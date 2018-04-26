@@ -332,7 +332,8 @@ export default class TaskFormFlowStep extends PureComponent {
       });
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const trimTempletDesc = _(templetDesc).replace(regxp.returnLine, '').trim();
+      let trimTempletDesc = _.replace(templetDesc, regxp.returnLine, '');
+      trimTempletDesc = _.trim(trimTempletDesc);
       taskFormData = { ...taskFormData, templetDesc };
       if (_.isEmpty(trimTempletDesc) || trimTempletDesc.length > 1000) {
         isFormValidate = false;

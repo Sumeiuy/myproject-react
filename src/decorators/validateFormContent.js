@@ -28,7 +28,8 @@ export const validateFormContent = (target, name, descriptor) => {
         timelyIntervalValue,
         serviceStrategySuggestion,
       } = args[0];
-      const trimServiceStrategySuggestion = _(serviceStrategySuggestion).replace(regxp.returnLine, '').trim();
+      let trimServiceStrategySuggestion = _.replace(serviceStrategySuggestion, regxp.returnLine, '');
+      trimServiceStrategySuggestion = _.trim(trimServiceStrategySuggestion);
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
       let isShowErrorIntervalValue = false;

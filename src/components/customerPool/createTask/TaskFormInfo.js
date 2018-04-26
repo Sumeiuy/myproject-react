@@ -188,7 +188,8 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = _(toString(contentState)).replace(regxp.returnLine, '').trim();
+      let content = _.replace(toString(contentState), regxp.returnLine, '');
+      content = _.trim(content);
       if (_.isEmpty(content) || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
@@ -293,7 +294,8 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleStrategySuggestionChange(e) {
-    const value = _(e.target.value).replace(regxp.returnLine, '').trim();
+    let value = _.replace(e.target.value, regxp.returnLine, '');
+    value = _.trim(value);
     this.setState({
       isShowErrorStrategySuggestion: _.isEmpty(value) || value.length > MAX_LENGTH,
     });
