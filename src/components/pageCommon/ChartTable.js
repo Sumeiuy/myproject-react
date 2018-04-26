@@ -492,11 +492,11 @@ export default class ChartTable extends PureComponent {
     const { chartTableInfo, style } = this.props;
     const { allWidth, scrollDisplay } = this.state;
     const paginationOption = {
-      curPageNum: chartTableInfo.curPageNum || 1,
-      totalRecordNum: chartTableInfo.totalCnt || 1,
-      curPageSize: chartTableInfo.pageSize,
-      onPageChange: this.handlePaginationChange,
-      isShowSizeChanger: false,
+      current: chartTableInfo.curPageNum || 1,
+      total: chartTableInfo.totalCnt || 1,
+      pageSize: chartTableInfo.pageSize,
+      onChange: this.handlePaginationChange,
+      showSizeChanger: false,
     };
     return (
       <div className={styles.tableDiv} style={style} ref={this.saveTableWrapper}>

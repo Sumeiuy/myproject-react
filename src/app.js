@@ -108,6 +108,8 @@ app.model(require('./models/stock'));
 app.model(require('./models/pointsExchange'));
 // 用户中心
 app.model(require('./models/userCenter'));
+// 电话申请和分配
+app.model(require('./models/telephoneNumberManage'));
 // 4. Router
 app.router(routerConfig);
 

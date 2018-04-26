@@ -65,6 +65,10 @@ import UserBasicInfo from './routes/userCenter/UserBasicInfo';
 import PlatformParameterSetting from './routes/platformParameterSetting/Home';
 // 用户信息审核
 import userInfoApproval from './routes/userCenter/userInfoApproval';
+// 公务手机和电话卡号管理
+import TelephoneNumberManage from './routes/telephoneNumberManage/Home';
+// 公务手机和电话卡号管理修改页面
+import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -251,6 +255,16 @@ const routes = [
   {
     path: '/platformParameterSetting',
     component: PlatformParameterSetting,
+    exact: false,
+  },
+  {
+    path: '/telephoneNumberManage',
+    component: TelephoneNumberManage,
+    exact: false,
+  },
+  {
+    path: '/telephoneNumberManageEdit',
+    component: TelephoneNumberManageEdit,
     exact: false,
   },
 ];
