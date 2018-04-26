@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
 import logable from '../../../decorators/logable';
+import { fspContainer } from '../../../config';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -53,6 +54,7 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorStrategySuggestion: PropTypes.bool,
     isShowErrorTaskName: PropTypes.bool,
     templetDescSuggestion: PropTypes.object,
+    productDescSuggestions: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -87,19 +89,32 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
       templetDescSuggestion,
-     } = props;
-
-    this.state = {
+      productDescSuggestions,
+    } = props;
+    let suggestions = [];
+    if (!_.isEmpty(productDescSuggestions)) {
+      suggestions = _.map(productDescSuggestions, item => (
+        !_.isEmpty(item) && <Nav
+          value={item.type}
+          data={item.type}
+        >
+          <span>{item.name}</span>
+        </Nav>
+      ));
+    } else if (!_.isEmpty(templetDescSuggestion)) {
       // 初始化的时候，如果外部有标签任务提示带入mention，
       // 那么将suggestion填充默认值，为了让标签任务提示高亮显示
-      suggestions: !_.isEmpty(templetDescSuggestion) ? [
+      suggestions = [
         <Nav
           value={templetDescSuggestion.type}
           data={'sightLabel'}
         >
           <span>{templetDescSuggestion.name}</span>
         </Nav>,
-      ] : [],
+      ];
+    }
+    this.state = {
+      suggestions,
       inputValue: '',
       isShowErrorInfo,
       isShowErrorTaskType,
@@ -167,6 +182,10 @@ export default class TaskFormInfo extends PureComponent {
         isShowErrorTaskName: nextErrorTaskName,
       });
     }
+  }
+
+  getSuggestionContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
   }
 
   getCurrentTaskSubTypes(currentMissionType) {
@@ -251,9 +270,10 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '任务提示' } })
   handleSearchChange(value, trigger) {
-    const { users, templetDescSuggestion } = this.props;
+    const { users, templetDescSuggestion, productDescSuggestions } = this.props;
     const searchValue = value.toLowerCase();
-    const dataSource = _.includes(PREFIX, trigger) ? [...users, templetDescSuggestion] : [];
+    const dataSource = _.includes(PREFIX, trigger) ?
+      [...users, templetDescSuggestion, ...productDescSuggestions] : [];
     const filtered = dataSource.filter(item =>
       item.name && item.name.toLowerCase().indexOf(searchValue) !== -1,
     );
@@ -332,7 +352,7 @@ export default class TaskFormInfo extends PureComponent {
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          getSuggestionContainer={() => this.fatherMention}
+          getSuggestionContainer={this.getSuggestionContainer}
           multiLines
           defaultValue={toContentState(defaultMissionDesc)}
           onChange={this.handleMentionChange}
@@ -571,14 +591,6 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div
           className={styles.task_textArea}
-          ref={
-            (ref) => {
-              // ref多次重绘可能是null, 这里要判断一下
-              if (!this.fatherMention && ref) {
-                this.fatherMention = ref;
-              }
-            }
-          }
         >
           <p>
             <label htmlFor="desc"><i>*</i>任务提示:</label>
