@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 14:03:41
+ * @Last Modified time: 2018-04-26 19:15:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -94,8 +94,8 @@ export default class CustomerFeedback extends PureComponent {
 
   static contextTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.object.isRequired,
-    push: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   constructor(props) {
