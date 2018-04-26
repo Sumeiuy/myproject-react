@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 14:26:53
+ * @Last Modified time: 2018-04-26 18:41:31
  * @description 只读服务记录
  */
 
@@ -30,7 +30,6 @@ export default function ServiceRecordReadOnly(props) {
     custFeedback,
     custFeedback2,
     ZLCustFeedback,
-    ZLCustFeedbackTime,
     ZLCustFeedbackList,
   } = props;
 
@@ -124,9 +123,7 @@ export default function ServiceRecordReadOnly(props) {
             : (
               <div className={styles.feedbackTime}>
                 <div className={styles.title}>反馈时间:</div>
-                <div className={styles.readOnlyText}>
-                  {isZL ? ZLCustFeedbackTime : feedbackDateTime}
-                </div>
+                <div className={styles.readOnlyText}>{feedbackDateTime}</div>
               </div>
             )
           }
@@ -154,7 +151,6 @@ ServiceRecordReadOnly.propTypes = {
   custFeedback: PropTypes.string,
   custFeedback2: PropTypes.string,
   ZLCustFeedback: PropTypes.string,
-  ZLCustFeedbackTime: PropTypes.string,
   ZLServiceContentTime: PropTypes.string,
   ZLCustFeedbackList: PropTypes.array,
 };
@@ -172,7 +168,6 @@ ServiceRecordReadOnly.defaultProps = {
   custFeedback: '',
   custFeedback2: '',
   ZLCustFeedback: '',
-  ZLCustFeedbackTime: '',
   ZLServiceContentTime: '',
   ZLCustFeedbackList: [],
 };

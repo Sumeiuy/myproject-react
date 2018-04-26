@@ -2,6 +2,7 @@
   .title {
     font-size: 14px;
     margin-bottom: 10px;
+    color: #4a4a4a;
   }
   .addParentClassBox {
     margin-bottom: 10px;
@@ -11,15 +12,47 @@
       }
     }
   }
+
+  .optiaonsListCaption {
+    display: flex;
+    background-color: #f7f7f7;
+    height: 36px;
+    line-height: 36px;
+
+    & > .optionCaption,
+    & > .optionLengthCaption,
+    & > .optionActionCaption {
+      font-size: 14px;
+      color: #4a4a4a;
+      line-height: 36px;
+      font-weight: bold;
+    }
+
+    & > .optionCaption {
+      flex: 1 1 auto;
+    }
+
+    & > .optionLengthCaption,
+    & > .optionActionCaption {
+      flex: 0 0 atuo;
+      width: 120px;
+    }
+  }
+
   .parentAddBtn {
     position: absolute;
     margin-top: -56px;
     right: 10px;
+    :global {
+      .ant-btn {
+        padding: 0 15px !important;
+      }
+    }
   }
   .header {
     display: flex;
     div:nth-of-type(1) {
-      min-width: 40%;
+      flex: 1 1 auto;
       div {
         width: auto;
       }
@@ -29,10 +62,12 @@
       }
     }
     div:nth-of-type(2) {
-      min-width: 40%;
-      color: #108ee9;
+      flex: 1 1 auto;
     }
     .lengthDiv {
+      flex: 0 0 auto;
+      width: 120px;
+      color: #108ee9;
       :global {
         .arrow {
           left: auto;
@@ -40,13 +75,17 @@
         }
       }
     }
-    :global {
-      .anticon-delete, .icon-edit, .anticon-up, .anticon-down {
-        font-size: 14px;
-        color: #108ee9;
-      }
-      .icon-success {
-        color: #62ca57;
+    .actionDiv {
+      flex: 0 0 auto;
+      width: 120px;
+      :global {
+        .anticon-delete, .icon-edit, .anticon-up, .anticon-down {
+          font-size: 14px;
+          color: #108ee9;
+        }
+        .icon-success {
+          color: #62ca57;
+        }
       }
     }
   }

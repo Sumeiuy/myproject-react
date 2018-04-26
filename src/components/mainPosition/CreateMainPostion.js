@@ -19,7 +19,7 @@ import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { emp } from '../../helper';
 import config from './config';
-import commonConfirm from '../common/Confirm';
+import commonConfirm from '../common/confirm_';
 import styles from './createMainPostion.less';
 import logable from '../../decorators/logable';
 

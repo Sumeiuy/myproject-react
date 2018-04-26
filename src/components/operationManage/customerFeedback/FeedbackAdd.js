@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 13:31:32
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-26 14:05:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -60,13 +60,7 @@ export default class MissionBind extends PureComponent {
 
   // 查询客户反馈
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '搜索客户反馈',
-      value: '$args[0]',
-    },
-  })
+  @logable({ type: 'Click', payload: { name: '搜索客户反馈', value: '$args[0]' } })
   handleSearchFeedback(keyword) {
     const { queryFeedbackList, roleType } = this.props;
     this.setState({
