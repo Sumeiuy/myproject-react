@@ -99,7 +99,7 @@ export default class Phone extends PureComponent {
     const className = classnames({
       [styles.number]: true,
       [styles.active]: disable !== true,
-    })
+    });
     return (
       <div
         className={className}
