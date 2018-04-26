@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-13 10:50:47
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-25 17:47:18
  */
 
 import React, { PureComponent } from 'react';
@@ -27,6 +27,17 @@ const OPEN_FEATURES = `
   scrollbars=no,
   status=no
 `;
+
+let opener = null;
+
+function receiveMessage(e) {
+  window.removeEventListener('message', receiveMessage);
+  console.log(e);
+  if (opener && _.isFunction(opener.close)) {
+    opener.close();
+    opener = null;
+  }
+}
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -56,10 +67,15 @@ export default class Phone extends PureComponent {
     });
 
     const srcUrl = `${URL}?number=${phoneNum}&custType=${custType}&auto=true`;
-    window.open(
+    opener = window.open(
       srcUrl,
       'phoneDialog',
       OPEN_FEATURES,
+    );
+    window.addEventListener(
+      'message',
+      receiveMessage,
+      false,
     );
   }
 
