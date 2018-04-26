@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:49:56
+ * @Last Modified time: 2018-04-26 21:37:56
  */
 
 import React, { PureComponent } from 'react';
@@ -69,7 +69,6 @@ export default class DistributeHome extends PureComponent {
       type: pageType,
     }).then(() => {
       const { location, replace, custRange } = this.props;
-      console.warn('custRange-Home', custRange);
       const { pathname, query, query: { pageNum = 1, pageSize = 10 } } = location;
       replace({
         pathname,
