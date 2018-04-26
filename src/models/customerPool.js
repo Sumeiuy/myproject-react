@@ -165,8 +165,10 @@ export default {
             params.pageNum = 1; // 默认显示第一页
             dispatch({
               type: 'getServiceLog',
-              payload: params,
-              keyword,
+              payload: {
+                ...params,
+                keyword: !_.isEmpty(keyword) ? decodeURIComponent(keyword) : '',
+              },
               loading: true,
             });
           },

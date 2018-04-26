@@ -89,6 +89,7 @@ export default class ServiceLog extends PureComponent {
       pageNum: 1,
     };
   }
+
   componentWillMount() {
     const { serviceLogData } = this.props;
     if (!_.isEmpty(serviceLogData)) {
@@ -98,6 +99,7 @@ export default class ServiceLog extends PureComponent {
       });
     }
   }
+
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
@@ -154,7 +156,7 @@ export default class ServiceLog extends PureComponent {
         ...query,
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
-        keyword: value,
+        keyword: decodeURIComponent(value),
       },
     });
   }
