@@ -45,6 +45,52 @@
     }
   }
 }
+ // 全局的错误提示dialog自定义
+ .globalCapture {
+  :global {
+    .ant-modal-body {
+      padding: 36px 20px 20px;
+    }
+    .ant-confirm-body {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+    .anticon.anticon-cross-circle {
+      height: 18px;
+      width: 18px;
+      font-size: 18px;
+      min-height: 18px;
+      color: #d0021b;
+      margin-right: 10px;
+      clear: both;
+    }
+    .ant-confirm-content {
+      margin-left: 0;
+      text-align: left;
+      word-break: break-all;
+      word-wrap: break-word;
+      clear: left;
+      font-size: 14px;
+      color: #2c2c2c;
+      float: left;
+      margin-top: -3px;
+    }
+    .ant-confirm-btns {
+      margin-top: 30px;
+    }
+    .ant-btn {
+      width: 80px;
+      height: 36px;
+      color: #108ee9;
+      span {
+        font-size: 14px;
+        letter-spacing: 0;
+        color: #fff;
+      }
+    }
+  }
+}
 .modallarge {
   :global {
     .ant-modal {

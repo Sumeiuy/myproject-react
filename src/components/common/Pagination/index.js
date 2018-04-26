@@ -4,7 +4,7 @@
  * @author zhufeiyang
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -83,7 +83,7 @@ function shouldHiddenPage(current, totalPageNumber, isShortPageList, needHiddenP
   return false;
 }
 
-export default class PaginationComponent extends PureComponent {
+export default class PaginationComponent extends React.Component {
   static propTypes = {
     current: PropTypes.number,
     total: PropTypes.number,
