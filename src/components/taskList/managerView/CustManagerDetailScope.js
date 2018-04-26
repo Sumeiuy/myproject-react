@@ -144,9 +144,6 @@ export default class CustManagerDetailScope extends PureComponent {
   * @param {*} listData 数据源
   */
   addIdToDataSource(listData) {
-    // 三个字段组合作为唯一
-    // 服务经理维度
-    // 取任务id，当前登录工号，当前客户部门id作为主键
     return _.map(listData, item => ({
       ...item,
       id: this.getPrimaryKey(item),
