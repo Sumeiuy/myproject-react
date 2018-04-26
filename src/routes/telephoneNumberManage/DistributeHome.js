@@ -69,6 +69,7 @@ export default class DistributeHome extends PureComponent {
       type: pageType,
     }).then(() => {
       const { location, replace, custRange } = this.props;
+      console.warn('custRange-Home', custRange);
       const { pathname, query, query: { pageNum = 1, pageSize = 10 } } = location;
       replace({
         pathname,
