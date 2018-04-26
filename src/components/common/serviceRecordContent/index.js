@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-24 15:33:38
+ * @Last Modified time: 2018-04-26 18:51:15
  */
 
 import React, { PureComponent } from 'react';
@@ -682,25 +682,26 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
-      ZLServiceContentTime,
       custFeedbackText,
       custFeedbackText2,
       custFeedbackTime,
       ZLCustFeedback,
-      ZLCustFeedbackTime,
     } = this.state;
     const { formData: { attachmentList }, custFeedbackList } = this.props;
     const zlServiceRecord = {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
       content: ZLServiceContentDesc,
-      time: ZLServiceContentTime,
     };
     // 存在一种情况就是MOT任务已经完结，但是流水还没有开始，导致Seibel那边没有返回相应的服务时间
     // 所以需要针对无反馈时间和服务时间的情况下，做特殊显示处理，显示成空字符
-    const serviceTimeText = serviceTime.isValid() ? serviceTime.format(DATE_FORMAT_SHOW) : '';
-    const feedbackTimeText = serviceTime.isValid() ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
-    const ZLCustFeedbackTimeText = serviceTime.isValid() ? ZLCustFeedbackTime.format(DATE_FORMAT_SHOW) : '';
+    // 在只读状态下，涨乐财富通，不会再提供反馈时间了，所以不再需要ZLCustFeedbackTime
+    // 针对 serviceTime,在做一个是否moment对象的判断
+    const isMomentAboutServiceTime = moment.isMoment(serviceTime);
+    const isMomentAboutFeedbackTime = moment.isMoment(custFeedbackTime);
+    const serviceTimeText = isMomentAboutServiceTime ? serviceTime.format(DATE_FORMAT_SHOW) : '';
+    const feedbackTimeText = isMomentAboutFeedbackTime ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
+
     return (
       <ServeRecordReadOnly
         isZL={serveWayUtil.isZhangle(serviceWayCode)}
@@ -715,7 +716,6 @@ export default class ServiceRecordContent extends PureComponent {
         custFeedback={custFeedbackText}
         custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
-        ZLCustFeedbackTime={ZLCustFeedbackTimeText}
         ZLCustFeedbackList={custFeedbackList}
       />
     );

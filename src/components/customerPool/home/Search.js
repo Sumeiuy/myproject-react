@@ -24,6 +24,8 @@ import styles from './search.less';
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';
+// 标签的类型值
+const LABEL = 'LABEL';
 let guid = 0;
 
 export default class Search extends PureComponent {
@@ -158,7 +160,12 @@ export default class Search extends PureComponent {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
       labelMapping: item.id,
       // 任务提示
-      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.value),
+      missionDesc: padSightLabelDesc({
+        sightingScopeBool,
+        labelId: item.id,
+        labelName: item.value,
+        isLabel: item.type === LABEL,
+      }),
       labelName: encodeURIComponent(item.value),
       labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.value),
@@ -259,9 +266,13 @@ export default class Search extends PureComponent {
           labelName: encodeURIComponent(item.name),
           labelDesc: encodeURIComponent(item.description),
           // 任务提示
-          missionDesc: padSightLabelDesc(isSightingScope(item.source), item.id, item.name),
+          missionDesc: padSightLabelDesc({
+            sightingScopeBool: isSightingScope(item.source),
+            labelId: item.id,
+            labelName: item.name,
+          }),
           q: encodeURIComponent(item.name),
-          type: 'LABEL',
+          type: LABEL,
         })}
         key={item.id}
       >

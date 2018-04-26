@@ -2,8 +2,8 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-23 20:35:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-26 10:07:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,21 +11,19 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Collapse, Icon, message } from 'antd';
 
-import Confirm from '../../../components/common/Confirm';
 import Button from '../../../components/common/Button';
-import EditInput from '../../../components/common/editInput';
+import EditInput from './EditInput';
 import Pagination from '../../common/Pagination';
-import styles from './optionsMaintain.less';
+// 此处为funcition,而非组件，所以使用小写打头
+import confirm from '../../../components/common/confirm_';
 import logable from '../../../decorators/logable';
 
+import styles from './optionsMaintain.less';
+
 const Panel = Collapse.Panel;
-const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 
 export default class OptionsMaintain extends PureComponent {
   static propTypes = {
-    replace: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
     // 查询客户反馈列表
     queryFeedbackList: PropTypes.func.isRequired,
     feedbackData: PropTypes.object.isRequired,
@@ -37,15 +35,19 @@ export default class OptionsMaintain extends PureComponent {
     modifyFeedback: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 折叠面板当前展开的id
+      // 折叠面板当前展开的id,
       collapseActiveKey: '',
+      // 是否添加一级反馈可选项
       addParentClass: false,
+      // 判断是需要增加二级反馈项的服务经理一级反馈可选项
       beAddedParentId: '',
     };
   }
@@ -53,20 +55,13 @@ export default class OptionsMaintain extends PureComponent {
   // 同步页码到url
   @autobind
   syncPageDataToUrl() {
-    const {
-      feedbackData,
-      replace,
-      location: {
-        query,
-        pathname,
-      },
-    } = this.props;
-    const feedbackDataPage = feedbackData.page || EMPTY_OBJECT;
+    const { location: { query, pathname }, replace } = this.context;
+    const { feedbackData: { page = {} } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        pageNum: feedbackDataPage.pageNum,
+        pageNum: page.pageNum || 1,
       },
     });
   }
@@ -74,126 +69,166 @@ export default class OptionsMaintain extends PureComponent {
   // 查询客户反馈列表
   @autobind
   queryFeedbackList(pageNum = 1, pageSize = 20) {
-    const {
-      queryFeedbackList,
-    } = this.props;
-    queryFeedbackList('', pageNum, pageSize).then(() => {
-      this.syncPageDataToUrl();
+    this.props.queryFeedbackList({ pageNum, pageSize }).then(this.syncPageDataToUrl);
+  }
+
+  // 修改反馈选项的文字后的弹出层的OK建处理程序,
+  // 新需求中，接口要求必须传custFeedbackName即涨乐客户可选项一级菜单的文字，
+  // 此处为修改服务经理反馈可选项
+  @autobind
+  handleEditSMFeedbackTextConfirmOK(name, item) {
+    const { id, custFeedbackName = '' } = item;
+    const { location: { query: { pageNum } } } = this.context;
+    this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
+      this.queryFeedbackList(pageNum);
     });
   }
 
-  // 编辑客户反馈
+  // 修改涨乐客户反馈一级选项文字
   @autobind
-  editCallback(value, id) {
-    // 调用接口
-    const {
-      modifyFeedback,
-      location: {
-        query: {
-          pageNum,
-        },
-      },
-    } = this.props;
-    if (_.isEmpty(value)) {
-      message.error('名称不能为空');
-      return;
+  handleEditZLFeedbackTextConfirmOK(custFeedbackName, item) {
+    const { id, name } = item;
+    const { location: { query: { pageNum } } } = this.context;
+    this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
+      this.queryFeedbackList(pageNum);
+    });
+  }
+
+  // 修改服务经理可选项一级反馈文字
+  @autobind
+  handleEditFirstFeedbackOfServiceManager(name, item) {
+    if (_.isEmpty(name)) {
+      confirm({
+        shortCut: 'feedbackMaintainNotEmpty',
+        onOk: _.noop,
+      });
+    } else {
+      confirm({
+        shortCut: 'feedbackMaintainUpdate',
+        onOk: () => this.handleEditSMFeedbackTextConfirmOK(name, item),
+      });
     }
-    Confirm({
-      content: '修改的反馈信息实时生效，会影响到已反馈的服务记录，是否确认修改？',
-      onOk: () => {
-        modifyFeedback({
-          id,
-          name: value,
-        }).then(() => {
-          this.queryFeedbackList(pageNum);
-        });
-      },
+  }
+
+  // 修改服务经理可选项二级反馈文字
+  @autobind
+  handleUpdateSecondFeedbackOfServiceManager(name, item) {
+    if (_.isEmpty(name)) {
+      confirm({
+        shortCut: 'feedbackMaintainNotEmpty',
+        onOk: _.noop,
+      });
+    } else {
+      confirm({
+        shortCut: 'feedbackMaintainUpdate',
+        onOk: () => this.handleEditSMFeedbackTextConfirmOK(name, item),
+      });
+    }
+  }
+
+  // 修改涨乐客户反馈一级可选项文字
+  @autobind
+  handleUpdateFirstFeedbackOfZhangLeCust(name, item) {
+    // 涨乐客户可选反馈可以为空，所以不需要检验，空的情况
+    confirm({
+      shortCut: 'feedbackMaintainUpdate',
+      onOk: () => this.handleEditZLFeedbackTextConfirmOK(name, item),
     });
   }
 
-  // 删除客户反馈
+  // 删除服务经理反馈可选项的二级反馈选项
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '删除',
-      value: '$args[0]',
-    },
-  })
-  deleteConfirm(parentId = '', childId = '', e) {
-    const {
-      feedbackData,
-      delFeedback,
-      location: {
-        query: {
-          pageNum,
-        },
-      },
-    } = this.props;
-    const { feedbackList } = feedbackData;
-    if (childId) {
+  deleteSecondFeedbackOfServiceManager(item, e) {
+    const { id, parentId } = item;
+    const { feedbackData: { feedbackList = [] } } = this.props;
+    if (id) {
       const parentNode = _.find(feedbackList, v => v.id === parentId);
       if (parentNode.childList.length < 2) {
         message.error('必须保留一个子类');
         return;
       }
+      this.deleteConfirm(id, e);
     }
+  }
+
+  // 删除一级客户反馈选项
+  @autobind
+  deleteFirstFeedbackOfServiceManager(item, e) {
+    const { id } = item;
+    this.deleteConfirm(id, e);
+  }
+
+  // 删除服务经理的二级反馈客户反馈
+  // 删除整条反馈维护记录
+  @autobind
+  @logable({ type: 'Click', payload: { name: '删除', value: '$args[0]' } })
+  deleteConfirm(id, e) {
+    const { location: { query: { pageNum } } } = this.context;
+    const { delFeedback } = this.props;
     if (e) {
       e.stopPropagation();
     }
-    Confirm({
-      content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
+    confirm({
+      shortCut: 'feedbackMaintainDelete',
       onOk: () => {
-        delFeedback({
-          id: childId || parentId,
-        }).then(() => {
-          this.queryFeedbackList(pageNum);
-        });
+        delFeedback({ id }).then(() => { this.queryFeedbackList(pageNum); });
       },
     });
   }
 
-  // 显示对应的添加子类输入框
+  // 显示添加二级反馈选项的输入框
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '+新增' } })
-  showAddChildBox(id) {
+  showAddSecondFeedbackInput() {
+    // 因为折叠面板的key就是反馈列表一级反馈选项的id值
+    const { collapseActiveKey } = this.state;
     this.setState({
-      beAddedParentId: id,
+      beAddedParentId: collapseActiveKey,
     });
   }
 
-  // 隐藏添加子类输入框
+  // 隐藏添加二级反馈客户可选项的输入框
   @autobind
-  handleCancelAddChild() {
+  hideAddSecondFeedbackInput() {
+    this.setState({ beAddedParentId: '' });
+  }
+
+  // 在新增一级或者二级客户反馈可选项之后的操作
+  @autobind
+  doAfterAddFeedbackOption() {
+    const { location: { query: { pageNum } } } = this.context;
+    this.queryFeedbackList(pageNum);
     this.setState({
       beAddedParentId: '',
+      addParentClass: false,
     });
   }
 
-  // 添加类
+  // 新增服务经理可选项下的二级客户反馈选项
   @autobind
-  handleAddClass(name, parentId) {
-    const {
-      addFeedback,
-      location: {
-        query: {
-          pageNum,
-        },
-      },
-    } = this.props;
-    addFeedback({
-      parentId,
-      name,
-    }).then(() => {
-      this.queryFeedbackList(pageNum);
-      this.setState({
-        beAddedParentId: '',
-        addParentClass: false,
-      });
-    });
+  handleAddSecondClassOfServiceManagerOption(name, item) {
+    const { parentId } = item;
+    // 因为新需求的接口中要求，custFeedbackName为必传值，
+    // 而由于涨乐客户反馈不能修改二级选项，所以传空字符串即可
+    this.addFeedbackOption({ name, parentId, custFeedbackName: '' });
   }
 
-  // 点击添加父类按钮
+  // 新增服务经可选项或者客户涨乐可选项的一级反馈选项
+  @autobind
+  handleAddFirstClassOfFeedbackOption(name) {
+    // 因为一级反馈选项没有父节点
+    // 新建一级反馈选项的时候，涨乐客户反馈选项，默认值为空，
+    // 所以新增的时候，custFeedbackName 传空字符串
+    this.addFeedbackOption({ name, parentId: '', custFeedbackName: '' });
+  }
+
+  // 新增服务经理可选项|客户涨乐可选项一级选项
+  @autobind
+  addFeedbackOption(option) {
+    this.props.addFeedback(option).then(this.doAfterAddFeedbackOption);
+  }
+
+  // 点击添加一级反馈选项
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '+反馈类型' } })
   parentAddHandle() {
@@ -202,7 +237,7 @@ export default class OptionsMaintain extends PureComponent {
     });
   }
 
-  // 取消添加父类
+  // 取消添加一级反馈选项
   @autobind
   handleCancelAddParent() {
     this.setState({
@@ -214,9 +249,8 @@ export default class OptionsMaintain extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '切换折叠面板' } })
   handleChangeCollapse(collapseActiveKey) {
-    this.setState({
-      collapseActiveKey,
-    });
+    // 此处出来的key值已经从数值转换成了字符串
+    this.setState({ collapseActiveKey });
   }
 
   // 翻页
@@ -225,123 +259,153 @@ export default class OptionsMaintain extends PureComponent {
     this.queryFeedbackList(pageNum);
   }
 
+  // 渲染折叠面板的头部header，此为客户反馈可选项的一级可选项
+  // TODO 新需求，需要新增 客户涨乐可选项
+  @autobind
+  renderCollapsePanelHeader(item) {
+    return (
+      <div className={styles.header}>
+        {/** 服务经理可选项，编辑框 */}
+        <EditInput
+          value={item.name}
+          item={item}
+          edit={item.edit}
+          editCallback={this.handleEditFirstFeedbackOfServiceManager}
+        />
+        {/** 客户涨乐可选项，编辑框 */}
+        <EditInput
+          value={item.custFeedbackName || ''}
+          item={item}
+          edit={item.edit}
+          editCallback={this.handleUpdateFirstFeedbackOfZhangLeCust}
+        />
+        <div className={styles.lengthDiv}>{item.length || 0}项<Icon type="up" /><Icon type="down" /></div>
+        <div className={styles.actionDiv}>
+          <Icon type="delete" title="删除" onClick={e => this.deleteFirstFeedbackOfServiceManager(item, e)} />
+        </div>
+      </div>
+    );
+  }
+
+  // 渲染二级反馈列表
+  // 目前只有服务经理可选项存在二级反馈，并且可以修改|删除
+  @autobind
+  renderChildrenFeedbackList(parentId, children = []) {
+    return _.map(children, (child) => {
+      const btnGroup = (
+        <Icon
+          type="delete"
+          title="删除"
+          onClick={e => this.deleteSecondFeedbackOfServiceManager({ ...child, parentId }, e)}
+        />
+      );
+      // 因为由于二级反馈选项的原始数据中并没有对应的一级反馈选项的id值，
+      // 因此此处需要将父节点放入子节点中,此处为修改二级反馈的文字
+      return (
+        <li key={child.id}>
+          <EditInput
+            value={child.name}
+            item={{ ...child, parentId }}
+            btnGroup={btnGroup}
+            edit={child.edit}
+            editCallback={this.handleUpdateSecondFeedbackOfServiceManager}
+          />
+        </li>
+      );
+    });
+  }
+
+  // 渲染用来 新增二级反馈可选项的输入框
+  @autobind
+  renderChildAddClassInput(id) {
+    const { beAddedParentId } = this.state;
+    // 如果当前的父节点，就是目标节点的时候，
+    // 则按新增子类型按钮，会在相应的折叠面板下，显示输入框
+    // 只有在服务经理可选项中 有该功能
+    if (beAddedParentId === id) {
+      return (
+        <li>
+          <EditInput
+            edit
+            item={{ parentId: id }}
+            editCallback={this.handleAddSecondClassOfServiceManagerOption}
+            onCancel={this.hideAddSecondFeedbackInput}
+          />
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 渲染Collapse里面所有的feedbackList
+  @autobind
+  renderCollapseAllPanels(feedbackList) {
+    return _.map(feedbackList, (item, index, array) => {
+      // 面板的头部，展示以及反馈列表的一级可选项
+      const panelHeader = this.renderCollapsePanelHeader(item, index, array);
+      const { id, childList = [] } = item;
+      // TODO 此处使用id值来代表折叠面板的key值，
+      // 该id值可以在后续查询数据，修改数据时候使用,
+      // 此处id值为Number，但是经过antd的collapse使用后，传递出来的已经变成了String，
+      // 所以此处统一将id值设置为String
+      return (
+        <Panel header={panelHeader} key={`${id}`}>
+          <ul>
+            {/* 展示二级反馈可选项 */}
+            {this.renderChildrenFeedbackList(id, childList)}
+            {/* 添加二级反馈的输入框 */}
+            {this.renderChildAddClassInput(`${id}`)}
+            {/* 添加二级反馈可选项的按钮 */}
+            <li>
+              <Button onClick={this.showAddSecondFeedbackInput} icon="plus">新增</Button>
+            </li>
+          </ul>
+        </Panel>
+      );
+    });
+  }
+
   render() {
-    const {
-      feedbackData,
-    } = this.props;
-    const {
-      collapseActiveKey,
-      beAddedParentId,
-      addParentClass,
-    } = this.state;
-    const feedbackDataPage = feedbackData.page || EMPTY_OBJECT;
-    const feedbackList = feedbackData.feedbackList || EMPTY_LIST;
-    const collapseProps = {
-      activeKey: collapseActiveKey,
-      onChange: this.handleChangeCollapse,
-      accordion: true,
-    };
-    const pagination = {
-      current: Number(feedbackDataPage.pageNum),
-      total: Number(feedbackDataPage.totalCount),
-      pageSize: Number(feedbackDataPage.pageSize),
-      onChange: this.handlePageChange,
-    };
+    const { feedbackData: { page = {}, feedbackList = [] } } = this.props;
+    const { collapseActiveKey, addParentClass } = this.state;
+
     return (
       <div className={styles.optionsMaintain}>
         <div className={styles.parentAddBtn}>
-          <Button type="primary" onClick={this.parentAddHandle}>
-            +反馈类型
-          </Button>
+          <Button type="primary" onClick={this.parentAddHandle} icon="plus" ghost >反馈类型</Button>
         </div>
-        <h2 className={styles.title}>请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类。</h2>
+        <h2 className={styles.title}>
+          请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类；可选项分服务经理可选项和客户涨乐可选项，设置了客户涨乐可选项则会显示在涨
+          乐财富通中供客户选择。
+        </h2>
+        {/** 头部添加服务经理可选项|客户涨乐反馈可选项的输入框 */}
         <div className={styles.addParentClassBox}>
           {
-            addParentClass ?
-              <EditInput
+            !addParentClass ? null
+              : (<EditInput
                 edit
-                editCallback={this.handleAddClass}
+                editCallback={this.handleAddFirstClassOfFeedbackOption}
                 onCancel={this.handleCancelAddParent}
-              />
-              :
-              null
+              />)
           }
         </div>
-        <Collapse {...collapseProps}>
-          {
-            feedbackList.map((item, index) => {
-              const header = (<div className={styles.header}>
-                <EditInput
-                  value={item.name}
-                  data={feedbackList}
-                  idx={index}
-                  id={String(item.id)}
-                  edit={item.edit}
-                  editCallback={this.editCallback}
-                />
-                <div className={styles.lengthDiv} >
-                  {item.length || 0}项
-                  <Icon type="up" />
-                  <Icon type="down" />
-                </div>
-                <div>
-                  <Icon
-                    type="delete"
-                    title="删除"
-                    onClick={e => this.deleteConfirm(item.id, '', e)}
-                  />
-                </div>
-              </div>);
-              return (<Panel header={header} key={`${index + 1}`}>
-                <ul>
-                  {
-                    (item.childList || EMPTY_LIST).map((child) => {
-                      const btnGroup = (
-                        <Icon
-                          type="delete"
-                          title="删除"
-                          onClick={() => this.deleteConfirm(item.id, child.id)}
-                        />
-                      );
-                      return (
-                        <li key={child.id}>
-                          <EditInput
-                            value={child.name}
-                            id={String(child.id)}
-                            btnGroup={btnGroup}
-                            edit={child.edit}
-                            editCallback={this.editCallback}
-                          />
-                        </li>
-                      );
-                    })
-                  }
-                  {
-                    beAddedParentId === item.id ?
-                      <li>
-                        <EditInput
-                          edit
-                          id={String(item.id)}
-                          editCallback={this.handleAddClass}
-                          onCancel={this.handleCancelAddChild}
-                        />
-                      </li>
-                      :
-                      null
-                  }
-                  <li>
-                    <Button onClick={() => this.showAddChildBox(item.id)}>
-                      +
-                      新增
-                    </Button>
-                  </li>
-                </ul>
-              </Panel>);
-            })
-          }
+        {/** 头部服务经理可选项 | 客户涨乐反馈可选项 | 操作 头部 */}
+        <div className={styles.optiaonsListCaption}>
+          <div className={styles.optionCaption}>服务经理可选项</div>
+          <div className={styles.optionCaption}>客户涨乐可选项</div>
+          <div className={styles.optionLengthCaption}>{/** 列表头部占空位使用,用来与下面的几项保持相同的大小位置展示 */}</div>
+          <div className={styles.optionActionCaption}>操作</div>
+        </div>
+        <Collapse activeKey={collapseActiveKey} onChange={this.handleChangeCollapse} accordion>
+          {this.renderCollapseAllPanels(feedbackList)}
         </Collapse>
         <div className={styles.pageBox}>
-          <Pagination {...pagination} />
+          <Pagination
+            current={page.pageNum}
+            total={page.totalCount}
+            pageSize={page.pageSize}
+            onChange={this.handlePageChange}
+          />
         </div>
       </div>
     );

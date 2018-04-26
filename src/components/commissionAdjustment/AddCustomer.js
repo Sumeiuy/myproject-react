@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import OperationOfCustermorList from './OperationOfCustermorList';
 import CustomerTableList from './CutomerTableList';
 import ProcessConfirm from '../common/biz/ProcessConfirm';

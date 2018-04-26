@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 
-import confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm_';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Detail from '../../components/commissionAdjustment/Detail';
 import SingleDetail from '../../components/commissionAdjustment/SingleDetail';

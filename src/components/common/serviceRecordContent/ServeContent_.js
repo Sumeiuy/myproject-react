@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 19:03:11
+ * @Last Modified time: 2018-04-26 16:04:40
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -61,8 +61,8 @@ export default class ServeContent extends PureComponent {
     // 如果修改了，则可以给用户提交，如果没有则不让用户提交
     if (isReject) {
       // 原始值
-      const { title, desc } = serveContent;
-      if (title === serveContentTitle && desc === serveContentDesc) {
+      const { desc } = serveContent;
+      if (_.isEqual(desc, serveContentDesc)) {
         // 如果相同代表，用户并没有修改
         message.error('服务内容已被驳回，请修改服务内容后再提交');
         return false;
