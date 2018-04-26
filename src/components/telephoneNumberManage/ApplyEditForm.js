@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 17:57:51
+ * @Last Modified time: 2018-04-26 18:53:33
  */
 
 import React, { PureComponent } from 'react';
@@ -113,7 +113,7 @@ export default class ApplyEditForm extends PureComponent {
       // 驳回重新提交，节点是submit，后端规定的且必传
       validateData({
         advisorBindingList: finalEmplists,
-        currentNodeCode: 'submit',
+        currentNodeCode: 'resubmit',
       }).then(() => {
         const { validateResultData } = this.props;
         const { isValid, msg } = validateResultData;
