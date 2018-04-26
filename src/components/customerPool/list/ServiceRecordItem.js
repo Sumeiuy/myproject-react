@@ -44,6 +44,14 @@ export default class ServiceRecordItem extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载' } })
   handleDownloadClick() {}
 
+  /**
+   * 判断是否是空或者字符串null
+   * @param {*string} content 内容
+   */
+  isNullOrNullString(content) {
+    return _.isEmpty(content) || content === 'null';
+  }
+
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
       const type = getIconType(item.name);
