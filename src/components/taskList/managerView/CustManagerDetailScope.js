@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 14:02:53
+ * @Last Modified time: 2018-04-26 17:27:04
  * 服务经理维度任务统计
  */
 
@@ -104,7 +104,7 @@ export default class CustManagerDetailScope extends PureComponent {
     }
     // 当任务切换
     // 设置默认维度
-    // 任务id切换了，orgId肯定恢复原始了，不需要讲外部的orgId传入getCurrentScopeByOrgId
+    // 任务id切换了，orgId肯定恢复原始了，不需要将外部的orgId传入getCurrentScopeByOrgId
     if (currentId !== nextMssnId) {
       this.setState({
         currentSelectScope: getCurrentScopeByOrgId({ custRange }),
