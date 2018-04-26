@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 19:32:58
+ * @Last Modified time: 2018-04-26 17:36:52
  */
 
 
@@ -15,8 +15,11 @@ import { Button, Table, message } from 'antd';
 import Icon from '../common/Icon';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import BatchAddEmpList from './BatchAddEmpList';
+import config from './config';
 import styles from './addEmpList.less';
 
+// 最大可以选择的服务经理的数量200
+const { MAXSELECTNUM } = config;
 export default class AddEmpList extends PureComponent {
   static propTypes = {
     pageType: PropTypes.string,
@@ -42,15 +45,16 @@ export default class AddEmpList extends PureComponent {
     this.state = {
       selectList: [],
       // 点击选择的服务经理
-      chooseEmp: {},
-      // 所有单个选择添加的服务经理列表
-      empLists: pageType === 'edit' ? advisorBindList : [],
+      selectedEmp: {},
+      // 所有单个选择添加的服务经理列表，若pageType为edit代表是修改页面
+      empList: pageType === 'edit' ? advisorBindList : [],
       // 批量添加弹框是否显示，默认false为不显示
       isShowBatchAddModal: false,
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    // 批量展示所有可以做业务手机申请的投顾，由前端分页，且最多业务要求显示200条
     this.props.queryBatchAdvisorList({
       pageNum: 1,
       pageSize: 200,
@@ -66,7 +70,7 @@ export default class AddEmpList extends PureComponent {
   // 点击选择服务经理
   @autobind
   handleSelectEmplist(cust) {
-    this.setState({ chooseEmp: cust });
+    this.setState({ selectedEmp: cust });
   }
 
   // 根据用户输入的关键字查询服务经理
@@ -82,26 +86,26 @@ export default class AddEmpList extends PureComponent {
   // 添加用户
   @autobind
   handleAddBtnClick() {
-    const { empLists, chooseEmp } = this.state;
+    const { empList, selectedEmp } = this.state;
     // 选中客户才能添加，不选不能添加
-    if (!_.isEmpty(chooseEmp)) {
+    if (!_.isEmpty(selectedEmp)) {
       // 判断是否已经存在用该户
-      const exist = _.findIndex(empLists, o => o.empId === chooseEmp.empId) > -1;
+      const exist = _.findIndex(empList, o => o.empId === selectedEmp.empId) > -1;
       if (exist) {
         message.error('此用户已经添加过');
         return;
       }
       // 将单客户添加的数据合并到newList中
-      const newList = _.concat([chooseEmp], empLists);
+      const newList = [selectedEmp, ...empList];
       // 对合并后的数据进行去重
       const finalEmplist = _.uniqBy(newList, 'empId');
       // 添加的服务经理数量最多不能多于200条
-      if (_.size(finalEmplist) > 200) {
-        message.error('服务经理最多只能添加200条');
+      if (_.size(finalEmplist) > MAXSELECTNUM) {
+        message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
         return;
       }
       this.setState({
-        empLists: finalEmplist,
+        empList: finalEmplist,
       });
       this.passData2Create(finalEmplist);
     } else {
@@ -112,10 +116,10 @@ export default class AddEmpList extends PureComponent {
   // 删除选择的用户
   @autobind
   handleDeleteEmp(record) {
-    const { empLists } = this.state;
-    const newList = _.filter(empLists, item => item.empId !== record.empId);
+    const { empList } = this.state;
+    const newList = _.filter(empList, item => item.empId !== record.empId);
     this.setState({
-      empLists: newList,
+      empList: newList,
     });
     this.passData2Create(newList);
   }
@@ -123,18 +127,18 @@ export default class AddEmpList extends PureComponent {
   // 用户批量选择添加的服务经理列表
   @autobind
   saveSelectedBatchEmpList(batchList) {
-    const { empLists } = this.state;
+    const { empList } = this.state;
     // 批量客户添加与单客户添加进行合并
-    const newList = _.concat(empLists, batchList);
+    const newList = [...batchList, ...empList];
     // 对合并后的数据进行去重
     const finalEmplist = _.uniqBy(newList, 'empId');
     // 去重后的数据不能多于200条
-    if (_.size(finalEmplist) > 200) {
-      message.error('服务经理最多只能添加200条');
+    if (_.size(finalEmplist) > MAXSELECTNUM) {
+      message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
     this.setState({
-      empLists: finalEmplist,
+      empList: finalEmplist,
       isShowBatchAddModal: false,
     });
     this.passData2Create(finalEmplist);
@@ -193,23 +197,21 @@ export default class AddEmpList extends PureComponent {
       advisorList,
       batchAdvisorListData,
     } = this.props;
-    const { empLists, isShowBatchAddModal } = this.state;
+    const { empList, isShowBatchAddModal } = this.state;
     // 处理选中的服务经理数组，给每个数组中对象加一个key
-    const empListWithKey = empLists.map(item => ({ ...item, key: item.empId }));
+    const empListWithKey = empList.map(item => ({ ...item, key: item.empId }));
     // 去重，数组对象中empId相同去掉重复的那个
     const finalEmplist = _.uniqBy(empListWithKey, 'empId');
     // 添加服务经理的总条数
-    const empListsSize = _.size(finalEmplist);
+    const empListSize = _.size(finalEmplist);
     // 渲染标题
     const columnTitle = this.renderColumnTitle();
-    console.warn('finalEmplist', finalEmplist);
     return (
       <div className={styles.addEmpListBox}>
         <div className={styles.selectSearchBox}>
           <SimilarAutoComplete
-            placeholder="经纪客户号/客户名称"
+            placeholder="姓名工号搜索"
             optionList={_.isEmpty(advisorList) ? [] : advisorList}
-            style={{ width: 160 }}
             showIdKey="empId"
             showNameKey="empName"
             onSelect={this.handleSelectEmplist}
@@ -228,7 +230,7 @@ export default class AddEmpList extends PureComponent {
             columns={columnTitle}
             dataSource={finalEmplist}
             pagination={{
-              total: empListsSize,
+              total: empListSize,
               showTotal: this.showTotal,
               pageSize: 5,
             }}

@@ -20,11 +20,13 @@ export default function telephoneNumberManage(api) {
     getAttachmentList: query => api.post('/file/ceFileList', query),
     // 获取新建页面投顾列表
     queryAdvisorList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAdvisorList', query),
-    // 获取新建页面获取下一步审批人
-    queryNextApproval: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryNextApproval', query),
     // 更新接口（新建和修改）
     updateBindingFlow: query => api.post('/groovynoauth/fsp/emp/mobilebinding/updateBindingFlow', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/emp/mobilebinding/doApprove', query),
+    // 下一步按钮和下一步审批人
+    getButtonList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryNextStepInfo', query),
+    // 验证提交数据接口
+    validateData: query => api.post('/file/mobilebinding/validate', query),
   };
 }

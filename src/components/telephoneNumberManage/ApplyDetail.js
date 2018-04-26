@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-23 09:15:20
+ * @Last Modified time: 2018-04-26 10:06:04
  */
 
 import React, { PureComponent } from 'react';
@@ -39,46 +39,6 @@ export default class ApplyDetail extends PureComponent {
   }
 
   @autobind
-  renderColumnTitle() {
-    const { currentNodeCode } = this.props.data;
-    const columns = [{
-      key: 'empName',
-      value: '姓名',
-    },
-    {
-      key: 'empId',
-      value: '工号',
-    },
-    {
-      key: 'orgName',
-      value: '所属营业部',
-    },
-    {
-      key: 'phoneNumber',
-      value: '电话号码',
-    },
-    {
-      key: 'ismi',
-      value: '手机串号',
-    },
-    {
-      key: 'sim',
-      value: 'SIM卡号',
-    }];
-    // resubmit表示被驳回重新提交或终止状态
-    // branchAudit表示分公司审核状态
-    // headHandle表示总部处理状态
-    if (currentNodeCode === 'resubmit' ||
-    currentNodeCode === 'branchAudit' ||
-    currentNodeCode === 'headHandle') {
-      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号还未录入
-      // 只展示员工姓名，工号，所属营业部三列
-      columns.splice(3, 3);
-    }
-    return columns;
-  }
-
-  @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
     const { appId } = this.props.data;
     this.setState({
@@ -92,15 +52,47 @@ export default class ApplyDetail extends PureComponent {
     });
   }
 
-    /**
- * 为数据源的每一项添加一个id属性
- * @param {*} listData 数据源
- */
+  @autobind
+  renderColumnTitle() {
+    const { currentNodeCode } = this.props.data;
+    let columns = [{
+      key: 'empName',
+      value: '姓名',
+    },
+    {
+      key: 'empId',
+      value: '工号',
+    },
+    {
+      key: 'orgName',
+      value: '所属营业部',
+    }];
+    // branchHandle表示分公司处理状态
+    // headAudit表示总部审核状态
+    // trueOver表示办结状态
+    if (currentNodeCode === 'branchHandle' ||
+    currentNodeCode === 'headAudit' ||
+    currentNodeCode === 'trueOver') {
+      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号已经录入
+      // 需要增加展示电话号码，手机串号，SIM卡号三列
+      const increasedColumns = [
+        { key: 'phoneNumber', value: '电话号码' },
+        { key: 'imsi', value: '手机串号' },
+        { key: 'sim', value: 'SIM卡号' },
+      ];
+      columns = [...columns, ...increasedColumns];
+    }
+    return columns;
+  }
+
+  /**
+   * 为数据源的每一项添加一个id属性
+   * @param {*} listData 数据源
+   */
   @autobind
   addIdToDataSource(listData) {
     if (!_.isEmpty(listData)) {
-      return _.map(listData, (item, index) => _.merge(item, { id: index }),
-      );
+      return _.map(listData, (item, index) => ({ ...item, id: `${item.empId}-${index}` }));
     }
     return [];
   }
@@ -128,14 +120,13 @@ export default class ApplyDetail extends PureComponent {
 
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
-
     const columnSize = _.size(titleColumn);
     let columnWidth;
     if (columnSize === 6) {
-      // 列全部保留
+      // 6列全部都有
       columnWidth = ['15%', '12%', '16%', '16%', '16%', '25%'];
     } else if (columnSize === 3) {
-      // 去除客户反馈和反馈详情列
+      // 开始的时候没有电话号码，手机串号，SIM卡号三列
       columnWidth = ['33%', '33%', '34%'];
     }
 

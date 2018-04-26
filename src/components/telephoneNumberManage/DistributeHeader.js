@@ -87,12 +87,11 @@ export default class DistributeHeader extends PureComponent {
           <div className={styles.filterFl}>
             <AutoComplete
               placeholder="姓名/工号"
-              showObjKey="ptyMngName"
-              objId="ptyMngId"
-              searchList={ptyMngAllList}
+              showNameKey="ptyMngName"
+              showIdKey="ptyMngId"
+              optionList={ptyMngAllList}
               onSelect={this.handleManagerSelect}
               onSearch={this.handleManagerSearch}
-              ref={ref => this.queryEmpListComponent = ref}
             />
           </div>
 

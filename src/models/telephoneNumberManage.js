@@ -23,14 +23,16 @@ export default {
     empAppBindingList: EMPTY_OBJECT,
     // 新建页面-投顾查询列表
     advisorListData: EMPTY_OBJECT,
-    // 新建页面-获取下一步审批人
-    nextApprovalData: EMPTY_LIST,
     // 附件列表
     attachmentList: EMPTY_LIST,
     // 批量投顾查询列表
     batchAdvisorListData: EMPTY_OBJECT,
     // 新建修改的更新接口
     updateBindingFlowAppId: '',
+    // 按钮组
+    buttonList: {},
+    // 验证提交数据结果
+    validateResultData: {},
   },
   reducers: {
     // 投顾手机分配页面筛选-服务经理列表
@@ -92,14 +94,6 @@ export default {
         advisorListData: resultData,
       };
     },
-    // 新建页面-获取下一步审批人
-    queryNextApprovalSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      return {
-        ...state,
-        nextApprovalData: resultData,
-      };
-    },
     // 获取附件列表
     getAttachmentListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -124,12 +118,29 @@ export default {
         updateBindingFlowAppId: resultData,
       };
     },
+    // 清除数据
     clearPropsSuccess(state) {
       return {
         ...state,
         advisorListData: EMPTY_OBJECT,
         nextApprovalData: EMPTY_LIST,
         batchAdvisorListData: EMPTY_OBJECT,
+      };
+    },
+    // 获取按钮信息
+    getButtonListSuccess(state, action) {
+      const { payload: { resultData = [] } } = action;
+      return {
+        ...state,
+        buttonList: resultData,
+      };
+    },
+    // 验证提交数据结果
+    validateDataSuccess(state, action) {
+      const { payload: { resultData = [] } } = action;
+      return {
+        ...state,
+        validateResultData: resultData,
       };
     },
   },
@@ -182,14 +193,6 @@ export default {
         payload: response,
       });
     },
-    // 获取新建页面-获取下一步审批人
-    * queryNextApproval({ payload }, { call, put }) {
-      const response = yield call(api.queryNextApproval, payload);
-      yield put({
-        type: 'queryNextApprovalSuccess',
-        payload: response,
-      });
-    },
     // 获取附件信息
     * getAttachmentList({ payload }, { call, put }) {
       const response = yield call(api.getAttachmentList, payload);
@@ -223,6 +226,22 @@ export default {
       yield put({
         type: 'clearPropsSuccess',
         payload: [],
+      });
+    },
+    // 获取按钮列表和下一步审批人
+    * getButtonList({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getButtonListSuccess',
+        payload: response,
+      });
+    },
+    // 验证提交数据接口
+    * validateData({ payload }, { call, put }) {
+      const response = yield call(api.validateData, payload);
+      yield put({
+        type: 'validateDataSuccess',
+        payload: response,
       });
     },
   },

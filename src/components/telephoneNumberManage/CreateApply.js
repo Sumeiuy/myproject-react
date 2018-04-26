@@ -3,7 +3,7 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 19:17:12
+ * @Last Modified time: 2018-04-26 17:59:25
  */
 
 import React, { PureComponent } from 'react';
@@ -12,21 +12,22 @@ import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
+import BottonGroup from '../permission/BottonGroup';
+import TableDialog from '../common/biz/TableDialog';
 import InfoTitle from '../common/InfoTitle';
 import AddEmpList from './AddEmpList';
-import Select from '../common/Select';
 import commonConfirm from '../common/Confirm';
+import config from './config';
 import styles from './createApply.less';
 
+// 最大可以选择的服务经理的数量200
+const { MAXSELECTNUM, approvalColumns } = config;
 export default class CreateApply extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 新建页面获取投顾
     advisorListData: PropTypes.object,
     queryAdvisorList: PropTypes.func.isRequired,
-    // 新建页面获取下一步审批人
-    nextApprovalData: PropTypes.array,
-    queryNextApproval: PropTypes.func.isRequired,
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
@@ -40,11 +41,16 @@ export default class CreateApply extends PureComponent {
     // 清除数据
     clearProps: PropTypes.func.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
+    // 获取按钮组
+    buttonList: PropTypes.object.isRequired,
+    getButtonList: PropTypes.func.isRequired,
+    // 验证提交数据
+    validateResultData: PropTypes.object.isRequired,
+    validateData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     advisorListData: {},
-    nextApprovalData: [],
   }
 
   constructor(props) {
@@ -53,15 +59,17 @@ export default class CreateApply extends PureComponent {
       // 模态框是否显示 默认状态下是隐藏的
       isShowModal: true,
       // 选择添加的服务经理列表
-      empLists: [],
-      // 选择的审批人
-      approval: '',
+      empList: [],
+      // 下一步审批人列表
+      nextApproverList: [],
+      // 审批人弹窗
+      nextApproverModal: false,
     };
   }
 
-  componentWillMount() {
-    // 获取下一步审批人
-    this.props.queryNextApproval({});
+  componentDidMount() {
+   // 获取下一步骤按钮列表
+    this.props.getButtonList();
   }
 
   // 关闭新建弹框
@@ -82,70 +90,83 @@ export default class CreateApply extends PureComponent {
   // 清空弹出层数据
   @autobind
   clearBoardAllData() {
-    this.setState({ isShowModal: false }, () => {
-      this.props.clearProps();
-    });
+    this.setState({
+      isShowModal: false,
+      nextApproverModal: false,
+    }, this.props.clearProps);
   }
 
   // 将用户选择添加的服务经理列表返回到弹出层用于提交
   @autobind
   saveSelectedEmpList(list) {
     this.setState({
-      empLists: list,
+      empList: list,
     });
   }
 
-  // 切换审批人
+  // 提交
   @autobind
-  handleApprovalSelectChange(name, value) {
-    this.setState({
-      approval: value,
-    });
-  }
-
-  // 处理审批人数据
-  @autobind
-  handleApprovalData(data) {
-    const options = [];
-    _.forEach(data, (item) => {
-      const { login, empName } = item;
-      const approvalLabel = `${empName}(${login})`;
-      options.push({
-        show: true,
-        label: approvalLabel,
-        value: login,
-      });
-    });
-    return options;
-  }
-
-  @autobind
-  sendCreateRequest() {
-    const { empLists, approval } = this.state;
-    const { updateBindingFlow } = this.props;
+  handleSubmit(item) {
+    const { validateData } = this.props;
+    const { empList } = this.state;
     // 用empId去重
-    const finalEmplists = _.uniqBy(empLists, 'empId');
+    const finalEmplists = _.uniqBy(empList, 'empId');
     const finalEmplistsSize = _.size(finalEmplists);
     if (_.isEmpty(finalEmplists)) {
       message.error('请添加服务经理');
       return;
-    } else if (_.isEmpty(approval)) {
-      message.error('请选择审批人');
-      return;
-    } else if (finalEmplistsSize > 200) {
-      message.error('服务经理最多只能添加200条');
+    } else if (finalEmplistsSize > MAXSELECTNUM) {
+      message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
+    // 提交前先对提交的数据调验证接口进行进行验证
+    // 新建，节点是new，后端规定的且必传
+    validateData({
+      advisorBindingList: finalEmplists,
+      currentNodeCode: 'new',
+    }).then(() => {
+      const { validateResultData } = this.props;
+      const { isValid, msg } = validateResultData;
+       // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+      if (isValid) {
+        this.setState({
+          operate: item.operate,
+          groupName: item.nextGroupName,
+          auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+          nextApproverList: item.flowAuditors,
+          nextApproverModal: true,
+        });
+      } else {
+        commonConfirm({
+          content: msg,
+        });
+      }
+    });
+  }
+
+  @autobind
+  sendCreateRequest(value) {
+    const { updateBindingFlow } = this.props;
+    const { empList } = this.state;
+    // 用empId去重
+    const finalEmplists = _.uniqBy(empList, 'empId');
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     updateBindingFlow({
       advisorBindingList: finalEmplists,
     }).then(() => {
-      this.sendDoApproveRequest();
+      this.sendDoApproveRequest(value);
     });
   }
 
   // 发送请求，先走新建（修改）接口，再走走流程接口
   @autobind
-  sendDoApproveRequest() {
+  sendDoApproveRequest(value) {
     const {
       doApprove,
       updateBindingFlowAppId,
@@ -158,19 +179,19 @@ export default class CreateApply extends PureComponent {
         },
       },
     } = this.props;
-    const { approval } = this.state;
+    const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId: updateBindingFlowAppId,
-      groupName: 'fgsfzr_group',
-      auditors: approval,
-      operate: 'commit',
+      groupName,
+      auditors: !_.isEmpty(value) ? value.login : auditors,
+      operate,
     }).then(() => {
       message.success('公务手机申请新建成功');
       this.setState({
         isShowModal: false,
       }, () => {
-        // 服务经理新建成功，清楚新建弹框的数据
-      //  this.props.clearProps();
+        // 新建成功，清楚新建弹框的数据
+        this.props.clearProps();
         queryAppList(query, pageNum, pageSize);
       });
     });
@@ -179,29 +200,43 @@ export default class CreateApply extends PureComponent {
   render() {
     const {
       isShowModal,
-      approval,
+      nextApproverModal,
+      nextApproverList,
     } = this.state;
     const {
       advisorListData,
       queryAdvisorList,
-      nextApprovalData,
       batchAdvisorListData,
       queryBatchAdvisorList,
+      buttonList,
     } = this.props;
     const { advisorList } = advisorListData;
-    // 处理审批人数据
-    const newNextApprovalData = this.handleApprovalData(nextApprovalData);
+    const selfBtnGroup = (<BottonGroup
+      list={buttonList}
+      onEmitEvent={this.handleSubmit}
+    />);
+    const searchProps = {
+      visible: nextApproverModal,
+      onOk: this.sendCreateRequest,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      dataSource: nextApproverList,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      modalKey: 'phoneApplyNextApproverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
     return (
       <CommonModal
         title="新建公务手机申请"
         visible={isShowModal}
-        onOk={this.sendCreateRequest}
         closeModal={this.closeModal}
         afterClose={this.afterClose}
         size="large"
         modalKey="myModal"
+        selfBtnGroup={selfBtnGroup}
       >
-        <div className={styles.createApplyWrapper} >
+        <div className={styles.createApplyWrapper}>
           <div id="createApplyEmp_module" className={styles.module}>
             <InfoTitle head="服务经理" />
             <AddEmpList
@@ -212,17 +247,7 @@ export default class CreateApply extends PureComponent {
               saveSelectedEmpList={this.saveSelectedEmpList}
             />
           </div>
-          <div id="approval_module" className={styles.module}>
-            <InfoTitle head="审批" />
-            <span className={styles.approvalTip}><span>*</span>选择审批人：</span>
-            <Select
-              width="160px"
-              name="approval"
-              data={newNextApprovalData}
-              value={approval}
-              onChange={this.handleApprovalSelectChange}
-            />
-          </div>
+          <TableDialog {...searchProps} />
         </div>
       </CommonModal>
     );

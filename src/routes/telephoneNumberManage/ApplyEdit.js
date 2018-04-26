@@ -1,9 +1,9 @@
 /**
  * @Author: hongguangqing
- * @Descripter: 公务手机卡号申请页面
+ * @Descripter: 公务手机卡号修改页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 16:27:23
+ * @Last Modified time: 2018-04-26 17:59:15
  */
 
 import React, { PureComponent } from 'react';
@@ -26,8 +26,6 @@ const effects = {
   queryEmpAppBindingList: 'telephoneNumberManage/queryEmpAppBindingList',
   // 获取新建页面投顾
   queryAdvisorList: 'telephoneNumberManage/queryAdvisorList',
-  // 新建页面获取下一步审批人
-  queryNextApproval: 'telephoneNumberManage/queryNextApproval',
   // 获取批量投顾
   queryBatchAdvisorList: 'telephoneNumberManage/queryBatchAdvisorList',
   // 新建修改的更新接口
@@ -36,6 +34,10 @@ const effects = {
   doApprove: 'telephoneNumberManage/doApprove',
   // 清除数据
   clearProps: 'telephoneNumberManage/clearProps',
+  // 按钮组信息
+  getButtonList: 'telephoneNumberManage/getButtonList',
+  // 验证提交数据
+  validateData: 'telephoneNumberManage/validateData',
 };
 const mapStateToProps = state => ({
   // 右侧详情数据
@@ -46,12 +48,14 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 获取新建页面的投顾
   advisorListData: state.telephoneNumberManage.advisorListData,
-  // 新建页面获取下一步审批人
-  nextApprovalData: state.telephoneNumberManage.nextApprovalData,
   // 获取批量投顾
   batchAdvisorListData: state.telephoneNumberManage.batchAdvisorListData,
   // 新建修改的更新接口
   updateBindingFlowAppId: state.telephoneNumberManage.updateBindingFlowAppId,
+  // 按钮组信息
+  buttonList: state.telephoneNumberManage.buttonList,
+  // 验证提交数据
+  validateResultData: state.telephoneNumberManage.validateResultData,
 });
 
 const mapDispatchToProps = {
@@ -62,8 +66,6 @@ const mapDispatchToProps = {
   queryEmpAppBindingList: dispatch(effects.queryEmpAppBindingList, { forceFull: true }),
   // 获取新建页面的投顾
   queryAdvisorList: dispatch(effects.queryAdvisorList, { loading: false }),
-  // 获取新建下一步审批人
-  queryNextApproval: dispatch(effects.queryNextApproval, { forceFull: true }),
   // 获取批量投顾
   queryBatchAdvisorList: dispatch(effects.queryBatchAdvisorList, { forceFull: true }),
   // 新建修改的更新接口
@@ -72,6 +74,10 @@ const mapDispatchToProps = {
   doApprove: dispatch(effects.doApprove, { forceFull: true }),
   // 清除数据
   clearProps: dispatch(effects.clearProps, { forceFull: true }),
+  // 请求按钮
+  getButtonList: dispatch(effects.getButtonList, { forceFull: true }),
+  // 验证提交数据
+  validateData: dispatch(effects.validateData, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -89,9 +95,6 @@ export default class ApplyHome extends PureComponent {
     // 新建页面获取投顾
     advisorListData: PropTypes.object.isRequired,
     queryAdvisorList: PropTypes.func.isRequired,
-    // 新建页面获取下一步审批人
-    nextApprovalData: PropTypes.array.isRequired,
-    queryNextApproval: PropTypes.func.isRequired,
     // 获取批量投顾
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
@@ -102,6 +105,12 @@ export default class ApplyHome extends PureComponent {
     doApprove: PropTypes.func.isRequired,
     // 清除数据
     clearProps: PropTypes.func.isRequired,
+    // 获取按钮组
+    buttonList: PropTypes.object.isRequired,
+    getButtonList: PropTypes.func.isRequired,
+    // 验证提交数据
+    validateResultData: PropTypes.object.isRequired,
+    validateData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -129,39 +138,40 @@ export default class ApplyHome extends PureComponent {
 
   render() {
     const {
-      location,
       detailInfo,
       getDetailInfo,
       empAppBindingList,
       advisorListData,
       queryAdvisorList,
-      nextApprovalData,
-      queryNextApproval,
       batchAdvisorListData,
       queryBatchAdvisorList,
       updateBindingFlowAppId,
       updateBindingFlow,
       doApprove,
+      buttonList,
+      getButtonList,
+      validateResultData,
+      validateData,
     } = this.props;
     if (_.isEmpty(detailInfo) || _.isEmpty(empAppBindingList)) {
       return null;
     }
-    console.warn('empAppBindingList', empAppBindingList);
     return (
       <ApplyEditForm
-        location={location}
         detailInfo={detailInfo}
         getDetailInfo={getDetailInfo}
         empAppBindingList={empAppBindingList}
         advisorListData={advisorListData}
         queryAdvisorList={queryAdvisorList}
-        nextApprovalData={nextApprovalData}
-        queryNextApproval={queryNextApproval}
         batchAdvisorListData={batchAdvisorListData}
         queryBatchAdvisorList={queryBatchAdvisorList}
         updateBindingFlowAppId={updateBindingFlowAppId}
         updateBindingFlow={updateBindingFlow}
         doApprove={doApprove}
+        buttonList={buttonList}
+        getButtonList={getButtonList}
+        validateResultData={validateResultData}
+        validateData={validateData}
       />
     );
   }

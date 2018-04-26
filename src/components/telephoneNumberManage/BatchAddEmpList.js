@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 18:58:44
+ * @Last Modified time: 2018-04-26 09:40:18
  */
 
 import React, { PureComponent } from 'react';
@@ -134,7 +134,7 @@ export default class BatchAddEmpList extends PureComponent {
         closeModal={this.closeModal}
         afterClose={this.afterClose}
         modalKey="myBatchAddEmpListModal"
-        wrapClassName="batchAddEmpListModal"
+        wrapClassName={styles.batchAddEmpListModal}
       >
         <div className={styles.batchAddEmpListBox}>
           <div className={styles.tip}>请从以下未分配机卡的服务经理名单中选择：</div>

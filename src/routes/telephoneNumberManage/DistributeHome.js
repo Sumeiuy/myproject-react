@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-20 16:23:33
+ * @Last Modified time: 2018-04-26 17:17:49
  */
 
 import React, { PureComponent } from 'react';
@@ -38,14 +38,14 @@ const mapStateToProps = state => ({
   advisorBindListData: state.telephoneNumberManage.advisorBindListData,
 });
 
-const mapDisPatchToProps = {
+const mapDispatchToProps = {
   replace: routerRedux.replace,
   queryEmpList: dispatch(effects.queryEmpList, { loading: false }),
   getCustRange: dispatch(effects.getCustRange, { forceFull: true }),
   queryAdvisorBindList: dispatch(effects.queryAdvisorBindList, { forceFull: true }),
 };
 
-@connect(mapStateToProps, mapDisPatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class DistributeHome extends PureComponent {
   static propTypes = {
@@ -62,7 +62,7 @@ export default class DistributeHome extends PureComponent {
     queryAdvisorBindList: PropTypes.func.isRequired,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // 先获取部门，然后根据部门数据数组中的第一个部门id去获取表格数据
     // 此时是获取该登录人所有岗位最大权限的列表数据
     this.props.getCustRange({
@@ -70,7 +70,6 @@ export default class DistributeHome extends PureComponent {
     }).then(() => {
       const { location, replace, custRange } = this.props;
       const { pathname, query, query: { pageNum = 1, pageSize = 10 } } = location;
-      console.warn('custRange', custRange);
       replace({
         pathname,
         query: {
@@ -80,6 +79,18 @@ export default class DistributeHome extends PureComponent {
         },
       });
       this.getAdvisorBindList(query, pageNum, pageSize);
+    });
+  }
+
+  // 请求表格数据
+  @autobind
+  getAdvisorBindList(query, pageNum = 1, pageSize = 10) {
+    const { queryAdvisorBindList } = this.props;
+    // 默认筛选条件
+    queryAdvisorBindList({
+      ...query,
+      pageNum,
+      pageSize,
     });
   }
 
@@ -101,18 +112,6 @@ export default class DistributeHome extends PureComponent {
     this.getAdvisorBindList({ ...query, ...obj }, 1, query.pageSize);
   }
 
-  // 请求表格数据
-  @autobind
-  getAdvisorBindList(query, pageNum = 1, pageSize = 10) {
-    const { queryAdvisorBindList } = this.props;
-    // 默认筛选条件
-    queryAdvisorBindList({
-      ...query,
-      pageNum,
-      pageSize,
-    });
-  }
-
    // 切换页码
    @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
@@ -129,14 +128,13 @@ export default class DistributeHome extends PureComponent {
   }
 
   /**
- * 为数据源的每一项添加一个id属性
- * @param {*} listData 数据源
- */
+   * 为数据源的每一项添加一个id属性
+   * @param {*} listData 数据源
+   */
   @autobind
   addIdToDataSource(listData) {
     if (!_.isEmpty(listData)) {
-      return _.map(listData, (item, index) => _.merge(item, { id: index }),
-      );
+      return _.map(listData, (item, index) => ({ ...item, id: `${item.empId}-${index}` }));
     }
     return [];
   }
@@ -177,7 +175,7 @@ export default class DistributeHome extends PureComponent {
         value: '电话号码',
       },
       {
-        key: 'ismi',
+        key: 'imsi',
         value: '手机串号',
       },
       {

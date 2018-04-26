@@ -3,38 +3,46 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-25 17:11:32
+ * @Last Modified time: 2018-04-26 17:57:51
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { message, Button } from 'antd';
+import { message } from 'antd';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import AddEmpList from './AddEmpList';
-import Select from '../common/Select';
-import { emp } from '../../helper';
+import BottonGroup from '../permission/BottonGroup';
+import TableDialog from '../common/biz/TableDialog';
 import ApprovalRecord from '../permission/ApprovalRecord';
+import commonConfirm from '../common/Confirm';
+import config from './config';
 import styles from './applyEditForm.less';
 
-// const COMMITOPERATE = 'commit'; // 提交的operate值
+const REJECT_STATUS_CODE = '04'; // 驳回状态code
+const COMMITOPERATE = 'commit'; // 提交的operate值
+// 最大可以选择的服务经理的数量200
+const { MAXSELECTNUM, approvalColumns } = config;
 export default class ApplyEditForm extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     detailInfo: PropTypes.object.isRequired,
     getDetailInfo: PropTypes.func.isRequired,
     empAppBindingList: PropTypes.object.isRequired,
     advisorListData: PropTypes.object.isRequired,
     queryAdvisorList: PropTypes.func.isRequired,
-    nextApprovalData: PropTypes.array.isRequired,
-    queryNextApproval: PropTypes.func.isRequired,
     batchAdvisorListData: PropTypes.object.isRequired,
     queryBatchAdvisorList: PropTypes.func.isRequired,
     updateBindingFlowAppId: PropTypes.string.isRequired,
     updateBindingFlow: PropTypes.func.isRequired,
     doApprove: PropTypes.func.isRequired,
+    // 获取按钮组
+    buttonList: PropTypes.object.isRequired,
+    getButtonList: PropTypes.func.isRequired,
+    // 验证提交数据
+    validateResultData: PropTypes.object.isRequired,
+    validateData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -43,125 +51,144 @@ export default class ApplyEditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { empAppBindingList } = this.props;
+    const { empAppBindingList, buttonList } = this.props;
     const { advisorBindList } = empAppBindingList;
     this.state = {
       // 选择添加的服务经理列表,默认为修改前添加的服务列表
-      empLists: advisorBindList,
-      // 选择的审批人
-      approval: '',
+      empList: advisorBindList,
+      // 审批人弹框默认false不显示
+      nextApproverModal: false,
+      // 下一步审批人列表
+      nextApproverList: [],
+      // 按钮组信息
+      buttonListData: buttonList,
     };
   }
 
-  componentWillMount() {
-    // 获取审批人
-    this.props.queryNextApproval({});
+  componentDidMount() {
+    const {
+      flowId,
+      statusCode,
+    } = this.props.detailInfo;
+    if (statusCode === REJECT_STATUS_CODE) {
+      // 获取下一步骤按钮列表
+      this.props.getButtonList({ flowId });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { buttonList } = nextProps;
+    if (buttonList !== this.props.buttonList) {
+      this.setState({ buttonListData: buttonList });
+    }
   }
 
   // 将用户选择添加的服务经理列表返回到弹出层用于提交
   @autobind
   saveSelectedEmpList(list) {
-    const { empLists } = this.state;
-    const newEmpList = _.concat(list, empLists);
     this.setState({
-      empLists: newEmpList,
+      empList: list,
     });
   }
 
-  // 切换审批人
+  // 提交
   @autobind
-  handleApprovalSelectChange(name, value) {
-    this.setState({
-      approval: value,
-    });
-  }
-
-  // 处理审批人数据
-  @autobind
-  handleApprovalData(data) {
-    const options = [];
-    _.forEach(data, (item) => {
-      const { login, empName } = item;
-      const approvalLabel = `${empName}(${login})`;
-      options.push({
-        show: true,
-        label: approvalLabel,
-        value: login,
-      });
-    });
-    return options;
-  }
-
-  // 点击提交按钮进行重新提交需要先走更新接口，在走走流程接口
-  @autobind
-  handleOkBtnClick() {
-    const { empLists, approval } = this.state;
-    const { updateBindingFlow } = this.props;
+  handleSubmit(item) {
+    const { validateData } = this.props;
+    const { empList } = this.state;
     // 用empId去重
-    const finalEmplists = _.uniqBy(empLists, 'empId');
+    const finalEmplists = _.uniqBy(empList, 'empId');
+    const finalEmplistsSize = _.size(finalEmplists);
     if (_.isEmpty(finalEmplists)) {
       message.error('请添加服务经理');
       return;
-    } else if (_.isEmpty(approval)) {
+    } else if (finalEmplistsSize > MAXSELECTNUM) {
+      message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
+      return;
+    }
+    // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+    // 终止按钮的approverNum为none，提交按钮的approverNum不为none，需要验证提交数据
+    if (item.approverNum !== 'none') {
+      // 提交前先对提交的数据调验证接口进行进行验证
+      // 驳回重新提交，节点是submit，后端规定的且必传
+      validateData({
+        advisorBindingList: finalEmplists,
+        currentNodeCode: 'submit',
+      }).then(() => {
+        const { validateResultData } = this.props;
+        const { isValid, msg } = validateResultData;
+        // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+        if (isValid) {
+          this.setState({
+            operate: item.operate,
+            groupName: item.nextGroupName,
+            auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+            nextApproverList: item.flowAuditors,
+            nextApproverModal: true,
+          });
+        } else {
+          commonConfirm({
+            content: msg,
+          });
+        }
+      });
+    } else {
+      this.sendDoApproveRequest();
+    }
+  }
+
+  // 发送修改请求,先走修改接口，再走走流程接口
+  @autobind
+  sendModifyRequest(value) {
+    const { updateBindingFlow, detailInfo } = this.props;
+    const { flowId, appId, currentNodeCode } = detailInfo;
+    const { empList } = this.state;
+    // 用empId去重
+    const finalEmplists = _.uniqBy(empList, 'empId');
+    if (_.isEmpty(value)) {
       message.error('请选择审批人');
       return;
     }
+    this.setState({
+      nextApproverModal: false,
+    });
     updateBindingFlow({
+      flowId,
+      appId,
+      currentNodeCode,
       advisorBindingList: finalEmplists,
     }).then(() => {
-      this.sendDoApproveRequest('ok');
+      this.sendDoApproveRequest(value);
     });
-  }
-
-  // 点击终止按钮，只需要走走流程接口
-  @autobind
-  handleCancleBtnClick() {
-    this.sendDoApproveRequest('cancle');
   }
 
   // 发送请求，走流程接口
   @autobind
-  sendDoApproveRequest(item) {
-    const {
-      doApprove,
-      getDetailInfo,
-      detailInfo,
-    } = this.props;
-    const { flowId, appId } = detailInfo;
-    const { approval } = this.state;
+  sendDoApproveRequest(value) {
+    const { doApprove, detailInfo, getDetailInfo } = this.props;
+    const { itemId, flowId } = detailInfo;
+    const { groupName, auditors, operate } = this.state;
     doApprove({
-      itemId: appId,
+      itemId,
       flowId,
       wobNum: flowId,
       // 下一组ID
-      groupName: item === 'ok' ? 'fgsfzr_group' : 'FINSH',
-      operate: item === 'ok' ? 'commit' : 'falseOver',
+      groupName,
+      operate,
       // 审批人
-      auditors: item === 'ok' ? approval : emp.getId(),
+      auditors: !_.isEmpty(value) ? value.login : auditors,
     }).then(() => {
-      if (item === 'ok') {
+      if (operate === COMMITOPERATE) {
         message.success('公务手机申请修改成功');
       } else {
-        message.success('公务手机申请已被终止');
+        message.success('该业务手机申请已被终止');
       }
-      getDetailInfo({ flowId });
+      this.setState({
+        buttonListData: {},
+      }, () => {
+        getDetailInfo({ flowId });
+      });
     });
-  }
-
-  @autobind
-  renderColumnTitle() {
-    return [{
-      key: 'empName',
-      value: '姓名',
-    },
-    {
-      key: 'empId',
-      value: '工号',
-    },
-    {
-      key: 'orgName',
-      value: '所属营业部',
-    }];
   }
 
   render() {
@@ -181,20 +208,32 @@ export default class ApplyEditForm extends PureComponent {
       advisorListData,
       batchAdvisorListData,
       queryBatchAdvisorList,
-      nextApprovalData,
       empAppBindingList,
     } = this.props;
-    const { approval } = this.state;
+    const {
+      nextApproverModal,
+      buttonListData,
+      nextApproverList,
+    } = this.state;
     const { advisorBindList } = empAppBindingList;
-    console.warn('advisorBindList', advisorBindList);
     const { advisorList } = advisorListData;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
     }
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
-    // 处理审批人数据
-    const newNextApprovalData = this.handleApprovalData(nextApprovalData);
+    // 审批人弹框
+    const searchProps = {
+      visible: nextApproverModal,
+      onOk: this.sendModifyRequest,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      dataSource: nextApproverList,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      modalKey: 'phoneEditNextApproverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
     return (
       <div className={styles.applyEditFormbox}>
         <div className={styles.inner}>
@@ -228,17 +267,6 @@ export default class ApplyEditForm extends PureComponent {
                 </ul>
               </div>
             </div>
-            <div id="approval_module" className={styles.module}>
-              <InfoTitle head="审批" />
-              <span className={styles.approvalTip}><span>*</span>选择审批人：</span>
-              <Select
-                width="160px"
-                name="approval"
-                data={newNextApprovalData}
-                value={approval}
-                onChange={this.handleApprovalSelectChange}
-              />
-            </div>
             <div id="approvalRecord_module" className={styles.module}>
               <ApprovalRecord
                 head="审批记录"
@@ -249,9 +277,12 @@ export default class ApplyEditForm extends PureComponent {
               />
             </div>
             <div id="button_module" className={styles.buttonModule}>
-               <Button className={styles.cancleBtn} onClick={this.handleCancleBtnClick}>取消</Button>
-               <Button className={styles.okBtn} onClick={this.handleOkBtnClick}>提交</Button>
+              <BottonGroup
+                list={buttonListData}
+                onEmitEvent={this.handleSubmit}
+              />
             </div>
+            <TableDialog {...searchProps} />
           </div>
         </div>
       </div>

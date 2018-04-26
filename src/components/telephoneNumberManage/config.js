@@ -5,6 +5,8 @@
  */
 
 const config = {
+  // 最大可以选择的服务经理的数量
+  MAXSELECTNUM: 200,
   telephoneNumDistribute: {
     pageName: '公务手机分配',
     pageType: '09', // 查询列表接口中的type值
@@ -57,6 +59,21 @@ const config = {
       },
     ],
   },
+  approvalColumns: [
+    {
+      title: '工号',
+      dataIndex: 'login',
+      key: 'login',
+    }, {
+      title: '姓名',
+      dataIndex: 'empName',
+      key: 'empName',
+    }, {
+      title: '所属营业部',
+      dataIndex: 'occupation',
+      key: 'occupation',
+    },
+  ],
 };
 
 export default config;
