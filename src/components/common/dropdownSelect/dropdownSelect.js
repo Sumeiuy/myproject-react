@@ -6,7 +6,7 @@
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
@@ -19,7 +19,7 @@ import styles from './dropdownSelect.less';
 // const Search = Input.Search;
 import HackSearch from '../hackSearch';
 
-export default class DropdownSelect extends PureComponent {
+export default class DropdownSelect extends React.Component {
   static propTypes = {
     // 组件名称
     name: PropTypes.string,
@@ -196,7 +196,7 @@ export default class DropdownSelect extends PureComponent {
     const { optionList } = this.state;
     return (
       <div onClick={this.handleSelect}>
-        { _.map(optionList, this.renderSelectOption) }
+        {_.map(optionList, this.renderSelectOption)}
       </div>
     );
   }

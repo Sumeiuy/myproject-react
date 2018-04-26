@@ -19,6 +19,7 @@ import {
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
+import { PRODUCT_ARGUMENTS } from './config';
 
 const NOOP = _.noop;
 // const EMPTY_OBJECT = {};
@@ -26,6 +27,10 @@ const NOOP = _.noop;
 // 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
 // \s*匹配0个或多个空格，尽量可能匹配多个空格
 const sightLabelPattern = /该客户筛选自\s*$/;
+// 正则匹配出'$持仓数量#0002#'
+// eg: 客户当前持有601088，数量为$持仓数量#GP601088#，市值为$持仓市值#GP601088#。
+// 匹配出 ["$持仓数量#GP601088#", "$持仓市值#GP601088#"]
+const productPattern = /\$[\u4e00-\u9fa5]{1,}#[a-zA-Z0-9]{1,}#/g;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
@@ -179,6 +184,11 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case 'search':
       case 'association':
+        defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = '请选择';
+        defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
+        break;
       case 'tag':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
@@ -258,6 +268,24 @@ export default class CreateTaskForm extends PureComponent {
     });
   }
 
+  // 返回持仓产品发起任务时，任务提示的文字
+  getDefaultMissionDescFromProduct(query) {
+    const condition = JSON.parse(decodeURIComponent(query.condition));
+    const { labelName, primaryKey: [id] } = condition;
+    let defaultMissionDesc = '';
+    if (this.isFromProduct(query)) {
+      defaultMissionDesc = `客户当前持有${labelName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+    }
+    return defaultMissionDesc;
+  }
+
+  // 判断是否从持仓产品进入的列表页发起任务的
+  isFromProduct(query) {
+    const condition = JSON.parse(decodeURIComponent(query.condition));
+    const { searchTypeReq } = condition;
+    return searchTypeReq === 'PRODUCT';
+  }
+
   /**
    * 瞄准镜发起任务时，构造的mention suggestion
    * @param {*string} templetDesc 构造好的任务提示
@@ -271,6 +299,17 @@ export default class CreateTaskForm extends PureComponent {
       name: type,
       isSightingScope: true,
     };
+  }
+
+  @autobind
+  renderProductDesc(value) {
+    const { location: { query } } = this.props;
+    const condition = JSON.parse(decodeURIComponent(query.condition));
+    const { primaryKey: [id] } = condition;
+    const list = value.match(productPattern);
+    const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
+    const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${id}#`, name: `${item}#${id}#` }));
+    return [...newList, ...dateList];
   }
 
   render() {
@@ -317,6 +356,8 @@ export default class CreateTaskForm extends PureComponent {
       templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
     }
 
+    const productDescSuggestions = this.isFromProduct(query) ?
+      this.renderProductDesc(defaultMissionDesc) : [];
     return (
       <div>
         {!isShowTitle ?
@@ -347,6 +388,7 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorTaskSubType={isShowErrorTaskSubType}
             templetDescSuggestion={templetDescSuggestion}
             wrappedComponentRef={ref => this.taskFormInfoRef = ref}
+            productDescSuggestions={productDescSuggestions}
           />
         </div>
       </div>
