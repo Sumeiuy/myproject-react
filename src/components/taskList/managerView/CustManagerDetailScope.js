@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-25 20:41:21
+ * @Last Modified time: 2018-04-26 14:02:53
  * 服务经理维度任务统计
  */
 
@@ -27,6 +27,7 @@ import {
   EMP_DEPARTMENT_COLUMN_FOR_FIRST,
   EMP_DEPARTMENT_COLUMN_FOR_LAST,
 } from '../../../config/managerViewCustManagerScope';
+import { getCurrentScopeByOrgLevel, getCurrentScopeByOrgId } from './helper';
 
 
 const EMPTY_LIST = [];
@@ -53,6 +54,10 @@ export default class CustManagerDetailScope extends PureComponent {
     currentScopeList: PropTypes.array,
     // 当前任务id
     currentId: PropTypes.string,
+    // 组织机构
+    custRange: PropTypes.array,
+    // 机构orgId
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -62,24 +67,53 @@ export default class CustManagerDetailScope extends PureComponent {
     getCustManagerScope: NOOP,
     currentScopeList: EMPTY_LIST,
     currentId: '',
+    custRange: EMPTY_LIST,
+    orgId: '',
   }
 
   constructor(props) {
     super(props);
+    const { custRange, orgId } = props;
     this.state = {
-      // 当前选择的维度，默认进来是服务经理维度，可以切换
-      currentSelectScope: EMP_MANAGER_SCOPE,
+      // 当前选择的维度
+      // 页面从无到有的过程中，orgId不一定是初始化的orgId，需要将外部传入的orgId传入进行
+      // 比对，得出当前维度
+      currentSelectScope: getCurrentScopeByOrgId({ custRange, orgId }),
+      dataSource: EMPTY_LIST,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentOrgLevel, currentId } = this.props;
-    const { currentOrgLevel: nextOrgLevel, currentId: nextMssnId } = nextProps;
-    // 当任务切换时，
-    // 当组织机构树发生变化的时候，将默认维度置为服务经理
-    if (currentOrgLevel !== nextOrgLevel || currentId !== nextMssnId) {
+    const {
+      currentOrgLevel,
+      currentId,
+      detailData: { list = EMPTY_LIST },
+    } = this.props;
+    const {
+      currentOrgLevel: nextOrgLevel,
+      currentId: nextMssnId,
+      custRange,
+      detailData: { list: nextList = EMPTY_LIST },
+    } = nextProps;
+    // 当组织机构树发生变化
+    // 设置默认维度
+    if (currentOrgLevel !== nextOrgLevel) {
       this.setState({
-        currentSelectScope: EMP_MANAGER_SCOPE,
+        currentSelectScope: getCurrentScopeByOrgLevel(nextOrgLevel),
+      });
+    }
+    // 当任务切换
+    // 设置默认维度
+    // 任务id切换了，orgId肯定恢复原始了，不需要讲外部的orgId传入getCurrentScopeByOrgId
+    if (currentId !== nextMssnId) {
+      this.setState({
+        currentSelectScope: getCurrentScopeByOrgId({ custRange }),
+      });
+    }
+    // 用来处理列改变的时候，primaryKey会为空的情况，所以将数据源用内部状态控制
+    if (list !== nextList) {
+      this.setState({
+        dataSource: this.addIdToDataSource(nextList),
       });
     }
   }
@@ -90,14 +124,32 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * 获取列表的主键，根据不同的维度，主键不一样
+   */
+  @autobind
+  getPrimaryKey(item) {
+    const { currentSelectScope } = this.state;
+    let id = `${item.mssnId}-${item.login}-${item.custDepartmentCode}`;
+    if (currentSelectScope === EMP_COMPANY_SCOPE) {
+      id = `${item.mssnId}-${item.empCompanyCode}`;
+    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+      id = `${item.mssnId}-${item.empDepartmentCode}`;
+    }
+
+    return id;
+  }
+
+  /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
   */
   addIdToDataSource(listData) {
+    // 三个字段组合作为唯一
+    // 服务经理维度
+    // 取任务id，当前登录工号，当前客户部门id作为主键
     return _.map(listData, item => ({
       ...item,
-      // 三个字段组合作为唯一
-      id: `${item.mssnId}-${item.login}-${item.custDepartmentCode}`,
+      id: this.getPrimaryKey(item),
     }));
   }
 
@@ -357,7 +409,8 @@ export default class CustManagerDetailScope extends PureComponent {
 
   render() {
     const { detailData = EMPTY_OBJECT, isFold } = this.props;
-    const { page = EMPTY_OBJECT, list = EMPTY_LIST } = detailData;
+    const { dataSource } = this.state;
+    const { page = EMPTY_OBJECT } = detailData;
     const { pageNum, pageSize, totalCount } = page;
     const {
       columnWidth,
@@ -372,7 +425,7 @@ export default class CustManagerDetailScope extends PureComponent {
             curPageSize: pageSize || INITIAL_PAGE_SIZE,
             totalRecordNum: totalCount,
           }}
-          listData={this.addIdToDataSource(list)}
+          listData={dataSource}
           onPageChange={this.handlePageChange}
           tableClass={
             classnames({
