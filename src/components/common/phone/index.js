@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-25 17:47:18
+ * @Last Modified time: 2018-04-26 11:34:41
  */
 
 import React, { PureComponent } from 'react';
@@ -30,23 +30,16 @@ const OPEN_FEATURES = `
 
 let opener = null;
 
-function receiveMessage(e) {
-  window.removeEventListener('message', receiveMessage);
-  console.log(e);
-  if (opener && _.isFunction(opener.close)) {
-    opener.close();
-    opener = null;
-  }
-}
-
 export default class Phone extends PureComponent {
   static propTypes = {
     // 电话号码
-    phoneNum: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
     // 客户类型
     custType: PropTypes.string.isRequired,
     // 点击号码回调
     onClick: PropTypes.func,
+    // 挂断电话回调
+    onEnd: PropTypes.func,
     // 页面自定义样式
     style: PropTypes.object,
   }
@@ -54,19 +47,19 @@ export default class Phone extends PureComponent {
   static defaultProps = {
     style: {},
     onClick: _.noop,
+    onEnd: _.noop,
   };
 
   // 点击号码弹出拨打电话的弹框
   @autobind
-  handleClickPhoneNum() {
-    const { phoneNum, custType, onClick } = this.props;
+  handleClick() {
+    const { number, custType, onClick } = this.props;
     onClick({
-      flag: true,
-      phoneNum,
+      number,
       custType,
     });
 
-    const srcUrl = `${URL}?number=${phoneNum}&custType=${custType}&auto=true`;
+    const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true`;
     opener = window.open(
       srcUrl,
       'phoneDialog',
@@ -74,21 +67,35 @@ export default class Phone extends PureComponent {
     );
     window.addEventListener(
       'message',
-      receiveMessage,
+      this.receiveMessage,
       false,
     );
   }
 
+  @autobind
+  receiveMessage(e) {
+    window.removeEventListener('message', this.receiveMessage);
+    if (e.data
+      && e.data.type === 'end'
+      && opener
+      && _.isFunction(opener.close)
+    ) {
+      this.props.onEnd(e.data);
+      opener.close();
+      opener = null;
+    }
+  }
+
   render() {
-    const { phoneNum, style } = this.props;
+    const { number, style } = this.props;
     return (
       <div className={styles.wrap}>
         <div
           className={styles.phoneNum}
-          onClick={this.handleClickPhoneNum}
+          onClick={this.handleClick}
           style={style}
         >
-          {phoneNum}
+          {number}
         </div>
       </div>
     );
