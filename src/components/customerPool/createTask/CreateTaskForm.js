@@ -19,7 +19,7 @@ import {
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
-import { productArguments } from './config';
+import { PRODUCT_ARGUMENTS } from './config';
 
 const NOOP = _.noop;
 // const EMPTY_OBJECT = {};
@@ -187,7 +187,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
-        defaultMissionDesc = this.defaultMissionDescFromProduct(query);
+        defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
       case 'tag':
         defaultMissionType = '请选择';
@@ -269,7 +269,7 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   // 返回持仓产品发起任务时，任务提示的文字
-  defaultMissionDescFromProduct(query) {
+  getDefaultMissionDescFromProduct(query) {
     const condition = JSON.parse(decodeURIComponent(query.condition));
     const { labelName, primaryKey: [id] } = condition;
     let defaultMissionDesc = '';
@@ -308,7 +308,7 @@ export default class CreateTaskForm extends PureComponent {
     const { primaryKey: [id] } = condition;
     const list = value.match(productPattern);
     const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
-    const dateList = _.map(productArguments, item => ({ type: `${item}#${id}#`, name: `${item}#${id}#` }));
+    const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${id}#`, name: `${item}#${id}#` }));
     return [...newList, ...dateList];
   }
 
