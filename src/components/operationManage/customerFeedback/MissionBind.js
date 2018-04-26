@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-18 14:19:08
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-26 17:20:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,8 +21,6 @@ const TabPane = Tabs.TabPane;
 const Panel = Collapse.Panel;
 const confirm = Modal.confirm;
 const Search = Input.Search;
-const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 
 // tab切换选项
 const TAB_LIST = config.tabList;
@@ -33,7 +31,6 @@ const FIRST_TAB = config.tabList[0].key;
 
 export default class MissionBind extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 获取任务列表
     queryMissionList: PropTypes.func.isRequired,
     missionData: PropTypes.object.isRequired,
@@ -48,7 +45,8 @@ export default class MissionBind extends PureComponent {
     missionBindChangeTab: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
+  static contextTypes = {
+    location: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -67,11 +65,11 @@ export default class MissionBind extends PureComponent {
 
   // 获取客户反馈气泡
   @autobind
-  getFeedbackItem(list, missionId, obj) {
-    return (list || EMPTY_LIST).map((item) => {
+  getFeedbackItem(list = [], missionId, obj) {
+    return list.map((item) => {
       const content = (<ul className={styles.popoverCentent}>
         {
-          (item.childList || EMPTY_LIST).map((childItem, childIndex) => (
+          (item.childList || []).map((childItem, childIndex) => (
             <li key={childItem.id}>{`${String.fromCharCode(65 + childIndex)}. ${childItem.name}`}</li>
           ))
         }
@@ -94,15 +92,9 @@ export default class MissionBind extends PureComponent {
   // 获取任务Panel
   @autobind
   getPanelList() {
-    const {
-      missionData,
-      location: {
-        query: {
-          childActiveKey = TAB_LIST[0].key,
-        },
-      },
-    } = this.props;
-    const missionList = missionData.missionList || EMPTY_LIST;
+    const { missionData } = this.props;
+    const { location: { query: { childActiveKey = TAB_LIST[0].key } } } = this.context;
+    const missionList = missionData.missionList || [];
     const isMOTMission = childActiveKey === FIRST_TAB;
     return missionList.map((item) => {
       const header = (<div className={styles.collapseHead}>
@@ -139,7 +131,6 @@ export default class MissionBind extends PureComponent {
               roleType: ROLE_TYPE[1].key,
             })
           }
-          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[1].key)}>+新增</Button>
         </div>
       </Panel>);
     });
@@ -155,12 +146,7 @@ export default class MissionBind extends PureComponent {
 
   // 切换折叠面板
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '切换折叠面板',
-    },
-  })
+  @logable({ type: 'Click', payload: { name: '切换折叠面板' } })
   handleChangeCollapse(collapseActiveKey) {
     this.setState({
       collapseActiveKey,
@@ -169,31 +155,15 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   handlePageChange(pageNum, pagaSize) {
-    const {
-      queryMissionList,
-      location: {
-        query: { childActiveKey, keyWord },
-      },
-    } = this.props;
-    queryMissionList(childActiveKey, pageNum, pagaSize, keyWord);
+    const { location: { query: { childActiveKey, keyWord } } } = this.context;
+    this.props.queryMissionList({ type: childActiveKey, pageNum, pagaSize, keyWord });
   }
 
   // 删除任务下所关联客户反馈选项
   @autobind
   handleDelCustomerFeedback(missionId, feedbackId, roleType) {
-    const {
-      missionData,
-      delCustomerFeedback,
-      queryMissionList,
-      location: {
-        query: {
-          childActiveKey,
-          pageNum,
-          pageSize,
-          keyWord,
-        },
-      },
-    } = this.props;
+    const { location: { query: { childActiveKey, pageNum, pageSize, keyWord } } } = this.context;
+    const { missionData, delCustomerFeedback, queryMissionList } = this.props;
     const { missionList } = missionData;
     const missionItem = _.find(missionList, v => v.id === missionId);
     // 任务绑定的反馈不能少于一条并且 roleType 为服务经理可选项
@@ -212,7 +182,7 @@ export default class MissionBind extends PureComponent {
           roleType,
         }).then(() => {
           // 删除成功之后更新任务列表
-          queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
+          queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
         });
       },
     });
@@ -232,18 +202,8 @@ export default class MissionBind extends PureComponent {
   @autobind
   handleAddFeedback() {
     const { beAddMissionId, roleType } = this.state;
-    const {
-      addCustomerFeedback,
-      queryMissionList,
-      location: {
-        query: {
-          childActiveKey,
-          pageNum,
-          pageSize,
-          keyWord,
-        },
-      },
-    } = this.props;
+    const { location: { query: { childActiveKey, pageNum, pageSize, keyWord } } } = this.context;
+    const { addCustomerFeedback, queryMissionList } = this.props;
     if (this.feedbackAddComponent) {
       const feedback = this.feedbackAddComponent.getData();
       if (_.isEmpty(feedback)) {
@@ -258,7 +218,7 @@ export default class MissionBind extends PureComponent {
       }).then(() => {
         this.handleCloseModal();
         // 添加成功之后更新任务列表
-        queryMissionList(childActiveKey, pageNum, pageSize, keyWord);
+        queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
       });
     }
   }
@@ -270,16 +230,9 @@ export default class MissionBind extends PureComponent {
    * @param pageSize 列表页容量，默认为20
    */
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '搜索Mot任务列表',
-      value: '$args[0]',
-    },
-  })
-  searchMotMission(value, pageNum = 1, pageSize = 20) {
-    const { queryMissionList } = this.props;
-    queryMissionList(FIRST_TAB, pageNum, pageSize, value);
+  @logable({ type: 'Click', payload: { name: '搜索Mot任务列表', value: '$args[0]' } })
+  searchMotMission(keyWord, pageNum = 1, pageSize = 20) {
+    this.props.queryMissionList({ type: FIRST_TAB, pageNum, pageSize, keyWord });
   }
   // 修复tab上input中左右键切换不符合预期
   preventKeyDownPropagation(e) {
@@ -300,38 +253,12 @@ export default class MissionBind extends PureComponent {
       beAddMissionId,
       roleType,
     } = this.state;
-    const {
-      missionData,
-      queryFeedbackList,
-      feedbackData,
-      location: {
-        query: {
-          childActiveKey = TAB_LIST[0].key, // 默认显示第一个tab
-      },
-      },
-    } = this.props;
-    const missionPage = missionData.page || EMPTY_OBJECT;
-    const paginationOption = {
-      current: Number(missionPage.pageNum),
-      total: Number(missionPage.totalCount),
-      pageSize: Number(missionPage.pageSize),
-      onChange: this.handlePageChange,
-    };
-    const modalProps = {
-      title: '请选择恰当的客户反馈',
-      visible: showModal,
-      onOk: this.handleAddFeedback,
-      onCancel: this.handleCloseModal,
-      width: 650,
-      wrapClassName: styles.feedbackAddModalWarp,
-    };
-    const collapseProps = {
-      activeKey: collapseActiveKey,
-      onChange: this.handleChangeCollapse,
-      accordion: true,
-    };
+    const { location: { query: { childActiveKey = TAB_LIST[0].key } } } = this.context;
+    const { missionData, queryFeedbackList, feedbackData } = this.props;
+    const missionPage = missionData.page || {};
+
     const isMOTMission = childActiveKey === FIRST_TAB;
-    const missionList = missionData.missionList || EMPTY_LIST;
+    const missionList = missionData.missionList || [];
 
     return (
       <div className={styles.missionBindWapper}>
@@ -359,9 +286,7 @@ export default class MissionBind extends PureComponent {
             }
           >
             {
-              TAB_LIST.map(item => (
-                <TabPane tab={item.tabName} key={item.key} />
-              ))
+              TAB_LIST.map(item => (<TabPane tab={item.tabName} key={item.key} />))
             }
           </Tabs>
         </div>
@@ -369,9 +294,7 @@ export default class MissionBind extends PureComponent {
           <div className={styles.titleBox}>
             <span className={isMOTMission ? styles.parentClass : styles.parentClassSelf}>任务大类</span>
             {
-              isMOTMission ?
-                <span className={styles.missionId}>事件ID</span> :
-                null
+              !isMOTMission ? null : (<span className={styles.missionId}>事件ID</span>)
             }
             <span className={styles.childClass}>任务子类/事件名称</span>
             <span className={styles.optionClass}>客户反馈选项</span>
@@ -379,27 +302,39 @@ export default class MissionBind extends PureComponent {
           {
             missionList.length ?
               <span>
-                <Collapse {...collapseProps}>
-                  {
-                    this.getPanelList()
-                  }
+                <Collapse
+                  activeKey={collapseActiveKey}
+                  onChange={this.handleChangeCollapse}
+                  accordion
+                >
+                  { this.getPanelList() }
                 </Collapse>
                 <div className={styles.pageBox}>
-                  <Pagination {...paginationOption} />
+                  <Pagination
+                    current={missionPage.pageNum}
+                    total={missionPage.totalCount}
+                    pageSize={missionPage.pageSize}
+                    onChange={this.handlePageChange}
+                  />
                 </div>
               </span> :
               <div className={styles.emptyContent}>
-                <span>
-                  <Icon type="frown-o" />
-                  暂无数据
-                </span>
+                <span><Icon type="frown-o" />暂无数据</span>
               </div>
           }
           <div className={styles.clear} />
         </div>
         {
-          showModal ?
-            <Modal {...modalProps}>
+          !showModal ? null
+          : (
+            <Modal
+              title="请选择恰当的客户反馈"
+              visible={showModal}
+              onO={this.handleAddFeedback}
+              onCancel={this.handleCloseModal}
+              width={650}
+              wrapClassName={styles.feedbackAddModalWarp}
+            >
               <FeedbackAdd
                 missionId={beAddMissionId}
                 queryFeedbackList={queryFeedbackList}
@@ -408,8 +343,7 @@ export default class MissionBind extends PureComponent {
                 ref={ref => this.feedbackAddComponent = ref}
               />
             </Modal>
-            :
-            null
+          )
         }
       </div>
     );
