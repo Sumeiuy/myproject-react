@@ -2,24 +2,26 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-25 22:07:09
+ * @Last Modified time: 2018-04-26 21:29:46
  * @Descripter:投资建议模板 Home页面
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Button, Collapse, Icon } from 'antd';
+import { Button, Collapse, Icon, Mention } from 'antd';
 
 import { dva } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import CommonModal from '../../components/common/biz/CommonModal';
 import Confirm from '../../components/common/Confirm';
-import TemplateAdd from '../../components/operationManage/investmentAdvice/TemplateAdd';
+import TemplateForm from '../../components/operationManage/investmentAdvice/TemplateForm';
 import styles from './home.less';
 
 const Panel = Collapse.Panel;
+const { toString } = Mention;
 // 使用helper里面封装的生成effects的方法
 const effect = dva.generateEffect;
 
@@ -69,38 +71,61 @@ export default class InvestmentAdvice extends PureComponent {
     this.state = {
       // 是否显示弹层
       showModal: false,
+      // 弹层标题
+      modelTitle: '新建模板',
       // 折叠面板打开的id
       collapseActiveKey: '',
-      // TemplateAdd组件参数
-      users: [],
-      defaultMissionDesc: '',
-      templetDescSuggestion: {
-        type: '1',
-        name: 'benjycui',
-      },
       // commonModal组件参数
-      modalKey: '1',
+      modalKey: 'addInvestAdviceTemplate',
+      // 编辑模板初始化参数
+      initialTemplateParams: {},
+      // 内容提示框错误状态
+      isShowContentStatusError: false,
+      // 内容提示框错误提示信息
+      contentStatusErrorMessage: '',
+      // 标题提示框错误状态
+      isShowTitleStatusError: false,
+      // 标题提示框错误提示信息
+      titleStatusErrorMessage: '',
+      // 当前页码
+      pageNum: 1,
+      // 每页条数
+      pageSize: 10,
     };
   }
 
   componentDidMount() {
-    // this.getInvestAdviceList();
+    this.getInvestAdviceList();
   }
 
   // 获取投资建议模版列表
   @autobind
-  getInvestAdviceList(pageNum = 1, pageSize = 10) {
-    this.getInvestAdviceList({
+  getInvestAdviceList() {
+    const { pageNum, pageSize } = this.state;
+    this.props.getInvestAdviceList({
       pageNum,
       pageSize,
     });
   }
 
-  // 新增模板
+  // 新增投资建议模板
   @autobind
-  addTemplate() {
+  addInvestAdviceTemplate() {
     this.setState({
       showModal: true,
+      modelTitle: '新建模板',
+      initialTemplateParams: {},
+    });
+  }
+
+  // 编辑投资建议模板
+  @autobind
+  editInvestAdviceTemplate(item) {
+    console.log('item', item);
+    this.setState({
+      showModal: true,
+      modelTitle: '编辑模板',
+      initialTemplateParams: item,
     });
   }
 
@@ -110,17 +135,17 @@ export default class InvestmentAdvice extends PureComponent {
     this.setState({ collapseActiveKey });
   }
 
-  // 删除投资建议
+  // 删除投资建议模板确认弹窗
+  @autobind
   deleteConfirm(id, e) {
-    console.warn('e', e);
     if (e) {
       e.stopPropagation();
     }
+    const self = this;
     Confirm({
       content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk() {
-        console.log('确认删除');
-        this.deleteInvestAdvice({ id });
+        self.deleteInvestAdvice({ id });
       },
       onCancel() {
         console.log('取消删除');
@@ -128,24 +153,94 @@ export default class InvestmentAdvice extends PureComponent {
     });
   }
 
+  // 删除投资建议模板
   @autobind
   deleteInvestAdvice(params) {
     console.warn('params', params);
-    // this.props.deleteInvestAdvice().then(() => {
-    //   console.warning('deleteSuccessStatus', this.props.deleteSuccessStatus);
-    // });
+    this.props.deleteInvestAdvice(params).then(() => {
+      if (this.props.deleteSuccessStatus) {
+        this.getInvestAdviceList();
+        if (!this.investmentAdvices.list.length) {
+          this.setState({ pageNum: this.state.pageNum - 1 }, this.getInvestAdviceList);
+        }
+      }
+    });
   }
 
   // 切换当前页
   @autobind
-  handlePageChange(pageNum, pagaSize) {
-    console.log('pageNum', pageNum);
-    console.log('pagaSize', pagaSize);
+  handlePageChange(pageNum) {
+    this.setState({ pageNum }, this.getInvestAdviceList);
+  }
+
+  // 校验mention内容提及框
+  @autobind
+  checkMention(mentions) {
+    if (!mentions) {
+      this.setState({
+        isShowContentStatusError: true,
+        contentStatusErrorMessage: '请输入内容',
+      });
+    } else if (mentions.length > 500) {
+      this.setState({
+        isShowContentStatusError: true,
+        contentStatusErrorMessage: '内容长度不能超过500字',
+      });
+    } else {
+      this.setState({
+        isShowContentStatusError: false,
+      });
+    }
+  }
+
+  // 校验标题
+  @autobind
+  checkTitle(title) {
+    if (!title) {
+      this.setState({
+        isShowTitleStatusError: true,
+        titleStatusErrorMessage: '请输入标题',
+      });
+    } else if (title.length > 15) {
+      this.setState({
+        isShowTitleStatusError: true,
+        titleStatusErrorMessage: '标题长度不能超过15字',
+      });
+    } else {
+      this.setState({
+        isShowTitleStatusError: false,
+      });
+    }
   }
 
   // 弹窗确定按钮
   @autobind
   handleOk() {
+    const { getFieldValue } = this.formTemplate;
+    const mentions = toString(getFieldValue('content'));
+    this.checkMention(mentions);
+    const { modelTitle, initialTemplateParams } = this.state;
+    const id = initialTemplateParams.id || '';
+    const action = modelTitle === '新建模板' ? 'CREATE' : 'UPDATE';
+    this.formTemplate.validateFields((err, values) => {
+      if (!err) {
+        const { title, type } = values;
+        const content = mentions;
+        const params = {
+          id,
+          action,
+          title,
+          content,
+          type,
+        };
+        this.props.modifyInvestAdvice(params).then(() => {
+          if (this.props.modifySuccessStatus) {
+            this.handleCancel();
+            this.getInvestAdviceList();
+          }
+        });
+      }
+    });
   }
 
   // 弹窗取消按钮
@@ -153,52 +248,52 @@ export default class InvestmentAdvice extends PureComponent {
   handleCancel() {
     this.setState({
       showModal: false,
+      isShowContentStatusError: false,
     });
   }
+
   render() {
-    const { showModal, collapseActiveKey,
-       users, defaultMissionDesc, modalKey, templetDescSuggestion } = this.state;
-    const { list, page } = this.props.investmentAdvices;
+    const {
+      showModal,
+      collapseActiveKey,
+      initialTemplateParams,
+      isShowContentStatusError,
+      contentStatusErrorMessage,
+      isShowTitleStatusError,
+      titleStatusErrorMessage,
+      defaultMissionDesc,
+      modalKey,
+      modelTitle,
+    } = this.state;
+    const { list = [], page = {} } = this.props.investmentAdvices;
     const { curPageNum, pageSize, totalPageNum } = page;
-    const collapseProps = {
-      activeKey: collapseActiveKey,
-      onChange: this.handleChangeCollapse,
-      accordion: true,
-    };
-    const paginationOption = {
-      current: Number(curPageNum),
-      total: Number(totalPageNum),
-      pageSize: Number(pageSize),
-      onChange: this.handlePageChange,
-    };
-    console.warn('list', list);
-    console.warn('paginationOption', paginationOption);
-    const investmentList = list.map((item) => {
+    const investmentAdviceList = list.map((item) => {
       const header = (<div className={styles.collapseHead}>
-        <span className={styles.type}>{item.type}</span>
+        <span className={styles.type}>{item.typeName}</span>
         <span className={styles.title}>{item.title}</span>
         <p className={styles.contentwapper}>
           <span className={styles.content}>{item.content}</span>
           <i className={styles.icon}><Icon type="up" /><Icon type="down" /></i>
         </p>
         <span className={styles.operate} >
-          <Icon type="delete" onClick={e => this.deleteConfirm(item.templateId, e)} />
+          <Icon type="delete" onClick={e => this.deleteConfirm(item.id, e)} />
         </span>
       </div>);
       return (
-        <Panel header={header} key={item.templateId}>
+        <Panel header={header} key={item.id}>
           <div className={styles.collapsePanel}>
             <p>{item.content}</p>
-            <Button>编辑</Button>
+            <Button onClick={e => this.editInvestAdviceTemplate(item, e)} >编辑</Button>
           </div>
         </Panel>
       );
     });
+
     return (
       <div className={styles.investmentAdviceWrapper}>
         <div className={styles.tipsBox}>
           <p>请在此定义投顾可以选择的投资建议固定话术。</p>
-          <Button type="primary" icon="plus" ghost onClick={this.addTemplate}>模板</Button>
+          <Button type="primary" icon="plus" ghost onClick={this.addInvestAdviceTemplate}>模板</Button>
         </div>
         <div className={styles.collapseBox}>
           <div className={styles.head}>
@@ -207,27 +302,49 @@ export default class InvestmentAdvice extends PureComponent {
             <span className={styles.headcontent}>内容</span>
             <span className={styles.operate}>操作</span>
           </div>
-          <Collapse {...collapseProps}>{investmentList}</Collapse>
+          <Collapse
+            activeKey={collapseActiveKey}
+            onChange={this.handleChangeCollapse}
+            accordion
+          >
+            {investmentAdviceList}
+          </Collapse>
         </div>
         <div className={styles.pageBox}>
-          <Pagination {...paginationOption} />
-        </div>
-        <CommonModal
-          title="新增模板"
-          visible={showModal}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          closeModal={this.handleCancel}
-          modalKey={modalKey}
-        >
-          { showModal ?
-            <TemplateAdd
-              users={users}
-              defaultMissionDesc={defaultMissionDesc}
-              templetDescSuggestion={templetDescSuggestion}
-            /> : ''
+          { _.isEmpty(page) ? null
+            : (
+              <Pagination
+                current={curPageNum}
+                total={totalPageNum}
+                pageSize={pageSize}
+                onChange={this.handlePageChange}
+              />
+              )
           }
-        </CommonModal>
+
+        </div>
+        {
+          !showModal ? null
+          : (<CommonModal
+            title={modelTitle}
+            visible={showModal}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            closeModal={this.handleCancel}
+            modalKey={modalKey}
+          >
+            <TemplateForm
+              ref={(form) => { this.formTemplate = form; }}
+              defaultMissionDesc={defaultMissionDesc}
+              initialTemplateParams={initialTemplateParams}
+              isShowContentStatusError={isShowContentStatusError}
+              contentStatusErrorMessage={contentStatusErrorMessage}
+              isShowTitleStatusError={isShowTitleStatusError}
+              titleStatusErrorMessage={titleStatusErrorMessage}
+              checkMention={this.checkMention}
+            />
+          </CommonModal>)
+        }
       </div>
     );
   }

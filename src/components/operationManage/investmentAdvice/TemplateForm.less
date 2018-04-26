@@ -1,0 +1,73 @@
+.TemplateAddWapper {
+  padding: 20px;
+
+  .contentWapper {
+    height: 250px;
+
+    .content {
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+    }
+  }
+
+  .tipWapper {
+    display: flex;
+    margin: -10px 0 20px 52px;
+    justify-content: space-between;
+
+    .tipNormal {
+      font-size: 14px;
+      color: #666;
+      line-height: 20px;
+      letter-spacing: -0.09px;
+    }
+
+    .tipInsert {
+      font-size: 14px;
+      line-height: 20px;
+      height: 16px;
+      color: #108ee9;
+      width: 120px;
+      display: inline-block;
+      letter-spacing: -0.09px;
+      cursor: pointer;
+    }
+  }
+
+  :global {
+    .ant-form {
+      .ant-form-item {
+        display: flex;
+
+        .ant-form-item-label {
+          width: 52px;
+          margin-right: 10x;
+        }
+
+        .ant-form-item-control-wrapper {
+          flex: 1;
+
+          .ant-mention-wrapper.multilines {
+            display: block;
+
+            & .DraftEditor-root, .DraftEditor-editorContainer {
+              height: 100%;
+
+              & .public-DraftEditor-content {
+                height: 100%;
+              }
+            }
+          }
+        }
+
+        .ant-select {
+          width: 228px;
+        }
+      }
+      label {
+        font-size: 14px;
+      }
+    }
+  }
+}

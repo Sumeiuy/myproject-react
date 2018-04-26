@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-25 20:26:34
+ * @Last Modified time: 2018-04-26 20:22:17
  */
 import { investmentAdvice as api } from '../api';
 
@@ -10,34 +10,11 @@ export default {
   namespace: 'investmentAdvice',
   state: {
     // 投资模板列表
-    investmentAdvices: {
-      list: [{
-        templateId: 1,
-        type: '产品销售类',
-        title: '标题内容标题内容标题内容标题内容',
-        content: '紫金产品赎回提醒-业绩比较基准内容内容内容内容紫金产品赎回提醒-业绩比较基准内容内容内容内容',
-      }, {
-        templateId: 2,
-        type: '产品销售类',
-        title: '标题内容标题内容标题内容标题内容',
-        content: '紫金产品赎回提醒-业绩比较基准内容内容内容内容内紫金产品赎回提醒-业绩比较基准内容内容内容内容',
-      }, {
-        templateId: 3,
-        type: '产品销售类',
-        title: '标题内容标题内容标题内容标题内容',
-        content: '紫金产品赎回提醒-业绩比较基准内容内容内容内容内紫金产品赎回提醒-业绩比较基准内容内容内容内容',
-      }],
-      page: {
-        curPageNum: 1,
-        pageSize: 10,
-        totalPageNum: 20,
-      },
-    },
+    investmentAdvices: {},
     // 删除是否成功
     deleteSuccessStatus: false,
     // 新建或编辑模版是否成功
     modifySuccessStatus: false,
-
   },
   reducers: {
     getInvestmentAdviceListSuccess(state, action) {
