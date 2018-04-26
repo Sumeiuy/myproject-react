@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:53:33
+ * @Last Modified time: 2018-04-26 19:03:32
  */
 
 import React, { PureComponent } from 'react';
@@ -106,35 +106,38 @@ export default class ApplyEditForm extends PureComponent {
       message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
-    // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
-    // 终止按钮的approverNum为none，提交按钮的approverNum不为none，需要验证提交数据
-    if (item.approverNum !== 'none') {
-      // 提交前先对提交的数据调验证接口进行进行验证
-      // 驳回重新提交，节点是submit，后端规定的且必传
-      validateData({
-        advisorBindingList: finalEmplists,
-        currentNodeCode: 'resubmit',
-      }).then(() => {
-        const { validateResultData } = this.props;
-        const { isValid, msg } = validateResultData;
-        // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
-        if (isValid) {
-          this.setState({
-            operate: item.operate,
-            groupName: item.nextGroupName,
-            auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-            nextApproverList: item.flowAuditors,
-            nextApproverModal: true,
-          });
-        } else {
-          commonConfirm({
-            content: msg,
-          });
-        }
-      });
-    } else {
-      this.sendDoApproveRequest();
-    }
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+    },() => {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none，需要验证提交数据
+      if (item.approverNum !== 'none') {
+        // 提交前先对提交的数据调验证接口进行进行验证
+        // 驳回重新提交，节点是submit，后端规定的且必传
+        validateData({
+          advisorBindingList: finalEmplists,
+          currentNodeCode: 'resubmit',
+        }).then(() => {
+          const { validateResultData } = this.props;
+          const { isValid, msg } = validateResultData;
+          // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+          if (isValid) {
+            this.setState({
+              nextApproverModal: true,
+            });
+          } else {
+            commonConfirm({
+              content: msg,
+            });
+          }
+        });
+      } else {
+        this.sendDoApproveRequest();
+      }
+    });
   }
 
   // 发送修改请求,先走修改接口，再走走流程接口
@@ -166,10 +169,10 @@ export default class ApplyEditForm extends PureComponent {
   @autobind
   sendDoApproveRequest(value) {
     const { doApprove, detailInfo, getDetailInfo } = this.props;
-    const { itemId, flowId } = detailInfo;
+    const { appId, flowId } = detailInfo;
     const { groupName, auditors, operate } = this.state;
     doApprove({
-      itemId,
+      itemId: appId,
       flowId,
       wobNum: flowId,
       // 下一组ID
