@@ -58,6 +58,7 @@ const effects = {
   getCeFileList: 'customerPool/getCeFileList',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  queryHoldingProduct: 'customerPool/queryHoldingProduct',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -101,6 +102,8 @@ const mapStateToProps = state => ({
   sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
   // 是否包含非本人名下客户和超出1000条数据限制
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
+  // 持仓产品详情
+  holdingProducts: state.customerPool.holdingProducts,
 });
 
 const mapDispatchToProps = {
@@ -138,6 +141,8 @@ const mapDispatchToProps = {
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
+  // 根据持仓产品的id查询对应的详情
+  queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -194,6 +199,8 @@ export default class CustomerList extends PureComponent {
     sightingTelescopeFilters: PropTypes.object.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -226,6 +233,10 @@ export default class CustomerList extends PureComponent {
     this.hasIndexViewPermission = permission.hasIndexViewPermission();
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
+    // HTSC 交易信息查询权限（非私密客户）
+    this.hasNPCTIQPermission = permission.hasNPCTIQPermission();
+    // HTSC 交易信息查询权限（含私密客户）
+    this.hasPCTIQPermission = permission.hasPCTIQPermission();
   }
 
   getChildContext() {
@@ -252,7 +263,7 @@ export default class CustomerList extends PureComponent {
     this.getCustomerList(this.props);
     if (query.source === 'sightingTelescope') {
       getFiltersOfSightingTelescope({
-        prodId: query.labelMapping,
+        prodId: decodeURIComponent(query.labelMapping),
       });
     }
   }
@@ -311,6 +322,7 @@ export default class CustomerList extends PureComponent {
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
     const labelDesc = decodeURIComponent(query.labelDesc);
+    const labelMapping = decodeURIComponent(query.labelMapping);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -320,10 +332,13 @@ export default class CustomerList extends PureComponent {
       enterType: ENTER_TYPE[query.source],
     };
     if (query.source === 'search') { // 搜索框
-      param.searchTypeReq = 'Any';
+      param.searchTypeReq = 'ALL';
       param.searchText = keyword;
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
-      param.labels = [query.labelMapping];
+      // param.labels = [query.labelMapping];
+      param.primaryKey = [labelMapping];
+      param.searchTypeReq = query.type;
+      param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
         param.queryLabelReq = {
@@ -333,8 +348,10 @@ export default class CustomerList extends PureComponent {
       }
     } else if (query.source === 'association') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
-      param.searchTypeReq = query.labelMapping === 'local' ? 'Any' : query.labelMapping;
+      param.searchTypeReq = query.type;
       param.searchText = keyword;
+      param.primaryKey = [labelMapping];
+      param.labelName = labelName;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
@@ -366,10 +383,11 @@ export default class CustomerList extends PureComponent {
       const {
         filters,
         labels,
-      } = getCustomerListFilters(filtersArray, query.labelMapping, filtersReq);
+      } = getCustomerListFilters(filtersArray, labelMapping, filtersReq);
       param.filtersReq = filters;
       if (query.source === 'sightingTelescope') {
-        param.labels = labels;
+        // param.labels = labels;
+        param.primaryKey = labels;
       }
     }
     if (query.sortType || query.sortDirection) {
@@ -389,7 +407,7 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: param,
     });
-    getCustomerData(param);
+    getCustomerData(_.omit(param, 'labelName'));
   }
 
   // 获取 客户列表接口的orgId入参的值
@@ -592,6 +610,8 @@ export default class CustomerList extends PureComponent {
       sightingTelescopeFilters,
       isSendCustsServedByPostn,
       sendCustsServedByPostnResult,
+      queryHoldingProduct,
+      holdingProducts,
     } = this.props;
     const {
       sortDirection,
@@ -691,6 +711,11 @@ export default class CustomerList extends PureComponent {
           hasIndexViewPermission={this.hasIndexViewPermission}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          hasNPCTIQPermission={this.hasNPCTIQPermission}
+          hasPCTIQPermission={this.hasPCTIQPermission}
+          queryHoldingProduct={queryHoldingProduct}
+          holdingProducts={holdingProducts}
+          queryHoldingProductReqState={interfaceState[effects.queryHoldingProduct]}
         />
       </div>
     );

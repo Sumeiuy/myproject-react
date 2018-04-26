@@ -7,7 +7,15 @@
  * @param {*string} labelId 标签id
  * @param {*string} labelName 标签名字
  */
-export default function padMissionDesc(sightingScopeBool, labelId, labelName) {
+export default function padMissionDesc({
+  sightingScopeBool,
+  labelId,
+  labelName,
+  isLabel = true,
+}) {
+  if (!isLabel) {
+    return '';
+  }
   // 来自普通标签
   let missionDesc = encodeURIComponent(`该客户筛选自${labelName}`);
   // 来自瞄准镜标签

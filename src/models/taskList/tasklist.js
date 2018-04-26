@@ -4,11 +4,7 @@
  * @author wangjunjun
  */
 
-import { stateFromHTML } from 'draft-js-import-html';
-import { Mention } from 'antd';
 import { customerPool as api } from '../../api';
-
-const { toString } = Mention;
 
 const EMPTY_OBJECT = {};
 // const EMPTY_LIST = [];
@@ -51,26 +47,9 @@ export default {
     * getTaskBasicInfo({ payload }, { call, put }) {
       const response = yield call(api.queryBasicInfo, payload);
       const { resultData } = response;
-      const { motDetailModel = {} } = resultData;
-      const {
-        infoContent,
-        strategyDesc,
-      } = motDetailModel;
-      const finalResultData = {
-        ...resultData,
-        motDetailModel: {
-          ...motDetailModel,
-          infoContent: toString(stateFromHTML(infoContent)),
-          strategyDesc: toString(stateFromHTML(strategyDesc)),
-          infoContentHtml: infoContent,
-          strategyDescHtml: strategyDesc,
-        },
-      };
       yield put({
         type: 'getTaskBasicInfoSuccess',
-        payload: {
-          resultData: finalResultData,
-        },
+        payload: { resultData },
       });
     },
   },

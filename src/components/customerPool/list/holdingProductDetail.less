@@ -1,0 +1,65 @@
+.holdingProductDetail {
+  display: inline-block;
+  .holdingProductDetailBtn {
+    font-style: normal;
+    color: #3983ff;
+    cursor: pointer;
+  }
+}
+.holdingProductDetailToolTip {
+  :global {
+    .ant-popover-arrow {
+      box-shadow: 2px 3px 4px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+    .ant-popover-inner {
+      padding: 0;
+      background-color: transparent;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+      border-radius: 3px;
+      border: 1px solid #d9d9d9;
+      border-bottom: 0;
+    }
+    .ant-popover-inner-content {
+      padding: 0;
+    }
+  }
+  .suspendedLayer {
+    background-color: #fff;
+    border-radius: 3px;
+    .detailItem {
+      padding: 10px;
+      .category {
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+        line-height: 18px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #4a4a4a;
+        border-bottom: 1px solid #ddd;
+      }
+      .content {
+        display: table;
+        width: 100%;
+        li {
+          display: table-row;
+          span {
+            display: table-cell;
+            &.label {
+              text-align: right;
+              color: #9b9b9b;
+            }
+            &.value {
+              padding-left: 4px;
+              color: #000;
+            }
+          }
+        }
+      }
+      .row {
+        padding: 4px 0;
+        height: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+}
