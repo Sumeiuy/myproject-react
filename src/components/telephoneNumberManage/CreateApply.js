@@ -3,7 +3,7 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 17:59:25
+ * @Last Modified time: 2018-04-26 18:32:37
  */
 
 import React, { PureComponent } from 'react';
@@ -24,7 +24,6 @@ import styles from './createApply.less';
 const { MAXSELECTNUM, approvalColumns } = config;
 export default class CreateApply extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 新建页面获取投顾
     advisorListData: PropTypes.object,
     queryAdvisorList: PropTypes.func.isRequired,
@@ -48,6 +47,10 @@ export default class CreateApply extends PureComponent {
     validateResultData: PropTypes.object.isRequired,
     validateData: PropTypes.func.isRequired,
   }
+
+  static contextTypes = {
+    location: PropTypes.object.isRequired,
+  };
 
   static defaultProps = {
     advisorListData: {},
@@ -171,14 +174,8 @@ export default class CreateApply extends PureComponent {
       doApprove,
       updateBindingFlowAppId,
       queryAppList,
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
     } = this.props;
+    const { location: { query, query: { pageNum, pageSize } } } = this.context;
     const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId: updateBindingFlowAppId,

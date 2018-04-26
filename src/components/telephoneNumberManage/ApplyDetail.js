@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 10:06:04
+ * @Last Modified time: 2018-04-26 18:30:26
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,6 @@ import styles from './applyDetail.less';
 
 export default class ApplyDetail extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     empAppBindingList: PropTypes.object.isRequired,
     queryEmpAppBindingList: PropTypes.func.isRequired,

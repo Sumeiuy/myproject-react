@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号修改页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 17:59:15
+ * @Last Modified time: 2018-04-26 18:16:08
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import withRouter from '../../decorators/withRouter';
 import ApplyEditForm from '../../components/telephoneNumberManage/ApplyEditForm';
 import { dva } from '../../helper';
 
-const dispatch = dva.generateEffect;
+const effect = dva.generateEffect;
 // TODO: TESTFLOWID常量，仅用于自测（flowId 从location中获取，跳转的入口在FSP内）
 const TESTFLOWID = '277F04385B7BFE45ABFD49D0EF615A63';
 const effects = {
@@ -61,23 +61,23 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取右侧详情信息
-  getDetailInfo: dispatch(effects.getDetailInfo, { forceFull: true }),
+  getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 服务经理表格申请数据
-  queryEmpAppBindingList: dispatch(effects.queryEmpAppBindingList, { forceFull: true }),
+  queryEmpAppBindingList: effect(effects.queryEmpAppBindingList, { forceFull: true }),
   // 获取新建页面的投顾
-  queryAdvisorList: dispatch(effects.queryAdvisorList, { loading: false }),
+  queryAdvisorList: effect(effects.queryAdvisorList, { loading: false }),
   // 获取批量投顾
-  queryBatchAdvisorList: dispatch(effects.queryBatchAdvisorList, { forceFull: true }),
+  queryBatchAdvisorList: effect(effects.queryBatchAdvisorList, { forceFull: true }),
   // 新建修改的更新接口
-  updateBindingFlow: dispatch(effects.updateBindingFlow, { forceFull: true }),
+  updateBindingFlow: effect(effects.updateBindingFlow, { forceFull: true }),
   // 走流程接口
-  doApprove: dispatch(effects.doApprove, { forceFull: true }),
+  doApprove: effect(effects.doApprove, { forceFull: true }),
   // 清除数据
-  clearProps: dispatch(effects.clearProps, { forceFull: true }),
+  clearProps: effect(effects.clearProps, { forceFull: true }),
   // 请求按钮
-  getButtonList: dispatch(effects.getButtonList, { forceFull: true }),
+  getButtonList: effect(effects.getButtonList, { forceFull: true }),
   // 验证提交数据
-  validateData: dispatch(effects.validateData, { forceFull: true }),
+  validateData: effect(effects.validateData, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)

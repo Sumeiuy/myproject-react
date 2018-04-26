@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:00:35
+ * @Last Modified time: 2018-04-26 18:32:57
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,7 @@ import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
-const dispatch = dva.generateEffect;
+const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
   getList: 'app/getSeibleList',
@@ -76,27 +76,27 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
-  getList: dispatch(effects.getList, { forceFull: true }),
+  getList: effect(effects.getList, { forceFull: true }),
   // 获取右侧详情信息
-  getDetailInfo: dispatch(effects.getDetailInfo, { forceFull: true }),
+  getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 服务经理表格申请数据
-  queryEmpAppBindingList: dispatch(effects.queryEmpAppBindingList, { forceFull: true }),
+  queryEmpAppBindingList: effect(effects.queryEmpAppBindingList, { forceFull: true }),
   // 获取附件列表
-  getAttachmentList: dispatch(effects.getAttachmentList, { forceFull: true }),
+  getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
   // 获取新建页面的投顾
-  queryAdvisorList: dispatch(effects.queryAdvisorList, { loading: false }),
+  queryAdvisorList: effect(effects.queryAdvisorList, { loading: false }),
   // 获取批量投顾
-  queryBatchAdvisorList: dispatch(effects.queryBatchAdvisorList, { forceFull: true }),
+  queryBatchAdvisorList: effect(effects.queryBatchAdvisorList, { forceFull: true }),
   // 新建修改的更新接口
-  updateBindingFlow: dispatch(effects.updateBindingFlow, { forceFull: true }),
+  updateBindingFlow: effect(effects.updateBindingFlow, { forceFull: true }),
   // 走流程接口
-  doApprove: dispatch(effects.doApprove, { forceFull: true }),
+  doApprove: effect(effects.doApprove, { forceFull: true }),
   // 清除数据
-  clearProps: dispatch(effects.clearProps, { forceFull: true }),
+  clearProps: effect(effects.clearProps, { forceFull: true }),
   // 清除数据
-  getButtonList: dispatch(effects.getButtonList, { forceFull: true }),
+  getButtonList: effect(effects.getButtonList, { forceFull: true }),
   // 验证提交数据
-  validateData: dispatch(effects.validateData, { forceFull: true }),
+  validateData: effect(effects.validateData, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -155,7 +155,7 @@ export default class ApplyHome extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       location: {
         query,
@@ -403,7 +403,6 @@ export default class ApplyHome extends PureComponent {
 
     const rightPanel = (
       <Detail
-        location={location}
         data={detailInfo}
         empAppBindingList={empAppBindingList}
         queryEmpAppBindingList={queryEmpAppBindingList}
@@ -423,7 +422,6 @@ export default class ApplyHome extends PureComponent {
         {
           isShowCreateModal ?
             <CreateApply
-              location={location}
               advisorListData={advisorListData}
               queryAdvisorList={queryAdvisorList}
               empAppBindingList={empAppBindingList}

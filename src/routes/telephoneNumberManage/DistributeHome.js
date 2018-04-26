@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 17:17:49
+ * @Last Modified time: 2018-04-26 18:49:56
  */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import { dva } from '../../helper';
 import styles from './distributeHome.less';
 
 const EMPTY_OBJECT = {};
-const dispatch = dva.generateEffect;
+const effect = dva.generateEffect;
 const { telephoneNumDistribute: { pageType } } = config;
 // 状态默认值为已分配
 const DISTRIBUT_EDEFAULT_VALUE = 'Y';
@@ -40,9 +40,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  queryEmpList: dispatch(effects.queryEmpList, { loading: false }),
-  getCustRange: dispatch(effects.getCustRange, { forceFull: true }),
-  queryAdvisorBindList: dispatch(effects.queryAdvisorBindList, { forceFull: true }),
+  queryEmpList: effect(effects.queryEmpList, { loading: false }),
+  getCustRange: effect(effects.getCustRange, { forceFull: true }),
+  queryAdvisorBindList: effect(effects.queryAdvisorBindList, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -188,9 +188,7 @@ export default class DistributeHome extends PureComponent {
 
   render() {
     const {
-      location,
       location: { query: { pageNum = 1, pageSize = 10 } },
-      replace,
       empList,
       queryEmpList,
       custRange,
@@ -203,8 +201,6 @@ export default class DistributeHome extends PureComponent {
     return (
       <div className={styles.distributeHomeBox}>
         <DistributeHeader
-          location={location}
-          replace={replace}
           empList={empList}
           queryEmpList={queryEmpList}
           custRange={custRange}
