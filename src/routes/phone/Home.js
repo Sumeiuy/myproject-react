@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-26 16:33:05
+ * @Last Modified time: 2018-04-26 16:53:41
  */
 
 import React, { PureComponent } from 'react';
@@ -40,6 +40,7 @@ export default class PhoneHome extends PureComponent {
         onEnd={this.handleEnd}
         number="18905163020"
         custType="per"
+        disable={false}
       />
     );
   }

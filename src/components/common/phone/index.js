@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-26 16:04:28
+ * @Last Modified time: 2018-04-26 16:51:27
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import bowser from 'bowser';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import styles from './index.less';
 
@@ -44,9 +45,12 @@ export default class Phone extends PureComponent {
     onEnd: PropTypes.func,
     // 页面自定义样式
     style: PropTypes.object,
+    // 是否禁用
+    disable: PropTypes.object,
   }
 
   static defaultProps = {
+    disable: true,
     style: {},
     onClick: _.noop,
     onEnd: _.noop,
@@ -55,7 +59,10 @@ export default class Phone extends PureComponent {
   // 点击号码弹出拨打电话的弹框
   @autobind
   handleClick() {
-    const { number, custType, onClick } = this.props;
+    const { number, custType, onClick, disable } = this.props;
+    if (disable === true) {
+      return;
+    }
     onClick({
       number,
       custType,
@@ -88,16 +95,18 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { number, style } = this.props;
+    const { number, style, disable } = this.props;
+    const className = classnames({
+      [styles.number]: true,
+      [styles.active]: disable !== true,
+    })
     return (
-      <div className={styles.wrap}>
-        <div
-          className={styles.phoneNum}
-          onClick={this.handleClick}
-          style={style}
-        >
-          {number}
-        </div>
+      <div
+        className={className}
+        onClick={this.handleClick}
+        style={style}
+      >
+        {number}
       </div>
     );
   }
