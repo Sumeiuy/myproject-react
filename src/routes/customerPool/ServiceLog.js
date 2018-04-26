@@ -322,6 +322,7 @@ export default class ServiceLog extends PureComponent {
                   defaultValue={!_.isEmpty(keyword) ? decodeURIComponent(keyword) : ''}
                   onSearch={this.handleSearchServiceRecord}
                   style={{ width: 160 }}
+                  enterButton
                 />
               </Col>
             </Row>
