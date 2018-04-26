@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 14:14:19
+ * @Last Modified time: 2018-04-26 17:20:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -131,7 +131,6 @@ export default class MissionBind extends PureComponent {
               roleType: ROLE_TYPE[1].key,
             })
           }
-          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[1].key)}>+新增</Button>
         </div>
       </Panel>);
     });
