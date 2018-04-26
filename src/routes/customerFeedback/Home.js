@@ -3,13 +3,12 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-25 10:44:35
+ * @Last Modified time: 2018-04-26 14:03:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import { Tabs } from 'antd';
 import _ from 'lodash';
 
@@ -52,8 +51,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
-  replace: routerRedux.replace,
   // 获取任务列表
   getMissionList: effect('customerFeedback/getMissionList'),
   // 删除任务下所关联客户反馈选项
@@ -76,9 +73,6 @@ const mapDispatchToProps = {
 @withRouter
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
     // 获取任务列表
     getMissionList: PropTypes.func.isRequired,
     emptyMissionData: PropTypes.func.isRequired,
@@ -96,6 +90,12 @@ export default class CustomerFeedback extends PureComponent {
     addFeedback: PropTypes.func.isRequired,
     // 编辑客户反馈选项
     modifyFeedback: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.object.isRequired,
+    push: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -117,7 +117,7 @@ export default class CustomerFeedback extends PureComponent {
           childActiveKey,
         },
       },
-    } = this.props;
+    } = this.context;
     if (_.isEmpty(parentActiveKey) || _.isEmpty(childActiveKey)) {
       replace({
         pathname,
@@ -128,96 +128,6 @@ export default class CustomerFeedback extends PureComponent {
         },
       });
     }
-  }
-
-  // 查询任务列表
-  @autobind
-  queryMissionList(type = 1, pageNum = 1, pageSize = 20, keyWord = '') {
-    const {
-      replace,
-      getMissionList,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    const params = {
-      type,
-      pageNum,
-      pageSize,
-      keyWord,
-    };
-    getMissionList(params).then(() => {
-      const { missionData } = this.props;
-      const missionPage = missionData.page || {};
-      replace({
-        pathname,
-        query: {
-          ...query,
-          pageNum: missionPage.pageNum,
-          pageSize: missionPage.pageSize,
-          keyWord,
-        },
-      });
-    });
-  }
-
-  // 查询客户反馈列表
-  @autobind
-  queryFeedbackList(payload) {
-    const { keyword = '', pageNum = 1, pageSize = 20, roleType = 0 } = payload;
-    const { getFeedbackList } = this.props;
-    const params = {
-      keyword,
-      pageNum,
-      pageSize,
-      roleType,
-    };
-    return getFeedbackList(params);
-  }
-
-  // 切换tab
-  @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab：任务绑定客户反馈/客户反馈选项维护' } })
-  handleChangeTab(key) {
-    const {
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-    } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        parentActiveKey: key,
-        pageNum: 1,
-      },
-    });
-  }
-
-  // 任务绑定组件切换tab状态更新到url
-  @autobind
-  missionBindChangeTab(key) {
-    const {
-      emptyMissionData,
-      replace,
-      location: {
-        pathname,
-        query,
-      },
-     } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        childActiveKey: key,
-        pageNum: 1,
-        keyWord: '',
-      },
-    });
-    emptyMissionData();
   }
 
   // 根据切换的TabKey，展示相关的内容组件
@@ -248,10 +158,8 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
-      replace,
-      location,
-      location: { query: { childActiveKey } },
      } = this.props;
+    const { replace, location, location: { query: { childActiveKey } } } = this.context;
     const missionBindProps = {
       getMissionList,
       missionData,
@@ -276,8 +184,6 @@ export default class CustomerFeedback extends PureComponent {
       delFeedback,
       addFeedback,
       modifyFeedback,
-      replace,
-      location,
      } = this.props;
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,
@@ -285,71 +191,69 @@ export default class CustomerFeedback extends PureComponent {
       delFeedback,
       addFeedback,
       modifyFeedback,
-      location,
-      replace,
     };
 
     return (<OptionsMaintain {...optionsMaintainProps} />);
   }
 
+  // 任务绑定反馈|查询任务列表
+  @autobind
+  queryMissionList(params) {
+    const { replace, location: { pathname, query } } = this.context;
+    this.props.getMissionList(params).then(() => {
+      const { missionData: { page = {} } } = this.props;
+      replace({
+        pathname,
+        query: {
+          ...query,
+          pageNum: page.pageNum,
+          pageSize: page.pageSize,
+          keyWord: params.keyWord,
+        },
+      });
+    });
+  }
+
+  // 查询客户反馈列表
+  @autobind
+  queryFeedbackList({ keyword = '', pageNum = 1, pageSize = 20, roleType = 0 }) {
+    return this.props.getFeedbackList({ keyword, pageNum, pageSize, roleType });
+  }
+
+  // 切换tab
+  @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：任务绑定客户反馈/客户反馈选项维护' } })
+  handleChangeTab(key) {
+    const { replace, location: { pathname, query } } = this.context;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        parentActiveKey: key,
+        pageNum: 1,
+      },
+    });
+  }
+
+  // 任务绑定组件切换tab状态更新到url
+  @autobind
+  missionBindChangeTab(key) {
+    const { emptyMissionData } = this.props;
+    const { replace, location: { pathname, query } } = this.context;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        childActiveKey: key,
+        pageNum: 1,
+        keyWord: '',
+      },
+    });
+    emptyMissionData();
+  }
+
   render() {
-    // let componentNode = null;
-    // const {
-    //   getMissionList,
-    //   missionData,
-    //   feedbackData,
-    //   delCustomerFeedback,
-    //   addCustomerFeedback,
-    //   delFeedback,
-    //   addFeedback,
-    //   modifyFeedback,
-    //   replace,
-    //   location,
-    //   location: {
-    //     query: {
-    //       parentActiveKey = TAB_LIST[0].key,
-    //       childActiveKey,
-    //     },
-    //   },
-    //  } = this.props;
-    // const missionBindProps = {
-    //   getMissionList,
-    //   missionData,
-    //   feedbackData,
-    //   delCustomerFeedback,
-    //   addCustomerFeedback,
-    //   childActiveKey,
-    //   replace,
-    //   location,
-    //   queryMissionList: this.queryMissionList,
-    //   queryFeedbackList: this.queryFeedbackList,
-    //   missionBindChangeTab: this.missionBindChangeTab,
-    // };
-    // const optionsMaintainProps = {
-    //   queryFeedbackList: this.queryFeedbackList,
-    //   feedbackData,
-    //   delFeedback,
-    //   addFeedback,
-    //   modifyFeedback,
-    //   location,
-    //   replace,
-    // };
-    // const missionBindComponent = <MissionBind {...missionBindProps} />;
-    // switch (parentActiveKey) {
-    //   case TabKeys.FIRST:
-    //     componentNode = missionBindComponent;
-    //     break;
-    //   case TabKeys.SECOND:
-    //     componentNode =
-    //     (<OptionsMaintain
-    //       {...optionsMaintainProps}
-    //     />);
-    //     break;
-    //   default:
-    //     componentNode = missionBindComponent;
-    //     break;
-    // }
-    const { location: { query: { parentActiveKey = TAB_LIST[0].key } } } = this.props;
+    const { location: { query: { parentActiveKey = TAB_LIST[0].key } } } = this.context;
     const tabContentComponent = this.getComponentByTabKey(parentActiveKey);
 
     return (

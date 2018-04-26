@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-25 21:39:39
+ * @Last Modified time: 2018-04-26 10:07:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ import Button from '../../../components/common/Button';
 import EditInput from './EditInput';
 import Pagination from '../../common/Pagination';
 // 此处为funcition,而非组件，所以使用小写打头
-import confirm from '../../../components/common/Confirm';
+import confirm from '../../../components/common/confirm_';
 import logable from '../../../decorators/logable';
 
 import styles from './optionsMaintain.less';
@@ -24,8 +24,6 @@ const Panel = Collapse.Panel;
 
 export default class OptionsMaintain extends PureComponent {
   static propTypes = {
-    replace: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
     // 查询客户反馈列表
     queryFeedbackList: PropTypes.func.isRequired,
     feedbackData: PropTypes.object.isRequired,
@@ -35,6 +33,11 @@ export default class OptionsMaintain extends PureComponent {
     addFeedback: PropTypes.func.isRequired,
     // 编辑客户反馈选项
     modifyFeedback: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -52,16 +55,13 @@ export default class OptionsMaintain extends PureComponent {
   // 同步页码到url
   @autobind
   syncPageDataToUrl() {
-    const {
-      feedbackData: { page = {} },
-      location: { query, pathname },
-      replace,
-    } = this.props;
+    const { location: { query, pathname }, replace } = this.context;
+    const { feedbackData: { page = {} } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        pageNum: page.pageNum,
+        pageNum: page.pageNum || 1,
       },
     });
   }
@@ -69,12 +69,8 @@ export default class OptionsMaintain extends PureComponent {
   // 查询客户反馈列表
   @autobind
   queryFeedbackList(pageNum = 1, pageSize = 20) {
-    this.props.queryFeedbackList('', pageNum, pageSize).then(this.syncPageDataToUrl);
+    this.props.queryFeedbackList({ pageNum, pageSize }).then(this.syncPageDataToUrl);
   }
-
-  // 不做任何处理的方法
-  @autobind
-  handleDoNothing() {}
 
   // 修改反馈选项的文字后的弹出层的OK建处理程序,
   // 新需求中，接口要求必须传custFeedbackName即涨乐客户可选项一级菜单的文字，
@@ -82,7 +78,7 @@ export default class OptionsMaintain extends PureComponent {
   @autobind
   handleEditSMFeedbackTextConfirmOK(name, item) {
     const { id, custFeedbackName = '' } = item;
-    const { location: { query: { pageNum } } } = this.props;
+    const { location: { query: { pageNum } } } = this.context;
     this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
       this.queryFeedbackList(pageNum);
     });
@@ -91,11 +87,8 @@ export default class OptionsMaintain extends PureComponent {
   // 修改涨乐客户反馈一级选项文字
   @autobind
   handleEditZLFeedbackTextConfirmOK(custFeedbackName, item) {
-    console.warn('handleEditZLFeedbackTextConfirmOK');
-    console.warn('custFeedbackName: ', custFeedbackName);
-    console.warn('item: ', item);
     const { id, name } = item;
-    const { location: { query: { pageNum } } } = this.props;
+    const { location: { query: { pageNum } } } = this.context;
     this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
       this.queryFeedbackList(pageNum);
     });
@@ -107,7 +100,7 @@ export default class OptionsMaintain extends PureComponent {
     if (_.isEmpty(name)) {
       confirm({
         shortCut: 'feedbackMaintainNotEmpty',
-        onOk: this.handleDoNothing,
+        onOk: _.noop,
       });
     } else {
       confirm({
@@ -123,7 +116,7 @@ export default class OptionsMaintain extends PureComponent {
     if (_.isEmpty(name)) {
       confirm({
         shortCut: 'feedbackMaintainNotEmpty',
-        onOk: this.handleDoNothing,
+        onOk: _.noop,
       });
     } else {
       confirm({
@@ -170,10 +163,8 @@ export default class OptionsMaintain extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '删除', value: '$args[0]' } })
   deleteConfirm(id, e) {
-    const {
-      delFeedback,
-      location: { query: { pageNum } },
-    } = this.props;
+    const { location: { query: { pageNum } } } = this.context;
+    const { delFeedback } = this.props;
     if (e) {
       e.stopPropagation();
     }
@@ -205,7 +196,7 @@ export default class OptionsMaintain extends PureComponent {
   // 在新增一级或者二级客户反馈可选项之后的操作
   @autobind
   doAfterAddFeedbackOption() {
-    const { location: { query: { pageNum } } } = this.props;
+    const { location: { query: { pageNum } } } = this.context;
     this.queryFeedbackList(pageNum);
     this.setState({
       beAddedParentId: '',

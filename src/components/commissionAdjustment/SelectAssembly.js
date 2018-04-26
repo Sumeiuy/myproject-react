@@ -12,7 +12,7 @@ import { AutoComplete } from 'antd';
 
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 
 import styles from './selectAssembly.less';
 

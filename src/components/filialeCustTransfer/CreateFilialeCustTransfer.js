@@ -22,7 +22,7 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import { seibelConfig, request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
-import commonConfirm from '../common/Confirm';
+import commonConfirm from '../common/confirm_';
 import customerTemplet from './customerTemplet.xls';
 import styles from './createFilialeCustTransfer.less';
 import logable, { logPV } from '../../decorators/logable';
