@@ -20,6 +20,7 @@ import preSaleQuery from './preSaleQuery';
 import stock from './stock';
 import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
+import telephoneNumberManage from './telephoneNumberManage';
 
 const api = apiCreator();
 
@@ -68,5 +69,7 @@ export default {
   pointsExchange: pointsExchange(api),
   // 用户中心
   userCenter: userCenter(api),
+  // 公务手机和电话卡号管理
+  telephoneNumberManage: telephoneNumberManage(api),
 };
 

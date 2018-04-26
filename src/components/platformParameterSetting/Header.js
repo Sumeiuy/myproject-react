@@ -33,9 +33,9 @@ function linkGenerator(menuItem, parentPath, push) {
     pathname: finaPathname,
   };
   return (
-    <span
+    <a
       onClick={() => { linkTo(linkToParam); }}
-    >{menuItem.name}</span>
+    >{menuItem.name}</a>
   );
 }
 
@@ -46,9 +46,9 @@ function getMenus(menu, parentPath, push, preventItem) {
         _.map(menu, menuItem => (
           <Menu.Item key={menuItem.path}>
             {
-              preventItem.path === menuItem.path ?
-                <span>{menuItem.name}</span> :
-                linkGenerator(menuItem, parentPath, push, preventItem)
+              preventItem.path === menuItem.path
+                ? <a>{menuItem.name}</a>
+                : linkGenerator(menuItem, parentPath, push, preventItem)
             }
           </Menu.Item>
         ))
@@ -125,9 +125,9 @@ export default class Header extends PureComponent {
                 parentPath += preventItem.path;
                 return dropDownMenu;
               }
-              return _.isString(option) ?
-                (<div key={index} className={styles.navItem}>{option}</div>) :
-                null;
+              return _.isString(option)
+                ? (<div key={index} className={styles.navItem}>{option}</div>)
+                : null;
             })
         }
       </div>
