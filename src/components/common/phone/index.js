@@ -3,7 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-26 11:34:41
+ * @Last Modified time: 2018-04-26 16:04:28
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,9 @@ import _ from 'lodash';
 import styles from './index.less';
 
 const URL = bowser.msie
+  // IE10跨域无法和父页面通信，部署在同域下
   ? '/fspa/phone/'
+  // Chrome等WebRTC只可用在https域下,所以部署到移动端server
   : 'https://crm.htsc.com.cn:2443/phone/';
 
 const OPEN_FEATURES = `
@@ -28,7 +30,7 @@ const OPEN_FEATURES = `
   status=no
 `;
 
-let opener = null;
+let popWin = null;
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -60,7 +62,7 @@ export default class Phone extends PureComponent {
     });
 
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true`;
-    opener = window.open(
+    popWin = window.open(
       srcUrl,
       'phoneDialog',
       OPEN_FEATURES,
@@ -77,12 +79,11 @@ export default class Phone extends PureComponent {
     window.removeEventListener('message', this.receiveMessage);
     if (e.data
       && e.data.type === 'end'
-      && opener
-      && _.isFunction(opener.close)
+      && popWin
     ) {
       this.props.onEnd(e.data);
-      opener.close();
-      opener = null;
+      popWin.close();
+      popWin = null;
     }
   }
 

@@ -3,43 +3,34 @@
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-26 12:39:39
+ * @Last Modified time: 2018-04-26 16:33:05
  */
 
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 
 import Phone from '../../components/common/phone';
-import withRouter from '../../decorators/withRouter';
 
 const mapStateToProps = () => ({
 
 });
 
-const mapDispatchToProps = {
-  togglePhoneDialog: query => ({
-    type: 'app/togglePhoneDialog',
-    payload: query || false,
-  }),
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
+@connect(mapStateToProps)
 export default class PhoneHome extends PureComponent {
   static propTypes = {
-    togglePhoneDialog: PropTypes.func.isRequired,
   }
 
   @autobind
   handleClick() {
-
+    // 可以在这个事件里先发一条服务记录
+    console.log('number clicked');
   }
 
   @autobind
-  handleEnd(data) {
-    console.log('Home:', '电话挂断', data);
+  handleEnd({ duration }) {
+    message.info(`通话时长: ${duration} 秒`);
   }
 
   render() {
