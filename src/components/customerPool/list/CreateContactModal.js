@@ -8,11 +8,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Modal, Button, Table } from 'antd';
+import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
 import { check } from '../../../helper';
 import logable from '../../../decorators/logable';
+import ContactInfoPopover from './ContactInfoPopover';
+import Phone from '../../common/phone';
 
 import styles from './createContactModal.less';
 
@@ -218,11 +220,49 @@ export default class CreateContactModal extends PureComponent {
     this.props.handleCollapseClick();
   }
 
+  /**
+   * 生成头像icon右侧的主联系人信息或这要联系电话
+   *
+   */
+  createMainContact({
+    custType,
+    isPersonHasContact,
+    isOrgMainContactHasTel,
+    mainContactInfo,
+    personalContactInfo,
+  }) {
+    if (!isPersonHasContact && !isOrgMainContactHasTel) {
+      return <p>客户未预留主要联系方式，请尽快完善信息</p>;
+    }
+    return (
+      <div className={styles.mainContact}>
+        {
+          (custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo)) &&
+          `主要联系人：${mainContactInfo.nameInfo.name || '--'}（${mainContactInfo.nameInfo.custRela || '--'}）`
+        }
+        {
+          (custType === 'per' && isPersonHasContact
+            && personalContactInfo.mainTelInfo.type !== 'none') &&
+          '主要联系电话：'
+        }
+        {
+          (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
+          <Phone
+            onTogglePhoneDialog={() => {}}
+            phoneNum={custType === 'per' ?
+              personalContactInfo.mainTelInfo.value :
+              mainContactInfo.cellInfo}
+            custType={custType}
+          />
+        }
+      </div>
+    );
+  }
+
   render() {
     const {
       visible,
     } = this.state;
-
     const {
       custContactData = EMPTY_OBJECT,
       serviceRecordData = EMPTY_LIST,
@@ -244,7 +284,7 @@ export default class CreateContactModal extends PureComponent {
     } = custContactData;
 
     const { custName } = custBaseInfo;
-    let otherContactInfo = EMPTY_LIST;
+    // let otherContactInfo = EMPTY_LIST;
     let mainContactInfo = {
       nameInfo: {},
       cellInfo: '',
@@ -288,18 +328,18 @@ export default class CreateContactModal extends PureComponent {
           }
         }
         // 其他联系人信息
-        const otherContact = _.filter(orgCustomerContactInfoList,
-          (item, index) => index !== mainContactIndex) || EMPTY_LIST;
-        otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
-          contact: item.name || '--',
-          phone: _.isEmpty(item.cellPhones) ? '--' :
-            this.formatPhoneNumber(item.cellPhones[0].contactValue),
-          work: _.isEmpty(item.workTels) ? '--' :
-            this.formatPhoneNumber(item.workTels[0].contactValue),
-          home: _.isEmpty(item.homeTels) ? '--' :
-            this.formatPhoneNumber(item.homeTels[0].contactValue),
-          personType: item.custRela || '--',
-        }));
+        // const otherContact = _.filter(orgCustomerContactInfoList,
+        //   (item, index) => index !== mainContactIndex) || EMPTY_LIST;
+        // otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
+        //   contact: item.name || '--',
+        //   phone: _.isEmpty(item.cellPhones) ? '--' :
+        //     this.formatPhoneNumber(item.cellPhones[0].contactValue),
+        //   work: _.isEmpty(item.workTels) ? '--' :
+        //     this.formatPhoneNumber(item.workTels[0].contactValue),
+        //   home: _.isEmpty(item.homeTels) ? '--' :
+        //     this.formatPhoneNumber(item.homeTels[0].contactValue),
+        //   personType: item.custRela || '--',
+        // }));
       } else if (!_.isEmpty(perCustomerContactInfo)) {
         const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
         isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
@@ -318,7 +358,7 @@ export default class CreateContactModal extends PureComponent {
           }
 
           // 过滤个人其他联系方式为空的情况
-          let otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
+          let otherTelInfo = _.omitBy(allTelInfo, _.isEmpty);
 
           const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
           if (!_.isEmpty(otherCellInfo)) {
@@ -337,8 +377,8 @@ export default class CreateContactModal extends PureComponent {
       }
     }
 
-    const columns = this.constructTableColumns();
-    const newDataSource = this.constructTableDatas(otherContactInfo);
+    // const columns = this.constructTableColumns();
+    // const newDataSource = this.constructTableDatas(otherContactInfo);
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -352,80 +392,30 @@ export default class CreateContactModal extends PureComponent {
           (<Button key="close" size="large" onClick={this.handleCancel}>关闭</Button>),
         ]}
       >
-        <div className={styles.custName}>
-          {custName || ''}
-        </div>
-        {
-          custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
-            <div className={styles.title}>
-              主要联系人：{mainContactInfo.nameInfo.name || '--'}（{mainContactInfo.nameInfo.custRela || '--'}）
+        <div className={styles.headBox}>
+          <div className={styles.left}>
+            <Icon type="touxiang" className={styles.headshot} />
+            <div className={styles.headshotRight}>
+              <p className={styles.customerName}>{custName}</p>
+              {this.createMainContact({
+                custType,
+                isPersonHasContact,
+                isOrgMainContactHasTel,
+                mainContactInfo,
+                personalContactInfo,
+              })}
             </div>
-            : null
-        }
-        {
-          (custType === 'per' && isPersonHasContact
-          && personalContactInfo.mainTelInfo.type !== 'none') ?
-            <div className={styles.title}>
-              主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
-            </div> : null
-        }
-        {
-          (!isPersonHasContact && !isOrgMainContactHasTel) ?
-            <div className={styles.noneInfoSection}>
-              <div className={styles.noneInfo}>
-                  客户未预留主要联系方式，请尽快完善信息
-              </div>
-              <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
-              </div>
-            </div> :
-            <div className={styles.number}>
-              {
-                ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
-                (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
-                  <div className={styles.mainContact}>
-                    <Icon type="dianhua1" className={styles.phoneIcon} />
-                    <span>
-                      {
-                      custType === 'per' ?
-                      personalContactInfo.mainTelInfo.value :
-                      mainContactInfo.cellInfo
-                      }
-                    </span>
-                  </div> : null
-              }
-              <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
-              </div>
-            </div>
-        }
-        {
-          /* 个人其他联系方式和主联系人其他联系方式 */
-          custType === 'per' ? this.constructOtherContact(personalContactInfo.otherTelInfo)
-          : this.constructOtherContact(mainContactInfo.telInfo)
-        }
-        { /* 机构客户其他联系人与联系方式 */}
-        {
-          (custType === 'org' && !_.isEmpty(newDataSource)) ?
-            <div className={styles.orgCustOtherTelsSection}>
-              <Table
-                className={styles.telTable}
-                columns={columns}
-                dataSource={newDataSource}
-                pagination={false}
+          </div>
+          <div className={styles.right}>
+            {
+              (!isPersonHasContact && !isOrgMainContactHasTel) ? null :
+              <ContactInfoPopover
+                custType={custType}
+                personalContactInfo={personalContactInfo.otherTelInfo}
+                orgCustomerContactInfoList={orgCustomerContactInfoList}
               />
-            </div> : null
-        }
-        { /* 提示信息 */}
-        <div className={styles.tipSection}>
-          <Icon className={styles.tipIcon} type="wenxintishi" />
-          <span>温馨提醒：联系过客户后请及时创建服务记录</span>
+            }
+          </div>
         </div>
         <div className={styles.serviceTitle}>最近服务记录</div>
         {/* 折叠面板 */}

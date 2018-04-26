@@ -1,0 +1,69 @@
+.phoneIcon {
+  float: left;
+  color: #108ee9;
+  font-size: 14px;
+  margin-right: 5px;
+}
+.phoneText {
+  float: left;
+  color: #108ee9;
+  font-size: 14px;
+}
+
+.popoverLayer {
+  display: inline-block;
+  margin: 0 auto;
+  max-height: 270px;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .2);
+  border-radius: 3px;
+  overflow-y: auto;
+  ul li {
+    height: 32px;
+    line-height: 32px;
+    margin: 0 14px;
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 14px;
+    .label {
+      color: #888;
+      margin-right: 10px;
+    }
+    .primary {
+      float: right;
+      margin-top: 8px;
+      margin-left: 15px;
+      width: 16px;
+      height: 16px;
+      background-color: #ef9819;
+      border-radius: 2px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+    &.title {
+      margin: -1px 0 0;
+      padding: 0 14px;
+      color: #313131;
+      font-weight: bold;
+      border-top: 1px solid #f2f2f2;
+    }
+    &:last-child {
+      border: 0;
+    }
+  }
+}
+
+.moreLinkman {
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.popover {
+  :global {
+    .ant-popover-inner-content {
+      padding: 0;
+    }
+  }
+}
