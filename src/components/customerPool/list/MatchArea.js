@@ -414,22 +414,19 @@ export default class MatchArea extends PureComponent {
       holdingProducts,
       queryHoldingProductReqState,
       formatAsset,
-      location: { query: { source } },
     } = this.props;
     const { empInfo: { empInfo = {} } } = this.context;
     const filteredProducts = this.getFilteredProducts(list, keyword);
     // 是否显示’持仓详情‘，默认不显示
     let isShowDetailBtn = false;
-    if (source === 'association') {
-      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-      if (hasNPCTIQPermission && !isPrivateCustomer) {
-        isShowDetailBtn = true;
-      }
-      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-      // 主服务经理 可以看名下所有客户的持仓信息
-      if (hasPCTIQPermission || empInfo.rowId === empId) {
-        isShowDetailBtn = true;
-      }
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
     }
     if (!_.isEmpty(filteredProducts)) {
       const { name, code } = filteredProducts[0] || {};

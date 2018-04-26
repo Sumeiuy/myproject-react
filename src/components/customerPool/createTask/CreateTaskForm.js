@@ -186,7 +186,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
-        defaultInitialValue = 4;
+        defaultInitialValue = 4; // 有效期
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
       case 'search':
@@ -195,7 +195,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
-        defaultInitialValue = 4;
+        defaultInitialValue = 4; // 有效期
         break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
