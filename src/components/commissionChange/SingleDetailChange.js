@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 16:35:44
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-26 09:07:10
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import DisabledSelect from './DisabledSelect';
 import RejectButtons from './RejectButtons';
 import InfoTitle from '../common/InfoTitle';

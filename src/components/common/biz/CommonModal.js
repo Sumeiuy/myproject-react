@@ -46,6 +46,7 @@ import ModalLoading from './ModalLoading';
 import styles from './commonModal.less';
 import logable from '../../../decorators/logable';
 
+const error = Modal.error;
 export default class CommonModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
@@ -88,8 +89,16 @@ export default class CommonModal extends PureComponent {
     size: 'normal',
     wrapClassName: '',
     selfBtnGroup: {},
-    onOk: () => {},
+    onOk: () => { },
   }
+
+  static showErrorDialog = (content) => {
+    error({
+      className: styles.globalCapture,
+      content,
+      okText: '确定',
+    });
+  };
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
@@ -118,23 +127,23 @@ export default class CommonModal extends PureComponent {
     } = this.props;
     const modalSize = `modal${size}`;
     const okBtn = !showOkBtn ? null
-    : (<Button
-      key="submit"
-      type="primary"
-      size="large"
-      disabled={btnStatus}
-      onClick={() => this.handleOk(modalKey)}
-    >
-      {okText}
-    </Button>);
+      : (<Button
+        key="submit"
+        type="primary"
+        size="large"
+        disabled={btnStatus}
+        onClick={() => this.handleOk(modalKey)}
+      >
+        {okText}
+      </Button>);
     const cancelBtn = !showCancelBtn ? null
-    : (<Button
-      key="back"
-      size="large"
-      onClick={() => this.handleCancel(modalKey)}
-    >
-      {cancelText}
-    </Button>);
+      : (<Button
+        key="back"
+        size="large"
+        onClick={() => this.handleCancel(modalKey)}
+      >
+        {cancelText}
+      </Button>);
     let footerContent = !needBtn ? null
       : [okBtn, cancelBtn];
     if (!_.isEmpty(selfBtnGroup)) {

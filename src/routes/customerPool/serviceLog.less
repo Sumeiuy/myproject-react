@@ -25,6 +25,45 @@
           width: 85%;
         }
       }
+      .searchInput {
+        :global {
+          .ant-input-suffix {
+            line-height: 14px;
+            .anticon {
+              font-size: 14px;
+            }
+            button {
+              background-color: transparent;
+              border-color: transparent;
+              color: #c2c2c2;
+            }
+          }
+          .ant-input-search.ant-input-affix-wrapper {
+            input {
+              background: #fff;
+              border: 1px solid #ccc;
+              border-radius: 3px;
+            }
+            // placeholder
+            ::-webkit-input-placeholder {
+              font-size: 14px;
+              color: #d9d9d9;
+            }
+            ::-moz-input-placeholder {
+              font-size: 14px;
+              color: #d9d9d9;
+            }
+            :-moz-input-placeholder {
+              font-size: 14px;
+              color: #d9d9d9;
+            }
+            :-ms-input-placeholder {
+              font-size: 14px;
+              color: #d9d9d9;
+            }
+          }
+        }
+      }
     }
     .showBtn {
       display: none;
@@ -46,4 +85,3 @@
     }
   }
 }
-/*子组件样式修改*/

@@ -92,13 +92,15 @@ export default class CustRange extends PureComponent {
   constructor(props) {
     super(props);
     const { custRange, orgId, defaultFirst } = this.props;
-    this.setDisplay(orgId, custRange, defaultFirst);
+    this.state = this.getDisplay(orgId, custRange, defaultFirst);
   }
 
   componentWillReceiveProps(nextProps) {
     const { custRange, orgId, defaultFirst } = nextProps;
     if (orgId !== this.props.orgId || custRange !== this.props.custRange) {
-      this.setDisplay(orgId, custRange, defaultFirst);
+      this.setState({
+        ...this.getDisplay(orgId, custRange, defaultFirst),
+      });
     }
   }
 
@@ -143,7 +145,7 @@ export default class CustRange extends PureComponent {
    * @param {*} defaultFirst 是否显示下拉列表数据的第一个
    */
   @autobind
-  setDisplay(orgId, custRange, defaultFirst) {
+  getDisplay(orgId, custRange, defaultFirst) {
     const formatCustRange = transformCustRangeData(custRange);
     walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
     let initValue = null;
@@ -158,7 +160,7 @@ export default class CustRange extends PureComponent {
         value: '',
       };
     }
-    this.state = {
+    return {
       formatCustRange,
       value: initValue,
       open: false,

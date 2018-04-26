@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-19 09:41:43
+ * @Last Modified time: 2018-04-26 14:02:53
  * 服务经理维度任务统计
  */
 
@@ -11,27 +11,53 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+
+import { Dropdown, Menu } from 'antd';
 import Table from '../../common/commonTable';
 import antdStyles from '../../../css/antd.less';
 import styles from './custManagerDetailScope.less';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
+import {
+  EMP_MANAGER_SCOPE,
+  EMP_DEPARTMENT_SCOPE,
+  EMP_COMPANY_SCOPE,
+  ALL_EMP_SCOPE_ITEM,
+  EMP_COMPANY_COLUMN_FOR_FIRST,
+  EMP_COMPANY_COLUMN_FOR_LAST,
+  EMP_DEPARTMENT_COLUMN_FOR_FIRST,
+  EMP_DEPARTMENT_COLUMN_FOR_LAST,
+} from '../../../config/managerViewCustManagerScope';
+import { getCurrentScopeByOrgLevel, getCurrentScopeByOrgId } from './helper';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-
-const INITIAL_PAGE_SIZE = 5;
-const INITIAL_PAGE_NUM = 1;
 const NOOP = _.noop;
+
+// 初始化分页条目
+const INITIAL_PAGE_SIZE = 5;
+// 初始化页码
+const INITIAL_PAGE_NUM = 1;
+
+const Item = Menu.Item;
 
 export default class CustManagerDetailScope extends PureComponent {
 
   static propTypes = {
     detailData: PropTypes.object,
+    // 当前组织机构层级
     currentOrgLevel: PropTypes.string,
     // 是否处于折叠状态
     isFold: PropTypes.bool,
     getCustManagerScope: PropTypes.func,
+    // 当前可供筛选的维度
+    currentScopeList: PropTypes.array,
+    // 当前任务id
+    currentId: PropTypes.string,
+    // 组织机构
+    custRange: PropTypes.array,
+    // 机构orgId
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -39,12 +65,78 @@ export default class CustManagerDetailScope extends PureComponent {
     currentOrgLevel: '',
     isFold: false,
     getCustManagerScope: NOOP,
+    currentScopeList: EMPTY_LIST,
+    currentId: '',
+    custRange: EMPTY_LIST,
+    orgId: '',
   }
 
   constructor(props) {
     super(props);
+    const { custRange, orgId } = props;
     this.state = {
+      // 当前选择的维度
+      // 页面从无到有的过程中，orgId不一定是初始化的orgId，需要将外部传入的orgId传入进行
+      // 比对，得出当前维度
+      currentSelectScope: getCurrentScopeByOrgId({ custRange, orgId }),
+      dataSource: EMPTY_LIST,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      currentOrgLevel,
+      currentId,
+      detailData: { list = EMPTY_LIST },
+    } = this.props;
+    const {
+      currentOrgLevel: nextOrgLevel,
+      currentId: nextMssnId,
+      custRange,
+      detailData: { list: nextList = EMPTY_LIST },
+    } = nextProps;
+    // 当组织机构树发生变化
+    // 设置默认维度
+    if (currentOrgLevel !== nextOrgLevel) {
+      this.setState({
+        currentSelectScope: getCurrentScopeByOrgLevel(nextOrgLevel),
+      });
+    }
+    // 当任务切换
+    // 设置默认维度
+    // 任务id切换了，orgId肯定恢复原始了，不需要讲外部的orgId传入getCurrentScopeByOrgId
+    if (currentId !== nextMssnId) {
+      this.setState({
+        currentSelectScope: getCurrentScopeByOrgId({ custRange }),
+      });
+    }
+    // 用来处理列改变的时候，primaryKey会为空的情况，所以将数据源用内部状态控制
+    if (list !== nextList) {
+      this.setState({
+        dataSource: this.addIdToDataSource(nextList),
+      });
+    }
+  }
+
+  @autobind
+  getFilterPopupContainer() {
+    return this.filterElem;
+  }
+
+  /**
+   * 获取列表的主键，根据不同的维度，主键不一样
+   */
+  @autobind
+  getPrimaryKey(item) {
+    const { currentSelectScope } = this.state;
+    let id = `${item.mssnId}-${item.login}-${item.custDepartmentCode}`;
+    if (currentSelectScope === EMP_COMPANY_SCOPE) {
+      id = `${item.mssnId}-${item.empCompanyCode}`;
+    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+      id = `${item.mssnId}-${item.empDepartmentCode}`;
+    }
+
+    return id;
   }
 
   /**
@@ -54,8 +146,7 @@ export default class CustManagerDetailScope extends PureComponent {
   addIdToDataSource(listData) {
     return _.map(listData, item => ({
       ...item,
-      // 三个字段组合作为唯一
-      id: `${item.mssnId}-${item.login}-${item.custDepartmentCode}`,
+      id: this.getPrimaryKey(item),
     }));
   }
 
@@ -67,10 +158,35 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   handlePageChange(pageNum, pageSize) {
     const { getCustManagerScope } = this.props;
+    const { currentSelectScope } = this.state;
     getCustManagerScope({
       pageNum,
       pageSize,
+      enterType: currentSelectScope,
     });
+  }
+
+  /**
+   * 选中一个维度，触发回调，请求当前维度的信息
+   */
+  @autobind
+  handleSelectMenuItem({ key }) {
+    this.setState({
+      currentSelectScope: key,
+    });
+    this.props.getCustManagerScope({
+      // 当前维度
+      enterType: key,
+    });
+  }
+
+  /**
+   * 设置当前filter对应的element
+   * @param {*node} input 当前element
+   */
+  @autobind
+  saveFilterRef(input) {
+    this.filterElem = input;
   }
 
   /**
@@ -99,12 +215,58 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * Menu的子选项
+   */
+  @autobind
+  renderFilterOption() {
+    const { currentScopeList } = this.props;
+    return _.map(currentScopeList, item => <Item key={item.key}>{item.value}</Item>);
+  }
+
+  /**
    * 渲染表头
    */
   @autobind
   renderTableTitle() {
+    const { currentSelectScope } = this.state;
+
     return (
-      <span className={`${styles.tableTitle} tableTitle`}>服务经理维度</span>
+      <div className={styles.titleSection}>
+        <div className={`${styles.tableTitle} tableTitle`}>服务经理维度</div>
+        <div
+          className={styles.scopeSelect}
+          ref={this.saveFilterRef}
+        >
+          <Dropdown
+            // dropdown的trigger需要数组
+            trigger={['click']}
+            overlay={
+              <Menu
+                onClick={this.handleSelectMenuItem}
+                selectedKeys={[currentSelectScope || EMP_MANAGER_SCOPE]}
+              >
+                {this.renderFilterOption()}
+              </Menu>
+            }
+            placement="bottomRight"
+            getPopupContainer={this.getFilterPopupContainer}
+          >
+            <div>
+              <span className={styles.title}>查看维度：</span>
+              <span className={styles.currentSelectScope}>
+                {_.filter(ALL_EMP_SCOPE_ITEM, item =>
+                  item.key === (currentSelectScope || EMP_MANAGER_SCOPE))[0].value}
+              </span>
+              <span
+                className="ant-select-arrow"
+                unselectable="unselectable"
+              >
+                <b />
+              </span>
+            </div>
+          </Dropdown>
+        </div>
+      </div>
     );
   }
 
@@ -120,62 +282,79 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
-   * 渲染每一列数据
+   * 渲染第一列
+   * 如果选择了服务经理，第一列展示服务经理，
+   * 如果选择了分公司，第一列展示分公司
+   * 如果选择了营业部，第一列展示营业部
    */
-  @autobind
-  renderColumn() {
-    const { currentOrgLevel } = this.props;
-    // 如果是营业部层级，则只展示基本的5列数据
-    let columnTitle = [{
+  renderFirstCoulmn() {
+    const { currentSelectScope } = this.state;
+    if (currentSelectScope === EMP_COMPANY_SCOPE) {
+      return [EMP_COMPANY_COLUMN_FOR_FIRST];
+    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+      return [EMP_DEPARTMENT_COLUMN_FOR_FIRST];
+    }
+
+    // 默认展示服务经理列
+    return [{
       key: 'login',
       value: '服务经理',
       render: this.renderManagerNameId,
       renderTitle: this.renderCoulmnTitleTooltip,
-    }, {
-      key: 'flowNum',
-      value: '客户总数',
-    }, {
-      key: 'servFlowNum',
-      value: '已服务客户',
-      render: ({ flowNum, servFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
-    }, {
-      key: 'doneFlowNum',
-      value: '已完成客户',
-      render: ({ flowNum, doneFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
-    }, {
-      key: 'traceFlowNum',
-      value: '结果达标客户',
-      render: ({ flowNum, traceFlowNum: everyCust }) =>
-        this.renderEveryCust(flowNum, everyCust),
     }];
+  }
 
-    if (currentOrgLevel === ORG_LEVEL1) {
-      // 经纪及财富管理部层级
-      // 增加分公司和营业部展示
-      columnTitle = [
-        ...columnTitle,
-        {
-          key: 'empCompanyName',
-          value: '所属分公司',
-        },
-        {
-          key: 'empDepartmentName',
-          value: '所属营业部',
-        },
-      ];
-    } else if (currentOrgLevel === ORG_LEVEL2) {
-      // 分公司层级
-      // 增加营业部列展示
-      columnTitle = [
-        ...columnTitle,
-        {
-          key: 'empDepartmentName',
-          value: '所属营业部',
-        },
-      ];
+  /**
+   * 渲染表格最后两列
+   */
+  renderLastTwoColumn() {
+    const { currentSelectScope } = this.state;
+    const { currentOrgLevel } = this.props;
+    if (currentSelectScope === EMP_MANAGER_SCOPE) {
+      // 服务经理维度，最后两列，根据层级，展示分公司或营业部
+      if (currentOrgLevel === ORG_LEVEL1) {
+        return [EMP_COMPANY_COLUMN_FOR_LAST, EMP_DEPARTMENT_COLUMN_FOR_LAST];
+      } else if (currentOrgLevel === ORG_LEVEL2) {
+        return [EMP_DEPARTMENT_COLUMN_FOR_LAST];
+      }
     }
+
+    // 分公司维度，
+    // 营业部维度
+    return EMPTY_LIST;
+  }
+
+  /**
+   * 渲染每一列数据
+   */
+  @autobind
+  renderColumn() {
+    const columnTitle = [
+      ...this.renderFirstCoulmn(),
+      {
+        key: 'flowNum',
+        value: '客户总数',
+      },
+      {
+        key: 'servFlowNum',
+        value: '已服务客户',
+        render: ({ flowNum, servFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      {
+        key: 'doneFlowNum',
+        value: '已完成客户',
+        render: ({ flowNum, doneFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      {
+        key: 'traceFlowNum',
+        value: '结果达标客户',
+        render: ({ flowNum, traceFlowNum: everyCust }) =>
+          this.renderEveryCust(flowNum, everyCust),
+      },
+      ...this.renderLastTwoColumn(),
+    ];
 
     return columnTitle;
   }
@@ -227,7 +406,8 @@ export default class CustManagerDetailScope extends PureComponent {
 
   render() {
     const { detailData = EMPTY_OBJECT, isFold } = this.props;
-    const { page = EMPTY_OBJECT, list = EMPTY_LIST } = detailData;
+    const { dataSource } = this.state;
+    const { page = EMPTY_OBJECT } = detailData;
     const { pageNum, pageSize, totalCount } = page;
     const {
       columnWidth,
@@ -242,7 +422,7 @@ export default class CustManagerDetailScope extends PureComponent {
             curPageSize: pageSize || INITIAL_PAGE_SIZE,
             totalRecordNum: totalCount,
           }}
-          listData={this.addIdToDataSource(list)}
+          listData={dataSource}
           onPageChange={this.handlePageChange}
           tableClass={
             classnames({
@@ -257,7 +437,7 @@ export default class CustManagerDetailScope extends PureComponent {
           columnWidth={columnWidth}
           titleColumn={this.renderColumn()}
           // 分页器样式
-          paginationClass={'selfPagination'}
+          paginationClass="selfPagination"
           needPagination
           isFixedColumn
           // 横向滚动，固定服务经理列

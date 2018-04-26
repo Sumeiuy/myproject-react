@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
@@ -78,7 +79,7 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            {serviceTips || '--'}
+            <ForgeryRichText text={serviceTips} />
           </div>
         </div>
 

@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import styles from './basicInfo.less';
 
 export default class BasicInfo extends PureComponent {
@@ -76,7 +77,7 @@ export default class BasicInfo extends PureComponent {
             <Col className={styles.colItem}>
               <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
               <p className={`${styles.content}`}>
-                {servicePolicy || '--'}
+                <ForgeryRichText text={servicePolicy} />
               </p>
             </Col>
           </Row>
@@ -86,7 +87,7 @@ export default class BasicInfo extends PureComponent {
                 <Col className={styles.colItem}>
                   <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
                   <p className={`${styles.content}`}>
-                    {missionDescription || '--'}
+                    <ForgeryRichText text={missionDescription} />
                   </p>
                 </Col>
               </Row> :

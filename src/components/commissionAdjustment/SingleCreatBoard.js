@@ -14,7 +14,7 @@ import { Icon } from 'antd';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from './ChoiceApproverBoard';
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import AutoComplete from '../common/AutoComplete';
