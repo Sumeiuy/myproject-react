@@ -14,7 +14,7 @@ import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper, number } from '../../helper';
+import { emp, permission, env as envHelper, number, regxp } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -559,7 +559,6 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-
         const formDataValidation = this.checkFormField({ ...values, isFormError });
 
         if (formDataValidation) {
@@ -575,8 +574,9 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
+      const trimTempletDesc = _(templetDesc).replace(regxp.returnLine, '').trim();
       taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      if (_.isEmpty(trimTempletDesc) || trimTempletDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,

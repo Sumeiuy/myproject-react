@@ -1,7 +1,7 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-14 13:26:52
- * @Last Modified by: xuxiaoqin
+ * @Last Modified by: xiaZhiQiang
  * @Last Modified time: 2018-01-22 11:02:42
  * 校验表单内容
  */
@@ -28,6 +28,7 @@ export const validateFormContent = (target, name, descriptor) => {
         timelyIntervalValue,
         serviceStrategySuggestion,
       } = args[0];
+      const trimServiceStrategySuggestion = _(serviceStrategySuggestion).replace(regxp.returnLine, '').trim();
       let isShowErrorExcuteType = false;
       let isShowErrorTaskType = false;
       let isShowErrorIntervalValue = false;
@@ -60,9 +61,8 @@ export const validateFormContent = (target, name, descriptor) => {
         });
         isShowErrorTaskName = true;
       }
-      if (_.isEmpty(serviceStrategySuggestion)
-        || serviceStrategySuggestion.length < 10
-        || serviceStrategySuggestion.length > 1000) {
+      if (_.isEmpty(trimServiceStrategySuggestion)
+        || trimServiceStrategySuggestion.length > 1000) {
         this.setState({
           isShowErrorStrategySuggestion: true,
         });

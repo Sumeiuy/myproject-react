@@ -26,8 +26,7 @@ const mentionTextStyle = {
   backgroundColor: '#ebf3fb',
   borderColor: '#ebf3fb',
 };
-// 字数限制，最大长度和最小长度
-const MIN_LENGTH = 10;
+// 字数限制，最大长度
 const MAX_LENGTH = 1000;
 
 @createForm()
@@ -189,8 +188,8 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = toString(contentState);
-      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
+      const content = _(toString(contentState)).replace(regxp.returnLine, '').trim();
+      if (_.isEmpty(content) || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -294,10 +293,9 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleStrategySuggestionChange(e) {
-    const value = e.target.value;
+    const value = _(e.target.value).replace(regxp.returnLine, '').trim();
     this.setState({
-      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
-        || value.length > MAX_LENGTH,
+      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length > MAX_LENGTH,
     });
   }
 
@@ -328,7 +326,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           mentionStyle={mentionTextStyle}
           style={{ width: '100%', height: 100 }}
-          placeholder={`请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：${MIN_LENGTH}-${MAX_LENGTH}字）`}
+          placeholder={'请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。'}
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -378,7 +376,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const errorProps = isShowErrorInfo ? {
       validateStatus: 'error',
-      help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
+      help: `任务提示不能为空，最多${MAX_LENGTH}个汉字`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -409,7 +407,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
       validateStatus: 'error',
-      help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
+      help: `服务策略不能为空，最多${MAX_LENGTH}个汉字`,
 
     } : null;
 
@@ -561,7 +559,7 @@ export default class TaskFormInfo extends PureComponent {
               })(<TextArea
                 id="desc"
                 rows={5}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。"
                 style={{ width: '100%' }}
                 maxLength={MAX_LENGTH}
                 onChange={this.handleStrategySuggestionChange}
