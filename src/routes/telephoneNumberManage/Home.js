@@ -1,7 +1,9 @@
 /**
- * @Descripter: 平台参数设置
- * @Author: xiaZhiQiang
- * @Date: 2018/4/12
+ * @Author: hongguangqing
+ * @Descripter: 公务手机管理
+ * @Date: 2018-04-27 10:13:09
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-04-27 10:13:46
  */
 
 import React, { PureComponent } from 'react';
@@ -17,11 +19,7 @@ export default class TelephoneNumberManage extends PureComponent {
     match: PropTypes.object.isRequired,
   };
   render() {
-    const {
-      match: {
-        path,
-      },
-    } = this.props;
+    const { match: { path } } = this.props;
     return (
       <Main menu={menu} matchPath={path}>
         <Switch>

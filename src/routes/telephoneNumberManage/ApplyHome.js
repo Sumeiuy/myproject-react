@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 19:25:31
+ * @Last Modified time: 2018-04-27 15:58:47
  */
 
 import React, { PureComponent } from 'react';
@@ -425,6 +425,7 @@ export default class ApplyHome extends PureComponent {
         {
           isShowCreateModal ?
             <CreateApply
+              location={location}
               advisorListData={advisorListData}
               queryAdvisorList={queryAdvisorList}
               empAppBindingList={empAppBindingList}
