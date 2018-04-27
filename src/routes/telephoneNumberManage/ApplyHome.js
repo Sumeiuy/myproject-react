@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 15:58:47
+ * @Last Modified time: 2018-04-27 22:22:22
  */
 
 import React, { PureComponent } from 'react';
@@ -26,6 +26,8 @@ import seibelHelper from '../../helper/page/seibel';
 
 // 头部筛选区域上方导航的高度，在SplitPanel计算中需要额外减去
 const EXTRAHEIGHT = 40;
+// 业务手机申请列表宽度
+const LEFT_PANEL_WIDTH = 450;
 const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
 const effect = dva.generateEffect;
 const effects = {
@@ -205,17 +207,15 @@ export default class ApplyHome extends PureComponent {
       });
       this.props.getDetailInfo({ flowId: item.flowId }).then(() => {
         const { detailInfo, queryEmpAppBindingList, getAttachmentList } = this.props;
-        const { appId, attachmnet } = detailInfo;
+        const { appId, attachment } = detailInfo;
         // 拿详情接口返回的appId去调详情表格数据
         queryEmpAppBindingList({
           appId,
           pageNum: 1,
           pageSize: 10,
         });
-        // 若详情接口返回的attachmnet不为null，调详情附件信息
-        if (!_.isEmpty(attachmnet)) {
-          getAttachmentList({ attachmnet });
-        }
+        // 拿详情接口返回的attachmnet，调详情附件信息
+        getAttachmentList({ attachment: attachment || '' });
       });
     }
   }
@@ -313,17 +313,15 @@ export default class ApplyHome extends PureComponent {
     this.setState({ activeRowIndex: index });
     this.props.getDetailInfo({ flowId }).then(() => {
       const { detailInfo, queryEmpAppBindingList, getAttachmentList } = this.props;
-      const { appId, attachmnet } = detailInfo;
+      const { appId, attachment } = detailInfo;
       // 拿详情接口返回的appId去调详情表格数据
       queryEmpAppBindingList({
         appId,
         pageNum: 1,
         pageSize: 10,
       });
-      // 若详情接口返回的attachmnet不为null，调详情附件信息
-      if (!_.isEmpty(attachmnet)) {
-        getAttachmentList({ attachmnet });
-      }
+      // 拿详情接口返回的attachmnet，调详情附件信息
+      getAttachmentList({ attachment: attachment || '' });
     });
   }
 
@@ -381,6 +379,7 @@ export default class ApplyHome extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        isUseOfCustomer={false}
       />
     );
 
@@ -421,6 +420,7 @@ export default class ApplyHome extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="telephoneNumApplyList"
           extraHeight={EXTRAHEIGHT}
+          leftWidth={LEFT_PANEL_WIDTH}
         />
         {
           isShowCreateModal ?

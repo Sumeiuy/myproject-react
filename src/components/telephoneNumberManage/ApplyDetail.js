@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 10:43:08
+ * @Last Modified time: 2018-04-27 21:12:26
  */
 
 import React, { PureComponent } from 'react';
@@ -35,6 +35,10 @@ export default class ApplyDetail extends PureComponent {
       curPageNum: 1,
       curPageSize: 10,
     };
+  }
+
+  componentWillReceiveProps() {
+
   }
 
   @autobind
@@ -123,10 +127,10 @@ export default class ApplyDetail extends PureComponent {
     let columnWidth;
     if (columnSize === 6) {
       // 6列全部都有
-      columnWidth = ['15%', '12%', '20%', '16%', '16%', '21%'];
+      columnWidth = ['14%', '10%', '22%', '15%', '17%', '22%'];
     } else if (columnSize === 3) {
       // 开始的时候没有电话号码，手机串号，SIM卡号三列
-      columnWidth = ['33%', '33%', '34%'];
+      columnWidth = ['30%', '30%', '40%'];
     }
 
     const newAdvisorBindList = this.addIdToDataSource(advisorBindList);
@@ -136,6 +140,7 @@ export default class ApplyDetail extends PureComponent {
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
             <div id="advisorAppBindingTable_module" className={styles.module}>
+              <InfoTitle head="服务经理" />
               <Table
                 pageData={{
                   curPageNum,
