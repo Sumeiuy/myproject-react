@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 17:20:06
+ * @Last Modified time: 2018-04-27 20:32:52
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -69,7 +69,11 @@ export default class TemplateForm extends PureComponent {
   handleSearchChange() {
     // 不需要根据用户输入的$后面的值进行过滤，总是返回全部的可选项
     const { dict: { investAdviceIndexPlaceHolders = [] } } = this.context;
-    const suggestions = investAdviceIndexPlaceHolders.map(suggestion => (
+    const slicedSuggestions = investAdviceIndexPlaceHolders.map(item => ({
+      ...item,
+      value: item.value.slice(1),
+    }));
+    const suggestions = slicedSuggestions.map(suggestion => (
       <Nav value={suggestion.value} data={suggestion}>
         <span>{suggestion.value}</span>
       </Nav>
@@ -80,8 +84,6 @@ export default class TemplateForm extends PureComponent {
   // 内容提及框内容失去焦点
   @autobind
   handleMentionBlur() {
-    const selections = window.getSelection();
-    console.warn('selections', selections);
   }
 
   // 内容提及框内容变化
@@ -128,7 +130,7 @@ export default class TemplateForm extends PureComponent {
     const { typeName, title, content } = initialTemplateParams;
 
     // 模板类型选项默认值
-    const missionTypeDefaultValue = typeName || missionType[0].value;
+    const missionTypeDefaultValue = typeName || missionType[0].key;
     const mentionContent = content || '';
 
     // 模板类型选项列表
@@ -137,8 +139,12 @@ export default class TemplateForm extends PureComponent {
     ));
 
     // 插入参数列表
-    const menuItems = investAdviceIndexPlaceHolders.map(item => (
-      <Menu.Item key={item.id}>{item.value}</Menu.Item>
+    const slicedSuggestions = investAdviceIndexPlaceHolders.map(item => ({
+      ...item,
+      value: item.value.slice(1),
+    }));
+    const menuItems = slicedSuggestions.map(item => (
+      <Menu.Item key={item.key}>{item.value}</Menu.Item>
     ));
 
     const menu = (

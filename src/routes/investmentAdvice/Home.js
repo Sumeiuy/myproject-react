@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 17:20:33
+ * @Last Modified time: 2018-04-27 21:02:31
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -102,7 +102,7 @@ export default class InvestmentAdvice extends PureComponent {
   }
 
   componentDidMount() {
-    this.getInvestAdviceList();
+    this.getInvestAdviceList(1);
   }
 
   @autobind
@@ -112,11 +112,10 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 获取投资建议模版列表
   @autobind
-  getInvestAdviceList() {
-    const { pageNum, pageSize } = this.state;
+  getInvestAdviceList(pageNum) {
     this.props.getInvestAdviceList({
       pageNum,
-      pageSize,
+      pageSize: 10,
     });
   }
 
@@ -163,7 +162,6 @@ export default class InvestmentAdvice extends PureComponent {
         self.deleteInvestAdvice({ id });
       },
       onCancel() {
-        console.log('取消删除');
       },
     });
   }
@@ -171,11 +169,19 @@ export default class InvestmentAdvice extends PureComponent {
   // 删除投资建议模板
   @autobind
   deleteInvestAdvice(params) {
+    const { list = [], page = {} } = this.props.investmentAdvices;
     this.props.deleteInvestAdvice(params).then(() => {
       if (this.props.deleteSuccessStatus) {
-        this.getInvestAdviceList();
-        if (!this.investmentAdvices.list.length) {
-          this.setState({ pageNum: this.state.pageNum - 1 }, this.getInvestAdviceList);
+        // 判断是否最后一条
+        if (list.length < 2) {
+          // 最后一条数据
+          // 需要查询前一页的数据
+          const { curPageNum } = page;
+          if (curPageNum === 1) {
+            this.getInvestAdviceList(1);
+          } else {
+            this.getInvestAdviceList(curPageNum - 1);
+          }
         }
       }
     });
@@ -184,7 +190,7 @@ export default class InvestmentAdvice extends PureComponent {
   // 切换当前页
   @autobind
   handlePageChange(pageNum) {
-    this.setState({ pageNum }, this.getInvestAdviceList);
+    this.getInvestAdviceList(pageNum);
   }
 
   // 校验mention内容提及框
@@ -245,19 +251,21 @@ export default class InvestmentAdvice extends PureComponent {
       initialTemplateParams,
      } = this.state;
     if (checkTitleStatus && checkContentStatus) {
-      const id = initialTemplateParams.id || '';
+      const templateId = initialTemplateParams.id || '';
       const action = modelTitle === '新建模板' ? 'CREATE' : 'UPDATE';
       const params = {
-        id,
+        templateId,
         action,
         title,
         content,
         type,
       };
+      const { page: { curPageNum = 1 } } = this.props.investmentAdvices;
+
       this.props.modifyInvestAdvice(params).then(() => {
         if (this.props.modifySuccessStatus) {
           this.handleCancel();
-          this.getInvestAdviceList();
+          this.getInvestAdviceList(curPageNum);
         }
       });
     }
@@ -287,7 +295,7 @@ export default class InvestmentAdvice extends PureComponent {
       modelTitle,
     } = this.state;
     const { list = [], page = {} } = this.props.investmentAdvices;
-    const { curPageNum, pageSize, totalPageNum } = page;
+    const { curPageNum, pageSize, totalRecordNum } = page;
     const investmentAdviceList = list.map((item) => {
       const header = (<div className={styles.collapseHead}>
         <span className={styles.type}>{item.typeName}</span>
@@ -343,7 +351,7 @@ export default class InvestmentAdvice extends PureComponent {
             : (
               <Pagination
                 current={curPageNum}
-                total={totalPageNum}
+                total={totalRecordNum}
                 pageSize={pageSize}
                 onChange={this.handlePageChange}
               />
