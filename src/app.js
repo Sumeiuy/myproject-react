@@ -115,7 +115,9 @@ app.model(require('./models/stock'));
 app.model(require('./models/pointsExchange'));
 // 用户中心
 app.model(require('./models/userCenter'));
-// 4. Router
+// 投资建议模版
+app.model(require('./models/investmentAdvice'));
+// 4. Route
 app.router(routerConfig);
 
 // 5. Start
