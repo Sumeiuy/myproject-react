@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-25 20:05:55
+ * @Last Modified time: 2018-04-27 10:01:31
 */
 
 import React, { PureComponent } from 'react';
@@ -13,8 +13,10 @@ import { autobind } from 'core-decorators';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
 import styles from './combinationFilter.less';
+import { yieldRankList } from '../../../routes/choicenessCombination/config';
 
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
+
 const labelStyle = {
   width: 'auto',
 };
@@ -29,49 +31,63 @@ const treeData = [{
   key: '0-1',
 }];
 
+const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
     // 筛选
     filterChange: PropTypes.func.isRequired,
+    // 组合排名收益率排序
+    yieldRankChange: PropTypes.func.isRequired,
+    yieldRankValue: PropTypes.string,
+    // 组合排名风险筛选
+    riskLevelFilter: PropTypes.func.isRequired,
+    riskLevel: PropTypes.array,
   }
 
   static defaultProps = {
-
+    yieldRankValue: '',
+    riskLevel: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      yieldValue: '',
-      riskValue: '',
+      // yieldValue: '',
+      // riskValue: '',
     };
   }
 
   @autobind
   handleRiskChange(value) {
-    const { filterChange } = this.props;
+    const { riskLevelFilter } = this.props;
     console.log('risk', value);
-    filterChange({
-      key: 'risk',
+    riskLevelFilter({
       value,
     });
   }
 
   @autobind
-  handleYieldSelect(value) {
-    const { filterChange } = this.props;
-    console.log('yield', value);
-    filterChange({
-      key: 'yield',
+  handleYieldSelect(key, value) {
+    const { yieldRankChange } = this.props;
+    console.log('yield', key, value);
+    // filterChange({
+    //   key: 'yield',
+    //   value,
+    // });
+    yieldRankChange({
       value,
     });
   }
 
   render() {
+    const {
+      yieldRankValue,
+      riskLevel,
+    } = this.props;
     const treeSelectProps = {
       treeData,
-      value: this.state.riskValue,
+      value: riskLevel,
       onChange: this.handleRiskChange,
       treeCheckable: true,
       showCheckedStrategy: SHOW_PARENT,
@@ -85,8 +101,8 @@ export default class CombinationRank extends PureComponent {
           <InfoForm label="收益率排序" style={labelStyle}>
             <Select
               name="yield"
-              data={[]}
-              value={''}
+              data={yieldRankList}
+              value={yieldRankValue}
               onChange={this.handleYieldSelect}
               width={'178px'}
             />

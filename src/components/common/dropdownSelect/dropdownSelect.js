@@ -1,24 +1,25 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:50:48
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-04-26 13:57:42
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
 import _ from 'lodash';
-import { Popover, Input, Icon } from 'antd';
+import { Popover, Icon } from 'antd';
 
 import { dom } from '../../../helper';
 import styles from './dropdownSelect.less';
 
-const Search = Input.Search;
+// const Search = Input.Search;
+import HackSearch from '../hackSearch';
 
-export default class DropdownSelect extends PureComponent {
+export default class DropdownSelect extends Component {
   static propTypes = {
     // 组件名称
     name: PropTypes.string,
@@ -118,20 +119,21 @@ export default class DropdownSelect extends PureComponent {
   }
 
   @autobind
-  handleSearchChange(e) {
+  handleSearchChange(value) {
     let dataSource = {};
     // 清空input时，展示搜索项
-    if (_.isEmpty(e.target.value)) {
+    if (_.isEmpty(value)) {
       dataSource = { optionList: this.props.presetOptionList };
     }
     this.setState({
-      searchValue: e.target.value,
+      // searchValue: e.target.value,
       ...dataSource,
     });
   }
 
   @autobind
-  handleSearch(inputValue) {
+  handleSearch() {
+    const inputValue = this.hackSearchComonent.getValue();
     this.props.emitToSearch(inputValue);
   }
 
@@ -156,15 +158,23 @@ export default class DropdownSelect extends PureComponent {
 
   @autobind
   renderDropdownSearch() {
-    const { searchValue } = this.state;
-    const { placeholder } = this.props;
+    // const { searchValue } = this.state;
+    const { placeholder, defaultSearchValue } = this.props;
     return (
-      <Search
-        value={searchValue}
+      // <Search
+      //   value={searchValue}
+      //   placeholder={placeholder}
+      //   onSearch={this.handleSearch}
+      //   onChange={this.handleSearchChange}
+      //   enterButton
+      // />
+      <HackSearch
         placeholder={placeholder}
         onSearch={this.handleSearch}
-        onChange={this.handleSearchChange}
+        defaultValue={defaultSearchValue}
+        handleChange={this.handleSearchChange}
         enterButton
+        ref={ref => this.hackSearchComonent = ref}
       />
     );
   }

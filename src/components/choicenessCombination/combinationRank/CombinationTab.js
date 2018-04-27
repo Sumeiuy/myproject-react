@@ -3,40 +3,66 @@
  * @Description: 精选组合-组合排名-tab切换
  * @Date: 2018-04-18 14:39:47
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 14:49:42
+ * @Last Modified time: 2018-04-27 10:14:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+// import _ from 'lodash';
 import { Tabs } from 'antd';
 import styles from './combinationTab.less';
 
 const TabPane = Tabs.TabPane;
-
+// const EMPTY_OBJECT = {};
 export default class CombinationTab extends PureComponent {
   static propTypes = {
     // tab切换
     tabChange: PropTypes.func.isRequired,
+    rankTabActiveKey: PropTypes.string.isRequired,
+    // 组合树列表数据
+    tabList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
 
   }
 
-  // constructor(props) {
-  //   super(props);
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeKey: '',
+    };
+  }
+
+  // componentWillReceiveProps({ tabList }) {
+  //   const { activeKey } = this.state;
+  //   if (_.isEmpty(activeKey) && !_.isEmpty(tabList)) {
+  //     this.setState({
+  //       activeKey: tabList[0].key,
+  //     });
+  //   }
   // }
 
+  @autobind
+  getTabPaneList() {
+    const { tabList } = this.props;
+    return tabList.map(item => (
+      <TabPane tab={item.label} key={item.key} />
+    ));
+  }
+
   render() {
-    const { tabChange } = this.props;
+    const {
+      tabChange,
+      // tabList,
+      rankTabActiveKey,
+    } = this.props;
+    // const { activeKey } = this.state;
+    // const defaultActiveKey = (tabList[0] || EMPTY_OBJECT).key;
     return (
       <div className={styles.combinationTabBox}>
-        <Tabs defaultActiveKey="1" onChange={tabChange}>
-          <TabPane tab="组合1" key="1" />
-          <TabPane tab="组合2" key="2" />
-          <TabPane tab="组合3" key="3" />
-          <TabPane tab="组合4" key="4" />
-          <TabPane tab="组合5" key="5" />
-          <TabPane tab="组合6" key="6" />
+        <Tabs activeKey={rankTabActiveKey} onChange={tabChange}>
+          {this.getTabPaneList()}
         </Tabs>
       </div>
     );
