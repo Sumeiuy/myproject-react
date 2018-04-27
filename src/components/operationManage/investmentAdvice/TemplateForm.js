@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 13:09:20
+ * @Last Modified time: 2018-04-27 14:01:39
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -64,7 +64,7 @@ export default class TemplateForm extends PureComponent {
       // 投资建议内容提示
       investAdviceIndexPlaceHolders: [
         {
-          key: 'CUST_NAME',
+          key: 'CUST_NAME1',
           value: '风险等级',
         },
         {
@@ -138,34 +138,11 @@ export default class TemplateForm extends PureComponent {
   //   checkMention(mentions);
   // }
 
-  // 获取光标位置
-  getCaretPosition(obj) {
-    let result = 0;
-    if (obj.selectionStart >= 0) { // IE以外
-      result = obj.selectionStart;
-    } else { // IE
-      try {
-        let rng;
-        if (obj.tagName === 'textarea') { // TEXTAREA
-          rng = event.srcElement.createTextRange();
-          rng.moveToPoint(event.x, event.y);
-        } else { // Text
-          rng = document.selection.createRange();
-        }
-        rng.moveStart('character', -event.srcElement.value.length);
-        result = rng.text.length;
-      } catch (e) {
-        throw new Error(10, 'asdasdasd');
-      }
-    }
-    return result;
-  }
-
   // 内容提及框内容失去焦点
-  // @autobind
+  @autobind
   handleMentionBlur() {
-    // const selections = window.getselection;
-    // console.warn('selections', selections);
+    const selections = window.getSelection();
+    console.warn('selections', selections);
   }
 
   render() {
@@ -239,6 +216,7 @@ export default class TemplateForm extends PureComponent {
                     initialValue: toContentState(mentionContent),
                   })(
                     <Mention
+                      ref={(mention) => { this.mention = mention; }}
                       mentionStyle={mentionTextStyle}
                       style={{ width: '100%', height: 200 }}
                       prefix={PREFIX}
