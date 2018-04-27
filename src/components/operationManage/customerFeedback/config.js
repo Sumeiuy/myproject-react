@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-04-16 13:25:09
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 20:20:01
+ * @Last Modified time: 2018-04-27 10:51:54
  */
 
 //  MOT任务
@@ -33,11 +33,13 @@ const zhangleRole = {
 
 const config = {
   // 角色可选项配置
-  roleType: [serviceManagerRole, zhangleRole],
+  ROLE_TYPES: [serviceManagerRole, zhangleRole],
   // tab切换选项
-  tabList: [motTask, selfTask],
-  motTask,
-  selfTask,
+  TABLIST: [motTask, selfTask],
+  MOT_TASK: motTask,
+  SELF_TASK: selfTask,
+  SERVICE_MANAGER_ROLE: serviceManagerRole,
+  ZHANGLE_ROLE: zhangleRole,
 };
 
 export default config;
