@@ -9,16 +9,16 @@
 export default function choicenessCombination(api) {
   return {
     // 获取调仓历史
-    getAdjustWarehouseHistory: query => api.post('/groovynoauth/fsp/choicenessCombination/queryCombinationAdjust', query),
+    getAdjustWarehouseHistory: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCombinationAdjust', query),
     // 组合证券构成列表/近一周表现前十的证券
-    getCombinationSecurityList: query => api.post('/groovynoauth/fsp/choicenessCombination/querySecurityList', query),
+    getCombinationSecurityList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/querySecurityList', query),
     // 获取组合树
-    getCombinationTree: query => api.post('/groovynoauth/fsp/choicenessCombination/queryPortfolioCategoryTree', query),
+    getCombinationTree: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryPortfolioCategoryTree', query),
     // 组合排名列表
-    getCombinationRankList: query => api.post('/groovynoauth/fsp/choicenessCombination/queryComposeList', query),
+    getCombinationRankList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryComposeList', query),
     // 收益率走势图
-    getCombinationChart: query => api.post('/groovynoauth/fsp/choicenessCombination/statisticReturnGraph', query),
+    getCombinationChart: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/statisticReturnGraph', query),
     // 历史报告列表
-    getReportHistoryList: query => api.post('/groovynoauth/fsp/choicenessCombination/reportHistoryList', query),
+    getReportHistoryList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/reportHistoryList', query),
   };
 }

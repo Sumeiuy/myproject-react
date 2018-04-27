@@ -21,29 +21,47 @@ const titleStyle = {
 
 const { directionRange } = config;
 const directionArray = _.filter(directionRange, o => o.value);
-console.warn('directionArray', directionArray);
+// securityType 里股票对应的值
+const STOCK_CODE = config.securityType[0].value;
+// 持仓历史
+const HISTORY_TYPE = config.typeList[0];
 export default class CombinationAdjustHistory extends PureComponent {
   static propTypes = {
     showModal: PropTypes.func.isRequired,
     data: PropTypes.object.isRequired,
+    openCustomerListPage: PropTypes.func.isRequired,
+    openStockPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
 
   }
 
-  // constructor(props) {
-  //   super(props);
-  // }
+  // 证券名称点击事件
+  @autobind
+  securityHandle(type, code) {
+    if (type === STOCK_CODE) {
+      console.warn('是股票');
+      const { openStockPage } = this.props;
+      const openPayload = {
+        code,
+      };
+      openStockPage(openPayload);
+    }
+  }
 
   @autobind
-  moreHandle(directionCode) {
+  moreHandle(value) {
     const { showModal } = this.props;
-    showModal(directionCode);
+    const payload = {
+      code: value,
+      type: HISTORY_TYPE,
+    };
+    showModal(payload);
   }
 
   render() {
-    const { data } = this.props;
+    const { data, openCustomerListPage } = this.props;
     const { list } = data;
     return (
       <div className={styles.combinationAdjustHistoryBox}>
@@ -54,7 +72,8 @@ export default class CombinationAdjustHistory extends PureComponent {
         {
           directionArray.map((item) => {
             const { icon, title, value } = item;
-            const showList = _.filter(list, o => o.directionCode === value);
+            const tempList = _.filter(list, o => o.directionCode === Number(value));
+            const showList = _.slice(tempList, 0, 2);
             return (
               <dl className={styles.adjustIn} key={value}>
                 <dt>
@@ -64,11 +83,26 @@ export default class CombinationAdjustHistory extends PureComponent {
                 {
                   showList.map((child, index) => {
                     const childKey = `${value}${index}`;
-                    const { securityName, securityCode, combinationName, reason } = child;
+                    const {
+                      securityName,
+                      securityCode,
+                      securityType,
+                      combinationName,
+                      reason,
+                    } = child;
+                    const openPayload = {
+                      name: securityName,
+                      code: securityCode,
+                      type: securityType,
+                    };
                     return (
                       <dd key={childKey}>
                         <div className={styles.titleBox}>
-                          <a className={styles.securityName} title={securityName}>
+                          <a
+                            className={styles.securityName}
+                            title={securityName}
+                            onClick={() => this.securityHandle(securityType, securityCode)}
+                          >
                             {securityName} ({securityCode})
                           </a>
                           <a className={styles.combinationName} title={combinationName}>
@@ -77,9 +111,13 @@ export default class CombinationAdjustHistory extends PureComponent {
                         </div>
                         <div className={styles.timeBox}>
                           <span>{child.time}</span>
-                          <a><Icon type="kehuzu" /></a>
+                          <a onClick={() => openCustomerListPage(openPayload)}>
+                            <Icon type="kehuzu" />
+                          </a>
                         </div>
-                        <p title={reason}>{reason}</p>
+                        <div className={styles.reasonBox}>
+                          <p title={reason}>{reason || '暂无'}</p>
+                        </div>
                       </dd>
                     );
                   })
