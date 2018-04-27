@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-26 21:41:06
+ * @Last Modified time: 2018-04-27 13:09:20
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -138,6 +138,36 @@ export default class TemplateForm extends PureComponent {
   //   checkMention(mentions);
   // }
 
+  // 获取光标位置
+  getCaretPosition(obj) {
+    let result = 0;
+    if (obj.selectionStart >= 0) { // IE以外
+      result = obj.selectionStart;
+    } else { // IE
+      try {
+        let rng;
+        if (obj.tagName === 'textarea') { // TEXTAREA
+          rng = event.srcElement.createTextRange();
+          rng.moveToPoint(event.x, event.y);
+        } else { // Text
+          rng = document.selection.createRange();
+        }
+        rng.moveStart('character', -event.srcElement.value.length);
+        result = rng.text.length;
+      } catch (e) {
+        throw new Error(10, 'asdasdasd');
+      }
+    }
+    return result;
+  }
+
+  // 内容提及框内容失去焦点
+  // @autobind
+  handleMentionBlur() {
+    // const selections = window.getselection;
+    // console.warn('selections', selections);
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { parameterList, suggestions } = this.state;
@@ -188,47 +218,66 @@ export default class TemplateForm extends PureComponent {
     } : null;
 
     return (
-      <div className={styles.TemplateAddWapper}>
+      <div className={styles.TemplateFormWapper}>
         <Form>
-          <FormItem label="标题：" {...titleStatusErrorProps}>
-            {getFieldDecorator('title', {
-              initialValue: title,
-            })(<Input />)}
-          </FormItem>
-          <FormItem label="内容：" {...contentStatusErrorProps}>
-            {getFieldDecorator('content', {
-              initialValue: toContentState(mentionContent),
-            })(
-              <Mention
-                mentionStyle={mentionTextStyle}
-                style={{ width: '100%', height: 200 }}
-                prefix={PREFIX}
-                onSearchChange={this.handleSearchChange}
-                suggestions={suggestions}
-                onSelect={this.onSelect}
-                multiLines
-              />,
-            )}
-          </FormItem>
-          <p className={styles.tipWapper}>
-            <span className={styles.tipNormal}>如果要在内容中包含对应每个客户的属性数值，
-            可以用 $xx 插入参数，比如 $客户名称。注意“$”前要有空格。</span>
-            <Dropdown overlay={menu} trigger={['click']}>
-              <span className={styles.tipInsert}>
-                插入参数
-              </span>
-            </Dropdown>
-          </p>
-          <FormItem label="类型：">
-            {getFieldDecorator('type', {
-              initialValue: missionTypeDefaultValue,
-              rules: [{
-                required: true, message: '请选择类型！',
-              }],
-            })(
-              <Select>{templateOptionsList}</Select>,
-            )}
-          </FormItem>
+          <ul className={styles.TemplateFormList}>
+            <li>
+              <div className={styles.TemplateFormItem}>
+                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>标题:</label>
+                <FormItem {...titleStatusErrorProps}>
+                  {getFieldDecorator('title', {
+                    initialValue: title,
+                  })(<Input />)}
+                </FormItem>
+              </div>
+            </li>
+            <li>
+              <div className={styles.TemplateFormItem}>
+                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
+                <FormItem {...contentStatusErrorProps}>
+                  {getFieldDecorator('content', {
+                    initialValue: toContentState(mentionContent),
+                  })(
+                    <Mention
+                      mentionStyle={mentionTextStyle}
+                      style={{ width: '100%', height: 200 }}
+                      prefix={PREFIX}
+                      onSearchChange={this.handleSearchChange}
+                      suggestions={suggestions}
+                      onSelect={this.onSelect}
+                      onBlur={this.handleMentionBlur}
+                      placeholder="请输入服务内容"
+                      multiLines
+                    />,
+                  )}
+                </FormItem>
+              </div>
+              <p className={styles.tipWapper}>
+                <span className={styles.tipNormal}>如果要在内容中包含对应每个客户的属性数值，
+                可以用 $xx 插入参数，比如 $客户名称。注意“$”前要有空格。</span>
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <span className={styles.tipInsert}>
+                    插入参数
+                  </span>
+                </Dropdown>
+              </p>
+            </li>
+            <li>
+              <div className={styles.TemplateFormItem}>
+                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>类型:</label>
+                <FormItem >
+                  {getFieldDecorator('type', {
+                    initialValue: missionTypeDefaultValue,
+                    rules: [{
+                      required: true, message: '请选择类型！',
+                    }],
+                  })(
+                    <Select>{templateOptionsList}</Select>,
+                  )}
+                </FormItem>
+              </div>
+            </li>
+          </ul>
         </Form>
       </div>
     );

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 09:08:32
+ * @Last Modified time: 2018-04-27 13:11:27
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -21,7 +21,14 @@ import TemplateForm from '../../components/operationManage/investmentAdvice/Temp
 import styles from './home.less';
 
 const Panel = Collapse.Panel;
-const { toString } = Mention;
+const { toString, toContentState } = Mention;
+// Mention属性
+const PREFIX = ['$'];
+const mentionTextStyle = {
+  color: '#2d84cc',
+  backgroundColor: '#ebf3fb',
+  borderColor: '#ebf3fb',
+};
 // 使用helper里面封装的生成effects的方法
 const effect = dva.generateEffect;
 
@@ -156,7 +163,6 @@ export default class InvestmentAdvice extends PureComponent {
   // 删除投资建议模板
   @autobind
   deleteInvestAdvice(params) {
-    console.warn('params', params);
     this.props.deleteInvestAdvice(params).then(() => {
       if (this.props.deleteSuccessStatus) {
         this.getInvestAdviceList();
@@ -190,7 +196,9 @@ export default class InvestmentAdvice extends PureComponent {
       this.setState({
         isShowContentStatusError: false,
       });
+      return true;
     }
+    return false;
   }
 
   // 校验标题
@@ -201,6 +209,7 @@ export default class InvestmentAdvice extends PureComponent {
         isShowTitleStatusError: true,
         titleStatusErrorMessage: '请输入标题',
       });
+      console.warn('111');
     } else if (title.length > 15) {
       this.setState({
         isShowTitleStatusError: true,
@@ -210,37 +219,41 @@ export default class InvestmentAdvice extends PureComponent {
       this.setState({
         isShowTitleStatusError: false,
       });
+      return true;
     }
+    return false;
   }
 
   // 弹窗确定按钮
   @autobind
   handleOk() {
     const { getFieldValue } = this.formTemplate;
-    const mentions = toString(getFieldValue('content'));
-    this.checkMention(mentions);
-    const { modelTitle, initialTemplateParams } = this.state;
-    const id = initialTemplateParams.id || '';
-    const action = modelTitle === '新建模板' ? 'CREATE' : 'UPDATE';
-    this.formTemplate.validateFields((err, values) => {
-      if (!err) {
-        const { title, type } = values;
-        const content = mentions;
-        const params = {
-          id,
-          action,
-          title,
-          content,
-          type,
-        };
-        this.props.modifyInvestAdvice(params).then(() => {
-          if (this.props.modifySuccessStatus) {
-            this.handleCancel();
-            this.getInvestAdviceList();
-          }
-        });
-      }
-    });
+    const content = toString(getFieldValue('content'));
+    const title = getFieldValue('title') || '';
+    const type = getFieldValue('type');
+    const checkContentStatus = this.checkMention(content);
+    const checkTitleStatus = this.checkTitle(title);
+    const {
+      modelTitle,
+      initialTemplateParams,
+     } = this.state;
+    if (checkTitleStatus && checkContentStatus) {
+      const id = initialTemplateParams.id || '';
+      const action = modelTitle === '新建模板' ? 'CREATE' : 'UPDATE';
+      const params = {
+        id,
+        action,
+        title,
+        content,
+        type,
+      };
+      this.props.modifyInvestAdvice(params).then(() => {
+        if (this.props.modifySuccessStatus) {
+          this.handleCancel();
+          this.getInvestAdviceList();
+        }
+      });
+    }
   }
 
   // 弹窗取消按钮
@@ -249,6 +262,7 @@ export default class InvestmentAdvice extends PureComponent {
     this.setState({
       showModal: false,
       isShowContentStatusError: false,
+      isShowTitleStatusError: false,
     });
   }
 
@@ -282,7 +296,14 @@ export default class InvestmentAdvice extends PureComponent {
       return (
         <Panel header={header} key={item.id}>
           <div className={styles.collapsePanel}>
-            <p>{item.content}</p>
+            <Mention
+              mentionStyle={mentionTextStyle}
+              style={{ width: '100%', height: 50 }}
+              readOnly
+              multiLines
+              prefix={PREFIX}
+              defaultValue={toContentState(item.content)}
+            />
             <Button onClick={e => this.editInvestAdviceTemplate(item, e)} >编辑</Button>
           </div>
         </Panel>

@@ -1,4 +1,4 @@
-.TemplateAddWapper {
+.TemplateFormWapper {
   padding: 20px;
 
   .contentWapper {
@@ -11,43 +11,58 @@
     }
   }
 
-  .tipWapper {
-    display: flex;
-    margin: -10px 0 20px 52px;
-    justify-content: space-between;
+  .TemplateFormList {
+    li {
+      .TemplateFormItem {
+        position: relative;
+        display: flex;
 
-    .tipNormal {
-      font-size: 14px;
-      color: #666;
-      line-height: 20px;
-      letter-spacing: -0.09px;
-    }
+        .templateForm_label {
+          width: 52px;
+          font-size: 14px;
+          margin-right: 10x;
+          display: inline-block;
 
-    .tipInsert {
-      font-size: 14px;
-      line-height: 20px;
-      height: 16px;
-      color: #108ee9;
-      width: 120px;
-      display: inline-block;
-      letter-spacing: -0.09px;
-      cursor: pointer;
+          .required_i {
+            color: #f00;
+            font-style: normal;
+          }
+        }
+      }
+
+      .tipWapper {
+        display: flex;
+        margin: -10px 0 20px 52px;
+        justify-content: space-between;
+
+        .tipNormal {
+          font-size: 14px;
+          color: #666;
+          line-height: 20px;
+          letter-spacing: -0.09px;
+        }
+
+        .tipInsert {
+          font-size: 14px;
+          line-height: 20px;
+          height: 16px;
+          color: #108ee9;
+          width: 120px;
+          text-align: right;
+          display: inline-block;
+          letter-spacing: -0.09px;
+          cursor: pointer;
+        }
+      }
     }
   }
 
   :global {
     .ant-form {
-      .ant-form-item {
-        display: flex;
-
-        .ant-form-item-label {
-          width: 52px;
-          margin-right: 10x;
-        }
+      .ant-row {
+        flex: 1;
 
         .ant-form-item-control-wrapper {
-          flex: 1;
-
           .ant-mention-wrapper.multilines {
             display: block;
 
@@ -60,13 +75,19 @@
             }
           }
         }
-
         .ant-select {
           width: 228px;
+          font-size: 14px;
         }
-      }
-      label {
-        font-size: 14px;
+
+        .ant-input {
+          font-size: 14px;
+        }
+        .ant-mention-wrapper {
+          .ant-mention-editor {
+            font-size: 14px;
+          }
+        }
       }
     }
   }
