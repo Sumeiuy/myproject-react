@@ -127,6 +127,7 @@ export default class Search extends PureComponent {
         id: item.primaryKey,
         type: item.type,
         source: item.source,
+        name: item.name,
       }
     ));
   }
@@ -156,7 +157,7 @@ export default class Search extends PureComponent {
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.value === value);
     const sightingScopeBool = isSightingScope(item.source);
-    this.handleOpenTab({
+    let query = {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
       labelMapping: item.id,
       // 任务提示
@@ -170,7 +171,12 @@ export default class Search extends PureComponent {
       labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.value),
       type: item.type,
-    });
+    };
+    // 查到的时持仓产品，传持仓产品的名称
+    if (item.type === 'PRODUCT' && item.name) {
+      query = { ...query, productName: encodeURIComponent(item.name) };
+    }
+    this.handleOpenTab(query);
   }
 
   @autobind

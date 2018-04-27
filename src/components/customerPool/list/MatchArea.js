@@ -411,7 +411,7 @@ export default class MatchArea extends PureComponent {
       if (filteredProducts.length > 1) {
         return this.getMultipleHoldingProductNode(filteredProducts, q);
       }
-      // 匹配到的持仓产品大于1个，显示 产品的名称/产品代码(持仓详情)
+      // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
       return this.getSingleHoldingProductNode(holdingProducts, q);
     }
     return null;

@@ -1426,12 +1426,12 @@ export default {
       };
     },
     queryHoldingProductSuccess(state, action) {
-      const { payload: { prdtHold, resultData } } = action;
+      const { payload: { prdtHold, custId, resultData } } = action;
       return {
         ...state,
         holdingProducts: {
           ...state.holdingProducts,
-          [prdtHold]: resultData,
+          [`${custId}${prdtHold}`]: resultData,
         },
       };
     },
