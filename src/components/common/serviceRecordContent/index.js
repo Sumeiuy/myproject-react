@@ -28,6 +28,7 @@ import {
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
+  PHONE,
  } from './utils';
 
 import styles from './index.less';
@@ -727,6 +728,7 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict },
       custFeedbackList,
       flowStatusCode,
+      caller,
     } = this.props;
     const {
       isReject,
@@ -792,6 +794,7 @@ export default class ServiceRecordContent extends PureComponent {
             onChange={this.handleServiceWayChange}
             options={serveWay}
             empInfo={empInfo}
+            caller={caller}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
@@ -831,15 +834,19 @@ export default class ServiceRecordContent extends PureComponent {
           <div className={styles.serveTime}>
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
-              <DatePicker
-                style={{ width: 142 }}
-                {...dateCommonProps}
-                value={serviceTime}
-                onChange={this.handleServiceDateChange}
-                disabledDate={this.disabledDate}
-                getCalendarContainer={() => this.serviceTimeRef}
-                disabled={isSelectZhangleFins}
-              />
+              {
+                caller === PHONE ?
+                  moment().format(DATE_FORMAT_SHOW) :
+                  <DatePicker
+                    style={{ width: 142 }}
+                    {...dateCommonProps}
+                    value={serviceTime}
+                    onChange={this.handleServiceDateChange}
+                    disabledDate={this.disabledDate}
+                    getCalendarContainer={() => this.serviceTimeRef}
+                    disabled={isSelectZhangleFins}
+                  />
+              }
             </div>
           </div>
         </div>
@@ -859,6 +866,7 @@ export default class ServiceRecordContent extends PureComponent {
               showError={isShowServiceContentError}
               value={serviceRecord}
               onChange={this.handleServiceRecordInputChange}
+              caller={caller}
             />
           )
         }
@@ -963,6 +971,7 @@ ServiceRecordContent.propTypes = {
   eventId: PropTypes.string,
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
+  caller: PropTypes.string.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {

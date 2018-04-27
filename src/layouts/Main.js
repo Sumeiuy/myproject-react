@@ -53,6 +53,8 @@ const mapStateToProps = state => ({
   custUuid: state.performerView.custUuid,
   // 自建任务平台的服务类型、任务反馈字典
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
+  // 服务弹窗的调用方
+  serviceRecordModalVisibleOfCaller: state.app.serviceRecordModalVisibleOfCaller,
 });
 
 const mapDispatchToProps = {
@@ -89,6 +91,7 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
+    serviceRecordModalVisibleOfCaller: PropTypes.string,
   }
 
   static defaultProps = {
@@ -96,6 +99,7 @@ export default class Main extends Component {
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
+    serviceRecordModalVisibleOfCaller: '',
   }
 
   componentDidMount() {
@@ -121,6 +125,7 @@ export default class Main extends Component {
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
+      serviceRecordModalVisibleOfCaller,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
@@ -152,6 +157,7 @@ export default class Main extends Component {
                             custUuid={custUuid}
                             ceFileDelete={ceFileDelete}
                             taskFeedbackList={motSelfBuiltFeedbackList}
+                            caller={serviceRecordModalVisibleOfCaller}
                           />
                         </div>
                       : null

@@ -39,10 +39,10 @@ export default class ContactInfoPopover extends PureComponent {
           hasWorkTels &&
           _.map(newList, (item, index) => {
             if (index === 0) {
-              return <li className={styles.title}>{name}</li>;
+              return <li className={styles.title} key={name} >{name}</li>;
             }
             return (
-              <li>
+              <li key={item.rowId} >
                 <span className={styles.content}>{item.contactValue}</span>
                 {item.mainFlag && <span className={styles.primary}>主</span>}
               </li>
@@ -72,9 +72,10 @@ export default class ContactInfoPopover extends PureComponent {
     homeTels = [],
     cellPhones = [],
     otherTels = [],
+    rowId = '',
   }) {
     return (
-      <div>
+      <div key={rowId}>
         {
           this.generateOrgContacts({ name, custRela, telList: workTels, label: '公司电话' })
         }
@@ -100,10 +101,10 @@ export default class ContactInfoPopover extends PureComponent {
           hasWorkTels &&
           _.map(newList, (item, index) => {
             if (index === 0) {
-              return <li className={styles.title}>{name}({custRela})</li>;
+              return <li className={styles.title} key={`${name}${custRela}`} >{name}({custRela})</li>;
             }
             return (
-              <li>
+              <li key={item.rowId} >
                 <span className={styles.label}>{label}</span>
                 <span className={styles.content}>{item.contactValue}</span>
                 {item.mainFlag && <span className={styles.primary}>主</span>}

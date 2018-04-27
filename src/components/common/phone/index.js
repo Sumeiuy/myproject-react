@@ -46,7 +46,7 @@ export default class Phone extends PureComponent {
     // 页面自定义样式
     style: PropTypes.object,
     // 是否禁用
-    disable: PropTypes.object,
+    disable: PropTypes.bool,
   }
 
   static defaultProps = {

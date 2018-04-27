@@ -22,6 +22,8 @@ export default {
     serviceRecordModalVisibleOfId: '',
     // 服务弹窗对应的客户的经纪客户名
     serviceRecordModalVisibleOfName: '',
+    // 服务弹窗的调用方
+    serviceRecordModalVisibleOfCaller: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -127,6 +129,7 @@ export default {
         serviceRecordModalVisible: payload.flag,
         serviceRecordModalVisibleOfId: payload.custId,
         serviceRecordModalVisibleOfName: payload.custName,
+        serviceRecordModalVisibleOfCaller: payload.caller,
       };
     },
     getDictionarySuccess(state, action) {
@@ -292,11 +295,20 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch }) {
+    setup({ dispatch, history }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
+      return history.listen(({ pathname }) => {
+        if (pathname === '/customerPool/list') {
+          // 进入页面查询子类型列表
+          dispatch({
+            type: 'getMotCustfeedBackDict',
+            payload: { pageNum: 1, pageSize: 10000, type: 2 },
+          });
+        }
+      });
     },
   },
 };

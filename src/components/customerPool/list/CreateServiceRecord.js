@@ -65,6 +65,7 @@ export default class CreateServiceRecord extends PureComponent {
     queryApprovalList: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
+    caller: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -162,6 +163,7 @@ export default class CreateServiceRecord extends PureComponent {
       queryApprovalList,
       custFeedbackList,
       zhangleApprovalList,
+      caller,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
@@ -211,6 +213,7 @@ export default class CreateServiceRecord extends PureComponent {
                 queryApprovalList={queryApprovalList}
                 custFeedbackList={custFeedbackList}
                 zhangleApprovalList={zhangleApprovalList}
+                caller={caller}
               />
             </div>
             :

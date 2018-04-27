@@ -12,6 +12,8 @@ import { autobind } from 'core-decorators';
 import { Select } from 'antd';
 import _ from 'lodash';
 
+import { PHONE } from './utils';
+
 import styles from './index.less';
 
 const { Option } = Select;
@@ -23,6 +25,7 @@ export default class ServiceWaySelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
+    caller: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -63,21 +66,24 @@ export default class ServiceWaySelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { width, options } = this.props;
+    const { width, options, caller } = this.props;
     // const selectValue = !_.isEmpty(value) ? value : options[0].key;
     // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (
       <div className={styles.serveWay}>
         <div className={styles.title}>服务方式:</div>
         <div className={styles.content} ref={this.setServiceWrapRef}>
-          <Select
-            value={value}
-            style={width}
-            onChange={this.handleSelectChange}
-            getPopupContainer={() => this.serviceWayRef}
-          >
-            { this.renderServiceSelectOptions(options) }
-          </Select>
+          {
+            caller === PHONE ? '电话' :
+            <Select
+              value={value}
+              style={width}
+              onChange={this.handleSelectChange}
+              getPopupContainer={() => this.serviceWayRef}
+            >
+              {this.renderServiceSelectOptions(options)}
+            </Select>
+          }
         </div>
       </div>
     );

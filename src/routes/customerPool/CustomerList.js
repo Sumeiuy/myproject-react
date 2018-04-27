@@ -58,6 +58,7 @@ const effects = {
   getCeFileList: 'customerPool/getCeFileList',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  addServeRecord: 'customerPool/addCommonServeRecord',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -101,6 +102,8 @@ const mapStateToProps = state => ({
   sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
   // 是否包含非本人名下客户和超出1000条数据限制
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
+  // 自建任务平台的服务类型、任务反馈字典
+  motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
 });
 
 const mapDispatchToProps = {
@@ -138,6 +141,8 @@ const mapDispatchToProps = {
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
+  // 天假服务记录
+  addServeRecord: fetchDataFunction(false, effects.addServeRecord),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -194,6 +199,8 @@ export default class CustomerList extends PureComponent {
     sightingTelescopeFilters: PropTypes.object.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -592,6 +599,8 @@ export default class CustomerList extends PureComponent {
       sightingTelescopeFilters,
       isSendCustsServedByPostn,
       sendCustsServedByPostnResult,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
     } = this.props;
     const {
       sortDirection,
@@ -691,6 +700,8 @@ export default class CustomerList extends PureComponent {
           hasIndexViewPermission={this.hasIndexViewPermission}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          addServeRecord={addServeRecord}
+          motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
         />
       </div>
     );

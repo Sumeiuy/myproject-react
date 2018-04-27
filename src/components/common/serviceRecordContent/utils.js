@@ -87,10 +87,14 @@ const serveStatusRadioGroupMap = [
   },
 ];
 
+// 打电话时的服务记录
+const PHONE = 'phone';
+
 export default {
   serveWaySelectMap,
   errorFeedback,
   getServeWayCode,
   getServeWayByCodeOrName,
   serveStatusRadioGroupMap,
+  PHONE,
 };

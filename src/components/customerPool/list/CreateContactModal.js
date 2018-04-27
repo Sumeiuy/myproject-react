@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
@@ -27,6 +28,29 @@ const CONTACT_MAP = {
   otherTels: '其他电话',
 };
 
+const PHONE = 'phone';
+
+/**
+ * 将数组对象中的id和name转成对应的key和value
+ * @param {*} arr 原数组
+ * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
+ */
+function transformCustFeecbackData(arr = []) {
+  return arr.map((item) => {
+    const obj = {
+      key: String(item.id),
+      value: item.name || item.parentClassName,
+    };
+    if (item.feedbackList && item.feedbackList.length) {
+      obj.children = transformCustFeecbackData(item.feedbackList);
+    }
+    if (item.childList && item.childList.length) {
+      obj.children = transformCustFeecbackData(item.childList);
+    }
+    return obj;
+  });
+}
+
 export default class CreateContactModal extends PureComponent {
   static propTypes = {
     custContactData: PropTypes.object.isRequired,
@@ -44,12 +68,17 @@ export default class CreateContactModal extends PureComponent {
     currentCustName: PropTypes.string.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    // 打电话结束弹出创建任务窗口
+    toggleServiceRecordModal: PropTypes.func,
+    addServeRecord: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
     data: {},
     custType: '',
     filesList: [],
+    toggleServiceRecordModal: _.noop,
   };
 
   constructor(props) {
@@ -221,16 +250,60 @@ export default class CreateContactModal extends PureComponent {
   }
 
   /**
-   * 生成头像icon右侧的主联系人信息或这要联系电话
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
+  @autobind
+  handlePhoneEnd(data) {
+    const {
+      currentCustId,
+      currentCustName,
+      toggleServiceRecordModal,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
+    } = this.props;
+    const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
+    console.log('list>>>>', data, list);
+    const [firstServiceType = {}] = list;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const {
+      key: firstFeedbackKey,
+      children: [secondFeedback],
+    } = firstFeedback;
+    const { key: secondFeedbackKey } = secondFeedback;
+    addServeRecord({
+      custId: currentCustId,
+      serveWay: 'HTSC Phone',
+      taskType: '2',
+      type: firstServiceTypeKey,
+      serveType: firstServiceTypeKey,
+      serveCustFeedBack: firstFeedbackKey,
+      serveCustFeedBack2: secondFeedbackKey,
+      serveContentDesc: '2222',
+      serveTime: '2018-04-27 10:53',
+      feedBackTime: moment().format('YYYY-MM-DD'),
+      caller: PHONE,
+    }).then(() => {
+      toggleServiceRecordModal({
+        custId: currentCustId,
+        custName: currentCustName,
+        flag: true,
+        caller: PHONE,
+      });
+    });
+  }
+
+  /**
+   * 生成头像icon右侧的主联系人信息或主要联系电话
    *
    */
   createMainContact({
-    custType,
     isPersonHasContact,
     isOrgMainContactHasTel,
     mainContactInfo,
     personalContactInfo,
   }) {
+    const { custType } = this.props;
     if (!isPersonHasContact && !isOrgMainContactHasTel) {
       return <p>客户未预留主要联系方式，请尽快完善信息</p>;
     }
@@ -248,11 +321,10 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
           <Phone
-            onTogglePhoneDialog={() => {}}
-            phoneNum={custType === 'per' ?
-              personalContactInfo.mainTelInfo.value :
-              mainContactInfo.cellInfo}
+            onEnd={this.handlePhoneEnd}
+            number={'18751964883'}
             custType={custType}
+            disable={false}
           />
         }
       </div>
@@ -327,19 +399,6 @@ export default class CreateContactModal extends PureComponent {
             }, mainContactInfo);
           }
         }
-        // 其他联系人信息
-        // const otherContact = _.filter(orgCustomerContactInfoList,
-        //   (item, index) => index !== mainContactIndex) || EMPTY_LIST;
-        // otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
-        //   contact: item.name || '--',
-        //   phone: _.isEmpty(item.cellPhones) ? '--' :
-        //     this.formatPhoneNumber(item.cellPhones[0].contactValue),
-        //   work: _.isEmpty(item.workTels) ? '--' :
-        //     this.formatPhoneNumber(item.workTels[0].contactValue),
-        //   home: _.isEmpty(item.homeTels) ? '--' :
-        //     this.formatPhoneNumber(item.homeTels[0].contactValue),
-        //   personType: item.custRela || '--',
-        // }));
       } else if (!_.isEmpty(perCustomerContactInfo)) {
         const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
         isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
@@ -398,7 +457,6 @@ export default class CreateContactModal extends PureComponent {
             <div className={styles.headshotRight}>
               <p className={styles.customerName}>{custName}</p>
               {this.createMainContact({
-                custType,
                 isPersonHasContact,
                 isOrgMainContactHasTel,
                 mainContactInfo,

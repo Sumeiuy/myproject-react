@@ -10,6 +10,7 @@ import { Row, Col, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+// import moment from 'moment';
 import contains from 'rc-util/lib/Dom/contains';
 
 import styles from './targetCustomerRight.less';
@@ -19,6 +20,7 @@ import TipsInfo from './TipsInfo';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 import logable from '../../../decorators/logable';
+import Phone from '../../common/phone';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -28,6 +30,8 @@ const NOTCOMPLETION = '不完备';
 const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
+
+// const PHONE = 'phone';
 
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
@@ -149,6 +153,70 @@ export default class TargetCustomerRight extends PureComponent {
   handleCustNameClick(itemData) {
     const param = this.get360FspTabConfig();
     this.openFsp360TabAction({ itemData, param });
+  }
+
+  /**
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
+  @autobind
+  handlePhoneEnd() {
+    // const {
+    //   currentCustId,
+    //   currentCustName,
+    //   toggleServiceRecordModal,
+    //   addServeRecord,
+    //   motSelfBuiltFeedbackList,
+    // } = this.props;
+    // const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
+    // console.log('list>>>>', data, list);
+    // const [firstServiceType = {}] = list;
+    // const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    // const [firstFeedback = {}] = children;
+    // const {
+    //   key: firstFeedbackKey,
+    //   children: [secondFeedback],
+    // } = firstFeedback;
+    // const { key: secondFeedbackKey } = secondFeedback;
+    // addServeRecord({
+    //   custId: currentCustId,
+    //   serveWay: 'HTSC Phone',
+    //   taskType: '2',
+    //   type: firstServiceTypeKey,
+    //   serveType: firstServiceTypeKey,
+    //   serveCustFeedBack: firstFeedbackKey,
+    //   serveCustFeedBack2: secondFeedbackKey,
+    //   serveContentDesc: '2222',
+    //   serveTime: '2018-04-27 10:53',
+    //   feedBackTime: moment().format('YYYY-MM-DD'),
+    //   caller: PHONE,
+    // }).then(() => {
+    //   toggleServiceRecordModal({
+    //     custId: currentCustId,
+    //     custName: currentCustName,
+    //     flag: true,
+    //     caller: PHONE,
+    //   });
+    // });
+  }
+
+  /**
+   * 传入电话号码
+   * @param {*} num
+   */
+  @autobind
+  renderPhone(num) {
+    console.log('num: ', num);
+    const {
+      itemData,
+    } = this.props;
+    return (
+      <Phone
+        onEnd={this.handlePhoneEnd}
+        number={'18751964883'}
+        custType={itemData.custNature}
+        disable={false}
+      />
+    );
   }
 
   // 联系电话的浮层信息

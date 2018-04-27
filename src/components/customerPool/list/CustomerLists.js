@@ -121,6 +121,8 @@ export default class CustomerLists extends PureComponent {
     hasIndexViewPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -521,6 +523,8 @@ export default class CustomerLists extends PureComponent {
       hasTkMampPermission,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -726,6 +730,9 @@ export default class CustomerLists extends PureComponent {
               serveWay={serveWay}
               getCeFileList={getCeFileList}
               filesList={filesList}
+              toggleServiceRecordModal={toggleServiceRecordModal}
+              addServeRecord={addServeRecord}
+              motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
             /> : null
         }
       </div>
