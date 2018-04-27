@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-27 13:21:44
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-04-27 14:36:27
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
