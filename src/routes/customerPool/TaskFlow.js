@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-03-09 10:53:32
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-27 14:02:23
  */
 
 import React, { PureComponent } from 'react';
@@ -1074,6 +1074,7 @@ export default class TaskFlow extends PureComponent {
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
       previewCustFile,
+      location,
     } = this.props;
 
     // 拿到自建任务需要的missionType

@@ -46,7 +46,7 @@ const onError = (e) => {
       message.error(errorMessage);
     } else if (messageType === '1') {
       // 错误类型是1，用dialog
-      CommonModal.showDialog(errorMessage);
+      CommonModal.showErrorDialog(errorMessage);
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
