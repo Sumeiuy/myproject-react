@@ -350,7 +350,7 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId) {
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId, currentSelectLabelName) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -378,7 +378,7 @@ export default class TaskFlow extends PureComponent {
       newPostBody = _.merge(newPostBody, {
         searchReq: {
           enterType: 'labelSearchCustPool',
-          labels: [labelId],
+          primaryKey: [labelId],
         },
       });
     } else {
@@ -386,7 +386,12 @@ export default class TaskFlow extends PureComponent {
         searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
       });
     }
-
+    newPostBody = _.merge(newPostBody, {
+      searchReq: {
+        searchTypeReq: 'LABEL',
+        searchText: currentSelectLabelName,
+      },
+    });
     return newPostBody;
   }
 
@@ -438,6 +443,7 @@ export default class TaskFlow extends PureComponent {
           custNum,
           customNum,
           missionDesc,
+          currentSelectLabelName,
         },
       } = sightingTelescope;
       // currentEntry为0 时 表示当前是导入客户
@@ -467,7 +473,12 @@ export default class TaskFlow extends PureComponent {
           return;
         }
 
-        postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+        postBody = this.addOrgIdOrPtyMngId(
+          postBody,
+          argsOfQueryCustomer,
+          labelId,
+          currentSelectLabelName,
+        );
       }
 
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
@@ -865,7 +876,7 @@ export default class TaskFlow extends PureComponent {
         ...postBody,
       };
     } else {
-      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId, labelName);
       postBody = {
         ...postBody,
         queryLabelReq: {
