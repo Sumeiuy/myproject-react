@@ -282,9 +282,13 @@ export default class CreateTaskForm extends PureComponent {
 
   // 判断是否从持仓产品进入的列表页发起任务的
   isFromProduct(query = {}) {
-    const condition = JSON.parse(decodeURIComponent(query.condition));
-    const { searchTypeReq = '' } = condition;
-    return searchTypeReq === 'PRODUCT';
+    const { condition } = query;
+    if (!_.isEmpty(condition)) {
+      const param = JSON.parse(decodeURIComponent(condition));
+      const { searchTypeReq = '' } = param;
+      return searchTypeReq === 'PRODUCT';
+    }
+    return false;
   }
 
   /**
