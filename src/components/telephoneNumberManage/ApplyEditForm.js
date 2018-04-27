@@ -3,21 +3,20 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 19:03:32
+ * @Last Modified time: 2018-04-26 20:03:40
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import AddEmpList from './AddEmpList';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import ApprovalRecord from '../permission/ApprovalRecord';
-import commonConfirm from '../common/Confirm';
 import config from './config';
 import styles from './applyEditForm.less';
 
@@ -111,7 +110,7 @@ export default class ApplyEditForm extends PureComponent {
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
-    },() => {
+    }, () => {
       // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
       // 终止按钮的approverNum为none，提交按钮的approverNum不为none，需要验证提交数据
       if (item.approverNum !== 'none') {
@@ -129,7 +128,9 @@ export default class ApplyEditForm extends PureComponent {
               nextApproverModal: true,
             });
           } else {
-            commonConfirm({
+            Modal.error({
+              title: '提示信息',
+              okText: '确定',
               content: msg,
             });
           }

@@ -3,13 +3,13 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:32:37
+ * @Last Modified time: 2018-04-27 15:58:15
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import BottonGroup from '../permission/BottonGroup';
@@ -24,6 +24,7 @@ import styles from './createApply.less';
 const { MAXSELECTNUM, approvalColumns } = config;
 export default class CreateApply extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 新建页面获取投顾
     advisorListData: PropTypes.object,
     queryAdvisorList: PropTypes.func.isRequired,
@@ -47,10 +48,6 @@ export default class CreateApply extends PureComponent {
     validateResultData: PropTypes.object.isRequired,
     validateData: PropTypes.func.isRequired,
   }
-
-  static contextTypes = {
-    location: PropTypes.object.isRequired,
-  };
 
   static defaultProps = {
     advisorListData: {},
@@ -140,7 +137,9 @@ export default class CreateApply extends PureComponent {
           nextApproverModal: true,
         });
       } else {
-        commonConfirm({
+        Modal.error({
+          title: '提示信息',
+          okText: '确定',
           content: msg,
         });
       }
@@ -174,8 +173,8 @@ export default class CreateApply extends PureComponent {
       doApprove,
       updateBindingFlowAppId,
       queryAppList,
+      location: { query, query: { pageNum, pageSize } },
     } = this.props;
-    const { location: { query, query: { pageNum, pageSize } } } = this.context;
     const { groupName, auditors, operate } = this.state;
     doApprove({
       itemId: updateBindingFlowAppId,

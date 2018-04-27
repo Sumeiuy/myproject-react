@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:32:57
+ * @Last Modified time: 2018-04-27 15:58:47
  */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,8 @@ import config from '../../components/telephoneNumberManage/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
+// 头部筛选区域上方导航的高度，在SplitPanel计算中需要额外减去
+const EXTRAHEIGHT = 40;
 const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
 const effect = dva.generateEffect;
 const effects = {
@@ -418,10 +420,12 @@ export default class ApplyHome extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="telephoneNumApplyList"
+          extraHeight={EXTRAHEIGHT}
         />
         {
           isShowCreateModal ?
             <CreateApply
+              location={location}
               advisorListData={advisorListData}
               queryAdvisorList={queryAdvisorList}
               empAppBindingList={empAppBindingList}

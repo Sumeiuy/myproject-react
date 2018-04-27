@@ -65,7 +65,7 @@ export default {
           ...resultData.children,
         ];
       } else {
-        custRange = resultData;
+        custRange = [resultData];
       }
       return {
         ...state,

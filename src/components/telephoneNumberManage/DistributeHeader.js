@@ -19,6 +19,8 @@ const { telephoneNumDistribute: { pageType, statusOptions } } = config;
 const DISTRIBUT_EDEFAULT_VALUE = 'Y';
 export default class DistributeHeader extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
     // 部门列表信息
     custRange: PropTypes.array.isRequired,
     getCustRange: PropTypes.func.isRequired,
@@ -28,11 +30,6 @@ export default class DistributeHeader extends PureComponent {
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
   }
-
-  static contextTypes = {
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
-  };
 
   static defaultProps = {
     filterCallback: _.noop,
@@ -73,11 +70,12 @@ export default class DistributeHeader extends PureComponent {
   }
 
   render() {
-    const { empList, custRange } = this.props;
     const {
+      empList,
+      custRange,
       replace,
       location: { query: { orgId, isBinding } },
-    } = this.context;
+    } = this.props;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
     // 增加已申请服务经理的全部
     const ptyMngAllList = !_.isEmpty(empList) ? [ptyMngAll, ...empList] : empList;
