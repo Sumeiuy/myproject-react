@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 13:11:27
+ * @Last Modified time: 2018-04-27 16:19:04
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -105,6 +105,11 @@ export default class InvestmentAdvice extends PureComponent {
     this.getInvestAdviceList();
   }
 
+  @autobind
+  setTemplateFormRef(form) {
+    this.formTemplate = form;
+  }
+
   // 获取投资建议模版列表
   @autobind
   getInvestAdviceList() {
@@ -122,17 +127,20 @@ export default class InvestmentAdvice extends PureComponent {
       showModal: true,
       modelTitle: '新建模板',
       initialTemplateParams: {},
+      isShowContentStatusError: false,
+      isShowTitleStatusError: false,
     });
   }
 
   // 编辑投资建议模板
   @autobind
   editInvestAdviceTemplate(item) {
-    console.log('item', item);
     this.setState({
       showModal: true,
       modelTitle: '编辑模板',
       initialTemplateParams: item,
+      isShowContentStatusError: false,
+      isShowTitleStatusError: false,
     });
   }
 
@@ -209,7 +217,6 @@ export default class InvestmentAdvice extends PureComponent {
         isShowTitleStatusError: true,
         titleStatusErrorMessage: '请输入标题',
       });
-      console.warn('111');
     } else if (title.length > 15) {
       this.setState({
         isShowTitleStatusError: true,
@@ -227,7 +234,7 @@ export default class InvestmentAdvice extends PureComponent {
   // 弹窗确定按钮
   @autobind
   handleOk() {
-    const { getFieldValue } = this.formTemplate;
+    const { getFieldValue } = this.formTemplate.getForm();
     const content = toString(getFieldValue('content'));
     const title = getFieldValue('title') || '';
     const type = getFieldValue('type');
@@ -355,7 +362,7 @@ export default class InvestmentAdvice extends PureComponent {
             modalKey={modalKey}
           >
             <TemplateForm
-              ref={(form) => { this.formTemplate = form; }}
+              wrappedComponentRef={this.setTemplateFormRef}
               defaultMissionDesc={defaultMissionDesc}
               initialTemplateParams={initialTemplateParams}
               isShowContentStatusError={isShowContentStatusError}
@@ -363,6 +370,8 @@ export default class InvestmentAdvice extends PureComponent {
               isShowTitleStatusError={isShowTitleStatusError}
               titleStatusErrorMessage={titleStatusErrorMessage}
               checkMention={this.checkMention}
+              checkTitle={this.checkTitle}
+              showModal={showModal}
             />
           </CommonModal>)
         }
