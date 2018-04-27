@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-26 21:29:46
+ * @Last Modified time: 2018-04-27 09:08:32
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -16,7 +16,7 @@ import { Button, Collapse, Icon, Mention } from 'antd';
 import { dva } from '../../helper';
 import Pagination from '../../components/common/Pagination';
 import CommonModal from '../../components/common/biz/CommonModal';
-import Confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm_';
 import TemplateForm from '../../components/operationManage/investmentAdvice/TemplateForm';
 import styles from './home.less';
 
@@ -142,7 +142,7 @@ export default class InvestmentAdvice extends PureComponent {
       e.stopPropagation();
     }
     const self = this;
-    Confirm({
+    confirm({
       content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
       onOk() {
         self.deleteInvestAdvice({ id });
