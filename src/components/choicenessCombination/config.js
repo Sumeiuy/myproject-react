@@ -32,20 +32,91 @@ const config = {
   directionRange: [
     {
       show: true,
-      label: '请选择',
+      label: '全部',
       value: '',
     },
     {
       show: true,
       label: '调入/增/买',
       value: '1',
+      icon: '买',
+      title: '最新调入',
     },
     {
       show: true,
       label: '调出/减/卖',
       value: '2',
+      icon: '卖',
+      title: '最新调出',
     },
   ],
+  titleList: {
+    transfer: [
+      {
+        dataIndex: 'time',
+        key: 'time',
+        title: '时间',
+        width: 150,
+      },
+      {
+        dataIndex: 'directionName',
+        key: 'directionName',
+        title: '调仓方向',
+        width: 86,
+      },
+      {
+        dataIndex: 'securityName',
+        key: 'securityName',
+        title: '证券名称',
+        width: 100,
+      },
+      {
+        dataIndex: 'securityCode',
+        key: 'securityCode',
+        title: '证券代码',
+        width: 86,
+      },
+      {
+        dataIndex: 'price',
+        key: 'price',
+        title: '调仓价（元）',
+        width: 115,
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+      {
+        dataIndex: 'combinationName',
+        key: 'combinationName',
+        title: '所属组合',
+        width: 150,
+      },
+    ],
+    report: [
+      {
+        dataIndex: 'title',
+        key: 'title',
+        title: '标题',
+      },
+      {
+        dataIndex: 'author',
+        key: 'author',
+        title: '作者',
+      },
+      {
+        dataIndex: 'time',
+        key: 'time',
+        title: '报告日期',
+      },
+      {
+        dataIndex: 'combinationName',
+        key: 'combinationName',
+        title: '组合名称',
+      },
+    ],
+  },
 };
 
 export default config;

@@ -16,6 +16,7 @@ export default {
   namespace: 'choicenessCombination',
   state: {
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
+    tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
     weeklySecurityTopTenData: EMPTY_LIST, // 近一周表现前十的证券
     combinationTreeList: EMPTY_LIST, // 组合树
@@ -29,6 +30,13 @@ export default {
       return {
         ...state,
         adjustWarehouseHistoryData: resultData,
+      };
+    },
+    getTableHistorySuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        tableHistoryList: resultData,
       };
     },
     // 获取组合调仓数据
@@ -76,8 +84,10 @@ export default {
     // 获取调仓历史数据
     * getAdjustWarehouseHistory({ payload }, { call, put }) {
       const response = yield call(api.getAdjustWarehouseHistory, payload);
+      // 如果调仓方向为 3，走首页历史调仓，否则走弹窗的 table 历史调仓
+      const type = payload.directionCode === '3' ? 'getAdjustWarehouseHistorySuccess' : 'getTableHistorySuccess';
       yield put({
-        type: 'getAdjustWarehouseHistorySuccess',
+        type,
         payload: response,
       });
     },
