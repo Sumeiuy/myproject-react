@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 17:20:01
+ * @Last Modified time: 2018-04-27 13:21:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,23 +11,21 @@ import { autobind } from 'core-decorators';
 import { Tabs, Modal, Collapse, Icon, Popover, Button, message, Input } from 'antd';
 import _ from 'lodash';
 
-import config from './config';
 import FeedbackAdd from './FeedbackAdd';
 import Pagination from '../../common/Pagination';
 import styles from './missionBind.less';
 import logable from '../../../decorators/logable';
+import {
+  TABLIST,
+  MOT_TASK,
+  SERVICE_MANAGER_ROLE,
+  ZHANGLE_ROLE,
+} from './config';
 
 const TabPane = Tabs.TabPane;
 const Panel = Collapse.Panel;
 const confirm = Modal.confirm;
 const Search = Input.Search;
-
-// tab切换选项
-const TAB_LIST = config.tabList;
-// 角色可选项配置
-const ROLE_TYPE = config.roleType;
-// 第一个tab的状态, MOT 任务
-const FIRST_TAB = config.tabList[0].key;
 
 export default class MissionBind extends PureComponent {
   static propTypes = {
@@ -59,7 +57,7 @@ export default class MissionBind extends PureComponent {
       // 被添加客户反馈的任务id
       beAddMissionId: '',
       // 服务经理或客户可选项
-      roleType: ROLE_TYPE[0].key,
+      roleType: SERVICE_MANAGER_ROLE.key,
     };
   }
 
@@ -84,18 +82,31 @@ export default class MissionBind extends PureComponent {
           :
             <span>{item.name}</span>
         }
-        <Icon type="close-circle" onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)} />
+        <Icon
+          type="close-circle"
+          onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)}
+        />
       </div>);
     });
+  }
+
+  // 渲染涨乐客户反馈可选项
+  @autobind
+  getZLFeedbackItem(list = []) {
+    return list.map(item => (
+      <div className={styles.zlfeedbackItem} key={item.id}>
+        <span>{item.name}</span>
+      </div>
+    ));
   }
 
   // 获取任务Panel
   @autobind
   getPanelList() {
     const { missionData } = this.props;
-    const { location: { query: { childActiveKey = TAB_LIST[0].key } } } = this.context;
+    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.context;
     const missionList = missionData.missionList || [];
-    const isMOTMission = childActiveKey === FIRST_TAB;
+    const isMOTMission = childActiveKey === MOT_TASK.key;
     return missionList.map((item) => {
       const header = (<div className={styles.collapseHead}>
         <span
@@ -113,22 +124,28 @@ export default class MissionBind extends PureComponent {
       </div>);
       return (<Panel header={header} key={item.id}>
         <div className={styles.feedbackListBox}>
-          <h2>{ROLE_TYPE[0].name}</h2>
+          <h2>{SERVICE_MANAGER_ROLE.name}</h2>
           {
             this.getFeedbackItem(item.feedbackList, item.id, {
               needPopover: true,
-              roleType: ROLE_TYPE[0].key,
+              roleType: SERVICE_MANAGER_ROLE.key,
             })
           }
-          <Button onClick={() => this.showAddFeedbackModal(item.id, ROLE_TYPE[0].key)}>+新增</Button>
-          <div className={styles.borderRight} />
+          <Button
+            ghost
+            icon="plus"
+            type="primary"
+            onClick={() => this.showAddFeedbackModal(item.id, SERVICE_MANAGER_ROLE.key)}
+          >
+            新增
+          </Button>
         </div>
         <div className={styles.feedbackListBox}>
-          <h2>{ROLE_TYPE[1].name}</h2>
+          <h2>{ZHANGLE_ROLE.name}</h2>
           {
-            this.getFeedbackItem(item.customerList, item.id, {
+            this.getZLFeedbackItem(item.customerList, item.id, {
               needPopover: false,
-              roleType: ROLE_TYPE[1].key,
+              roleType: ZHANGLE_ROLE.key,
             })
           }
         </div>
@@ -162,12 +179,14 @@ export default class MissionBind extends PureComponent {
   // 删除任务下所关联客户反馈选项
   @autobind
   handleDelCustomerFeedback(missionId, feedbackId, roleType) {
-    const { location: { query: { childActiveKey, pageNum, pageSize, keyWord } } } = this.context;
+    const {
+      location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
+    } = this.context;
     const { missionData, delCustomerFeedback, queryMissionList } = this.props;
     const { missionList } = missionData;
     const missionItem = _.find(missionList, v => v.id === missionId);
     // 任务绑定的反馈不能少于一条并且 roleType 为服务经理可选项
-    if (missionItem.feedbackList.length < 2 && roleType === ROLE_TYPE[0].key) {
+    if (missionItem.feedbackList.length < 2 && roleType === SERVICE_MANAGER_ROLE.key) {
       message.error('每条任务绑定的客户反馈不能少于一条');
       return;
     }
@@ -202,7 +221,9 @@ export default class MissionBind extends PureComponent {
   @autobind
   handleAddFeedback() {
     const { beAddMissionId, roleType } = this.state;
-    const { location: { query: { childActiveKey, pageNum, pageSize, keyWord } } } = this.context;
+    const {
+      location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
+    } = this.context;
     const { addCustomerFeedback, queryMissionList } = this.props;
     if (this.feedbackAddComponent) {
       const feedback = this.feedbackAddComponent.getData();
@@ -232,7 +253,7 @@ export default class MissionBind extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '搜索Mot任务列表', value: '$args[0]' } })
   searchMotMission(keyWord, pageNum = 1, pageSize = 20) {
-    this.props.queryMissionList({ type: FIRST_TAB, pageNum, pageSize, keyWord });
+    this.props.queryMissionList({ type: MOT_TASK.key, pageNum, pageSize, keyWord });
   }
   // 修复tab上input中左右键切换不符合预期
   preventKeyDownPropagation(e) {
@@ -253,11 +274,11 @@ export default class MissionBind extends PureComponent {
       beAddMissionId,
       roleType,
     } = this.state;
-    const { location: { query: { childActiveKey = TAB_LIST[0].key } } } = this.context;
+    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.context;
     const { missionData, queryFeedbackList, feedbackData } = this.props;
     const missionPage = missionData.page || {};
 
-    const isMOTMission = childActiveKey === FIRST_TAB;
+    const isMOTMission = childActiveKey === MOT_TASK.key;
     const missionList = missionData.missionList || [];
 
     return (
@@ -286,7 +307,7 @@ export default class MissionBind extends PureComponent {
             }
           >
             {
-              TAB_LIST.map(item => (<TabPane tab={item.tabName} key={item.key} />))
+              TABLIST.map(item => (<TabPane tab={item.name} key={item.key} />))
             }
           </Tabs>
         </div>
@@ -330,7 +351,7 @@ export default class MissionBind extends PureComponent {
             <Modal
               title="请选择恰当的客户反馈"
               visible={showModal}
-              onO={this.handleAddFeedback}
+              onOk={this.handleAddFeedback}
               onCancel={this.handleCloseModal}
               width={650}
               wrapClassName={styles.feedbackAddModalWarp}
