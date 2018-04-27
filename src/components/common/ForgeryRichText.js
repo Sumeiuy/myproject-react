@@ -31,7 +31,8 @@ export default class ForgeryRichText extends PureComponent {
       const textList = textContent.split(regxp.returnLine);
       return _.map(textList, item => <div
         key={item}
-        dangerouslySetInnerHTML={{ __html: item }}
+        // 处理空行问题
+        dangerouslySetInnerHTML={{ __html: _.isEmpty(item) ? '<br/>' : item }}
       />);
     }
     return '--';
