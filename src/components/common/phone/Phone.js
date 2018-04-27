@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-27 21:25:55
+ * @Last Modified time: 2018-04-27 21:31:26
  */
 
 import React, { PureComponent } from 'react';
@@ -56,6 +56,8 @@ export default class Phone extends PureComponent {
     config: PropTypes.object.isRequired,
     // 获取电话配置
     getConfig: PropTypes.func.isRequired,
+    // 用户信息
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
