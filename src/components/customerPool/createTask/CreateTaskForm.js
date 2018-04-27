@@ -182,19 +182,20 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
-      case 'search':
       case 'association':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
-        defaultExecutionType = '请选择';
+        defaultExecutionType = 'Chance';
+        defaultInitialValue = 4; // 有效期4天
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
+      case 'search':
       case 'tag':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
-        defaultInitialValue = 4;
+        defaultInitialValue = 4; // 有效期4天
         break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
@@ -271,10 +272,10 @@ export default class CreateTaskForm extends PureComponent {
   // 返回持仓产品发起任务时，任务提示的文字
   getDefaultMissionDescFromProduct(query) {
     const condition = JSON.parse(decodeURIComponent(query.condition));
-    const { labelName, primaryKey: [id] } = condition;
+    const { productName, primaryKey: [id] } = condition;
     let defaultMissionDesc = '';
     if (this.isFromProduct(query)) {
-      defaultMissionDesc = `客户当前持有${labelName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+      defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
     }
     return defaultMissionDesc;
   }
