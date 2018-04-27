@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 21:37:56
+ * @Last Modified time: 2018-04-27 16:21:06
  */
 
 import React, { PureComponent } from 'react';
@@ -69,29 +69,28 @@ export default class DistributeHome extends PureComponent {
       type: pageType,
     }).then(() => {
       const { location, replace, custRange } = this.props;
-      const { pathname, query, query: { pageNum = 1, pageSize = 10 } } = location;
+      const { pathname, query } = location;
+      const newQuery = {
+        ...query,
+        pageNum: 1,
+        pageSize: 10,
+        isBinding: DISTRIBUT_EDEFAULT_VALUE,
+        orgId: custRange[0].id,
+      };
       replace({
         pathname,
-        query: {
-          ...query,
-          isBinding: DISTRIBUT_EDEFAULT_VALUE,
-          orgId: custRange[0].id,
-        },
+        query: newQuery,
       });
-      this.getAdvisorBindList(query, pageNum, pageSize);
+      this.getAdvisorBindList(newQuery);
     });
   }
 
   // 请求表格数据
   @autobind
-  getAdvisorBindList(query, pageNum = 1, pageSize = 10) {
+  getAdvisorBindList(query) {
     const { queryAdvisorBindList } = this.props;
     // 默认筛选条件
-    queryAdvisorBindList({
-      ...query,
-      pageNum,
-      pageSize,
-    });
+    queryAdvisorBindList({ ...query });
   }
 
   // 头部筛选后调用方法
@@ -100,16 +99,13 @@ export default class DistributeHome extends PureComponent {
     // 1.将筛选的值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    const newQuery = { ...query, pageNum: 1, ...obj };
     replace({
       pathname,
-      query: {
-        ...query,
-        pageNum: 1,
-        ...obj,
-      },
+      query: newQuery,
     });
     // 2.调用queryTgBindList接口
-    this.getAdvisorBindList({ ...query, ...obj }, 1, query.pageSize);
+    this.getAdvisorBindList(newQuery);
   }
 
    // 切换页码
@@ -124,7 +120,7 @@ export default class DistributeHome extends PureComponent {
         pageNum: nextPage,
       },
     });
-    this.getAdvisorBindList(query, nextPage, currentPageSize);
+    this.getAdvisorBindList({ ...query, pageNum: nextPage, pageSize: currentPageSize });
   }
 
   /**
@@ -188,7 +184,9 @@ export default class DistributeHome extends PureComponent {
 
   render() {
     const {
+      location,
       location: { query: { pageNum = 1, pageSize = 10 } },
+      replace,
       empList,
       queryEmpList,
       custRange,
@@ -201,6 +199,8 @@ export default class DistributeHome extends PureComponent {
     return (
       <div className={styles.distributeHomeBox}>
         <DistributeHeader
+          location={location}
+          replace={replace}
           empList={empList}
           queryEmpList={queryEmpList}
           custRange={custRange}
@@ -217,7 +217,7 @@ export default class DistributeHome extends PureComponent {
           onPageChange={this.handlePageNumberChange}
           tableClass={styles.advisorBindListTable}
           titleColumn={this.renderColumn()}
-          columnWidth={['15%', '12%', '16%', '16%', '16%', '25%']}
+          columnWidth={['19%', '12%', '19%', '16%', '16%', '18%']}
           emptyListDataNeedEmptyRow
         />
       </div>
