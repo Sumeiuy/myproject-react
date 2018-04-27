@@ -137,17 +137,6 @@ export default class TaskSearchRow extends PureComponent {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
-  /*  @autobind
-   getFilterInfo(filters) {
-     const stringArray = _.map(filters, (filterObj) => {
-       if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
-         return `${filterObj.filterLabel}：${filterObj.valueArray.join('，')}`;
-       }
-       return null;
-     });
-     return _.compact(stringArray).join(' ； ');
-   } */
-
   @autobind
   getSelectFiltersInfo(filters) {
     if (filters) {
@@ -496,7 +485,7 @@ export default class TaskSearchRow extends PureComponent {
 
   render() {
     const {
-                  currentFilterObject,
+      currentFilterObject,
       currentAllFilterState,
       currentSelectLabelName,
       allFiltersCloseIconState,
@@ -511,7 +500,7 @@ export default class TaskSearchRow extends PureComponent {
     } = this.state;
 
     const {
-                  currentSelectLabel,
+      currentSelectLabel,
       dict,
       sightingTelescopeFilters,
       circlePeopleData,
