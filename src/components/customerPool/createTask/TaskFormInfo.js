@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
 import logable from '../../../decorators/logable';
+import { fspContainer } from '../../../config';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -26,8 +27,7 @@ const mentionTextStyle = {
   backgroundColor: '#ebf3fb',
   borderColor: '#ebf3fb',
 };
-// 字数限制，最大长度和最小长度
-const MIN_LENGTH = 10;
+// 字数限制，最大长度
 const MAX_LENGTH = 1000;
 
 @createForm()
@@ -53,6 +53,7 @@ export default class TaskFormInfo extends PureComponent {
     isShowErrorStrategySuggestion: PropTypes.bool,
     isShowErrorTaskName: PropTypes.bool,
     templetDescSuggestion: PropTypes.object,
+    productDescSuggestions: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -87,19 +88,32 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
       templetDescSuggestion,
-     } = props;
-
-    this.state = {
+      productDescSuggestions,
+    } = props;
+    let suggestions = [];
+    if (!_.isEmpty(productDescSuggestions)) {
+      suggestions = _.map(productDescSuggestions, item => (
+        !_.isEmpty(item) && <Nav
+          value={item.type}
+          data={item.type}
+        >
+          <span>{item.name}</span>
+        </Nav>
+      ));
+    } else if (!_.isEmpty(templetDescSuggestion)) {
       // 初始化的时候，如果外部有标签任务提示带入mention，
       // 那么将suggestion填充默认值，为了让标签任务提示高亮显示
-      suggestions: !_.isEmpty(templetDescSuggestion) ? [
+      suggestions = [
         <Nav
           value={templetDescSuggestion.type}
           data={'sightLabel'}
         >
           <span>{templetDescSuggestion.name}</span>
         </Nav>,
-      ] : [],
+      ];
+    }
+    this.state = {
+      suggestions,
       inputValue: '',
       isShowErrorInfo,
       isShowErrorTaskType,
@@ -169,6 +183,10 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
+  getSuggestionContainer() {
+    return document.querySelector(fspContainer.container) || document.body;
+  }
+
   getCurrentTaskSubTypes(currentMissionType) {
     const { taskTypes } = this.props;
     const currentTaskTypeCollection = _.find(taskTypes, item =>
@@ -189,8 +207,9 @@ export default class TaskFormInfo extends PureComponent {
   handleMentionChange(contentState) {
     if (!this.isFirstLoad) {
       let isShowErrorInfo = false;
-      const content = toString(contentState);
-      if (_.isEmpty(content) || content.length < MIN_LENGTH || content.length > MAX_LENGTH) {
+      let content = _.replace(toString(contentState), regxp.returnLine, '');
+      content = _.trim(content);
+      if (_.isEmpty(content) || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
 
@@ -251,9 +270,10 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '任务提示' } })
   handleSearchChange(value, trigger) {
-    const { users, templetDescSuggestion } = this.props;
+    const { users, templetDescSuggestion, productDescSuggestions } = this.props;
     const searchValue = value.toLowerCase();
-    const dataSource = _.includes(PREFIX, trigger) ? [...users, templetDescSuggestion] : [];
+    const dataSource = _.includes(PREFIX, trigger) ?
+      [...users, templetDescSuggestion, ...productDescSuggestions] : [];
     const filtered = dataSource.filter(item =>
       item.name && item.name.toLowerCase().indexOf(searchValue) !== -1,
     );
@@ -294,10 +314,10 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleStrategySuggestionChange(e) {
-    const value = e.target.value;
+    let value = _.replace(e.target.value, regxp.returnLine, '');
+    value = _.trim(value);
     this.setState({
-      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length < MIN_LENGTH
-        || value.length > MAX_LENGTH,
+      isShowErrorStrategySuggestion: _.isEmpty(value) || value.length > MAX_LENGTH,
     });
   }
 
@@ -328,11 +348,11 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           mentionStyle={mentionTextStyle}
           style={{ width: '100%', height: 100 }}
-          placeholder={`请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：${MIN_LENGTH}-${MAX_LENGTH}字）`}
+          placeholder={'请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。'}
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          getSuggestionContainer={() => this.fatherMention}
+          getSuggestionContainer={this.getSuggestionContainer}
           multiLines
           defaultValue={toContentState(defaultMissionDesc)}
           onChange={this.handleMentionChange}
@@ -378,7 +398,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const errorProps = isShowErrorInfo ? {
       validateStatus: 'error',
-      help: `任务提示不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
+      help: `任务提示不能为空，最多${MAX_LENGTH}个汉字`,
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -409,7 +429,7 @@ export default class TaskFormInfo extends PureComponent {
 
     const serviceStrategySuggestionErrorProps = isShowErrorStrategySuggestion ? {
       validateStatus: 'error',
-      help: `服务策略不能小于${MIN_LENGTH}个字符，最多${MAX_LENGTH}个字符`,
+      help: `服务策略不能为空，最多${MAX_LENGTH}个汉字`,
 
     } : null;
 
@@ -561,7 +581,7 @@ export default class TaskFormInfo extends PureComponent {
               })(<TextArea
                 id="desc"
                 rows={5}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。"
                 style={{ width: '100%' }}
                 maxLength={MAX_LENGTH}
                 onChange={this.handleStrategySuggestionChange}
@@ -571,14 +591,6 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div
           className={styles.task_textArea}
-          ref={
-            (ref) => {
-              // ref多次重绘可能是null, 这里要判断一下
-              if (!this.fatherMention && ref) {
-                this.fatherMention = ref;
-              }
-            }
-          }
         >
           <p>
             <label htmlFor="desc"><i>*</i>任务提示:</label>

@@ -24,6 +24,8 @@ import styles from './search.less';
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';
+// 标签的类型值
+const LABEL = 'LABEL';
 let guid = 0;
 
 export default class Search extends PureComponent {
@@ -125,6 +127,7 @@ export default class Search extends PureComponent {
         id: item.primaryKey,
         type: item.type,
         source: item.source,
+        name: item.name,
       }
     ));
   }
@@ -154,16 +157,26 @@ export default class Search extends PureComponent {
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.value === value);
     const sightingScopeBool = isSightingScope(item.source);
-    this.handleOpenTab({
+    let query = {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
       labelMapping: item.id,
       // 任务提示
-      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.value),
+      missionDesc: padSightLabelDesc({
+        sightingScopeBool,
+        labelId: item.id,
+        labelName: item.value,
+        isLabel: item.type === LABEL,
+      }),
       labelName: encodeURIComponent(item.value),
       labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.value),
       type: item.type,
-    });
+    };
+    // 查到的时持仓产品，传持仓产品的名称
+    if (item.type === 'PRODUCT' && item.name) {
+      query = { ...query, productName: encodeURIComponent(item.name) };
+    }
+    this.handleOpenTab(query);
   }
 
   @autobind
@@ -259,9 +272,13 @@ export default class Search extends PureComponent {
           labelName: encodeURIComponent(item.name),
           labelDesc: encodeURIComponent(item.description),
           // 任务提示
-          missionDesc: padSightLabelDesc(isSightingScope(item.source), item.id, item.name),
+          missionDesc: padSightLabelDesc({
+            sightingScopeBool: isSightingScope(item.source),
+            labelId: item.id,
+            labelName: item.name,
+          }),
           q: encodeURIComponent(item.name),
-          type: 'LABEL',
+          type: LABEL,
         })}
         key={item.id}
       >

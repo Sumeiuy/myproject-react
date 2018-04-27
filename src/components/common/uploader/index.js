@@ -11,7 +11,7 @@ import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import confirm from '../../common/Confirm';
+import confirm from '../../common/confirm_';
 import Loading from '../../../layouts/Loading';
 import Icon from '../../common/Icon';
 import { emp } from '../../../helper';

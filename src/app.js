@@ -12,6 +12,7 @@ import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
+import CommonModal from './components/common/biz/CommonModal';
 // v2兼容样式
 // import 'antd/lib/style/v2-compatible-reset';
 import './css/antd.less';
@@ -39,8 +40,14 @@ const onError = (e) => {
   // 后端暂时没有登录超时概念
   // 都走门户的验证，门户返回的html，JSON parse报错即认为超时
   if (msg.indexOf(ERROR_SEPARATOR) > -1) {
-    const errorMessage = msg.split(ERROR_SEPARATOR)[1];
-    message.error(errorMessage);
+    const [errorMessage, messageType] = msg.split(ERROR_SEPARATOR);
+    if (messageType === '0') {
+      // 错误类型是0，用message.error
+      message.error(errorMessage);
+    } else if (messageType === '1') {
+      // 错误类型是1，用dialog
+      CommonModal.showErrorDialog(errorMessage);
+    }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
@@ -110,7 +117,9 @@ app.model(require('./models/pointsExchange'));
 app.model(require('./models/userCenter'));
 // 精选组合
 app.model(require('./models/choicenessCombination'));
-// 4. Router
+// 投资建议模版
+app.model(require('./models/investmentAdvice'));
+// 4. Route
 app.router(routerConfig);
 
 // 5. Start

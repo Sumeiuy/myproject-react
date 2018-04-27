@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import LabelInfo from '../common/LabelInfo';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import styles from './infoArea.less';
 
 function InfoArea(props) {
@@ -22,17 +23,38 @@ function InfoArea(props) {
         {
           _.map(
             data,
-            item => (
-              <div className={styles.coloumn} key={item.id}>
+            (item) => {
+              // policy or tip 是 服务策略 和 任务提示项设置的ID
+              const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
+              return (
                 <div
                   className={classnames(
-                    styles.infoKey,
-                    { [styles.keyNone]: _.isEmpty(item.key) },
+                    styles.coloumn,
+                    { [styles.row]: isPoliceOrTip },
                   )}
-                >{item.key}</div>
-                <div className={styles.infoValue}>{item.value}</div>
-              </div>
-            ),
+                  key={item.id}
+                >
+                  <div
+                    className={classnames(
+                      styles.infoKey,
+                      { [styles.keyNone]: _.isEmpty(item.key) },
+                    )}
+                  >{item.key}</div>
+                  <div className={styles.infoValue}>
+                    {
+                      isPoliceOrTip ?
+                        (<div
+                          className={styles.row}
+                        >
+                          <ForgeryRichText text={item.value} />
+                        </div>
+                        ) :
+                        item.value
+                    }
+                  </div>
+                </div>
+              );
+            },
           )
         }
       </div>

@@ -137,17 +137,6 @@ export default class TaskSearchRow extends PureComponent {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
- /*  @autobind
-  getFilterInfo(filters) {
-    const stringArray = _.map(filters, (filterObj) => {
-      if (!_.isEmpty(filterObj.valueArray) && filterObj.valueArray[0] !== '不限') {
-        return `${filterObj.filterLabel}：${filterObj.valueArray.join('，')}`;
-      }
-      return null;
-    });
-    return _.compact(stringArray).join(' ； ');
-  } */
-
   @autobind
   getSelectFiltersInfo(filters) {
     if (filters) {
@@ -400,7 +389,21 @@ export default class TaskSearchRow extends PureComponent {
                   dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
                 />
                 <span className={styles.titExp}>
-                  <span>由</span><i>{item.createrName || '--'}</i><span>创建于</span><i>{transformDate(item.createDate)}</i><span>- 客户总数：</span><i>{transformNumber(item.customNum)}</i>
+                  {/**
+                   * 没有创建人或者创建时间，不展示
+                   */}
+                  {
+                    (item.createrName && item.createDate) ?
+                      <span>
+                        <span>由</span>
+                        <i>{item.createrName || '--'}</i>
+                        <span>创建于</span>
+                        <i>{transformDate(item.createDate)}</i>
+                        <span>- </span>
+                      </span> : null
+                  }
+                  <span>客户总数：</span>
+                  <i>{transformNumber(item.customNum)}</i>
                 </span>
               </Radio>
             </div>

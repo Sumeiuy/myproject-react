@@ -34,6 +34,8 @@
 
     span {
       display: inline-block;
+      box-sizing: border-box;
+      vertical-align: middle;
 
       &.type {
         padding-left: 30px;
@@ -44,8 +46,16 @@
         width: 35%;
       }
 
-      &.content {
+      &.headcontent {
         width: 35%;
+      }
+
+      &.content {
+        max-width: 80%;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       &.operate {
@@ -53,61 +63,24 @@
       }
     }
 
-    :global {
-      .ant-collapse {
-        border: none;
-        .ant-collapse-item {
-          .ant-collapse-header {
-            margin: 0 auto;
-            padding: 0;
-            height: 37px;
-            line-height: 37px;
-            font-size: 14px;
-            color: #4a4a4a;
-            i.arrow {
-              display: none;
-            }
-            &:active {
-              background: none;
-            }
-          }
-          .ant-collapse-content {
-            background: none;
-            border-top: 0;
-            .ant-collapse-content-box {
-              display: flex;
-              padding-top: 4px;
-              padding-bottom: 4px;
-              border-top: 1px solid #d9d9d9;
-            }
-          }
-          &.ant-collapse-item-active {
-            .anticon-up {
-              display: inline-block;
-            }
-            .anticon-down {
-              display: none;
-            }
-          }
-          .anticon-up {
-            display: none;
-          }
+    .collapseHead {
+      .contentwapper {
+        display: inline-block;
+        width: 35%;
+        padding-right: 80px;
+        box-sizing: border-box;
+        vertical-align: middle;
+
+        .icon {
+          color: #108ee9;
+          display: inline-block;
+          margin-left: 5px;
         }
       }
-    }
 
-    .collapseHead {
       span {
         font-size: 14px;
         color: #4a4a4a;
-
-        &.content {
-          i {
-            color: #108ee9;
-            display: inline-block;
-            margin-left: 5px;
-          }
-        }
 
         &.operate {
           i {
@@ -121,6 +94,30 @@
     }
 
     .collapsePanel {
+      width: 100%;
+      background: #fff;
+
+      :global {
+        .ant-mention-active {
+          border-color: #fff;
+          outline: 0;
+          border: 0;
+          box-shadow: 0 0 0 #fff;
+          .ant-mention-editor {
+            border-color: #fff;
+            outline: 0;
+            border: 0;
+            box-shadow: 0 0 0 #fff;
+          }
+        }
+        .ant-mention-wrapper {
+          .ant-mention-editor {
+            border: 0;
+            font-size: 14px;
+            color: #4a4a4a;
+          }
+        }
+      }
       p {
         font-size: 14px;
         padding: 0 15px;
@@ -132,6 +129,111 @@
         height: 30px;
         font-size: 14px;
         margin-bottom: 5px;
+      }
+    }
+
+    :global {
+      .ant-collapse-content {
+        border-top: 0;
+      }
+      .ant-collapse {
+        font-size: 14px;
+        border-radius: 0;
+        .ant-collapse-item {
+          .ant-collapse-header {
+            padding: 0;
+            height: 37px;
+            line-height: 37px;
+            font-size: 14px;
+            color: #4a4a4a;
+            background: #fff;
+            i.arrow {
+              display: none;
+            }
+            &:active {
+              background: none;
+            }
+          }
+          .anticon-up {
+            display: none;
+          }
+          &.ant-collapse-item-active {
+            .anticon-down {
+              display: none;
+            }
+            .anticon-up {
+              display: inline-block;
+            }
+          }
+          .icon-edit {
+            visibility: hidden;
+          }
+          &:hover {
+            .ant-collapse-header > div > div > div .icon-edit {
+              visibility: visible;
+            }
+          }
+        }
+      }
+      .ant-collapse > div {
+        .ant-collapse-header > .arrow {
+          display: none !important;
+        }
+        .ant-collapse-content-box {
+          padding: 8px 0;
+          border-top: 1px solid #d9d9d9;
+          ul {
+            li {
+              margin-top: 6px;
+              height: 28px;
+              line-height: 28px;
+              &:first-child {
+                margin-top: 0;
+              }
+              em {
+                margin-right: 10px;
+                width: auto;
+              }
+              .anticon-delete, .icon-edit {
+                vertical-align: middle;
+                visibility: hidden;
+                color: #108ee9;
+                cursor: pointer;
+              }
+              button {
+                height: 28px;
+              }
+              &:hover {
+                .icon-edit {
+                  visibility: visible;
+                }
+                .anticon-delete {
+                  visibility: visible;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .pageBox {
+    float: right;
+    margin: 20px;
+    margin-right: 40px;
+    :global {
+      .ant-pagination-item {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .addInvestAdviceModal {
+    :global {
+      .ant-modal {
+        width: 650px !important;
+        height: 574px !important;
       }
     }
   }

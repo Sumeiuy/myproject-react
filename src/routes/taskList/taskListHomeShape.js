@@ -52,7 +52,7 @@ export default {
   custFeedback: PropTypes.array,
   custRange: PropTypes.array,
   empInfo: PropTypes.object,
-  missionImplementationDetail: PropTypes.object.isRequired,
+  missionImplementationDetail: PropTypes.object,
   countFlowStatus: PropTypes.func.isRequired,
   clearCreateTaskData: PropTypes.func.isRequired,
   getServiceType: PropTypes.func.isRequired,

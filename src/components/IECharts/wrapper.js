@@ -4,7 +4,7 @@
  * @description copy别人的然后进行修改
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 // import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
@@ -13,7 +13,7 @@ import Resize from 'element-resize-detector';
 
 
 function wrapECharts(ECharts) {
-  class IECharts extends PureComponent {
+  class IECharts extends React.Component {
 
     static propTypes = {
       className: PropTypes.string,
