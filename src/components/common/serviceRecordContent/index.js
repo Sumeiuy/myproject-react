@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 18:51:15
+ * @Last Modified time: 2018-04-28 11:13:13
  */
 
 import React, { PureComponent } from 'react';
@@ -60,22 +60,6 @@ export default class ServiceRecordContent extends PureComponent {
     this.state = this.initialState(props);
     // 代表是否是删除操作
     this.isDeletingFile = false;
-  }
-
-  componentDidMount() {
-    // 判断如果是 涨乐财富通服务方式下的只读|驳回模式，并且页面在执行者视图下，
-    // 则需要查询下 可选列表
-    const { isEntranceFromPerformerView, isReadOnly, isReject } = this.props;
-    if (isEntranceFromPerformerView && (isReadOnly || isReject)) {
-      const { eventId, taskTypeCode, serviceType } = this.state;
-      const type = `${+taskTypeCode + 1}`;
-      // TODO 如果是mot任务 eventId参数需要使用 eventId
-      // 如果是自建任务 需要使用serviceTypeCode
-      // type 值为2的时候，该任务是自建任务
-      const eventIdParam = type === '2' ? serviceType : eventId;
-      this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
-      this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
-    }
   }
 
   componentWillReceiveProps(nextProps) {

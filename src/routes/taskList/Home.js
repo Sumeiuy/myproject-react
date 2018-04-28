@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 14:10:44
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-28 11:15:48
  * @description 任务管理首页
  */
 
@@ -781,13 +781,8 @@ export default class PerformerView extends PureComponent {
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    const { getTaskDetailBasicInfo, queryTargetCust } = this.props;
-    getTaskDetailBasicInfo({ taskId: obj.id });
-    queryTargetCust({
-      missionId: obj.id,
-      pageNum: 1,
-      pageSize: 10,
-    });
+    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
+    this.props.queryTargetCust({ missionId: obj.id, pageNum: 1, pageSize: 10 });
   }
 
   /**
