@@ -156,7 +156,7 @@ export default class ServiceLog extends PureComponent {
         ...query,
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
-        keyword: decodeURIComponent(value),
+        keyword: encodeURIComponent(value),
       },
     });
   }

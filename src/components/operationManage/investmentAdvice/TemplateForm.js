@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 16:30:14
+ * @Last Modified time: 2018-04-27 17:20:06
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -171,7 +171,7 @@ export default class TemplateForm extends PureComponent {
                 <FormItem {...titleStatusErrorProps}>
                   {getFieldDecorator('title', {
                     initialValue: title,
-                  })(<Input onChange={e => this.handleTitleInputChange(e)} />)}
+                  })(<Input onChange={this.handleTitleInputChange} />)}
                 </FormItem>
               </div>
             </li>
@@ -183,7 +183,6 @@ export default class TemplateForm extends PureComponent {
                     initialValue: toContentState(mentionContent),
                   })(
                     <Mention
-                      ref={(mention) => { this.mention = mention; }}
                       mentionStyle={mentionTextStyle}
                       style={{ width: '100%', height: 200 }}
                       prefix={PREFIX}
