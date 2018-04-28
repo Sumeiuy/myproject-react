@@ -68,8 +68,9 @@ export default class CombinationModal extends PureComponent {
   componentWillMount() {
     const { getTreeData, type } = this.props;
     getTreeData();
+    // 时间默认选中为最三个月
     const dateObj = this.calcDate('3');
-    const titleArray = this.setTitleList(type);
+    const titleArray = this.getTitleList(type);
     this.setState({
       startDate: dateObj.begin,
       endDate: dateObj.end,
@@ -77,8 +78,9 @@ export default class CombinationModal extends PureComponent {
     }, () => this.sendRequest());
   }
 
+  // 根据类型配置不同的表格标题
   @autobind
-  setTitleList(type) {
+  getTitleList(type) {
     const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
     if (type === HISTORY_TYPE) {
