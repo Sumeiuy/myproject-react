@@ -57,8 +57,6 @@ export default class WeeklySecurityTopTen extends PureComponent {
     let newValue = value;
     if (value > 0) {
       newValue = `+${newValue}`;
-    } else {
-      newValue = `-${newValue}`;
     }
     return newValue;
   }
