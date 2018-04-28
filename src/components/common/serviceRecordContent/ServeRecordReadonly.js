@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 18:41:31
+ * @Last Modified time: 2018-04-28 14:27:55
  * @description 只读服务记录
  */
 
@@ -150,8 +150,8 @@ ServiceRecordReadOnly.propTypes = {
   feedbackDateTime: PropTypes.string,
   custFeedback: PropTypes.string,
   custFeedback2: PropTypes.string,
-  ZLCustFeedback: PropTypes.string,
   ZLServiceContentTime: PropTypes.string,
+  ZLCustFeedback: PropTypes.string,
   ZLCustFeedbackList: PropTypes.array,
 };
 ServiceRecordReadOnly.defaultProps = {
@@ -167,7 +167,7 @@ ServiceRecordReadOnly.defaultProps = {
   feedbackDateTime: '',
   custFeedback: '',
   custFeedback2: '',
-  ZLCustFeedback: '',
   ZLServiceContentTime: '',
+  ZLCustFeedback: '',
   ZLCustFeedbackList: [],
 };
