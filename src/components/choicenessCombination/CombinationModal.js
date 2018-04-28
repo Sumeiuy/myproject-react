@@ -2,8 +2,8 @@
  * @Description: 精选组合弹窗
  * @Author: Liujianshu
  * @Date: 2018-04-24 15:40:21
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 21:28:52
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-04-28 17:39:36
  */
 
 import React, { PureComponent } from 'react';
@@ -23,6 +23,10 @@ import styles from './combinationModal.less';
 
 const Search = Input.Search;
 const { timeRange, directionRange, titleList } = config;
+// 3个月的key
+const THREE_MOUNTH_KEY = '3';
+// 调入的key
+const DIRECT_IN = '1';
 // 持仓历史
 const HISTORY_TYPE = config.typeList[0];
 export default class CombinationModal extends PureComponent {
@@ -41,7 +45,7 @@ export default class CombinationModal extends PureComponent {
   static defaultProps = {
     title: '标题',
     treeData: [],
-    direction: '1',
+    direction: DIRECT_IN,
     openCustomerListPage: _.noop,
   }
 
@@ -50,7 +54,7 @@ export default class CombinationModal extends PureComponent {
     const { direction } = this.props;
     this.state = {
       // 时间默认值
-      time: '3',
+      time: THREE_MOUNTH_KEY,
       // 调仓方向默认值
       directionCode: direction,
       // 开始日期
@@ -69,7 +73,7 @@ export default class CombinationModal extends PureComponent {
     const { getTreeData, type } = this.props;
     getTreeData();
     // 时间默认选中为最三个月
-    const dateObj = this.calcDate('3');
+    const dateObj = this.calcDate(THREE_MOUNTH_KEY);
     const titleArray = this.getTitleList(type);
     this.setState({
       startDate: dateObj.begin,
@@ -154,9 +158,7 @@ export default class CombinationModal extends PureComponent {
   treeSelectChangeHandle(value) {
     this.setState({
       combinationCode: value,
-    }, () => {
-      this.sendRequest();
-    });
+    }, this.sendRequest);
   }
 
   // 发送请求
@@ -185,9 +187,7 @@ export default class CombinationModal extends PureComponent {
   searchListHandle(v = '') {
     this.setState({
       keyword: v,
-    }, () => {
-      this.sendRequest();
-    });
+    }, this.sendRequest);
   }
 
     // 分页事件
