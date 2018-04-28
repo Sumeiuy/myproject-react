@@ -60,6 +60,11 @@
         right: 6px;
         margin-right: 0;
       }
+      :global {
+        .ant-select-tree-dropdown {
+          width: 230px !important;
+        }
+      }
     }
     :global {
       input {
@@ -84,6 +89,13 @@
   .content {
     margin-top: 68px;
     z-index: 1;
+    .ellipsis {
+      width: 174px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
+    }
     :global {
       table {
         tr td, rt th {
@@ -94,6 +106,9 @@
         thead tr {
           height: 38px;
           line-height: 38px;
+          th {
+            padding: 0 16px;
+          }
         }
         tr td {
           padding: 10px 14px;
@@ -118,4 +133,8 @@
     right: 0;
     background: #fff;
   }
+}
+.dropdownClassName {
+  width: auto !important;
+  max-width: 300px;
 }

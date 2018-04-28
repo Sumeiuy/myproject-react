@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-tab切换
  * @Date: 2018-04-18 14:39:47
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 16:42:43
+ * @Last Modified time: 2018-04-28 16:04:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -34,15 +34,6 @@ export default class CombinationTab extends PureComponent {
       activeKey: '',
     };
   }
-
-  // componentWillReceiveProps({ tabList }) {
-  //   const { activeKey } = this.state;
-  //   if (_.isEmpty(activeKey) && !_.isEmpty(tabList)) {
-  //     this.setState({
-  //       activeKey: tabList[0].key,
-  //     });
-  //   }
-  // }
 
   @autobind
   getTabPaneList() {

@@ -16,6 +16,7 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
@@ -457,11 +458,15 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div>{serviceStrategySuggestion || '--'}</div>
+              <div>
+                <ForgeryRichText text={serviceStrategySuggestion} />
+              </div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>{!_.isEmpty(templetDesc) ? templetDesc : '--'}</div>
+              <div>
+                <ForgeryRichText text={templetDesc} />
+              </div>
             </div>
           </div>
         </div>

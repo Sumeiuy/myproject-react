@@ -19,6 +19,6 @@ export default function choicenessCombination(api) {
     // 收益率走势图
     getCombinationChart: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/statisticReturnGraph', query),
     // 历史报告列表
-    getReportHistoryList: query => api.post('/groovynoauth/fsp/choicenessCombination/reportHistoryList', query),
+    getReportHistoryList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/reportHistoryList', query),
   };
 }

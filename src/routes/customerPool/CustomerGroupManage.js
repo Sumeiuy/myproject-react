@@ -22,7 +22,7 @@ import SimpleSearch from '../../components/customerPool/groupManage/CustomerGrou
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
-import confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm_';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/common/commonTable/index.less';

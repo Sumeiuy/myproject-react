@@ -51,12 +51,12 @@ const config = {
     },
   ],
   titleList: {
-    transfer: [
+    history: [
       {
         dataIndex: 'time',
         key: 'time',
         title: '时间',
-        width: 150,
+        width: 170,
       },
       {
         dataIndex: 'directionName',
@@ -91,7 +91,7 @@ const config = {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '所属组合',
-        width: 150,
+        width: 174,
       },
     ],
     report: [
@@ -117,6 +117,24 @@ const config = {
       },
     ],
   },
+  typeList: ['history', 'report'],
+  securityType: [
+    {
+      name: '股票',
+      value: '1',
+      shortName: 'GP',
+    },
+    {
+      name: '基金',
+      value: '2',
+      shortName: 'JJ',
+    },
+    {
+      name: '债券',
+      value: '3',
+      shortName: 'ZQ',
+    },
+  ],
 };
 
 export default config;

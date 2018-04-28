@@ -7,30 +7,115 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+import classnames from 'classnames';
+
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
+import config from './config';
 import styles from './weeklySecurityTopTen.less';
 
 const titleStyle = {
   fontSize: '16px',
 };
-
+// securityType 里股票对应的值
+const STOCK_CODE = config.securityType[0].value;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
+    permission: PropTypes.bool.isRequired,
+    orgId: PropTypes.string,
+    openCustomerListPage: PropTypes.func.isRequired,
+    openStockPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-
+    orgId: '',
   }
 
   // constructor(props) {
   //   super(props);
   // }
 
+  // 证券名称点击事件
+  @autobind
+  securityHandle(type, code) {
+    if (type === STOCK_CODE) {
+      console.warn('是股票');
+      const { openStockPage } = this.props;
+      const openPayload = {
+        code,
+      };
+      openStockPage(openPayload);
+    }
+  }
+
+  @autobind
+  percentChange(value) {
+    let newValue = value;
+    if (value > 0) {
+      newValue = `+${newValue}`;
+    }
+    return newValue;
+  }
+
+  @autobind
+  renderList() {
+    const { data, openCustomerListPage } = this.props;
+    return data.map((item, index) => {
+      const {
+        securityType,
+        name,
+        code,
+        callInTime,
+        priceLimit,
+        combinationName,
+        reason,
+      } = item;
+      const key = `${code}${index}`;
+      const change = this.percentChange(priceLimit.toFixed(2));
+      const bigThanZero = priceLimit > 0;
+      const changeClassName = classnames({
+        [styles.up]: bigThanZero,
+        [styles.down]: !bigThanZero,
+      });
+      const openPayload = {
+        name,
+        code,
+        type: securityType,
+      };
+      return (
+        <li key={key}>
+          <div className={`${styles.summary} clearfix`}>
+            <a
+              className={styles.securityName}
+              title={`${name} ${code}`}
+              onClick={() => this.securityHandle(securityType, code)}
+            >
+              {name}（{code}）
+            </a>
+            <span className={styles.adjustTime} title={callInTime}>{callInTime}</span>
+            <span className={styles.upAndDown}>
+              <i className={changeClassName}>
+                {change}%
+              </i>
+            </span>
+            <span className={styles.combinationName} title={combinationName}>
+              {combinationName}
+            </span>
+            <span className={styles.client}>
+              <a onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>
+            </span>
+          </div>
+          <p className={styles.reason}>{reason || '暂无'}</p>
+        </li>
+      );
+    });
+  }
+
   render() {
-    const { data } = this.props;
     return (
       <div className={styles.weeklySecurityTopTenBox}>
         <InfoTitle
@@ -46,26 +131,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
             <span className={styles.client}>持仓客户</span>
           </div>
           <ul className={styles.bodyBox}>
-            {
-              data.map((item, index) => {
-                const { securityName, securityCode, time, change, combinationName } = item;
-                const key = `${securityCode}${index}`;
-                return (
-                  <li key={key}>
-                    <div className={`${styles.summary} clearfix`}>
-                      <span className={styles.securityName} title={`${securityName} ${securityCode}`}>{}securityName（{securityCode}）</span>
-                      <span className={styles.adjustTime}>{time}</span>
-                      <span className={styles.upAndDown}>
-                        <i className={styles.up}>{change}</i>
-                      </span>
-                      <span className={styles.combinationName}>{combinationName}</span>
-                      <span className={styles.client}><a><Icon type="kehuzu" /></a></span>
-                    </div>
-                    <p className={styles.reason}>理由理由理由李理由理由理由李理由理由理由李</p>
-                  </li>
-                );
-              })
-            }
+            {this.renderList()}
           </ul>
         </div>
       </div>

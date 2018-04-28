@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 20:01:59
+ * @Last Modified time: 2018-04-28 16:10:01
 */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,7 @@ export default class CombinationRank extends PureComponent {
     // tab切换
     tabChange: PropTypes.func.isRequired,
     // 筛选
-    filterChange: PropTypes.func.isRequired,
+    // filterChange: PropTypes.func.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合排名列表数据
@@ -47,22 +47,16 @@ export default class CombinationRank extends PureComponent {
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
     riskLevel: PropTypes.array,
+    // 打开个股资讯页面
+    openStockPage: PropTypes.func.isRequired,
+    // 打开持仓查客户页面
+    openCustomerListPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     yieldRankValue: '',
     riskLevel: EMPTY_LIST,
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
-
-  // @autobind
-  // handleTabChange(key) {
-  //   const { tabChange } = this.props;
-  //   tabChange(key);
-  // }
 
   @autobind
   getCombinationList() {
@@ -73,22 +67,23 @@ export default class CombinationRank extends PureComponent {
       getCombinationLineChart,
       rankTabActiveKey,
       yieldRankValue,
-      // dict,
+      dict,
+      openStockPage,
+      openCustomerListPage,
     } = this.props;
-    console.log('abcde', combinationRankList);
     return combinationRankList.map(item => (
-      item.show ?
-        <CombinationListItem
-          rankTabActiveKey={rankTabActiveKey}
-          data={item}
-          key={item.combinationCode}
-          chartTabChange={chartTabChange}
-          getCombinationLineChart={getCombinationLineChart}
-          combinationLineChartData={combinationLineChartData}
-          yieldRankValue={yieldRankValue}
-        />
-      :
-        <div />
+      <CombinationListItem
+        rankTabActiveKey={rankTabActiveKey}
+        data={item}
+        key={item.combinationCode}
+        chartTabChange={chartTabChange}
+        getCombinationLineChart={getCombinationLineChart}
+        combinationLineChartData={combinationLineChartData}
+        yieldRankValue={yieldRankValue}
+        dict={dict}
+        openStockPage={openStockPage}
+        openCustomerListPage={openCustomerListPage}
+      />
     ));
   }
 
@@ -96,7 +91,7 @@ export default class CombinationRank extends PureComponent {
     const {
       dict,
       tabChange,
-      filterChange,
+      // filterChange,
       combinationTreeList,
       yieldRankChange,
       yieldRankValue,
@@ -117,7 +112,6 @@ export default class CombinationRank extends PureComponent {
             rankTabActiveKey={rankTabActiveKey}
           />
           <CombinationFilter
-            filterChange={filterChange}
             yieldRankChange={yieldRankChange}
             yieldRankValue={yieldRankValue}
             riskLevelFilter={riskLevelFilter}

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-03-09 10:53:32
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-27 14:02:23
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper, number } from '../../helper';
+import { emp, permission, env as envHelper, number, regxp } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -559,7 +559,6 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-
         const formDataValidation = this.checkFormField({ ...values, isFormError });
 
         if (formDataValidation) {
@@ -575,8 +574,10 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
+      let trimTempletDesc = _.replace(templetDesc, regxp.returnLine, '');
+      trimTempletDesc = _.trim(trimTempletDesc);
       taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      if (_.isEmpty(trimTempletDesc) || trimTempletDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -1073,6 +1074,7 @@ export default class TaskFlow extends PureComponent {
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
       previewCustFile,
+      location,
     } = this.props;
 
     // 拿到自建任务需要的missionType

@@ -6,7 +6,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
+import { openFspTab } from '../../../utils';
 import HoldingProductDetail from './HoldingProductDetail';
 import styles from './matchArea.less';
 
@@ -24,6 +26,11 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   return value.replace(regxp,
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
+
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 // const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
 
@@ -46,6 +53,7 @@ export default class MatchArea extends PureComponent {
   }
 
   static contextTypes = {
+    push: PropTypes.func.isRequired,
     empInfo: PropTypes.object,
   };
 
@@ -69,6 +77,39 @@ export default class MatchArea extends PureComponent {
     this.custUnrightBusinessType = {};
     custUnrightBusinessType.forEach((item) => {
       this.custUnrightBusinessType[item.key] = item.value;
+    });
+  }
+
+  /**
+   * 跳转到360服务记录页面
+   * @param {*object} itemData 当前列表item数据
+   * @param {*} keyword 当前输入关键字
+   */
+  @autobind
+  handleOpenFsp360TabAction(itemData, keyword) {
+    const { custNature, custId, rowId, ptyId } = itemData;
+    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const pathname = '/customerCenter/fspcustomerDetail';
+    openFspTab({
+      routerAction: this.context.push,
+      url,
+      query: {
+        custId,
+        rowId,
+        ptyId,
+        keyword,
+      },
+      pathname,
+      param: {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+        activeSubTab: ['服务记录'],
+      },
+      state: {
+        url,
+      },
     });
   }
 
@@ -286,7 +327,7 @@ export default class MatchArea extends PureComponent {
     const {
       q = '',
       listItem,
-      location: { query: { source } },
+      location: { query: { source, q: keyword } },
     } = this.props;
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
@@ -300,6 +341,10 @@ export default class MatchArea extends PureComponent {
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
             <i>...</i>
           </span>
+          <span
+            className={styles.more}
+            onClick={() => this.handleOpenFsp360TabAction(listItem, keyword)}
+          >详情</span>
         </li>
       );
     }
@@ -366,7 +411,7 @@ export default class MatchArea extends PureComponent {
       if (filteredProducts.length > 1) {
         return this.getMultipleHoldingProductNode(filteredProducts, q);
       }
-      // 匹配到的持仓产品大于1个，显示 产品的名称/产品代码(持仓详情)
+      // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
       return this.getSingleHoldingProductNode(holdingProducts, q);
     }
     return null;

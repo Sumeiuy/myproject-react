@@ -323,6 +323,7 @@ export default class CustomerList extends PureComponent {
     const labelName = decodeURIComponent(query.labelName);
     const labelDesc = decodeURIComponent(query.labelDesc);
     const labelMapping = decodeURIComponent(query.labelMapping);
+    const productName = query.productName && decodeURIComponent(query.productName);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -351,6 +352,7 @@ export default class CustomerList extends PureComponent {
       param.searchTypeReq = query.type;
       param.searchText = keyword;
       param.primaryKey = [labelMapping];
+      param.productName = productName;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
@@ -406,7 +408,7 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: param,
     });
-    getCustomerData(param);
+    getCustomerData(_.omit(param, 'productName'));
   }
 
   // 获取 客户列表接口的orgId入参的值

@@ -52,7 +52,7 @@ export default class HoldingProductDetail extends PureComponent {
   getDetail() {
     const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
     const { id = '' } = data;
-    if (_.isEmpty(holdingProducts[id])) {
+    if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
       queryHoldingProduct({ custId, prdtHold: id })
         .then(() => { this.setState({ popoverVisible: true }); });
     } else {
@@ -68,6 +68,7 @@ export default class HoldingProductDetail extends PureComponent {
     const {
       data,
       holdingProducts = {},
+      custId,
     } = this.props;
     // 取当前产品的id
     const currentHoldingProductId = data.id;
@@ -76,7 +77,7 @@ export default class HoldingProductDetail extends PureComponent {
       return <div className={styles.detailItem}>暂无数据</div>;
     }
     // 取当前产品id在本地存储的数据中对应的详情信息，type时产品的类别，detail时产品的具体信息
-    const { type = '', detail = [] } = holdingProducts[currentHoldingProductId] || {};
+    const { type = '', detail = [] } = holdingProducts[`${custId}${currentHoldingProductId}`] || {};
     // 当前产品的类别是否为金融产品
     const isNotFinance = type !== TYPE_FINANCE;
     return _.map(detail, (item = {}) => (

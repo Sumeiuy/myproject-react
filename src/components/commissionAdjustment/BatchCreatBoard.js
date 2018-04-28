@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import ChoiceApproverBoard from './ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import AddCustomer from './AddCustomer';
 import InfoTitle from '../common/InfoTitle';
 import CommissionLine from './CommissionLine';

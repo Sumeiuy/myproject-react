@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { permission, emp, env as envHelper } from '../../../helper';
+import { permission, emp, env as envHelper, regxp } from '../../../helper';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
@@ -332,8 +332,10 @@ export default class TaskFormFlowStep extends PureComponent {
       });
       // 校验任务提示
       const templetDesc = formComponent.getData();
+      let trimTempletDesc = _.replace(templetDesc, regxp.returnLine, '');
+      trimTempletDesc = _.trim(trimTempletDesc);
       taskFormData = { ...taskFormData, templetDesc };
-      if (_.isEmpty(templetDesc) || templetDesc.length < 10 || templetDesc.length > 1000) {
+      if (_.isEmpty(trimTempletDesc) || trimTempletDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,

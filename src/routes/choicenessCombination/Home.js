@@ -3,20 +3,25 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 08:59:20
+ * @Last Modified time: 2018-04-28 16:02:46
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-// import _ from 'lodash';
+import { routerRedux } from 'dva/router';
+import _ from 'lodash';
+
 import styles from './index.less';
-import dva from '../../helper/dva';
+import { permission, dva, url as urlHelper, emp } from '../../helper';
+import { openRctTab } from '../../utils';
+import fspPatch from '../../decorators/fspPatch';
 import CombinationAdjustHistory from '../../components/choicenessCombination/CombinationAdjustHistory';
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
+import config from '../../components/choicenessCombination/config';
 
 const dispatch = dva.generateEffect;
 const EMPTY_LIST = [];
@@ -73,9 +78,11 @@ const mapDispatchToProps = {
   combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: false }),
   yieldRankChange: dispatch(effects.yieldRankChange, { loading: false }),
   riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: false }),
+  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@fspPatch()
 export default class ChoicenessCombination extends PureComponent {
   static propTypes = {
     // 字典数据
@@ -105,6 +112,7 @@ export default class ChoicenessCombination extends PureComponent {
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
     riskLevel: PropTypes.array,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -117,6 +125,11 @@ export default class ChoicenessCombination extends PureComponent {
     this.state = {
       visible: false,
       directionCode: '1',
+      // HTSC 任务管理岗
+      hasTkMampPermission: permission.hasTkMampPermission(),
+      // 组织 ID
+      orgId: emp.getOrgId(),
+      modalType: '',
     };
   }
 
@@ -147,13 +160,15 @@ export default class ChoicenessCombination extends PureComponent {
 
   // 打开弹窗
   @autobind
-  showModal(directionCode) {
+  showModal(obj) {
     this.setState({
       visible: true,
-      directionCode,
+      directionCode: obj.code || '',
+      modalType: obj.type || '',
     });
   }
 
+  // 关闭弹窗
   @autobind
   closeModal() {
     this.setState({
@@ -162,10 +177,10 @@ export default class ChoicenessCombination extends PureComponent {
   }
 
   // 组合排名列表筛选排序
-  @autobind
-  handleFilterChange(data) {
-    console.log('组合排名列表筛选排序', data);
-  }
+  // @autobind
+  // handleFilterChange(data) {
+  //   console.log('组合排名列表筛选排序', data);
+  // }
 
   // tab切换
   @autobind
@@ -187,9 +202,79 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationLineChart(payload);
   }
 
+  // 查看持仓客户
+  @autobind
+  openCustomerListPage(obj) {
+    const { name, code, type } = obj;
+    const { push } = this.props;
+    const { hasTkMampPermission, orgId } = this.state;
+    // 组合 productId
+    let productId = '';
+    if (type) {
+      const filterType = _.filter(config.securityType, o => o.value === type);
+      if (filterType.length) {
+        productId = `${filterType[0].shortName}${code}`;
+      }
+    } else {
+      productId = code;
+    }
+
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_CUSTOMER_LIST',
+      title: '客户列表',
+    };
+    // GP\JJ\ZQ
+    const query = {
+      labelMapping: encodeURIComponent(productId),
+      labelName: encodeURIComponent(code),
+      orgId: hasTkMampPermission ? orgId : 'msm',
+      q: encodeURIComponent(code),
+      source: 'association',
+      type: 'PRODUCT',
+      productName: encodeURIComponent(name),
+    };
+    const url = `/customerPool/list?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
+  @autobind
+  openStockPage(obj) {
+    const { code } = obj;
+    const { push } = this.props;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_STOCK_INFO',
+      title: '个股资讯',
+    };
+    const query = {
+      keyword: code,
+    };
+    const url = `/stock?${urlHelper.stringify(query)}`;
+    console.log('打开个股资讯');
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
   render() {
     const {
       dict,
+      push,
       getCombinationTree,
       adjustWarehouseHistoryData,
       tableHistoryList,
@@ -208,46 +293,91 @@ export default class ChoicenessCombination extends PureComponent {
     const {
       visible,
       directionCode,
+      hasTkMampPermission,
+      orgId,
+      modalType,
     } = this.state;
+
+    const modalProps = {
+      history: {
+        type: config.typeList[0],
+        title: '调仓历史',
+        // 调仓方向集合
+        direction: directionCode,
+        // 获取组合名称树接口
+        getTreeData: getCombinationTree,
+        // 组合名称树数据
+        treeData: combinationTreeList,
+        // 获取列表接口
+        getListData: getAdjustWarehouseHistory,
+        // 列表数据
+        listData: tableHistoryList,
+        // 查看持仓客户事件
+        openCustomerListPage: this.openCustomerListPage,
+      },
+      report: {
+        type: config.typeList[1],
+        title: '历史报告',
+        // 获取组合名称树接口
+        getTreeData: getCombinationTree,
+        // 组合名称树数据
+        treeData: combinationTreeList,
+        // 获取列表接口
+        getListData: getAdjustWarehouseHistory,
+        // 列表数据
+        listData: tableHistoryList,
+      },
+    };
+
     return (
       <div className={styles.choicenessCombinationBox}>
-        <div className={`${styles.topContainer} clearfix`}>
-          {/* 组合调仓组件 */}
-          <CombinationAdjustHistory
-            showModal={this.showModal}
-            data={adjustWarehouseHistoryData}
-          />
-          <WeeklySecurityTopTen data={weeklySecurityTopTenData} />
-        </div>
-        <CombinationRank
-          combinationTreeList={combinationTreeList}
-          combinationRankList={combinationRankList}
-          filterChange={this.handleFilterChange}
-          tabChange={this.handleTabChange}
-          chartTabChange={this.handleChartTabChange}
-          getCombinationLineChart={getCombinationLineChart}
-          combinationLineChartData={combinationLineChartData}
-          rankTabActiveKey={rankTabActiveKey}
-          yieldRankChange={yieldRankChange}
-          yieldRankValue={yieldRankValue}
-          riskLevelFilter={riskLevelFilter}
-          riskLevel={riskLevel}
-          dict={dict}
-        />
-        {
-          visible
-          ?
-            <CombinationModal
-              direction={directionCode}
-              getTreeData={getCombinationTree}
-              treeData={combinationTreeList}
-              getListData={getAdjustWarehouseHistory}
-              listData={tableHistoryList}
-              closeModal={this.closeModal}
+        <div className={styles.choicenessContent}>
+          <div className={`${styles.topContainer} clearfix`}>
+            {/* 组合调仓组件 */}
+            <CombinationAdjustHistory
+              push={push}
+              showModal={this.showModal}
+              data={adjustWarehouseHistoryData}
+              openCustomerListPage={this.openCustomerListPage}
+              openStockPage={this.openStockPage}
             />
-          :
-            null
-        }
+            <WeeklySecurityTopTen
+              push={push}
+              data={weeklySecurityTopTenData}
+              permission={hasTkMampPermission}
+              orgId={orgId}
+              openCustomerListPage={this.openCustomerListPage}
+              openStockPage={this.openStockPage}
+            />
+          </div>
+          <CombinationRank
+            combinationTreeList={combinationTreeList}
+            combinationRankList={combinationRankList}
+            tabChange={this.handleTabChange}
+            chartTabChange={this.handleChartTabChange}
+            getCombinationLineChart={getCombinationLineChart}
+            combinationLineChartData={combinationLineChartData}
+            rankTabActiveKey={rankTabActiveKey}
+            yieldRankChange={yieldRankChange}
+            yieldRankValue={yieldRankValue}
+            riskLevelFilter={riskLevelFilter}
+            riskLevel={riskLevel}
+            dict={dict}
+            openStockPage={this.openStockPage}
+            openCustomerListPage={this.openCustomerListPage}
+          />
+          {
+            visible
+            ?
+              <CombinationModal
+                // 关闭弹窗
+                closeModal={this.closeModal}
+                {...modalProps[modalType]}
+              />
+            :
+              null
+          }
+        </div>
       </div>
     );
   }

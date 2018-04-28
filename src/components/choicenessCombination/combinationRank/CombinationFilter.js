@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 15:46:34
+ * @Last Modified time: 2018-04-28 16:03:53
 */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ export default class CombinationRank extends PureComponent {
     // 字典
     dict: PropTypes.object.isRequired,
     // 筛选
-    filterChange: PropTypes.func.isRequired,
+    // filterChange: PropTypes.func.isRequired,
     // 组合排名收益率排序
     yieldRankChange: PropTypes.func.isRequired,
     yieldRankValue: PropTypes.string,
@@ -51,28 +51,6 @@ export default class CombinationRank extends PureComponent {
   }
 
   @autobind
-  handleRiskChange(value) {
-    const { riskLevelFilter } = this.props;
-    console.log('risk', value);
-    riskLevelFilter({
-      value,
-    });
-  }
-
-  @autobind
-  handleYieldSelect(key, value) {
-    const { yieldRankChange } = this.props;
-    console.log('yield', key, value);
-    // filterChange({
-    //   key: 'yield',
-    //   value,
-    // });
-    yieldRankChange({
-      value,
-    });
-  }
-
-  @autobind
   getTreeData() {
     const { dict: { prodRiskLevelList = EMPTY_LIST } } = this.props;
     const treeDataList = [riskDefaultItem];
@@ -84,6 +62,22 @@ export default class CombinationRank extends PureComponent {
       });
     });
     return treeDataList;
+  }
+
+  @autobind
+  handleYieldSelect(key, value) {
+    const { yieldRankChange } = this.props;
+    yieldRankChange({
+      value,
+    });
+  }
+
+  @autobind
+  handleRiskChange(value) {
+    const { riskLevelFilter } = this.props;
+    riskLevelFilter({
+      value,
+    });
   }
 
   render() {
@@ -114,7 +108,7 @@ export default class CombinationRank extends PureComponent {
             />
           </InfoForm>
         </div>
-        <div className={styles.formItem}>
+        <div className={`${styles.formItem} ${styles.treeSelectBox}`}>
           <InfoForm label="风险等级" style={labelStyle}>
             <TreeSelect {...treeSelectProps} />
           </InfoForm>

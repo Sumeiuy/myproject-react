@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 09:04:03
+ * @Last Modified time: 2018-04-28 16:06:54
 */
 
 import _ from 'lodash';
@@ -38,40 +38,7 @@ function calcDate(value) {
   };
 }
 
-// 根据风险等级筛选
-// function combinationRankListFilter(list, condition) {
-//   const ablist = list.map((resultItem) => {
-//     const isAll = _.findIndex(condition, item => (item === riskDefaultItem.value)) > -1;
-//     return {
-//       ...resultItem,
-//       show: isAll ? true : _.findIndex(condition,
-//         conditionItem => (resultItem.riskLevel === conditionItem)) > -1,
-//     };
-//   });
-//   return ablist;
-// }
-
-// 在以7天收益率排序时，把没有7天收益率的组合数据设置为不显示
-// function combinationRankListNoDayDataDisabled(list, desc) {
-//   return list.map((item) => {
-//     const show = !(desc === yieldRankList[0].value && _.isNull(item.weekEarnings));
-//     console.log(show, desc === yieldRankList[0].value, _.isNull(item.weekEarnings));
-//     return {
-//       ...item,
-//       show,
-//     };
-//   });
-// }
-
-// 根据收益率排序
-// function combinationRankListSort(list, desc) {
-//   const resultList = combinationRankListNoDayDataDisabled(list, desc);
-//   // 先把对应的收益率列表里面的item找出来
-//   const yieldItem = _.filter(yieldRankList, item => item.value === desc);
-//   // 然后找出对应的收益率的key，进行排序
-//   return _.reverse(_.sortBy(resultList, item => item[yieldItem.showNameKey]));
-// }
-
+// 根据传入条件对组合排名数据进行排序筛选
 function combinationRankListSortAndFilter(list, condition) {
   const { yieldRankValue, riskLevel } = condition;
   // 先把对应的收益率列表里面的item找出来
@@ -80,10 +47,13 @@ function combinationRankListSortAndFilter(list, condition) {
   const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
   return sortList.map((item) => {
     let show;
+    // 如果是排序条件是近7天收益率并且当前项是资产配置类组合
     if (yieldRankValue === yieldRankList[0].value && _.isNull(item.weekEarnings)) {
       show = false;
-    } else if (_.findIndex(riskLevel,
-      conditionItem => (conditionItem === riskDefaultItem.value)) > -1) {
+    } else if ((_.findIndex(riskLevel,
+      conditionItem => (conditionItem === riskDefaultItem.value)) > -1)
+      || _.isEmpty(riskLevel)) {
+        // 如果筛选项中有所有的字段
       show = true;
     } else {
       show = _.findIndex(riskLevel,
@@ -108,7 +78,7 @@ export default {
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    riskLevel: [riskDefaultItem.value], // 所筛选的风险等级 默认选择全部
+    riskLevel: EMPTY_LIST, // 所筛选的风险等级
   },
   reducers: {
     // 风险等级筛选
@@ -193,7 +163,6 @@ export default {
         yieldRankValue: state.yieldRankValue,
         riskLevel: state.riskLevel,
       });
-      console.log('combinationRankListaaa', combinationRankList, state.yieldRankValue, state.riskLevel);
       return {
         ...state,
         combinationRankList,
@@ -206,8 +175,6 @@ export default {
       const newCombinationLineChartData = {};
       newCombinationLineChartData[resultData.combinationCode] = {
         ...resultData,
-        // 如果是资产配置类默认显示近一年，否则显示近三个月
-        // defaultActiveKey: true ? chartTabList[1].key : chartTabList[0].key,
       };
       return {
         ...state,
@@ -277,20 +244,6 @@ export default {
         combinationCode: payload.combinationCode,
         ...calcDate(payload.key),
       };
-      switch (payload.key) {
-        case chartTabList[0].key :
-          newPayload.startDate = '';
-          newPayload.endDate = '';
-          break;
-        case chartTabList[1].key :
-          newPayload.startDate = '';
-          newPayload.endDate = '';
-          break;
-        default :
-          newPayload.startDate = '';
-          newPayload.endDate = '';
-          break;
-      }
       const response = yield call(api.getCombinationChart, newPayload);
       yield put({
         type: 'getCombinationLineChartSuccess',

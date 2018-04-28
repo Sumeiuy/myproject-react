@@ -158,13 +158,17 @@ export default {
         const routeCallbackObj = {
           serviceLog(param) {
             const params = param;
-            const { pageSize, serveDateToPaged } = params;
+            // 默认搜索内容为空
+            const { pageSize, serveDateToPaged, keyword = '' } = params;
             if (_.isEmpty(pageSize)) params.pageSize = null;
             if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
             params.pageNum = 1; // 默认显示第一页
             dispatch({
               type: 'getServiceLog',
-              payload: params,
+              payload: {
+                ...params,
+                keyword: !_.isEmpty(keyword) ? decodeURIComponent(keyword) : '',
+              },
               loading: true,
             });
           },
@@ -1422,12 +1426,12 @@ export default {
       };
     },
     queryHoldingProductSuccess(state, action) {
-      const { payload: { prdtHold, resultData } } = action;
+      const { payload: { prdtHold, custId, resultData } } = action;
       return {
         ...state,
         holdingProducts: {
           ...state.holdingProducts,
-          [prdtHold]: resultData,
+          [`${custId}${prdtHold}`]: resultData,
         },
       };
     },

@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 20:52:09
+ * @Last Modified time: 2018-04-28 16:04:08
 */
 
 import React, { PureComponent } from 'react';
@@ -15,14 +15,15 @@ import Icon from '../../common/Icon';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 import { yieldRankList } from '../../../routes/choicenessCombination/config';
+import { securityType as securityTypeList } from '../config';
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
+const EMPTY_LIST = [];
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
     // 字典
-    // dict: PropTypes.object.isRequired,
+    dict: PropTypes.object.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合item数据
@@ -34,6 +35,10 @@ export default class CombinationListItem extends PureComponent {
     rankTabActiveKey: PropTypes.string.isRequired,
     // 组合排名收益率排序
     yieldRankValue: PropTypes.string,
+    // 打开个股资讯页面
+    openStockPage: PropTypes.func.isRequired,
+    // 打开持仓查客户页面
+    openCustomerListPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -47,7 +52,7 @@ export default class CombinationListItem extends PureComponent {
 
   @autobind
   getHistoryList() {
-    const { data } = this.props;
+    const { data, openStockPage } = this.props;
     if (_.isEmpty(data.securityList)) {
       return (
         <div className={styles.noData}>
@@ -58,18 +63,40 @@ export default class CombinationListItem extends PureComponent {
     }
     return data.securityList.map((item, index) => {
       const key = `key${index}`;
+      const reason = (item.reason || '').length > 35 ?
+        `${item.reason.slice(0, 35)}...`
+        : item.reason;
       return (
         <div className={`${styles.historyItem} clearfix`} key={key}>
           <span className={styles.securityName}>
-            <a title={item.securityName}>{item.securityName}</a>
+            {
+              this.isStock(item.securityType) ?
+                <a
+                  title={item.securityName}
+                  onClick={() => openStockPage({ code: item.securityCode })}
+                >
+                  {item.securityName}
+                </a>
+                :
+                <span title={item.securityName}>{item.securityName}</span>
+            }
           </span>
           <span className={styles.securityCode}>
-            <a>{item.securityCode}</a>
+            {
+              this.isStock(item.securityType) ?
+                <a
+                  onClick={() => openStockPage({ code: item.securityCode })}
+                >
+                  {item.securityCode}
+                </a>
+                :
+                <span>{item.securityCode}</span>
+            }
           </span>
           <span className={styles.direction}>{item.directionName}</span>
           <span className={styles.time}>{item.time}</span>
           <span className={styles.cost}>{item.price}</span>
-          <span className={styles.reason} title={item.reason}>{item.reason}</span>
+          <span className={styles.reason} title={item.reason}>{reason}</span>
         </div>
       );
     });
@@ -101,6 +128,31 @@ export default class CombinationListItem extends PureComponent {
     );
   }
 
+  @autobind
+  getRiskLevelName() {
+    const { data, dict } = this.props;
+    const riskLevelData = dict.prodRiskLevelList;
+    const { riskLevel = '' } = data;
+    const riskLevelName = ((_.filter(riskLevelData, item => item.key === riskLevel)
+    || EMPTY_LIST)[0]
+    || EMPTY_OBJECT).value;
+    return riskLevelName ? (<i>{riskLevelName}</i>) : null;
+  }
+
+  @autobind
+  isStock(securityType) {
+    return securityType === securityTypeList[0].value;
+  }
+
+  @autobind
+  openCustomerListPage(data) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage({
+      name: data.combinationName,
+      code: data.combinationCode,
+    });
+  }
+
   render() {
     const {
       // dict,
@@ -111,10 +163,15 @@ export default class CombinationListItem extends PureComponent {
       rankTabActiveKey,
       // yieldRankValue,
     } = this.props;
-    // const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
+    const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
     const yieldName = this.getYieldName();
+    const classNames = classnames({
+      [styles.itemBox]: true,
+      clearfix: true,
+      [styles.show]: data.show,
+    });
     return (
-      <div className={`${styles.itemBox} clearfix`}>
+      <div className={classNames}>
         <div className={styles.left}>
           <div className={styles.headBox}>
             <span className={styles.combinationName} title={data.combinationName}>
@@ -125,7 +182,7 @@ export default class CombinationListItem extends PureComponent {
               {this.getYieldNode()}
             </span>
             <span className={styles.tips}>
-              <i>{data.riskLevelName}</i>
+              {this.getRiskLevelName()}
               {
                 data.isRecommend ?
                   <em>推荐</em>
@@ -136,7 +193,7 @@ export default class CombinationListItem extends PureComponent {
             <span className={styles.link}>
               <a>历史报告 </a>
               |
-              <a> 订购客户</a>
+              <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
             </span>
           </div>
           <div className={`${styles.titleBox} clearfix`}>
@@ -153,8 +210,9 @@ export default class CombinationListItem extends PureComponent {
         </div>
         <div className={styles.right}>
           <CombinationYieldChart
+            combinationItemData={data}
             combinationCode={data.combinationCode}
-            chartData={combinationLineChartData}
+            chartData={chartData}
             getCombinationLineChart={getCombinationLineChart}
             tabChange={chartTabChange}
             rankTabActiveKey={rankTabActiveKey}

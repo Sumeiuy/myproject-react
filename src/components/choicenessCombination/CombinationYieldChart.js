@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 19:23:28
+ * @Last Modified time: 2018-04-28 16:05:57
 */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import styles from './combinationYieldChart.less';
 import { chartTabList } from '../../routes/choicenessCombination/config';
 
 const TabPane = Tabs.TabPane;
-const EMPTY_OBJECT = {};
+// const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 export default class CombinationYieldChart extends PureComponent {
   static propTypes = {
@@ -24,6 +24,8 @@ export default class CombinationYieldChart extends PureComponent {
     tabChange: PropTypes.func.isRequired,
     // 对应的组合code
     combinationCode: PropTypes.string,
+    // 对应的组合数据
+    combinationItemData: PropTypes.object.isRequired,
     // 图表数据
     getCombinationLineChart: PropTypes.func.isRequired,
     chartData: PropTypes.object.isRequired,
@@ -49,29 +51,30 @@ export default class CombinationYieldChart extends PureComponent {
       rankTabActiveKey: newRankTabActiveKey,
     } = nextProps;
     const {
-      combinationCode,
       rankTabActiveKey,
+      combinationItemData,
     } = this.props;
+    // 如果组合排名tab选中的key发生变化，重置chart里面tab的选中key
+    if (newRankTabActiveKey !== rankTabActiveKey) {
+      this.setState({
+        activeKey: '',
+      });
+    }
     const { activeKey } = this.state;
     // 判断一下，如果图表数据有并且activeKey是空的话根据组合类型设置预设值
-    if (_.isEmpty(activeKey) && !_.isEmpty(newChartData[combinationCode])) {
-      const isAsset = _.isNull(newChartData[combinationCode].weekEarnings);
+    if (_.isEmpty(activeKey) && !_.isEmpty(newChartData)) {
+      const isAsset = _.isNull(combinationItemData.weekEarnings);
       this.setState({
         // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
         activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
       });
     }
-    // 如果组合排名tab选中的key发生变化，重置chart里面tab的选中key
-    if (newRankTabActiveKey !== rankTabActiveKey) {
-      this.resetActiveKey();
-    }
   }
 
   @autobind
   getTabPaneList() {
-    const { chartData, combinationCode } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const isAsset = _.isNull(itemData.weekEarnings);
+    const { combinationItemData } = this.props;
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
     // 如果是资产配置类组合不显示近三个月的选项
     const list = isAsset ? chartTabList.slice(1, chartTabList.length) : chartTabList;
     return list.map(item => (
@@ -81,31 +84,38 @@ export default class CombinationYieldChart extends PureComponent {
 
   @autobind
   getLegendData() {
-    const { chartData, combinationCode } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const legendData = [itemData.combinationName];
-    const isAsset = _.isNull(itemData.weekEarnings);
-    // 如果非资产配置类组合，就多现实一个基准线
-    if (isAsset) {
-      legendData.push(itemData.baseName);
+    const { chartData, combinationItemData } = this.props;
+    // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    const combinationName = (chartData.combinationName || '').length > 8 ?
+      chartData.combinationName.slice(0, 8)
+      :
+      chartData.combinationName;
+    const baseName = (chartData.baseName || '').length > 8 ?
+      chartData.baseName.slice(0, 8)
+      :
+      chartData.baseName;
+    const legendData = [combinationName];
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
+    // 如果非资产配置类组合，就多显示一个基准线
+    if (!isAsset) {
+      legendData.push(baseName);
     }
     return legendData;
   }
 
   @autobind
   getSeriesData() {
-    const { chartData, combinationCode } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const isAsset = _.isNull(itemData.weekEarnings);
+    const { chartData, combinationItemData } = this.props;
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
     const seriesData = [{
-      data: itemData.combinationLine,
+      data: chartData.combinationLine,
       type: 'line',
       areaStyle: {
         normal: {
           color: 'rgba(141,189,233, 0.5)',
         },
       },
-      name: itemData.combinationName,
+      name: chartData.combinationName,
       lineStyle: {
         normal: {
           color: 'rgb(141,189,233)',
@@ -113,16 +123,16 @@ export default class CombinationYieldChart extends PureComponent {
       },
     }];
     // 如果非资产配置类组合，就多显示一个基准线
-    if (isAsset) {
+    if (!isAsset) {
       seriesData.push({
-        data: itemData.baseLine,
+        data: chartData.baseLine,
         type: 'line',
         areaStyle: {
           normal: {
             color: 'rgba(235,154,154, 0.5)',
           },
         },
-        name: itemData.baseName,
+        name: chartData.baseName,
         lineStyle: {
           normal: {
             color: 'rgb(235,154,154)',
@@ -135,36 +145,34 @@ export default class CombinationYieldChart extends PureComponent {
 
   @autobind
   tooltipFormat(params) {
-    const { chartData, combinationCode } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const combinationNum = (itemData.combinationData || EMPTY_ARRAY)[params[0].dataIndex];
-    const isAsset = _.isNull(itemData.weekEarnings);
-    // 如果是资产配置类组合，就多现实一个基准数据
-    if (isAsset) {
-      const baseNum = (itemData.baseData || EMPTY_ARRAY)[params[0].dataIndex];
+    const { chartData, combinationItemData } = this.props;
+    const combinationNum = (chartData.combinationData || EMPTY_ARRAY)[params[0].dataIndex] || 0;
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
+    // 如果非资产配置类组合，就多现实一个基准数据
+    if (!isAsset) {
+      const baseNum = (chartData.baseData || EMPTY_ARRAY)[params[0].dataIndex] || 0;
       return `
         <div>${params[0].axisValueLabel}</div>
-        <div>${params[0].marker}${params[0].seriesName}: ${combinationNum}</div>
-        <div>${params[1].marker}${params[1].seriesName}: ${baseNum}</div>
+        <div>${params[0].marker}${params[0].seriesName}: ${combinationNum.toFixed(2)}%</div>
+        <div>${params[1].marker}${params[1].seriesName}: ${baseNum.toFixed(2)}%</div>
       `;
     }
     return `
       <div>${params[0].axisValueLabel}</div>
-      <div>${params[0].marker}${params[0].seriesName}: ${combinationNum}</div>
+      <div>${params[0].marker}${params[0].seriesName}: ${combinationNum.toFixed(2)}%</div>
     `;
   }
 
   // 在组合排名tab切换时用于重置图表组件tab的状态
-  @autobind
-  resetActiveKey() {
-    const { chartData, combinationCode } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const isAsset = _.isNull(itemData.weekEarnings);
-    const activeKey = isAsset ? chartTabList[1].key : chartTabList[0].key;
-    this.setState({
-      activeKey,
-    });
-  }
+  // @autobind
+  // resetActiveKey() {
+  //   const { combinationItemData } = this.props;
+  //   const isAsset = _.isNull(combinationItemData.weekEarnings);
+  //   const activeKey = isAsset ? chartTabList[1].key : chartTabList[0].key;
+  //   this.setState({
+  //     activeKey,
+  //   });
+  // }
 
   @autobind
   handleTabChange(key) {
@@ -182,28 +190,34 @@ export default class CombinationYieldChart extends PureComponent {
     const { activeKey } = this.state;
     const {
       chartData,
-      combinationCode,
     } = this.props;
-    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
     const option = {
       legend: {
         data: this.getLegendData(),
         bottom: 0,
         itemHeight: 0,
-        itemGap: 20,
+        itemWidth: 10,
+        itemGap: 5,
+        textStyle: {
+          fontSize: 8,
+        },
+        selectedMode: false,
       },
       xAxis: {
         type: 'category',
-        data: itemData.timeLine,
+        data: chartData.timeLine,
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
+          fontSize: 10,
         },
       },
       yAxis: {
         type: 'value',
         axisLabel: {
           formatter: '{value} %',
+          fontSize: 10,
         },
       },
       series: this.getSeriesData(),
@@ -219,8 +233,8 @@ export default class CombinationYieldChart extends PureComponent {
         width: 'auto',
         top: 10,
         bottom: 45,
-        left: 45,
-        right: 25,
+        left: 30,
+        right: 30,
       },
     };
     // 如果是资产配置类默认显示近一年，否则显示近三个月

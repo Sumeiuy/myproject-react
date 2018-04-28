@@ -17,25 +17,32 @@ import CommonTable from '../common/biz/CommonTable';
 import Pagination from '../common/Pagination';
 import Select from '../common/Select';
 import Button from '../common/Button';
+import Icon from '../common/Icon';
 import config from './config';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
 const { timeRange, directionRange, titleList } = config;
-const { transfer } = titleList;
+// 持仓历史
+const HISTORY_TYPE = config.typeList[0];
 export default class CombinationModal extends PureComponent {
   static propTypes = {
+    type: PropTypes.string.isRequired,
+    title: PropTypes.string,
     getTreeData: PropTypes.func.isRequired,
     treeData: PropTypes.array,
     getListData: PropTypes.func.isRequired,
     listData: PropTypes.object.isRequired,
     direction: PropTypes.string,
     closeModal: PropTypes.func.isRequired,
+    openCustomerListPage: PropTypes.func,
   }
 
   static defaultProps = {
+    title: '标题',
     treeData: [],
     direction: '1',
+    openCustomerListPage: _.noop,
   }
 
   constructor(props) {
@@ -54,21 +61,48 @@ export default class CombinationModal extends PureComponent {
       combinationCode: '',
       // 搜索关键字
       keyword: '',
+      titleArray: [],
     };
   }
 
   componentWillMount() {
-    const { getTreeData, getListData } = this.props;
-    // TODO:通过类型判断来调用不同的接口
+    const { getTreeData, type } = this.props;
     getTreeData();
-    getListData();
     const dateObj = this.calcDate('3');
+    const titleArray = this.setTitleList(type);
     this.setState({
       startDate: dateObj.begin,
       endDate: dateObj.end,
-    });
+      titleArray,
+    }, () => this.sendRequest());
   }
 
+  @autobind
+  setTitleList(type) {
+    const { openCustomerListPage } = this.props;
+    const titleArray = titleList[type];
+    if (type === HISTORY_TYPE) {
+      // 持仓历史
+      const lastColumn = {
+        dataIndex: 'view',
+        key: 'view',
+        title: '持仓客户',
+        width: 80,
+        render: (text, record) => {
+          const openPayload = {
+            name: record.securityName,
+            code: record.securityCode,
+            type: record.securityType,
+          };
+          return <a onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
+        },
+      };
+      titleArray[5].render = (text, record) => this.renderPopover(record.reason);
+      titleArray[6].render = (text, record) => this.renderPopover(record.combinationName);
+      titleArray[7] = lastColumn;
+    }
+    return titleArray;
+  }
 
   // 计算事件函数，返回格式化后的开始、结束日期
   @autobind
@@ -126,17 +160,20 @@ export default class CombinationModal extends PureComponent {
   // 发送请求
   @autobind
   sendRequest(pageNum = 1, pageSize = 10) {
-    const { getListData } = this.props;
+    const { getListData, type } = this.props;
     const { startDate, endDate, combinationCode, directionCode, keyword } = this.state;
     const payload = {
       startDate,
       endDate,
       combinationCode,
-      directionCode,
       keyword,
       pageSize,
       pageNum,
     };
+    if (type === HISTORY_TYPE) {
+      // 调仓历史
+      payload.directionCode = directionCode;
+    }
     console.warn('payload', payload);
     getListData(payload);
   }
@@ -157,27 +194,36 @@ export default class CombinationModal extends PureComponent {
     this.sendRequest(page);
   }
 
-  render() {
-    const { time, directionCode, combinationCode, keyword } = this.state;
-    const { treeData, listData, closeModal } = this.props;
-    const { list = [], page = {} } = listData;
-    const PaginationOption = {
-      current: Number(page.pageNum) || 1,
-      total: Number(page.totalCount) || 1,
-      pageSize: Number(page.pageSize),
-      onChange: this.handlePaginationChange,
-    };
-    const newTransfer = [...transfer];
-    newTransfer[5].render = (text, record) => (
-      <Popover
+  @autobind
+  renderPopover(value) {
+    let reactElement = null;
+    if (value) {
+      reactElement = (<Popover
         placement="top"
-        content={record.reason}
+        content={value}
         trigger="hover"
         overlayClassName={styles.popover}
       >
-        {record.reason}
-      </Popover>
-    );
+        <div className={styles.ellipsis}>
+          {value}
+        </div>
+      </Popover>);
+    } else {
+      reactElement = '暂无';
+    }
+    return reactElement;
+  }
+
+  render() {
+    const { time, directionCode, combinationCode, keyword, titleArray } = this.state;
+    const { type, title, treeData, listData, closeModal } = this.props;
+    const { list = [], page = {} } = listData;
+    const PaginationOption = {
+      current: page.pageNum,
+      total: page.totalCount,
+      pageSize: page.pageSize,
+      onChange: this.handlePaginationChange,
+    };
     const footerContent = (<Button
       key="close"
       onClick={closeModal}
@@ -187,7 +233,7 @@ export default class CombinationModal extends PureComponent {
     return (
       <div className={styles.combinationModal}>
         <Modal
-          title="标题"
+          title={title}
           visible
           footer={footerContent}
           wrapClassName={styles.modal}
@@ -212,17 +258,24 @@ export default class CombinationModal extends PureComponent {
                 placeholder="Please select"
                 treeDefaultExpandAll
                 onChange={this.treeSelectChangeHandle}
+                dropdownClassName={styles.dropdownClassName}
               />
             </div>
-            <div className={styles.headerItem}>
-              <span>调仓方向</span>
-              <Select
-                name="directionCode"
-                data={directionRange}
-                value={directionCode}
-                onChange={this.selectChangeHandle}
-              />
-            </div>
+            {
+              type === HISTORY_TYPE
+              ?
+                <div className={styles.headerItem}>
+                  <span>调仓方向</span>
+                  <Select
+                    name="directionCode"
+                    data={directionRange}
+                    value={directionCode}
+                    onChange={this.selectChangeHandle}
+                  />
+                </div>
+              :
+                null
+            }
             <div className={styles.headerItem}>
               <Search
                 placeholder="证券名称/证券代码/证券简称"
@@ -238,7 +291,7 @@ export default class CombinationModal extends PureComponent {
           <div className={styles.content}>
             <CommonTable
               data={list}
-              titleList={newTransfer}
+              titleList={titleArray}
               align="left"
             />
           </div>
