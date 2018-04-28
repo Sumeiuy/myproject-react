@@ -106,6 +106,7 @@ export default class MatchArea extends PureComponent {
         title: '客户360视图-客户信息',
         forceRefresh: true,
         activeSubTab: ['服务记录'],
+        serviceRecordKeyword: [keyword],
       },
       state: {
         url,
