@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 09:58:52
+ * @Last Modified time: 2018-04-27 20:01:59
 */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,8 @@ const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
+    // 字典
+    dict: PropTypes.object.isRequired,
     // tab切换
     tabChange: PropTypes.func.isRequired,
     // 筛选
@@ -70,21 +72,29 @@ export default class CombinationRank extends PureComponent {
       combinationLineChartData,
       getCombinationLineChart,
       rankTabActiveKey,
+      yieldRankValue,
+      // dict,
     } = this.props;
+    console.log('abcde', combinationRankList);
     return combinationRankList.map(item => (
-      <CombinationListItem
-        rankTabActiveKey={rankTabActiveKey}
-        data={item}
-        key={item.combinationCode}
-        chartTabChange={chartTabChange}
-        getCombinationLineChart={getCombinationLineChart}
-        combinationLineChartData={combinationLineChartData}
-      />
+      item.show ?
+        <CombinationListItem
+          rankTabActiveKey={rankTabActiveKey}
+          data={item}
+          key={item.combinationCode}
+          chartTabChange={chartTabChange}
+          getCombinationLineChart={getCombinationLineChart}
+          combinationLineChartData={combinationLineChartData}
+          yieldRankValue={yieldRankValue}
+        />
+      :
+        <div />
     ));
   }
 
   render() {
     const {
+      dict,
       tabChange,
       filterChange,
       combinationTreeList,
@@ -104,7 +114,7 @@ export default class CombinationRank extends PureComponent {
           <CombinationTab
             tabList={combinationTreeList}
             tabChange={tabChange}
-            activeKey={rankTabActiveKey}
+            rankTabActiveKey={rankTabActiveKey}
           />
           <CombinationFilter
             filterChange={filterChange}
@@ -112,6 +122,7 @@ export default class CombinationRank extends PureComponent {
             yieldRankValue={yieldRankValue}
             riskLevelFilter={riskLevelFilter}
             riskLevel={riskLevel}
+            dict={dict}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}

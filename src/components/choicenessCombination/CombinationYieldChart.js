@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-26 21:10:24
+ * @Last Modified time: 2018-04-27 19:23:28
 */
 
 import React, { PureComponent } from 'react';
@@ -55,9 +55,10 @@ export default class CombinationYieldChart extends PureComponent {
     const { activeKey } = this.state;
     // 判断一下，如果图表数据有并且activeKey是空的话根据组合类型设置预设值
     if (_.isEmpty(activeKey) && !_.isEmpty(newChartData[combinationCode])) {
+      const isAsset = _.isNull(newChartData[combinationCode].weekEarnings);
       this.setState({
         // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
-        activeKey: true ? chartTabList[1].key : chartTabList[0].key,
+        activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
       });
     }
     // 如果组合排名tab选中的key发生变化，重置chart里面tab的选中key
@@ -68,10 +69,11 @@ export default class CombinationYieldChart extends PureComponent {
 
   @autobind
   getTabPaneList() {
-    // const { chartData, combinationCode } = this.props;
-    // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    const { chartData, combinationCode } = this.props;
+    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    const isAsset = _.isNull(itemData.weekEarnings);
     // 如果是资产配置类组合不显示近三个月的选项
-    const list = true ? chartTabList.slice(1, chartTabList.length) : chartTabList;
+    const list = isAsset ? chartTabList.slice(1, chartTabList.length) : chartTabList;
     return list.map(item => (
       <TabPane tab={item.label} key={item.key} />
     ));
@@ -82,8 +84,9 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationCode } = this.props;
     const itemData = chartData[combinationCode] || EMPTY_OBJECT;
     const legendData = [itemData.combinationName];
+    const isAsset = _.isNull(itemData.weekEarnings);
     // 如果非资产配置类组合，就多现实一个基准线
-    if (true) {
+    if (isAsset) {
       legendData.push(itemData.baseName);
     }
     return legendData;
@@ -93,6 +96,7 @@ export default class CombinationYieldChart extends PureComponent {
   getSeriesData() {
     const { chartData, combinationCode } = this.props;
     const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    const isAsset = _.isNull(itemData.weekEarnings);
     const seriesData = [{
       data: itemData.combinationLine,
       type: 'line',
@@ -108,8 +112,8 @@ export default class CombinationYieldChart extends PureComponent {
         },
       },
     }];
-    // 如果非资产配置类组合，就多现实一个基准线
-    if (true) {
+    // 如果非资产配置类组合，就多显示一个基准线
+    if (isAsset) {
       seriesData.push({
         data: itemData.baseLine,
         type: 'line',
@@ -134,8 +138,9 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationCode } = this.props;
     const itemData = chartData[combinationCode] || EMPTY_OBJECT;
     const combinationNum = (itemData.combinationData || EMPTY_ARRAY)[params[0].dataIndex];
+    const isAsset = _.isNull(itemData.weekEarnings);
     // 如果是资产配置类组合，就多现实一个基准数据
-    if (true) {
+    if (isAsset) {
       const baseNum = (itemData.baseData || EMPTY_ARRAY)[params[0].dataIndex];
       return `
         <div>${params[0].axisValueLabel}</div>
@@ -152,9 +157,10 @@ export default class CombinationYieldChart extends PureComponent {
   // 在组合排名tab切换时用于重置图表组件tab的状态
   @autobind
   resetActiveKey() {
-    // const { chartData, combinationCode } = this.props;
-    // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const activeKey = true ? chartTabList[1].key : chartTabList[0].key;
+    const { chartData, combinationCode } = this.props;
+    const itemData = chartData[combinationCode] || EMPTY_OBJECT;
+    const isAsset = _.isNull(itemData.weekEarnings);
+    const activeKey = isAsset ? chartTabList[1].key : chartTabList[0].key;
     this.setState({
       activeKey,
     });

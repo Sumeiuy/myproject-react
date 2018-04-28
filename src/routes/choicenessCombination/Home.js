@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 09:57:36
+ * @Last Modified time: 2018-04-28 08:59:20
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import dva from '../../helper/dva';
 import CombinationAdjustHistory from '../../components/choicenessCombination/CombinationAdjustHistory';
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
+import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 
 const dispatch = dva.generateEffect;
 const EMPTY_LIST = [];
@@ -40,8 +41,12 @@ const effects = {
 };
 
 const mapStateToProps = state => ({
+  // 字典
+  dict: state.app.dict,
   // 调仓历史数据
   adjustWarehouseHistoryData: state.choicenessCombination.adjustWarehouseHistoryData,
+  // 弹窗调仓历史数据
+  tableHistoryList: state.choicenessCombination.tableHistoryList,
   // 组合调仓数据
   combinationAdjustHistoryData: state.choicenessCombination.combinationAdjustHistoryData,
   // 近一周表现前十的证券
@@ -73,10 +78,15 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ChoicenessCombination extends PureComponent {
   static propTypes = {
+    // 字典数据
+    dict: PropTypes.object.isRequired,
     // 获取调仓历史数据
     getAdjustWarehouseHistory: PropTypes.func.isRequired,
+    adjustWarehouseHistoryData: PropTypes.object.isRequired,
     // 获取组合证券构成数据/获取近一周表现前十的证券
     getCombinationSecurityList: PropTypes.func.isRequired,
+    tableHistoryList: PropTypes.object.isRequired,
+    weeklySecurityTopTenData: PropTypes.array.isRequired,
     // 组合树列表数据
     getCombinationTree: PropTypes.func.isRequired,
     combinationTreeList: PropTypes.array.isRequired,
@@ -105,21 +115,49 @@ export default class ChoicenessCombination extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-
+      visible: false,
+      directionCode: '1',
     };
   }
 
   componentDidMount() {
     const {
+      getAdjustWarehouseHistory,
+      getCombinationSecurityList,
       getCombinationTree,
       getCombinationRankList,
     } = this.props;
+    // 调仓方向传 3 视为取最新两条数据
+    const payload = {
+      directionCode: '3',
+    };
+    getAdjustWarehouseHistory(payload);
+    getCombinationSecurityList();
     // 先获取组合树，然后用组合树的第一个组合类别id查询组合排名数据
     getCombinationTree().then(() => {
       const { combinationTreeList } = this.props;
       getCombinationRankList({
-        combinationType: (combinationTreeList[0] || EMPTY_OBJECT).value,
+        combinationType: ((combinationTreeList[0]
+          || EMPTY_OBJECT).children[0]
+          || EMPTY_OBJECT).value,
       });
+    });
+  }
+
+
+  // 打开弹窗
+  @autobind
+  showModal(directionCode) {
+    this.setState({
+      visible: true,
+      directionCode,
+    });
+  }
+
+  @autobind
+  closeModal() {
+    this.setState({
+      visible: false,
     });
   }
 
@@ -133,7 +171,6 @@ export default class ChoicenessCombination extends PureComponent {
   @autobind
   handleTabChange(key) {
     const { getCombinationRankList, combinationRankTabchange } = this.props;
-    // 将tab选中的key和redux中的rankTabActiveKey 同步
     combinationRankTabchange({ key });
     // 查询组合排名数据
     getCombinationRankList({
@@ -152,6 +189,11 @@ export default class ChoicenessCombination extends PureComponent {
 
   render() {
     const {
+      dict,
+      getCombinationTree,
+      adjustWarehouseHistoryData,
+      tableHistoryList,
+      weeklySecurityTopTenData,
       combinationTreeList,
       combinationRankList,
       combinationLineChartData,
@@ -161,12 +203,21 @@ export default class ChoicenessCombination extends PureComponent {
       yieldRankValue,
       riskLevelFilter,
       riskLevel,
+      getAdjustWarehouseHistory,
     } = this.props;
+    const {
+      visible,
+      directionCode,
+    } = this.state;
     return (
       <div className={styles.choicenessCombinationBox}>
         <div className={`${styles.topContainer} clearfix`}>
-          <CombinationAdjustHistory />
-          <WeeklySecurityTopTen />
+          {/* 组合调仓组件 */}
+          <CombinationAdjustHistory
+            showModal={this.showModal}
+            data={adjustWarehouseHistoryData}
+          />
+          <WeeklySecurityTopTen data={weeklySecurityTopTenData} />
         </div>
         <CombinationRank
           combinationTreeList={combinationTreeList}
@@ -181,7 +232,22 @@ export default class ChoicenessCombination extends PureComponent {
           yieldRankValue={yieldRankValue}
           riskLevelFilter={riskLevelFilter}
           riskLevel={riskLevel}
+          dict={dict}
         />
+        {
+          visible
+          ?
+            <CombinationModal
+              direction={directionCode}
+              getTreeData={getCombinationTree}
+              treeData={combinationTreeList}
+              getListData={getAdjustWarehouseHistory}
+              listData={tableHistoryList}
+              closeModal={this.closeModal}
+            />
+          :
+            null
+        }
       </div>
     );
   }

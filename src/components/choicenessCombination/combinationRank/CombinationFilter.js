@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 10:01:31
+ * @Last Modified time: 2018-04-27 15:46:34
 */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
 import styles from './combinationFilter.less';
-import { yieldRankList } from '../../../routes/choicenessCombination/config';
+import { yieldRankList, riskDefaultItem } from '../../../routes/choicenessCombination/config';
 
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
@@ -21,20 +21,12 @@ const labelStyle = {
   width: 'auto',
 };
 
-const treeData = [{
-  label: 'Node1',
-  value: '0-0',
-  key: '0-0',
-}, {
-  label: 'Node2',
-  value: '0-1',
-  key: '0-1',
-}];
-
 const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
+    // 字典
+    dict: PropTypes.object.isRequired,
     // 筛选
     filterChange: PropTypes.func.isRequired,
     // 组合排名收益率排序
@@ -80,13 +72,27 @@ export default class CombinationRank extends PureComponent {
     });
   }
 
+  @autobind
+  getTreeData() {
+    const { dict: { prodRiskLevelList = EMPTY_LIST } } = this.props;
+    const treeDataList = [riskDefaultItem];
+    prodRiskLevelList.forEach((item) => {
+      treeDataList.push({
+        ...item,
+        label: item.value,
+        value: item.key,
+      });
+    });
+    return treeDataList;
+  }
+
   render() {
     const {
       yieldRankValue,
       riskLevel,
     } = this.props;
     const treeSelectProps = {
-      treeData,
+      treeData: this.getTreeData(),
       value: riskLevel,
       onChange: this.handleRiskChange,
       treeCheckable: true,

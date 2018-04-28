@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 22:13:14
+ * @Last Modified time: 2018-04-25 20:49:28
  */
 
 import React, { PureComponent } from 'react';
@@ -492,11 +492,11 @@ export default class ChartTable extends PureComponent {
     const { chartTableInfo, style } = this.props;
     const { allWidth, scrollDisplay } = this.state;
     const paginationOption = {
-      curPageNum: chartTableInfo.curPageNum || 1,
-      totalRecordNum: chartTableInfo.totalCnt || 1,
-      curPageSize: chartTableInfo.pageSize,
-      onPageChange: this.handlePaginationChange,
-      isShowSizeChanger: false,
+      current: chartTableInfo.curPageNum || 1,
+      total: chartTableInfo.totalCnt || 1,
+      pageSize: chartTableInfo.pageSize,
+      onChange: this.handlePaginationChange,
+      showSizeChanger: false,
     };
     return (
       <div className={styles.tableDiv} style={style} ref={this.saveTableWrapper}>

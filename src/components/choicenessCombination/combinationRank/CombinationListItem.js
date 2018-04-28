@@ -3,21 +3,26 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-26 21:19:05
+ * @Last Modified time: 2018-04-27 20:52:09
 */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import Icon from '../../common/Icon';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
+import { yieldRankList } from '../../../routes/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
+// const EMPTY_LIST = [];
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
+    // 字典
+    // dict: PropTypes.object.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合item数据
@@ -27,10 +32,13 @@ export default class CombinationListItem extends PureComponent {
     combinationLineChartData: PropTypes.object.isRequired,
     // 组合排名tab当前选择的key
     rankTabActiveKey: PropTypes.string.isRequired,
+    // 组合排名收益率排序
+    yieldRankValue: PropTypes.string,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
+    yieldRankValue: '',
   }
 
   // constructor(props) {
@@ -40,7 +48,7 @@ export default class CombinationListItem extends PureComponent {
   @autobind
   getHistoryList() {
     const { data } = this.props;
-    if (_.isEmpty(data.latestAdjust)) {
+    if (_.isEmpty(data.securityList)) {
       return (
         <div className={styles.noData}>
           <Icon type="meiyouxiangguanjieguo" />
@@ -48,7 +56,7 @@ export default class CombinationListItem extends PureComponent {
         </div>
       );
     }
-    return data.latestAdjust.map((item, index) => {
+    return data.securityList.map((item, index) => {
       const key = `key${index}`;
       return (
         <div className={`${styles.historyItem} clearfix`} key={key}>
@@ -67,14 +75,44 @@ export default class CombinationListItem extends PureComponent {
     });
   }
 
+  @autobind
+  getYieldName() {
+    const {
+      yieldRankValue,
+    } = this.props;
+    const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
+    return `${result.label}: `;
+  }
+
+  @autobind
+  getYieldNode() {
+    const {
+      data,
+      yieldRankValue,
+    } = this.props;
+    const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
+    const num = data[result.showNameKey];
+    const className = classnames({
+      [styles.up]: num >= 0,
+      [styles.down]: num < 0,
+    });
+    return (
+      <em className={className}>{`${num >= 0 ? '+' : '-'}${num}%`}</em>
+    );
+  }
+
   render() {
     const {
+      // dict,
       data,
       chartTabChange,
       getCombinationLineChart,
       combinationLineChartData,
       rankTabActiveKey,
+      // yieldRankValue,
     } = this.props;
+    // const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
+    const yieldName = this.getYieldName();
     return (
       <div className={`${styles.itemBox} clearfix`}>
         <div className={styles.left}>
@@ -83,8 +121,8 @@ export default class CombinationListItem extends PureComponent {
               <a>{data.combinationName}</a>
             </span>
             <span className={styles.earnings}>
-              <i>近7天收益率:</i>
-              <em className={styles.up}>+5.12%</em>
+              <i>{yieldName}</i>
+              {this.getYieldNode()}
             </span>
             <span className={styles.tips}>
               <i>{data.riskLevelName}</i>

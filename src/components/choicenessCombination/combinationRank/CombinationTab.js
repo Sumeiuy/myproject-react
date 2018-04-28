@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-tab切换
  * @Date: 2018-04-18 14:39:47
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 10:14:47
+ * @Last Modified time: 2018-04-27 16:42:43
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,8 @@ import { Tabs } from 'antd';
 import styles from './combinationTab.less';
 
 const TabPane = Tabs.TabPane;
-// const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 export default class CombinationTab extends PureComponent {
   static propTypes = {
     // tab切换
@@ -45,8 +46,8 @@ export default class CombinationTab extends PureComponent {
 
   @autobind
   getTabPaneList() {
-    const { tabList } = this.props;
-    return tabList.map(item => (
+    const { tabList = EMPTY_LIST } = this.props;
+    return ((tabList[0] || EMPTY_OBJECT).children || EMPTY_LIST).map(item => (
       <TabPane tab={item.label} key={item.key} />
     ));
   }
