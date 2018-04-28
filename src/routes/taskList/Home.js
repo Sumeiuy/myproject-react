@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 14:10:44
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-28 14:26:17
  * @description 任务管理首页
  */
 
@@ -50,6 +50,9 @@ const { taskList } = pageConfig;
 // 服务经理维度任务统计分页初始化
 const GET_CUST_SCOPE_PAGE_NUM = 1;
 const GET_CUST_SCOPE_PAGE_SIZE = 5;
+
+// 查询涨乐财富通的审批人需要的btnId固定值
+const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
 // 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
 const feedbackListOfNone = [{
@@ -781,13 +784,23 @@ export default class PerformerView extends PureComponent {
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    const { getTaskDetailBasicInfo, queryTargetCust } = this.props;
-    getTaskDetailBasicInfo({ taskId: obj.id });
-    queryTargetCust({
-      missionId: obj.id,
-      pageNum: 1,
-      pageSize: 10,
-    });
+    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
+    this.props.queryTargetCust({ missionId: obj.id, pageNum: 1, pageSize: 10 });
+    // 加载右侧详情的时候，查一把涨乐财富通的数据
+    this.queryDataForZhanleServiceWay();
+  }
+
+  // 查询涨乐财富通的数据
+  @autobind
+  queryDataForZhanleServiceWay() {
+    const { eventId, taskTypeCode, typeCode } = this.state;
+    const type = `${+taskTypeCode + 1}`;
+    // TODO 如果是mot任务 eventId参数需要使用 eventId
+    // 如果是自建任务 需要使用serviceType
+    // type 值为2的时候，该任务是自建任务
+    const eventIdParam = type === '2' ? typeCode : eventId;
+    this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
+    this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
   }
 
   /**
