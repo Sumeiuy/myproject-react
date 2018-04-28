@@ -26,9 +26,6 @@ const PAGE_SIZE = 10;
 
 const create = Form.create;
 
-// 查询涨乐财富通的审批人需要的btnId固定值
-const ZL_QUREY_APPROVAL_BTN_ID = '200000';
-
 @create()
 export default class PerformerViewDetail extends PureComponent {
 
@@ -89,21 +86,21 @@ export default class PerformerViewDetail extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    // 当currentId不同的情况下，表示用户切换了左侧任务列表选项
-    // 此时需要查询下相关任务下的可涨乐财富通服务方式下反馈可选项列表和审批人列表
-    const { currentId: prevId } = this.props;
-    const { currentId: nextId } = nextProps;
-    if (nextId !== prevId) {
-      const { eventId, taskTypeCode, serviceTypeCode } = nextProps;
-      const type = `${+taskTypeCode + 1}`;
-      // TODO 如果是mot任务 eventId参数需要使用 eventId
-      // 如果是自建任务 需要使用serviceType
-      // type 值为2的时候，该任务是自建任务
-      const eventIdParam = type === '2' ? serviceTypeCode : eventId;
-      this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
-      this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
-    }
+  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+  @autobind
+  getServeStatusSelectOptionsData(serveStatus) {
+    const allCustOption = {
+      value: '',
+      label: '所有客户',
+      show: true,
+    };
+    const stateData = serveStatus.map(o => ({
+      value: o.key,
+      label: o.value,
+      show: true,
+    }));
+    stateData.unshift(allCustOption);
+    return stateData;
   }
 
   // 查询目标客户的列表和
@@ -367,23 +364,6 @@ export default class PerformerViewDetail extends PureComponent {
       answerText: e.target.value,
     }];
     this.handleRepeatData(initAreaText, params, 'areaTextData');
-  }
-
-  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-  @autobind
-  getServeStatusSelectOptionsData(serveStatus) {
-    const allCustOption = {
-      value: '',
-      label: '所有客户',
-      show: true,
-    };
-    const stateData = serveStatus.map(o => ({
-      value: o.key,
-      label: o.value,
-      show: true,
-    }));
-    stateData.unshift(allCustOption);
-    return stateData;
   }
 
   render() {
