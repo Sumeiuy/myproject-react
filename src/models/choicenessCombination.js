@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:06:54
+ * @Last Modified time: 2018-04-28 17:42:20
 */
 
 import _ from 'lodash';
@@ -20,10 +20,8 @@ function calcDate(value) {
   let startDate = '';
   // 结束日期
   let endDate = '';
-  // 取出现在的时间
-  const now = new Date();
   // 结束日期对象
-  const endMoment = moment(now);
+  const endMoment = moment();
   // 开始日期对象
   if (value !== chartTabList[2].key) {
     const startMoment = moment(endMoment).subtract(value, 'month');
@@ -46,7 +44,8 @@ function combinationRankListSortAndFilter(list, condition) {
   // 然后找出对应的收益率的key，进行排序
   const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
   return sortList.map((item) => {
-    let show;
+    let show = _.findIndex(riskLevel,
+      conditionItem => (item.riskLevel === conditionItem)) > -1;
     // 如果是排序条件是近7天收益率并且当前项是资产配置类组合
     if (yieldRankValue === yieldRankList[0].value && _.isNull(item.weekEarnings)) {
       show = false;
@@ -55,9 +54,6 @@ function combinationRankListSortAndFilter(list, condition) {
       || _.isEmpty(riskLevel)) {
         // 如果筛选项中有所有的字段
       show = true;
-    } else {
-      show = _.findIndex(riskLevel,
-        conditionItem => (item.riskLevel === conditionItem)) > -1;
     }
     return {
       ...item,

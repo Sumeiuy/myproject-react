@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:04:08
+ * @Last Modified time: 2018-04-28 17:48:04
 */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,8 @@ import { securityType as securityTypeList } from '../config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+// 最大字符长度
+const MAX_SIZE_LENGTH = 35;
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
@@ -63,8 +65,8 @@ export default class CombinationListItem extends PureComponent {
     }
     return data.securityList.map((item, index) => {
       const key = `key${index}`;
-      const reason = (item.reason || '').length > 35 ?
-        `${item.reason.slice(0, 35)}...`
+      const reason = (item.reason || '').length > MAX_SIZE_LENGTH ?
+        `${item.reason.slice(0, MAX_SIZE_LENGTH)}...`
         : item.reason;
       return (
         <div className={`${styles.historyItem} clearfix`} key={key}>
@@ -118,13 +120,13 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    const num = data[result.showNameKey];
+    const num = data[result.showNameKey].toFixed(2);
     const className = classnames({
       [styles.up]: num >= 0,
       [styles.down]: num < 0,
     });
     return (
-      <em className={className}>{`${num >= 0 ? '+' : '-'}${num}%`}</em>
+      <em className={className}>{`${num >= 0 ? '+' : ''}${num}%`}</em>
     );
   }
 
