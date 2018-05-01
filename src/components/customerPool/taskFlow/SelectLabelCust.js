@@ -144,7 +144,11 @@ export default class SelectLabelCust extends PureComponent {
       // 任务提示
       // 来自瞄准镜标签，则展示变量任务提示
       // 来自普通标签，则展示普通任务提示
-      missionDesc: padSightLabelDesc(isSightLabel(source), labelId, labelName),
+      missionDesc: padSightLabelDesc({
+        sightingScopeBool: isSightLabel(source),
+        labelId,
+        labelName,
+      }),
       // 是不是瞄准镜标签
       isSightLabel: isSightLabel(source),
     };
