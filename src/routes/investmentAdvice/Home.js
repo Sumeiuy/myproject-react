@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 21:02:31
+ * @Last Modified time: 2018-05-01 22:43:27
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -102,7 +102,7 @@ export default class InvestmentAdvice extends PureComponent {
   }
 
   componentDidMount() {
-    this.getInvestAdviceList(1);
+    this.getInvestAdviceList({ pageNum: 1 });
   }
 
   @autobind
@@ -112,7 +112,7 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 获取投资建议模版列表
   @autobind
-  getInvestAdviceList(pageNum) {
+  getInvestAdviceList({ pageNum }) {
     this.props.getInvestAdviceList({
       pageNum,
       pageSize: 10,
@@ -172,16 +172,18 @@ export default class InvestmentAdvice extends PureComponent {
     const { list = [], page = {} } = this.props.investmentAdvices;
     this.props.deleteInvestAdvice(params).then(() => {
       if (this.props.deleteSuccessStatus) {
+        const { curPageNum } = page;
         // 判断是否最后一条
         if (list.length < 2) {
           // 最后一条数据
           // 需要查询前一页的数据
-          const { curPageNum } = page;
           if (curPageNum === 1) {
-            this.getInvestAdviceList(1);
+            this.getInvestAdviceList({ pageNum: 1 });
           } else {
-            this.getInvestAdviceList(curPageNum - 1);
+            this.getInvestAdviceList({ pageNum: curPageNum - 1 });
           }
+        } else {
+          this.getInvestAdviceList({ pageNum: curPageNum });
         }
       }
     });
@@ -190,7 +192,7 @@ export default class InvestmentAdvice extends PureComponent {
   // 切换当前页
   @autobind
   handlePageChange(pageNum) {
-    this.getInvestAdviceList(pageNum);
+    this.getInvestAdviceList({ pageNum });
   }
 
   // 校验mention内容提及框
@@ -265,7 +267,7 @@ export default class InvestmentAdvice extends PureComponent {
       this.props.modifyInvestAdvice(params).then(() => {
         if (this.props.modifySuccessStatus) {
           this.handleCancel();
-          this.getInvestAdviceList(curPageNum);
+          this.getInvestAdviceList({ pageNum: curPageNum });
         }
       });
     }
