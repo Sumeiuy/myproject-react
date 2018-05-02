@@ -3,12 +3,13 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 13:30:11
+ * @Last Modified time: 2018-05-02 17:16:12
 */
 
 import _ from 'lodash';
 import moment from 'moment';
 import { choicenessCombination as api } from '../api';
+import { delay } from '../utils/sagaEffects';
 import { yieldRankList, riskDefaultItem, chartTabList } from '../routes/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
@@ -46,14 +47,11 @@ function combinationRankListSortAndFilter(list, condition) {
   const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
   return sortList.map((item) => {
     // 匹配对应风险等级的数据
-    let show = _.findIndex(riskLevel,
-      conditionItem => (item.riskLevel === conditionItem)) > -1;
+    let show = item.riskLevel === riskLevel;
     // 如果是排序条件是近7天收益率并且当前项是资产配置类组合
     if (yieldRankValue === yieldRankList[0].value && _.isNull(item.weekEarnings)) {
       show = false;
-    } else if ((_.findIndex(riskLevel,
-      conditionItem => (conditionItem === riskDefaultItem.value)) > -1)
-      || _.isEmpty(riskLevel)) {
+    } else if (riskLevel === riskDefaultItem.value || _.isEmpty(riskLevel)) {
         // 如果筛选项中有“全部”的字段
       show = true;
     }
@@ -62,10 +60,6 @@ function combinationRankListSortAndFilter(list, condition) {
       show,
     };
   });
-}
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms, true));
 }
 
 export default {
@@ -80,7 +74,7 @@ export default {
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    riskLevel: EMPTY_LIST, // 所筛选的风险等级
+    riskLevel: '', // 所筛选的风险等级
   },
   reducers: {
     // 风险等级筛选

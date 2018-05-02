@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 14:10:05
+ * @Last Modified time: 2018-05-02 17:25:40
 */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 最大字符长度
 const MAX_SIZE_LENGTH = 35;
+const DEFAULT_REASON = '调仓理由：暂无';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
@@ -75,7 +76,7 @@ export default class CombinationListItem extends PureComponent {
               this.isStock(item.securityType) ?
                 <a
                   title={item.securityName}
-                  onClick={() => openStockPage({ code: item.securityCode })}
+                  onClick={() => openStockPage({ code: item.securityName })}
                 >
                   {item.securityName}
                 </a>
@@ -98,7 +99,7 @@ export default class CombinationListItem extends PureComponent {
           <span className={styles.direction}>{item.directionName}</span>
           <span className={styles.time}>{item.time}</span>
           <span className={styles.cost}>{item.price}</span>
-          <span className={styles.reason} title={item.reason}>{reason}</span>
+          <span className={styles.reason} title={item.reason}>{reason || DEFAULT_REASON}</span>
         </div>
       );
     });
@@ -110,7 +111,7 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    return `${result.label}: `;
+    return `${result.showName}: `;
   }
 
   @autobind
