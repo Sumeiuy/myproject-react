@@ -84,7 +84,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
         <div className={styles.reason}>{reason || '调入理由：暂无'}</div>
       </div>);
     };
-    newTitleList[1].render = text => (<div>{time.format(text, 'YYYY-MM-DD HH:MM')}</div>);
+    newTitleList[1].render = text => (<div>{time.format(text, config.formatStr)}</div>);
     newTitleList[2].render = (text) => {
       const change = this.percentChange(text.toFixed(2));
       const bigThanZero = text > 0;

@@ -7,6 +7,7 @@
  */
 
 const config = {
+  formatStr: 'YYYY-MM-DD HH:mm',
   timeRange: [
     {
       show: true,

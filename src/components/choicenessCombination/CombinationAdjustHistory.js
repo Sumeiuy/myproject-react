@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
+import { time } from '../../helper';
 import config from './config';
 import styles from './combinationAdjustHistory.less';
 
@@ -109,7 +110,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                           </a>
                         </div>
                         <div className={styles.timeBox}>
-                          <span>{child.time}</span>
+                          <span>{time.format(child.time, config.formatStr)}</span>
                           <a
                             className={styles.customerLink}
                             onClick={() => openCustomerListPage(openPayload)}
