@@ -1,12 +1,25 @@
 .choicenessCombinationBox {
+  box-sizing: border-box;
+  padding: 20px;
   height: 100%;
+  min-width: 1032px;
   overflow-x: auto;
-  .choicenessContent {
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
+  .topContainer {
+    margin-bottom: 20px;
+    height: 404px;
+    position: relative;
+    .topContainerChild {
+      position: absolute;
+      width: 44%;
+      height: 404px;
+      padding: 16px 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      box-shadow: 2px 1px 5px #bdbcbc;
+      &:last-child {
+        width: calc(~"56% - 20px");
+        margin-left: calc(~"44% + 20px");
+      }
+    }
   }
-}
-.topContainer {
-  margin-bottom: 20px;
 }

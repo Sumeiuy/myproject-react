@@ -140,6 +140,23 @@ const config = {
       },
     ],
   },
+  securityType: [
+    {
+      name: '股票',
+      value: '1',
+      shortName: 'GP',
+    },
+    {
+      name: '基金',
+      value: '2',
+      shortName: 'JJ',
+    },
+    {
+      name: '债券',
+      value: '3',
+      shortName: 'ZQ',
+    },
+  ],
 };
 
 export default config;
