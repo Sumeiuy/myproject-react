@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 12:47:14
+ * @Last Modified time: 2018-05-02 14:45:25
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -148,9 +148,7 @@ export default class TemplateForm extends PureComponent {
     targetElement[0].children[0].innerText = innerText;
     // 获取属性是data-text的标签内容
     const allTextArray = getTextByAttribute('span', 'data-text');
-    console.warn('allTextArray', allTextArray);
     const content = allTextArray.join('');
-    console.warn('content', content);
     const contentState = toContentState(content);
     this.props.form.setFieldsValue({ content: contentState });
   }
